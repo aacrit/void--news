@@ -272,8 +272,17 @@ def _scrape_single(article_data, source_map):
         article_data["full_text"] = scraped.get("full_text", "")
         article_data["word_count"] = scraped.get("word_count", 0)
         article_data["image_url"] = scraped.get("image_url")
-    except Exception as e:
+    except Exception:
         pass  # Article proceeds with empty full_text
+
+    # RSS summary fallback: if scraper got no text, use the RSS summary
+    # A 200-word summary is far better than empty for NLP analysis
+    if not article_data.get("full_text"):
+        summary = article_data.get("summary", "") or ""
+        title = article_data.get("title", "") or ""
+        if summary and len(summary) > 50:
+            article_data["full_text"] = f"{title}\n\n{summary}"
+            article_data["word_count"] = len(article_data["full_text"].split())
 
     # Determine section
     source_id_slug = article_data.get("source_id", "")

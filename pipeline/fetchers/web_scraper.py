@@ -3,8 +3,15 @@ Web scraper for extracting full article text from news pages.
 
 Uses BeautifulSoup + requests to extract article content. Respects
 robots.txt and uses a polite User-Agent.
+
+Improved extraction with:
+- Broader CSS selectors for major news sites
+- JSON-LD structured data parsing (Article schema)
+- Meta description fallback
+- Better paragraph aggregation
 """
 
+import json
 import urllib.robotparser
 from urllib.parse import urlparse
 
@@ -12,7 +19,11 @@ import requests
 from bs4 import BeautifulSoup
 
 
-USER_AGENT = "VoidNews/1.0 (+https://github.com/aacrit/void--news)"
+# Use a browser-like User-Agent — many news sites block bot-like agents
+USER_AGENT = (
+    "Mozilla/5.0 (compatible; VoidNews/1.0; "
+    "+https://github.com/aacrit/void--news)"
+)
 REQUEST_TIMEOUT = 15  # seconds
 
 # Cache for robots.txt parsers (keyed by domain)
@@ -22,14 +33,7 @@ _robots_cache: dict[str, urllib.robotparser.RobotFileParser] = {}
 def _check_robots_txt(url: str) -> bool:
     """
     Check if the URL is allowed by the site's robots.txt.
-
     Results are cached per domain to avoid repeated fetches.
-
-    Args:
-        url: The URL to check.
-
-    Returns:
-        True if crawling is allowed, False otherwise.
     """
     parsed = urlparse(url)
     domain = f"{parsed.scheme}://{parsed.netloc}"
@@ -41,7 +45,6 @@ def _check_robots_txt(url: str) -> bool:
         try:
             rp.read()
         except Exception:
-            # If we can't fetch robots.txt, assume allowed
             _robots_cache[domain] = None
             return True
         _robots_cache[domain] = rp
@@ -50,57 +53,127 @@ def _check_robots_txt(url: str) -> bool:
     if rp is None:
         return True
 
-    return rp.can_fetch(USER_AGENT, url)
+    return rp.can_fetch("*", url)
+
+
+def _extract_json_ld_text(soup: BeautifulSoup) -> str:
+    """
+    Extract article text from JSON-LD structured data (schema.org Article).
+    Many major news sites embed full article text in JSON-LD.
+    """
+    for script in soup.find_all("script", type="application/ld+json"):
+        try:
+            data = json.loads(script.string or "")
+            # Handle both single object and array of objects
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                if isinstance(item, dict):
+                    # Check @type for Article variants
+                    item_type = item.get("@type", "")
+                    if isinstance(item_type, list):
+                        item_type = " ".join(item_type)
+                    if "Article" in str(item_type) or "NewsArticle" in str(item_type):
+                        body = item.get("articleBody", "")
+                        if body and len(body) > 100:
+                            return body
+                    # Check @graph array
+                    for graph_item in item.get("@graph", []):
+                        if isinstance(graph_item, dict):
+                            gt = graph_item.get("@type", "")
+                            if "Article" in str(gt):
+                                body = graph_item.get("articleBody", "")
+                                if body and len(body) > 100:
+                                    return body
+        except (json.JSONDecodeError, TypeError, AttributeError):
+            continue
+    return ""
+
+
+def _extract_meta_description(soup: BeautifulSoup) -> str:
+    """Extract meta description or og:description as last-resort text."""
+    for attr in [
+        {"property": "og:description"},
+        {"name": "description"},
+        {"name": "twitter:description"},
+    ]:
+        tag = soup.find("meta", attrs=attr)
+        if tag and tag.get("content") and len(tag["content"]) > 50:
+            return tag["content"]
+    return ""
 
 
 def _extract_article_text(soup: BeautifulSoup) -> str:
     """
     Extract the main article text from a parsed HTML page.
 
-    Tries common article page structures in order of specificity:
-    1. <article> tag
-    2. <main> tag
-    3. Elements with common article class names
-    4. Fallback to largest <div> with substantial text
-
-    Args:
-        soup: Parsed BeautifulSoup object.
-
-    Returns:
-        Extracted article text as a string.
+    Tries multiple strategies in order of reliability:
+    1. JSON-LD structured data (most reliable for major sites)
+    2. <article> tag
+    3. <main> tag
+    4. Common CSS selectors for news site content areas
+    5. Largest div with paragraph text
+    6. Meta description fallback
     """
-    # Remove script, style, nav, header, footer elements
-    for tag in soup.find_all(["script", "style", "nav", "header", "footer", "aside"]):
+    # Remove non-content elements
+    for tag in soup.find_all([
+        "script", "style", "nav", "header", "footer", "aside",
+        "form", "iframe", "noscript", "svg",
+    ]):
+        # Don't decompose JSON-LD scripts (needed for Strategy 1)
+        if tag.name == "script" and tag.get("type") == "application/ld+json":
+            continue
         tag.decompose()
 
-    # Strategy 1: <article> tag
+    # Strategy 1: JSON-LD structured data
+    text = _extract_json_ld_text(soup)
+    if text:
+        return text
+
+    # Strategy 2: <article> tag
     article = soup.find("article")
     if article:
         text = article.get_text(separator="\n", strip=True)
         if len(text) > 100:
             return text
 
-    # Strategy 2: <main> tag
+    # Strategy 3: <main> tag
     main = soup.find("main")
     if main:
         text = main.get_text(separator="\n", strip=True)
         if len(text) > 100:
             return text
 
-    # Strategy 3: Common article content class names
+    # Strategy 4: Common article content selectors (expanded for major outlets)
     content_selectors = [
-        ".post-content",
-        ".article-content",
-        ".article-body",
-        ".entry-content",
-        ".story-body",
-        ".story-content",
-        ".content-body",
-        ".article__body",
-        ".article__content",
+        # Generic patterns
         '[itemprop="articleBody"]',
-        "#article-body",
-        "#story-body",
+        '[data-testid="article-body"]',
+        '[data-component="text-block"]',
+        ".post-content", ".article-content", ".article-body",
+        ".entry-content", ".story-body", ".story-content",
+        ".content-body", ".article__body", ".article__content",
+        "#article-body", "#story-body", "#storytext",
+        # Major outlet specific
+        ".story-body__inner",          # BBC
+        ".article-page",              # Reuters
+        ".pg-rail-tall__body",        # CNN
+        ".article-text",              # Al Jazeera
+        ".article__text",             # The Guardian
+        ".caas-body",                 # Yahoo News
+        ".body-content",              # NBC News
+        ".article-body-text",         # CBS News
+        ".articleBody",               # Generic schema
+        ".RichTextStoryBody",         # NPR
+        ".paywall",                   # Paywalled content area
+        ".premium-content",           # Premium content area
+        ".article-wrap",              # Generic
+        ".detail-body",               # Fox News
+        ".article-page__content",     # Washington Post
+        "#article-content",           # Generic
+        "#content-body",              # Generic
+        "#main-content",              # Generic
+        ".story__content",            # ProPublica
+        ".postContent",               # Blog-style
     ]
     for selector in content_selectors:
         element = soup.select_one(selector)
@@ -109,32 +182,37 @@ def _extract_article_text(soup: BeautifulSoup) -> str:
             if len(text) > 100:
                 return text
 
-    # Strategy 4: Find the div with the most paragraph text
+    # Strategy 5: Find the div with the most paragraph text
     best_text = ""
     for div in soup.find_all("div"):
-        paragraphs = div.find_all("p")
-        if paragraphs:
-            text = "\n".join(p.get_text(strip=True) for p in paragraphs)
+        paragraphs = div.find_all("p", recursive=True)
+        if len(paragraphs) >= 2:  # At least 2 paragraphs for it to be an article
+            text = "\n".join(
+                p.get_text(strip=True) for p in paragraphs
+                if len(p.get_text(strip=True)) > 20  # Skip tiny paragraphs
+            )
             if len(text) > len(best_text):
                 best_text = text
 
-    return best_text
+    if best_text and len(best_text) > 100:
+        return best_text
+
+    # Strategy 6: Aggregate all <p> tags on the page
+    all_paragraphs = soup.find_all("p")
+    if len(all_paragraphs) >= 3:
+        text = "\n".join(
+            p.get_text(strip=True) for p in all_paragraphs
+            if len(p.get_text(strip=True)) > 30
+        )
+        if len(text) > 200:
+            return text
+
+    # Strategy 7: Meta description as absolute last resort
+    return _extract_meta_description(soup)
 
 
 def _extract_image_url(soup: BeautifulSoup, base_url: str) -> str | None:
-    """
-    Extract the main image URL from the article page.
-
-    Tries Open Graph meta tag first, then looks for large images
-    within the article content.
-
-    Args:
-        soup: Parsed BeautifulSoup object.
-        base_url: The article URL (for resolving relative paths).
-
-    Returns:
-        Image URL string, or None if not found.
-    """
+    """Extract the main image URL from the article page."""
     # Try Open Graph image
     og_image = soup.find("meta", property="og:image")
     if og_image and og_image.get("content"):
@@ -149,7 +227,6 @@ def _extract_image_url(soup: BeautifulSoup, base_url: str) -> str | None:
     article = soup.find("article") or soup.find("main") or soup
     for img in article.find_all("img", src=True):
         src = img["src"]
-        # Skip tiny images (icons, trackers)
         width = img.get("width")
         height = img.get("height")
         if width and height:
@@ -158,8 +235,10 @@ def _extract_image_url(soup: BeautifulSoup, base_url: str) -> str | None:
                     return src
             except ValueError:
                 pass
-        # If no dimensions, take first image with a reasonable src
-        if not any(skip in src.lower() for skip in ["icon", "logo", "avatar", "pixel", "tracker", "1x1"]):
+        if not any(skip in src.lower() for skip in [
+            "icon", "logo", "avatar", "pixel", "tracker", "1x1",
+            "spacer", "blank", "loading", "spinner",
+        ]):
             return src
 
     return None
@@ -171,15 +250,6 @@ def scrape_article(url: str) -> dict:
 
     Checks robots.txt before scraping. Returns partial results if some
     extraction steps fail.
-
-    Args:
-        url: The full URL of the article page to scrape.
-
-    Returns:
-        Dict with keys:
-            - full_text: str (extracted article text, empty string on failure)
-            - word_count: int (number of words in full_text)
-            - image_url: str | None (main article image URL)
     """
     result = {
         "full_text": "",
@@ -189,25 +259,30 @@ def scrape_article(url: str) -> dict:
 
     # Check robots.txt
     if not _check_robots_txt(url):
-        print(f"  [robots] Blocked by robots.txt: {url}")
         return result
 
     try:
         response = requests.get(
             url,
-            headers={"User-Agent": USER_AGENT},
+            headers={
+                "User-Agent": USER_AGENT,
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept-Encoding": "gzip, deflate",
+                "DNT": "1",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+            },
             timeout=REQUEST_TIMEOUT,
             allow_redirects=True,
         )
         response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"  [error] Failed to fetch {url}: {e}")
+    except requests.RequestException:
         return result
 
     # Ensure we got HTML
     content_type = response.headers.get("Content-Type", "")
-    if "html" not in content_type.lower():
-        print(f"  [skip] Non-HTML content at {url}: {content_type}")
+    if "html" not in content_type.lower() and "xml" not in content_type.lower():
         return result
 
     soup = BeautifulSoup(response.text, "html.parser")
