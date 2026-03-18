@@ -52,22 +52,47 @@ function HomeContent() {
 
     async function loadFromSupabase() {
       try {
-        const selectFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity`;
+        // Query with enrichment columns first; fall back to base schema if
+        // migrations 002/003 haven't been applied to the live database yet.
+        const enrichedFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity`;
+        const baseFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated`;
 
-        const [worldRes, usRes] = await Promise.all([
+        let worldRes, usRes;
+        let usingEnriched = true;
+
+        [worldRes, usRes] = await Promise.all([
           supabase
             .from("story_clusters")
-            .select(selectFields)
+            .select(enrichedFields)
             .eq("section", "world")
             .order("headline_rank", { ascending: false })
             .limit(100),
           supabase
             .from("story_clusters")
-            .select(selectFields)
+            .select(enrichedFields)
             .eq("section", "us")
             .order("headline_rank", { ascending: false })
             .limit(100),
         ]);
+
+        // If enriched query failed (columns don't exist), fall back to base schema
+        if (worldRes.error || usRes.error) {
+          usingEnriched = false;
+          [worldRes, usRes] = await Promise.all([
+            supabase
+              .from("story_clusters")
+              .select(baseFields)
+              .eq("section", "world")
+              .order("first_published", { ascending: false })
+              .limit(100),
+            supabase
+              .from("story_clusters")
+              .select(baseFields)
+              .eq("section", "us")
+              .order("first_published", { ascending: false })
+              .limit(100),
+          ]);
+        }
 
         if (controller.signal.aborted) return;
 
@@ -83,27 +108,12 @@ function HomeContent() {
 
         if (controller.signal.aborted) return;
 
-        // Read bias data directly from pre-computed bias_diversity JSONB column.
-        // This eliminates an expensive cluster_bias_summary view query with
-        // a large IN() clause on every page load. The view is retained for
-        // Deep Dive and pipeline use only.
+        // Read bias data from pre-computed bias_diversity JSONB when available.
+        // Falls back gracefully when enrichment columns don't exist yet.
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         const liveStories: Story[] = clusters.map(
-          (cluster: {
-            id: string;
-            title: string;
-            summary: string | null;
-            category: string | null;
-            section: string | null;
-            importance_score: number | null;
-            source_count: number | null;
-            first_published: string | null;
-            last_updated: string | null;
-            divergence_score: number | null;
-            headline_rank: number | null;
-            coverage_velocity: number | null;
-            bias_diversity: Record<string, number> | null;
-          }) => {
-            const bd = cluster.bias_diversity;
+          (cluster: any) => {
+            const bd = usingEnriched ? cluster.bias_diversity : null;
 
             const biasScores: BiasScores = bd && bd.avg_political_lean != null
               ? {
