@@ -1,0 +1,8 @@
+feedparser>=6.0
+beautifulsoup4>=4.12
+requests>=2.31
+supabase>=2.0
+python-dotenv>=1.0
+spacy>=3.7
+textblob>=0.18
+nltk>=3.8

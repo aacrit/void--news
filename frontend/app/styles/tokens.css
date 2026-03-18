@@ -1,0 +1,191 @@
+/* ==========================================================================
+   void --news — Design Tokens
+   "Press & Precision" design system
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Light Mode — "Morning Edition"
+   Warm paper tones. Aged broadsheet under morning light.
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-mode="light"] {
+  /* Surfaces */
+  --bg-primary:    #FAF8F5;
+  --bg-secondary:  #F2EDE8;
+  --bg-card:       #FFFFFF;
+  --bg-elevated:   #FFFFFF;
+
+  /* Text */
+  --fg-primary:    #1A1A1A;
+  --fg-secondary:  #4A4A4A;
+  --fg-tertiary:   #7A7A7A;
+  --fg-muted:      #A0A0A0;
+
+  /* Borders & Dividers */
+  --border-subtle: #E8E2DB;
+  --border-strong: #C8C0B5;
+  --divider:       #D4CCC2;
+
+  /* Shadows — warm, barely there */
+  --shadow-e0: none;
+  --shadow-e1: 0 1px 3px rgba(28, 26, 23, 0.04);
+  --shadow-e2: 0 4px 12px rgba(28, 26, 23, 0.08);
+  --shadow-e3: 0 8px 24px rgba(28, 26, 23, 0.12);
+
+  /* Blur levels */
+  --blur-e1: 8px;
+  --blur-e2: 16px;
+  --blur-e3: 24px;
+
+  /* Accent — used sparingly, only functional */
+  --accent: #1A1A1A;
+  --accent-hover: #333333;
+}
+
+/* --------------------------------------------------------------------------
+   Dark Mode — "Evening Edition"
+   Dark walnut warmth. Not terminal black, not pure dark.
+   -------------------------------------------------------------------------- */
+:root[data-mode="dark"] {
+  /* Surfaces */
+  --bg-primary:    #1C1A17;
+  --bg-secondary:  #252320;
+  --bg-card:       #2A2725;
+  --bg-elevated:   #333028;
+
+  /* Text */
+  --fg-primary:    #EDE8E0;
+  --fg-secondary:  #B8B0A5;
+  --fg-tertiary:   #8A8278;
+  --fg-muted:      #5A5550;
+
+  /* Borders & Dividers */
+  --border-subtle: #3A3530;
+  --border-strong: #4A4540;
+  --divider:       #403B35;
+
+  /* Shadows — cooler in dark mode */
+  --shadow-e0: none;
+  --shadow-e1: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-e3: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* Blur levels */
+  --blur-e1: 8px;
+  --blur-e2: 16px;
+  --blur-e3: 24px;
+
+  /* Accent */
+  --accent: #EDE8E0;
+  --accent-hover: #D4CCC2;
+}
+
+/* --------------------------------------------------------------------------
+   Bias Color System
+   Consistent across light/dark. Colors earned through data, not decoration.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Political Lean Spectrum */
+  --bias-left:         #3B82F6;
+  --bias-center-left:  #60A5FA;
+  --bias-center:       #9CA3AF;
+  --bias-center-right: #F97316;
+  --bias-right:        #EF4444;
+
+  /* Sensationalism Scale */
+  --sense-low:    #22C55E;
+  --sense-medium: #EAB308;
+  --sense-high:   #EF4444;
+
+  /* Opinion vs. Reporting */
+  --type-reporting: #3B82F6;
+  --type-analysis:  #8B5CF6;
+  --type-opinion:   #F97316;
+
+  /* Factual Rigor */
+  --rigor-high:   #22C55E;
+  --rigor-medium: #EAB308;
+  --rigor-low:    #EF4444;
+}
+
+/* --------------------------------------------------------------------------
+   Typography Scale — Fluid with clamp()
+   -------------------------------------------------------------------------- */
+:root {
+  --text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
+  --text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+  --text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  --text-lg:    clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --text-xl:    clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
+  --text-hero:  clamp(2rem, 1.5rem + 2vw, 4rem);
+
+  /* Font families — set by next/font, fallbacks here */
+  --font-editorial:  var(--font-playfair), "Playfair Display", "Georgia", "Times New Roman", serif;
+  --font-structural: var(--font-inter), "Inter", "Helvetica Neue", "Arial", sans-serif;
+  --font-data:       var(--font-jetbrains), "JetBrains Mono", "Menlo", "Consolas", monospace;
+}
+
+/* --------------------------------------------------------------------------
+   Spacing Scale — Fluid with clamp()
+   -------------------------------------------------------------------------- */
+:root {
+  --space-1:  clamp(0.125rem, 0.1rem + 0.1vw, 0.25rem);
+  --space-2:  clamp(0.25rem, 0.2rem + 0.2vw, 0.5rem);
+  --space-3:  clamp(0.5rem, 0.4rem + 0.4vw, 0.75rem);
+  --space-4:  clamp(0.75rem, 0.6rem + 0.6vw, 1rem);
+  --space-5:  clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
+  --space-6:  clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  --space-7:  clamp(2rem, 1.5rem + 2vw, 4rem);
+}
+
+/* --------------------------------------------------------------------------
+   Animation Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Duration */
+  --dur-instant:  0ms;
+  --dur-fast:     150ms;
+  --dur-normal:   300ms;
+  --dur-morph:    400ms;
+  --dur-step:     450ms;
+  --dur-slow:     600ms;
+
+  /* Easing */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Spring approximation for CSS — damped overshoot */
+  --spring: linear(
+    0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%,
+    0.721 25.3%, 0.849 31.5%, 0.937 38.1%,
+    0.968 41.8%, 0.991 45.7%, 1.006 50.1%,
+    1.015 55%, 1.017 63.9%, 1.001 85.6%, 1
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Border & Radius
+   -------------------------------------------------------------------------- */
+:root {
+  --radius-none: 0;
+  --radius-sm:   1px;
+  --radius-md:   2px;
+
+  --rule-thin:   1px solid var(--divider);
+  --rule-strong: 1px solid var(--border-strong);
+}
+
+/* --------------------------------------------------------------------------
+   Z-Index Scale
+   -------------------------------------------------------------------------- */
+:root {
+  --z-base:     1;
+  --z-card:     2;
+  --z-sticky:   10;
+  --z-nav:      20;
+  --z-dropdown: 30;
+  --z-tooltip:  40;
+  --z-overlay:  50;
+  --z-modal:    100;
+}
