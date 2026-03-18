@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { Section } from "../lib/types";
 import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
@@ -94,7 +95,7 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
           aria-label="Main navigation"
         >
           {/* Masthead — inline SVG logo (currentColor for theme support) */}
-          <a
+          <Link
             href="/"
             aria-label="void --news — home"
             style={{
@@ -112,7 +113,7 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             <span className="nav-logo-mobile" style={{ display: "none" }}>
               <ScaleIcon animation="idle" size={24} />
             </span>
-          </a>
+          </Link>
 
           {/* Section tabs — desktop */}
           <div

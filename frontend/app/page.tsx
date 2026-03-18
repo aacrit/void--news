@@ -24,7 +24,6 @@ import Footer from "./components/Footer";
 function HomeContent() {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLiveData, setIsLiveData] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<Section>("world");
   const [activeCategory, setActiveCategory] = useState<"All" | Category>(
@@ -91,6 +90,10 @@ function HomeContent() {
               cluster.first_published ||
               cluster.last_updated ||
               new Date().toISOString(),
+            // TODO(m-6): Bias scores are hardcoded placeholders. To show real
+            // data, join cluster_articles + bias_scores in the Supabase query
+            // and compute per-cluster averages. Deferred to avoid N+1 queries
+            // on page load — consider a database view or RPC for this.
             biasScores: {
               politicalLean: 50,
               sensationalism: 30,
@@ -104,7 +107,6 @@ function HomeContent() {
         );
 
         setStories(liveStories);
-        setIsLiveData(true);
         setIsLoading(false);
 
         // Get last pipeline run time

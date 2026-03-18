@@ -34,6 +34,7 @@ from utils.supabase_client import (
     insert_bias_scores,
     insert_cluster,
     link_article_to_cluster,
+    supabase,
     update_pipeline_run,
 )
 
@@ -191,6 +192,18 @@ def main():
         except Exception as e:
             print(f"  [error] Scrape failed for {url}: {e}")
 
+        # C-2: Determine section based on source tier and country
+        source_id_slug = article_data.get("source_id", "")
+        source_info = source_map.get(source_id_slug, {})
+        source_tier = source_info.get("tier", "")
+        source_country = source_info.get("country", "")
+        if source_tier == "us_major":
+            article_data["section"] = "us"
+        elif source_country == "US" and source_tier == "independent":
+            article_data["section"] = "us"
+        else:
+            article_data["section"] = "world"
+
         result = insert_article(article_data)
         if result:
             article_data["id"] = result["id"]
@@ -247,10 +260,29 @@ def main():
         # Step 8: Store clusters
         print("\n[8/8] Storing clusters...")
         for cluster in clusters:
+            cluster_articles_list = cluster.get("articles", [])
+
+            # C-2: Determine cluster section from its articles
+            # Use the most common section among articles; default to "world"
+            section_counts: dict[str, int] = {}
+            for art in cluster_articles_list:
+                sec = art.get("section", "world")
+                section_counts[sec] = section_counts.get(sec, 0) + 1
+            cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
+
+            # C-3: Populate cluster summary from first article
+            cluster_summary = ""
+            if cluster_articles_list:
+                first_art = cluster_articles_list[0]
+                cluster_summary = first_art.get("summary", "") or ""
+                if not cluster_summary:
+                    cluster_summary = (first_art.get("title", "") or "")[:200]
+
             result = insert_cluster({
                 "title": cluster.get("title", "Untitled Story")[:500],
+                "summary": cluster_summary,
                 "category": cluster.get("category", "politics"),
-                "section": cluster.get("section", "world"),
+                "section": cluster_section,
                 "importance_score": round(cluster.get("importance_score", 0.0), 2),
                 "source_count": cluster.get("source_count", 0),
                 "first_published": cluster.get("first_published", ""),
