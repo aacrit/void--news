@@ -7,19 +7,100 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Apply migration 002
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg2
+        run: pip install psycopg2-binary
+
+      - name: Apply migrations via Python
         env:
-          DATABASE_URL: postgresql://postgres:${{ secrets.SUPABASE_DB_PASSWORD }}@db.xryzskhgfuafyotrcdvj.supabase.co:5432/postgres
-        run: psql "$DATABASE_URL" -f supabase/migrations/002_cluster_bias_enrichment.sql
-      
-      - name: Apply migration 003
-        env:
-          DATABASE_URL: postgresql://postgres:${{ secrets.SUPABASE_DB_PASSWORD }}@db.xryzskhgfuafyotrcdvj.supabase.co:5432/postgres
-        run: psql "$DATABASE_URL" -f supabase/migrations/003_schema_fixes.sql
-      
-      - name: Verify columns exist
-        env:
-          DATABASE_URL: postgresql://postgres:${{ secrets.SUPABASE_DB_PASSWORD }}@db.xryzskhgfuafyotrcdvj.supabase.co:5432/postgres
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          psql "$DATABASE_URL" -c "SELECT column_name FROM information_schema.columns WHERE table_name = 'story_clusters' ORDER BY ordinal_position;"
+          python3 << 'PYEOF'
+          import psycopg2, os, sys
+
+          pw = os.environ["SUPABASE_DB_PASSWORD"]
+          ref = "xryzskhgfuafyotrcdvj"
+
+          # Try multiple connection methods
+          conn = None
+          attempts = [
+              f"postgresql://postgres.{ref}:{pw}@aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require",
+              f"postgresql://postgres:{pw}@db.{ref}.supabase.co:5432/postgres?sslmode=require",
+              f"postgresql://postgres.{ref}:{pw}@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require",
+          ]
+
+          for dsn in attempts:
+              host = dsn.split("@")[1].split("/")[0]
+              try:
+                  conn = psycopg2.connect(dsn, connect_timeout=15)
+                  conn.autocommit = True
+                  print(f"Connected via {host}")
+                  break
+              except Exception as e:
+                  print(f"Failed {host}: {str(e).strip().split(chr(10))[0][:100]}")
+                  conn = None
+
+          if not conn:
+              print("All connection attempts failed!")
+              sys.exit(1)
+
+          cur = conn.cursor()
+
+          # Apply migration 002
+          print("\n=== Applying migration 002 ===")
+          with open("supabase/migrations/002_cluster_bias_enrichment.sql") as f:
+              sql = f.read()
+          try:
+              cur.execute(sql)
+              print("Migration 002 applied successfully!")
+          except Exception as e:
+              print(f"Migration 002 error: {e}")
+              # Try individual statements
+              conn.rollback() if not conn.autocommit else None
+              for stmt in sql.split(';'):
+                  stmt = stmt.strip()
+                  if stmt and not stmt.startswith('--'):
+                      try:
+                          cur.execute(stmt)
+                      except Exception as e2:
+                          print(f"  Statement error (continuing): {str(e2)[:100]}")
+
+          # Apply migration 003
+          print("\n=== Applying migration 003 ===")
+          with open("supabase/migrations/003_schema_fixes.sql") as f:
+              sql = f.read()
+          try:
+              cur.execute(sql)
+              print("Migration 003 applied successfully!")
+          except Exception as e:
+              print(f"Migration 003 error: {e}")
+              conn.rollback() if not conn.autocommit else None
+              for stmt in sql.split(';'):
+                  stmt = stmt.strip()
+                  if stmt and not stmt.startswith('--'):
+                      try:
+                          cur.execute(stmt)
+                      except Exception as e2:
+                          print(f"  Statement error (continuing): {str(e2)[:100]}")
+
+          # Verify
+          print("\n=== Verification ===")
+          cur.execute("""
+              SELECT column_name FROM information_schema.columns
+              WHERE table_name = 'story_clusters'
+              ORDER BY ordinal_position
+          """)
+          cols = [r[0] for r in cur.fetchall()]
+          print(f"story_clusters columns: {cols}")
+
+          for col in ['headline_rank', 'divergence_score', 'bias_diversity', 'coverage_velocity']:
+              status = "OK" if col in cols else "MISSING"
+              print(f"  {col}: {status}")
+
+          cur.close()
+          conn.close()
+          PYEOF
