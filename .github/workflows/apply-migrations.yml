@@ -1,0 +1,25 @@
+name: Apply DB Migrations
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Apply migration 002
+        env:
+          DATABASE_URL: postgresql://postgres:${{ secrets.SUPABASE_DB_PASSWORD }}@db.xryzskhgfuafyotrcdvj.supabase.co:5432/postgres
+        run: psql "$DATABASE_URL" -f supabase/migrations/002_cluster_bias_enrichment.sql
+      
+      - name: Apply migration 003
+        env:
+          DATABASE_URL: postgresql://postgres:${{ secrets.SUPABASE_DB_PASSWORD }}@db.xryzskhgfuafyotrcdvj.supabase.co:5432/postgres
+        run: psql "$DATABASE_URL" -f supabase/migrations/003_schema_fixes.sql
+      
+      - name: Verify columns exist
+        env:
+          DATABASE_URL: postgresql://postgres:${{ secrets.SUPABASE_DB_PASSWORD }}@db.xryzskhgfuafyotrcdvj.supabase.co:5432/postgres
+        run: |
+          psql "$DATABASE_URL" -c "SELECT column_name FROM information_schema.columns WHERE table_name = 'story_clusters' ORDER BY ordinal_position;"
