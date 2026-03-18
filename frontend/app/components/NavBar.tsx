@@ -64,7 +64,7 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             <span className="nav-logo-desktop">
               <LogoFull height={28} />
             </span>
-            <span className="nav-logo-mobile" style={{ display: "none" }}>
+            <span className="nav-logo-mobile">
               <ScaleIcon animation="idle" size={24} />
             </span>
           </Link>

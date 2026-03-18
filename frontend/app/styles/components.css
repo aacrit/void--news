@@ -180,6 +180,11 @@
 .nav-logo {
   display: flex;
   align-items: center;
+}
+
+/* Hidden by default, shown on mobile via responsive.css */
+.nav-logo-mobile {
+  display: none;
   text-decoration: none;
   color: var(--fg-primary);
 }

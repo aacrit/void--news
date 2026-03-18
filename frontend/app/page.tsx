@@ -253,7 +253,7 @@ function HomeContent() {
         {/* Empty state — no data from pipeline yet */}
         {!isLoading && !error && stories.length === 0 && (
           <div className="empty-state">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="empty-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="empty-icon" aria-hidden="true">
               <rect x="8" y="12" width="48" height="40" rx="1" stroke="currentColor" strokeWidth="1.5" />
               <line x1="16" y1="22" x2="48" y2="22" stroke="currentColor" strokeWidth="1.5" />
               <line x1="16" y1="30" x2="40" y2="30" stroke="currentColor" strokeWidth="1" opacity="0.5" />
