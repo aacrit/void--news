@@ -197,28 +197,38 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
         scores = scores_result.data
         count = len(scores)
 
-        # Compute averages
-        avg = lambda key: round(sum(s[key] for s in scores) / count) if count else 0
-        avg_pl = avg("political_lean")
-        avg_sens = avg("sensationalism")
-        avg_of = avg("opinion_fact")
-        avg_fr = avg("factual_rigor")
-        avg_frm = avg("framing")
-
-        # Compute spread
         import math
-        def stddev(vals):
+
+        def _stddev(vals):
             if len(vals) < 2:
                 return 0.0
             mean = sum(vals) / len(vals)
             return math.sqrt(sum((v - mean) ** 2 for v in vals) / len(vals))
 
         pl_values = [s["political_lean"] for s in scores]
+        sens_values = [s["sensationalism"] for s in scores]
+        of_values = [s["opinion_fact"] for s in scores]
+        fr_values = [s["factual_rigor"] for s in scores]
         frm_values = [s["framing"] for s in scores]
 
-        lean_spread = round(stddev(pl_values), 1)
-        framing_spread = round(stddev(frm_values), 1)
+        # Weighted average political lean (weight by factual rigor, matching the view)
+        total_rigor = sum(fr_values)
+        if total_rigor > 0:
+            avg_pl = round(sum(p * r for p, r in zip(pl_values, fr_values)) / total_rigor)
+        else:
+            avg_pl = round(sum(pl_values) / count) if count else 50
+
+        avg_sens = round(sum(sens_values) / count) if count else 30
+        avg_of = round(sum(of_values) / count) if count else 25
+        avg_fr = round(sum(fr_values) / count) if count else 50
+        avg_frm = round(sum(frm_values) / count) if count else 40
+
+        # Compute all spread metrics (matching the view)
+        lean_spread = round(_stddev(pl_values), 1)
+        framing_spread = round(_stddev(frm_values), 1)
         lean_range = max(pl_values) - min(pl_values) if pl_values else 0
+        sensationalism_spread = round(_stddev(sens_values), 1)
+        opinion_spread = round(_stddev(of_values), 1)
 
         # Divergence score
         divergence = min(100.0,
@@ -236,6 +246,8 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
             "lean_spread": lean_spread,
             "framing_spread": framing_spread,
             "lean_range": lean_range,
+            "sensationalism_spread": sensationalism_spread,
+            "opinion_spread": opinion_spread,
             "aggregate_confidence": min(1.0, count / 5.0),
             "analyzed_count": count,
         }
@@ -263,35 +275,47 @@ def main():
         print("[abort] No sources loaded. Exiting.")
         return
 
-    # Seed/sync sources into Supabase and get UUID mappings
+    # Seed/sync sources into Supabase via batch upsert (replaces N+1 per-source queries)
     print("\n  Syncing sources to Supabase...")
     source_map = {}  # slug -> source dict with UUID
+    source_rows = [{
+        "slug": s.get("id", ""),
+        "name": s.get("name", ""),
+        "url": s.get("url", ""),
+        "rss_url": s.get("rss_url"),
+        "tier": s.get("tier", "independent"),
+        "country": s.get("country", "US"),
+        "type": s.get("type", "digital"),
+        "political_lean_baseline": s.get("political_lean_baseline"),
+        "credibility_notes": s.get("credibility_notes"),
+    } for s in sources]
+
+    try:
+        result = supabase.table("sources").upsert(
+            source_rows, on_conflict="slug"
+        ).execute()
+        # Map slugs to DB UUIDs
+        if result.data:
+            slug_to_uuid = {r["slug"]: r["id"] for r in result.data}
+            for s in sources:
+                slug = s.get("id", "")
+                if slug in slug_to_uuid:
+                    s["db_id"] = slug_to_uuid[slug]
+    except Exception as e:
+        print(f"  [warn] Batch source upsert failed, falling back to individual sync: {e}")
+        # Fallback: individual source sync
+        for s in sources:
+            slug = s.get("id", "")
+            try:
+                existing = supabase.table("sources").select("id").eq("slug", slug).limit(1).execute()
+                if existing.data:
+                    s["db_id"] = existing.data[0]["id"]
+            except Exception as ex:
+                if "duplicate" not in str(ex).lower():
+                    print(f"  [warn] Source sync failed for {slug}: {ex}")
+
     for s in sources:
-        slug = s.get("id", "")
-        try:
-            # Check if source exists
-            existing = supabase.table("sources").select("id").eq("slug", slug).limit(1).execute()
-            if existing.data:
-                s["db_id"] = existing.data[0]["id"]
-            else:
-                # Insert new source
-                row = supabase.table("sources").insert({
-                    "slug": slug,
-                    "name": s.get("name", ""),
-                    "url": s.get("url", ""),
-                    "rss_url": s.get("rss_url"),
-                    "tier": s.get("tier", "independent"),
-                    "country": s.get("country", "US"),
-                    "type": s.get("type", "digital"),
-                    "political_lean_baseline": s.get("political_lean_baseline"),
-                    "credibility_notes": s.get("credibility_notes"),
-                }).execute()
-                if row.data:
-                    s["db_id"] = row.data[0]["id"]
-        except Exception as e:
-            if "duplicate" not in str(e).lower():
-                print(f"  [warn] Source sync failed for {slug}: {e}")
-        source_map[slug] = s
+        source_map[s.get("id", "")] = s
 
     sources_with_ids = [s for s in sources if s.get("db_id")]
     print(f"  {len(sources_with_ids)} sources synced to Supabase")

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import type { Section, Category, Story, BiasScores, BiasSpread } from "./lib/types";
-import { supabase, fetchClusterBiasSummary } from "./lib/supabase";
+import { supabase } from "./lib/supabase";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
@@ -58,13 +58,13 @@ function HomeContent() {
             .from("story_clusters")
             .select(selectFields)
             .eq("section", "world")
-            .order("first_published", { ascending: false })
+            .order("headline_rank", { ascending: false })
             .limit(100),
           supabase
             .from("story_clusters")
             .select(selectFields)
             .eq("section", "us")
-            .order("first_published", { ascending: false })
+            .order("headline_rank", { ascending: false })
             .limit(100),
         ]);
 
@@ -80,11 +80,12 @@ function HomeContent() {
           return;
         }
 
-        const clusterIds = clusters.map((c: { id: string }) => c.id);
-        const biasSummaryMap = await fetchClusterBiasSummary(clusterIds);
-
         if (controller.signal.aborted) return;
 
+        // Read bias data directly from pre-computed bias_diversity JSONB column.
+        // This eliminates an expensive cluster_bias_summary view query with
+        // a large IN() clause on every page load. The view is retained for
+        // Deep Dive and pipeline use only.
         const liveStories: Story[] = clusters.map(
           (cluster: {
             id: string;
@@ -101,24 +102,15 @@ function HomeContent() {
             coverage_velocity: number | null;
             bias_diversity: Record<string, number> | null;
           }) => {
-            const viewData = biasSummaryMap?.[cluster.id];
-            const jsonData = cluster.bias_diversity;
+            const bd = cluster.bias_diversity;
 
-            const biasScores: BiasScores = viewData
+            const biasScores: BiasScores = bd && bd.avg_political_lean != null
               ? {
-                  politicalLean: viewData.avg_political_lean ?? 50,
-                  sensationalism: viewData.avg_sensationalism ?? 30,
-                  opinionFact: viewData.avg_opinion_fact ?? 25,
-                  factualRigor: viewData.avg_factual_rigor ?? 75,
-                  framing: viewData.avg_framing ?? 40,
-                }
-              : jsonData && jsonData.avg_political_lean != null
-              ? {
-                  politicalLean: jsonData.avg_political_lean ?? 50,
-                  sensationalism: jsonData.avg_sensationalism ?? 30,
-                  opinionFact: jsonData.avg_opinion_fact ?? 25,
-                  factualRigor: jsonData.avg_factual_rigor ?? 75,
-                  framing: jsonData.avg_framing ?? 40,
+                  politicalLean: bd.avg_political_lean ?? 50,
+                  sensationalism: bd.avg_sensationalism ?? 30,
+                  opinionFact: bd.avg_opinion_fact ?? 25,
+                  factualRigor: bd.avg_factual_rigor ?? 75,
+                  framing: bd.avg_framing ?? 40,
                 }
               : {
                   politicalLean: 50,
@@ -128,25 +120,15 @@ function HomeContent() {
                   framing: 40,
                 };
 
-            const biasSpread: BiasSpread | undefined = viewData
+            const biasSpread: BiasSpread | undefined = bd && bd.lean_spread != null
               ? {
-                  leanSpread: viewData.lean_spread ?? 0,
-                  framingSpread: viewData.framing_spread ?? 0,
-                  leanRange: viewData.lean_range ?? 0,
-                  sensationalismSpread: viewData.sensationalism_spread ?? 0,
-                  opinionSpread: viewData.opinion_spread ?? 0,
-                  aggregateConfidence: viewData.aggregate_confidence ?? 0,
-                  analyzedCount: viewData.analyzed_article_count ?? 0,
-                }
-              : jsonData && jsonData.lean_spread != null
-              ? {
-                  leanSpread: jsonData.lean_spread ?? 0,
-                  framingSpread: jsonData.framing_spread ?? 0,
-                  leanRange: jsonData.lean_range ?? 0,
-                  sensationalismSpread: 0,
-                  opinionSpread: 0,
-                  aggregateConfidence: jsonData.aggregate_confidence ?? 0,
-                  analyzedCount: jsonData.analyzed_count ?? 0,
+                  leanSpread: bd.lean_spread ?? 0,
+                  framingSpread: bd.framing_spread ?? 0,
+                  leanRange: bd.lean_range ?? 0,
+                  sensationalismSpread: bd.sensationalism_spread ?? 0,
+                  opinionSpread: bd.opinion_spread ?? 0,
+                  aggregateConfidence: bd.aggregate_confidence ?? 0,
+                  analyzedCount: bd.analyzed_count ?? 0,
                 }
               : undefined;
 
