@@ -10,9 +10,10 @@ Steps:
     3. Fetch articles via RSS feeds (parallel)
     4. Scrape full article text for each fetched article
     5. Store articles in Supabase
-    6. Run bias analysis on each article (6 axes)
-    7. Cluster stories and rank by importance
-    8. Log pipeline run results
+    6. Run bias analysis on each article (5 axes)
+    7. Cluster articles into stories
+    8. Categorize and rank clusters
+    9. Store clusters and linkages, finalize pipeline run
 """
 
 import json
@@ -34,32 +35,22 @@ from utils.supabase_client import (
     insert_cluster,
     link_article_to_cluster,
     update_pipeline_run,
-    supabase,
 )
 
-# Import analyzers
+# Phase 2: Bias analyzers
 from analyzers.political_lean import analyze_political_lean
 from analyzers.sensationalism import analyze_sensationalism
 from analyzers.opinion_detector import analyze_opinion
 from analyzers.factual_rigor import analyze_factual_rigor
 from analyzers.framing import analyze_framing
 
-# Import clustering, categorization, ranking
+# Phase 2: Clustering, categorization, ranking
 from clustering.story_cluster import cluster_stories
 from categorizer.auto_categorize import categorize_article
 from ranker.importance_ranker import rank_importance
 
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
-
-LEAN_MAP = {
-    "left": 15,
-    "center-left": 35,
-    "center": 50,
-    "center-right": 65,
-    "right": 85,
-    "varies": 50,
-}
 
 
 def load_sources() -> list[dict]:
@@ -73,114 +64,47 @@ def load_sources() -> list[dict]:
     return sources
 
 
-def analyze_article(article_id: str, title: str, text: str, source_baseline: int = 50) -> dict | None:
-    """Run all 5 bias analyzers on a single article."""
-    if not text and not title:
-        return None
-    content = text or title
+def run_bias_analysis(article: dict, source: dict) -> dict:
+    """
+    Run all 5 bias analyzers on a single article.
+
+    Returns a dict with score keys ready for DB insertion.
+    Each analyzer is run independently; failures fall back to defaults.
+    """
+    scores = {
+        "political_lean": 50,
+        "sensationalism": 10,
+        "opinion_fact": 25,
+        "factual_rigor": 50,
+        "framing": 15,
+    }
+
     try:
-        scores = {
-            "article_id": article_id,
-            "political_lean": max(0, min(100, int(analyze_political_lean(content, title=title, source_baseline=source_baseline)))),
-            "sensationalism": max(0, min(100, int(analyze_sensationalism(content, title=title)))),
-            "opinion_fact": max(0, min(100, int(analyze_opinion(content, title=title)))),
-            "factual_rigor": max(0, min(100, int(analyze_factual_rigor(content, title=title)))),
-            "framing": max(0, min(100, int(analyze_framing(content, title=title)))),
-            "confidence": 0.7,
-        }
-        return scores
+        scores["political_lean"] = analyze_political_lean(article, source)
     except Exception as e:
-        print(f"  [error] Bias analysis failed for article {article_id}: {e}")
-        return None
+        print(f"    [warn] Political lean failed: {e}")
 
-
-def run_clustering_and_ranking(stored_articles: list[dict], sources: list[dict]) -> int:
-    """Cluster stored articles into stories, categorize, and rank by importance."""
-    if len(stored_articles) < 2:
-        print("  Not enough articles to cluster.")
-        return 0
-
-    texts = []
-    for a in stored_articles:
-        text = a.get("title", "")
-        full_text = a.get("full_text", "") or a.get("summary", "")
-        if full_text:
-            text += " " + " ".join(full_text.split()[:200])
-        texts.append(text)
-
-    print("  Running story clustering...")
     try:
-        cluster_labels = cluster_stories(texts)
+        scores["sensationalism"] = analyze_sensationalism(article)
     except Exception as e:
-        print(f"  [error] Clustering failed: {e}")
-        return 0
+        print(f"    [warn] Sensationalism failed: {e}")
 
-    clusters_map = {}
-    for idx, label in enumerate(cluster_labels):
-        if label == -1:
-            continue
-        clusters_map.setdefault(label, []).append(stored_articles[idx])
+    try:
+        scores["opinion_fact"] = analyze_opinion(article)
+    except Exception as e:
+        print(f"    [warn] Opinion detection failed: {e}")
 
-    print(f"  Found {len(clusters_map)} story clusters from {len(stored_articles)} articles")
+    try:
+        scores["factual_rigor"] = analyze_factual_rigor(article)
+    except Exception as e:
+        print(f"    [warn] Factual rigor failed: {e}")
 
-    source_lookup = {s.get("id", s.get("slug", "")): s for s in sources}
-    clusters_created = 0
+    try:
+        scores["framing"] = analyze_framing(article)
+    except Exception as e:
+        print(f"    [warn] Framing failed: {e}")
 
-    for label, articles in clusters_map.items():
-        if len(articles) < 1:
-            continue
-
-        cluster_title = articles[0].get("title", "Untitled Story")
-        combined_text = " ".join(a.get("title", "") + " " + (a.get("summary", "") or "") for a in articles)
-        category = categorize_article(combined_text)
-
-        sections = [a.get("section", "world") for a in articles]
-        section = max(set(sections), key=sections.count) if sections else "world"
-
-        unique_sources = set(a.get("source_id", "") for a in articles)
-        source_count = len(unique_sources)
-
-        try:
-            cluster_sources = [source_lookup.get(sid, {}) for sid in unique_sources]
-            importance = rank_importance(articles, cluster_sources)
-        except Exception as e:
-            print(f"  [warn] Importance ranking failed: {e}")
-            importance = source_count * 10
-
-        timestamps = [a.get("published_at") for a in articles if a.get("published_at")]
-        first_published = min(timestamps) if timestamps else datetime.now(timezone.utc).isoformat()
-
-        cluster_row = insert_cluster({
-            "title": cluster_title[:500],
-            "summary": articles[0].get("summary", "")[:1000],
-            "category": category,
-            "section": section,
-            "importance_score": round(importance, 2),
-            "source_count": source_count,
-            "first_published": first_published,
-        })
-
-        if cluster_row:
-            clusters_created += 1
-            cluster_id = cluster_row["id"]
-            for article in articles:
-                link_article_to_cluster(cluster_id, article["id"])
-            try:
-                cat_result = supabase.table("categories").select("id").eq("slug", category.lower()).limit(1).execute()
-                if cat_result.data:
-                    cat_id = cat_result.data[0]["id"]
-                    for article in articles:
-                        try:
-                            supabase.table("article_categories").insert({
-                                "article_id": article["id"],
-                                "category_id": cat_id,
-                            }).execute()
-                        except Exception:
-                            pass
-            except Exception:
-                pass
-
-    return clusters_created
+    return scores
 
 
 def main():
@@ -191,16 +115,16 @@ def main():
     print("=" * 60)
 
     # Step 1: Load sources
-    print("\n[1/7] Loading sources...")
+    print("\n[1/8] Loading sources...")
     sources = load_sources()
     if not sources:
         print("[abort] No sources loaded. Exiting.")
         return
 
-    source_slug_map = {s.get("id", s.get("slug", "")): s for s in sources}
+    source_map = {s.get("id", ""): s for s in sources}
 
     # Step 2: Create pipeline run record
-    print("\n[2/7] Creating pipeline run record...")
+    print("\n[2/8] Creating pipeline run record...")
     pipeline_run = create_pipeline_run()
     run_id = pipeline_run["id"] if pipeline_run else None
     if run_id:
@@ -209,13 +133,13 @@ def main():
         print("  [warn] Could not create pipeline run record.")
 
     # Step 3: Fetch articles via RSS
-    print("\n[3/7] Fetching RSS feeds...")
+    print("\n[3/8] Fetching RSS feeds...")
     articles_raw, fetch_errors = fetch_from_rss(sources)
     print(f"  Total raw articles: {len(articles_raw)}")
     print(f"  Fetch errors: {len(fetch_errors)}")
 
     # Step 4: Scrape full text and store articles
-    print("\n[4/7] Scraping article text and storing in Supabase...")
+    print("\n[4/8] Scraping article text and storing in Supabase...")
     stored_articles = []
 
     for i, article_data in enumerate(articles_raw):
@@ -240,36 +164,85 @@ def main():
 
     print(f"  Articles stored: {len(stored_articles)}/{len(articles_raw)}")
 
-    # Step 5: Run bias analysis
-    print(f"\n[5/7] Running bias analysis on {len(stored_articles)} articles...")
+    # Step 5: Run bias analysis on each article
+    print(f"\n[5/8] Running bias analysis on {len(stored_articles)} articles...")
     articles_analyzed = 0
 
     for i, article in enumerate(stored_articles):
         if (i + 1) % 25 == 0 or i == 0:
             print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
 
-        source = source_slug_map.get(article.get("source_id", ""), {})
-        baseline_lean = LEAN_MAP.get(source.get("political_lean_baseline", "center"), 50)
+        source_id = article.get("source_id", "")
+        source = source_map.get(source_id, {"political_lean_baseline": "center"})
 
-        text = article.get("full_text", "") or article.get("summary", "") or ""
-        title = article.get("title", "")
-        scores = analyze_article(article["id"], title, text, source_baseline=baseline_lean)
+        bias_scores = run_bias_analysis(article, source)
+        bias_scores["article_id"] = article.get("id", "")
 
-        if scores:
-            result = insert_bias_scores(scores)
-            if result:
-                articles_analyzed += 1
+        result = insert_bias_scores(bias_scores)
+        if result:
+            articles_analyzed += 1
 
     print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
 
-    # Step 6: Cluster stories and rank importance
-    print(f"\n[6/7] Clustering stories and ranking importance...")
-    clusters_created = run_clustering_and_ranking(stored_articles, sources)
-    print(f"  Clusters created: {clusters_created}")
+    # Step 6: Cluster articles into stories
+    print(f"\n[6/8] Clustering {len(stored_articles)} articles into stories...")
+    clusters = []
+    try:
+        clusters = cluster_stories(stored_articles)
+        print(f"  Clusters formed: {len(clusters)}")
+    except Exception as e:
+        print(f"  [error] Clustering failed: {e}")
 
-    # Step 7: Update pipeline run
+    # Step 7: Categorize and rank each cluster
+    print("\n[7/8] Categorizing and ranking clusters...")
+    for cluster in clusters:
+        cluster_articles_list = cluster.get("articles", [])
+
+        # Categorize using the first article
+        try:
+            categories = categorize_article(cluster_articles_list[0]) if cluster_articles_list else ["politics"]
+            cluster["categories"] = categories
+            cluster["category"] = categories[0] if categories else "politics"
+        except Exception as e:
+            print(f"  [warn] Categorization failed: {e}")
+            cluster["categories"] = ["politics"]
+            cluster["category"] = "politics"
+
+        # Rank importance
+        try:
+            importance = rank_importance(cluster_articles_list, sources)
+            cluster["importance_score"] = importance
+        except Exception as e:
+            print(f"  [warn] Ranking failed: {e}")
+            cluster["importance_score"] = 20.0
+
+    clusters.sort(key=lambda c: c.get("importance_score", 0), reverse=True)
+
+    # Step 8: Store clusters and linkages in Supabase
+    print("\n[8/8] Storing clusters and finalizing...")
+    clusters_created = 0
+    for cluster in clusters:
+        cluster_record = {
+            "title": cluster.get("title", "Untitled Story")[:500],
+            "category": cluster.get("category", "politics"),
+            "section": cluster.get("section", "world"),
+            "importance_score": round(cluster.get("importance_score", 0.0), 2),
+            "source_count": cluster.get("source_count", 0),
+            "first_published": cluster.get("first_published", ""),
+        }
+
+        result = insert_cluster(cluster_record)
+        if result:
+            cluster_id = result.get("id", "")
+            clusters_created += 1
+            for article_id in cluster.get("article_ids", []):
+                if article_id:
+                    link_article_to_cluster(cluster_id, article_id)
+
+    print(f"  Clusters stored: {clusters_created}/{len(clusters)}")
+
+    # Finalize
     duration = time.time() - start_time
-    print(f"\n[7/7] Finalizing pipeline run...")
     if run_id:
         update_pipeline_run(
             run_id=run_id,
@@ -284,7 +257,8 @@ def main():
     print("\n" + "=" * 60)
     print("Pipeline complete!")
     print(f"  Duration: {duration:.1f}s")
-    print(f"  Sources: {len(sources)} | Articles: {len(stored_articles)} | Analyzed: {articles_analyzed} | Clusters: {clusters_created}")
+    print(f"  Sources: {len(sources)} | Articles: {len(stored_articles)} "
+          f"| Analyzed: {articles_analyzed} | Clusters: {clusters_created}")
     print(f"  Errors: {len(fetch_errors)}")
     print("=" * 60)
 
