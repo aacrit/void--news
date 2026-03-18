@@ -3,23 +3,23 @@
     "id": "ap-news",
     "name": "Associated Press",
     "url": "https://apnews.com",
-    "rss_url": "https://rsshub.app/apnews/topics/apf-topnews",
+    "rss_url": "https://news.google.com/rss/search?q=when:24h+allinurl:apnews.com&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "wire",
     "political_lean_baseline": "center",
-    "credibility_notes": "Gold-standard wire service, founded 1846. Nonprofit cooperative owned by member newspapers. Consistently rated among the most factual news sources worldwide."
+    "credibility_notes": "Gold-standard wire service, founded 1846. Nonprofit cooperative owned by member newspapers. Consistently rated among the most factual news sources worldwide. RSS via Google News filter (AP discontinued public RSS feeds)"
   },
   {
     "id": "reuters",
     "name": "Reuters",
     "url": "https://www.reuters.com",
-    "rss_url": "https://www.reutersagency.com/feed/?best-topics=political-general",
+    "rss_url": "https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "wire",
     "political_lean_baseline": "center",
-    "credibility_notes": "Premier international wire service. Known for strict editorial standards and factual reporting. Thomson Reuters is publicly traded."
+    "credibility_notes": "Premier international wire service. Known for strict editorial standards and factual reporting. Thomson Reuters is publicly traded. RSS via Google News filter (Reuters discontinued public RSS in 2020)"
   },
   {
     "id": "upi",
@@ -80,18 +80,18 @@
     "id": "chicago-tribune",
     "name": "Chicago Tribune",
     "url": "https://www.chicagotribune.com",
-    "rss_url": "https://www.chicagotribune.com/arcio/rss/category/nation-world/",
+    "rss_url": "https://news.google.com/rss/search?q=site:chicagotribune.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Major Midwestern broadsheet, founded 1847. Historically center-right editorial page. Part of Tribune Publishing."
+    "credibility_notes": "Major Midwestern broadsheet, founded 1847. Historically center-right editorial page. Part of Tribune Publishing. RSS via Google News filter (Arc CMS feeds disabled)"
   },
   {
     "id": "boston-globe",
     "name": "The Boston Globe",
     "url": "https://www.bostonglobe.com",
-    "rss_url": "https://www.bostonglobe.com/arc/outboundfeeds/rss/homepage/",
+    "rss_url": "https://www.bostonglobe.com/arc/outboundfeeds/rss/?outputType=xml",
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
@@ -122,14 +122,14 @@
   },
   {
     "id": "msnbc",
-    "name": "MSNBC",
-    "url": "https://www.msnbc.com",
-    "rss_url": "https://www.msnbc.com/feeds/latest",
+    "name": "MS NOW",
+    "url": "https://www.ms.now",
+    "rss_url": "https://www.ms.now/feed",
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
     "political_lean_baseline": "left",
-    "credibility_notes": "Progressive-leaning cable news. Shares newsgathering with NBC News. Primarily opinion and analysis programming."
+    "credibility_notes": "Progressive-leaning cable news. Shares newsgathering with NBC News. Primarily opinion and analysis programming. Rebranded from MSNBC in Nov 2025 (Comcast/Versant spinoff)"
   },
   {
     "id": "nbc-news",
@@ -223,7 +223,7 @@
     "id": "daily-beast",
     "name": "The Daily Beast",
     "url": "https://www.thedailybeast.com",
-    "rss_url": "https://feeds.thedailybeast.com/rss/articles",
+    "rss_url": "https://www.thedailybeast.com/arc/outboundfeeds/rss/articles/",
     "tier": "us_major",
     "country": "US",
     "type": "digital",
@@ -311,7 +311,7 @@
     "id": "the-nation",
     "name": "The Nation",
     "url": "https://www.thenation.com",
-    "rss_url": "https://www.thenation.com/feed/",
+    "rss_url": "https://www.thenation.com/feed/?post_type=article",
     "tier": "us_major",
     "country": "US",
     "type": "magazine",
@@ -352,15 +352,15 @@
     "credibility_notes": "Major UK broadsheet owned by Scott Trust (nonprofit). Known for investigative journalism (Snowden leaks, Panama Papers). Open editorial stance."
   },
   {
-    "id": "the-times-uk",
-    "name": "The Times",
-    "url": "https://www.thetimes.co.uk",
-    "rss_url": "https://www.thetimes.co.uk/rss",
+    "id": "the-independent",
+    "name": "The Independent",
+    "url": "https://www.independent.co.uk",
+    "rss_url": "https://www.independent.co.uk/news/world/rss",
     "tier": "international",
-    "country": "UK",
-    "type": "broadsheet",
-    "political_lean_baseline": "center-right",
-    "credibility_notes": "UK paper of record, founded 1785. Known for authoritative reporting. Owned by News UK (Murdoch). Editorially center-right."
+    "country": "GB",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Formerly a broadsheet, now digital-only. Centrist-to-liberal editorial line. Owned by Independent Digital News & Media (Saudi-linked). Replaces The Times UK (hard paywall, no RSS)."
   },
   {
     "id": "the-telegraph",
@@ -454,7 +454,7 @@
     "id": "ansa-english",
     "name": "ANSA (English)",
     "url": "https://www.ansa.it/english/",
-    "rss_url": "https://www.ansa.it/english/news/rss.xml",
+    "rss_url": "https://www.ansa.it/english/news/english_nr_rss.xml",
     "tier": "international",
     "country": "IT",
     "type": "wire",
@@ -509,7 +509,7 @@
     "id": "the-national-uae",
     "name": "The National",
     "url": "https://www.thenationalnews.com",
-    "rss_url": "https://www.thenationalnews.com/rss",
+    "rss_url": "https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml",
     "tier": "international",
     "country": "AE",
     "type": "broadsheet",
@@ -564,12 +564,12 @@
     "id": "nikkei-asia",
     "name": "Nikkei Asia",
     "url": "https://asia.nikkei.com",
-    "rss_url": "https://asia.nikkei.com/rss",
+    "rss_url": "https://asia.nikkei.com/rss/feed/nar",
     "tier": "international",
     "country": "JP",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics."
+    "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics. Paywalled; ToS restricts redistribution — use RSS summaries only"
   },
   {
     "id": "straits-times",
@@ -630,18 +630,18 @@
     "id": "the-east-african",
     "name": "The East African",
     "url": "https://www.theeastafrican.co.ke",
-    "rss_url": "https://www.theeastafrican.co.ke/tea/rss",
+    "rss_url": "https://news.google.com/rss/search?q=site:theeastafrican.co.ke+when:7d&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "KE",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Regional weekly covering Kenya, Uganda, Tanzania, Rwanda, Burundi, and South Sudan. Published by Nation Media Group, East Africa's largest media company."
+    "credibility_notes": "Regional weekly covering Kenya, Uganda, Tanzania, Rwanda, Burundi, and South Sudan. Published by Nation Media Group, East Africa's largest media company. RSS via Google News filter (site blocks direct RSS)"
   },
   {
     "id": "daily-maverick",
     "name": "Daily Maverick",
     "url": "https://www.dailymaverick.co.za",
-    "rss_url": "https://www.dailymaverick.co.za/feed/",
+    "rss_url": "https://www.dailymaverick.co.za/dmrss",
     "tier": "international",
     "country": "ZA",
     "type": "digital",
@@ -729,7 +729,7 @@
     "id": "marshall-project",
     "name": "The Marshall Project",
     "url": "https://www.themarshallproject.org",
-    "rss_url": "https://www.themarshallproject.org/rss/index.rss",
+    "rss_url": "https://www.themarshallproject.org/rss/recent.rss",
     "tier": "independent",
     "country": "US",
     "type": "nonprofit",
@@ -825,15 +825,15 @@
     "credibility_notes": "Leading democratic socialist magazine. Provides explicitly left perspective on politics, economics, and culture. Important voice in American left discourse."
   },
   {
-    "id": "current-affairs",
-    "name": "Current Affairs",
-    "url": "https://www.currentaffairs.org",
-    "rss_url": "https://www.currentaffairs.org/feed",
+    "id": "american-prospect",
+    "name": "The American Prospect",
+    "url": "https://prospect.org",
+    "rss_url": "https://prospect.org/api/rss/content.rss",
     "tier": "independent",
     "country": "US",
-    "type": "independent",
+    "type": "magazine",
     "political_lean_baseline": "left",
-    "credibility_notes": "Left-leaning magazine covering politics and culture. Known for long-form analysis and distinctive voice. Founded by Nathan J. Robinson."
+    "credibility_notes": "Progressive policy magazine founded 1990. Well-sourced investigative and policy journalism. Replaces Current Affairs (RSS feed defunct)."
   },
   {
     "id": "the-dispatch",
@@ -850,12 +850,12 @@
     "id": "lawfare",
     "name": "Lawfare",
     "url": "https://www.lawfaremedia.org",
-    "rss_url": "https://www.lawfaremedia.org/feed",
+    "rss_url": "https://lawfare.substack.com/feed",
     "tier": "independent",
     "country": "US",
     "type": "independent",
     "political_lean_baseline": "center",
-    "credibility_notes": "Leading national security law blog and podcast. Published by Brookings. Expert legal analysis on security, intelligence, and governance issues."
+    "credibility_notes": "Leading national security law blog and podcast. Published by Brookings. Expert legal analysis on security, intelligence, and governance issues. Migrated to Substack for distribution."
   },
   {
     "id": "the-federalist",
@@ -927,7 +927,7 @@
     "id": "texas-tribune",
     "name": "The Texas Tribune",
     "url": "https://www.texastribune.org",
-    "rss_url": "https://www.texastribune.org/feeds/articles.xml",
+    "rss_url": "https://feeds.texastribune.org/feeds/main/",
     "tier": "independent",
     "country": "US",
     "type": "nonprofit",
