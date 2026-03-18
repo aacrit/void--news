@@ -277,7 +277,7 @@ export default function BiasStamp({ scores, size = "sm" }: BiasStampProps) {
   return (
     <div
       ref={containerRef}
-      style={{ position: "relative", display: "inline-flex" }}
+      style={{ position: "relative", display: "inline-flex", zIndex: 10 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
@@ -375,6 +375,23 @@ export default function BiasStamp({ scores, size = "sm" }: BiasStampProps) {
             />
           )}
         </svg>
+
+        {/* Type label below stamp */}
+        <span
+          style={{
+            display: "block",
+            textAlign: "center",
+            fontFamily: "var(--font-data)",
+            fontSize: "8px",
+            letterSpacing: "0.05em",
+            color: "var(--fg-muted)",
+            marginTop: "1px",
+            textTransform: "uppercase" as const,
+            lineHeight: 1,
+          }}
+        >
+          {getTypeLabel(scores.opinionFact)}
+        </span>
       </div>
 
       {/* ── Expanded Bias Card ────────────────────────────────────────── */}
@@ -393,7 +410,7 @@ export default function BiasStamp({ scores, size = "sm" }: BiasStampProps) {
             border: "1px solid var(--border-subtle)",
             borderRadius: 0,
             boxShadow: "var(--shadow-e2)",
-            zIndex: "var(--z-tooltip)" as string,
+            zIndex: 9999,
             padding: "10px 12px",
             animation: "fadeIn 150ms var(--ease-out)",
             pointerEvents: "auto",
