@@ -207,10 +207,44 @@ h1, h2, h3 {
 }
 
 /* --------------------------------------------------------------------------
+   Skip-to-Content Link — Accessibility
+   Visually hidden by default, appears on keyboard focus.
+   -------------------------------------------------------------------------- */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-primary);
+  background: var(--bg-card);
+  padding: var(--space-3) var(--space-5);
+  border: 2px solid var(--accent-warm, #C8956C);
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  width: auto;
+  height: auto;
+  overflow: visible;
+  z-index: 9999;
+  box-shadow: var(--shadow-e2);
+}
+
+/* --------------------------------------------------------------------------
    Focus States — Accessibility
+   Warm-toned outline for all interactive elements.
    -------------------------------------------------------------------------- */
 :focus-visible {
-  outline: 2px solid var(--fg-primary);
+  outline: 2px solid var(--accent-warm, #C8956C);
   outline-offset: 2px;
 }
 
@@ -273,6 +307,40 @@ h1, h2, h3 {
 }
 
 /* --------------------------------------------------------------------------
+   Shimmer / Skeleton Loading
+   Gradient sweep for placeholder content during data fetches.
+   -------------------------------------------------------------------------- */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-card) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+/* --------------------------------------------------------------------------
+   Content Visibility — Performance
+   Below-fold compact grid cards use content-visibility for paint savings.
+   -------------------------------------------------------------------------- */
+.grid-compact__item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+
+/* --------------------------------------------------------------------------
    Reduced Motion — Accessibility
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
@@ -288,6 +356,10 @@ h1, h2, h3 {
   html {
     scroll-behavior: auto;
   }
+
+  .skeleton {
+    animation: none !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -298,4 +370,31 @@ h1, h2, h3 {
   transition:
     color var(--dur-morph) var(--ease-out),
     background-color var(--dur-morph) var(--ease-out);
+}
+
+/* --------------------------------------------------------------------------
+   System Dark Mode Preference — Auto-detect on first visit
+   Falls back to light if no explicit data-mode set.
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]):not([data-mode="dark"]) {
+    --bg-primary:    #1C1A17;
+    --bg-secondary:  #252320;
+    --bg-card:       #2A2725;
+    --bg-elevated:   #333028;
+    --fg-primary:    #EDE8E0;
+    --fg-secondary:  #B8B0A5;
+    --fg-tertiary:   #8A8278;
+    --fg-muted:      #5A5550;
+    --border-subtle: #3A3530;
+    --border-strong: #4A4540;
+    --divider:       #403B35;
+    --shadow-e0: none;
+    --shadow-e1: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-e3: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --accent: #EDE8E0;
+    --accent-hover: #D4CCC2;
+    --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  }
 }

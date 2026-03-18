@@ -35,17 +35,36 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "void --news",
+  title: "void --news — See every side of the story",
   description:
-    "News aggregation with multi-dimensional bias analysis. See the full picture.",
-  keywords: ["news", "bias analysis", "media literacy", "journalism"],
+    "Free news aggregation with per-article bias analysis across 90 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+  keywords: [
+    "news",
+    "bias analysis",
+    "media literacy",
+    "journalism",
+    "political bias",
+    "news aggregation",
+    "fact checking",
+  ],
   authors: [{ name: "void --news" }],
   openGraph: {
-    title: "void --news",
+    title: "void --news — See every side of the story",
     description:
-      "News aggregation with multi-dimensional bias analysis. See the full picture.",
+      "Free news aggregation with per-article bias analysis across 90 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
     type: "website",
+    siteName: "void --news",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "void --news — See every side of the story",
+    description:
+      "Free news aggregation with per-article bias analysis across 90 curated sources.",
+  },
+  icons: {
+    icon: "/void--news/favicon.ico",
+  },
+  manifest: "/void--news/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -93,6 +112,13 @@ export default function RootLayout({
           fontFamily: "var(--font-structural)",
         }}
       >
+        {/* Skip to content — accessibility */}
+        <a
+          href="#main-content"
+          className="skip-to-content"
+        >
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>

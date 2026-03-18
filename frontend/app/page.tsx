@@ -2,23 +2,27 @@
 
 import { useState, useEffect, useMemo } from "react";
 import type { Section, Category, Story } from "./lib/types";
-import { mockStories } from "./lib/mockData";
 import { supabase } from "./lib/supabase";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
 import StoryCard from "./components/StoryCard";
 import RefreshButton from "./components/RefreshButton";
+import LoadingSkeleton from "./components/LoadingSkeleton";
+import ErrorBoundary from "./components/ErrorBoundary";
+import Footer from "./components/Footer";
 
 /* ---------------------------------------------------------------------------
    Homepage — News Feed
    Desktop: broadsheet grid — lead story + asymmetric layout + dense compact
    Mobile: single-column tabloid stack
-   Fetches live data from Supabase; falls back to mock data if unavailable.
+   Fetches live data from Supabase. Shows loading skeleton, then content.
+   Wrapped in ErrorBoundary for graceful error handling.
    --------------------------------------------------------------------------- */
 
-export default function Home() {
-  const [stories, setStories] = useState<Story[]>(mockStories);
+function HomeContent() {
+  const [stories, setStories] = useState<Story[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLiveData, setIsLiveData] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<Section>("world");
@@ -48,7 +52,7 @@ export default function Home() {
           .limit(30);
 
         if (error || !clusters || clusters.length === 0) {
-          // No data yet — keep mock data
+          setIsLoading(false);
           return;
         }
 
@@ -91,6 +95,7 @@ export default function Home() {
 
         setStories(liveStories);
         setIsLiveData(true);
+        setIsLoading(false);
 
         // Get last pipeline run time
         const { data: run } = await supabase
@@ -105,7 +110,7 @@ export default function Home() {
           setLastUpdated(run.completed_at);
         }
       } catch {
-        // Silently fall back to mock data
+        setIsLoading(false);
       }
     }
 
@@ -128,6 +133,8 @@ export default function Home() {
     <div
       style={{
         minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
         backgroundColor: "var(--bg-primary)",
         transition: "background-color var(--dur-morph) var(--ease-out)",
       }}
@@ -141,11 +148,14 @@ export default function Home() {
       />
 
       <main
+        id="main-content"
         style={{
+          flex: 1,
           maxWidth: 1280,
           margin: "0 auto",
           padding: "0 var(--space-7)",
           paddingBottom: "var(--space-7)",
+          width: "100%",
         }}
       >
         {/* Section title — newspaper tradition */}
@@ -189,21 +199,62 @@ export default function Home() {
           onCategoryChange={setActiveCategory}
         />
 
-        {/* Empty state */}
-        {filteredStories.length === 0 && (
-          <div
-            style={{
-              padding: "var(--space-7) 0",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontFamily: "var(--font-structural)",
-                fontSize: "var(--text-lg)",
-                color: "var(--fg-tertiary)",
-              }}
-            >
+        {/* Loading skeleton */}
+        {isLoading && <LoadingSkeleton />}
+
+        {/* Empty state — no data from pipeline yet */}
+        {!isLoading && stories.length === 0 && (
+          <div style={{
+            padding: "var(--space-7) var(--space-5)",
+            textAlign: "center",
+            maxWidth: 480,
+            margin: "0 auto",
+          }}>
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style={{ margin: "0 auto var(--space-5)", opacity: 0.35, color: "var(--fg-tertiary)" }}>
+              <rect x="8" y="12" width="48" height="40" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="16" y1="22" x2="48" y2="22" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="16" y1="30" x2="40" y2="30" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+              <line x1="16" y1="36" x2="44" y2="36" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+              <line x1="16" y1="42" x2="36" y2="42" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+            </svg>
+            <h2 style={{
+              fontFamily: "var(--font-editorial)",
+              fontSize: "var(--text-xl)",
+              fontWeight: 700,
+              color: "var(--fg-primary)",
+              marginBottom: "var(--space-3)",
+            }}>
+              Awaiting First Edition
+            </h2>
+            <p style={{
+              fontFamily: "var(--font-structural)",
+              fontSize: "var(--text-base)",
+              color: "var(--fg-tertiary)",
+              lineHeight: 1.6,
+              marginBottom: "var(--space-4)",
+            }}>
+              The news pipeline hasn&apos;t run yet. Stories will appear here
+              once articles are fetched and analyzed from 90 curated sources.
+            </p>
+            <p style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "var(--text-xs)",
+              color: "var(--fg-muted)",
+              letterSpacing: "0.02em",
+            }}>
+              Scheduled: 6:00 AM &amp; 6:00 PM UTC daily
+            </p>
+          </div>
+        )}
+
+        {/* No stories in selected filter */}
+        {!isLoading && stories.length > 0 && filteredStories.length === 0 && (
+          <div style={{ padding: "var(--space-7) 0", textAlign: "center" }}>
+            <p style={{
+              fontFamily: "var(--font-structural)",
+              fontSize: "var(--text-lg)",
+              color: "var(--fg-tertiary)",
+            }}>
               No stories in this category.
             </p>
             <button
@@ -223,14 +274,14 @@ export default function Home() {
         )}
 
         {/* Lead story */}
-        {leadStory && (
+        {!isLoading && leadStory && (
           <section aria-label="Lead story">
             <LeadStory story={leadStory} />
           </section>
         )}
 
         {/* Medium stories — broadsheet grid on desktop */}
-        {mediumStories.length > 0 && (
+        {!isLoading && mediumStories.length > 0 && (
           <section
             aria-label="Top stories"
             className="grid-medium"
@@ -256,7 +307,7 @@ export default function Home() {
         )}
 
         {/* Compact stories — dense grid on desktop */}
-        {compactStories.length > 0 && (
+        {!isLoading && compactStories.length > 0 && (
           <section aria-label="More stories" className="grid-compact">
             {compactStories.map((story, idx) => (
               <div key={story.id} className="grid-compact__item">
@@ -270,62 +321,55 @@ export default function Home() {
         )}
 
         {/* Edition line — newspaper tradition */}
-        <footer
-          style={{
-            borderTop: "2px solid var(--fg-primary)",
-            marginTop: "var(--space-6)",
-            paddingTop: "var(--space-3)",
-            paddingBottom: "var(--space-6)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "var(--space-3)",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-data)",
-              fontSize: "var(--text-xs)",
-              color: "var(--fg-muted)",
-              fontFeatureSettings: '"tnum" 1',
-            }}
-          >
-            {activeSection === "world" ? "World" : "US"} Edition /{" "}
-            {filteredStories.length} stories
-          </span>
+        {!isLoading && (
           <div
             style={{
+              borderTop: "2px solid var(--fg-primary)",
+              marginTop: "var(--space-6)",
+              paddingTop: "var(--space-3)",
+              paddingBottom: "var(--space-3)",
               display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
+              flexWrap: "wrap",
               gap: "var(--space-3)",
             }}
           >
-            {!isLiveData && (
-              <span
-                style={{
-                  fontFamily: "var(--font-data)",
-                  fontSize: "var(--text-xs)",
-                  color: "var(--fg-muted)",
-                  fontFeatureSettings: '"tnum" 1',
-                }}
-              >
-                Demo data
-              </span>
-            )}
             <span
               style={{
-                fontFamily: "var(--font-editorial)",
+                fontFamily: "var(--font-data)",
                 fontSize: "var(--text-xs)",
                 color: "var(--fg-muted)",
-                letterSpacing: "0.01em",
+                fontFeatureSettings: '"tnum" 1',
               }}
             >
-              void --news
+              {activeSection === "world" ? "World" : "US"} Edition /{" "}
+              {filteredStories.length} stories
             </span>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-3)",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-editorial)",
+                  fontSize: "var(--text-xs)",
+                  color: "var(--fg-muted)",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                void --news
+              </span>
+            </div>
           </div>
-        </footer>
+        )}
       </main>
+
+      {/* Footer */}
+      {!isLoading && <Footer />}
 
       {/* Page-level responsive styles */}
       <style>{`
@@ -409,6 +453,13 @@ export default function Home() {
           .nav-tabs-desktop {
             display: none !important;
           }
+          /* Mobile: show icon, hide full logo */
+          .nav-logo-desktop {
+            display: none !important;
+          }
+          .nav-logo-mobile {
+            display: block !important;
+          }
           /* Extra padding at bottom for mobile nav */
           main {
             padding-bottom: 80px !important;
@@ -431,5 +482,13 @@ export default function Home() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ErrorBoundary>
+      <HomeContent />
+    </ErrorBoundary>
   );
 }

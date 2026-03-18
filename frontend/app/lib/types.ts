@@ -16,6 +16,19 @@ export interface Source {
   count: number;
 }
 
+export interface StorySource {
+  name: string;
+  url: string;
+  tier: "us_major" | "international" | "independent";
+  biasScores: BiasScores;
+}
+
+export interface DeepDiveData {
+  consensus: string[];
+  divergence: string[];
+  sources: StorySource[];
+}
+
 export interface Story {
   id: string;
   title: string;
@@ -26,6 +39,7 @@ export interface Story {
   biasScores: BiasScores;
   section: "world" | "us";
   importance: number;
+  deepDive?: DeepDiveData;
 }
 
 export type Category =
