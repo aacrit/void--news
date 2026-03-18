@@ -6,15 +6,47 @@ import LogoFull from "./LogoFull";
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
    Uses the same LogoFull as NavBar for consistent branding.
+   Shows "90 curated sources" with last pipeline run time.
    --------------------------------------------------------------------------- */
 
-export default function Footer() {
+interface FooterProps {
+  lastUpdated?: string | null;
+}
+
+function formatLastUpdated(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffHrs = Math.floor(diffMs / 3600000);
+  const diffMins = Math.floor(diffMs / 60000);
+
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  if (diffMins < 60) {
+    return `Last updated ${diffMins}m ago`;
+  }
+  if (diffHrs < 24) {
+    return `Last updated ${diffHrs}h ago`;
+  }
+  const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return `Last updated ${date}, ${time}`;
+}
+
+export default function Footer({ lastUpdated }: FooterProps) {
+  const updatedText = lastUpdated
+    ? formatLastUpdated(lastUpdated)
+    : "Updated twice daily";
+
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
         <LogoFull height={22} />
         <p className="footer-tagline">Free, transparent news bias analysis</p>
-        <p className="footer-stats">90 curated sources &middot; Updated twice daily</p>
+        <p className="footer-stats">90 curated sources &middot; {updatedText}</p>
         <a
           href="https://github.com/aacrit/void-news"
           target="_blank"

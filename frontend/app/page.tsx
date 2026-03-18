@@ -9,7 +9,7 @@ import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
 import StoryCard from "./components/StoryCard";
 import DeepDive from "./components/DeepDive";
-import RefreshButton from "./components/RefreshButton";
+
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Footer from "./components/Footer";
@@ -211,9 +211,6 @@ function HomeContent() {
           <h1 className="section-header__title">
             {activeSection === "world" ? "World News" : "US News"}
           </h1>
-          <div className="section-header__actions">
-            <RefreshButton externalLastUpdated={lastUpdated} />
-          </div>
         </div>
 
         {/* Filter bar */}
@@ -346,7 +343,7 @@ function HomeContent() {
       </main>
 
       {/* Footer */}
-      {!isLoading && <Footer />}
+      {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
       {/* Deep Dive panel */}
       {selectedStory && (
