@@ -511,6 +511,28 @@ def main():
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
+    # Step 10: Truncate full_text for IP compliance
+    # Full article text is used only for NLP analysis (transformative use).
+    # After analysis, truncate to a short excerpt to avoid storing copyrighted
+    # content long-term. Bias scores (the derived, transformative output) are
+    # retained. See docs/IP-COMPLIANCE.md — AP v. Meltwater precedent.
+    print("\n[10] Truncating full_text for IP compliance...")
+    try:
+        truncated = 0
+        for article in stored_articles:
+            art_id = article.get("id", "")
+            if art_id:
+                full = article.get("full_text", "") or ""
+                if len(full) > 300:
+                    excerpt = full[:297] + "..."
+                    supabase.table("articles").update({
+                        "full_text": excerpt,
+                    }).eq("id", art_id).execute()
+                    truncated += 1
+        print(f"  Truncated {truncated} articles to 300-char excerpts")
+    except Exception as e:
+        print(f"  [warn] Full-text truncation failed: {e}")
+
     # Finalize
     duration = time.time() - start_time
     if run_id:

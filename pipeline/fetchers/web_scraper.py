@@ -51,7 +51,8 @@ def _check_robots_txt(url: str) -> bool:
 
     rp = _robots_cache[domain]
     if rp is None:
-        return True
+        # Conservative: if robots.txt is unreachable, assume disallowed
+        return False
 
     return rp.can_fetch("*", url)
 
@@ -164,7 +165,6 @@ def _extract_article_text(soup: BeautifulSoup) -> str:
         ".article-body-text",         # CBS News
         ".articleBody",               # Generic schema
         ".RichTextStoryBody",         # NPR
-        ".paywall",                   # Paywalled content area
         ".premium-content",           # Premium content area
         ".article-wrap",              # Generic
         ".detail-body",               # Fox News
