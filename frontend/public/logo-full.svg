@@ -1,24 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 40" fill="currentColor" role="img" aria-label="void --news">
   <!--
     void --news — Combination Mark (Icon + Wordmark)
-    Left: Weighing Scale icon, ~24px tall
+    Left: The Void Scale icon, ~24px tall
     12px gap
     Right: Full wordmark
     Used in the NavBar.
   -->
 
-  <!-- ===== Weighing Scale Icon — scaled to 24px height ===== -->
+  <!-- ===== The Void Scale Icon — scaled to 24px height ===== -->
   <g transform="translate(0,8) scale(0.75)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Fulcrum triangle -->
-    <path d="M16,4 L13,9 L19,9 Z"/>
+    <!-- Void circle -->
+    <circle cx="16" cy="4" r="2.5"/>
     <!-- Beam -->
-    <line x1="4" y1="9" x2="28" y2="9"/>
-    <!-- Left suspension + pan -->
-    <path d="M7,9 L5,18 L11,18 L9,9"/>
-    <!-- Right suspension + pan -->
-    <path d="M23,9 L21,18 L27,18 L25,9"/>
+    <line x1="3" y1="8" x2="29" y2="8"/>
+    <!-- Left suspension + newspaper page -->
+    <path d="M7,8 L4,13 L4,22 L12,22 L12,13 L9,8"/>
+    <!-- Left headline rule -->
+    <line x1="5.5" y1="16.5" x2="10.5" y2="16.5"/>
+    <!-- Right suspension + newspaper page -->
+    <path d="M23,8 L20,13 L20,22 L28,22 L28,13 L25,8"/>
+    <!-- Right headline rule -->
+    <line x1="21.5" y1="16.5" x2="26.5" y2="16.5"/>
     <!-- Center post -->
-    <line x1="16" y1="9" x2="16" y2="27"/>
+    <line x1="16" y1="8" x2="16" y2="27"/>
     <!-- Base -->
     <line x1="12" y1="27" x2="20" y2="27"/>
   </g>
