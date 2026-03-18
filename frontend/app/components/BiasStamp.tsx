@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useId, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import type { BiasScores } from "../lib/types";
 
 interface BiasStampProps {
@@ -9,9 +10,17 @@ interface BiasStampProps {
 }
 
 /* ---------------------------------------------------------------------------
-   BiasStamp — Newspaper-inspired bias indicator
-   Compact circular stamp with colored ring (lean), inner letter (type),
-   and rigor arc. Expands into a detailed bias card on hover/tap.
+   BiasStamp — "The Bias Pulse"
+
+   Compact form: 5 thin vertical bars side by side, each representing one
+   bias axis. Height encodes score intensity. Color encodes the value.
+   Creates a unique "fingerprint" per article — no two stories look alike.
+
+   Like an EKG or seismograph reading — you can see at a glance whether
+   coverage is calm and centered, or volatile and extreme.
+
+   Hover/tap expands a detailed card rendered via portal (fixed positioning)
+   to avoid z-index and overflow clipping issues.
    --------------------------------------------------------------------------- */
 
 /* ── Score-to-label mappings ─────────────────────────────────────────────── */
@@ -40,13 +49,6 @@ function getTypeLabel(v: number): string {
   return "Editorial";
 }
 
-function getTypeLetter(v: number): string {
-  if (v <= 25) return "R";
-  if (v <= 50) return "A";
-  if (v <= 75) return "O";
-  return "E";
-}
-
 function getRigorLabel(v: number): string {
   if (v <= 25) return "Poorly sourced";
   if (v <= 50) return "Some sourcing";
@@ -63,56 +65,37 @@ function getFramingLabel(v: number): string {
 
 /* ── Cached CSS variable reader ──────────────────────────────────────────── */
 
-/** Module-level cache for bias CSS custom properties. Read once, reuse. */
 let cssVarCache: Record<string, string> | null = null;
+
+const SSR_FALLBACK: Record<string, string> = {
+  "--bias-left": "#3B82F6",
+  "--bias-center-left": "#60A5FA",
+  "--bias-center": "#9CA3AF",
+  "--bias-center-right": "#F97316",
+  "--bias-right": "#EF4444",
+  "--rigor-high": "#22C55E",
+  "--rigor-medium": "#EAB308",
+  "--rigor-low": "#EF4444",
+  "--sense-low": "#22C55E",
+  "--sense-medium": "#EAB308",
+  "--sense-high": "#EF4444",
+  "--type-reporting": "#3B82F6",
+  "--type-analysis": "#8B5CF6",
+  "--type-opinion": "#F97316",
+};
 
 function getBiasColors(): Record<string, string> {
   if (cssVarCache) return cssVarCache;
-  if (typeof document === "undefined") {
-    // SSR fallback
-    return {
-      "--bias-left": "#3B82F6",
-      "--bias-center-left": "#60A5FA",
-      "--bias-center": "#9CA3AF",
-      "--bias-center-right": "#F97316",
-      "--bias-right": "#EF4444",
-      "--rigor-high": "#22C55E",
-      "--rigor-medium": "#EAB308",
-      "--rigor-low": "#EF4444",
-      "--sense-low": "#22C55E",
-      "--sense-medium": "#EAB308",
-      "--sense-high": "#EF4444",
-    };
-  }
+  if (typeof document === "undefined") return SSR_FALLBACK;
 
   const style = getComputedStyle(document.documentElement);
-  const vars = [
-    "--bias-left", "--bias-center-left", "--bias-center",
-    "--bias-center-right", "--bias-right",
-    "--rigor-high", "--rigor-medium", "--rigor-low",
-    "--sense-low", "--sense-medium", "--sense-high",
-  ];
-
   cssVarCache = {};
-  for (const v of vars) {
-    cssVarCache[v] = style.getPropertyValue(v).trim() || {
-      "--bias-left": "#3B82F6",
-      "--bias-center-left": "#60A5FA",
-      "--bias-center": "#9CA3AF",
-      "--bias-center-right": "#F97316",
-      "--bias-right": "#EF4444",
-      "--rigor-high": "#22C55E",
-      "--rigor-medium": "#EAB308",
-      "--rigor-low": "#EF4444",
-      "--sense-low": "#22C55E",
-      "--sense-medium": "#EAB308",
-      "--sense-high": "#EF4444",
-    }[v]!;
+  for (const v of Object.keys(SSR_FALLBACK)) {
+    cssVarCache[v] = style.getPropertyValue(v).trim() || SSR_FALLBACK[v];
   }
   return cssVarCache;
 }
 
-/** Invalidate cache on theme change */
 if (typeof window !== "undefined") {
   const observer = new MutationObserver((mutations) => {
     for (const m of mutations) {
@@ -139,19 +122,13 @@ function lerpColor(a: string, b: string, t: number): string {
 
 function getLeanColor(v: number): string {
   const c = getBiasColors();
-  const left = c["--bias-left"];
-  const centerLeft = c["--bias-center-left"];
-  const center = c["--bias-center"];
-  const centerRight = c["--bias-center-right"];
-  const right = c["--bias-right"];
-
-  if (v <= 20) return left;
-  if (v <= 35) return lerpColor(left, centerLeft, (v - 20) / 15);
-  if (v <= 45) return centerLeft;
-  if (v <= 55) return center;
-  if (v <= 65) return centerRight;
-  if (v <= 80) return lerpColor(centerRight, right, (v - 65) / 15);
-  return right;
+  if (v <= 20) return c["--bias-left"];
+  if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
+  if (v <= 45) return c["--bias-center-left"];
+  if (v <= 55) return c["--bias-center"];
+  if (v <= 65) return c["--bias-center-right"];
+  if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
+  return c["--bias-right"];
 }
 
 function getRigorColor(v: number): string {
@@ -161,11 +138,18 @@ function getRigorColor(v: number): string {
   return c["--rigor-low"];
 }
 
-function getSensationalismColor(v: number): string {
+function getToneColor(v: number): string {
   const c = getBiasColors();
   if (v <= 25) return c["--sense-low"];
   if (v <= 50) return c["--sense-medium"];
   return c["--sense-high"];
+}
+
+function getTypeColor(v: number): string {
+  const c = getBiasColors();
+  if (v <= 25) return c["--type-reporting"];
+  if (v <= 50) return c["--type-analysis"];
+  return c["--type-opinion"];
 }
 
 function getFramingColor(v: number): string {
@@ -175,23 +159,63 @@ function getFramingColor(v: number): string {
   return c["--sense-high"];
 }
 
-function getRingThickness(lean: number): number {
-  const distance = Math.abs(lean - 50);
-  return 2 + (distance / 50) * 1.5;
+/* ── The 5 bars definition ───────────────────────────────────────────────── */
+
+interface BarDef {
+  key: string;
+  label: string;
+  value: number;       // 0-100, raw score
+  intensity: number;   // 0-100, how "intense" for bar height (distance from ideal)
+  color: string;
+  labelText: string;
 }
 
-/* ── SVG arc helper ──────────────────────────────────────────────────────── */
-
-function describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number): string {
-  const start = polarToCartesian(cx, cy, r, endAngle);
-  const end = polarToCartesian(cx, cy, r, startAngle);
-  const largeArc = endAngle - startAngle <= 180 ? "0" : "1";
-  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
-}
-
-function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
-  const rad = ((angleDeg - 90) * Math.PI) / 180;
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+function getBars(scores: BiasScores): BarDef[] {
+  // For each axis, "intensity" = how far from ideal.
+  // Lean: distance from 50 (center). Rigor: inverted (low rigor = high bar).
+  // Tone: sensationalism as-is. Type: opinion distance from 0. Framing: as-is.
+  return [
+    {
+      key: "lean",
+      label: "Lean",
+      value: scores.politicalLean,
+      intensity: Math.abs(scores.politicalLean - 50) * 2, // 0-100
+      color: getLeanColor(scores.politicalLean),
+      labelText: getLeanLabel(scores.politicalLean),
+    },
+    {
+      key: "rigor",
+      label: "Rigor",
+      value: scores.factualRigor,
+      intensity: 100 - scores.factualRigor, // Low rigor = tall bar (bad)
+      color: getRigorColor(scores.factualRigor),
+      labelText: getRigorLabel(scores.factualRigor),
+    },
+    {
+      key: "tone",
+      label: "Tone",
+      value: scores.sensationalism,
+      intensity: scores.sensationalism, // High sensationalism = tall bar
+      color: getToneColor(scores.sensationalism),
+      labelText: getSensationalismLabel(scores.sensationalism),
+    },
+    {
+      key: "type",
+      label: "Type",
+      value: scores.opinionFact,
+      intensity: scores.opinionFact, // More opinion = taller
+      color: getTypeColor(scores.opinionFact),
+      labelText: getTypeLabel(scores.opinionFact),
+    },
+    {
+      key: "framing",
+      label: "Framing",
+      value: scores.framing,
+      intensity: scores.framing, // More framing = taller
+      color: getFramingColor(scores.framing),
+      labelText: getFramingLabel(scores.framing),
+    },
+  ];
 }
 
 /* ── Component ───────────────────────────────────────────────────────────── */
@@ -200,11 +224,17 @@ export default function BiasStamp({ scores, size = "sm" }: BiasStampProps) {
   const [expanded, setExpanded] = useState(false);
   const [animated, setAnimated] = useState(false);
   const [barAnimated, setBarAnimated] = useState(false);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const expandedId = `bias-card-${useId()}`;
 
-  const stampSize = size === "lg" ? 36 : 32;
+  const barH = size === "lg" ? 24 : 18;   // max bar height
+  const barW = size === "lg" ? 4 : 3;     // bar width
+  const gap = size === "lg" ? 3 : 2;      // gap between bars
+  const minBarH = 3;                       // minimum bar height (always visible)
+
+  const bars = getBars(scores);
 
   useEffect(() => {
     const t = setTimeout(() => setAnimated(true), 50);
@@ -233,57 +263,70 @@ export default function BiasStamp({ scores, size = "sm" }: BiasStampProps) {
     return () => document.removeEventListener("click", handleOutsideClick, true);
   }, [expanded]);
 
-  const handleMouseEnter = useCallback(() => {
+  const open = useCallback(() => {
     if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
+    // Calculate tooltip position from element bounding rect
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const cardW = 240;
+      // Prefer right side, fall back to left if near viewport edge
+      const spaceRight = window.innerWidth - rect.right;
+      const x = spaceRight > cardW + 12
+        ? rect.right + 8
+        : rect.left - cardW - 8;
+      // Vertically align to stamp, clamped to viewport
+      const y = Math.max(8, Math.min(rect.top, window.innerHeight - 300));
+      setTooltipPos({ x, y });
+    }
     setExpanded(true);
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
-    leaveTimerRef.current = setTimeout(() => setExpanded(false), 200);
+  const close = useCallback(() => {
+    leaveTimerRef.current = setTimeout(() => {
+      setExpanded(false);
+      setTooltipPos(null);
+    }, 200);
   }, []);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    setExpanded((prev) => !prev);
-  }, []);
+    if (expanded) {
+      setExpanded(false);
+      setTooltipPos(null);
+    } else {
+      open();
+    }
+  }, [expanded, open]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      setExpanded((prev) => !prev);
+      if (expanded) { setExpanded(false); setTooltipPos(null); }
+      else open();
     }
-    if (e.key === "Escape") setExpanded(false);
-  }, []);
+    if (e.key === "Escape") { setExpanded(false); setTooltipPos(null); }
+  }, [expanded, open]);
 
-  const handleFocus = useCallback(() => setExpanded(true), []);
+  const handleFocus = useCallback(() => open(), [open]);
   const handleBlur = useCallback((e: React.FocusEvent) => {
     if (containerRef.current && !containerRef.current.contains(e.relatedTarget as Node)) {
       setExpanded(false);
+      setTooltipPos(null);
     }
   }, []);
-
-  const leanColor = getLeanColor(scores.politicalLean);
-  const ringThickness = getRingThickness(scores.politicalLean);
-  const typeLetter = getTypeLetter(scores.opinionFact);
-  const rigorColor = getRigorColor(scores.factualRigor);
-
-  const arcSweep = (scores.factualRigor / 100) * 120;
-  const arcStart = 210 - arcSweep / 2;
-  const arcEnd = 210 + arcSweep / 2;
-  const arcR = stampSize / 2 + 3;
 
   const ariaLabel = `Bias: ${getLeanLabel(scores.politicalLean)} lean, ${getTypeLabel(scores.opinionFact)}, ${getRigorLabel(scores.factualRigor)}, ${getSensationalismLabel(scores.sensationalism)} tone, ${getFramingLabel(scores.framing)}`;
 
   return (
     <div
       ref={containerRef}
-      className="bias-stamp"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      style={{ position: "relative", display: "inline-flex" }}
+      onMouseEnter={open}
+      onMouseLeave={close}
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
-      {/* ── Stamp ─────────────────────────────────────────────────────── */}
+      {/* ── The Bias Pulse — 5 vertical bars ──────────────────────────── */}
       <div
         role="img"
         aria-label={ariaLabel}
@@ -291,108 +334,120 @@ export default function BiasStamp({ scores, size = "sm" }: BiasStampProps) {
         tabIndex={0}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        className="bias-stamp__circle"
         style={{
-          width: stampSize,
-          height: stampSize,
-          transform: animated ? "scale(1)" : "scale(0.9)",
+          display: "flex",
+          alignItems: "flex-end",
+          gap: gap,
+          height: barH,
+          cursor: "pointer",
+          padding: "0 2px",
           opacity: animated ? 1 : 0,
-          transition: "transform 200ms var(--ease-out), opacity 200ms var(--ease-out)",
+          transform: animated ? "translateY(0)" : "translateY(4px)",
+          transition: "opacity 300ms var(--ease-out), transform 300ms var(--ease-out)",
         }}
       >
-        {/* Colored ring (lean) */}
-        <div
-          className="bias-stamp__ring"
-          style={{ border: `${ringThickness}px solid ${leanColor}` }}
-        />
-
-        {/* Inner letter (type) */}
-        <span
-          className="bias-stamp__letter"
-          style={{ fontSize: size === "lg" ? "var(--text-sm)" : "var(--text-xs)" }}
-        >
-          {typeLetter}
-        </span>
-
-        {/* Rigor arc (below stamp) */}
-        <svg
-          width={stampSize + 8}
-          height={12}
-          viewBox={`0 0 ${stampSize + 8} 12`}
-          style={{ position: "absolute", bottom: -8, left: -4, overflow: "visible" }}
-          aria-hidden="true"
-        >
-          <path
-            d={describeArc((stampSize + 8) / 2, -stampSize / 2 + 6, arcR, 150, 210 + 60)}
-            fill="none"
-            stroke="var(--border-subtle)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          {arcSweep > 0 && (
-            <path
-              d={describeArc((stampSize + 8) / 2, -stampSize / 2 + 6, arcR, arcStart, arcEnd)}
-              fill="none"
-              stroke={rigorColor}
-              strokeWidth="2.5"
-              strokeLinecap="round"
+        {bars.map((bar, i) => {
+          const h = minBarH + ((barH - minBarH) * bar.intensity) / 100;
+          return (
+            <div
+              key={bar.key}
+              title={`${bar.label}: ${bar.labelText}`}
+              style={{
+                width: barW,
+                height: animated ? h : minBarH,
+                backgroundColor: bar.color,
+                borderRadius: 1,
+                transition: `height 400ms var(--ease-out)`,
+                transitionDelay: `${i * 50}ms`,
+              }}
             />
-          )}
-        </svg>
-
-        {/* Type label */}
-        <span className="bias-stamp__type-label">
-          {getTypeLabel(scores.opinionFact)}
-        </span>
+          );
+        })}
       </div>
 
-      {/* ── Expanded Bias Card ────────────────────────────────────────── */}
-      {expanded && (
-        <div
-          id={expandedId}
-          role="tooltip"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          className="bias-stamp__expanded anim-fade-in"
-          style={{ left: stampSize + 8 }}
-        >
-          <div className="bias-stamp__expanded-header">Bias Analysis</div>
+      {/* ── Expanded Card (portal to body for correct z-index) ─────── */}
+      {expanded && tooltipPos && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            id={expandedId}
+            role="tooltip"
+            onMouseEnter={() => {
+              if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
+            }}
+            onMouseLeave={close}
+            style={{
+              position: "fixed",
+              top: tooltipPos.y,
+              left: tooltipPos.x,
+              width: 240,
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-e3)",
+              zIndex: 9999,
+              padding: "var(--space-3) var(--space-4)",
+              animation: "fadeIn 150ms var(--ease-out)",
+              pointerEvents: "auto",
+            }}
+          >
+            {/* Header */}
+            <div style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "var(--text-xs)",
+              fontWeight: 500,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase" as const,
+              color: "var(--fg-tertiary)",
+              paddingBottom: 6,
+              borderBottom: "1px solid var(--border-subtle)",
+              marginBottom: 10,
+            }}>
+              Bias Analysis
+            </div>
 
-          {/* Lean spectrum */}
-          <div className="bias-row">
-            <div className="bias-row__label">Lean</div>
-            <LeanSpectrum value={scores.politicalLean} animated={barAnimated} />
-            <div className="bias-row__value">{getLeanLabel(scores.politicalLean)}</div>
-          </div>
-
-          {/* Rigor bar */}
-          <div className="bias-row">
-            <div className="bias-row__label">Rigor</div>
-            <ProgressBar value={scores.factualRigor} color={getRigorColor(scores.factualRigor)} animated={barAnimated} delay={40} />
-            <div className="bias-row__value">{getRigorLabel(scores.factualRigor)}</div>
-          </div>
-
-          {/* Tone */}
-          <div className="bias-row">
-            <div className="bias-row__label">Tone</div>
-            <ProgressBar value={100 - scores.sensationalism} color={getSensationalismColor(scores.sensationalism)} animated={barAnimated} delay={80} />
-            <div className="bias-row__value">{getSensationalismLabel(scores.sensationalism)}</div>
-          </div>
-
-          {/* Type badge */}
-          <div className="bias-row">
-            <div className="bias-row__label">Type</div>
-            <span className="type-badge">{getTypeLabel(scores.opinionFact)}</span>
-          </div>
-
-          {/* Framing bar */}
-          <div className="bias-row">
-            <div className="bias-row__label">Framing</div>
-            <ProgressBar value={100 - scores.framing} color={getFramingColor(scores.framing)} animated={barAnimated} delay={120} />
-            <div className="bias-row__value">{getFramingLabel(scores.framing)}</div>
-          </div>
-        </div>
-      )}
+            {/* 5 axis rows */}
+            {bars.map((bar, i) => (
+              <div key={bar.key} style={{ marginBottom: i < bars.length - 1 ? 8 : 0 }}>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  marginBottom: 3,
+                }}>
+                  <span style={{
+                    fontFamily: "var(--font-data)",
+                    fontSize: "var(--text-xs)",
+                    fontWeight: 500,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--fg-tertiary)",
+                  }}>
+                    {bar.label}
+                  </span>
+                  <span style={{
+                    fontFamily: "var(--font-structural)",
+                    fontSize: "var(--text-xs)",
+                    color: "var(--fg-secondary)",
+                  }}>
+                    {bar.labelText}
+                  </span>
+                </div>
+                {/* Bar visualization */}
+                {bar.key === "lean" ? (
+                  <LeanSpectrum value={bar.value} animated={barAnimated} />
+                ) : (
+                  <AxisBar
+                    value={bar.key === "rigor" ? bar.value : 100 - bar.value}
+                    color={bar.color}
+                    animated={barAnimated}
+                    delay={i * 40}
+                  />
+                )}
+              </div>
+            ))}
+          </div>,
+          document.body
+        )
+      }
     </div>
   );
 }
@@ -434,22 +489,29 @@ function LeanSpectrum({ value, animated }: { value: number; animated: boolean })
   );
 }
 
-function ProgressBar({ value, color, animated, delay = 0 }: { value: number; color: string; animated: boolean; delay?: number }) {
+function AxisBar({ value, color, animated, delay = 0 }: {
+  value: number; color: string; animated: boolean; delay?: number;
+}) {
   const pct = Math.max(0, Math.min(100, value));
 
   return (
-    <div className="progress-bar">
-      <div className="progress-bar__track">
-        <div
-          className="progress-bar__fill"
-          style={{
-            width: animated ? `${pct}%` : "0%",
-            backgroundColor: color,
-            transitionDelay: `${delay}ms`,
-          }}
-        />
+    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <div style={{
+        flex: 1,
+        height: 4,
+        backgroundColor: "var(--border-subtle)",
+        borderRadius: 2,
+        overflow: "hidden",
+      }}>
+        <div style={{
+          width: animated ? `${pct}%` : "0%",
+          height: "100%",
+          backgroundColor: color,
+          borderRadius: 2,
+          transition: "width 300ms var(--ease-out)",
+          transitionDelay: `${delay}ms`,
+        }} />
       </div>
-      <span className="progress-bar__label">{pct}%</span>
     </div>
   );
 }
