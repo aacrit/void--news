@@ -88,6 +88,33 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   Paper Texture — Subtle grain overlay simulating newsprint
+   Uses CSS SVG noise filter. Very subtle: more felt than seen.
+   -------------------------------------------------------------------------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: var(--paper-texture);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure all content sits above the paper texture */
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Headline Ink Spread — Simulates ink on paper (very subtle, 0.5px)
+   Applied only to editorial headlines, not body text or UI.
+   -------------------------------------------------------------------------- */
+h1, h2, h3 {
+  text-shadow: 0 0 0.5px var(--fg-primary);
+}
+
+/* --------------------------------------------------------------------------
    Three Voices of Type
    -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/mockData";
-import DotMatrix from "./DotMatrix";
+import BiasBars from "./BiasBars";
 
 interface LeadStoryProps {
   story: Story;
@@ -115,7 +115,7 @@ export default function LeadStory({ story }: LeadStoryProps) {
         >
           {story.source.count} sources
         </span>
-        <DotMatrix scores={story.biasScores} size="lg" />
+        <BiasBars scores={story.biasScores} size="lg" />
       </div>
     </article>
   );

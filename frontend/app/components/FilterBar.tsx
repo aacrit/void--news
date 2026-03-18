@@ -1,6 +1,34 @@
 "use client";
 
 import type { Category } from "../lib/types";
+import type { Icon } from "@phosphor-icons/react";
+import {
+  SquaresFour,
+  Scales,
+  ChartLineUp,
+  Cpu,
+  Heartbeat,
+  Leaf,
+  ShieldWarning,
+  Flask,
+  PaintBrush,
+  Lightning,
+  Handshake,
+} from "@phosphor-icons/react";
+
+const CATEGORY_ICONS: Record<string, Icon> = {
+  All: SquaresFour,
+  Politics: Scales,
+  Economy: ChartLineUp,
+  Tech: Cpu,
+  Health: Heartbeat,
+  Environment: Leaf,
+  Conflict: ShieldWarning,
+  Science: Flask,
+  Society: PaintBrush,
+  Energy: Lightning,
+  Diplomacy: Handshake,
+};
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
   "All",
@@ -48,6 +76,7 @@ export default function FilterBar({
     >
       {ALL_CATEGORIES.map((cat) => {
         const isActive = activeCategory === cat;
+        const IconComponent = CATEGORY_ICONS[cat];
         return (
           <button
             key={cat}
@@ -76,6 +105,9 @@ export default function FilterBar({
               transition:
                 "color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--spring)",
               flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-1)",
             }}
             onMouseDown={(e) => {
               (e.currentTarget as HTMLElement).style.transform = "scale(0.97)";
@@ -87,6 +119,9 @@ export default function FilterBar({
               (e.currentTarget as HTMLElement).style.transform = "scale(1)";
             }}
           >
+            {IconComponent && (
+              <IconComponent size={14} weight="light" aria-hidden="true" />
+            )}
             {cat}
           </button>
         );

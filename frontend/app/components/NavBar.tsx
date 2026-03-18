@@ -1,6 +1,7 @@
 "use client";
 
 import type { Section } from "../lib/types";
+import { Globe, Flag, Newspaper } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 
 interface NavBarProps {
@@ -50,8 +51,12 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
               color: "var(--fg-primary)",
               userSelect: "none",
               lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-2)",
             }}
           >
+            <Newspaper size="1em" weight="light" aria-hidden="true" />
             void{" "}
             <span
               style={{
@@ -99,7 +104,14 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
                   minWidth: 44,
                 }}
               >
-                {section === "world" ? "World" : "US"}
+                <span style={{ display: "flex", alignItems: "center", gap: "var(--space-1)" }}>
+                  {section === "world" ? (
+                    <Globe size={14} weight="light" aria-hidden="true" />
+                  ) : (
+                    <Flag size={14} weight="light" aria-hidden="true" />
+                  )}
+                  {section === "world" ? "World" : "US"}
+                </span>
               </button>
             ))}
           </div>
@@ -154,7 +166,14 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
                 "color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out)",
             }}
           >
-            {section === "world" ? "World" : "US"}
+            <span style={{ display: "flex", alignItems: "center", gap: "var(--space-1)" }}>
+              {section === "world" ? (
+                <Globe size={14} weight="light" aria-hidden="true" />
+              ) : (
+                <Flag size={14} weight="light" aria-hidden="true" />
+              )}
+              {section === "world" ? "World" : "US"}
+            </span>
           </button>
         ))}
       </nav>

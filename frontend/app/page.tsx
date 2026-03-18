@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import type { Section, Category } from "./lib/types";
+import { useState, useEffect, useMemo } from "react";
+import type { Section, Category, Story } from "./lib/types";
 import { mockStories } from "./lib/mockData";
+import { supabase } from "./lib/supabase";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
@@ -13,21 +14,111 @@ import RefreshButton from "./components/RefreshButton";
    Homepage — News Feed
    Desktop: broadsheet grid — lead story + asymmetric layout + dense compact
    Mobile: single-column tabloid stack
+   Fetches live data from Supabase; falls back to mock data if unavailable.
    --------------------------------------------------------------------------- */
 
 export default function Home() {
+  const [stories, setStories] = useState<Story[]>(mockStories);
+  const [isLiveData, setIsLiveData] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<Section>("world");
   const [activeCategory, setActiveCategory] = useState<"All" | Category>(
     "All"
   );
 
-  const filteredStories = useMemo(() => {
-    let stories = mockStories.filter((s) => s.section === activeSection);
-    if (activeCategory !== "All") {
-      stories = stories.filter((s) => s.category === activeCategory);
+  useEffect(() => {
+    async function loadFromSupabase() {
+      try {
+        const { data: clusters, error } = await supabase
+          .from("story_clusters")
+          .select(
+            `
+            id,
+            title,
+            summary,
+            category,
+            section,
+            importance_score,
+            source_count,
+            first_published,
+            last_updated
+          `
+          )
+          .order("importance_score", { ascending: false })
+          .limit(30);
+
+        if (error || !clusters || clusters.length === 0) {
+          // No data yet — keep mock data
+          return;
+        }
+
+        // Transform clusters into Story format for the components
+        const liveStories: Story[] = clusters.map(
+          (cluster: {
+            id: string;
+            title: string;
+            summary: string | null;
+            category: string | null;
+            section: string | null;
+            importance_score: number | null;
+            source_count: number | null;
+            first_published: string | null;
+            last_updated: string | null;
+          }) => ({
+            id: cluster.id,
+            title: cluster.title,
+            summary: cluster.summary || "",
+            source: {
+              name: "Multiple Sources",
+              count: cluster.source_count || 1,
+            },
+            category: (cluster.category || "Politics") as Category,
+            publishedAt:
+              cluster.first_published ||
+              cluster.last_updated ||
+              new Date().toISOString(),
+            biasScores: {
+              politicalLean: 50,
+              sensationalism: 30,
+              opinionFact: 25,
+              factualRigor: 75,
+              framing: 40,
+            },
+            section: (cluster.section || "world") as Section,
+            importance: cluster.importance_score || 50,
+          })
+        );
+
+        setStories(liveStories);
+        setIsLiveData(true);
+
+        // Get last pipeline run time
+        const { data: run } = await supabase
+          .from("pipeline_runs")
+          .select("completed_at")
+          .eq("status", "completed")
+          .order("completed_at", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (run?.completed_at) {
+          setLastUpdated(run.completed_at);
+        }
+      } catch {
+        // Silently fall back to mock data
+      }
     }
-    return stories.sort((a, b) => b.importance - a.importance);
-  }, [activeSection, activeCategory]);
+
+    loadFromSupabase();
+  }, []);
+
+  const filteredStories = useMemo(() => {
+    let filtered = stories.filter((s) => s.section === activeSection);
+    if (activeCategory !== "All") {
+      filtered = filtered.filter((s) => s.category === activeCategory);
+    }
+    return filtered.sort((a, b) => b.importance - a.importance);
+  }, [stories, activeSection, activeCategory]);
 
   const leadStory = filteredStories[0];
   const mediumStories = filteredStories.slice(1, 4);
@@ -81,8 +172,14 @@ export default function Home() {
           >
             {activeSection === "world" ? "World News" : "US News"}
           </h1>
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-            <RefreshButton />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-3)",
+            }}
+          >
+            <RefreshButton externalLastUpdated={lastUpdated} />
           </div>
         </div>
 
@@ -160,16 +257,13 @@ export default function Home() {
 
         {/* Compact stories — dense grid on desktop */}
         {compactStories.length > 0 && (
-          <section
-            aria-label="More stories"
-            className="grid-compact"
-          >
+          <section aria-label="More stories" className="grid-compact">
             {compactStories.map((story, idx) => (
-              <div
-                key={story.id}
-                className="grid-compact__item"
-              >
-                <StoryCard story={story} index={idx + mediumStories.length + 1} />
+              <div key={story.id} className="grid-compact__item">
+                <StoryCard
+                  story={story}
+                  index={idx + mediumStories.length + 1}
+                />
               </div>
             ))}
           </section>
@@ -200,16 +294,36 @@ export default function Home() {
             {activeSection === "world" ? "World" : "US"} Edition /{" "}
             {filteredStories.length} stories
           </span>
-          <span
+          <div
             style={{
-              fontFamily: "var(--font-editorial)",
-              fontSize: "var(--text-xs)",
-              color: "var(--fg-muted)",
-              letterSpacing: "0.01em",
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-3)",
             }}
           >
-            void --news
-          </span>
+            {!isLiveData && (
+              <span
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontSize: "var(--text-xs)",
+                  color: "var(--fg-muted)",
+                  fontFeatureSettings: '"tnum" 1',
+                }}
+              >
+                Demo data
+              </span>
+            )}
+            <span
+              style={{
+                fontFamily: "var(--font-editorial)",
+                fontSize: "var(--text-xs)",
+                color: "var(--fg-muted)",
+                letterSpacing: "0.01em",
+              }}
+            >
+              void --news
+            </span>
+          </div>
         </footer>
       </main>
 

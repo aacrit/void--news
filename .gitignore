@@ -31,3 +31,6 @@ build/
 
 # Claude worktrees
 .claude/worktrees/
+
+# Supabase temp
+supabase/.temp/

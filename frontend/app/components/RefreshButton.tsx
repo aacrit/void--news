@@ -1,16 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowClockwise, Clock, Warning } from "@phosphor-icons/react";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
    Click triggers confirmation dialog. On confirm, simulates data refresh.
    --------------------------------------------------------------------------- */
 
-export default function RefreshButton() {
+interface RefreshButtonProps {
+  externalLastUpdated?: string | null;
+}
+
+export default function RefreshButton({ externalLastUpdated }: RefreshButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState("6:00 AM CT");
+  const [localLastUpdated, setLocalLastUpdated] = useState("6:00 AM CT");
+
+  const displayTime = externalLastUpdated
+    ? new Date(externalLastUpdated).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : localLastUpdated;
 
   const handleRefresh = () => {
     setShowConfirm(false);
@@ -22,7 +35,7 @@ export default function RefreshButton() {
       const minutes = now.getMinutes().toString().padStart(2, "0");
       const ampm = hours >= 12 ? "PM" : "AM";
       const h = hours % 12 || 12;
-      setLastUpdated(`${h}:${minutes} ${ampm} CT`);
+      setLocalLastUpdated(`${h}:${minutes} ${ampm} CT`);
     }, 1200);
   };
 
@@ -31,7 +44,7 @@ export default function RefreshButton() {
       <button
         onClick={() => setShowConfirm(true)}
         disabled={refreshing}
-        aria-label={`Last updated ${lastUpdated}. Click to refresh.`}
+        aria-label={`Last updated ${displayTime}. Click to refresh.`}
         style={{
           display: "flex",
           alignItems: "center",
@@ -60,26 +73,17 @@ export default function RefreshButton() {
         }}
       >
         {/* Refresh icon */}
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <ArrowClockwise
+          size={12}
+          weight="light"
           aria-hidden="true"
           style={{
             animation: refreshing ? "spin 1s linear infinite" : "none",
           }}
-        >
-          <polyline points="23 4 23 10 17 10" />
-          <polyline points="1 20 1 14 7 14" />
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-        </svg>
+        />
+        <Clock size={12} weight="light" aria-hidden="true" />
         <span>
-          {refreshing ? "Refreshing..." : `Last updated: ${lastUpdated}`}
+          {refreshing ? "Refreshing..." : `Last updated: ${displayTime}`}
         </span>
       </button>
 
@@ -124,8 +128,12 @@ export default function RefreshButton() {
                 fontWeight: 700,
                 marginBottom: "var(--space-3)",
                 color: "var(--fg-primary)",
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-2)",
               }}
             >
+              <Warning size={20} weight="light" aria-hidden="true" />
               Refresh data?
             </h3>
             <p

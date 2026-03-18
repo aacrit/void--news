@@ -2,7 +2,8 @@
 
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/mockData";
-import DotMatrix from "./DotMatrix";
+import { ArrowSquareOut, Stack } from "@phosphor-icons/react";
+import BiasBars from "./BiasBars";
 
 interface StoryCardProps {
   story: Story;
@@ -78,9 +79,18 @@ export default function StoryCard({ story, index }: StoryCardProps) {
           letterSpacing: "-0.005em",
           color: "var(--fg-primary)",
           marginBottom: "var(--space-2)",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "var(--space-1)",
         }}
       >
-        {story.title}
+        <span style={{ flex: 1 }}>{story.title}</span>
+        <ArrowSquareOut
+          size={14}
+          weight="light"
+          aria-hidden="true"
+          style={{ flexShrink: 0, marginTop: "0.15em", color: "var(--fg-muted)" }}
+        />
       </h3>
 
       {/* Summary */}
@@ -115,11 +125,15 @@ export default function StoryCard({ story, index }: StoryCardProps) {
             fontSize: "var(--text-sm)",
             color: "var(--fg-tertiary)",
             fontFeatureSettings: '"tnum" 1',
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-1)",
           }}
         >
+          <Stack size={14} weight="light" aria-hidden="true" />
           {story.source.count} sources
         </span>
-        <DotMatrix scores={story.biasScores} />
+        <BiasBars scores={story.biasScores} />
       </div>
     </article>
   );
