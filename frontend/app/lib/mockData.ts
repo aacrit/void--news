@@ -1,4 +1,477 @@
-import { Story } from "./types";
+import type { Story, DeepDiveData } from "./types";
+
+/* ---------------------------------------------------------------------------
+   Deep Dive mock data — consensus, divergence, and source coverage
+   per story cluster. 3-6 sources per story, across tiers.
+   --------------------------------------------------------------------------- */
+
+const deepDive1: DeepDiveData = {
+  consensus: [
+    "The EU-China agreement covers semiconductors, green technology, and agricultural exports",
+    "Tariffs on key goods will be removed under the new framework",
+    "Both sides confirmed the deal after months of negotiations",
+  ],
+  divergence: [
+    "Western outlets emphasize EU leverage on tech-transfer standards; Chinese state media frames the deal as mutual benefit",
+    "US-based sources question whether the deal undermines transatlantic trade solidarity",
+    "Independent outlets highlight labor and environmental provisions that major outlets largely omit",
+  ],
+  sources: [
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 10, opinionFact: 8, factualRigor: 92, framing: 18 } },
+    { name: "Financial Times", url: "https://ft.com", tier: "international", biasScores: { politicalLean: 52, sensationalism: 12, opinionFact: 15, factualRigor: 90, framing: 22 } },
+    { name: "CNN", url: "https://cnn.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 28, opinionFact: 20, factualRigor: 82, framing: 30 } },
+    { name: "South China Morning Post", url: "https://scmp.com", tier: "international", biasScores: { politicalLean: 58, sensationalism: 14, opinionFact: 12, factualRigor: 85, framing: 35 } },
+    { name: "The Intercept", url: "https://theintercept.com", tier: "independent", biasScores: { politicalLean: 30, sensationalism: 20, opinionFact: 30, factualRigor: 80, framing: 40 } },
+  ],
+};
+
+const deepDive2: DeepDiveData = {
+  consensus: [
+    "The $1.2 trillion bill passed the Senate 71-28 with bipartisan support",
+    "Funds are allocated for bridge repairs, broadband, and EV charging infrastructure",
+    "The bill now moves to the House for consideration",
+  ],
+  divergence: [
+    "Progressive outlets criticize the bill for not going far enough on climate provisions",
+    "Conservative media frames the spending as potentially inflationary and fiscally irresponsible",
+    "Independent sources question the earmark allocation process and which states benefit most",
+  ],
+  sources: [
+    { name: "AP News", url: "https://apnews.com", tier: "us_major", biasScores: { politicalLean: 48, sensationalism: 10, opinionFact: 5, factualRigor: 95, framing: 12 } },
+    { name: "New York Times", url: "https://nytimes.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 18, opinionFact: 15, factualRigor: 90, framing: 22 } },
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 72, sensationalism: 35, opinionFact: 28, factualRigor: 75, framing: 38 } },
+    { name: "NPR", url: "https://npr.org", tier: "us_major", biasScores: { politicalLean: 40, sensationalism: 12, opinionFact: 10, factualRigor: 92, framing: 18 } },
+    { name: "ProPublica", url: "https://propublica.org", tier: "independent", biasScores: { politicalLean: 35, sensationalism: 15, opinionFact: 18, factualRigor: 94, framing: 25 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 46, sensationalism: 14, opinionFact: 8, factualRigor: 90, framing: 16 } },
+  ],
+};
+
+const deepDive3: DeepDiveData = {
+  consensus: [
+    "WHO officially lifted the global health emergency designation for mpox",
+    "Vaccination campaigns in Africa are credited with declining case numbers",
+    "Global case counts have dropped significantly over the past six months",
+  ],
+  divergence: [
+    "Some outlets question whether the declaration is premature given ongoing cases in Central Africa",
+    "International sources provide more context on regional vaccination disparities",
+    "US outlets focus more on domestic implications while international media covers global access issues",
+  ],
+  sources: [
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 10, opinionFact: 5, factualRigor: 94, framing: 12 } },
+    { name: "Al Jazeera", url: "https://aljazeera.com", tier: "international", biasScores: { politicalLean: 44, sensationalism: 14, opinionFact: 8, factualRigor: 90, framing: 18 } },
+    { name: "CNN", url: "https://cnn.com", tier: "us_major", biasScores: { politicalLean: 42, sensationalism: 20, opinionFact: 10, factualRigor: 88, framing: 15 } },
+    { name: "The Lancet", url: "https://thelancet.com", tier: "independent", biasScores: { politicalLean: 50, sensationalism: 5, opinionFact: 3, factualRigor: 98, framing: 6 } },
+  ],
+};
+
+const deepDive4: DeepDiveData = {
+  consensus: [
+    "The Fed Chair signaled openness to rate cuts in coming months",
+    "Consumer price index data shows sustained decline toward the 2% target",
+    "Markets reacted positively to the announcement",
+  ],
+  divergence: [
+    "Conservative outlets warn the Fed may be moving too soon and risking renewed inflation",
+    "Progressive outlets argue rate cuts should have come earlier to help working families",
+    "Financial press debates the timing relative to employment data and wage growth",
+  ],
+  sources: [
+    { name: "Wall Street Journal", url: "https://wsj.com", tier: "us_major", biasScores: { politicalLean: 58, sensationalism: 12, opinionFact: 20, factualRigor: 90, framing: 25 } },
+    { name: "Bloomberg", url: "https://bloomberg.com", tier: "us_major", biasScores: { politicalLean: 52, sensationalism: 10, opinionFact: 15, factualRigor: 92, framing: 20 } },
+    { name: "CNBC", url: "https://cnbc.com", tier: "us_major", biasScores: { politicalLean: 54, sensationalism: 22, opinionFact: 18, factualRigor: 85, framing: 28 } },
+    { name: "The Markup", url: "https://themarkup.org", tier: "independent", biasScores: { politicalLean: 44, sensationalism: 8, opinionFact: 12, factualRigor: 94, framing: 15 } },
+  ],
+};
+
+const deepDive5: DeepDiveData = {
+  consensus: [
+    "Both Ukraine and Russia committed to a 90-day ceasefire",
+    "Turkey and UAE brokered the agreement through shuttle diplomacy",
+    "The deal includes prisoner exchange and humanitarian corridor provisions",
+  ],
+  divergence: [
+    "Western media frames this as a Ukrainian diplomatic victory; Russian state media emphasizes territorial concessions",
+    "Some sources question the enforceability given past ceasefire failures",
+    "Independent outlets highlight civilian perspectives and humanitarian needs that major outlets underreport",
+  ],
+  sources: [
+    { name: "Al Jazeera", url: "https://aljazeera.com", tier: "international", biasScores: { politicalLean: 42, sensationalism: 25, opinionFact: 12, factualRigor: 82, framing: 30 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 46, sensationalism: 18, opinionFact: 10, factualRigor: 88, framing: 22 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 12, opinionFact: 6, factualRigor: 94, framing: 15 } },
+    { name: "Washington Post", url: "https://washingtonpost.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 22, opinionFact: 18, factualRigor: 86, framing: 28 } },
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 70, sensationalism: 40, opinionFact: 30, factualRigor: 70, framing: 45 } },
+    { name: "Bellingcat", url: "https://bellingcat.com", tier: "independent", biasScores: { politicalLean: 48, sensationalism: 10, opinionFact: 8, factualRigor: 96, framing: 12 } },
+  ],
+};
+
+const deepDive6: DeepDiveData = {
+  consensus: [
+    "Three major fires broke out in Southern California, forcing evacuations",
+    "Ventura and San Bernardino counties are the most affected areas",
+    "Drought conditions contributed to the early start of wildfire season",
+  ],
+  divergence: [
+    "Left-leaning outlets connect the fires directly to climate change policy failures",
+    "Conservative outlets focus on forest management and regulatory barriers to controlled burns",
+    "Local outlets provide granular evacuation details while national outlets focus on the broader trend",
+  ],
+  sources: [
+    { name: "Los Angeles Times", url: "https://latimes.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 30, opinionFact: 18, factualRigor: 85, framing: 32 } },
+    { name: "AP News", url: "https://apnews.com", tier: "us_major", biasScores: { politicalLean: 48, sensationalism: 15, opinionFact: 6, factualRigor: 92, framing: 14 } },
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 68, sensationalism: 45, opinionFact: 32, factualRigor: 72, framing: 50 } },
+    { name: "The Guardian", url: "https://theguardian.com", tier: "international", biasScores: { politicalLean: 35, sensationalism: 28, opinionFact: 22, factualRigor: 82, framing: 38 } },
+  ],
+};
+
+const deepDive7: DeepDiveData = {
+  consensus: [
+    "ISRO successfully deployed a test satellite for space-based solar energy",
+    "The satellite can beam solar energy to ground stations",
+    "This marks a milestone in space-based renewable energy technology",
+  ],
+  divergence: [
+    "Indian outlets frame this as a geopolitical achievement rivaling US and Chinese space programs",
+    "Western outlets are more cautious about the technology's scalability and cost",
+    "Scientific outlets focus on the technical challenges remaining before commercial viability",
+  ],
+  sources: [
+    { name: "The Guardian", url: "https://theguardian.com", tier: "international", biasScores: { politicalLean: 42, sensationalism: 15, opinionFact: 8, factualRigor: 90, framing: 18 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 12, opinionFact: 6, factualRigor: 92, framing: 14 } },
+    { name: "Nature", url: "https://nature.com", tier: "independent", biasScores: { politicalLean: 50, sensationalism: 5, opinionFact: 4, factualRigor: 98, framing: 6 } },
+    { name: "CNN", url: "https://cnn.com", tier: "us_major", biasScores: { politicalLean: 44, sensationalism: 22, opinionFact: 14, factualRigor: 84, framing: 20 } },
+  ],
+};
+
+const deepDive8: DeepDiveData = {
+  consensus: [
+    "The Supreme Court agreed to hear the Section 702 surveillance challenge",
+    "The case concerns warrantless surveillance of Americans' international communications",
+    "The outcome will have major implications for Fourth Amendment privacy rights",
+  ],
+  divergence: [
+    "Civil liberties outlets frame the case as a critical check on government overreach",
+    "National security-focused outlets emphasize the importance of surveillance tools for counterterrorism",
+    "Legal analysis outlets disagree on the likely outcome based on the court's current composition",
+  ],
+  sources: [
+    { name: "Washington Post", url: "https://washingtonpost.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 18, opinionFact: 15, factualRigor: 90, framing: 25 } },
+    { name: "Wall Street Journal", url: "https://wsj.com", tier: "us_major", biasScores: { politicalLean: 58, sensationalism: 14, opinionFact: 20, factualRigor: 88, framing: 28 } },
+    { name: "The Intercept", url: "https://theintercept.com", tier: "independent", biasScores: { politicalLean: 28, sensationalism: 25, opinionFact: 30, factualRigor: 82, framing: 40 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 8, opinionFact: 6, factualRigor: 94, framing: 12 } },
+    { name: "NPR", url: "https://npr.org", tier: "us_major", biasScores: { politicalLean: 42, sensationalism: 12, opinionFact: 10, factualRigor: 92, framing: 18 } },
+  ],
+};
+
+const deepDive9: DeepDiveData = {
+  consensus: [
+    "New fabrication plants from TSMC and Intel are now operational",
+    "The semiconductor shortage that lasted three years is easing",
+    "Automakers and electronics manufacturers expect relief from tlhe supply improvements",
+  ],
+  divergence: [
+    "US outlets emphasize the domestic economic benefits and job creation from Arizona fabs",
+    "European outlets focus on Germany's fab and EU strategic autonomy in semiconductors",
+    "Industry analysts disagree on whether overcapacity may become the next challenge",
+  ],
+  sources: [
+    { name: "Bloomberg", url: "https://bloomberg.com", tier: "us_major", biasScores: { politicalLean: 52, sensationalism: 8, opinionFact: 12, factualRigor: 94, framing: 18 } },
+    { name: "DW", url: "https://dw.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 10, opinionFact: 8, factualRigor: 90, framing: 15 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 6, opinionFact: 5, factualRigor: 96, framing: 10 } },
+    { name: "The Markup", url: "https://themarkup.org", tier: "independent", biasScores: { politicalLean: 44, sensationalism: 12, opinionFact: 15, factualRigor: 88, framing: 22 } },
+  ],
+};
+
+const deepDive10: DeepDiveData = {
+  consensus: [
+    "Education unions in 14 states plan coordinated walkouts",
+    "The strikes target mandatory AI-assisted grading systems",
+    "Teachers cite a lack of input in technology adoption decisions",
+  ],
+  divergence: [
+    "Left-leaning outlets frame this as a labor rights issue and support teacher autonomy",
+    "Right-leaning outlets argue unions are resisting beneficial technology and holding students back",
+    "Tech-focused outlets provide more nuanced analysis of AI grading effectiveness",
+  ],
+  sources: [
+    { name: "NPR", url: "https://npr.org", tier: "us_major", biasScores: { politicalLean: 40, sensationalism: 18, opinionFact: 15, factualRigor: 88, framing: 25 } },
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 72, sensationalism: 42, opinionFact: 35, factualRigor: 68, framing: 48 } },
+    { name: "Washington Post", url: "https://washingtonpost.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 22, opinionFact: 20, factualRigor: 85, framing: 30 } },
+    { name: "The Markup", url: "https://themarkup.org", tier: "independent", biasScores: { politicalLean: 42, sensationalism: 10, opinionFact: 12, factualRigor: 92, framing: 18 } },
+  ],
+};
+
+const deepDive11: DeepDiveData = {
+  consensus: [
+    "Satellite data confirms a 42% reduction in Amazon deforestation year-over-year",
+    "Strengthened enforcement and community programs are credited for the decline",
+    "Deforestation is at its lowest level in fifteen years",
+  ],
+  divergence: [
+    "Brazilian government sources emphasize policy success; opposition outlets question data methodology",
+    "Environmental groups warn the progress is fragile and could reverse with political changes",
+    "International outlets provide more context on the global significance than domestic ones",
+  ],
+  sources: [
+    { name: "DW", url: "https://dw.com", tier: "international", biasScores: { politicalLean: 46, sensationalism: 12, opinionFact: 8, factualRigor: 90, framing: 16 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 14, opinionFact: 6, factualRigor: 92, framing: 14 } },
+    { name: "The Guardian", url: "https://theguardian.com", tier: "international", biasScores: { politicalLean: 38, sensationalism: 18, opinionFact: 12, factualRigor: 88, framing: 22 } },
+  ],
+};
+
+const deepDive12: DeepDiveData = {
+  consensus: [
+    "The Pentagon demonstrated a new hypersonic missile interceptor system",
+    "The system responds to advances by China and Russia in hypersonic weapons",
+    "Defense officials describe it as a significant technological breakthrough",
+  ],
+  divergence: [
+    "Conservative outlets celebrate the defense advancement and advocate for increased military spending",
+    "Progressive outlets question the cost and whether it escalates an arms race",
+    "International outlets focus on the geopolitical implications for global security balance",
+  ],
+  sources: [
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 70, sensationalism: 40, opinionFact: 28, factualRigor: 74, framing: 45 } },
+    { name: "AP News", url: "https://apnews.com", tier: "us_major", biasScores: { politicalLean: 50, sensationalism: 12, opinionFact: 6, factualRigor: 94, framing: 14 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 18, opinionFact: 10, factualRigor: 88, framing: 22 } },
+    { name: "Center for Public Integrity", url: "https://publicintegrity.org", tier: "independent", biasScores: { politicalLean: 40, sensationalism: 15, opinionFact: 20, factualRigor: 90, framing: 30 } },
+  ],
+};
+
+const deepDive13: DeepDiveData = {
+  consensus: [
+    "Japan's population has fallen below 120 million for the first time",
+    "The birth rate has hit a new record low",
+    "The decline is accelerating faster than government projections",
+  ],
+  divergence: [
+    "Japanese domestic outlets focus on the economic implications and pension system strain",
+    "Western outlets frame it as a cautionary tale for other developed nations",
+    "Some sources advocate immigration reform while others emphasize pronatalist policies",
+  ],
+  sources: [
+    { name: "NHK", url: "https://nhk.or.jp", tier: "international", biasScores: { politicalLean: 50, sensationalism: 14, opinionFact: 8, factualRigor: 94, framing: 14 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 18, opinionFact: 10, factualRigor: 90, framing: 18 } },
+    { name: "New York Times", url: "https://nytimes.com", tier: "us_major", biasScores: { politicalLean: 40, sensationalism: 22, opinionFact: 16, factualRigor: 88, framing: 24 } },
+  ],
+};
+
+const deepDive14: DeepDiveData = {
+  consensus: [
+    "Bipartisan legislation targets Google and Meta's ad exchange monopolies",
+    "The bill would force major tech companies to divest advertising infrastructure",
+    "Sponsors argue the current structure inflates costs for small businesses",
+  ],
+  divergence: [
+    "Tech-critical outlets support the bill as overdue antitrust action",
+    "Business outlets warn of unintended consequences for the digital advertising ecosystem",
+    "Independent outlets provide more detail on lobbying efforts by tech companies against the bill",
+  ],
+  sources: [
+    { name: "The Intercept", url: "https://theintercept.com", tier: "independent", biasScores: { politicalLean: 30, sensationalism: 22, opinionFact: 30, factualRigor: 82, framing: 35 } },
+    { name: "Wall Street Journal", url: "https://wsj.com", tier: "us_major", biasScores: { politicalLean: 58, sensationalism: 14, opinionFact: 18, factualRigor: 88, framing: 25 } },
+    { name: "Bloomberg", url: "https://bloomberg.com", tier: "us_major", biasScores: { politicalLean: 52, sensationalism: 10, opinionFact: 14, factualRigor: 92, framing: 20 } },
+    { name: "The Markup", url: "https://themarkup.org", tier: "independent", biasScores: { politicalLean: 40, sensationalism: 8, opinionFact: 10, factualRigor: 96, framing: 14 } },
+  ],
+};
+
+const deepDive15: DeepDiveData = {
+  consensus: [
+    "Leaders from 38 African nations gathered in Cape Town for the summit",
+    "The summit focused on coordinated responses to climate-driven threats",
+    "Rising sea levels, drought, and extreme heat were the primary concerns",
+  ],
+  divergence: [
+    "African media emphasizes the need for wealthy nations to fund adaptation efforts",
+    "Western outlets focus on the geopolitical dimensions and competition for influence",
+    "Environmental outlets highlight the disproportionate impact on communities that contributed least to emissions",
+  ],
+  sources: [
+    { name: "France24", url: "https://france24.com", tier: "international", biasScores: { politicalLean: 44, sensationalism: 14, opinionFact: 10, factualRigor: 88, framing: 22 } },
+    { name: "Al Jazeera", url: "https://aljazeera.com", tier: "international", biasScores: { politicalLean: 42, sensationalism: 18, opinionFact: 12, factualRigor: 86, framing: 26 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 12, opinionFact: 8, factualRigor: 90, framing: 16 } },
+    { name: "The Guardian", url: "https://theguardian.com", tier: "international", biasScores: { politicalLean: 38, sensationalism: 20, opinionFact: 14, factualRigor: 84, framing: 28 } },
+  ],
+};
+
+const deepDive16: DeepDiveData = {
+  consensus: [
+    "The FDA approved the first gene therapy for sickle cell disease in children",
+    "The treatment edits patients' own stem cells with a 94% success rate in trials",
+    "Cost and access remain significant barriers to widespread adoption",
+  ],
+  divergence: [
+    "Health equity outlets emphasize that the disease disproportionately affects Black communities",
+    "Business outlets focus on the commercial prospects and pricing of the therapy",
+    "Conservative outlets question FDA approval speed relative to other pending treatments",
+  ],
+  sources: [
+    { name: "CNN", url: "https://cnn.com", tier: "us_major", biasScores: { politicalLean: 42, sensationalism: 20, opinionFact: 12, factualRigor: 88, framing: 18 } },
+    { name: "New York Times", url: "https://nytimes.com", tier: "us_major", biasScores: { politicalLean: 40, sensationalism: 15, opinionFact: 10, factualRigor: 92, framing: 16 } },
+    { name: "NPR", url: "https://npr.org", tier: "us_major", biasScores: { politicalLean: 42, sensationalism: 12, opinionFact: 8, factualRigor: 94, framing: 14 } },
+    { name: "ProPublica", url: "https://propublica.org", tier: "independent", biasScores: { politicalLean: 36, sensationalism: 18, opinionFact: 15, factualRigor: 90, framing: 24 } },
+  ],
+};
+
+const deepDive17: DeepDiveData = {
+  consensus: [
+    "The ECB maintained its benchmark rate at 2.75%",
+    "Persistent wage growth concerns influenced the decision",
+    "Manufacturing output continues to contract across the eurozone",
+  ],
+  divergence: [
+    "Hawkish analysts argue the ECB should have raised rates further",
+    "Dovish economists say holding rates risks deepening the manufacturing recession",
+    "Southern European outlets are more critical of the decision's impact on their economies",
+  ],
+  sources: [
+    { name: "Financial Times", url: "https://ft.com", tier: "international", biasScores: { politicalLean: 52, sensationalism: 6, opinionFact: 12, factualRigor: 96, framing: 14 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 8, opinionFact: 6, factualRigor: 94, framing: 10 } },
+    { name: "DW", url: "https://dw.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 10, opinionFact: 8, factualRigor: 92, framing: 16 } },
+    { name: "Bloomberg", url: "https://bloomberg.com", tier: "us_major", biasScores: { politicalLean: 54, sensationalism: 10, opinionFact: 14, factualRigor: 92, framing: 18 } },
+  ],
+};
+
+const deepDive18: DeepDiveData = {
+  consensus: [
+    "Dangerous PFAS levels were found in groundwater near 47 military installations",
+    "An estimated 2 million residents are affected by the contamination",
+    "The contamination stems from firefighting foam used on military bases for decades",
+  ],
+  divergence: [
+    "Progressive outlets push for immediate government accountability and cleanup funding",
+    "Defense-aligned outlets emphasize the military's operational needs that led to PFAS use",
+    "Scientific outlets debate the health risk thresholds and what constitutes a dangerous level",
+  ],
+  sources: [
+    { name: "ProPublica", url: "https://propublica.org", tier: "independent", biasScores: { politicalLean: 34, sensationalism: 28, opinionFact: 18, factualRigor: 94, framing: 30 } },
+    { name: "Washington Post", url: "https://washingtonpost.com", tier: "us_major", biasScores: { politicalLean: 38, sensationalism: 22, opinionFact: 15, factualRigor: 90, framing: 25 } },
+    { name: "AP News", url: "https://apnews.com", tier: "us_major", biasScores: { politicalLean: 48, sensationalism: 14, opinionFact: 6, factualRigor: 94, framing: 14 } },
+  ],
+};
+
+const deepDive19: DeepDiveData = {
+  consensus: [
+    "North Korea launched a submarine-based ballistic missile in the Sea of Japan",
+    "Japan and South Korea immediately condemned the test",
+    "The UN Security Council convened an emergency session in response",
+  ],
+  divergence: [
+    "US outlets emphasize phillips military readiness and deterrence posture",
+    "Asian outlets provide more regional context and diplomatic nuance",
+    "Independent analysts debate whether the test represents a genuine capability advance",
+  ],
+  sources: [
+    { name: "Yonhap", url: "https://en.yna.co.kr", tier: "international", biasScores: { politicalLean: 48, sensationalism: 30, opinionFact: 10, factualRigor: 86, framing: 28 } },
+    { name: "NHK", url: "https://nhk.or.jp", tier: "international", biasScores: { politicalLean: 50, sensationalism: 25, opinionFact: 8, factualRigor: 90, framing: 24 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 14, opinionFact: 6, factualRigor: 94, framing: 12 } },
+    { name: "CNN", url: "https://cnn.com", tier: "us_major", biasScores: { politicalLean: 44, sensationalism: 38, opinionFact: 18, factualRigor: 82, framing: 32 } },
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 68, sensationalism: 44, opinionFact: 28, factualRigor: 72, framing: 42 } },
+  ],
+};
+
+const deepDive20: DeepDiveData = {
+  consensus: [
+    "Gene-edited wheat showed 30% yield increase under water-stressed conditions",
+    "Field trial results were published in a peer-reviewed journal",
+    "The research has implications for global food security under climate change",
+  ],
+  divergence: [
+    "Scientific outlets note rivalry between research groups and prior claims of similar breakthroughs",
+    "Environmental outlets raise concerns about the ecological impact of gene-edited crops",
+    "Agricultural industry sources are optimistic about commercial applications within 5 years",
+  ],
+  sources: [
+    { name: "Nature", url: "https://nature.com", tier: "independent", biasScores: { politicalLean: 50, sensationalism: 8, opinionFact: 4, factualRigor: 98, framing: 6 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 14, opinionFact: 8, factualRigor: 90, framing: 14 } },
+    { name: "The Guardian", url: "https://theguardian.com", tier: "international", biasScores: { politicalLean: 40, sensationalism: 18, opinionFact: 12, factualRigor: 86, framing: 20 } },
+  ],
+};
+
+const deepDive21: DeepDiveData = {
+  consensus: [
+    "ERCOT projects a potential 15 GW power shortfall during peak summer demand",
+    "The Texas grid remains vulnerable to extreme weather events",
+    "Officials are warning of possible rolling blackouts",
+  ],
+  divergence: [
+    "Conservative outlets blame renewable energy mandates for grid instability",
+    "Progressive outlets point to deregulation and fossil fuel infrastructure failures",
+    "Energy analysts debate whether natural gas or renewable intermittency is the primary risk factor",
+  ],
+  sources: [
+    { name: "Houston Chronicle", url: "https://houstonchronicle.com", tier: "us_major", biasScores: { politicalLean: 42, sensationalism: 30, opinionFact: 15, factualRigor: 85, framing: 28 } },
+    { name: "AP News", url: "https://apnews.com", tier: "us_major", biasScores: { politicalLean: 48, sensationalism: 14, opinionFact: 6, factualRigor: 94, framing: 12 } },
+    { name: "Fox News", url: "https://foxnews.com", tier: "us_major", biasScores: { politicalLean: 70, sensationalism: 42, opinionFact: 30, factualRigor: 70, framing: 48 } },
+    { name: "The Markup", url: "https://themarkup.org", tier: "independent", biasScores: { politicalLean: 42, sensationalism: 10, opinionFact: 12, factualRigor: 92, framing: 18 } },
+  ],
+};
+
+const deepDive22: DeepDiveData = {
+  consensus: [
+    "China conducted live-fire military drills east of Taiwan for a third consecutive week",
+    "The exercises drew sharp warnings from both Washington and Taipei",
+    "Tensions in the Taiwan Strait have reached their highest point in years",
+  ],
+  divergence: [
+    "Chinese outlets frame the exercises as legitimate sovereignty defense",
+    "Western outlets portray the drills as provocative and destabilizing",
+    "Taiwanese media focuses on domestic preparedness and public sentiment",
+  ],
+  sources: [
+    { name: "South China Morning Post", url: "https://scmp.com", tier: "international", biasScores: { politicalLean: 56, sensationalism: 28, opinionFact: 16, factualRigor: 80, framing: 38 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 22, opinionFact: 10, factualRigor: 88, framing: 24 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 12, opinionFact: 6, factualRigor: 94, framing: 14 } },
+    { name: "Washington Post", url: "https://washingtonpost.com", tier: "us_major", biasScores: { politicalLean: 40, sensationalism: 24, opinionFact: 16, factualRigor: 86, framing: 28 } },
+    { name: "New York Times", url: "https://nytimes.com", tier: "us_major", biasScores: { politicalLean: 40, sensationalism: 20, opinionFact: 14, factualRigor: 88, framing: 26 } },
+  ],
+};
+
+const deepDive23: DeepDiveData = {
+  consensus: [
+    "The first tranche of a $26 billion opioid settlement is reaching communities",
+    "Funds are going to treatment centers and recovery programs",
+    "Rural and underserved counties are the primary recipients",
+  ],
+  divergence: [
+    "Local outlets celebrate the impact but warn funds are insufficient for the scale of the crisis",
+    "Legal outlets debate whether the settlement amounts constitute adequate accountability",
+    "Conservative outlets question the effectiveness of government-run treatment programs",
+  ],
+  sources: [
+    { name: "PBS NewsHour", url: "https://pbs.org", tier: "us_major", biasScores: { politicalLean: 44, sensationalism: 10, opinionFact: 8, factualRigor: 92, framing: 14 } },
+    { name: "NPR", url: "https://npr.org", tier: "us_major", biasScores: { politicalLean: 42, sensationalism: 12, opinionFact: 10, factualRigor: 90, framing: 16 } },
+    { name: "ProPublica", url: "https://propublica.org", tier: "independent", biasScores: { politicalLean: 36, sensationalism: 18, opinionFact: 14, factualRigor: 92, framing: 22 } },
+  ],
+};
+
+const deepDive24: DeepDiveData = {
+  consensus: [
+    "The Northern Sea Route became navigable in mid-March for the first time",
+    "Arctic ice coverage has hit a new record low",
+    "The route opening raises both commercial and environmental concerns",
+  ],
+  divergence: [
+    "Environmental outlets frame this as an alarming climate milestone",
+    "Business outlets emphasize the shipping and economic opportunities",
+    "Scientific outlets debate the rate of Arctic warming versus model predictions",
+  ],
+  sources: [
+    { name: "The Guardian", url: "https://theguardian.com", tier: "international", biasScores: { politicalLean: 38, sensationalism: 28, opinionFact: 14, factualRigor: 86, framing: 28 } },
+    { name: "BBC", url: "https://bbc.com", tier: "international", biasScores: { politicalLean: 48, sensationalism: 16, opinionFact: 8, factualRigor: 92, framing: 16 } },
+    { name: "Reuters", url: "https://reuters.com", tier: "international", biasScores: { politicalLean: 50, sensationalism: 10, opinionFact: 6, factualRigor: 94, framing: 12 } },
+    { name: "Bloomberg", url: "https://bloomberg.com", tier: "us_major", biasScores: { politicalLean: 54, sensationalism: 14, opinionFact: 12, factualRigor: 90, framing: 20 } },
+  ],
+};
+
+const deepDiveMap: Record<string, DeepDiveData> = {
+  "1": deepDive1, "2": deepDive2, "3": deepDive3, "4": deepDive4,
+  "5": deepDive5, "6": deepDive6, "7": deepDive7, "8": deepDive8,
+  "9": deepDive9, "10": deepDive10, "11": deepDive11, "12": deepDive12,
+  "13": deepDive13, "14": deepDive14, "15": deepDive15, "16": deepDive16,
+  "17": deepDive17, "18": deepDive18, "19": deepDive19, "20": deepDive20,
+  "21": deepDive21, "22": deepDive22, "23": deepDive23, "24": deepDive24,
+};
 
 export const mockStories: Story[] = [
   {
@@ -18,6 +491,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 100,
+    deepDive: deepDive1,
   },
   {
     id: "2",
@@ -36,6 +510,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 95,
+    deepDive: deepDive2,
   },
   {
     id: "3",
@@ -54,6 +529,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 90,
+    deepDive: deepDive3,
   },
   {
     id: "4",
@@ -72,6 +548,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 88,
+    deepDive: deepDive4,
   },
   {
     id: "5",
@@ -90,6 +567,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 98,
+    deepDive: deepDive5,
   },
   {
     id: "6",
@@ -108,6 +586,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 82,
+    deepDive: deepDive6,
   },
   {
     id: "7",
@@ -126,6 +605,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 85,
+    deepDive: deepDive7,
   },
   {
     id: "8",
@@ -144,6 +624,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 80,
+    deepDive: deepDive8,
   },
   {
     id: "9",
@@ -162,6 +643,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 78,
+    deepDive: deepDive9,
   },
   {
     id: "10",
@@ -170,7 +652,7 @@ export const mockStories: Story[] = [
       "Education unions in 14 states plan coordinated walkouts protesting mandatory AI-assisted grading systems and the lack of teacher input in technology adoption decisions.",
     source: { name: "NPR", count: 11 },
     category: "Society",
-    publishedAt: "2026-03-17T14:00:00Z",
+ино    publishedAt: "2026-03-17T14:00:00Z",
     biasScores: {
       politicalLean: 35,
       sensationalism: 38,
@@ -180,6 +662,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 76,
+    deepDive: deepDive10,
   },
   {
     id: "11",
@@ -198,6 +681,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 74,
+    deepDive: deepDive11,
   },
   {
     id: "12",
@@ -216,6 +700,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 72,
+    deepDive: deepDive12,
   },
   {
     id: "13",
@@ -234,6 +719,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 70,
+    deepDive: deepDive13,
   },
   {
     id: "14",
@@ -252,6 +738,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 68,
+    deepDive: deepDive14,
   },
   {
     id: "15",
@@ -270,6 +757,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 66,
+    deepDive: deepDive15,
   },
   {
     id: "16",
@@ -288,6 +776,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 64,
+    deepDive: deepDive16,
   },
   {
     id: "17",
@@ -306,6 +795,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 62,
+    deepDive: deepDive17,
   },
   {
     id: "18",
@@ -324,6 +814,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 60,
+    deepDive: deepDive18,
   },
   {
     id: "19",
@@ -342,6 +833,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 58,
+    deepDive: deepDive19,
   },
   {
     id: "20",
@@ -360,6 +852,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 56,
+    deepDive: deepDive20,
   },
   {
     id: "21",
@@ -378,6 +871,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 54,
+    deepDive: deepDive21,
   },
   {
     id: "22",
@@ -396,6 +890,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 52,
+    deepDive: deepDive22,
   },
   {
     id: "23",
@@ -414,6 +909,7 @@ export const mockStories: Story[] = [
     },
     section: "us",
     importance: 50,
+    deepDive: deepDive23,
   },
   {
     id: "24",
@@ -432,6 +928,7 @@ export const mockStories: Story[] = [
     },
     section: "world",
     importance: 48,
+    deepDive: deepDive24,
   },
 ];
 

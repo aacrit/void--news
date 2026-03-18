@@ -37,17 +37,20 @@ from utils.supabase_client import (
     update_pipeline_run,
 )
 
-# Phase 2: Bias analyzers
-from analyzers.political_lean import analyze_political_lean
-from analyzers.sensationalism import analyze_sensationalism
-from analyzers.opinion_detector import analyze_opinion
-from analyzers.factual_rigor import analyze_factual_rigor
-from analyzers.framing import analyze_framing
-
-# Phase 2: Clustering, categorization, ranking
-from clustering.story_cluster import cluster_stories
-from categorizer.auto_categorize import categorize_article
-from ranker.importance_ranker import rank_importance
+# Phase 2: Bias analyzers — optional (require spaCy/NLTK)
+ANALYSIS_AVAILABLE = False
+try:
+    from analyzers.political_lean import analyze_political_lean
+    from analyzers.sensationalism import analyze_sensationalism
+    from analyzers.opinion_detector import analyze_opinion
+    from analyzers.factual_rigor import analyze_factual_rigor
+    from analyzers.framing import analyze_framing
+    from clustering.story_cluster import cluster_stories
+    from categorizer.auto_categorize import categorize_article
+    from ranker.importance_ranker import rank_importance
+    ANALYSIS_AVAILABLE = True
+except ImportError as e:
+    print(f"[warn] Analysis modules not available ({e}). Running fetch-only mode.")
 
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
@@ -165,79 +168,68 @@ def main():
     print(f"  Articles stored: {len(stored_articles)}/{len(articles_raw)}")
 
     # Step 5: Run bias analysis on each article
-    print(f"\n[5/8] Running bias analysis on {len(stored_articles)} articles...")
     articles_analyzed = 0
-
-    for i, article in enumerate(stored_articles):
-        if (i + 1) % 25 == 0 or i == 0:
-            print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
-
-        source_id = article.get("source_id", "")
-        source = source_map.get(source_id, {"political_lean_baseline": "center"})
-
-        bias_scores = run_bias_analysis(article, source)
-        bias_scores["article_id"] = article.get("id", "")
-
-        result = insert_bias_scores(bias_scores)
-        if result:
-            articles_analyzed += 1
-
-    print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
-
-    # Step 6: Cluster articles into stories
-    print(f"\n[6/8] Clustering {len(stored_articles)} articles into stories...")
-    clusters = []
-    try:
-        clusters = cluster_stories(stored_articles)
-        print(f"  Clusters formed: {len(clusters)}")
-    except Exception as e:
-        print(f"  [error] Clustering failed: {e}")
-
-    # Step 7: Categorize and rank each cluster
-    print("\n[7/8] Categorizing and ranking clusters...")
-    for cluster in clusters:
-        cluster_articles_list = cluster.get("articles", [])
-
-        # Categorize using the first article
-        try:
-            categories = categorize_article(cluster_articles_list[0]) if cluster_articles_list else ["politics"]
-            cluster["categories"] = categories
-            cluster["category"] = categories[0] if categories else "politics"
-        except Exception as e:
-            print(f"  [warn] Categorization failed: {e}")
-            cluster["categories"] = ["politics"]
-            cluster["category"] = "politics"
-
-        # Rank importance
-        try:
-            importance = rank_importance(cluster_articles_list, sources)
-            cluster["importance_score"] = importance
-        except Exception as e:
-            print(f"  [warn] Ranking failed: {e}")
-            cluster["importance_score"] = 20.0
-
-    clusters.sort(key=lambda c: c.get("importance_score", 0), reverse=True)
-
-    # Step 8: Store clusters and linkages in Supabase
-    print("\n[8/8] Storing clusters and finalizing...")
     clusters_created = 0
-    for cluster in clusters:
-        cluster_record = {
-            "title": cluster.get("title", "Untitled Story")[:500],
-            "category": cluster.get("category", "politics"),
-            "section": cluster.get("section", "world"),
-            "importance_score": round(cluster.get("importance_score", 0.0), 2),
-            "source_count": cluster.get("source_count", 0),
-            "first_published": cluster.get("first_published", ""),
-        }
 
-        result = insert_cluster(cluster_record)
-        if result:
-            cluster_id = result.get("id", "")
-            clusters_created += 1
-            for article_id in cluster.get("article_ids", []):
-                if article_id:
-                    link_article_to_cluster(cluster_id, article_id)
+    if not ANALYSIS_AVAILABLE:
+        print("\n[5-8] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
+    else:
+        # Step 5: Bias analysis
+        print(f"\n[5/8] Running bias analysis on {len(stored_articles)} articles...")
+        for i, article in enumerate(stored_articles):
+            if (i + 1) % 25 == 0 or i == 0:
+                print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
+            source_id = article.get("source_id", "")
+            source = source_map.get(source_id, {"political_lean_baseline": "center"})
+            bias_scores = run_bias_analysis(article, source)
+            bias_scores["article_id"] = article.get("id", "")
+            result = insert_bias_scores(bias_scores)
+            if result:
+                articles_analyzed += 1
+        print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
+
+        # Step 6: Cluster articles
+        print(f"\n[6/8] Clustering {len(stored_articles)} articles into stories...")
+        clusters = []
+        try:
+            clusters = cluster_stories(stored_articles)
+            print(f"  Clusters formed: {len(clusters)}")
+        except Exception as e:
+            print(f"  [error] Clustering failed: {e}")
+
+        # Step 7: Categorize and rank
+        print("\n[7/8] Categorizing and ranking clusters...")
+        for cluster in clusters:
+            cluster_articles_list = cluster.get("articles", [])
+            try:
+                categories = categorize_article(cluster_articles_list[0]) if cluster_articles_list else ["politics"]
+                cluster["category"] = categories[0] if categories else "politics"
+            except Exception:
+                cluster["category"] = "politics"
+            try:
+                cluster["importance_score"] = rank_importance(cluster_articles_list, sources)
+            except Exception:
+                cluster["importance_score"] = 20.0
+
+        clusters.sort(key=lambda c: c.get("importance_score", 0), reverse=True)
+
+        # Step 8: Store clusters
+        print("\n[8/8] Storing clusters...")
+        for cluster in clusters:
+            result = insert_cluster({
+                "title": cluster.get("title", "Untitled Story")[:500],
+                "category": cluster.get("category", "politics"),
+                "section": cluster.get("section", "world"),
+                "importance_score": round(cluster.get("importance_score", 0.0), 2),
+                "source_count": cluster.get("source_count", 0),
+                "first_published": cluster.get("first_published", ""),
+            })
+            if result:
+                clusters_created += 1
+                cluster_id = result.get("id", "")
+                for article_id in cluster.get("article_ids", []):
+                    if article_id:
+                        link_article_to_cluster(cluster_id, article_id)
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters)}")
 
