@@ -12,8 +12,7 @@ import {
   ShieldWarning,
   Flask,
   PaintBrush,
-  Lightning,
-  Handshake,
+  Trophy,
 } from "@phosphor-icons/react";
 
 const CATEGORY_ICONS: Record<string, Icon> = {
@@ -25,9 +24,8 @@ const CATEGORY_ICONS: Record<string, Icon> = {
   Environment: Leaf,
   Conflict: ShieldWarning,
   Science: Flask,
-  Society: PaintBrush,
-  Energy: Lightning,
-  Diplomacy: Handshake,
+  Culture: PaintBrush,
+  Sports: Trophy,
 };
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
@@ -39,9 +37,8 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
   "Environment",
   "Conflict",
   "Science",
-  "Society",
-  "Energy",
-  "Diplomacy",
+  "Culture",
+  "Sports",
 ];
 
 interface FilterBarProps {

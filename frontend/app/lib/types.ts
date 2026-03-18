@@ -51,8 +51,7 @@ export type Category =
   | "Environment"
   | "Conflict"
   | "Science"
-  | "Society"
-  | "Energy"
-  | "Diplomacy";
+  | "Culture"
+  | "Sports";
 
 export type Section = "world" | "us";

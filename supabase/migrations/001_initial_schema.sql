@@ -107,10 +107,12 @@ CREATE INDEX idx_cluster_articles_cluster ON cluster_articles(cluster_id);
 CREATE INDEX idx_cluster_articles_article ON cluster_articles(article_id);
 
 -- Insert default categories
+-- Slugs must match the pipeline auto_categorize.py output keys.
+-- Display names must match the frontend Category type in types.ts.
 INSERT INTO categories (name, slug) VALUES
   ('Politics', 'politics'),
   ('Economy', 'economy'),
-  ('Technology', 'tech'),
+  ('Tech', 'technology'),
   ('Health', 'health'),
   ('Environment', 'environment'),
   ('Conflict', 'conflict'),

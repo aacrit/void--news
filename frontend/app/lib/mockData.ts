@@ -651,7 +651,7 @@ export const mockStories: Story[] = [
     summary:
       "Education unions in 14 states plan coordinated walkouts protesting mandatory AI-assisted grading systems and the lack of teacher input in technology adoption decisions.",
     source: { name: "NPR", count: 11 },
-    category: "Society",
+    category: "Culture",
     publishedAt: "2026-03-17T14:00:00Z",
     biasScores: {
       politicalLean: 35,
@@ -708,7 +708,7 @@ export const mockStories: Story[] = [
     summary:
       "New census data reveals Japan's population decline is accelerating faster than projected, prompting renewed debate over immigration reform and economic sustainability.",
     source: { name: "NHK", count: 9 },
-    category: "Society",
+    category: "Culture",
     publishedAt: "2026-03-17T08:00:00Z",
     biasScores: {
       politicalLean: 50,
@@ -860,7 +860,7 @@ export const mockStories: Story[] = [
     summary:
       "ERCOT projections indicate the state's power grid may face a 15 GW shortfall during peak demand, raising fears of a repeat of the 2021 grid failure under extreme conditions.",
     source: { name: "Houston Chronicle", count: 9 },
-    category: "Energy",
+    category: "Environment",
     publishedAt: "2026-03-16T08:00:00Z",
     biasScores: {
       politicalLean: 42,
@@ -879,7 +879,7 @@ export const mockStories: Story[] = [
     summary:
       "China's People's Liberation Army conducted live-fire drills in waters east of Taiwan for the third consecutive week, drawing sharp warnings from Washington and Taipei.",
     source: { name: "South China Morning Post", count: 16 },
-    category: "Diplomacy",
+    category: "Conflict",
     publishedAt: "2026-03-16T06:00:00Z",
     biasScores: {
       politicalLean: 55,
