@@ -1,0 +1,185 @@
+/* ==========================================================================
+   void --news — Layout
+   Broadsheet newspaper grid with asymmetric hierarchy.
+   ========================================================================== */
+
+/* ---- Page Structure ---------------------------------------------------- */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  transition: background-color var(--dur-morph) var(--ease-out);
+}
+
+.page-main {
+  flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-7);
+  padding-bottom: var(--space-7);
+  width: 100%;
+}
+
+/* ---- Section Header — Newspaper tradition ------------------------------ */
+.section-header {
+  border-bottom: 2px solid var(--fg-primary);
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.section-header__title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+}
+
+.section-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ---- Broadsheet Grid — Asymmetric newspaper layout --------------------- */
+/* Mobile: single column stack */
+.grid-medium {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-bottom: var(--rule-thin);
+}
+
+.grid-medium__item {
+  padding-right: 0;
+  padding-left: 0;
+  border-right: none;
+}
+
+.grid-compact {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.grid-compact__item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+
+/* ---- Edition Line — Newspaper tradition -------------------------------- */
+.edition-line {
+  border-top: 2px solid var(--fg-primary);
+  margin-top: var(--space-6);
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ---- Empty States ------------------------------------------------------ */
+.empty-state {
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.empty-state--inline {
+  padding: var(--space-7) 0;
+  text-align: center;
+  max-width: none;
+}
+
+/* ---- Deep Dive Panel --------------------------------------------------- */
+.deep-dive-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--overlay-backdrop);
+  z-index: var(--z-overlay);
+  cursor: pointer;
+}
+
+.deep-dive-panel {
+  position: fixed;
+  z-index: var(--z-modal);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-e3);
+  overflow-y: auto;
+  overflow-x: hidden;
+  outline: none;
+  /* Mobile default: full-screen from bottom */
+  inset: 0;
+}
+
+.deep-dive-panel__header {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-primary);
+  z-index: 2;
+  border-bottom: var(--rule-thin);
+  padding: var(--space-4) var(--space-5);
+}
+
+.deep-dive-panel__content {
+  padding: var(--space-5);
+}
+
+/* ---- Footer ------------------------------------------------------------ */
+.site-footer {
+  border-top: 1px solid var(--divider);
+  margin-top: var(--space-6);
+  padding: var(--space-6) var(--space-7);
+}
+
+.site-footer__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+/* ---- Dot Separator ----------------------------------------------------- */
+.dot-separator {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--fg-muted);
+  flex-shrink: 0;
+}
+
+/* ---- Source Row (Deep Dive) -------------------------------------------- */
+.source-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.source-row:nth-child(even) {
+  background-color: var(--bg-secondary);
+}
+
+/* ---- Screen Reader Only ------------------------------------------------ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

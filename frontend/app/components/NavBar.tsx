@@ -22,11 +22,8 @@ function LogoFull({ height = 28 }: { height?: number }) {
       aria-hidden="true"
       style={{ height, width: "auto", display: "block", flexShrink: 0 }}
     >
-      {/* The Void Scale Icon — scaled to ~24px high, uses shared si- classes */}
       <g transform="translate(0,8) scale(0.75)" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        {/* Void circle — the analytical lens */}
         <circle cx="16" cy="4" r="2.5" className="si-void" />
-        {/* Animated beam group — newspaper pages as pans */}
         <g className="si-beam--idle">
           <line x1="3" y1="8" x2="29" y2="8" />
           <path d="M7,8 L4,13 L4,22 L12,22 L12,13 L9,8" />
@@ -34,22 +31,15 @@ function LogoFull({ height = 28 }: { height?: number }) {
           <path d="M23,8 L20,13 L20,22 L28,22 L28,13 L25,8" />
           <line x1="21.5" y1="16.5" x2="26.5" y2="16.5" />
         </g>
-        {/* Center post */}
         <line x1="16" y1="8" x2="16" y2="27" />
-        {/* Base */}
         <line x1="12" y1="27" x2="20" y2="27" />
       </g>
-
-      {/* Wordmark */}
       <g transform="translate(36,2)">
-        {/* "void" — serif letterforms, bold, condensed */}
         <polygon points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36" />
         <path d="M34,20C34,10.5 39.5,3 48,3C56.5,3 62,10.5 62,20C62,29.5 56.5,37 48,37C39.5,37 34,29.5 34,20ZM40,20C40,27.5 43,32 48,32C53,32 56,27.5 56,20C56,12.5 53,8 48,8C43,8 40,12.5 40,20Z" />
         <rect x="69" y="2" width="5" height="5" rx="0.8" />
         <rect x="69.5" y="11" width="4" height="25" rx="0.5" />
         <path d="M82,20C82,10.5 87,3 94,3C97,3 100,4.5 102,7.5L102,0L107,0L107,36L102,36L102,32.5C100,35.5 97,37 94,37C87,37 82,29.5 82,20ZM88,20C88,27.5 90.8,32 95,32C98,32 100.5,29.5 102,26L102,14C100.5,10.5 98,8 95,8C90.8,8 88,12.5 88,20Z" />
-
-        {/* "--news" — monospace letterforms, regular weight */}
         <rect x="122" y="17.5" width="10" height="3" rx="0.5" />
         <rect x="134" y="17.5" width="10" height="3" rx="0.5" />
         <path d="M156,12L159.2,12L159.2,16C161,13 163.5,11 167,11C170,11 172,12.5 173.2,14.8C174,16.5 174,18.5 174,21L174,36L170.8,36L170.8,21.5C170.8,18.5 170.5,17 169.5,15.8C168.5,14.6 167,14 165,14C162.5,14 160.8,15.5 159.8,17.5C159.2,18.8 159.2,20 159.2,21.5L159.2,36L156,36Z" />
@@ -63,95 +53,31 @@ function LogoFull({ height = 28 }: { height?: number }) {
 
 /* ---------------------------------------------------------------------------
    NavBar — Newspaper masthead
-   Desktop: top bar with full logo (icon + wordmark), section tabs, theme toggle
-   Mobile: minimal top bar with icon only, bottom nav with section tabs
-   Thin bottom border (newspaper rule)
    --------------------------------------------------------------------------- */
 
 export default function NavBar({ activeSection, onSectionChange }: NavBarProps) {
   return (
     <>
-      {/* Desktop / Mobile Top Nav */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: "var(--z-nav)",
-          backgroundColor: "var(--bg-primary)",
-          borderBottom: "var(--rule-thin)",
-          transition: "background-color var(--dur-morph) var(--ease-out)",
-        }}
-      >
-        <nav
-          style={{
-            maxWidth: "1280px",
-            margin: "0 auto",
-            padding: "var(--space-3) var(--space-7)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-          aria-label="Main navigation"
-        >
-          {/* Masthead — inline SVG logo (currentColor for theme support) */}
-          <Link
-            href="/"
-            aria-label="void --news — home"
-            className="si-hoverable"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-              color: "var(--fg-primary)",
-            }}
-          >
-            {/* Desktop: full combination mark (icon + wordmark) */}
-            <span className="nav-logo-desktop" style={{ display: "block" }}>
+      <header className="nav-header">
+        <nav className="nav-inner" aria-label="Main navigation">
+          <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
+            <span className="nav-logo-desktop">
               <LogoFull height={28} />
             </span>
-            {/* Mobile: icon only (weighing scale mark) */}
             <span className="nav-logo-mobile" style={{ display: "none" }}>
               <ScaleIcon animation="idle" size={24} />
             </span>
           </Link>
 
-          {/* Section tabs — desktop */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0,
-            }}
-            className="nav-tabs-desktop"
-          >
+          <div className="nav-tabs">
             {(["world", "us"] as Section[]).map((section) => (
               <button
                 key={section}
                 onClick={() => onSectionChange(section)}
                 aria-current={activeSection === section ? "page" : undefined}
-                aria-pressed={activeSection === section}
-                style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: activeSection === section ? 600 : 400,
-                  letterSpacing: "0.02em",
-                  textTransform: "uppercase",
-                  color:
-                    activeSection === section
-                      ? "var(--fg-primary)"
-                      : "var(--fg-tertiary)",
-                  padding: "var(--space-2) var(--space-4)",
-                  borderBottom:
-                    activeSection === section
-                      ? "2px solid var(--fg-primary)"
-                      : "2px solid transparent",
-                  transition:
-                    "color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out)",
-                  minHeight: 44,
-                  minWidth: 44,
-                }}
+                className={`nav-tab${activeSection === section ? " nav-tab--active" : ""}`}
               >
-                <span style={{ display: "flex", alignItems: "center", gap: "var(--space-1)" }}>
+                <span className="nav-tab__inner">
                   {section === "world" ? (
                     <Globe size={14} weight="light" aria-hidden="true" />
                   ) : (
@@ -163,57 +89,20 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             ))}
           </div>
 
-          {/* Theme toggle */}
           <ThemeToggle />
         </nav>
       </header>
 
       {/* Mobile bottom nav */}
-      <nav
-        className="nav-bottom-mobile"
-        aria-label="Section navigation"
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: "var(--z-nav)",
-          backgroundColor: "var(--bg-primary)",
-          borderTop: "var(--rule-thin)",
-          display: "none", /* shown via media query in page styles */
-          padding: "var(--space-2) var(--space-5)",
-          justifyContent: "center",
-          gap: "var(--space-5)",
-          transition: "background-color var(--dur-morph) var(--ease-out)",
-        }}
-      >
+      <nav className="nav-bottom" aria-label="Section navigation">
         {(["world", "us"] as Section[]).map((section) => (
           <button
             key={`mobile-${section}`}
             onClick={() => onSectionChange(section)}
             aria-pressed={activeSection === section}
-            style={{
-              fontFamily: "var(--font-structural)",
-              fontSize: "var(--text-sm)",
-              fontWeight: activeSection === section ? 600 : 400,
-              letterSpacing: "0.02em",
-              textTransform: "uppercase",
-              color:
-                activeSection === section
-                  ? "var(--fg-primary)"
-                  : "var(--fg-tertiary)",
-              padding: "var(--space-3) var(--space-5)",
-              borderTop:
-                activeSection === section
-                  ? "2px solid var(--fg-primary)"
-                  : "2px solid transparent",
-              minHeight: 44,
-              minWidth: 44,
-              transition:
-                "color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out)",
-            }}
+            className={`nav-bottom-tab${activeSection === section ? " nav-bottom-tab--active" : ""}`}
           >
-            <span style={{ display: "flex", alignItems: "center", gap: "var(--space-1)" }}>
+            <span className="nav-tab__inner">
               {section === "world" ? (
                 <Globe size={14} weight="light" aria-hidden="true" />
               ) : (

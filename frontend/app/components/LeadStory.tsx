@@ -1,7 +1,7 @@
 "use client";
 
 import type { Story } from "../lib/types";
-import { timeAgo } from "../lib/mockData";
+import { timeAgo } from "../lib/utils";
 import BiasStamp from "./BiasStamp";
 
 interface LeadStoryProps {
@@ -11,22 +11,15 @@ interface LeadStoryProps {
 
 /* ---------------------------------------------------------------------------
    LeadStory — Hero treatment for the most important story
-   Larger typography, more prominent layout, bigger dot matrix.
-   Desktop: 2/3 width. Mobile: full-width.
+   Larger typography, more prominent layout, bigger bias stamp.
    --------------------------------------------------------------------------- */
 
 export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
   return (
     <article
-      role="button"
+      className="lead-story anim-fade-in-up"
       tabIndex={0}
       aria-label={`Read deep dive: ${story.title}`}
-      style={{
-        padding: "var(--space-6) 0",
-        borderBottom: "var(--rule-strong)",
-        animation: `fadeInUp var(--dur-normal) var(--ease-out) both`,
-        cursor: "pointer",
-      }}
       onClick={() => onStoryClick?.(story)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -36,94 +29,21 @@ export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
       }}
     >
       {/* Category tag + time */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-3)",
-          marginBottom: "var(--space-3)",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-structural)",
-            fontSize: "var(--text-sm)",
-            fontWeight: 600,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color: "var(--fg-tertiary)",
-          }}
-        >
-          {story.category}
-        </span>
-        <span
-          style={{
-            width: 3,
-            height: 3,
-            borderRadius: "50%",
-            backgroundColor: "var(--fg-muted)",
-            flexShrink: 0,
-          }}
-          aria-hidden="true"
-        />
-        <span
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: "var(--text-xs)",
-            color: "var(--fg-muted)",
-            fontFeatureSettings: '"tnum" 1',
-          }}
-        >
-          {timeAgo(story.publishedAt)}
-        </span>
+      <div className="lead-story__meta">
+        <span className="category-tag category-tag--lead">{story.category}</span>
+        <span className="dot-separator" aria-hidden="true" />
+        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
       </div>
 
       {/* Hero headline */}
-      <h2
-        style={{
-          fontFamily: "var(--font-editorial)",
-          fontSize: "var(--text-hero)",
-          fontWeight: 700,
-          lineHeight: 1.1,
-          letterSpacing: "-0.01em",
-          color: "var(--fg-primary)",
-          marginBottom: "var(--space-3)",
-        }}
-      >
-        {story.title}
-      </h2>
+      <h2 className="lead-story__headline">{story.title}</h2>
 
-      {/* Extended summary — 3-4 lines for lead story */}
-      <p
-        style={{
-          fontFamily: "var(--font-structural)",
-          fontSize: "var(--text-base)",
-          lineHeight: 1.7,
-          color: "var(--fg-secondary)",
-          maxWidth: "65ch",
-          marginBottom: "var(--space-4)",
-        }}
-      >
-        {story.summary}
-      </p>
+      {/* Extended summary */}
+      <p className="lead-story__summary">{story.summary}</p>
 
-      {/* Source count + large dot matrix */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-5)",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: "var(--text-base)",
-            color: "var(--fg-secondary)",
-            fontWeight: 500,
-            fontFeatureSettings: '"tnum" 1',
-          }}
-        >
+      {/* Source count + large bias stamp */}
+      <div className="lead-story__footer">
+        <span className="source-count source-count--lead">
           {story.source.count} sources
         </span>
         <BiasStamp scores={story.biasScores} size="lg" />

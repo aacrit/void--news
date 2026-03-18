@@ -6,8 +6,6 @@ import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
-   Click triggers confirmation dialog. On confirm, simulates data refresh.
-   Dialog includes focus trap, Escape key handler, and focus restoration.
    --------------------------------------------------------------------------- */
 
 interface RefreshButtonProps {
@@ -49,21 +47,15 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
     }, 1200);
   }, []);
 
-  /* Auto-focus cancel button when dialog opens; restore focus when it closes */
   useEffect(() => {
     if (showConfirm) {
-      /* Small delay to let the dialog render before focusing */
-      const t = setTimeout(() => {
-        cancelButtonRef.current?.focus();
-      }, 0);
+      const t = setTimeout(() => cancelButtonRef.current?.focus(), 0);
       return () => clearTimeout(t);
     } else {
-      /* Restore focus to the refresh button after dialog closes */
       refreshButtonRef.current?.focus();
     }
   }, [showConfirm]);
 
-  /* Escape key handler + focus trap */
   useEffect(() => {
     if (!showConfirm) return;
 
@@ -108,147 +100,59 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
         onClick={() => setShowConfirm(true)}
         disabled={refreshing}
         aria-label={`Last updated ${displayTime}. Click to refresh.`}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-2)",
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-xs)",
-          color: "var(--fg-tertiary)",
-          padding: "var(--space-2) var(--space-3)",
-          border: "1px solid var(--border-subtle)",
-          borderRadius: "var(--radius-md)",
-          cursor: refreshing ? "wait" : "pointer",
-          opacity: refreshing ? 0.6 : 1,
-          transition:
-            "opacity var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out)",
-          fontFeatureSettings: '"tnum" 1',
-          minHeight: 44,
-        }}
-        onMouseEnter={(e) => {
-          if (!refreshing)
-            (e.currentTarget as HTMLElement).style.borderColor =
-              "var(--border-strong)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor =
-            "var(--border-subtle)";
-        }}
+        className={`refresh-btn${refreshing ? " refresh-btn--loading" : ""}`}
       >
-        {/* Refresh icon — scale animation when refreshing */}
-        <ScaleIcon
-          animation={refreshing ? "loading" : "none"}
-          size={14}
-        />
+        <ScaleIcon animation={refreshing ? "loading" : "none"} size={14} />
         <Clock size={12} weight="light" aria-hidden="true" />
-        <span>
-          {refreshing ? "Refreshing..." : `Last updated: ${displayTime}`}
-        </span>
+        <span>{refreshing ? "Refreshing..." : `Last updated: ${displayTime}`}</span>
       </button>
 
-      {/* Confirmation dialog */}
       {showConfirm && (
         <>
-          {/* Backdrop */}
           <div
             onClick={closeDialog}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: "var(--z-overlay)",
-              backgroundColor: "var(--overlay-backdrop)",
-              animation: "fadeIn var(--dur-normal) var(--ease-out)",
-            }}
+            className="deep-dive-backdrop anim-fade-in"
           />
-          {/* Dialog */}
           <div
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Confirm refresh"
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: "var(--z-modal)",
-              backgroundColor: "var(--bg-card)",
-              border: "1px solid var(--border-strong)",
-              padding: "var(--space-5) var(--space-6)",
-              maxWidth: 340,
-              width: "90%",
-              animation: "fadeInUp var(--dur-normal) var(--ease-out)",
-              boxShadow: "var(--shadow-e3)",
-            }}
+            className="refresh-dialog anim-fade-in-up"
           >
             <h3
+              className="section-heading"
               style={{
-                fontFamily: "var(--font-editorial)",
-                fontSize: "var(--text-lg)",
-                fontWeight: 700,
-                marginBottom: "var(--space-3)",
-                color: "var(--fg-primary)",
                 display: "flex",
                 alignItems: "center",
                 gap: "var(--space-2)",
+                borderBottom: "none",
+                paddingBottom: 0,
               }}
             >
               <Warning size={20} weight="light" aria-hidden="true" />
               Refresh data?
             </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-structural)",
-                fontSize: "var(--text-sm)",
-                color: "var(--fg-secondary)",
-                marginBottom: "var(--space-5)",
-                lineHeight: 1.5,
-              }}
-            >
+            <p style={{
+              fontFamily: "var(--font-structural)",
+              fontSize: "var(--text-sm)",
+              color: "var(--fg-secondary)",
+              marginBottom: "var(--space-5)",
+              lineHeight: 1.5,
+            }}>
               This will re-fetch the latest stories from all sources.
             </p>
-            <div style={{ display: "flex", gap: "var(--space-3)", justifyContent: "flex-end" }}>
-              <button
-                ref={cancelButtonRef}
-                onClick={closeDialog}
-                style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 500,
-                  color: "var(--fg-tertiary)",
-                  padding: "var(--space-2) var(--space-4)",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: "var(--radius-md)",
-                  minHeight: 44,
-                  minWidth: 44,
-                  transition: "border-color var(--dur-fast) var(--ease-out)",
-                }}
-              >
+            <div className="refresh-dialog__actions">
+              <button ref={cancelButtonRef} onClick={closeDialog} className="btn-secondary">
                 Cancel
               </button>
-              <button
-                onClick={handleRefresh}
-                style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 600,
-                  color: "var(--bg-primary)",
-                  backgroundColor: "var(--fg-primary)",
-                  padding: "var(--space-2) var(--space-4)",
-                  borderRadius: "var(--radius-md)",
-                  minHeight: 44,
-                  minWidth: 44,
-                  transition:
-                    "opacity var(--dur-fast) var(--ease-out)",
-                }}
-              >
+              <button onClick={handleRefresh} className="btn-primary">
                 Refresh
               </button>
             </div>
           </div>
         </>
       )}
-
     </div>
   );
 }

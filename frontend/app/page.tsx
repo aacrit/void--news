@@ -15,7 +15,6 @@ import Footer from "./components/Footer";
 
 function capitalize(s: string): string {
   if (!s) return s;
-  // Map DB category slugs to display names
   const map: Record<string, string> = {
     politics: "Politics", economy: "Economy", tech: "Tech", technology: "Tech",
     health: "Health", environment: "Environment", conflict: "Conflict",
@@ -28,18 +27,15 @@ function capitalize(s: string): string {
    Homepage — News Feed
    Desktop: broadsheet grid — lead story + asymmetric layout + dense compact
    Mobile: single-column tabloid stack
-   Fetches live data from Supabase. Shows loading skeleton, then content.
-   Wrapped in ErrorBoundary for graceful error handling.
    --------------------------------------------------------------------------- */
 
 function HomeContent() {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<Section>("world");
-  const [activeCategory, setActiveCategory] = useState<"All" | Category>(
-    "All"
-  );
+  const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   const handleStoryClick = useCallback((story: Story) => {
@@ -51,9 +47,10 @@ function HomeContent() {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function loadFromSupabase() {
       try {
-        // Fetch world and US stories separately to ensure both sections have content
         const selectFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity`;
 
         const [worldRes, usRes] = await Promise.all([
@@ -71,6 +68,8 @@ function HomeContent() {
             .limit(100),
         ]);
 
+        if (controller.signal.aborted) return;
+
         const clusters = [
           ...(worldRes.data || []),
           ...(usRes.data || []),
@@ -81,11 +80,11 @@ function HomeContent() {
           return;
         }
 
-        // Fetch aggregated bias scores from the view (single query, no N+1)
         const clusterIds = clusters.map((c: { id: string }) => c.id);
         const biasSummaryMap = await fetchClusterBiasSummary(clusterIds);
 
-        // Transform clusters into Story format for the components
+        if (controller.signal.aborted) return;
+
         const liveStories: Story[] = clusters.map(
           (cluster: {
             id: string;
@@ -102,7 +101,6 @@ function HomeContent() {
             coverage_velocity: number | null;
             bias_diversity: Record<string, number> | null;
           }) => {
-            // Priority: 1) cluster_bias_summary view, 2) bias_diversity JSONB, 3) defaults
             const viewData = biasSummaryMap?.[cluster.id];
             const jsonData = cluster.bias_diversity;
 
@@ -179,7 +177,6 @@ function HomeContent() {
         setStories(liveStories);
         setIsLoading(false);
 
-        // Get last pipeline run time
         const { data: run } = await supabase
           .from("pipeline_runs")
           .select("completed_at")
@@ -188,15 +185,19 @@ function HomeContent() {
           .limit(1)
           .single();
 
-        if (run?.completed_at) {
+        if (!controller.signal.aborted && run?.completed_at) {
           setLastUpdated(run.completed_at);
         }
-      } catch {
-        setIsLoading(false);
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : "Failed to load stories");
+          setIsLoading(false);
+        }
       }
     }
 
     loadFromSupabase();
+    return () => controller.abort();
   }, []);
 
   const filteredStories = useMemo(() => {
@@ -212,15 +213,7 @@ function HomeContent() {
   const compactStories = filteredStories.slice(4);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "var(--bg-primary)",
-        transition: "background-color var(--dur-morph) var(--ease-out)",
-      }}
-    >
+    <div className="page-container">
       <NavBar
         activeSection={activeSection}
         onSectionChange={(s) => {
@@ -229,48 +222,13 @@ function HomeContent() {
         }}
       />
 
-      <main
-        id="main-content"
-        style={{
-          flex: 1,
-          maxWidth: 1280,
-          margin: "0 auto",
-          padding: "0 var(--space-7)",
-          paddingBottom: "var(--space-7)",
-          width: "100%",
-        }}
-      >
+      <main id="main-content" className="page-main">
         {/* Section title — newspaper tradition */}
-        <div
-          style={{
-            borderBottom: "2px solid var(--fg-primary)",
-            paddingTop: "var(--space-5)",
-            paddingBottom: "var(--space-2)",
-            marginBottom: "var(--space-2)",
-            display: "flex",
-            alignItems: "baseline",
-            justifyContent: "space-between",
-          }}
-        >
-          <h1
-            style={{
-              fontFamily: "var(--font-editorial)",
-              fontSize: "var(--text-lg)",
-              fontWeight: 700,
-              letterSpacing: "0.02em",
-              textTransform: "uppercase",
-              color: "var(--fg-primary)",
-            }}
-          >
+        <div className="section-header">
+          <h1 className="section-header__title">
             {activeSection === "world" ? "World News" : "US News"}
           </h1>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-3)",
-            }}
-          >
+          <div className="section-header__actions">
             <RefreshButton externalLastUpdated={lastUpdated} />
           </div>
         </div>
@@ -281,57 +239,61 @@ function HomeContent() {
           onCategoryChange={setActiveCategory}
         />
 
+        {/* Live region for screen readers */}
+        <div aria-live="polite" className="sr-only">
+          {!isLoading && filteredStories.length > 0 &&
+            `${filteredStories.length} stories loaded`}
+          {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
+            "No stories match the current filter"}
+        </div>
+
         {/* Loading skeleton */}
         {isLoading && <LoadingSkeleton />}
 
+        {/* Error state */}
+        {error && !isLoading && (
+          <div className="empty-state">
+            <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
+              Unable to load stories
+            </h2>
+            <p className="text-base" style={{ color: "var(--fg-tertiary)", marginBottom: "var(--space-4)" }}>
+              {error}
+            </p>
+            <button
+              className="btn-primary"
+              onClick={() => window.location.reload()}
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
         {/* Empty state — no data from pipeline yet */}
-        {!isLoading && stories.length === 0 && (
-          <div style={{
-            padding: "var(--space-7) var(--space-5)",
-            textAlign: "center",
-            maxWidth: 480,
-            margin: "0 auto",
-          }}>
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style={{ margin: "0 auto var(--space-5)", opacity: 0.35, color: "var(--fg-tertiary)" }}>
+        {!isLoading && !error && stories.length === 0 && (
+          <div className="empty-state">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="empty-icon">
               <rect x="8" y="12" width="48" height="40" rx="1" stroke="currentColor" strokeWidth="1.5" />
               <line x1="16" y1="22" x2="48" y2="22" stroke="currentColor" strokeWidth="1.5" />
               <line x1="16" y1="30" x2="40" y2="30" stroke="currentColor" strokeWidth="1" opacity="0.5" />
               <line x1="16" y1="36" x2="44" y2="36" stroke="currentColor" strokeWidth="1" opacity="0.5" />
               <line x1="16" y1="42" x2="36" y2="42" stroke="currentColor" strokeWidth="1" opacity="0.5" />
             </svg>
-            <h2 style={{
-              fontFamily: "var(--font-editorial)",
-              fontSize: "var(--text-xl)",
-              fontWeight: 700,
-              color: "var(--fg-primary)",
-              marginBottom: "var(--space-3)",
-            }}>
+            <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
               Awaiting First Edition
             </h2>
-            <p style={{
-              fontFamily: "var(--font-structural)",
-              fontSize: "var(--text-base)",
-              color: "var(--fg-tertiary)",
-              lineHeight: 1.6,
-              marginBottom: "var(--space-4)",
-            }}>
+            <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
               The news pipeline hasn&apos;t run yet. Stories will appear here
               once articles are fetched and analyzed from 90 curated sources.
             </p>
-            <p style={{
-              fontFamily: "var(--font-data)",
-              fontSize: "var(--text-xs)",
-              color: "var(--fg-muted)",
-              letterSpacing: "0.02em",
-            }}>
+            <p className="edition-meta">
               Scheduled: 6:00 AM &amp; 6:00 PM UTC daily
             </p>
           </div>
         )}
 
         {/* No stories in selected filter */}
-        {!isLoading && stories.length > 0 && filteredStories.length === 0 && (
-          <div style={{ padding: "var(--space-7) 0", textAlign: "center" }}>
+        {!isLoading && !error && stories.length > 0 && filteredStories.length === 0 && (
+          <div className="empty-state--inline">
             <p style={{
               fontFamily: "var(--font-structural)",
               fontSize: "var(--text-lg)",
@@ -364,18 +326,9 @@ function HomeContent() {
 
         {/* Medium stories — broadsheet grid on desktop */}
         {!isLoading && mediumStories.length > 0 && (
-          <section
-            aria-label="Top stories"
-            className="grid-medium"
-            style={{
-              borderBottom: "var(--rule-thin)",
-            }}
-          >
+          <section aria-label="Top stories" className="grid-medium">
             {mediumStories.map((story, idx) => (
-              <div
-                key={story.id}
-                className="grid-medium__item"
-              >
+              <div key={story.id} className="grid-medium__item">
                 <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
               </div>
             ))}
@@ -398,49 +351,13 @@ function HomeContent() {
         )}
 
         {/* Edition line — newspaper tradition */}
-        {!isLoading && (
-          <div
-            style={{
-              borderTop: "2px solid var(--fg-primary)",
-              marginTop: "var(--space-6)",
-              paddingTop: "var(--space-3)",
-              paddingBottom: "var(--space-3)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "var(--space-3)",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-data)",
-                fontSize: "var(--text-xs)",
-                color: "var(--fg-muted)",
-                fontFeatureSettings: '"tnum" 1',
-              }}
-            >
+        {!isLoading && filteredStories.length > 0 && (
+          <div className="edition-line">
+            <span className="edition-meta">
               {activeSection === "world" ? "World" : "US"} Edition /{" "}
               {filteredStories.length} stories
             </span>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "var(--space-3)",
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "var(--font-editorial)",
-                  fontSize: "var(--text-xs)",
-                  color: "var(--fg-muted)",
-                  letterSpacing: "0.01em",
-                }}
-              >
-                void --news
-              </span>
-            </div>
+            <span className="brand-name">void --news</span>
           </div>
         )}
       </main>
@@ -448,130 +365,10 @@ function HomeContent() {
       {/* Footer */}
       {!isLoading && <Footer />}
 
-      {/* Deep Dive panel — slides in when a story is selected */}
+      {/* Deep Dive panel */}
       {selectedStory && (
         <DeepDive story={selectedStory} onClose={handleDeepDiveClose} />
       )}
-
-      {/* Page-level responsive styles */}
-      <style>{`
-        /* ---- Medium stories grid (desktop: 3 columns with newspaper rules) ---- */
-        .grid-medium {
-          display: grid;
-          grid-template-columns: 1fr;
-        }
-
-        .grid-medium__item {
-          padding-right: 0;
-          padding-left: 0;
-          border-right: none;
-        }
-
-        @media (min-width: 768px) {
-          .grid-medium {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0 var(--space-5);
-          }
-          .grid-medium__item {
-            border-right: var(--rule-thin);
-            padding-right: var(--space-5);
-          }
-          .grid-medium__item:nth-child(2n) {
-            border-right: none;
-            padding-right: 0;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .grid-medium {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0 var(--space-5);
-          }
-          .grid-medium__item {
-            border-right: var(--rule-thin);
-            padding-right: var(--space-5);
-          }
-          .grid-medium__item:nth-child(2n) {
-            border-right: var(--rule-thin);
-            padding-right: var(--space-5);
-          }
-          .grid-medium__item:nth-child(3n) {
-            border-right: none;
-            padding-right: 0;
-          }
-          .grid-medium__item:last-child {
-            border-right: none;
-          }
-        }
-
-        /* ---- Compact stories grid ---- */
-        .grid-compact {
-          display: grid;
-          grid-template-columns: 1fr;
-        }
-
-        @media (min-width: 768px) {
-          .grid-compact {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0 var(--space-5);
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .grid-compact {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0 var(--space-5);
-          }
-        }
-
-        @media (min-width: 1280px) {
-          .grid-compact {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0 var(--space-5);
-          }
-        }
-
-        /* Compact story cards: reduce typography */
-        .grid-compact .grid-compact__item h3 {
-          font-size: var(--text-lg) !important;
-        }
-
-        /* ---- Mobile bottom nav visibility ---- */
-        @media (max-width: 767px) {
-          .nav-bottom-mobile {
-            display: flex !important;
-          }
-          .nav-tabs-desktop {
-            display: none !important;
-          }
-          /* Mobile: show icon, hide full logo */
-          .nav-logo-desktop {
-            display: none !important;
-          }
-          .nav-logo-mobile {
-            display: block !important;
-          }
-          /* Extra padding at bottom for mobile nav */
-          main {
-            padding-bottom: 80px !important;
-          }
-        }
-
-        /* ---- Scrollbar hide for filter bar ---- */
-        [role="tablist"]::-webkit-scrollbar {
-          display: none;
-        }
-
-        /* ---- Medium grid column rules on desktop ---- */
-        @media (min-width: 1024px) {
-          .grid-medium__item {
-            padding-left: var(--space-5);
-          }
-          .grid-medium__item:first-child {
-            padding-left: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }

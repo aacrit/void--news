@@ -1,37 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Supabase project credentials (public anon key — safe for client-side use)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://xryzskhgfuafyotrcdvj.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyeXpza2hnZnVhZnlvdHJjZHZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTI4NTYsImV4cCI6MjA4OTM4ODg1Nn0._AnBvpTBUa7sqyU_T49bPGi-YOKDkiSptVPGn6YHpRE';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export async function fetchStories() {
-  const { data: clusters, error: clusterError } = await supabase
-    .from('story_clusters')
-    .select(`
-      id,
-      title,
-      summary,
-      category,
-      section,
-      importance_score,
-      source_count,
-      first_published,
-      last_updated,
-      divergence_score,
-      headline_rank,
-      coverage_velocity,
-      bias_diversity
-    `)
-    .order('headline_rank', { ascending: false })
-    .limit(30);
-
-  if (clusterError || !clusters?.length) {
-    return null;
-  }
-
-  return clusters;
-}
 
 /**
  * Fetch aggregated bias scores for multiple clusters in a single query.
@@ -44,12 +17,10 @@ export async function fetchClusterBiasSummary(clusterIds: string[]) {
     .in('cluster_id', clusterIds);
 
   if (error) {
-    // View may not be deployed yet — return empty
     console.warn('cluster_bias_summary query failed:', error.message);
     return null;
   }
 
-  // Index by cluster_id for O(1) lookup
   const map: Record<string, {
     avg_political_lean: number;
     avg_sensationalism: number;

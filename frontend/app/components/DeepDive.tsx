@@ -10,22 +10,19 @@ import {
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
-import { timeAgo } from "../lib/mockData";
+import { timeAgo } from "../lib/utils";
 import BiasStamp from "./BiasStamp";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
-   Desktop: 50% width panel sliding from the right with dark backdrop.
+   Desktop (1024px+): 50% width panel sliding from the right.
    Mobile: full-screen modal sliding up from the bottom.
-   Accessibility: focus trap, Escape to close, role="dialog", aria-modal.
    --------------------------------------------------------------------------- */
 
 interface DeepDiveProps {
   story: Story;
   onClose: () => void;
 }
-
-/* --- Tier display helpers ------------------------------------------------- */
 
 const TIER_LABELS: Record<StorySource["tier"], string> = {
   us_major: "US",
@@ -61,51 +58,15 @@ function CoverageBar({
   const pct = total > 0 ? (count / total) * 100 : 0;
 
   return (
-    <div style={{ marginBottom: "var(--space-3)" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          marginBottom: "var(--space-1)",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-structural)",
-            fontSize: "var(--text-sm)",
-            fontWeight: 500,
-            color: "var(--fg-secondary)",
-          }}
-        >
-          {label}
-        </span>
-        <span
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: "var(--text-xs)",
-            color: "var(--fg-tertiary)",
-            fontFeatureSettings: '"tnum" 1',
-          }}
-        >
-          {count}
-        </span>
+    <div className="coverage-bar">
+      <div className="coverage-bar__header">
+        <span className="coverage-bar__label">{label}</span>
+        <span className="coverage-bar__count">{count}</span>
       </div>
-      <div
-        style={{
-          height: 6,
-          backgroundColor: "var(--bg-secondary)",
-          width: "100%",
-          overflow: "hidden",
-        }}
-      >
+      <div className="coverage-bar__track">
         <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            backgroundColor: color,
-            transition: "width var(--dur-morph) var(--ease-out)",
-          }}
+          className="coverage-bar__fill"
+          style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
     </div>
@@ -122,12 +83,10 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  /* The data to render: prefer live Supabase data, fall back to story.deepDive */
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
-  const sources = deepDive?.sources ?? [];
+  const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
 
-  /* Tier counts */
   const tierCounts = useMemo(() => {
     const counts = { us_major: 0, international: 0, independent: 0 };
     for (const s of sources) {
@@ -149,7 +108,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           return;
         }
 
-        /* Transform raw Supabase data into DeepDiveData shape */
         const storySourceList: StorySource[] = [];
         for (const row of raw) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -158,14 +116,12 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           const source = article.source;
           const biasArr = article.bias_scores;
-          const bias =
-            Array.isArray(biasArr) && biasArr.length > 0 ? biasArr[0] : null;
+          const bias = Array.isArray(biasArr) && biasArr.length > 0 ? biasArr[0] : null;
 
           storySourceList.push({
             name: (source?.name as string) ?? "Unknown",
             url: (article.url as string) ?? (source?.url as string) ?? "#",
-            tier:
-              ((source?.tier as string) as StorySource["tier"]) ?? "us_major",
+            tier: ((source?.tier as string) as StorySource["tier"]) ?? "us_major",
             biasScores: {
               politicalLean: (bias?.political_lean as number) ?? 50,
               sensationalism: (bias?.sensationalism as number) ?? 30,
@@ -195,21 +151,15 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
     }
 
     loadClusterData();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [story.id, story.deepDive]);
 
   /* ---- Open animation sequence ----------------------------------------- */
   useEffect(() => {
-    /* Store the element that had focus before opening */
     previousFocusRef.current = document.activeElement as HTMLElement;
-
-    /* Prevent body scroll */
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    /* Trigger enter animations on next frame */
     requestAnimationFrame(() => {
       setIsVisible(true);
       setTimeout(() => setContentVisible(true), 200);
@@ -223,8 +173,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   /* ---- Focus trap + Escape key ----------------------------------------- */
   useEffect(() => {
     if (!isVisible) return;
-
-    /* Focus the panel on open */
     panelRef.current?.focus();
 
     function handleKeyDown(e: KeyboardEvent) {
@@ -234,7 +182,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         return;
       }
 
-      /* Tab trap */
       if (e.key === "Tab" && panelRef.current) {
         const focusable = panelRef.current.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -264,7 +211,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
     setContentVisible(false);
     setIsVisible(false);
     setTimeout(() => {
-      /* Restore focus */
       previousFocusRef.current?.focus();
       onClose();
     }, 400);
@@ -276,14 +222,10 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
       <div
         aria-hidden="true"
         onClick={handleClose}
+        className="deep-dive-backdrop"
         style={{
-          position: "fixed",
-          inset: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: "var(--z-overlay)",
           opacity: isVisible ? 1 : 0,
-          transition: `opacity 300ms var(--ease-out)`,
-          cursor: "pointer",
+          transition: "opacity 300ms var(--ease-out)",
         }}
       />
 
@@ -296,182 +238,50 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         tabIndex={-1}
         className="deep-dive-panel"
         style={{
-          position: "fixed",
-          zIndex: "var(--z-modal)",
-          backgroundColor: "var(--bg-primary)",
-          boxShadow: "var(--shadow-e3)",
-          overflowY: "auto",
-          overflowX: "hidden",
-          outline: "none",
-          /* Default (mobile): full-screen from bottom */
-          inset: 0,
           transform: isVisible ? "translateY(0)" : "translateY(100%)",
-          transition: `transform 400ms var(--ease-out)`,
+          transition: "transform 400ms var(--ease-out)",
         }}
       >
         {/* ---- Header --------------------------------------------------- */}
-        <header
-          style={{
-            position: "sticky",
-            top: 0,
-            backgroundColor: "var(--bg-primary)",
-            zIndex: 2,
-            borderBottom: "var(--rule-thin)",
-            padding: "var(--space-4) var(--space-5)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "var(--space-3)",
-            }}
-          >
-            {/* Back button */}
-            <button
-              onClick={handleClose}
-              aria-label="Back to feed"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "var(--space-2)",
-                fontFamily: "var(--font-structural)",
-                fontSize: "var(--text-sm)",
-                fontWeight: 500,
-                color: "var(--fg-secondary)",
-                padding: "var(--space-2)",
-                marginLeft: "calc(-1 * var(--space-2))",
-                minWidth: 44,
-                minHeight: 44,
-              }}
-            >
+        <header className="deep-dive-panel__header">
+          <div className="deep-dive-header-bar">
+            <button onClick={handleClose} aria-label="Back to feed" className="deep-dive-back">
               <ArrowLeft size={18} weight="regular" aria-hidden="true" />
               <span className="deep-dive-back-label">Back to feed</span>
             </button>
 
-            {/* Close button — more prominent on mobile */}
-            <button
-              onClick={handleClose}
-              aria-label="Close deep dive"
-              className="deep-dive-close-btn"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 44,
-                height: 44,
-                color: "var(--fg-secondary)",
-                flexShrink: 0,
-              }}
-            >
+            <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
               <X size={20} weight="regular" aria-hidden="true" />
             </button>
           </div>
 
-          {/* Headline */}
-          <h2
-            style={{
-              fontFamily: "var(--font-editorial)",
-              fontSize: "var(--text-xl)",
-              fontWeight: 700,
-              lineHeight: 1.15,
-              letterSpacing: "-0.005em",
-              color: "var(--fg-primary)",
-              marginTop: "var(--space-3)",
-            }}
-          >
+          <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginTop: "var(--space-3)" }}>
             {story.title}
           </h2>
 
-          {/* Meta row: category + source count + time */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-3)",
-              marginTop: "var(--space-2)",
-              flexWrap: "wrap",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-structural)",
-                fontSize: "var(--text-xs)",
-                fontWeight: 500,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                color: "var(--fg-tertiary)",
-              }}
-            >
-              {story.category}
-            </span>
-            <span
-              style={{
-                width: 3,
-                height: 3,
-                borderRadius: "50%",
-                backgroundColor: "var(--fg-muted)",
-                flexShrink: 0,
-              }}
-              aria-hidden="true"
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-data)",
-                fontSize: "var(--text-xs)",
-                color: "var(--fg-tertiary)",
-                fontFeatureSettings: '"tnum" 1',
-              }}
-            >
+          <div className="deep-dive-meta">
+            <span className="category-tag">{story.category}</span>
+            <span className="dot-separator" aria-hidden="true" />
+            <span className="time-tag" style={{ color: "var(--fg-tertiary)" }}>
               {sources.length > 0 ? sources.length : story.source.count} sources
             </span>
-            <span
-              style={{
-                width: 3,
-                height: 3,
-                borderRadius: "50%",
-                backgroundColor: "var(--fg-muted)",
-                flexShrink: 0,
-              }}
-              aria-hidden="true"
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-data)",
-                fontSize: "var(--text-xs)",
-                color: "var(--fg-muted)",
-                fontFeatureSettings: '"tnum" 1',
-              }}
-            >
-              {timeAgo(story.publishedAt)}
-            </span>
+            <span className="dot-separator" aria-hidden="true" />
+            <span className="time-tag">{timeAgo(story.publishedAt)}</span>
           </div>
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
         <div
+          className="deep-dive-panel__content"
           style={{
-            padding: "var(--space-5)",
             opacity: contentVisible ? 1 : 0,
-            transition: `opacity 300ms var(--ease-out)`,
+            transition: "opacity 300ms var(--ease-out)",
           }}
         >
           {/* Loading indicator */}
           {isLoadingData && !deepDive && (
-            <div
-              style={{
-                padding: "var(--space-5) 0",
-                textAlign: "center",
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "var(--font-data)",
-                  fontSize: "var(--text-sm)",
-                  color: "var(--fg-tertiary)",
-                }}
-              >
+            <div style={{ padding: "var(--space-5) 0", textAlign: "center" }}>
+              <span className="text-data" style={{ color: "var(--fg-tertiary)" }}>
                 Loading coverage data...
               </span>
             </div>
@@ -479,84 +289,21 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: What Happened --------------------------------- */}
           <section aria-labelledby="dd-summary" style={{ marginBottom: "var(--space-6)" }}>
-            <h3
-              id="dd-summary"
-              style={{
-                fontFamily: "var(--font-editorial)",
-                fontSize: "var(--text-lg)",
-                fontWeight: 700,
-                color: "var(--fg-primary)",
-                marginBottom: "var(--space-3)",
-                paddingBottom: "var(--space-2)",
-                borderBottom: "var(--rule-thin)",
-              }}
-            >
-              What happened
-            </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-structural)",
-                fontSize: "var(--text-base)",
-                lineHeight: 1.7,
-                color: "var(--fg-secondary)",
-                maxWidth: "65ch",
-              }}
-            >
+            <h3 id="dd-summary" className="section-heading">What happened</h3>
+            <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)" }}>
               {story.summary}
             </p>
           </section>
 
           {/* ---- Section: Where sources agree ----------------------------- */}
           {deepDive && deepDive.consensus.length > 0 && (
-            <section
-              aria-labelledby="dd-consensus"
-              style={{ marginBottom: "var(--space-6)" }}
-            >
-              <h3
-                id="dd-consensus"
-                style={{
-                  fontFamily: "var(--font-editorial)",
-                  fontSize: "var(--text-lg)",
-                  fontWeight: 700,
-                  color: "var(--fg-primary)",
-                  marginBottom: "var(--space-3)",
-                  paddingBottom: "var(--space-2)",
-                  borderBottom: "var(--rule-thin)",
-                }}
-              >
-                Where sources agree
-              </h3>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
+              <ul className="evidence-list">
                 {deepDive.consensus.map((point, i) => (
-                  <li
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "var(--space-3)",
-                      padding: "var(--space-2) 0",
-                    }}
-                  >
-                    <Check
-                      size={18}
-                      weight="bold"
-                      aria-hidden="true"
-                      style={{
-                        color: "var(--sense-low)",
-                        flexShrink: 0,
-                        marginTop: 2,
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontFamily: "var(--font-structural)",
-                        fontSize: "var(--text-base)",
-                        lineHeight: 1.6,
-                        color: "var(--fg-secondary)",
-                      }}
-                    >
-                      {point}
-                    </span>
+                  <li key={i} className="evidence-item">
+                    <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
+                    <span className="evidence-item__text">{point}</span>
                   </li>
                 ))}
               </ul>
@@ -565,55 +312,13 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Where sources diverge -------------------------- */}
           {deepDive && deepDive.divergence.length > 0 && (
-            <section
-              aria-labelledby="dd-divergence"
-              style={{ marginBottom: "var(--space-6)" }}
-            >
-              <h3
-                id="dd-divergence"
-                style={{
-                  fontFamily: "var(--font-editorial)",
-                  fontSize: "var(--text-lg)",
-                  fontWeight: 700,
-                  color: "var(--fg-primary)",
-                  marginBottom: "var(--space-3)",
-                  paddingBottom: "var(--space-2)",
-                  borderBottom: "var(--rule-thin)",
-                }}
-              >
-                Where sources diverge
-              </h3>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
+              <ul className="evidence-list">
                 {deepDive.divergence.map((point, i) => (
-                  <li
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "var(--space-3)",
-                      padding: "var(--space-2) 0",
-                    }}
-                  >
-                    <Warning
-                      size={18}
-                      weight="bold"
-                      aria-hidden="true"
-                      style={{
-                        color: "var(--sense-medium)",
-                        flexShrink: 0,
-                        marginTop: 2,
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontFamily: "var(--font-structural)",
-                        fontSize: "var(--text-base)",
-                        lineHeight: 1.6,
-                        color: "var(--fg-secondary)",
-                      }}
-                    >
-                      {point}
-                    </span>
+                  <li key={i} className="evidence-item">
+                    <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
+                    <span className="evidence-item__text">{point}</span>
                   </li>
                 ))}
               </ul>
@@ -622,105 +327,38 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Source Coverage List ----------------------------- */}
           {sources.length > 0 && (
-            <section
-              aria-labelledby="dd-sources"
-              style={{ marginBottom: "var(--space-6)" }}
-            >
-              <h3
-                id="dd-sources"
-                style={{
-                  fontFamily: "var(--font-editorial)",
-                  fontSize: "var(--text-lg)",
-                  fontWeight: 700,
-                  color: "var(--fg-primary)",
-                  marginBottom: "var(--space-3)",
-                  paddingBottom: "var(--space-2)",
-                  borderBottom: "var(--rule-thin)",
-                }}
-              >
-                Source coverage
-              </h3>
+            <section aria-labelledby="dd-sources" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-sources" className="section-heading">Source coverage</h3>
               <div role="list" aria-label="Sources covering this story">
                 {sources.map((src, i) => (
-                  <div
-                    key={`${src.name}-${i}`}
-                    role="listitem"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "var(--space-3)",
-                      padding: "var(--space-3) var(--space-3)",
-                      backgroundColor:
-                        i % 2 === 1 ? "var(--bg-secondary)" : "transparent",
-                      transition:
-                        "background-color var(--dur-fast) var(--ease-out)",
-                    }}
-                  >
-                    {/* Source name — clickable */}
+                  <div key={`${src.name}-${i}`} role="listitem" className="source-row">
                     <a
                       href={src.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{
-                        fontFamily: "var(--font-structural)",
-                        fontSize: "var(--text-base)",
-                        fontWeight: 500,
-                        color: "var(--fg-primary)",
-                        textDecoration: "none",
-                        flex: 1,
-                        minWidth: 0,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
+                      className="source-link"
                     >
                       {src.name}
                     </a>
 
-                    {/* Tier badge */}
                     <span
-                      style={{
-                        fontFamily: "var(--font-data)",
-                        fontSize: "var(--text-xs)",
-                        fontWeight: 500,
-                        color: TIER_COLORS[src.tier],
-                        border: `1px solid ${TIER_COLORS[src.tier]}`,
-                        padding: "1px 6px",
-                        letterSpacing: "0.04em",
-                        textTransform: "uppercase",
-                        flexShrink: 0,
-                        lineHeight: 1.5,
-                      }}
+                      className="tier-badge"
+                      style={{ color: TIER_COLORS[src.tier], border: `1px solid ${TIER_COLORS[src.tier]}` }}
                       title={TIER_FULL_LABELS[src.tier]}
                     >
                       {TIER_LABELS[src.tier]}
                     </span>
 
-                    {/* Bias bars */}
                     <BiasStamp scores={src.biasScores} size="sm" />
 
-                    {/* External link */}
                     <a
                       href={src.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Open ${src.name} article in new tab`}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 32,
-                        height: 32,
-                        color: "var(--fg-muted)",
-                        flexShrink: 0,
-                        transition: "color var(--dur-fast) var(--ease-out)",
-                      }}
+                      className="external-link-icon"
                     >
-                      <ArrowSquareOut
-                        size={16}
-                        weight="regular"
-                        aria-hidden="true"
-                      />
+                      <ArrowSquareOut size={16} weight="regular" aria-hidden="true" />
                     </a>
                   </div>
                 ))}
@@ -730,106 +368,24 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Coverage Breakdown ------------------------------ */}
           {sources.length > 0 && (
-            <section
-              aria-labelledby="dd-breakdown"
-              style={{ marginBottom: "var(--space-6)" }}
-            >
-              <h3
-                id="dd-breakdown"
-                style={{
-                  fontFamily: "var(--font-editorial)",
-                  fontSize: "var(--text-lg)",
-                  fontWeight: 700,
-                  color: "var(--fg-primary)",
-                  marginBottom: "var(--space-3)",
-                  paddingBottom: "var(--space-2)",
-                  borderBottom: "var(--rule-thin)",
-                }}
-              >
-                Coverage breakdown
-              </h3>
-              <CoverageBar
-                label={TIER_FULL_LABELS.us_major}
-                count={tierCounts.us_major}
-                total={sources.length}
-                color={TIER_COLORS.us_major}
-              />
-              <CoverageBar
-                label={TIER_FULL_LABELS.international}
-                count={tierCounts.international}
-                total={sources.length}
-                color={TIER_COLORS.international}
-              />
-              <CoverageBar
-                label={TIER_FULL_LABELS.independent}
-                count={tierCounts.independent}
-                total={sources.length}
-                color={TIER_COLORS.independent}
-              />
+            <section aria-labelledby="dd-breakdown" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-breakdown" className="section-heading">Coverage breakdown</h3>
+              <CoverageBar label={TIER_FULL_LABELS.us_major} count={tierCounts.us_major} total={sources.length} color={TIER_COLORS.us_major} />
+              <CoverageBar label={TIER_FULL_LABELS.international} count={tierCounts.international} total={sources.length} color={TIER_COLORS.international} />
+              <CoverageBar label={TIER_FULL_LABELS.independent} count={tierCounts.independent} total={sources.length} color={TIER_COLORS.independent} />
             </section>
           )}
 
           {/* No deep dive data at all */}
           {!deepDive && !isLoadingData && (
-            <div
-              style={{
-                padding: "var(--space-6) 0",
-                textAlign: "center",
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-base)",
-                  color: "var(--fg-tertiary)",
-                  lineHeight: 1.6,
-                }}
-              >
+            <div style={{ padding: "var(--space-6) 0", textAlign: "center" }}>
+              <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
                 Detailed coverage data is not yet available for this story.
                 Check back after the next pipeline run.
               </p>
             </div>
           )}
         </div>
-
-        {/* ---- Responsive styles ---------------------------------------- */}
-        <style>{`
-          /* Mobile: full-screen modal from bottom (default above) */
-
-          /* Desktop: 50% width panel from right */
-          @media (min-width: 768px) {
-            .deep-dive-panel {
-              left: auto !important;
-              right: 0 !important;
-              top: 0 !important;
-              bottom: 0 !important;
-              width: 50% !important;
-              min-width: 420px !important;
-              max-width: 720px !important;
-              transform: ${isVisible ? "translateX(0)" : "translateX(100%)"} !important;
-              border-left: var(--rule-thin) !important;
-            }
-
-            .deep-dive-close-btn {
-              display: none !important;
-            }
-          }
-
-          /* Very wide screens — cap width */
-          @media (min-width: 1440px) {
-            .deep-dive-panel {
-              width: 40% !important;
-              max-width: 640px !important;
-            }
-          }
-
-          /* Mobile: hide "Back to feed" text, keep arrow */
-          @media (max-width: 767px) {
-            .deep-dive-back-label {
-              display: none !important;
-            }
-          }
-        `}</style>
       </div>
     </>
   );

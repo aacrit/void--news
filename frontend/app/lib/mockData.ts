@@ -464,15 +464,6 @@ const deepDive24: DeepDiveData = {
   ],
 };
 
-const deepDiveMap: Record<string, DeepDiveData> = {
-  "1": deepDive1, "2": deepDive2, "3": deepDive3, "4": deepDive4,
-  "5": deepDive5, "6": deepDive6, "7": deepDive7, "8": deepDive8,
-  "9": deepDive9, "10": deepDive10, "11": deepDive11, "12": deepDive12,
-  "13": deepDive13, "14": deepDive14, "15": deepDive15, "16": deepDive16,
-  "17": deepDive17, "18": deepDive18, "19": deepDive19, "20": deepDive20,
-  "21": deepDive21, "22": deepDive22, "23": deepDive23, "24": deepDive24,
-};
-
 export const mockStories: Story[] = [
   {
     id: "1",
