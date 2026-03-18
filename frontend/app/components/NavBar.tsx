@@ -11,7 +11,7 @@ interface NavBarProps {
   onSectionChange: (section: Section) => void;
 }
 
-/** Full combination mark — Weighing Scale icon + "void --news" wordmark */
+/** Full combination mark — Void Scale icon + "void --news" wordmark */
 function LogoFull({ height = 28 }: { height?: number }) {
   return (
     <svg
@@ -22,23 +22,22 @@ function LogoFull({ height = 28 }: { height?: number }) {
       aria-hidden="true"
       style={{ height, width: "auto", display: "block", flexShrink: 0 }}
     >
-      {/* Weighing Scale Icon — scaled to ~24px high, uses shared si- classes */}
+      {/* The Void Scale Icon — scaled to ~24px high, uses shared si- classes */}
       <g transform="translate(0,8) scale(0.75)" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        {/* Fulcrum triangle */}
-        <path d="M16,4 L13,9 L19,9 Z"/>
-        {/* Animated beam group */}
+        {/* Void circle — the analytical lens */}
+        <circle cx="16" cy="4" r="2.5" className="si-void" />
+        {/* Animated beam group — newspaper pages as pans */}
         <g className="si-beam--idle">
-          {/* Beam */}
-          <line x1="4" y1="9" x2="28" y2="9"/>
-          {/* Left suspension + pan */}
-          <path d="M7,9 L5,18 L11,18 L9,9"/>
-          {/* Right suspension + pan */}
-          <path d="M23,9 L21,18 L27,18 L25,9"/>
+          <line x1="3" y1="8" x2="29" y2="8" />
+          <path d="M7,8 L4,13 L4,22 L12,22 L12,13 L9,8" />
+          <line x1="5.5" y1="16.5" x2="10.5" y2="16.5" />
+          <path d="M23,8 L20,13 L20,22 L28,22 L28,13 L25,8" />
+          <line x1="21.5" y1="16.5" x2="26.5" y2="16.5" />
         </g>
         {/* Center post */}
-        <line x1="16" y1="9" x2="16" y2="27"/>
+        <line x1="16" y1="8" x2="16" y2="27" />
         {/* Base */}
-        <line x1="12" y1="27" x2="20" y2="27"/>
+        <line x1="12" y1="27" x2="20" y2="27" />
       </g>
 
       {/* Wordmark */}
@@ -98,6 +97,7 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
           <Link
             href="/"
             aria-label="void --news — home"
+            className="si-hoverable"
             style={{
               display: "flex",
               alignItems: "center",
