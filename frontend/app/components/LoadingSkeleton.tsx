@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import ScaleIcon from "./ScaleIcon";
+import LogoIcon from "./LogoIcon";
 
 /* ---------------------------------------------------------------------------
    LoadingSkeleton — Placeholder shimmer while Supabase data loads
@@ -20,7 +20,7 @@ export default function LoadingSkeleton() {
   return (
     <div role="status" aria-label="Loading stories" className="anim-fade-in">
       <div className="loading-indicator">
-        <ScaleIcon animation="loading" size={32} />
+        <LogoIcon animation="loading" size={32} />
       </div>
 
       {/* Lead story skeleton */}

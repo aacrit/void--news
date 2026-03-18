@@ -1,20 +1,18 @@
 "use client";
 
 import { GithubLogo } from "@phosphor-icons/react";
-import ScaleIcon from "./ScaleIcon";
+import LogoFull from "./LogoFull";
 
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
+   Uses the same LogoFull as NavBar for consistent branding.
    --------------------------------------------------------------------------- */
 
 export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
-        <div className="footer-masthead">
-          <ScaleIcon animation="idle" size={20} />
-          void <span className="footer-masthead__code">--news</span>
-        </div>
+        <LogoFull height={22} />
         <p className="footer-tagline">Free, transparent news bias analysis</p>
         <p className="footer-stats">90 curated sources &middot; Updated twice daily</p>
         <a

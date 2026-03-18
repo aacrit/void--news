@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import type { Section, Category, Story, BiasScores, BiasSpread } from "./lib/types";
 import { supabase } from "./lib/supabase";
+import LogoFull from "./components/LogoFull";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
@@ -339,7 +340,7 @@ function HomeContent() {
               {activeSection === "world" ? "World" : "US"} Edition /{" "}
               {filteredStories.length} stories
             </span>
-            <span className="brand-name">void --news</span>
+            <LogoFull height={14} />
           </div>
         )}
       </main>

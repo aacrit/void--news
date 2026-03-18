@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Component, type ReactNode } from "react";
+import LogoFull from "./LogoFull";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -49,9 +50,9 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
               Try refreshing
             </button>
             <div className="error-rule-bottom" />
-            <span className="brand-name" style={{ display: "block", marginTop: "var(--space-3)" }}>
-              void --news
-            </span>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "var(--space-3)" }}>
+              <LogoFull height={18} />
+            </div>
           </div>
         </div>
       );

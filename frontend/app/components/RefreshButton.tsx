@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Clock, Warning } from "@phosphor-icons/react";
-import ScaleIcon from "./ScaleIcon";
+import LogoIcon from "./LogoIcon";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
@@ -102,7 +102,7 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
         aria-label={`Last updated ${displayTime}. Click to refresh.`}
         className={`refresh-btn${refreshing ? " refresh-btn--loading" : ""}`}
       >
-        <ScaleIcon animation={refreshing ? "loading" : "none"} size={14} />
+        <LogoIcon animation={refreshing ? "loading" : "none"} size={14} />
         <Clock size={12} weight="light" aria-hidden="true" />
         <span>{refreshing ? "Refreshing..." : `Last updated: ${displayTime}`}</span>
       </button>
