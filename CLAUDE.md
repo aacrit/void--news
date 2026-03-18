@@ -307,67 +307,84 @@ reset.css → tokens.css → layout.css → typography.css → components.css �
 /plugin install frontend-design@claude-plugins-official
 ```
 
-## Agents (Adapted from DondeAI Hierarchy)
+## Agent Team (Adapted from DondeAI — 16 Agents, 7 Divisions)
+
+> Full team structure, R&R, and sequential cycles: `docs/AGENT-TEAM.md`
 
 ### Agent Hierarchy
 
 ```
 CEO (Aacrit)
-  └── COO (void-coo)
-        ├── Quality ———— pipeline-tester, bias-auditor
-        ├── Infrastructure — perf-optimizer, db-reviewer
-        ├── Frontend ———— frontend-builder, frontend-fixer, responsive-specialist
-        ├── Pipeline ———— nlp-engineer, source-curator
-        ├── Branding ———— logo-designer
-        └── R&I —————————— motion-physics-designer, data-storytelling-designer,
-                           micro-interaction-designer, accessibility-inclusivity-lead
+  ├── Quality ————————— analytics-expert, bias-auditor, pipeline-tester, bug-fixer
+  ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
+  ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
+  ├── Pipeline ————————— nlp-engineer, source-curator
+  ├── Security ————————— void-ciso
+  ├── Product —————————— ceo-advisor
+  └── Branding ————————— logo-designer
 ```
 
-### Frontend Division (`.claude/agents/`)
+### Cost Policy — $0 Absolute Ceiling
 
-| Agent | Purpose | Trigger | Adapted From |
-|-------|---------|---------|-------------|
-| `frontend-builder` | Component engineering — takes specs, builds UI following Press & Precision design system | Feature requests, build tasks | DondeAI `frontend-builder` |
-| `frontend-fixer` | UI bug remediation — root-cause grouping, surgical fixes | Bug reports, visual issues | DondeAI `frontend-fixer` |
-| `responsive-specialist` | Desktop/mobile layout optimization — ensures both layouts work correctly | New components, responsive bugs | DondeAI `css-theme-specialist` (adapted) |
+```
+ALL AI/LLM WORK USES CLAUDE CODE CLI (Max subscription).
+No Anthropic API keys. No OpenAI. No paid inference. Anywhere. Ever.
 
-### R&I Division (Design Advisors)
-
-| Agent | Purpose | Trigger | Adapted From |
-|-------|---------|---------|-------------|
-| `motion-physics-designer` | Spring physics, gesture interactions, animation choreography | Animation design decisions | DondeAI `motion-physics-designer` |
-| `data-storytelling-designer` | Bias visualization, chart design, data narrative | Dashboard/chart design | DondeAI `data-storytelling-designer` |
-| `micro-interaction-designer` | Delight moments, feedback, progressive disclosure interactions | UX polish | DondeAI `micro-interaction-designer` |
-| `accessibility-inclusivity-lead` | WCAG 2.1 AA compliance, screen reader, reduced motion | Accessibility audits | DondeAI `accessibility-inclusivity-lead` |
-
-### Infrastructure
-
-| Agent | Purpose | Trigger | Adapted From |
-|-------|---------|---------|-------------|
-| `perf-optimizer` | Frontend performance, bundle size, load time | Performance audits | DondeAI `perf-optimizer` |
-| `db-reviewer` | Supabase schema audit, data quality, query optimization | Schema changes, data issues | DondeAI `db-reviewer` |
-
-### Branding
-
-| Agent | Purpose | Trigger |
-|-------|---------|---------|
-| `logo-designer` | Brand identity — logo, favicon, visual identity, SVG assets. Expert in editorial/publication design | Branding tasks, launch prep |
-
-### Quality / Pipeline
-
-| Agent | Purpose | Trigger |
-|-------|---------|---------|
-| `pipeline-tester` | Validates pipeline output quality — article parsing, bias scores, clustering | After pipeline changes |
-| `bias-auditor` | Audits bias scoring accuracy against known benchmarks | Periodic, after algorithm changes |
-| `nlp-engineer` | NLP pipeline specialist — spaCy models, scoring algorithms | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config maintenance | Source list changes |
+Pipeline NLP: Rule-based only (spaCy, NLTK, TextBlob) — $0
+Agent work:   Claude Code CLI (opus via Max subscription) — $0
+Database:     Supabase free tier — $0
+Hosting:      GitHub Pages — $0
+CI/CD:        GitHub Actions free tier — $0
+```
 
 ### Agent Design Principles (from DondeAI)
-- **Mandatory Reads**: Every agent reads CLAUDE.md before any work
-- **Execution Protocol**: Assess → Plan → Build → Verify → Report
-- **Max Blast Radius**: Limit files changed per run (max 4 CSS, 2 JS)
-- **Safety Guardrails**: Locked design decisions cannot be changed without CEO approval
-- **$0 Cost**: All agents operate at zero cost — code generation and review only
+
+1. **No Hierarchical Delegation** — Agents cannot spawn other agents. Task routing at CEO level.
+2. **Read-First Protocol** — Every agent reads CLAUDE.md + relevant docs before any work.
+3. **Execution Protocol** — Assess → Plan → Build → Verify → Report. No exceptions.
+4. **Max Blast Radius** — Each agent bounded: max 4 CSS, 2 JS/TS, 3 Python files per run.
+5. **$0 Cost — Claude CLI Only** — All AI work via `claude` CLI command. No API keys, no per-token billing.
+6. **Model: Opus** — All agents use Claude Opus via CLI. No model downgrades.
+7. **Parallel-Safe vs Sequential** — Read-only agents run concurrently; write agents require sequencing.
+
+### Sequential Cycles
+
+```
+Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester (retest)
+Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
+Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
+```
+
+### Agent Routing
+
+| Task Pattern | Agent | Division |
+|---|---|---|
+| Bias score accuracy, calibration, benchmarking | `analytics-expert` | Quality |
+| Ground-truth validation, known-outlet comparison | `bias-auditor` | Quality |
+| Pipeline output validation, clustering quality | `pipeline-tester` | Quality |
+| Post-test bug fixing, scoring fixes | `bug-fixer` | Quality |
+| Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` | Infrastructure |
+| Article/cluster data quality, NULL audits | `db-reviewer` | Infrastructure |
+| Sync docs with codebase | `update-docs` | Infrastructure |
+| Build UI components, new features | `frontend-builder` | Frontend |
+| Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` | Frontend |
+| Desktop/mobile layout, responsive issues | `responsive-specialist` | Frontend |
+| Browser testing, click-through QA | `uat-tester` | Frontend |
+| spaCy models, bias scoring algorithms, NER | `nlp-engineer` | Pipeline |
+| Source vetting, RSS config, credibility | `source-curator` | Pipeline |
+| Security audit, secrets scan, RLS, OWASP | `void-ciso` | Security |
+| Strategic advice, roadmap, priorities | `ceo-advisor` | Product |
+| Logo, favicon, brand identity | `logo-designer` | Branding |
+
+### Locked Decisions (Require CEO Approval)
+
+- Press & Precision design system (3-voice type, dot matrix rule, newspaper grid)
+- 6-axis bias scoring model + confidence
+- Supabase as single data layer
+- Static export (Next.js → GitHub Pages)
+- 90-source curated list structure (3 tiers × 30)
+- $0 operational cost constraint
+- Claude Max CLI for all AI work (no API LLMs)
 
 ## Project Structure
 
