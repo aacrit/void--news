@@ -69,7 +69,7 @@ function HomeContent() {
           `
           )
           .order("importance_score", { ascending: false })
-          .limit(30);
+          .limit(200);
 
         if (error || !clusters || clusters.length === 0) {
           setIsLoading(false);
