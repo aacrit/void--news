@@ -184,17 +184,36 @@ def _attribution_score(text: str) -> float:
 def _metadata_score(article: dict) -> float:
     """
     Check URL, section, and other metadata for opinion markers.
-    Returns 0 or a high value (0 = no markers, 80 = opinion markers found).
+    Returns a gradated score based on marker strength:
+        90 = explicit opinion/editorial
+        50 = analysis/column (interpretive but sourced)
+        30 = blog/personal essay (lighter opinion signal)
+         0 = no markers found
     """
     url = (article.get("url", "") or "").lower()
     section = (article.get("section", "") or "").lower()
     title = (article.get("title", "") or "").lower()
 
-    # Check all text fields for opinion markers
     combined = f"{url} {section} {title}"
-    for marker in OPINION_MARKERS:
+
+    # Check in priority order — strongest match wins
+    strong_markers = ["opinion", "editorial", "op-ed", "oped", "commentary"]
+    for marker in strong_markers:
         if marker in combined:
-            return 80.0
+            return 90.0
+
+    mid_markers = ["analysis", "column", "perspective"]
+    for marker in mid_markers:
+        if marker in combined:
+            return 50.0
+
+    light_markers = [
+        "blog", "personal essay", "my turn", "viewpoint",
+        "letters to the editor", "the take", "first person",
+    ]
+    for marker in light_markers:
+        if marker in combined:
+            return 30.0
 
     return 0.0
 
@@ -282,11 +301,11 @@ def analyze_opinion(article: dict) -> int:
     # Weighted combination
     weighted = (
         pronoun * 0.12
-        + subjectivity * 0.20
+        + subjectivity * 0.23
         + modal * 0.12
         + hedging * 0.08
         + attribution * 0.15
-        + metadata * 0.15
+        + metadata * 0.12
         + rhetorical * 0.08
         + value_judg * 0.10
     )

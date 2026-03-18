@@ -38,6 +38,9 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
     (re.compile(r"goes (wrong|viral|crazy)", re.I), 8.0),
     (re.compile(r"you need to (know|see|read|hear)", re.I), 7.0),
     (re.compile(r"what (you|we) (need|should) to know", re.I), 5.0),
+    # BREAKING / EXCLUSIVE / URGENT prefix patterns
+    (re.compile(r"^(BREAKING|EXCLUSIVE|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
+    (re.compile(r"\.\.\.\s*$"), 5.0),
     # All-caps words (2+ uppercase words in a row)
     (re.compile(r"\b[A-Z]{3,}\b"), 3.0),
 ]
@@ -46,7 +49,7 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
 # Superlatives and hyperbolic words
 # ---------------------------------------------------------------------------
 SUPERLATIVES: list[str] = [
-    "worst", "best", "unprecedented", "shocking", "explosive", "breaking",
+    "worst", "best", "unprecedented", "shocking", "explosive",
     "stunning", "bombshell", "jaw-dropping", "mind-blowing", "unbelievable",
     "incredible", "outrageous", "horrifying", "terrifying", "devastating",
     "catastrophic", "disastrous", "nightmarish", "apocalyptic",

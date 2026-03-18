@@ -10,19 +10,7 @@ Uses rule-based NLP (no LLM API calls):
     - spaCy NER entity type boosting
 """
 
-import spacy
-
-# ---------------------------------------------------------------------------
-# Lazy-load spaCy model
-# ---------------------------------------------------------------------------
-_nlp = None
-
-
-def _get_nlp():
-    global _nlp
-    if _nlp is None:
-        _nlp = spacy.load("en_core_web_sm")
-    return _nlp
+from utils.nlp_shared import get_nlp
 
 
 # ---------------------------------------------------------------------------
@@ -236,7 +224,7 @@ def categorize_article(article: dict) -> list[str]:
         category_scores[category] = score
 
     # 2. NER entity type boosting
-    nlp = _get_nlp()
+    nlp = get_nlp()
     # Process title + summary (more focused than full text)
     analysis_text = f"{title} {summary}"[:10000]
     doc = nlp(analysis_text)

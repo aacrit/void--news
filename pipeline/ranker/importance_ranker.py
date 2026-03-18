@@ -18,19 +18,7 @@ import math
 import re
 from datetime import datetime, timezone
 
-import spacy
-
-# ---------------------------------------------------------------------------
-# Lazy-load spaCy model
-# ---------------------------------------------------------------------------
-_nlp = None
-
-
-def _get_nlp():
-    global _nlp
-    if _nlp is None:
-        _nlp = spacy.load("en_core_web_sm")
-    return _nlp
+from utils.nlp_shared import get_nlp
 
 
 # ---------------------------------------------------------------------------
@@ -248,7 +236,7 @@ def _geographic_impact_score(cluster_articles: list[dict]) -> float:
     Mentions of multiple countries/regions = higher impact.
     Returns 0-100.
     """
-    nlp = _get_nlp()
+    nlp = get_nlp()
 
     countries_mentioned: set[str] = set()
     global_keyword_count = 0

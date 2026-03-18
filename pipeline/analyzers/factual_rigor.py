@@ -17,19 +17,7 @@ Uses rule-based NLP heuristics (no LLM API calls):
 
 import re
 
-import spacy
-
-# ---------------------------------------------------------------------------
-# Lazy-load spaCy model
-# ---------------------------------------------------------------------------
-_nlp = None
-
-
-def _get_nlp():
-    global _nlp
-    if _nlp is None:
-        _nlp = spacy.load("en_core_web_sm")
-    return _nlp
+from utils.nlp_shared import get_nlp
 
 
 # ---------------------------------------------------------------------------
@@ -116,21 +104,22 @@ SPECIFIC_ATTRIBUTION = re.compile(
 )
 
 
-def _named_source_score(text: str) -> float:
+def _named_source_score(text: str, doc=None) -> float:
     """
     Count unique named persons used as sources via spaCy NER.
     Returns 0-100.
     """
-    nlp = _get_nlp()
-    doc = nlp(text[:100000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
 
     # Find PERSON entities near attribution verbs
     named_sources = set()
     for ent in doc.ents:
         if ent.label_ == "PERSON":
-            # Check if attribution verb appears within 50 chars of entity
-            context_start = max(0, ent.start_char - 50)
-            context_end = min(len(text), ent.end_char + 50)
+            # Check if attribution verb appears within 120 chars of entity
+            context_start = max(0, ent.start_char - 120)
+            context_end = min(len(text), ent.end_char + 120)
             context = text[context_start:context_end]
             if ATTRIBUTION_VERBS.search(context):
                 named_sources.add(ent.text.lower().strip())
@@ -140,19 +129,20 @@ def _named_source_score(text: str) -> float:
     return min(100.0, count * 20.0)
 
 
-def _org_citation_score(text: str) -> float:
+def _org_citation_score(text: str, doc=None) -> float:
     """
     Count organization entities cited as sources.
     Returns 0-100.
     """
-    nlp = _get_nlp()
-    doc = nlp(text[:100000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
 
     cited_orgs = set()
     for ent in doc.ents:
         if ent.label_ == "ORG":
-            context_start = max(0, ent.start_char - 80)
-            context_end = min(len(text), ent.end_char + 80)
+            context_start = max(0, ent.start_char - 120)
+            context_end = min(len(text), ent.end_char + 120)
             context = text[context_start:context_end]
             if ORG_CITATION_PATTERNS.search(context) or ATTRIBUTION_VERBS.search(context):
                 cited_orgs.add(ent.text.lower().strip())
@@ -234,11 +224,11 @@ def _attribution_specificity_score(text: str) -> float:
 
     # Net specificity: specific attributions boost, vague ones penalize
     if specific_count == 0 and vague_count == 0:
-        return 30.0  # neutral baseline
+        return 0.0  # no sourcing = no specificity credit
 
     total = specific_count + vague_count
     if total == 0:
-        return 30.0
+        return 0.0
 
     specific_ratio = specific_count / total
     # All specific = 100, all vague = 0, mixed = proportional
@@ -262,9 +252,13 @@ def analyze_factual_rigor(article: dict) -> int:
     if not combined.strip():
         return 10  # no text = very low rigor
 
+    # Parse once with spaCy and share the doc for NER-based sub-scores
+    nlp = get_nlp()
+    doc = nlp(combined[:15000])
+
     # Sub-scores
-    named_src = _named_source_score(combined)            # 0-100
-    org_cite = _org_citation_score(combined)             # 0-100
+    named_src = _named_source_score(combined, doc=doc)   # 0-100
+    org_cite = _org_citation_score(combined, doc=doc)    # 0-100
     data_stats = _data_statistics_score(combined)        # 0-100
     quotes = _direct_quote_score(combined)               # 0-100
     refs = _reference_score(combined)                    # 0-100

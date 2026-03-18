@@ -20,6 +20,7 @@ import json
 import os
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -261,6 +262,34 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
         print(f"  [warn] Fallback enrichment failed for {cluster_id}: {e}")
 
 
+def _scrape_single(article_data, source_map):
+    """Scrape a single article (for parallel execution)."""
+    url = article_data.get("url", "")
+    if not url:
+        return None
+    try:
+        scraped = scrape_article(url)
+        article_data["full_text"] = scraped.get("full_text", "")
+        article_data["word_count"] = scraped.get("word_count", 0)
+        article_data["image_url"] = scraped.get("image_url")
+    except Exception as e:
+        pass  # Article proceeds with empty full_text
+
+    # Determine section
+    source_id_slug = article_data.get("source_id", "")
+    source_info = source_map.get(source_id_slug, {})
+    source_tier = source_info.get("tier", "")
+    source_country = source_info.get("country", "")
+    if source_tier == "us_major":
+        article_data["section"] = "us"
+    elif source_country == "US" and source_tier == "independent":
+        article_data["section"] = "us"
+    else:
+        article_data["section"] = "world"
+
+    return article_data
+
+
 def main():
     """Run the full news ingestion + analysis pipeline."""
     start_time = time.time()
@@ -335,41 +364,24 @@ def main():
     print(f"  Total raw articles: {len(articles_raw)}")
     print(f"  Fetch errors: {len(fetch_errors)}")
 
-    # Step 4: Scrape full text and store articles
-    print("\n[4/9] Scraping article text and storing in Supabase...")
+    # Step 4: Scrape full text and store articles (parallel)
+    print("\n[4/9] Scraping article text (parallel, 15 workers)...")
     stored_articles = []
 
-    for i, article_data in enumerate(articles_raw):
-        url = article_data.get("url", "")
-        if not url:
-            continue
-        if (i + 1) % 50 == 0 or i == 0:
-            print(f"  Processing article {i + 1}/{len(articles_raw)}...")
-
-        try:
-            scraped = scrape_article(url)
-            article_data["full_text"] = scraped.get("full_text", "")
-            article_data["word_count"] = scraped.get("word_count", 0)
-            article_data["image_url"] = scraped.get("image_url")
-        except Exception as e:
-            print(f"  [error] Scrape failed for {url}: {e}")
-
-        # C-2: Determine section based on source tier and country
-        source_id_slug = article_data.get("source_id", "")
-        source_info = source_map.get(source_id_slug, {})
-        source_tier = source_info.get("tier", "")
-        source_country = source_info.get("country", "")
-        if source_tier == "us_major":
-            article_data["section"] = "us"
-        elif source_country == "US" and source_tier == "independent":
-            article_data["section"] = "us"
-        else:
-            article_data["section"] = "world"
-
-        result = insert_article(article_data)
-        if result:
-            article_data["id"] = result["id"]
-            stored_articles.append(article_data)
+    with ThreadPoolExecutor(max_workers=15) as executor:
+        futures = {
+            executor.submit(_scrape_single, article_data, source_map): article_data
+            for article_data in articles_raw
+        }
+        for i, future in enumerate(as_completed(futures)):
+            if (i + 1) % 50 == 0 or i == 0:
+                print(f"  Scraped {i + 1}/{len(articles_raw)}...")
+            result = future.result()
+            if result:
+                db_result = insert_article(result)
+                if db_result:
+                    result["id"] = db_result["id"]
+                    stored_articles.append(result)
 
     print(f"  Articles stored: {len(stored_articles)}/{len(articles_raw)}")
 

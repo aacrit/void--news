@@ -102,7 +102,7 @@
     "id": "cnn",
     "name": "CNN",
     "url": "https://www.cnn.com",
-    "rss_url": "http://rss.cnn.com/rss/cnn_topstories.rss",
+    "rss_url": "https://rss.cnn.com/rss/cnn_topstories.rss",
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
@@ -271,7 +271,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "digital",
-    "political_lean_baseline": "center-left",
+    "political_lean_baseline": "center",
     "credibility_notes": "Large digital business and news outlet. Increasingly strong on investigative and political coverage. Owned by Axel Springer."
   },
   {
@@ -388,11 +388,11 @@
     "id": "the-economist",
     "name": "The Economist",
     "url": "https://www.economist.com",
-    "rss_url": "https://www.economist.com/international/rss.xml",
+    "rss_url": "https://www.economist.com/rss",
     "tier": "international",
     "country": "UK",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-right",
     "credibility_notes": "Highly influential global affairs weekly. Self-describes as 'classical liberal.' Pro-free-market, socially liberal. Renowned for global analysis."
   },
   {
@@ -520,7 +520,7 @@
     "id": "nhk-world",
     "name": "NHK World-Japan",
     "url": "https://www3.nhk.or.jp/nhkworld/",
-    "rss_url": "https://www3.nhk.or.jp/rss/news/cat0.xml",
+    "rss_url": "https://www3.nhk.or.jp/nhkworld/en/news/list.xml",
     "tier": "international",
     "country": "JP",
     "type": "broadcast",
@@ -799,8 +799,8 @@
     "tier": "independent",
     "country": "US",
     "type": "independent",
-    "political_lean_baseline": "right",
-    "credibility_notes": "Leading libertarian magazine. Published by Reason Foundation. Covers civil liberties, free markets, and limited government. Factual with clear libertarian perspective."
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Libertarian perspective; socially liberal, fiscally conservative. Published by Reason Foundation. Covers civil liberties, free markets, and limited government. Factual with clear libertarian perspective."
   },
   {
     "id": "american-conservative",

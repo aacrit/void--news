@@ -8,7 +8,7 @@ Scores each article on a 0-100 political lean spectrum:
 
 Uses rule-based NLP heuristics (no LLM API calls):
     - Partisan keyword lexicons (50+ terms per side)
-    - Source baseline blending (0.7 * text + 0.3 * baseline)
+    - Source baseline blending (0.85 * text + 0.15 * baseline)
     - Entity sentiment via spaCy NER + TextBlob
     - Framing phrase detection
 """
@@ -16,20 +16,9 @@ Uses rule-based NLP heuristics (no LLM API calls):
 import re
 from collections import Counter
 
-import spacy
 from textblob import TextBlob
 
-# ---------------------------------------------------------------------------
-# Lazy-load spaCy model (shared across calls in the same process)
-# ---------------------------------------------------------------------------
-_nlp = None
-
-
-def _get_nlp():
-    global _nlp
-    if _nlp is None:
-        _nlp = spacy.load("en_core_web_sm")
-    return _nlp
+from utils.nlp_shared import get_nlp
 
 
 # ---------------------------------------------------------------------------
@@ -95,9 +84,7 @@ RIGHT_KEYWORDS: dict[str, int] = {
 # ---------------------------------------------------------------------------
 FRAMING_PHRASES: list[tuple[str, float]] = [
     # Left-leaning framing
-    ("experts say", -0.5), ("studies show", -0.3), ("scientists warn", -0.5),
     ("advocates argue", -0.3), ("critics of the administration", -0.3),
-    ("evidence suggests", -0.2), ("research indicates", -0.3),
     # Right-leaning framing
     ("critics say", 0.3), ("some argue", 0.1), ("many believe", 0.1),
     ("radical", 0.5), ("far-left", 0.8), ("extremist left", 0.8),
@@ -142,16 +129,33 @@ def _keyword_score(text: str) -> float:
     right_total = 0
 
     for phrase, weight in LEFT_KEYWORDS.items():
-        count = text_lower.count(phrase)
+        # Use word-boundary regex for single-word keywords to avoid substring matches
+        if " " not in phrase:
+            count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
+        else:
+            count = text_lower.count(phrase)
         left_total += count * weight
 
     for phrase, weight in RIGHT_KEYWORDS.items():
-        count = text_lower.count(phrase)
+        if " " not in phrase:
+            count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
+        else:
+            count = text_lower.count(phrase)
         right_total += count * weight
+
+    # Normalize by article length (per 500 words)
+    word_count = max(len(text_lower.split()) / 500, 1)
+    left_total = left_total / word_count
+    right_total = right_total / word_count
 
     total = left_total + right_total
     if total == 0:
         return 50.0
+
+    if total < 4:
+        # Dampen toward center when very few keywords matched
+        right_ratio = right_total / total
+        return 50.0 + (right_ratio - 0.5) * (total / 4.0) * 100.0
 
     # Proportion: right / total maps to 0-100 where 0 = all left, 100 = all right
     right_ratio = right_total / total
@@ -182,8 +186,8 @@ def _entity_sentiment_score(text: str) -> float:
     Use spaCy NER + TextBlob to gauge sentiment toward politically coded entities.
     Returns a lean shift (-15 to +15): negative = leftward, positive = rightward.
     """
-    nlp = _get_nlp()
-    doc = nlp(text[:100000])  # limit for performance
+    nlp = get_nlp()
+    doc = nlp(text[:15000])  # limit for performance
 
     left_sentiment = 0.0
     right_sentiment = 0.0
@@ -262,8 +266,8 @@ def analyze_political_lean(article: dict, source: dict) -> int:
     text_score = kw_score + framing_shift + entity_shift
     text_score = max(0.0, min(100.0, text_score))
 
-    # 4. Blend with source baseline (0.7 text + 0.3 baseline)
+    # 4. Blend with source baseline (0.85 text + 0.15 baseline)
     source_baseline = _get_source_baseline(source)
-    final_score = 0.7 * text_score + 0.3 * source_baseline
+    final_score = 0.85 * text_score + 0.15 * source_baseline
 
     return max(0, min(100, int(round(final_score))))

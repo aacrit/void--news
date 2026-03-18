@@ -15,20 +15,9 @@ Uses rule-based NLP heuristics (no LLM API calls):
 
 import re
 
-import spacy
 from textblob import TextBlob
 
-# ---------------------------------------------------------------------------
-# Lazy-load spaCy model
-# ---------------------------------------------------------------------------
-_nlp = None
-
-
-def _get_nlp():
-    global _nlp
-    if _nlp is None:
-        _nlp = spacy.load("en_core_web_sm")
-    return _nlp
+from utils.nlp_shared import get_nlp
 
 
 # ---------------------------------------------------------------------------
@@ -54,7 +43,6 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     # Immigration
     ("flood", "influx", 2),
     ("swarm", "large number", 3),
-    ("invasion", "migration", 3),
     ("illegal alien", "undocumented immigrant", 3),
     ("anchor baby", "child of immigrants", 3),
     # Political
@@ -118,14 +106,15 @@ EVASIVE_PASSIVE: list[str] = [
 ]
 
 
-def _connotation_score(text: str) -> float:
+def _connotation_score(text: str, doc=None) -> float:
     """
     Measure sentiment polarity around key entities.
     High absolute polarity around entities = more framing.
     Returns 0-100.
     """
-    nlp = _get_nlp()
-    doc = nlp(text[:80000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
 
     # Extract key entities (PERSON, ORG, GPE, NORP)
     key_labels = {"PERSON", "ORG", "GPE", "NORP", "EVENT"}
@@ -206,9 +195,9 @@ def _omission_score(text: str, cluster_articles: list[dict] | None = None) -> fl
 
     # Cross-article omission detection (if cluster provided)
     if cluster_articles and len(cluster_articles) >= 2:
-        nlp = _get_nlp()
+        nlp = get_nlp()
         # Get entities from this article
-        doc = nlp(text[:50000])
+        doc = nlp(text[:15000])
         this_entities = {ent.text.lower() for ent in doc.ents
                         if ent.label_ in ("PERSON", "ORG", "GPE")}
 
@@ -256,7 +245,7 @@ def _headline_body_divergence(title: str, body: str) -> float:
     return min(100.0, divergence * 50.0)
 
 
-def _passive_voice_score(text: str) -> float:
+def _passive_voice_score(text: str, doc=None) -> float:
     """
     Check for evasive passive voice constructions.
     Returns 0-100.
@@ -272,8 +261,9 @@ def _passive_voice_score(text: str) -> float:
         evasive_count += text_lower.count(phrase)
 
     # General passive voice density using spaCy
-    nlp = _get_nlp()
-    doc = nlp(text[:80000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
 
     passive_count = 0
     active_count = 0
@@ -316,12 +306,16 @@ def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -
     if not full_text.strip() and not title.strip():
         return 15  # default low
 
+    # Parse once with spaCy and share the doc for NER/dep-based sub-scores
+    nlp = get_nlp()
+    doc = nlp(full_text[:15000])
+
     # Sub-scores
-    connotation = _connotation_score(full_text)          # 0-100
-    keyword_emp = _keyword_emphasis_score(full_text)     # 0-100
+    connotation = _connotation_score(full_text, doc=doc)  # 0-100
+    keyword_emp = _keyword_emphasis_score(full_text)       # 0-100
     omission = _omission_score(full_text, cluster_articles)  # 0-100
     headline_div = _headline_body_divergence(title, full_text)  # 0-100
-    passive = _passive_voice_score(full_text)            # 0-100
+    passive = _passive_voice_score(full_text, doc=doc)     # 0-100
 
     # Weighted combination
     weighted = (

@@ -13,23 +13,12 @@ Uses rule-based NLP (no LLM API calls):
 
 from collections import Counter
 
-import spacy
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
-# ---------------------------------------------------------------------------
-# Lazy-load spaCy model
-# ---------------------------------------------------------------------------
-_nlp = None
-
-
-def _get_nlp():
-    global _nlp
-    if _nlp is None:
-        _nlp = spacy.load("en_core_web_sm")
-    return _nlp
+from utils.nlp_shared import get_nlp
 
 
 def _build_document(article: dict) -> str:
@@ -46,7 +35,7 @@ def _generate_cluster_title(articles: list[dict]) -> str:
     Generate a cluster title from the most common named entities
     across articles in the cluster.
     """
-    nlp = _get_nlp()
+    nlp = get_nlp()
     entity_counter: Counter = Counter()
 
     for article in articles[:20]:  # limit for performance
