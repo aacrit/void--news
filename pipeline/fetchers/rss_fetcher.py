@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 import feedparser
+import requests
 
 
 # Maximum number of parallel feed fetches
@@ -17,6 +18,12 @@ MAX_WORKERS = 10
 
 # Timeout per feed in seconds
 FEED_TIMEOUT = 30
+
+# Request headers
+HEADERS = {
+    "User-Agent": "VoidNews/1.0 (+https://github.com/aacrit/void--news)",
+    "Accept": "application/rss+xml, application/xml, text/xml, */*",
+}
 
 
 def _parse_published_date(entry: dict) -> str | None:
@@ -65,7 +72,7 @@ def _parse_entry(entry: dict, source: dict) -> dict:
         summary = summary[:997] + "..."
 
     return {
-        "source_id": source["id"],
+        "source_id": source.get("db_id") or source.get("id", ""),
         "url": entry.get("link", ""),
         "title": entry.get("title", "Untitled"),
         "summary": summary,
@@ -89,25 +96,37 @@ def _fetch_single_feed(source: dict) -> list[dict]:
         return []
 
     try:
-        feed = feedparser.parse(
-            rss_url,
-            request_headers={"User-Agent": "VoidNews/1.0 (+https://github.com/aacrit/void--news)"},
-        )
+        # Fetch via requests first (handles redirects, auth, encoding better)
+        resp = requests.get(rss_url, headers=HEADERS, timeout=FEED_TIMEOUT, allow_redirects=True)
+        resp.raise_for_status()
+
+        # Parse the fetched content
+        feed = feedparser.parse(resp.content)
 
         if feed.bozo and not feed.entries:
-            print(f"  [warn] Feed parse error for {source.get('name', 'unknown')}: {feed.bozo_exception}")
+            # Try parsing as text if content parse failed
+            feed = feedparser.parse(resp.text)
+
+        if not feed.entries:
+            print(f"  [warn] No entries in feed for {source.get('name', 'unknown')} ({rss_url})")
             return []
 
         articles = []
         for entry in feed.entries:
             article = _parse_entry(entry, source)
-            if article["url"]:  # Skip entries without URLs
+            if article["url"]:
                 articles.append(article)
 
         return articles
 
+    except requests.exceptions.Timeout:
+        print(f"  [timeout] {source.get('name', 'unknown')}: timed out after {FEED_TIMEOUT}s")
+        return []
+    except requests.exceptions.HTTPError as e:
+        print(f"  [http] {source.get('name', 'unknown')}: {e.response.status_code}")
+        return []
     except Exception as e:
-        print(f"  [error] Failed to fetch feed for {source.get('name', 'unknown')}: {e}")
+        print(f"  [error] {source.get('name', 'unknown')}: {e}")
         return []
 
 

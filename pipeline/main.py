@@ -124,7 +124,38 @@ def main():
         print("[abort] No sources loaded. Exiting.")
         return
 
-    source_map = {s.get("id", ""): s for s in sources}
+    # Seed/sync sources into Supabase and get UUID mappings
+    print("\n  Syncing sources to Supabase...")
+    source_map = {}  # slug -> source dict with UUID
+    for s in sources:
+        slug = s.get("id", "")
+        try:
+            # Check if source exists
+            existing = supabase.table("sources").select("id").eq("slug", slug).limit(1).execute()
+            if existing.data:
+                s["db_id"] = existing.data[0]["id"]
+            else:
+                # Insert new source
+                row = supabase.table("sources").insert({
+                    "slug": slug,
+                    "name": s.get("name", ""),
+                    "url": s.get("url", ""),
+                    "rss_url": s.get("rss_url"),
+                    "tier": s.get("tier", "independent"),
+                    "country": s.get("country", "US"),
+                    "type": s.get("type", "digital"),
+                    "political_lean_baseline": s.get("political_lean_baseline"),
+                    "credibility_notes": s.get("credibility_notes"),
+                }).execute()
+                if row.data:
+                    s["db_id"] = row.data[0]["id"]
+        except Exception as e:
+            if "duplicate" not in str(e).lower():
+                print(f"  [warn] Source sync failed for {slug}: {e}")
+        source_map[slug] = s
+
+    sources_with_ids = [s for s in sources if s.get("db_id")]
+    print(f"  {len(sources_with_ids)} sources synced to Supabase")
 
     # Step 2: Create pipeline run record
     print("\n[2/8] Creating pipeline run record...")
