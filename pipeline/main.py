@@ -81,6 +81,7 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
         "opinion_fact": 25,
         "factual_rigor": 50,
         "framing": 15,
+        "confidence": 0.7,
     }
 
     try:

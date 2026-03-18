@@ -4,7 +4,7 @@ Last updated: 2026-03-18
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
-A modern news aggregation platform with a sophisticated, multi-dimensional bias analysis engine. Inspired by Ground News but built to fix its shortcomings: bias analysis is free and central, per-article (not per-outlet), and sources are curated for credibility. Focused on World News and US News.
+A modern news aggregation platform with a sophisticated, multi-dimensional bias analysis engine. Built from first principles to make bias analysis free, central, and per-article — not per-outlet. Every source is curated for credibility. Covers World News and US News with a 6-axis rule-based NLP approach that goes far beyond simple left/center/right labels.
 
 ## Architecture
 

@@ -100,7 +100,7 @@ export default function FilterBar({
               padding: "var(--space-2) var(--space-3)",
               whiteSpace: "nowrap",
               cursor: "pointer",
-              minHeight: 32,
+              minHeight: 44,
               scrollSnapAlign: "start",
               transition:
                 "color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--spring)",

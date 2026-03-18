@@ -99,7 +99,7 @@ export default function Footer() {
             border: "1px solid var(--border-subtle)",
             transition:
               "color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out)",
-            minHeight: 36,
+            minHeight: 44,
             textDecoration: "none",
           }}
         >

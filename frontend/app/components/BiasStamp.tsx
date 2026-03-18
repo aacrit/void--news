@@ -63,41 +63,18 @@ function getFramingLabel(v: number): string {
 
 /* ── Color computations ──────────────────────────────────────────────────── */
 
-/** Interpolate lean color from the 0-100 spectrum */
-function getLeanColor(v: number): string {
-  if (v <= 20) return "#3B82F6";
-  if (v <= 35) {
-    const t = (v - 20) / 15;
-    return lerpColor("#3B82F6", "#60A5FA", t);
-  }
-  if (v <= 45) return "#60A5FA";
-  if (v <= 55) return "#9CA3AF";
-  if (v <= 65) return "#F97316";
-  if (v <= 80) {
-    const t = (v - 65) / 15;
-    return lerpColor("#F97316", "#EF4444", t);
-  }
-  return "#EF4444";
-}
-
-function getRigorColor(v: number): string {
-  if (v >= 60) return "#22C55E";
-  if (v >= 30) return "#EAB308";
-  return "#EF4444";
-}
-
-function getSensationalismColor(v: number): string {
-  if (v <= 25) return "#22C55E";
-  if (v <= 50) return "#EAB308";
-  if (v <= 75) return "#EF4444";
-  return "#EF4444";
-}
-
-function getFramingColor(v: number): string {
-  if (v <= 25) return "#22C55E";
-  if (v <= 50) return "#EAB308";
-  if (v <= 75) return "#EF4444";
-  return "#EF4444";
+/**
+ * Read a CSS custom property value from the document root.
+ * Returns the trimmed string value (e.g. "#3B82F6").
+ * Falls back to the provided default when running server-side or if the
+ * property is not set.
+ */
+function getCSSVar(name: string, fallback: string): string {
+  if (typeof document === "undefined") return fallback;
+  const val = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return val || fallback;
 }
 
 /** Hex color lerp */
@@ -114,6 +91,56 @@ function lerpColor(a: string, b: string, t: number): string {
   const rg = Math.round(ag + (bg - ag) * t);
   const rb = Math.round(ab + (bb - ab) * t);
   return `#${((rr << 16) | (rg << 8) | rb).toString(16).padStart(6, "0")}`;
+}
+
+/** Interpolate lean color from the 0-100 spectrum using CSS custom properties */
+function getLeanColor(v: number): string {
+  const left = getCSSVar("--bias-left", "#3B82F6");
+  const centerLeft = getCSSVar("--bias-center-left", "#60A5FA");
+  const center = getCSSVar("--bias-center", "#9CA3AF");
+  const centerRight = getCSSVar("--bias-center-right", "#F97316");
+  const right = getCSSVar("--bias-right", "#EF4444");
+
+  if (v <= 20) return left;
+  if (v <= 35) {
+    const t = (v - 20) / 15;
+    return lerpColor(left, centerLeft, t);
+  }
+  if (v <= 45) return centerLeft;
+  if (v <= 55) return center;
+  if (v <= 65) return centerRight;
+  if (v <= 80) {
+    const t = (v - 65) / 15;
+    return lerpColor(centerRight, right, t);
+  }
+  return right;
+}
+
+function getRigorColor(v: number): string {
+  const high = getCSSVar("--rigor-high", "#22C55E");
+  const medium = getCSSVar("--rigor-medium", "#EAB308");
+  const low = getCSSVar("--rigor-low", "#EF4444");
+  if (v >= 60) return high;
+  if (v >= 30) return medium;
+  return low;
+}
+
+function getSensationalismColor(v: number): string {
+  const low = getCSSVar("--sense-low", "#22C55E");
+  const medium = getCSSVar("--sense-medium", "#EAB308");
+  const high = getCSSVar("--sense-high", "#EF4444");
+  if (v <= 25) return low;
+  if (v <= 50) return medium;
+  return high;
+}
+
+function getFramingColor(v: number): string {
+  const low = getCSSVar("--sense-low", "#22C55E");
+  const medium = getCSSVar("--sense-medium", "#EAB308");
+  const high = getCSSVar("--sense-high", "#EF4444");
+  if (v <= 25) return low;
+  if (v <= 50) return medium;
+  return high;
 }
 
 /** Ring thickness based on distance from center (0-50 mapped to 2-3.5px) */
@@ -509,7 +536,7 @@ function LeanSpectrum({
           right: 0,
           height: "2px",
           background:
-            "linear-gradient(to right, #3B82F6, #9CA3AF 50%, #EF4444)",
+            "linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right))",
           borderRadius: "1px",
           opacity: 0.35,
         }}

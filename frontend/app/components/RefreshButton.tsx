@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Clock, Warning } from "@phosphor-icons/react";
 import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
    Click triggers confirmation dialog. On confirm, simulates data refresh.
+   Dialog includes focus trap, Escape key handler, and focus restoration.
    --------------------------------------------------------------------------- */
 
 interface RefreshButtonProps {
@@ -18,6 +19,10 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
   const [refreshing, setRefreshing] = useState(false);
   const [localLastUpdated, setLocalLastUpdated] = useState("6:00 AM CT");
 
+  const refreshButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
   const displayTime = externalLastUpdated
     ? new Date(externalLastUpdated).toLocaleTimeString("en-US", {
         hour: "numeric",
@@ -26,7 +31,11 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
       })
     : localLastUpdated;
 
-  const handleRefresh = () => {
+  const closeDialog = useCallback(() => {
+    setShowConfirm(false);
+  }, []);
+
+  const handleRefresh = useCallback(() => {
     setShowConfirm(false);
     setRefreshing(true);
     setTimeout(() => {
@@ -38,11 +47,64 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
       const h = hours % 12 || 12;
       setLocalLastUpdated(`${h}:${minutes} ${ampm} CT`);
     }, 1200);
-  };
+  }, []);
+
+  /* Auto-focus cancel button when dialog opens; restore focus when it closes */
+  useEffect(() => {
+    if (showConfirm) {
+      /* Small delay to let the dialog render before focusing */
+      const t = setTimeout(() => {
+        cancelButtonRef.current?.focus();
+      }, 0);
+      return () => clearTimeout(t);
+    } else {
+      /* Restore focus to the refresh button after dialog closes */
+      refreshButtonRef.current?.focus();
+    }
+  }, [showConfirm]);
+
+  /* Escape key handler + focus trap */
+  useEffect(() => {
+    if (!showConfirm) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeDialog();
+        return;
+      }
+
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [showConfirm, closeDialog]);
 
   return (
     <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
       <button
+        ref={refreshButtonRef}
         onClick={() => setShowConfirm(true)}
         disabled={refreshing}
         aria-label={`Last updated ${displayTime}. Click to refresh.`}
@@ -61,7 +123,7 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
           transition:
             "opacity var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out)",
           fontFeatureSettings: '"tnum" 1',
-          minHeight: 32,
+          minHeight: 44,
         }}
         onMouseEnter={(e) => {
           if (!refreshing)
@@ -89,17 +151,18 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
         <>
           {/* Backdrop */}
           <div
-            onClick={() => setShowConfirm(false)}
+            onClick={closeDialog}
             style={{
               position: "fixed",
               inset: 0,
               zIndex: "var(--z-overlay)",
-              backgroundColor: "rgba(0, 0, 0, 0.15)",
+              backgroundColor: "var(--overlay-backdrop)",
               animation: "fadeIn var(--dur-normal) var(--ease-out)",
             }}
           />
           {/* Dialog */}
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Confirm refresh"
@@ -146,7 +209,8 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
             </p>
             <div style={{ display: "flex", gap: "var(--space-3)", justifyContent: "flex-end" }}>
               <button
-                onClick={() => setShowConfirm(false)}
+                ref={cancelButtonRef}
+                onClick={closeDialog}
                 style={{
                   fontFamily: "var(--font-structural)",
                   fontSize: "var(--text-sm)",
@@ -155,7 +219,7 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
                   padding: "var(--space-2) var(--space-4)",
                   border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
-                  minHeight: 36,
+                  minHeight: 44,
                   minWidth: 44,
                   transition: "border-color var(--dur-fast) var(--ease-out)",
                 }}
@@ -172,7 +236,7 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
                   backgroundColor: "var(--fg-primary)",
                   padding: "var(--space-2) var(--space-4)",
                   borderRadius: "var(--radius-md)",
-                  minHeight: 36,
+                  minHeight: 44,
                   minWidth: 44,
                   transition:
                     "opacity var(--dur-fast) var(--ease-out)",

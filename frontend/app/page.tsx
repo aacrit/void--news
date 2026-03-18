@@ -13,6 +13,17 @@ import LoadingSkeleton from "./components/LoadingSkeleton";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Footer from "./components/Footer";
 
+function capitalize(s: string): string {
+  if (!s) return s;
+  // Map DB category slugs to display names
+  const map: Record<string, string> = {
+    politics: "Politics", economy: "Economy", tech: "Tech", technology: "Tech",
+    health: "Health", environment: "Environment", conflict: "Conflict",
+    science: "Science", culture: "Culture", sports: "Sports",
+  };
+  return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 /* ---------------------------------------------------------------------------
    Homepage — News Feed
    Desktop: broadsheet grid — lead story + asymmetric layout + dense compact
@@ -85,7 +96,7 @@ function HomeContent() {
               name: "Multiple Sources",
               count: cluster.source_count || 1,
             },
-            category: (cluster.category || "Politics") as Category,
+            category: capitalize(cluster.category || "politics") as Category,
             publishedAt:
               cluster.first_published ||
               cluster.last_updated ||
@@ -305,12 +316,6 @@ function HomeContent() {
               <div
                 key={story.id}
                 className="grid-medium__item"
-                style={{
-                  borderRight:
-                    idx < mediumStories.length - 1
-                      ? "var(--rule-thin)"
-                      : "none",
-                }}
               >
                 <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
               </div>
@@ -400,6 +405,7 @@ function HomeContent() {
         .grid-medium__item {
           padding-right: 0;
           padding-left: 0;
+          border-right: none;
         }
 
         @media (min-width: 768px) {
@@ -408,10 +414,11 @@ function HomeContent() {
             gap: 0 var(--space-5);
           }
           .grid-medium__item {
+            border-right: var(--rule-thin);
             padding-right: var(--space-5);
           }
           .grid-medium__item:nth-child(2n) {
-            border-right: none !important;
+            border-right: none;
             padding-right: 0;
           }
         }
@@ -421,13 +428,20 @@ function HomeContent() {
             grid-template-columns: repeat(3, 1fr);
             gap: 0 var(--space-5);
           }
+          .grid-medium__item {
+            border-right: var(--rule-thin);
+            padding-right: var(--space-5);
+          }
           .grid-medium__item:nth-child(2n) {
-            border-right: var(--rule-thin) !important;
+            border-right: var(--rule-thin);
             padding-right: var(--space-5);
           }
           .grid-medium__item:nth-child(3n) {
-            border-right: none !important;
+            border-right: none;
             padding-right: 0;
+          }
+          .grid-medium__item:last-child {
+            border-right: none;
           }
         }
 

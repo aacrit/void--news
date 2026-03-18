@@ -8,18 +8,18 @@
 
 ## 1. Vision
 
-A free, transparent news aggregation platform that delivers World News and US News with sophisticated, per-article bias analysis. Unlike Ground News, bias insights are central and free — not paywalled. Unlike generic aggregators, every source is vetted for credibility.
+A free, transparent news aggregation platform that delivers World News and US News with sophisticated, per-article bias analysis. Bias insights are central and free — never paywalled. Every source is vetted for credibility, and analysis goes far beyond simple left/right labels.
 
 **One sentence:** The news, dissected — see what every outlet is saying, how they're saying it, and what they're leaving out.
 
 ## 2. Problem Statement
 
-| Problem | Ground News Weakness | void --news Solution |
+| Problem | Industry Status Quo | void --news Solution |
 |---------|---------------------|---------------------|
-| Bias is per-outlet, not per-article | Labels CNN as "left" regardless of the article | Multi-axis NLP analysis on every individual article |
-| Bias features are paywalled | Free tier shows limited bias info | All bias data is free and central to the experience |
-| Aggregates untrusted sources | Includes low-credibility outlets | 90 curated, vetted sources only |
-| Left/right is too simplistic | Single-axis political spectrum | 6-axis analysis: political lean, sensationalism, opinion/fact, factual rigor, framing, per-topic tracking |
+| Bias is per-outlet, not per-article | Most tools label an entire outlet as "left" or "right" regardless of the specific article | Multi-axis NLP analysis on every individual article |
+| Bias features are paywalled or limited | Free tiers show limited bias info, full insights require subscriptions | All bias data is free and central to the experience |
+| Aggregators include untrusted sources | Low-credibility outlets mixed in with reputable ones | 90 curated, vetted sources only — quality over quantity |
+| Left/right is too simplistic | Single-axis political spectrum (left/center/right buckets) | 6-axis analysis: political lean, sensationalism, opinion/fact, factual rigor, framing, per-topic tracking |
 
 ## 3. Scope
 
@@ -72,7 +72,7 @@ GitHub Actions (2x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 | # | Decision | Choice | Rationale |
 |---|----------|--------|-----------|
-| 1 | Bias model | Per-article, 6-axis, rule-based NLP | Fixes Ground News's per-outlet limitation |
+| 1 | Bias model | Per-article, 6-axis, rule-based NLP | Granular per-article analysis instead of static per-outlet labels |
 | 2 | Source strategy | 90 curated, vetted only | Quality over quantity |
 | 3 | Pipeline frequency | 2x daily + frontend refresh from Supabase | Balances freshness with quality analysis time |
 | 4 | Frontend framework | Next.js (static export) + React + TypeScript | Modern, dynamic, static-exportable |
