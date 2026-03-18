@@ -11,7 +11,7 @@ import {
 import type { Story, StorySource, DeepDiveData } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/mockData";
-import BiasBars from "./BiasBars";
+import BiasStamp from "./BiasStamp";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -152,14 +152,14 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         /* Transform raw Supabase data into DeepDiveData shape */
         const storySourceList: StorySource[] = [];
         for (const row of raw) {
-          const article = row.article as Record<string, unknown> | null;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const article = row.article as any;
           if (!article) continue;
 
-          const source = article.source as Record<string, unknown> | null;
-          const biasArr = article.bias_scores as
-            | Record<string, unknown>[]
-            | null;
-          const bias = biasArr && biasArr.length > 0 ? biasArr[0] : null;
+          const source = article.source;
+          const biasArr = article.bias_scores;
+          const bias =
+            Array.isArray(biasArr) && biasArr.length > 0 ? biasArr[0] : null;
 
           storySourceList.push({
             name: (source?.name as string) ?? "Unknown",
@@ -697,7 +697,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                     </span>
 
                     {/* Bias bars */}
-                    <BiasBars scores={src.biasScores} size="sm" />
+                    <BiasStamp scores={src.biasScores} size="sm" />
 
                     {/* External link */}
                     <a

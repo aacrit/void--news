@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import type { Section, Category, Story } from "./lib/types";
 import { supabase } from "./lib/supabase";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
 import StoryCard from "./components/StoryCard";
+import DeepDive from "./components/DeepDive";
 import RefreshButton from "./components/RefreshButton";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -29,6 +30,15 @@ function HomeContent() {
   const [activeCategory, setActiveCategory] = useState<"All" | Category>(
     "All"
   );
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+
+  const handleStoryClick = useCallback((story: Story) => {
+    setSelectedStory(story);
+  }, []);
+
+  const handleDeepDiveClose = useCallback(() => {
+    setSelectedStory(null);
+  }, []);
 
   useEffect(() => {
     async function loadFromSupabase() {
@@ -276,7 +286,7 @@ function HomeContent() {
         {/* Lead story */}
         {!isLoading && leadStory && (
           <section aria-label="Lead story">
-            <LeadStory story={leadStory} />
+            <LeadStory story={leadStory} onStoryClick={handleStoryClick} />
           </section>
         )}
 
@@ -300,7 +310,7 @@ function HomeContent() {
                       : "none",
                 }}
               >
-                <StoryCard story={story} index={idx + 1} />
+                <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
               </div>
             ))}
           </section>
@@ -314,6 +324,7 @@ function HomeContent() {
                 <StoryCard
                   story={story}
                   index={idx + mediumStories.length + 1}
+                  onStoryClick={handleStoryClick}
                 />
               </div>
             ))}
@@ -370,6 +381,11 @@ function HomeContent() {
 
       {/* Footer */}
       {!isLoading && <Footer />}
+
+      {/* Deep Dive panel — slides in when a story is selected */}
+      {selectedStory && (
+        <DeepDive story={selectedStory} onClose={handleDeepDiveClose} />
+      )}
 
       {/* Page-level responsive styles */}
       <style>{`
