@@ -17,9 +17,13 @@ export async function fetchStories() {
       importance_score,
       source_count,
       first_published,
-      last_updated
+      last_updated,
+      divergence_score,
+      headline_rank,
+      coverage_velocity,
+      bias_diversity
     `)
-    .order('importance_score', { ascending: false })
+    .order('headline_rank', { ascending: false })
     .limit(30);
 
   if (clusterError || !clusters?.length) {
@@ -27,6 +31,45 @@ export async function fetchStories() {
   }
 
   return clusters;
+}
+
+/**
+ * Fetch aggregated bias scores for multiple clusters in a single query.
+ * Uses the cluster_bias_summary view to avoid N+1 queries.
+ */
+export async function fetchClusterBiasSummary(clusterIds: string[]) {
+  const { data, error } = await supabase
+    .from('cluster_bias_summary')
+    .select('*')
+    .in('cluster_id', clusterIds);
+
+  if (error) {
+    // View may not be deployed yet — return empty
+    console.warn('cluster_bias_summary query failed:', error.message);
+    return null;
+  }
+
+  // Index by cluster_id for O(1) lookup
+  const map: Record<string, {
+    avg_political_lean: number;
+    avg_sensationalism: number;
+    avg_opinion_fact: number;
+    avg_factual_rigor: number;
+    avg_framing: number;
+    lean_spread: number;
+    framing_spread: number;
+    lean_range: number;
+    sensationalism_spread: number;
+    opinion_spread: number;
+    aggregate_confidence: number;
+    analyzed_article_count: number;
+  }> = {};
+
+  for (const row of (data || [])) {
+    map[row.cluster_id] = row;
+  }
+
+  return map;
 }
 
 export async function fetchArticlesForCluster(clusterId: string) {

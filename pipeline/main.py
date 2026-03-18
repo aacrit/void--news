@@ -10,10 +10,10 @@ Steps:
     3. Fetch articles via RSS feeds (parallel)
     4. Scrape full article text for each fetched article
     5. Store articles in Supabase
-    6. Run bias analysis on each article (5 axes)
+    6. Run bias analysis on each article (5 axes + confidence)
     7. Cluster articles into stories
-    8. Categorize and rank clusters
-    9. Store clusters and linkages, finalize pipeline run
+    8. Categorize and rank clusters (v2 — 7 signals + divergence)
+    9. Store clusters with enrichment data, finalize pipeline run
 """
 
 import json
@@ -48,7 +48,7 @@ try:
     from analyzers.framing import analyze_framing
     from clustering.story_cluster import cluster_stories
     from categorizer.auto_categorize import categorize_article
-    from ranker.importance_ranker import rank_importance
+    from ranker.importance_ranker import rank_importance, compute_coverage_velocity
     ANALYSIS_AVAILABLE = True
 except ImportError as e:
     print(f"[warn] Analysis modules not available ({e}). Running fetch-only mode.")
@@ -68,9 +68,46 @@ def load_sources() -> list[dict]:
     return sources
 
 
+def compute_confidence(article: dict, scores: dict) -> float:
+    """
+    Compute per-article analysis confidence based on text quality
+    and signal strength.
+
+    Factors:
+        - Word count: short articles have less signal (30%)
+        - Signal variance: scores near defaults = low confidence (40%)
+        - Text availability: no full text = very low confidence (30%)
+    """
+    word_count = article.get("word_count", 0) or 0
+    full_text = article.get("full_text", "") or ""
+
+    # Length confidence: articles under 500 words have less reliable analysis
+    # 100 words = 0.2, 300 = 0.6, 500+ = 1.0
+    length_conf = min(1.0, word_count / 500.0) if word_count > 0 else 0.1
+
+    # Text availability: no full text means analysis ran on title/summary only
+    text_conf = 1.0 if len(full_text) > 200 else (0.5 if full_text else 0.1)
+
+    # Signal strength: how many axes deviated from defaults
+    defaults = {
+        "political_lean": 50, "sensationalism": 10,
+        "opinion_fact": 25, "factual_rigor": 50, "framing": 15,
+    }
+    deviations = 0
+    for key, default_val in defaults.items():
+        actual = scores.get(key, default_val)
+        if abs(actual - default_val) > 5:
+            deviations += 1
+    # 0 deviations = 0.3 (all defaults), 5 deviations = 1.0 (all fired)
+    signal_conf = 0.3 + (deviations / 5.0) * 0.7
+
+    confidence = (length_conf * 0.30) + (text_conf * 0.30) + (signal_conf * 0.40)
+    return round(max(0.1, min(1.0, confidence)), 2)
+
+
 def run_bias_analysis(article: dict, source: dict) -> dict:
     """
-    Run all 5 bias analyzers on a single article.
+    Run all 5 bias analyzers on a single article with computed confidence.
 
     Returns a dict with score keys ready for DB insertion.
     Each analyzer is run independently; failures fall back to defaults.
@@ -109,7 +146,107 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
     except Exception as e:
         print(f"    [warn] Framing failed: {e}")
 
+    # Compute real confidence based on text quality and signal strength
+    scores["confidence"] = compute_confidence(article, scores)
+
     return scores
+
+
+def enrich_cluster(cluster_id: str) -> None:
+    """
+    Call the Supabase RPC to refresh enrichment data for a cluster.
+    Falls back to a manual update if the function doesn't exist.
+    """
+    try:
+        supabase.rpc("refresh_cluster_enrichment", {"p_cluster_id": cluster_id}).execute()
+    except Exception as e:
+        # RPC not deployed yet — compute client-side as fallback
+        if "function" in str(e).lower() or "does not exist" in str(e).lower():
+            _enrich_cluster_fallback(cluster_id)
+        else:
+            print(f"  [warn] Cluster enrichment failed for {cluster_id}: {e}")
+
+
+def _enrich_cluster_fallback(cluster_id: str) -> None:
+    """
+    Client-side fallback for cluster enrichment when the DB function
+    hasn't been deployed yet.
+    """
+    try:
+        # Fetch bias scores for this cluster's articles
+        result = (
+            supabase.table("cluster_articles")
+            .select("article_id")
+            .eq("cluster_id", cluster_id)
+            .execute()
+        )
+        if not result.data:
+            return
+
+        article_ids = [r["article_id"] for r in result.data]
+
+        scores_result = (
+            supabase.table("bias_scores")
+            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing")
+            .in_("article_id", article_ids)
+            .execute()
+        )
+        if not scores_result.data:
+            return
+
+        scores = scores_result.data
+        count = len(scores)
+
+        # Compute averages
+        avg = lambda key: round(sum(s[key] for s in scores) / count) if count else 0
+        avg_pl = avg("political_lean")
+        avg_sens = avg("sensationalism")
+        avg_of = avg("opinion_fact")
+        avg_fr = avg("factual_rigor")
+        avg_frm = avg("framing")
+
+        # Compute spread
+        import math
+        def stddev(vals):
+            if len(vals) < 2:
+                return 0.0
+            mean = sum(vals) / len(vals)
+            return math.sqrt(sum((v - mean) ** 2 for v in vals) / len(vals))
+
+        pl_values = [s["political_lean"] for s in scores]
+        frm_values = [s["framing"] for s in scores]
+
+        lean_spread = round(stddev(pl_values), 1)
+        framing_spread = round(stddev(frm_values), 1)
+        lean_range = max(pl_values) - min(pl_values) if pl_values else 0
+
+        # Divergence score
+        divergence = min(100.0,
+            (min(lean_range / 60.0, 1.0) * 40.0) +
+            (min(lean_spread / 20.0, 1.0) * 30.0) +
+            (min(framing_spread / 25.0, 1.0) * 30.0)
+        )
+
+        bias_diversity = {
+            "avg_political_lean": avg_pl,
+            "avg_sensationalism": avg_sens,
+            "avg_opinion_fact": avg_of,
+            "avg_factual_rigor": avg_fr,
+            "avg_framing": avg_frm,
+            "lean_spread": lean_spread,
+            "framing_spread": framing_spread,
+            "lean_range": lean_range,
+            "aggregate_confidence": min(1.0, count / 5.0),
+            "analyzed_count": count,
+        }
+
+        supabase.table("story_clusters").update({
+            "divergence_score": round(divergence, 2),
+            "bias_diversity": json.dumps(bias_diversity),
+        }).eq("id", cluster_id).execute()
+
+    except Exception as e:
+        print(f"  [warn] Fallback enrichment failed for {cluster_id}: {e}")
 
 
 def main():
@@ -120,7 +257,7 @@ def main():
     print("=" * 60)
 
     # Step 1: Load sources
-    print("\n[1/8] Loading sources...")
+    print("\n[1/9] Loading sources...")
     sources = load_sources()
     if not sources:
         print("[abort] No sources loaded. Exiting.")
@@ -160,7 +297,7 @@ def main():
     print(f"  {len(sources_with_ids)} sources synced to Supabase")
 
     # Step 2: Create pipeline run record
-    print("\n[2/8] Creating pipeline run record...")
+    print("\n[2/9] Creating pipeline run record...")
     pipeline_run = create_pipeline_run()
     run_id = pipeline_run["id"] if pipeline_run else None
     if run_id:
@@ -169,13 +306,13 @@ def main():
         print("  [warn] Could not create pipeline run record.")
 
     # Step 3: Fetch articles via RSS
-    print("\n[3/8] Fetching RSS feeds...")
+    print("\n[3/9] Fetching RSS feeds...")
     articles_raw, fetch_errors = fetch_from_rss(sources)
     print(f"  Total raw articles: {len(articles_raw)}")
     print(f"  Fetch errors: {len(fetch_errors)}")
 
     # Step 4: Scrape full text and store articles
-    print("\n[4/8] Scraping article text and storing in Supabase...")
+    print("\n[4/9] Scraping article text and storing in Supabase...")
     stored_articles = []
 
     for i, article_data in enumerate(articles_raw):
@@ -215,12 +352,14 @@ def main():
     # Step 5: Run bias analysis on each article
     articles_analyzed = 0
     clusters_created = 0
+    # Collect per-article bias scores keyed by article_id for ranking
+    article_bias_map: dict[str, dict] = {}
 
     if not ANALYSIS_AVAILABLE:
-        print("\n[5-8] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
+        print("\n[5-9] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
     else:
-        # Step 5: Bias analysis
-        print(f"\n[5/8] Running bias analysis on {len(stored_articles)} articles...")
+        # Step 5: Bias analysis with computed confidence
+        print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles...")
         for i, article in enumerate(stored_articles):
             if (i + 1) % 25 == 0 or i == 0:
                 print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
@@ -231,10 +370,14 @@ def main():
             result = insert_bias_scores(bias_scores)
             if result:
                 articles_analyzed += 1
+                # Store for ranking
+                article_bias_map[article.get("id", "")] = {
+                    k: v for k, v in bias_scores.items() if k != "article_id"
+                }
         print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
 
         # Step 6: Cluster articles
-        print(f"\n[6/8] Clustering {len(stored_articles)} articles into stories...")
+        print(f"\n[6/9] Clustering {len(stored_articles)} articles into stories...")
         clusters = []
         try:
             clusters = cluster_stories(stored_articles)
@@ -242,36 +385,56 @@ def main():
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
 
-        # Step 7: Categorize and rank
-        print("\n[7/8] Categorizing and ranking clusters...")
+        # Step 7: Categorize and rank with v2 engine
+        print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
+
+            # Categorize
             try:
                 categories = categorize_article(cluster_articles_list[0]) if cluster_articles_list else ["politics"]
                 cluster["category"] = categories[0] if categories else "politics"
             except Exception:
                 cluster["category"] = "politics"
+
+            # Gather bias scores for articles in this cluster
+            cluster_bias_scores = []
+            for art in cluster_articles_list:
+                art_id = art.get("id", "")
+                if art_id in article_bias_map:
+                    cluster_bias_scores.append(article_bias_map[art_id])
+
+            # Rank with v2 engine (7 signals + divergence)
             try:
-                cluster["importance_score"] = rank_importance(cluster_articles_list, sources)
-            except Exception:
+                rank_result = rank_importance(
+                    cluster_articles_list, sources, cluster_bias_scores
+                )
+                cluster["importance_score"] = rank_result["importance_score"]
+                cluster["divergence_score"] = rank_result["divergence_score"]
+                cluster["coverage_velocity"] = rank_result["coverage_velocity"]
+                cluster["headline_rank"] = rank_result["headline_rank"]
+            except Exception as e:
+                print(f"  [warn] Ranking failed: {e}")
                 cluster["importance_score"] = 20.0
+                cluster["divergence_score"] = 0.0
+                cluster["coverage_velocity"] = 0
+                cluster["headline_rank"] = 20.0
 
-        clusters.sort(key=lambda c: c.get("importance_score", 0), reverse=True)
+        clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
 
-        # Step 8: Store clusters
-        print("\n[8/8] Storing clusters...")
+        # Step 8: Store clusters with enrichment data
+        print("\n[8/9] Storing clusters with enrichment data...")
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
-            # C-2: Determine cluster section from its articles
-            # Use the most common section among articles; default to "world"
+            # Determine cluster section from its articles
             section_counts: dict[str, int] = {}
             for art in cluster_articles_list:
                 sec = art.get("section", "world")
                 section_counts[sec] = section_counts.get(sec, 0) + 1
             cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
-            # C-3: Populate cluster summary from first article
+            # Populate cluster summary from first article
             cluster_summary = ""
             if cluster_articles_list:
                 first_art = cluster_articles_list[0]
@@ -287,6 +450,9 @@ def main():
                 "importance_score": round(cluster.get("importance_score", 0.0), 2),
                 "source_count": cluster.get("source_count", 0),
                 "first_published": cluster.get("first_published", ""),
+                "divergence_score": round(cluster.get("divergence_score", 0.0), 2),
+                "headline_rank": round(cluster.get("headline_rank", 0.0), 2),
+                "coverage_velocity": cluster.get("coverage_velocity", 0),
             })
             if result:
                 clusters_created += 1
@@ -295,7 +461,10 @@ def main():
                     if article_id:
                         link_article_to_cluster(cluster_id, article_id)
 
-    print(f"  Clusters stored: {clusters_created}/{len(clusters)}")
+                # Step 9: Enrich cluster with aggregated bias data
+                enrich_cluster(cluster_id)
+
+    print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
     # Finalize
     duration = time.time() - start_time

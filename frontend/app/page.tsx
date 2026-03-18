@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import type { Section, Category, Story } from "./lib/types";
-import { supabase } from "./lib/supabase";
+import type { Section, Category, Story, BiasScores, BiasSpread } from "./lib/types";
+import { supabase, fetchClusterBiasSummary } from "./lib/supabase";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
@@ -54,7 +54,7 @@ function HomeContent() {
     async function loadFromSupabase() {
       try {
         // Fetch world and US stories separately to ensure both sections have content
-        const selectFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated`;
+        const selectFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity`;
 
         const [worldRes, usRes] = await Promise.all([
           supabase
@@ -81,6 +81,10 @@ function HomeContent() {
           return;
         }
 
+        // Fetch aggregated bias scores from the view (single query, no N+1)
+        const clusterIds = clusters.map((c: { id: string }) => c.id);
+        const biasSummaryMap = await fetchClusterBiasSummary(clusterIds);
+
         // Transform clusters into Story format for the components
         const liveStories: Story[] = clusters.map(
           (cluster: {
@@ -93,33 +97,83 @@ function HomeContent() {
             source_count: number | null;
             first_published: string | null;
             last_updated: string | null;
-          }) => ({
-            id: cluster.id,
-            title: cluster.title,
-            summary: cluster.summary || "",
-            source: {
-              name: "Multiple Sources",
-              count: cluster.source_count || 1,
-            },
-            category: capitalize(cluster.category || "politics") as Category,
-            publishedAt:
-              cluster.first_published ||
-              cluster.last_updated ||
-              new Date().toISOString(),
-            // TODO(m-6): Bias scores are hardcoded placeholders. To show real
-            // data, join cluster_articles + bias_scores in the Supabase query
-            // and compute per-cluster averages. Deferred to avoid N+1 queries
-            // on page load — consider a database view or RPC for this.
-            biasScores: {
-              politicalLean: 50,
-              sensationalism: 30,
-              opinionFact: 25,
-              factualRigor: 75,
-              framing: 40,
-            },
-            section: (cluster.section || "world") as Section,
-            importance: cluster.importance_score || 50,
-          })
+            divergence_score: number | null;
+            headline_rank: number | null;
+            coverage_velocity: number | null;
+            bias_diversity: Record<string, number> | null;
+          }) => {
+            // Priority: 1) cluster_bias_summary view, 2) bias_diversity JSONB, 3) defaults
+            const viewData = biasSummaryMap?.[cluster.id];
+            const jsonData = cluster.bias_diversity;
+
+            const biasScores: BiasScores = viewData
+              ? {
+                  politicalLean: viewData.avg_political_lean ?? 50,
+                  sensationalism: viewData.avg_sensationalism ?? 30,
+                  opinionFact: viewData.avg_opinion_fact ?? 25,
+                  factualRigor: viewData.avg_factual_rigor ?? 75,
+                  framing: viewData.avg_framing ?? 40,
+                }
+              : jsonData && jsonData.avg_political_lean != null
+              ? {
+                  politicalLean: jsonData.avg_political_lean ?? 50,
+                  sensationalism: jsonData.avg_sensationalism ?? 30,
+                  opinionFact: jsonData.avg_opinion_fact ?? 25,
+                  factualRigor: jsonData.avg_factual_rigor ?? 75,
+                  framing: jsonData.avg_framing ?? 40,
+                }
+              : {
+                  politicalLean: 50,
+                  sensationalism: 30,
+                  opinionFact: 25,
+                  factualRigor: 75,
+                  framing: 40,
+                };
+
+            const biasSpread: BiasSpread | undefined = viewData
+              ? {
+                  leanSpread: viewData.lean_spread ?? 0,
+                  framingSpread: viewData.framing_spread ?? 0,
+                  leanRange: viewData.lean_range ?? 0,
+                  sensationalismSpread: viewData.sensationalism_spread ?? 0,
+                  opinionSpread: viewData.opinion_spread ?? 0,
+                  aggregateConfidence: viewData.aggregate_confidence ?? 0,
+                  analyzedCount: viewData.analyzed_article_count ?? 0,
+                }
+              : jsonData && jsonData.lean_spread != null
+              ? {
+                  leanSpread: jsonData.lean_spread ?? 0,
+                  framingSpread: jsonData.framing_spread ?? 0,
+                  leanRange: jsonData.lean_range ?? 0,
+                  sensationalismSpread: 0,
+                  opinionSpread: 0,
+                  aggregateConfidence: jsonData.aggregate_confidence ?? 0,
+                  analyzedCount: jsonData.analyzed_count ?? 0,
+                }
+              : undefined;
+
+            return {
+              id: cluster.id,
+              title: cluster.title,
+              summary: cluster.summary || "",
+              source: {
+                name: "Multiple Sources",
+                count: cluster.source_count || 1,
+              },
+              category: capitalize(cluster.category || "politics") as Category,
+              publishedAt:
+                cluster.first_published ||
+                cluster.last_updated ||
+                new Date().toISOString(),
+              biasScores,
+              biasSpread,
+              section: (cluster.section || "world") as Section,
+              importance: cluster.headline_rank || cluster.importance_score || 50,
+              divergenceScore: cluster.divergence_score || 0,
+              headlineRank: cluster.headline_rank || cluster.importance_score || 50,
+              coverageVelocity: cluster.coverage_velocity || 0,
+            };
+          }
         );
 
         setStories(liveStories);
@@ -150,7 +204,7 @@ function HomeContent() {
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
-    return filtered.sort((a, b) => b.importance - a.importance);
+    return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
   }, [stories, activeSection, activeCategory]);
 
   const leadStory = filteredStories[0];

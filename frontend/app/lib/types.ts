@@ -11,6 +11,17 @@ export interface BiasScores {
   framing: number;
 }
 
+/** Spread metrics showing how much sources diverge on each axis */
+export interface BiasSpread {
+  leanSpread: number;
+  framingSpread: number;
+  leanRange: number;
+  sensationalismSpread: number;
+  opinionSpread: number;
+  aggregateConfidence: number;
+  analyzedCount: number;
+}
+
 export interface Source {
   name: string;
   count: number;
@@ -37,8 +48,12 @@ export interface Story {
   category: Category;
   publishedAt: string;
   biasScores: BiasScores;
+  biasSpread?: BiasSpread;
   section: "world" | "us";
   importance: number;
+  divergenceScore: number;
+  headlineRank: number;
+  coverageVelocity: number;
   deepDive?: DeepDiveData;
   articleUrl?: string;
 }
