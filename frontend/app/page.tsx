@@ -53,25 +53,30 @@ function HomeContent() {
   useEffect(() => {
     async function loadFromSupabase() {
       try {
-        const { data: clusters, error } = await supabase
-          .from("story_clusters")
-          .select(
-            `
-            id,
-            title,
-            summary,
-            category,
-            section,
-            importance_score,
-            source_count,
-            first_published,
-            last_updated
-          `
-          )
-          .order("importance_score", { ascending: false })
-          .limit(200);
+        // Fetch world and US stories separately to ensure both sections have content
+        const selectFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated`;
 
-        if (error || !clusters || clusters.length === 0) {
+        const [worldRes, usRes] = await Promise.all([
+          supabase
+            .from("story_clusters")
+            .select(selectFields)
+            .eq("section", "world")
+            .order("first_published", { ascending: false })
+            .limit(100),
+          supabase
+            .from("story_clusters")
+            .select(selectFields)
+            .eq("section", "us")
+            .order("first_published", { ascending: false })
+            .limit(100),
+        ]);
+
+        const clusters = [
+          ...(worldRes.data || []),
+          ...(usRes.data || []),
+        ];
+
+        if (clusters.length === 0) {
           setIsLoading(false);
           return;
         }
