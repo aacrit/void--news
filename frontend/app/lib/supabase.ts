@@ -61,6 +61,36 @@ export async function fetchArticlesForCluster(clusterId: string) {
   return data;
 }
 
+export async function fetchDeepDiveData(clusterId: string) {
+  const { data, error } = await supabase
+    .from('cluster_articles')
+    .select(`
+      article:articles (
+        id,
+        title,
+        url,
+        summary,
+        published_at,
+        source:sources (
+          name,
+          tier,
+          url
+        ),
+        bias_scores (
+          political_lean,
+          sensationalism,
+          opinion_fact,
+          factual_rigor,
+          framing
+        )
+      )
+    `)
+    .eq('cluster_id', clusterId);
+
+  if (error) return null;
+  return data;
+}
+
 export async function fetchLastPipelineRun() {
   const { data, error } = await supabase
     .from('pipeline_runs')

@@ -652,7 +652,7 @@ export const mockStories: Story[] = [
       "Education unions in 14 states plan coordinated walkouts protesting mandatory AI-assisted grading systems and the lack of teacher input in technology adoption decisions.",
     source: { name: "NPR", count: 11 },
     category: "Society",
-ино    publishedAt: "2026-03-17T14:00:00Z",
+    publishedAt: "2026-03-17T14:00:00Z",
     biasScores: {
       politicalLean: 35,
       sensationalism: 38,

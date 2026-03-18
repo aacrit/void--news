@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowClockwise, Clock, Warning } from "@phosphor-icons/react";
+import { Clock, Warning } from "@phosphor-icons/react";
+import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
@@ -72,14 +73,10 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
             "var(--border-subtle)";
         }}
       >
-        {/* Refresh icon */}
-        <ArrowClockwise
-          size={12}
-          weight="light"
-          aria-hidden="true"
-          style={{
-            animation: refreshing ? "spin 1s linear infinite" : "none",
-          }}
+        {/* Refresh icon — scale animation when refreshing */}
+        <ScaleIcon
+          animation={refreshing ? "loading" : "none"}
+          size={14}
         />
         <Clock size={12} weight="light" aria-hidden="true" />
         <span>
@@ -188,13 +185,6 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
         </>
       )}
 
-      {/* Spin keyframe injected */}
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

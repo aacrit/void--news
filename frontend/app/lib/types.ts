@@ -40,6 +40,7 @@ export interface Story {
   section: "world" | "us";
   importance: number;
   deepDive?: DeepDiveData;
+  articleUrl?: string;
 }
 
 export type Category =

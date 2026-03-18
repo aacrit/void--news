@@ -3,11 +3,12 @@
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/mockData";
 import { ArrowSquareOut, Stack } from "@phosphor-icons/react";
-import BiasBars from "./BiasBars";
+import BiasStamp from "./BiasStamp";
 
 interface StoryCardProps {
   story: Story;
   index: number;
+  onStoryClick?: (story: Story) => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -17,9 +18,12 @@ interface StoryCardProps {
    Entrance animation: fadeInUp with stagger
    --------------------------------------------------------------------------- */
 
-export default function StoryCard({ story, index }: StoryCardProps) {
+export default function StoryCard({ story, index, onStoryClick }: StoryCardProps) {
   return (
     <article
+      role="button"
+      tabIndex={0}
+      aria-label={`Read deep dive: ${story.title}`}
       style={{
         padding: "var(--space-5) 0",
         borderBottom: "var(--rule-thin)",
@@ -27,6 +31,13 @@ export default function StoryCard({ story, index }: StoryCardProps) {
         animationDelay: `${index * 40}ms`,
         cursor: "pointer",
         transition: "background-color var(--dur-fast) var(--ease-out)",
+      }}
+      onClick={() => onStoryClick?.(story)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onStoryClick?.(story);
+        }
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.backgroundColor =
@@ -133,7 +144,7 @@ export default function StoryCard({ story, index }: StoryCardProps) {
           <Stack size={14} weight="light" aria-hidden="true" />
           {story.source.count} sources
         </span>
-        <BiasBars scores={story.biasScores} />
+        <BiasStamp scores={story.biasScores} />
       </div>
     </article>
   );

@@ -3,39 +3,14 @@
 import type { Section } from "../lib/types";
 import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
+import ScaleIcon from "./ScaleIcon";
 
 interface NavBarProps {
   activeSection: Section;
   onSectionChange: (section: Section) => void;
 }
 
-/* ---------------------------------------------------------------------------
-   Inline SVG components for the brand marks.
-   Using inline SVGs so `currentColor` inherits from CSS — works in both
-   light and dark modes without separate assets.
-   --------------------------------------------------------------------------- */
-
-/** Bias Bars icon — 5 vertical bars representing the 5 bias axes */
-function BiasBarsIcon({ height = 24 }: { height?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      fill="currentColor"
-      role="img"
-      aria-hidden="true"
-      style={{ height, width: "auto", display: "block", flexShrink: 0 }}
-    >
-      <rect x="5" y="6" width="3" height="22" rx="0.5" />
-      <rect x="10" y="10" width="3" height="18" rx="0.5" />
-      <rect x="15" y="16" width="3" height="12" rx="0.5" />
-      <rect x="20" y="12" width="3" height="16" rx="0.5" />
-      <rect x="25" y="4" width="3" height="24" rx="0.5" />
-    </svg>
-  );
-}
-
-/** Full combination mark — Bias Bars icon + "void --news" wordmark */
+/** Full combination mark — Weighing Scale icon + "void --news" wordmark */
 function LogoFull({ height = 28 }: { height?: number }) {
   return (
     <svg
@@ -46,13 +21,23 @@ function LogoFull({ height = 28 }: { height?: number }) {
       aria-hidden="true"
       style={{ height, width: "auto", display: "block", flexShrink: 0 }}
     >
-      {/* Bias Bars Icon — scaled to ~24px high */}
-      <g transform="translate(0,8) scale(0.75)">
-        <rect x="5" y="6" width="3" height="22" rx="0.5" />
-        <rect x="10" y="10" width="3" height="18" rx="0.5" />
-        <rect x="15" y="16" width="3" height="12" rx="0.5" />
-        <rect x="20" y="12" width="3" height="16" rx="0.5" />
-        <rect x="25" y="4" width="3" height="24" rx="0.5" />
+      {/* Weighing Scale Icon — scaled to ~24px high, uses shared si- classes */}
+      <g transform="translate(0,8) scale(0.75)" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        {/* Fulcrum triangle */}
+        <path d="M16,4 L13,9 L19,9 Z"/>
+        {/* Animated beam group */}
+        <g className="si-beam--idle">
+          {/* Beam */}
+          <line x1="4" y1="9" x2="28" y2="9"/>
+          {/* Left suspension + pan */}
+          <path d="M7,9 L5,18 L11,18 L9,9"/>
+          {/* Right suspension + pan */}
+          <path d="M23,9 L21,18 L27,18 L25,9"/>
+        </g>
+        {/* Center post */}
+        <line x1="16" y1="9" x2="16" y2="27"/>
+        {/* Base */}
+        <line x1="12" y1="27" x2="20" y2="27"/>
       </g>
 
       {/* Wordmark */}
@@ -123,9 +108,9 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             <span className="nav-logo-desktop" style={{ display: "block" }}>
               <LogoFull height={28} />
             </span>
-            {/* Mobile: icon only (bias bars mark) */}
+            {/* Mobile: icon only (weighing scale mark) */}
             <span className="nav-logo-mobile" style={{ display: "none" }}>
-              <BiasBarsIcon height={24} />
+              <ScaleIcon animation="idle" size={24} />
             </span>
           </a>
 

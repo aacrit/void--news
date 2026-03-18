@@ -2,10 +2,11 @@
 
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/mockData";
-import BiasBars from "./BiasBars";
+import BiasStamp from "./BiasStamp";
 
 interface LeadStoryProps {
   story: Story;
+  onStoryClick?: (story: Story) => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -14,14 +15,24 @@ interface LeadStoryProps {
    Desktop: 2/3 width. Mobile: full-width.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story }: LeadStoryProps) {
+export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
   return (
     <article
+      role="button"
+      tabIndex={0}
+      aria-label={`Read deep dive: ${story.title}`}
       style={{
         padding: "var(--space-6) 0",
         borderBottom: "var(--rule-strong)",
         animation: `fadeInUp var(--dur-normal) var(--ease-out) both`,
         cursor: "pointer",
+      }}
+      onClick={() => onStoryClick?.(story)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onStoryClick?.(story);
+        }
       }}
     >
       {/* Category tag + time */}
@@ -115,7 +126,7 @@ export default function LeadStory({ story }: LeadStoryProps) {
         >
           {story.source.count} sources
         </span>
-        <BiasBars scores={story.biasScores} size="lg" />
+        <BiasStamp scores={story.biasScores} size="lg" />
       </div>
     </article>
   );

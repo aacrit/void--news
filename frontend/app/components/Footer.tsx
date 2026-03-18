@@ -1,11 +1,12 @@
 "use client";
 
 import { GithubLogo } from "@phosphor-icons/react";
+import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
-   "void --news" masthead, tagline, source count, GitHub link.
-   Thin top rule, generous padding.
+   "void --news" masthead with weighing scale icon, tagline, source count,
+   GitHub link. Thin top rule, generous padding.
    --------------------------------------------------------------------------- */
 
 export default function Footer() {
@@ -28,7 +29,7 @@ export default function Footer() {
           textAlign: "center",
         }}
       >
-        {/* Masthead */}
+        {/* Masthead with scale icon */}
         <div
           style={{
             fontFamily: "var(--font-editorial)",
@@ -42,6 +43,7 @@ export default function Footer() {
             gap: "var(--space-2)",
           }}
         >
+          <ScaleIcon animation="idle" size={20} />
           void{" "}
           <span
             style={{

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    LoadingSkeleton — Placeholder rectangles matching story card layout
@@ -25,6 +26,18 @@ export default function LoadingSkeleton() {
       aria-label="Loading stories"
       style={{ animation: "fadeIn var(--dur-normal) var(--ease-out)" }}
     >
+      {/* Branded loading indicator */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "var(--space-5) 0 var(--space-4)",
+          color: "var(--fg-tertiary)",
+        }}
+      >
+        <ScaleIcon animation="loading" size={32} />
+      </div>
+
       {/* Lead story skeleton */}
       <div
         style={{

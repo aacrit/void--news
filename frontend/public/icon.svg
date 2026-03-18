@@ -1,27 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" role="img" aria-label="void --news">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="void --news">
   <!--
-    void --news — Brand Icon (Bias Bars Mark)
-    5 vertical bars representing the 5 bias analysis axes:
-    L (Political Lean), S (Sensationalism), O (Opinion/Fact),
-    R (Factual Rigor), F (Framing)
-    Varying heights create a distinctive equalizer silhouette.
+    void --news — Brand Icon (Weighing Scale)
+    A balance scale: news being weighed and analyzed.
+    Extremely simplistic line art — 7 strokes total.
     Works at 16x16px (favicon) through 512x512px.
   -->
 
-  <!-- Bar 1: Political Lean — tallest, authority -->
-  <rect x="5" y="6" width="3" height="22" rx="0.5"/>
+  <!-- Fulcrum triangle -->
+  <path d="M16,4 L13,9 L19,9 Z"/>
 
-  <!-- Bar 2: Sensationalism — medium-tall -->
-  <rect x="10" y="10" width="3" height="18" rx="0.5"/>
+  <!-- Beam -->
+  <line x1="4" y1="9" x2="28" y2="9"/>
 
-  <!-- Bar 3: Opinion/Fact — shortest, creates the valley -->
-  <rect x="15" y="16" width="3" height="12" rx="0.5"/>
+  <!-- Left suspension + pan -->
+  <path d="M7,9 L5,18 L11,18 L9,9"/>
 
-  <!-- Bar 4: Factual Rigor — medium -->
-  <rect x="20" y="12" width="3" height="16" rx="0.5"/>
+  <!-- Right suspension + pan -->
+  <path d="M23,9 L21,18 L27,18 L25,9"/>
 
-  <!-- Bar 5: Framing — tall, bookend -->
-  <rect x="25" y="4" width="3" height="24" rx="0.5"/>
+  <!-- Center post -->
+  <line x1="16" y1="9" x2="16" y2="27"/>
 
-  <!-- All bars share the same baseline at y=28 -->
+  <!-- Base -->
+  <line x1="12" y1="27" x2="20" y2="27"/>
 </svg>

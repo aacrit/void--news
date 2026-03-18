@@ -1,24 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 40" fill="currentColor" role="img" aria-label="void --news">
   <!--
     void --news — Combination Mark (Icon + Wordmark)
-    Left: Bias Bars icon (5 vertical bars), ~24px tall
+    Left: Weighing Scale icon, ~24px tall
     12px gap
     Right: Full wordmark
     Used in the NavBar.
   -->
 
-  <!-- ===== Bias Bars Icon — scaled to 24px height ===== -->
-  <g transform="translate(0,8) scale(0.75)">
-    <!-- Bar 1: Political Lean -->
-    <rect x="5" y="6" width="3" height="22" rx="0.5"/>
-    <!-- Bar 2: Sensationalism -->
-    <rect x="10" y="10" width="3" height="18" rx="0.5"/>
-    <!-- Bar 3: Opinion/Fact -->
-    <rect x="15" y="16" width="3" height="12" rx="0.5"/>
-    <!-- Bar 4: Factual Rigor -->
-    <rect x="20" y="12" width="3" height="16" rx="0.5"/>
-    <!-- Bar 5: Framing -->
-    <rect x="25" y="4" width="3" height="24" rx="0.5"/>
+  <!-- ===== Weighing Scale Icon — scaled to 24px height ===== -->
+  <g transform="translate(0,8) scale(0.75)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Fulcrum triangle -->
+    <path d="M16,4 L13,9 L19,9 Z"/>
+    <!-- Beam -->
+    <line x1="4" y1="9" x2="28" y2="9"/>
+    <!-- Left suspension + pan -->
+    <path d="M7,9 L5,18 L11,18 L9,9"/>
+    <!-- Right suspension + pan -->
+    <path d="M23,9 L21,18 L27,18 L25,9"/>
+    <!-- Center post -->
+    <line x1="16" y1="9" x2="16" y2="27"/>
+    <!-- Base -->
+    <line x1="12" y1="27" x2="20" y2="27"/>
   </g>
 
   <!-- ===== 12px gap, then Wordmark ===== -->
