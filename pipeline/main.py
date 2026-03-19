@@ -231,17 +231,28 @@ def _batch_upsert(table: str, rows: list[dict], chunk_size: int = 200,
 
 def enrich_cluster(cluster_id: str) -> None:
     """
-    Call the Supabase RPC to refresh enrichment data for a cluster.
-    Falls back to a manual update if the function doesn't exist.
+    Call the Supabase RPC to refresh enrichment data for a cluster,
+    then always run client-side consensus/divergence generation.
+
+    The RPC handles divergence_score, bias_diversity, coverage_score,
+    and tier_breakdown, but does NOT generate consensus_points or
+    divergence_points text. Those are always computed client-side.
     """
+    rpc_succeeded = False
     try:
         supabase.rpc("refresh_cluster_enrichment", {"p_cluster_id": cluster_id}).execute()
+        rpc_succeeded = True
     except Exception as e:
         # RPC not deployed yet — compute client-side as fallback
         if "function" in str(e).lower() or "does not exist" in str(e).lower():
             _enrich_cluster_fallback(cluster_id)
+            return  # fallback already generates consensus/divergence
         else:
             print(f"  [warn] Cluster enrichment failed for {cluster_id}: {e}")
+
+    # RPC succeeded but omits consensus/divergence text — always generate
+    if rpc_succeeded:
+        _generate_cluster_consensus_divergence(cluster_id)
 
 
 def _generate_consensus_divergence(
@@ -502,15 +513,99 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
             sensationalism_spread, opinion_spread,
         )
 
+        # Pass raw Python objects — Supabase client handles JSONB
+        # serialization automatically. Using json.dumps() here would
+        # double-serialize, storing escaped JSON strings instead of arrays.
         supabase.table("story_clusters").update({
             "divergence_score": round(divergence, 2),
-            "bias_diversity": json.dumps(bias_diversity),
-            "consensus_points": json.dumps(consensus_pts),
-            "divergence_points": json.dumps(divergence_pts),
+            "bias_diversity": bias_diversity,
+            "consensus_points": consensus_pts,
+            "divergence_points": divergence_pts,
         }).eq("id", cluster_id).execute()
 
     except Exception as e:
         print(f"  [warn] Fallback enrichment failed for {cluster_id}: {e}")
+
+
+def _generate_cluster_consensus_divergence(cluster_id: str) -> None:
+    """
+    Generate and store consensus/divergence text for a cluster.
+
+    Called after the RPC enrichment succeeds (RPC handles numeric
+    aggregates but not the human-readable text). Fetches bias scores,
+    computes spreads, generates text via _generate_consensus_divergence,
+    and writes just the two JSONB columns.
+    """
+    try:
+        result = (
+            supabase.table("cluster_articles")
+            .select("article_id")
+            .eq("cluster_id", cluster_id)
+            .execute()
+        )
+        if not result.data:
+            return
+
+        article_ids = [r["article_id"] for r in result.data]
+
+        scores_result = (
+            supabase.table("bias_scores")
+            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing")
+            .in_("article_id", article_ids)
+            .execute()
+        )
+        if not scores_result.data:
+            return
+
+        scores = scores_result.data
+        count = len(scores)
+
+        import math
+
+        def _stddev(vals):
+            if len(vals) < 2:
+                return 0.0
+            mean = sum(vals) / len(vals)
+            return math.sqrt(sum((v - mean) ** 2 for v in vals) / len(vals))
+
+        pl_values = [s["political_lean"] for s in scores]
+        sens_values = [s["sensationalism"] for s in scores]
+        of_values = [s["opinion_fact"] for s in scores]
+        fr_values = [s["factual_rigor"] for s in scores]
+        frm_values = [s["framing"] for s in scores]
+
+        total_rigor = sum(fr_values)
+        if total_rigor > 0:
+            avg_pl = round(sum(p * r for p, r in zip(pl_values, fr_values)) / total_rigor)
+        else:
+            avg_pl = round(sum(pl_values) / count) if count else 50
+
+        avg_sens = round(sum(sens_values) / count) if count else 30
+        avg_of = round(sum(of_values) / count) if count else 25
+        avg_fr = round(sum(fr_values) / count) if count else 50
+        avg_frm = round(sum(frm_values) / count) if count else 40
+
+        lean_spread = round(_stddev(pl_values), 1)
+        framing_spread = round(_stddev(frm_values), 1)
+        lean_range = max(pl_values) - min(pl_values) if pl_values else 0
+        sensationalism_spread = round(_stddev(sens_values), 1)
+        opinion_spread = round(_stddev(of_values), 1)
+
+        consensus_pts, divergence_pts = _generate_consensus_divergence(
+            count, pl_values, sens_values, of_values, fr_values, frm_values,
+            avg_pl, avg_sens, avg_of, avg_fr, avg_frm,
+            lean_spread, framing_spread, lean_range,
+            sensationalism_spread, opinion_spread,
+        )
+
+        # Pass raw Python lists — Supabase client handles JSONB serialization
+        supabase.table("story_clusters").update({
+            "consensus_points": consensus_pts,
+            "divergence_points": divergence_pts,
+        }).eq("id", cluster_id).execute()
+
+    except Exception as e:
+        print(f"  [warn] Consensus/divergence generation failed for {cluster_id}: {e}")
 
 
 def _scrape_single(article_data, source_map):

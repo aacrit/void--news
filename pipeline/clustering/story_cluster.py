@@ -11,6 +11,7 @@ Uses rule-based NLP (no LLM API calls):
     - Cluster title generation from most common named entities (spaCy NER)
 """
 
+import re
 from collections import Counter
 
 from sklearn.cluster import AgglomerativeClustering
@@ -19,6 +20,36 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 from utils.nlp_shared import get_nlp
+
+
+# --- Title cleanup patterns ---
+# Wire service prefixes: (LEAD), (URGENT), BREAKING:, etc.
+_WIRE_PREFIX_RE = re.compile(
+    r'^\s*(?:\((?:LEAD|URGENT|CORRECTED|UPDATE(?:\s*\d*)?|RECASTS?|ADDS?|WRAPUP|NEWSALERT)\)\s*)'
+    r'|^\s*(?:WATCH\s*LIVE\s*:|WATCH\s*:|BREAKING\s*:|UPDATE\s*:|EXCLUSIVE\s*:)\s*',
+    re.IGNORECASE,
+)
+# Source attribution at end: " - Reuters", " | BBC News", " -- AP", etc.
+_ATTRIBUTION_SUFFIX_RE = re.compile(
+    r'\s*[-\u2013\u2014|]+\s*'
+    r'(?:Reuters|AP\s*News?|Associated\s*Press|CNN|BBC(?:\s*News)?|NPR|PBS'
+    r'|Fox\s*News|The\s+[A-Z]\w+(?:\s+[A-Z]\w+)?|[A-Z]\w+\s+News'
+    r'|Al\s+Jazeera|Bloomberg|CNBC|ABC\s*News|CBS\s*News|NBC\s*News'
+    r'|The\s+Guardian|Washington\s+Post|New\s+York\s+Times|Wall\s+Street\s+Journal)'
+    r'\s*$',
+    re.IGNORECASE,
+)
+
+
+def _clean_title(title: str) -> str:
+    """Strip wire prefixes, source attribution, and junk from a title."""
+    # Strip wire prefixes
+    title = _WIRE_PREFIX_RE.sub('', title).strip()
+    # Strip source attribution suffixes
+    title = _ATTRIBUTION_SUFFIX_RE.sub('', title).strip()
+    # Strip trailing whitespace/punctuation artifacts
+    title = title.strip(' \t\n\r-\u2013\u2014|')
+    return title
 
 
 def _build_document(article: dict) -> str:
@@ -39,15 +70,33 @@ def _generate_cluster_title(articles: list[dict]) -> str:
     For multi-article clusters, scores each title by entity coverage,
     informativeness (length sweet spot), and absence of clickbait signals,
     then picks the best one.
-    """
-    titles = [a.get("title", "") or "" for a in articles]
-    titles = [t.strip() for t in titles if t.strip()]
 
-    if not titles:
+    All titles are cleaned: wire prefixes stripped, source attribution
+    removed, degenerate titles (<15 chars) rejected.
+    """
+    # Clean all titles and filter out degenerate ones
+    raw_titles = [a.get("title", "") or "" for a in articles]
+    cleaned_titles = [_clean_title(t) for t in raw_titles]
+    valid_titles = [t for t in cleaned_titles if len(t) >= 15]
+
+    if not valid_titles:
+        # All titles degenerate — try entity-concatenated fallback
+        nlp = get_nlp()
+        entity_counter: Counter = Counter()
+        for article in articles[:20]:
+            title = article.get("title", "") or ""
+            summary = article.get("summary", "") or ""
+            doc = nlp(f"{title} {summary}"[:5000])
+            for ent in doc.ents:
+                if ent.label_ in ("PERSON", "ORG", "GPE", "EVENT"):
+                    entity_counter[ent.text] += 1
+        top_ents = [name for name, _ in entity_counter.most_common(3)]
+        if top_ents:
+            return ", ".join(top_ents)
         return "Developing Story"
 
-    if len(titles) == 1:
-        return titles[0]
+    if len(valid_titles) == 1:
+        return valid_titles[0]
 
     # Extract common entities across the cluster to measure title relevance
     nlp = get_nlp()
@@ -98,7 +147,7 @@ def _generate_cluster_title(articles: list[dict]) -> str:
 
         return score
 
-    scored = [(t, _score_title(t)) for t in titles]
+    scored = [(t, _score_title(t)) for t in valid_titles]
     scored.sort(key=lambda x: x[1], reverse=True)
     return scored[0][0]
 
@@ -139,8 +188,57 @@ def _generate_cluster_summary(articles: list[dict]) -> str:
     return ""
 
 
-def _determine_section(articles: list[dict]) -> str:
-    """Determine cluster section by majority vote of article sections."""
+# --- Content-based section markers ---
+US_MARKERS = {
+    'congress', 'senate', 'house of representatives', 'white house',
+    'capitol hill', 'supreme court', 'pentagon', 'state department',
+    'fbi', 'cia', 'dhs', 'fema', 'epa', 'fda', 'sec', 'fed ',
+    'federal reserve', 'wall street', 'medicare', 'medicaid',
+    'democrat', 'republican', 'gop', 'dnc', 'rnc',
+    'governor', 'senator', 'congressman',
+    # US state names (most newsworthy)
+    'california', 'texas', 'florida', 'new york', 'illinois',
+    'pennsylvania', 'ohio', 'georgia', 'michigan', 'virginia',
+    'north carolina', 'arizona', 'wisconsin', 'colorado',
+    # Key US political figures
+    'trump', 'biden', 'harris', 'desantis', 'pelosi', 'mcconnell',
+}
+
+INTL_MARKERS = {
+    'ukraine', 'russia', 'china', 'eu ', 'european union', 'nato',
+    'middle east', 'gaza', 'israel', 'iran', 'north korea', 'un ',
+    'united nations', 'world bank', 'imf', 'brics',
+    'africa', 'asia', 'latin america', 'pacific',
+    'india', 'japan', 'south korea', 'taiwan', 'syria',
+    'saudi arabia', 'turkey', 'brazil', 'mexico',
+}
+
+
+def _determine_section(articles: list[dict], cluster_title: str = "",
+                       cluster_summary: str = "") -> str:
+    """
+    Determine cluster section using content-based markers with
+    source-based fallback.
+
+    Priority:
+    1. Check cluster title + summary for US vs. international markers
+    2. If clear signal (2+ markers one side, 0 the other), use that
+    3. Otherwise fall back to majority vote of article sections
+    """
+    # Content-based detection from cluster title + summary
+    text = f"{cluster_title} {cluster_summary}".lower()
+
+    us_count = sum(1 for m in US_MARKERS if m in text)
+    intl_count = sum(1 for m in INTL_MARKERS if m in text)
+
+    # Clear US signal: 2+ US markers, no international markers
+    if us_count >= 2 and intl_count == 0:
+        return "us"
+    # Clear international signal: 2+ intl markers, no US markers
+    if intl_count >= 2 and us_count == 0:
+        return "world"
+
+    # Ambiguous or insufficient content signal — fall back to source-based
     sections: Counter = Counter()
     for article in articles:
         section = article.get("section", "") or ""
@@ -265,13 +363,18 @@ def cluster_stories(
         pub_dates = [a.get("published_at", "") for a in cluster_articles if a.get("published_at")]
         first_published = min(pub_dates) if pub_dates else ""
 
+        cluster_title = _generate_cluster_title(cluster_articles)
+        cluster_summary = _generate_cluster_summary(cluster_articles)
+
         clusters.append({
-            "title": _generate_cluster_title(cluster_articles),
-            "summary": _generate_cluster_summary(cluster_articles),
+            "title": cluster_title,
+            "summary": cluster_summary,
             "article_ids": article_ids,
             "source_ids": source_ids,
             "source_count": len(source_ids),
-            "section": _determine_section(cluster_articles),
+            "section": _determine_section(
+                cluster_articles, cluster_title, cluster_summary
+            ),
             "first_published": first_published,
             "articles": cluster_articles,
         })
