@@ -11,7 +11,7 @@ import LeadStory from "./components/LeadStory";
 import StoryCard from "./components/StoryCard";
 import DeepDive from "./components/DeepDive";
 
-import RefreshButton from "./components/RefreshButton";
+import { timeAgo } from "./lib/utils";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Footer from "./components/Footer";
@@ -54,6 +54,7 @@ function HomeContent() {
   const [activeSection, setActiveSection] = useState<Section>("world");
   const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  const [showAllCompact, setShowAllCompact] = useState(false);
 
   const handleStoryClick = useCallback((story: Story) => {
     setSelectedStory(story);
@@ -276,6 +277,7 @@ function HomeContent() {
         onSectionChange={(s) => {
           setActiveSection(s);
           setActiveCategory("All");
+          setShowAllCompact(false);
         }}
       />
 
@@ -285,13 +287,17 @@ function HomeContent() {
           <h1 className="section-header__title">
             {activeSection === "world" ? "World News" : "US News"}
           </h1>
-          <RefreshButton externalLastUpdated={lastUpdated} />
+          {lastUpdated && (
+            <span className="edition-meta">
+              Updated {timeAgo(lastUpdated)}
+            </span>
+          )}
         </div>
 
         {/* Filter bar */}
         <FilterBar
           activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
+          onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
         />
 
         {/* Live region for screen readers */}
@@ -391,20 +397,37 @@ function HomeContent() {
           </section>
         )}
 
-        {/* Compact stories — dense grid on desktop */}
-        {!isLoading && compactStories.length > 0 && (
-          <section aria-label="More stories" className="grid-compact">
-            {compactStories.map((story, idx) => (
-              <div key={story.id} className="grid-compact__item">
-                <StoryCard
-                  story={story}
-                  index={idx + mediumStories.length + 1}
-                  onStoryClick={handleStoryClick}
-                />
-              </div>
-            ))}
-          </section>
-        )}
+        {/* Compact stories — capped at 8 (2 desktop rows) with "More" */}
+        {!isLoading && compactStories.length > 0 && (() => {
+          const COMPACT_CAP = 8;
+          const visible = showAllCompact ? compactStories : compactStories.slice(0, COMPACT_CAP);
+          const hasMore = compactStories.length > COMPACT_CAP && !showAllCompact;
+          return (
+            <>
+              <section aria-label="More stories" className="grid-compact">
+                {visible.map((story, idx) => (
+                  <div key={story.id} className="grid-compact__item">
+                    <StoryCard
+                      story={story}
+                      index={idx + mediumStories.length + 1}
+                      onStoryClick={handleStoryClick}
+                    />
+                  </div>
+                ))}
+              </section>
+              {hasMore && (
+                <div className="show-more">
+                  <button
+                    className="show-more__btn"
+                    onClick={() => setShowAllCompact(true)}
+                  >
+                    More stories ({compactStories.length - COMPACT_CAP} remaining)
+                  </button>
+                </div>
+              )}
+            </>
+          );
+        })()}
 
         {/* Edition line — newspaper tradition */}
         {!isLoading && filteredStories.length > 0 && (
