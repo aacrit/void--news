@@ -47,6 +47,8 @@ JUNK_TITLE_PATTERNS = [
         r'^developing story$',  # Generic placeholder title
         r'^newsletter',         # Non-news newsletter content
         r'^top news.*latest',   # RSS feed index pages
+        r'^latest videos',      # Video index pages ("Latest Videos - CNN")
+        r'^(world|europe|asia|americas?|business|sport|science)\s*[-–—]\s*', # RSS section pages ("Europe - The Economist")
         r'^photo:?\s',          # Photo captions
         r'^video:?\s',          # Video-only content
         r'^photos?:?\s',        # Photo galleries
