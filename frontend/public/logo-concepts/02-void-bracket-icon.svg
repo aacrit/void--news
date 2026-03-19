@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="void --news">
+  <!--
+    Direction 2 Icon: The Brackets
+    Square brackets [ ] centered in a square frame.
+    At 16px: Two vertical lines with short horizontals = instantly recognizable.
+    The brackets ARE the product: framing, examining, holding up for inspection.
+  -->
+  <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+    <!-- Left bracket -->
+    <polyline points="12,5 6,5 6,27 12,27"/>
+    <!-- Right bracket -->
+    <polyline points="20,5 26,5 26,27 20,27"/>
+  </g>
+</svg>

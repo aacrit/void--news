@@ -1,7 +1,8 @@
 "use client";
 
 import React, { Component, type ReactNode } from "react";
-import LogoFull from "./LogoFull";
+import LogoWordmark from "./LogoWordmark";
+import LogoIcon from "./LogoIcon";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -14,6 +15,8 @@ interface ErrorBoundaryState {
 
 /* ---------------------------------------------------------------------------
    ErrorBoundary — Catches React render errors
+   Shows the void circle in "balanced" state (settling after disruption)
+   with the wordmark beneath.
    --------------------------------------------------------------------------- */
 
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -36,6 +39,10 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
         <div className="error-page">
           <div className="error-content">
             <div className="error-rule-top" />
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-5)" }}>
+              <LogoIcon size={48} animation="balanced" />
+              <LogoWordmark height={16} />
+            </div>
             <h1 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
               Something went wrong
             </h1>
@@ -50,9 +57,6 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
               Try refreshing
             </button>
             <div className="error-rule-bottom" />
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "var(--space-3)" }}>
-              <LogoFull height={18} />
-            </div>
           </div>
         </div>
       );

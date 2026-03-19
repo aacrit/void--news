@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="void --news">
+  <!--
+    Direction 1 Icon: Typographic "V" mark
+    The serif V from the masthead, centered in a square.
+    At 16px: reads as a strong diagonal mark.
+    The V carries the serif character of the full wordmark.
+  -->
+  <g fill="currentColor">
+    <!-- Serif V letterform -->
+    <path d="M4,6 L6.5,6 L16,26 L25.5,6 L28,6 L17.5,29 C17.3,29.5 16.8,30 16,30 C15.2,30 14.7,29.5 14.5,29 Z"/>
+    <!-- Top serifs -->
+    <rect x="2" y="4.5" width="7" height="1.8" rx="0.4"/>
+    <rect x="23" y="4.5" width="7" height="1.8" rx="0.4"/>
+  </g>
+</svg>

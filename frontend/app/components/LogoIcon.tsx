@@ -4,9 +4,12 @@ import ScaleIcon from "./ScaleIcon";
 import type { ScaleAnimation } from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
-   LogoIcon — Icon-only brand mark (The Void Scale)
+   LogoIcon — Icon-only brand mark (Void Circle + Scale Beam)
    Use this for compact contexts: mobile nav, loading indicators, refresh btn.
    For the full logo (icon + wordmark), use LogoFull instead.
+
+   animation="none" renders only the void circle (pure favicon mark).
+   animation="idle" and others show the full scale apparatus with tipping.
    --------------------------------------------------------------------------- */
 
 interface LogoIconProps {

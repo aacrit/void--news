@@ -12,6 +12,7 @@ import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } fr
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import BiasLens from "./BiasLens";
+import LogoIcon from "./LogoIcon";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -318,11 +319,12 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             transition: "opacity 300ms var(--ease-out)",
           }}
         >
-          {/* Loading indicator */}
+          {/* Loading indicator — analyzing animation while fetching deep dive data */}
           {isLoadingData && !deepDive && (
-            <div style={{ padding: "var(--space-5) 0", textAlign: "center" }}>
+            <div style={{ padding: "var(--space-5) 0", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)" }}>
+              <LogoIcon size={32} animation="analyzing" />
               <span className="text-data" style={{ color: "var(--fg-tertiary)" }}>
-                Loading coverage data...
+                Analyzing coverage...
               </span>
             </div>
           )}

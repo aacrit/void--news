@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" role="img" aria-label="void --news">
+  <!--
+    Direction 3: The Spectrum Bar
+
+    Concept: The wordmark sits above a thin horizontal bar divided into
+    five segments — blue, light-blue, gray, orange, red — representing
+    the political lean bias spectrum. This bar is the brand's visual
+    signature, tying the logo directly to the core product feature.
+
+    The bar doubles as a newspaper rule (the thin lines that separate
+    columns in broadsheet layout) and as a data visualization (the
+    bias spectrum). It sits where an underline would go, grounding
+    the typography.
+
+    "void" in serif, "--news" in monospace — same typographic split
+    as other directions, but here the spectrum bar adds a third
+    visual element that makes the mark distinctive.
+
+    Icon version: Five stacked dots or the bar alone in a square.
+    At 16px: Bar reduces to a simple colored line — still distinctive.
+    At 400px+: Individual spectrum segments become clear, bar has presence.
+
+    Color note: This is one of the few logo directions that uses color
+    intentionally. The spectrum bar uses the exact bias colors from the
+    design system. In monochrome contexts, the bar renders as a solid
+    line with subtle opacity variation.
+  -->
+
+  <!-- ===== "void" — Serif letterforms ===== -->
+  <g fill="currentColor">
+    <!-- V -->
+    <path d="M30,6 L34,6 L49,46 L64,6 L68,6 L51.5,54 C51.2,54.6 50.6,55 50,55 L48,55 C47.4,55 46.8,54.6 46.5,54 Z"/>
+
+    <!-- O -->
+    <path d="M82,30 C82,16 88,5 98,5 C108,5 114,16 114,30 C114,44 108,55 98,55 C88,55 82,44 82,30Z M87,30 C87,42 91.5,51 98,51 C104.5,51 109,42 109,30 C109,18 104.5,9 98,9 C91.5,9 87,18 87,30Z"/>
+
+    <!-- I -->
+    <rect x="126" y="5" width="6" height="6" rx="0.8"/>
+    <rect x="126.5" y="16" width="5" height="39" rx="0.6"/>
+
+    <!-- D -->
+    <path d="M146,6 L146,55 L142,55 L142,6 Z"/>
+    <path d="M146,6 L155,6 C169,6 177,16 177,30.5 C177,45 169,55 155,55 L146,55 L146,51 L155,51 C166,51 172,43 172,30.5 C172,18 166,10 155,10 L146,10 Z"/>
+  </g>
+
+  <!-- ===== "--news" — Monospace letterforms ===== -->
+  <g fill="currentColor" opacity="0.8">
+    <!-- First dash -->
+    <rect x="192" y="28" width="12" height="3" rx="0.8"/>
+    <!-- Second dash -->
+    <rect x="208" y="28" width="12" height="3" rx="0.8"/>
+
+    <!-- n -->
+    <path d="M232,18 L235,18 L235,23 C237,20 240,18 243,18 C246.5,18 249,19.5 250,22 C250.5,23.5 250.5,25 250.5,27 L250.5,55 L247.5,55 L247.5,28 C247.5,25 247,23.5 246,22.5 C245,21.5 243.5,20.5 241.5,20.5 C239,20.5 237.5,22 236.5,24 C235.5,25.5 235,27 235,28.5 L235,55 L232,55Z"/>
+
+    <!-- e -->
+    <path d="M260,37 C260,30 263,18 270,18 C277,18 280,29 280,36 L280,38 L263.5,38 C264,45 266.5,50 271,50 C274,50 276,48 277,46 L279,48 C277,51 274,53 270.5,53 C264,53 260,46 260,37Z M263.5,35.5 L277,35.5 C276.5,29 274.5,21 270,21 C265.5,21 263.8,28.5 263.5,35.5Z"/>
+
+    <!-- w -->
+    <path d="M288,18 L291.5,18 L297,45 L302.5,18 L306,18 L311.5,45 L317,18 L320.5,18 L313,55 L310,55 L304.5,28 L299,55 L296,55Z"/>
+
+    <!-- s -->
+    <path d="M328,43 C328,39 330.5,37 333.5,36 L338,34.5 C340.5,33.5 341.5,32 341.5,30 C341.5,27 339.5,25 336.5,25 C334,25 332,26.5 331,28.5 L329,27 C330.5,24 333.5,21 337,21 C342,21 345.5,24.5 345.5,29.5 C345.5,33 343.5,35 340.5,36 L336,38 C333.5,39 332,40.5 332,43 C332,46 334,48.5 337,48.5 C339.5,48.5 341,47 342,45 L344,47 C342.5,50 340,52 336.5,52 C332,52 328,48.5 328,43Z"/>
+  </g>
+
+  <!-- ===== Spectrum Bar — The bias visualization as brand signature ===== -->
+  <!-- Five segments: left, center-left, center, center-right, right -->
+  <!-- Uses exact bias colors from the design system -->
+  <!-- Total width matches wordmark width (~330px), height 4px -->
+  <g>
+    <!-- Left — Blue -->
+    <rect x="30" y="62" width="63" height="4" rx="0" fill="#3B82F6"/>
+    <!-- Center-Left — Light Blue -->
+    <rect x="95" y="62" width="63" height="4" rx="0" fill="#60A5FA"/>
+    <!-- Center — Neutral Gray -->
+    <rect x="160" y="62" width="63" height="4" rx="0" fill="#9CA3AF"/>
+    <!-- Center-Right — Orange -->
+    <rect x="225" y="62" width="63" height="4" rx="0" fill="#F97316"/>
+    <!-- Right — Red -->
+    <rect x="290" y="62" width="63" height="4" rx="0" fill="#EF4444"/>
+
+    <!-- Round the outer corners only -->
+    <rect x="30" y="62" width="2" height="4" rx="1" fill="#3B82F6"/>
+    <rect x="351" y="62" width="2" height="4" rx="1" fill="#EF4444"/>
+  </g>
+
+  <!-- ===== Monochrome fallback version (hidden, for reference) ===== -->
+  <!--
+    In single-color contexts, replace the spectrum bar with:
+    <rect x="30" y="62" width="323" height="3" rx="1.5" fill="currentColor" opacity="0.25"/>
+    The bar becomes a simple rule — still reads as the brand signature.
+  -->
+</svg>

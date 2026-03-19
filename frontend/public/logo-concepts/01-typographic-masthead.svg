@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 80" role="img" aria-label="void --news">
+  <!--
+    Direction 1: Typographic Masthead
+
+    Concept: The name IS the logo. Pure typographic authority.
+    "void" in bold, high-contrast serif letterforms — newspaper masthead weight.
+    "--news" in lighter monospace — CLI flag precision.
+    The deliberate typographic collision between serif and monospace creates
+    the brand tension: editorial gravitas meets technical rigor.
+
+    A thin horizontal rule separates the two voices, acting as both a
+    newspaper column rule and a terminal divider.
+
+    Fonts represented: Playfair Display (editorial) + JetBrains Mono (data)
+    Colors: Single color (currentColor) for maximum flexibility.
+
+    Scalability: At 16px, the letterforms simplify to recognizable silhouettes.
+    At 400px+, the serif details and stroke contrast become prominent.
+
+    Light mode: #1A1A1A on #FAF8F5 (ink on paper)
+    Dark mode:  #EDE8E0 on #1C1A17 (cream on walnut)
+  -->
+
+  <!-- ===== "void" — Heavy serif masthead letterforms ===== -->
+  <!-- Designed with high stroke contrast (thick verticals, thin joins) -->
+  <!-- to evoke classical newspaper typography at any size -->
+  <g fill="currentColor">
+
+    <!-- V — strong diagonal strokes with serif bracketing -->
+    <path d="M0,8 L3,8 L3.5,8 C4,8 4.5,8.3 4.7,8.8 L26,62 L47.3,8.8 C47.5,8.3 48,8 48.5,8 L52,8 L52,10 L50,10 L28,64 C27.5,65 26.5,65 26,64 L4,10 L0,10 Z"/>
+    <!-- V serifs -->
+    <rect x="0" y="6" width="12" height="2.5" rx="0.5"/>
+    <rect x="40" y="6" width="12" height="2.5" rx="0.5"/>
+
+    <!-- O — elegant oval with visible stroke contrast -->
+    <path d="M76,36 C76,19 84,6 98,6 C112,6 120,19 120,36 C120,53 112,66 98,66 C84,66 76,53 76,36Z M82,36 C82,50 88,61 98,61 C108,61 114,50 114,36 C114,22 108,11 98,11 C88,11 82,22 82,36Z"/>
+
+    <!-- I — vertical with square dot -->
+    <rect x="134" y="6" width="8" height="8" rx="1"/>
+    <rect x="135" y="20" width="6" height="46" rx="0.8"/>
+    <!-- I serifs -->
+    <rect x="129" y="62" width="16" height="2.5" rx="0.5"/>
+
+    <!-- D — strong vertical, elegant bowl -->
+    <path d="M160,8 L160,66 L155,66 L155,8 Z"/>
+    <path d="M160,8 L172,8 C190,8 200,20 200,37 C200,54 190,66 172,66 L160,66 L160,61 L172,61 C187,61 194,51 194,37 C194,23 187,13 172,13 L160,13 Z"/>
+    <!-- D serifs -->
+    <rect x="150" y="6" width="14" height="2.5" rx="0.5"/>
+    <rect x="150" y="64" width="14" height="2.5" rx="0.5"/>
+  </g>
+
+  <!-- ===== Vertical divider — newspaper column rule ===== -->
+  <line x1="218" y1="14" x2="218" y2="58" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+
+  <!-- ===== "--news" — Monospace letterforms, lighter weight ===== -->
+  <!-- Evenly spaced, consistent stroke width, no serifs -->
+  <g fill="currentColor" opacity="0.85">
+
+    <!-- First dash -->
+    <rect x="234" y="33" width="14" height="3" rx="0.8"/>
+    <!-- Second dash -->
+    <rect x="252" y="33" width="14" height="3" rx="0.8"/>
+
+    <!-- n — monospace proportions -->
+    <path d="M282,24 L285.5,24 L285.5,30 C288,26 291,24 295,24 C299,24 302,26 303.5,29 C304,31 304.2,33 304.2,36 L304.2,66 L300.5,66 L300.5,37 C300.5,33 300,31 299,29.5 C297.8,28 296,27 293.5,27 C290.5,27 288.5,28.5 287,31 C285.8,33 285.5,34.5 285.5,37 L285.5,66 L282,66Z"/>
+
+    <!-- e — monospace proportions -->
+    <path d="M316,45 C316,37 320,24 329,24 C338,24 341.5,36 341.5,44 L341.5,46 L320,46 C320.5,54 324,60 329.5,60 C333,60 335.5,57.5 337,55 L339.5,57 C337,61 333.5,63 329,63 C321.5,63 316,55 316,45Z M320,43 L337.5,43 C337,36 334.5,27 329,27 C323.5,27 320.5,35 320,43Z"/>
+
+    <!-- w — monospace proportions -->
+    <path d="M352,24 L356,24 L363,54 L370,24 L374,24 L381,54 L388,24 L392,24 L383,66 L379,66 L372,36 L365,66 L361,66Z"/>
+
+    <!-- s — monospace proportions -->
+    <path d="M402,52 C402,47 405,44 408.5,43 L414,41.5 C417,40.5 418.5,38.5 418.5,36 C418.5,32.5 416,30 412.5,30 C409,30 406.5,32 405.5,34.5 L402.5,33 C404,29.5 407.5,26 412.5,26 C418.5,26 422.5,30 422.5,35.5 C422.5,39.5 420,42 416.5,43.5 L411,45 C408,46.5 406,48.5 406,51.5 C406,55 408.5,58 412,58 C415,58 417,56 418.5,53.5 L421,55.5 C419,59 415.5,62 411.5,62 C406,62 402,58 402,52Z"/>
+  </g>
+</svg>

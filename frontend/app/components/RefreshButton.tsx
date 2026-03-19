@@ -99,7 +99,7 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
         aria-label={displayTime ? `Last updated ${displayTime}. Click to refresh.` : "Loading update time. Click to refresh."}
         className={`refresh-btn${refreshing ? " refresh-btn--loading" : ""}`}
       >
-        <LogoIcon animation={refreshing ? "loading" : "none"} size={14} />
+        <LogoIcon animation={refreshing ? "loading" : "idle"} size={14} />
         <Clock size={12} weight="light" aria-hidden="true" />
         <span>{refreshing ? "Refreshing..." : displayTime ? `Last updated: ${displayTime}` : "Loading..."}</span>
       </button>

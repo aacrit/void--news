@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 80" role="img" aria-label="void --news">
+  <!--
+    Direction 2: The Void Bracket
+
+    Concept: void --[news]
+    Square brackets frame "news", representing the analytical lens through
+    which void examines the news. The brackets are the product metaphor made
+    literal — void doesn't make news, it frames it, examines it, holds it
+    up for inspection.
+
+    "void" in editorial serif — the brand identity.
+    "--" in monospace — the CLI heritage, the flag that modifies.
+    "[news]" in monospace with prominent brackets — the subject under analysis.
+
+    The brackets are slightly taller than the text, creating visual emphasis.
+    They use a heavier stroke than the monospace text, making them the
+    focal point of the mark.
+
+    Icon version: Just the brackets [ ] — the analytical frame itself.
+    At 16px: Two vertical strokes with short horizontals = recognizable.
+
+    Scalability: Brackets are geometrically simple, read at any size.
+    At 400px+: The serif/mono contrast and bracket weight become distinctive.
+  -->
+
+  <!-- ===== "void" — Serif letterforms, editorial authority ===== -->
+  <g fill="currentColor">
+    <!-- V -->
+    <path d="M0,10 L5,10 L22,56 L39,10 L44,10 L24.5,64 C24.2,64.8 23.5,65 23,65 L21,65 C20.5,65 19.8,64.8 19.5,64 Z"/>
+
+    <!-- O -->
+    <path d="M58,37 C58,21 65,9 77,9 C89,9 96,21 96,37 C96,53 89,65 77,65 C65,65 58,53 58,37Z M64,37 C64,50 69,60 77,60 C85,60 90,50 90,37 C90,24 85,14 77,14 C69,14 64,24 64,37Z"/>
+
+    <!-- I -->
+    <rect x="110" y="9" width="7" height="7" rx="1"/>
+    <rect x="111" y="22" width="5" height="43" rx="0.6"/>
+
+    <!-- D -->
+    <path d="M132,10 L132,65 L128,65 L128,10 Z"/>
+    <path d="M132,10 L143,10 C159,10 168,21 168,37.5 C168,54 159,65 143,65 L132,65 L132,60.5 L143,60.5 C156,60.5 162.5,51 162.5,37.5 C162.5,24 156,14.5 143,14.5 L132,14.5 Z"/>
+  </g>
+
+  <!-- ===== "  --" — Monospace dashes, the CLI flag ===== -->
+  <g fill="currentColor" opacity="0.7">
+    <rect x="188" y="35" width="14" height="3.5" rx="1"/>
+    <rect x="206" y="35" width="14" height="3.5" rx="1"/>
+  </g>
+
+  <!-- ===== "[" — Left bracket, heavy weight ===== -->
+  <!-- The bracket is the focal point: taller than text, heavier stroke -->
+  <g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square">
+    <polyline points="244,4 234,4 234,70 244,70"/>
+  </g>
+
+  <!-- ===== "news" — Monospace letterforms inside the brackets ===== -->
+  <g fill="currentColor" opacity="0.85">
+    <!-- n -->
+    <path d="M256,26 L259.5,26 L259.5,32 C262,28 265,26 269,26 C273,26 276,28 277.5,31 C278,33 278.2,35 278.2,38 L278.2,65 L274.5,65 L274.5,39 C274.5,35 274,33 273,31.5 C271.8,30 270,29 267.5,29 C264.5,29 262.5,30.5 261,33 C259.8,35 259.5,36.5 259.5,39 L259.5,65 L256,65Z"/>
+
+    <!-- e -->
+    <path d="M290,46 C290,38 293.5,26 302,26 C310.5,26 314,37.5 314,45 L314,47 L293.5,47 C294,55 297.5,61 303,61 C306.5,61 309,58.5 310.5,56 L313,58 C310.5,62 307,64 303,64 C295.5,64 290,56 290,46Z M293.5,44 L310.5,44 C310,37 307.5,29 302,29 C296.5,29 294,37 293.5,44Z"/>
+
+    <!-- w -->
+    <path d="M324,26 L328,26 L335,56 L342,26 L346,26 L353,56 L360,26 L364,26 L355,65 L351,65 L344,38 L337,65 L333,65Z"/>
+
+    <!-- s -->
+    <path d="M374,53 C374,48 377,45 380.5,44 L386,42.5 C389,41.5 390.5,39.5 390.5,37 C390.5,33.5 388,31 384.5,31 C381,31 378.5,33 377.5,35.5 L375,34 C376.5,30.5 380,27 385,27 C391,27 395,31 395,36.5 C395,40.5 392.5,43 389,44.5 L383.5,46 C380.5,47.5 378.5,49.5 378.5,52.5 C378.5,56 381,59 384.5,59 C387.5,59 389.5,57 391,54.5 L393.5,56.5 C391.5,60 388,63 384,63 C378.5,63 374,59 374,53Z"/>
+  </g>
+
+  <!-- ===== "]" — Right bracket, heavy weight ===== -->
+  <g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square">
+    <polyline points="400,4 410,4 410,70 400,70"/>
+  </g>
+</svg>

@@ -62,7 +62,11 @@ export const metadata: Metadata = {
       "Free news aggregation with per-article bias analysis across 90 curated sources.",
   },
   icons: {
-    icon: "/void--news/favicon.ico",
+    icon: [
+      { url: "/void--news/icon.svg", type: "image/svg+xml" },
+      { url: "/void--news/favicon.ico", sizes: "any" },
+    ],
+    apple: "/void--news/icon.svg",
   },
   manifest: "/void--news/manifest.json",
 };
