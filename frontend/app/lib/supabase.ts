@@ -35,6 +35,28 @@ export async function fetchDeepDiveData(clusterId: string) {
     .eq('cluster_id', clusterId);
 
   if (error) return null;
+
+  // The rationale column may be stored as a JSON string (text) rather than
+  // jsonb, so PostgREST returns it as a raw string that needs JSON.parse().
+  // Parse it client-side on each bias_score to ensure the rationale object
+  // is accessible for BiasLens popups in the Deep Dive view.
+  if (data) {
+    for (const row of data) {
+      const article = row.article as { bias_scores?: Array<{ rationale?: unknown }> } | null;
+      if (article?.bias_scores) {
+        for (const score of article.bias_scores) {
+          if (typeof score.rationale === 'string') {
+            try {
+              score.rationale = JSON.parse(score.rationale);
+            } catch {
+              score.rationale = null;
+            }
+          }
+        }
+      }
+    }
+  }
+
   return data;
 }
 
