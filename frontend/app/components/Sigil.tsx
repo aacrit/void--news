@@ -347,15 +347,20 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
             background: "linear-gradient(to right, var(--bias-left), var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right))",
             opacity: 0.3,
           }} />
-          {/* Marker dot */}
+          {/* Marker dot — positioned within the track (6px inset each side) */}
           <div style={{
-            position: "absolute", top: "50%",
-            left: `calc(6px + ${lean}% * (100% - 12px) / 100)`,
-            width: 11, height: 11, borderRadius: "50%", backgroundColor: lc,
-            transform: stage >= 2 ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
-            transition: "transform 450ms var(--spring) 100ms, background-color 300ms var(--ease-out)",
-            boxShadow: `0 0 0 2.5px var(--bg-card), 0 0 10px ${lc}44`,
-          }} />
+            position: "absolute", top: "50%", left: 6, right: 6,
+            height: 0, pointerEvents: "none" as const,
+          }}>
+            <div style={{
+              position: "absolute", top: 0,
+              left: `${lean}%`,
+              width: 11, height: 11, borderRadius: "50%", backgroundColor: lc,
+              transform: stage >= 2 ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
+              transition: "transform 450ms var(--spring) 100ms, left 450ms var(--spring) 100ms, background-color 300ms var(--ease-out)",
+              boxShadow: `0 0 0 2.5px var(--bg-card), 0 0 10px ${lc}44`,
+            }} />
+          </div>
         </div>
         {/* Tick labels */}
         <div style={{
