@@ -20,7 +20,8 @@ import requests
 JUNK_URL_PATTERNS = [
     re.compile(p, re.IGNORECASE)
     for p in (
-        r'/page/\d+',           # Pagination
+        r'/page/\d+',           # Pagination (slash-separated)
+        r'page-\d+',            # Pagination (hyphenated, e.g. Chicago Tribune)
         r'/author/',            # Author pages
         r'/tag/',               # Tag listing pages
         r'/category/',          # Category listing pages
@@ -41,6 +42,11 @@ JUNK_TITLE_PATTERNS = [
         r'^sign\s*up',          # Sign up pages
         r'^sponsored[:\s]',     # Sponsored content
         r'- page \d+',          # Pagination in title
+        r'page \d+.*chicago tribune',  # Chicago Tribune pagination pages
+        r'^[\w\s]+ - page \d+',  # Generic "Name - Page N" pagination
+        r'^developing story$',  # Generic placeholder title
+        r'^newsletter',         # Non-news newsletter content
+        r'^top news.*latest',   # RSS feed index pages
         r'^photo:?\s',          # Photo captions
         r'^video:?\s',          # Video-only content
         r'^photos?:?\s',        # Photo galleries

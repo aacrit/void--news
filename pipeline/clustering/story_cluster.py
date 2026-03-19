@@ -35,18 +35,31 @@ _ATTRIBUTION_SUFFIX_RE = re.compile(
     r'(?:Reuters|AP\s*News?|Associated\s*Press|CNN|BBC(?:\s*News)?|NPR|PBS'
     r'|Fox\s*News|The\s+[A-Z]\w+(?:\s+[A-Z]\w+)?|[A-Z]\w+\s+News'
     r'|Al\s+Jazeera|Bloomberg|CNBC|ABC\s*News|CBS\s*News|NBC\s*News'
-    r'|The\s+Guardian|Washington\s+Post|New\s+York\s+Times|Wall\s+Street\s+Journal)'
+    r'|The\s+Guardian|Washington\s+Post|New\s+York\s+Times|Wall\s+Street\s+Journal'
+    r'|Chicago\s+Tribune|UPI|NHK\s+WORLD(?:-JAPAN)?|NHK\s+World'
+    r'|Nikkei|Haaretz|South\s+China\s+Morning\s+Post)'
     r'\s*$',
+    re.IGNORECASE,
+)
+# Domain suffix attribution: " - upi.com", " - nhk.or.jp", etc.
+_DOMAIN_SUFFIX_RE = re.compile(
+    r'\s*[-\u2013\u2014|]+\s*\w+\.(?:com|org|net|co\.uk|or\.jp|co\.jp)\s*$',
     re.IGNORECASE,
 )
 
 
 def _clean_title(title: str) -> str:
-    """Strip wire prefixes, source attribution, and junk from a title."""
+    """Strip wire prefixes, source attribution, and junk from a title.
+
+    Applies attribution stripping twice to handle double attributions
+    like '... | NHK WORLD-JAPAN - nhk.or.jp'.
+    """
     # Strip wire prefixes
     title = _WIRE_PREFIX_RE.sub('', title).strip()
-    # Strip source attribution suffixes
-    title = _ATTRIBUTION_SUFFIX_RE.sub('', title).strip()
+    # Strip source attribution and domain suffixes (apply twice for doubles)
+    for _ in range(2):
+        title = _ATTRIBUTION_SUFFIX_RE.sub('', title).strip()
+        title = _DOMAIN_SUFFIX_RE.sub('', title).strip()
     # Strip trailing whitespace/punctuation artifacts
     title = title.strip(' \t\n\r-\u2013\u2014|')
     return title
@@ -240,9 +253,12 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
     intl_count = sum(1 for m in INTL_MARKERS if m in text)
 
     # Override only when signal is clearly one-sided:
-    # Require 3+ markers on one side AND 0 on the other.
-    # If both sides have markers, keep source-based assignment (no override).
-    if us_count >= 3 and intl_count == 0:
+    # US requires 4+ markers (higher bar to avoid over-classification);
+    # International keeps 3+ (under-represented, lower threshold is safer).
+    # Both require 0 markers on the other side.
+    # Asymmetry biases ambiguous stories toward "world" — safer default
+    # for a global news product (target: US <= 55%).
+    if us_count >= 4 and intl_count == 0:
         return "us"
     if intl_count >= 3 and us_count == 0:
         return "world"
