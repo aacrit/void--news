@@ -214,10 +214,15 @@ def _batch_upsert(table: str, rows: list[dict], chunk_size: int = 200,
             total += len(chunk)
         except Exception as e:
             print(f"  [warn] Batch {table} upsert failed (chunk {i}): {e}")
-            # Fall back to individual inserts for this chunk
+            # Fall back to individual upserts for this chunk
             for row in chunk:
                 try:
-                    supabase.table(table).insert(row).execute()
+                    if on_conflict:
+                        supabase.table(table).upsert(
+                            row, on_conflict=on_conflict
+                        ).execute()
+                    else:
+                        supabase.table(table).upsert(row).execute()
                     total += 1
                 except Exception:
                     pass  # skip duplicates/errors silently
@@ -530,9 +535,9 @@ def _scrape_single(article_data, source_map):
             article_data["full_text"] = f"{title}\n\n{summary}"
             article_data["word_count"] = len(article_data["full_text"].split())
 
-    # Determine section
-    source_id_slug = article_data.get("source_id", "")
-    source_info = source_map.get(source_id_slug, {})
+    # Determine section — use source_slug (always the slug string) for lookup
+    source_slug = article_data.get("source_slug", "") or article_data.get("source_id", "")
+    source_info = source_map.get(source_slug, {})
     source_tier = source_info.get("tier", "")
     source_country = source_info.get("country", "")
     if source_tier == "us_major":
@@ -635,33 +640,122 @@ def main():
             if result:
                 scraped_articles.append(result)
 
-    # Batch-insert articles to Supabase (200 per chunk vs N individual HTTP calls)
-    print(f"  Batch-inserting {len(scraped_articles)} articles...")
-    stored_articles = []
-    for i in range(0, len(scraped_articles), 200):
-        chunk = scraped_articles[i:i + 200]
+    # Resolve source slugs to DB UUIDs and build clean article rows
+    # The raw article dicts from _scrape_single have source_id set to the
+    # slug string (e.g., "ap-news") or the UUID depending on when db_id was
+    # available. We must ensure every article row has the proper UUID before
+    # sending to Supabase, and include only columns that exist in the
+    # articles table to avoid PostgREST rejecting the payload.
+    article_rows = []
+    skipped_no_source = 0
+    for art in scraped_articles:
+        # Resolve source_id to DB UUID using source_slug (always the slug string).
+        # The source_slug field was added by _parse_entry and is always the
+        # original source "id" from sources.json (e.g., "ap-news").
+        # source_id may be the UUID (if db_id was set) or the slug (if not).
+        src_slug = art.get("source_slug", "") or art.get("source_id", "")
+        src_info = source_map.get(src_slug, {})
+        db_source_id = src_info.get("db_id")
+        if not db_source_id:
+            # source_id might already be a UUID (set by _parse_entry from db_id).
+            # Check if any source has this as its db_id.
+            raw_source_id = art.get("source_id", "")
+            for s in source_map.values():
+                if s.get("db_id") == raw_source_id:
+                    db_source_id = raw_source_id
+                    break
+        if not db_source_id:
+            skipped_no_source += 1
+            continue
+
+        row = {
+            "source_id": db_source_id,
+            "url": art.get("url", ""),
+            "title": art.get("title", "Untitled"),
+            "summary": art.get("summary"),
+            "full_text": art.get("full_text"),
+            "author": art.get("author"),
+            "published_at": art.get("published_at"),
+            "section": art.get("section", "world"),
+            "image_url": art.get("image_url"),
+            "word_count": art.get("word_count", 0),
+        }
+        # Skip rows missing required NOT NULL fields
+        if not row["url"] or not row["title"]:
+            skipped_no_source += 1
+            continue
+        # Keep reference to original dict for later enrichment (dedup, analysis)
+        art["_row"] = row
+        article_rows.append((row, art))
+
+    if skipped_no_source:
+        print(f"  Skipped {skipped_no_source} articles (missing source UUID or required fields)")
+
+    # Deduplicate URLs within this batch (RSS feeds can return overlapping entries)
+    seen_urls: set[str] = set()
+    unique_article_rows: list[tuple[dict, dict]] = []
+    for row, art in article_rows:
+        url = row["url"]
+        if url not in seen_urls:
+            seen_urls.add(url)
+            unique_article_rows.append((row, art))
+    if len(article_rows) != len(unique_article_rows):
+        print(f"  Deduplicated within batch: {len(article_rows)} -> {len(unique_article_rows)}")
+
+    # Filter out URLs that already exist in the DB (avoid re-processing
+    # articles from previous pipeline runs, which inflated article count
+    # from ~596 to 3,436 when using UPSERT)
+    existing_urls: set[str] = set()
+    all_urls = [row["url"] for row, _ in unique_article_rows]
+    for i in range(0, len(all_urls), 500):
+        url_chunk = all_urls[i:i + 500]
         try:
-            result = supabase.table("articles").upsert(
-                chunk, on_conflict="url"
-            ).execute()
+            result = supabase.table("articles").select("url").in_("url", url_chunk).execute()
             if result.data:
-                # Map returned IDs back to article dicts
+                for r in result.data:
+                    existing_urls.add(r["url"])
+        except Exception as e:
+            print(f"  [warn] URL existence check failed, proceeding without dedup: {e}")
+            existing_urls.clear()
+            break
+
+    new_article_rows: list[tuple[dict, dict]] = []
+    for row, art in unique_article_rows:
+        if row["url"] not in existing_urls:
+            new_article_rows.append((row, art))
+
+    if existing_urls:
+        print(f"  Filtered existing URLs: {len(unique_article_rows)} -> {len(new_article_rows)} new articles")
+
+    # Batch-insert only NEW articles to Supabase (200 per chunk)
+    print(f"  Batch-inserting {len(new_article_rows)} new articles...")
+    stored_articles = []
+    for i in range(0, len(new_article_rows), 200):
+        chunk_pairs = new_article_rows[i:i + 200]
+        chunk_rows = [row for row, _ in chunk_pairs]
+        try:
+            result = supabase.table("articles").insert(chunk_rows).execute()
+            if result.data:
+                # Map returned IDs back to original article dicts
                 url_to_id = {r["url"]: r["id"] for r in result.data if r.get("url")}
-                for art in chunk:
-                    art_url = art.get("url", "")
+                for row, art in chunk_pairs:
+                    art_url = row["url"]
                     if art_url in url_to_id:
                         art["id"] = url_to_id[art_url]
                         stored_articles.append(art)
         except Exception as e:
             print(f"  [warn] Batch article insert failed (chunk {i}), falling back: {e}")
             # Fallback: individual inserts for this chunk
-            for art in chunk:
-                db_result = insert_article(art)
-                if db_result:
-                    art["id"] = db_result["id"]
-                    stored_articles.append(art)
+            for row, art in chunk_pairs:
+                try:
+                    result = supabase.table("articles").insert(row).execute()
+                    if result.data:
+                        art["id"] = result.data[0]["id"]
+                        stored_articles.append(art)
+                except Exception:
+                    pass  # skip duplicates/errors silently
 
-    print(f"  Articles stored: {len(stored_articles)}/{len(scraped_articles)}")
+    print(f"  Articles stored: {len(stored_articles)}/{len(new_article_rows)} new ({len(existing_urls)} existing skipped)")
 
     # Step 4b: Content-based deduplication
     # Removes near-duplicate articles (syndicated/wire content with different URLs)
@@ -672,7 +766,7 @@ def main():
 
         # Enrich articles with tier info so deduplicator can prefer higher-tier sources
         for art in stored_articles:
-            src_slug = art.get("source_id", "")
+            src_slug = art.get("source_slug", "") or art.get("source_id", "")
             src_info = source_map.get(src_slug, {})
             art["tier"] = src_info.get("tier", "")
 
@@ -703,8 +797,8 @@ def main():
         for i, article in enumerate(stored_articles):
             if (i + 1) % 25 == 0 or i == 0:
                 print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
-            source_id = article.get("source_id", "")
-            source = source_map.get(source_id, {"political_lean_baseline": "center"})
+            source_slug = article.get("source_slug", "") or article.get("source_id", "")
+            source = source_map.get(source_slug, {"political_lean_baseline": "center"})
             bias_scores = run_bias_analysis(article, source)
             bias_scores["article_id"] = article.get("id", "")
             # Store for ranking (in-memory)
@@ -982,8 +1076,8 @@ def main():
                     art_id = ca.get("id", "")
                     if art_id and art_id in article_bias_map and cluster.get("category"):
                         scores = article_bias_map[art_id]
-                        # Resolve source_id slug to DB UUID
-                        src_slug = ca.get("source_id", "")
+                        # Resolve source slug to DB UUID
+                        src_slug = ca.get("source_slug", "") or ca.get("source_id", "")
                         src_info = source_map.get(src_slug, {})
                         db_source_id = src_info.get("db_id")
                         if db_source_id:
