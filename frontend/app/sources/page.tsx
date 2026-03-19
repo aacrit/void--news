@@ -5,6 +5,7 @@ import Link from "next/link";
 import { supabase } from "../lib/supabase";
 import SpectrumChart, { type SpectrumSource } from "../components/SpectrumChart";
 import ThemeToggle from "../components/ThemeToggle";
+import PageToggle from "../components/PageToggle";
 import LogoFull from "../components/LogoFull";
 import LogoIcon from "../components/LogoIcon";
 import Footer from "../components/Footer";
@@ -89,19 +90,10 @@ export default function SourcesPage() {
             </span>
           </div>
 
-          <div className="nav-tabs">
-            <Link
-              href="/"
-              className="nav-tab"
-            >
-              <span className="nav-tab__inner">News Feed</span>
-            </Link>
-            <span className="nav-tab nav-tab--active" aria-current="page">
-              <span className="nav-tab__inner">Sources</span>
-            </span>
+          <div className="nav-right">
+            <PageToggle activePage="sources" />
+            <ThemeToggle />
           </div>
-
-          <ThemeToggle />
         </nav>
       </header>
 
@@ -111,9 +103,7 @@ export default function SourcesPage() {
           <div className="sources-header__text">
             <h1 className="sources-header__title">Our Sources</h1>
             <p className="sources-header__subtitle">
-              Every source vetted for credibility before inclusion. Bias
-              analysis runs per-article — not per-outlet — so a center-leaning
-              outlet can still publish opinion pieces, and we&apos;ll flag them.
+              Every source vetted for credibility. Bias analysis runs per-article, not per-outlet.
             </p>
           </div>
           <div className="sources-header__stat" aria-live="polite">

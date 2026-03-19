@@ -271,6 +271,7 @@ interface SpectrumChartProps {
 export default function SpectrumChart({ sources }: SpectrumChartProps) {
   const [tooltip, setTooltip] = useState<SourceTooltip | null>(null);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   // Group sources by lean category
   const grouped = LEAN_ZONES.reduce<
@@ -315,7 +316,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
       {/* ---- Desktop: Horizontal layout ---- */}
       <div className="spectrum-chart__desktop" aria-hidden="false">
         {/* Above bar: US Major sources */}
-        <div className="spectrum-above" aria-label="US Major outlets">
+        <div className={`spectrum-above${expanded ? "" : " spectrum-above--collapsed"}`} aria-label="US Major outlets">
           <span className="spectrum-tier-label spectrum-tier-label--above">
             US Major
           </span>
@@ -360,8 +361,17 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
           ))}
         </div>
 
+        {/* Expand/collapse toggle */}
+        <button
+          className="spectrum-expand-btn"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+        >
+          {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
+        </button>
+
         {/* Below bar: International + Independent */}
-        <div className="spectrum-below" aria-label="International and Independent outlets">
+        <div className={`spectrum-below${expanded ? "" : " spectrum-below--collapsed"}`} aria-label="International and Independent outlets">
           <span className="spectrum-tier-label spectrum-tier-label--below">
             Intl &amp; Independent
           </span>

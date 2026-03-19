@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Section } from "../lib/types";
 import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
+import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import LogoIcon from "./LogoIcon";
 
@@ -96,7 +97,10 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             ))}
           </div>
 
-          <ThemeToggle />
+          <div className="nav-right">
+            <PageToggle activePage="feed" />
+            <ThemeToggle />
+          </div>
         </nav>
       </header>
 
