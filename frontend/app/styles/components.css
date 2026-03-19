@@ -262,9 +262,17 @@
   justify-content: space-between;
 }
 
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
 .nav-logo {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 /* Hidden by default, shown on mobile via responsive.css */
@@ -272,6 +280,24 @@
   display: none;
   text-decoration: none;
   color: var(--fg-primary);
+}
+
+/* Dateline — newspaper date + volume, inline with logo */
+.nav-dateline {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  border-left: 1px solid var(--divider);
+  padding-left: var(--space-4);
+}
+
+/* Desktop: full dateline. Mobile: compact. */
+.nav-dateline__compact {
+  display: none;
 }
 
 .nav-tabs {

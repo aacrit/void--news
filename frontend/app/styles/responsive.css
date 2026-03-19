@@ -193,6 +193,20 @@
     display: block;
   }
 
+  /* Dateline: show compact date, hide full */
+  .nav-dateline__full {
+    display: none;
+  }
+
+  .nav-dateline__compact {
+    display: inline;
+  }
+
+  .nav-dateline {
+    border-left: none;
+    padding-left: 0;
+  }
+
   /* --- Padding normalization ---
      Replace the global var(--space-7) (~32px) horizontal padding with
      var(--space-5) (~16px) on all edge-to-edge containers. Standard
