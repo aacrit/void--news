@@ -106,14 +106,20 @@ def compute_confidence(article: dict, scores: dict) -> float:
     return round(max(0.1, min(1.0, confidence)), 2)
 
 
-def run_bias_analysis(article: dict, source: dict) -> dict:
+def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] | None = None) -> dict:
     """
     Run all 5 bias analyzers on a single article with computed confidence.
 
+    Args:
+        article: Article dict with full_text, title, etc.
+        source: Source dict with political_lean_baseline, etc.
+        cluster_articles: Optional list of other articles in the same cluster,
+            passed to the framing analyzer for cross-article omission detection.
+
     Returns a dict with score keys ready for DB insertion.
     Each analyzer is run independently; failures fall back to defaults.
-    Analyzers that return dicts (3-lens: lean, opinion, rigor) have their
-    rationale collected into a JSONB-ready rationale field.
+    Analyzers that return dicts (all 5 axes) have their rationale collected
+    into a JSONB-ready rationale field.
     """
     scores = {
         "political_lean": 50,
@@ -136,7 +142,12 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
         print(f"    [warn] Political lean failed: {e}")
 
     try:
-        scores["sensationalism"] = analyze_sensationalism(article)
+        result = analyze_sensationalism(article)
+        if isinstance(result, dict):
+            scores["sensationalism"] = result["score"]
+            rationale["sensationalism"] = result["rationale"]
+        else:
+            scores["sensationalism"] = result
     except Exception as e:
         print(f"    [warn] Sensationalism failed: {e}")
 
@@ -161,7 +172,12 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
         print(f"    [warn] Factual rigor failed: {e}")
 
     try:
-        scores["framing"] = analyze_framing(article)
+        result = analyze_framing(article, cluster_articles=cluster_articles)
+        if isinstance(result, dict):
+            scores["framing"] = result["score"]
+            rationale["framing"] = result["rationale"]
+        else:
+            scores["framing"] = result
     except Exception as e:
         print(f"    [warn] Framing failed: {e}")
 
@@ -596,6 +612,8 @@ def main():
     clusters_created = 0
     # Collect per-article bias scores keyed by article_id for ranking
     article_bias_map: dict[str, dict] = {}
+    # Collect article-to-categories mapping for junction table
+    article_categories_map: dict[str, list[str]] = {}
 
     if not ANALYSIS_AVAILABLE:
         print("\n[5-9] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
@@ -627,6 +645,56 @@ def main():
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
 
+        # Step 6b: Re-run framing analysis with cluster context
+        # Framing's omission detection benefits from knowing what other
+        # articles in the same cluster mention. Initial analysis (step 5)
+        # ran without cluster context. Now re-score framing for multi-article
+        # clusters and update the stored bias scores.
+        print("\n[6b] Re-scoring framing with cluster context...")
+        framing_updated = 0
+        for cluster in clusters:
+            cluster_articles_list = cluster.get("articles", [])
+            if len(cluster_articles_list) < 2:
+                continue  # single-article clusters gain nothing
+            for art in cluster_articles_list:
+                art_id = art.get("id", "")
+                if not art_id:
+                    continue
+                try:
+                    result = analyze_framing(art, cluster_articles=cluster_articles_list)
+                    new_framing = result["score"] if isinstance(result, dict) else result
+                    new_rationale = result.get("rationale") if isinstance(result, dict) else None
+
+                    # Update in-memory bias map
+                    if art_id in article_bias_map:
+                        article_bias_map[art_id]["framing"] = new_framing
+
+                    # Update DB: bias_scores row
+                    update_data: dict = {"framing": new_framing}
+                    # Merge new framing rationale into existing rationale
+                    if new_rationale:
+                        existing = article_bias_map.get(art_id, {})
+                        existing_rationale_str = existing.get("rationale")
+                        if existing_rationale_str and isinstance(existing_rationale_str, str):
+                            try:
+                                existing_rationale = json.loads(existing_rationale_str)
+                            except (json.JSONDecodeError, TypeError):
+                                existing_rationale = {}
+                        elif isinstance(existing_rationale_str, dict):
+                            existing_rationale = existing_rationale_str
+                        else:
+                            existing_rationale = {}
+                        existing_rationale["framing"] = new_rationale
+                        update_data["rationale"] = json.dumps(existing_rationale)
+
+                    supabase.table("bias_scores").update(
+                        update_data
+                    ).eq("article_id", art_id).execute()
+                    framing_updated += 1
+                except Exception as e:
+                    print(f"    [warn] Framing re-score failed for {art_id}: {e}")
+        print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
+
         # Step 7: Categorize and rank with v2 engine
         print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
         for cluster in clusters:
@@ -636,6 +704,11 @@ def main():
             try:
                 categories = categorize_article(cluster_articles_list[0]) if cluster_articles_list else ["politics"]
                 cluster["category"] = categories[0] if categories else "politics"
+                # Store all categories for each article in the cluster
+                for art in cluster_articles_list:
+                    art_id = art.get("id", "")
+                    if art_id:
+                        article_categories_map[art_id] = categories
             except Exception:
                 cluster["category"] = "politics"
 
@@ -708,6 +781,53 @@ def main():
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
+    # Step 9b: Populate article_categories junction table
+    if ANALYSIS_AVAILABLE and article_categories_map:
+        print("\n[9b] Populating article_categories junction table...")
+        # Fetch category slug -> UUID mapping
+        category_slug_map: dict[str, str] = {}
+        try:
+            cat_result = supabase.table("categories").select("id,slug").execute()
+            if cat_result.data:
+                category_slug_map = {r["slug"]: r["id"] for r in cat_result.data}
+        except Exception as e:
+            print(f"  [warn] Failed to fetch categories: {e}")
+
+        if category_slug_map:
+            ac_inserted = 0
+            ac_rows = []
+            for art_id, cat_slugs in article_categories_map.items():
+                for slug in cat_slugs:
+                    cat_id = category_slug_map.get(slug)
+                    if cat_id:
+                        ac_rows.append({
+                            "article_id": art_id,
+                            "category_id": cat_id,
+                        })
+            # Batch upsert to avoid duplicates
+            if ac_rows:
+                try:
+                    # Upsert in chunks of 200 to avoid payload limits
+                    for i in range(0, len(ac_rows), 200):
+                        chunk = ac_rows[i:i + 200]
+                        supabase.table("article_categories").upsert(
+                            chunk, on_conflict="article_id,category_id"
+                        ).execute()
+                        ac_inserted += len(chunk)
+                    print(f"  article_categories rows inserted: {ac_inserted}")
+                except Exception as e:
+                    print(f"  [warn] article_categories batch insert failed: {e}")
+                    # Fallback: insert one by one
+                    for row in ac_rows:
+                        try:
+                            supabase.table("article_categories").upsert(
+                                row, on_conflict="article_id,category_id"
+                            ).execute()
+                        except Exception:
+                            pass  # skip duplicates silently
+        else:
+            print("  [warn] No categories found in DB; skipping article_categories")
+
     # Step 10: Truncate full_text for IP compliance
     # Full article text is used only for NLP analysis (transformative use).
     # After analysis, truncate to a short excerpt to avoid storing copyrighted
@@ -729,6 +849,22 @@ def main():
         print(f"  Truncated {truncated} articles to 300-char excerpts")
     except Exception as e:
         print(f"  [warn] Full-text truncation failed: {e}")
+
+    # Cleanup: remove stale clusters and stuck pipeline runs
+    print("\n[cleanup] Running database cleanup RPCs...")
+    try:
+        result = supabase.rpc("cleanup_stale_clusters").execute()
+        cleaned = result.data if result.data else 0
+        print(f"  Stale clusters cleaned: {cleaned}")
+    except Exception as e:
+        print(f"  [warn] cleanup_stale_clusters failed: {e}")
+
+    try:
+        result = supabase.rpc("cleanup_stuck_pipeline_runs").execute()
+        cleaned = result.data if result.data else 0
+        print(f"  Stuck pipeline runs cleaned: {cleaned}")
+    except Exception as e:
+        print(f"  [warn] cleanup_stuck_pipeline_runs failed: {e}")
 
     # Finalize
     duration = time.time() - start_time
