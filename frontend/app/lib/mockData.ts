@@ -1,4 +1,4 @@
-import type { Story, DeepDiveData, BiasScores, ThreeLensData, OpinionLabel } from "./types";
+import type { Story, DeepDiveData, BiasScores, ThreeLensData, OpinionLabel, SigilData } from "./types";
 
 /** Derive ThreeLensData from BiasScores for mock data */
 function mockLensData(bs: BiasScores, sourceCount: number): ThreeLensData {
@@ -479,7 +479,7 @@ const deepDive24: DeepDiveData = {
   ],
 };
 
-const rawMockStories: Omit<Story, "lensData">[] = [
+const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
   {
     id: "1",
     title: "EU and China reach landmark trade agreement after months of tense negotiations",
@@ -1010,9 +1010,28 @@ const rawMockStories: Omit<Story, "lensData">[] = [
   },
 ];
 
+function mockSigilData(bs: BiasScores, sourceCount: number, divergenceScore: number): SigilData {
+  const opinionLabel: OpinionLabel =
+    bs.opinionFact <= 25 ? "Reporting" :
+    bs.opinionFact <= 50 ? "Analysis" :
+    bs.opinionFact <= 75 ? "Opinion" : "Editorial";
+  return {
+    politicalLean: bs.politicalLean,
+    sensationalism: bs.sensationalism,
+    opinionFact: bs.opinionFact,
+    factualRigor: bs.factualRigor,
+    framing: bs.framing,
+    agreement: divergenceScore,
+    sourceCount,
+    pending: false,
+    opinionLabel,
+  };
+}
+
 export const mockStories: Story[] = rawMockStories.map((s) => ({
   ...s,
   lensData: mockLensData(s.biasScores, s.source.count),
+  sigilData: mockSigilData(s.biasScores, s.source.count, s.divergenceScore),
 }));
 
 /**

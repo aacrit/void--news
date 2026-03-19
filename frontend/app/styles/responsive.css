@@ -40,12 +40,34 @@
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
-@media (min-width: 1024px) {
-  /* Lead story: constrain to ~66% of canvas on desktop — newspaper
-     dominant-column feel. Headline + summary stay proportional. */
-  .lead-story {
-    max-width: 66%;
+@media (min-width: 768px) {
+  /* Lead section: 2-column split — lead (2fr) + secondary (1fr).
+     Classic broadsheet "above the fold" layout with column divider. */
+  .lead-section {
+    grid-template-columns: 2fr 1fr;
+    gap: 0;
   }
+
+  .lead-section__primary {
+    padding-right: var(--space-5);
+    border-right: var(--rule-thin);
+  }
+
+  .lead-section__secondary {
+    padding-left: var(--space-5);
+    border-top: none;
+    /* Align secondary story to top of lead column */
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .lead-section__secondary .story-card {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Remove old single-story constraint — grid column constrains instead */
 
   .grid-medium {
     grid-template-columns: repeat(3, 1fr);
@@ -199,17 +221,6 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: flex-start;
-  }
-
-  /* --- Lead story — remove ch constraint; the container itself is the
-     constraint on mobile. 28ch at hero size would exceed viewport width. */
-  .lead-story__headline {
-    max-width: none;
-  }
-
-  /* --- Lead story summary — same principle, container constrains width. */
-  .lead-story__summary {
-    max-width: none;
   }
 
   /* --- Source rows in Deep Dive — allow wrapping so tier badge + BiasLens

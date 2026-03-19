@@ -145,12 +145,8 @@
   letter-spacing: -0.01em;
   color: var(--fg-primary);
   margin-bottom: var(--space-3);
-  /* Newspaper measure: hero headlines should not exceed ~20 words per line.
-     At clamp(2rem..4rem), 28ch keeps lines punchy and readable.
-     On mobile, the container is narrower than 28ch so this is overridden
-     to none in responsive.css — see max-width: none override there. */
-  max-width: 28ch;
-  /* Prevent long words from overflowing on narrow mobile viewports */
+  /* No max-width — the grid column (2fr in lead-section) constrains
+     the headline naturally. On mobile the container is the constraint. */
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -160,9 +156,6 @@
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--fg-secondary);
-  /* Match headline measure proportionally — wider than headline since
-     body text is smaller, but still constrained for readability. */
-  max-width: 75ch;
   margin-bottom: var(--space-4);
 }
 
