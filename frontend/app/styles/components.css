@@ -59,6 +59,9 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-1);
+  /* Prevent long words from overflowing on narrow mobile viewports */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .story-card__headline-text {
@@ -143,8 +146,13 @@
   color: var(--fg-primary);
   margin-bottom: var(--space-3);
   /* Newspaper measure: hero headlines should not exceed ~20 words per line.
-     At clamp(2rem..4rem), 28ch keeps lines punchy and readable. */
+     At clamp(2rem..4rem), 28ch keeps lines punchy and readable.
+     On mobile, the container is narrower than 28ch so this is overridden
+     to none in responsive.css — see max-width: none override there. */
   max-width: 28ch;
+  /* Prevent long words from overflowing on narrow mobile viewports */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .lead-story__summary {
