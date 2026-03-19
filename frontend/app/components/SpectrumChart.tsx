@@ -5,7 +5,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
    Desktop: horizontal bar, sources plotted above (us_major) and below
-   Mobile: vertical bar, sources listed in lean-zone rows
+   Mobile: horizontal swipeable card strip with scroll-snap dot indicators
    --------------------------------------------------------------------------- */
 
 export interface SpectrumSource {
@@ -270,6 +270,47 @@ function SourceTooltipCard({
 }
 
 /* ---------------------------------------------------------------------------
+   MobileSpectrumFavicon — compact favicon chip used in swipe cards
+   --------------------------------------------------------------------------- */
+function MobileSpectrumFavicon({
+  source,
+}: {
+  source: SpectrumSource;
+}) {
+  return (
+    <span
+      className="spectrum-mobile-card__favicon"
+      title={source.name}
+      aria-label={source.name}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={getFaviconUrl(source.url)}
+        alt=""
+        width={20}
+        height={20}
+        className="spectrum-mobile-card__favicon-img"
+        loading="lazy"
+        aria-hidden="true"
+        onError={(e) => {
+          const target = e.currentTarget as HTMLImageElement;
+          target.style.display = "none";
+          const fallback = target.nextElementSibling as HTMLElement | null;
+          if (fallback) fallback.style.display = "flex";
+        }}
+      />
+      <span
+        className="spectrum-mobile-card__favicon-fallback"
+        aria-hidden="true"
+        style={{ display: "none" }}
+      >
+        {source.name.charAt(0).toUpperCase()}
+      </span>
+    </span>
+  );
+}
+
+/* ---------------------------------------------------------------------------
    SpectrumChart — main component
    --------------------------------------------------------------------------- */
 interface SpectrumChartProps {
@@ -280,6 +321,10 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
   const [tooltip, setTooltip] = useState<SourceTooltip | null>(null);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Group sources by lean category
   const grouped = LEAN_ZONES.reduce<
@@ -303,6 +348,51 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
       grouped[lean].below.push(s);
     }
   }
+
+  // Only include zones that have sources — skip empty zones for mobile cards
+  const populatedZones = LEAN_ZONES.filter(
+    (zone) =>
+      grouped[zone.key].above.length > 0 || grouped[zone.key].below.length > 0
+  );
+
+  // IntersectionObserver — update active dot as cards scroll into view
+  useEffect(() => {
+    const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
+    if (cards.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the most-intersecting card
+        let best: { index: number; ratio: number } | null = null;
+        entries.forEach((entry) => {
+          const index = parseInt(
+            (entry.target as HTMLElement).dataset.cardIndex ?? "0",
+            10
+          );
+          if (!best || entry.intersectionRatio > best.ratio) {
+            best = { index, ratio: entry.intersectionRatio };
+          }
+        });
+        if (best && (best as { index: number; ratio: number }).ratio > 0.4) {
+          setActiveCardIndex((best as { index: number; ratio: number }).index);
+        }
+      },
+      {
+        root: scrollRef.current,
+        threshold: [0.4, 0.6, 0.8],
+      }
+    );
+
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [populatedZones.length]);
+
+  // Scroll to card when dot indicator is clicked
+  const scrollToCard = useCallback((index: number) => {
+    const card = cardRefs.current[index];
+    if (!card || !scrollRef.current) return;
+    card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, []);
 
   // Close tooltip on Escape
   useEffect(() => {
@@ -419,50 +509,112 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
         {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
       </button>
 
-      {/* ---- Mobile: Vertical layout ---- */}
-      <div className="spectrum-chart__mobile" aria-hidden="false">
-        {LEAN_ZONES.map((zone) => {
-          const allInZone = [
-            ...grouped[zone.key].above,
-            ...grouped[zone.key].below,
-          ];
-          if (allInZone.length === 0) return null;
-          return (
-            <div
+      {/* ---- Mobile: Horizontal swipeable card strip ---- */}
+      <div className="spectrum-chart__mobile" aria-label="Political lean spectrum — swipe to explore zones" role="region">
+
+        {/* Reference gradient bar */}
+        <div className="spectrum-mobile-bar" aria-hidden="true" />
+
+        {/* Scrollable card strip */}
+        <div
+          ref={scrollRef}
+          className="spectrum-mobile-strip"
+          role="list"
+          aria-label="Lean zone cards"
+        >
+          {/* Leading spacer so first card aligns with left edge padding */}
+          <div className="spectrum-mobile-strip__spacer" aria-hidden="true" />
+
+          {populatedZones.map((zone, i) => {
+            const usMajor = grouped[zone.key].above;
+            const intlIndep = grouped[zone.key].below;
+            const totalInZone = usMajor.length + intlIndep.length;
+
+            return (
+              <div
+                key={zone.key}
+                ref={(el) => { cardRefs.current[i] = el; }}
+                data-card-index={i}
+                className={`spectrum-mobile-card${activeCardIndex === i ? " spectrum-mobile-card--active" : ""}`}
+                data-lean={zone.key}
+                role="listitem"
+                aria-label={`${zone.label}: ${totalInZone} source${totalInZone !== 1 ? "s" : ""}`}
+              >
+                {/* Card header */}
+                <div className="spectrum-mobile-card__header">
+                  <span
+                    className="spectrum-mobile-card__dot"
+                    data-lean={zone.key}
+                    aria-hidden="true"
+                  />
+                  <span className="spectrum-mobile-card__label">{zone.label}</span>
+                </div>
+
+                {/* Description */}
+                <p className="spectrum-mobile-card__desc">{zone.desc}</p>
+
+                {/* Divider */}
+                <div className="spectrum-mobile-card__divider" aria-hidden="true" />
+
+                {/* US Major favicons */}
+                {usMajor.length > 0 && (
+                  <div className="spectrum-mobile-card__tier-group">
+                    <span className="spectrum-mobile-card__tier-label">US Major</span>
+                    <div className="spectrum-mobile-card__favicons">
+                      {usMajor.map((s) => (
+                        <MobileSpectrumFavicon key={s.slug} source={s} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* International & Independent favicons */}
+                {intlIndep.length > 0 && (
+                  <div className="spectrum-mobile-card__tier-group">
+                    <span className="spectrum-mobile-card__tier-label">
+                      {usMajor.length > 0 ? "Intl & Independent" : "International & Independent"}
+                    </span>
+                    <div className="spectrum-mobile-card__favicons">
+                      {intlIndep.map((s) => (
+                        <MobileSpectrumFavicon key={s.slug} source={s} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Source count */}
+                <div className="spectrum-mobile-card__count">
+                  <span className="spectrum-mobile-card__count-num">{totalInZone}</span>
+                  <span className="spectrum-mobile-card__count-label">
+                    {totalInZone === 1 ? "source" : "sources"}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Trailing spacer */}
+          <div className="spectrum-mobile-strip__spacer" aria-hidden="true" />
+        </div>
+
+        {/* Dot indicators */}
+        <div
+          className="spectrum-mobile-dots"
+          role="tablist"
+          aria-label="Lean zone navigation"
+        >
+          {populatedZones.map((zone, i) => (
+            <button
               key={zone.key}
-              className="spectrum-mobile-row"
+              className={`spectrum-mobile-dots__dot${activeCardIndex === i ? " spectrum-mobile-dots__dot--active" : ""}`}
               data-lean={zone.key}
-            >
-              <div className="spectrum-mobile-row__marker" aria-hidden="true">
-                <div className="spectrum-mobile-row__dot" data-lean={zone.key} />
-                <div className="spectrum-mobile-row__line" />
-              </div>
-              <div className="spectrum-mobile-row__content">
-                <h3 className="spectrum-mobile-row__label">{zone.label}</h3>
-                <ul className="spectrum-mobile-row__sources">
-                  {allInZone.map((s) => (
-                    <li key={s.slug} className="spectrum-mobile-source">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={getFaviconUrl(s.url)}
-                        alt=""
-                        width={16}
-                        height={16}
-                        className="spectrum-mobile-source__img"
-                        loading="lazy"
-                        aria-hidden="true"
-                      />
-                      <span className="spectrum-mobile-source__name">{s.name}</span>
-                      <span className="spectrum-mobile-source__tier">
-                        {tierLabel(s.tier)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          );
-        })}
+              role="tab"
+              aria-selected={activeCardIndex === i}
+              aria-label={`Go to ${zone.label}`}
+              onClick={() => scrollToCard(i)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Tooltip — rendered as fixed overlay, tracks pointer position */}
