@@ -624,18 +624,56 @@ def main():
     print(f"  Total raw articles: {len(articles_raw)}")
     print(f"  Fetch errors: {len(fetch_errors)}")
 
+    # Step 3b: Filter out URLs already in the database
+    # This avoids scraping ~3,800+ articles that already exist, reducing
+    # scrape time from ~7 minutes to seconds on typical runs.
+    print("\n[3b] Filtering known URLs...")
+    total_rss_urls = len(articles_raw)
+    articles_to_scrape = articles_raw  # default: scrape everything (first run / error fallback)
+
+    try:
+        # Collect all non-empty URLs from RSS results
+        url_list = [a.get("url", "") for a in articles_raw if a.get("url")]
+
+        if url_list:
+            existing_urls: set[str] = set()
+            # Query in chunks of 500 to stay within Supabase query size limits
+            chunk_size = 500
+            for i in range(0, len(url_list), chunk_size):
+                url_chunk = url_list[i:i + chunk_size]
+                result = supabase.table("articles").select("url").in_("url", url_chunk).execute()
+                if result.data:
+                    existing_urls.update(r["url"] for r in result.data)
+
+            # Keep articles whose URL is new (not in DB) or has no URL (include for safety)
+            articles_to_scrape = [
+                a for a in articles_raw
+                if not a.get("url") or a["url"] not in existing_urls
+            ]
+
+            existing_count = len(existing_urls)
+            new_count = len(articles_to_scrape)
+            print(f"  URLs from RSS: {total_rss_urls}")
+            print(f"  Already in DB: {existing_count}")
+            print(f"  New to scrape: {new_count}")
+        else:
+            print(f"  URLs from RSS: {total_rss_urls} (none valid)")
+    except Exception as e:
+        print(f"  [warn] URL filter query failed ({e}), scraping all {total_rss_urls} articles")
+        articles_to_scrape = articles_raw
+
     # Step 4: Scrape full text (parallel), then batch-insert articles
-    print("\n[4/9] Scraping article text (parallel, 15 workers)...")
+    print(f"\n[4/9] Scraping article text (parallel, 15 workers)...")
     scraped_articles = []
 
     with ThreadPoolExecutor(max_workers=15) as executor:
         futures = {
             executor.submit(_scrape_single, article_data, source_map): article_data
-            for article_data in articles_raw
+            for article_data in articles_to_scrape
         }
         for i, future in enumerate(as_completed(futures)):
             if (i + 1) % 50 == 0 or i == 0:
-                print(f"  Scraped {i + 1}/{len(articles_raw)}...")
+                print(f"  Scraped {i + 1}/{len(articles_to_scrape)}...")
             result = future.result()
             if result:
                 scraped_articles.append(result)
