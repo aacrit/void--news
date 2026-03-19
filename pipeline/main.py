@@ -110,6 +110,10 @@ def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] 
     """
     Run all 5 bias analyzers on a single article with computed confidence.
 
+    Performance optimization: parses spaCy doc once and passes it to
+    analyzers that need NER/dependency parsing (factual_rigor, framing),
+    avoiding 2-3 redundant spaCy parses per article.
+
     Args:
         article: Article dict with full_text, title, etc.
         source: Source dict with political_lean_baseline, etc.
@@ -189,6 +193,35 @@ def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] 
         scores["rationale"] = json.dumps(rationale)
 
     return scores
+
+
+def _batch_upsert(table: str, rows: list[dict], chunk_size: int = 200,
+                  on_conflict: str | None = None) -> int:
+    """
+    Batch upsert rows to a Supabase table in chunks.
+    Returns the number of rows successfully upserted.
+    """
+    total = 0
+    for i in range(0, len(rows), chunk_size):
+        chunk = rows[i:i + chunk_size]
+        try:
+            if on_conflict:
+                supabase.table(table).upsert(
+                    chunk, on_conflict=on_conflict
+                ).execute()
+            else:
+                supabase.table(table).upsert(chunk).execute()
+            total += len(chunk)
+        except Exception as e:
+            print(f"  [warn] Batch {table} upsert failed (chunk {i}): {e}")
+            # Fall back to individual inserts for this chunk
+            for row in chunk:
+                try:
+                    supabase.table(table).insert(row).execute()
+                    total += 1
+                except Exception:
+                    pass  # skip duplicates/errors silently
+    return total
 
 
 def enrich_cluster(cluster_id: str) -> None:
@@ -586,9 +619,9 @@ def main():
     print(f"  Total raw articles: {len(articles_raw)}")
     print(f"  Fetch errors: {len(fetch_errors)}")
 
-    # Step 4: Scrape full text and store articles (parallel)
+    # Step 4: Scrape full text (parallel), then batch-insert articles
     print("\n[4/9] Scraping article text (parallel, 15 workers)...")
-    stored_articles = []
+    scraped_articles = []
 
     with ThreadPoolExecutor(max_workers=15) as executor:
         futures = {
@@ -600,12 +633,35 @@ def main():
                 print(f"  Scraped {i + 1}/{len(articles_raw)}...")
             result = future.result()
             if result:
-                db_result = insert_article(result)
-                if db_result:
-                    result["id"] = db_result["id"]
-                    stored_articles.append(result)
+                scraped_articles.append(result)
 
-    print(f"  Articles stored: {len(stored_articles)}/{len(articles_raw)}")
+    # Batch-insert articles to Supabase (200 per chunk vs N individual HTTP calls)
+    print(f"  Batch-inserting {len(scraped_articles)} articles...")
+    stored_articles = []
+    for i in range(0, len(scraped_articles), 200):
+        chunk = scraped_articles[i:i + 200]
+        try:
+            result = supabase.table("articles").upsert(
+                chunk, on_conflict="url"
+            ).execute()
+            if result.data:
+                # Map returned IDs back to article dicts
+                url_to_id = {r["url"]: r["id"] for r in result.data if r.get("url")}
+                for art in chunk:
+                    art_url = art.get("url", "")
+                    if art_url in url_to_id:
+                        art["id"] = url_to_id[art_url]
+                        stored_articles.append(art)
+        except Exception as e:
+            print(f"  [warn] Batch article insert failed (chunk {i}), falling back: {e}")
+            # Fallback: individual inserts for this chunk
+            for art in chunk:
+                db_result = insert_article(art)
+                if db_result:
+                    art["id"] = db_result["id"]
+                    stored_articles.append(art)
+
+    print(f"  Articles stored: {len(stored_articles)}/{len(scraped_articles)}")
 
     # Step 4b: Content-based deduplication
     # Removes near-duplicate articles (syndicated/wire content with different URLs)
@@ -641,8 +697,9 @@ def main():
     if not ANALYSIS_AVAILABLE:
         print("\n[5-9] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
     else:
-        # Step 5: Bias analysis with computed confidence
+        # Step 5: Bias analysis with computed confidence + batch DB insert
         print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles...")
+        bias_rows_to_insert: list[dict] = []
         for i, article in enumerate(stored_articles):
             if (i + 1) % 25 == 0 or i == 0:
                 print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
@@ -650,13 +707,18 @@ def main():
             source = source_map.get(source_id, {"political_lean_baseline": "center"})
             bias_scores = run_bias_analysis(article, source)
             bias_scores["article_id"] = article.get("id", "")
-            result = insert_bias_scores(bias_scores)
-            if result:
-                articles_analyzed += 1
-                # Store for ranking
-                article_bias_map[article.get("id", "")] = {
-                    k: v for k, v in bias_scores.items() if k != "article_id"
-                }
+            # Store for ranking (in-memory)
+            article_bias_map[article.get("id", "")] = {
+                k: v for k, v in bias_scores.items() if k != "article_id"
+            }
+            bias_rows_to_insert.append(bias_scores)
+
+        # Batch-insert bias scores (200 per chunk vs N individual HTTP calls)
+        print(f"  Batch-inserting {len(bias_rows_to_insert)} bias score rows...")
+        articles_analyzed = _batch_upsert(
+            "bias_scores", bias_rows_to_insert, chunk_size=200,
+            on_conflict="article_id",
+        )
         print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
 
         # Step 6: Cluster articles
@@ -673,18 +735,52 @@ def main():
         # articles in the same cluster mention. Initial analysis (step 5)
         # ran without cluster context. Now re-score framing for multi-article
         # clusters and update the stored bias scores.
+        #
+        # Performance optimization: pre-compute cluster entity cache once per
+        # cluster (instead of re-parsing all articles for each article in the
+        # cluster). This reduces spaCy calls from O(N*M) to O(N+M).
         print("\n[6b] Re-scoring framing with cluster context...")
         framing_updated = 0
+        framing_update_rows: list[dict] = []  # batch DB updates
+
+        try:
+            from utils.nlp_shared import get_nlp
+            _nlp = get_nlp()
+        except Exception:
+            _nlp = None
+
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
             if len(cluster_articles_list) < 2:
                 continue  # single-article clusters gain nothing
+
+            # Pre-compute cluster entity cache: parse each article ONCE,
+            # collect all entities into a shared set
+            cluster_entity_cache: set[str] = set()
+            article_docs: dict[str, object] = {}  # art_id -> spaCy doc
+            if _nlp is not None:
+                for art in cluster_articles_list[:10]:
+                    art_text = art.get("full_text", "") or ""
+                    art_id = art.get("id", "")
+                    if art_text and art_id:
+                        doc = _nlp(art_text[:15000])
+                        article_docs[art_id] = doc
+                        for ent in doc.ents:
+                            if ent.label_ in ("PERSON", "ORG", "GPE"):
+                                cluster_entity_cache.add(ent.text.lower())
+
             for art in cluster_articles_list:
                 art_id = art.get("id", "")
                 if not art_id:
                     continue
                 try:
-                    result = analyze_framing(art, cluster_articles=cluster_articles_list)
+                    # Reuse pre-computed spaCy doc if available
+                    cached_doc = article_docs.get(art_id)
+                    result = analyze_framing(
+                        art, cluster_articles=cluster_articles_list,
+                        doc=cached_doc,
+                        cluster_entity_cache=cluster_entity_cache if cluster_entity_cache else None,
+                    )
                     new_framing = result["score"] if isinstance(result, dict) else result
                     new_rationale = result.get("rationale") if isinstance(result, dict) else None
 
@@ -692,8 +788,8 @@ def main():
                     if art_id in article_bias_map:
                         article_bias_map[art_id]["framing"] = new_framing
 
-                    # Update DB: bias_scores row
-                    update_data: dict = {"framing": new_framing}
+                    # Build update row for batch
+                    update_data: dict = {"article_id": art_id, "framing": new_framing}
                     # Merge new framing rationale into existing rationale
                     if new_rationale:
                         existing = article_bias_map.get(art_id, {})
@@ -710,13 +806,21 @@ def main():
                         existing_rationale["framing"] = new_rationale
                         update_data["rationale"] = json.dumps(existing_rationale)
 
-                    supabase.table("bias_scores").update(
-                        update_data
-                    ).eq("article_id", art_id).execute()
+                    framing_update_rows.append(update_data)
                     framing_updated += 1
                 except Exception as e:
                     print(f"    [warn] Framing re-score failed for {art_id}: {e}")
-        print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
+
+        # Batch-upsert framing updates (instead of one UPDATE per article)
+        if framing_update_rows:
+            upserted = _batch_upsert(
+                "bias_scores", framing_update_rows, chunk_size=200,
+                on_conflict="article_id",
+            )
+            print(f"  Framing re-scored: {framing_updated} articles "
+                  f"({upserted} DB rows updated in batches)")
+        else:
+            print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
 
         # Step 7: Categorize and rank with v2 engine
         print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
@@ -762,6 +866,9 @@ def main():
 
         # Step 8: Store clusters with enrichment data
         print("\n[8/9] Storing clusters with enrichment data...")
+        all_cluster_article_links: list[dict] = []  # batch insert
+        cluster_ids_to_enrich: list[str] = []
+
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
@@ -795,12 +902,25 @@ def main():
             if result:
                 clusters_created += 1
                 cluster_id = result.get("id", "")
+                cluster_ids_to_enrich.append(cluster_id)
                 for article_id in cluster.get("article_ids", []):
                     if article_id:
-                        link_article_to_cluster(cluster_id, article_id)
+                        all_cluster_article_links.append({
+                            "cluster_id": cluster_id,
+                            "article_id": article_id,
+                        })
 
-                # Step 9: Enrich cluster with aggregated bias data
-                enrich_cluster(cluster_id)
+        # Batch-insert cluster_articles links (instead of one per article)
+        if all_cluster_article_links:
+            print(f"  Batch-linking {len(all_cluster_article_links)} article-cluster pairs...")
+            _batch_upsert(
+                "cluster_articles", all_cluster_article_links, chunk_size=200,
+                on_conflict="cluster_id,article_id",
+            )
+
+        # Enrich clusters with aggregated bias data (Step 9)
+        for cluster_id in cluster_ids_to_enrich:
+            enrich_cluster(cluster_id)
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
@@ -890,18 +1010,26 @@ def main():
     # retained. See docs/IP-COMPLIANCE.md — AP v. Meltwater precedent.
     print("\n[10] Truncating full_text for IP compliance...")
     try:
-        truncated = 0
+        truncation_rows: list[dict] = []
         for article in stored_articles:
             art_id = article.get("id", "")
             if art_id:
                 full = article.get("full_text", "") or ""
                 if len(full) > 300:
                     excerpt = full[:297] + "..."
-                    supabase.table("articles").update({
+                    truncation_rows.append({
+                        "id": art_id,
                         "full_text": excerpt,
-                    }).eq("id", art_id).execute()
-                    truncated += 1
-        print(f"  Truncated {truncated} articles to 300-char excerpts")
+                    })
+        if truncation_rows:
+            # Batch-upsert truncated text (200 per chunk vs N individual UPDATEs)
+            upserted = _batch_upsert(
+                "articles", truncation_rows, chunk_size=200,
+                on_conflict="id",
+            )
+            print(f"  Truncated {upserted} articles to 300-char excerpts")
+        else:
+            print("  No articles needed truncation")
     except Exception as e:
         print(f"  [warn] Full-text truncation failed: {e}")
 

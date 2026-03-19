@@ -169,10 +169,27 @@ def _keyword_emphasis_score(text: str) -> float:
     return min(100.0, density * 15.0)
 
 
-def _omission_score(text: str, cluster_articles: list[dict] | None = None) -> float:
+def _omission_score(
+    text: str,
+    cluster_articles: list[dict] | None = None,
+    doc=None,
+    cluster_entity_cache: set[str] | None = None,
+) -> float:
     """
     Detect one-sided sourcing within the article.
     If cluster_articles provided, compare entity coverage.
+
+    Performance optimization: accepts pre-computed spaCy doc and
+    cluster_entity_cache to avoid redundant NLP processing during
+    step 6b re-framing.
+
+    Args:
+        text: Article full text.
+        cluster_articles: Other articles in the same cluster.
+        doc: Pre-computed spaCy doc for this article (avoids re-parsing).
+        cluster_entity_cache: Pre-computed set of entity strings from all
+            cluster articles. When provided, skips parsing other articles.
+
     Returns 0-100.
     """
     text_lower = text.lower()
@@ -195,21 +212,25 @@ def _omission_score(text: str, cluster_articles: list[dict] | None = None) -> fl
 
     # Cross-article omission detection (if cluster provided)
     if cluster_articles and len(cluster_articles) >= 2:
-        nlp = get_nlp()
-        # Get entities from this article
-        doc = nlp(text[:15000])
+        # Get entities from this article (reuse doc if provided)
+        if doc is None:
+            nlp = get_nlp()
+            doc = nlp(text[:15000])
         this_entities = {ent.text.lower() for ent in doc.ents
                         if ent.label_ in ("PERSON", "ORG", "GPE")}
 
-        # Get entities from all cluster articles
-        cluster_entities: set[str] = set()
-        for other in cluster_articles[:10]:  # limit for performance
-            other_text = other.get("full_text", "") or ""
-            if other_text and other_text != text:
-                other_doc = nlp(other_text[:30000])
-                for ent in other_doc.ents:
-                    if ent.label_ in ("PERSON", "ORG", "GPE"):
-                        cluster_entities.add(ent.text.lower())
+        # Use cached cluster entities if provided (avoids re-parsing all articles)
+        cluster_entities = cluster_entity_cache
+        if cluster_entities is None:
+            nlp = get_nlp()
+            cluster_entities = set()
+            for other in cluster_articles[:10]:  # limit for performance
+                other_text = other.get("full_text", "") or ""
+                if other_text and other_text != text:
+                    other_doc = nlp(other_text[:15000])
+                    for ent in other_doc.ents:
+                        if ent.label_ in ("PERSON", "ORG", "GPE"):
+                            cluster_entities.add(ent.text.lower())
 
         if cluster_entities:
             # What fraction of cluster entities does this article mention?
@@ -288,7 +309,12 @@ def _passive_voice_score(text: str, doc=None) -> float:
     return min(100.0, evasive_score + passive_score)
 
 
-def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -> dict:
+def analyze_framing(
+    article: dict,
+    cluster_articles: list[dict] | None = None,
+    doc=None,
+    cluster_entity_cache: set[str] | None = None,
+) -> dict:
     """
     Score the framing bias of an article.
 
@@ -296,6 +322,10 @@ def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -
         article: Dict with keys: full_text, title, summary.
         cluster_articles: Optional list of other articles in the same
             story cluster, used for omission detection.
+        doc: Pre-computed spaCy doc for the article text (avoids re-parsing
+            when called from step 6b re-framing).
+        cluster_entity_cache: Pre-computed entity set from all cluster articles
+            (avoids O(N*M) spaCy calls during step 6b).
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -314,13 +344,17 @@ def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -
         }
 
     # Parse once with spaCy and share the doc for NER/dep-based sub-scores
-    nlp = get_nlp()
-    doc = nlp(full_text[:15000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(full_text[:15000])
 
     # Sub-scores
     connotation = _connotation_score(full_text, doc=doc)  # 0-100
     keyword_emp = _keyword_emphasis_score(full_text)       # 0-100
-    omission = _omission_score(full_text, cluster_articles)  # 0-100
+    omission = _omission_score(
+        full_text, cluster_articles, doc=doc,
+        cluster_entity_cache=cluster_entity_cache,
+    )  # 0-100
     headline_div = _headline_body_divergence(title, full_text)  # 0-100
     passive = _passive_voice_score(full_text, doc=doc)     # 0-100
 
