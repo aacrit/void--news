@@ -40,31 +40,8 @@
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
-@media (min-width: 768px) {
-  /* Lead section: 2-column split — lead (2fr) + secondary (1fr).
-     Classic broadsheet "above the fold" layout with column divider. */
-  .lead-section {
-    grid-template-columns: 2fr 1fr;
-    gap: 0;
-  }
-
-  .lead-section__primary {
-    padding-right: var(--space-5);
-    border-right: var(--rule-thin);
-  }
-
-  .lead-section__secondary {
-    padding-left: var(--space-5);
-    border-top: none;
-    /* Align secondary story to top of lead column */
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .lead-section__secondary .story-card {
-    border-bottom: none;
-  }
-}
+/* Lead section stays single-column at all breakpoints —
+   the lead story takes full width for maximum impact. */
 
 @media (min-width: 1024px) {
   /* Remove old single-story constraint — grid column constrains instead */

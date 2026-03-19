@@ -176,8 +176,11 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           if (!article) continue;
 
           const source = article.source;
-          const biasArr = article.bias_scores;
-          const bias = Array.isArray(biasArr) && biasArr.length > 0 ? biasArr[0] : null;
+          // bias_scores may be object (one-to-one) or array (one-to-many)
+          const biasRaw = article.bias_scores;
+          const bias = Array.isArray(biasRaw)
+            ? (biasRaw.length > 0 ? biasRaw[0] : null)
+            : (biasRaw ?? null);
 
           const lean = (bias?.political_lean as number) ?? 50;
           const opinionVal = (bias?.opinion_fact as number) ?? 25;
@@ -439,37 +442,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           </section>
 
-          {/* ---- Section: Where sources agree ----------------------------- */}
-          {deepDive && deepDive.consensus.length > 0 && (
-            <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
-              <ul className="evidence-list">
-                {deepDive.consensus.map((point, i) => (
-                  <li key={i} className="evidence-item">
-                    <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
-                    <span className="evidence-item__text">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* ---- Section: Where sources diverge -------------------------- */}
-          {deepDive && deepDive.divergence.length > 0 && (
-            <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
-              <ul className="evidence-list">
-                {deepDive.divergence.map((point, i) => (
-                  <li key={i} className="evidence-item">
-                    <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
-                    <span className="evidence-item__text">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* ---- Section: Source Coverage List ----------------------------- */}
+          {/* ---- Section: Source Coverage List (next to bias for easy access) */}
           {sources.length > 0 && (
             <section aria-labelledby="dd-sources" style={{ marginBottom: "var(--space-6)" }}>
               <h3 id="dd-sources" className="section-heading">Sources</h3>
@@ -559,6 +532,36 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               <CoverageBar label={TIER_FULL_LABELS.us_major} count={tierCounts.us_major} total={sources.length} color={TIER_COLORS.us_major} />
               <CoverageBar label={TIER_FULL_LABELS.international} count={tierCounts.international} total={sources.length} color={TIER_COLORS.international} />
               <CoverageBar label={TIER_FULL_LABELS.independent} count={tierCounts.independent} total={sources.length} color={TIER_COLORS.independent} />
+            </section>
+          )}
+
+          {/* ---- Section: Where sources agree ----------------------------- */}
+          {deepDive && deepDive.consensus.length > 0 && (
+            <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
+              <ul className="evidence-list">
+                {deepDive.consensus.map((point, i) => (
+                  <li key={i} className="evidence-item">
+                    <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
+                    <span className="evidence-item__text">{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* ---- Section: Where sources diverge -------------------------- */}
+          {deepDive && deepDive.divergence.length > 0 && (
+            <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
+              <ul className="evidence-list">
+                {deepDive.divergence.map((point, i) => (
+                  <li key={i} className="evidence-item">
+                    <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
+                    <span className="evidence-item__text">{point}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
 

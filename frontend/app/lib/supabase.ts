@@ -42,18 +42,27 @@ export async function fetchDeepDiveData(clusterId: string) {
   // is accessible for BiasLens popups in the Deep Dive view.
   if (data) {
     for (const row of data) {
-      const article = row.article as { bias_scores?: Array<{ rationale?: unknown }> } | null;
-      if (article?.bias_scores) {
-        for (const score of article.bias_scores) {
-          if (typeof score.rationale === 'string') {
-            try {
-              score.rationale = JSON.parse(score.rationale);
-            } catch {
-              score.rationale = null;
-            }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const article = row.article as any;
+      if (!article?.bias_scores) continue;
+
+      // bias_scores may be an object (one-to-one) or array (one-to-many)
+      const scores = Array.isArray(article.bias_scores)
+        ? article.bias_scores
+        : [article.bias_scores];
+
+      for (const score of scores) {
+        if (typeof score.rationale === 'string') {
+          try {
+            score.rationale = JSON.parse(score.rationale);
+          } catch {
+            score.rationale = null;
           }
         }
       }
+
+      // Normalize to array for consistent downstream access
+      article.bias_scores = scores;
     }
   }
 
