@@ -16,7 +16,7 @@ interface RefreshButtonProps {
 export default function RefreshButton({ externalLastUpdated, onRefresh }: RefreshButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [localLastUpdated, setLocalLastUpdated] = useState("6:00 AM CT");
+  const [localLastUpdated, setLocalLastUpdated] = useState("");
 
   const refreshButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
         minute: "2-digit",
         hour12: true,
       })
-    : localLastUpdated;
+    : localLastUpdated || null;
 
   const closeDialog = useCallback(() => {
     setShowConfirm(false);
@@ -96,12 +96,12 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
         ref={refreshButtonRef}
         onClick={() => setShowConfirm(true)}
         disabled={refreshing}
-        aria-label={`Last updated ${displayTime}. Click to refresh.`}
+        aria-label={displayTime ? `Last updated ${displayTime}. Click to refresh.` : "Loading update time. Click to refresh."}
         className={`refresh-btn${refreshing ? " refresh-btn--loading" : ""}`}
       >
         <LogoIcon animation={refreshing ? "loading" : "none"} size={14} />
         <Clock size={12} weight="light" aria-hidden="true" />
-        <span>{refreshing ? "Refreshing..." : `Last updated: ${displayTime}`}</span>
+        <span>{refreshing ? "Refreshing..." : displayTime ? `Last updated: ${displayTime}` : "Loading..."}</span>
       </button>
 
       {showConfirm && (

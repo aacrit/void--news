@@ -163,34 +163,34 @@ def _body_score(text: str) -> float:
     # Very positive or very negative = more sensational
     polarity_extremity = abs(blob.sentiment.polarity)
     subjectivity = blob.sentiment.subjectivity
-    score += polarity_extremity * 15.0  # up to 15 pts
-    score += subjectivity * 10.0  # up to 10 pts
+    score += polarity_extremity * 20.0  # up to 20 pts
+    score += subjectivity * 15.0  # up to 15 pts
 
     # --- Urgency language density ---
     urgency_count = 0
     for phrase in URGENCY_WORDS:
         urgency_count += text_lower.count(phrase)
     urgency_density = urgency_count / max(word_count / 100, 1)
-    score += min(urgency_density * 5.0, 15.0)
+    score += min(urgency_density * 8.0, 20.0)
 
     # --- Superlative density ---
     sup_count = 0
     for word in SUPERLATIVES:
         sup_count += text_lower.count(word)
     sup_density = sup_count / max(word_count / 100, 1)
-    score += min(sup_density * 3.0, 15.0)
+    score += min(sup_density * 5.0, 20.0)
 
     # --- Hyperbolic modifier density ---
     hyp_count = 0
     for mod in HYPERBOLIC_MODIFIERS:
         hyp_count += text_lower.count(mod)
     hyp_density = hyp_count / max(word_count / 100, 1)
-    score += min(hyp_density * 3.0, 10.0)
+    score += min(hyp_density * 5.0, 15.0)
 
     # --- Exclamation mark density ---
     excl_count = text.count("!")
     excl_per_100 = excl_count / max(word_count / 100, 1)
-    score += min(excl_per_100 * 3.0, 10.0)
+    score += min(excl_per_100 * 5.0, 15.0)
 
     # --- Short punchy sentence ratio ---
     sentences = re.split(r"[.!?]+", text)
@@ -198,9 +198,9 @@ def _body_score(text: str) -> float:
     if sentences:
         short_count = sum(1 for s in sentences if len(s.split()) <= 6)
         short_ratio = short_count / len(sentences)
-        # More than 40% short sentences is sensational-leaning
-        if short_ratio > 0.4:
-            score += (short_ratio - 0.4) * 30.0
+        # More than 30% short sentences is sensational-leaning
+        if short_ratio > 0.3:
+            score += (short_ratio - 0.3) * 40.0
 
     # --- Attribution gaps (inverse: measured articles have more attribution) ---
     measured_count = 0
@@ -208,7 +208,7 @@ def _body_score(text: str) -> float:
         measured_count += text_lower.count(phrase)
     measured_density = measured_count / max(word_count / 100, 1)
     # High attribution = less sensational, apply negative weight
-    score -= min(measured_density * 3.0, 15.0)
+    score -= min(measured_density * 4.0, 20.0)
 
     return max(0.0, min(100.0, score))
 
@@ -241,9 +241,19 @@ def analyze_sensationalism(article: dict) -> dict:
     h_score = _headline_score(title)
     b_score = _body_score(full_text)
 
-    # Weighted combination: 40% headline, 60% body
-    combined = 0.4 * h_score + 0.6 * b_score
-    score = max(0, min(100, int(round(combined))))
+    # Weighted combination: 50% headline, 50% body
+    # Headline is the strongest discriminator between wire copy and tabloid
+    combined = 0.5 * h_score + 0.5 * b_score
+
+    # Apply a mild floor-stretch to spread the compressed 4-7 range wider.
+    # Stretch the 0-30 raw range into 0-50 and preserve 30-100 into 50-100.
+    # This makes AP wire copy score ~10-20 and tabloid headlines score 50-80.
+    if combined <= 30:
+        stretched = combined * (50.0 / 30.0)
+    else:
+        stretched = 50.0 + (combined - 30.0) * (50.0 / 70.0)
+
+    score = max(0, min(100, int(round(stretched))))
 
     # Compute sub-signal rationale
     text_lower = (full_text or "").lower()
