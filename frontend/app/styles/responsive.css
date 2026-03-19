@@ -174,37 +174,6 @@
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
 
 @media (max-width: 767px) {
-  /* ── Masthead: compact single-line dateline on mobile ────── */
-  .masthead {
-    padding: 0 var(--space-5);
-  }
-
-  /* Hide desktop-only masthead elements */
-  .masthead__nameplate,
-  .masthead__tagline,
-  .masthead__edition,
-  .masthead__vol,
-  .masthead__date-full {
-    display: none;
-  }
-
-  /* Show compact date + inline edition */
-  .masthead__date-compact {
-    display: inline;
-  }
-
-  /* Center the dateline when vol is hidden — single compact line */
-  .masthead__dateline {
-    justify-content: center;
-    gap: var(--space-2);
-    border-top: none;
-    border-bottom: 3px solid var(--fg-primary);
-    padding-bottom: var(--space-2);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   /* Bottom nav visible */
   .nav-bottom {
     display: flex;
