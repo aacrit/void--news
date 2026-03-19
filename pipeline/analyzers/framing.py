@@ -288,7 +288,7 @@ def _passive_voice_score(text: str, doc=None) -> float:
     return min(100.0, evasive_score + passive_score)
 
 
-def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -> int:
+def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -> dict:
     """
     Score the framing bias of an article.
 
@@ -298,13 +298,20 @@ def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -
             story cluster, used for omission detection.
 
     Returns:
-        Integer score 0-100 (0=neutral framing, 100=heavily framed).
+        Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
     """
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
 
     if not full_text.strip() and not title.strip():
-        return 15  # default low
+        return {
+            "score": 15,
+            "rationale": {
+                "connotation_score": 0, "keyword_emphasis_score": 0,
+                "omission_score": 0, "headline_body_divergence": 0,
+                "passive_voice_score": 0, "has_cluster_context": False,
+            },
+        }
 
     # Parse once with spaCy and share the doc for NER/dep-based sub-scores
     nlp = get_nlp()
@@ -326,4 +333,16 @@ def analyze_framing(article: dict, cluster_articles: list[dict] | None = None) -
         + passive * 0.15
     )
 
-    return max(0, min(100, int(round(weighted))))
+    score = max(0, min(100, int(round(weighted))))
+
+    return {
+        "score": score,
+        "rationale": {
+            "connotation_score": round(connotation, 1),
+            "keyword_emphasis_score": round(keyword_emp, 1),
+            "omission_score": round(omission, 1),
+            "headline_body_divergence": round(headline_div, 1),
+            "passive_voice_score": round(passive, 1),
+            "has_cluster_context": cluster_articles is not None and len(cluster_articles or []) >= 2,
+        },
+    }

@@ -213,7 +213,7 @@ def _body_score(text: str) -> float:
     return max(0.0, min(100.0, score))
 
 
-def analyze_sensationalism(article: dict) -> int:
+def analyze_sensationalism(article: dict) -> dict:
     """
     Score the sensationalism level of an article.
 
@@ -221,19 +221,51 @@ def analyze_sensationalism(article: dict) -> int:
         article: Dict with keys: full_text, title, summary.
 
     Returns:
-        Integer score 0-100 (0=measured, 100=highly sensational).
+        Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
     """
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""
 
     # If no text at all, return low default
     if not title.strip() and not full_text.strip():
-        return 10
+        return {
+            "score": 10,
+            "rationale": {
+                "headline_score": 0, "body_score": 0,
+                "clickbait_signals": 0, "superlative_density": 0,
+                "urgency_density": 0, "hyperbole_density": 0,
+                "measured_density": 0,
+            },
+        }
 
     h_score = _headline_score(title)
     b_score = _body_score(full_text)
 
     # Weighted combination: 40% headline, 60% body
     combined = 0.4 * h_score + 0.6 * b_score
+    score = max(0, min(100, int(round(combined))))
 
-    return max(0, min(100, int(round(combined))))
+    # Compute sub-signal rationale
+    text_lower = (full_text or "").lower()
+    words = text_lower.split()
+    word_count = len(words)
+    per_100 = max(word_count / 100, 1)
+
+    clickbait_signals = sum(1 for p, _ in CLICKBAIT_PATTERNS if p.search(title))
+    sup_count = sum(text_lower.count(w) for w in SUPERLATIVES)
+    urg_count = sum(text_lower.count(p) for p in URGENCY_WORDS)
+    hyp_count = sum(text_lower.count(m) for m in HYPERBOLIC_MODIFIERS)
+    meas_count = sum(text_lower.count(p) for p in MEASURED_PHRASES)
+
+    return {
+        "score": score,
+        "rationale": {
+            "headline_score": round(h_score, 1),
+            "body_score": round(b_score, 1),
+            "clickbait_signals": clickbait_signals,
+            "superlative_density": round(sup_count / per_100, 2),
+            "urgency_density": round(urg_count / per_100, 2),
+            "hyperbole_density": round(hyp_count / per_100, 2),
+            "measured_density": round(meas_count / per_100, 2),
+        },
+    }
