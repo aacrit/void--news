@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Section } from "../lib/types";
-import { Globe, Flag, ListMagnifyingGlass } from "@phosphor-icons/react";
+import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import LogoFull from "./LogoFull";
 import LogoIcon from "./LogoIcon";
@@ -94,12 +94,6 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
                 </span>
               </button>
             ))}
-            <Link href="/sources" className="nav-tab nav-tab--link">
-              <span className="nav-tab__inner">
-                <ListMagnifyingGlass size={14} weight="light" aria-hidden="true" />
-                Sources
-              </span>
-            </Link>
           </div>
 
           <ThemeToggle />
