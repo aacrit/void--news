@@ -142,6 +142,9 @@ Single Next.js project with **device-optimized layouts** sharing the same data l
 - Horizontal scroll strips with scroll-snap on mobile
 - Bottom sheet pattern for filters/detail on mobile
 - One-handed reachability: critical actions in bottom 40% of screen
+- Mobile edge padding: `--space-5` (~16px) on `.page-main`, `.nav-inner`, `.site-footer` (not `--space-7`)
+- `overflow-wrap: break-word` on all headline elements to prevent horizontal overflow
+- Section header and Deep Dive source rows use `flex-wrap: wrap` on mobile
 
 ### Two Core Views
 
