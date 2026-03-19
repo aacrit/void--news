@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Section } from "../lib/types";
 import { Globe, Flag } from "@phosphor-icons/react";
@@ -15,10 +16,18 @@ interface NavBarProps {
 /* ---------------------------------------------------------------------------
    NavBar — Newspaper masthead
    Desktop: LogoFull (icon + wordmark, bigger), section tabs, theme toggle
-   Mobile: LogoIcon (icon only), bottom nav with section tabs
+   Mobile: LogoIcon with draw-on-mount animation, then idle tipping
    --------------------------------------------------------------------------- */
 
 export default function NavBar({ activeSection, onSectionChange }: NavBarProps) {
+  /* Draw animation on mount: plays the stroke-reveal, then settles to idle */
+  const [logoAnim, setLogoAnim] = useState<"draw" | "idle">("draw");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLogoAnim("idle"), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <header className="nav-header">
@@ -28,9 +37,9 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             <span className="nav-logo-desktop">
               <LogoFull height={36} />
             </span>
-            {/* Mobile: icon only */}
+            {/* Mobile: icon only — draw on mount, then idle */}
             <span className="nav-logo-mobile">
-              <LogoIcon size={28} animation="idle" />
+              <LogoIcon size={28} animation={logoAnim} />
             </span>
           </Link>
 

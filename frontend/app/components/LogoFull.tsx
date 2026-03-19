@@ -1,15 +1,18 @@
 "use client";
 
 /* ---------------------------------------------------------------------------
-   LogoFull — Full combination mark: Void Scale icon + "void --news" wordmark
+   LogoFull — Full combination mark: Hybrid icon + "void --news" wordmark
    Single SVG entity. Use everywhere the full brand needs to appear:
    NavBar (desktop), Footer, error pages, about pages.
 
    The wordmark uses vector-drawn letterforms (not fonts) so it renders
    identically everywhere — no font-loading dependency.
 
-   "void" — bold serif letterforms (editorial authority)
-   "--news" — lighter monospace letterforms (data/code precision)
+   Direction 5 "Negative Space O" + hybrid scale beam:
+   "void" — bold serif letterforms where the "O" is a hollow outline
+   (stroke only, no fill), the defining visual tension.
+   "--news" — lighter monospace letterforms (data/code precision).
+   Icon — the void circle with scale beam in idle state, to the left.
    --------------------------------------------------------------------------- */
 
 interface LogoFullProps {
@@ -22,45 +25,59 @@ export default function LogoFull({ height = 28, className }: LogoFullProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 320 40"
+      viewBox="0 0 340 40"
       fill="currentColor"
       role="img"
       aria-hidden="true"
       className={className}
       style={{ height, width: "auto", display: "block", flexShrink: 0 }}
     >
-      {/* ── Void Scale Icon (scaled to fit wordmark height) ────────── */}
+      {/* ── Hybrid Icon (void circle + scale beam, scaled to wordmark) ─ */}
       <g
-        transform="translate(0,8) scale(0.75)"
+        transform="translate(2,4) scale(0.83)"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.8"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {/* Void circle — the analytical lens */}
-        <circle cx="16" cy="4" r="2.5" className="si-void" />
-        {/* Animated beam group — newspaper pages as pans */}
+        {/* Void circle — the primary mark */}
+        <circle cx="16" cy="13" r="9" className="si-void" />
+        {/* Beam group — idle tipping animation */}
         <g className="si-beam--idle">
-          <line x1="3" y1="8" x2="29" y2="8" />
-          <path d="M7,8 L4,13 L4,22 L12,22 L12,13 L9,8" />
-          <line x1="5.5" y1="16.5" x2="10.5" y2="16.5" />
-          <path d="M23,8 L20,13 L20,22 L28,22 L28,13 L25,8" />
-          <line x1="21.5" y1="16.5" x2="26.5" y2="16.5" />
+          <line x1="3" y1="13" x2="29" y2="13" />
+          <line x1="5" y1="11" x2="5" y2="15" />
+          <line x1="27" y1="11" x2="27" y2="15" />
         </g>
-        {/* Center post */}
-        <line x1="16" y1="8" x2="16" y2="27" />
+        {/* Post */}
+        <line x1="16" y1="22" x2="16" y2="29" />
         {/* Base */}
-        <line x1="12" y1="27" x2="20" y2="27" />
+        <line x1="12" y1="29" x2="20" y2="29" />
       </g>
 
       {/* ── Wordmark ──────────────────────────────────────────────── */}
       <g transform="translate(36,2)">
-        {/* "void" — bold serif letterforms */}
-        <polygon points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36" />
-        <path d="M34,20C34,10.5 39.5,3 48,3C56.5,3 62,10.5 62,20C62,29.5 56.5,37 48,37C39.5,37 34,29.5 34,20ZM40,20C40,27.5 43,32 48,32C53,32 56,27.5 56,20C56,12.5 53,8 48,8C43,8 40,12.5 40,20Z" />
+        {/* "v" — bold serif letterform */}
+        <polygon
+          points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36"
+        />
+
+        {/* "o" — THE VOID: hollow outline only, no fill.
+            A precise ellipse with thin stroke, empty interior.
+            The void at the heart of the word. */}
+        <ellipse
+          cx="48" cy="20"
+          rx="13" ry="16.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+        />
+
+        {/* "i" — serif letterform */}
         <rect x="69" y="2" width="5" height="5" rx="0.8" />
         <rect x="69.5" y="11" width="4" height="25" rx="0.5" />
+
+        {/* "d" — serif letterform */}
         <path d="M82,20C82,10.5 87,3 94,3C97,3 100,4.5 102,7.5L102,0L107,0L107,36L102,36L102,32.5C100,35.5 97,37 94,37C87,37 82,29.5 82,20ZM88,20C88,27.5 90.8,32 95,32C98,32 100.5,29.5 102,26L102,14C100.5,10.5 98,8 95,8C90.8,8 88,12.5 88,20Z" />
 
         {/* "--news" — lighter monospace letterforms */}

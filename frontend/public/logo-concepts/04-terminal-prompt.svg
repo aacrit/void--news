@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 64" role="img" aria-label="void --news">
+  <!--
+    Direction 4: Terminal Prompt
+
+    Concept: The entire brand rendered as a command being typed.
+    $ void --news
+
+    All monospace. The dollar-sign prompt establishes the terminal context.
+    The blinking cursor block at the end suggests the command is live,
+    active, in-progress — the analysis never stops running.
+
+    This is the most technically-rooted direction. It says: "this tool
+    was built by engineers for thinkers." No editorial pretense, pure
+    function. The beauty is in the precision of the monospace grid.
+
+    The "$" prompt is rendered at reduced opacity — it's context, not
+    content. "void" is full weight. "--news" is the flag/argument.
+    The cursor block pulses with a CSS animation class.
+
+    Typography: All JetBrains Mono (data voice). No serif mixing.
+    This direction intentionally breaks the two-voice rule to make
+    a statement: the product IS a terminal command made visible.
+
+    Icon version: "v>" or just the cursor block with "V" inside.
+    At 16px: Cursor block alone is recognizable.
+    At 400px+: Full command string, every character precisely placed.
+
+    Light mode: Dark text on warm paper — like code on parchment.
+    Dark mode: Light text on dark walnut — terminal native.
+  -->
+
+  <!-- Background hint — subtle terminal feel -->
+  <!-- (Optional: can be removed for transparent background) -->
+
+  <!-- ===== "$" — Shell prompt, reduced presence ===== -->
+  <g fill="currentColor" opacity="0.35">
+    <!-- $ sign — monospace, geometric -->
+    <path d="M8,20 C8,16 10.5,13 14.5,12 L14.5,8 L17,8 L17,12 C20.5,12.5 23,14.5 24,17 L21.5,18.5 C21,17 19.5,15.5 17,15 L17,26 C22,27 25.5,29 25.5,34 C25.5,38.5 22.5,42 17,42.5 L17,48 L14.5,48 L14.5,42.5 C10,42 7,39 6,35.5 L8.5,34 C9.5,37 11.5,39 14.5,39.5 L14.5,28 C10,27 8,24.5 8,20Z M14.5,25 L14.5,15.5 C12,16 11,18 11,20 C11,22.5 12,24 14.5,25Z M17,29 L17,39.5 C20,39 22.5,37 22.5,34 C22.5,31 20.5,29.5 17,29Z"/>
+  </g>
+
+  <!-- ===== 24px gap after prompt ===== -->
+
+  <!-- ===== "void" — Monospace letterforms, full weight ===== -->
+  <g fill="currentColor">
+    <!-- v — monospace, equal-width -->
+    <path d="M50,10 L54,10 L66,48 L78,10 L82,10 L68,53 C67.7,53.7 67,54 66.3,54 L65.7,54 C65,54 64.3,53.7 64,53 Z"/>
+
+    <!-- o — monospace, circular -->
+    <path d="M92,31 C92,18 98,8 108,8 C118,8 124,18 124,31 C124,44 118,54 108,54 C98,54 92,44 92,31Z M96.5,31 C96.5,42 101,50 108,50 C115,50 119.5,42 119.5,31 C119.5,20 115,12 108,12 C101,12 96.5,20 96.5,31Z"/>
+
+    <!-- i — monospace with square dot -->
+    <rect x="136" y="8" width="5.5" height="5.5" rx="0.5"/>
+    <rect x="136.5" y="19" width="4.5" height="35" rx="0.5"/>
+
+    <!-- d — monospace -->
+    <path d="M154,31 C154,18 159.5,8 168,8 C172,8 175,10 177,13 L177,2 L181,2 L181,54 L177,54 L177,49 C175,52 172,54 168,54 C159.5,54 154,44 154,31Z M158.5,31 C158.5,42 162.5,50 169,50 C173,50 175.5,47 177,44 L177,18 C175.5,15 173,12 169,12 C162.5,12 158.5,20 158.5,31Z"/>
+  </g>
+
+  <!-- ===== Space (24px in monospace grid) ===== -->
+
+  <!-- ===== "--" — CLI flag, slightly emphasized ===== -->
+  <g fill="currentColor" opacity="0.75">
+    <!-- First dash — precise monospace width -->
+    <rect x="206" y="28" width="16" height="3.5" rx="0.8"/>
+    <!-- Second dash -->
+    <rect x="226" y="28" width="16" height="3.5" rx="0.8"/>
+  </g>
+
+  <!-- ===== "news" — Monospace letterforms, the argument ===== -->
+  <g fill="currentColor">
+    <!-- n -->
+    <path d="M254,18 L258,18 L258,24 C260.5,20 264,18 268,18 C272.5,18 275.5,20 277,23.5 C277.5,25 277.5,27 277.5,29.5 L277.5,54 L273.5,54 L273.5,30 C273.5,27 273,25 272,23.5 C271,22 269.5,21 267,21 C264,21 262,22.5 260.5,25 C259.5,27 258,28 258,30 L258,54 L254,54Z"/>
+
+    <!-- e -->
+    <path d="M290,37 C290,28 294,18 303,18 C312,18 315.5,28 315.5,36 L315.5,38.5 L294.5,38.5 C295,46 298,51 303.5,51 C307,51 309.5,49 311,46.5 L313.5,48.5 C311.5,52 308,54 303.5,54 C295,54 290,46 290,37Z M294.5,35.5 L311.5,35.5 C311,28 309,21 303,21 C297,21 295,28 294.5,35.5Z"/>
+
+    <!-- w -->
+    <path d="M326,18 L330,18 L338,47 L346,18 L350,18 L358,47 L366,18 L370,18 L360,54 L356,54 L348,25 L340,54 L336,54Z"/>
+
+    <!-- s -->
+    <path d="M380,43 C380,38 383,35 387,34 L392,32.5 C395,31.5 396.5,29.5 396.5,27 C396.5,23.5 394,21 390.5,21 C387.5,21 385,23 384,25.5 L381.5,24 C383,20.5 386.5,18 391,18 C397,18 401,22 401,27.5 C401,31.5 398.5,34 395,35.5 L390,37 C387,38.5 385,40 385,43 C385,46.5 387.5,49 391,49 C394,49 396,47 397,44.5 L399.5,46.5 C397.5,50 394.5,52 390.5,52 C385,52 380,48.5 380,43Z"/>
+  </g>
+
+  <!-- ===== Cursor block — the active/running indicator ===== -->
+  <!-- This is the brand's "alive" signal. Optionally animated via CSS. -->
+  <!-- Class "cursor-blink" can be targeted for animation -->
+  <rect x="416" y="10" width="14" height="44" rx="1" fill="currentColor" opacity="0.85" class="cursor-blink"/>
+
+  <!-- ===== CSS animation for cursor (when embedded in HTML) ===== -->
+  <style>
+    @keyframes blink {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 0; }
+    }
+    .cursor-blink {
+      animation: blink 1.2s step-end infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor-blink {
+        animation: none;
+        opacity: 0.85;
+      }
+    }
+  </style>
+</svg>

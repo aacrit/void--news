@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="void --news">
+  <!--
+    Direction 4 Icon: Terminal Cursor with V
+    A monospace "V" inside (or beside) a cursor block.
+    At 16px: A filled rectangle with a letter cutout — distinctive and technical.
+    References both the terminal heritage and the brand initial.
+  -->
+
+  <!-- Cursor block background -->
+  <rect x="4" y="4" width="24" height="24" rx="2" fill="currentColor" opacity="0.12"/>
+
+  <!-- Prompt chevron > -->
+  <polyline
+    points="8,12 13,16 8,20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Cursor line (blinking) -->
+  <rect x="17" y="11" width="2.5" height="10" rx="0.5" fill="currentColor" class="cursor-blink"/>
+
+  <!-- Underline -->
+  <rect x="8" y="26" width="16" height="1.5" rx="0.5" fill="currentColor" opacity="0.3"/>
+
+  <style>
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .cursor-blink {
+      animation: blink 1.2s step-end infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor-blink {
+        animation: none;
+        opacity: 1;
+      }
+    }
+  </style>
+</svg>

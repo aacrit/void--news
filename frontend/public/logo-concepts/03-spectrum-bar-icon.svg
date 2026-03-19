@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="void --news">
+  <!--
+    Direction 3 Icon: Five Spectrum Dots
+    Five dots in a horizontal row, each in a bias spectrum color.
+    At 16px: Five colored dots — minimal but distinctive.
+    Directly ties the icon to the core product feature.
+    Monochrome fallback: five dots at varying opacity.
+  -->
+
+  <!-- Five spectrum dots — 4px diameter, 2px gaps -->
+  <circle cx="6" cy="16" r="2.5" fill="#3B82F6"/>
+  <circle cx="11.5" cy="16" r="2.5" fill="#60A5FA"/>
+  <circle cx="17" cy="16" r="2.5" fill="#9CA3AF"/>
+  <circle cx="22.5" cy="16" r="2.5" fill="#F97316"/>
+  <circle cx="28" cy="16" r="2.5" fill="#EF4444"/>
+
+  <!-- Monochrome variant (commented out):
+  <circle cx="6" cy="16" r="2.5" fill="currentColor" opacity="0.6"/>
+  <circle cx="11.5" cy="16" r="2.5" fill="currentColor" opacity="0.4"/>
+  <circle cx="17" cy="16" r="2.5" fill="currentColor" opacity="0.25"/>
+  <circle cx="22.5" cy="16" r="2.5" fill="currentColor" opacity="0.4"/>
+  <circle cx="28" cy="16" r="2.5" fill="currentColor" opacity="0.6"/>
+  -->
+</svg>

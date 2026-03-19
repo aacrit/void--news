@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" role="img" aria-label="void --news">
+  <!--
+    Direction 5: The Negative Space O
+
+    Concept: "void" where the "o" is rendered as a precise circle outline
+    (not filled) — a literal void in the wordmark. The hollow "o" becomes
+    the brand's icon mark: a perfect circle with a hairline stroke, representing
+    emptiness, neutrality, the space between biases where truth might exist.
+
+    This direction leans into the name's meaning. "Void" means empty,
+    null, absent. The logo makes that visible: every letter is solid
+    except the one that IS the void. The absence is the identity.
+
+    The circle also reads as:
+    - A lens (analyzing, examining)
+    - A zero (null, neutral, unbiased)
+    - An aperture (seeing through)
+    - A hole in the page (the void itself)
+
+    "void" — serif letterforms, with the O as thin outline only
+    "--news" — monospace, lighter weight
+
+    Icon version: The circle alone. Simple. Distinctive. Scales perfectly.
+    At 16px: A circle with a dot or just the circle outline.
+    At 400px+: The contrast between solid serif letters and the hollow O
+    becomes the defining visual tension.
+
+    Color: Single color (currentColor). The void is expressed through
+    absence of fill, not through color.
+  -->
+
+  <!-- ===== "v" — Solid serif ===== -->
+  <g fill="currentColor">
+    <path d="M4,8 L9,8 L27,56 L45,8 L50,8 L29.5,64 C29.2,64.7 28.5,65 28,65 L26,65 C25.5,65 24.8,64.7 24.5,64 Z"/>
+    <!-- V top serifs -->
+    <rect x="0" y="6" width="12" height="2.5" rx="0.5"/>
+    <rect x="38" y="6" width="14" height="2.5" rx="0.5"/>
+  </g>
+
+  <!-- ===== "o" — THE VOID: outline only, no fill ===== -->
+  <!-- This is the defining element. A precise ellipse, thin stroke, -->
+  <!-- empty interior. The void at the heart of the word. -->
+  <ellipse
+    cx="78"
+    cy="36"
+    rx="20"
+    ry="28"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.2"
+  />
+
+  <!-- ===== "i" — Solid serif ===== -->
+  <g fill="currentColor">
+    <!-- i dot — square, editorial -->
+    <rect x="112" y="6" width="8" height="8" rx="1"/>
+    <!-- i stem -->
+    <rect x="113" y="20" width="6" height="45" rx="0.8"/>
+    <!-- i base serif -->
+    <rect x="108" y="62" width="16" height="2.5" rx="0.5"/>
+  </g>
+
+  <!-- ===== "d" — Solid serif ===== -->
+  <g fill="currentColor">
+    <!-- d vertical stem -->
+    <path d="M138,8 L138,65 L134,65 L134,8 Z"/>
+    <!-- d bowl -->
+    <path d="M138,8 L148,8 C164,8 173,20 173,37 C173,54 164,65 148,65 L138,65 L138,61 L148,61 C161,61 167.5,51 167.5,37 C167.5,23 161,13 148,13 L138,13 Z"/>
+    <!-- d top serif -->
+    <rect x="129" y="6" width="13" height="2.5" rx="0.5"/>
+    <!-- d bottom serif -->
+    <rect x="129" y="63" width="13" height="2.5" rx="0.5"/>
+  </g>
+
+  <!-- ===== Vertical hairline divider ===== -->
+  <line x1="190" y1="16" x2="190" y2="56" stroke="currentColor" stroke-width="0.8" opacity="0.2"/>
+
+  <!-- ===== "--news" — Monospace, lighter weight ===== -->
+  <g fill="currentColor" opacity="0.75">
+    <!-- First dash -->
+    <rect x="206" y="34" width="13" height="3" rx="0.8"/>
+    <!-- Second dash -->
+    <rect x="223" y="34" width="13" height="3" rx="0.8"/>
+
+    <!-- n -->
+    <path d="M250,22 L253.5,22 L253.5,28 C256,24 259,22 263,22 C267,22 270,24 271.2,27 C271.5,28.5 271.5,30 271.5,32.5 L271.5,65 L268,65 L268,33 C268,30 267.5,28 266.5,26.8 C265.5,25.5 264,25 261.5,25 C258.5,25 256.5,26.5 255.5,29 C254.5,31 253.5,32 253.5,34 L253.5,65 L250,65Z"/>
+
+    <!-- e -->
+    <path d="M282,44 C282,36 285.5,22 294,22 C302.5,22 306,35 306,43.5 L306,45.5 L285.5,45.5 C286,53 289,58.5 294,58.5 C297.5,58.5 300,56 301.5,53.5 L303.5,55.5 C301.5,59.5 298,62 294,62 C286.5,62 282,54 282,44Z M285.5,43 L302.5,43 C302,36 300,26 294,26 C288,26 286,35 285.5,43Z"/>
+
+    <!-- w -->
+    <path d="M316,22 L320,22 L327,52 L334,22 L338,22 L345,52 L352,22 L356,22 L347,65 L343.5,65 L336.5,34 L329.5,65 L326,65Z"/>
+
+    <!-- s -->
+    <path d="M366,51 C366,46.5 368.5,44 372,43 L377,41.5 C380,40.5 381.5,38.5 381.5,36 C381.5,32.5 379,30 375.5,30 C372.5,30 370.5,32 369.5,34 L367,32.5 C368.5,29 372,26 376,26 C381.5,26 385.5,29.5 385.5,35 C385.5,39 383,41 380,42.5 L375,44 C372,45.5 370.5,47 370.5,50 C370.5,53 372.5,55.5 376,55.5 C378.5,55.5 380.5,54 381.5,51.5 L384,53 C382,57 379,59 375.5,59 C370.5,59 366,55.5 366,51Z"/>
+  </g>
+</svg>

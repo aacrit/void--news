@@ -1,11 +1,12 @@
 "use client";
 
 import { GithubLogo } from "@phosphor-icons/react";
-import LogoFull from "./LogoFull";
+import LogoIcon from "./LogoIcon";
+import LogoWordmark from "./LogoWordmark";
 
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
-   Uses the same LogoFull as NavBar for consistent branding.
+   Uses LogoIcon (idle animation) + LogoWordmark for branding.
    Shows "90 curated sources" with last pipeline run time.
    --------------------------------------------------------------------------- */
 
@@ -44,7 +45,10 @@ export default function Footer({ lastUpdated }: FooterProps) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
-        <LogoFull height={22} />
+        <div className="si-hoverable" style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+          <LogoIcon size={22} animation="idle" />
+          <LogoWordmark height={16} />
+        </div>
         <p className="footer-tagline">Free, transparent news bias analysis</p>
         <p className="footer-stats">90 curated sources &middot; {updatedText}</p>
         <a

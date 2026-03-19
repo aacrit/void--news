@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import type { Section, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel } from "./lib/types";
 import { supabase } from "./lib/supabase";
-import LogoFull from "./components/LogoFull";
+import LogoWordmark from "./components/LogoWordmark";
+import LogoIcon from "./components/LogoIcon";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
@@ -309,13 +310,7 @@ function HomeContent() {
         {/* Empty state — no data from pipeline yet */}
         {!isLoading && !error && stories.length === 0 && (
           <div className="empty-state">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="empty-icon" aria-hidden="true">
-              <rect x="8" y="12" width="48" height="40" rx="1" stroke="currentColor" strokeWidth="1.5" />
-              <line x1="16" y1="22" x2="48" y2="22" stroke="currentColor" strokeWidth="1.5" />
-              <line x1="16" y1="30" x2="40" y2="30" stroke="currentColor" strokeWidth="1" opacity="0.5" />
-              <line x1="16" y1="36" x2="44" y2="36" stroke="currentColor" strokeWidth="1" opacity="0.5" />
-              <line x1="16" y1="42" x2="36" y2="42" stroke="currentColor" strokeWidth="1" opacity="0.5" />
-            </svg>
+            <LogoIcon size={56} animation="analyzing" />
             <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
               Awaiting First Edition
             </h2>
@@ -395,7 +390,7 @@ function HomeContent() {
               {activeSection === "world" ? "World" : "US"} Edition /{" "}
               {filteredStories.length} stories
             </span>
-            <LogoFull height={14} />
+            <LogoWordmark height={14} />
           </div>
         )}
       </main>
