@@ -234,11 +234,13 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         if (!cancelled && storySourceList.length > 0) {
           // Use pipeline-generated consensus/divergence from the cluster,
           // falling back only when no data has been computed yet.
-          const consensus = story.deepDive?.consensus && story.deepDive.consensus.length > 0
-            ? story.deepDive.consensus
+          const rawConsensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
+          const rawDivergence = Array.isArray(story.deepDive?.divergence) ? story.deepDive.divergence : [];
+          const consensus = rawConsensus.length > 0
+            ? rawConsensus
             : ["Sources broadly agree on the key facts of this story"];
-          const divergenceData = story.deepDive?.divergence && story.deepDive.divergence.length > 0
-            ? story.deepDive.divergence
+          const divergenceData = rawDivergence.length > 0
+            ? rawDivergence
             : ["Some differences in framing and emphasis were detected across sources"];
 
           setLiveData({
@@ -536,7 +538,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           )}
 
           {/* ---- Section: Where sources agree ----------------------------- */}
-          {deepDive && deepDive.consensus.length > 0 && (
+          {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
             <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-6)" }}>
               <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
               <ul className="evidence-list">
@@ -551,7 +553,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           )}
 
           {/* ---- Section: Where sources diverge -------------------------- */}
-          {deepDive && deepDive.divergence.length > 0 && (
+          {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
             <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-6)" }}>
               <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
               <ul className="evidence-list">
