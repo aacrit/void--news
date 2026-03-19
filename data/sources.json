@@ -988,5 +988,82 @@
     "type": "nonprofit",
     "political_lean_baseline": "center",
     "credibility_notes": "Minnesota nonprofit news outlet founded 2007. In-depth coverage of state politics, policy, and culture. Member-supported with strong community ties."
+  },
+  {
+    "id": "mexico-news-daily",
+    "name": "Mexico News Daily",
+    "url": "https://mexiconewsdaily.com",
+    "rss_url": "https://mexiconewsdaily.com/feed/",
+    "tier": "international",
+    "country": "MX",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language digital outlet covering Mexican news, politics, and culture. Founded 2016. Fills critical Latin America coverage gap. Added 2026-03-18 to address geographic gap."
+  },
+  {
+    "id": "brazilian-report",
+    "name": "The Brazilian Report",
+    "url": "https://brazilian.report",
+    "rss_url": "https://brazilian.report/feed/",
+    "tier": "international",
+    "country": "BR",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "English-language outlet covering Brazilian politics, economy, and society. Founded 2017. Subscription-based with professional editorial standards. Added 2026-03-18 to address Latin America coverage gap."
+  },
+  {
+    "id": "yonhap-news",
+    "name": "Yonhap News Agency",
+    "url": "https://en.yna.co.kr",
+    "rss_url": "https://en.yna.co.kr/RSS/news.xml",
+    "tier": "international",
+    "country": "KR",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "South Korea's largest news agency, founded 1980. Government-affiliated but editorially independent wire service. Primary English-language source for Korean Peninsula news. Added 2026-03-18 to address South Korea coverage gap."
+  },
+  {
+    "id": "trt-world",
+    "name": "TRT World",
+    "url": "https://www.trtworld.com",
+    "rss_url": "https://www.trtworld.com/rss",
+    "tier": "international",
+    "country": "TR",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language arm of Turkish Radio and Television Corporation (state broadcaster). State-affiliated: editorial line generally aligns with Turkish government positions, particularly on foreign policy. Valuable for Turkish/regional perspective but readers should note state connection. Added 2026-03-18 to address Turkey coverage gap."
+  },
+  {
+    "id": "premium-times-nigeria",
+    "name": "Premium Times Nigeria",
+    "url": "https://www.premiumtimesng.com",
+    "rss_url": "https://www.premiumtimesng.com/feed",
+    "tier": "independent",
+    "country": "NG",
+    "type": "independent",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Leading Nigerian independent investigative newspaper, founded 2011. Known for anti-corruption and accountability journalism. Won multiple awards including the Wole Soyinka Award for Investigative Reporting. Added 2026-03-18 to address West Africa coverage gap."
+  },
+  {
+    "id": "realclearpolitics",
+    "name": "RealClearPolitics",
+    "url": "https://www.realclearpolitics.com",
+    "rss_url": "https://www.realclearpolitics.com/index.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Political news aggregator and polling data site, founded 2000. Known for poll averaging and election forecasting. Publishes opinion from across the spectrum but editorial selection leans center-right. Added 2026-03-18 to improve political lean balance."
+  },
+  {
+    "id": "the-free-press",
+    "name": "The Free Press",
+    "url": "https://www.thefp.com",
+    "rss_url": "https://www.thefp.com/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Digital media company founded 2021 by Bari Weiss. Heterodox journalism emphasizing free speech and open debate. Center-right on cultural issues, varied on economic policy. Subscription-based with growing audience. Added 2026-03-18 to improve political lean balance."
   }
 ]
