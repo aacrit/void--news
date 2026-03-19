@@ -7,7 +7,7 @@ import LogoWordmark from "./LogoWordmark";
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
    Uses LogoIcon (idle animation) + LogoWordmark for branding.
-   Shows "90 curated sources" with last pipeline run time.
+   Shows "200 curated sources" with last pipeline run time.
    --------------------------------------------------------------------------- */
 
 interface FooterProps {
@@ -50,7 +50,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoWordmark height={16} />
         </div>
         <p className="footer-tagline">Free, transparent news bias analysis</p>
-        <p className="footer-stats">90 curated sources &middot; {updatedText}</p>
+        <p className="footer-stats">200 curated sources &middot; {updatedText}</p>
         <a
           href="https://github.com/aacrit/void-news"
           target="_blank"
