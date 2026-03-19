@@ -15,9 +15,31 @@ interface NavBarProps {
 
 /* ---------------------------------------------------------------------------
    NavBar — Newspaper masthead
-   Desktop: LogoFull (icon + wordmark, bigger), section tabs, theme toggle
-   Mobile: LogoIcon with draw-on-mount animation, then idle tipping
+   Desktop: LogoFull + dateline (Vol/date), section tabs, theme toggle
+   Mobile: LogoIcon + compact date, bottom nav for sections
    --------------------------------------------------------------------------- */
+
+function getDayOfYear(): number {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function formatDateFull(): string {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function formatDateCompact(): string {
+  return new Date().toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
 
 export default function NavBar({ activeSection, onSectionChange }: NavBarProps) {
   /* Draw animation on mount: plays the stroke-reveal, then settles to idle */
@@ -32,16 +54,28 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
     <>
       <header className="nav-header">
         <nav className="nav-inner" aria-label="Main navigation">
-          <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
-            {/* Desktop: full combination mark (icon + wordmark) — bigger */}
-            <span className="nav-logo-desktop">
-              <LogoFull height={36} />
+          <div className="nav-left">
+            <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
+              {/* Desktop: full combination mark (icon + wordmark) */}
+              <span className="nav-logo-desktop">
+                <LogoFull height={36} />
+              </span>
+              {/* Mobile: icon only — draw on mount, then idle */}
+              <span className="nav-logo-mobile">
+                <LogoIcon size={28} animation={logoAnim} />
+              </span>
+            </Link>
+
+            {/* Dateline — newspaper date + volume */}
+            <span className="nav-dateline">
+              <span className="nav-dateline__full">
+                Vol. I &middot; No. {getDayOfYear()} &middot; {formatDateFull()}
+              </span>
+              <span className="nav-dateline__compact">
+                {formatDateCompact()}
+              </span>
             </span>
-            {/* Mobile: icon only — draw on mount, then idle */}
-            <span className="nav-logo-mobile">
-              <LogoIcon size={28} animation={logoAnim} />
-            </span>
-          </Link>
+          </div>
 
           <div className="nav-tabs">
             {(["world", "us"] as Section[]).map((section) => (
