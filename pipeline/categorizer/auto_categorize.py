@@ -3,7 +3,7 @@ Auto-categorization engine for the void --news pipeline.
 
 Automatically assigns topic categories to articles based on content analysis.
 Categories: politics, economy, technology, health, environment, conflict,
-science, culture, sports.
+science, culture, sports, general.
 
 Uses rule-based NLP (no LLM API calls):
     - Keyword matching with weighted category dictionaries
@@ -54,28 +54,29 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         # AI/ML — strong signals
         "artificial intelligence": 3, "machine learning": 3,
         "chatgpt": 3, "large language model": 3, "deep learning": 3,
-        "openai": 3, "nvidia": 2,
+        "openai": 3, "nvidia": 3, "generative ai": 3,
         # Cybersecurity — strong signals
         "cybersecurity": 3, "ransomware": 3, "data breach": 3,
-        "zero-day": 3,
+        "zero-day": 3, "hacking": 3, "cyberattack": 3,
         # Software/industry — moderate signals
         "software update": 2, "open source": 2, "programming": 2,
-        "algorithm": 2, "startup": 2, "silicon valley": 2,
-        "tech company": 2, "tech industry": 2, "tech giant": 2,
+        "silicon valley": 3, "tech company": 3, "tech industry": 3,
+        "tech giant": 3, "software": 2, "app store": 2,
         # Hardware — moderate signals
-        "smartphone": 1, "semiconductor": 2, "microchip": 2,
-        "quantum computing": 3,
-        # Platforms/media — weak-to-moderate signals
-        "social media": 1, "streaming": 1,
+        "semiconductor": 3, "microchip": 3, "quantum computing": 3,
+        # Platforms — only strong tech-specific usages
         "cryptocurrency": 2, "bitcoin": 2, "blockchain": 2,
-        # Transport tech
-        "electric vehicle": 1, "self-driving": 2, "autonomous vehicle": 2,
-        # Connectivity
-        "5g": 2, "broadband": 1, "fiber optic": 1,
+        # Transport tech — only unambiguous phrases
+        "self-driving": 3, "autonomous vehicle": 3,
+        # Connectivity — only strong signals
+        "5g network": 2, "fiber optic": 2,
         # Immersive tech
-        "virtual reality": 3, "augmented reality": 3,
+        "virtual reality": 3, "augmented reality": 3, "metaverse": 3,
         # Robotics
-        "robotics": 3,
+        "robotics": 3, "robot": 2,
+        # Big tech companies
+        "google": 2, "apple": 2, "meta platforms": 3, "amazon web services": 3,
+        "microsoft azure": 3, "cloud computing": 3, "tech startup": 3,
     },
     "health": {
         "vaccine": 3, "vaccination": 3, "disease": 2, "hospital": 2,
@@ -218,7 +219,7 @@ def categorize_article(article: dict) -> list[str]:
     word_count = len(combined_lower.split())
 
     if word_count == 0:
-        return ["politics"]  # safe default
+        return ["general"]  # safe default for empty articles
 
     # 1. Keyword matching scores
     category_scores: dict[str, float] = {}
@@ -256,15 +257,22 @@ def categorize_article(article: dict) -> list[str]:
 
     # 4. Select categories
     if not category_scores or max(category_scores.values()) == 0:
-        return ["politics"]  # default
+        return ["general"]  # default when no keywords matched
 
     # Sort by score descending
     sorted_cats = sorted(category_scores.items(), key=lambda x: x[1], reverse=True)
 
     # Primary category is always included
     primary_score = sorted_cats[0][1]
-    if primary_score == 0:
-        return ["politics"]
+
+    # Minimum score threshold: if the best score is very low, the article
+    # couldn't be confidently classified — return "general" rather than
+    # a misleading label based on a single weak keyword match.
+    # Threshold of 1.5 requires at least one moderate keyword hit (weight 2
+    # appearing once in a 100-word article, or multiple weight-1 hits).
+    MIN_SCORE_THRESHOLD = 1.5
+    if primary_score < MIN_SCORE_THRESHOLD:
+        return ["general"]
 
     result = [sorted_cats[0][0]]
 

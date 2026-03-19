@@ -12,11 +12,69 @@ Improved extraction with:
 """
 
 import json
+import re
 import urllib.robotparser
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+
+
+# ---------------------------------------------------------------------------
+# Image credit / photo caption stripping (UAT-006)
+# These patterns match common photo credit lines that some scrapers pick up
+# as the first line of article text. They are stripped before storage.
+# ---------------------------------------------------------------------------
+_IMAGE_CREDIT_PATTERNS = [
+    # "Patrick Grehan / Corbis via Getty Images —"
+    # "Name Name / Agency — "
+    re.compile(
+        r"^[A-Z][a-zA-Z\-'\.]+([ ][A-Z][a-zA-Z\-'\.]+)?"  # 1-3 capitalized name parts
+        r"\s*/\s*"                                            # slash separator
+        r"[A-Za-z][\w\s,\.\-]+"                              # agency name(s)
+        r"\s*[\u2014\u2013\-\|]\s*",                         # em-dash/en-dash/hyphen/pipe
+        re.UNICODE,
+    ),
+    # "Photo: Name / Agency" or "Photo credit: ..."
+    re.compile(r"^Photo(?:\s+credit)?:\s*.{0,120}\n?", re.IGNORECASE),
+    # "Image: ..."
+    re.compile(r"^Image:\s*.{0,120}\n?", re.IGNORECASE),
+    # "Credit: ..."
+    re.compile(r"^Credit:\s*.{0,120}\n?", re.IGNORECASE),
+    # "Getty Images —", "Reuters —", "AP Photo —"
+    re.compile(
+        r"^(?:Getty Images?|Reuters|AP Photo|AFP|Shutterstock|Alamy)"
+        r"\s*[\u2014\u2013\-\|]\s*",
+        re.UNICODE,
+    ),
+    # Bare "AP", "AFP", "Reuters" at start of a line followed by content
+    re.compile(r"^\((?:AP|AFP|Reuters|PA)\)\s*[\u2014\u2013\-]\s*", re.UNICODE),
+]
+
+
+def _strip_image_credits(text: str) -> str:
+    """
+    Remove leading image credit / photo attribution lines from article text.
+
+    Only strips from the very beginning of the text (or after a leading
+    newline), so legitimate article content starting with a name is preserved.
+    Maximum strip length is 200 characters to avoid accidentally removing a
+    real opening sentence.
+    """
+    if not text:
+        return text
+
+    stripped = text.lstrip("\n\r\t ")
+    # Only attempt to strip from the first 200 characters
+    prefix = stripped[:200]
+
+    for pattern in _IMAGE_CREDIT_PATTERNS:
+        m = pattern.match(prefix)
+        if m and m.end() < 180:  # safety: don't strip more than 180 chars
+            stripped = stripped[m.end():].lstrip()
+            break  # only strip one credit block at the start
+
+    return stripped
 
 
 # Use a browser-like User-Agent — many news sites block bot-like agents
@@ -287,8 +345,9 @@ def scrape_article(url: str) -> dict:
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Extract article text
+    # Extract article text, then strip leading image credits
     full_text = _extract_article_text(soup)
+    full_text = _strip_image_credits(full_text)
     result["full_text"] = full_text
     result["word_count"] = len(full_text.split()) if full_text else 0
 

@@ -18,6 +18,7 @@ Steps:
 
 import json
 import os
+import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -56,6 +57,47 @@ except ImportError as e:
 
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
+
+# ---------------------------------------------------------------------------
+# US domestic content signal patterns (UAT-004)
+# Used to detect stories about US domestic politics/events even when the
+# source is not tier us_major (e.g., international outlet covering US story).
+# ---------------------------------------------------------------------------
+_US_STATE_NAMES = (
+    "alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware"
+    "|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky"
+    "|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi"
+    "|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico"
+    "|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania"
+    "|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont"
+    "|virginia|washington|west virginia|wisconsin|wyoming"
+)
+_US_DOMESTIC_PATTERN = re.compile(
+    r"\b("
+    + _US_STATE_NAMES
+    + r"|congress|senate|house of representatives|supreme court"
+    r"|white house|pentagon|u\.s\. congress|u\.s\. senate|u\.s\. house"
+    r"|federal reserve|fbi|cia|dhs|doj|department of justice"
+    r"|republican party|democratic party|gop|dnc|rnc"
+    r"|u\.s\. dollar|u\.s\. economy|u\.s\. government|u\.s\. president"
+    r"|u\.s\. troops|u\.s\. military|u\.s\. officials"
+    r"|aipac|nra|aclu|planned parenthood|irs"
+    r"|mid-?term|u\.s\. immigration|border patrol|ice detain"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def _has_us_domestic_signal(article_data: dict) -> bool:
+    """
+    Return True if the article's title + summary contains clear US domestic
+    content signals (state names, US institutions, US political entities).
+    Used as a content-based override for section assignment.
+    """
+    title = article_data.get("title", "") or ""
+    summary = article_data.get("summary", "") or ""
+    text = f"{title} {summary}"
+    return bool(_US_DOMESTIC_PATTERN.search(text))
 
 
 def load_sources() -> list[dict]:
@@ -639,6 +681,11 @@ def _scrape_single(article_data, source_map):
         article_data["section"] = "us"
     elif source_country == "US" and source_tier == "independent":
         article_data["section"] = "us"
+    elif _has_us_domestic_signal(article_data):
+        # Content-based override: international/unknown-tier sources covering
+        # clearly US domestic stories (e.g., BBC covering AIPAC, Rand Paul,
+        # Evanston Mayor) should appear in the US section.
+        article_data["section"] = "us"
     else:
         article_data["section"] = "world"
 
@@ -1108,12 +1155,21 @@ def main():
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
-            # Determine cluster section from its articles
+            # Determine cluster section from its articles.
+            # Strategy: if any article was assigned "us" section (meaning it
+            # came from a us_major source, a US independent, or matched US
+            # domestic content patterns), the cluster is a US story — even if
+            # more international sources are covering it. This prevents US
+            # domestic stories from falling under "world" just because more
+            # international outlets picked up the story.
             section_counts: dict[str, int] = {}
             for art in cluster_articles_list:
                 sec = art.get("section", "world")
                 section_counts[sec] = section_counts.get(sec, 0) + 1
-            cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
+            if section_counts.get("us", 0) > 0:
+                cluster_section = "us"
+            else:
+                cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
             # Use pre-generated summary from clustering step
             cluster_summary = cluster.get("summary", "") or ""
