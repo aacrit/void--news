@@ -50,7 +50,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
         </div>
         <p className="footer-tagline">Free, transparent news bias analysis</p>
         <p className="footer-stats">200 curated sources &middot; {updatedText}</p>
-        <p className="footer-built">&copy; void --news 2026</p>
+        <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
       </div>
     </footer>
   );
