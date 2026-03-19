@@ -51,22 +51,31 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "supply chain": 2, "manufacturing": 2, "industrial": 1,
     },
     "technology": {
-        "ai": 3, "artificial intelligence": 3, "machine learning": 3,
-        "software": 2, "startup": 2, "tech": 2, "digital": 1,
-        "cyber": 2, "cybersecurity": 3, "algorithm": 2, "data": 1,
-        "silicon valley": 3, "app": 1, "application": 1,
-        "robot": 2, "robotics": 3, "automation": 2,
-        "cloud computing": 3, "quantum computing": 3,
-        "smartphone": 2, "social media": 2, "platform": 1,
-        "google": 2, "apple": 1, "microsoft": 2, "amazon": 1,
-        "meta": 1, "openai": 3, "nvidia": 2, "tesla": 2,
-        "semiconductor": 3, "chip": 2, "microchip": 3,
-        "5g": 3, "internet": 1, "broadband": 2, "fiber": 1,
-        "virtual reality": 3, "augmented reality": 3, "metaverse": 3,
-        "blockchain": 3, "nft": 3, "open source": 2,
-        "programming": 2, "developer": 1, "coding": 2,
-        "hack": 2, "hacker": 2, "data breach": 3, "privacy": 2,
-        "encryption": 2, "surveillance": 2, "deep learning": 3,
+        # AI/ML — strong signals
+        "artificial intelligence": 3, "machine learning": 3,
+        "chatgpt": 3, "large language model": 3, "deep learning": 3,
+        "openai": 3, "nvidia": 2,
+        # Cybersecurity — strong signals
+        "cybersecurity": 3, "ransomware": 3, "data breach": 3,
+        "zero-day": 3,
+        # Software/industry — moderate signals
+        "software update": 2, "open source": 2, "programming": 2,
+        "algorithm": 2, "startup": 2, "silicon valley": 2,
+        "tech company": 2, "tech industry": 2, "tech giant": 2,
+        # Hardware — moderate signals
+        "smartphone": 1, "semiconductor": 2, "microchip": 2,
+        "quantum computing": 3,
+        # Platforms/media — weak-to-moderate signals
+        "social media": 1, "streaming": 1,
+        "cryptocurrency": 2, "bitcoin": 2, "blockchain": 2,
+        # Transport tech
+        "electric vehicle": 1, "self-driving": 2, "autonomous vehicle": 2,
+        # Connectivity
+        "5g": 2, "broadband": 1, "fiber optic": 1,
+        # Immersive tech
+        "virtual reality": 3, "augmented reality": 3,
+        # Robotics
+        "robotics": 3,
     },
     "health": {
         "vaccine": 3, "vaccination": 3, "disease": 2, "hospital": 2,
@@ -174,7 +183,7 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
 # ---------------------------------------------------------------------------
 NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
     "GPE": {"politics": 0.5, "conflict": 0.3},
-    "ORG": {"economy": 0.3, "technology": 0.2},
+    "ORG": {"economy": 0.3},
     "PERSON": {"politics": 0.2, "culture": 0.2},
     "MONEY": {"economy": 0.5},
     "PERCENT": {"economy": 0.3},
@@ -182,7 +191,7 @@ NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
     "NORP": {"politics": 0.3, "conflict": 0.2},
     "FAC": {"culture": 0.2},
     "EVENT": {"sports": 0.3, "culture": 0.3, "conflict": 0.2},
-    "PRODUCT": {"technology": 0.3},
+    "PRODUCT": {"technology": 0.1},
     "LAW": {"politics": 0.5},
 }
 
