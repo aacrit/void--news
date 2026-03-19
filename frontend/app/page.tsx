@@ -322,14 +322,14 @@ function HomeContent() {
           <div className="empty-state">
             <LogoIcon size={56} animation="analyzing" />
             <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
-              Awaiting First Edition
+              The Presses Are Warming Up
             </h2>
             <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
-              The news pipeline hasn&apos;t run yet. Stories will appear here
-              once articles are fetched and analyzed from 90 curated sources.
+              The printing press is rolling &mdash; 200 curated sources are being
+              fetched, analyzed, and typeset. The first edition will appear shortly.
             </p>
             <p className="edition-meta">
-              Scheduled: 11:00 AM &amp; 11:00 PM UTC daily
+              Editions printed daily at 11:00 AM &amp; 11:00 PM UTC
             </p>
           </div>
         )}
