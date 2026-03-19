@@ -19,10 +19,9 @@ interface NavBarProps {
    Mobile: LogoIcon + compact date, bottom nav for sections
    --------------------------------------------------------------------------- */
 
-function getDayOfYear(): number {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+function getEditionLabel(): string {
+  const hour = new Date().getHours();
+  return hour < 12 ? "Morning Edition" : "Evening Edition";
 }
 
 function formatDateFull(): string {
@@ -69,7 +68,7 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
             {/* Dateline — newspaper date + volume */}
             <span className="nav-dateline">
               <span className="nav-dateline__full">
-                Vol. I &middot; No. {getDayOfYear()} &middot; {formatDateFull()}
+                {getEditionLabel()} &middot; {formatDateFull()}
               </span>
               <span className="nav-dateline__compact">
                 {formatDateCompact()}
