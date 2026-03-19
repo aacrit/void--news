@@ -243,6 +243,90 @@
   border-color: var(--border-strong);
 }
 
+/* ---- Masthead — 80s Newspaper Nameplate -------------------------------- */
+/* Scrolls with content. The sticky NavBar takes over on scroll.
+   Desktop: full broadsheet flag — dateline, nameplate, tagline, edition.
+   Mobile: compact dateline bar only (logo stays in NavBar). */
+
+.masthead {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-7);
+  text-align: center;
+}
+
+/* Dateline bar — Vol/issue left, date right */
+.masthead__dateline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--fg-primary);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Nameplate — thick rule above, thin below, centered logo */
+.masthead__nameplate {
+  border-top: 3px solid var(--fg-primary);
+  border-bottom: 1px solid var(--divider);
+  padding: var(--space-5) 0 var(--space-4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tagline — uppercase, wide letterspacing, muted */
+.masthead__tagline {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: var(--space-3) 0;
+}
+
+/* Edition bar — thick rule below, centered metadata */
+.masthead__edition {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0 var(--space-3);
+  border-top: 1px solid var(--divider);
+  border-bottom: 3px solid var(--fg-primary);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-feature-settings: "tnum" 1;
+}
+
+.masthead__edition-label {
+  font-weight: 600;
+  color: var(--fg-secondary);
+}
+
+/* Dot separators in edition bar */
+.masthead__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--fg-muted);
+  flex-shrink: 0;
+}
+
+/* Desktop: show full date, hide compact + inline edition */
+.masthead__date-compact {
+  display: none;
+}
+
 /* ---- NavBar ------------------------------------------------------------ */
 .nav-header {
   position: sticky;

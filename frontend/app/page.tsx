@@ -5,6 +5,7 @@ import type { Section, Category, Story, BiasScores, BiasSpread, ThreeLensData, O
 import { supabase } from "./lib/supabase";
 import LogoWordmark from "./components/LogoWordmark";
 import LogoIcon from "./components/LogoIcon";
+import Masthead from "./components/Masthead";
 import NavBar from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
@@ -272,6 +273,11 @@ function HomeContent() {
 
   return (
     <div className="page-container">
+      <Masthead
+        activeSection={activeSection}
+        storyCount={filteredStories.length}
+        lastUpdated={lastUpdated}
+      />
       <NavBar
         activeSection={activeSection}
         onSectionChange={(s) => {
