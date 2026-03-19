@@ -1,7 +1,7 @@
 ---
 name: db-reviewer
-description: Supabase data quality auditor — article completeness, bias score distributions, cluster integrity, source coverage
-model: opus
+description: "MUST BE USED for Supabase data quality audits — article completeness, bias score distributions, cluster integrity, source coverage, orphaned records. Read-only."
+model: haiku
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -16,9 +16,10 @@ You audit the Supabase database for data quality issues. Articles, bias scores, 
 ## Mandatory Reads
 
 1. `CLAUDE.md` — Data model, pipeline flow
-2. `supabase/migrations/*.sql` — Complete schema
-3. `data/sources.json` — 90 curated sources
-4. `pipeline/main.py` — How data gets written
+2. `docs/AGENT-TEAM.md` — Team structure, routing rules
+3. `supabase/migrations/*.sql` — Complete schema
+4. `data/sources.json` — 90 curated sources
+5. `pipeline/main.py` — How data gets written
 
 ## Audit Framework — 8 Domains
 
@@ -109,3 +110,7 @@ STATISTICS:
 
 THE ONE THING: [single most important data quality issue]
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

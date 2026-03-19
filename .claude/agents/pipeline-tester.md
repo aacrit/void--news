@@ -1,7 +1,7 @@
 ---
 name: pipeline-tester
-description: Pipeline quality gate — validates article parsing, clustering quality, bias score distributions, and ranking output after every pipeline change
-model: opus
+description: "MUST BE USED after every pipeline change. Validates article parsing, clustering quality, bias score distributions, and ranking output. Read-only."
+model: haiku
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -104,3 +104,7 @@ ISSUES:
 
 THE BOTTOM LINE: [one sentence]
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

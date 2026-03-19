@@ -1,7 +1,7 @@
 ---
 name: frontend-builder
-description: Component engineering — builds UI following Press & Precision design system, Next.js/TypeScript, newspaper grid, progressive disclosure
-model: opus
+description: "MUST BE USED for building UI components and features. Follows Press & Precision design system, Next.js/TypeScript, newspaper grid, progressive disclosure. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -78,3 +78,7 @@ Every component must pass:
 - Data types in types.ts (without CEO approval)
 - Supabase queries (without CEO approval)
 - Animation timing tokens
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

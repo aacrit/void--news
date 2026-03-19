@@ -1,7 +1,7 @@
 ---
 name: bias-auditor
-description: Ground-truth bias validation — runs articles through analyzers and compares against known outlet bias profiles and expert consensus
-model: opus
+description: "MUST BE USED for ground-truth bias validation. Runs articles through analyzers and compares against known outlet profiles and expert consensus. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -115,3 +115,7 @@ REGRESSION: [PASS/FAIL]
 
 CUMULATIVE (all rounds): [N] articles, [N]% accuracy
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

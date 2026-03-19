@@ -1,7 +1,7 @@
 ---
 name: uat-tester
-description: Browser testing — clicks every button, resizes viewports, screenshots, severity-ranked findings for homepage and Deep Dive
-model: opus
+description: "MUST BE USED for browser-based UAT. Clicks every button, resizes viewports, screenshots anomalies. Validates homepage and Deep Dive views. Read-only."
+model: haiku
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -118,3 +118,7 @@ FINDINGS:
 
 THE ONE FIX: [single most important issue]
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

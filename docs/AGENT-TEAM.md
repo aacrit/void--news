@@ -14,7 +14,7 @@ Adapted from DondeAI's proven agent ecosystem. Every principle below is inherite
 4. **Max Blast Radius** — Each agent has bounded file modification limits (max 4 CSS, 2 JS/TS, 3 Python per run).
 5. **$0 Cost — Claude Max CLI Only** — All AI/LLM work uses Claude Code CLI (claude-opus via Max subscription). No API-based LLM calls anywhere. No OpenAI, no Anthropic API keys, no paid inference. This is a hard constraint.
 6. **Parallel-Safe vs Sequential** — Read-only agents can run simultaneously. Write agents require sequencing.
-7. **Model: Opus** — All agents use Claude Opus via CLI. No model downgrades.
+7. **Model Tiering** — Opus for creative agents, Sonnet for execution agents, Haiku for read-only agents.
 
 ### Cost Policy
 
@@ -42,13 +42,13 @@ CEO (Aacrit)
   ├── Quality ————————— analytics-expert, bias-auditor, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
-  ├── Pipeline ————————— nlp-engineer, source-curator
+  ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
 ```
 
-**Total: 16 agents across 7 divisions**
+**Total: 17 agents across 7 divisions**
 
 ---
 
@@ -58,10 +58,10 @@ CEO (Aacrit)
 
 | Agent | Purpose | Model | Write Access | Trigger |
 |-------|---------|-------|-------------|---------|
-| `analytics-expert` | Bias engine benchmarking, ranking calibration, competitive gap analysis | opus | Yes | After algorithm changes, periodic audits |
-| `bias-auditor` | Ground-truth bias validation against known outlet profiles | opus | Yes | After scoring changes, periodic |
-| `pipeline-tester` | Pipeline quality gate — article parsing, clustering, scoring validation | opus | No (read-only) | After every pipeline change |
-| `bug-fixer` | Post-test bug remediation, root-cause grouping, surgical fixes | opus | Yes | After test failures |
+| `analytics-expert` | Bias engine benchmarking, ranking calibration, competitive gap analysis | sonnet | Yes | After algorithm changes, periodic audits |
+| `bias-auditor` | Ground-truth bias validation against known outlet profiles | sonnet | Yes | After scoring changes, periodic |
+| `pipeline-tester` | Pipeline quality gate — article parsing, clustering, scoring validation | haiku | No (read-only) | After every pipeline change |
+| `bug-fixer` | Post-test bug remediation, root-cause grouping, surgical fixes | sonnet | Yes | After test failures |
 
 **Sequential Quality Cycle:**
 ```
@@ -77,18 +77,18 @@ analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
 
 | Agent | Purpose | Model | Write Access | Trigger |
 |-------|---------|-------|-------------|---------|
-| `perf-optimizer` | Pipeline runtime + frontend load time optimization | opus | Yes | Performance issues, periodic |
-| `db-reviewer` | Supabase data quality — articles, bias scores, clusters, sources | opus | No (read-only) | After pipeline runs, schema changes |
-| `update-docs` | Sync CLAUDE.md and docs/*.md with current codebase | opus | Yes | After significant changes |
+| `perf-optimizer` | Pipeline runtime + frontend load time optimization | sonnet | Yes | Performance issues, periodic |
+| `db-reviewer` | Supabase data quality — articles, bias scores, clusters, sources | haiku | No (read-only) | After pipeline runs, schema changes |
+| `update-docs` | Sync CLAUDE.md and docs/*.md with current codebase | sonnet | Yes | After significant changes |
 
 ### Frontend Division (4 agents)
 
 | Agent | Purpose | Model | Write Access | Trigger |
 |-------|---------|-------|-------------|---------|
-| `frontend-builder` | Component engineering — Press & Precision design system | opus | Yes | Feature requests, build tasks |
-| `frontend-fixer` | UI bug remediation — bias display, layout, animation, a11y | opus | Yes | Bug reports, visual issues |
-| `responsive-specialist` | Desktop/mobile layout optimization, light/dark modes | opus | Yes | New components, responsive bugs |
-| `uat-tester` | Browser testing — clicks, resizes, screenshots, severity-ranked findings | opus | No (read-only) | After frontend changes |
+| `frontend-builder` | Component engineering — Press & Precision design system | sonnet | Yes | Feature requests, build tasks |
+| `frontend-fixer` | UI bug remediation — bias display, layout, animation, a11y | sonnet | Yes | Bug reports, visual issues |
+| `responsive-specialist` | Desktop/mobile layout optimization, light/dark modes | sonnet | Yes | New components, responsive bugs |
+| `uat-tester` | Browser testing — clicks, resizes, screenshots, severity-ranked findings | haiku | No (read-only) | After frontend changes |
 
 **Sequential Frontend Cycle:**
 ```

@@ -1,7 +1,7 @@
 ---
 name: frontend-fixer
-description: UI bug remediation — bias display, layout breaks, animation jank, accessibility gaps, responsive breakage
-model: opus
+description: "MUST BE USED for fixing UI bugs — bias display errors, layout breaks, animation jank, accessibility gaps, responsive breakage. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -70,3 +70,7 @@ REGRESSION RISK: [Low/Med/High]
 NEXT STEPS:
   1. Run uat-tester to verify
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

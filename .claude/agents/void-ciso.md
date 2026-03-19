@@ -1,7 +1,7 @@
 ---
 name: void-ciso
-description: Security audit — secrets scanning, RLS policy review, CORS, injection prevention, OWASP top 10, dependency vulnerabilities
-model: opus
+description: "MUST BE USED for security audits — secrets scanning, Supabase RLS review, CORS, injection prevention, OWASP top 10, dependency vulnerabilities. Read-only."
+model: haiku
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -16,7 +16,8 @@ You audit the void --news codebase for security vulnerabilities. Adapted from Do
 ## Mandatory Reads
 
 1. `CLAUDE.md` — Architecture, tech stack
-2. `supabase/migrations/*.sql` — RLS policies
+2. `docs/AGENT-TEAM.md` — Team structure, routing rules
+3. `supabase/migrations/*.sql` — RLS policies
 3. `frontend/app/lib/supabase.ts` — Client credentials
 4. `pipeline/utils/supabase_client.py` — Server credentials
 5. `.github/workflows/*.yml` — CI/CD secrets handling
@@ -127,3 +128,7 @@ FINDINGS:
 
 THE ONE FIX: [single most important security issue]
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.
