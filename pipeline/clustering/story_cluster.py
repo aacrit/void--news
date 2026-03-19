@@ -32,29 +32,111 @@ def _build_document(article: dict) -> str:
 
 def _generate_cluster_title(articles: list[dict]) -> str:
     """
-    Generate a cluster title from the most common named entities
-    across articles in the cluster.
+    Generate a cluster title by selecting the most representative article
+    headline from the cluster.
+
+    For single-article clusters, uses that article's title directly.
+    For multi-article clusters, scores each title by entity coverage,
+    informativeness (length sweet spot), and absence of clickbait signals,
+    then picks the best one.
     """
+    titles = [a.get("title", "") or "" for a in articles]
+    titles = [t.strip() for t in titles if t.strip()]
+
+    if not titles:
+        return "Developing Story"
+
+    if len(titles) == 1:
+        return titles[0]
+
+    # Extract common entities across the cluster to measure title relevance
     nlp = get_nlp()
     entity_counter: Counter = Counter()
-
-    for article in articles[:20]:  # limit for performance
+    for article in articles[:20]:
         title = article.get("title", "") or ""
         doc = nlp(title)
         for ent in doc.ents:
             if ent.label_ in ("PERSON", "ORG", "GPE", "EVENT", "NORP"):
-                entity_counter[ent.text] += 1
+                entity_counter[ent.text.lower()] += 1
 
-    if not entity_counter:
-        # Fallback: use the shortest title from the cluster
-        titles = [a.get("title", "") for a in articles if a.get("title")]
-        if titles:
-            return min(titles, key=len)
-        return "Untitled Story"
+    top_entities = {name for name, count in entity_counter.most_common(5)
+                    if count >= 2} if entity_counter else set()
 
-    # Build title from top entities
-    top_entities = [name for name, _ in entity_counter.most_common(3)]
-    return " / ".join(top_entities)
+    # Score each title
+    def _score_title(title: str) -> float:
+        score = 0.0
+        length = len(title)
+
+        # Length sweet spot: prefer 40-120 chars (informative but not wordy)
+        if 40 <= length <= 120:
+            score += 3.0
+        elif 20 <= length < 40:
+            score += 1.5
+        elif 120 < length <= 160:
+            score += 2.0
+        elif length < 20:
+            score += 0.5  # too vague
+
+        # Entity coverage: reward titles that mention cluster-wide entities
+        if top_entities:
+            title_lower = title.lower()
+            matches = sum(1 for e in top_entities if e in title_lower)
+            score += matches * 2.0
+
+        # Penalize clickbait signals
+        if title.endswith("?"):
+            score -= 1.0
+        if title.isupper():
+            score -= 2.0
+        if any(w in title.lower() for w in ("you won't believe", "shocking",
+                                              "this is why", "here's what")):
+            score -= 1.5
+
+        # Prefer titles with a colon or dash (often structured: "Topic: Detail")
+        if ": " in title or " — " in title or " - " in title:
+            score += 0.5
+
+        return score
+
+    scored = [(t, _score_title(t)) for t in titles]
+    scored.sort(key=lambda x: x[1], reverse=True)
+    return scored[0][0]
+
+
+def _generate_cluster_summary(articles: list[dict]) -> str:
+    """
+    Generate a cluster summary by selecting the most informative article
+    summary from the cluster.
+
+    For multi-article clusters, picks the longest substantive summary
+    (avoiding very short or boilerplate text). Falls back to constructing
+    a brief description from the cluster title and source count.
+    """
+    summaries = []
+    for a in articles:
+        summary = (a.get("summary", "") or "").strip()
+        if summary and len(summary) >= 40:
+            summaries.append(summary)
+
+    if not summaries:
+        # Fall back to shorter summaries
+        for a in articles:
+            summary = (a.get("summary", "") or "").strip()
+            if summary and len(summary) >= 15:
+                summaries.append(summary)
+
+    if summaries:
+        # Pick the longest non-duplicate summary (most informative)
+        summaries.sort(key=len, reverse=True)
+        return summaries[0]
+
+    # Last resort: use the first article's title
+    for a in articles:
+        title = (a.get("title", "") or "").strip()
+        if title:
+            return title
+
+    return ""
 
 
 def _determine_section(articles: list[dict]) -> str:
@@ -104,7 +186,8 @@ def cluster_stories(
     if len(articles) == 1:
         article = articles[0]
         return [{
-            "title": article.get("title", "Untitled"),
+            "title": article.get("title") or "Developing Story",
+            "summary": _generate_cluster_summary([article]),
             "article_ids": [article.get("id", "")],
             "source_ids": [article.get("source_id", "")],
             "source_count": 1,
@@ -127,7 +210,8 @@ def cluster_stories(
     if len(valid_docs) == 1:
         article = valid_articles[0]
         return [{
-            "title": article.get("title", "Untitled"),
+            "title": article.get("title") or "Developing Story",
+            "summary": _generate_cluster_summary([article]),
             "article_ids": [article.get("id", "")],
             "source_ids": [article.get("source_id", "")],
             "source_count": 1,
@@ -183,6 +267,7 @@ def cluster_stories(
 
         clusters.append({
             "title": _generate_cluster_title(cluster_articles),
+            "summary": _generate_cluster_summary(cluster_articles),
             "article_ids": article_ids,
             "source_ids": source_ids,
             "source_count": len(source_ids),
