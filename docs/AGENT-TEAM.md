@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-18
+Last updated: 2026-03-19
 
 ## Philosophy
 
@@ -86,7 +86,7 @@ CEO (Aacrit)
 |-------|---------|-------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization, frontend content | sonnet | Yes | Pipeline development, content quality issues |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | sonnet | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 90-source list | sonnet | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 97-source list | sonnet | Yes | Source list changes |
 
 ### Security Division (1 agent)
 
@@ -183,7 +183,7 @@ feed-intelligence (ingestion) → nlp-engineer (bias) → pipeline-tester (valid
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 90-source curated list structure (3 tiers × 30)
+- 97-source curated list structure (3 tiers: 30 us_major + 34 international + 33 independent)
 - $0 operational cost constraint
 - Claude Max CLI for all AI work (no API LLMs)
 

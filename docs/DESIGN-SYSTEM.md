@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
 **Version:** 1.1
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-19
 
 ---
 
@@ -407,10 +407,29 @@ Active components in `frontend/app/components/`:
 | `LoadingSkeleton` | Animated skeleton loading state | -- |
 | `ErrorBoundary` | Error boundary wrapper | -- |
 | `Footer` | Page footer with last-updated info | -- |
-| `LogoFull` / `LogoIcon` | Brand logo (full and icon variants) | -- |
-| `ScaleIcon` | Scale/balance icon for brand | -- |
+| `LogoFull` | Combination mark: void circle + scale beam icon + "void --news" wordmark as single SVG. Use in NavBar (desktop), Footer, error pages. Direction 5 "Negative Space O" — hollow O in "void", monospace "--news". | -- |
+| `LogoIcon` | Icon-only wrapper around `ScaleIcon`. Use in mobile nav, loading indicators, compact contexts. `animation="none"` shows void circle only (favicon mark). | -- |
+| `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
+| `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping), `loading` (dramatic tipping), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
 
 **Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).
+
+### Logo Animation Deployment
+
+| Context | Component | Animation State |
+|---------|-----------|----------------|
+| NavBar (mobile, on mount) | `LogoIcon` | `draw` → transitions to `idle` after 800ms |
+| NavBar (desktop) | `LogoFull` | static SVG (idle beam embedded) |
+| LoadingSkeleton | `LogoIcon` | `loading` |
+| ErrorBoundary | `LogoIcon` | `balanced` |
+| DeepDive panel header | `LogoIcon` | `analyzing` |
+| Empty state | `LogoIcon` | `analyzing` |
+| RefreshButton (idle) | `LogoIcon` | `idle` |
+| RefreshButton (refreshing) | `LogoIcon` | `loading` |
+| Footer | `LogoIcon` | `idle` |
+| Favicon (`/public/icon.svg`) | Static SVG | void circle only (`none` equivalent) |
+
+Add `.si-hoverable` class to any ancestor to activate hover animation on `LogoIcon` / `ScaleIcon`.
 
 ---
 

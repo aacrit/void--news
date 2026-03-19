@@ -322,7 +322,7 @@ reset.css → tokens.css → layout.css → typography.css → components.css �
 /plugin install frontend-design@claude-plugins-official
 ```
 
-## Agent Team (Adapted from DondeAI — 16 Agents, 7 Divisions)
+## Agent Team (Adapted from DondeAI — 17 Agents, 7 Divisions)
 
 > Full team structure, R&R, and sequential cycles: `docs/AGENT-TEAM.md`
 
@@ -443,9 +443,10 @@ void-news/
 │   │   │   ├── LoadingSkeleton.tsx
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── Footer.tsx
-│   │   │   ├── LogoFull.tsx
-│   │   │   ├── LogoIcon.tsx
-│   │   │   └── ScaleIcon.tsx
+│   │   │   ├── LogoFull.tsx       # Combination mark: void circle + scale beam icon + wordmark (single SVG, Direction 5)
+│   │   │   ├── LogoIcon.tsx       # Icon-only wrapper around ScaleIcon (compact contexts, mobile nav)
+│   │   │   ├── LogoWordmark.tsx   # Text-only "void --news" with hollow-O treatment (no icon mark)
+│   │   │   └── ScaleIcon.tsx      # Void Circle + Scale Beam hybrid icon; 8 animation states (idle/loading/hover/analyzing/balanced/pulse/draw/none)
 │   │   ├── lib/
 │   │   │   ├── supabase.ts        # Supabase client, fetchDeepDiveData, fetchLastPipelineRun
 │   │   │   ├── types.ts           # TypeScript types (BiasScores, ThreeLensData, Story, etc.)
