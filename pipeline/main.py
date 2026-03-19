@@ -632,38 +632,38 @@ def main():
     articles_to_scrape = articles_raw  # default: scrape everything (first run / error fallback)
 
     try:
-        # Collect all non-empty URLs from RSS results
-        url_list = [a.get("url", "") for a in articles_raw if a.get("url")]
+        rss_urls = {a["url"] for a in articles_raw if a.get("url")}
 
-        if url_list:
+        if rss_urls:
+            # Fetch ALL existing URLs from DB in paginated reads (avoids
+            # PostgREST query-string length limits from IN() filters).
             existing_urls: set[str] = set()
-            # Query in chunks of 200 to stay within Supabase/PostgREST limits
-            chunk_size = 200
-            for i in range(0, len(url_list), chunk_size):
-                url_chunk = url_list[i:i + chunk_size]
-                # Retry up to 3 times with backoff for transient 520 errors
-                for attempt in range(3):
-                    try:
-                        result = supabase.table("articles").select("url").in_("url", url_chunk).execute()
-                        if result.data:
-                            existing_urls.update(r["url"] for r in result.data)
-                        break
-                    except Exception as chunk_err:
-                        if attempt < 2:
-                            time.sleep(2 ** attempt)  # 1s, 2s backoff
-                        else:
-                            raise chunk_err
+            page_size = 1000
+            offset = 0
+            while True:
+                result = (
+                    supabase.table("articles")
+                    .select("url")
+                    .range(offset, offset + page_size - 1)
+                    .execute()
+                )
+                if not result.data:
+                    break
+                existing_urls.update(r["url"] for r in result.data if r.get("url"))
+                if len(result.data) < page_size:
+                    break
+                offset += page_size
 
-            # Keep articles whose URL is new (not in DB) or has no URL (include for safety)
+            # Keep articles whose URL is new (not in DB) or has no URL
             articles_to_scrape = [
                 a for a in articles_raw
                 if not a.get("url") or a["url"] not in existing_urls
             ]
 
-            existing_count = len(existing_urls)
+            existing_count = len(rss_urls & existing_urls)
             new_count = len(articles_to_scrape)
             print(f"  URLs from RSS: {total_rss_urls}")
-            print(f"  Already in DB: {existing_count}")
+            print(f"  Already in DB: {existing_count} (of {len(existing_urls)} total)")
             print(f"  New to scrape: {new_count}")
         else:
             print(f"  URLs from RSS: {total_rss_urls} (none valid)")
