@@ -56,6 +56,18 @@ JUNK_TITLE_PATTERNS = [
         r'everything you need to know about .+ day\b',  # Commerce/shopping roundups
         r'\bbest .+ deals\b',   # Shopping deal roundups
         r'\bbest .+ gifts\b',   # Gift guide roundups
+        # Economist/outlet section-page entries: "Finance & economics - The Economist"
+        # Catches titles that are bare category labels (1-4 words, no verb/number)
+        # followed by " - <Outlet Name>" with no actual news content
+        r'^[\w\s&]+\s+[-–—]\s+the\s+economist\s*$',  # "Finance & economics - The Economist"
+        # Wire-service digest / roundup titles (not individual stories)
+        r'\bnews\s+(?:summary|digest|wrap(?:up)?|roundup|bulletin)\b',  # "Yonhap news summary"
+        r'\bdaily\s+(?:briefing|digest|roundup|bulletin|wrap)\b',       # "Daily briefing"
+        r'\bmorning\s+(?:briefing|digest|roundup|bulletin)\b',          # "Morning briefing"
+        r'\bevening\s+(?:briefing|digest|roundup|bulletin)\b',          # "Evening briefing"
+        # Puzzle/crossword/game entries slipping through from magazine feeds
+        r'\b(?:mini\s+)?crossword\b',   # "Mini crossword for Mar 19th 2026"
+        r'\bobituaries?\s*[-–—]',       # "Notable obituaries - The Economist"
     )
 ]
 
