@@ -5,14 +5,17 @@ import { createPortal } from "react-dom";
 import type { SigilData } from "../lib/types";
 
 /* ==========================================================================
-   Sigil — Lean-First Bias Indicator
+   Sigil — The Brand Mark AS the Bias Indicator
 
-   Hero: Political lean spectrum bar with animated marker
-   Second: Source count badge
-   Third: Binary Fact/Opinion badge
-   On hover: Full detail popup with secondary scores
+   The void --news scale icon encodes live bias data:
+     Beam tilt  → political lean (left/right)
+     Beam color → lean spectrum (blue → gray → red)
+     Circle     → source coverage (stroke fill = Harvey ball)
+     Base       → Reporting (blue) vs Opinion (orange)
 
-   Premium micro-interactions throughout. $100B product feel.
+   On hover: the mark gracefully unfolds — beam lifts into a lean spectrum,
+   circle reveals source count, base morphs into type label. Then secondary
+   scores stagger in. The brand literally opens up to show its analysis.
    ========================================================================== */
 
 interface SigilProps {
@@ -20,71 +23,55 @@ interface SigilProps {
   size?: "sm" | "lg";
 }
 
-/* ── CSS variable cache (shared pattern) ──────────────────────────────── */
+/* ── CSS variable cache ────────────────────────────────────────────────── */
 
 let cssVarCache: Record<string, string> | null = null;
-
-const SSR_FALLBACK: Record<string, string> = {
-  "--bias-left": "#3B82F6",
-  "--bias-center-left": "#60A5FA",
-  "--bias-center": "#9CA3AF",
-  "--bias-center-right": "#F97316",
-  "--bias-right": "#EF4444",
-  "--sense-low": "#22C55E",
-  "--sense-medium": "#EAB308",
-  "--sense-high": "#EF4444",
-  "--type-reporting": "#3B82F6",
-  "--type-opinion": "#F97316",
-  "--rigor-high": "#22C55E",
-  "--rigor-medium": "#EAB308",
-  "--rigor-low": "#EF4444",
+const SSR: Record<string, string> = {
+  "--bias-left": "#3B82F6", "--bias-center-left": "#60A5FA",
+  "--bias-center": "#9CA3AF", "--bias-center-right": "#F97316",
+  "--bias-right": "#EF4444", "--sense-low": "#22C55E",
+  "--sense-medium": "#EAB308", "--sense-high": "#EF4444",
+  "--type-reporting": "#3B82F6", "--type-opinion": "#F97316",
+  "--rigor-high": "#22C55E", "--rigor-medium": "#EAB308", "--rigor-low": "#EF4444",
 };
 
-function getColors(): Record<string, string> {
+function gc(): Record<string, string> {
   if (cssVarCache) return cssVarCache;
-  if (typeof document === "undefined") return SSR_FALLBACK;
-  const style = getComputedStyle(document.documentElement);
+  if (typeof document === "undefined") return SSR;
+  const s = getComputedStyle(document.documentElement);
   cssVarCache = {};
-  for (const v of Object.keys(SSR_FALLBACK)) {
-    cssVarCache[v] = style.getPropertyValue(v).trim() || SSR_FALLBACK[v];
-  }
+  for (const v of Object.keys(SSR)) cssVarCache[v] = s.getPropertyValue(v).trim() || SSR[v];
   return cssVarCache;
 }
 
 if (typeof window !== "undefined") {
-  const obs = new MutationObserver((muts) => {
-    for (const m of muts) {
-      if (m.type === "attributes" && m.attributeName === "data-mode") cssVarCache = null;
-    }
-  });
-  obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
+  new MutationObserver((ms) => {
+    for (const m of ms) if (m.type === "attributes" && m.attributeName === "data-mode") cssVarCache = null;
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
 }
 
-/* ── Color helpers ─────────────────────────────────────────────────────── */
+/* ── Color math ────────────────────────────────────────────────────────── */
 
-function lerpColor(a: string, b: string, t: number): string {
+function lerp(a: string, b: string, t: number): string {
   const ah = parseInt(a.slice(1), 16), bh = parseInt(b.slice(1), 16);
-  const ar = (ah >> 16) & 0xff, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
-  const br = (bh >> 16) & 0xff, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
-  return `#${(
-    ((Math.round(ar + (br - ar) * t) << 16) |
-      (Math.round(ag + (bg - ag) * t) << 8) |
-      Math.round(ab + (bb - ab) * t))
-  ).toString(16).padStart(6, "0")}`;
+  const r = Math.round(((ah >> 16) & 0xff) + (((bh >> 16) & 0xff) - ((ah >> 16) & 0xff)) * t);
+  const g = Math.round(((ah >> 8) & 0xff) + (((bh >> 8) & 0xff) - ((ah >> 8) & 0xff)) * t);
+  const bl = Math.round((ah & 0xff) + ((bh & 0xff) - (ah & 0xff)) * t);
+  return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
 }
 
-function getLeanColor(v: number): string {
-  const c = getColors();
+function leanColor(v: number): string {
+  const c = gc();
   if (v <= 20) return c["--bias-left"];
-  if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
+  if (v <= 35) return lerp(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
   if (v <= 45) return c["--bias-center-left"];
   if (v <= 55) return c["--bias-center"];
   if (v <= 65) return c["--bias-center-right"];
-  if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
+  if (v <= 80) return lerp(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
   return c["--bias-right"];
 }
 
-function getLeanLabel(v: number): string {
+function leanLabel(v: number): string {
   if (v <= 20) return "Far Left";
   if (v <= 35) return "Left";
   if (v <= 45) return "Center-Left";
@@ -94,50 +81,32 @@ function getLeanLabel(v: number): string {
   return "Far Right";
 }
 
-function getScoreColor(v: number, invert = false): string {
-  const c = getColors();
-  const s = invert ? 100 - v : v;
+function qualityColor(v: number, invert = false): string {
+  const c = gc(); const s = invert ? 100 - v : v;
   if (s <= 30) return c["--sense-low"];
-  if (s <= 60) return lerpColor(c["--sense-low"], c["--sense-medium"], (s - 30) / 30);
-  if (s <= 80) return lerpColor(c["--sense-medium"], c["--sense-high"], (s - 60) / 20);
+  if (s <= 60) return lerp(c["--sense-low"], c["--sense-medium"], (s - 30) / 30);
+  if (s <= 80) return lerp(c["--sense-medium"], c["--sense-high"], (s - 60) / 20);
   return c["--sense-high"];
 }
 
-/* ── Interaction hook ──────────────────────────────────────────────────── */
+/* ── Hover hook ────────────────────────────────────────────────────────── */
 
-function useSigilHover() {
+function useHover() {
   const [open, setOpen] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const show = useCallback(() => {
-    if (timer.current) clearTimeout(timer.current);
-    setOpen(true);
-  }, []);
-
-  const hide = useCallback(() => {
-    timer.current = setTimeout(() => setOpen(false), 220);
-  }, []);
-
-  const toggle = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpen(v => !v);
-  }, []);
-
+  const t = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const show = useCallback(() => { if (t.current) clearTimeout(t.current); setOpen(true); }, []);
+  const hide = useCallback(() => { t.current = setTimeout(() => setOpen(false), 240); }, []);
+  const toggle = useCallback((e: React.MouseEvent) => { e.stopPropagation(); setOpen(v => !v); }, []);
   const onKey = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(v => !v); }
     if (e.key === "Escape") setOpen(false);
   }, []);
-
-  const keepOpen = useCallback(() => {
-    if (timer.current) clearTimeout(timer.current);
-  }, []);
-
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-
-  return { open, show, hide, toggle, onKey, keepOpen };
+  const keep = useCallback(() => { if (t.current) clearTimeout(t.current); }, []);
+  useEffect(() => () => { if (t.current) clearTimeout(t.current); }, []);
+  return { open, show, hide, toggle, onKey, keep };
 }
 
-/* ── Animated count-up ─────────────────────────────────────────────────── */
+/* ── Count-up hook ─────────────────────────────────────────────────────── */
 
 function useCountUp(target: number, ms: number, active: boolean): number {
   const [v, setV] = useState(0);
@@ -145,49 +114,162 @@ function useCountUp(target: number, ms: number, active: boolean): number {
     if (!active) { setV(0); return; }
     const t0 = performance.now();
     let raf: number;
-    function tick(now: number) {
+    const tick = (now: number) => {
       const p = Math.min((now - t0) / ms, 1);
-      const e = 1 - Math.pow(1 - p, 3);
-      setV(Math.round(e * target));
+      setV(Math.round((1 - Math.pow(1 - p, 3)) * target));
       if (p < 1) raf = requestAnimationFrame(tick);
-    }
+    };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [target, ms, active]);
   return v;
 }
 
-/* ── Detail popup ─────────────────────────────────────────────────────── */
+/* ── Constants ─────────────────────────────────────────────────────────── */
 
-function SigilPopup({
-  triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data,
-}: {
-  triggerRef: React.RefObject<HTMLElement | null>;
-  isOpen: boolean;
-  onClose: () => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  id: string;
-  data: SigilData;
+const CIRC = 2 * Math.PI * 9; // ~56.55, circle circumference (r=9)
+
+/* ── Compact data-mark: the logo encoding live data ───────────────────── */
+
+function DataMark({ data, size, mounted }: {
+  data: SigilData; size: "sm" | "lg"; mounted: boolean;
 }) {
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
-  const [revealed, setRevealed] = useState(false);
+  const lean = data.politicalLean;
+  const isOpinion = data.opinionFact > 50;
+  const beamAngle = (lean - 50) * 0.30; // ±15° range
+  const beamCol = leanColor(lean);
+  const baseCol = isOpinion ? "var(--type-opinion)" : "var(--type-reporting)";
+
+  // Circle fill: source coverage as Harvey ball
+  const coverage = Math.min(data.sourceCount / 10, 1);
+  const fillLen = coverage * CIRC;
+
+  const px = size === "lg" ? 34 : 22;
+  const showNum = size === "lg" && data.sourceCount > 0;
+  const numSize = 7;
+
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      width={px} height={px}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ display: "block", flexShrink: 0 }}
+    >
+      {/* Void circle — coverage ring */}
+      {/* Background ring (faint) */}
+      <circle cx="16" cy="13" r="9"
+        stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
+      />
+      {/* Fill ring (coverage) */}
+      <circle cx="16" cy="13" r="9"
+        stroke={beamCol} strokeWidth="1.8"
+        strokeDasharray={`${mounted ? fillLen : 0} ${CIRC}`}
+        style={{
+          transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+          transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
+        }}
+        opacity={0.7}
+      />
+
+      {/* Source count number inside circle (lg only) */}
+      {showNum && (
+        <text x="16" y="13" textAnchor="middle" dominantBaseline="central"
+          style={{
+            fontFamily: "var(--font-data)", fontSize: numSize, fontWeight: 700,
+            fill: "var(--fg-secondary)",
+            opacity: mounted ? 1 : 0,
+            transition: "opacity 350ms var(--ease-out) 300ms",
+          }}
+        >
+          {data.sourceCount}
+        </text>
+      )}
+
+      {/* Beam group — pivots around circle center, tilts by lean */}
+      <g style={{
+        transformOrigin: "16px 13px",
+        transform: `rotate(${mounted ? beamAngle : 0}deg)`,
+        transition: "transform 700ms var(--spring) 60ms",
+      }}>
+        {/* Beam line */}
+        <line x1="4" y1="13" x2="28" y2="13"
+          stroke={beamCol} strokeWidth="1.8"
+          style={{ transition: "stroke 400ms var(--ease-out)" }}
+          opacity={mounted ? 0.85 : 0.3}
+        />
+        {/* Left weight tick */}
+        <line x1="6" y1="11.5" x2="6" y2="14.5"
+          stroke={beamCol} strokeWidth="1.4"
+          style={{ transition: "stroke 400ms var(--ease-out)" }}
+          opacity={mounted ? 0.7 : 0.2}
+        />
+        {/* Right weight tick */}
+        <line x1="26" y1="11.5" x2="26" y2="14.5"
+          stroke={beamCol} strokeWidth="1.4"
+          style={{ transition: "stroke 400ms var(--ease-out)" }}
+          opacity={mounted ? 0.7 : 0.2}
+        />
+      </g>
+
+      {/* Center post */}
+      <line x1="16" y1="22" x2="16" y2="28"
+        stroke="var(--fg-tertiary)" strokeWidth="1.4"
+        opacity={mounted ? 0.4 : 0.15}
+        style={{ transition: "opacity 300ms var(--ease-out) 200ms" }}
+      />
+
+      {/* Base — color-coded by type */}
+      <line x1="12" y1="28.5" x2="20" y2="28.5"
+        stroke={baseCol} strokeWidth="1.8"
+        opacity={mounted ? 0.75 : 0.2}
+        style={{ transition: "stroke 300ms var(--ease-out), opacity 400ms var(--ease-out) 250ms" }}
+      />
+    </svg>
+  );
+}
+
+/* ── Popup: the mark unfolds ──────────────────────────────────────────── */
+
+function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data }: {
+  triggerRef: React.RefObject<HTMLElement | null>;
+  isOpen: boolean; onClose: () => void;
+  onMouseEnter: () => void; onMouseLeave: () => void;
+  id: string; data: SigilData;
+}) {
+  const [pos, setPos] = useState<{ x: number; y: number; mobile: boolean } | null>(null);
+  const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=base, 5=details
 
   const lean = data.politicalLean;
-  const leanColor = getLeanColor(lean);
-  const leanLabel = getLeanLabel(lean);
-  const isOpinion = data.opinionFact > 50;
+  const lc = leanColor(lean);
+  const ll = leanLabel(lean);
+  const isOp = data.opinionFact > 50;
+  const typeCol = isOp ? "var(--type-opinion)" : "var(--type-reporting)";
+  const typeLabel = isOp ? "Opinion" : "Reporting";
 
   useEffect(() => {
-    if (!isOpen || !triggerRef.current) { setRevealed(false); return; }
-    const rect = triggerRef.current.getBoundingClientRect();
-    const W = 300, H = 360;
-    const spR = window.innerWidth - rect.right;
-    const spL = rect.left;
-    let x = spR > W + 16 ? rect.right + 10 : spL > W + 16 ? rect.left - W - 10 : Math.max(8, (window.innerWidth - W) / 2);
-    const y = Math.max(8, Math.min(rect.top - 60, window.innerHeight - H - 16));
-    setPos({ x, y });
-    requestAnimationFrame(() => requestAnimationFrame(() => setRevealed(true)));
+    if (!isOpen || !triggerRef.current) { setStage(0); return; }
+    const mobile = window.innerWidth < 768;
+    if (mobile) {
+      // Bottom sheet positioning on mobile
+      setPos({ x: 0, y: 0, mobile: true });
+    } else {
+      const r = triggerRef.current.getBoundingClientRect();
+      const W = 280, H = 380;
+      const spR = window.innerWidth - r.right;
+      const x = spR > W + 16 ? r.right + 10 : r.left > W + 16 ? r.left - W - 10 : Math.max(8, (window.innerWidth - W) / 2);
+      const y = Math.max(8, Math.min(r.top - 60, window.innerHeight - H - 16));
+      setPos({ x, y, mobile: false });
+    }
+    // Staggered reveal: mark → beam → circle → base → details
+    const t1 = setTimeout(() => setStage(1), 30);
+    const t2 = setTimeout(() => setStage(2), 180);
+    const t3 = setTimeout(() => setStage(3), 320);
+    const t4 = setTimeout(() => setStage(4), 460);
+    const t5 = setTimeout(() => setStage(5), 600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
   }, [isOpen, triggerRef]);
 
   useEffect(() => {
@@ -201,399 +283,232 @@ function SigilPopup({
 
   if (!isOpen || !pos || typeof document === "undefined") return null;
 
-  const TIER_MAP: Record<string, string> = { us_major: "US Major", international: "Intl", independent: "Ind" };
-
-  const secondaryAxes = [
-    { label: "Sensationalism", value: data.sensationalism, desc: data.sensationalism <= 25 ? "Measured" : data.sensationalism <= 50 ? "Moderate" : data.sensationalism <= 75 ? "Elevated" : "Inflammatory" },
-    { label: "Factual Rigor", value: data.factualRigor, desc: data.factualRigor >= 70 ? "High" : data.factualRigor >= 40 ? "Moderate" : "Low", invert: true },
-    { label: "Framing", value: data.framing, desc: data.framing <= 25 ? "Neutral" : data.framing <= 55 ? "Some" : "Heavy" },
-    { label: "Source Agreement", value: data.agreement, desc: data.agreement <= 25 ? "Agree" : data.agreement <= 55 ? "Mixed" : "Disagree" },
+  const TM: Record<string, string> = { us_major: "US Major", international: "Intl", independent: "Ind" };
+  const secondary = [
+    { label: "Sensationalism", v: data.sensationalism, d: data.sensationalism <= 25 ? "Measured" : data.sensationalism <= 50 ? "Moderate" : data.sensationalism <= 75 ? "Elevated" : "Inflammatory" },
+    { label: "Factual Rigor", v: data.factualRigor, d: data.factualRigor >= 70 ? "High" : data.factualRigor >= 40 ? "Moderate" : "Low", inv: true },
+    { label: "Framing", v: data.framing, d: data.framing <= 25 ? "Neutral" : data.framing <= 55 ? "Some" : "Heavy" },
+    { label: "Agreement", v: data.agreement, d: data.agreement <= 25 ? "Agree" : data.agreement <= 55 ? "Mixed" : "Disagree" },
   ];
 
+  const isMobile = pos.mobile;
+
   return createPortal(
-    <div
-      id={id}
-      role="tooltip"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      style={{
-        position: "fixed", top: pos.y, left: pos.x, width: 300, zIndex: 9999,
-        background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
-        boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
-        animation: "sigilPopupIn 280ms var(--spring) both",
-      }}
-    >
-      {/* ── Header ── */}
+    <>
+      {/* Backdrop overlay on mobile */}
+      {isMobile && (
+        <div onClick={onClose} style={{
+          position: "fixed", inset: 0, zIndex: 9998,
+          backgroundColor: "var(--overlay-backdrop)",
+          opacity: stage >= 1 ? 1 : 0,
+          transition: "opacity 200ms var(--ease-out)",
+        }} />
+      )}
+      <div id={id} role="tooltip" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+        style={isMobile ? {
+          // Mobile: bottom sheet
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9999,
+          background: "var(--bg-card)", borderTop: "1px solid var(--border-subtle)",
+          boxShadow: "0 -8px 24px rgba(0,0,0,0.15)", pointerEvents: "auto",
+          borderRadius: "12px 12px 0 0",
+          maxHeight: "80vh", overflowY: "auto" as const,
+          transform: stage >= 1 ? "translateY(0)" : "translateY(100%)",
+          transition: "transform 350ms var(--spring)",
+        } : {
+          // Desktop: floating popup
+          position: "fixed", top: pos.y, left: pos.x, width: 280, zIndex: 9999,
+          background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
+          boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
+          opacity: stage >= 1 ? 1 : 0, transform: stage >= 1 ? "scale(1) translateY(0)" : "scale(0.94) translateY(6px)",
+          transition: "opacity 250ms var(--ease-out), transform 300ms var(--spring)",
+        }}
+      >
+      {/* ═══ SECTION 1: Beam → Lean Spectrum ═══ */}
       <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        padding: "10px 14px 8px", borderBottom: "1px solid var(--border-subtle)",
+        padding: "14px 16px 10px", borderBottom: "1px solid var(--border-subtle)",
+        opacity: stage >= 2 ? 1 : 0, transform: stage >= 2 ? "translateY(0)" : "translateY(-8px)",
+        transition: "opacity 300ms var(--ease-out), transform 350ms var(--spring)",
       }}>
-        <span style={{
-          fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", fontWeight: 500,
-          letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--fg-tertiary)",
-        }}>
-          Bias Analysis
-        </span>
-        <span style={{
-          fontFamily: "var(--font-editorial)", fontSize: 11, fontWeight: 600,
-          color: isOpinion ? "var(--type-opinion)" : "var(--type-reporting)",
-          padding: "1px 6px",
-          border: `1px solid ${isOpinion ? "var(--type-opinion)" : "var(--type-reporting)"}`,
-          opacity: 0.8,
-        }}>
-          {isOpinion ? "Opinion" : "Reporting"}
-        </span>
-      </div>
-
-      {/* ── Hero: Lean Spectrum ── */}
-      <div style={{ padding: "14px 14px 10px" }}>
-        {/* Label */}
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8,
-        }}>
+        {/* Label row */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
           <span style={{
-            fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)",
-            fontWeight: 600, color: leanColor,
-            opacity: revealed ? 1 : 0,
-            transition: "opacity 300ms var(--ease-out) 80ms",
-          }}>
-            {leanLabel}
-          </span>
-          <PopupCountScore target={lean} color={leanColor} revealed={revealed} delay={120} />
+            fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", fontWeight: 600, color: lc,
+          }}>{ll}</span>
+          <CountScore target={lean} color={lc} active={stage >= 2} />
         </div>
-
-        {/* Full spectrum bar */}
-        <div style={{ position: "relative", height: 20, marginBottom: 6 }}>
+        {/* Spectrum bar — echoes the beam */}
+        <div style={{ position: "relative", height: 18, marginBottom: 4 }}>
+          {/* Ticks at ends (echoing beam weight ticks) */}
+          <div style={{ position: "absolute", left: 0, top: 3, width: 2, height: 12, borderRadius: 1, backgroundColor: "var(--bias-left)", opacity: 0.4 }} />
+          <div style={{ position: "absolute", right: 0, top: 3, width: 2, height: 12, borderRadius: 1, backgroundColor: "var(--bias-right)", opacity: 0.4 }} />
           {/* Track */}
           <div style={{
-            position: "absolute", left: 0, right: 0, top: 7, height: 6, borderRadius: 3,
+            position: "absolute", left: 6, right: 6, top: 7, height: 4, borderRadius: 2,
             background: "linear-gradient(to right, var(--bias-left), var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right))",
-            opacity: 0.35,
+            opacity: 0.3,
           }} />
-          {/* Marker */}
+          {/* Marker dot */}
           <div style={{
-            position: "absolute", top: "50%", left: `${lean}%`,
-            width: 12, height: 12, borderRadius: "50%",
-            backgroundColor: leanColor,
-            transform: revealed ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
-            transition: "transform 450ms var(--spring) 150ms, background-color 300ms var(--ease-out)",
-            boxShadow: `0 0 0 3px var(--bg-card), 0 0 8px ${leanColor}44`,
+            position: "absolute", top: "50%",
+            left: `calc(6px + ${lean}% * (100% - 12px) / 100)`,
+            width: 11, height: 11, borderRadius: "50%", backgroundColor: lc,
+            transform: stage >= 2 ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
+            transition: "transform 450ms var(--spring) 100ms, background-color 300ms var(--ease-out)",
+            boxShadow: `0 0 0 2.5px var(--bg-card), 0 0 10px ${lc}44`,
           }} />
         </div>
-
         {/* Tick labels */}
         <div style={{
-          display: "flex", justifyContent: "space-between",
-          fontFamily: "var(--font-data)", fontSize: 8, letterSpacing: "0.04em",
+          display: "flex", justifyContent: "space-between", padding: "0 2px",
+          fontFamily: "var(--font-data)", fontSize: 8, letterSpacing: "0.05em",
           textTransform: "uppercase" as const, color: "var(--fg-muted)",
-          opacity: revealed ? 1 : 0,
-          transition: "opacity 300ms var(--ease-out) 200ms",
         }}>
-          <span>Left</span>
-          <span>Center</span>
-          <span>Right</span>
+          <span>Left</span><span>Center</span><span>Right</span>
         </div>
       </div>
 
-      {/* ── Sources ── */}
+      {/* ═══ SECTION 2: Circle → Source Coverage ═══ */}
       <div style={{
-        padding: "8px 14px", borderTop: "1px solid var(--border-subtle)",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        opacity: revealed ? 1 : 0,
-        transition: "opacity 300ms var(--ease-out) 250ms",
+        padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)",
+        display: "flex", alignItems: "center", gap: 14,
+        opacity: stage >= 3 ? 1 : 0, transform: stage >= 3 ? "translateY(0)" : "translateY(-6px)",
+        transition: "opacity 280ms var(--ease-out), transform 320ms var(--spring)",
       }}>
-        <span style={{
-          fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", color: "var(--fg-secondary)",
-        }}>
-          <strong>{data.sourceCount}</strong>{" "}
-          <span style={{ color: "var(--fg-tertiary)" }}>source{data.sourceCount !== 1 ? "s" : ""}</span>
-        </span>
-        {data.tierBreakdown && (
-          <div style={{ display: "flex", gap: 5 }}>
-            {Object.entries(data.tierBreakdown).map(([tier, count]) =>
-              (count as number) > 0 ? (
-                <span key={tier} style={{
-                  fontFamily: "var(--font-data)", fontSize: 9, padding: "1px 5px",
-                  border: "1px solid var(--border-subtle)", borderRadius: 2,
-                  color: "var(--fg-tertiary)",
-                }}>
-                  {TIER_MAP[tier] || tier}: {count as number}
-                </span>
-              ) : null
-            )}
+        {/* Mini coverage ring (echoing the void circle) */}
+        <svg viewBox="0 0 40 40" width="40" height="40" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="20" cy="20" r="16" stroke="var(--border-subtle)" strokeWidth="2.5" opacity={0.25} />
+          <circle cx="20" cy="20" r="16"
+            stroke={lc} strokeWidth="2.5" strokeLinecap="round"
+            strokeDasharray={`${stage >= 3 ? Math.min(data.sourceCount / 10, 1) * (2 * Math.PI * 16) : 0} ${2 * Math.PI * 16}`}
+            style={{ transform: "rotate(-90deg)", transformOrigin: "20px 20px", transition: "stroke-dasharray 600ms var(--spring)" }}
+            opacity={0.6}
+          />
+          <text x="20" y="20" textAnchor="middle" dominantBaseline="central"
+            style={{ fontFamily: "var(--font-data)", fontSize: 13, fontWeight: 700, fill: "var(--fg-secondary)" }}
+          >
+            <CountText target={data.sourceCount} active={stage >= 3} />
+          </text>
+        </svg>
+        {/* Source details */}
+        <div>
+          <div style={{
+            fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", fontWeight: 500, color: "var(--fg-secondary)", marginBottom: 4,
+          }}>
+            {data.sourceCount} source{data.sourceCount !== 1 ? "s" : ""}
           </div>
-        )}
+          {data.tierBreakdown && (
+            <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+              {Object.entries(data.tierBreakdown).map(([tier, count]) =>
+                (count as number) > 0 ? (
+                  <span key={tier} style={{
+                    fontFamily: "var(--font-data)", fontSize: 9, padding: "1px 5px",
+                    border: "1px solid var(--border-subtle)", borderRadius: 2, color: "var(--fg-tertiary)",
+                  }}>{TM[tier] || tier}: {count as number}</span>
+                ) : null
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── Secondary Scores ── */}
+      {/* ═══ SECTION 3: Base → Reporting / Opinion ═══ */}
       <div style={{
-        padding: "8px 14px 12px", borderTop: "1px solid var(--border-subtle)",
+        padding: "10px 16px", borderBottom: "1px solid var(--border-subtle)",
+        display: "flex", alignItems: "center", gap: 10,
+        opacity: stage >= 4 ? 1 : 0, transform: stage >= 4 ? "translateY(0)" : "translateY(-4px)",
+        transition: "opacity 260ms var(--ease-out), transform 300ms var(--spring)",
       }}>
-        {secondaryAxes.map((axis, i) => (
-          <SecondaryRow
-            key={axis.label}
-            label={axis.label}
-            value={axis.value}
-            desc={axis.desc}
-            invert={axis.invert}
-            revealed={revealed}
-            delay={300 + i * 60}
-          />
+        {/* Mini base line (echoing the stand) */}
+        <div style={{
+          width: 24, height: 3, borderRadius: 1.5, backgroundColor: typeCol, opacity: 0.7, flexShrink: 0,
+        }} />
+        <span style={{
+          fontFamily: "var(--font-editorial)", fontSize: 13, fontWeight: 600,
+          color: typeCol, letterSpacing: "0.02em",
+        }}>
+          {typeLabel}
+        </span>
+      </div>
+
+      {/* ═══ SECTION 4: Secondary Scores ═══ */}
+      <div style={{ padding: "10px 16px 14px" }}>
+        {secondary.map((ax, i) => (
+          <div key={ax.label} style={{
+            display: "flex", alignItems: "center", gap: 8, marginBottom: 4,
+            opacity: stage >= 5 ? 1 : 0,
+            transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
+          }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--fg-tertiary)", width: 74, flexShrink: 0 }}>
+              {ax.label}
+            </span>
+            <div style={{ flex: 1, height: 3, backgroundColor: "var(--border-subtle)", borderRadius: 1.5, overflow: "hidden" }}>
+              <div style={{
+                width: stage >= 5 ? `${ax.v}%` : "0%", height: "100%",
+                backgroundColor: qualityColor(ax.v, ax.inv),
+                borderRadius: 1.5,
+                transition: `width 450ms var(--ease-out) ${150 + i * 55}ms`,
+              }} />
+            </div>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 500, color: "var(--fg-tertiary)", width: 50, textAlign: "right" as const, flexShrink: 0 }}>
+              {ax.d}
+            </span>
+          </div>
         ))}
       </div>
-    </div>,
+    </div>
+    </>,
     document.body,
   );
 }
 
-/* ── Popup count-up score ──────────────────────────────────────────────── */
+/* ── Count-up helpers for popup ────────────────────────────────────────── */
 
-function PopupCountScore({ target, color, revealed, delay }: {
-  target: number; color: string; revealed: boolean; delay: number;
-}) {
-  const v = useCountUp(target, 500, revealed);
-  return (
-    <span style={{
-      fontFamily: "var(--font-data)", fontSize: 13, fontWeight: 700, color,
-      opacity: revealed ? 1 : 0,
-      transition: `opacity 250ms var(--ease-out) ${delay}ms`,
-    }}>
-      {v}
-    </span>
-  );
+function CountScore({ target, color, active }: { target: number; color: string; active: boolean }) {
+  const v = useCountUp(target, 500, active);
+  return <span style={{ fontFamily: "var(--font-data)", fontSize: 13, fontWeight: 700, color }}>{v}</span>;
 }
 
-/* ── Secondary score row with animated bar ─────────────────────────────── */
-
-function SecondaryRow({ label, value, desc, invert, revealed, delay }: {
-  label: string; value: number; desc: string; invert?: boolean; revealed: boolean; delay: number;
-}) {
-  const color = getScoreColor(value, invert);
-  const barPct = invert ? value : value; // always show magnitude
-
-  return (
-    <div style={{
-      display: "flex", alignItems: "center", gap: 8, marginBottom: 5,
-      opacity: revealed ? 1 : 0,
-      transition: `opacity 280ms var(--ease-out) ${delay}ms`,
-    }}>
-      <span style={{
-        fontFamily: "var(--font-data)", fontSize: 9, color: "var(--fg-tertiary)",
-        width: 78, flexShrink: 0, letterSpacing: "0.02em",
-      }}>
-        {label}
-      </span>
-      <div style={{
-        flex: 1, height: 4, backgroundColor: "var(--border-subtle)",
-        borderRadius: 2, overflow: "hidden",
-      }}>
-        <div style={{
-          width: revealed ? `${barPct}%` : "0%", height: "100%",
-          backgroundColor: color, borderRadius: 2,
-          transition: `width 500ms var(--ease-out) ${delay + 80}ms`,
-        }} />
-      </div>
-      <span style={{
-        fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 500,
-        color: "var(--fg-tertiary)", width: 42, textAlign: "right" as const,
-        flexShrink: 0,
-      }}>
-        {desc}
-      </span>
-    </div>
-  );
+function CountText({ target, active }: { target: number; active: boolean }) {
+  const v = useCountUp(target, 400, active);
+  return <>{v}</>;
 }
 
-/* ── Lean spectrum bar (inline, compact) ──────────────────────────────── */
-
-function LeanBar({ lean, size, mounted }: {
-  lean: number; size: "sm" | "lg"; mounted: boolean;
-}) {
-  const color = getLeanColor(lean);
-  const w = size === "lg" ? 140 : 80;
-  const h = size === "lg" ? 6 : 4;
-  const dot = size === "lg" ? 10 : 7;
-
-  return (
-    <div style={{
-      position: "relative", width: w, height: dot + 4,
-      display: "flex", alignItems: "center",
-    }}>
-      {/* Gradient track */}
-      <div style={{
-        position: "absolute", left: 0, right: 0,
-        top: "50%", transform: "translateY(-50%)",
-        height: h, borderRadius: h / 2,
-        background: "linear-gradient(to right, var(--bias-left), var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right))",
-        opacity: mounted ? 0.3 : 0.1,
-        transition: "opacity 400ms var(--ease-out)",
-      }} />
-
-      {/* Active fill — from center to marker position */}
-      <div style={{
-        position: "absolute",
-        top: "50%", transform: "translateY(-50%)",
-        height: h, borderRadius: h / 2,
-        left: lean < 50 ? `${lean}%` : "50%",
-        width: mounted ? `${Math.abs(lean - 50)}%` : "0%",
-        backgroundColor: color,
-        opacity: 0.5,
-        transition: "width 500ms var(--spring) 100ms, left 500ms var(--spring) 100ms, opacity 300ms var(--ease-out)",
-      }} />
-
-      {/* Marker dot */}
-      <div style={{
-        position: "absolute",
-        top: "50%",
-        left: mounted ? `${lean}%` : "50%",
-        width: dot, height: dot,
-        borderRadius: "50%",
-        backgroundColor: color,
-        transform: "translate(-50%, -50%)",
-        transition: "left 600ms var(--spring) 80ms, background-color 300ms var(--ease-out), box-shadow 200ms var(--ease-out)",
-        boxShadow: `0 0 0 2px var(--bg-card), 0 1px 4px ${color}55`,
-      }} />
-    </div>
-  );
-}
-
-/* ── Source count badge ─────────────────────────────────────────────────── */
-
-function SourceBadge({ count, size, mounted }: {
-  count: number; size: "sm" | "lg"; mounted: boolean;
-}) {
-  const fontSize = size === "lg" ? 11 : 9;
-  const dim = size === "lg" ? 22 : 16;
-  const good = count >= 5;
-  const great = count >= 10;
-
-  return (
-    <div style={{
-      width: dim, height: dim, borderRadius: "50%",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      backgroundColor: great ? "var(--sense-low)" : good ? "var(--sense-medium)" : "var(--border-subtle)",
-      opacity: mounted ? (great ? 0.18 : good ? 0.15 : 0.12) : 0,
-      transition: "opacity 350ms var(--ease-out) 200ms",
-      position: "relative",
-    }}>
-      <span style={{
-        fontFamily: "var(--font-data)", fontSize, fontWeight: 700,
-        color: "var(--fg-secondary)", lineHeight: 1,
-        opacity: mounted ? 1 : 0,
-        transition: "opacity 300ms var(--ease-out) 250ms",
-      }}>
-        {count}
-      </span>
-    </div>
-  );
-}
-
-/* ── Fact / Opinion binary badge ───────────────────────────────────────── */
-
-function TypeBadge({ isOpinion, size, mounted }: {
-  isOpinion: boolean; size: "sm" | "lg"; mounted: boolean;
-}) {
-  const fontSize = size === "lg" ? 9 : 7;
-  const label = size === "lg"
-    ? (isOpinion ? "OPINION" : "REPORT")
-    : (isOpinion ? "OPN" : "RPT");
-
-  return (
-    <span style={{
-      fontFamily: "var(--font-data)", fontSize, fontWeight: 600,
-      letterSpacing: "0.06em",
-      color: isOpinion ? "var(--type-opinion)" : "var(--type-reporting)",
-      opacity: mounted ? 0.75 : 0,
-      transition: "opacity 300ms var(--ease-out) 300ms",
-      lineHeight: 1,
-      padding: size === "lg" ? "2px 5px" : "1px 3px",
-      border: `1px solid ${isOpinion ? "var(--type-opinion)" : "var(--type-reporting)"}`,
-      borderRadius: 1,
-      borderColor: isOpinion ? "var(--type-opinion)" : "var(--type-reporting)",
-      // Subtle tinted background
-      backgroundColor: isOpinion
-        ? "color-mix(in srgb, var(--type-opinion) 6%, transparent)"
-        : "color-mix(in srgb, var(--type-reporting) 6%, transparent)",
-    }}>
-      {label}
-    </span>
-  );
-}
-
-/* ── Main Sigil export ─────────────────────────────────────────────────── */
+/* ── Main Sigil ────────────────────────────────────────────────────────── */
 
 export default function Sigil({ data, size = "sm" }: SigilProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { open, show, hide, toggle, onKey, keepOpen } = useSigilHover();
+  const { open, show, hide, toggle, onKey, keep } = useHover();
   const [mounted, setMounted] = useState(false);
   const tooltipId = `sigil-${useId()}`;
 
-  const isOpinion = data.opinionFact > 50;
-  const leanLabel = getLeanLabel(data.politicalLean);
+  const isOp = data.opinionFact > 50;
+  const ll = leanLabel(data.politicalLean);
 
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 60);
-    return () => clearTimeout(t);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const gap = size === "lg" ? 10 : 6;
-
-  const ariaLabel = `Political lean: ${leanLabel} (${data.politicalLean}). ${data.sourceCount} sources. ${isOpinion ? "Opinion" : "Reporting"}. Press Enter for full bias analysis.`;
+  const aria = `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. ${isOp ? "Opinion" : "Reporting"}. Press Enter for details.`;
 
   return (
-    <div
-      ref={ref}
-      className="sigil"
-      onMouseEnter={show}
-      onFocus={show}
-      onMouseLeave={hide}
-      onBlur={hide}
-      onClick={toggle}
-      onKeyDown={onKey}
-      tabIndex={0}
-      role="button"
-      aria-expanded={open}
-      aria-label={ariaLabel}
+    <div ref={ref} className="sigil"
+      onMouseEnter={show} onFocus={show} onMouseLeave={hide} onBlur={hide}
+      onClick={toggle} onKeyDown={onKey}
+      tabIndex={0} role="button" aria-expanded={open} aria-label={aria}
       aria-controls={open ? tooltipId : undefined}
       style={{
-        display: "inline-flex", alignItems: "center", gap,
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
         cursor: "pointer", position: "relative",
-        // Touch target minimum 44px height
-        minHeight: 44, paddingTop: 4, paddingBottom: 4,
+        minWidth: 44, minHeight: 44,
         opacity: data.pending ? 0.3 : 1,
         filter: data.pending ? "grayscale(1)" : "none",
         transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
     >
-      {/* Source count */}
-      <SourceBadge count={data.sourceCount} size={size} mounted={mounted} />
+      <DataMark data={data} size={size} mounted={mounted} />
 
-      {/* HERO: Lean spectrum bar */}
-      <LeanBar lean={data.politicalLean} size={size} mounted={mounted} />
-
-      {/* Fact / Opinion badge */}
-      <TypeBadge isOpinion={isOpinion} size={size} mounted={mounted} />
-
-      {/* Pending label */}
-      {data.pending && (
-        <span style={{
-          fontFamily: "var(--font-data)", fontSize: 7, fontWeight: 500,
-          letterSpacing: "0.04em", textTransform: "uppercase" as const,
-          color: "var(--fg-tertiary)", whiteSpace: "nowrap",
-        }}>
-          Pending
-        </span>
-      )}
-
-      {/* Detail popup */}
       <SigilPopup
-        triggerRef={ref}
-        isOpen={open}
-        onClose={() => hide()}
-        onMouseEnter={keepOpen}
-        onMouseLeave={hide}
-        id={tooltipId}
-        data={data}
+        triggerRef={ref} isOpen={open} onClose={() => hide()}
+        onMouseEnter={keep} onMouseLeave={hide}
+        id={tooltipId} data={data}
       />
     </div>
   );
