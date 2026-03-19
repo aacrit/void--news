@@ -236,11 +236,21 @@
   transform: scale(0.97);
 }
 
+.filter-chip__icon {
+  display: inline-flex;
+  align-items: center;
+}
+
 .filter-chip--active {
   font-weight: 600;
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
   border-color: var(--border-strong);
+}
+
+/* RefreshButton text — hidden on mobile via responsive.css */
+.refresh-btn__text {
+  white-space: nowrap;
 }
 
 /* ---- NavBar ------------------------------------------------------------ */
@@ -347,8 +357,12 @@
   padding-left: var(--space-4);
 }
 
-/* Desktop: full dateline. Mobile: compact. */
+/* Desktop: show full dateline, hide medium/compact */
 .nav-dateline__compact {
+  display: none;
+}
+
+.nav-dateline__medium {
   display: none;
 }
 

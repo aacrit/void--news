@@ -102,7 +102,7 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
       >
         <LogoIcon animation={refreshing ? "loading" : "idle"} size={14} />
         <Clock size={12} weight="light" aria-hidden="true" />
-        <span>{refreshing ? "Refreshing..." : displayTime ? `Last updated: ${displayTime}` : "Loading..."}</span>
+        <span className="refresh-btn__text">{refreshing ? "Refreshing..." : displayTime ? `Last updated: ${displayTime}` : "Loading..."}</span>
       </button>
 
       {showConfirm && (

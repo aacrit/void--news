@@ -151,17 +151,21 @@
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
 
 @media (max-width: 767px) {
+
+  /* === NAVIGATION === */
+
   /* Bottom nav visible */
   .nav-bottom {
     display: flex;
   }
 
-  /* Desktop tabs hidden */
+  /* Desktop tabs hidden on mobile — sections via bottom nav */
   .nav-tabs {
     display: none;
   }
 
-  /* Mobile: icon only, hide full logo */
+  /* [USER REQUEST] Mobile header: show full logo + edition/date.
+     Desktop logo hidden; mobile logo (compact LogoFull at 22px) shown. */
   .nav-logo-desktop {
     display: none;
   }
@@ -170,12 +174,12 @@
     display: block;
   }
 
-  /* Dateline: show compact date, hide full */
+  /* Dateline: show edition + compact date, hide full weekday date */
   .nav-dateline__full {
     display: none;
   }
 
-  .nav-dateline__compact {
+  .nav-dateline__medium {
     display: inline;
   }
 
@@ -184,46 +188,63 @@
     padding-left: 0;
   }
 
-  /* --- Padding normalization ---
-     Replace the global var(--space-7) (~32px) horizontal padding with
-     var(--space-5) (~16px) on all edge-to-edge containers. Standard
-     mobile horizontal padding is 16px — matches iOS HIG and Material. */
+  /* Tighter nav inner padding + gap to fit logo + edition on one row */
+  .nav-inner {
+    padding: var(--space-2) var(--space-5);
+    gap: var(--space-2);
+  }
 
+  .nav-left {
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  /* [CRITICAL-1] Bottom nav touch targets — WCAG 44×44px minimum.
+     Increase min-height + padding for thumb-reachable targets. */
+  .nav-bottom-tab {
+    padding: var(--space-4) var(--space-5);
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* === LAYOUT === */
+
+  /* Padding normalization — 16px horizontal matches iOS HIG / Material */
   .page-main {
     padding-left: var(--space-5);
     padding-right: var(--space-5);
-    /* Extra bottom clearance for fixed bottom nav */
-    padding-bottom: 80px;
-  }
-
-  .nav-inner {
-    padding-left: var(--space-5);
-    padding-right: var(--space-5);
+    /* [CRITICAL-3] Match actual bottom nav height (~56px) + safe area */
+    padding-bottom: 68px;
   }
 
   .site-footer {
     padding-left: var(--space-5);
     padding-right: var(--space-5);
+    /* Safe area clearance for iPhone notch/dynamic island */
+    margin-bottom: var(--space-5);
   }
 
-  /* --- Section header — allow RefreshButton timestamp to wrap on narrow
-     viewports rather than overflow or compress the section title. */
+  /* Section header — allow RefreshButton timestamp to wrap */
   .section-header {
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: flex-start;
   }
 
-  /* --- Source rows in Deep Dive — allow wrapping so tier badge + BiasLens
-     + external link don't overflow a 343px content area. */
-  .source-row {
-    flex-wrap: wrap;
+  /* [ENHANCEMENT-4] RefreshButton — hide timestamp text on mobile,
+     keep icons only. Timestamp is in aria-label for accessibility. */
+  .refresh-btn__text {
+    display: none;
   }
 
-  /* --- Story card vertical tightening ---
-     Mobile screens are scroll-heavy. Reduce vertical padding and margins
-     to show more stories above the fold without losing readability. */
+  .refresh-btn {
+    min-width: auto;
+    padding: var(--space-2);
+  }
 
+  /* === STORY CARDS === */
+
+  /* Vertical tightening — more stories above the fold */
   .story-card {
     padding: var(--space-3) 0;
   }
@@ -242,9 +263,18 @@
     -webkit-line-clamp: 2;
   }
 
-  /* Lead story: tighter on mobile too */
+  /* [CRITICAL-5] Reserve space for Sigil to prevent layout shift */
+  .story-card__footer {
+    min-height: 32px;
+    margin-top: var(--space-2);
+  }
+
+  /* === LEAD STORY === */
+
+  /* [ENHANCEMENT-3] Tighter lead story — show lead + secondary together */
   .lead-story {
-    padding: var(--space-4) 0;
+    padding: var(--space-3) 0;
+    border-bottom: var(--rule-thin);
   }
 
   .lead-story__meta {
@@ -252,15 +282,77 @@
   }
 
   .lead-story__headline {
+    font-size: clamp(1.5rem, 4vw, 2rem);
     margin-bottom: var(--space-2);
+    line-height: 1.15;
   }
 
   .lead-story__summary {
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    line-height: 1.5;
   }
 
-  /* Deep Dive: hide "Back to feed" text, keep arrow */
+  .lead-section__secondary {
+    border-top: var(--rule-thin);
+    padding-top: var(--space-3);
+  }
+
+  /* === DEEP DIVE === */
+
+  /* [CRITICAL-4] Hide scrollbar on mobile Deep Dive — standard mobile pattern */
+  .deep-dive-panel {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .deep-dive-panel::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide "Back to feed" text, keep arrow */
   .deep-dive-back-label {
+    display: none;
+  }
+
+  /* [ENHANCEMENT-5] Source rows — better stacking on narrow screens */
+  .source-row {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  /* === EMPTY STATE === */
+
+  /* [ENHANCEMENT-6] Scale down empty state for mobile */
+  .empty-state {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  /* === ACCESSIBILITY === */
+
+  /* [RECOMMENDATION-2] Thicker focus outline for small touch targets */
+  :focus-visible {
+    outline: 3px solid var(--accent-warm, #C8956C);
+    outline-offset: 1px;
+  }
+}
+
+/* ---- Ultra-narrow (max-width: 375px) ----------------------------------- */
+
+@media (max-width: 375px) {
+  /* [CRITICAL-2] FilterBar — tighter chips, reduced gradient on iPhone SE */
+  .filter-bar-wrapper::after {
+    width: 32px;
+  }
+
+  .filter-chip {
+    padding: var(--space-2);
+    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
+  }
+
+  /* Hide filter chip icons on ultra-narrow to save space */
+  .filter-chip__icon {
     display: none;
   }
 }
