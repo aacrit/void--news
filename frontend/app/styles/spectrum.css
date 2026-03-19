@@ -202,43 +202,22 @@
   }
 }
 
-/* ---- Tier label (sits beside the logos, vertical) --------------------- */
-.spectrum-tier-label {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-  white-space: nowrap;
-  flex-shrink: 0;
-  align-self: center;
-}
-
 /* ---- Logo grid rows (above and below) --------------------------------- */
 .spectrum-above,
 .spectrum-below {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-3);
+  display: block;
 }
 
 .spectrum-above {
-  margin-bottom: var(--space-3);
-  min-height: 72px;
+  margin-bottom: var(--space-2);
 }
 
 .spectrum-below {
-  margin-top: var(--space-3);
-  min-height: 72px;
+  margin-top: var(--space-2);
 }
 
 .spectrum-above__grid,
 .spectrum-below__grid {
-  flex: 1;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0;
@@ -248,7 +227,6 @@
 .spectrum-zone-col {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Above: logos sit flush to bar */
   padding: var(--space-2) var(--space-2);
   border-left: 1px solid var(--divider);
   transition: background-color var(--dur-fast) var(--ease-out);
@@ -258,12 +236,13 @@
   border-left: none;
 }
 
+/* Above: logos flow top-down so they're visible when collapsed */
 .spectrum-zone-col--above {
-  justify-content: flex-end; /* Logos descend toward bar */
+  justify-content: flex-start;
 }
 
 .spectrum-zone-col--below {
-  justify-content: flex-start; /* Logos ascend away from bar */
+  justify-content: flex-start;
 }
 
 /* Zone tints */
@@ -279,11 +258,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  align-content: flex-end; /* Above: logos stack up from bar */
-}
-
-.spectrum-zone-col--below .spectrum-zone-col__logos {
-  align-content: flex-start; /* Below: logos stack down from bar */
+  align-content: flex-start;
 }
 
 /* ---- Source logo button ----------------------------------------------- */
@@ -585,6 +560,32 @@
   white-space: nowrap;
 }
 
+/* ---- Inline legend grid (aligned to same 7-col as bar) --------------- */
+.spectrum-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-top: var(--space-2);
+}
+
+.spectrum-legend-cell {
+  padding: var(--space-1) var(--space-2);
+  border-left: 1px solid var(--divider);
+  text-align: center;
+}
+
+.spectrum-legend-cell:first-child {
+  border-left: none;
+}
+
+.spectrum-legend-cell__label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  letter-spacing: 0.03em;
+}
+
 /* ---- Seven-point scale legend ----------------------------------------- */
 .spectrum-legend {
   border-top: 2px solid var(--fg-primary);
@@ -728,7 +729,7 @@
 /* ---- Collapse/expand for above and below logo rows -------------------- */
 .spectrum-above--collapsed,
 .spectrum-below--collapsed {
-  max-height: 72px;
+  max-height: 148px;
   overflow: hidden;
   position: relative;
 }

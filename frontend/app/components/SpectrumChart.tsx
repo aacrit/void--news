@@ -317,9 +317,6 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
       <div className="spectrum-chart__desktop" aria-hidden="false">
         {/* Above bar: US Major sources */}
         <div className={`spectrum-above${expanded ? "" : " spectrum-above--collapsed"}`} aria-label="US Major outlets">
-          <span className="spectrum-tier-label spectrum-tier-label--above">
-            US Major
-          </span>
           <div className="spectrum-above__grid">
             {LEAN_ZONES.map((zone) => (
               <div
@@ -361,20 +358,8 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
           ))}
         </div>
 
-        {/* Expand/collapse toggle */}
-        <button
-          className="spectrum-expand-btn"
-          onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-        >
-          {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
-        </button>
-
         {/* Below bar: International + Independent */}
         <div className={`spectrum-below${expanded ? "" : " spectrum-below--collapsed"}`} aria-label="International and Independent outlets">
-          <span className="spectrum-tier-label spectrum-tier-label--below">
-            Intl &amp; Independent
-          </span>
           <div className="spectrum-below__grid">
             {LEAN_ZONES.map((zone) => (
               <div
@@ -401,6 +386,35 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
             ))}
           </div>
         </div>
+
+        {/* Seven-point scale legend — aligned to same 7-col grid */}
+        <div className="spectrum-legend-grid">
+          {LEAN_ZONES.map((zone) => (
+            <div key={zone.key} className="spectrum-legend-cell" data-lean={zone.key}>
+              <span className="spectrum-legend-cell__label">{zone.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Expand/collapse toggle */}
+        {!expanded && (
+          <button
+            className="spectrum-expand-btn"
+            onClick={() => setExpanded(true)}
+            aria-expanded={false}
+          >
+            Show all {sources.length} sources
+          </button>
+        )}
+        {expanded && (
+          <button
+            className="spectrum-expand-btn"
+            onClick={() => setExpanded(false)}
+            aria-expanded={true}
+          >
+            Show fewer
+          </button>
+        )}
       </div>
 
       {/* ---- Mobile: Vertical layout ---- */}

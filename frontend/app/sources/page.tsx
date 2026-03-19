@@ -103,7 +103,9 @@ export default function SourcesPage() {
           <div className="sources-header__text">
             <h1 className="sources-header__title">Our Sources</h1>
             <p className="sources-header__subtitle">
-              Every source vetted for credibility. Bias analysis runs per-article, not per-outlet.
+              Every source vetted for credibility. Bias runs per-article, not per-outlet.
+              These baselines are starting points &mdash; a right-leaning outlet can publish
+              measured reporting, and our engine will reflect that.
             </p>
           </div>
           <div className="sources-header__stat" aria-live="polite">
@@ -214,73 +216,7 @@ export default function SourcesPage() {
           <SpectrumChart sources={sources} />
         )}
 
-        {/* ---- Seven-point scale legend ---- */}
-        {!isLoading && !error && sources.length > 0 && (
-          <section className="spectrum-legend" aria-label="Political lean scale explanation">
-            <h2 className="spectrum-legend__title">The Seven-Point Scale</h2>
-            <div className="spectrum-legend__grid">
-              {[
-                {
-                  lean: "far-left",
-                  label: "Far Left",
-                  desc: "Strongly progressive framing across most topics. Frequent use of left-coded language.",
-                },
-                {
-                  lean: "left",
-                  label: "Left",
-                  desc: "Consistent left-leaning framing. Covers stories through a progressive lens.",
-                },
-                {
-                  lean: "center-left",
-                  label: "Center Left",
-                  desc: "Leans progressive but maintains journalistic standards. Occasional conservative perspectives.",
-                },
-                {
-                  lean: "center",
-                  label: "Center",
-                  desc: "Presents multiple perspectives. Aims for balance. Wire services often fall here.",
-                },
-                {
-                  lean: "center-right",
-                  label: "Center Right",
-                  desc: "Leans conservative but covers diverse viewpoints. Strong editorial standards.",
-                },
-                {
-                  lean: "right",
-                  label: "Right",
-                  desc: "Consistent right-leaning framing. Covers stories through a conservative lens.",
-                },
-                {
-                  lean: "far-right",
-                  label: "Far Right",
-                  desc: "Strongly conservative framing. Frequent use of right-coded language and framing.",
-                },
-              ].map(({ lean, label, desc }) => (
-                <div
-                  key={lean}
-                  className="spectrum-legend__item"
-                  data-lean={lean}
-                >
-                  <div className="spectrum-legend__item-header">
-                    <span
-                      className="spectrum-legend__item-dot"
-                      data-lean={lean}
-                      aria-hidden="true"
-                    />
-                    <span className="spectrum-legend__item-label">{label}</span>
-                  </div>
-                  <p className="spectrum-legend__item-desc">{desc}</p>
-                </div>
-              ))}
-            </div>
-            <p className="spectrum-legend__caveat">
-              These baselines are starting points for the analysis engine, not
-              verdicts. Every article is scored independently. A right-leaning
-              outlet can publish measured, factual reporting — and our engine
-              will reflect that.
-            </p>
-          </section>
-        )}
+        {/* Seven-point scale is now inline in the SpectrumChart component */}
       </main>
 
       <Footer />
