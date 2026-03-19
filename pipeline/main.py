@@ -190,6 +190,111 @@ def enrich_cluster(cluster_id: str) -> None:
             print(f"  [warn] Cluster enrichment failed for {cluster_id}: {e}")
 
 
+def _generate_consensus_divergence(
+    count: int,
+    pl_values: list, sens_values: list, of_values: list,
+    fr_values: list, frm_values: list,
+    avg_pl: float, avg_sens: float, avg_of: float,
+    avg_fr: float, avg_frm: float,
+    lean_spread: float, framing_spread: float, lean_range: float,
+    sensationalism_spread: float, opinion_spread: float,
+) -> tuple[list[str], list[str]]:
+    """
+    Generate human-readable consensus and divergence points from bias score
+    analysis across articles in a cluster.
+
+    Consensus: axes where sources agree (scores close together).
+    Divergence: axes where sources disagree (scores spread widely).
+
+    Returns (consensus_list, divergence_list) as lists of strings.
+    """
+    if count < 2:
+        return (
+            ["Single-source coverage — no cross-source comparison available"],
+            [],
+        )
+
+    consensus = []
+    divergence = []
+
+    # --- Political Lean ---
+    if lean_range <= 15:
+        if avg_pl < 40:
+            consensus.append("Sources show similar left-leaning political framing")
+        elif avg_pl > 60:
+            consensus.append("Sources show similar right-leaning political framing")
+        else:
+            consensus.append("Sources show similar centrist political framing")
+    elif lean_range > 30:
+        divergence.append(
+            f"Sources show significant differences in political framing "
+            f"(lean spread: {int(lean_range)} points)"
+        )
+    elif lean_spread > 15:
+        divergence.append("Sources show moderate differences in political framing")
+
+    # --- Sensationalism ---
+    if sensationalism_spread <= 8 and avg_sens < 25:
+        consensus.append("Coverage maintains a measured tone across sources")
+    elif sensationalism_spread <= 8 and avg_sens >= 25:
+        consensus.append("Sources use a similarly elevated tone in their coverage")
+    elif sensationalism_spread > 15:
+        divergence.append(
+            "Some sources use notably more sensational language than others"
+        )
+
+    # --- Opinion vs. Fact ---
+    if opinion_spread <= 10 and avg_of < 30:
+        consensus.append(
+            "Coverage is primarily factual reporting across all sources"
+        )
+    elif opinion_spread <= 10 and avg_of >= 30 and avg_of < 60:
+        consensus.append("Sources take a similar analytical approach to this story")
+    elif opinion_spread <= 10 and avg_of >= 60:
+        consensus.append(
+            "Sources consistently present opinion-heavy coverage"
+        )
+    elif opinion_spread > 15:
+        divergence.append(
+            "Sources range from straight reporting to opinion-heavy coverage"
+        )
+
+    # --- Factual Rigor ---
+    if all(v >= 70 for v in fr_values):
+        consensus.append("Sources demonstrate strong factual sourcing")
+    elif all(v < 40 for v in fr_values):
+        consensus.append("Sources show similarly limited factual sourcing")
+    elif max(fr_values) - min(fr_values) > 30:
+        divergence.append(
+            "Sources differ in the depth of their factual sourcing"
+        )
+
+    # --- Framing ---
+    if framing_spread <= 10:
+        if avg_frm < 25:
+            consensus.append("Sources use relatively neutral framing")
+        else:
+            consensus.append("Sources apply similar framing choices")
+    elif framing_spread > 15:
+        divergence.append(
+            "Sources differ in how they frame the story "
+            "(emphasis and language choices vary)"
+        )
+
+    # Ensure we always have at least one point in each list when there are
+    # multiple sources, to avoid empty sections in the UI.
+    if not consensus:
+        consensus.append(
+            "Sources broadly agree on the key facts of this story"
+        )
+    if not divergence:
+        divergence.append(
+            "No major divergence detected across sources on this story"
+        )
+
+    return consensus, divergence
+
+
 def _enrich_cluster_fallback(cluster_id: str) -> None:
     """
     Client-side fallback for cluster enrichment when the DB function
@@ -335,9 +440,19 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
             "avg_opinion_label": opinion_label,
         }
 
+        # Generate consensus/divergence text from bias score analysis
+        consensus_pts, divergence_pts = _generate_consensus_divergence(
+            count, pl_values, sens_values, of_values, fr_values, frm_values,
+            avg_pl, avg_sens, avg_of, avg_fr, avg_frm,
+            lean_spread, framing_spread, lean_range,
+            sensationalism_spread, opinion_spread,
+        )
+
         supabase.table("story_clusters").update({
             "divergence_score": round(divergence, 2),
             "bias_diversity": json.dumps(bias_diversity),
+            "consensus_points": json.dumps(consensus_pts),
+            "divergence_points": json.dumps(divergence_pts),
         }).eq("id", cluster_id).execute()
 
     except Exception as e:

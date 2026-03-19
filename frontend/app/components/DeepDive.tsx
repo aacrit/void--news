@@ -168,13 +168,18 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         }
 
         if (!cancelled && storySourceList.length > 0) {
+          // Use pipeline-generated consensus/divergence from the cluster,
+          // falling back only when no data has been computed yet.
+          const consensus = story.deepDive?.consensus && story.deepDive.consensus.length > 0
+            ? story.deepDive.consensus
+            : ["Sources broadly agree on the key facts of this story"];
+          const divergenceData = story.deepDive?.divergence && story.deepDive.divergence.length > 0
+            ? story.deepDive.divergence
+            : ["Some differences in framing and emphasis were detected across sources"];
+
           setLiveData({
-            consensus: story.deepDive?.consensus ?? [
-              "Sources broadly agree on the key facts of this story",
-            ],
-            divergence: story.deepDive?.divergence ?? [
-              "Some differences in framing and emphasis were detected across sources",
-            ],
+            consensus,
+            divergence: divergenceData,
             sources: storySourceList,
           });
         }

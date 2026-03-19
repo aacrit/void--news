@@ -68,7 +68,7 @@ function HomeContent() {
       try {
         // Query with enrichment columns first; fall back to base schema if
         // migrations 002/003 haven't been applied to the live database yet.
-        const enrichedFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity`;
+        const enrichedFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
         const baseFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated`;
 
         let worldRes, usRes;
@@ -169,6 +169,16 @@ function HomeContent() {
               opinionLabel: (bd?.avg_opinion_label as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact),
             };
 
+            // Parse consensus/divergence from JSONB columns
+            const rawConsensus = usingEnriched ? cluster.consensus_points : null;
+            const rawDivergence = usingEnriched ? cluster.divergence_points : null;
+            const consensusPoints: string[] = Array.isArray(rawConsensus)
+              ? rawConsensus
+              : [];
+            const divergencePoints: string[] = Array.isArray(rawDivergence)
+              ? rawDivergence
+              : [];
+
             return {
               id: cluster.id,
               title: cluster.title,
@@ -190,6 +200,13 @@ function HomeContent() {
               divergenceScore: cluster.divergence_score || 0,
               headlineRank: cluster.headline_rank || cluster.importance_score || 50,
               coverageVelocity: cluster.coverage_velocity || 0,
+              deepDive: consensusPoints.length > 0 || divergencePoints.length > 0
+                ? {
+                    consensus: consensusPoints,
+                    divergence: divergencePoints,
+                    sources: [],
+                  }
+                : undefined,
             };
           }
         );
