@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import type { Section, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel } from "./lib/types";
+import type { Section, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "./lib/types";
 import { supabase } from "./lib/supabase";
 import LogoWordmark from "./components/LogoWordmark";
 import LogoIcon from "./components/LogoIcon";
@@ -161,6 +161,7 @@ function HomeContent() {
               : undefined;
 
             const sourceCount = cluster.source_count || 1;
+            const opinionLabel = (bd?.avg_opinion_label as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact);
             const lensData: ThreeLensData = {
               lean: biasScores.politicalLean,
               coverage: bd?.coverage_score ?? deriveCoverageScore(
@@ -169,8 +170,21 @@ function HomeContent() {
               sourceCount,
               tierBreakdown: bd?.tier_breakdown,
               opinion: biasScores.opinionFact,
-              opinionLabel: (bd?.avg_opinion_label as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact),
+              opinionLabel,
               pending: !hasBiasData,
+            };
+            const sigilData: SigilData = {
+              politicalLean: biasScores.politicalLean,
+              sensationalism: biasScores.sensationalism,
+              opinionFact: biasScores.opinionFact,
+              factualRigor: biasScores.factualRigor,
+              framing: biasScores.framing,
+              agreement: cluster.divergence_score || 0,
+              sourceCount,
+              tierBreakdown: bd?.tier_breakdown,
+              biasSpread,
+              pending: !hasBiasData,
+              opinionLabel,
             };
 
             // Parse consensus/divergence from JSONB columns
@@ -199,6 +213,7 @@ function HomeContent() {
               biasScores,
               biasSpread,
               lensData,
+              sigilData,
               section: (cluster.section || "world") as Section,
               importance: cluster.headline_rank || cluster.importance_score || 50,
               divergenceScore: cluster.divergence_score || 0,
@@ -250,8 +265,9 @@ function HomeContent() {
   }, [stories, activeSection, activeCategory]);
 
   const leadStory = filteredStories[0];
-  const mediumStories = filteredStories.slice(1, 4);
-  const compactStories = filteredStories.slice(4);
+  const secondaryStory = filteredStories[1];
+  const mediumStories = filteredStories.slice(2, 5);
+  const compactStories = filteredStories.slice(5);
 
   return (
     <div className="page-container">
@@ -350,10 +366,17 @@ function HomeContent() {
           </div>
         )}
 
-        {/* Lead story */}
+        {/* Lead section — lead story + secondary on desktop */}
         {!isLoading && leadStory && (
-          <section aria-label="Lead story">
-            <LeadStory story={leadStory} onStoryClick={handleStoryClick} />
+          <section aria-label="Lead story" className="lead-section">
+            <div className="lead-section__primary">
+              <LeadStory story={leadStory} onStoryClick={handleStoryClick} />
+            </div>
+            {secondaryStory && (
+              <div className="lead-section__secondary">
+                <StoryCard story={secondaryStory} index={1} onStoryClick={handleStoryClick} />
+              </div>
+            )}
           </section>
         )}
 
