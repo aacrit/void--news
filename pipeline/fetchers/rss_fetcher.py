@@ -75,6 +75,7 @@ def _parse_entry(entry: dict, source: dict) -> dict:
 
     return {
         "source_id": source.get("db_id") or source.get("id", ""),
+        "source_slug": source.get("id", ""),
         "url": entry.get("link", ""),
         "title": entry.get("title", "Untitled"),
         "summary": summary,
