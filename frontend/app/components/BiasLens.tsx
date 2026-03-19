@@ -642,6 +642,7 @@ function DataRow({ label, value, invert }: { label: string; value: number; inver
 
 export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
   const gap = size === "lg" ? 10 : 6;
+  const pending = lensData.pending;
 
   return (
     <div
@@ -651,7 +652,11 @@ export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
         alignItems: "center",
         gap,
         position: "relative",
+        opacity: pending ? 0.35 : 1,
+        filter: pending ? "grayscale(1)" : "none",
+        transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
+      aria-label={pending ? "Bias analysis pending" : undefined}
     >
       <LeanNeedle
         value={lensData.lean}
@@ -671,6 +676,20 @@ export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
         rationale={lensData.opinionRationale}
         size={size}
       />
+      {pending && (
+        <span style={{
+          fontFamily: "var(--font-data)",
+          fontSize: size === "lg" ? "var(--text-xs)" : 9,
+          fontWeight: 500,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase" as const,
+          color: "var(--fg-tertiary)",
+          marginLeft: 2,
+          whiteSpace: "nowrap",
+        }}>
+          Pending
+        </span>
+      )}
     </div>
   );
 }

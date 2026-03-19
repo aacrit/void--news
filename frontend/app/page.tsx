@@ -10,6 +10,7 @@ import LeadStory from "./components/LeadStory";
 import StoryCard from "./components/StoryCard";
 import DeepDive from "./components/DeepDive";
 
+import RefreshButton from "./components/RefreshButton";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Footer from "./components/Footer";
@@ -128,8 +129,9 @@ function HomeContent() {
         const liveStories: Story[] = clusters.map(
           (cluster: any) => {
             const bd = usingEnriched ? cluster.bias_diversity : null;
+            const hasBiasData = !!(bd && bd.avg_political_lean != null);
 
-            const biasScores: BiasScores = bd && bd.avg_political_lean != null
+            const biasScores: BiasScores = hasBiasData
               ? {
                   politicalLean: bd.avg_political_lean ?? 50,
                   sensationalism: bd.avg_sensationalism ?? 30,
@@ -167,6 +169,7 @@ function HomeContent() {
               tierBreakdown: bd?.tier_breakdown,
               opinion: biasScores.opinionFact,
               opinionLabel: (bd?.avg_opinion_label as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact),
+              pending: !hasBiasData,
             };
 
             // Parse consensus/divergence from JSONB columns
@@ -265,6 +268,7 @@ function HomeContent() {
           <h1 className="section-header__title">
             {activeSection === "world" ? "World News" : "US News"}
           </h1>
+          <RefreshButton externalLastUpdated={lastUpdated} />
         </div>
 
         {/* Filter bar */}

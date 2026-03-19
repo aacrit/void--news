@@ -78,6 +78,8 @@ export interface ThreeLensData {
   opinion: number;
   opinionLabel: "Reporting" | "Analysis" | "Opinion" | "Editorial";
   opinionRationale?: OpinionRationale;
+  /** True when bias scores are fallback placeholders, not real analysis data */
+  pending?: boolean;
 }
 
 export type OpinionLabel = ThreeLensData["opinionLabel"];

@@ -10,9 +10,10 @@ import LogoIcon from "./LogoIcon";
 
 interface RefreshButtonProps {
   externalLastUpdated?: string | null;
+  onRefresh?: () => void;
 }
 
-export default function RefreshButton({ externalLastUpdated }: RefreshButtonProps) {
+export default function RefreshButton({ externalLastUpdated, onRefresh }: RefreshButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [localLastUpdated, setLocalLastUpdated] = useState("6:00 AM CT");
@@ -36,16 +37,12 @@ export default function RefreshButton({ externalLastUpdated }: RefreshButtonProp
   const handleRefresh = useCallback(() => {
     setShowConfirm(false);
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      const ampm = hours >= 12 ? "PM" : "AM";
-      const h = hours % 12 || 12;
-      setLocalLastUpdated(`${h}:${minutes} ${ampm} CT`);
-    }, 1200);
-  }, []);
+    if (onRefresh) {
+      onRefresh();
+    } else {
+      window.location.reload();
+    }
+  }, [onRefresh]);
 
   useEffect(() => {
     if (showConfirm) {
