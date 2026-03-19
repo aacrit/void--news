@@ -112,6 +112,8 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
 
     Returns a dict with score keys ready for DB insertion.
     Each analyzer is run independently; failures fall back to defaults.
+    Analyzers that return dicts (3-lens: lean, opinion, rigor) have their
+    rationale collected into a JSONB-ready rationale field.
     """
     scores = {
         "political_lean": 50,
@@ -121,9 +123,15 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
         "framing": 15,
         "confidence": 0.7,
     }
+    rationale = {}
 
     try:
-        scores["political_lean"] = analyze_political_lean(article, source)
+        result = analyze_political_lean(article, source)
+        if isinstance(result, dict):
+            scores["political_lean"] = result["score"]
+            rationale["lean"] = result["rationale"]
+        else:
+            scores["political_lean"] = result
     except Exception as e:
         print(f"    [warn] Political lean failed: {e}")
 
@@ -133,12 +141,22 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
         print(f"    [warn] Sensationalism failed: {e}")
 
     try:
-        scores["opinion_fact"] = analyze_opinion(article)
+        result = analyze_opinion(article)
+        if isinstance(result, dict):
+            scores["opinion_fact"] = result["score"]
+            rationale["opinion"] = result["rationale"]
+        else:
+            scores["opinion_fact"] = result
     except Exception as e:
         print(f"    [warn] Opinion detection failed: {e}")
 
     try:
-        scores["factual_rigor"] = analyze_factual_rigor(article)
+        result = analyze_factual_rigor(article)
+        if isinstance(result, dict):
+            scores["factual_rigor"] = result["score"]
+            rationale["coverage"] = result["rationale"]
+        else:
+            scores["factual_rigor"] = result
     except Exception as e:
         print(f"    [warn] Factual rigor failed: {e}")
 
@@ -149,6 +167,10 @@ def run_bias_analysis(article: dict, source: dict) -> dict:
 
     # Compute real confidence based on text quality and signal strength
     scores["confidence"] = compute_confidence(article, scores)
+
+    # Attach rationale as JSON string for the JSONB column
+    if rationale:
+        scores["rationale"] = json.dumps(rationale)
 
     return scores
 
@@ -238,6 +260,63 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
             (min(framing_spread / 25.0, 1.0) * 30.0)
         )
 
+        # Compute tier breakdown for 3-lens coverage score
+        tier_breakdown = {"us_major": 0, "international": 0, "independent": 0}
+        try:
+            arts_result = (
+                supabase.table("cluster_articles")
+                .select("article_id")
+                .eq("cluster_id", cluster_id)
+                .execute()
+            )
+            if arts_result.data:
+                art_ids = [r["article_id"] for r in arts_result.data]
+                src_result = (
+                    supabase.table("articles")
+                    .select("source_id")
+                    .in_("id", art_ids)
+                    .execute()
+                )
+                if src_result.data:
+                    source_ids = list({r["source_id"] for r in src_result.data if r.get("source_id")})
+                    if source_ids:
+                        tier_result = (
+                            supabase.table("sources")
+                            .select("tier")
+                            .in_("id", source_ids)
+                            .execute()
+                        )
+                        if tier_result.data:
+                            for r in tier_result.data:
+                                t = r.get("tier", "")
+                                if t in tier_breakdown:
+                                    tier_breakdown[t] += 1
+        except Exception:
+            pass  # tier breakdown is best-effort
+
+        tier_count = len([v for v in tier_breakdown.values() if v > 0])
+        source_count_val = sum(tier_breakdown.values()) or count
+        agg_confidence = min(1.0, count / 5.0)
+
+        # Coverage score: composite of source breadth, tier diversity, confidence, rigor
+        coverage_score = round(
+            (min(1.0, source_count_val / 10.0) * 35.0)
+            + (tier_count / 3.0 * 20.0)
+            + (agg_confidence * 20.0)
+            + (avg_fr / 100.0 * 25.0),
+            1,
+        )
+
+        # Opinion label
+        if avg_of <= 25:
+            opinion_label = "Reporting"
+        elif avg_of <= 50:
+            opinion_label = "Analysis"
+        elif avg_of <= 75:
+            opinion_label = "Opinion"
+        else:
+            opinion_label = "Editorial"
+
         bias_diversity = {
             "avg_political_lean": avg_pl,
             "avg_sensationalism": avg_sens,
@@ -249,8 +328,11 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
             "lean_range": lean_range,
             "sensationalism_spread": sensationalism_spread,
             "opinion_spread": opinion_spread,
-            "aggregate_confidence": min(1.0, count / 5.0),
+            "aggregate_confidence": agg_confidence,
             "analyzed_count": count,
+            "coverage_score": coverage_score,
+            "tier_breakdown": tier_breakdown,
+            "avg_opinion_label": opinion_label,
         }
 
         supabase.table("story_clusters").update({

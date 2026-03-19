@@ -271,7 +271,7 @@ def _value_judgment_score(text: str) -> float:
     return min(100.0, ratio * 500.0)
 
 
-def analyze_opinion(article: dict) -> int:
+def analyze_opinion(article: dict) -> dict:
     """
     Score where an article falls on the opinion-fact spectrum.
 
@@ -279,24 +279,32 @@ def analyze_opinion(article: dict) -> int:
         article: Dict with keys: full_text, title, summary, section, url.
 
     Returns:
-        Integer score 0-100 (0=factual reporting, 100=pure opinion).
+        Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
     """
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
     combined = f"{title} {full_text}"
 
     if not combined.strip():
-        return 25  # default neutral-ish
+        return {
+            "score": 25,
+            "rationale": {
+                "pronoun_score": 0, "subjectivity_score": 0, "modal_score": 0,
+                "hedging_score": 0, "attribution_score": 50, "metadata_score": 0,
+                "rhetorical_score": 0, "value_judgment_score": 0,
+                "classification": "Reporting", "dominant_signals": [],
+            },
+        }
 
     # Compute sub-scores
-    pronoun = _pronoun_score(combined)           # 0-100
-    subjectivity = _subjectivity_score(combined)  # 0-100
-    modal = _modal_score(combined)               # 0-100
-    hedging = _hedging_score(combined)           # 0-100
-    attribution = _attribution_score(combined)    # 0-100 (inverted)
-    metadata = _metadata_score(article)          # 0 or 80
-    rhetorical = _rhetorical_question_score(combined)  # 0-100
-    value_judg = _value_judgment_score(combined)  # 0-100
+    pronoun = _pronoun_score(combined)
+    subjectivity = _subjectivity_score(combined)
+    modal = _modal_score(combined)
+    hedging = _hedging_score(combined)
+    attribution = _attribution_score(combined)
+    metadata = _metadata_score(article)
+    rhetorical = _rhetorical_question_score(combined)
+    value_judg = _value_judgment_score(combined)
 
     # Weighted combination
     weighted = (
@@ -310,4 +318,44 @@ def analyze_opinion(article: dict) -> int:
         + value_judg * 0.10
     )
 
-    return max(0, min(100, int(round(weighted))))
+    score = max(0, min(100, int(round(weighted))))
+
+    # Derive classification label
+    if score <= 25:
+        classification = "Reporting"
+    elif score <= 50:
+        classification = "Analysis"
+    elif score <= 75:
+        classification = "Opinion"
+    else:
+        classification = "Editorial"
+
+    # Identify dominant signals (top 3 by weighted contribution)
+    signal_contributions = [
+        ("subjectivity", subjectivity * 0.23),
+        ("attribution_gaps", attribution * 0.15),
+        ("pronouns", pronoun * 0.12),
+        ("modal_language", modal * 0.12),
+        ("metadata", metadata * 0.12),
+        ("value_judgments", value_judg * 0.10),
+        ("hedging", hedging * 0.08),
+        ("rhetorical_questions", rhetorical * 0.08),
+    ]
+    signal_contributions.sort(key=lambda x: x[1], reverse=True)
+    dominant = [s[0] for s in signal_contributions[:3] if s[1] > 0]
+
+    return {
+        "score": score,
+        "rationale": {
+            "pronoun_score": round(pronoun, 1),
+            "subjectivity_score": round(subjectivity, 1),
+            "modal_score": round(modal, 1),
+            "hedging_score": round(hedging, 1),
+            "attribution_score": round(attribution, 1),
+            "metadata_score": round(metadata, 1),
+            "rhetorical_score": round(rhetorical, 1),
+            "value_judgment_score": round(value_judg, 1),
+            "classification": classification,
+            "dominant_signals": dominant,
+        },
+    }

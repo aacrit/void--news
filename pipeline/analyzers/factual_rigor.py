@@ -235,7 +235,7 @@ def _attribution_specificity_score(text: str) -> float:
     return specific_ratio * 100.0
 
 
-def analyze_factual_rigor(article: dict) -> int:
+def analyze_factual_rigor(article: dict) -> dict:
     """
     Score the factual rigor of an article.
 
@@ -243,28 +243,35 @@ def analyze_factual_rigor(article: dict) -> int:
         article: Dict with keys: full_text, title, summary.
 
     Returns:
-        Integer score 0-100 (0=no sourcing, 100=heavily sourced).
+        Dict with "score" (int 0-100) and "rationale" (dict with evidence counts).
     """
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
     combined = f"{title} {full_text}"
 
     if not combined.strip():
-        return 10  # no text = very low rigor
+        return {
+            "score": 10,
+            "rationale": {
+                "named_sources_count": 0, "org_citations_count": 0,
+                "data_points_count": 0, "direct_quotes_count": 0,
+                "vague_sources_count": 0, "specificity_ratio": 0,
+            },
+        }
 
     # Parse once with spaCy and share the doc for NER-based sub-scores
     nlp = get_nlp()
     doc = nlp(combined[:15000])
 
     # Sub-scores
-    named_src = _named_source_score(combined, doc=doc)   # 0-100
-    org_cite = _org_citation_score(combined, doc=doc)    # 0-100
-    data_stats = _data_statistics_score(combined)        # 0-100
-    quotes = _direct_quote_score(combined)               # 0-100
-    refs = _reference_score(combined)                    # 0-100
-    specificity = _attribution_specificity_score(combined)  # 0-100
+    named_src = _named_source_score(combined, doc=doc)
+    org_cite = _org_citation_score(combined, doc=doc)
+    data_stats = _data_statistics_score(combined)
+    quotes = _direct_quote_score(combined)
+    refs = _reference_score(combined)
+    specificity = _attribution_specificity_score(combined)
 
-    # Weighted combination (matches spec)
+    # Weighted combination
     weighted = (
         named_src * 0.30
         + data_stats * 0.25
@@ -272,9 +279,37 @@ def analyze_factual_rigor(article: dict) -> int:
         + org_cite * 0.15
         + specificity * 0.10
     )
-
-    # Small bonus for references (additional signal not in main weights)
     ref_bonus = min(refs * 0.05, 5.0)
     weighted += ref_bonus
 
-    return max(0, min(100, int(round(weighted))))
+    score = max(0, min(100, int(round(weighted))))
+
+    # Collect counts for rationale
+    # Named sources: score / 20 gives approximate count (0=0, 20=1, 40=2, etc.)
+    named_count = int(round(named_src / 20.0))
+    org_count = int(round(org_cite / 25.0))
+    data_count = int(round(data_stats / 33.0 * (len(combined.split()) / 100.0)))
+    quote_count = int(round(quotes / 20.0 * (len(combined.split()) / 500.0)))
+
+    # Vague sources count
+    text_lower = combined.lower()
+    vague_count = 0
+    for phrase in VAGUE_SOURCES:
+        vague_count += text_lower.count(phrase)
+
+    # Specificity ratio
+    specific_count = len(SPECIFIC_ATTRIBUTION.findall(combined))
+    total_attr = specific_count + vague_count
+    spec_ratio = round(specific_count / total_attr, 2) if total_attr > 0 else 0.0
+
+    return {
+        "score": score,
+        "rationale": {
+            "named_sources_count": named_count,
+            "org_citations_count": org_count,
+            "data_points_count": max(0, data_count),
+            "direct_quotes_count": max(0, quote_count),
+            "vague_sources_count": vague_count,
+            "specificity_ratio": spec_ratio,
+        },
+    }

@@ -8,10 +8,10 @@ import {
   Warning,
   ArrowSquareOut,
 } from "@phosphor-icons/react";
-import type { Story, StorySource, DeepDiveData } from "../lib/types";
+import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
-import BiasStamp from "./BiasStamp";
+import BiasLens from "./BiasLens";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -118,17 +118,52 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           const biasArr = article.bias_scores;
           const bias = Array.isArray(biasArr) && biasArr.length > 0 ? biasArr[0] : null;
 
+          const lean = (bias?.political_lean as number) ?? 50;
+          const opinionVal = (bias?.opinion_fact as number) ?? 25;
+          const rigor = (bias?.factual_rigor as number) ?? 75;
+
+          // Parse rationale if available
+          let rationale: Record<string, unknown> | null = null;
+          if (bias?.rationale && typeof bias.rationale === "object") {
+            rationale = bias.rationale;
+          }
+
+          // Derive opinion label
+          let opinionLabel: OpinionLabel = "Reporting";
+          if (opinionVal > 75) opinionLabel = "Editorial";
+          else if (opinionVal > 50) opinionLabel = "Opinion";
+          else if (opinionVal > 25) opinionLabel = "Analysis";
+
+          // Per-article coverage: based on rigor + confidence (no cluster source count)
+          const confidence = (bias?.confidence as number) ?? 0.5;
+          const coverageScore = Math.round((rigor / 100) * 60 + confidence * 40);
+
+          const lensData: ThreeLensData = {
+            lean,
+            coverage: coverageScore,
+            sourceCount: 1,
+            opinion: opinionVal,
+            opinionLabel,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            leanRationale: (rationale?.lean as any) ?? undefined,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            opinionRationale: (rationale?.opinion as any) ?? undefined,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            coverageRationale: (rationale?.coverage as any) ?? undefined,
+          };
+
           storySourceList.push({
             name: (source?.name as string) ?? "Unknown",
             url: (article.url as string) ?? (source?.url as string) ?? "#",
             tier: ((source?.tier as string) as StorySource["tier"]) ?? "us_major",
             biasScores: {
-              politicalLean: (bias?.political_lean as number) ?? 50,
+              politicalLean: lean,
               sensationalism: (bias?.sensationalism as number) ?? 30,
-              opinionFact: (bias?.opinion_fact as number) ?? 25,
-              factualRigor: (bias?.factual_rigor as number) ?? 75,
+              opinionFact: opinionVal,
+              factualRigor: rigor,
               framing: (bias?.framing as number) ?? 40,
             },
+            lensData,
           });
         }
 
@@ -349,7 +384,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                       {TIER_LABELS[src.tier]}
                     </span>
 
-                    <BiasStamp scores={src.biasScores} size="sm" />
+                    {src.lensData && <BiasLens lensData={src.lensData} size="sm" />}
 
                     <a
                       href={src.url}

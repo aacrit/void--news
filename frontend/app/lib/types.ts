@@ -27,11 +27,67 @@ export interface Source {
   count: number;
 }
 
+/** Rationale for political lean scoring */
+export interface LeanRationale {
+  keywordScore: number;
+  framingShift: number;
+  entityShift: number;
+  sourceBaseline: number;
+  topLeftKeywords: string[];
+  topRightKeywords: string[];
+  framingPhrasesFound: string[];
+  entitySentiments: Record<string, number>;
+}
+
+/** Rationale for opinion vs reporting classification */
+export interface OpinionRationale {
+  pronounScore: number;
+  subjectivityScore: number;
+  modalScore: number;
+  hedgingScore: number;
+  attributionScore: number;
+  metadataScore: number;
+  rhetoricalScore: number;
+  valueJudgmentScore: number;
+  classification: "Reporting" | "Analysis" | "Opinion" | "Editorial";
+  dominantSignals: string[];
+}
+
+/** Rationale for coverage/confidence scoring */
+export interface CoverageRationale {
+  factualRigor: number;
+  namedSourcesCount: number;
+  orgCitationsCount: number;
+  dataPointsCount: number;
+  directQuotesCount: number;
+  vagueSourcesCount: number;
+  specificityRatio: number;
+}
+
+/** Three-lens data model for bias visualization */
+export interface ThreeLensData {
+  /** Political lean: 0=far left, 50=center, 100=far right */
+  lean: number;
+  leanRationale?: LeanRationale;
+  /** Coverage/confidence composite: 0=weak, 100=strong */
+  coverage: number;
+  coverageRationale?: CoverageRationale;
+  sourceCount: number;
+  tierBreakdown?: Record<string, number>;
+  /** Opinion vs reporting: 0=reporting, 100=opinion */
+  opinion: number;
+  opinionLabel: "Reporting" | "Analysis" | "Opinion" | "Editorial";
+  opinionRationale?: OpinionRationale;
+}
+
+export type OpinionLabel = ThreeLensData["opinionLabel"];
+
 export interface StorySource {
   name: string;
   url: string;
   tier: "us_major" | "international" | "independent";
   biasScores: BiasScores;
+  lensData?: ThreeLensData;
 }
 
 export interface DeepDiveData {
@@ -49,6 +105,7 @@ export interface Story {
   publishedAt: string;
   biasScores: BiasScores;
   biasSpread?: BiasSpread;
+  lensData: ThreeLensData;
   section: "world" | "us";
   importance: number;
   divergenceScore: number;
