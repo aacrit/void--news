@@ -227,8 +227,8 @@
     "tier": "us_major",
     "country": "US",
     "type": "digital",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "Digital news and opinion site. Known for investigative scoops and sharp commentary. Leans left editorially."
+    "political_lean_baseline": "left",
+    "credibility_notes": "Digital news and opinion site. Known for investigative scoops and sharp commentary. Leans left editorially. Re-classified from center-left to left based on editorial positioning."
   },
   {
     "id": "bloomberg",
@@ -261,7 +261,7 @@
     "country": "US",
     "type": "magazine",
     "political_lean_baseline": "center-right",
-    "credibility_notes": "Business magazine founded 1917. Known for rich lists and business coverage. Uses contributor model which varies in quality."
+    "credibility_notes": "Business magazine founded 1917. Known for rich lists and business coverage. Uses contributor model which varies in quality. Pro-market, center-right editorial slant."
   },
   {
     "id": "business-insider",
@@ -293,8 +293,8 @@
     "tier": "us_major",
     "country": "US",
     "type": "magazine",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "Elite literary and news magazine. Renowned for investigative journalism and rigorous fact-checking. Conde Nast publication."
+    "political_lean_baseline": "left",
+    "credibility_notes": "Elite literary and news magazine. Renowned for investigative journalism and rigorous fact-checking. Conde Nast publication. Editorial stance is clearly left-of-center; re-classified from center-left."
   },
   {
     "id": "time",
@@ -328,6 +328,116 @@
     "type": "magazine",
     "political_lean_baseline": "right",
     "credibility_notes": "Flagship conservative magazine founded by William F. Buckley Jr. in 1955. Intellectual right. Generally factual with clear conservative editorial stance."
+  },
+  {
+    "id": "washington-examiner",
+    "name": "Washington Examiner",
+    "url": "https://www.washingtonexaminer.com",
+    "rss_url": "https://www.washingtonexaminer.com/section/news/feed",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative political publication covering Washington DC. Strong on policy and politics from a right-leaning perspective. Owned by MediaDC (Philip Anschutz)."
+  },
+  {
+    "id": "daily-wire",
+    "name": "The Daily Wire",
+    "url": "https://www.dailywire.com",
+    "rss_url": "https://www.dailywire.com/feeds/rss.xml",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative media company founded by Ben Shapiro. High traffic, large podcast audience. Mix of news reporting and strong opinion content. Clearly right editorial stance."
+  },
+  {
+    "id": "new-york-post",
+    "name": "New York Post",
+    "url": "https://nypost.com",
+    "rss_url": "https://nypost.com/feed/",
+    "tier": "us_major",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Oldest continuously published daily newspaper in the US (founded 1801). Owned by News Corp. Tabloid format, conservative editorial stance. Mix of tabloid sensationalism and factual news reporting."
+  },
+  {
+    "id": "newsweek",
+    "name": "Newsweek",
+    "url": "https://www.newsweek.com",
+    "rss_url": "https://www.newsweek.com/rss",
+    "tier": "us_major",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Historic American news magazine, founded 1933. Digital-first since 2012. Editorial stance has shifted toward center-to-center-right under current ownership. Factual news operation."
+  },
+  {
+    "id": "usa-today",
+    "name": "USA Today",
+    "url": "https://www.usatoday.com",
+    "rss_url": "https://rssfeeds.usatoday.com/usatoday-NewsTopStories",
+    "tier": "us_major",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "National daily with one of the largest US circulations. Gannett-owned. Known for accessible, broadly centrist coverage. Strong sports, weather, and national reporting."
+  },
+  {
+    "id": "huffpost",
+    "name": "HuffPost",
+    "url": "https://www.huffpost.com",
+    "rss_url": "https://www.huffpost.com/section/front-page/feed",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Large digital news outlet, founded 2005 by Arianna Huffington. Left-leaning editorial direction. Owned by HuffPost Media. Wide reach with mix of reporting and commentary."
+  },
+  {
+    "id": "salon",
+    "name": "Salon",
+    "url": "https://www.salon.com",
+    "rss_url": "https://www.salon.com/feed",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Online magazine founded 1995. Clearly left editorial stance on politics and culture. Mixes original reporting with strong opinion content. Long-standing digital publication."
+  },
+  {
+    "id": "mother-jones",
+    "name": "Mother Jones",
+    "url": "https://www.motherjones.com",
+    "rss_url": "https://www.motherjones.com/feed/",
+    "tier": "us_major",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Nonprofit investigative news organization founded 1976. Strong investigative reporting from a progressive perspective. Known for campaign finance investigations and Mitt Romney '47 percent' video."
+  },
+  {
+    "id": "breitbart",
+    "name": "Breitbart News",
+    "url": "https://www.breitbart.com",
+    "rss_url": "https://feeds.feedburner.com/breitbart",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Far-right political news and opinion website, founded 2007. High traffic and influential in right-wing media ecosystem. Strong editorial perspective; some reporting mixes news with advocacy."
+  },
+  {
+    "id": "newsmax",
+    "name": "Newsmax",
+    "url": "https://www.newsmax.com",
+    "rss_url": "https://www.newsmax.com/rss/Newsfront/16",
+    "tier": "us_major",
+    "country": "US",
+    "type": "broadcast",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Conservative cable news and digital outlet. Positions itself to the right of Fox News. Large cable audience. Mix of news and strong right-wing opinion. Founded by Christopher Ruddy."
   },
   {
     "id": "bbc-news",
@@ -491,8 +601,8 @@
     "tier": "international",
     "country": "QA",
     "type": "broadcast",
-    "political_lean_baseline": "varies",
-    "credibility_notes": "Qatar-funded global news network. Strong Middle East and Global South coverage. Award-winning journalism, though editorial independence debated given state funding."
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Qatar-funded global news network. Strong Middle East and Global South coverage. Award-winning journalism, though editorial independence debated given state funding. Re-classified from 'varies' to center-left based on consistent editorial positioning."
   },
   {
     "id": "haaretz",
@@ -569,7 +679,7 @@
     "country": "JP",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics. Paywalled; ToS restricts redistribution — use RSS summaries only"
+    "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics. Paywalled; ToS restricts redistribution \u2014 use RSS summaries only"
   },
   {
     "id": "straits-times",
@@ -660,6 +770,149 @@
     "credibility_notes": "Australia's national public broadcaster. Funded by government but editorially independent. Charter requires balance and accuracy."
   },
   {
+    "id": "mexico-news-daily",
+    "name": "Mexico News Daily",
+    "url": "https://mexiconewsdaily.com",
+    "rss_url": "https://mexiconewsdaily.com/feed/",
+    "tier": "international",
+    "country": "MX",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language digital outlet covering Mexican news, politics, and culture. Founded 2016. Fills critical Latin America coverage gap. Added 2026-03-18 to address geographic gap."
+  },
+  {
+    "id": "brazilian-report",
+    "name": "The Brazilian Report",
+    "url": "https://brazilian.report",
+    "rss_url": "https://brazilian.report/feed/",
+    "tier": "international",
+    "country": "BR",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "English-language outlet covering Brazilian politics, economy, and society. Founded 2017. Subscription-based with professional editorial standards. Added 2026-03-18 to address Latin America coverage gap."
+  },
+  {
+    "id": "yonhap-news",
+    "name": "Yonhap News Agency",
+    "url": "https://en.yna.co.kr",
+    "rss_url": "https://en.yna.co.kr/RSS/news.xml",
+    "tier": "international",
+    "country": "KR",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "South Korea's largest news agency, founded 1980. Government-affiliated but editorially independent wire service. Primary English-language source for Korean Peninsula news. Added 2026-03-18 to address South Korea coverage gap."
+  },
+  {
+    "id": "trt-world",
+    "name": "TRT World",
+    "url": "https://www.trtworld.com",
+    "rss_url": "https://www.trtworld.com/rss",
+    "tier": "international",
+    "country": "TR",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language arm of Turkish Radio and Television Corporation (state broadcaster). State-affiliated: editorial line generally aligns with Turkish government positions, particularly on foreign policy. Valuable for Turkish/regional perspective but readers should note state connection. Added 2026-03-18 to address Turkey coverage gap."
+  },
+  {
+    "id": "rt",
+    "name": "RT (Russia Today)",
+    "url": "https://www.rt.com",
+    "rss_url": "https://www.rt.com/rss/",
+    "tier": "international",
+    "country": "RU",
+    "type": "broadcast",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Russian state-funded international broadcaster. Editorially reflects Russian government positions; classified as state media by multiple governments. Included for perspective on Russian/Kremlin viewpoint; editorial reliability is heavily qualified. Readers must apply strong critical lens."
+  },
+  {
+    "id": "cgtn",
+    "name": "CGTN (China Global Television Network)",
+    "url": "https://www.cgtn.com",
+    "rss_url": "https://www.cgtn.com/subscribe/feeds/english/video.xml",
+    "tier": "international",
+    "country": "CN",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "China's English-language international broadcaster. Part of China Media Group, state-controlled. Provides official Chinese government perspective on international affairs. Essential for understanding Beijing's messaging; editorial independence is limited."
+  },
+  {
+    "id": "dawn-pakistan",
+    "name": "Dawn",
+    "url": "https://www.dawn.com",
+    "rss_url": "https://www.dawn.com/feeds/home",
+    "tier": "international",
+    "country": "PK",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Pakistan's most widely read English-language newspaper, founded 1941. Generally independent with strong accountability journalism. Essential source for South Asian geopolitics."
+  },
+  {
+    "id": "the-times-of-india",
+    "name": "The Times of India",
+    "url": "https://timesofindia.indiatimes.com",
+    "rss_url": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "World's most-read English-language newspaper by circulation. Bennett, Coleman & Co. owned. Broad national coverage across Indian subcontinent. Center to center-right editorial slant."
+  },
+  {
+    "id": "the-spectator",
+    "name": "The Spectator",
+    "url": "https://www.spectator.co.uk",
+    "rss_url": "https://www.spectator.co.uk/feed/",
+    "tier": "international",
+    "country": "UK",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "World's oldest weekly magazine (founded 1828). Conservative political and cultural commentary. Highly readable. Owned by Spectator Media. Strong conservative intellectual tradition."
+  },
+  {
+    "id": "sky-news",
+    "name": "Sky News",
+    "url": "https://news.sky.com",
+    "rss_url": "https://feeds.skynews.com/feeds/rss/world.xml",
+    "tier": "international",
+    "country": "UK",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "UK commercial 24-hour news channel. Part of Sky Group (Comcast-owned). Generally balanced news reporting. Less partisan than US cable equivalents."
+  },
+  {
+    "id": "the-irish-times",
+    "name": "The Irish Times",
+    "url": "https://www.irishtimes.com",
+    "rss_url": "https://www.irishtimes.com/cmlink/news-1.1319192",
+    "tier": "international",
+    "country": "IE",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Ireland's newspaper of record, founded 1859. Owned by Irish Times Trust. Strong on Irish politics, European affairs, and Northern Ireland. Center-left editorial tradition."
+  },
+  {
+    "id": "the-japan-times",
+    "name": "The Japan Times",
+    "url": "https://www.japantimes.co.jp",
+    "rss_url": "https://www.japantimes.co.jp/feed/",
+    "tier": "international",
+    "country": "JP",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Japan's oldest English-language newspaper, founded 1897. Majority-owned by News2u Holdings. Editorially independent with a centrist perspective on Japanese and Asian affairs."
+  },
+  {
+    "id": "the-local-europe",
+    "name": "The Local",
+    "url": "https://www.thelocal.com",
+    "rss_url": "https://www.thelocal.com/rss.php",
+    "tier": "international",
+    "country": "SE",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language news network covering life in European countries including Sweden, Germany, France, Italy, Spain, and others. Founded in Stockholm 2004. Good pan-European perspective."
+  },
+  {
     "id": "propublica",
     "name": "ProPublica",
     "url": "https://www.propublica.org",
@@ -678,8 +931,8 @@
     "tier": "independent",
     "country": "US",
     "type": "investigative",
-    "political_lean_baseline": "left",
-    "credibility_notes": "Founded by Glenn Greenwald, Jeremy Scahill, and Laura Poitras. Strong on national security, surveillance, and civil liberties. Left-leaning editorial perspective."
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Founded by Glenn Greenwald, Jeremy Scahill, and Laura Poitras. Strong on national security, surveillance, and civil liberties. Left-leaning editorial perspective. Re-classified to far-left based on consistent editorial positioning."
   },
   {
     "id": "bellingcat",
@@ -821,8 +1074,8 @@
     "tier": "independent",
     "country": "US",
     "type": "independent",
-    "political_lean_baseline": "left",
-    "credibility_notes": "Leading democratic socialist magazine. Provides explicitly left perspective on politics, economics, and culture. Important voice in American left discourse."
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Leading democratic socialist magazine. Provides explicitly left perspective on politics, economics, and culture. Important voice in American left discourse. Re-classified to far-left."
   },
   {
     "id": "american-prospect",
@@ -833,7 +1086,7 @@
     "country": "US",
     "type": "magazine",
     "political_lean_baseline": "left",
-    "credibility_notes": "Progressive policy magazine founded 1990. Well-sourced investigative and policy journalism. Replaces Current Affairs (RSS feed defunct)."
+    "credibility_notes": "Progressive policy magazine founded 1990. Well-sourced investigative and policy journalism."
   },
   {
     "id": "the-dispatch",
@@ -855,7 +1108,7 @@
     "country": "US",
     "type": "independent",
     "political_lean_baseline": "center",
-    "credibility_notes": "Leading national security law blog and podcast. Published by Brookings. Expert legal analysis on security, intelligence, and governance issues. Migrated to Substack for distribution."
+    "credibility_notes": "Leading national security law publication. Published by Brookings. Expert legal analysis on security, intelligence, and governance issues. Migrated to Substack for distribution."
   },
   {
     "id": "the-federalist",
@@ -990,50 +1243,6 @@
     "credibility_notes": "Minnesota nonprofit news outlet founded 2007. In-depth coverage of state politics, policy, and culture. Member-supported with strong community ties."
   },
   {
-    "id": "mexico-news-daily",
-    "name": "Mexico News Daily",
-    "url": "https://mexiconewsdaily.com",
-    "rss_url": "https://mexiconewsdaily.com/feed/",
-    "tier": "international",
-    "country": "MX",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language digital outlet covering Mexican news, politics, and culture. Founded 2016. Fills critical Latin America coverage gap. Added 2026-03-18 to address geographic gap."
-  },
-  {
-    "id": "brazilian-report",
-    "name": "The Brazilian Report",
-    "url": "https://brazilian.report",
-    "rss_url": "https://brazilian.report/feed/",
-    "tier": "international",
-    "country": "BR",
-    "type": "digital",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "English-language outlet covering Brazilian politics, economy, and society. Founded 2017. Subscription-based with professional editorial standards. Added 2026-03-18 to address Latin America coverage gap."
-  },
-  {
-    "id": "yonhap-news",
-    "name": "Yonhap News Agency",
-    "url": "https://en.yna.co.kr",
-    "rss_url": "https://en.yna.co.kr/RSS/news.xml",
-    "tier": "international",
-    "country": "KR",
-    "type": "wire",
-    "political_lean_baseline": "center",
-    "credibility_notes": "South Korea's largest news agency, founded 1980. Government-affiliated but editorially independent wire service. Primary English-language source for Korean Peninsula news. Added 2026-03-18 to address South Korea coverage gap."
-  },
-  {
-    "id": "trt-world",
-    "name": "TRT World",
-    "url": "https://www.trtworld.com",
-    "rss_url": "https://www.trtworld.com/rss",
-    "tier": "international",
-    "country": "TR",
-    "type": "broadcast",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language arm of Turkish Radio and Television Corporation (state broadcaster). State-affiliated: editorial line generally aligns with Turkish government positions, particularly on foreign policy. Valuable for Turkish/regional perspective but readers should note state connection. Added 2026-03-18 to address Turkey coverage gap."
-  },
-  {
     "id": "premium-times-nigeria",
     "name": "Premium Times Nigeria",
     "url": "https://www.premiumtimesng.com",
@@ -1042,7 +1251,7 @@
     "country": "NG",
     "type": "independent",
     "political_lean_baseline": "center",
-    "credibility_notes": "Leading Nigerian independent investigative newspaper, founded 2011. Known for anti-corruption and accountability journalism. Won multiple awards including the Wole Soyinka Award for Investigative Reporting. Added 2026-03-18 to address West Africa coverage gap."
+    "credibility_notes": "Leading Nigerian independent investigative newspaper, founded 2011. Known for anti-corruption and accountability journalism. Won multiple awards including the Wole Soyinka Award for Investigative Reporting."
   },
   {
     "id": "realclearpolitics",
@@ -1053,7 +1262,7 @@
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "center-right",
-    "credibility_notes": "Political news aggregator and polling data site, founded 2000. Known for poll averaging and election forecasting. Publishes opinion from across the spectrum but editorial selection leans center-right. Added 2026-03-18 to improve political lean balance."
+    "credibility_notes": "Political news aggregator and polling data site, founded 2000. Known for poll averaging and election forecasting. Publishes opinion from across the spectrum but editorial selection leans center-right."
   },
   {
     "id": "the-free-press",
@@ -1064,6 +1273,930 @@
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "center-right",
-    "credibility_notes": "Digital media company founded 2021 by Bari Weiss. Heterodox journalism emphasizing free speech and open debate. Center-right on cultural issues, varied on economic policy. Subscription-based with growing audience. Added 2026-03-18 to improve political lean balance."
+    "credibility_notes": "Digital media company founded 2021 by Bari Weiss. Heterodox journalism emphasizing free speech and open debate. Center-right on cultural issues, varied on economic policy. Subscription-based with growing audience."
+  },
+  {
+    "id": "democracy-now",
+    "name": "Democracy Now!",
+    "url": "https://www.democracynow.org",
+    "rss_url": "https://www.democracynow.org/democracynow.rss",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadcast",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Independent nonprofit media organization founded 1996 by Amy Goodman. Daily news program carried on 1,500+ stations. Explicitly progressive editorial perspective. Strong on labor, environment, peace, and social justice."
+  },
+  {
+    "id": "in-these-times",
+    "name": "In These Times",
+    "url": "https://inthesetimes.com",
+    "rss_url": "https://inthesetimes.com/rss",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Socialist magazine founded 1976. Covers labor, social movements, and progressive politics from an explicitly left perspective. Founded by James Weinstein. Professional editorial staff."
+  },
+  {
+    "id": "truthout",
+    "name": "Truthout",
+    "url": "https://truthout.org",
+    "rss_url": "https://truthout.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "nonprofit",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Progressive nonprofit news outlet founded 2001. Covers social justice, environment, and civil liberties from an explicitly left perspective. Nonprofit funded by reader donations."
+  },
+  {
+    "id": "common-dreams",
+    "name": "Common Dreams",
+    "url": "https://www.commondreams.org",
+    "rss_url": "https://www.commondreams.org/feeds/news.rss",
+    "tier": "independent",
+    "country": "US",
+    "type": "nonprofit",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Progressive news and views outlet founded 1997. Nonprofit. Covers peace, environment, social justice, and inequality from a strongly progressive perspective. Mix of original reporting and aggregation."
+  },
+  {
+    "id": "wsws",
+    "name": "World Socialist Web Site",
+    "url": "https://www.wsws.org",
+    "rss_url": "https://www.wsws.org/rss.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Publication of the International Committee of the Fourth International (Trotskyist). Founded 1998. Clear Marxist editorial perspective. Provides far-left analysis on politics, economics, and international affairs. Long-running publication with editorial staff."
+  },
+  {
+    "id": "tribune-uk",
+    "name": "Tribune (UK)",
+    "url": "https://tribunemag.co.uk",
+    "rss_url": "https://tribunemag.co.uk/feed",
+    "tier": "independent",
+    "country": "UK",
+    "type": "magazine",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "British democratic socialist magazine, relaunched 2018. Historic Tribune was founded 1937 and associated with Aneurin Bevan and George Orwell. Covers UK and international politics from the left. Professional editorial operation."
+  },
+  {
+    "id": "new-statesman",
+    "name": "New Statesman",
+    "url": "https://www.newstatesman.com",
+    "rss_url": "https://www.newstatesman.com/rss/blogs",
+    "tier": "international",
+    "country": "UK",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "British centre-left political and cultural magazine, founded 1913. Historically associated with Fabian Society. Covers UK and international politics, arts, and culture. Strong investigative and analytical journalism."
+  },
+  {
+    "id": "the-progressive",
+    "name": "The Progressive",
+    "url": "https://progressive.org",
+    "rss_url": "https://progressive.org/latest/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Progressive magazine founded 1909 by Robert M. La Follette. Covers peace, labor, civil liberties, and social justice. Long-standing publication with professional editorial team."
+  },
+  {
+    "id": "current-affairs",
+    "name": "Current Affairs",
+    "url": "https://www.currentaffairs.org",
+    "rss_url": "https://www.currentaffairs.org/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Socialist cultural and political magazine founded 2015 by Nathan Robinson. Strongly left editorial perspective on politics and culture. Professional editorial staff."
+  },
+  {
+    "id": "vox",
+    "name": "Vox",
+    "url": "https://www.vox.com",
+    "rss_url": "https://www.vox.com/rss/index.xml",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Explanatory journalism outlet founded 2014 by Ezra Klein. Vox Media. Generally center-left editorial perspective with strong fact-based analysis. Good on policy and science."
+  },
+  {
+    "id": "slate",
+    "name": "Slate",
+    "url": "https://slate.com",
+    "rss_url": "https://feeds.slate.com/slate/all",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Online magazine founded 1996 by Michael Kinsley. Part of Slate Group (Univision-owned). Left-leaning editorial perspective across politics and culture. Mix of reporting and opinion."
+  },
+  {
+    "id": "the-bulwark",
+    "name": "The Bulwark",
+    "url": "https://www.thebulwark.com",
+    "rss_url": "https://www.thebulwark.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Never-Trump conservative publication founded 2018 by Charlie Sykes and Bill Kristol. Anti-Trump right perspective. Professional journalism and analysis with conservative principles minus populist nationalism."
+  },
+  {
+    "id": "commentary-magazine",
+    "name": "Commentary Magazine",
+    "url": "https://www.commentary.org",
+    "rss_url": "https://www.commentary.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Neoconservative magazine of opinion published since 1945. Associated with American Enterprise Institute circles. Strong intellectual conservative tradition. Covers politics, culture, and foreign policy."
+  },
+  {
+    "id": "city-journal",
+    "name": "City Journal",
+    "url": "https://www.city-journal.org",
+    "rss_url": "https://www.city-journal.org/rss.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Policy and ideas magazine published by the Manhattan Institute since 1990. Focuses on urban policy, education, crime, and public administration from a conservative perspective. Rigorously edited."
+  },
+  {
+    "id": "washington-free-beacon",
+    "name": "Washington Free Beacon",
+    "url": "https://freebeacon.com",
+    "rss_url": "https://freebeacon.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative news website founded 2012. Known for investigative reporting on liberal institutions and Democratic politicians. Clear right-wing editorial perspective. Some original reporting with factual standards."
+  },
+  {
+    "id": "the-daily-caller",
+    "name": "The Daily Caller",
+    "url": "https://dailycaller.com",
+    "rss_url": "https://dailycaller.com/feed/",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Conservative news outlet co-founded by Tucker Carlson in 2010. High traffic. Right-wing editorial perspective with mix of news and opinion. Some original reporting; quality varies."
+  },
+  {
+    "id": "the-epoch-times",
+    "name": "The Epoch Times",
+    "url": "https://www.theepochtimes.com",
+    "rss_url": "https://www.theepochtimes.com/c-us/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Media outlet with ties to the Falun Gong movement. Founded 2000. Strongly anti-CCP, pro-Trump editorial perspective. Large international print and digital distribution. Credibility is limited on political topics; included for perspective representation."
+  },
+  {
+    "id": "townhall",
+    "name": "Townhall",
+    "url": "https://townhall.com",
+    "rss_url": "https://townhall.com/rss/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative news and opinion website, founded 1995. Originally a project of The Heritage Foundation. Now owned by Salem Communications. Mix of reporting and strong conservative opinion."
+  },
+  {
+    "id": "pj-media",
+    "name": "PJ Media",
+    "url": "https://pjmedia.com",
+    "rss_url": "https://pjmedia.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative opinion and news website, founded 2004. Strong voice in right-wing commentary. Owned by Salem Communications. Emphasis on politics and culture from a conservative lens."
+  },
+  {
+    "id": "the-spectator-us",
+    "name": "The Spectator (US)",
+    "url": "https://thespectator.com",
+    "rss_url": "https://thespectator.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "American edition of the British Spectator magazine, launched 2018. Conservative political commentary and culture. Affiliated with the UK Spectator. Strong intellectual conservative tradition in American context."
+  },
+  {
+    "id": "washington-times",
+    "name": "The Washington Times",
+    "url": "https://www.washingtontimes.com",
+    "rss_url": "https://www.washingtontimes.com/rss/headlines/news/",
+    "tier": "us_major",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative broadsheet daily, founded 1982. Owned by News World Communications (Unification Church-linked). Strong on military and conservative politics. Right-leaning editorial perspective."
+  },
+  {
+    "id": "federalist-society-blog",
+    "name": "The Federalist Society Blog",
+    "url": "https://fedsoc.org",
+    "rss_url": "https://fedsoc.org/blog/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "independent",
+    "political_lean_baseline": "right",
+    "credibility_notes": "The Federalist Society for Law and Public Policy Studies is the leading conservative and libertarian legal organization. Law and policy analysis from a conservative/originalist perspective. High-quality legal scholarship."
+  },
+  {
+    "id": "mediaite",
+    "name": "Mediaite",
+    "url": "https://www.mediaite.com",
+    "rss_url": "https://www.mediaite.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Media industry news and criticism site. Founded 2009. Covers media, politics, and entertainment news. Mildly center-left editorial slant. Useful for media criticism across the spectrum."
+  },
+  {
+    "id": "opendemocracy",
+    "name": "openDemocracy",
+    "url": "https://www.opendemocracy.net",
+    "rss_url": "https://www.opendemocracy.net/en/rss.xml",
+    "tier": "independent",
+    "country": "UK",
+    "type": "digital",
+    "political_lean_baseline": "left",
+    "credibility_notes": "UK-based independent global media platform covering democracy and power. Founded 2001. Left-leaning editorial perspective with international scope. Funded by foundations and donations."
+  },
+  {
+    "id": "guardian-us",
+    "name": "The Guardian US",
+    "url": "https://www.theguardian.com/us",
+    "rss_url": "https://www.theguardian.com/us/rss",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "US operation of The Guardian. Covers American politics, culture, and news from a center-left international perspective. Strong environmental and social justice reporting."
+  },
+  {
+    "id": "semafor",
+    "name": "Semafor",
+    "url": "https://www.semafor.com",
+    "rss_url": "https://www.semafor.com/feed",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "News organization founded 2022 by Ben Smith and Justin Smith. Global ambition with offices in multiple countries. Innovative format separating news from analysis. Centrist editorial positioning."
+  },
+  {
+    "id": "the-information",
+    "name": "The Information",
+    "url": "https://www.theinformation.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:theinformation.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Subscription-based tech journalism outlet founded 2013 by Jessica Lessin. Breaking news and analysis on Silicon Valley and tech industry. High-quality reporting; centrist on politics."
+  },
+  {
+    "id": "the-wire-china",
+    "name": "The Wire China",
+    "url": "https://www.thewirechina.com",
+    "rss_url": "https://www.thewirechina.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Digital publication covering China's economy, foreign policy, and society. Founded 2020. In-depth analysis from China experts. Centrist, analytical perspective."
+  },
+  {
+    "id": "rest-of-world",
+    "name": "Rest of World",
+    "url": "https://restofworld.org",
+    "rss_url": "https://restofworld.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "nonprofit",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Nonprofit news organization covering technology's impact outside the Western tech bubble. Founded 2020. Reports from Africa, Asia, Latin America, and Middle East. Centrist, factual."
+  },
+  {
+    "id": "spectator-australia",
+    "name": "The Spectator (Australia)",
+    "url": "https://www.spectator.com.au",
+    "rss_url": "https://www.spectator.com.au/feed/",
+    "tier": "international",
+    "country": "AU",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Australian edition of the Spectator. Conservative political and cultural commentary on Australian and international affairs. Founded 2008. Right-leaning editorial perspective."
+  },
+  {
+    "id": "quadrant-online",
+    "name": "Quillette",
+    "url": "https://quillette.com",
+    "rss_url": "https://quillette.com/feed/",
+    "tier": "independent",
+    "country": "AU",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Online magazine founded in Australia 2015 by Claire Lehmann. Heterodox intellectual perspectives, generally center-right to right on cultural issues. Covers science, culture, and politics. Strong on free speech debates."
+  },
+  {
+    "id": "unherd",
+    "name": "UnHerd",
+    "url": "https://unherd.com",
+    "rss_url": "https://unherd.com/feed/",
+    "tier": "international",
+    "country": "UK",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "UK-based media outlet founded 2017 by Tim Montgomerie. Aims to challenge mainstream consensus from various angles. Often center-right to right editorial perspective. High-quality long-form commentary."
+  },
+  {
+    "id": "capx",
+    "name": "CapX",
+    "url": "https://capx.co",
+    "rss_url": "https://capx.co/feed/",
+    "tier": "international",
+    "country": "UK",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Centre for Policy Studies publication. Free-market, center-right economics and politics. UK-based. High quality intellectual conservative commentary on policy and economics."
+  },
+  {
+    "id": "aei-ideas",
+    "name": "AEI Ideas",
+    "url": "https://www.aei.org",
+    "rss_url": "https://www.aei.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "independent",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "American Enterprise Institute think-tank publication. Right-of-center economic and policy analysis. One of the most credible conservative think-tanks in the US. Expert commentary on policy, economics, and foreign affairs."
+  },
+  {
+    "id": "heritage-foundation",
+    "name": "The Daily Signal",
+    "url": "https://www.dailysignal.com",
+    "rss_url": "https://www.dailysignal.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "News publication of The Heritage Foundation. Conservative policy commentary and news from one of the most influential conservative think-tanks. Clear right-wing editorial perspective with policy expertise."
+  },
+  {
+    "id": "dispatch-newsletter",
+    "name": "The Dispatch Newsletter",
+    "url": "https://thedispatch.com/newsletter/",
+    "rss_url": "https://thedispatch.com/newsletter/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Newsletter arm of The Dispatch. Conservative-leaning analysis distinct from mainstream right. Founded by Jonah Goldberg. Strong fact-checking culture."
+  },
+  {
+    "id": "stat-news",
+    "name": "STAT News",
+    "url": "https://www.statnews.com",
+    "rss_url": "https://www.statnews.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Health, medicine, and life science news outlet. Founded 2015 by Boston Globe Media. Rigorous scientific journalism. Centrist; focused on evidence-based health reporting."
+  },
+  {
+    "id": "science-news",
+    "name": "Science News",
+    "url": "https://www.sciencenews.org",
+    "rss_url": "https://www.sciencenews.org/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "nonprofit",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Nonprofit science journalism organization, founded 1921. Covers all fields of science, medicine, and technology. Factual, evidence-based; politically neutral."
+  },
+  {
+    "id": "foreign-policy",
+    "name": "Foreign Policy",
+    "url": "https://foreignpolicy.com",
+    "rss_url": "https://foreignpolicy.com/feed/",
+    "tier": "us_major",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Leading international affairs magazine and website. Founded 1970 by Samuel Huntington. Graham Holdings (Washington Post parent). Expert analysis on geopolitics, diplomacy, and international economics."
+  },
+  {
+    "id": "foreign-affairs",
+    "name": "Foreign Affairs",
+    "url": "https://www.foreignaffairs.com",
+    "rss_url": "https://www.foreignaffairs.com/rss.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Published by the Council on Foreign Relations since 1922. Premier journal of international affairs. Expert analysis and policy discussion. Centrist, establishment foreign policy perspective."
+  },
+  {
+    "id": "war-on-the-rocks",
+    "name": "War on the Rocks",
+    "url": "https://warontherocks.com",
+    "rss_url": "https://warontherocks.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "National security and defense analysis publication. Founded 2013. Expert commentary on military strategy, foreign policy, and security affairs. Nonpartisan, expert-driven."
+  },
+  {
+    "id": "just-security",
+    "name": "Just Security",
+    "url": "https://www.justsecurity.org",
+    "rss_url": "https://www.justsecurity.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Online forum on law, rights, and US national security. Published by NYU School of Law. Expert commentary from legal scholars and former officials. Center-left on rights issues."
+  },
+  {
+    "id": "brookings-fixgov",
+    "name": "Brookings Institution",
+    "url": "https://www.brookings.edu",
+    "rss_url": "https://www.brookings.edu/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "independent",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Leading centrist-to-center-left think-tank. Rigorous policy research and analysis. Covers domestic and foreign policy. Founded 1916. Expert authors from academia and government."
+  },
+  {
+    "id": "cato-institute",
+    "name": "Cato at Liberty",
+    "url": "https://www.cato.org",
+    "rss_url": "https://www.cato.org/rss/blog",
+    "tier": "independent",
+    "country": "US",
+    "type": "independent",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Libertarian Cato Institute policy blog. Expert analysis on economics, civil liberties, and foreign policy from a libertarian/center-right perspective. High-quality policy research."
+  },
+  {
+    "id": "national-interest",
+    "name": "The National Interest",
+    "url": "https://nationalinterest.org",
+    "rss_url": "https://nationalinterest.org/rss-feeds/all",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Foreign policy and national security magazine. Center-right realist perspective on international affairs. Published by the Center for the National Interest. Expert contributors from government and academia."
+  },
+  {
+    "id": "the-american-interest",
+    "name": "American Affairs",
+    "url": "https://americanaffairsjournal.org",
+    "rss_url": "https://americanaffairsjournal.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Quarterly journal of public policy and political thought, founded 2017. Nationalist/populist right-of-center orientation. High-quality intellectual analysis of political economy and governance."
+  },
+  {
+    "id": "prospect-uk",
+    "name": "Prospect Magazine",
+    "url": "https://www.prospectmagazine.co.uk",
+    "rss_url": "https://www.prospectmagazine.co.uk/feed/",
+    "tier": "international",
+    "country": "UK",
+    "type": "magazine",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "British center-left magazine of politics, ideas, and culture, founded 1995. In-depth analysis of UK and international politics. High-quality journalism and intellectual commentary."
+  },
+  {
+    "id": "la-jornada-english",
+    "name": "Mexico News Network",
+    "url": "https://mexiconewsnetwork.com",
+    "rss_url": "https://mexiconewsnetwork.com/feed/",
+    "tier": "international",
+    "country": "MX",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language coverage of Mexican business, politics, and society. Professional journalism team. Centrist analytical perspective on Mexican affairs."
+  },
+  {
+    "id": "the-wire-india",
+    "name": "The Wire (India)",
+    "url": "https://thewire.in",
+    "rss_url": "https://thewire.in/rss",
+    "tier": "international",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Independent Indian digital news publication, founded 2015. Known for investigative journalism and criticism of the BJP government. Center-left editorial perspective on Indian politics."
+  },
+  {
+    "id": "daily-sabah",
+    "name": "Daily Sabah",
+    "url": "https://www.dailysabah.com",
+    "rss_url": "https://www.dailysabah.com/rss",
+    "tier": "international",
+    "country": "TR",
+    "type": "broadsheet",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Turkish English-language daily, founded 2014. Pro-government editorial perspective aligned with AKP/Erdogan. Important for Turkish government viewpoint on Middle East and regional affairs. Readers should note political alignment."
+  },
+  {
+    "id": "arab-news",
+    "name": "Arab News",
+    "url": "https://www.arabnews.com",
+    "rss_url": "https://www.arabnews.com/rss.xml",
+    "tier": "international",
+    "country": "SA",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Saudi Arabia's first English-language newspaper, founded 1975. English-language coverage of Arab world affairs, international news. Saudi state-aligned editorial perspective on regional politics."
+  },
+  {
+    "id": "middle-east-eye",
+    "name": "Middle East Eye",
+    "url": "https://www.middleeasteye.net",
+    "rss_url": "https://www.middleeasteye.net/rss",
+    "tier": "international",
+    "country": "UK",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "UK-based digital news outlet covering the Middle East and North Africa. Founded 2014. Independent with center-left editorial perspective. Strong on conflict zones and human rights in the region."
+  },
+  {
+    "id": "africa-report",
+    "name": "The Africa Report",
+    "url": "https://www.theafricareport.com",
+    "rss_url": "https://www.theafricareport.com/feed/",
+    "tier": "international",
+    "country": "FR",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Pan-African English-language news outlet, covering politics, business, and culture across the continent. Owned by Groupe Jeune Afrique (Tunis-based). Centrist analytical perspective."
+  },
+  {
+    "id": "allafrica",
+    "name": "AllAfrica",
+    "url": "https://allafrica.com",
+    "rss_url": "https://allafrica.com/tools/headlines/rdf/latest/headlines.rdf",
+    "tier": "international",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "African news aggregator republishing stories from major African newspapers and news organizations. Founded 1997. Essential aggregation point for African news in English. Wide geographic and editorial diversity."
+  },
+  {
+    "id": "eurasia-review",
+    "name": "Eurasian Review",
+    "url": "https://www.eurasiareview.com",
+    "rss_url": "https://www.eurasiareview.com/feed/",
+    "tier": "international",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Analysis and news on Eurasian affairs. Founded 2009. Publishes expert commentary on geopolitics, international relations, and regional affairs across Eurasia and beyond. Centrist analytical perspective."
+  },
+  {
+    "id": "asia-times",
+    "name": "Asia Times",
+    "url": "https://asiatimes.com",
+    "rss_url": "https://asiatimes.com/feed/",
+    "tier": "international",
+    "country": "HK",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Digital news outlet covering Asian geopolitics, finance, and culture. Successor to the original Asia Times (1995-2016). Centrist perspective on Asian affairs with expert commentary from across the region."
+  },
+  {
+    "id": "radio-free-europe",
+    "name": "Radio Free Europe / Radio Liberty",
+    "url": "https://www.rferl.org",
+    "rss_url": "https://www.rferl.org/api/zprmdpqmveq",
+    "tier": "international",
+    "country": "US",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "US government-funded broadcaster targeting authoritarian countries in Europe and Asia. Editorially independent and professional. Considered credible for Eastern Europe/former Soviet region coverage. Maintains journalistic standards."
+  },
+  {
+    "id": "voice-of-america",
+    "name": "Voice of America",
+    "url": "https://www.voanews.com",
+    "rss_url": "https://www.voanews.com/api/zr-yqtkqe",
+    "tier": "international",
+    "country": "US",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "US federal government international broadcaster operated by USAGM. Legally prohibited from broadcasting to US audiences. Generally factual, balanced reporting though subject to US foreign policy priorities."
+  },
+  {
+    "id": "the-kyiv-independent",
+    "name": "The Kyiv Independent",
+    "url": "https://kyivindependent.com",
+    "rss_url": "https://kyivindependent.com/feed/",
+    "tier": "international",
+    "country": "UA",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Ukrainian English-language digital news outlet, founded 2021 after journalists left the Kyiv Post over editorial independence concerns. Primary English-language source for Ukrainian war coverage. Pro-Ukraine perspective (as expected from within Ukraine)."
+  },
+  {
+    "id": "the-moscow-times",
+    "name": "The Moscow Times",
+    "url": "https://www.themoscowtimes.com",
+    "rss_url": "https://www.themoscowtimes.com/rss/news",
+    "tier": "international",
+    "country": "NL",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Independent English-language news publication about Russia, now based in Amsterdam after fleeing Russian pressure. Founded 1992. Critical of Russian government. Important independent voice on Russia."
+  },
+  {
+    "id": "balkan-insight",
+    "name": "Balkan Insight (BIRN)",
+    "url": "https://balkaninsight.com",
+    "rss_url": "https://balkaninsight.com/feed/",
+    "tier": "international",
+    "country": "RS",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Balkan Investigative Reporting Network. Covers Southeast European politics, war crimes, and governance. Founded 2004. Independent, factual investigative journalism in the Balkans."
+  },
+  {
+    "id": "the-diplomat",
+    "name": "The Diplomat",
+    "url": "https://thediplomat.com",
+    "rss_url": "https://thediplomat.com/feed/",
+    "tier": "international",
+    "country": "JP",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Digital magazine covering geopolitics and society in the Asia-Pacific region. Founded 2002. Expert commentary on Indo-Pacific affairs, security, and diplomacy. Centrist analytical perspective."
+  },
+  {
+    "id": "latin-america-reports",
+    "name": "Latin America Reports",
+    "url": "https://www.latinamericareports.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:latinamericareports.com+when:7d&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language coverage of Latin American affairs. Centrist analytical perspective on regional politics, economics, and society. RSS via Google News."
+  },
+  {
+    "id": "religion-news-service",
+    "name": "Religion News Service",
+    "url": "https://religionnews.com",
+    "rss_url": "https://religionnews.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "nonprofit",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Nonprofit news agency covering religion, ethics, and spirituality since 1934. Nonpartisan. Widely syndicated in major news outlets. Essential for faith community coverage."
+  },
+  {
+    "id": "the-intercept-uk",
+    "name": "Bureau of Investigative Journalism",
+    "url": "https://www.thebureauinvestigates.com",
+    "rss_url": "https://www.thebureauinvestigates.com/feed",
+    "tier": "independent",
+    "country": "UK",
+    "type": "investigative",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Independent nonprofit investigative newsroom based in London. Founded 2010. Known for drone strike investigations, corporate accountability reporting. Generally center-left on editorial framing."
+  },
+  {
+    "id": "jerusalem-post",
+    "name": "The Jerusalem Post",
+    "url": "https://www.jpost.com",
+    "rss_url": "https://www.jpost.com/rss/rssfeedsfrontpage.aspx",
+    "tier": "international",
+    "country": "IL",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Israel's leading English-language newspaper, founded 1932. Center-right editorial perspective on Israeli and international affairs. Strong on Middle East politics and security."
+  },
+  {
+    "id": "the-tablet",
+    "name": "Tablet Magazine",
+    "url": "https://www.tabletmag.com",
+    "rss_url": "https://www.tabletmag.com/rss",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Jewish news and culture magazine. Founded 2009. Covers politics, culture, and ideas with a heterodox center-right perspective. Known for contrarian takes and literary journalism."
+  },
+  {
+    "id": "jewish-telegraphic-agency",
+    "name": "Jewish Telegraphic Agency",
+    "url": "https://www.jta.org",
+    "rss_url": "https://www.jta.org/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Global Jewish news agency, founded 1917. Nonpartisan wire service covering Jewish communities and Israel worldwide. Widely syndicated. Essential for Jewish community coverage."
+  },
+  {
+    "id": "five-thirty-eight",
+    "name": "FiveThirtyEight",
+    "url": "https://fivethirtyeight.com",
+    "rss_url": "https://fivethirtyeight.com/all/feed",
+    "tier": "us_major",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Data journalism outlet founded by Nate Silver. Now part of ABC News. Statistics-driven analysis of politics, sports, and science. Centrist methodological approach."
+  },
+  {
+    "id": "dissent-magazine",
+    "name": "Dissent Magazine",
+    "url": "https://www.dissentmagazine.org",
+    "rss_url": "https://www.dissentmagazine.org/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Democratic socialist magazine of politics and culture, founded 1954. Left-leaning intellectual analysis of politics, labor, and society. Strong analytical tradition."
+  },
+  {
+    "id": "boston-review",
+    "name": "Boston Review",
+    "url": "https://www.bostonreview.net",
+    "rss_url": "https://www.bostonreview.net/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "MIT-affiliated forum for politics, culture, and ideas. Founded 1975. Left-leaning intellectual perspective. Rigorous academic and public intellectual contributions. Open to various left perspectives."
+  },
+  {
+    "id": "n-plus-one",
+    "name": "n+1 Magazine",
+    "url": "https://www.nplusonemag.com",
+    "rss_url": "https://www.nplusonemag.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Intellectual magazine of literature, culture, and politics. Founded 2004. Left editorial perspective with literary sensibility. Published independently. Respected in intellectual and literary circles."
+  },
+  {
+    "id": "the-baffler",
+    "name": "The Baffler",
+    "url": "https://thebaffler.com",
+    "rss_url": "https://thebaffler.com/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Magazine of culture and politics, founded 1988. Left-wing critique of capitalism, media, and culture. Published by MIT Press. Known for sharp critical essays and cultural commentary."
+  },
+  {
+    "id": "western-journal",
+    "name": "The Western Journal",
+    "url": "https://www.westernjournal.com",
+    "rss_url": "https://www.westernjournal.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Conservative news site with right-wing editorial perspective. Founded 2008. High traffic in right-wing media ecosystem. Mix of news aggregation and original conservative commentary. Credibility is limited on factual accuracy."
+  },
+  {
+    "id": "american-thinker",
+    "name": "American Thinker",
+    "url": "https://www.americanthinker.com",
+    "rss_url": "https://www.americanthinker.com/atom.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Conservative online publication, founded 2003. Explicitly right-wing commentary and analysis. Some original reporting. Conservative intellectual tradition with strong opinion content."
+  },
+  {
+    "id": "post-millennial",
+    "name": "The Post Millennial",
+    "url": "https://thepostmillennial.com",
+    "rss_url": "https://thepostmillennial.com/feed",
+    "tier": "independent",
+    "country": "CA",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Canadian right-wing media outlet, founded 2017. Far-right editorial perspective on Canadian and international politics. High social media following. Mix of news and opinion."
+  },
+  {
+    "id": "campus-reform",
+    "name": "Campus Reform",
+    "url": "https://www.campusreform.org",
+    "rss_url": "https://www.campusreform.org/rss",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Campus news outlet of the Leadership Institute focusing on liberal bias in academia. Founded 2009. Right-wing editorial perspective; covers campus politics and academic controversies from a conservative lens."
+  },
+  {
+    "id": "compact-magazine",
+    "name": "Compact Magazine",
+    "url": "https://compactmag.com",
+    "rss_url": "https://compactmag.com/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Heterodox political magazine founded 2022. Cross-ideological, but editorially right-leaning/populist nationalist in orientation. Published by prominent right-wing intellectuals. High-quality political commentary."
+  },
+  {
+    "id": "mises-wire",
+    "name": "Mises Wire",
+    "url": "https://mises.org",
+    "rss_url": "https://mises.org/wire/rss.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Publication of the Mises Institute. Austrian school economics and libertarian/paleo-libertarian politics. Academically rigorous on economics. Politically far-right/anti-state. Long-running publication with editorial board."
+  },
+  {
+    "id": "sputnik-international",
+    "name": "Sputnik International",
+    "url": "https://sputnikglobe.com",
+    "rss_url": "https://sputnikglobe.com/export/rss2/archive/index.xml",
+    "tier": "international",
+    "country": "RU",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Russian state-funded news agency and website. Editorially reflects Russian government positions. Classified as foreign state media by multiple governments. Included for perspective on Russian/Kremlin messaging; readers must apply strong critical lens."
+  },
+  {
+    "id": "global-times",
+    "name": "Global Times (China)",
+    "url": "https://www.globaltimes.cn",
+    "rss_url": "https://www.globaltimes.cn/rss/outboundpage.xml",
+    "tier": "international",
+    "country": "CN",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Tabloid under People's Daily, official organ of the Communist Party of China. Nationalist and state-aligned editorial perspective. Nationalistic and sometimes combative in tone. Included for Chinese state/nationalist viewpoint."
+  },
+  {
+    "id": "associated-press-fact-check",
+    "name": "AP Fact Check",
+    "url": "https://apnews.com/APFactCheck",
+    "rss_url": "https://feeds.apnews.com/rss/APFactCheck",
+    "tier": "independent",
+    "country": "US",
+    "type": "fact_check",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Fact-checking operation of the Associated Press. Non-partisan verification of claims by politicians, public figures, and viral content. Highest factual credibility standard."
+  },
+  {
+    "id": "conservative-treehouse",
+    "name": "Daily Caller News Foundation",
+    "url": "https://dailycallernewsfoundation.org",
+    "rss_url": "https://dailycallernewsfoundation.org/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "investigative",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Investigative arm of The Daily Caller. Nonprofit. Produces original investigative journalism with a right-leaning editorial perspective. Content widely republished. Founded 2010."
+  },
+  {
+    "id": "heterodox-academy",
+    "name": "Persuasion",
+    "url": "https://www.persuasion.community",
+    "rss_url": "https://www.persuasion.community/feed",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Liberal-to-center-right publication founded 2020 by Yascha Mounk. Focuses on defending liberal democracy against authoritarianism from left and right. Expert contributors. Center-right on free speech and institutional issues."
   }
 ]

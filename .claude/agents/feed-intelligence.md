@@ -11,8 +11,8 @@ You own the full fetch → parse → deduplicate → cluster → summarize pipel
 
 ## Cost Policy
 
-**$0.00 — Claude Code CLI only. No API calls. No paid inference.**
-All summarization must be rule-based or template-driven. No LLM API calls in the pipeline.
+**$0.00 — Claude Code CLI only. Gemini 2.5 Flash free tier for cluster summarization only.**
+Bias analysis must remain rule-based. Cluster headlines/summaries/consensus/divergence use Gemini Flash (free tier, 15 calls/run cap). Fallback to rule-based when Gemini unavailable.
 
 ## Mandatory Reads
 
@@ -22,8 +22,10 @@ All summarization must be rule-based or template-driven. No LLM API calls in the
 4. `pipeline/fetchers/rss_fetcher.py` — RSS fetching, parallel execution, timeout handling
 5. `pipeline/fetchers/web_scraper.py` — Article text extraction, robots.txt compliance
 6. `pipeline/clustering/story_cluster.py` — TF-IDF similarity, agglomerative clustering
-7. `pipeline/ranker/importance_ranker.py` — v2 ranking with 7 signals
-8. `pipeline/categorizer/auto_categorize.py` — Topic classification
+7. `pipeline/summarizer/cluster_summarizer.py` — Gemini Flash cluster summarization
+8. `pipeline/summarizer/gemini_client.py` — Gemini API client with rate limiting + caps
+9. `pipeline/ranker/importance_ranker.py` — v2 ranking with 7 signals
+10. `pipeline/categorizer/auto_categorize.py` — Topic classification
 9. `data/sources.json` — 90 curated sources with RSS URLs
 10. `supabase/migrations/*.sql` — articles, story_clusters, cluster_articles schema
 
@@ -51,12 +53,14 @@ All summarization must be rule-based or template-driven. No LLM API calls in the
 - TF-IDF similarity thresholds in clustering must catch these without over-merging
 
 ### 4. Cluster Summarization (Frontend-Critical)
-- Generate meaningful cluster titles (not "Untitled Story" or first headline verbatim)
-- Build cluster summaries: 2-3 sentence overviews of what the story is about
-- Extract consensus_points: facts all sources agree on (JSONB array)
-- Extract divergence_points: where sources disagree in framing or emphasis (JSONB array)
-- All summarization must be extractive or template-based (no LLM calls)
-- Approach: TF-IDF keyword extraction + lead paragraph extraction + template sentences
+- **Primary**: Gemini 2.5 Flash generates headlines, summaries, consensus/divergence for clusters with 3+ sources
+  - See `pipeline/summarizer/cluster_summarizer.py` and `gemini_client.py`
+  - Hard-capped at 15 API calls per pipeline run (free tier protection)
+  - Clusters processed by source_count descending (biggest stories get Gemini first)
+- **Fallback**: Rule-based selection (best article title, longest summary) for remaining clusters
+- Gemini titles should be neutral, factual, 60-100 chars — no clickbait or questions
+- Gemini consensus/divergence should reference specific facts and source types
+- Monitor: is the 15-call cap sufficient? Are the right clusters getting Gemini treatment?
 
 ### 5. Section Assignment & Categorization Quality
 - Ensure articles get correct `section` (world vs us) — currently defaults to 'world'
@@ -94,7 +98,7 @@ All summarization must be rule-based or template-driven. No LLM API calls in the
 ## Constraints
 
 - **Max blast radius**: 4 Python files per run (fetchers + clustering + main.py)
-- **$0 constraint**: No LLM API calls. All summarization must be extractive/rule-based
+- **$0 constraint**: Gemini Flash free tier for summarization only (15 calls/run). Bias analysis remains rule-based
 - **Performance**: Total pipeline < 6 min
 - **Schema**: Cannot change database schema (propose migrations separately)
 - **Source list**: Cannot add/remove sources (that's source-curator's domain)

@@ -49,6 +49,8 @@ You audit the Supabase database for data quality issues. Articles, bias scores, 
 - Clusters without summaries
 - Clusters with "Untitled Story" title
 - Source count accuracy (matches actual linked articles)
+- Gemini vs rule-based content: clusters with 3+ sources should have richer consensus/divergence (specific facts, not generic templates like "Coverage maintains a measured tone")
+- Count of clusters with specific vs generic consensus points
 
 ### 5. Enrichment Quality
 - `bias_diversity` JSONB populated (% of clusters)

@@ -53,6 +53,7 @@
 - All 5 per-article analyzers now return structured rationale dicts (sub-scores + evidence) stored as JSONB
 - Framing analyzer is cluster-aware: step 6b re-runs framing with cluster context for cross-article omission detection
 - Content-based deduplication (step 4b) using TF-IDF + cosine similarity (threshold 0.85) with Union-Find transitive grouping; keeps higher-tier source articles
+- Gemini Flash summarization (step 7b): `pipeline/summarizer/` module (`gemini_client.py` + `cluster_summarizer.py`) generates headlines, summaries, consensus/divergence for clusters with 3+ sources using `gemini-2.5-flash` via `google-genai` SDK; hard-capped at 15 calls/run (30 RPD = 2% of 1500 RPD free tier); clusters processed by source_count descending; falls back to rule-based when unavailable or cap reached
 - Per-topic per-outlet tracking (Axis 6, step 9c): EMA-based (alpha=0.3) tracking in `source_topic_lean` table
 - Pipeline generates consensus/divergence points per cluster from bias score distributions
 - article_categories junction table populated by pipeline
@@ -61,6 +62,7 @@
 - Confidence scoring per article (text length + availability + signal strength)
 - Source list expanded from 90 to 97 sources (us_major=30, international=34, independent=33)
 - DB cleanup: updated_at auto-triggers on articles/story_clusters, redundant indexes dropped (migrations 005-006)
+- `google-genai>=1.0.0` added to `requirements.txt`; `GEMINI_API_KEY` env var added to pipeline.yml and `.env`
 
 ### Week 3: Deduplication + Clustering
 
@@ -91,9 +93,10 @@
 | 5.2 | **Auto-Categorization** (`categorizer/`) — topic classification using keyword matching + named entity categories (Politics, Economy, Tech, Health, Environment, Conflict, Science, Culture, Sports) | nlp-engineer |
 | 5.3 | **Importance Ranking** (`ranker/`) — composite score: source coverage breadth × editorial weight (top outlets per bias tier) × recency decay × geographic impact estimation | nlp-engineer |
 | 5.4 | **Editorial Weight Model** — top outlets in each bias category get higher importance multiplier; cross-spectrum coverage (left + center + right all covering it) gets maximum boost | nlp-engineer |
-| 5.5 | Integrate all analyzers into pipeline orchestrator: fetch → parse → deduplicate → cluster → analyze → rank → categorize → write | nlp-engineer |
-| 5.6 | End-to-end pipeline test with full analysis | pipeline-tester |
-| 5.7 | Benchmark bias scoring against manually labeled test set (50 articles) | bias-auditor |
+| 5.5 | **Gemini Flash summarization** (`summarizer/gemini_client.py` + `cluster_summarizer.py`) — step 7b: generate headlines, summaries, consensus/divergence for 3+-source clusters using `gemini-2.5-flash`; 15-call/run cap, descending source_count priority, rule-based fallback | nlp-engineer |
+| 5.6 | Integrate all analyzers into pipeline orchestrator: fetch → parse → deduplicate → cluster → analyze → re-frame → rank → summarize → categorize → store → enrich | nlp-engineer |
+| 5.7 | End-to-end pipeline test with full analysis | pipeline-tester |
+| 5.8 | Benchmark bias scoring against manually labeled test set (50 articles) | bias-auditor |
 
 **Phase 2 Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores (5 per-article + longitudinal per-source-per-topic tracking), content deduplication, story clusters, categories, and importance rankings. All stored in Supabase.
 
