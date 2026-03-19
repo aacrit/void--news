@@ -347,13 +347,13 @@ function LeanNeedle({ value, rationale, size }: {
         </div>
         {rationale ? (
           <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.5 }}>
-            {rationale.topLeftKeywords.length > 0 && (
+            {rationale.topLeftKeywords?.length > 0 && (
               <div style={{ marginBottom: 4 }}>
                 <span style={{ color: "var(--bias-left)" }}>Left signals:</span>{" "}
                 {rationale.topLeftKeywords.slice(0, 3).join(", ")}
               </div>
             )}
-            {rationale.topRightKeywords.length > 0 && (
+            {rationale.topRightKeywords?.length > 0 && (
               <div style={{ marginBottom: 4 }}>
                 <span style={{ color: "var(--bias-right)" }}>Right signals:</span>{" "}
                 {rationale.topRightKeywords.slice(0, 3).join(", ")}
@@ -619,7 +619,7 @@ function OpinionPrism({ value, opinionLabel, rationale, size }: {
         </div>
         {rationale ? (
           <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
-            {rationale.dominantSignals.length > 0 && (
+            {rationale.dominantSignals?.length > 0 && (
               <div style={{ marginBottom: 4 }}>
                 <span style={{ fontWeight: 500, color: "var(--fg-secondary)" }}>Key signals:</span>{" "}
                 {rationale.dominantSignals.map(s => SIGNAL_LABELS[s] || s).join(", ")}
