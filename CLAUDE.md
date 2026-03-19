@@ -502,6 +502,12 @@ void-news/
 - [ ] Mobile touch gesture refinement
 - [ ] Launch
 
+## Git Workflow
+
+- **Always push to `claude/*` branches** (e.g., `claude/feature-name`). Never push directly to `main`.
+- GitHub auto-merge is enabled — pushing to `claude/*` auto-creates a PR and merges to `main`.
+- No need to manually create PRs, merge, or push to `main`. Just push to `claude/*` and it handles the rest.
+
 ## Development Notes
 
 - Python 3.11+ for pipeline
