@@ -42,11 +42,8 @@ export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
 
-      {/* Source count + large bias stamp */}
+      {/* Bias indicator — lean-first with source count + type badge */}
       <div className="lead-story__footer">
-        <span className="source-count source-count--lead">
-          {story.source.count} sources
-        </span>
         <Sigil data={story.sigilData} size="lg" />
       </div>
     </article>

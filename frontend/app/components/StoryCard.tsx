@@ -2,7 +2,7 @@
 
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
-import { ArrowSquareOut, Stack } from "@phosphor-icons/react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 
 interface StoryCardProps {
@@ -52,12 +52,8 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
       {/* Summary */}
       <p className="story-card__summary">{story.summary}</p>
 
-      {/* Source count + bias stamp */}
+      {/* Bias indicator — lean bar + source count + type badge */}
       <div className="story-card__footer">
-        <span className="source-count">
-          <Stack size={14} weight="light" aria-hidden="true" />
-          {story.source.count} sources
-        </span>
         <Sigil data={story.sigilData} />
       </div>
     </article>
