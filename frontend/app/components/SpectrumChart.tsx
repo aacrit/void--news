@@ -38,6 +38,7 @@ const LEAN_ZONES: {
   key: LeanCategory;
   label: string;
   shortLabel: string;
+  desc: string;
   cssVar: string;
   bgVar: string;
 }[] = [
@@ -45,6 +46,7 @@ const LEAN_ZONES: {
     key: "far-left",
     label: "Far Left",
     shortLabel: "Far L",
+    desc: "Strongly progressive framing. Frequent left-coded language.",
     cssVar: "--bias-left",
     bgVar: "--spectrum-zone-far-left",
   },
@@ -52,6 +54,7 @@ const LEAN_ZONES: {
     key: "left",
     label: "Left",
     shortLabel: "Left",
+    desc: "Consistent left-leaning framing through a progressive lens.",
     cssVar: "--bias-left",
     bgVar: "--spectrum-zone-left",
   },
@@ -59,6 +62,7 @@ const LEAN_ZONES: {
     key: "center-left",
     label: "Center Left",
     shortLabel: "Ctr-L",
+    desc: "Leans progressive but maintains journalistic standards.",
     cssVar: "--bias-center-left",
     bgVar: "--spectrum-zone-center-left",
   },
@@ -66,6 +70,7 @@ const LEAN_ZONES: {
     key: "center",
     label: "Center",
     shortLabel: "Center",
+    desc: "Multiple perspectives. Aims for balance. Wire services.",
     cssVar: "--bias-center",
     bgVar: "--spectrum-zone-center",
   },
@@ -73,6 +78,7 @@ const LEAN_ZONES: {
     key: "center-right",
     label: "Center Right",
     shortLabel: "Ctr-R",
+    desc: "Leans conservative but covers diverse viewpoints.",
     cssVar: "--bias-center-right",
     bgVar: "--spectrum-zone-center-right",
   },
@@ -80,6 +86,7 @@ const LEAN_ZONES: {
     key: "right",
     label: "Right",
     shortLabel: "Right",
+    desc: "Consistent right-leaning framing through a conservative lens.",
     cssVar: "--bias-right",
     bgVar: "--spectrum-zone-right",
   },
@@ -87,6 +94,7 @@ const LEAN_ZONES: {
     key: "far-right",
     label: "Far Right",
     shortLabel: "Far R",
+    desc: "Strongly conservative framing. Frequent right-coded language.",
     cssVar: "--bias-right",
     bgVar: "--spectrum-zone-far-right",
   },
@@ -391,12 +399,13 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
 
       </div>
 
-      {/* Seven-point scale — colored dots + labels aligned to bar columns */}
+      {/* Seven-point scale — colored dots + labels + descriptions */}
       <div className="spectrum-scale">
         {LEAN_ZONES.map((zone) => (
           <div key={zone.key} className="spectrum-scale__item" data-lean={zone.key}>
             <span className="spectrum-scale__dot" data-lean={zone.key} />
             <span className="spectrum-scale__label">{zone.label}</span>
+            <span className="spectrum-scale__desc">{zone.desc}</span>
           </div>
         ))}
       </div>
