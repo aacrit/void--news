@@ -1,7 +1,7 @@
 ---
 name: bug-fixer
-description: Post-test bug remediation — ingests pipeline-tester/bias-auditor failures, root-cause groups, implements surgical fixes in analyzers/ranker/frontend
-model: opus
+description: "MUST BE USED for post-test bug fixing. Ingests pipeline-tester/bias-auditor failures, root-cause groups, implements surgical fixes in analyzers/ranker/frontend. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -84,3 +84,7 @@ NEXT STEPS:
   1. Run pipeline-tester to verify
   2. [any follow-up needed]
 ```
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

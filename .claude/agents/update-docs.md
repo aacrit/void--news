@@ -1,7 +1,7 @@
 ---
 name: update-docs
-description: Documentation maintenance — scans codebase and syncs CLAUDE.md, docs/*.md, and AGENT-TEAM.md with current state
-model: opus
+description: "MUST BE USED after significant code changes. Syncs CLAUDE.md, docs/*.md, and AGENT-TEAM.md with current codebase state. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -70,3 +70,7 @@ You scan the codebase for drift between documentation and reality, then update d
 - **Date stamp** — Update "Last updated" in every modified doc
 - **Remove outdated info** — Don't leave stale content
 - **Max blast radius**: 4 documentation files per run
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

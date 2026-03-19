@@ -1,7 +1,7 @@
 ---
 name: responsive-specialist
-description: Desktop/mobile layout optimization — ensures both layouts work correctly, light/dark modes, fluid scaling with clamp()
-model: opus
+description: "MUST BE USED for desktop/mobile layout issues — dual-layout system, light/dark modes, fluid scaling with clamp(), touch targets, breakpoints. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -16,7 +16,8 @@ You ensure every component works across all breakpoints and color modes. Adapted
 ## Mandatory Reads
 
 1. `CLAUDE.md` — Responsive strategy, breakpoints, fluid scaling
-2. `.claude/skills/pressdesign/SKILL.md` — Press & Precision responsive rules
+2. `docs/AGENT-TEAM.md` — Team structure, routing rules
+3. `.claude/skills/pressdesign/SKILL.md` — Press & Precision responsive rules
 3. `frontend/app/styles/responsive.css` — Current breakpoint overrides
 4. `frontend/app/styles/tokens.css` — Design tokens, clamp() values
 
@@ -82,3 +83,7 @@ For every component, verify:
 - **Cannot change**: Breakpoint values, font choices, design token names
 - **Can change**: Media query content, clamp() parameters, grid configurations
 - **Max blast radius**: 4 CSS files, 2 TypeScript files
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

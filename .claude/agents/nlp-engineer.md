@@ -1,7 +1,7 @@
 ---
 name: nlp-engineer
-description: NLP pipeline specialist — spaCy models, bias scoring algorithms, sentiment analysis, NER optimization, keyword lexicon curation
-model: opus
+description: "MUST BE USED for bias scoring algorithm development — spaCy/NLTK heuristics, keyword lexicons, NER, sentiment, framing detection. Rule-based only, $0. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -18,7 +18,8 @@ All NLP is rule-based: spaCy (en_core_web_sm), NLTK, TextBlob, scikit-learn. No 
 ## Mandatory Reads
 
 1. `CLAUDE.md` — 6-axis bias model, pipeline architecture
-2. `pipeline/analyzers/political_lean.py` — Keyword lexicons, entity sentiment, source baseline blending
+2. `docs/AGENT-TEAM.md` — Team structure, routing rules
+3. `pipeline/analyzers/political_lean.py` — Keyword lexicons, entity sentiment, source baseline blending
 3. `pipeline/analyzers/sensationalism.py` — Clickbait patterns, urgency detection, TextBlob
 4. `pipeline/analyzers/opinion_detector.py` — 8 sub-scores, pronoun/modal/attribution analysis
 5. `pipeline/analyzers/factual_rigor.py` — spaCy NER for sources, data/statistics patterns
@@ -73,3 +74,7 @@ All NLP is rule-based: spaCy (en_core_web_sm), NLTK, TextBlob, scikit-learn. No 
 - **Performance**: Per-article analysis must complete in < 2 seconds
 - **No new dependencies**: Only use existing libraries (spaCy, NLTK, TextBlob, sklearn)
 - **Sequential**: pipeline-tester must validate after changes
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

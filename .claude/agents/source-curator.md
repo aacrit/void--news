@@ -1,7 +1,7 @@
 ---
 name: source-curator
-description: Source credibility vetting, RSS/scrape config maintenance, 90-source list management across 3 tiers
-model: opus
+description: "MUST BE USED for source list management — credibility vetting, RSS URL maintenance, 90-source list across 3 tiers, tier balance. Read+write."
+model: sonnet
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -16,7 +16,8 @@ You manage the 90 curated news sources that feed the void --news pipeline. Every
 ## Mandatory Reads
 
 1. `CLAUDE.md` — Source curation principles, tier structure
-2. `data/sources.json` — The 90 curated sources
+2. `docs/AGENT-TEAM.md` — Team structure, routing rules
+3. `data/sources.json` — The 90 curated sources
 3. `pipeline/fetchers/rss_fetcher.py` — How sources are fetched
 4. `pipeline/fetchers/web_scraper.py` — How articles are scraped
 
@@ -93,3 +94,7 @@ A source must meet ALL of:
 - **Can fix**: Broken RSS URLs, typos, credibility_notes updates
 - **Max blast radius**: 1 file (data/sources.json)
 - **90-source cap**: Total must remain at 90 (30 per tier)
+
+## Output
+
+Return findings and changes to the main session. Do not attempt to spawn other agents.

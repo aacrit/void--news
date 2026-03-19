@@ -318,7 +318,7 @@ CEO (Aacrit)
   ├── Quality ————————— analytics-expert, bias-auditor, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
-  ├── Pipeline ————————— nlp-engineer, source-curator
+  ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
@@ -355,10 +355,11 @@ Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeli
 Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
 ```
 
-### Agent Routing
+### Agent Routing Rules
 
 | Task Pattern | Agent | Division |
 |---|---|---|
+| RSS feed health, article collection, deduplication, cluster summaries, frontend content quality | `feed-intelligence` | Pipeline |
 | Bias score accuracy, calibration, benchmarking | `analytics-expert` | Quality |
 | Ground-truth validation, known-outlet comparison | `bias-auditor` | Quality |
 | Pipeline output validation, clustering quality | `pipeline-tester` | Quality |

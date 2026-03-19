@@ -6,8 +6,13 @@ __pycache__/
 venv/
 
 # Next.js
+.next/
 frontend/.next/
 frontend/out/
+
+# Test artifacts
+frontend/test-results/
+frontend/uat-screenshots/
 
 # Environment
 .env
