@@ -326,10 +326,10 @@ function HomeContent() {
             </h2>
             <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
               The printing press is rolling &mdash; 200 curated sources are being
-              fetched, analyzed, and typeset. The first edition will appear shortly.
+              fetched, analyzed, and typeset. The {new Date().getUTCHours() < 17 ? "morning" : "evening"} edition will appear shortly.
             </p>
             <p className="edition-meta">
-              Editions printed daily at 11:00 AM &amp; 11:00 PM UTC
+              Morning edition: 11:00 AM UTC &middot; Evening edition: 11:00 PM UTC
             </p>
           </div>
         )}
