@@ -282,18 +282,6 @@ function HomeContent() {
       />
 
       <main id="main-content" className="page-main">
-        {/* Section title — newspaper tradition */}
-        <div className="section-header">
-          <h1 className="section-header__title">
-            {activeSection === "world" ? "World News" : "US News"}
-          </h1>
-          {lastUpdated && (
-            <span className="edition-meta">
-              Updated {timeAgo(lastUpdated)}
-            </span>
-          )}
-        </div>
-
         {/* Filter bar */}
         <FilterBar
           activeCategory={activeCategory}
