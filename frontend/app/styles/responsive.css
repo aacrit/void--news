@@ -171,9 +171,51 @@
     display: block;
   }
 
-  /* Extra padding at bottom for mobile nav */
+  /* --- Padding normalization ---
+     Replace the global var(--space-7) (~32px) horizontal padding with
+     var(--space-5) (~16px) on all edge-to-edge containers. Standard
+     mobile horizontal padding is 16px — matches iOS HIG and Material. */
+
   .page-main {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+    /* Extra bottom clearance for fixed bottom nav */
     padding-bottom: 80px;
+  }
+
+  .nav-inner {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  .site-footer {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  /* --- Section header — allow RefreshButton timestamp to wrap on narrow
+     viewports rather than overflow or compress the section title. */
+  .section-header {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  /* --- Lead story — remove ch constraint; the container itself is the
+     constraint on mobile. 28ch at hero size would exceed viewport width. */
+  .lead-story__headline {
+    max-width: none;
+  }
+
+  /* --- Lead story summary — same principle, container constrains width. */
+  .lead-story__summary {
+    max-width: none;
+  }
+
+  /* --- Source rows in Deep Dive — allow wrapping so tier badge + BiasLens
+     + external link don't overflow a 343px content area. */
+  .source-row {
+    flex-wrap: wrap;
   }
 
   /* Deep Dive: hide "Back to feed" text, keep arrow */
