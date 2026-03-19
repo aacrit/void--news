@@ -63,16 +63,6 @@ CEO (Aacrit)
 | `pipeline-tester` | Pipeline quality gate — article parsing, clustering, scoring validation | haiku | No (read-only) | After every pipeline change |
 | `bug-fixer` | Post-test bug remediation, root-cause grouping, surgical fixes | sonnet | Yes | After test failures |
 
-**Sequential Quality Cycle:**
-```
-pipeline-tester → (review results) → bug-fixer → pipeline-tester (retest)
-```
-
-**Bias Audit Cycle:**
-```
-analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
-```
-
 ### Infrastructure Division (3 agents)
 
 | Agent | Purpose | Model | Write Access | Trigger |
@@ -90,29 +80,25 @@ analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
 | `responsive-specialist` | Desktop/mobile layout optimization, light/dark modes | sonnet | Yes | New components, responsive bugs |
 | `uat-tester` | Browser testing — clicks, resizes, screenshots, severity-ranked findings | haiku | No (read-only) | After frontend changes |
 
-**Sequential Frontend Cycle:**
-```
-frontend-builder → responsive-specialist → uat-tester → frontend-fixer
-```
-
-### Pipeline Division (2 agents)
+### Pipeline Division (3 agents)
 
 | Agent | Purpose | Model | Write Access | Trigger |
 |-------|---------|-------|-------------|---------|
-| `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | opus | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 90-source list | opus | Yes | Source list changes |
+| `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization, frontend content | sonnet | Yes | Pipeline development, content quality issues |
+| `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | sonnet | Yes | Bias engine development |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 90-source list | sonnet | Yes | Source list changes |
 
 ### Security Division (1 agent)
 
 | Agent | Purpose | Model | Write Access | Trigger |
 |-------|---------|-------|-------------|---------|
-| `void-ciso` | Security audit — secrets, RLS, CORS, injection, OWASP, dependencies | opus | No (read-only) | Periodic, before launch |
+| `void-ciso` | Security audit — secrets, RLS, CORS, injection, OWASP, dependencies | haiku | No (read-only) | Periodic, before launch |
 
 ### Product Division (1 agent)
 
 | Agent | Purpose | Model | Write Access | Trigger |
 |-------|---------|-------|-------------|---------|
-| `ceo-advisor` | Strategic product counsel — roadmap, competitive positioning, priorities | opus | No (read-only) | Strategic decisions |
+| `ceo-advisor` | Strategic product counsel — roadmap, competitive positioning, priorities | haiku | No (read-only) | Strategic decisions |
 
 ### Branding Division (1 agent)
 
@@ -122,10 +108,40 @@ frontend-builder → responsive-specialist → uat-tester → frontend-fixer
 
 ---
 
+## Sequential Cycles
+
+**Quality Cycle:**
+```
+pipeline-tester → (review results) → bug-fixer → pipeline-tester (retest)
+```
+
+**Bias Audit Cycle:**
+```
+analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
+```
+
+**Frontend Cycle:**
+```
+frontend-builder → responsive-specialist → uat-tester → frontend-fixer
+```
+
+**Content Quality Cycle:**
+```
+feed-intelligence → pipeline-tester → (if issues) → bug-fixer → pipeline-tester
+```
+
+**Full Pipeline Development Cycle:**
+```
+feed-intelligence (ingestion) → nlp-engineer (bias) → pipeline-tester (validate) → bug-fixer (fix) → pipeline-tester (retest)
+```
+
+---
+
 ## Agent Routing Rules
 
 | Task Pattern | Agent | Division |
 |---|---|---|
+| RSS feed health, article collection, deduplication, cluster summaries, frontend content quality | `feed-intelligence` | Pipeline |
 | Bias score accuracy, calibration, benchmarking | `analytics-expert` | Quality |
 | Ground-truth validation, known-outlet comparison | `bias-auditor` | Quality |
 | Pipeline output validation, clustering quality | `pipeline-tester` | Quality |
