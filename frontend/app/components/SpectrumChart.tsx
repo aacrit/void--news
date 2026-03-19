@@ -316,6 +316,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
       {/* ---- Desktop: Horizontal layout ---- */}
       <div className="spectrum-chart__desktop" aria-hidden="false">
         {/* Above bar: US Major sources */}
+        <span className="spectrum-section-label">US Major</span>
         <div className={`spectrum-above${expanded ? "" : " spectrum-above--collapsed"}`} aria-label="US Major outlets">
           <div className="spectrum-above__grid">
             {LEAN_ZONES.map((zone) => (
@@ -359,6 +360,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
         </div>
 
         {/* Below bar: International + Independent */}
+        <span className="spectrum-section-label">International &amp; Independent</span>
         <div className={`spectrum-below${expanded ? "" : " spectrum-below--collapsed"}`} aria-label="International and Independent outlets">
           <div className="spectrum-below__grid">
             {LEAN_ZONES.map((zone) => (
@@ -387,35 +389,25 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
           </div>
         </div>
 
-        {/* Seven-point scale legend — aligned to same 7-col grid */}
-        <div className="spectrum-legend-grid">
-          {LEAN_ZONES.map((zone) => (
-            <div key={zone.key} className="spectrum-legend-cell" data-lean={zone.key}>
-              <span className="spectrum-legend-cell__label">{zone.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Expand/collapse toggle */}
-        {!expanded && (
-          <button
-            className="spectrum-expand-btn"
-            onClick={() => setExpanded(true)}
-            aria-expanded={false}
-          >
-            Show all {sources.length} sources
-          </button>
-        )}
-        {expanded && (
-          <button
-            className="spectrum-expand-btn"
-            onClick={() => setExpanded(false)}
-            aria-expanded={true}
-          >
-            Show fewer
-          </button>
-        )}
       </div>
+
+      {/* Seven-point scale legend — aligned to same 7-col grid (outside desktop/mobile toggle) */}
+      <div className="spectrum-legend-grid spectrum-legend-grid--desktop">
+        {LEAN_ZONES.map((zone) => (
+          <div key={zone.key} className="spectrum-legend-cell" data-lean={zone.key}>
+            <span className="spectrum-legend-cell__label">{zone.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Expand/collapse toggle */}
+      <button
+        className="spectrum-expand-btn spectrum-expand-btn--desktop"
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+      >
+        {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
+      </button>
 
       {/* ---- Mobile: Vertical layout ---- */}
       <div className="spectrum-chart__mobile" aria-hidden="false">
