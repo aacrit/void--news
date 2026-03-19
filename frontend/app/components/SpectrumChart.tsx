@@ -391,18 +391,19 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
 
       </div>
 
-      {/* Seven-point scale legend — aligned to same 7-col grid (outside desktop/mobile toggle) */}
-      <div className="spectrum-legend-grid spectrum-legend-grid--desktop">
+      {/* Seven-point scale — colored dots + labels aligned to bar columns */}
+      <div className="spectrum-scale">
         {LEAN_ZONES.map((zone) => (
-          <div key={zone.key} className="spectrum-legend-cell" data-lean={zone.key}>
-            <span className="spectrum-legend-cell__label">{zone.label}</span>
+          <div key={zone.key} className="spectrum-scale__item" data-lean={zone.key}>
+            <span className="spectrum-scale__dot" data-lean={zone.key} />
+            <span className="spectrum-scale__label">{zone.label}</span>
           </div>
         ))}
       </div>
 
       {/* Expand/collapse toggle */}
       <button
-        className="spectrum-expand-btn spectrum-expand-btn--desktop"
+        className="spectrum-expand-btn"
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
       >
