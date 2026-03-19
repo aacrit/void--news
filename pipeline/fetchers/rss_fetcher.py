@@ -5,12 +5,36 @@ Fetches articles from RSS feeds using feedparser, with parallel
 execution via ThreadPoolExecutor.
 """
 
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 import feedparser
 import requests
+
+
+# Patterns to strip from the beginning of RSS summaries
+# Photo credits, file photo prefixes, and image attributions
+_PHOTO_CREDIT_PATTERN = re.compile(
+    r"^(?:FILE\s*(?:PHOTO\s*)?[-\u2014\u2013]\s*)"  # FILE - , FILE PHOTO -
+    r"|^(?:(?:Photo|Image|Credit|Caption)\s*:\s*)"    # Photo: , Image: , Credit:
+    r"|^(?:[\w\s,.']+\s+(?:/|via)\s+[\w\s,.]+(?:Images?|Photos?|Press|News|AFP|Reuters|AP|Getty|Corbis|Sipa|Alamy|EPA|Zuma|Anadolu|Xinhua)\s*)"  # Name / Agency
+, re.IGNORECASE | re.MULTILINE)
+
+
+def _clean_summary(summary: str) -> str:
+    """Strip photo credits and file photo prefixes from the start of summaries."""
+    if not summary:
+        return summary
+    # Apply pattern repeatedly (some summaries stack credits)
+    cleaned = summary
+    for _ in range(3):
+        new = _PHOTO_CREDIT_PATTERN.sub("", cleaned, count=1).strip()
+        if new == cleaned:
+            break
+        cleaned = new
+    return cleaned
 
 
 # Maximum number of parallel feed fetches
@@ -68,6 +92,9 @@ def _parse_entry(entry: dict, source: dict) -> dict:
     if "<" in summary:
         from bs4 import BeautifulSoup
         summary = BeautifulSoup(summary, "html.parser").get_text(strip=True)
+
+    # Strip photo credits and file photo prefixes from start of summary
+    summary = _clean_summary(summary)
 
     # Truncate very long summaries
     if len(summary) > 1000:
