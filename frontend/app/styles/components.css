@@ -142,6 +142,9 @@
   letter-spacing: -0.01em;
   color: var(--fg-primary);
   margin-bottom: var(--space-3);
+  /* Newspaper measure: hero headlines should not exceed ~20 words per line.
+     At clamp(2rem..4rem), 28ch keeps lines punchy and readable. */
+  max-width: 28ch;
 }
 
 .lead-story__summary {
@@ -149,7 +152,9 @@
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--fg-secondary);
-  max-width: 65ch;
+  /* Match headline measure proportionally — wider than headline since
+     body text is smaller, but still constrained for readability. */
+  max-width: 75ch;
   margin-bottom: var(--space-4);
 }
 
