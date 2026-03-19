@@ -752,6 +752,12 @@
   flex-wrap: wrap;
 }
 
+/* ---- Deep Dive Source Icons --------------------------------------------- */
+.dd-source-icon:hover {
+  transform: scale(1.15);
+  border-color: var(--fg-tertiary) !important;
+}
+
 /* ---- Footer ------------------------------------------------------------ */
 .footer-masthead {
   font-family: var(--font-editorial);
