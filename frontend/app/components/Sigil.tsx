@@ -81,6 +81,16 @@ function leanLabel(v: number): string {
   return "Far Right";
 }
 
+function leanShort(v: number): string {
+  if (v <= 20) return "Far L";
+  if (v <= 35) return "Left";
+  if (v <= 45) return "Ctr-L";
+  if (v <= 55) return "Center";
+  if (v <= 65) return "Ctr-R";
+  if (v <= 80) return "Right";
+  return "Far R";
+}
+
 function qualityColor(v: number, invert = false): string {
   const c = gc(); const s = invert ? 100 - v : v;
   if (s <= 30) return c["--sense-low"];
@@ -144,9 +154,9 @@ function DataMark({ data, size, mounted }: {
   const coverage = Math.min(data.sourceCount / 10, 1);
   const fillLen = coverage * CIRC;
 
-  const px = size === "lg" ? 34 : 22;
-  const showNum = size === "lg" && data.sourceCount > 0;
-  const numSize = 7;
+  const px = size === "lg" ? 42 : 28;
+  const showNum = data.sourceCount > 0;
+  const numSize = size === "lg" ? 8 : 6;
 
   return (
     <svg
@@ -488,6 +498,9 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
 
   const isOp = data.opinionFact > 50;
   const ll = leanLabel(data.politicalLean);
+  const ls = leanShort(data.politicalLean);
+  const lc = leanColor(data.politicalLean);
+  const typeCol = isOp ? "var(--type-opinion)" : "var(--type-reporting)";
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
@@ -500,15 +513,64 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
       tabIndex={0} role="button" aria-expanded={open} aria-label={aria}
       aria-controls={open ? tooltipId : undefined}
       style={{
-        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        display: "inline-flex", alignItems: "center",
+        gap: size === "lg" ? 8 : 5,
         cursor: "pointer", position: "relative",
-        minWidth: 44, minHeight: 44,
+        minHeight: 44,
         opacity: data.pending ? 0.3 : 1,
         filter: data.pending ? "grayscale(1)" : "none",
         transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
     >
+      {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} />
+
+      {/* Text labels — makes the mark self-explanatory */}
+      <div style={{
+        display: "flex", flexDirection: "column",
+        gap: size === "lg" ? 3 : 1,
+        opacity: mounted ? 1 : 0,
+        transition: "opacity 350ms var(--ease-out) 350ms",
+      }}>
+        {/* Lean label — the hero text */}
+        <span style={{
+          fontFamily: "var(--font-data)", fontWeight: 600,
+          fontSize: size === "lg" ? 11 : 9,
+          color: lc,
+          lineHeight: 1,
+          letterSpacing: "0.02em",
+        }}>
+          {size === "lg" ? ll : ls}
+        </span>
+
+        {/* Source count + type badge on one line */}
+        <div style={{
+          display: "flex", alignItems: "center",
+          gap: size === "lg" ? 5 : 3,
+        }}>
+          <span style={{
+            fontFamily: "var(--font-data)",
+            fontSize: size === "lg" ? 9 : 7,
+            color: "var(--fg-tertiary)",
+            lineHeight: 1,
+          }}>
+            {data.sourceCount} src
+          </span>
+          <span style={{
+            fontFamily: "var(--font-data)", fontWeight: 600,
+            fontSize: size === "lg" ? 8 : 6,
+            color: typeCol,
+            lineHeight: 1,
+            letterSpacing: "0.04em",
+            padding: "1px 3px",
+            border: `1px solid ${typeCol}`,
+            borderRadius: 1,
+            opacity: 0.75,
+          }}>
+            {isOp ? "OPN" : "RPT"}
+          </span>
+        </div>
+      </div>
 
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
