@@ -637,13 +637,22 @@ def main():
 
         if url_list:
             existing_urls: set[str] = set()
-            # Query in chunks of 500 to stay within Supabase query size limits
-            chunk_size = 500
+            # Query in chunks of 200 to stay within Supabase/PostgREST limits
+            chunk_size = 200
             for i in range(0, len(url_list), chunk_size):
                 url_chunk = url_list[i:i + chunk_size]
-                result = supabase.table("articles").select("url").in_("url", url_chunk).execute()
-                if result.data:
-                    existing_urls.update(r["url"] for r in result.data)
+                # Retry up to 3 times with backoff for transient 520 errors
+                for attempt in range(3):
+                    try:
+                        result = supabase.table("articles").select("url").in_("url", url_chunk).execute()
+                        if result.data:
+                            existing_urls.update(r["url"] for r in result.data)
+                        break
+                    except Exception as chunk_err:
+                        if attempt < 2:
+                            time.sleep(2 ** attempt)  # 1s, 2s backoff
+                        else:
+                            raise chunk_err
 
             # Keep articles whose URL is new (not in DB) or has no URL (include for safety)
             articles_to_scrape = [
