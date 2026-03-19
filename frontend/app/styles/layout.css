@@ -199,6 +199,16 @@
   background-color: var(--bg-secondary);
 }
 
+/* Clickable source row — whole row is a link */
+.source-row--link:hover {
+  background-color: var(--bg-secondary);
+}
+
+.source-row--link:hover .source-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ---- Screen Reader Only ------------------------------------------------ */
 .sr-only {
   position: absolute;

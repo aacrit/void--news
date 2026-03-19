@@ -12,6 +12,7 @@ import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } fr
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import BiasLens from "./BiasLens";
+import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 
 /* ---------------------------------------------------------------------------
@@ -42,6 +43,65 @@ const TIER_COLORS: Record<StorySource["tier"], string> = {
   international: "var(--type-reporting)",
   independent: "var(--sense-low)",
 };
+
+/* --- Favicon helper ------------------------------------------------------ */
+
+function getDomain(url: string): string {
+  try { return new URL(url).hostname.replace(/^www\./, ""); }
+  catch { return ""; }
+}
+
+function faviconUrl(articleUrl: string): string {
+  const domain = getDomain(articleUrl);
+  if (!domain) return "";
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+}
+
+/* --- Bias axis helpers --------------------------------------------------- */
+
+interface BiasAxis {
+  label: string;
+  value: number;
+  description: string;
+  color: string;
+  invert?: boolean;
+}
+
+function getBiasAxes(scores: Story["biasScores"]): BiasAxis[] {
+  return [
+    {
+      label: "Political Lean",
+      value: scores.politicalLean,
+      description: scores.politicalLean <= 35 ? "Left-leaning" : scores.politicalLean <= 65 ? "Center" : "Right-leaning",
+      color: scores.politicalLean <= 35 ? "var(--bias-left)" : scores.politicalLean <= 65 ? "var(--bias-center)" : "var(--bias-right)",
+    },
+    {
+      label: "Sensationalism",
+      value: scores.sensationalism,
+      description: scores.sensationalism <= 25 ? "Measured" : scores.sensationalism <= 50 ? "Moderate" : scores.sensationalism <= 75 ? "Elevated" : "Inflammatory",
+      color: scores.sensationalism <= 30 ? "var(--sense-low)" : scores.sensationalism <= 60 ? "var(--sense-medium)" : "var(--sense-high)",
+    },
+    {
+      label: "Opinion vs Fact",
+      value: scores.opinionFact,
+      description: scores.opinionFact <= 25 ? "Reporting" : scores.opinionFact <= 50 ? "Analysis" : scores.opinionFact <= 75 ? "Opinion" : "Editorial",
+      color: scores.opinionFact <= 25 ? "var(--type-reporting)" : scores.opinionFact <= 50 ? "var(--type-analysis)" : "var(--type-opinion)",
+    },
+    {
+      label: "Factual Rigor",
+      value: scores.factualRigor,
+      description: scores.factualRigor >= 70 ? "High" : scores.factualRigor >= 40 ? "Moderate" : "Low",
+      color: scores.factualRigor >= 70 ? "var(--rigor-high)" : scores.factualRigor >= 40 ? "var(--rigor-medium)" : "var(--rigor-low)",
+      invert: true,
+    },
+    {
+      label: "Framing",
+      value: scores.framing,
+      description: scores.framing <= 25 ? "Neutral" : scores.framing <= 55 ? "Some framing" : "Heavy framing",
+      color: scores.framing <= 30 ? "var(--sense-low)" : scores.framing <= 60 ? "var(--sense-medium)" : "var(--sense-high)",
+    },
+  ];
+}
 
 /* --- Coverage breakdown bar component ------------------------------------ */
 
@@ -309,6 +369,13 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
           </div>
+
+          {/* Cluster-level bias indicator */}
+          {story.sigilData && !story.sigilData.pending && (
+            <div style={{ marginTop: "var(--space-3)" }}>
+              <Sigil data={story.sigilData} size="lg" />
+            </div>
+          )}
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
@@ -335,6 +402,41 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)" }}>
               {story.summary}
             </p>
+          </section>
+
+          {/* ---- Section: Bias Analysis ---------------------------------- */}
+          <section aria-labelledby="dd-bias" style={{ marginBottom: "var(--space-6)" }}>
+            <h3 id="dd-bias" className="section-heading">Bias analysis</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {getBiasAxes(story.biasScores).map((axis) => (
+                <div key={axis.label} className="dd-bias-row">
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 3 }}>
+                    <span style={{
+                      fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
+                      fontWeight: 500, letterSpacing: "0.04em", textTransform: "uppercase" as const,
+                      color: "var(--fg-tertiary)",
+                    }}>
+                      {axis.label}
+                    </span>
+                    <span style={{
+                      fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
+                      fontWeight: 600, color: axis.color,
+                    }}>
+                      {axis.description}
+                    </span>
+                  </div>
+                  <div style={{
+                    height: 4, backgroundColor: "var(--border-subtle)", borderRadius: 2, overflow: "hidden",
+                  }}>
+                    <div style={{
+                      width: `${axis.value}%`, height: "100%",
+                      backgroundColor: axis.color, borderRadius: 2,
+                      transition: "width 400ms var(--ease-out)",
+                    }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
 
           {/* ---- Section: Where sources agree ----------------------------- */}
@@ -370,40 +472,82 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           {/* ---- Section: Source Coverage List ----------------------------- */}
           {sources.length > 0 && (
             <section aria-labelledby="dd-sources" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-sources" className="section-heading">Source coverage</h3>
+              <h3 id="dd-sources" className="section-heading">Sources</h3>
               <div role="list" aria-label="Sources covering this story">
-                {sources.map((src, i) => (
-                  <div key={`${src.name}-${i}`} role="listitem" className="source-row">
+                {sources.map((src, i) => {
+                  const domain = getDomain(src.url);
+                  const favicon = faviconUrl(src.url);
+
+                  return (
                     <a
+                      key={`${src.name}-${i}`}
+                      role="listitem"
                       href={src.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="source-link"
+                      className="source-row source-row--link"
+                      style={{ textDecoration: "none", color: "inherit" }}
                     >
-                      {src.name}
+                      {/* Favicon */}
+                      {favicon ? (
+                        <img
+                          src={favicon}
+                          alt=""
+                          width={20}
+                          height={20}
+                          style={{ borderRadius: 2, flexShrink: 0 }}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span style={{
+                          width: 20, height: 20, borderRadius: 2, flexShrink: 0,
+                          backgroundColor: TIER_COLORS[src.tier],
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
+                          color: "var(--bg-primary)", opacity: 0.7,
+                        }}>
+                          {src.name.charAt(0)}
+                        </span>
+                      )}
+
+                      {/* Source name + domain */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span className="source-link" style={{ display: "block" }}>
+                          {src.name}
+                        </span>
+                        {domain && (
+                          <span style={{
+                            fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
+                            color: "var(--fg-muted)", display: "block", marginTop: 1,
+                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const,
+                          }}>
+                            {domain}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Tier badge */}
+                      <span
+                        className="tier-badge"
+                        style={{ color: TIER_COLORS[src.tier], border: `1px solid ${TIER_COLORS[src.tier]}` }}
+                        title={TIER_FULL_LABELS[src.tier]}
+                      >
+                        {TIER_LABELS[src.tier]}
+                      </span>
+
+                      {/* Per-source bias lens */}
+                      {src.lensData && <BiasLens lensData={src.lensData} size="sm" />}
+
+                      {/* External link arrow */}
+                      <ArrowSquareOut
+                        size={16}
+                        weight="regular"
+                        aria-hidden="true"
+                        style={{ color: "var(--fg-muted)", flexShrink: 0 }}
+                      />
                     </a>
-
-                    <span
-                      className="tier-badge"
-                      style={{ color: TIER_COLORS[src.tier], border: `1px solid ${TIER_COLORS[src.tier]}` }}
-                      title={TIER_FULL_LABELS[src.tier]}
-                    >
-                      {TIER_LABELS[src.tier]}
-                    </span>
-
-                    {src.lensData && <BiasLens lensData={src.lensData} size="sm" />}
-
-                    <a
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Open ${src.name} article in new tab`}
-                      className="external-link-icon"
-                    >
-                      <ArrowSquareOut size={16} weight="regular" aria-hidden="true" />
-                    </a>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}
