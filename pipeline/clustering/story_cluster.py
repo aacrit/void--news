@@ -189,19 +189,18 @@ def _generate_cluster_summary(articles: list[dict]) -> str:
 
 
 # --- Content-based section markers ---
+# Only unambiguous US-specific terms. Removed overly broad terms that trigger
+# on international reporting: "governor", "senator", "congressman" (other
+# countries have these), "democrat"/"republican" (too common in any US political
+# reporting), and US state names (e.g. "georgia" is also a country).
 US_MARKERS = {
-    'congress', 'senate', 'house of representatives', 'white house',
-    'capitol hill', 'supreme court', 'pentagon', 'state department',
-    'fbi', 'cia', 'dhs', 'fema', 'epa', 'fda', 'sec', 'fed ',
+    'congress', 'house of representatives', 'white house',
+    'capitol hill', 'pentagon', 'state department',
+    'fbi', 'cia', 'dhs', 'fema', 'epa', 'fda', 'sec',
     'federal reserve', 'wall street', 'medicare', 'medicaid',
-    'democrat', 'republican', 'gop', 'dnc', 'rnc',
-    'governor', 'senator', 'congressman',
-    # US state names (most newsworthy)
-    'california', 'texas', 'florida', 'new york', 'illinois',
-    'pennsylvania', 'ohio', 'georgia', 'michigan', 'virginia',
-    'north carolina', 'arizona', 'wisconsin', 'colorado',
-    # Key US political figures
-    'trump', 'biden', 'harris', 'desantis', 'pelosi', 'mcconnell',
+    'gop', 'dnc', 'rnc',
+    # Key US political figures (unambiguous)
+    'trump', 'biden', 'desantis', 'pelosi', 'mcconnell',
 }
 
 INTL_MARKERS = {
@@ -211,6 +210,15 @@ INTL_MARKERS = {
     'africa', 'asia', 'latin america', 'pacific',
     'india', 'japan', 'south korea', 'taiwan', 'syria',
     'saudi arabia', 'turkey', 'brazil', 'mexico',
+    # Additional international markers for better balance
+    'minister', 'parliament', 'european', 'beijing', 'moscow',
+    'kiev', 'kyiv', 'jerusalem', 'tehran', 'kabul',
+    'g7', 'g20', 'world cup', 'olympics',
+    'prime minister', 'chancellor', 'monarchy',
+    'hong kong', 'myanmar', 'afghanistan', 'iraq', 'yemen',
+    'sudan', 'somalia', 'ethiopia', 'nigeria', 'kenya',
+    'australia', 'new zealand', 'philippines', 'indonesia',
+    'pakistan', 'bangladesh', 'sri lanka', 'vietnam',
 }
 
 
@@ -222,7 +230,7 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
 
     Priority:
     1. Check cluster title + summary for US vs. international markers
-    2. If clear signal (2+ markers one side, 0 the other), use that
+    2. If clear signal (3+ markers one side, 0 the other), override
     3. Otherwise fall back to majority vote of article sections
     """
     # Content-based detection from cluster title + summary
@@ -231,14 +239,15 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
     us_count = sum(1 for m in US_MARKERS if m in text)
     intl_count = sum(1 for m in INTL_MARKERS if m in text)
 
-    # Clear US signal: 2+ US markers, no international markers
-    if us_count >= 2 and intl_count == 0:
+    # Override only when signal is clearly one-sided:
+    # Require 3+ markers on one side AND 0 on the other.
+    # If both sides have markers, keep source-based assignment (no override).
+    if us_count >= 3 and intl_count == 0:
         return "us"
-    # Clear international signal: 2+ intl markers, no US markers
-    if intl_count >= 2 and us_count == 0:
+    if intl_count >= 3 and us_count == 0:
         return "world"
 
-    # Ambiguous or insufficient content signal — fall back to source-based
+    # Ambiguous, mixed, or insufficient content signal — fall back to source-based
     sections: Counter = Counter()
     for article in articles:
         section = article.get("section", "") or ""

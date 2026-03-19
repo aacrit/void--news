@@ -8,10 +8,54 @@ execution via ThreadPoolExecutor.
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import feedparser
 import requests
+
+
+# --- Junk content filters (applied before scraping to save time) ---
+
+# URLs that are not news articles (pagination, author pages, admin, etc.)
+JUNK_URL_PATTERNS = [
+    re.compile(p, re.IGNORECASE)
+    for p in (
+        r'/page/\d+',           # Pagination
+        r'/author/',            # Author pages
+        r'/tag/',               # Tag listing pages
+        r'/category/',          # Category listing pages
+        r'/search\?',           # Search results
+        r'/wp-admin',           # WordPress admin pages
+        r'/feed/?$',            # Feed pages themselves
+        r'/gallery/',           # Photo galleries (not articles)
+        r'/slideshow/',         # Slideshows
+    )
+]
+
+# Titles that signal non-article content
+JUNK_TITLE_PATTERNS = [
+    re.compile(p, re.IGNORECASE)
+    for p in (
+        r'^donate',             # Donation pages
+        r'^subscribe',          # Subscription pages
+        r'^sign\s*up',          # Sign up pages
+        r'^sponsored[:\s]',     # Sponsored content
+        r'- page \d+',          # Pagination in title
+        r'^photo:?\s',          # Photo captions
+        r'^video:?\s',          # Video-only content
+        r'^photos?:?\s',        # Photo galleries
+        r'^gallery:?\s',        # Gallery pages
+        r'everything you need to know about .+ day\b',  # Commerce/shopping roundups
+        r'\bbest .+ deals\b',   # Shopping deal roundups
+        r'\bbest .+ gifts\b',   # Gift guide roundups
+    )
+]
+
+# Maximum article age in days (reject stale evergreen content)
+MAX_ARTICLE_AGE_DAYS = 3
+
+# Minimum title length (catches junk like "CNN", "BTS", etc.)
+MIN_TITLE_LENGTH = 10
 
 
 # Patterns to strip from the beginning of RSS summaries
@@ -142,10 +186,45 @@ def _fetch_single_feed(source: dict) -> list[dict]:
             return []
 
         articles = []
+        skipped = 0
         for entry in feed.entries:
+            # --- Junk content filtering (before parse/scrape) ---
+            url = entry.get("link", "")
+            title = entry.get("title", "") or ""
+
+            # A. Reject junk URLs (pagination, author pages, etc.)
+            if url and any(p.search(url) for p in JUNK_URL_PATTERNS):
+                skipped += 1
+                continue
+
+            # B. Reject junk titles
+            if title and any(p.search(title) for p in JUNK_TITLE_PATTERNS):
+                skipped += 1
+                continue
+
+            # C. Minimum title length
+            if len(title.strip()) < MIN_TITLE_LENGTH:
+                skipped += 1
+                continue
+
+            # D. Reject stale content (older than MAX_ARTICLE_AGE_DAYS)
+            published_parsed = entry.get("published_parsed") or entry.get("updated_parsed")
+            if published_parsed:
+                try:
+                    pub_dt = datetime(*published_parsed[:6], tzinfo=timezone.utc)
+                    cutoff = datetime.now(timezone.utc) - timedelta(days=MAX_ARTICLE_AGE_DAYS)
+                    if pub_dt < cutoff:
+                        skipped += 1
+                        continue
+                except (TypeError, ValueError):
+                    pass  # Can't parse date — don't filter, let it through
+
             article = _parse_entry(entry, source)
             if article["url"]:
                 articles.append(article)
+
+        if skipped:
+            print(f"  [filter] {source.get('name', 'unknown')}: skipped {skipped} junk/stale entries")
 
         return articles
 
