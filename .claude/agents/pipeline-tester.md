@@ -47,6 +47,15 @@ You are the automated quality gate for the void --news pipeline. After every pip
 - Source count matches actual linked articles
 - No article appears in multiple clusters
 
+### 3b. Gemini Summarization Quality
+- Clusters with 3+ sources should have Gemini-generated titles (neutral, factual, 60-100 chars)
+- Gemini summaries should be 2-3 sentences, factual, no editorializing
+- Consensus points should reference specific details (not generic "sources agree")
+- Divergence points should reference source types and specific framing differences
+- Compare Gemini vs rule-based clusters: Gemini titles should be noticeably better
+- Check `pipeline/summarizer/gemini_client.py` call cap (15/run) isn't being hit prematurely
+- Verify fallback: clusters that didn't get Gemini still have valid rule-based titles/summaries
+
 ### 4. Ranking Quality
 - `headline_rank` has variance (not all same score)
 - `divergence_score` is populated for multi-source clusters

@@ -12,7 +12,7 @@ Adapted from DondeAI's proven agent ecosystem. Every principle below is inherite
 2. **Read-First Protocol** — Every agent reads CLAUDE.md + relevant docs before any work.
 3. **Execution Protocol** — Assess → Plan → Build → Verify → Report. No exceptions.
 4. **Max Blast Radius** — Each agent has bounded file modification limits (max 4 CSS, 2 JS/TS, 3 Python per run).
-5. **$0 Cost — Claude Max CLI Only** — All AI/LLM work uses Claude Code CLI (claude-opus via Max subscription). No API-based LLM calls anywhere. No OpenAI, no Anthropic API keys, no paid inference. This is a hard constraint.
+5. **$0 Cost — Claude Max CLI Only** — All agent/development AI work uses Claude Code CLI (claude-opus via Max subscription). No paid inference anywhere. The only permitted external API call is Gemini Flash for pipeline cluster summarization, capped at 15 calls/run on its free tier. No OpenAI, no paid Anthropic API, no other paid inference. This is a hard constraint.
 6. **Parallel-Safe vs Sequential** — Read-only agents can run simultaneously. Write agents require sequencing.
 7. **Model Tiering** — Opus for creative agents, Sonnet for execution agents, Haiku for read-only agents.
 
@@ -21,17 +21,18 @@ Adapted from DondeAI's proven agent ecosystem. Every principle below is inherite
 ```
 COST BUDGET: $0.00 — ABSOLUTE CEILING
 
-All AI work runs through Claude Code CLI (Max subscription).
-No API keys. No per-token billing. No exceptions.
+All AI agent work runs through Claude Code CLI (Max subscription).
+No paid inference. No exceptions.
 
-Pipeline NLP: Rule-based only (spaCy, NLTK, TextBlob) — $0
+Pipeline NLP (bias analysis): Rule-based only (spaCy, NLTK, TextBlob) — $0
+Pipeline summarization: Gemini Flash free tier (15 calls/run cap, 30 RPD = 2% of 1500 RPD limit) — $0
 Database: Supabase free tier — $0
 Hosting: GitHub Pages — $0
 CI/CD: GitHub Actions free tier — $0
 Agent work: Claude Code CLI (Max subscription) — $0
 ```
 
-**Before running ANY command that could incur API costs:** Stop. There are no API keys. If a task seems to require paid inference, redesign the approach to use rule-based NLP or Claude CLI.
+**Before running ANY command that could incur API costs:** Stop. The only permitted external API is Gemini Flash via its free tier, hard-capped at 15 calls/run. If a task seems to require paid inference, redesign the approach to use rule-based NLP or Claude CLI.
 
 ---
 
@@ -185,7 +186,7 @@ feed-intelligence (ingestion) → nlp-engineer (bias) → pipeline-tester (valid
 - Static export (Next.js → GitHub Pages)
 - 97-source curated list structure (3 tiers: 30 us_major + 34 international + 33 independent)
 - $0 operational cost constraint
-- Claude Max CLI for all AI work (no API LLMs)
+- Claude Max CLI for all agent/dev work; Gemini Flash free tier only for pipeline cluster summarization (no paid inference)
 
 ---
 

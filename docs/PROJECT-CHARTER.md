@@ -1,6 +1,6 @@
 # void --news — Project Charter
 
-**Date:** 2026-03-18
+**Date:** 2026-03-19
 **Project Owner:** Aacrit (CEO)
 **Status:** Planning
 
@@ -18,7 +18,7 @@ A free, transparent news aggregation platform that delivers World News and US Ne
 |---------|---------------------|---------------------|
 | Bias is per-outlet, not per-article | Most tools label an entire outlet as "left" or "right" regardless of the specific article | Multi-axis NLP analysis on every individual article |
 | Bias features are paywalled or limited | Free tiers show limited bias info, full insights require subscriptions | All bias data is free and central to the experience |
-| Aggregators include untrusted sources | Low-credibility outlets mixed in with reputable ones | 90 curated, vetted sources only — quality over quantity |
+| Aggregators include untrusted sources | Low-credibility outlets mixed in with reputable ones | 97 curated, vetted sources only — quality over quantity |
 | Left/right is too simplistic | Single-axis political spectrum (left/center/right buckets) | 6-axis analysis: political lean, sensationalism, opinion/fact, factual rigor, framing, per-topic tracking |
 
 ## 3. Scope
@@ -26,9 +26,10 @@ A free, transparent news aggregation platform that delivers World News and US Ne
 ### In Scope (MVP)
 
 - World News and US News coverage
-- 90 curated sources across 3 tiers (US major, international, independent)
+- 97 curated sources across 3 tiers (US major, international, independent)
 - 2x daily automated pipeline (GitHub Actions)
 - Rule-based NLP bias engine (6 axes, zero API cost)
+- Gemini Flash summarization for high-value clusters (3+ sources), free-tier only (15 calls/run cap)
 - Story clustering with unified summaries
 - Importance ranking with editorial weighting
 - Responsive web app (desktop + mobile optimized layouts)
@@ -43,13 +44,13 @@ A free, transparent news aggregation platform that delivers World News and US Ne
 - Social features (comments, sharing, bookmarks)
 - Paid features or subscriptions
 - Push notifications
-- AI/LLM-powered features (all analysis is rule-based)
+- Paid AI/LLM inference (Gemini Flash is used via free tier only; all bias analysis remains rule-based)
 
 ## 4. Success Criteria
 
 | Metric | Target |
 |--------|--------|
-| Sources at launch | 90 (30 per tier) |
+| Sources at launch | 97 (30 us_major + 34 international + 33 independent) |
 | Pipeline reliability | 95%+ successful runs |
 | Pipeline completion time | < 6 minutes (GitHub Actions limit) |
 | Bias scoring coverage | 100% of ingested articles scored on all 6 axes |
@@ -65,7 +66,7 @@ GitHub Actions (2x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 ```
 
 - **Zero backend server** — fully serverless
-- **Zero API cost** — all NLP is local, rule-based
+- **Zero API cost** — all bias NLP is local, rule-based; Gemini Flash cluster summarization uses the free tier (capped at 15 calls/run, 30 RPD)
 - **Zero hosting cost** — GitHub Pages + Supabase free tier + GitHub Actions free tier
 
 ## 6. Key Design Decisions (Locked)
@@ -73,7 +74,7 @@ GitHub Actions (2x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | # | Decision | Choice | Rationale |
 |---|----------|--------|-----------|
 | 1 | Bias model | Per-article, 6-axis, rule-based NLP | Granular per-article analysis instead of static per-outlet labels |
-| 2 | Source strategy | 90 curated, vetted only | Quality over quantity |
+| 2 | Source strategy | 97 curated, vetted only | Quality over quantity |
 | 3 | Pipeline frequency | 2x daily + frontend refresh from Supabase | Balances freshness with quality analysis time |
 | 4 | Frontend framework | Next.js (static export) + React + TypeScript | Modern, dynamic, static-exportable |
 | 5 | Responsive strategy | One project, two layouts (desktop/mobile) | Shared logic, optimized presentation |
@@ -103,7 +104,7 @@ GitHub Actions (2x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| GitHub Actions timeout (>6 min for 90 sources) | Medium | High | Parallelize fetching, batch processing, incremental updates |
+| GitHub Actions timeout (>6 min for 97 sources) | Medium | High | Parallelize fetching, batch processing, incremental updates |
 | NLP bias scoring inaccuracy | Medium | High | Benchmark against known examples, iterative tuning, bias-auditor agent |
 | RSS feed changes/breakage | High | Medium | Health monitoring, fallback scraping, source-curator maintenance |
 | Supabase free tier limits | Low | Medium | Efficient queries, prune old articles, monitor usage |
@@ -131,6 +132,7 @@ GitHub Actions (2x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | Supabase | Free tier (500MB database, 50K monthly active users) |
 | Motion One | Free (CDN) |
 | Python NLP libraries | Free (open source) |
+| Gemini Flash API | Free tier (1500 RPD limit; capped at 30 RPD = 2% of limit) |
 | Claude CLI (development) | Existing subscription |
 | **Total** | **$0/month** |
 
@@ -138,7 +140,7 @@ GitHub Actions (2x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 The MVP is complete when:
 
-- [ ] 90 sources actively ingested 2x daily with 95%+ reliability
+- [ ] 97 sources actively ingested 2x daily with 95%+ reliability
 - [ ] All 6 bias axes scored on every article
 - [ ] Story clustering groups related articles with 85%+ accuracy
 - [ ] Desktop layout renders newspaper-style multi-column grid
