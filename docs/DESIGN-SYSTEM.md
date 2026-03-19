@@ -1,6 +1,6 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.1
+**Version:** 1.2
 **Last updated:** 2026-03-19
 
 ---
@@ -287,6 +287,17 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 - Vertically stacked sections (summary → sources → charts)
 - Each source row is tappable → opens article in browser
 - Charts render full-width, scroll horizontally if needed
+- Source rows use `flex-wrap: wrap` so metadata wraps instead of overflowing on narrow viewports
+
+### Mobile Layout Rules (max-width: 767px)
+
+| Element | Rule | Rationale |
+|---------|------|-----------|
+| `.page-main`, `.nav-inner`, `.site-footer` | padding: `--space-5` (~16px) | Recovers 32px content width vs desktop `--space-7` |
+| `.lead-story__headline`, `.lead-story__summary` | `max-width` constraints removed | Container constrains width; `ch` limits are redundant and wasteful on mobile |
+| `.story-card__headline`, `.lead-story__headline` | `overflow-wrap: break-word` (global) | Prevents long words from causing horizontal overflow |
+| `.section-header` | `flex-wrap: wrap` | RefreshButton timestamp wraps instead of overflowing |
+| Deep Dive source rows | `flex-wrap: wrap` | Source metadata wraps on narrow viewports |
 
 ---
 
