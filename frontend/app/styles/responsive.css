@@ -41,6 +41,12 @@
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
 @media (min-width: 1024px) {
+  /* Lead story: constrain to ~66% of canvas on desktop — newspaper
+     dominant-column feel. Headline + summary stay proportional. */
+  .lead-story {
+    max-width: 66%;
+  }
+
   .grid-medium {
     grid-template-columns: repeat(3, 1fr);
     gap: 0 var(--space-5);

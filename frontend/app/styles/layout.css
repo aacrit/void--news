@@ -132,6 +132,12 @@
   padding: var(--space-5);
 }
 
+/* Inside Deep Dive, text should fill the panel width — override the
+   global 65ch measure since the panel itself is already narrow. */
+.deep-dive-panel__content .text-base {
+  max-width: none;
+}
+
 /* ---- Footer ------------------------------------------------------------ */
 .site-footer {
   border-top: 1px solid var(--divider);
