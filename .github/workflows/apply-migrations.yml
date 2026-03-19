@@ -28,9 +28,9 @@ jobs:
           # Try multiple connection methods
           conn = None
           attempts = [
-              f"postgresql://postgres.{ref}:{pw}@aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require",
+              f"postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require",
               f"postgresql://postgres:{pw}@db.{ref}.supabase.co:5432/postgres?sslmode=require",
-              f"postgresql://postgres.{ref}:{pw}@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require",
+              f"postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=require",
           ]
 
           for dsn in attempts:
@@ -50,42 +50,26 @@ jobs:
 
           cur = conn.cursor()
 
-          # Apply migration 002
-          print("\n=== Applying migration 002 ===")
-          with open("supabase/migrations/002_cluster_bias_enrichment.sql") as f:
-              sql = f.read()
-          try:
-              cur.execute(sql)
-              print("Migration 002 applied successfully!")
-          except Exception as e:
-              print(f"Migration 002 error: {e}")
-              # Try individual statements
-              conn.rollback() if not conn.autocommit else None
-              for stmt in sql.split(';'):
-                  stmt = stmt.strip()
-                  if stmt and not stmt.startswith('--'):
-                      try:
-                          cur.execute(stmt)
-                      except Exception as e2:
-                          print(f"  Statement error (continuing): {str(e2)[:100]}")
-
-          # Apply migration 003
-          print("\n=== Applying migration 003 ===")
-          with open("supabase/migrations/003_schema_fixes.sql") as f:
-              sql = f.read()
-          try:
-              cur.execute(sql)
-              print("Migration 003 applied successfully!")
-          except Exception as e:
-              print(f"Migration 003 error: {e}")
-              conn.rollback() if not conn.autocommit else None
-              for stmt in sql.split(';'):
-                  stmt = stmt.strip()
-                  if stmt and not stmt.startswith('--'):
-                      try:
-                          cur.execute(stmt)
-                      except Exception as e2:
-                          print(f"  Statement error (continuing): {str(e2)[:100]}")
+          import glob
+          migrations = sorted(glob.glob("supabase/migrations/*.sql"))
+          for mig_path in migrations:
+              mig_name = mig_path.split("/")[-1]
+              print(f"\n=== Applying {mig_name} ===")
+              with open(mig_path) as f:
+                  sql = f.read()
+              try:
+                  cur.execute(sql)
+                  print(f"{mig_name} applied successfully!")
+              except Exception as e:
+                  print(f"{mig_name} error: {e}")
+                  conn.rollback() if not conn.autocommit else None
+                  for stmt in sql.split(';'):
+                      stmt = stmt.strip()
+                      if stmt and not stmt.startswith('--'):
+                          try:
+                              cur.execute(stmt)
+                          except Exception as e2:
+                              print(f"  Statement error (continuing): {str(e2)[:100]}")
 
           # Verify
           print("\n=== Verification ===")
@@ -98,6 +82,18 @@ jobs:
           print(f"story_clusters columns: {cols}")
 
           for col in ['headline_rank', 'divergence_score', 'bias_diversity', 'coverage_velocity']:
+              status = "OK" if col in cols else "MISSING"
+              print(f"  {col}: {status}")
+
+          cur.execute("""
+              SELECT column_name FROM information_schema.columns
+              WHERE table_name = 'bias_scores'
+              ORDER BY ordinal_position
+          """)
+          cols = [r[0] for r in cur.fetchall()]
+          print(f"bias_scores columns: {cols}")
+
+          for col in ['rationale']:
               status = "OK" if col in cols else "MISSING"
               print(f"  {col}: {status}")
 
