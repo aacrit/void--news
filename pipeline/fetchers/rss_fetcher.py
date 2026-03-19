@@ -14,10 +14,12 @@ import requests
 
 
 # Maximum number of parallel feed fetches
-MAX_WORKERS = 10
+# RSS fetching is pure I/O — 20 workers for 97 sources keeps throughput high
+MAX_WORKERS = 20
 
 # Timeout per feed in seconds
-FEED_TIMEOUT = 30
+# Most healthy feeds respond in <5s; 15s catches slow CDNs without blocking
+FEED_TIMEOUT = 15
 
 # Request headers
 HEADERS = {
