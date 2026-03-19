@@ -181,7 +181,7 @@ function DataMark({ data, size, mounted }: {
           transform: "rotate(-90deg)", transformOrigin: "16px 13px",
           transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
         }}
-        opacity={0.7}
+        opacity={0.9}
       />
 
       {/* Source count number inside circle (lg only) */}
@@ -208,19 +208,19 @@ function DataMark({ data, size, mounted }: {
         <line x1="4" y1="13" x2="28" y2="13"
           stroke={beamCol} strokeWidth="1.8"
           style={{ transition: "stroke 400ms var(--ease-out)" }}
-          opacity={mounted ? 0.85 : 0.3}
+          opacity={mounted ? 1 : 0.3}
         />
         {/* Left weight tick */}
         <line x1="6" y1="11.5" x2="6" y2="14.5"
           stroke={beamCol} strokeWidth="1.4"
           style={{ transition: "stroke 400ms var(--ease-out)" }}
-          opacity={mounted ? 0.7 : 0.2}
+          opacity={mounted ? 0.85 : 0.2}
         />
         {/* Right weight tick */}
         <line x1="26" y1="11.5" x2="26" y2="14.5"
           stroke={beamCol} strokeWidth="1.4"
           style={{ transition: "stroke 400ms var(--ease-out)" }}
-          opacity={mounted ? 0.7 : 0.2}
+          opacity={mounted ? 0.85 : 0.2}
         />
       </g>
 
@@ -234,7 +234,7 @@ function DataMark({ data, size, mounted }: {
       {/* Base — color-coded by type */}
       <line x1="12" y1="28.5" x2="20" y2="28.5"
         stroke={baseCol} strokeWidth="1.8"
-        opacity={mounted ? 0.75 : 0.2}
+        opacity={mounted ? 0.9 : 0.2}
         style={{ transition: "stroke 300ms var(--ease-out), opacity 400ms var(--ease-out) 250ms" }}
       />
     </svg>
@@ -535,7 +535,7 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
         {/* Lean label — the hero text */}
         <span style={{
           fontFamily: "var(--font-data)", fontWeight: 600,
-          fontSize: size === "lg" ? 11 : 9,
+          fontSize: size === "lg" ? 11 : 10,
           color: lc,
           lineHeight: 1,
           letterSpacing: "0.02em",
@@ -546,11 +546,11 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
         {/* Source count + type badge on one line */}
         <div style={{
           display: "flex", alignItems: "center",
-          gap: size === "lg" ? 5 : 3,
+          gap: size === "lg" ? 5 : 4,
         }}>
           <span style={{
             fontFamily: "var(--font-data)",
-            fontSize: size === "lg" ? 9 : 7,
+            fontSize: size === "lg" ? 9 : 8,
             color: "var(--fg-tertiary)",
             lineHeight: 1,
           }}>
@@ -558,14 +558,14 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
           </span>
           <span style={{
             fontFamily: "var(--font-data)", fontWeight: 600,
-            fontSize: size === "lg" ? 8 : 6,
+            fontSize: size === "lg" ? 8 : 7,
             color: typeCol,
             lineHeight: 1,
             letterSpacing: "0.04em",
             padding: "1px 3px",
             border: `1px solid ${typeCol}`,
             borderRadius: 1,
-            opacity: 0.75,
+            opacity: 0.85,
           }}>
             {isOp ? "OPN" : "RPT"}
           </span>

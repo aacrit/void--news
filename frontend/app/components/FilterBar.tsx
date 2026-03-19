@@ -43,6 +43,14 @@ interface FilterBarProps {
    --------------------------------------------------------------------------- */
 
 export default function FilterBar({ activeCategory, onCategoryChange }: FilterBarProps) {
+  const handleChipTap = (cat: "All" | Category) => {
+    // Haptic feedback on mobile
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+    onCategoryChange(cat);
+  };
+
   return (
     <div className="filter-bar-wrapper">
       <div className="filter-bar" role="tablist" aria-label="Filter stories by category">
@@ -54,12 +62,14 @@ export default function FilterBar({ activeCategory, onCategoryChange }: FilterBa
               key={cat}
               role="tab"
               aria-selected={isActive}
-              onClick={() => onCategoryChange(cat)}
+              onClick={() => handleChipTap(cat)}
               className={`filter-chip${isActive ? " filter-chip--active" : ""}`}
             >
-              {IconComponent && (
-                <IconComponent size={14} weight="light" aria-hidden="true" />
-              )}
+              <span className="filter-chip__icon">
+                {IconComponent && (
+                  <IconComponent size={14} weight="light" aria-hidden="true" />
+                )}
+              </span>
               {cat}
             </button>
           );

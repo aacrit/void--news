@@ -21,12 +21,6 @@ export default function SourcesPage() {
   const [sources, setSources] = useState<SpectrumSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [logoAnim, setLogoAnim] = useState<"draw" | "idle">("draw");
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLogoAnim("idle"), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -81,12 +75,12 @@ export default function SourcesPage() {
                 <LogoFull height={36} />
               </span>
               <span className="nav-logo-mobile">
-                <LogoIcon size={28} animation={logoAnim} />
+                <LogoFull height={22} />
               </span>
             </Link>
             <span className="nav-dateline">
               <span className="nav-dateline__full">Our Sources</span>
-              <span className="nav-dateline__compact">Sources</span>
+              <span className="nav-dateline__medium">Sources</span>
             </span>
           </div>
 

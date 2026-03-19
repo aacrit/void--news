@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Section } from "../lib/types";
 import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-import LogoIcon from "./LogoIcon";
 
 interface NavBarProps {
   activeSection: Section;
@@ -16,8 +14,8 @@ interface NavBarProps {
 
 /* ---------------------------------------------------------------------------
    NavBar — Newspaper masthead
-   Desktop: LogoFull + dateline (Vol/date), section tabs, theme toggle
-   Mobile: LogoIcon + compact date, bottom nav for sections
+   Desktop: LogoFull (36px) + full dateline, section tabs, theme toggle
+   Mobile:  LogoFull (22px) + edition/date, bottom nav for sections
    --------------------------------------------------------------------------- */
 
 function getEditionLabel(): string {
@@ -42,37 +40,31 @@ function formatDateCompact(): string {
 }
 
 export default function NavBar({ activeSection, onSectionChange }: NavBarProps) {
-  /* Draw animation on mount: plays the stroke-reveal, then settles to idle */
-  const [logoAnim, setLogoAnim] = useState<"draw" | "idle">("draw");
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLogoAnim("idle"), 800);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
       <header className="nav-header">
         <nav className="nav-inner" aria-label="Main navigation">
           <div className="nav-left">
             <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
-              {/* Desktop: full combination mark (icon + wordmark) */}
+              {/* Desktop: full combination mark at 36px */}
               <span className="nav-logo-desktop">
                 <LogoFull height={36} />
               </span>
-              {/* Mobile: icon only — draw on mount, then idle */}
+              {/* Mobile: same full logo at 22px — brand stays visible */}
               <span className="nav-logo-mobile">
-                <LogoIcon size={28} animation={logoAnim} />
+                <LogoFull height={22} />
               </span>
             </Link>
 
-            {/* Dateline — newspaper date + volume */}
+            {/* Dateline — newspaper date + edition */}
             <span className="nav-dateline">
+              {/* Desktop: full edition + date */}
               <span className="nav-dateline__full">
                 {getEditionLabel()} &middot; {formatDateFull()}
               </span>
-              <span className="nav-dateline__compact">
-                {formatDateCompact()}
+              {/* Mobile: edition + compact date */}
+              <span className="nav-dateline__medium">
+                {getEditionLabel()} &middot; {formatDateCompact()}
               </span>
             </span>
           </div>
@@ -115,9 +107,9 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
           >
             <span className="nav-tab__inner">
               {section === "world" ? (
-                <Globe size={14} weight="light" aria-hidden="true" />
+                <Globe size={18} weight="light" aria-hidden="true" />
               ) : (
-                <Flag size={14} weight="light" aria-hidden="true" />
+                <Flag size={18} weight="light" aria-hidden="true" />
               )}
               {section === "world" ? "World" : "US"}
             </span>
