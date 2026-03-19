@@ -1,7 +1,7 @@
 name: News Pipeline
 on:
   schedule:
-    - cron: '0 6,18 * * *'  # 6 AM and 6 PM UTC
+    - cron: '0 11,23 * * *'  # 11 AM and 11 PM UTC — catches EU morning + US afternoon peaks
   workflow_dispatch:  # Manual trigger
 
 jobs:
