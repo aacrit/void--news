@@ -3,7 +3,7 @@
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 import { ArrowSquareOut, Stack } from "@phosphor-icons/react";
-import BiasStamp from "./BiasStamp";
+import BiasLens from "./BiasLens";
 
 interface StoryCardProps {
   story: Story;
@@ -57,7 +57,7 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
           <Stack size={14} weight="light" aria-hidden="true" />
           {story.source.count} sources
         </span>
-        <BiasStamp scores={story.biasScores} />
+        <BiasLens lensData={story.lensData} />
       </div>
     </article>
   );

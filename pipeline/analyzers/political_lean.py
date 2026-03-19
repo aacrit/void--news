@@ -122,82 +122,91 @@ BASELINE_MAP: dict[str, int] = {
 }
 
 
-def _keyword_score(text: str) -> float:
-    """Compute keyword-based lean score from 0-100. 50 = neutral."""
+def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
+    """Compute keyword-based lean score from 0-100. 50 = neutral.
+    Returns (score, top_left_keywords, top_right_keywords)."""
     text_lower = text.lower()
     left_total = 0
     right_total = 0
+    left_hits: dict[str, float] = {}
+    right_hits: dict[str, float] = {}
 
     for phrase, weight in LEFT_KEYWORDS.items():
-        # Use word-boundary regex for single-word keywords to avoid substring matches
         if " " not in phrase:
             count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
         else:
             count = text_lower.count(phrase)
-        left_total += count * weight
+        if count > 0:
+            left_total += count * weight
+            left_hits[phrase] = count * weight
 
     for phrase, weight in RIGHT_KEYWORDS.items():
         if " " not in phrase:
             count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
         else:
             count = text_lower.count(phrase)
-        right_total += count * weight
+        if count > 0:
+            right_total += count * weight
+            right_hits[phrase] = count * weight
 
     # Normalize by article length (per 500 words)
     word_count = max(len(text_lower.split()) / 500, 1)
     left_total = left_total / word_count
     right_total = right_total / word_count
 
+    # Top keywords by impact
+    top_left = sorted(left_hits, key=left_hits.get, reverse=True)[:5]
+    top_right = sorted(right_hits, key=right_hits.get, reverse=True)[:5]
+
     total = left_total + right_total
     if total == 0:
-        return 50.0
+        return 50.0, top_left, top_right
 
     if total < 4:
-        # Dampen toward center when very few keywords matched
         right_ratio = right_total / total
-        return 50.0 + (right_ratio - 0.5) * (total / 4.0) * 100.0
+        return 50.0 + (right_ratio - 0.5) * (total / 4.0) * 100.0, top_left, top_right
 
-    # Proportion: right / total maps to 0-100 where 0 = all left, 100 = all right
     right_ratio = right_total / total
-    return right_ratio * 100.0
+    return right_ratio * 100.0, top_left, top_right
 
 
-def _framing_score(text: str) -> float:
-    """Detect framing phrases and return a lean shift (-50 to +50)."""
+def _framing_score(text: str) -> tuple[float, list[str]]:
+    """Detect framing phrases and return (lean_shift, phrases_found)."""
     text_lower = text.lower()
     shift = 0.0
     count = 0
+    phrases_found: list[str] = []
 
     for phrase, direction in FRAMING_PHRASES:
         occurrences = text_lower.count(phrase)
         if occurrences > 0:
             shift += direction * occurrences
             count += occurrences
+            phrases_found.append(phrase)
 
     if count == 0:
-        return 0.0
+        return 0.0, phrases_found
 
-    # Normalize: cap at +/- 15 points of shift
-    return max(-15.0, min(15.0, shift * 3.0))
+    return max(-15.0, min(15.0, shift * 3.0)), phrases_found
 
 
-def _entity_sentiment_score(text: str) -> float:
+def _entity_sentiment_score(text: str) -> tuple[float, dict[str, float]]:
     """
     Use spaCy NER + TextBlob to gauge sentiment toward politically coded entities.
-    Returns a lean shift (-15 to +15): negative = leftward, positive = rightward.
+    Returns (lean_shift, entity_sentiments_dict).
     """
     nlp = get_nlp()
-    doc = nlp(text[:15000])  # limit for performance
+    doc = nlp(text[:15000])
 
     left_sentiment = 0.0
     right_sentiment = 0.0
     left_count = 0
     right_count = 0
+    entity_sentiments: dict[str, list[float]] = {}
 
-    # Collect sentences mentioning political entities
     for sent in doc.sents:
         sent_lower = sent.text.lower()
-        blob = None  # lazy
+        blob = None
 
         for ent_name in LEFT_CODED_ENTITIES:
             if ent_name in sent_lower:
@@ -205,6 +214,7 @@ def _entity_sentiment_score(text: str) -> float:
                     blob = TextBlob(sent.text)
                 left_sentiment += blob.sentiment.polarity
                 left_count += 1
+                entity_sentiments.setdefault(ent_name, []).append(blob.sentiment.polarity)
 
         for ent_name in RIGHT_CODED_ENTITIES:
             if ent_name in sent_lower:
@@ -212,18 +222,22 @@ def _entity_sentiment_score(text: str) -> float:
                     blob = TextBlob(sent.text)
                 right_sentiment += blob.sentiment.polarity
                 right_count += 1
+                entity_sentiments.setdefault(ent_name, []).append(blob.sentiment.polarity)
 
-    # Positive sentiment toward left entities = left lean (negative shift)
-    # Positive sentiment toward right entities = right lean (positive shift)
     shift = 0.0
     if left_count > 0:
         avg_left = left_sentiment / left_count
-        shift -= avg_left * 10  # positive sentiment about left = leftward shift
+        shift -= avg_left * 10
     if right_count > 0:
         avg_right = right_sentiment / right_count
-        shift += avg_right * 10  # positive sentiment about right = rightward shift
+        shift += avg_right * 10
 
-    return max(-15.0, min(15.0, shift))
+    # Average sentiments per entity for rationale
+    avg_sentiments = {
+        k: round(sum(v) / len(v), 2) for k, v in entity_sentiments.items()
+    }
+
+    return max(-15.0, min(15.0, shift)), avg_sentiments
 
 
 def _get_source_baseline(source: dict) -> int:
@@ -234,7 +248,7 @@ def _get_source_baseline(source: dict) -> int:
     return BASELINE_MAP.get(str(baseline_str).lower().strip(), 50)
 
 
-def analyze_political_lean(article: dict, source: dict) -> int:
+def analyze_political_lean(article: dict, source: dict) -> dict:
     """
     Score the political lean of an article.
 
@@ -243,31 +257,49 @@ def analyze_political_lean(article: dict, source: dict) -> int:
         source: Dict with keys: political_lean_baseline, tier, name.
 
     Returns:
-        Integer score 0-100 (0=strong left, 50=center, 100=strong right).
+        Dict with "score" (int 0-100) and "rationale" (dict with evidence).
     """
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
     combined = f"{title} {full_text}"
+    source_baseline = _get_source_baseline(source)
 
     if not combined.strip():
-        # No text to analyze; fall back to source baseline
-        return _get_source_baseline(source)
+        return {
+            "score": source_baseline,
+            "rationale": {"keyword_score": 50, "framing_shift": 0, "entity_shift": 0,
+                          "source_baseline": source_baseline, "top_left_keywords": [],
+                          "top_right_keywords": [], "framing_phrases_found": [],
+                          "entity_sentiments": {}},
+        }
 
-    # 1. Keyword-based score (0-100)
-    kw_score = _keyword_score(combined)
+    # 1. Keyword-based score (0-100) + top keywords
+    kw_score, top_left, top_right = _keyword_score(combined)
 
-    # 2. Framing shift (-15 to +15)
-    framing_shift = _framing_score(combined)
+    # 2. Framing shift (-15 to +15) + phrases found
+    framing_shift, framing_phrases = _framing_score(combined)
 
-    # 3. Entity sentiment shift (-15 to +15)
-    entity_shift = _entity_sentiment_score(combined)
+    # 3. Entity sentiment shift (-15 to +15) + sentiments
+    entity_shift, entity_sentiments = _entity_sentiment_score(combined)
 
     # Combine text-based score
     text_score = kw_score + framing_shift + entity_shift
     text_score = max(0.0, min(100.0, text_score))
 
     # 4. Blend with source baseline (0.85 text + 0.15 baseline)
-    source_baseline = _get_source_baseline(source)
     final_score = 0.85 * text_score + 0.15 * source_baseline
+    score = max(0, min(100, int(round(final_score))))
 
-    return max(0, min(100, int(round(final_score))))
+    return {
+        "score": score,
+        "rationale": {
+            "keyword_score": round(kw_score, 1),
+            "framing_shift": round(framing_shift, 1),
+            "entity_shift": round(entity_shift, 1),
+            "source_baseline": source_baseline,
+            "top_left_keywords": top_left,
+            "top_right_keywords": top_right,
+            "framing_phrases_found": framing_phrases,
+            "entity_sentiments": entity_sentiments,
+        },
+    }

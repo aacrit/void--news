@@ -2,7 +2,7 @@
 
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
-import BiasStamp from "./BiasStamp";
+import BiasLens from "./BiasLens";
 
 interface LeadStoryProps {
   story: Story;
@@ -46,7 +46,7 @@ export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
         <span className="source-count source-count--lead">
           {story.source.count} sources
         </span>
-        <BiasStamp scores={story.biasScores} size="lg" />
+        <BiasLens lensData={story.lensData} size="lg" />
       </div>
     </article>
   );

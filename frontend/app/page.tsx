@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import type { Section, Category, Story, BiasScores, BiasSpread } from "./lib/types";
+import type { Section, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel } from "./lib/types";
 import { supabase } from "./lib/supabase";
 import LogoFull from "./components/LogoFull";
 import NavBar from "./components/NavBar";
@@ -22,6 +22,20 @@ function capitalize(s: string): string {
     science: "Science", culture: "Culture", sports: "Sports",
   };
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function deriveOpinionLabel(score: number): OpinionLabel {
+  if (score <= 25) return "Reporting";
+  if (score <= 50) return "Analysis";
+  if (score <= 75) return "Opinion";
+  return "Editorial";
+}
+
+function deriveCoverageScore(sourceCount: number, factualRigor: number, confidence: number): number {
+  const sourceNorm = Math.min(1.0, sourceCount / 10.0);
+  const rigorNorm = factualRigor / 100.0;
+  const confNorm = Math.min(1.0, confidence);
+  return Math.round((sourceNorm * 0.35 + 0.2 + confNorm * 0.20 + rigorNorm * 0.25) * 100);
 }
 
 /* ---------------------------------------------------------------------------
@@ -143,13 +157,25 @@ function HomeContent() {
                 }
               : undefined;
 
+            const sourceCount = cluster.source_count || 1;
+            const lensData: ThreeLensData = {
+              lean: biasScores.politicalLean,
+              coverage: bd?.coverage_score ?? deriveCoverageScore(
+                sourceCount, biasScores.factualRigor, biasSpread?.aggregateConfidence ?? 0.5,
+              ),
+              sourceCount,
+              tierBreakdown: bd?.tier_breakdown,
+              opinion: biasScores.opinionFact,
+              opinionLabel: (bd?.avg_opinion_label as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact),
+            };
+
             return {
               id: cluster.id,
               title: cluster.title,
               summary: cluster.summary || "",
               source: {
                 name: "Multiple Sources",
-                count: cluster.source_count || 1,
+                count: sourceCount,
               },
               category: capitalize(cluster.category || "politics") as Category,
               publishedAt:
@@ -158,6 +184,7 @@ function HomeContent() {
                 new Date().toISOString(),
               biasScores,
               biasSpread,
+              lensData,
               section: (cluster.section || "world") as Section,
               importance: cluster.headline_rank || cluster.importance_score || 50,
               divergenceScore: cluster.divergence_score || 0,

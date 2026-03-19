@@ -95,7 +95,9 @@ export async function fetchDeepDiveData(clusterId: string) {
           sensationalism,
           opinion_fact,
           factual_rigor,
-          framing
+          framing,
+          confidence,
+          rationale
         )
       )
     `)
