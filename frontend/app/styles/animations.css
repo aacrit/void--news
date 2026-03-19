@@ -1,6 +1,7 @@
 /* ==========================================================================
    void --news — Animations
    GPU-only (transform + opacity). Symmetric. Accessible.
+   Spring physics via CSS linear() easing — no JS animation library needed.
    ========================================================================== */
 
 /* ---- Keyframes --------------------------------------------------------- */
@@ -9,6 +10,18 @@
   from {
     opacity: 0;
     transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Story card spring entrance — subtle translateY with spring overshoot */
+@keyframes springEntranceCard {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -30,6 +43,52 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* Filter chip spring press — snappy scale feedback */
+@keyframes springChipPress {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.95); }
+  70%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* DeepDive panel spring slide-in from right */
+@keyframes springSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* DeepDive panel mobile: spring slide-up from bottom */
+@keyframes springSlideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RefreshButton spring press */
+@keyframes springBtnPress {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(0.97); }
+  70%  { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+/* Theme toggle spring swap */
+@keyframes springToggleSpin {
+  from { transform: rotate(-15deg) scale(0.9); opacity: 0; }
+  to   { transform: rotate(0deg) scale(1); opacity: 1; }
 }
 
 /* ---- Shimmer / Skeleton ------------------------------------------------ */
@@ -61,9 +120,38 @@
   animation: fadeInUp var(--dur-normal) var(--ease-out) both;
 }
 
-/* Staggered entrance — use with style="animation-delay: Nms" */
+/* Staggered entrance — story cards with spring physics.
+   Use style={{ "--story-index": N } as React.CSSProperties} to auto-stagger.
+   Falls back to animationDelay inline style as well. */
 .anim-stagger {
-  animation: fadeInUp var(--dur-normal) var(--ease-out) both;
+  animation: springEntranceCard var(--dur-step) var(--spring) both;
+}
+
+/* Filter chip active spring press feedback */
+.filter-chip--active {
+  animation: springChipPress var(--dur-normal) var(--spring);
+}
+
+/* DeepDive spring entrance — desktop (slide from right) */
+.deep-dive-panel {
+  animation: springSlideInRight var(--dur-morph) var(--spring) both;
+}
+
+/* DeepDive spring entrance — mobile (slide from bottom) */
+@media (max-width: 1023px) {
+  .deep-dive-panel {
+    animation: springSlideInUp var(--dur-morph) var(--spring) both;
+  }
+}
+
+/* RefreshButton spring press — activated by .refresh-btn:active */
+.refresh-btn:active:not([disabled]) {
+  animation: springBtnPress var(--dur-normal) var(--spring);
+}
+
+/* Theme toggle spring entrance on icon swap */
+.theme-toggle__icon:not(.theme-toggle__icon--hidden) {
+  animation: springToggleSpin var(--dur-normal) var(--spring) both;
 }
 
 /* ---- Reduced Motion ---------------------------------------------------- */

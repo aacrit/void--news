@@ -44,25 +44,27 @@ interface FilterBarProps {
 
 export default function FilterBar({ activeCategory, onCategoryChange }: FilterBarProps) {
   return (
-    <div className="filter-bar" role="tablist" aria-label="Filter stories by category">
-      {ALL_CATEGORIES.map((cat) => {
-        const isActive = activeCategory === cat;
-        const IconComponent = CATEGORY_ICONS[cat];
-        return (
-          <button
-            key={cat}
-            role="tab"
-            aria-selected={isActive}
-            onClick={() => onCategoryChange(cat)}
-            className={`filter-chip${isActive ? " filter-chip--active" : ""}`}
-          >
-            {IconComponent && (
-              <IconComponent size={14} weight="light" aria-hidden="true" />
-            )}
-            {cat}
-          </button>
-        );
-      })}
+    <div className="filter-bar-wrapper">
+      <div className="filter-bar" role="tablist" aria-label="Filter stories by category">
+        {ALL_CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat;
+          const IconComponent = CATEGORY_ICONS[cat];
+          return (
+            <button
+              key={cat}
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => onCategoryChange(cat)}
+              className={`filter-chip${isActive ? " filter-chip--active" : ""}`}
+            >
+              {IconComponent && (
+                <IconComponent size={14} weight="light" aria-hidden="true" />
+              )}
+              {cat}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

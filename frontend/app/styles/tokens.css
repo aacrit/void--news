@@ -62,6 +62,12 @@
   --bg-card:       #2A2725;
   --bg-elevated:   #333028;
 
+  /* Bias color overrides for dark mode — increase blue saturation.
+     Blues appear muted against warm dark backgrounds; boost to vibrant. */
+  --bias-left:         #60A5FA;
+  --bias-center-left:  #93C5FD;
+  --type-reporting:    #60A5FA;
+
   /* Text */
   --fg-primary:    #EDE8E0;
   --fg-secondary:  #B8B0A5;

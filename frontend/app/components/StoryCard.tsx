@@ -21,8 +21,9 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
     <article
       className="story-card anim-stagger"
       style={{ animationDelay: `${index * 40}ms` }}
+      role="button"
       tabIndex={0}
-      aria-label={`Read deep dive: ${story.title}`}
+      aria-label={`Open deep dive for: ${story.title}`}
       onClick={() => onStoryClick?.(story)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
