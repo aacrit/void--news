@@ -607,6 +607,29 @@ def main():
 
     print(f"  Articles stored: {len(stored_articles)}/{len(articles_raw)}")
 
+    # Step 4b: Content-based deduplication
+    # Removes near-duplicate articles (syndicated/wire content with different URLs)
+    # before analysis to avoid wasting compute on duplicate text.
+    print(f"\n[4b] Content-based deduplication on {len(stored_articles)} articles...")
+    try:
+        from clustering.deduplicator import deduplicate_articles
+
+        # Enrich articles with tier info so deduplicator can prefer higher-tier sources
+        for art in stored_articles:
+            src_slug = art.get("source_id", "")
+            src_info = source_map.get(src_slug, {})
+            art["tier"] = src_info.get("tier", "")
+
+        articles_before_dedup = len(stored_articles)
+        stored_articles = deduplicate_articles(stored_articles)
+        articles_after_dedup = len(stored_articles)
+        print(f"  Deduplication: {articles_before_dedup} -> {articles_after_dedup} "
+              f"({articles_before_dedup - articles_after_dedup} duplicates removed)")
+    except ImportError:
+        print("  [skip] Deduplicator not available (sklearn not installed)")
+    except Exception as e:
+        print(f"  [warn] Deduplication failed, continuing with all articles: {e}")
+
     # Step 5: Run bias analysis on each article
     articles_analyzed = 0
     clusters_created = 0
@@ -827,6 +850,38 @@ def main():
                             pass  # skip duplicates silently
         else:
             print("  [warn] No categories found in DB; skipping article_categories")
+
+    # Step 9c: Update per-source per-topic tracking (Axis 6)
+    if ANALYSIS_AVAILABLE and clusters:
+        print("\n[9c] Updating per-source per-topic tracking...")
+        try:
+            from analyzers.topic_outlet_tracker import update_source_topic_lean
+
+            tracking_articles = []
+            for cluster in clusters:
+                for ca in cluster.get("articles", []):
+                    art_id = ca.get("id", "")
+                    if art_id and art_id in article_bias_map and cluster.get("category"):
+                        scores = article_bias_map[art_id]
+                        # Resolve source_id slug to DB UUID
+                        src_slug = ca.get("source_id", "")
+                        src_info = source_map.get(src_slug, {})
+                        db_source_id = src_info.get("db_id")
+                        if db_source_id:
+                            tracking_articles.append({
+                                "source_id": db_source_id,
+                                "category": cluster["category"],
+                                "political_lean": scores.get("political_lean", 50),
+                                "sensationalism": scores.get("sensationalism", 10),
+                                "opinion_fact": scores.get("opinion_fact", 25),
+                            })
+            if tracking_articles:
+                stats = update_source_topic_lean(tracking_articles, supabase)
+                print(f"  Updated source-topic tracking: {stats}")
+            else:
+                print("  No articles with scores + categories to track")
+        except Exception as e:
+            print(f"  [warn] Source-topic tracking failed: {e}")
 
     # Step 10: Truncate full_text for IP compliance
     # Full article text is used only for NLP analysis (transformative use).
