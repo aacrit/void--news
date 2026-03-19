@@ -319,7 +319,7 @@ function HomeContent() {
               once articles are fetched and analyzed from 90 curated sources.
             </p>
             <p className="edition-meta">
-              Scheduled: 6:00 AM &amp; 6:00 PM UTC daily
+              Scheduled: 11:00 AM &amp; 11:00 PM UTC daily
             </p>
           </div>
         )}

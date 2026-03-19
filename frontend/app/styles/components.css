@@ -9,12 +9,36 @@
   padding: var(--space-5) 0;
   border-bottom: var(--rule-thin);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease-out);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.story-card:hover,
-.story-card:focus-within {
+.story-card:hover {
   background-color: var(--bg-secondary);
+  box-shadow: var(--shadow-e1);
+  transform: translateY(-2px);
+}
+
+.story-card:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  background-color: var(--bg-secondary);
+}
+
+/* Touch-specific active state — no hover flicker on touch devices */
+@media (hover: none) {
+  .story-card:hover {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .story-card:active {
+    transform: scale(0.99);
+    opacity: 0.95;
+  }
 }
 
 .story-card__meta {
@@ -71,6 +95,36 @@
   padding: var(--space-6) 0;
   border-bottom: var(--rule-strong);
   cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.lead-story:hover {
+  background-color: var(--bg-secondary);
+  box-shadow: var(--shadow-e1);
+  transform: translateY(-2px);
+}
+
+.lead-story:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  background-color: var(--bg-secondary);
+}
+
+/* Touch-specific active state */
+@media (hover: none) {
+  .lead-story:hover {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .lead-story:active {
+    transform: scale(0.99);
+    opacity: 0.95;
+  }
 }
 
 .lead-story__meta {
@@ -106,6 +160,31 @@
 }
 
 /* ---- Filter Bar -------------------------------------------------------- */
+.filter-bar-wrapper {
+  position: relative;
+}
+
+/* Fade gradient hinting scrollability — right edge on mobile */
+.filter-bar-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  background: linear-gradient(to right, transparent, var(--bg-primary));
+  pointer-events: none;
+  z-index: 1;
+  /* Only show on mobile where overflow is likely */
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .filter-bar-wrapper::after {
+    display: block;
+  }
+}
+
 .filter-bar {
   display: flex;
   gap: var(--space-2);
@@ -746,4 +825,14 @@
   margin: 0 auto var(--space-5);
   opacity: 0.35;
   color: var(--fg-tertiary);
+}
+
+/* ---- Rationale Pending — fallback state when JSONB rationale is null --- */
+.rationale-pending {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-style: italic;
+  line-height: 1.5;
+  padding-top: var(--space-1);
 }

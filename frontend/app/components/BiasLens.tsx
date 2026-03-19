@@ -258,13 +258,16 @@ function LeanNeedle({ value, rationale, size }: {
       ref={ref}
       className="lens"
       onMouseEnter={show}
+      onFocus={show}
       onMouseLeave={hide}
+      onBlur={hide}
       onClick={toggle}
       onKeyDown={onKey}
       tabIndex={0}
-      role="img"
-      aria-label={`Political lean: ${label}, score ${value}`}
-      aria-describedby={open ? tooltipId : undefined}
+      role="button"
+      aria-expanded={open}
+      aria-label={`Political lean: ${label}, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
+      aria-controls={open ? tooltipId : undefined}
       style={{ width: h, height: h + pivotR, cursor: "pointer" }}
     >
       <div style={{
@@ -342,7 +345,7 @@ function LeanNeedle({ value, rationale, size }: {
             transform: "translate(-50%, -50%)", boxShadow: "0 0 0 2px var(--bg-card)",
           }} />
         </div>
-        {rationale && (
+        {rationale ? (
           <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.5 }}>
             {rationale.topLeftKeywords.length > 0 && (
               <div style={{ marginBottom: 4 }}>
@@ -361,6 +364,10 @@ function LeanNeedle({ value, rationale, size }: {
                 Source baseline: {rationale.sourceBaseline} (15% weight)
               </div>
             )}
+          </div>
+        ) : (
+          <div className="rationale-pending" style={{ fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontStyle: "italic", lineHeight: 1.5 }}>
+            Detailed analysis pending
           </div>
         )}
       </LensPopup>
@@ -405,13 +412,16 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
       ref={ref}
       className="lens"
       onMouseEnter={show}
+      onFocus={show}
       onMouseLeave={hide}
+      onBlur={hide}
       onClick={toggle}
       onKeyDown={onKey}
       tabIndex={0}
-      role="img"
-      aria-label={`Coverage: ${label}, ${sourceCount} sources, score ${value}`}
-      aria-describedby={open ? tooltipId : undefined}
+      role="button"
+      aria-expanded={open}
+      aria-label={`Coverage: ${label}, ${sourceCount} sources, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
+      aria-controls={open ? tooltipId : undefined}
       style={{ width: diameter, height: diameter, cursor: "pointer" }}
     >
       <svg
@@ -498,7 +508,7 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
               )}
             </div>
           )}
-          {rationale && (
+          {rationale ? (
             <>
               {rationale.namedSourcesCount > 0 && (
                 <div>{rationale.namedSourcesCount} named source{rationale.namedSourcesCount !== 1 ? "s" : ""} cited</div>
@@ -510,6 +520,10 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
                 <div>{rationale.directQuotesCount} direct quote{rationale.directQuotesCount !== 1 ? "s" : ""}</div>
               )}
             </>
+          ) : (
+            <div className="rationale-pending" style={{ marginTop: 4, fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontStyle: "italic" }}>
+              Detailed analysis pending
+            </div>
           )}
         </div>
       </LensPopup>
@@ -554,13 +568,16 @@ function OpinionPrism({ value, opinionLabel, rationale, size }: {
       ref={ref}
       className="lens"
       onMouseEnter={show}
+      onFocus={show}
       onMouseLeave={hide}
+      onBlur={hide}
       onClick={toggle}
       onKeyDown={onKey}
       tabIndex={0}
-      role="img"
-      aria-label={`Content type: ${opinionLabel}, score ${value}`}
-      aria-describedby={open ? tooltipId : undefined}
+      role="button"
+      aria-expanded={open}
+      aria-label={`Content type: ${opinionLabel}, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
+      aria-controls={open ? tooltipId : undefined}
       style={{ width: dim + 4, height: dim + 4, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
     >
       <div style={{
@@ -600,7 +617,7 @@ function OpinionPrism({ value, opinionLabel, rationale, size }: {
             <span>Opinion</span>
           </div>
         </div>
-        {rationale && (
+        {rationale ? (
           <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
             {rationale.dominantSignals.length > 0 && (
               <div style={{ marginBottom: 4 }}>
@@ -614,6 +631,10 @@ function OpinionPrism({ value, opinionLabel, rationale, size }: {
               <DataRow label="Pronouns" value={rationale.pronounScore} />
               <DataRow label="Modal lang." value={rationale.modalScore} />
             </div>
+          </div>
+        ) : (
+          <div className="rationale-pending" style={{ fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontStyle: "italic", lineHeight: 1.5 }}>
+            Detailed analysis pending
           </div>
         )}
       </LensPopup>

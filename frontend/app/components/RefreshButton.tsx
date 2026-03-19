@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Clock, Warning } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
+import { timeAgo } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
@@ -134,11 +135,22 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
               fontFamily: "var(--font-structural)",
               fontSize: "var(--text-sm)",
               color: "var(--fg-secondary)",
-              marginBottom: "var(--space-5)",
+              marginBottom: "var(--space-2)",
               lineHeight: 1.5,
             }}>
               This will re-fetch the latest stories from all sources.
             </p>
+            {externalLastUpdated && (
+              <p style={{
+                fontFamily: "var(--font-data)",
+                fontSize: "var(--text-xs)",
+                color: "var(--fg-tertiary)",
+                marginBottom: "var(--space-5)",
+                lineHeight: 1.5,
+              }}>
+                Current data is {timeAgo(externalLastUpdated)} old.
+              </p>
+            )}
             <div className="refresh-dialog__actions">
               <button ref={cancelButtonRef} onClick={closeDialog} className="btn-secondary">
                 Cancel

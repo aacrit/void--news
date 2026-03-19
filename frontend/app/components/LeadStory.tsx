@@ -18,8 +18,9 @@ export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
   return (
     <article
       className="lead-story anim-fade-in-up"
+      role="button"
       tabIndex={0}
-      aria-label={`Read deep dive: ${story.title}`}
+      aria-label={`Open deep dive for: ${story.title}`}
       onClick={() => onStoryClick?.(story)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
