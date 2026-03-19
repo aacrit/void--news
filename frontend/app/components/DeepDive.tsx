@@ -381,6 +381,47 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               <Sigil data={story.sigilData} size="lg" />
             </div>
           )}
+
+          {/* Source favicons — compact row linking to original articles */}
+          {sources.length > 0 && (
+            <div className="dd-source-icons" style={{
+              display: "flex", flexWrap: "wrap", gap: 6,
+              marginTop: "var(--space-3)", alignItems: "center",
+            }}>
+              {sources.map((src, i) => {
+                const favicon = faviconUrl(src.url);
+                return (
+                  <a
+                    key={`${src.name}-${i}`}
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={src.name}
+                    aria-label={`Read on ${src.name}`}
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      width: 28, height: 28, borderRadius: "50%",
+                      border: "1px solid var(--border-subtle)",
+                      backgroundColor: "var(--bg-card)",
+                      transition: "transform 150ms var(--ease-out), border-color 150ms",
+                    }}
+                    className="dd-source-icon"
+                  >
+                    {favicon ? (
+                      <img src={favicon} alt="" width={16} height={16} style={{ borderRadius: 2 }} loading="lazy" />
+                    ) : (
+                      <span style={{
+                        fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
+                        color: "var(--fg-tertiary)",
+                      }}>
+                        {src.name.charAt(0)}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          )}
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
@@ -444,88 +485,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           </section>
 
-          {/* ---- Section: Source Coverage List (next to bias for easy access) */}
-          {sources.length > 0 && (
-            <section aria-labelledby="dd-sources" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-sources" className="section-heading">Sources</h3>
-              <div role="list" aria-label="Sources covering this story">
-                {sources.map((src, i) => {
-                  const domain = getDomain(src.url);
-                  const favicon = faviconUrl(src.url);
-
-                  return (
-                    <a
-                      key={`${src.name}-${i}`}
-                      role="listitem"
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="source-row source-row--link"
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      {/* Favicon */}
-                      {favicon ? (
-                        <img
-                          src={favicon}
-                          alt=""
-                          width={20}
-                          height={20}
-                          style={{ borderRadius: 2, flexShrink: 0 }}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <span style={{
-                          width: 20, height: 20, borderRadius: 2, flexShrink: 0,
-                          backgroundColor: TIER_COLORS[src.tier],
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
-                          color: "var(--bg-primary)", opacity: 0.7,
-                        }}>
-                          {src.name.charAt(0)}
-                        </span>
-                      )}
-
-                      {/* Source name + domain */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <span className="source-link" style={{ display: "block" }}>
-                          {src.name}
-                        </span>
-                        {domain && (
-                          <span style={{
-                            fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
-                            color: "var(--fg-muted)", display: "block", marginTop: 1,
-                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const,
-                          }}>
-                            {domain}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Tier badge */}
-                      <span
-                        className="tier-badge"
-                        style={{ color: TIER_COLORS[src.tier], border: `1px solid ${TIER_COLORS[src.tier]}` }}
-                        title={TIER_FULL_LABELS[src.tier]}
-                      >
-                        {TIER_LABELS[src.tier]}
-                      </span>
-
-                      {/* Per-source bias lens */}
-                      {src.lensData && <BiasLens lensData={src.lensData} size="sm" />}
-
-                      {/* External link arrow */}
-                      <ArrowSquareOut
-                        size={16}
-                        weight="regular"
-                        aria-hidden="true"
-                        style={{ color: "var(--fg-muted)", flexShrink: 0 }}
-                      />
-                    </a>
-                  );
-                })}
-              </div>
-            </section>
-          )}
 
           {/* ---- Section: Coverage Breakdown ------------------------------ */}
           {sources.length > 0 && (
