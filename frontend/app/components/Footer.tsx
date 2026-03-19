@@ -1,6 +1,5 @@
 "use client";
 
-import { GithubLogo } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 
@@ -51,17 +50,6 @@ export default function Footer({ lastUpdated }: FooterProps) {
         </div>
         <p className="footer-tagline">Free, transparent news bias analysis</p>
         <p className="footer-stats">200 curated sources &middot; {updatedText}</p>
-        <a
-          href="https://github.com/aacrit/void-news"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="View source on GitHub"
-          className="footer-github"
-        >
-          <GithubLogo size={16} weight="light" aria-hidden="true" />
-          Source
-        </a>
-        <p className="footer-built">Built with transparency in mind</p>
       </div>
     </footer>
   );
