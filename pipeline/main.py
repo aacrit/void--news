@@ -772,16 +772,15 @@ def main():
                 section_counts[sec] = section_counts.get(sec, 0) + 1
             cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
-            # Populate cluster summary from first article
-            cluster_summary = ""
-            if cluster_articles_list:
+            # Use pre-generated summary from clustering step
+            cluster_summary = cluster.get("summary", "") or ""
+            if not cluster_summary and cluster_articles_list:
                 first_art = cluster_articles_list[0]
-                cluster_summary = first_art.get("summary", "") or ""
-                if not cluster_summary:
-                    cluster_summary = (first_art.get("title", "") or "")[:200]
+                cluster_summary = (first_art.get("summary", "") or
+                                   first_art.get("title", "") or "")[:300]
 
             result = insert_cluster({
-                "title": cluster.get("title", "Untitled Story")[:500],
+                "title": cluster.get("title", "Developing Story")[:500],
                 "summary": cluster_summary,
                 "category": cluster.get("category", "politics"),
                 "section": cluster_section,
