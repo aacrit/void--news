@@ -229,6 +229,45 @@
     flex-wrap: wrap;
   }
 
+  /* --- Story card vertical tightening ---
+     Mobile screens are scroll-heavy. Reduce vertical padding and margins
+     to show more stories above the fold without losing readability. */
+
+  .story-card {
+    padding: var(--space-3) 0;
+  }
+
+  .story-card__meta {
+    margin-bottom: var(--space-1);
+  }
+
+  .story-card__headline {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-1);
+  }
+
+  .story-card__summary {
+    margin-bottom: var(--space-2);
+    -webkit-line-clamp: 2;
+  }
+
+  /* Lead story: tighter on mobile too */
+  .lead-story {
+    padding: var(--space-4) 0;
+  }
+
+  .lead-story__meta {
+    margin-bottom: var(--space-2);
+  }
+
+  .lead-story__headline {
+    margin-bottom: var(--space-2);
+  }
+
+  .lead-story__summary {
+    margin-bottom: var(--space-3);
+  }
+
   /* Deep Dive: hide "Back to feed" text, keep arrow */
   .deep-dive-back-label {
     display: none;
