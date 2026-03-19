@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-18
+Last updated: 2026-03-19
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -40,41 +40,44 @@ GitHub Actions (2x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 - Motion One via CDN importmap (no npm install needed).
 
 ### Bias Analysis — The Differentiator
-The bias engine analyzes **each article individually** across multiple axes. All 5 implemented analyzers return both a numeric score (0-100) and a structured rationale dict with sub-scores and evidence, stored as JSONB for hover-popup display in the frontend's "Three Lenses" visualization.
+The bias engine analyzes **each article individually** across multiple axes. All 6 axes are implemented. Axes 1-5 return both a numeric score (0-100) and a structured rationale dict with sub-scores and evidence, stored as JSONB for hover-popup display in the frontend's "Three Lenses" visualization. Axis 6 tracks longitudinal trends per source per topic.
 
 1. **Political Lean** — left/center/right spectrum based on keyword lexicons, entity sentiment (spaCy NER + TextBlob), framing phrases, source baseline blending (0.85 text + 0.15 baseline). Rationale includes top left/right keywords, framing phrases found, entity sentiments.
 2. **Sensationalism Score** — headline clickbait pattern matching, superlative/urgency/hyperbole density, TextBlob sentiment extremity, short-sentence ratio, measured-phrase inverse signal. Rationale includes headline_score, body_score, clickbait_signals, per-100-word densities.
 3. **Opinion vs. Reporting** — first-person pronouns, TextBlob subjectivity, modal/prescriptive language, hedging, attribution density (inverse), metadata markers (URL/section), rhetorical questions, unattributed value judgments. Rationale includes all 8 sub-scores, classification label, dominant signals.
 4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs), organization citations, data/statistics patterns, direct quote density, reference/link counting, attribution specificity vs. vague sourcing penalties. Rationale includes named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
 5. **Framing Analysis** — connotation analysis (entity-sentence sentiment), charged synonym detection (50+ pairs), omission detection (one-sided sourcing + cross-article entity comparison when cluster context available), headline-body sentiment divergence, passive voice (evasive patterns + spaCy dep parsing). Rationale includes all 5 sub-scores and has_cluster_context flag.
-6. **Per-Topic Per-Outlet Tracking** — an outlet's bias may differ by topic (economics vs. social issues)
+6. **Per-Topic Per-Outlet Tracking** — EMA-based tracking (alpha=0.3) of how each source's lean, sensationalism, and opinion scores vary by topic category. Stored in `source_topic_lean` table. Updated as pipeline step 9c after each run.
 
 All analysis is algorithmic/rule-based using NLP heuristics. No LLM API calls. Confidence is computed per-article based on text length, text availability, and signal strength (deviation from defaults).
 
 ### Source Curation
-90 vetted sources at launch, organized in three tiers (30 each):
+97 vetted sources organized in three tiers:
 
-- **Major US Outlets** — AP, Reuters, NYT, WSJ, Washington Post, Fox News, CNN, NPR, PBS, Bloomberg, etc.
-- **International Outlets** — BBC, Al Jazeera, DW, France24, Reuters International, The Guardian, NHK, etc.
-- **Independent/Nonprofit** — ProPublica, The Intercept, Bellingcat, The Markup, Center for Public Integrity, etc.
+- **Major US Outlets (30)** — AP, Reuters, NYT, WSJ, Washington Post, Fox News, CNN, NPR, PBS, Bloomberg, etc.
+- **International Outlets (34)** — BBC, Al Jazeera, DW, France24, Reuters International, The Guardian, NHK, Mexico News Daily, The Brazilian Report, Yonhap, TRT World, etc.
+- **Independent/Nonprofit (33)** — ProPublica, The Intercept, Bellingcat, The Markup, Center for Public Integrity, Premium Times Nigeria, RealClearPolitics, The Free Press, etc.
 
 All sources must meet credibility criteria before inclusion. Quality over quantity.
 
 ## Pipeline Flow (2x Daily)
 
 ```
- 1. LOAD SOURCES — Load 90 sources from data/sources.json, sync to Supabase
- 2. PIPELINE RUN — Create pipeline_runs record for tracking
- 3. FETCH        — Pull articles via RSS feeds from 90 sources (parallel)
- 4. SCRAPE       — Extract full article text via web scraper (15 parallel workers), RSS summary fallback
- 5. ANALYZE      — Run 5-axis bias scoring on each article (all return score + rationale)
- 6. CLUSTER      — Group articles into story clusters (TF-IDF + entity overlap)
- 6b. RE-FRAME    — Re-run framing analysis with cluster context (omission detection across articles)
- 7. CATEGORIZE & RANK — Auto-tag topics + v2 importance ranking (7 signals + divergence)
- 8. STORE        — Write clusters with enrichment data, populate article_categories junction table
- 9. ENRICH       — Compute cluster-level aggregated bias data, consensus/divergence points
-10. TRUNCATE     — Truncate full_text to 300-char excerpts for IP compliance
-    CLEANUP      — Call cleanup_stale_clusters and cleanup_stuck_pipeline_runs RPCs
+ 1.  LOAD SOURCES — Load 97 sources from data/sources.json, sync to Supabase
+ 2.  PIPELINE RUN — Create pipeline_runs record for tracking
+ 3.  FETCH        — Pull articles via RSS feeds from 97 sources (parallel)
+ 4.  SCRAPE       — Extract full article text via web scraper (15 parallel workers), RSS summary fallback
+ 4b. DEDUPLICATE  — Content-based dedup (TF-IDF + cosine similarity, threshold 0.85, Union-Find grouping)
+ 5.  ANALYZE      — Run 5-axis bias scoring on each article (all return score + rationale)
+ 6.  CLUSTER      — Group articles into story clusters (TF-IDF + entity overlap)
+ 6b. RE-FRAME     — Re-run framing analysis with cluster context (omission detection across articles)
+ 7.  CATEGORIZE & RANK — Auto-tag topics + v2 importance ranking (7 signals + divergence)
+ 8.  STORE        — Write clusters with enrichment data, populate article_categories junction table
+ 9.  ENRICH       — Compute cluster-level aggregated bias data, consensus/divergence points
+ 9b. ARTICLE CATS — Populate article_categories junction table
+ 9c. TOPIC TRACK  — Update per-source per-topic tracking (Axis 6, EMA-based)
+10.  TRUNCATE     — Truncate full_text to 300-char excerpts for IP compliance
+     CLEANUP      — Call cleanup_stale_clusters and cleanup_stuck_pipeline_runs RPCs
 ```
 
 ## Frontend Design
@@ -292,17 +295,19 @@ reset.css → tokens.css → layout.css → typography.css → components.css �
 
 ### Key Tables
 - `sources` — outlet metadata, credibility info, RSS/scrape config, tier (us_major/international/independent), slug
-- `articles` — excerpt text (truncated post-analysis for IP compliance), metadata, source_id, publish_date, url, section
+- `articles` — excerpt text (truncated post-analysis for IP compliance), metadata, source_id, publish_date, url, section, updated_at (auto-trigger)
 - `bias_scores` — per-article multi-axis scores + rationale JSONB (linked to article_id)
-- `story_clusters` — groups of articles about the same event; includes bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity
+- `story_clusters` — groups of articles about the same event; includes bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity, updated_at (auto-trigger)
 - `cluster_articles` — junction table linking articles to clusters
 - `categories` — auto-generated topic tags
 - `article_categories` — junction table linking articles to categories (populated by pipeline)
+- `source_topic_lean` — per-source per-topic EMA-averaged lean/sensationalism/opinion scores, article_count (Axis 6)
 - `pipeline_runs` — tracking pipeline execution history
 
 ### Key Views & Functions
 - `cluster_bias_summary` — view aggregating bias scores per cluster (weighted averages, spreads)
 - `refresh_cluster_enrichment(p_cluster_id)` — function computing divergence_score, bias_diversity, coverage_score, tier_breakdown
+- `update_updated_at_column()` — trigger function for auto-updating updated_at on articles and story_clusters
 - `cleanup_stale_clusters()` — removes clusters with no linked articles
 - `cleanup_stuck_pipeline_runs()` — marks stale running pipeline entries as failed
 
@@ -393,7 +398,7 @@ Frontend Build:    frontend-builder → responsive-specialist → uat-tester →
 - 6-axis bias scoring model + confidence
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 90-source curated list structure (3 tiers × 30)
+- 97-source curated list structure (3 tiers: 30 us_major + 34 international + 33 independent)
 - $0 operational cost constraint
 - Claude Max CLI for all AI work (no API LLMs)
 
@@ -415,12 +420,14 @@ void-news/
 │   │   ├── sensationalism.py
 │   │   ├── opinion_detector.py
 │   │   ├── factual_rigor.py
-│   │   └── framing.py             # Cluster-aware: accepts cluster_articles for omission detection
+│   │   ├── framing.py             # Cluster-aware: accepts cluster_articles for omission detection
+│   │   └── topic_outlet_tracker.py # Axis 6: EMA-based per-source per-topic tracking
 │   ├── clustering/                # Story deduplication and grouping
+│   │   └── deduplicator.py        # TF-IDF + cosine similarity content dedup
 │   ├── categorizer/               # Auto-topic classification
 │   ├── ranker/                    # Importance/impact scoring (v2: 7 signals + divergence)
 │   ├── utils/                     # Shared utilities, Supabase client, nlp_shared
-│   ├── main.py                    # Pipeline orchestrator (10 steps + cleanup)
+│   ├── main.py                    # Pipeline orchestrator (12 steps + cleanup)
 │   └── requirements.txt
 ├── frontend/                      # Next.js 16 App Router
 │   ├── app/
@@ -459,10 +466,10 @@ void-news/
 │       ├── deploy.yml             # Frontend build + deploy to GitHub Pages
 │       └── migrate.yml            # Supabase migration runner
 ├── data/
-│   └── sources.json               # 90 curated sources with RSS URLs and metadata
+│   └── sources.json               # 97 curated sources with RSS URLs and metadata
 └── supabase/
     ├── config.toml
-    └── migrations/                # Database schema migrations (001-004)
+    └── migrations/                # Database schema migrations (001-006)
 ```
 
 ## MVP Scope
@@ -478,7 +485,7 @@ void-news/
 - [x] Pipeline orchestrator (main.py)
 
 ### Phase 2 — Analysis Engine (Week 3-5) -- COMPLETE
-- [x] Story deduplication (TF-IDF similarity)
+- [x] Content-based deduplication (TF-IDF + cosine similarity, threshold 0.85, Union-Find grouping)
 - [x] Story clustering algorithm
 - [x] Political lean scoring (with rationale)
 - [x] Sensationalism detection (with rationale)
@@ -490,6 +497,7 @@ void-news/
 - [x] Confidence scoring per article
 - [x] Consensus/divergence generation per cluster
 - [x] IP compliance: full_text truncation post-analysis
+- [x] Per-topic per-outlet tracking (Axis 6, EMA-based, source_topic_lean table)
 
 ### Phase 3 — Frontend MVP (Week 6-8) -- COMPLETE
 - [x] Next.js project setup with TypeScript (App Router, Next.js 16)
@@ -534,7 +542,7 @@ void-news/
 - Node 18+ / Next.js 16 (App Router) for frontend
 - TypeScript for all frontend code
 - All bias analysis must be rule-based — no external API dependencies
-- Pipeline must complete within GitHub Actions time limits (~6 min for 90 sources)
+- Pipeline must complete within GitHub Actions time limits (~6 min for 97 sources)
 - Frontend must work as a fully static site (next export)
 - Supabase client-side reads only (no server-side operations from frontend)
 - Animation system adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`)

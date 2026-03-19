@@ -1,7 +1,7 @@
 # void --news — Implementation Plan
 
 **Version:** 1.1
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-19
 
 ---
 
@@ -13,7 +13,7 @@
 
 ## Phase 1 — Foundation (Week 1-2) -- COMPLETE
 
-**Goal:** Working pipeline that fetches articles from 90 sources and stores them in Supabase.
+**Goal:** Working pipeline that fetches articles from 97 sources and stores them in Supabase.
 
 ### Week 1: Scaffolding + Source List
 
@@ -39,7 +39,7 @@
 | 2.6 | Set up GitHub Actions workflow (`.github/workflows/pipeline.yml`) — cron 2x daily (6 AM, 6 PM UTC) | — |
 | 2.7 | Test pipeline end-to-end: 90 sources → Supabase with real articles | pipeline-tester |
 
-**Phase 1 Deliverable:** Pipeline runs 2x daily via GitHub Actions, fetching articles from 90 sources into Supabase. Raw articles stored with metadata.
+**Phase 1 Deliverable:** Pipeline runs 2x daily via GitHub Actions, fetching articles from 97 sources into Supabase. Raw articles stored with metadata.
 
 **Dependencies:** Supabase account (existing), GitHub repo created.
 
@@ -47,16 +47,20 @@
 
 ## Phase 2 — Analysis Engine (Week 3-5) -- COMPLETE
 
-**Goal:** Full 5-axis bias scoring (all with rationale), story clustering, categorization, importance ranking, consensus/divergence generation, and IP compliance truncation.
+**Goal:** Full 6-axis bias scoring (axes 1-5 with rationale, axis 6 longitudinal tracking), content deduplication, story clustering, categorization, importance ranking, consensus/divergence generation, and IP compliance truncation.
 
 **Additions beyond original plan:**
-- All 5 analyzers now return structured rationale dicts (sub-scores + evidence) stored as JSONB
+- All 5 per-article analyzers now return structured rationale dicts (sub-scores + evidence) stored as JSONB
 - Framing analyzer is cluster-aware: step 6b re-runs framing with cluster context for cross-article omission detection
+- Content-based deduplication (step 4b) using TF-IDF + cosine similarity (threshold 0.85) with Union-Find transitive grouping; keeps higher-tier source articles
+- Per-topic per-outlet tracking (Axis 6, step 9c): EMA-based (alpha=0.3) tracking in `source_topic_lean` table
 - Pipeline generates consensus/divergence points per cluster from bias score distributions
 - article_categories junction table populated by pipeline
 - Cleanup RPCs (stale clusters, stuck pipeline runs) called at end of each run
 - Full-text truncated to 300-char excerpts post-analysis for IP compliance
 - Confidence scoring per article (text length + availability + signal strength)
+- Source list expanded from 90 to 97 sources (us_major=30, international=34, independent=33)
+- DB cleanup: updated_at auto-triggers on articles/story_clusters, redundant indexes dropped (migrations 005-006)
 
 ### Week 3: Deduplication + Clustering
 
@@ -91,7 +95,7 @@
 | 5.6 | End-to-end pipeline test with full analysis | pipeline-tester |
 | 5.7 | Benchmark bias scoring against manually labeled test set (50 articles) | bias-auditor |
 
-**Phase 2 Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores, story clusters, categories, and importance rankings. All stored in Supabase.
+**Phase 2 Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores (5 per-article + longitudinal per-source-per-topic tracking), content deduplication, story clusters, categories, and importance rankings. All stored in Supabase.
 
 **Dependencies:** Phase 1 complete (articles in Supabase).
 
@@ -250,7 +254,7 @@
 
 | Checkpoint | When | Gate |
 |-----------|------|------|
-| Source list review | End of Week 1 | 90 sources with valid RSS/scrape configs |
+| Source list review | End of Week 1 | 97 sources with valid RSS/scrape configs |
 | Pipeline reliability | End of Week 2 | 95%+ fetch success rate |
 | Bias scoring accuracy | End of Week 5 | 80%+ accuracy on 50-article benchmark |
 | Frontend visual quality | End of Week 8 | Lighthouse 90+, CEO visual approval |
