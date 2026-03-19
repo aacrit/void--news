@@ -12,6 +12,7 @@ Steps:
     5. Store articles in Supabase
     6. Run bias analysis on each article (5 axes + confidence)
     7. Cluster articles into stories
+    7b. Summarize clusters with Gemini Flash (headline, summary, consensus/divergence)
     8. Categorize and rank clusters (v2 — 7 signals + divergence)
     9. Store clusters with enrichment data, finalize pipeline run
 """
@@ -54,6 +55,15 @@ try:
     ANALYSIS_AVAILABLE = True
 except ImportError as e:
     print(f"[warn] Analysis modules not available ({e}). Running fetch-only mode.")
+
+# Gemini summarizer — optional (requires google-generativeai + API key)
+SUMMARIZER_AVAILABLE = False
+try:
+    from summarizer.cluster_summarizer import summarize_clusters_batch
+    from summarizer.gemini_client import is_available as gemini_is_available
+    SUMMARIZER_AVAILABLE = True
+except ImportError:
+    pass
 
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
@@ -271,14 +281,20 @@ def _batch_upsert(table: str, rows: list[dict], chunk_size: int = 200,
     return total
 
 
-def enrich_cluster(cluster_id: str) -> None:
+def enrich_cluster(cluster_id: str, skip_text: bool = False) -> None:
     """
     Call the Supabase RPC to refresh enrichment data for a cluster,
-    then always run client-side consensus/divergence generation.
+    then run client-side consensus/divergence generation unless skip_text
+    is True (indicates Gemini already generated the text).
 
     The RPC handles divergence_score, bias_diversity, coverage_score,
     and tier_breakdown, but does NOT generate consensus_points or
-    divergence_points text. Those are always computed client-side.
+    divergence_points text.
+
+    Args:
+        cluster_id: UUID of the cluster to enrich.
+        skip_text: If True, skip rule-based consensus/divergence generation
+            (used when Gemini has already provided these).
     """
     rpc_succeeded = False
     try:
@@ -287,13 +303,13 @@ def enrich_cluster(cluster_id: str) -> None:
     except Exception as e:
         # RPC not deployed yet — compute client-side as fallback
         if "function" in str(e).lower() or "does not exist" in str(e).lower():
-            _enrich_cluster_fallback(cluster_id)
+            _enrich_cluster_fallback(cluster_id, skip_text=skip_text)
             return  # fallback already generates consensus/divergence
         else:
             print(f"  [warn] Cluster enrichment failed for {cluster_id}: {e}")
 
-    # RPC succeeded but omits consensus/divergence text — always generate
-    if rpc_succeeded:
+    # RPC succeeded but omits consensus/divergence text — generate unless Gemini handled it
+    if rpc_succeeded and not skip_text:
         _generate_cluster_consensus_divergence(cluster_id)
 
 
@@ -402,10 +418,15 @@ def _generate_consensus_divergence(
     return consensus, divergence
 
 
-def _enrich_cluster_fallback(cluster_id: str) -> None:
+def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
     """
     Client-side fallback for cluster enrichment when the DB function
     hasn't been deployed yet.
+
+    Args:
+        cluster_id: UUID of the cluster to enrich.
+        skip_text: If True, skip rule-based consensus/divergence generation
+            (used when Gemini has already provided these).
     """
     try:
         # Fetch bias scores for this cluster's articles
@@ -547,23 +568,29 @@ def _enrich_cluster_fallback(cluster_id: str) -> None:
             "avg_opinion_label": opinion_label,
         }
 
-        # Generate consensus/divergence text from bias score analysis
-        consensus_pts, divergence_pts = _generate_consensus_divergence(
-            count, pl_values, sens_values, of_values, fr_values, frm_values,
-            avg_pl, avg_sens, avg_of, avg_fr, avg_frm,
-            lean_spread, framing_spread, lean_range,
-            sensationalism_spread, opinion_spread,
-        )
+        # Build the update payload — always include numeric aggregates
+        update_payload = {
+            "divergence_score": round(divergence, 2),
+            "bias_diversity": bias_diversity,
+        }
+
+        # Generate consensus/divergence text unless Gemini already provided it
+        if not skip_text:
+            consensus_pts, divergence_pts = _generate_consensus_divergence(
+                count, pl_values, sens_values, of_values, fr_values, frm_values,
+                avg_pl, avg_sens, avg_of, avg_fr, avg_frm,
+                lean_spread, framing_spread, lean_range,
+                sensationalism_spread, opinion_spread,
+            )
+            update_payload["consensus_points"] = consensus_pts
+            update_payload["divergence_points"] = divergence_pts
 
         # Pass raw Python objects — Supabase client handles JSONB
         # serialization automatically. Using json.dumps() here would
         # double-serialize, storing escaped JSON strings instead of arrays.
-        supabase.table("story_clusters").update({
-            "divergence_score": round(divergence, 2),
-            "bias_diversity": bias_diversity,
-            "consensus_points": consensus_pts,
-            "divergence_points": divergence_pts,
-        }).eq("id", cluster_id).execute()
+        supabase.table("story_clusters").update(
+            update_payload
+        ).eq("id", cluster_id).execute()
 
     except Exception as e:
         print(f"  [warn] Fallback enrichment failed for {cluster_id}: {e}")
@@ -1013,6 +1040,42 @@ def main():
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
 
+        # Step 6 post-process: detect and wrap orphaned articles.
+        # Articles that had empty documents (no title/text) are silently
+        # dropped by cluster_stories() before TF-IDF vectorization.
+        # These articles have been stored with bias scores but are invisible
+        # to the frontend (no cluster_articles row). Wrap each orphan in its
+        # own single-article cluster so it appears in the feed.
+        clustered_article_ids: set[str] = set()
+        for c in clusters:
+            for aid in c.get("article_ids", []):
+                if aid:
+                    clustered_article_ids.add(aid)
+
+        orphan_articles = [
+            a for a in stored_articles
+            if a.get("id") and a["id"] not in clustered_article_ids
+        ]
+        if orphan_articles:
+            print(f"  Orphaned articles (no cluster): {len(orphan_articles)} — wrapping in solo clusters")
+            for orphan in orphan_articles:
+                art_id = orphan.get("id", "")
+                # Build a minimal single-article cluster identical to what
+                # cluster_stories() returns for a 1-article input.
+                source_id = orphan.get("source_id", "")
+                solo_cluster = {
+                    "title": orphan.get("title") or "Developing Story",
+                    "summary": orphan.get("summary") or orphan.get("title") or "",
+                    "article_ids": [art_id],
+                    "source_ids": [source_id],
+                    "source_count": 1,
+                    "section": orphan.get("section", "world"),
+                    "first_published": orphan.get("published_at", ""),
+                    "articles": [orphan],
+                }
+                clusters.append(solo_cluster)
+            print(f"  Clusters after orphan wrap: {len(clusters)}")
+
         # Step 6b: Re-run framing analysis with cluster context
         # Framing's omission detection benefits from knowing what other
         # articles in the same cluster mention. Initial analysis (step 5)
@@ -1105,6 +1168,28 @@ def main():
         else:
             print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
 
+        # Step 7b: Summarize clusters with Gemini Flash
+        # Generates polished headlines, summaries, and consensus/divergence.
+        # Falls back to rule-based generation (already set by cluster_stories)
+        # when Gemini is unavailable or fails for a given cluster.
+        gemini_results: dict[int, dict] = {}
+        if SUMMARIZER_AVAILABLE and gemini_is_available():
+            print("\n[7b] Summarizing clusters with Gemini Flash...")
+            try:
+                gemini_results = summarize_clusters_batch(clusters)
+                for idx, result in gemini_results.items():
+                    clusters[idx]["title"] = result["headline"]
+                    clusters[idx]["summary"] = result["summary"]
+                    clusters[idx]["consensus_points"] = result["consensus"]
+                    clusters[idx]["divergence_points"] = result["divergence"]
+                    clusters[idx]["_gemini_enriched"] = True
+            except Exception as e:
+                print(f"  [warn] Gemini summarization failed: {e}")
+        elif SUMMARIZER_AVAILABLE:
+            print("\n[7b] Skipping Gemini summarization (GEMINI_API_KEY not set)")
+        else:
+            print("\n[7b] Skipping Gemini summarization (google-generativeai not installed)")
+
         # Step 7: Categorize and rank with v2 engine
         print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
         for cluster in clusters:
@@ -1151,8 +1236,9 @@ def main():
         print("\n[8/9] Storing clusters with enrichment data...")
         all_cluster_article_links: list[dict] = []  # batch insert
         cluster_ids_to_enrich: list[str] = []
+        gemini_enriched_ids: set[str] = set()  # clusters with Gemini text
 
-        for cluster in clusters:
+        for ci, cluster in enumerate(clusters):
             cluster_articles_list = cluster.get("articles", [])
 
             # Determine cluster section from its articles.
@@ -1171,29 +1257,39 @@ def main():
             else:
                 cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
-            # Use pre-generated summary from clustering step
+            # Use pre-generated summary from clustering or Gemini step
             cluster_summary = cluster.get("summary", "") or ""
             if not cluster_summary and cluster_articles_list:
                 first_art = cluster_articles_list[0]
                 cluster_summary = (first_art.get("summary", "") or
                                    first_art.get("title", "") or "")[:300]
 
-            result = insert_cluster({
+            cluster_row = {
                 "title": cluster.get("title", "Developing Story")[:500],
                 "summary": cluster_summary,
                 "category": cluster.get("category", "politics"),
                 "section": cluster_section,
                 "importance_score": round(cluster.get("importance_score", 0.0), 2),
                 "source_count": cluster.get("source_count", 0),
-                "first_published": cluster.get("first_published", ""),
+                "first_published": cluster.get("first_published") or None,
                 "divergence_score": round(cluster.get("divergence_score", 0.0), 2),
                 "headline_rank": round(cluster.get("headline_rank", 0.0), 2),
                 "coverage_velocity": cluster.get("coverage_velocity", 0),
-            })
+            }
+
+            # Include Gemini-generated consensus/divergence in the initial insert
+            has_gemini = cluster.get("_gemini_enriched", False)
+            if has_gemini:
+                cluster_row["consensus_points"] = cluster.get("consensus_points", [])
+                cluster_row["divergence_points"] = cluster.get("divergence_points", [])
+
+            result = insert_cluster(cluster_row)
             if result:
                 clusters_created += 1
                 cluster_id = result.get("id", "")
                 cluster_ids_to_enrich.append(cluster_id)
+                if has_gemini:
+                    gemini_enriched_ids.add(cluster_id)
                 for article_id in cluster.get("article_ids", []):
                     if article_id:
                         all_cluster_article_links.append({
@@ -1210,8 +1306,13 @@ def main():
             )
 
         # Enrich clusters with aggregated bias data (Step 9)
+        # For Gemini-enriched clusters, only run numeric aggregation (RPC),
+        # skip rule-based consensus/divergence text generation.
         for cluster_id in cluster_ids_to_enrich:
-            enrich_cluster(cluster_id)
+            if cluster_id in gemini_enriched_ids:
+                enrich_cluster(cluster_id, skip_text=True)
+            else:
+                enrich_cluster(cluster_id)
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
@@ -1313,12 +1414,20 @@ def main():
                         "full_text": excerpt,
                     })
         if truncation_rows:
-            # Batch-upsert truncated text (200 per chunk vs N individual UPDATEs)
-            upserted = _batch_upsert(
-                "articles", truncation_rows, chunk_size=200,
-                on_conflict="id",
-            )
-            print(f"  Truncated {upserted} articles to 300-char excerpts")
+            # Direct UPDATE (not upsert) — rows already exist; upsert with only
+            # {id, full_text} triggers an INSERT that violates NOT NULL on source_id.
+            truncated_count = 0
+            for i in range(0, len(truncation_rows), 200):
+                chunk = truncation_rows[i:i + 200]
+                for row in chunk:
+                    try:
+                        supabase.table("articles").update(
+                            {"full_text": row["full_text"]}
+                        ).eq("id", row["id"]).execute()
+                        truncated_count += 1
+                    except Exception as trunc_err:
+                        print(f"  [warn] Truncation update failed for {row['id']}: {trunc_err}")
+            print(f"  Truncated {truncated_count} articles to 300-char excerpts")
         else:
             print("  No articles needed truncation")
     except Exception as e:
