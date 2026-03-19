@@ -2,7 +2,7 @@
 
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
-import BiasLens from "./BiasLens";
+import Sigil from "./Sigil";
 
 interface LeadStoryProps {
   story: Story;
@@ -47,7 +47,7 @@ export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
         <span className="source-count source-count--lead">
           {story.source.count} sources
         </span>
-        <BiasLens lensData={story.lensData} size="lg" />
+        <Sigil data={story.sigilData} size="lg" />
       </div>
     </article>
   );

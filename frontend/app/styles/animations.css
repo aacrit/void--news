@@ -154,6 +154,38 @@
   animation: springToggleSpin var(--dur-normal) var(--spring) both;
 }
 
+/* ---- Sigil — Unified Bias Indicator ------------------------------------ */
+
+/* Divergence pulse glow — faster pulse = higher disagreement */
+@keyframes sigilPulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.06); }
+}
+
+/* Sigil popup entrance — subtle scale + translate */
+@keyframes sigilPopupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Sigil compact hex entrance — dot reveal with spring */
+@keyframes sigilHexIn {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-30deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 /* ---- Reduced Motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {

@@ -98,6 +98,32 @@ export interface DeepDiveData {
   sources: StorySource[];
 }
 
+/** Data model for the Sigil — unified 6-axis bias indicator */
+export interface SigilData {
+  /** Political lean: 0=far left, 50=center, 100=far right */
+  politicalLean: number;
+  /** Sensationalism: 0=measured, 100=inflammatory */
+  sensationalism: number;
+  /** Opinion vs reporting: 0=reporting, 50=analysis, 100=opinion */
+  opinionFact: number;
+  /** Factual rigor: 0=unsourced, 100=well-sourced (inverted: high=good) */
+  factualRigor: number;
+  /** Framing: 0=neutral, 100=heavy framing */
+  framing: number;
+  /** Source agreement: 0=unanimous, 100=high disagreement */
+  agreement: number;
+  /** Number of sources covering this story */
+  sourceCount: number;
+  /** Tier breakdown for coverage context */
+  tierBreakdown?: Record<string, number>;
+  /** Spread metrics per axis (when available from cluster data) */
+  biasSpread?: BiasSpread;
+  /** True when bias scores are fallback placeholders */
+  pending?: boolean;
+  /** Opinion classification label */
+  opinionLabel: OpinionLabel;
+}
+
 export interface Story {
   id: string;
   title: string;
@@ -108,6 +134,7 @@ export interface Story {
   biasScores: BiasScores;
   biasSpread?: BiasSpread;
   lensData: ThreeLensData;
+  sigilData: SigilData;
   section: "world" | "us";
   importance: number;
   divergenceScore: number;
