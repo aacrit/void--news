@@ -1,8 +1,8 @@
 -- Track how each source's political lean varies by topic
 -- This enables Axis 6: Per-Topic Per-Outlet Tracking
 CREATE TABLE IF NOT EXISTS source_topic_lean (
-  id BIGSERIAL PRIMARY KEY,
-  source_id BIGINT NOT NULL REFERENCES sources(id) ON DELETE CASCADE,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  source_id UUID NOT NULL REFERENCES sources(id) ON DELETE CASCADE,
   category TEXT NOT NULL,
   avg_lean NUMERIC(5,2) NOT NULL DEFAULT 50.0,
   avg_sensationalism NUMERIC(5,2) NOT NULL DEFAULT 50.0,
