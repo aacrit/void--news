@@ -24,7 +24,7 @@ GitHub Actions (2x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 | Ingestion      | Python, feedparser, BeautifulSoup/Scrapy      |
 | NLP/Bias Engine| Python, spaCy, NLTK, TextBlob                |
 | Database       | Supabase (PostgreSQL)                         |
-| Frontend       | Next.js 14+ (static export), React, TypeScript|
+| Frontend       | Next.js 16 (App Router), React 19, TypeScript  |
 | Animation      | Motion One v11 (spring physics, ~6.5KB CDN)   |
 | Styling        | CSS custom properties, mobile-first, clamp()  |
 | Fonts          | Playfair Display (editorial), Inter (structural), JetBrains Mono (data) |
@@ -40,16 +40,16 @@ GitHub Actions (2x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 - Motion One via CDN importmap (no npm install needed).
 
 ### Bias Analysis — The Differentiator
-The bias engine analyzes **each article individually** across multiple axes:
+The bias engine analyzes **each article individually** across multiple axes. All 5 implemented analyzers return both a numeric score (0-100) and a structured rationale dict with sub-scores and evidence, stored as JSONB for hover-popup display in the frontend's "Three Lenses" visualization.
 
-1. **Political Lean** — left/center/right spectrum based on language, framing, source patterns
-2. **Sensationalism Score** — measured vs. inflammatory tone, headline clickbait detection
-3. **Opinion vs. Reporting** — distinguishes editorial content from factual reporting
-4. **Factual Rigor** — presence of sourcing, citations, data-backed claims
-5. **Framing Analysis** — what facts are emphasized, what is omitted, language connotation
+1. **Political Lean** — left/center/right spectrum based on keyword lexicons, entity sentiment (spaCy NER + TextBlob), framing phrases, source baseline blending (0.85 text + 0.15 baseline). Rationale includes top left/right keywords, framing phrases found, entity sentiments.
+2. **Sensationalism Score** — headline clickbait pattern matching, superlative/urgency/hyperbole density, TextBlob sentiment extremity, short-sentence ratio, measured-phrase inverse signal. Rationale includes headline_score, body_score, clickbait_signals, per-100-word densities.
+3. **Opinion vs. Reporting** — first-person pronouns, TextBlob subjectivity, modal/prescriptive language, hedging, attribution density (inverse), metadata markers (URL/section), rhetorical questions, unattributed value judgments. Rationale includes all 8 sub-scores, classification label, dominant signals.
+4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs), organization citations, data/statistics patterns, direct quote density, reference/link counting, attribution specificity vs. vague sourcing penalties. Rationale includes named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
+5. **Framing Analysis** — connotation analysis (entity-sentence sentiment), charged synonym detection (50+ pairs), omission detection (one-sided sourcing + cross-article entity comparison when cluster context available), headline-body sentiment divergence, passive voice (evasive patterns + spaCy dep parsing). Rationale includes all 5 sub-scores and has_cluster_context flag.
 6. **Per-Topic Per-Outlet Tracking** — an outlet's bias may differ by topic (economics vs. social issues)
 
-All analysis is algorithmic/rule-based using NLP heuristics. No LLM API calls.
+All analysis is algorithmic/rule-based using NLP heuristics. No LLM API calls. Confidence is computed per-article based on text length, text availability, and signal strength (deviation from defaults).
 
 ### Source Curation
 90 vetted sources at launch, organized in three tiers (30 each):
@@ -63,14 +63,18 @@ All sources must meet credibility criteria before inclusion. Quality over quanti
 ## Pipeline Flow (2x Daily)
 
 ```
-1. FETCH      — Pull articles via RSS feeds + web scraping from 90 sources
-2. PARSE      — Extract full article text, metadata, publish date
-3. DEDUPLICATE — Identify duplicate/syndicated content
-4. CLUSTER    — Group articles covering the same story across sources
-5. ANALYZE    — Run multi-axis bias scoring on each article
-6. RANK       — Score story importance/impact for feed ordering
-7. CATEGORIZE — Auto-tag topics (Politics, Economy, Tech, Health, Environment, Conflict, etc.)
-8. WRITE      — Push processed data to Supabase
+ 1. LOAD SOURCES — Load 90 sources from data/sources.json, sync to Supabase
+ 2. PIPELINE RUN — Create pipeline_runs record for tracking
+ 3. FETCH        — Pull articles via RSS feeds from 90 sources (parallel)
+ 4. SCRAPE       — Extract full article text via web scraper (15 parallel workers), RSS summary fallback
+ 5. ANALYZE      — Run 5-axis bias scoring on each article (all return score + rationale)
+ 6. CLUSTER      — Group articles into story clusters (TF-IDF + entity overlap)
+ 6b. RE-FRAME    — Re-run framing analysis with cluster context (omission detection across articles)
+ 7. CATEGORIZE & RANK — Auto-tag topics + v2 importance ranking (7 signals + divergence)
+ 8. STORE        — Write clusters with enrichment data, populate article_categories junction table
+ 9. ENRICH       — Compute cluster-level aggregated bias data, consensus/divergence points
+10. TRUNCATE     — Truncate full_text to 300-char excerpts for IP compliance
+    CLEANUP      — Call cleanup_stale_clusters and cleanup_stuck_pipeline_runs RPCs
 ```
 
 ## Frontend Design
@@ -287,14 +291,20 @@ reset.css → tokens.css → layout.css → typography.css → components.css �
 ## Data Model (Supabase)
 
 ### Key Tables
-- `sources` — outlet metadata, credibility info, RSS/scrape config, tier (us_major/international/independent)
-- `articles` — full text, metadata, source_id, publish_date, url
-- `bias_scores` — per-article multi-axis scores (linked to article_id)
-- `story_clusters` — groups of articles about the same event
+- `sources` — outlet metadata, credibility info, RSS/scrape config, tier (us_major/international/independent), slug
+- `articles` — excerpt text (truncated post-analysis for IP compliance), metadata, source_id, publish_date, url, section
+- `bias_scores` — per-article multi-axis scores + rationale JSONB (linked to article_id)
+- `story_clusters` — groups of articles about the same event; includes bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity
 - `cluster_articles` — junction table linking articles to clusters
 - `categories` — auto-generated topic tags
-- `article_categories` — junction table linking articles to categories
+- `article_categories` — junction table linking articles to categories (populated by pipeline)
 - `pipeline_runs` — tracking pipeline execution history
+
+### Key Views & Functions
+- `cluster_bias_summary` — view aggregating bias scores per cluster (weighted averages, spreads)
+- `refresh_cluster_enrichment(p_cluster_id)` — function computing divergence_score, bias_diversity, coverage_score, tier_breakdown
+- `cleanup_stale_clusters()` — removes clusters with no linked articles
+- `cleanup_stuck_pipeline_runs()` — marks stale running pipeline entries as failed
 
 ## Skills (`.claude/skills/`)
 
@@ -395,104 +405,113 @@ void-news/
 ├── docs/
 │   ├── PROJECT-CHARTER.md         # Project charter and scope
 │   ├── DESIGN-SYSTEM.md           # Press & Precision design system
-│   ├── IMPLEMENTATION-PLAN.md     # Phased implementation roadmap
-│   └── ARCHITECTURE.md            # Technical architecture details
+│   └── IMPLEMENTATION-PLAN.md     # Phased implementation roadmap
 ├── pipeline/                      # Python ingestion + analysis
 │   ├── fetchers/                  # RSS and scraping modules
 │   │   ├── rss_fetcher.py
 │   │   └── web_scraper.py
-│   ├── analyzers/                 # NLP bias analysis engine
+│   ├── analyzers/                 # NLP bias analysis engine (all return score + rationale)
 │   │   ├── political_lean.py
 │   │   ├── sensationalism.py
 │   │   ├── opinion_detector.py
 │   │   ├── factual_rigor.py
-│   │   └── framing.py
+│   │   └── framing.py             # Cluster-aware: accepts cluster_articles for omission detection
 │   ├── clustering/                # Story deduplication and grouping
 │   ├── categorizer/               # Auto-topic classification
-│   ├── ranker/                    # Importance/impact scoring
-│   ├── utils/                     # Shared utilities, Supabase client
-│   ├── main.py                    # Pipeline orchestrator
+│   ├── ranker/                    # Importance/impact scoring (v2: 7 signals + divergence)
+│   ├── utils/                     # Shared utilities, Supabase client, nlp_shared
+│   ├── main.py                    # Pipeline orchestrator (10 steps + cleanup)
 │   └── requirements.txt
-├── frontend/                      # Next.js static site
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── shared/            # Shared logic components
-│   │   │   ├── desktop/           # Desktop-specific layouts
-│   │   │   └── mobile/            # Mobile-specific layouts
-│   │   ├── layouts/
-│   │   │   ├── DesktopLayout.tsx
-│   │   │   └── MobileLayout.tsx
-│   │   ├── pages/                 # Next.js pages
-│   │   ├── hooks/                 # Custom React hooks (data fetching, device detection)
-│   │   ├── lib/                   # Supabase client, utilities
-│   │   ├── animations/            # Motion One spring presets, utilities
-│   │   │   ├── spring.ts          # Spring presets (adapted from DondeAI)
-│   │   │   └── motion.ts          # Timeline, RAF, interactions (adapted from DondeAI)
-│   │   └── styles/
-│   │       ├── reset.css
-│   │       ├── tokens.css         # Design tokens (colors, spacing, typography, animation)
-│   │       ├── layout.css
-│   │       ├── typography.css
-│   │       ├── components.css
-│   │       ├── animations.css     # Keyframes, transitions
-│   │       └── responsive.css     # Breakpoint-specific overrides
+├── frontend/                      # Next.js 16 App Router
+│   ├── app/
+│   │   ├── components/            # React components
+│   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism (active bias viz)
+│   │   │   ├── DeepDive.tsx       # Slide-in panel: consensus/divergence, source coverage
+│   │   │   ├── LeadStory.tsx      # Hero story card
+│   │   │   ├── StoryCard.tsx      # Standard story card
+│   │   │   ├── NavBar.tsx         # Section navigation (World/US)
+│   │   │   ├── FilterBar.tsx      # Category filter chips
+│   │   │   ├── RefreshButton.tsx  # Refresh with last-updated timestamp
+│   │   │   ├── ThemeToggle.tsx    # Light/dark mode
+│   │   │   ├── LoadingSkeleton.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── LogoFull.tsx
+│   │   │   ├── LogoIcon.tsx
+│   │   │   └── ScaleIcon.tsx
+│   │   ├── lib/
+│   │   │   ├── supabase.ts        # Supabase client, fetchDeepDiveData, fetchLastPipelineRun
+│   │   │   ├── types.ts           # TypeScript types (BiasScores, ThreeLensData, Story, etc.)
+│   │   │   ├── mockData.ts        # Fallback mock data
+│   │   │   └── utils.ts           # Helpers (timeAgo, etc.)
+│   │   ├── page.tsx               # Homepage: news feed with live Supabase queries
+│   │   ├── layout.tsx             # Root layout with fonts and metadata
+│   │   └── globals.css            # All styles (tokens, layout, components, animations)
 │   ├── public/
-│   └── next.config.js
+│   ├── package.json               # Next.js 16.1.7, React 19.2.3
+│   └── next.config.ts
 ├── .claude/
-│   └── agents/                    # Claude agents for development
+│   ├── agents/                    # 17 Claude agent definitions
+│   └── skills/                    # pressdesign skill
 ├── .github/
 │   └── workflows/
 │       ├── pipeline.yml           # 2x daily news pipeline cron
-│       └── deploy.yml             # Frontend build + deploy to GitHub Pages
+│       ├── deploy.yml             # Frontend build + deploy to GitHub Pages
+│       └── migrate.yml            # Supabase migration runner
 ├── data/
-│   └── sources.json               # Curated source list with RSS URLs and metadata
+│   └── sources.json               # 90 curated sources with RSS URLs and metadata
 └── supabase/
-    └── migrations/                # Database schema migrations
+    ├── config.toml
+    └── migrations/                # Database schema migrations (001-004)
 ```
 
 ## MVP Scope
 
-### Phase 1 — Foundation (Week 1-2)
-- [ ] Project scaffolding (Next.js, Python pipeline, Supabase)
-- [ ] Source list curation (90 sources with RSS/scrape configs)
-- [ ] Supabase schema setup (all tables + migrations)
-- [ ] Basic RSS fetcher (feedparser)
-- [ ] Basic web scraper (BeautifulSoup)
-- [ ] Article storage pipeline
-- [ ] GitHub Actions cron (2x daily)
-- [ ] Pipeline orchestrator (main.py)
+### Phase 1 — Foundation (Week 1-2) -- COMPLETE
+- [x] Project scaffolding (Next.js, Python pipeline, Supabase)
+- [x] Source list curation (90 sources with RSS/scrape configs)
+- [x] Supabase schema setup (all tables + migrations 001-004)
+- [x] Basic RSS fetcher (feedparser)
+- [x] Basic web scraper (BeautifulSoup)
+- [x] Article storage pipeline
+- [x] GitHub Actions cron (2x daily)
+- [x] Pipeline orchestrator (main.py)
 
-### Phase 2 — Analysis Engine (Week 3-5)
-- [ ] Story deduplication (TF-IDF similarity)
-- [ ] Story clustering algorithm
-- [ ] Political lean scoring
-- [ ] Sensationalism detection
-- [ ] Opinion vs. reporting classifier
-- [ ] Factual rigor scoring
-- [ ] Framing analysis (keyword emphasis, omission detection)
-- [ ] Auto-categorization (topic tagging)
-- [ ] Importance/impact ranking
+### Phase 2 — Analysis Engine (Week 3-5) -- COMPLETE
+- [x] Story deduplication (TF-IDF similarity)
+- [x] Story clustering algorithm
+- [x] Political lean scoring (with rationale)
+- [x] Sensationalism detection (with rationale)
+- [x] Opinion vs. reporting classifier (with rationale)
+- [x] Factual rigor scoring (with rationale)
+- [x] Framing analysis (cluster-aware omission detection, with rationale)
+- [x] Auto-categorization (topic tagging) + article_categories junction table populated
+- [x] Importance/impact ranking (v2: 7 signals + divergence)
+- [x] Confidence scoring per article
+- [x] Consensus/divergence generation per cluster
+- [x] IP compliance: full_text truncation post-analysis
 
-### Phase 3 — Frontend MVP (Week 6-8)
-- [ ] Next.js project setup with static export + TypeScript
-- [ ] Design token system (CSS custom properties)
+### Phase 3 — Frontend MVP (Week 6-8) -- COMPLETE
+- [x] Next.js project setup with TypeScript (App Router, Next.js 16)
+- [x] Design token system (CSS custom properties in globals.css)
 - [ ] Animation system (Motion One spring presets, utilities)
-- [ ] Desktop layout — newspaper-style multi-column grid
-- [ ] Mobile layout — single-column feed with bottom nav
-- [ ] Story card component (shared logic, separate layouts)
-- [ ] Homepage news feed (importance-ranked)
-- [ ] Category tag filtering
-- [ ] Bias indicator display on story cards
-- [ ] Refresh button with confirmation
-- [ ] "Last updated" timestamp
+- [x] Desktop layout — newspaper-style multi-column grid
+- [x] Mobile layout — single-column feed
+- [x] Story card component (LeadStory + StoryCard)
+- [x] Homepage news feed (importance-ranked via headline_rank)
+- [x] Category tag filtering (FilterBar)
+- [x] Bias indicator display on story cards (BiasLens: Three Lenses)
+- [x] Refresh button with last-updated timestamp (RefreshButton)
+- [x] "Last updated" timestamp
+- [x] Light/dark mode (ThemeToggle)
 - [ ] GitHub Pages deployment
 
-### Phase 4 — Deep Dive Dashboard (Week 9-11)
-- [ ] Deep Dive Dashboard view (desktop: split-screen, mobile: full-screen modal)
-- [ ] Multi-source story comparison
-- [ ] Bias visualization charts (per-axis breakdowns)
-- [ ] Framing analysis display
-- [ ] Coverage distribution view
+### Phase 4 — Deep Dive Dashboard (Week 9-11) -- IN PROGRESS
+- [x] Deep Dive Dashboard view (slide-in panel, mobile full-screen)
+- [x] Multi-source story comparison (per-source BiasLens in Deep Dive)
+- [x] Coverage distribution view (tier breakdown bars)
+- [x] Consensus/divergence display (pipeline-generated, read from JSONB)
+- [ ] Framing analysis display (detailed framing comparison)
 - [ ] Source credibility context panels
 
 ### Phase 5 — Polish & Launch (Week 12)
@@ -512,7 +531,7 @@ void-news/
 ## Development Notes
 
 - Python 3.11+ for pipeline
-- Node 18+ / Next.js 14+ for frontend
+- Node 18+ / Next.js 16 (App Router) for frontend
 - TypeScript for all frontend code
 - All bias analysis must be rule-based — no external API dependencies
 - Pipeline must complete within GitHub Actions time limits (~6 min for 90 sources)

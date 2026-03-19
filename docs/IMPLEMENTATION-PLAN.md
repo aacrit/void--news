@@ -1,7 +1,7 @@
 # void --news — Implementation Plan
 
-**Version:** 1.0
-**Date:** 2026-03-18
+**Version:** 1.1
+**Last updated:** 2026-03-18
 
 ---
 
@@ -11,7 +11,7 @@
 
 ---
 
-## Phase 1 — Foundation (Week 1-2)
+## Phase 1 — Foundation (Week 1-2) -- COMPLETE
 
 **Goal:** Working pipeline that fetches articles from 90 sources and stores them in Supabase.
 
@@ -45,9 +45,18 @@
 
 ---
 
-## Phase 2 — Analysis Engine (Week 3-5)
+## Phase 2 — Analysis Engine (Week 3-5) -- COMPLETE
 
-**Goal:** Full 6-axis bias scoring, story clustering, categorization, and importance ranking.
+**Goal:** Full 5-axis bias scoring (all with rationale), story clustering, categorization, importance ranking, consensus/divergence generation, and IP compliance truncation.
+
+**Additions beyond original plan:**
+- All 5 analyzers now return structured rationale dicts (sub-scores + evidence) stored as JSONB
+- Framing analyzer is cluster-aware: step 6b re-runs framing with cluster context for cross-article omission detection
+- Pipeline generates consensus/divergence points per cluster from bias score distributions
+- article_categories junction table populated by pipeline
+- Cleanup RPCs (stale clusters, stuck pipeline runs) called at end of each run
+- Full-text truncated to 300-char excerpts post-analysis for IP compliance
+- Confidence scoring per article (text length + availability + signal strength)
 
 ### Week 3: Deduplication + Clustering
 
@@ -88,9 +97,18 @@
 
 ---
 
-## Phase 3 — Frontend MVP (Week 6-8)
+## Phase 3 — Frontend MVP (Week 6-8) -- COMPLETE
 
 **Goal:** Responsive web app with news feed, bias indicators, desktop + mobile layouts.
+
+**Implementation notes:**
+- Built with Next.js 16 App Router (not pages router) + React 19
+- BiasLens "Three Lenses" visualization (Needle, Ring, Prism) replaces earlier Dot Matrix concept
+- BiasStamp.tsx (517 lines) removed as dead code, superseded by BiasLens
+- Supabase functions fetchClusterBiasSummary and fetchArticlesForCluster removed (unused)
+- pg server-side package removed (unnecessary dependency)
+- Fallback bias display shows dimmed/pending state when using placeholder values
+- RefreshButton rendered in section header area
 
 ### Week 6: Project Setup + Design System
 
@@ -140,9 +158,20 @@
 
 ---
 
-## Phase 4 — Deep Dive Dashboard (Week 9-11)
+## Phase 4 — Deep Dive Dashboard (Week 9-11) -- IN PROGRESS
 
 **Goal:** Story clustering view with unified summaries, source comparison, bias visualizations.
+
+**Completed:**
+- Deep Dive slide-in panel (desktop 50% width from right, mobile full-screen from bottom)
+- Pipeline-generated consensus/divergence points displayed (from JSONB columns, not hardcoded)
+- Per-source BiasLens with rationale popups in source list
+- Coverage breakdown by tier (US Major / International / Independent)
+- Live data fetching from Supabase (cluster_articles -> articles -> bias_scores with rationale)
+
+**Remaining:**
+- Detailed framing comparison view
+- Source credibility context panels
 
 ### Week 9: Unified Summary + Source List
 

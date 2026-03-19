@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.0
-**Date:** 2026-03-18
+**Version:** 1.1
+**Last updated:** 2026-03-18
 
 ---
 
@@ -137,47 +137,45 @@ Colors are consistent across light/dark modes for instant recognition. Designed 
 
 ---
 
-## 4. Bias Dot Matrix — The Core Visual Language
+## 4. BiasLens — "Three Lenses" (The Core Visual Language)
 
-The dot matrix is void --news's signature visual element. Minimal, scannable, information-dense.
+BiasLens is void --news's signature visual element. Three distinctive micro-visualizations, each encoding a different dimension of bias analysis. Replaces the earlier Dot Matrix (removed) and BiasStamp (removed) approaches.
 
-### Anatomy
+**Component:** `BiasLens.tsx` (active) -- `BiasStamp.tsx` and `DotMatrix` are deleted.
+
+### The Three Lenses
 
 ```
 [Story Headline]
-[Source Name] · [Time]   ● ● ○ ● ●
-                         L S O R F
+[Source Name] · [Time]   /  (3)  ■
+                         N   R   P
 ```
 
-Five dots, one per bias axis:
+| Lens | Name | Visual | Encoding |
+|------|------|--------|----------|
+| 1 (N) | **The Needle** | Tilting line with pivot dot | Political lean: rotates -30 to +30 degrees from center. Color from lean spectrum (blue left, gray center, red right). |
+| 2 (R) | **The Signal Ring** | SVG ring (Harvey ball) with source count | Coverage/confidence composite: ring fill 0-100%. Source count displayed in center. Color: green (strong) / yellow (moderate) / red (weak). |
+| 3 (P) | **The Prism** | Morphing shape (square to circle) | Opinion vs. reporting: square = factual reporting, circle = opinion. Color: blue (reporting) / purple (analysis) / orange (opinion). |
 
-| Position | Axis | Encoding |
-|----------|------|----------|
-| 1 (L) | Political Lean | Color from lean spectrum (blue → gray → red) |
-| 2 (S) | Sensationalism | Green (low) → Yellow → Red (high) |
-| 3 (O) | Opinion/Fact | Blue (reporting) → Purple (analysis) → Orange (opinion) |
-| 4 (R) | Factual Rigor | Green (high) → Yellow → Red (low) |
-| 5 (F) | Framing | Filled (neutral framing) → Half-filled → Hollow (heavy framing) |
+### Sizes
 
-### Dot Sizes
-
-- **Filled circle (●)**: Strong signal, high confidence
-- **Half-filled (◐)**: Moderate signal
-- **Hollow circle (○)**: Weak signal or neutral
-- **Size**: 8px desktop, 10px mobile (touch-friendly)
-- **Spacing**: 6px between dots
+- **sm** (story cards): Needle 18px, Ring 18px, Prism 14px. Gap 6px.
+- **lg** (lead story, deep dive header): Needle 28px, Ring 28px, Prism 22px. Gap 10px.
 
 ### Interaction
 
-- **Desktop hover**: Tooltip showing axis name + value + brief explanation
-- **Mobile tap**: Bottom sheet with full bias breakdown
-- **Cluster view**: Dot matrices stacked vertically for source comparison — patterns visible at a glance
+- **Desktop hover**: Each lens has its own independent popup with title, score, spectrum bar, and rationale sub-scores (when available from pipeline analysis).
+- **Mobile tap**: Same popup positioned near the lens element.
+- **Deep Dive source list**: Per-source BiasLens (sm) inline next to each source name.
+- **Pending state**: When bias scores are fallback placeholders (not yet analyzed), the entire lens group renders at 35% opacity with grayscale filter and a "Pending" label.
 
 ### Accessibility
 
-- Dots always accompanied by screen reader text: "Political lean: center-left. Sensationalism: low. Type: reporting. Rigor: high. Framing: moderate."
-- Color + shape encoding (filled/half/hollow) — never color alone
-- Min 4.5:1 contrast on both light and dark backgrounds
+- Each lens has `role="img"` with descriptive `aria-label` (e.g., "Political lean: Center-Left, score 42").
+- Popups use `role="tooltip"` with `aria-describedby` linking.
+- Keyboard accessible: Tab to focus, Enter/Space to toggle popup, Escape to close.
+- Color is never the sole differentiator -- shape (needle angle, ring fill, square-to-circle morph) encodes the data independently.
+- Min 4.5:1 contrast on both light and dark backgrounds.
 
 ---
 
@@ -306,8 +304,8 @@ Five dots, one per bias axis:
 │  Brief summary in Inter 400, 2 lines max.  │  ← Structural voice
 │  Truncated with ellipsis if longer.        │
 │                                            │
-│  12 sources  ● ● ○ ● ●                    │  ← Data voice + dot matrix
-│              L S O R F                     │
+│  12 sources  /  (12)  ■                    │  ← Data voice + BiasLens (sm)
+│              N   R    P                    │
 └────────────────────────────────────────────┘
 ```
 
@@ -322,7 +320,7 @@ Five dots, one per bias axis:
 │                                  │
 │  Brief summary in Inter...       │
 │                                  │
-│  12 sources  ● ● ○ ● ●          │
+│  12 sources  /  (12)  ■          │
 └──────────────────────────────────┘
 ```
 
@@ -332,7 +330,7 @@ Five dots, one per bias axis:
 - Hero typography (--text-hero for headline)
 - 3-4 line summary
 - Source count badge prominent
-- Dot matrix larger (12px dots)
+- BiasLens (lg) — larger Needle (28px), Ring (28px), Prism (22px)
 
 ---
 
@@ -394,20 +392,25 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 
 ## 8. Component Inventory
 
-| Component | Desktop | Mobile | Shared Logic |
-|-----------|---------|--------|-------------|
-| `StoryCard` | Multi-column, hover reveals | Full-width, tap reveals | Data fetching, bias display |
-| `LeadStory` | Hero card, 2/3 width | Full-width, larger type | Same |
-| `DotMatrix` | 8px dots, hover tooltips | 10px dots, tap bottom sheet | Score calculation, colors |
-| `BiasTooltip` | Hover popup | Bottom sheet | Content |
-| `DeepDive` | Right panel / split-screen | Full-screen modal | Summary, source list |
-| `SourceList` | Expandable inline list | Scrollable list | Source data, links |
-| `FilterBar` | Horizontal chips in header | Bottom sheet with chips | Filter state |
-| `NavBar` | Top horizontal nav | Bottom tab bar | Navigation state |
-| `RefreshButton` | Header, with confirmation dialog | Pull-area or bottom bar | Supabase refresh |
-| `ThemeToggle` | Header icon | Settings or header | Mode switching |
-| `UnifiedSummary` | Inline in deep dive | Full-width card | Summary generation |
-| `CoverageChart` | Inline, medium size | Full-width, scrollable | Chart data |
+Active components in `frontend/app/components/`:
+
+| Component | Purpose | Bias Visualization |
+|-----------|---------|-------------------|
+| `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
+| `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
+| `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
+| `DeepDive` | Slide-in panel: consensus, divergence, source coverage, tier breakdown | Per-source BiasLens (sm) |
+| `FilterBar` | Category filter chips | -- |
+| `NavBar` | Section navigation (World/US) with logo and theme toggle | -- |
+| `RefreshButton` | Refresh with "last updated" timestamp | -- |
+| `ThemeToggle` | Light/dark mode toggle | -- |
+| `LoadingSkeleton` | Animated skeleton loading state | -- |
+| `ErrorBoundary` | Error boundary wrapper | -- |
+| `Footer` | Page footer with last-updated info | -- |
+| `LogoFull` / `LogoIcon` | Brand logo (full and icon variants) | -- |
+| `ScaleIcon` | Scale/balance icon for brand | -- |
+
+**Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).
 
 ---
 
