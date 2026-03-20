@@ -407,7 +407,7 @@ export default function PaperPage() {
 
   useEffect(() => {
     async function load() {
-      const enrichedFields = `id,title,summary,category,section,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+      const enrichedFields = `id,title,summary,category,section,sections,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
 
       // Fetch all stories and op-eds in parallel
       const [worldRes, usRes, worldOpEdRaw, usOpEdRaw] = await Promise.all([
@@ -415,15 +415,14 @@ export default function PaperPage() {
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", ["world"])
-          // Exclude opinion clusters — those appear as individual op-eds below
-          .neq("content_type", "opinion")
+          .eq("content_type", "reporting")
           .order("headline_rank", { ascending: false })
           .limit(25),
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", ["us"])
-          .neq("content_type", "opinion")
+          .eq("content_type", "reporting")
           .order("headline_rank", { ascending: false })
           .limit(25),
         fetchOpinionArticles("world"),
