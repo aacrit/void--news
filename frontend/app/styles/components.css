@@ -2311,7 +2311,7 @@
   will-change: left;
 }
 
-/* ---- Score breakdown trigger button ------------------------------------ */
+/* ---- Press Analysis trigger button -------------------------------------- */
 .bi-trigger {
   display: inline-flex;
   align-items: center;
@@ -2437,40 +2437,24 @@
   flex-shrink: 0;
 }
 
-/* Desktop: slide from left edge of Deep Dive panel */
+/* Desktop: overlays the Deep Dive panel from the right.
+   DD panel is right: 0; width: 50vw. The drawer sits inside that space. */
 @media (min-width: 1024px) {
   .bi-panel__drawer {
-    /* Deep Dive is right: 0; width: 50vw.
-       Drawer is left portion: starts at left edge of DD panel,
-       covers 60% of the DD panel width ≈ 30vw.
-       right side = the left edge of DD, i.e. 50vw from the left. */
     left: auto;
-    right: 50vw;
+    right: 0;
     top: 0;
     bottom: 0;
     height: auto;
     max-height: none;
-    width: 30vw;
-    min-width: 280px;
-    max-width: 400px;
+    width: 50vw;
+    max-width: 480px;
     border-radius: 0;
-    border-right: var(--rule-thin);
+    border-left: var(--rule-thin);
   }
 
   .bi-panel__drawer::before {
     display: none;
-  }
-}
-
-/* Wide desktop: Deep Dive is narrower (40%, max 640px) — adjust drawer */
-@media (min-width: 1440px) {
-  .bi-panel__drawer {
-    /* DD panel is max 640px wide, right: 0.
-       Right edge of drawer = right edge of DD panel left side.
-       Since max DD width is 640px, drawer starts at (100vw - 640px). */
-    right: auto;
-    left: max(0px, calc(100vw - 640px));
-    width: min(384px, 60%);
   }
 }
 
