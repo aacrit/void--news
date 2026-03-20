@@ -5,7 +5,7 @@ import type { Section, Category, Story, BiasScores, BiasSpread, ThreeLensData, O
 import { supabase } from "./lib/supabase";
 import LogoWordmark from "./components/LogoWordmark";
 import LogoIcon from "./components/LogoIcon";
-import NavBar from "./components/NavBar";
+import NavBar, { type ViewMode } from "./components/NavBar";
 import FilterBar from "./components/FilterBar";
 import LeadStory from "./components/LeadStory";
 import StoryCard from "./components/StoryCard";
@@ -53,6 +53,7 @@ function HomeContent() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<Section>("world");
   const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
+  const [viewMode, setViewMode] = useState<ViewMode>("facts");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showAllCompact, setShowAllCompact] = useState(false);
 
@@ -71,7 +72,7 @@ function HomeContent() {
       try {
         // Query with enrichment columns first; fall back to base schema if
         // migrations 002/003 haven't been applied to the live database yet.
-        const enrichedFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
         const baseFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated`;
 
         let worldRes, usRes;
@@ -259,11 +260,17 @@ function HomeContent() {
 
   const filteredStories = useMemo(() => {
     let filtered = stories.filter((s) => s.section === activeSection);
+    // Facts/Opinion split: facts = opinionFact ≤ 50, opinion = opinionFact > 50
+    if (viewMode === "facts") {
+      filtered = filtered.filter((s) => s.biasScores.opinionFact <= 50);
+    } else {
+      filtered = filtered.filter((s) => s.biasScores.opinionFact > 50);
+    }
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
-  }, [stories, activeSection, activeCategory]);
+  }, [stories, activeSection, activeCategory, viewMode]);
 
   const leadStories = filteredStories.slice(0, 2);
   const mediumStories = filteredStories.slice(2, 5);
@@ -275,6 +282,12 @@ function HomeContent() {
         activeSection={activeSection}
         onSectionChange={(s) => {
           setActiveSection(s);
+          setActiveCategory("All");
+          setShowAllCompact(false);
+        }}
+        viewMode={viewMode}
+        onViewModeChange={(mode) => {
+          setViewMode(mode);
           setActiveCategory("All");
           setShowAllCompact(false);
         }}
@@ -341,21 +354,39 @@ function HomeContent() {
               fontSize: "var(--text-lg)",
               color: "var(--fg-tertiary)",
             }}>
-              No stories in this category.
+              {viewMode === "opinion"
+                ? "No opinion pieces in this edition."
+                : "No stories in this category."}
             </p>
-            <button
-              onClick={() => setActiveCategory("All")}
-              style={{
-                fontFamily: "var(--font-structural)",
-                fontSize: "var(--text-sm)",
-                color: "var(--fg-secondary)",
-                marginTop: "var(--space-3)",
-                textDecoration: "underline",
-                textUnderlineOffset: "3px",
-              }}
-            >
-              View all stories
-            </button>
+            {activeCategory !== "All" ? (
+              <button
+                onClick={() => setActiveCategory("All")}
+                style={{
+                  fontFamily: "var(--font-structural)",
+                  fontSize: "var(--text-sm)",
+                  color: "var(--fg-secondary)",
+                  marginTop: "var(--space-3)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "3px",
+                }}
+              >
+                View all stories
+              </button>
+            ) : viewMode === "opinion" ? (
+              <button
+                onClick={() => setViewMode("facts")}
+                style={{
+                  fontFamily: "var(--font-structural)",
+                  fontSize: "var(--text-sm)",
+                  color: "var(--fg-secondary)",
+                  marginTop: "var(--space-3)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "3px",
+                }}
+              >
+                Switch to Facts
+              </button>
+            ) : null}
           </div>
         )}
 
