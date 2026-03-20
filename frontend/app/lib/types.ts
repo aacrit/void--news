@@ -124,6 +124,22 @@ export interface SigilData {
   opinionLabel: OpinionLabel;
 }
 
+export interface OpinionArticle {
+  id: string;
+  title: string;
+  summary: string;
+  author: string | null;
+  url: string;
+  publishedAt: string;
+  sourceName: string;
+  sourceSlug: string;
+  sourceTier: "us_major" | "international" | "independent";
+  section: "world" | "us";
+  politicalLean: number;
+  sensationalism: number;
+  confidence: number;
+}
+
 export interface Story {
   id: string;
   title: string;

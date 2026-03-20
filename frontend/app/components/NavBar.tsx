@@ -124,7 +124,7 @@ export default function NavBar({ activeEdition, viewMode, onViewModeChange }: Na
                 onClick={() => onViewModeChange("opinion")}
                 aria-pressed={viewMode === "opinion"}
               >
-                Opinion
+                Op-Ed
               </button>
             </div>
           </div>

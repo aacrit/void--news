@@ -1,5 +1,5 @@
 """
-Re-rank existing clusters using the v3.1 ranking engine.
+Re-rank existing clusters using the v3.3 ranking engine.
 
 Reads clusters + articles + bias scores from Supabase, runs rank_importance()
 on each, and writes back updated headline_rank + divergence_score +
@@ -26,6 +26,14 @@ SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 DRY_RUN = "--dry-run" in sys.argv
 
 
+def _get_section(cluster_id: str, clusters: list[dict]) -> str:
+    """Look up the section (world/us) for a cluster by ID."""
+    for c in clusters:
+        if c["id"] == cluster_id:
+            return c.get("section", "world")
+    return "world"
+
+
 def load_sources() -> list[dict]:
     with open(SOURCES_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -46,7 +54,7 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
 def main():
     start = time.time()
     print("=" * 60)
-    print(f"void --news re-ranker v3.1 {'(DRY RUN)' if DRY_RUN else ''}")
+    print(f"void --news re-ranker v3.3 {'(DRY RUN)' if DRY_RUN else ''}")
     print("=" * 60)
 
     # 1. Load sources with DB IDs
@@ -168,14 +176,16 @@ def main():
 
     print(f"\n  Scored {len(updates)} clusters, {errors} errors")
 
-    # Lead eligibility gate: top 2 positions (lead stories) require 5+
-    # sources. Stories with <5 sources get demoted below lead slots.
-    # This ensures the hero treatment only goes to well-covered stories.
-    LEAD_MIN_SOURCES = 5
-    LEAD_SLOTS = 2
+    # Lead eligibility gate (v3.3): top 5 positions require 3+ sources.
+    # Previously gated only the top 2 slots at 5+ sources. Extended to top 5
+    # because benchmarking shows 2-source stories regularly claiming positions
+    # 3-5 on velocity alone. 3+ sources is a more permissive floor than 5+
+    # but prevents the worst single-source or micro-coverage stories from
+    # taking prominent feed positions.
+    LEAD_MIN_SOURCES = 3
+    LEAD_SLOTS = 5
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    lead_eligible = [u for u in updates if u["source_count"] >= LEAD_MIN_SOURCES]
     lead_ineligible_in_top = []
 
     # Check if any top-LEAD_SLOTS items are ineligible
@@ -183,28 +193,71 @@ def main():
         if updates[i]["source_count"] < LEAD_MIN_SOURCES:
             lead_ineligible_in_top.append(i)
 
-    if lead_ineligible_in_top and lead_eligible:
-        # Swap ineligible leads with the best eligible stories not in top 2
+    if lead_ineligible_in_top:
+        # Swap ineligible leads with the best eligible stories not in top LEAD_SLOTS
         eligible_idx = 0
         for slot in lead_ineligible_in_top:
-            # Find next eligible story not already in top LEAD_SLOTS
             while eligible_idx < len(updates):
                 if updates[eligible_idx]["source_count"] >= LEAD_MIN_SOURCES and eligible_idx >= LEAD_SLOTS:
-                    # Swap: bump eligible story's rank above the ineligible one
                     updates[eligible_idx]["headline_rank"] = updates[slot]["headline_rank"] + 0.01
                     eligible_idx += 1
                     break
                 eligible_idx += 1
         updates.sort(key=lambda u: u["headline_rank"], reverse=True)
-        print(f"  Lead gate: promoted {len(lead_ineligible_in_top)} stories with 5+ sources to lead slots")
+        print(f"  Lead gate: promoted {len(lead_ineligible_in_top)} stories with 3+ sources into top-5 slots")
 
-    print("\n  --- Top 15 by v3.2 headline_rank ---")
-    for j, u in enumerate(updates[:15]):
-        # Find original title
-        title = next(
-            (c["title"] for c in clusters if c["id"] == u["id"]), "?"
-        )[:60]
-        print(f"  {j+1:2}. [{u['headline_rank']:5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
+    # Topic diversity re-rank (v3.3): max 2 stories per category in the
+    # top 10 of each section. Prevents sports×3, BTS×2, etc.
+    # Runs per section (world/us) since that's how the frontend displays.
+    MAX_SAME_CAT = 2
+    TOP_N = 10
+    for section_val in ("world", "us", "india"):
+        pool = [u for u in updates if _get_section(u["id"], clusters) == section_val]
+        if len(pool) <= TOP_N:
+            continue
+        promoted: list[dict] = []
+        deferred: list[dict] = []
+        cat_counts: dict[str, int] = {}
+
+        for u in pool:
+            if len(promoted) >= TOP_N:
+                deferred.append(u)
+                continue
+            cat = u.get("category", "general")
+            if cat_counts.get(cat, 0) < MAX_SAME_CAT:
+                promoted.append(u)
+                cat_counts[cat] = cat_counts.get(cat, 0) + 1
+            else:
+                deferred.append(u)
+
+        # Backfill if we couldn't fill TOP_N
+        while len(promoted) < TOP_N and deferred:
+            promoted.append(deferred.pop(0))
+
+        # Adjust headline_rank for demoted items so DB sort order matches
+        final_order = promoted + deferred
+        if final_order:
+            top_rank = final_order[0]["headline_rank"]
+            for i, u in enumerate(final_order):
+                if i < TOP_N:
+                    u["headline_rank"] = round(top_rank - (i * 0.01), 2)
+
+        demoted_count = sum(1 for d in deferred if d not in pool[TOP_N:])
+        if demoted_count:
+            print(f"  Topic diversity ({section_val}): demoted {demoted_count} stories exceeding category cap")
+
+    # Re-sort after topic diversity adjustments
+    updates.sort(key=lambda u: u["headline_rank"], reverse=True)
+
+    # Print top 15 per section
+    for section_val in ("world", "us", "india"):
+        section_updates = [u for u in updates if _get_section(u["id"], clusters) == section_val]
+        print(f"\n  --- Top 15 {section_val.upper()} by v3.3 headline_rank ---")
+        for j, u in enumerate(section_updates[:15]):
+            title = next(
+                (c["title"] for c in clusters if c["id"] == u["id"]), "?"
+            )[:60]
+            print(f"  {j+1:2}. [{u['headline_rank']:5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
 
     if DRY_RUN:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")

@@ -21,6 +21,9 @@ import type { SigilData } from "../lib/types";
 interface SigilProps {
   data: SigilData;
   size?: "sm" | "lg";
+  /** "facts" = standard cluster mode (coverage ring + source count)
+   *  "oped"  = opinion article mode (tone arc for sensationalism, no source count) */
+  mode?: "facts" | "oped";
 }
 
 /* ── CSS variable cache ────────────────────────────────────────────────── */
@@ -141,19 +144,34 @@ const CIRC = 2 * Math.PI * 9; // ~56.55, circle circumference (r=9)
 
 /* ── Compact data-mark: the logo encoding live data ───────────────────── */
 
-function DataMark({ data, size, mounted }: {
-  data: SigilData; size: "sm" | "lg"; mounted: boolean;
+function senseColor(v: number): string {
+  const c = gc();
+  if (v <= 33) return c["--sense-low"];
+  if (v <= 66) return lerp(c["--sense-low"], c["--sense-medium"], (v - 33) / 33);
+  return lerp(c["--sense-medium"], c["--sense-high"], (v - 66) / 34);
+}
+
+function DataMark({ data, size, mounted, mode = "facts" }: {
+  data: SigilData; size: "sm" | "lg"; mounted: boolean; mode?: "facts" | "oped";
 }) {
   const lean = data.politicalLean;
   const beamAngle = (lean - 50) * 0.30; // ±15° range
   const beamCol = leanColor(lean);
 
-  // Circle fill: source coverage as Harvey ball
-  const coverage = Math.min(data.sourceCount / 10, 1);
-  const fillLen = coverage * CIRC;
-
   const px = size === "lg" ? 42 : 28;
-  const showNum = data.sourceCount > 0;
+
+  // oped mode: tone arc = sensationalism fill, colored green→yellow→red
+  const sense = data.sensationalism ?? 0;
+  const toneCol = senseColor(sense);
+  const toneFill = (sense / 100) * CIRC;
+
+  // facts mode: source coverage Harvey ball
+  const coverage = Math.min(data.sourceCount / 10, 1);
+  const coverageFill = coverage * CIRC;
+  const ringCol = beamCol;
+  const ringFill = coverageFill;
+
+  const showNum = mode === "facts" && data.sourceCount > 0;
   const numSize = size === "lg" ? 8 : 6;
 
   return (
@@ -166,15 +184,15 @@ function DataMark({ data, size, mounted }: {
       aria-hidden="true"
       style={{ display: "block", flexShrink: 0 }}
     >
-      {/* Void circle — coverage ring */}
+      {/* Void circle — coverage ring (facts) or tone arc (oped) */}
       {/* Background ring (faint) */}
       <circle cx="16" cy="13" r="9"
         stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
       />
-      {/* Fill ring (coverage) */}
+      {/* Fill ring */}
       <circle cx="16" cy="13" r="9"
-        stroke={beamCol} strokeWidth="1.8"
-        strokeDasharray={`${mounted ? fillLen : 0} ${CIRC}`}
+        stroke={mode === "oped" ? toneCol : ringCol} strokeWidth="1.8"
+        strokeDasharray={`${mounted ? (mode === "oped" ? toneFill : ringFill) : 0} ${CIRC}`}
         style={{
           transform: "rotate(-90deg)", transformOrigin: "16px 13px",
           transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
@@ -182,7 +200,7 @@ function DataMark({ data, size, mounted }: {
         opacity={0.9}
       />
 
-      {/* Source count number inside circle (lg only) */}
+      {/* Source count number inside circle — facts mode only */}
       {showNum && (
         <text x="16" y="13" textAnchor="middle" dominantBaseline="central"
           style={{
@@ -465,7 +483,7 @@ function CountText({ target, active }: { target: number; active: boolean }) {
 
 /* ── Main Sigil ────────────────────────────────────────────────────────── */
 
-export default function Sigil({ data, size = "sm" }: SigilProps) {
+export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { open, show, hide, toggle, onKey, keep } = useHover();
   const [mounted, setMounted] = useState(false);
@@ -477,7 +495,9 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const aria = `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
+  const aria = mode === "oped"
+    ? `Political lean: ${ll} (${data.politicalLean}). Press Enter for details.`
+    : `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
   return (
     <div ref={ref} className="sigil"
@@ -496,7 +516,7 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
       }}
     >
       {/* The data-encoded brand mark */}
-      <DataMark data={data} size={size} mounted={mounted} />
+      <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
       {/* Text labels — makes the mark self-explanatory */}
       <div style={{
@@ -516,15 +536,17 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
           {size === "lg" ? ll : ls}
         </span>
 
-        {/* Source count */}
-        <span style={{
-          fontFamily: "var(--font-data)",
-          fontSize: size === "lg" ? 9 : 8,
-          color: "var(--fg-tertiary)",
-          lineHeight: 1,
-        }}>
-          {data.sourceCount} src
-        </span>
+        {/* Source count — facts mode only */}
+        {mode === "facts" && (
+          <span style={{
+            fontFamily: "var(--font-data)",
+            fontSize: size === "lg" ? 9 : 8,
+            color: "var(--fg-tertiary)",
+            lineHeight: 1,
+          }}>
+            {data.sourceCount} src
+          </span>
+        )}
       </div>
 
       <SigilPopup

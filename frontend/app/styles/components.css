@@ -1172,3 +1172,276 @@
   line-height: 1.5;
   padding-top: var(--space-1);
 }
+
+/* ==========================================================================
+   Op-Ed Page
+   Individual opinion/editorial articles — no clustering, no deep dive.
+   Newspaper editorial section aesthetic: left-border lean accent, byline row.
+   ========================================================================== */
+
+/* ---- Op-Ed Page Container ---------------------------------------------- */
+.oped-page {
+  width: 100%;
+}
+
+/* ---- Op-Ed Page Header ------------------------------------------------- */
+.oped-page__header {
+  padding: var(--space-5) 0 var(--space-4);
+}
+
+.oped-page__header-rule {
+  height: 1px;
+  background-color: var(--fg-primary);
+  margin-bottom: var(--space-3);
+}
+
+.oped-page__header-rule:last-child {
+  margin-bottom: 0;
+  margin-top: var(--space-3);
+  background-color: var(--divider);
+}
+
+.oped-page__header-inner {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.oped-page__title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.oped-page__subtitle {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ---- Op-Ed Featured — first article, larger treatment ------------------ */
+.oped-page__featured {
+  margin-bottom: var(--space-5);
+}
+
+/* ---- Op-Ed Grid — 2-col desktop, 1-col mobile -------------------------- */
+.oped-page__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .oped-page__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-6);
+  }
+}
+
+/* ---- Op-Ed Count line -------------------------------------------------- */
+.oped-page__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: var(--space-5) 0 var(--space-3);
+  border-top: var(--rule-thin);
+  margin-top: var(--space-4);
+}
+
+/* ---- Opinion Card ------------------------------------------------------ */
+.opinion-card {
+  padding: var(--space-4) 0 var(--space-4) var(--space-4);
+  border-bottom: var(--rule-thin);
+  border-left: 3px solid var(--bias-center, #9CA3AF);
+  /* Left border color is overridden by inline style from lean data */
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.opinion-card:hover {
+  background-color: var(--bg-secondary);
+  box-shadow: var(--shadow-e1);
+  transform: translateY(-1px);
+}
+
+.opinion-card:focus-within {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  background-color: var(--bg-secondary);
+}
+
+@media (hover: none) {
+  .opinion-card:hover {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .opinion-card:active {
+    transform: scale(0.99);
+    opacity: 0.95;
+  }
+}
+
+/* Featured variant — larger padding, no grid borders */
+.opinion-card--featured {
+  padding: var(--space-5) 0 var(--space-5) var(--space-5);
+  border-top: none;
+  border-bottom: var(--rule-thin);
+  border-left-width: 4px;
+}
+
+/* ---- Opinion Card: Byline ---------------------------------------------- */
+.opinion-card__byline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+}
+
+.opinion-card__source {
+  color: var(--fg-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.opinion-card__tier {
+  font-weight: 400;
+  color: var(--fg-muted);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: calc(var(--text-xs) * 0.9);
+  border: 1px solid var(--border-subtle);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.opinion-card__author {
+  color: var(--fg-tertiary);
+  font-style: italic;
+}
+
+/* Separator dots between byline items */
+.opinion-card__byline .opinion-card__author::before,
+.opinion-card__byline .opinion-card__time::before {
+  content: "\00B7"; /* middle dot */
+  margin-right: var(--space-2);
+  color: var(--fg-muted);
+  font-style: normal;
+}
+
+.opinion-card__time {
+  color: var(--fg-muted);
+  font-style: normal;
+}
+
+/* ---- Opinion Card: Headline -------------------------------------------- */
+.opinion-card__headline {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  margin: 0 0 var(--space-2);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.opinion-card__headline-link {
+  color: var(--fg-primary);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.opinion-card__headline-link:hover {
+  color: var(--accent-warm);
+}
+
+.opinion-card__headline-link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Featured: larger headline */
+.opinion-card--featured .opinion-card__headline {
+  font-size: var(--text-xl);
+}
+
+/* Standard: medium headline */
+.opinion-card:not(.opinion-card--featured) .opinion-card__headline {
+  font-size: var(--text-lg);
+}
+
+/* ---- Opinion Card: Excerpt --------------------------------------------- */
+.opinion-card__excerpt {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-3);
+  /* 2-line clamp for standard cards, 3-line for featured */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.opinion-card--featured .opinion-card__excerpt {
+  -webkit-line-clamp: 3;
+}
+
+/* ---- Opinion Card: Footer (bias + read link) --------------------------- */
+.opinion-card__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.opinion-card__read-link {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color var(--dur-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.opinion-card__read-link:hover {
+  color: var(--fg-secondary);
+}
+
+/* Mobile: expand excerpt slightly, tighter padding */
+@media (max-width: 767px) {
+  .opinion-card {
+    padding: var(--space-4) 0 var(--space-4) var(--space-3);
+  }
+
+  .opinion-card--featured {
+    padding: var(--space-4) 0 var(--space-4) var(--space-3);
+  }
+
+  .opinion-card--featured .opinion-card__headline {
+    font-size: var(--text-lg);
+  }
+}
