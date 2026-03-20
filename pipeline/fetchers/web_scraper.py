@@ -1,12 +1,17 @@
 """
 Web scraper for extracting full article text from news pages.
 
-Uses BeautifulSoup + requests to extract article content. Respects
-robots.txt and uses a polite User-Agent.
+Two-tier extraction:
+  Tier 1: requests + BeautifulSoup (fast, ~0.5s per article)
+  Tier 2: Playwright headless browser (JS rendering, ~3s per article)
 
-Improved extraction with:
-- Broader CSS selectors for major news sites
+Tier 2 activates as a fallback when Tier 1 returns <500 chars — this
+catches JS-rendered sites (NYT, WaPo, etc.) that serve empty HTML shells.
+Playwright is imported lazily so the pipeline works without it installed.
+
+Extraction strategies (both tiers):
 - JSON-LD structured data parsing (Article schema)
+- Broader CSS selectors for major news sites
 - Meta description fallback
 - Better paragraph aggregation
 """
@@ -302,12 +307,60 @@ def _extract_image_url(soup: BeautifulSoup, base_url: str) -> str | None:
     return None
 
 
+_PLAYWRIGHT_AVAILABLE: bool | None = None  # lazy-checked once
+
+
+def _scrape_with_playwright(url: str) -> str:
+    """
+    Fallback scraper using Playwright headless Chromium for JS-rendered sites.
+
+    Returns extracted article text, or empty string on failure.
+    Lazy-imports playwright so the module works without it installed.
+    """
+    global _PLAYWRIGHT_AVAILABLE
+    if _PLAYWRIGHT_AVAILABLE is False:
+        return ""
+
+    try:
+        from playwright.sync_api import sync_playwright
+        _PLAYWRIGHT_AVAILABLE = True
+    except ImportError:
+        _PLAYWRIGHT_AVAILABLE = False
+        return ""
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/131.0.0.0 Safari/537.36"
+                ),
+                viewport={"width": 1280, "height": 800},
+            )
+            page = context.new_page()
+            page.goto(url, wait_until="domcontentloaded", timeout=20000)
+            # Wait for article content to render (most sites load within 2s)
+            page.wait_for_timeout(2500)
+
+            html = page.content()
+            browser.close()
+
+        soup = BeautifulSoup(html, "html.parser")
+        text = _extract_article_text(soup)
+        return text
+    except Exception:
+        return ""
+
+
 def scrape_article(url: str) -> dict:
     """
     Scrape an article page to extract full text, word count, and image URL.
 
-    Checks robots.txt before scraping. Returns partial results if some
-    extraction steps fail.
+    Two-tier: tries requests+BeautifulSoup first (fast). If text < 500 chars,
+    retries with Playwright headless browser (handles JS-rendered sites).
+    Checks robots.txt before scraping.
     """
     result = {
         "full_text": "",
@@ -348,6 +401,15 @@ def scrape_article(url: str) -> dict:
     # Extract article text, then strip leading image credits
     full_text = _extract_article_text(soup)
     full_text = _strip_image_credits(full_text)
+
+    # Tier 2 fallback: if BeautifulSoup got too little text, retry with
+    # Playwright headless browser (renders JavaScript like a real browser).
+    # Threshold 500 chars — below that, the page likely needs JS rendering.
+    if len(full_text) < 500:
+        pw_text = _scrape_with_playwright(url)
+        if len(pw_text) > len(full_text):
+            full_text = _strip_image_credits(pw_text)
+
     result["full_text"] = full_text
     result["word_count"] = len(full_text.split()) if full_text else 0
 
