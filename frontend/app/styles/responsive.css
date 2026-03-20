@@ -190,9 +190,23 @@
     display: block;
   }
 
-  /* Dateline row: hidden entirely on mobile — nav is already compact */
+  /* Dateline row: hidden on mobile */
   .nav-dateline-row {
     display: none;
+  }
+
+  /* Dateline: show medium variant, hide full */
+  .nav-dateline__full {
+    display: none;
+  }
+
+  .nav-dateline__medium {
+    display: inline;
+  }
+
+  .nav-dateline {
+    border-left: none;
+    padding-left: 0;
   }
 
   /* Tighter nav inner padding + gap to fit logo + edition on one row */
