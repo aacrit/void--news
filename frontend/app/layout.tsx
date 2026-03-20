@@ -110,6 +110,13 @@ export default function RootLayout({
             on first client-side query (~100-300ms savings on cold load) */}
         <link rel="preconnect" href="https://xryzskhgfuafyotrcdvj.supabase.co" />
         <link rel="dns-prefetch" href="https://xryzskhgfuafyotrcdvj.supabase.co" />
+        {/* E-paper period fonts — non-blocking load */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        />
         {/* Inline script to set theme before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
