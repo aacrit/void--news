@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-19
+Last updated: 2026-03-19 (rev 2)
 
 ## Philosophy
 
@@ -12,7 +12,7 @@ Adapted from DondeAI's proven agent ecosystem. Every principle below is inherite
 2. **Read-First Protocol** — Every agent reads CLAUDE.md + relevant docs before any work.
 3. **Execution Protocol** — Assess → Plan → Build → Verify → Report. No exceptions.
 4. **Max Blast Radius** — Each agent has bounded file modification limits (max 4 CSS, 2 JS/TS, 3 Python per run).
-5. **$0 Cost — Claude Max CLI Only** — All agent/development AI work uses Claude Code CLI (claude-opus via Max subscription). No paid inference anywhere. The only permitted external API call is Gemini Flash for pipeline cluster summarization, capped at 15 calls/run on its free tier. No OpenAI, no paid Anthropic API, no other paid inference. This is a hard constraint.
+5. **$0 Cost — Claude Max CLI Only** — All agent/development AI work uses Claude Code CLI (claude-opus via Max subscription). No paid inference anywhere. The only permitted external API call is Gemini Flash for pipeline cluster summarization, capped at 25 calls/run on its free tier. No OpenAI, no paid Anthropic API, no other paid inference. This is a hard constraint.
 6. **Parallel-Safe vs Sequential** — Read-only agents can run simultaneously. Write agents require sequencing.
 7. **Model Tiering** — Opus for creative agents, Sonnet for execution agents, Haiku for read-only agents.
 
@@ -25,14 +25,14 @@ All AI agent work runs through Claude Code CLI (Max subscription).
 No paid inference. No exceptions.
 
 Pipeline NLP (bias analysis): Rule-based only (spaCy, NLTK, TextBlob) — $0
-Pipeline summarization: Gemini Flash free tier (15 calls/run cap, 30 RPD = 2% of 1500 RPD limit) — $0
+Pipeline summarization: Gemini Flash free tier (25 calls/run cap, 50 RPD = 3.3% of 1500 RPD limit) — $0
 Database: Supabase free tier — $0
 Hosting: GitHub Pages — $0
 CI/CD: GitHub Actions free tier — $0
 Agent work: Claude Code CLI (Max subscription) — $0
 ```
 
-**Before running ANY command that could incur API costs:** Stop. The only permitted external API is Gemini Flash via its free tier, hard-capped at 15 calls/run. If a task seems to require paid inference, redesign the approach to use rule-based NLP or Claude CLI.
+**Before running ANY command that could incur API costs:** Stop. The only permitted external API is Gemini Flash via its free tier, hard-capped at 25 calls/run. If a task seems to require paid inference, redesign the approach to use rule-based NLP or Claude CLI.
 
 ---
 
@@ -87,7 +87,7 @@ CEO (Aacrit)
 |-------|---------|-------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization, frontend content | sonnet | Yes | Pipeline development, content quality issues |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | sonnet | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 97-source list | sonnet | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 200-source list | sonnet | Yes | Source list changes |
 
 ### Security Division (1 agent)
 
@@ -184,7 +184,7 @@ feed-intelligence (ingestion) → nlp-engineer (bias) → pipeline-tester (valid
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 97-source curated list structure (3 tiers: 30 us_major + 34 international + 33 independent)
+- 200-source curated list structure (3 tiers: 49 us_major + 67 international + 84 independent); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all agent/dev work; Gemini Flash free tier only for pipeline cluster summarization (no paid inference)
 

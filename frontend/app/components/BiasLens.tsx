@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useId } from "react";
 import { createPortal } from "react-dom";
-import type { ThreeLensData, LeanRationale, OpinionRationale, CoverageRationale } from "../lib/types";
+import type { ThreeLensData, LeanRationale, CoverageRationale } from "../lib/types";
 
 interface BiasLensProps {
   lensData: ThreeLensData;
@@ -91,12 +91,6 @@ function getCoverageColor(v: number): string {
   return c["--sense-high"];
 }
 
-function getOpinionColor(v: number): string {
-  const c = getColors();
-  if (v <= 25) return c["--type-reporting"];
-  if (v <= 50) return c["--type-analysis"];
-  return c["--type-opinion"];
-}
 
 /* ── Label helpers ──────────────────────────────────────────────────────── */
 
@@ -531,134 +525,6 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
   );
 }
 
-/* ── Lens 3: The Prism (Opinion vs Reporting) ──────────────────────────── */
-
-function OpinionPrism({ value, opinionLabel, rationale, size }: {
-  value: number; opinionLabel: string;
-  rationale?: OpinionRationale; size: "sm" | "lg";
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { open, show, hide, toggle, onKey, keepOpen } = useLensInteraction();
-  const [animated, setAnimated] = useState(false);
-  const tooltipId = `opinion-${useId()}`;
-
-  const dim = size === "lg" ? 22 : 14;
-  // Square (0% radius) → Circle (50% radius)
-  const borderRadius = `${(value / 100) * 50}%`;
-  const color = getOpinionColor(value);
-
-  useEffect(() => {
-    const t = setTimeout(() => setAnimated(true), 170);
-    return () => clearTimeout(t);
-  }, []);
-
-  const SIGNAL_LABELS: Record<string, string> = {
-    subjectivity: "Subjective language",
-    attribution_gaps: "Attribution gaps",
-    pronouns: "First-person pronouns",
-    modal_language: "Prescriptive language",
-    metadata: "Opinion section/URL",
-    value_judgments: "Value judgments",
-    hedging: "Hedging language",
-    rhetorical_questions: "Rhetorical questions",
-  };
-
-  return (
-    <div
-      ref={ref}
-      className="lens"
-      onMouseEnter={show}
-      onFocus={show}
-      onMouseLeave={hide}
-      onBlur={hide}
-      onClick={toggle}
-      onKeyDown={onKey}
-      tabIndex={0}
-      role="button"
-      aria-expanded={open}
-      aria-label={`Content type: ${opinionLabel}, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
-      aria-controls={open ? tooltipId : undefined}
-      style={{ width: dim + 4, height: dim + 4, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
-    >
-      <div style={{
-        width: animated ? dim : dim * 0.6,
-        height: animated ? dim : dim * 0.6,
-        borderRadius,
-        backgroundColor: color,
-        transition: "border-radius 400ms var(--ease-out), background-color 300ms var(--ease-out), width 400ms var(--ease-out), height 400ms var(--ease-out)",
-        opacity: animated ? 1 : 0.3,
-      }} />
-
-      <LensPopup
-        triggerRef={ref}
-        isOpen={open}
-        onClose={() => hide()}
-        onMouseEnter={keepOpen}
-        onMouseLeave={hide}
-        title="Content Type"
-        id={tooltipId}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
-          <span style={{ fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", color: "var(--fg-primary)", fontWeight: 600 }}>
-            {opinionLabel}
-          </span>
-          <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", color, fontWeight: 600 }}>
-            {value}
-          </span>
-        </div>
-        {/* Shape legend */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, fontSize: "var(--text-xs)", color: "var(--fg-tertiary)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 0, backgroundColor: "var(--type-reporting)", opacity: 0.5 }} />
-            <span>Reporting</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--type-opinion)", opacity: 0.5 }} />
-            <span>Opinion</span>
-          </div>
-        </div>
-        {rationale ? (
-          <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
-            {rationale.dominantSignals?.length > 0 && (
-              <div style={{ marginBottom: 4 }}>
-                <span style={{ fontWeight: 500, color: "var(--fg-secondary)" }}>Key signals:</span>{" "}
-                {rationale.dominantSignals.map(s => SIGNAL_LABELS[s] || s).join(", ")}
-              </div>
-            )}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px 8px", marginTop: 6 }}>
-              <DataRow label="Subjectivity" value={rationale.subjectivityScore} />
-              <DataRow label="Attribution" value={rationale.attributionScore} invert />
-              <DataRow label="Pronouns" value={rationale.pronounScore} />
-              <DataRow label="Modal lang." value={rationale.modalScore} />
-            </div>
-          </div>
-        ) : (
-          <div className="rationale-pending" style={{ fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontStyle: "italic", lineHeight: 1.5 }}>
-            Detailed analysis pending
-          </div>
-        )}
-      </LensPopup>
-    </div>
-  );
-}
-
-/* ── Small data row for popup ──────────────────────────────────────────── */
-
-function DataRow({ label, value, invert }: { label: string; value: number; invert?: boolean }) {
-  const displayVal = Math.round(value);
-  const barPct = invert ? 100 - displayVal : displayVal;
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-      <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--fg-tertiary)", width: 60, flexShrink: 0 }}>
-        {label}
-      </span>
-      <div style={{ flex: 1, height: 3, backgroundColor: "var(--border-subtle)", borderRadius: 1, overflow: "hidden" }}>
-        <div style={{ width: `${barPct}%`, height: "100%", backgroundColor: "var(--fg-tertiary)", borderRadius: 1, opacity: 0.5 }} />
-      </div>
-    </div>
-  );
-}
-
 /* ── Main BiasLens component ───────────────────────────────────────────── */
 
 export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
@@ -689,12 +555,6 @@ export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
         sourceCount={lensData.sourceCount}
         tierBreakdown={lensData.tierBreakdown}
         rationale={lensData.coverageRationale}
-        size={size}
-      />
-      <OpinionPrism
-        value={lensData.opinion}
-        opinionLabel={lensData.opinionLabel}
-        rationale={lensData.opinionRationale}
         size={size}
       />
       {pending && (

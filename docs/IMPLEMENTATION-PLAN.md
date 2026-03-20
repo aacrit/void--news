@@ -1,7 +1,7 @@
 # void --news — Implementation Plan
 
 **Version:** 1.1
-**Last updated:** 2026-03-19
+**Last updated:** 2026-03-19 (rev 2)
 
 ---
 
@@ -13,7 +13,7 @@
 
 ## Phase 1 — Foundation (Week 1-2) -- COMPLETE
 
-**Goal:** Working pipeline that fetches articles from 97 sources and stores them in Supabase.
+**Goal:** Working pipeline that fetches articles from 200 sources and stores them in Supabase.
 
 ### Week 1: Scaffolding + Source List
 
@@ -37,9 +37,9 @@
 | 2.4 | Build Supabase client utility (`pipeline/utils/supabase_client.py`) — insert articles, upsert sources | — |
 | 2.5 | Build pipeline orchestrator (`pipeline/main.py`) — fetch → parse → store, with logging and error handling | nlp-engineer |
 | 2.6 | Set up GitHub Actions workflow (`.github/workflows/pipeline.yml`) — cron 2x daily (6 AM, 6 PM UTC) | — |
-| 2.7 | Test pipeline end-to-end: 90 sources → Supabase with real articles | pipeline-tester |
+| 2.7 | Test pipeline end-to-end: 200 sources → Supabase with real articles | pipeline-tester |
 
-**Phase 1 Deliverable:** Pipeline runs 2x daily via GitHub Actions, fetching articles from 97 sources into Supabase. Raw articles stored with metadata.
+**Phase 1 Deliverable:** Pipeline runs 2x daily via GitHub Actions, fetching articles from 200 sources into Supabase. Raw articles stored with metadata.
 
 **Dependencies:** Supabase account (existing), GitHub repo created.
 
@@ -53,15 +53,20 @@
 - All 5 per-article analyzers now return structured rationale dicts (sub-scores + evidence) stored as JSONB
 - Framing analyzer is cluster-aware: step 6b re-runs framing with cluster context for cross-article omission detection
 - Content-based deduplication (step 4b) using TF-IDF + cosine similarity (threshold 0.85) with Union-Find transitive grouping; keeps higher-tier source articles
-- Gemini Flash summarization (step 7b): `pipeline/summarizer/` module (`gemini_client.py` + `cluster_summarizer.py`) generates headlines, summaries, consensus/divergence for clusters with 3+ sources using `gemini-2.5-flash` via `google-genai` SDK; hard-capped at 15 calls/run (30 RPD = 2% of 1500 RPD free tier); clusters processed by source_count descending; falls back to rule-based when unavailable or cap reached
+- Gemini Flash summarization (step 7b): `pipeline/summarizer/` module (`gemini_client.py` + `cluster_summarizer.py`) generates headlines, 150-250 word summaries, consensus/divergence for clusters with 3+ sources using `gemini-2.5-flash` via `google-genai` SDK; hard-capped at 25 calls/run (50 RPD = 3.3% of 1500 RPD free tier); `max_output_tokens=8192`; clusters processed by source_count descending; falls back to rule-based when unavailable or cap reached
 - Per-topic per-outlet tracking (Axis 6, step 9c): EMA-based (alpha=0.3) tracking in `source_topic_lean` table
 - Pipeline generates consensus/divergence points per cluster from bias score distributions
 - article_categories junction table populated by pipeline
 - Cleanup RPCs (stale clusters, stuck pipeline runs) called at end of each run
 - Full-text truncated to 300-char excerpts post-analysis for IP compliance
 - Confidence scoring per article (text length + availability + signal strength)
-- Source list expanded from 90 to 97 sources (us_major=30, international=34, independent=33)
-- DB cleanup: updated_at auto-triggers on articles/story_clusters, redundant indexes dropped (migrations 005-006)
+- Source list expanded to 200 sources (us_major=49, international=67, independent=84); 7-point political lean spectrum (far-left → far-right); left:right ratio fixed to 1.15:1
+- Orphan article detection: unclustered articles wrapped in single-article clusters so they appear in feed
+- Junk title filters expanded: 9 additional patterns in rss_fetcher.py (Economist section pages, Yonhap digests, crosswords, obituaries)
+- Truncation step switched from upsert to UPDATE to avoid NOT NULL violations
+- `first_published` sends None instead of empty string to avoid invalid timestamp errors
+- `_gemini_enriched` flag on cluster dicts survives sort-order changes
+- DB cleanup: updated_at auto-triggers on articles/story_clusters, redundant indexes dropped (migrations 005-007)
 - `google-genai>=1.0.0` added to `requirements.txt`; `GEMINI_API_KEY` env var added to pipeline.yml and `.env`
 
 ### Week 3: Deduplication + Clustering
@@ -93,7 +98,7 @@
 | 5.2 | **Auto-Categorization** (`categorizer/`) — topic classification using keyword matching + named entity categories (Politics, Economy, Tech, Health, Environment, Conflict, Science, Culture, Sports) | nlp-engineer |
 | 5.3 | **Importance Ranking** (`ranker/`) — composite score: source coverage breadth × editorial weight (top outlets per bias tier) × recency decay × geographic impact estimation | nlp-engineer |
 | 5.4 | **Editorial Weight Model** — top outlets in each bias category get higher importance multiplier; cross-spectrum coverage (left + center + right all covering it) gets maximum boost | nlp-engineer |
-| 5.5 | **Gemini Flash summarization** (`summarizer/gemini_client.py` + `cluster_summarizer.py`) — step 7b: generate headlines, summaries, consensus/divergence for 3+-source clusters using `gemini-2.5-flash`; 15-call/run cap, descending source_count priority, rule-based fallback | nlp-engineer |
+| 5.5 | **Gemini Flash summarization** (`summarizer/gemini_client.py` + `cluster_summarizer.py`) — step 7b: generate headlines, 150-250 word summaries, consensus/divergence for 3+-source clusters using `gemini-2.5-flash`; 25-call/run cap, descending source_count priority, rule-based fallback | nlp-engineer |
 | 5.6 | Integrate all analyzers into pipeline orchestrator: fetch → parse → deduplicate → cluster → analyze → re-frame → rank → summarize → categorize → store → enrich | nlp-engineer |
 | 5.7 | End-to-end pipeline test with full analysis | pipeline-tester |
 | 5.8 | Benchmark bias scoring against manually labeled test set (50 articles) | bias-auditor |
@@ -116,6 +121,15 @@
 - pg server-side package removed (unnecessary dependency)
 - Fallback bias display shows dimmed/pending state when using placeholder values
 - RefreshButton rendered in section header area
+- `/sources` page added: horizontal SpectrumChart visualization + source list with favicons and hover tooltips; mobile uses vertical layout
+- PageToggle component: switches between Feed and Sources views
+- Sigil component: compact bias sigil using SigilData type
+- DeepDive: source icons moved to compact favicons under headline (verbose source list removed)
+- BiasLens: optional chaining on rationale array properties (crash fix); Array.isArray guards on consensus/divergence
+- Lead stories layout: two equal-width cards (1fr 1fr desktop, stacked mobile)
+- Footer: Source link removed; "Built with transparency" line removed; copyright added
+- Empty state: "The Presses Are Warming Up" with morning/evening edition messaging
+- All "90/97 sources" UI references updated to "200 sources"
 
 ### Week 6: Project Setup + Design System
 
@@ -257,7 +271,7 @@
 
 | Checkpoint | When | Gate |
 |-----------|------|------|
-| Source list review | End of Week 1 | 97 sources with valid RSS/scrape configs |
+| Source list review | End of Week 1 | 200 sources with valid RSS/scrape configs |
 | Pipeline reliability | End of Week 2 | 95%+ fetch success rate |
 | Bias scoring accuracy | End of Week 5 | 80%+ accuracy on 50-article benchmark |
 | Frontend visual quality | End of Week 8 | Lighthouse 90+, CEO visual approval |

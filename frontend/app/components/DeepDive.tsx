@@ -82,12 +82,6 @@ function getBiasAxes(scores: Story["biasScores"]): BiasAxis[] {
       color: scores.sensationalism <= 30 ? "var(--sense-low)" : scores.sensationalism <= 60 ? "var(--sense-medium)" : "var(--sense-high)",
     },
     {
-      label: "Opinion vs Fact",
-      value: scores.opinionFact,
-      description: scores.opinionFact <= 25 ? "Reporting" : scores.opinionFact <= 50 ? "Analysis" : scores.opinionFact <= 75 ? "Opinion" : "Editorial",
-      color: scores.opinionFact <= 25 ? "var(--type-reporting)" : scores.opinionFact <= 50 ? "var(--type-analysis)" : "var(--type-opinion)",
-    },
-    {
       label: "Factual Rigor",
       value: scores.factualRigor,
       description: scores.factualRigor >= 70 ? "High" : scores.factualRigor >= 40 ? "Moderate" : "Low",

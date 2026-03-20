@@ -145,10 +145,8 @@ function DataMark({ data, size, mounted }: {
   data: SigilData; size: "sm" | "lg"; mounted: boolean;
 }) {
   const lean = data.politicalLean;
-  const isOpinion = data.opinionFact > 50;
   const beamAngle = (lean - 50) * 0.30; // ±15° range
   const beamCol = leanColor(lean);
-  const baseCol = isOpinion ? "var(--type-opinion)" : "var(--type-reporting)";
 
   // Circle fill: source coverage as Harvey ball
   const coverage = Math.min(data.sourceCount / 10, 1);
@@ -231,11 +229,11 @@ function DataMark({ data, size, mounted }: {
         style={{ transition: "opacity 300ms var(--ease-out) 200ms" }}
       />
 
-      {/* Base — color-coded by type */}
+      {/* Base — neutral stand */}
       <line x1="12" y1="28.5" x2="20" y2="28.5"
-        stroke={baseCol} strokeWidth="1.8"
-        opacity={mounted ? 0.9 : 0.2}
-        style={{ transition: "stroke 300ms var(--ease-out), opacity 400ms var(--ease-out) 250ms" }}
+        stroke="var(--fg-tertiary)" strokeWidth="1.8"
+        opacity={mounted ? 0.3 : 0.1}
+        style={{ transition: "opacity 400ms var(--ease-out) 250ms" }}
       />
     </svg>
   );
@@ -250,14 +248,11 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   id: string; data: SigilData;
 }) {
   const [pos, setPos] = useState<{ x: number; y: number; mobile: boolean } | null>(null);
-  const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=base, 5=details
+  const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=details
 
   const lean = data.politicalLean;
   const lc = leanColor(lean);
   const ll = leanLabel(lean);
-  const isOp = data.opinionFact > 50;
-  const typeCol = isOp ? "var(--type-opinion)" : "var(--type-reporting)";
-  const typeLabel = isOp ? "Opinion" : "Reporting";
 
   useEffect(() => {
     if (!isOpen || !triggerRef.current) { setStage(0); return; }
@@ -267,19 +262,18 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       setPos({ x: 0, y: 0, mobile: true });
     } else {
       const r = triggerRef.current.getBoundingClientRect();
-      const W = 280, H = 380;
+      const W = 280, H = 320;
       const spR = window.innerWidth - r.right;
       const x = spR > W + 16 ? r.right + 10 : r.left > W + 16 ? r.left - W - 10 : Math.max(8, (window.innerWidth - W) / 2);
       const y = Math.max(8, Math.min(r.top - 60, window.innerHeight - H - 16));
       setPos({ x, y, mobile: false });
     }
-    // Staggered reveal: mark → beam → circle → base → details
+    // Staggered reveal: mark → beam → circle → details
     const t1 = setTimeout(() => setStage(1), 30);
     const t2 = setTimeout(() => setStage(2), 180);
     const t3 = setTimeout(() => setStage(3), 320);
-    const t4 = setTimeout(() => setStage(4), 460);
-    const t5 = setTimeout(() => setStage(5), 600);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
+    const t4 = setTimeout(() => setStage(4), 480);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, [isOpen, triggerRef]);
 
   useEffect(() => {
@@ -426,31 +420,12 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         </div>
       </div>
 
-      {/* ═══ SECTION 3: Base → Reporting / Opinion ═══ */}
-      <div style={{
-        padding: "10px 16px", borderBottom: "1px solid var(--border-subtle)",
-        display: "flex", alignItems: "center", gap: 10,
-        opacity: stage >= 4 ? 1 : 0, transform: stage >= 4 ? "translateY(0)" : "translateY(-4px)",
-        transition: "opacity 260ms var(--ease-out), transform 300ms var(--spring)",
-      }}>
-        {/* Mini base line (echoing the stand) */}
-        <div style={{
-          width: 24, height: 3, borderRadius: 1.5, backgroundColor: typeCol, opacity: 0.7, flexShrink: 0,
-        }} />
-        <span style={{
-          fontFamily: "var(--font-editorial)", fontSize: 13, fontWeight: 600,
-          color: typeCol, letterSpacing: "0.02em",
-        }}>
-          {typeLabel}
-        </span>
-      </div>
-
-      {/* ═══ SECTION 4: Secondary Scores ═══ */}
+      {/* ═══ SECTION 3: Secondary Scores ═══ */}
       <div style={{ padding: "10px 16px 14px" }}>
         {secondary.map((ax, i) => (
           <div key={ax.label} style={{
             display: "flex", alignItems: "center", gap: 8, marginBottom: 4,
-            opacity: stage >= 5 ? 1 : 0,
+            opacity: stage >= 4 ? 1 : 0,
             transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
           }}>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--fg-tertiary)", width: 74, flexShrink: 0 }}>
@@ -458,7 +433,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
             </span>
             <div style={{ flex: 1, height: 3, backgroundColor: "var(--border-subtle)", borderRadius: 1.5, overflow: "hidden" }}>
               <div style={{
-                width: stage >= 5 ? `${ax.v}%` : "0%", height: "100%",
+                width: stage >= 4 ? `${ax.v}%` : "0%", height: "100%",
                 backgroundColor: qualityColor(ax.v, ax.inv),
                 borderRadius: 1.5,
                 transition: `width 450ms var(--ease-out) ${150 + i * 55}ms`,
@@ -496,15 +471,13 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
   const [mounted, setMounted] = useState(false);
   const tooltipId = `sigil-${useId()}`;
 
-  const isOp = data.opinionFact > 50;
   const ll = leanLabel(data.politicalLean);
   const ls = leanShort(data.politicalLean);
   const lc = leanColor(data.politicalLean);
-  const typeCol = isOp ? "var(--type-opinion)" : "var(--type-reporting)";
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const aria = `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. ${isOp ? "Opinion" : "Reporting"}. Press Enter for details.`;
+  const aria = `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
   return (
     <div ref={ref} className="sigil"
@@ -543,33 +516,15 @@ export default function Sigil({ data, size = "sm" }: SigilProps) {
           {size === "lg" ? ll : ls}
         </span>
 
-        {/* Source count + type badge on one line */}
-        <div style={{
-          display: "flex", alignItems: "center",
-          gap: size === "lg" ? 5 : 4,
+        {/* Source count */}
+        <span style={{
+          fontFamily: "var(--font-data)",
+          fontSize: size === "lg" ? 9 : 8,
+          color: "var(--fg-tertiary)",
+          lineHeight: 1,
         }}>
-          <span style={{
-            fontFamily: "var(--font-data)",
-            fontSize: size === "lg" ? 9 : 8,
-            color: "var(--fg-tertiary)",
-            lineHeight: 1,
-          }}>
-            {data.sourceCount} src
-          </span>
-          <span style={{
-            fontFamily: "var(--font-data)", fontWeight: 600,
-            fontSize: size === "lg" ? 8 : 7,
-            color: typeCol,
-            lineHeight: 1,
-            letterSpacing: "0.04em",
-            padding: "1px 3px",
-            border: `1px solid ${typeCol}`,
-            borderRadius: 1,
-            opacity: 0.85,
-          }}>
-            {isOp ? "OPN" : "RPT"}
-          </span>
-        </div>
+          {data.sourceCount} src
+        </span>
       </div>
 
       <SigilPopup
