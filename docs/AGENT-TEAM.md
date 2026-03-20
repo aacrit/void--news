@@ -87,7 +87,7 @@ CEO (Aacrit)
 |-------|---------|-------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization, frontend content | sonnet | Yes | Pipeline development, content quality issues |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | sonnet | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 200-source list | sonnet | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 222-source list | sonnet | Yes | Source list changes |
 
 ### Security Division (1 agent)
 
@@ -184,7 +184,7 @@ feed-intelligence (ingestion) → nlp-engineer (bias) → pipeline-tester (valid
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 200-source curated list structure (3 tiers: 49 us_major + 67 international + 84 independent); 7-point political lean spectrum
+- 222-source curated list structure (3 tiers); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all agent/dev work; Gemini Flash free tier only for pipeline cluster summarization (no paid inference)
 
@@ -230,5 +230,15 @@ These are read-only advisory agents — they propose, they don't implement.
 | Agent | Division | Outcome |
 |-------|----------|---------|
 | `update-docs` | Infrastructure | CLAUDE.md + AGENT-TEAM.md updated to reflect: ranking engine v3.2 (9 signals, confidence multiplier, lead eligibility gate, soft-floor normalization, topic diversity re-rank); dedup threshold 0.80; 3-article majority vote categorization; new `pipeline/rerank.py` standalone script; "Why This Story" tooltip on StoryCard + LeadStory; bias-blind ranking design principle; source map dual-key fix |
+
+**Files modified this session:** `CLAUDE.md`, `docs/AGENT-TEAM.md`
+
+### 2026-03-20 — Ranking v3.3, Clustering v2, Multi-section, Source count fix
+
+**Agents run:** `update-docs`
+
+| Agent | Division | Outcome |
+|-------|----------|---------|
+| `update-docs` | Infrastructure | CLAUDE.md + AGENT-TEAM.md updated to reflect: ranking v3.3 (rebalanced weights, composition-aware tier scoring, consequentiality gate, soft confidence curve, lead gate top-5/3+, topic diversity cap 2 per section); clustering v2 (similarity threshold 0.2, doc length 500 words, Phase 2 entity-overlap merge pass via merge_related_clusters); multi-section cross-listing (sections[] column on story_clusters, migration 011, GIN index, frontend .contains() filter); source count corrected 200→222; migration count updated 009→011 |
 
 **Files modified this session:** `CLAUDE.md`, `docs/AGENT-TEAM.md`
