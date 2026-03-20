@@ -1,8 +1,9 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import type { Story } from "../lib/types";
 import { timeAgo, whyThisStory } from "../lib/utils";
-import { ArrowSquareOut } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 
 interface StoryCardProps {
@@ -13,15 +14,32 @@ interface StoryCardProps {
 
 /* ---------------------------------------------------------------------------
    StoryCard — Newspaper-style article card
-   Hover via CSS. Keyboard accessible. Staggered entrance animation.
+   Hover via CSS. Keyboard accessible.
+   Scroll-driven stagger: IntersectionObserver triggers animation only when
+   the card enters the viewport — below-fold cards don't waste their entrance.
    --------------------------------------------------------------------------- */
 
 export default function StoryCard({ story, index, onStoryClick }: StoryCardProps) {
+  const cardRef = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     /* article preserves landmark semantics for assistive tech.
        The inner div[role="button"] carries all interactive attributes. */
     <article
-      className="story-card anim-stagger"
+      ref={cardRef}
+      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}`}
       style={{ animationDelay: `${index * 40}ms` }}
     >
       <div
@@ -46,9 +64,9 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
         {/* Headline */}
         <h3 className="story-card__headline">
           <span className="story-card__headline-text">{story.title}</span>
-          <ArrowSquareOut
+          <CaretRight
             size={14}
-            weight="light"
+            weight="bold"
             aria-hidden="true"
             className="story-card__headline-icon"
           />

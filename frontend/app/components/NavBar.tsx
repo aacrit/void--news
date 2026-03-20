@@ -73,16 +73,11 @@ export default function NavBar({ activeEdition, viewMode, onViewModeChange }: Na
               </span>
             </Link>
 
-            {/* Dateline — edition name + time of day + date */}
-            <span className="nav-dateline">
-              {/* Desktop: full edition + date */}
-              <span className="nav-dateline__full">
-                {activeEditionMeta.label} Edition &middot; {getEditionLabel()} &middot; {formatDateFull()}
-              </span>
-              {/* Mobile: edition + compact date */}
-              <span className="nav-dateline__medium">
-                {activeEditionMeta.label} Edition &middot; {formatDateCompact()}
-              </span>
+            {/* Dateline — edition name + time of day + date.
+                Uses nav-dateline-row__text class (visible) instead of
+                legacy nav-dateline (display:none). */}
+            <span className="nav-dateline-row__text" style={{ display: "none" }}>
+              {/* Desktop: rendered in the dateline row below instead */}
             </span>
           </div>
 
@@ -136,7 +131,16 @@ export default function NavBar({ activeEdition, viewMode, onViewModeChange }: Na
         </nav>
       </header>
 
-      {/* Mobile bottom nav — all 5 editions */}
+      {/* Dateline row — thin data strip below masthead (desktop only, hidden on mobile via CSS) */}
+      <div className="nav-dateline-row">
+        <div className="nav-dateline-row__inner">
+          <span className="nav-dateline-row__text">
+            {activeEditionMeta.label} Edition &middot; {getEditionLabel()} &middot; {formatDateFull()}
+          </span>
+        </div>
+      </div>
+
+      {/* Mobile bottom nav — all 3 editions */}
       <nav className="nav-bottom" aria-label="Edition navigation">
         {EDITIONS.map((edition) => (
           <Link

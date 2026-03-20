@@ -137,6 +137,8 @@
   outline: none;
   /* Mobile default: full-screen from bottom */
   inset: 0;
+  /* GPU layer promotion during transform animation — eliminates repaint */
+  will-change: transform;
 }
 
 .deep-dive-panel__header {

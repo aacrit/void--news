@@ -121,10 +121,51 @@
 }
 
 /* Staggered entrance — story cards with spring physics.
-   Use style={{ "--story-index": N } as React.CSSProperties} to auto-stagger.
-   Falls back to animationDelay inline style as well. */
+   Paused by default: IntersectionObserver adds .anim-stagger--visible
+   to play only when the card enters the viewport. Falls back to
+   animationDelay inline style for per-card stagger. */
 .anim-stagger {
   animation: springEntranceCard var(--dur-step) var(--spring) both;
+  animation-play-state: paused;
+}
+
+.anim-stagger--visible {
+  animation-play-state: running;
+}
+
+/* Lead story stagger — primary lead fades in first, secondary 120ms later */
+.anim-lead-primary {
+  animation: fadeInUp var(--dur-morph) var(--ease-out) both;
+}
+
+.anim-lead-secondary {
+  animation: fadeInUp var(--dur-morph) var(--ease-out) 120ms both;
+}
+
+/* Skeleton → content crossfade: skeleton fades out as content arrives */
+.anim-crossfade-in {
+  animation: fadeIn var(--dur-normal) var(--ease-out) both;
+}
+
+.anim-crossfade-out {
+  animation: fadeOut var(--dur-fast) var(--ease-out) both;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Deep Dive content section stagger — sections fade in sequentially */
+.anim-dd-section {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+}
+
+.anim-dd-section--visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Filter chip active spring press feedback */
@@ -150,10 +191,22 @@
 
 /* ---- Sigil — Unified Bias Indicator ------------------------------------ */
 
-/* Divergence pulse glow — faster pulse = higher disagreement */
+/* Divergence pulse glow — faster pulse = higher disagreement.
+   Applied via .sigil--divergent on stories with agreement > 55. */
 @keyframes sigilPulse {
   0%, 100% { opacity: 0.15; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(1.06); }
+}
+
+.sigil--divergent::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sense-medium) 0%, transparent 70%);
+  animation: sigilPulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Sigil popup entrance — subtle scale + translate */

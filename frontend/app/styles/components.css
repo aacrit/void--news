@@ -11,14 +11,21 @@
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
+    box-shadow var(--dur-normal) var(--ease-out),
+    transform var(--dur-step) var(--spring);
 }
 
 .story-card:hover {
   background-color: var(--bg-secondary);
-  box-shadow: var(--shadow-e1);
+  box-shadow: var(--shadow-e2);
   transform: translateY(-2px);
+}
+
+/* Desktop press feedback — spring scale on mousedown */
+.story-card:active {
+  transform: scale(0.995) translateY(0);
+  box-shadow: var(--shadow-e1);
+  transition-duration: var(--dur-fast);
 }
 
 .story-card:focus-visible {
@@ -116,14 +123,25 @@
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
+    box-shadow var(--dur-normal) var(--ease-out),
+    transform var(--dur-step) var(--spring);
 }
 
 .lead-story:hover {
   background-color: var(--bg-secondary);
-  box-shadow: var(--shadow-e1);
+  box-shadow: var(--shadow-e2);
   transform: translateY(-2px);
+}
+
+.lead-story:active {
+  transform: scale(0.995) translateY(0);
+  box-shadow: var(--shadow-e1);
+  transition-duration: var(--dur-fast);
+}
+
+/* Primary lead: larger headline to establish visual hierarchy over secondary */
+.lead-section__col:first-child .lead-story__headline {
+  font-size: clamp(1.75rem, 1.5rem + 1.5vw, 3.25rem);
 }
 
 .lead-story:focus-visible {
@@ -324,15 +342,26 @@
     color var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
+    transform var(--dur-step) var(--spring);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
 
+.filter-chip:hover {
+  color: var(--fg-secondary);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
 .filter-chip:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
+}
+
+.filter-chip:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 .filter-chip__icon {
@@ -411,6 +440,16 @@
   color: var(--fg-primary);
   border-color: var(--border-strong);
   background-color: var(--bg-secondary);
+}
+
+.page-toggle:active {
+  transform: scale(0.95);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.page-toggle:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 .page-toggle__label {
@@ -513,6 +552,20 @@
   white-space: nowrap;
 }
 
+.nav-tab:hover:not(.nav-tab--active) {
+  color: var(--fg-secondary);
+}
+
+.nav-tab:active {
+  transform: scale(0.97);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.nav-tab:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
 .nav-tab--active {
   font-weight: 600;
   color: var(--fg-primary);
@@ -584,6 +637,16 @@
   background-color: var(--bg-secondary);
 }
 
+.view-mode-toggle__btn:active {
+  transform: scale(0.95);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.view-mode-toggle__btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+
 /* Mobile: compact, full touch target */
 @media (max-width: 767px) {
   .view-mode-toggle {
@@ -648,6 +711,11 @@
     border-color var(--dur-fast) var(--ease-out);
 }
 
+.nav-bottom-tab:active {
+  transform: scale(0.95);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
 .nav-bottom-tab--active {
   font-weight: 600;
   color: var(--fg-primary);
@@ -656,14 +724,25 @@
 
 /* ---- Theme Toggle ------------------------------------------------------ */
 .theme-toggle {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  transition: background-color var(--dur-fast) var(--ease-out);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-step) var(--spring);
   position: relative;
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 .theme-toggle:hover {
@@ -730,7 +809,13 @@
 }
 
 .show-more__btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.show-more__btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 /* ---- Buttons (shared) -------------------------------------------------- */
@@ -752,6 +837,16 @@
   border-color: var(--border-strong);
 }
 
+.btn-secondary:active {
+  transform: scale(0.96);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
 .btn-primary {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
@@ -768,6 +863,17 @@
 
 .btn-primary:hover {
   opacity: 0.85;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 /* ---- BiasStamp — "The Bias Pulse" -------------------------------------- */
@@ -901,6 +1007,23 @@
   margin-left: calc(-1 * var(--space-2));
   min-width: 44px;
   min-height: 44px;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-step) var(--spring);
+}
+
+.deep-dive-back:hover {
+  background-color: var(--bg-secondary);
+}
+
+.deep-dive-back:active {
+  transform: scale(0.94);
+}
+
+.deep-dive-back:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 .deep-dive-close {
@@ -911,6 +1034,23 @@
   height: 44px;
   color: var(--fg-secondary);
   flex-shrink: 0;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-step) var(--spring);
+}
+
+.deep-dive-close:hover {
+  background-color: var(--bg-secondary);
+}
+
+.deep-dive-close:active {
+  transform: scale(0.90);
+}
+
+.deep-dive-close:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 /* ---- Deep Dive Header Bar ---------------------------------------------- */
@@ -1004,8 +1144,14 @@
 .dd-spectrum__row--below .dd-spectrum__dot { top: 0; }
 
 .dd-spectrum__dot:hover {
-  transform: translateX(-50%) scale(1.3);
+  transform: translateX(-50%) scale(1.35);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 100 !important;
+}
+
+.dd-spectrum__dot:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
   z-index: 100 !important;
 }
 
@@ -1072,6 +1218,16 @@
 
 .dd-read-more:hover {
   color: var(--fg-primary);
+}
+
+.dd-read-more:active {
+  transform: scale(0.97);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
+.dd-read-more:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 /* ---- Footer ------------------------------------------------------------ */
@@ -1566,6 +1722,11 @@
   color: var(--fg-primary);
 }
 
+.opinion-card__expand-btn:active {
+  transform: scale(0.97);
+  transition: transform var(--dur-fast) var(--spring);
+}
+
 .opinion-card__read-link {
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -1659,6 +1820,11 @@
 .bi-source-btn:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
+}
+
+.bi-source-btn:active {
+  transform: scale(0.96);
+  transition: transform var(--dur-fast) var(--spring);
 }
 
 .bi-source-btn--active {
