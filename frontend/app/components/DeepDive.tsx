@@ -6,12 +6,10 @@ import {
   X,
   Check,
   Warning,
-  ArrowSquareOut,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
-import BiasLens from "./BiasLens";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 
@@ -26,24 +24,6 @@ interface DeepDiveProps {
   onClose: () => void;
 }
 
-const TIER_LABELS: Record<StorySource["tier"], string> = {
-  us_major: "US",
-  international: "Intl",
-  independent: "Ind",
-};
-
-const TIER_FULL_LABELS: Record<StorySource["tier"], string> = {
-  us_major: "US Major",
-  international: "International",
-  independent: "Independent",
-};
-
-const TIER_COLORS: Record<StorySource["tier"], string> = {
-  us_major: "var(--bias-center)",
-  international: "var(--type-reporting)",
-  independent: "var(--sense-low)",
-};
-
 /* --- Favicon helper ------------------------------------------------------ */
 
 function getDomain(url: string): string {
@@ -57,75 +37,16 @@ function faviconUrl(articleUrl: string): string {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
 }
 
-/* --- Bias axis helpers --------------------------------------------------- */
+/* --- Lean label helper --------------------------------------------------- */
 
-interface BiasAxis {
-  label: string;
-  value: number;
-  description: string;
-  color: string;
-  invert?: boolean;
-}
-
-function getBiasAxes(scores: Story["biasScores"]): BiasAxis[] {
-  return [
-    {
-      label: "Political Lean",
-      value: scores.politicalLean,
-      description: scores.politicalLean <= 35 ? "Left-leaning" : scores.politicalLean <= 65 ? "Center" : "Right-leaning",
-      color: scores.politicalLean <= 35 ? "var(--bias-left)" : scores.politicalLean <= 65 ? "var(--bias-center)" : "var(--bias-right)",
-    },
-    {
-      label: "Sensationalism",
-      value: scores.sensationalism,
-      description: scores.sensationalism <= 25 ? "Measured" : scores.sensationalism <= 50 ? "Moderate" : scores.sensationalism <= 75 ? "Elevated" : "Inflammatory",
-      color: scores.sensationalism <= 30 ? "var(--sense-low)" : scores.sensationalism <= 60 ? "var(--sense-medium)" : "var(--sense-high)",
-    },
-    {
-      label: "Factual Rigor",
-      value: scores.factualRigor,
-      description: scores.factualRigor >= 70 ? "High" : scores.factualRigor >= 40 ? "Moderate" : "Low",
-      color: scores.factualRigor >= 70 ? "var(--rigor-high)" : scores.factualRigor >= 40 ? "var(--rigor-medium)" : "var(--rigor-low)",
-      invert: true,
-    },
-    {
-      label: "Framing",
-      value: scores.framing,
-      description: scores.framing <= 25 ? "Neutral" : scores.framing <= 55 ? "Some framing" : "Heavy framing",
-      color: scores.framing <= 30 ? "var(--sense-low)" : scores.framing <= 60 ? "var(--sense-medium)" : "var(--sense-high)",
-    },
-  ];
-}
-
-/* --- Coverage breakdown bar component ------------------------------------ */
-
-function CoverageBar({
-  label,
-  count,
-  total,
-  color,
-}: {
-  label: string;
-  count: number;
-  total: number;
-  color: string;
-}) {
-  const pct = total > 0 ? (count / total) * 100 : 0;
-
-  return (
-    <div className="coverage-bar">
-      <div className="coverage-bar__header">
-        <span className="coverage-bar__label">{label}</span>
-        <span className="coverage-bar__count">{count}</span>
-      </div>
-      <div className="coverage-bar__track">
-        <div
-          className="coverage-bar__fill"
-          style={{ width: `${pct}%`, backgroundColor: color }}
-        />
-      </div>
-    </div>
-  );
+function leanLabel(lean: number): string {
+  if (lean <= 20) return "Far Left";
+  if (lean <= 35) return "Left";
+  if (lean <= 45) return "Center-Left";
+  if (lean <= 55) return "Center";
+  if (lean <= 65) return "Center-Right";
+  if (lean <= 80) return "Right";
+  return "Far Right";
 }
 
 /* --- Main DeepDive component --------------------------------------------- */
@@ -143,13 +64,26 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
 
-  const tierCounts = useMemo(() => {
-    const counts = { us_major: 0, international: 0, independent: 0 };
-    for (const s of sources) {
-      counts[s.tier]++;
-    }
-    return counts;
+  /* ---- Compute lean spectrum positions (stack overlapping dots) ---------- */
+  const leanPositions = useMemo(() => {
+    const items = sources
+      .map((src, idx) => ({ src, idx, lean: src.biasScores.politicalLean }))
+      .sort((a, b) => a.lean - b.lean);
+
+    const placed: { lean: number; row: number }[] = [];
+    return items.map((item) => {
+      let row = 0;
+      for (const p of placed) {
+        if (Math.abs(item.lean - p.lean) < 7 && p.row === row) {
+          row++;
+        }
+      }
+      placed.push({ lean: item.lean, row });
+      return { ...item, row };
+    });
   }, [sources]);
+
+  const spectrumMaxRow = Math.max(0, ...leanPositions.map((p) => p.row));
 
   /* ---- Detect desktop vs mobile for directional animation -------------- */
   useEffect(() => {
@@ -462,49 +396,86 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </p>
           </section>
 
-          {/* ---- Section: Bias Analysis ---------------------------------- */}
-          <section aria-labelledby="dd-bias" style={{ marginBottom: "var(--space-6)" }}>
-            <h3 id="dd-bias" className="section-heading">Bias analysis</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {getBiasAxes(story.biasScores).map((axis) => (
-                <div key={axis.label} className="dd-bias-row">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 3 }}>
-                    <span style={{
-                      fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
-                      fontWeight: 500, letterSpacing: "0.04em", textTransform: "uppercase" as const,
-                      color: "var(--fg-tertiary)",
-                    }}>
-                      {axis.label}
-                    </span>
-                    <span style={{
-                      fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
-                      fontWeight: 600, color: axis.color,
-                    }}>
-                      {axis.description}
-                    </span>
-                  </div>
-                  <div style={{
-                    height: 4, backgroundColor: "var(--border-subtle)", borderRadius: 2, overflow: "hidden",
-                  }}>
-                    <div style={{
-                      width: `${axis.value}%`, height: "100%",
-                      backgroundColor: axis.color, borderRadius: 2,
-                      transition: "width 400ms var(--ease-out)",
-                    }} />
-                  </div>
+          {/* ---- Section: Source Lean Spectrum ------------------------------ */}
+          {sources.length > 1 && (
+            <section aria-labelledby="dd-lean" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-lean" className="section-heading">How sources lean</h3>
+              <div style={{ position: "relative", padding: "var(--space-2) 0" }}>
+                {/* Gradient track */}
+                <div style={{
+                  height: 3,
+                  background: "linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right))",
+                  borderRadius: 2,
+                  opacity: 0.5,
+                }} />
+
+                {/* Center tick mark */}
+                <div style={{
+                  position: "absolute", left: "50%", top: "var(--space-2)",
+                  width: 1, height: 11,
+                  backgroundColor: "var(--fg-tertiary)", opacity: 0.4,
+                  transform: "translateX(-50%)",
+                }} />
+
+                {/* Source dots — positioned by lean score, stacked when overlapping */}
+                <div style={{
+                  position: "relative",
+                  height: (spectrumMaxRow + 1) * 28 + 4,
+                  marginTop: 8,
+                }}>
+                  {leanPositions.map(({ src, idx, lean, row }) => {
+                    const favicon = faviconUrl(src.url);
+                    return (
+                      <a
+                        key={`${src.name}-${idx}`}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                        aria-label={`${src.name}: ${leanLabel(lean)}`}
+                        className="dd-source-icon"
+                        style={{
+                          position: "absolute",
+                          left: `${lean}%`,
+                          top: row * 28,
+                          transform: "translateX(-50%)",
+                          width: 24, height: 24, borderRadius: "50%",
+                          border: "2px solid var(--bg-surface)",
+                          backgroundColor: "var(--bg-card)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                          transition: "transform 150ms var(--ease-out)",
+                          zIndex: sources.length - row,
+                        }}
+                      >
+                        {favicon ? (
+                          <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
+                        ) : (
+                          <span style={{
+                            fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
+                            color: "var(--fg-tertiary)",
+                          }}>
+                            {src.name.charAt(0)}
+                          </span>
+                        )}
+                      </a>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </section>
 
-
-          {/* ---- Section: Coverage Breakdown ------------------------------ */}
-          {sources.length > 0 && (
-            <section aria-labelledby="dd-breakdown" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-breakdown" className="section-heading">Coverage breakdown</h3>
-              <CoverageBar label={TIER_FULL_LABELS.us_major} count={tierCounts.us_major} total={sources.length} color={TIER_COLORS.us_major} />
-              <CoverageBar label={TIER_FULL_LABELS.international} count={tierCounts.international} total={sources.length} color={TIER_COLORS.international} />
-              <CoverageBar label={TIER_FULL_LABELS.independent} count={tierCounts.independent} total={sources.length} color={TIER_COLORS.independent} />
+                {/* Axis labels */}
+                <div style={{
+                  display: "flex", justifyContent: "space-between",
+                  fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
+                  color: "var(--fg-tertiary)", letterSpacing: "0.04em",
+                  textTransform: "uppercase" as const,
+                  marginTop: 4,
+                }}>
+                  <span>Left</span>
+                  <span>Center</span>
+                  <span>Right</span>
+                </div>
+              </div>
             </section>
           )}
 
