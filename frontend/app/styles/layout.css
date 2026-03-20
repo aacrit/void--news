@@ -200,6 +200,10 @@
 }
 
 /* Clickable source row — whole row is a link */
+.source-row--link {
+  cursor: pointer;
+}
+
 .source-row--link:hover {
   background-color: var(--bg-secondary);
 }
@@ -207,6 +211,11 @@
 .source-row--link:hover .source-link {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.source-row--link:active {
+  background-color: var(--bg-secondary);
+  opacity: 0.85;
 }
 
 /* ---- Screen Reader Only ------------------------------------------------ */

@@ -513,7 +513,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           )}
 
           {/* ---- Section: What Happened (collapsible) ---------------------- */}
-          <section aria-labelledby="dd-summary" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
+          <section aria-labelledby="dd-summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms" }}>
             <h3 id="dd-summary" className="section-heading">What happened</h3>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
               <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)", margin: 0 }}>
@@ -529,7 +529,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Where sources agree -------------------------------- */}
           {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-            <section aria-labelledby="dd-consensus" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "200ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
+            <section aria-labelledby="dd-consensus" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "200ms" }}>
               <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
               <ul className="evidence-list">
                 {deepDive.consensus.map((point, i) => (
@@ -544,7 +544,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Where sources diverge ------------------------------ */}
           {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-            <section aria-labelledby="dd-divergence" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "300ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
+            <section aria-labelledby="dd-divergence" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "300ms" }}>
               <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
               <ul className="evidence-list">
                 {deepDive.divergence.map((point, i) => (

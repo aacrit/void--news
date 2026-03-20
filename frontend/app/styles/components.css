@@ -12,7 +12,7 @@
   transition:
     background-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-normal) var(--ease-out),
-    transform var(--dur-step) var(--spring);
+    transform var(--dur-fast) var(--spring);
 }
 
 .story-card:hover {
@@ -124,7 +124,7 @@
   transition:
     background-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-normal) var(--ease-out),
-    transform var(--dur-step) var(--spring);
+    transform var(--dur-fast) var(--spring);
 }
 
 .lead-story:hover {
@@ -280,7 +280,7 @@
   position: relative;
   overflow: hidden;
   /* When visible, animate in */
-  max-height: 80px; /* enough for one chip row */
+  max-height: 68px; /* 44px chip + var(--space-3) top/bottom padding */
   transition: max-height var(--dur-normal) var(--ease-out);
 }
 
@@ -373,7 +373,7 @@
   font-weight: 600;
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
-  border-color: var(--border-strong);
+  border-color: var(--fg-primary);
 }
 
 /* RefreshButton text — hidden on mobile via responsive.css */
@@ -546,7 +546,8 @@
   align-items: center;
   transition:
     color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out);
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
   min-height: 44px;
   min-width: 44px;
   white-space: nowrap;
@@ -558,7 +559,6 @@
 
 .nav-tab:active {
   transform: scale(0.97);
-  transition: transform var(--dur-fast) var(--spring);
 }
 
 .nav-tab:focus-visible {
@@ -708,12 +708,12 @@
   text-decoration: none;
   transition:
     color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out);
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
 }
 
 .nav-bottom-tab:active {
   transform: scale(0.95);
-  transition: transform var(--dur-fast) var(--spring);
 }
 
 .nav-bottom-tab--active {
@@ -829,7 +829,11 @@
   border-radius: var(--radius-md);
   min-height: 44px;
   min-width: 44px;
-  transition: border-color var(--dur-fast) var(--ease-out);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
   cursor: pointer;
 }
 
@@ -1164,8 +1168,6 @@
 
 .dd-spectrum__dot--overflow:hover {
   opacity: 1;
-  width: 24px;
-  height: 24px;
   transform: translateX(-50%) scale(1.35);
 }
 
@@ -1523,7 +1525,8 @@
   transition:
     background-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
 }
 
 .opinion-card:hover {
@@ -1664,7 +1667,7 @@
   left: 0;
   right: 0;
   height: 3em;
-  background: linear-gradient(transparent, var(--bg-primary));
+  background: linear-gradient(transparent, var(--bg-card));
   pointer-events: none;
   transition: opacity var(--dur-fast) var(--ease-out);
 }
@@ -1964,7 +1967,7 @@
 }
 
 .bi-axis__content--expanded {
-  max-height: 600px;
+  max-height: 1200px;
 }
 
 .bi-axis__rationale {
@@ -2390,7 +2393,7 @@
   position: fixed;
   /* Overlays the entire Deep Dive panel area */
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--overlay-backdrop);
   /* Sits above Deep Dive content (z-modal = 100) but below the drawer (z-modal + 1) */
   z-index: calc(var(--z-modal) + 1);
   cursor: pointer;

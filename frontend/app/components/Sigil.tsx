@@ -326,7 +326,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           transition: "opacity 200ms var(--ease-out)",
         }} />
       )}
-      <div id={id} role="tooltip" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+      <div id={id} role={isMobile ? "dialog" : "tooltip"} aria-modal={isMobile ? true : undefined} aria-label={isMobile ? "Bias analysis details" : undefined} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
         style={isMobile ? {
           // Mobile: bottom sheet
           position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9999,
