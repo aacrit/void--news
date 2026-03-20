@@ -165,8 +165,14 @@ function SectionLabel({ label }: { label: string }) {
 
 // --- Article ---
 
-function articleByline(sourceCount: number): string {
-  if (sourceCount === 1) return "From a single report";
+function articleByline(sourceCount: number, tierBreakdown?: Record<string, number>): string {
+  if (sourceCount === 1) {
+    // Describe the single source by its tier
+    if (tierBreakdown?.us_major) return "From a major U.S. outlet";
+    if (tierBreakdown?.international) return "From an international bureau";
+    if (tierBreakdown?.independent) return "From an independent outlet";
+    return "From a single report";
+  }
   if (sourceCount <= 3) return `Compiled from ${sourceCount} sources`;
   return `From multiple outlets \u2014 ${sourceCount} Sources`;
 }
@@ -193,7 +199,7 @@ function Article({
       )}
       <h2 className="np-article__headline">{story.title}</h2>
       <p className="np-article__byline">
-        {articleByline(story.source.count)}
+        {articleByline(story.source.count, story.sigilData.tierBreakdown)}
       </p>
       <p className="np-article__summary">
         <span className="np-article__dateline">{dateline} &mdash; </span>
@@ -394,10 +400,16 @@ export default function PaperPage() {
       const worldClusters = worldRes.data || [];
       const usClusters = usRes.data || [];
 
-      const stories = [
-        ...worldClusters.map((c) => buildStory(c, true)),
-        ...usClusters.map((c) => buildStory(c, true)),
-      ].sort((a, b) => b.headlineRank - a.headlineRank);
+      // Deduplicate — a cluster with multiple sections can appear in both queries
+      const seen = new Set<string>();
+      const stories: Story[] = [];
+      for (const c of [...worldClusters, ...usClusters]) {
+        if (!seen.has(c.id)) {
+          seen.add(c.id);
+          stories.push(buildStory(c, true));
+        }
+      }
+      stories.sort((a, b) => b.headlineRank - a.headlineRank);
 
       setAllStories(stories);
       setIsLoading(false);
@@ -416,20 +428,19 @@ export default function PaperPage() {
     load();
   }, []);
 
-  // --- Section derivation — show ALL stories ---
+  // --- Section derivation — show ALL stories, no duplicates ---
   const frontPage = allStories.slice(0, 3);
   const lead = frontPage[0];
   const primaryLeft = frontPage[1];
   const primaryRight = frontPage[2];
+  const frontPageIds = new Set(frontPage.map((s) => s.id));
 
   // All remaining stories split by section
   const worldStories = allStories
-    .filter((s) => s.section === "world")
-    .filter((s) => !frontPage.includes(s));
+    .filter((s) => s.section === "world" && !frontPageIds.has(s.id));
 
   const usStories = allStories
-    .filter((s) => s.section === "us")
-    .filter((s) => !frontPage.includes(s));
+    .filter((s) => s.section === "us" && !frontPageIds.has(s.id));
 
   const hour = new Date().getUTCHours();
   const editionName = hour < 17 ? "Morning" : "Evening";
