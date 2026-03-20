@@ -176,14 +176,11 @@ def main():
 
     print(f"\n  Scored {len(updates)} clusters, {errors} errors")
 
-    # Lead eligibility gate (v3.3): top 5 positions require 3+ sources.
-    # Previously gated only the top 2 slots at 5+ sources. Extended to top 5
-    # because benchmarking shows 2-source stories regularly claiming positions
-    # 3-5 on velocity alone. 3+ sources is a more permissive floor than 5+
-    # but prevents the worst single-source or micro-coverage stories from
-    # taking prominent feed positions.
+    # Lead eligibility gate (v3.3): top 10 positions require 3+ sources.
+    # 2-source stories were slipping into positions 6-10 despite the gate
+    # only covering top 5. Extended to full top 10 for editorial quality.
     LEAD_MIN_SOURCES = 3
-    LEAD_SLOTS = 5
+    LEAD_SLOTS = 10
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
     lead_ineligible_in_top = []
