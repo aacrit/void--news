@@ -165,6 +165,16 @@ function SectionLabel({ label }: { label: string }) {
 
 // --- Article ---
 
+function articleByline(sourceCount: number): string {
+  if (sourceCount === 1) return "From a single report";
+  if (sourceCount <= 3) return `Compiled from ${sourceCount} sources`;
+  return `From multiple outlets \u2014 ${sourceCount} Sources`;
+}
+
+function isOpinionPiece(label: OpinionLabel): boolean {
+  return label === "Opinion" || label === "Editorial";
+}
+
 function Article({
   story,
   size,
@@ -174,12 +184,16 @@ function Article({
 }) {
   const datelineMap = story.section === "us" ? US_DATELINES : WORLD_DATELINES;
   const dateline = datelineMap[story.category] || (story.section === "us" ? "WASHINGTON, D.C." : "LONDON");
+  const opinion = isOpinionPiece(story.sigilData.opinionLabel);
 
   return (
-    <article className={`np-article np-article--${size}`}>
+    <article className={`np-article np-article--${size}${opinion ? " np-article--opinion" : ""}`}>
+      {opinion && (
+        <p className="np-article__opinion-label">{story.sigilData.opinionLabel}</p>
+      )}
       <h2 className="np-article__headline">{story.title}</h2>
       <p className="np-article__byline">
-        By Our Correspondents &mdash; {story.source.count} {story.source.count === 1 ? "Source" : "Sources"}
+        {articleByline(story.source.count)}
       </p>
       <p className="np-article__summary">
         <span className="np-article__dateline">{dateline} &mdash; </span>
