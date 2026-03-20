@@ -86,8 +86,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       setError(null);
 
       try {
-        const enrichedFields = `id,title,summary,category,section,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
-        const baseFields = `id,title,summary,category,section,importance_score,source_count,first_published,last_updated`;
+        const enrichedFields = `id,title,summary,category,section,sections,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         let res;
         let usingEnriched = true;
@@ -98,14 +98,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           supabase
             .from("story_clusters")
             .select(enrichedFields)
-            .eq("section", activeEdition)
+            .contains("sections", [activeEdition])
             .eq("content_type", "reporting")
             .order("headline_rank", { ascending: false })
             .limit(100),
           supabase
             .from("story_clusters")
             .select(enrichedFields)
-            .eq("section", activeEdition)
+            .contains("sections", [activeEdition])
             .eq("content_type", "opinion")
             .order("headline_rank", { ascending: false })
             .limit(50),
@@ -119,7 +119,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           res = await supabase
             .from("story_clusters")
             .select(baseFields)
-            .eq("section", activeEdition)
+            .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
             .limit(100);
         }
@@ -228,6 +228,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               lensData,
               sigilData,
               section: (cluster.section || "world") as Edition,
+              sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
               importance: cluster.headline_rank || cluster.importance_score || 50,
               divergenceScore: cluster.divergence_score || 0,
               headlineRank: cluster.headline_rank || cluster.importance_score || 50,
