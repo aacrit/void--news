@@ -178,7 +178,18 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           });
         }
 
-        if (!cancelled && storySourceList.length > 0) {
+        // Deduplicate: keep only the first article per source name.
+        // Multiple articles from the same outlet in a cluster would otherwise
+        // produce duplicate entries in the spectrum and source count display.
+        const seenSourceNames = new Set<string>();
+        const dedupedSourceList = storySourceList.filter((s) => {
+          const key = s.name.toLowerCase().trim();
+          if (seenSourceNames.has(key)) return false;
+          seenSourceNames.add(key);
+          return true;
+        });
+
+        if (!cancelled && dedupedSourceList.length > 0) {
           // Use pipeline-generated consensus/divergence from the cluster,
           // falling back only when no data has been computed yet.
           const rawConsensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
@@ -193,7 +204,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           setLiveData({
             consensus,
             divergence: divergenceData,
-            sources: storySourceList,
+            sources: dedupedSourceList,
           });
         }
       } catch {
@@ -353,7 +364,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                       style={{ left: `${lean}%` }}
                     >
                       {favicon ? (
-                        <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
+                        <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
                       ) : (
                         <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
                       )}
@@ -385,7 +396,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                       style={{ left: `${lean}%` }}
                     >
                       {favicon ? (
-                        <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
+                        <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
                       ) : (
                         <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
                       )}
