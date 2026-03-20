@@ -88,7 +88,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-mode="light"
+      data-mode="dark"
       className={`${playfair.variable} ${inter.variable} ${jetbrains.variable}`}
       suppressHydrationWarning
     >
@@ -100,10 +100,8 @@ export default function RootLayout({
               (function() {
                 try {
                   var stored = localStorage.getItem('void-news-theme');
-                  if (stored === 'dark' || stored === 'light') {
-                    document.documentElement.setAttribute('data-mode', stored);
-                  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-mode', 'dark');
+                  if (stored === 'light') {
+                    document.documentElement.setAttribute('data-mode', 'light');
                   }
                 } catch(e) {}
               })();

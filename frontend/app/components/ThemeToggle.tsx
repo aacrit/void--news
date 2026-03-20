@@ -8,11 +8,10 @@ import { Sun, Moon } from "@phosphor-icons/react";
    --------------------------------------------------------------------------- */
 
 function getThemeFromStorage(): "light" | "dark" {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
   const stored = localStorage.getItem("void-news-theme") as "light" | "dark" | null;
   if (stored) return stored;
-  if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) return "dark";
-  return "light";
+  return "dark";
 }
 
 const subscribe = () => () => {};
