@@ -227,7 +227,8 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
-  min-height: 36px;
+  /* WCAG 2.1 AA: interactive elements must be >= 44x44px */
+  min-height: 44px;
   cursor: pointer;
   align-self: flex-start;
   margin: var(--space-3) 0 0;
@@ -235,13 +236,18 @@
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
 }
 
 .filter-toggle:hover {
   color: var(--fg-secondary);
   border-color: var(--border-strong);
   background-color: var(--bg-secondary);
+}
+
+.filter-toggle:active {
+  transform: scale(0.96);
 }
 
 .filter-toggle:focus-visible {
@@ -394,10 +400,17 @@
 .nav-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-3) var(--space-7);
+  /* Mobile-first: --space-5 (~16px) horizontal; promoted to --space-7 at 768px+ */
+  padding: var(--space-3) var(--space-5);
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .nav-inner {
+    padding: var(--space-3) var(--space-7);
+  }
 }
 
 .nav-left {
@@ -433,7 +446,8 @@
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
 }
 
 .page-toggle:hover {
@@ -444,7 +458,6 @@
 
 .page-toggle:active {
   transform: scale(0.95);
-  transition: transform var(--dur-fast) var(--spring);
 }
 
 .page-toggle:focus-visible {
@@ -600,7 +613,15 @@
   border: 1px solid var(--divider);
   border-radius: var(--radius-md);
   overflow: hidden;
-  height: 32px;
+  /* WCAG 2.1 AA: touch target — 44px mobile-first, 32px on desktop where
+     mouse precision makes smaller controls acceptable */
+  height: 44px;
+}
+
+@media (min-width: 768px) {
+  .view-mode-toggle {
+    height: 32px;
+  }
 }
 
 .view-mode-toggle__btn {
@@ -647,12 +668,8 @@
   outline-offset: -2px;
 }
 
-/* Mobile: compact, full touch target */
+/* Mobile: slightly larger text for legibility; min-width already 44px */
 @media (max-width: 767px) {
-  .view-mode-toggle {
-    height: 36px;
-  }
-
   .view-mode-toggle__btn {
     min-width: 52px;
     padding: 0 var(--space-3);
@@ -714,6 +731,11 @@
 
 .nav-bottom-tab:active {
   transform: scale(0.95);
+}
+
+.nav-bottom-tab:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 .nav-bottom-tab--active {
@@ -927,7 +949,7 @@
 .progress-bar__fill {
   height: 100%;
   border-radius: 2px;
-  transition: width 300ms var(--ease-out);
+  transition: width var(--dur-normal) var(--ease-out);
 }
 
 .progress-bar__label {
@@ -1075,9 +1097,12 @@
 }
 
 /* ---- Deep Dive Source Icons --------------------------------------------- */
+.dd-source-icon {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
 .dd-source-icon:hover {
   transform: scale(1.15);
-  border-color: var(--fg-tertiary) !important;
 }
 
 /* ---- Deep Dive: Source Spectrum (above / track / below) ------------------ */
@@ -1137,7 +1162,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-e1);
   transition: transform 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
   cursor: pointer;
   text-decoration: none;
@@ -1149,7 +1174,7 @@
 
 .dd-spectrum__dot:hover {
   transform: translateX(-50%) scale(1.35);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-e2);
   z-index: 100 !important;
 }
 
@@ -2308,10 +2333,8 @@
   height: 9px;
   border-radius: 50%;
   border: 2px solid var(--bg-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-e1);
   transition: left var(--dur-normal) var(--ease-out);
-  /* Promoted to GPU */
-  will-change: left;
 }
 
 /* ---- Press Analysis trigger button -------------------------------------- */

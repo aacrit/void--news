@@ -16,9 +16,17 @@
   flex: 1;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 var(--space-7);
-  padding-bottom: var(--space-7);
+  /* Mobile-first: --space-5 (~16px) at 375px, promoted to --space-7 at 768px+ */
+  padding: 0 var(--space-5);
+  padding-bottom: var(--space-5);
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .page-main {
+    padding: 0 var(--space-7);
+    padding-bottom: var(--space-7);
+  }
 }
 
 /* ---- Section Header — Newspaper tradition ------------------------------ */
@@ -164,7 +172,14 @@
 .site-footer {
   border-top: 1px solid var(--divider);
   margin-top: var(--space-6);
-  padding: var(--space-6) var(--space-7);
+  /* Mobile-first: --space-5 horizontal; --space-7 promoted at 768px+ */
+  padding: var(--space-5) var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .site-footer {
+    padding: var(--space-6) var(--space-7);
+  }
 }
 
 .site-footer__inner {
@@ -216,6 +231,11 @@
 .source-row--link:active {
   background-color: var(--bg-secondary);
   opacity: 0.85;
+}
+
+.source-row--link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 /* ---- Screen Reader Only ------------------------------------------------ */

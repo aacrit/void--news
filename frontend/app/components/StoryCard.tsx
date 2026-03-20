@@ -35,64 +35,58 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
   }, []);
 
   return (
-    /* article preserves landmark semantics for assistive tech.
-       The inner div[role="button"] carries all interactive attributes. */
     <article
       ref={cardRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open deep dive for: ${story.title}`}
+      onClick={() => onStoryClick?.(story)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onStoryClick?.(story);
+        }
+      }}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}`}
       style={{ animationDelay: `${index * 40}ms` }}
     >
-      <div
-        role="button"
-        tabIndex={0}
-        aria-label={`Open deep dive for: ${story.title}`}
-        onClick={() => onStoryClick?.(story)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onStoryClick?.(story);
-          }
-        }}
-        style={{ cursor: "pointer" }}
-      >
-        {/* Category tag + time */}
-        <div className="story-card__meta">
-          <span className="category-tag">{story.category}</span>
-          <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-        </div>
+      {/* Category tag + time */}
+      <div className="story-card__meta">
+        <span className="category-tag">{story.category}</span>
+        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+      </div>
 
-        {/* Headline */}
-        <h3 className="story-card__headline">
-          <span className="story-card__headline-text">{story.title}</span>
-          <CaretRight
-            size={14}
-            weight="bold"
-            aria-hidden="true"
-            className="story-card__headline-icon"
-          />
-        </h3>
+      {/* Headline */}
+      <h3 className="story-card__headline">
+        <span className="story-card__headline-text">{story.title}</span>
+        <CaretRight
+          size={14}
+          weight="bold"
+          aria-hidden="true"
+          className="story-card__headline-icon"
+        />
+      </h3>
 
-        {/* Summary */}
-        <p className="story-card__summary">{story.summary}</p>
+      {/* Summary */}
+      <p className="story-card__summary">{story.summary}</p>
 
-        {/* Bias indicator — lean bar + source count + type badge */}
-        <div className="story-card__footer">
-          <Sigil data={story.sigilData} />
-          {(() => {
-            const reasons = whyThisStory({
-              sourceCount: story.source.count,
-              coverageVelocity: story.coverageVelocity,
-              divergenceScore: story.divergenceScore,
-              leanSpread: story.biasSpread?.leanSpread,
-              headlineRank: story.headlineRank,
-            });
-            return reasons.length > 0 ? (
-              <span className="story-card__why" title={reasons.join(" / ")}>
-                {reasons[0]}
-              </span>
-            ) : null;
-          })()}
-        </div>
+      {/* Bias indicator — lean bar + source count + type badge */}
+      <div className="story-card__footer">
+        <Sigil data={story.sigilData} />
+        {(() => {
+          const reasons = whyThisStory({
+            sourceCount: story.source.count,
+            coverageVelocity: story.coverageVelocity,
+            divergenceScore: story.divergenceScore,
+            leanSpread: story.biasSpread?.leanSpread,
+            headlineRank: story.headlineRank,
+          });
+          return reasons.length > 0 ? (
+            <span className="story-card__why" title={reasons.join(" / ")}>
+              {reasons[0]}
+            </span>
+          ) : null;
+        })()}
       </div>
     </article>
   );

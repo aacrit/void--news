@@ -331,7 +331,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           // Mobile: bottom sheet
           position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9999,
           background: "var(--bg-card)", borderTop: "1px solid var(--border-subtle)",
-          boxShadow: "0 -8px 24px rgba(0,0,0,0.15)", pointerEvents: "auto",
+          boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
           borderRadius: "12px 12px 0 0",
           maxHeight: "80vh", overflowY: "auto" as const,
           transform: stage >= 1 ? "translateY(0)" : "translateY(100%)",
