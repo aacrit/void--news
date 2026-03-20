@@ -511,7 +511,7 @@
     "url": "https://www.dw.com/en",
     "rss_url": "https://rss.dw.com/rdf/rss-en-all",
     "tier": "international",
-    "country": "DE",
+    "country": "",
     "type": "broadcast",
     "political_lean_baseline": "center",
     "credibility_notes": "Germany's international broadcaster, funded by German federal tax revenue. Publishes in 30 languages. Known for balanced European perspective."
@@ -544,7 +544,7 @@
     "url": "https://www.spiegel.de/international/",
     "rss_url": "https://www.spiegel.de/international/index.rss",
     "tier": "international",
-    "country": "DE",
+    "country": "",
     "type": "magazine",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Germany's most influential news magazine. Known for investigative journalism. Survived a 2018 fabrication scandal with strengthened fact-checking."
@@ -2383,7 +2383,7 @@
     "url": "https://kathmandupost.com",
     "rss_url": "https://news.google.com/rss/search?q=site:kathmandupost.com+when:24h&ceid=NP:en&hl=en&gl=NP",
     "tier": "international",
-    "country": "NP",
+    "country": "",
     "type": "broadsheet",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Nepal's leading English-language daily, founded 1993. Published by Kantipur Publications (Nepal's largest media group). Strong on Nepali politics and governance."
@@ -2394,7 +2394,7 @@
     "url": "https://www.nepalitimes.com",
     "rss_url": "https://news.google.com/rss/search?q=site:nepalitimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "NP",
+    "country": "",
     "type": "magazine",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Nepal's leading English-language weekly magazine, founded 2000. Published by Himalmedia. Known for in-depth analysis of South Asian politics, environment, and culture."
@@ -2405,7 +2405,7 @@
     "url": "https://thehimalayantimes.com",
     "rss_url": "https://news.google.com/rss/search?q=site:thehimalayantimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "NP",
+    "country": "",
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Nepal's second-largest English-language daily. Owned by IME Group (financial conglomerate). Broad national coverage with decent business reporting."
@@ -2416,7 +2416,7 @@
     "url": "https://myrepublica.nagariknetwork.com",
     "rss_url": "https://news.google.com/rss/search?q=site:myrepublica.nagariknetwork.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "NP",
+    "country": "",
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "English-language daily published by Nagarik Network. Reasonable editorial standards. Covers Nepali politics, development, and regional issues."
@@ -2427,7 +2427,7 @@
     "url": "https://www.recordnepal.com",
     "rss_url": "https://news.google.com/rss/search?q=site:recordnepal.com&ceid=NP:en&hl=en&gl=NP",
     "tier": "independent",
-    "country": "NP",
+    "country": "",
     "type": "investigative",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Independent investigative journalism outlet focused on Nepal. Founded 2019. Covers accountability, governance, human rights, and political transparency."
@@ -2439,7 +2439,7 @@
     "url": "https://www.thelocal.de",
     "rss_url": "https://feeds.thelocal.com/rss/de",
     "tier": "international",
-    "country": "DE",
+    "country": "",
     "type": "digital",
     "political_lean_baseline": "center",
     "credibility_notes": "English-language news site covering Germany for international readers, founded 2004. Part of The Local Europe network. Credible English-language reporting on German politics and society."

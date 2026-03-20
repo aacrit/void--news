@@ -124,7 +124,7 @@ def load_sources(editions: list[str] | None = None) -> list[dict]:
     """Load the curated source list from data/sources.json.
 
     Args:
-        editions: Optional list of edition slugs to filter by (e.g., ["india", "nepal"]).
+        editions: Optional list of edition slugs to filter by (e.g., ["india"]).
                   If None or empty, loads all sources.
     """
     if not SOURCES_PATH.exists():
@@ -757,7 +757,7 @@ def _scrape_single(article_data, source_map):
     source_country = source_info.get("country", "")
 
     if source_country in _COUNTRY_EDITION_MAP:
-        # Country-specific edition: US, India, Nepal, Germany
+        # Country-specific edition: US, India
         article_data["section"] = _COUNTRY_EDITION_MAP[source_country]
     elif _has_us_domestic_signal(article_data):
         # Content-based override: international sources covering clearly
@@ -777,7 +777,7 @@ def main():
         "--editions",
         type=str,
         default="",
-        help="Comma-separated edition slugs to process (e.g., 'india,nepal'). "
+        help="Comma-separated edition slugs to process (e.g., 'india'). "
              "Empty = all sources.",
     )
     args = parser.parse_args()
@@ -1397,7 +1397,7 @@ def main():
             # Determine cluster section (edition) from its articles.
             # Strategy: majority vote — whichever edition has the most
             # articles in this cluster determines the cluster's edition.
-            # This works fairly across all 5 editions (world/us/india/nepal/germany).
+            # This works fairly across all 3 editions (world/us/india).
             section_counts: dict[str, int] = {}
             for art in cluster_articles_list:
                 sec = art.get("section", "world")
@@ -1414,7 +1414,7 @@ def main():
             if not cluster_summary and cluster_articles_list:
                 first_art = cluster_articles_list[0]
                 cluster_summary = (first_art.get("summary", "") or
-                                   first_art.get("title", "") or "")[:300]
+                                   first_art.get("title", "") or "")
 
             cluster_row = {
                 "title": cluster.get("title", "Developing Story")[:500],
@@ -1569,12 +1569,27 @@ def main():
     # After analysis, truncate to a short excerpt to avoid storing copyrighted
     # content long-term. Bias scores (the derived, transformative output) are
     # retained. See docs/IP-COMPLIANCE.md — AP v. Meltwater precedent.
-    print("\n[10] Truncating full_text for IP compliance...")
+    #
+    # EXCEPTION: Opinion articles (opinion_fact > 50) keep their full text.
+    # Opinion/editorial content is authored commentary — the full text is the
+    # value proposition for the Op-Ed page. Cluster summaries also keep full
+    # text since they're already short (Gemini 150-250 words or article excerpt).
+    print("\n[10] Truncating full_text for IP compliance (skipping opinion articles)...")
     try:
+        # Build set of opinion article IDs to preserve
+        opinion_article_ids: set[str] = set()
+        for art_id, scores in article_bias_map.items():
+            if scores.get("opinion_fact", 0) > 50:
+                opinion_article_ids.add(art_id)
+
         truncation_rows: list[dict] = []
+        skipped_opinion = 0
         for article in stored_articles:
             art_id = article.get("id", "")
             if art_id:
+                if art_id in opinion_article_ids:
+                    skipped_opinion += 1
+                    continue  # Preserve full text for opinion articles
                 full = article.get("full_text", "") or ""
                 if len(full) > 300:
                     excerpt = full[:297] + "..."
@@ -1611,7 +1626,8 @@ def main():
                         failed_count += 1
 
             print(f"  Truncated {truncated_count} articles to 300-char excerpts"
-                  + (f" ({failed_count} failed)" if failed_count else ""))
+                  + (f" ({failed_count} failed)" if failed_count else "")
+                  + f", preserved {skipped_opinion} opinion articles")
         else:
             print("  No articles needed truncation")
     except Exception as e:
