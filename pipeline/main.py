@@ -1097,10 +1097,32 @@ def main():
         print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
 
         # Step 6: Cluster articles
-        print(f"\n[6/9] Clustering {len(stored_articles)} articles into stories...")
+        # Include recent articles from the last 48h so stories that span
+        # multiple pipeline runs can cluster together (cross-run continuity).
+        print(f"\n[6/9] Clustering articles into stories...")
+        recent_articles = []
+        try:
+            from datetime import datetime, timezone, timedelta
+            cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+            current_ids = {a.get("id", "") for a in stored_articles}
+            recent_res = supabase.table("articles").select(
+                "id,title,summary,full_text,source_id,published_at,word_count"
+            ).gte("published_at", cutoff).limit(800).execute()
+            # Only add articles NOT in the current batch (avoid duplicates)
+            for art in (recent_res.data or []):
+                if art["id"] not in current_ids:
+                    # Resolve source_slug from source_map for clustering
+                    art["section"] = art.get("section", "world")
+                    recent_articles.append(art)
+            print(f"  Current batch: {len(stored_articles)}, 48h lookback: {len(recent_articles)}")
+        except Exception as e:
+            print(f"  [warn] 48h lookback fetch failed, clustering current batch only: {e}")
+
+        all_articles_for_clustering = stored_articles + recent_articles
+        print(f"  Total for clustering: {len(all_articles_for_clustering)}")
         clusters = []
         try:
-            clusters = cluster_stories(stored_articles)
+            clusters = cluster_stories(all_articles_for_clustering)
             print(f"  Clusters formed: {len(clusters)}")
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
