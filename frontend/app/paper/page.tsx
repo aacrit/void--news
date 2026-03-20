@@ -11,8 +11,22 @@ import type {
   OpinionLabel,
   SigilData,
 } from "../lib/types";
-import { supabase } from "../lib/supabase";
+import { supabase, fetchOpinionArticles } from "../lib/supabase";
 import "./paper.css";
+
+// --- Op-ed article type (individual source articles, not cluster summaries) ---
+interface OpEdArticle {
+  id: string;
+  title: string;       // Original source headline
+  summary: string;     // Full article summary — shown without truncation
+  url: string;         // Source link
+  sourceName: string;  // e.g., "The Washington Post"
+  sourceTier: string;  // us_major, international, independent
+  publishedAt: string;
+  opinionLabel: OpinionLabel;
+  politicalLean: number;
+  sensationalism: number;
+}
 
 /* ---------------------------------------------------------------------------
    E-Paper Edition — 1930s Static Broadsheet Newspaper
@@ -209,6 +223,21 @@ function Article({
   );
 }
 
+// --- Op-Ed Article Component ---
+// Renders individual opinion/editorial pieces from a single source.
+// No dateline — the source attribution IS the provenance.
+
+function OpEdArticleComponent({ oped }: { oped: OpEdArticle }) {
+  return (
+    <article className="np-article np-article--secondary np-article--opinion np-article--oped">
+      <p className="np-article__opinion-label">{oped.opinionLabel}</p>
+      <h2 className="np-article__headline">{oped.title}</h2>
+      <p className="np-article__byline">From {oped.sourceName}</p>
+      <p className="np-article__summary">{oped.summary}</p>
+    </article>
+  );
+}
+
 // --- Classifieds ---
 
 function Classifieds({ lastUpdated, storyCount }: { lastUpdated: string | null; storyCount: number }) {
@@ -371,6 +400,8 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
 
 export default function PaperPage() {
   const [allStories, setAllStories] = useState<Story[]>([]);
+  const [worldOpEds, setWorldOpEds] = useState<OpEdArticle[]>([]);
+  const [usOpEds, setUsOpEds] = useState<OpEdArticle[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -378,20 +409,25 @@ export default function PaperPage() {
     async function load() {
       const enrichedFields = `id,title,summary,category,section,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
 
-      // Fetch all stories from both sections
-      const [worldRes, usRes] = await Promise.all([
+      // Fetch all stories and op-eds in parallel
+      const [worldRes, usRes, worldOpEdRaw, usOpEdRaw] = await Promise.all([
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", ["world"])
+          // Exclude opinion clusters — those appear as individual op-eds below
+          .neq("content_type", "opinion")
           .order("headline_rank", { ascending: false })
           .limit(100),
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", ["us"])
+          .neq("content_type", "opinion")
           .order("headline_rank", { ascending: false })
           .limit(100),
+        fetchOpinionArticles("world"),
+        fetchOpinionArticles("us"),
       ]);
 
       const worldClusters = worldRes.data || [];
@@ -408,7 +444,26 @@ export default function PaperPage() {
       }
       stories.sort((a, b) => b.headlineRank - a.headlineRank);
 
+      // Map OpinionArticle → OpEdArticle
+      function mapOpEd(raw: typeof worldOpEdRaw[number]): OpEdArticle {
+        const opinionScore = 65; // fetchOpinionArticles only returns opinion clusters
+        return {
+          id: raw.id,
+          title: raw.title,
+          summary: raw.summary,
+          url: raw.url,
+          sourceName: raw.sourceName,
+          sourceTier: raw.sourceTier,
+          publishedAt: raw.publishedAt,
+          opinionLabel: deriveOpinionLabel(opinionScore),
+          politicalLean: raw.politicalLean,
+          sensationalism: raw.sensationalism,
+        };
+      }
+
       setAllStories(stories);
+      setWorldOpEds(worldOpEdRaw.map(mapOpEd));
+      setUsOpEds(usOpEdRaw.map(mapOpEd));
       setIsLoading(false);
 
       const { data: run } = await supabase
@@ -438,6 +493,33 @@ export default function PaperPage() {
 
   const usStories = allStories
     .filter((s) => s.section === "us" && !frontPageIds.has(s.id));
+
+  // --- Interleave op-eds into a story list ---
+  // Returns a flat array of tagged items: cluster stories with an op-ed
+  // inserted after every 4th cluster story. Op-eds are consumed in order.
+  type SectionItem =
+    | { kind: "story"; story: Story }
+    | { kind: "oped"; oped: OpEdArticle };
+
+  function interleave(stories: Story[], opeds: OpEdArticle[]): SectionItem[] {
+    const result: SectionItem[] = [];
+    let opedIndex = 0;
+    for (let i = 0; i < stories.length; i++) {
+      result.push({ kind: "story", story: stories[i] });
+      // After every 4th story, insert the next op-ed if available
+      if ((i + 1) % 4 === 0 && opedIndex < opeds.length) {
+        result.push({ kind: "oped", oped: opeds[opedIndex++] });
+      }
+    }
+    // Append any remaining op-eds at the end of the section
+    while (opedIndex < opeds.length) {
+      result.push({ kind: "oped", oped: opeds[opedIndex++] });
+    }
+    return result;
+  }
+
+  const worldItems = interleave(worldStories, worldOpEds);
+  const usItems = interleave(usStories, usOpEds);
 
   const hour = new Date().getUTCHours();
   const editionName = hour < 17 ? "Morning" : "Evening";
@@ -469,30 +551,42 @@ export default function PaperPage() {
         </div>
       )}
 
-      {/* World News — all stories */}
-      {!isLoading && worldStories.length > 0 && (
+      {/* World News — cluster stories interleaved with op-eds */}
+      {!isLoading && worldItems.length > 0 && (
         <>
           <SectionLabel label="WORLD NEWS" />
           <div className="np-broadsheet">
-            {worldStories.map((story) => (
-              <div key={story.id} className="np-col">
-                <Article story={story} size="secondary" />
-              </div>
-            ))}
+            {worldItems.map((item) =>
+              item.kind === "story" ? (
+                <div key={item.story.id} className="np-col">
+                  <Article story={item.story} size="secondary" />
+                </div>
+              ) : (
+                <div key={`oped-${item.oped.id}`} className="np-col">
+                  <OpEdArticleComponent oped={item.oped} />
+                </div>
+              )
+            )}
           </div>
         </>
       )}
 
-      {/* Domestic — all stories */}
-      {!isLoading && usStories.length > 0 && (
+      {/* Domestic — cluster stories interleaved with op-eds */}
+      {!isLoading && usItems.length > 0 && (
         <>
           <SectionLabel label="DOMESTIC" />
           <div className="np-broadsheet">
-            {usStories.map((story) => (
-              <div key={story.id} className="np-col">
-                <Article story={story} size="secondary" />
-              </div>
-            ))}
+            {usItems.map((item) =>
+              item.kind === "story" ? (
+                <div key={item.story.id} className="np-col">
+                  <Article story={item.story} size="secondary" />
+                </div>
+              ) : (
+                <div key={`oped-${item.oped.id}`} className="np-col">
+                  <OpEdArticleComponent oped={item.oped} />
+                </div>
+              )
+            )}
           </div>
         </>
       )}
