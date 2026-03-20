@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Sigil from "./Sigil";
 import type { OpinionArticle } from "../lib/types";
 import type { SigilData } from "../lib/types";
@@ -7,7 +8,7 @@ import { timeAgo } from "../lib/utils";
 
 /* --------------------------------------------------------------------------
    OpinionCard — individual opinion/editorial article card
-   No deep dive, no clustering. Headline links to original article.
+   Shows inline text (10-12 lines collapsed, expandable to full).
    Left border accent: blue (left lean) | gray (center) | red (right lean)
    -------------------------------------------------------------------------- */
 
@@ -26,7 +27,7 @@ function buildSigilData(article: OpinionArticle): SigilData {
   return {
     politicalLean: article.politicalLean,
     sensationalism: article.sensationalism,
-    opinionFact: 75, // these are opinion articles by definition
+    opinionFact: 75,
     factualRigor: 50,
     framing: 50,
     agreement: 0,
@@ -43,13 +44,12 @@ function tierLabel(tier: OpinionArticle["sourceTier"]): string {
 }
 
 export default function OpinionCard({ article, featured = false }: OpinionCardProps) {
-  const excerpt =
-    article.summary.length > 200
-      ? article.summary.slice(0, 200).replace(/\s+\S*$/, "") + "\u2026"
-      : article.summary;
-
+  const [expanded, setExpanded] = useState(false);
   const borderColor = leanBorderColor(article.politicalLean);
   const sigilData = buildSigilData(article);
+
+  const fullText = article.summary || "";
+  const isLong = fullText.length > 400;
 
   return (
     <article
@@ -68,36 +68,43 @@ export default function OpinionCard({ article, featured = false }: OpinionCardPr
         <span className="opinion-card__time">{timeAgo(article.publishedAt)}</span>
       </div>
 
-      {/* Headline — links to original article */}
+      {/* Headline */}
       <h3 className="opinion-card__headline">
-        <a
-          href={article.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="opinion-card__headline-link"
-        >
-          {article.title}
-        </a>
+        <span className="opinion-card__headline-link">{article.title}</span>
       </h3>
 
-      {/* Excerpt */}
-      {excerpt && (
-        <p className="opinion-card__excerpt">{excerpt}</p>
+      {/* Inline article text — 10-12 lines collapsed, expandable */}
+      {fullText && (
+        <div
+          className={`opinion-card__text${expanded ? " opinion-card__text--expanded" : ""}`}
+        >
+          <p className="opinion-card__text-content">{fullText}</p>
+        </div>
       )}
 
-      {/* Bias indicator row */}
+      {/* Expand / collapse + source link row */}
       <div className="opinion-card__footer">
         <Sigil data={sigilData} mode="oped" size="sm" />
-        <a
-          href={article.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="opinion-card__read-link"
-          tabIndex={-1}
-          aria-hidden="true"
-        >
-          Read at {article.sourceName} &#8599;
-        </a>
+
+        <div className="opinion-card__actions">
+          {isLong && (
+            <button
+              className="opinion-card__expand-btn"
+              onClick={() => setExpanded(!expanded)}
+              aria-expanded={expanded}
+            >
+              {expanded ? "Show less" : "Read more"}
+            </button>
+          )}
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="opinion-card__read-link"
+          >
+            Source &#8599;
+          </a>
+        </div>
       </div>
     </article>
   );

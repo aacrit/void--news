@@ -157,33 +157,18 @@ export async function fetchOpinionArticles(section: "world" | "us" | "india") {
     };
   });
 
-  // Per-outlet cap: max 2 per source_slug
+  // Per-outlet cap: max 3 per source_slug
   const slugCount: Record<string, number> = {};
   const capped = normalized.filter((a) => {
     const n = (slugCount[a!.sourceSlug] || 0);
-    if (n >= 2) return false;
+    if (n >= 3) return false;
     slugCount[a!.sourceSlug] = n + 1;
     return true;
   });
 
-  // Spectrum balance: in every 5 positions, max 2 from same lean bucket
-  const leanBucket = (lean: number) =>
-    lean < 41 ? "L" : lean <= 60 ? "C" : "R";
-
-  const balanced: typeof capped = [];
-  const windowBuckets: string[] = [];
-  for (const a of capped) {
-    const bucket = leanBucket(a!.politicalLean);
-    const windowStart = Math.max(0, windowBuckets.length - 4);
-    const recentWindow = windowBuckets.slice(windowStart);
-    const bucketCount = recentWindow.filter((b) => b === bucket).length;
-    if (bucketCount >= 2) continue;
-    balanced.push(a);
-    windowBuckets.push(bucket);
-    if (balanced.length >= 30) break;
-  }
-
-  return balanced;
+  // No aggressive spectrum balance filter — show all opinion pieces.
+  // The per-outlet cap already prevents any single outlet from dominating.
+  return capped.slice(0, 50);
 }
 
 export async function fetchLastPipelineRun() {
