@@ -40,11 +40,22 @@
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
-/* Lead section stays single-column at all breakpoints —
-   the lead story takes full width for maximum impact. */
-
 @media (min-width: 1024px) {
-  /* Remove old single-story constraint — grid column constrains instead */
+  /* Two equal lead stories side by side */
+  .lead-section {
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .lead-section__col:not(:last-child) {
+    border-bottom: none;
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .lead-section__col:last-child {
+    padding-left: var(--space-5);
+  }
 
   .grid-medium {
     grid-template-columns: repeat(3, 1fr);
@@ -293,9 +304,9 @@
     line-height: 1.5;
   }
 
-  .lead-section__secondary {
-    border-top: var(--rule-thin);
-    padding-top: var(--space-3);
+  .lead-section__col:not(:last-child) {
+    border-bottom: var(--rule-thin);
+    padding-bottom: var(--space-3);
   }
 
   /* === DEEP DIVE === */

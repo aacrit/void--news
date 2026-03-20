@@ -265,8 +265,7 @@ function HomeContent() {
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
   }, [stories, activeSection, activeCategory]);
 
-  const leadStory = filteredStories[0];
-  const secondaryStory = filteredStories[1];
+  const leadStories = filteredStories.slice(0, 2);
   const mediumStories = filteredStories.slice(2, 5);
   const compactStories = filteredStories.slice(5);
 
@@ -360,17 +359,14 @@ function HomeContent() {
           </div>
         )}
 
-        {/* Lead section — lead story + secondary on desktop */}
-        {!isLoading && leadStory && (
-          <section aria-label="Lead story" className="lead-section">
-            <div className="lead-section__primary">
-              <LeadStory story={leadStory} onStoryClick={handleStoryClick} />
-            </div>
-            {secondaryStory && (
-              <div className="lead-section__secondary">
-                <StoryCard story={secondaryStory} index={1} onStoryClick={handleStoryClick} />
+        {/* Lead section — two primary headlines side by side on desktop */}
+        {!isLoading && leadStories.length > 0 && (
+          <section aria-label="Lead stories" className="lead-section">
+            {leadStories.map((story) => (
+              <div key={story.id} className="lead-section__col">
+                <LeadStory story={story} onStoryClick={handleStoryClick} />
               </div>
-            )}
+            ))}
           </section>
         )}
 

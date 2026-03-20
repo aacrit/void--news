@@ -48,25 +48,23 @@
 }
 
 /* ---- Lead Section — Above the fold -------------------------------------- */
-/* Mobile: single column stack. Desktop: lead (2fr) + secondary (1fr). */
+/* Mobile: single column stack. Desktop: two equal columns (1fr 1fr). */
 .lead-section {
   display: grid;
   grid-template-columns: 1fr;
   border-bottom: var(--rule-strong);
 }
 
-.lead-section__primary {
-  /* Lead story already has its own padding/border — remove the
-     border-bottom since the section container handles it. */
+.lead-section__col {
+  /* On mobile, columns stack vertically */
 }
 
-.lead-section__primary .lead-story {
+.lead-section__col:not(:last-child) {
+  border-bottom: var(--rule-thin);
+}
+
+.lead-section__col .lead-story {
   border-bottom: none;
-}
-
-.lead-section__secondary {
-  /* On mobile, the secondary story stacks below the lead. */
-  border-top: var(--rule-thin);
 }
 
 /* ---- Broadsheet Grid — Asymmetric newspaper layout --------------------- */
