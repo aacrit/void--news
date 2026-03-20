@@ -36,7 +36,10 @@ or described expert is not attribution.
 - Neutral framing of competing legitimate perspectives. No false balance on \
 empirical questions with clear factual consensus.
 - Precise language: name individuals when known, state exact figures, specify \
-locations when central.\
+locations when central.
+- NEVER use bracketed citations, footnotes, or reference markers like [1], [2,5], \
+[Source], (1), etc. This is a news briefing, not an academic paper. Attribute \
+inline using natural language ("according to...", "...X reported").\
 """
 
 # ---------------------------------------------------------------------------
@@ -88,6 +91,8 @@ Prohibited constructions:
 - "...raising questions about..." (vague concern framing)
 - "...sparking outrage/controversy..." (importing reaction framing)
 - Any adjective that expresses editorial judgment rather than factual description
+- Bracketed citations or reference numbers like [1], [2,5], [Source 3], (1). \
+This is a news article, not a research paper. Use natural inline attribution.
 
 ---
 
@@ -169,6 +174,13 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     ]).lower()
 
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
+
+    # Check for bracketed citations [1], [2,5], [Source 3], etc.
+    import re
+    bracket_refs = re.findall(r'\[\d[\d,\s]*\]|\[source\s*\d*\]', all_text)
+    if bracket_refs:
+        found.extend(f"citation:{ref}" for ref in bracket_refs[:3])
+
     if found:
         print(
             f"  [quality] Prohibited terms in cluster {cluster_id}: {found}"
