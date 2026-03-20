@@ -7,7 +7,7 @@ Each cluster represents one news story as seen through multiple sources.
 Uses rule-based NLP (no LLM API calls):
     - TF-IDF vectorization of article titles + first 500 words
     - Cosine similarity via sklearn
-    - Agglomerative clustering with distance threshold (0.2)
+    - Agglomerative clustering with distance threshold (0.3)
     - Entity-overlap merge pass (Phase 2) to consolidate evolving-story fragments
     - Cluster title generation from most common named entities (spaCy NER)
 """
@@ -488,7 +488,7 @@ def merge_related_clusters(
 
 def cluster_stories(
     articles: list[dict],
-    similarity_threshold: float = 0.2,
+    similarity_threshold: float = 0.3,
     run_merge_pass: bool = True,
 ) -> list[dict]:
     """
