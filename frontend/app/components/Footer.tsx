@@ -49,7 +49,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoWordmark height={16} />
         </div>
         <p className="footer-tagline">Free, transparent news bias analysis</p>
-        <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
+        <p className="footer-built">&copy; 2026 void --news. All rights reserved. &middot; <a href="/void--news/paper" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>Read the Broadsheet Edition</a></p>
       </div>
     </footer>
   );

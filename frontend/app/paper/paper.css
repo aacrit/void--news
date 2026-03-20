@@ -1,0 +1,485 @@
+/* ==========================================================================
+   E-PAPER EDITION — 1930s Broadsheet Newspaper
+   Scoped to .np-root. No color. No interaction. Pure static reading.
+   ========================================================================== */
+
+/* --- Tokens --- */
+.np-root {
+  --np-paper: #F4EFDF;
+  --np-paper-aged: #EDE8D5;
+  --np-paper-dark: #E8E0C8;
+  --np-ink: #0D0B09;
+  --np-ink-light: #8A8278;
+  --np-rule: #C8C0B5;
+  --np-rule-dark: #9E978C;
+  --np-font-head: var(--font-playfair), "Georgia", "Times New Roman", serif;
+  --np-font-body: var(--font-inter), "Helvetica Neue", "Arial", sans-serif;
+}
+
+/* --- Base --- */
+.np-root {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--np-paper) 0%, var(--np-paper-aged) 60%, var(--np-paper-dark) 100%);
+  color: var(--np-ink);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+  position: relative;
+}
+
+/* Paper grain texture overlay */
+.np-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 400px 400px;
+}
+
+/* --- Masthead --- */
+.np-masthead {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.np-masthead__motto-rule {
+  border: none;
+  border-top: 1px solid var(--np-ink);
+  margin: 0 0 6px;
+}
+
+.np-masthead__motto {
+  font-family: var(--np-font-body);
+  font-size: 10px;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.2em;
+  color: var(--np-ink-light);
+  margin: 0 0 8px;
+}
+
+.np-masthead__thick-rule {
+  border: none;
+  border-top: 3px solid var(--np-ink);
+  margin: 0 0 16px;
+}
+
+.np-masthead__nameplate {
+  font-family: var(--np-font-head);
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--np-ink);
+  margin: 0 0 8px;
+  text-shadow: 0.4px 0.4px 0 rgba(13, 11, 9, 0.08);
+}
+
+.np-masthead__subtitle {
+  font-family: var(--np-font-body);
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--np-ink-light);
+  margin: 0 0 12px;
+}
+
+/* Double rule: thick top, thin bottom */
+.np-double-rule {
+  border: none;
+  border-top: 3px solid var(--np-ink);
+  padding-top: 3px;
+  border-bottom: 1px solid var(--np-ink);
+  margin: 0;
+  height: 0;
+}
+
+/* Info bar — 3-column layout */
+.np-masthead__info {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 8px 0;
+  font-family: var(--np-font-body);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--np-ink-light);
+}
+
+.np-masthead__info-left { text-align: left; }
+.np-masthead__info-center { text-align: center; }
+.np-masthead__info-right { text-align: right; }
+
+/* Thin rule after info */
+.np-thin-rule {
+  border: none;
+  border-top: 1px solid var(--np-ink);
+  margin: 0;
+}
+
+/* Edition bar — 2-column */
+.np-masthead__edition-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0 8px;
+  font-family: var(--np-font-body);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--np-ink-light);
+}
+
+/* --- Section Labels --- */
+.np-section-label {
+  text-align: center;
+  padding: 16px 0 12px;
+}
+
+.np-section-label__rule-top {
+  border: none;
+  border-top: 2px solid var(--np-ink);
+  margin: 0 0 8px;
+}
+
+.np-section-label__text {
+  font-family: var(--np-font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--np-ink);
+  margin: 0;
+}
+
+.np-section-label__rule-bottom {
+  border: none;
+  border-top: 1px solid var(--np-ink);
+  margin: 8px 0 0;
+}
+
+/* --- Broadsheet Grid --- */
+.np-broadsheet {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: start;
+  row-gap: 16px;
+  margin-bottom: 0;
+}
+
+.np-col {
+  padding: 0 16px;
+  border-right: 1px solid var(--np-rule);
+}
+
+.np-col:first-child { padding-left: 0; }
+.np-col:last-child { border-right: none; padding-right: 0; }
+
+/* Remove right border on every 4th column in multi-row grids */
+.np-col:nth-child(4n) { border-right: none; }
+
+.np-col--span2 {
+  grid-column: span 2;
+}
+
+/* --- Articles --- */
+.np-article {
+  margin-bottom: 20px;
+}
+
+.np-article__headline {
+  font-family: var(--np-font-head);
+  font-weight: 700;
+  color: var(--np-ink);
+  line-height: 1.15;
+  margin: 0 0 6px;
+  text-shadow: 0.4px 0.4px 0 rgba(13, 11, 9, 0.08);
+  overflow-wrap: break-word;
+}
+
+.np-article--lead .np-article__headline { font-size: 48px; }
+.np-article--primary .np-article__headline { font-size: 26px; }
+.np-article--secondary .np-article__headline { font-size: 18px; }
+
+.np-article__byline {
+  font-family: var(--np-font-body);
+  font-size: 9px;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--np-ink-light);
+  margin: 0 0 8px;
+}
+
+.np-article__summary {
+  font-family: var(--np-font-body);
+  font-size: 13px;
+  line-height: 1.58;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  color: var(--np-ink);
+  margin: 0;
+}
+
+.np-article__dateline {
+  font-family: var(--np-font-body);
+  font-variant-caps: small-caps;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Drop cap — lead story only */
+.np-article--lead .np-article__summary::first-letter {
+  float: left;
+  font-family: var(--np-font-head);
+  font-size: 4.2em;
+  font-weight: 700;
+  line-height: 0.82;
+  margin: 0.05em 0.1em 0 0;
+  color: var(--np-ink);
+}
+
+/* Line clamp for summaries */
+.np-article--lead .np-article__summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.np-article--primary .np-article__summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.np-article--secondary .np-article__summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Article separator within column */
+.np-article__rule {
+  border: none;
+  border-top: 1px solid var(--np-rule);
+  margin: 0 0 16px;
+}
+
+/* --- Press Analysis (bias prose) --- */
+.np-press-analysis {
+  font-family: var(--np-font-head);
+  font-style: italic;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--np-ink-light);
+  border-top: 1px solid var(--np-rule);
+  padding-top: 6px;
+  margin-top: 10px;
+}
+
+.np-press-analysis__label {
+  font-style: normal;
+  font-variant-caps: small-caps;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* --- Classifieds --- */
+.np-classifieds {
+  margin-top: 8px;
+}
+
+.np-classifieds__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.np-classified-ad {
+  padding: 10px 14px;
+  border: 1px solid var(--np-rule);
+  border-right: none;
+  font-family: var(--np-font-body);
+  font-size: 9px;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  color: var(--np-ink);
+}
+
+.np-classified-ad:last-child { border-right: 1px solid var(--np-rule); }
+
+.np-classified-ad__heading {
+  font-weight: 600;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* --- Colophon --- */
+.np-colophon {
+  text-align: center;
+  padding: 20px 0 0;
+  font-family: var(--np-font-body);
+  font-size: 10px;
+  color: var(--np-ink-light);
+  line-height: 1.7;
+}
+
+.np-colophon__rule {
+  border: none;
+  border-top: 1px solid var(--np-rule);
+  margin: 0 0 16px;
+}
+
+.np-colophon__link {
+  color: var(--np-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --- Loading --- */
+.np-loading {
+  text-align: center;
+  padding: 60px 0;
+  font-family: var(--np-font-head);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--np-ink-light);
+}
+
+/* --- Responsive --- */
+
+/* Tablet: 2 columns */
+@media (max-width: 1023px) {
+  .np-root {
+    padding: 20px 24px 40px;
+  }
+
+  .np-masthead__nameplate {
+    font-size: 56px;
+  }
+
+  .np-broadsheet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .np-col--span2 {
+    grid-column: span 2;
+  }
+
+  .np-classifieds__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .np-classified-ad:nth-child(2n) {
+    border-right: 1px solid var(--np-rule);
+  }
+}
+
+/* Mobile: single column tabloid */
+@media (max-width: 767px) {
+  .np-root {
+    padding: 16px 16px 32px;
+  }
+
+  .np-masthead__nameplate {
+    font-size: 40px;
+  }
+
+  .np-masthead__info {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2px;
+  }
+
+  .np-masthead__info-left,
+  .np-masthead__info-right {
+    text-align: center;
+  }
+
+  .np-masthead__edition-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .np-broadsheet {
+    grid-template-columns: 1fr;
+  }
+
+  .np-col,
+  .np-col:first-child,
+  .np-col:last-child,
+  .np-col--span2 {
+    grid-column: span 1;
+    border-right: none;
+    padding: 0;
+    border-bottom: 1px solid var(--np-rule);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .np-article--lead .np-article__headline { font-size: 32px; }
+  .np-article--primary .np-article__headline { font-size: 22px; }
+  .np-article--secondary .np-article__headline { font-size: 16px; }
+
+  .np-classifieds__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .np-classified-ad,
+  .np-classified-ad:last-child,
+  .np-classified-ad:nth-child(2n) {
+    border-right: 1px solid var(--np-rule);
+  }
+}
+
+/* --- Print --- */
+@page {
+  margin: 0.75in;
+  size: letter landscape;
+}
+
+@media print {
+  .np-root {
+    background: white;
+    max-width: none;
+    padding: 0;
+  }
+
+  .np-root::before {
+    display: none;
+  }
+
+  .np-article__headline {
+    text-shadow: none;
+  }
+
+  .np-section-label {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .np-section-label:first-of-type {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+
+  .np-colophon__link {
+    text-decoration: none;
+  }
+
+  .np-no-print {
+    display: none;
+  }
+}
