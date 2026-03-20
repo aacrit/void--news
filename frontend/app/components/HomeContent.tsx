@@ -11,6 +11,7 @@ import FilterBar from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
+import OpEdPage from "./OpEdPage";
 import ErrorBoundary from "./ErrorBoundary";
 
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -91,12 +92,26 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         let res;
         let usingEnriched = true;
 
-        res = await supabase
-          .from("story_clusters")
-          .select(enrichedFields)
-          .eq("section", activeEdition)
-          .order("headline_rank", { ascending: false })
-          .limit(100);
+        // Fetch reporting + opinion separately so opinion pieces (fewer
+        // sources, lower headline_rank) aren't crowded out of the top 100.
+        const [reportingRes, opinionRes] = await Promise.all([
+          supabase
+            .from("story_clusters")
+            .select(enrichedFields)
+            .eq("section", activeEdition)
+            .eq("content_type", "reporting")
+            .order("headline_rank", { ascending: false })
+            .limit(100),
+          supabase
+            .from("story_clusters")
+            .select(enrichedFields)
+            .eq("section", activeEdition)
+            .eq("content_type", "opinion")
+            .order("headline_rank", { ascending: false })
+            .limit(50),
+        ]);
+
+        res = reportingRes;
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -111,7 +126,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
         if (controller.signal.aborted) return;
 
-        const clusters = res.data || [];
+        // Merge reporting + opinion clusters
+        const clusters = [
+          ...(res.data || []),
+          ...(!res.error && opinionRes.data ? opinionRes.data : []),
+        ];
 
         if (clusters.length === 0) {
           setStories([]);
@@ -251,18 +270,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   }, [activeEdition]);
 
   const filteredStories = useMemo(() => {
-    let filtered = stories;
-    // Facts/Opinion split: facts = opinionFact <= 50, opinion = opinionFact > 50
-    if (viewMode === "facts") {
-      filtered = filtered.filter((s) => s.biasScores.opinionFact <= 50);
-    } else {
-      filtered = filtered.filter((s) => s.biasScores.opinionFact > 50);
-    }
+    // In facts mode: show only reporting/facts clusters (opinionFact <= 50)
+    // In opinion mode: OpEdPage handles its own data fetching — show nothing here
+    let filtered = stories.filter((s) => s.biasScores.opinionFact <= 50);
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
-  }, [stories, activeCategory, viewMode]);
+  }, [stories, activeCategory]);
 
   const leadStories = filteredStories.slice(0, 2);
   const mediumStories = filteredStories.slice(2, 5);
@@ -283,7 +298,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       />
 
       <main id="main-content" className="page-main">
-        {/* Facts / Opinion toggle — mobile only (desktop lives in nav-tabs) */}
+        {/* Facts / Op-Ed toggle — mobile only (desktop lives in nav-tabs) */}
         <div className="view-mode-toggle--mobile" aria-hidden="false">
           <div
             className="view-mode-toggle"
@@ -302,171 +317,167 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               onClick={() => { setViewMode("opinion"); setActiveCategory("All"); setShowAllCompact(false); }}
               aria-pressed={viewMode === "opinion"}
             >
-              Opinion
+              Op-Ed
             </button>
           </div>
         </div>
 
-        {/* Filter bar */}
+        {/* Op-Ed page — renders its own data when in opinion mode */}
+        {viewMode === "opinion" && (
+          <OpEdPage edition={activeEdition} />
+        )}
+
+        {/* Filter bar — facts mode only */}
+        {viewMode === "facts" && (
         <FilterBar
           activeCategory={activeCategory}
           onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
         />
-
-        {/* Live region for screen readers */}
-        <div aria-live="polite" className="sr-only">
-          {!isLoading && filteredStories.length > 0 &&
-            `${filteredStories.length} stories loaded`}
-          {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
-            "No stories match the current filter"}
-        </div>
-
-        {/* Loading skeleton */}
-        {isLoading && <LoadingSkeleton />}
-
-        {/* Error state */}
-        {error && !isLoading && (
-          <div className="empty-state">
-            <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
-              Unable to load stories
-            </h2>
-            <p className="text-base" style={{ color: "var(--fg-tertiary)", marginBottom: "var(--space-4)" }}>
-              {error}
-            </p>
-            <button
-              className="btn-primary"
-              onClick={() => window.location.reload()}
-            >
-              Try again
-            </button>
-          </div>
         )}
 
-        {/* Empty state — no data from pipeline yet */}
-        {!isLoading && !error && stories.length === 0 && (
-          <div className="empty-state">
-            <LogoIcon size={56} animation="analyzing" />
-            <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
-              The Presses Are Warming Up
-            </h2>
-            <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
-              No stories yet for the {editionMeta.label} edition &mdash; the pipeline is still
-              collecting and analyzing {editionMeta.sourceCount}.
-              The {new Date().getUTCHours() < 17 ? "morning" : "evening"} edition will appear shortly.
-            </p>
-            <p className="edition-meta">
-              Morning edition: 11:00 AM UTC &middot; Evening edition: 11:00 PM UTC
-            </p>
-          </div>
-        )}
+        {/* Facts mode — live region, loading, error, empty states, story grids */}
+        {viewMode === "facts" && (
+          <>
+            {/* Live region for screen readers */}
+            <div aria-live="polite" className="sr-only">
+              {!isLoading && filteredStories.length > 0 &&
+                `${filteredStories.length} stories loaded`}
+              {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
+                "No stories match the current filter"}
+            </div>
 
-        {/* No stories in selected filter */}
-        {!isLoading && !error && stories.length > 0 && filteredStories.length === 0 && (
-          <div className="empty-state--inline">
-            <p style={{
-              fontFamily: "var(--font-structural)",
-              fontSize: "var(--text-lg)",
-              color: "var(--fg-tertiary)",
-            }}>
-              {viewMode === "opinion"
-                ? "No opinion pieces in this edition."
-                : "No stories in this category."}
-            </p>
-            {activeCategory !== "All" ? (
-              <button
-                onClick={() => setActiveCategory("All")}
-                style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-sm)",
-                  color: "var(--fg-secondary)",
-                  marginTop: "var(--space-3)",
-                  textDecoration: "underline",
-                  textUnderlineOffset: "3px",
-                }}
-              >
-                View all stories
-              </button>
-            ) : viewMode === "opinion" ? (
-              <button
-                onClick={() => setViewMode("facts")}
-                style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-sm)",
-                  color: "var(--fg-secondary)",
-                  marginTop: "var(--space-3)",
-                  textDecoration: "underline",
-                  textUnderlineOffset: "3px",
-                }}
-              >
-                Switch to Facts
-              </button>
-            ) : null}
-          </div>
-        )}
+            {/* Loading skeleton */}
+            {isLoading && <LoadingSkeleton />}
 
-        {/* Lead section — two primary headlines side by side on desktop */}
-        {!isLoading && leadStories.length > 0 && (
-          <section aria-label="Lead stories" className="lead-section">
-            {leadStories.map((story) => (
-              <div key={story.id} className="lead-section__col">
-                <LeadStory story={story} onStoryClick={handleStoryClick} />
+            {/* Error state */}
+            {error && !isLoading && (
+              <div className="empty-state">
+                <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
+                  Unable to load stories
+                </h2>
+                <p className="text-base" style={{ color: "var(--fg-tertiary)", marginBottom: "var(--space-4)" }}>
+                  {error}
+                </p>
+                <button
+                  className="btn-primary"
+                  onClick={() => window.location.reload()}
+                >
+                  Try again
+                </button>
               </div>
-            ))}
-          </section>
-        )}
+            )}
 
-        {/* Medium stories — broadsheet grid on desktop */}
-        {!isLoading && mediumStories.length > 0 && (
-          <section aria-label="Top stories" className="grid-medium">
-            {mediumStories.map((story, idx) => (
-              <div key={story.id} className="grid-medium__item">
-                <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
+            {/* Empty state — no data from pipeline yet */}
+            {!isLoading && !error && stories.length === 0 && (
+              <div className="empty-state">
+                <LogoIcon size={56} animation="analyzing" />
+                <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
+                  The Presses Are Warming Up
+                </h2>
+                <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
+                  No stories yet for the {editionMeta.label} edition &mdash; the pipeline is still
+                  collecting and analyzing {editionMeta.sourceCount}.
+                  The {new Date().getUTCHours() < 17 ? "morning" : "evening"} edition will appear shortly.
+                </p>
+                <p className="edition-meta">
+                  Morning edition: 11:00 AM UTC &middot; Evening edition: 11:00 PM UTC
+                </p>
               </div>
-            ))}
-          </section>
-        )}
+            )}
 
-        {/* Compact stories — capped at 8 (2 desktop rows) with "More" */}
-        {!isLoading && compactStories.length > 0 && (() => {
-          const COMPACT_CAP = 8;
-          const visible = showAllCompact ? compactStories : compactStories.slice(0, COMPACT_CAP);
-          const hasMore = compactStories.length > COMPACT_CAP && !showAllCompact;
-          return (
-            <>
-              <section aria-label="More stories" className="grid-compact">
-                {visible.map((story, idx) => (
-                  <div key={story.id} className="grid-compact__item">
-                    <StoryCard
-                      story={story}
-                      index={idx + mediumStories.length + 1}
-                      onStoryClick={handleStoryClick}
-                    />
+            {/* No stories in selected filter */}
+            {!isLoading && !error && stories.length > 0 && filteredStories.length === 0 && (
+              <div className="empty-state--inline">
+                <p style={{
+                  fontFamily: "var(--font-structural)",
+                  fontSize: "var(--text-lg)",
+                  color: "var(--fg-tertiary)",
+                }}>
+                  No stories in this category.
+                </p>
+                {activeCategory !== "All" && (
+                  <button
+                    onClick={() => setActiveCategory("All")}
+                    style={{
+                      fontFamily: "var(--font-structural)",
+                      fontSize: "var(--text-sm)",
+                      color: "var(--fg-secondary)",
+                      marginTop: "var(--space-3)",
+                      textDecoration: "underline",
+                      textUnderlineOffset: "3px",
+                    }}
+                  >
+                    View all stories
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Lead section — two primary headlines side by side on desktop */}
+            {!isLoading && leadStories.length > 0 && (
+              <section aria-label="Lead stories" className="lead-section">
+                {leadStories.map((story) => (
+                  <div key={story.id} className="lead-section__col">
+                    <LeadStory story={story} onStoryClick={handleStoryClick} />
                   </div>
                 ))}
               </section>
-              {hasMore && (
-                <div className="show-more">
-                  <button
-                    className="show-more__btn"
-                    onClick={() => setShowAllCompact(true)}
-                  >
-                    More stories ({compactStories.length - COMPACT_CAP} remaining)
-                  </button>
-                </div>
-              )}
-            </>
-          );
-        })()}
+            )}
 
-        {/* Edition line — newspaper tradition */}
-        {!isLoading && filteredStories.length > 0 && (
-          <div className="edition-line">
-            <span className="edition-meta">
-              {editionMeta.label} Edition /{" "}
-              {filteredStories.length} stories
-            </span>
-            <LogoWordmark height={14} />
-          </div>
+            {/* Medium stories — broadsheet grid on desktop */}
+            {!isLoading && mediumStories.length > 0 && (
+              <section aria-label="Top stories" className="grid-medium">
+                {mediumStories.map((story, idx) => (
+                  <div key={story.id} className="grid-medium__item">
+                    <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
+                  </div>
+                ))}
+              </section>
+            )}
+
+            {/* Compact stories — capped at 8 (2 desktop rows) with "More" */}
+            {!isLoading && compactStories.length > 0 && (() => {
+              const COMPACT_CAP = 8;
+              const visible = showAllCompact ? compactStories : compactStories.slice(0, COMPACT_CAP);
+              const hasMore = compactStories.length > COMPACT_CAP && !showAllCompact;
+              return (
+                <>
+                  <section aria-label="More stories" className="grid-compact">
+                    {visible.map((story, idx) => (
+                      <div key={story.id} className="grid-compact__item">
+                        <StoryCard
+                          story={story}
+                          index={idx + mediumStories.length + 1}
+                          onStoryClick={handleStoryClick}
+                        />
+                      </div>
+                    ))}
+                  </section>
+                  {hasMore && (
+                    <div className="show-more">
+                      <button
+                        className="show-more__btn"
+                        onClick={() => setShowAllCompact(true)}
+                      >
+                        More stories ({compactStories.length - COMPACT_CAP} remaining)
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+
+            {/* Edition line — newspaper tradition */}
+            {!isLoading && filteredStories.length > 0 && (
+              <div className="edition-line">
+                <span className="edition-meta">
+                  {editionMeta.label} Edition /{" "}
+                  {filteredStories.length} stories
+                </span>
+                <LogoWordmark height={14} />
+              </div>
+            )}
+          </>
         )}
       </main>
 
