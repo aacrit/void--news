@@ -72,10 +72,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setSelectedStory(null);
   }, []);
 
-  // Reset filters when edition changes
+  // Reset filters and scroll to top when edition changes
   useEffect(() => {
     setActiveCategory("All");
     setShowAllCompact(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeEdition]);
 
   useEffect(() => {
@@ -417,9 +418,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {/* Lead section — two primary headlines side by side on desktop */}
             {!isLoading && leadStories.length > 0 && (
               <section aria-label="Lead stories" className="lead-section">
-                {leadStories.map((story) => (
+                {leadStories.map((story, i) => (
                   <div key={story.id} className="lead-section__col">
-                    <LeadStory story={story} onStoryClick={handleStoryClick} />
+                    <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} />
                   </div>
                 ))}
               </section>

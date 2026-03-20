@@ -18,7 +18,31 @@ interface BiasInspectorProps {
   sources: StorySource[];
 }
 
-/* ── Color helpers (self-contained — no import from BiasLens) ───────────── */
+/* ── Color helpers — reads CSS variables for dark mode awareness ────────── */
+
+/** CSS variable cache — invalidated on theme switch via MutationObserver */
+let biColorCache: Record<string, string> | null = null;
+const BI_SSR: Record<string, string> = {
+  "--bias-left": "#3B82F6", "--bias-center": "#9CA3AF", "--bias-right": "#EF4444",
+  "--sense-low": "#22C55E", "--sense-medium": "#EAB308", "--sense-high": "#EF4444",
+  "--type-reporting": "#3B82F6", "--type-analysis": "#8B5CF6", "--type-opinion": "#F97316",
+  "--rigor-high": "#22C55E", "--rigor-medium": "#EAB308", "--rigor-low": "#EF4444",
+};
+
+function biVars(): Record<string, string> {
+  if (biColorCache) return biColorCache;
+  if (typeof document === "undefined") return BI_SSR;
+  const s = getComputedStyle(document.documentElement);
+  biColorCache = {};
+  for (const v of Object.keys(BI_SSR)) biColorCache[v] = s.getPropertyValue(v).trim() || BI_SSR[v];
+  return biColorCache;
+}
+
+if (typeof window !== "undefined") {
+  new MutationObserver((ms) => {
+    for (const m of ms) if (m.type === "attributes" && m.attributeName === "data-mode") biColorCache = null;
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
+}
 
 function lerpHex(a: string, b: string, t: number): string {
   const ah = parseInt(a.replace("#", ""), 16);
@@ -31,32 +55,32 @@ function lerpHex(a: string, b: string, t: number): string {
   return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
 }
 
-// Political lean: blue(left) → gray(center) → red(right)
+// Political lean: blue(left) → gray(center) → red(right) — reads CSS vars for dark mode
 function getLeanColor(v: number): string {
-  const LEFT = "#3B82F6", CENTER = "#9CA3AF", RIGHT = "#EF4444";
-  if (v <= 50) return lerpHex(LEFT, CENTER, v / 50);
-  return lerpHex(CENTER, RIGHT, (v - 50) / 50);
+  const c = biVars();
+  if (v <= 50) return lerpHex(c["--bias-left"], c["--bias-center"], v / 50);
+  return lerpHex(c["--bias-center"], c["--bias-right"], (v - 50) / 50);
 }
 
 // Sensationalism: green(low) → yellow(medium) → red(high)
 function getSenseColor(v: number): string {
-  const LOW = "#22C55E", MED = "#EAB308", HIGH = "#EF4444";
-  if (v <= 50) return lerpHex(LOW, MED, v / 50);
-  return lerpHex(MED, HIGH, (v - 50) / 50);
+  const c = biVars();
+  if (v <= 50) return lerpHex(c["--sense-low"], c["--sense-medium"], v / 50);
+  return lerpHex(c["--sense-medium"], c["--sense-high"], (v - 50) / 50);
 }
 
 // Opinion: blue(reporting) → purple(analysis) → orange(opinion)
 function getOpinionColor(v: number): string {
-  const RPT = "#3B82F6", ANA = "#8B5CF6", OPN = "#F97316";
-  if (v <= 50) return lerpHex(RPT, ANA, v / 50);
-  return lerpHex(ANA, OPN, (v - 50) / 50);
+  const c = biVars();
+  if (v <= 50) return lerpHex(c["--type-reporting"], c["--type-analysis"], v / 50);
+  return lerpHex(c["--type-analysis"], c["--type-opinion"], (v - 50) / 50);
 }
 
 // Factual rigor: red(low) → yellow(medium) → green(high) — INVERTED: high=good
 function getRigorColor(v: number): string {
-  const LOW = "#EF4444", MED = "#EAB308", HIGH = "#22C55E";
-  if (v <= 50) return lerpHex(LOW, MED, v / 50);
-  return lerpHex(MED, HIGH, (v - 50) / 50);
+  const c = biVars();
+  if (v <= 50) return lerpHex(c["--rigor-low"], c["--rigor-medium"], v / 50);
+  return lerpHex(c["--rigor-medium"], c["--rigor-high"], (v - 50) / 50);
 }
 
 // Framing: green(neutral) → yellow → red(heavy framing)

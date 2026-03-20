@@ -110,6 +110,10 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
     async function loadClusterData() {
       setIsLoadingData(true);
+      // Safety timeout: force-close spinner after 5s if fetch never resolves
+      const safetyTimeout = setTimeout(() => {
+        if (!cancelled) setIsLoadingData(false);
+      }, 5000);
       try {
         const raw = await fetchDeepDiveData(story.id);
         if (cancelled || !raw || raw.length === 0) {
@@ -276,6 +280,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
       } catch {
         /* Silently fall back to mock deepDive data */
       } finally {
+        clearTimeout(safetyTimeout);
         if (!cancelled) setIsLoadingData(false);
       }
     }
@@ -336,14 +341,17 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  /* ---- Close with animation -------------------------------------------- */
+  /* ---- Close with animation — sequenced: content fades first, then panel slides out */
   const handleClose = useCallback(() => {
     setContentVisible(false);
-    setIsVisible(false);
+    // Content fades out over 150ms, then panel slides out
     setTimeout(() => {
-      previousFocusRef.current?.focus();
-      onClose();
-    }, 400);
+      setIsVisible(false);
+      setTimeout(() => {
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 400);
+    }, 150);
   }, [onClose]);
 
   return (
@@ -369,11 +377,12 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         className="deep-dive-panel"
         style={{
           /* Desktop: slide from right (translateX). Mobile: slide from bottom (translateY).
-             Both open and close use the same axis — symmetric animation. */
+             Both open and close use the same axis — symmetric animation.
+             Spring easing gives physical weight to the panel. */
           transform: isVisible
             ? "translate(0, 0)"
             : isDesktop ? "translateX(100%)" : "translateY(100%)",
-          transition: "transform 400ms var(--ease-out)",
+          transition: "transform 500ms var(--spring)",
         }}
       >
         {/* ---- Header --------------------------------------------------- */}
@@ -427,7 +436,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                       title={`${src.name} — ${leanLabel(lean)} (${lean})`}
                       aria-label={`${src.name}: ${leanLabel(lean)}`}
                       className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                      style={{ left: `${lean}%` }}
+                      style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
                     >
                       {favicon ? (
                         <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
@@ -459,7 +468,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                       title={`${src.name} — ${leanLabel(lean)} (${lean})`}
                       aria-label={`${src.name}: ${leanLabel(lean)}`}
                       className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                      style={{ left: `${lean}%` }}
+                      style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
                     >
                       {favicon ? (
                         <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
@@ -493,7 +502,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           )}
 
           {/* ---- Section: What Happened (collapsible) ---------------------- */}
-          <section aria-labelledby="dd-summary" style={{ marginBottom: "var(--space-5)" }}>
+          <section aria-labelledby="dd-summary" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
             <h3 id="dd-summary" className="section-heading">What happened</h3>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
               <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)", margin: 0 }}>
@@ -509,7 +518,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Where sources agree -------------------------------- */}
           {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-            <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-5)" }}>
+            <section aria-labelledby="dd-consensus" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "200ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
               <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
               <ul className="evidence-list">
                 {deepDive.consensus.map((point, i) => (
@@ -524,7 +533,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Where sources diverge ------------------------------ */}
           {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-            <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-5)" }}>
+            <section aria-labelledby="dd-divergence" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "300ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
               <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
               <ul className="evidence-list">
                 {deepDive.divergence.map((point, i) => (
@@ -539,7 +548,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Section: Bias Inspector ------------------------------------- */}
           {sources.length > 0 && (
-            <section aria-labelledby="dd-bias-inspector" style={{ marginBottom: "var(--space-5)" }}>
+            <section aria-labelledby="dd-bias-inspector" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "400ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
               <BiasInspector sources={sources} />
             </section>
           )}

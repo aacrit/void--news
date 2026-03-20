@@ -105,6 +105,9 @@ body::before {
   background-image: var(--paper-texture);
   pointer-events: none;
   z-index: 0;
+  /* GPU layer promotion — prevents repaint during scroll on low-end devices */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 body > * {

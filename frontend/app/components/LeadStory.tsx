@@ -6,6 +6,8 @@ import Sigil from "./Sigil";
 
 interface LeadStoryProps {
   story: Story;
+  /** 0 = primary (first/most important), 1+ = secondary */
+  rank?: number;
   onStoryClick?: (story: Story) => void;
 }
 
@@ -14,11 +16,11 @@ interface LeadStoryProps {
    Larger typography, more prominent layout, bigger bias stamp.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, onStoryClick }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryProps) {
   return (
     /* article preserves landmark semantics for assistive tech.
        The inner div[role="button"] carries all interactive attributes. */
-    <article className="lead-story anim-fade-in-up">
+    <article className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}`}>
       <div
         role="button"
         tabIndex={0}

@@ -290,6 +290,19 @@
     margin-top: var(--space-2);
   }
 
+  /* === SECTION HEADERS === */
+
+  /* Mobile wayfinding: tighter section headers with visible 2px top rule */
+  .section-header {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-1);
+    margin-bottom: var(--space-1);
+  }
+
+  .section-header__title {
+    font-size: var(--text-sm);
+  }
+
   /* === LEAD STORY === */
 
   /* [ENHANCEMENT-3] Tighter lead story — show lead + secondary together */
