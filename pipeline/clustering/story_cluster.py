@@ -287,6 +287,20 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
     return "world"
 
 
+# Entities too broad to be useful merge signals — they appear across many
+# unrelated stories and cause transitive over-merging (Iran+Trump connects
+# gas field strikes to NATO to Hegseth to oil prices to Hormuz).
+_OVERLY_COMMON_ENTITIES = frozenset({
+    "us", "u.s.", "united states", "america", "american",
+    "trump", "donald trump", "president trump",
+    "biden", "joe biden", "president biden",
+    "china", "russia", "iran", "israel",
+    "congress", "senate", "pentagon", "white house",
+    "the united states", "the us", "washington",
+    "republicans", "democrats", "gop",
+})
+
+
 def _extract_cluster_entities(articles: list[dict]) -> set[str]:
     """
     Extract a set of prominent named entities (PERSON, ORG, GPE, NORP, EVENT)
@@ -294,6 +308,9 @@ def _extract_cluster_entities(articles: list[dict]) -> set[str]:
 
     Used by merge_related_clusters() to find narrative overlap across
     initially-separate clusters. Returns lowercase entity strings.
+
+    Filters out overly-common entities (Trump, US, Iran, etc.) that appear
+    across many unrelated stories and cause transitive over-merging.
     """
     nlp = get_nlp()
     entities: set[str] = set()
@@ -308,14 +325,14 @@ def _extract_cluster_entities(articles: list[dict]) -> set[str]:
             if ent.label_ in ("PERSON", "ORG", "GPE", "NORP", "EVENT"):
                 # Normalize: lowercase, strip possessives
                 normalized = ent.text.lower().rstrip("'s").strip()
-                if len(normalized) >= 3:  # skip trivial single-letter matches
+                if len(normalized) >= 3 and normalized not in _OVERLY_COMMON_ENTITIES:
                     entities.add(normalized)
     return entities
 
 
 def merge_related_clusters(
     clusters: list[dict],
-    min_shared_entities: int = 2,
+    min_shared_entities: int = 3,
     max_age_spread_hours: float = 72.0,
 ) -> list[dict]:
     """
