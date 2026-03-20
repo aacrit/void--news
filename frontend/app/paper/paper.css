@@ -353,6 +353,26 @@ html:has(.np-root) body {
   font-style: italic;
 }
 
+/* Op-ed column tint — distinguishes individual opinion pieces from cluster
+   reporting in the broadsheet grid. Lighter background, no dateline needed. */
+.np-article--oped {
+  background: var(--np-stain);
+  margin-left: -18px;
+  margin-right: -18px;
+  padding: 10px 18px 12px;
+}
+
+/* First and last col have asymmetric padding — compensate */
+.np-col:first-child .np-article--oped {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.np-col:last-child .np-article--oped {
+  margin-right: 0;
+  padding-right: 0;
+}
+
 /* Drop cap — lead story only */
 .np-article--lead .np-article__summary::first-letter {
   float: left;
