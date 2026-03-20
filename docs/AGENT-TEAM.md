@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-19 (rev 3)
+Last updated: 2026-03-20 (rev 4)
 
 ## Philosophy
 
@@ -222,3 +222,13 @@ These are read-only advisory agents — they propose, they don't implement.
 | `update-docs` | Infrastructure | CLAUDE.md: migration count 001-007→001-009, Gemini Voice architecture note, GEMINI-VOICE-PLAN.md added to project structure; AGENT-TEAM.md: session log added |
 
 **Files modified this session:** ~25 files across pipeline, frontend, supabase/migrations, .github/workflows, and docs.
+
+### 2026-03-20 — Ranking Engine v3.2 + Pipeline Improvements
+
+**Agents run:** `update-docs`
+
+| Agent | Division | Outcome |
+|-------|----------|---------|
+| `update-docs` | Infrastructure | CLAUDE.md + AGENT-TEAM.md updated to reflect: ranking engine v3.2 (9 signals, confidence multiplier, lead eligibility gate, soft-floor normalization, topic diversity re-rank); dedup threshold 0.80; 3-article majority vote categorization; new `pipeline/rerank.py` standalone script; "Why This Story" tooltip on StoryCard + LeadStory; bias-blind ranking design principle; source map dual-key fix |
+
+**Files modified this session:** `CLAUDE.md`, `docs/AGENT-TEAM.md`
