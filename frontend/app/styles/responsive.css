@@ -343,6 +343,21 @@
     align-items: flex-start;
   }
 
+  /* Compact source row: ensure 44px touch target, hide lean label text on narrow screens */
+  .dd-source-row {
+    min-height: 44px;
+    gap: var(--space-2);
+    padding: 0 var(--space-1);
+  }
+
+  .dd-source-row__lean-label {
+    display: none;
+  }
+
+  .dd-source-row__lean-track {
+    width: 64px;
+  }
+
   /* === EMPTY STATE === */
 
   /* [ENHANCEMENT-6] Scale down empty state for mobile */

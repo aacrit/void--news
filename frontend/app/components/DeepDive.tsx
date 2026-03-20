@@ -6,6 +6,7 @@ import {
   X,
   Check,
   Warning,
+  ArrowSquareOut,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
@@ -49,6 +50,77 @@ function leanLabel(lean: number): string {
   return "Far Right";
 }
 
+/* --- Lean dot color helper (mirrors BiasLens logic, no CSS var lookup) --- */
+
+function leanDotColor(lean: number): string {
+  if (lean <= 35) return "var(--bias-left)";
+  if (lean <= 55) return "var(--bias-center)";
+  if (lean <= 65) return "var(--bias-center-right)";
+  return "var(--bias-right)";
+}
+
+/* --- SourceRow — compact single-row source entry ------------------------- */
+
+interface SourceRowProps {
+  src: StorySource;
+}
+
+function SourceRow({ src }: SourceRowProps) {
+  const lean = src.biasScores.politicalLean;
+  const favicon = faviconUrl(src.url);
+  const dotColor = leanDotColor(lean);
+  const label = leanLabel(lean);
+
+  return (
+    <a
+      href={src.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Read ${src.name} — ${label} lean. Opens in new tab.`}
+      className="dd-source-row"
+    >
+      {/* Favicon */}
+      <span className="dd-source-row__favicon" aria-hidden="true">
+        {favicon ? (
+          <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
+        ) : (
+          <span className="dd-source-row__initial">{src.name.charAt(0)}</span>
+        )}
+      </span>
+
+      {/* Source name */}
+      <span className="dd-source-row__name">{src.name}</span>
+
+      {/* Mini lean bar */}
+      <span
+        className="dd-source-row__lean-bar"
+        aria-label={`${label} (${lean})`}
+        title={`${label} (${lean})`}
+      >
+        <span className="dd-source-row__lean-track" aria-hidden="true">
+          {/* Gradient track */}
+          <span className="dd-source-row__lean-gradient" />
+          {/* Dot marker */}
+          <span
+            className="dd-source-row__lean-dot"
+            style={{
+              left: `${lean}%`,
+              backgroundColor: dotColor,
+              boxShadow: `0 0 0 2px var(--bg-card)`,
+            }}
+          />
+        </span>
+        <span className="dd-source-row__lean-label">{label}</span>
+      </span>
+
+      {/* External link icon */}
+      <span className="dd-source-row__link-icon" aria-hidden="true">
+        <ArrowSquareOut size={13} weight="regular" />
+      </span>
+    </a>
+  );
+}
+
 /* --- Main DeepDive component --------------------------------------------- */
 
 export default function DeepDive({ story, onClose }: DeepDiveProps) {
@@ -63,27 +135,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
-
-  /* ---- Compute lean spectrum positions (stack overlapping dots) ---------- */
-  const leanPositions = useMemo(() => {
-    const items = sources
-      .map((src, idx) => ({ src, idx, lean: src.biasScores.politicalLean }))
-      .sort((a, b) => a.lean - b.lean);
-
-    const placed: { lean: number; row: number }[] = [];
-    return items.map((item) => {
-      let row = 0;
-      for (const p of placed) {
-        if (Math.abs(item.lean - p.lean) < 7 && p.row === row) {
-          row++;
-        }
-      }
-      placed.push({ lean: item.lean, row });
-      return { ...item, row };
-    });
-  }, [sources]);
-
-  const spectrumMaxRow = Math.max(0, ...leanPositions.map((p) => p.row));
 
   /* ---- Detect desktop vs mobile for directional animation -------------- */
   useEffect(() => {
@@ -327,47 +378,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               <Sigil data={story.sigilData} size="lg" />
             </div>
           )}
-
-          {/* Source favicons — compact row linking to original articles */}
-          {sources.length > 0 && (
-            <div className="dd-source-icons" style={{
-              display: "flex", flexWrap: "wrap", gap: 6,
-              marginTop: "var(--space-3)", alignItems: "center",
-            }}>
-              {sources.map((src, i) => {
-                const favicon = faviconUrl(src.url);
-                return (
-                  <a
-                    key={`${src.name}-${i}`}
-                    href={src.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={src.name}
-                    aria-label={`Read on ${src.name}`}
-                    style={{
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      width: 28, height: 28, borderRadius: "50%",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "var(--bg-card)",
-                      transition: "transform 150ms var(--ease-out), border-color 150ms",
-                    }}
-                    className="dd-source-icon"
-                  >
-                    {favicon ? (
-                      <img src={favicon} alt="" width={16} height={16} style={{ borderRadius: 2 }} loading="lazy" />
-                    ) : (
-                      <span style={{
-                        fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
-                        color: "var(--fg-tertiary)",
-                      }}>
-                        {src.name.charAt(0)}
-                      </span>
-                    )}
-                  </a>
-                );
-              })}
-            </div>
-          )}
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
@@ -396,85 +406,19 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </p>
           </section>
 
-          {/* ---- Section: Source Lean Spectrum ------------------------------ */}
-          {sources.length > 1 && (
-            <section aria-labelledby="dd-lean" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-lean" className="section-heading">How sources lean</h3>
-              <div style={{ position: "relative", padding: "var(--space-2) 0" }}>
-                {/* Gradient track */}
-                <div style={{
-                  height: 3,
-                  background: "linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right))",
-                  borderRadius: 2,
-                  opacity: 0.5,
-                }} />
-
-                {/* Center tick mark */}
-                <div style={{
-                  position: "absolute", left: "50%", top: "var(--space-2)",
-                  width: 1, height: 11,
-                  backgroundColor: "var(--fg-tertiary)", opacity: 0.4,
-                  transform: "translateX(-50%)",
-                }} />
-
-                {/* Source dots — positioned by lean score, stacked when overlapping */}
-                <div style={{
-                  position: "relative",
-                  height: (spectrumMaxRow + 1) * 28 + 4,
-                  marginTop: 8,
-                }}>
-                  {leanPositions.map(({ src, idx, lean, row }) => {
-                    const favicon = faviconUrl(src.url);
-                    return (
-                      <a
-                        key={`${src.name}-${idx}`}
-                        href={src.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                        aria-label={`${src.name}: ${leanLabel(lean)}`}
-                        className="dd-source-icon"
-                        style={{
-                          position: "absolute",
-                          left: `${lean}%`,
-                          top: row * 28,
-                          transform: "translateX(-50%)",
-                          width: 24, height: 24, borderRadius: "50%",
-                          border: "2px solid var(--bg-surface)",
-                          backgroundColor: "var(--bg-card)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                          transition: "transform 150ms var(--ease-out)",
-                          zIndex: sources.length - row,
-                        }}
-                      >
-                        {favicon ? (
-                          <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
-                        ) : (
-                          <span style={{
-                            fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
-                            color: "var(--fg-tertiary)",
-                          }}>
-                            {src.name.charAt(0)}
-                          </span>
-                        )}
-                      </a>
-                    );
-                  })}
-                </div>
-
-                {/* Axis labels */}
-                <div style={{
-                  display: "flex", justifyContent: "space-between",
-                  fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
-                  color: "var(--fg-tertiary)", letterSpacing: "0.04em",
-                  textTransform: "uppercase" as const,
-                  marginTop: 4,
-                }}>
-                  <span>Left</span>
-                  <span>Center</span>
-                  <span>Right</span>
-                </div>
+          {/* ---- Section: Sources ------------------------------------------ */}
+          {sources.length > 0 && (
+            <section aria-labelledby="dd-sources" style={{ marginBottom: "var(--space-6)" }}>
+              <h3 id="dd-sources" className="section-heading">
+                Sources
+                <span className="dd-sources-count">{sources.length}</span>
+              </h3>
+              <div className="dd-source-list" role="list">
+                {sources.map((src, i) => (
+                  <div key={`${src.name}-${i}`} role="listitem">
+                    <SourceRow src={src} />
+                  </div>
+                ))}
               </div>
             </section>
           )}
