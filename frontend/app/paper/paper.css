@@ -115,16 +115,6 @@ html:has(.np-root) body {
   text-shadow: 0.5px 0.5px 0 rgba(26, 23, 16, 0.12);
 }
 
-.np-masthead__subtitle {
-  font-family: var(--np-font-label);
-  font-size: 12px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  font-weight: 500;
-  color: var(--np-ink-light);
-  margin: 0 0 14px;
-}
-
 /* Double rule: thick top, thin bottom */
 .np-double-rule {
   border: none;
@@ -304,7 +294,7 @@ html:has(.np-root) body {
 
 .np-classifieds__grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 0;
 }
 
@@ -384,7 +374,7 @@ html:has(.np-root) body {
   .np-col:nth-child(4n) { border-right: none; }
 
   .np-classifieds__grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .np-masthead__nameplate {
