@@ -317,6 +317,42 @@ html:has(.np-root) body {
   letter-spacing: 0.08em;
 }
 
+/* --- Opinion / Editorial articles --- */
+
+/* Thin rule above the opinion label — acts as a distinctive column rule */
+.np-article--opinion {
+  border-top: 1px solid var(--np-rule-dark);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+/* Opinion label: small-caps, tight tracking, above the headline */
+.np-article__opinion-label {
+  font-family: var(--np-font-deck);
+  font-variant: small-caps;
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--np-ink-light);
+  margin: 0 0 5px;
+  /* Thin bracket rule flanking the label */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.np-article__opinion-label::before,
+.np-article__opinion-label::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--np-rule-dark);
+}
+
+/* Italic headline for opinion pieces — authentic broadsheet convention */
+.np-article--opinion .np-article__headline {
+  font-style: italic;
+}
+
 /* Drop cap — lead story only */
 .np-article--lead .np-article__summary::first-letter {
   float: left;
