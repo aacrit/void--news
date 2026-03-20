@@ -94,7 +94,7 @@ function Masthead({ lastUpdated, storyCount }: { lastUpdated: string | null; sto
       <hr className="np-masthead__motto-rule" />
       <p className="np-masthead__motto">&ldquo;All the Bias That&rsquo;s Fit to Print&rdquo;</p>
       <hr className="np-masthead__thick-rule" />
-      <h1 className="np-masthead__nameplate">void news</h1>
+      <h1 className="np-masthead__nameplate">Void News</h1>
       <hr className="np-double-rule" aria-hidden="true" />
       <div className="np-masthead__info">
         <span className="np-masthead__info-left">
@@ -205,7 +205,7 @@ function Colophon({ edition }: { edition: string }) {
     <footer className="np-colophon">
       <hr className="np-colophon__rule" />
       <p>
-        void --news &middot; The {edition} Edition &middot; {dateStr}
+        Void News &middot; The {edition} Edition &middot; {dateStr}
       </p>
       <p>
         Printed on digital presses &middot; 200 curated sources &middot; 6-axis bias analysis
