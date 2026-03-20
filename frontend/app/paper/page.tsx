@@ -417,14 +417,14 @@ export default function PaperPage() {
           .contains("sections", ["world"])
           .eq("content_type", "reporting")
           .order("headline_rank", { ascending: false })
-          .limit(25),
+          .limit(40),
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", ["us"])
           .eq("content_type", "reporting")
           .order("headline_rank", { ascending: false })
-          .limit(25),
+          .limit(40),
         fetchOpinionArticles("world"),
         fetchOpinionArticles("us"),
       ]);
@@ -483,8 +483,8 @@ export default function PaperPage() {
   // A real 1920s front page had ~15-20 stories total, not 100+.
   // Keep only the highest-ranked stories for a readable edition.
   const FRONT_PAGE_COUNT = 3;
-  const SECTION_CAP = 8;       // max news stories per section
-  const OPED_CAP = 3;          // max op-eds per section
+  const SECTION_CAP = 12;      // max news stories per section
+  const OPED_CAP = 5;          // max op-eds per section
 
   const frontPage = allStories.slice(0, FRONT_PAGE_COUNT);
   const lead = frontPage[0];

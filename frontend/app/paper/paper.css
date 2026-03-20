@@ -214,7 +214,7 @@ html:has(.np-root) body {
 /* --- Section Labels --- */
 .np-section-label {
   text-align: center;
-  padding: 24px 0 16px;
+  padding: 16px 0 10px;
 }
 
 .np-section-label__rule-top {
@@ -244,7 +244,7 @@ html:has(.np-root) body {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   align-items: start;
-  row-gap: 24px;
+  row-gap: 12px;
   margin-bottom: 0;
 }
 
@@ -253,7 +253,7 @@ html:has(.np-root) body {
 }
 
 .np-col {
-  padding: 0 18px;
+  padding: 0 14px;
   border-right: 1px solid var(--np-rule);
 }
 
@@ -268,7 +268,7 @@ html:has(.np-root) body {
 
 /* --- Articles --- */
 .np-article {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .np-article__headline {
@@ -284,10 +284,10 @@ html:has(.np-root) body {
 .np-article--lead .np-article__headline {
   font-size: 56px;
   line-height: 1.05;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
-.np-article--primary .np-article__headline { font-size: 30px; }
-.np-article--secondary .np-article__headline { font-size: 22px; }
+.np-article--primary .np-article__headline { font-size: 28px; }
+.np-article--secondary .np-article__headline { font-size: 20px; }
 
 .np-article__byline {
   font-family: var(--np-font-deck);
@@ -295,7 +295,7 @@ html:has(.np-root) body {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--np-ink-light);
-  margin: 0 0 10px;
+  margin: 0 0 6px;
 }
 
 .np-article__summary {
