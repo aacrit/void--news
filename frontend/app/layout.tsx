@@ -113,9 +113,18 @@ export default function RootLayout({
         {/* E-paper period fonts — non-blocking load */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Chomsky: open-source blackletter in the style of the NYT nameplate.
+            Designed by Fredrick Brennan, OFL license. English Textura tradition —
+            upright, elegant, correct stroke weight. Not the heavy Fraktur of
+            UnifrakturCook. CDN via Font Library (fontlibrary.org). */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          href="https://fontlibrary.org//face/chomsky"
+          type="text/css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         />
         {/* Inline script to set theme before first paint — avoids flash */}
         <script

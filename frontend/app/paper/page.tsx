@@ -73,11 +73,16 @@ const WORLD_DATELINES: Record<string, string> = {
 };
 
 // --- Masthead ---
+// Modelled on authentic 1920s NYT front page structure:
+//   [motto ear left | — | copyright ear right]
+//   [thick rule]
+//   [nameplate — Chomsky blackletter, English Textura style]
+//   [thick rule]
+//   [No. {issueNo} | DATE IN FULL CAPS | Free of Charge]
+//   [thin rule]
 
-function Masthead({ lastUpdated, storyCount }: { lastUpdated: string | null; storyCount: number }) {
+function Masthead({ lastUpdated }: { lastUpdated: string | null }) {
   const now = new Date();
-  const hour = now.getUTCHours();
-  const edition = hour < 17 ? "Morning" : "Evening";
 
   const dateStr = now.toLocaleDateString("en-US", {
     weekday: "long",
@@ -86,28 +91,61 @@ function Masthead({ lastUpdated, storyCount }: { lastUpdated: string | null; sto
     day: "numeric",
   }).toUpperCase();
 
+  // Issue number counts days since launch — shown as plain Arabic numeral.
+  // Real newspapers earned volume numbers over decades; we don't pretend.
   const epoch = new Date("2026-03-01T00:00:00Z");
   const issueNo = Math.max(1, Math.floor((now.getTime() - epoch.getTime()) / 86400000));
 
+  // Copyright year for right ear
+  const year = now.getFullYear();
+
+  // "Press closed" time for right ear — falls back to launch date if no run yet
+  const pressTime = lastUpdated
+    ? new Date(lastUpdated).toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : null;
+
   return (
     <header className="np-masthead">
-      <hr className="np-masthead__motto-rule" />
-      <p className="np-masthead__motto">&ldquo;All the Bias That&rsquo;s Fit to Print&rdquo;</p>
-      <hr className="np-masthead__thick-rule" />
-      <h1 className="np-masthead__nameplate">Void News</h1>
+      {/* Top ears — motto left, copyright right, ruled box around each */}
+      <div className="np-masthead__ears">
+        <div className="np-masthead__ear np-masthead__ear--left">
+          <span className="np-masthead__ear-text">
+            &ldquo;All the Bias That&rsquo;s Fit to Print&rdquo;
+          </span>
+        </div>
+        <div className="np-masthead__ear np-masthead__ear--right">
+          <span className="np-masthead__ear-text">
+            Copyright {year}, Void News
+            {pressTime && (
+              <> &mdash; Press closed {pressTime}</>
+            )}
+          </span>
+        </div>
+      </div>
+
+      {/* Top rule — thick, ink-black */}
+      <hr className="np-masthead__top-rule" />
+
+      {/* Nameplate — Chomsky blackletter */}
+      <h1 className="np-masthead__nameplate">Void News.</h1>
+
+      {/* Sub-nameplate rule — double rule, thick over thin */}
       <hr className="np-double-rule" aria-hidden="true" />
+
+      {/* Info bar — No. / Date / Price — authentic three-column layout */}
       <div className="np-masthead__info">
         <span className="np-masthead__info-left">
-          Vol. I &middot; No. {issueNo}
+          No.&thinsp;{issueNo}
         </span>
         <span className="np-masthead__info-center">{dateStr}</span>
-        <span className="np-masthead__info-right">Gratis</span>
+        <span className="np-masthead__info-right">Free of Charge</span>
       </div>
-      <hr className="np-thin-rule" />
-      <div className="np-masthead__edition-bar">
-        <span>{edition.toUpperCase()} EDITION</span>
-        <span>{storyCount > 0 ? `${storyCount} STORIES` : "200 SOURCES"}</span>
-      </div>
+
+      {/* Closing rule under info bar */}
       <hr className="np-double-rule" aria-hidden="true" />
     </header>
   );
@@ -383,7 +421,7 @@ export default function PaperPage() {
 
   return (
     <div className="np-root">
-      <Masthead lastUpdated={lastUpdated} storyCount={allStories.length} />
+      <Masthead lastUpdated={lastUpdated} />
 
       {isLoading && (
         <p className="np-loading">Setting type &mdash; your edition is being prepared&hellip;</p>
