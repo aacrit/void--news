@@ -122,14 +122,46 @@ def _has_us_domestic_signal(article_data: dict) -> bool:
     return bool(_US_DOMESTIC_PATTERN.search(text))
 
 
-def load_sources() -> list[dict]:
-    """Load the curated source list from data/sources.json."""
+def load_sources(editions: list[str] | None = None) -> list[dict]:
+    """Load the curated source list from data/sources.json.
+
+    Args:
+        editions: Optional list of edition slugs to filter by (e.g., ["india", "nepal"]).
+                  If None or empty, loads all sources.
+    """
     if not SOURCES_PATH.exists():
         print(f"[error] Sources file not found: {SOURCES_PATH}")
         return []
     with open(SOURCES_PATH, "r", encoding="utf-8") as f:
         sources = json.load(f)
-    print(f"Loaded {len(sources)} sources from {SOURCES_PATH}")
+    total = len(sources)
+
+    if editions:
+        # Build set of country codes for requested editions
+        # Reverse lookup: edition -> country codes
+        edition_to_countries: dict[str, list[str]] = {}
+        for country, edition in _COUNTRY_EDITION_MAP.items():
+            edition_to_countries.setdefault(edition, []).append(country)
+        # "world" = all countries NOT in any specific edition
+        mapped_countries = set(_COUNTRY_EDITION_MAP.keys())
+
+        allowed_countries: set[str] = set()
+        include_world = False
+        for ed in editions:
+            if ed == "world":
+                include_world = True
+            elif ed in edition_to_countries:
+                allowed_countries.update(edition_to_countries[ed])
+
+        sources = [
+            s for s in sources
+            if s.get("country", "") in allowed_countries
+            or (include_world and s.get("country", "") not in mapped_countries)
+        ]
+        print(f"Loaded {len(sources)}/{total} sources for editions: {', '.join(editions)}")
+    else:
+        print(f"Loaded {total} sources from {SOURCES_PATH}")
+
     return sources
 
 
@@ -741,14 +773,29 @@ def _scrape_single(article_data, source_map):
 
 def main():
     """Run the full news ingestion + analysis pipeline."""
+    import argparse
+    parser = argparse.ArgumentParser(description="void --news pipeline")
+    parser.add_argument(
+        "--editions",
+        type=str,
+        default="",
+        help="Comma-separated edition slugs to process (e.g., 'india,nepal'). "
+             "Empty = all sources.",
+    )
+    args = parser.parse_args()
+
+    editions = [e.strip() for e in args.editions.split(",") if e.strip()] if args.editions else None
+
     start_time = time.time()
     print("=" * 60)
+    edition_label = ", ".join(editions) if editions else "all"
     print(f"void --news pipeline starting at {datetime.now(timezone.utc).isoformat()}")
+    print(f"  Editions: {edition_label}")
     print("=" * 60)
 
     # Step 1: Load sources
     print("\n[1/9] Loading sources...")
-    sources = load_sources()
+    sources = load_sources(editions=editions)
     if not sources:
         print("[abort] No sources loaded. Exiting.")
         return
