@@ -43,15 +43,7 @@ html:has(.np-root) body {
 /* --- Base — Full broadsheet width --- */
 .np-root {
   min-height: 100vh;
-  background:
-    /* Stain patches — random-looking aging marks */
-    radial-gradient(ellipse 200px 150px at 15% 30%, var(--np-stain) 0%, transparent 70%),
-    radial-gradient(ellipse 180px 220px at 75% 55%, var(--np-stain) 0%, transparent 70%),
-    radial-gradient(ellipse 250px 100px at 45% 80%, var(--np-stain) 0%, transparent 70%),
-    /* Edge darkening — aged paper is darker at edges */
-    radial-gradient(ellipse 80% 80% at 50% 50%, transparent 50%, rgba(120, 105, 75, 0.12) 100%),
-    /* Vertical aging gradient */
-    linear-gradient(180deg, var(--np-paper) 0%, var(--np-paper-mid) 40%, var(--np-paper-aged) 70%, var(--np-paper-dark) 100%);
+  background: var(--np-paper);
   color: var(--np-ink);
   max-width: 1800px;
   margin: 0 auto;
