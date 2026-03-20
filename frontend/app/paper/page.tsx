@@ -334,6 +334,7 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
     lensData,
     sigilData,
     section: (cluster.section || "world") as Edition,
+    sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
     importance: cluster.headline_rank || cluster.importance_score || 50,
     divergenceScore: cluster.divergence_score || 0,
     headlineRank: cluster.headline_rank || cluster.importance_score || 50,
@@ -365,13 +366,13 @@ export default function PaperPage() {
         supabase
           .from("story_clusters")
           .select(enrichedFields)
-          .eq("section", "world")
+          .contains("sections", ["world"])
           .order("headline_rank", { ascending: false })
           .limit(100),
         supabase
           .from("story_clusters")
           .select(enrichedFields)
-          .eq("section", "us")
+          .contains("sections", ["us"])
           .order("headline_rank", { ascending: false })
           .limit(100),
       ]);
