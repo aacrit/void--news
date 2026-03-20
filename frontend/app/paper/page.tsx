@@ -94,8 +94,7 @@ function Masthead({ lastUpdated, storyCount }: { lastUpdated: string | null; sto
       <hr className="np-masthead__motto-rule" />
       <p className="np-masthead__motto">&ldquo;All the Bias That&rsquo;s Fit to Print&rdquo;</p>
       <hr className="np-masthead__thick-rule" />
-      <h1 className="np-masthead__nameplate">void --news</h1>
-      <p className="np-masthead__subtitle">The Digital Broadsheet</p>
+      <h1 className="np-masthead__nameplate">void news</h1>
       <hr className="np-double-rule" aria-hidden="true" />
       <div className="np-masthead__info">
         <span className="np-masthead__info-left">
@@ -167,7 +166,6 @@ function Classifieds({ lastUpdated, storyCount }: { lastUpdated: string | null; 
 
   return (
     <div className="np-classifieds">
-      <SectionLabel label="CLASSIFIEDS &amp; NOTICES" />
       <div className="np-classifieds__grid">
         <div className="np-classified-ad">
           <span className="np-classified-ad__heading">Public Notice &mdash;</span>
@@ -175,12 +173,6 @@ function Classifieds({ lastUpdated, storyCount }: { lastUpdated: string | null; 
           organisations. All bias assessments computed algorithmically by rule-based
           natural language processing. No editorial judgments were made in the
           preparation of this broadsheet.
-        </div>
-        <div className="np-classified-ad">
-          <span className="np-classified-ad__heading">Lost &amp; Found &mdash;</span>
-          One (1) unbiased media landscape. Last seen circa 1987. If found, contact
-          this publication immediately. Substantial reward offered in the form of
-          restored public trust.
         </div>
         <div className="np-classified-ad">
           <span className="np-classified-ad__heading">Free of Charge &mdash;</span>
@@ -193,12 +185,6 @@ function Classifieds({ lastUpdated, storyCount }: { lastUpdated: string | null; 
           Press closed: {closedTime}. Next edition at dawn. Weather forecast: partly
           cloudy with a high probability of framing divergence across the major wire
           services. Outlook: contested.
-        </div>
-        <div className="np-classified-ad">
-          <span className="np-classified-ad__heading">Situations Vacant &mdash;</span>
-          Wanted: news consumers willing to read beyond the headline. Must possess
-          critical thinking skills and tolerance for nuance. Experience with multiple
-          news sources preferred. Apply within.
         </div>
       </div>
     </div>

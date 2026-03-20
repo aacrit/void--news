@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { supabase } from "../lib/supabase";
 import SpectrumChart, { type SpectrumSource } from "../components/SpectrumChart";
@@ -17,10 +17,25 @@ import Footer from "../components/Footer";
    Mobile: vertical lean zones with source lists.
    --------------------------------------------------------------------------- */
 
+type Edition = "world" | "us" | "india";
+
+const EDITIONS: { slug: Edition; label: string }[] = [
+  { slug: "world", label: "All" },
+  { slug: "us", label: "US" },
+  { slug: "india", label: "India" },
+];
+
+const EDITION_COUNTRIES: Record<Edition, string[] | null> = {
+  world: null,
+  us: ["US"],
+  india: ["IN"],
+};
+
 export default function SourcesPage() {
   const [sources, setSources] = useState<SpectrumSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeEdition, setActiveEdition] = useState<Edition>("world");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -58,7 +73,14 @@ export default function SourcesPage() {
     return () => controller.abort();
   }, []);
 
-  const totalCount = sources.length;
+  const filteredSources = useMemo(() => {
+    const countries = EDITION_COUNTRIES[activeEdition];
+    if (!countries) return sources;
+    return sources.filter((s) => countries.includes(s.country));
+  }, [sources, activeEdition]);
+
+  const editionLabel = EDITIONS.find((e) => e.slug === activeEdition)?.label ?? "All";
+  const totalCount = filteredSources.length;
 
   return (
     <div className="page-container">
@@ -92,48 +114,25 @@ export default function SourcesPage() {
       </header>
 
       <main id="main-content" className="page-main sources-page">
-        {/* ---- Page header ---- */}
-        <header className="sources-header">
-          <div className="sources-header__text">
-            <h1 className="sources-header__title">Our Sources</h1>
-            <p className="sources-header__subtitle">
-              Every source vetted for credibility. Bias runs per-article, not per-outlet.
-              These baselines are starting points &mdash; a right-leaning outlet can publish
-              measured reporting, and our engine will reflect that.
-            </p>
+        {/* ---- Compact toolbar with edition filter ---- */}
+        <div className="sources-toolbar">
+          <div className="sources-toolbar__text">
+            <h1 className="sources-toolbar__title">
+              {totalCount} Sources &middot; {editionLabel}
+            </h1>
           </div>
-          <div className="sources-header__stat" aria-live="polite">
-            {isLoading ? (
-              <span
-                className="skeleton sources-header__stat-skeleton"
-                aria-label="Loading source count"
-              />
-            ) : (
-              <span className="sources-header__count">
-                <span className="sources-header__count-num">{totalCount}</span>
-                <span className="sources-header__count-label">
-                  curated sources
-                </span>
-              </span>
-            )}
-          </div>
-        </header>
-
-        {/* ---- Tier legend ---- */}
-        <div className="sources-tier-legend" aria-label="Tier breakdown">
-          <div className="sources-tier-legend__item">
-            <span className="sources-tier-legend__dot sources-tier-legend__dot--above" />
-            <span className="sources-tier-legend__name">
-              US Major
-            </span>
-            <span className="sources-tier-legend__note">Above the bar</span>
-          </div>
-          <div className="sources-tier-legend__item">
-            <span className="sources-tier-legend__dot sources-tier-legend__dot--below" />
-            <span className="sources-tier-legend__name">
-              International &amp; Independent
-            </span>
-            <span className="sources-tier-legend__note">Below the bar</span>
+          <div className="sources-editions" role="tablist" aria-label="Filter by edition">
+            {EDITIONS.map((edition) => (
+              <button
+                key={edition.slug}
+                role="tab"
+                aria-selected={activeEdition === edition.slug}
+                className={`sources-edition-chip${activeEdition === edition.slug ? " sources-edition-chip--active" : ""}`}
+                onClick={() => setActiveEdition(edition.slug)}
+              >
+                {edition.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -206,8 +205,19 @@ export default function SourcesPage() {
         )}
 
         {/* ---- Spectrum visualization ---- */}
-        {!isLoading && !error && sources.length > 0 && (
-          <SpectrumChart sources={sources} />
+        {!isLoading && !error && filteredSources.length > 0 && (
+          <SpectrumChart sources={filteredSources} />
+        )}
+
+        {!isLoading && !error && filteredSources.length === 0 && sources.length > 0 && (
+          <div className="empty-state" style={{ padding: "var(--space-6) 0" }}>
+            <p className="text-base" style={{ color: "var(--fg-tertiary)" }}>
+              No sources for {editionLabel} edition.
+            </p>
+            <button className="btn-secondary" onClick={() => setActiveEdition("world")} style={{ marginTop: "var(--space-3)" }}>
+              View all sources
+            </button>
+          </div>
         )}
 
         {/* Seven-point scale is now inline in the SpectrumChart component */}
