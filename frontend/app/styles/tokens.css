@@ -47,8 +47,8 @@
   /* Overlay backdrop */
   --overlay-backdrop: rgba(28, 26, 23, 0.15);
 
-  /* Paper texture — grain overlay (light mode: heavy newsprint) */
-  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.22'/%3E%3C/svg%3E");
+  /* Paper texture — visible newsprint speckle (low freq = coarse grain) */
+  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.20' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
 }
 
 /* --------------------------------------------------------------------------
@@ -63,9 +63,12 @@
   --bg-elevated:   #333028;
 
   /* Bias color overrides for dark mode — increase blue saturation.
-     Blues appear muted against warm dark backgrounds; boost to vibrant. */
+     Blues appear muted against warm dark backgrounds; boost to vibrant.
+     Reds also slightly warmed to avoid harshness against dark walnut. */
+  --bias-far-left:     #3B82F6;
   --bias-left:         #60A5FA;
   --bias-center-left:  #93C5FD;
+  --bias-far-right:    #DC2626;
   --type-reporting:    #60A5FA;
 
   /* Text */
@@ -100,21 +103,25 @@
   /* Overlay backdrop */
   --overlay-backdrop: rgba(0, 0, 0, 0.3);
 
-  /* Paper texture — grain overlay (dark mode: heavy warm grain) */
-  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.16'/%3E%3C/svg%3E");
+  /* Paper texture — visible warm speckle (low freq = coarse grain) */
+  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.20' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
 }
 
 /* --------------------------------------------------------------------------
    Bias Color System
    Consistent across light/dark. Colors earned through data, not decoration.
+   7-point political lean, 3-point scales for other axes.
+   Min 4.5:1 contrast ratio on both light (#FAF8F5) and dark (#1C1A17) bgs.
    -------------------------------------------------------------------------- */
 :root {
-  /* Political Lean Spectrum */
+  /* Political Lean Spectrum (7-point) */
+  --bias-far-left:     #1D4ED8;
   --bias-left:         #3B82F6;
   --bias-center-left:  #60A5FA;
   --bias-center:       #9CA3AF;
   --bias-center-right: #F97316;
   --bias-right:        #EF4444;
+  --bias-far-right:    #B91C1C;
 
   /* Sensationalism Scale */
   --sense-low:    #22C55E;
