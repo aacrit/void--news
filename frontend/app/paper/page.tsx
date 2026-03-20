@@ -538,9 +538,11 @@ export default function PaperPage() {
         <p className="np-loading">Setting type &mdash; your edition is being prepared&hellip;</p>
       )}
 
-      {/* Front Page — 3-column hero layout */}
+      {/* Front Page — 3-column hero layout, or single-column if primary stories missing */}
       {!isLoading && lead && (
-        <div className="np-broadsheet np-broadsheet--front">
+        <div className={`np-broadsheet ${
+          (primaryLeft || primaryRight) ? 'np-broadsheet--front' : 'np-broadsheet--lead-only'
+        }`}>
           {primaryLeft && (
             <div className="np-col">
               <Article story={primaryLeft} size="primary" />
