@@ -367,8 +367,8 @@
 
   /* [RECOMMENDATION-2] Thicker focus outline for small touch targets */
   :focus-visible {
-    outline: 3px solid var(--accent-warm, #C8956C);
-    outline-offset: 1px;
+    outline: 3px solid var(--accent-warm);
+    outline-offset: 2px;
   }
 }
 
