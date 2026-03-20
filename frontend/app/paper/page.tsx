@@ -407,73 +407,111 @@ export default function PaperPage() {
 
   useEffect(() => {
     async function load() {
-      const enrichedFields = `id,title,summary,category,section,sections,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+      try {
+        const enrichedFields = `id,title,summary,category,section,sections,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
 
-      // Fetch all stories and op-eds in parallel
-      const [worldRes, usRes, worldOpEdRaw, usOpEdRaw] = await Promise.all([
-        supabase
-          .from("story_clusters")
-          .select(enrichedFields)
-          .contains("sections", ["world"])
-          .eq("content_type", "reporting")
-          .order("headline_rank", { ascending: false })
-          .limit(40),
-        supabase
-          .from("story_clusters")
-          .select(enrichedFields)
-          .contains("sections", ["us"])
-          .eq("content_type", "reporting")
-          .order("headline_rank", { ascending: false })
-          .limit(40),
-        fetchOpinionArticles("world"),
-        fetchOpinionArticles("us"),
-      ]);
+        // Fetch stories — try enriched query with content_type filter first
+        let worldClusters: any[] = [];
+        let usClusters: any[] = [];
 
-      const worldClusters = worldRes.data || [];
-      const usClusters = usRes.data || [];
+        const [worldRes, usRes] = await Promise.all([
+          supabase
+            .from("story_clusters")
+            .select(enrichedFields)
+            .contains("sections", ["world"])
+            .eq("content_type", "reporting")
+            .order("headline_rank", { ascending: false })
+            .limit(40),
+          supabase
+            .from("story_clusters")
+            .select(enrichedFields)
+            .contains("sections", ["us"])
+            .eq("content_type", "reporting")
+            .order("headline_rank", { ascending: false })
+            .limit(40),
+        ]);
 
-      // Deduplicate — a cluster with multiple sections can appear in both queries
-      const seen = new Set<string>();
-      const stories: Story[] = [];
-      for (const c of [...worldClusters, ...usClusters]) {
-        if (!seen.has(c.id)) {
-          seen.add(c.id);
-          stories.push(buildStory(c, true));
+        worldClusters = worldRes.data || [];
+        usClusters = usRes.data || [];
+
+        // Fallback: if content_type filter returned nothing, fetch without it
+        if (worldClusters.length === 0 && usClusters.length === 0) {
+          const [wFallback, uFallback] = await Promise.all([
+            supabase
+              .from("story_clusters")
+              .select(enrichedFields)
+              .contains("sections", ["world"])
+              .order("headline_rank", { ascending: false })
+              .limit(40),
+            supabase
+              .from("story_clusters")
+              .select(enrichedFields)
+              .contains("sections", ["us"])
+              .order("headline_rank", { ascending: false })
+              .limit(40),
+          ]);
+          worldClusters = wFallback.data || [];
+          usClusters = uFallback.data || [];
         }
+
+        // Deduplicate
+        const seen = new Set<string>();
+        const stories: Story[] = [];
+        for (const c of [...worldClusters, ...usClusters]) {
+          if (!seen.has(c.id)) {
+            seen.add(c.id);
+            stories.push(buildStory(c, true));
+          }
+        }
+        stories.sort((a, b) => b.headlineRank - a.headlineRank);
+
+        // Fetch op-eds (non-blocking — if this fails, we still show news)
+        let worldOpEdRaw: any[] = [];
+        let usOpEdRaw: any[] = [];
+        try {
+          [worldOpEdRaw, usOpEdRaw] = await Promise.all([
+            fetchOpinionArticles("world"),
+            fetchOpinionArticles("us"),
+          ]);
+        } catch {
+          // Op-ed fetch failed — continue without them
+        }
+
+        function mapOpEd(raw: any): OpEdArticle {
+          return {
+            id: raw.id,
+            title: raw.title,
+            summary: raw.summary,
+            url: raw.url,
+            sourceName: raw.sourceName,
+            sourceTier: raw.sourceTier,
+            publishedAt: raw.publishedAt,
+            opinionLabel: deriveOpinionLabel(65),
+            politicalLean: raw.politicalLean,
+            sensationalism: raw.sensationalism,
+          };
+        }
+
+        setAllStories(stories);
+        setWorldOpEds(worldOpEdRaw.map(mapOpEd));
+        setUsOpEds(usOpEdRaw.map(mapOpEd));
+      } catch (err) {
+        console.error("Paper page load failed:", err);
+      } finally {
+        setIsLoading(false);
       }
-      stories.sort((a, b) => b.headlineRank - a.headlineRank);
 
-      // Map OpinionArticle → OpEdArticle
-      function mapOpEd(raw: typeof worldOpEdRaw[number]): OpEdArticle {
-        const opinionScore = 65; // fetchOpinionArticles only returns opinion clusters
-        return {
-          id: raw.id,
-          title: raw.title,
-          summary: raw.summary,
-          url: raw.url,
-          sourceName: raw.sourceName,
-          sourceTier: raw.sourceTier,
-          publishedAt: raw.publishedAt,
-          opinionLabel: deriveOpinionLabel(opinionScore),
-          politicalLean: raw.politicalLean,
-          sensationalism: raw.sensationalism,
-        };
-      }
-
-      setAllStories(stories);
-      setWorldOpEds(worldOpEdRaw.map(mapOpEd));
-      setUsOpEds(usOpEdRaw.map(mapOpEd));
-      setIsLoading(false);
-
-      const { data: run } = await supabase
-        .from("pipeline_runs")
-        .select("completed_at")
-        .eq("status", "completed")
-        .order("completed_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (run?.completed_at) setLastUpdated(run.completed_at);
+      // Pipeline timestamp (fire-and-forget)
+      try {
+        const { data: run } = await supabase
+          .from("pipeline_runs")
+          .select("completed_at")
+          .eq("status", "completed")
+          .order("completed_at", { ascending: false })
+          .limit(1)
+          .single();
+        if (run?.completed_at) setLastUpdated(run.completed_at);
+      } catch { /* ignore */ }
     }
 
     load();
