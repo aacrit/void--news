@@ -1,8 +1,22 @@
 name: News Pipeline
 on:
   schedule:
-    - cron: '0 11,23 * * *'  # 11 AM and 11 PM UTC — catches EU morning + US afternoon peaks
-  workflow_dispatch:  # Manual trigger
+    # Per-edition primetime scheduling — morning + evening for each region.
+    # Each cron triggers the same job; the edition is resolved from the schedule.
+    - cron: '0 1 * * *'      # US evening  (8 PM ET)
+    - cron: '0 4 * * *'      # India+Nepal morning (9:30 AM IST / 9:45 AM NPT)
+    - cron: '0 7 * * *'      # Germany morning (8 AM CET / 9 AM CEST)
+    - cron: '0 11 * * *'     # World morning (EU morning + Asia afternoon)
+    - cron: '0 13 * * *'     # India+Nepal evening (6:30 PM IST / 6:45 PM NPT)
+    - cron: '0 14 * * *'     # US morning (9 AM ET / 6 AM PT)
+    - cron: '0 17 * * *'     # Germany evening (6 PM CET / 7 PM CEST)
+    - cron: '0 23 * * *'     # World evening (US afternoon wrap-up)
+  workflow_dispatch:
+    inputs:
+      editions:
+        description: 'Edition filter (comma-separated: us,india,nepal,germany,world). Empty = all.'
+        required: false
+        default: ''
 
 jobs:
   run-pipeline:
@@ -25,9 +39,35 @@ jobs:
       - name: Download spaCy model
         if: steps.spacy-cache.outputs.cache-hit != 'true'
         run: python -m spacy download en_core_web_sm
+      - name: Determine editions from schedule
+        id: editions
+        run: |
+          if [ -n "${{ inputs.editions }}" ]; then
+            echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
+          else
+            case "${{ github.event.schedule }}" in
+              "0 1 * * *")  echo "filter=us" >> $GITHUB_OUTPUT ;;
+              "0 4 * * *")  echo "filter=india,nepal" >> $GITHUB_OUTPUT ;;
+              "0 7 * * *")  echo "filter=germany" >> $GITHUB_OUTPUT ;;
+              "0 11 * * *") echo "filter=world" >> $GITHUB_OUTPUT ;;
+              "0 13 * * *") echo "filter=india,nepal" >> $GITHUB_OUTPUT ;;
+              "0 14 * * *") echo "filter=us" >> $GITHUB_OUTPUT ;;
+              "0 17 * * *") echo "filter=germany" >> $GITHUB_OUTPUT ;;
+              "0 23 * * *") echo "filter=world" >> $GITHUB_OUTPUT ;;
+              *)            echo "filter=" >> $GITHUB_OUTPUT ;;
+            esac
+          fi
       - name: Run pipeline
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python pipeline/main.py
+        run: |
+          EDITIONS="${{ steps.editions.outputs.filter }}"
+          if [ -n "$EDITIONS" ]; then
+            echo "Running pipeline for editions: $EDITIONS"
+            python pipeline/main.py --editions "$EDITIONS"
+          else
+            echo "Running full pipeline (all editions)"
+            python pipeline/main.py
+          fi
