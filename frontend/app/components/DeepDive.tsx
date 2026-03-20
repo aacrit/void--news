@@ -57,6 +57,9 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [consensusExpanded, setConsensusExpanded] = useState(false);
+  const [divergenceExpanded, setDivergenceExpanded] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -64,26 +67,25 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
 
-  /* ---- Compute lean spectrum positions (max 3 rows, overflow collapses) -- */
+  /* ---- Compute lean spectrum: 1 above + 1 below track, overlap at 3+ ---- */
   const leanPositions = useMemo(() => {
-    const MAX_VISIBLE_ROWS = 3;
     const items = sources
       .map((src, idx) => ({ src, idx, lean: src.biasScores.politicalLean }))
       .sort((a, b) => a.lean - b.lean);
 
-    const placed: { lean: number; row: number }[] = [];
+    // Alternate: first source at a lean position goes above, second below.
+    // Third+ at the same lean position overlap on the below row.
+    const positionCounts: Record<string, number> = {};
     return items.map((item) => {
-      let row = 0;
-      for (const p of placed) {
-        if (Math.abs(item.lean - p.lean) < 7 && p.row === row) {
-          row++;
-        }
-      }
-      placed.push({ lean: item.lean, row });
-      // If row exceeds max, collapse into the last visible row (will overlap)
-      const visibleRow = Math.min(row, MAX_VISIBLE_ROWS - 1);
-      const isOverflow = row >= MAX_VISIBLE_ROWS;
-      return { ...item, row: visibleRow, isOverflow };
+      // Bucket by ~7% lean proximity
+      const bucket = Math.round(item.lean / 7);
+      const count = positionCounts[bucket] || 0;
+      positionCounts[bucket] = count + 1;
+
+      // 0 = above track, 1 = below track
+      const side: "above" | "below" = count === 0 ? "above" : "below";
+      const isOverflow = count >= 2; // 3rd+ source at same position
+      return { ...item, side, isOverflow };
     });
   }, [sources]);
 
@@ -330,53 +332,65 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           )}
 
-          {/* Source spectrum — merged lean visualization + clickable source links.
-              No section header. Favicons positioned on spectrum by lean score.
-              Max 3 rows; overflow sources overlap and expand on hover. */}
+          {/* Source spectrum — 1 row above, track with inline labels, 1 row below.
+              Sources at same lean position: first above, second below, 3+ overlap. */}
           {sources.length > 0 && (
             <div className="dd-spectrum" style={{ marginTop: "var(--space-4)" }}>
-              {/* Gradient track */}
-              <div className="dd-spectrum__track" />
-
-              {/* Center tick */}
-              <div className="dd-spectrum__center-tick" />
-
-              {/* Source dots positioned by lean, max 3 rows */}
-              <div className="dd-spectrum__dots" style={{ height: (leanPositions.length > 0 ? Math.min(3, Math.max(...leanPositions.map(p => p.row + 1))) : 1) * 30 + 4 }}>
-                {leanPositions.map(({ src, idx, lean, row, isOverflow }) => {
+              {/* Row above track */}
+              <div className="dd-spectrum__row dd-spectrum__row--above">
+                {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
                   const favicon = faviconUrl(src.url);
                   return (
                     <a
-                      key={`${src.name}-${idx}`}
+                      key={`above-${src.name}-${idx}`}
                       href={src.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       title={`${src.name} — ${leanLabel(lean)} (${lean})`}
                       aria-label={`${src.name}: ${leanLabel(lean)}`}
                       className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                      style={{
-                        left: `${lean}%`,
-                        top: row * 30,
-                        zIndex: isOverflow ? 1 : sources.length - row,
-                      }}
+                      style={{ left: `${lean}%` }}
                     >
                       {favicon ? (
                         <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
                       ) : (
-                        <span className="dd-spectrum__dot-initial">
-                          {src.name.charAt(0)}
-                        </span>
+                        <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
                       )}
                     </a>
                   );
                 })}
               </div>
 
-              {/* Axis labels */}
-              <div className="dd-spectrum__labels">
-                <span>Left</span>
-                <span>Center</span>
-                <span>Right</span>
+              {/* Track with inline labels */}
+              <div className="dd-spectrum__track">
+                <span className="dd-spectrum__inline-label dd-spectrum__inline-label--left">Left</span>
+                <span className="dd-spectrum__inline-label dd-spectrum__inline-label--center">Center</span>
+                <span className="dd-spectrum__inline-label dd-spectrum__inline-label--right">Right</span>
+              </div>
+
+              {/* Row below track */}
+              <div className="dd-spectrum__row dd-spectrum__row--below">
+                {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
+                  const favicon = faviconUrl(src.url);
+                  return (
+                    <a
+                      key={`below-${src.name}-${idx}`}
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                      aria-label={`${src.name}: ${leanLabel(lean)}`}
+                      className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                      style={{ left: `${lean}%` }}
+                    >
+                      {favicon ? (
+                        <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
+                      ) : (
+                        <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
+                      )}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -400,43 +414,58 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           )}
 
-          {/* ---- Section: What Happened --------------------------------- */}
-          <section aria-labelledby="dd-summary" style={{ marginBottom: "var(--space-6)" }}>
+          {/* ---- Section: What Happened (collapsible) ---------------------- */}
+          <section aria-labelledby="dd-summary" style={{ marginBottom: "var(--space-5)" }}>
             <h3 id="dd-summary" className="section-heading">What happened</h3>
-            <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)" }}>
-              {story.summary}
-            </p>
+            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
+              <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)", margin: 0 }}>
+                {story.summary}
+              </p>
+            </div>
+            {story.summary && story.summary.length > 300 && !summaryExpanded && (
+              <button className="dd-read-more" onClick={() => setSummaryExpanded(true)}>Read more</button>
+            )}
           </section>
 
           {/* Source lean spectrum removed — merged into header spectrum above */}
 
-          {/* ---- Section: Where sources agree ----------------------------- */}
+          {/* ---- Section: Where sources agree (collapsible) ----------------- */}
           {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-            <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-6)" }}>
+            <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-5)" }}>
               <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
-              <ul className="evidence-list">
-                {deepDive.consensus.map((point, i) => (
-                  <li key={i} className="evidence-item">
-                    <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
-                    <span className="evidence-item__text">{point}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className={`dd-collapsible${consensusExpanded ? " dd-collapsible--expanded" : ""}`}>
+                <ul className="evidence-list">
+                  {deepDive.consensus.map((point, i) => (
+                    <li key={i} className="evidence-item">
+                      <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
+                      <span className="evidence-item__text">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {deepDive.consensus.length > 3 && !consensusExpanded && (
+                <button className="dd-read-more" onClick={() => setConsensusExpanded(true)}>Read more</button>
+              )}
             </section>
           )}
 
-          {/* ---- Section: Where sources diverge -------------------------- */}
+          {/* ---- Section: Where sources diverge (collapsible) -------------- */}
           {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-            <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-6)" }}>
+            <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-5)" }}>
               <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
-              <ul className="evidence-list">
-                {deepDive.divergence.map((point, i) => (
-                  <li key={i} className="evidence-item">
-                    <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
-                    <span className="evidence-item__text">{point}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className={`dd-collapsible${divergenceExpanded ? " dd-collapsible--expanded" : ""}`}>
+                <ul className="evidence-list">
+                  {deepDive.divergence.map((point, i) => (
+                    <li key={i} className="evidence-item">
+                      <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
+                      <span className="evidence-item__text">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {deepDive.divergence.length > 3 && !divergenceExpanded && (
+                <button className="dd-read-more" onClick={() => setDivergenceExpanded(true)}>Read more</button>
+              )}
             </section>
           )}
 
