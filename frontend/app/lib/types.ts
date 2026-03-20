@@ -64,6 +64,27 @@ export interface CoverageRationale {
   specificityRatio: number;
 }
 
+/** Rationale for sensationalism scoring */
+export interface SensationalismRationale {
+  headlineScore: number;
+  bodyScore: number;
+  clickbaitSignals: number;
+  superlativeDensity: number;
+  urgencyDensity: number;
+  hyperboleDensity: number;
+  measuredDensity: number;
+}
+
+/** Rationale for framing analysis scoring */
+export interface FramingRationale {
+  connotationScore: number;
+  keywordEmphasisScore: number;
+  omissionScore: number;
+  headlineBodyDivergence: number;
+  passiveVoiceScore: number;
+  hasClusterContext: boolean;
+}
+
 /** Three-lens data model for bias visualization */
 export interface ThreeLensData {
   /** Political lean: 0=far left, 50=center, 100=far right */
@@ -78,6 +99,10 @@ export interface ThreeLensData {
   opinion: number;
   opinionLabel: "Reporting" | "Analysis" | "Opinion" | "Editorial";
   opinionRationale?: OpinionRationale;
+  /** Sensationalism rationale — populated from bias_scores.rationale.sensationalism */
+  sensationalismRationale?: SensationalismRationale;
+  /** Framing rationale — populated from bias_scores.rationale.framing */
+  framingRationale?: FramingRationale;
   /** True when bias scores are fallback placeholders, not real analysis data */
   pending?: boolean;
 }
@@ -90,6 +115,8 @@ export interface StorySource {
   tier: "us_major" | "international" | "independent";
   biasScores: BiasScores;
   lensData?: ThreeLensData;
+  /** Raw analysis confidence 0–1 from pipeline (optional, for BiasInspector) */
+  confidence?: number;
 }
 
 export interface DeepDiveData {

@@ -12,6 +12,7 @@ import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
+import BiasInspector from "./BiasInspector";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -161,6 +162,10 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             opinionRationale: (rationale?.opinion as any) ?? undefined,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             coverageRationale: (rationale?.coverage as any) ?? undefined,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            sensationalismRationale: (rationale?.sensationalism as any) ?? undefined,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            framingRationale: (rationale?.framing as any) ?? undefined,
           };
 
           storySourceList.push({
@@ -175,6 +180,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               framing: (bias?.framing as number) ?? 40,
             },
             lensData,
+            confidence,
           });
         }
 
@@ -468,6 +474,13 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {/* ---- Section: Bias Inspector ------------------------------------- */}
+          {sources.length > 0 && (
+            <section aria-labelledby="dd-bias-inspector" style={{ marginBottom: "var(--space-5)" }}>
+              <BiasInspector sources={sources} />
             </section>
           )}
 
