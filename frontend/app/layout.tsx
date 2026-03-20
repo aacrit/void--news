@@ -35,6 +35,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aacrit.github.io"),
   title: "void --news — See every side of the story",
   description:
     "Free news aggregation with per-article bias analysis across 200 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
@@ -54,19 +55,31 @@ export const metadata: Metadata = {
       "Free news aggregation with per-article bias analysis across 200 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
     type: "website",
     siteName: "void --news",
+    images: [
+      {
+        url: "/void--news/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "void --news — News aggregation with multi-axis bias analysis",
+        type: "image/svg+xml",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "void --news — See every side of the story",
     description:
       "Free news aggregation with per-article bias analysis across 200 curated sources.",
+    images: ["/void--news/twitter-card.svg"],
   },
   icons: {
     icon: [
       { url: "/void--news/icon.svg", type: "image/svg+xml" },
-      { url: "/void--news/favicon.ico", sizes: "any" },
+      { url: "/void--news/favicon.ico", sizes: "32x32" },
     ],
-    apple: "/void--news/icon.svg",
+    apple: [
+      { url: "/void--news/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
   manifest: "/void--news/manifest.json",
 };
@@ -93,6 +106,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Preconnect to Supabase — eliminates DNS + TLS handshake latency
+            on first client-side query (~100-300ms savings on cold load) */}
+        <link rel="preconnect" href="https://xryzskhgfuafyotrcdvj.supabase.co" />
+        <link rel="dns-prefetch" href="https://xryzskhgfuafyotrcdvj.supabase.co" />
         {/* Inline script to set theme before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{

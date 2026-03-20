@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-19 (rev 2)
+Last updated: 2026-03-19 (rev 3)
 
 ## Philosophy
 
@@ -202,3 +202,23 @@ When the product matures, add R&I division advisory agents:
 | `accessibility-inclusivity-lead` | WCAG 2.1 AA compliance | Direct port |
 
 These are read-only advisory agents — they propose, they don't implement.
+
+---
+
+## Session Log
+
+### 2026-03-19 — Full Agent Chain Run (6 chains + Gemini Voice)
+
+**Agents run:** `nlp-engineer`, `bug-fixer`, `feed-intelligence`, `perf-optimizer`, `responsive-specialist`, `logo-designer`, `update-docs`
+
+| Agent | Division | Outcome |
+|-------|----------|---------|
+| `nlp-engineer` | Pipeline | Bias engine fixes: COMMON_ACRONYMS frozenset in sensationalism.py, attribution floor 80→50 in opinion_detector.py, 12 new political_lean keywords + 4 framing phrases, SPECIFIC_ATTRIBUTION counted as named sources in factual_rigor.py |
+| `bug-fixer` | Quality | Confidence `text_conf` binary threshold replaced with smooth linear ramp (0.1 at no text → 1.0 at 1000+ chars) in main.py |
+| `feed-intelligence` | Pipeline | Gemini Voice architecture: `_SYSTEM_INSTRUCTION`, `_USER_PROMPT_TEMPLATE`, `_PROHIBITED_TERMS` (26 terms), `_check_quality()` validator; source slugs rendered as tier labels in prompts; `generate_json()` extended with optional `system_instruction` param |
+| `perf-optimizer` | Infrastructure | ThreadPoolExecutor parallelization for cluster enrichment + full-text truncation (8 workers each); pip + spaCy model caching in pipeline.yml; next.config.ts compress + no source maps; migration 009_perf_indexes.sql (3 composite indexes) |
+| `responsive-specialist` | Frontend | Safe area inset for iPhone notch; DeepDive symmetric translateX/translateY animation; BiasLens SignalRing position fix; article role="button" moved to inner div in LeadStory + StoryCard |
+| `logo-designer` | Branding | Full favicon set (SVG, ICO, PNG 16/32/180/192/512), OpenGraph 1200x630, Twitter card 1024x512; manifest.json updated; layout.tsx favicon metadata + Supabase preconnect + OG/Twitter meta; --bias-far-left/--bias-far-right tokens added; loading indicator copy updated |
+| `update-docs` | Infrastructure | CLAUDE.md: migration count 001-007→001-009, Gemini Voice architecture note, GEMINI-VOICE-PLAN.md added to project structure; AGENT-TEAM.md: session log added |
+
+**Files modified this session:** ~25 files across pipeline, frontend, supabase/migrations, .github/workflows, and docs.

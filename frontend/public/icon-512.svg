@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!--
+    void --news — PWA Icon 512x512
+    Dark walnut background with cream icon and wordmark.
+    Full detail at this size — show the complete scale apparatus.
+  -->
+  <!-- Background — dark walnut -->
+  <rect width="512" height="512" rx="0" fill="#1C1A17"/>
+
+  <!-- Icon centered and larger -->
+  <g transform="translate(96, 68)" stroke="#EDE8E0" stroke-width="12">
+    <!-- Void circle -->
+    <circle cx="160" cy="130" r="90"/>
+    <!-- Beam -->
+    <line x1="30" y1="130" x2="290" y2="130"/>
+    <!-- Left tick -->
+    <line x1="50" y1="110" x2="50" y2="150"/>
+    <!-- Right tick -->
+    <line x1="270" y1="110" x2="270" y2="150"/>
+    <!-- Post -->
+    <line x1="160" y1="220" x2="160" y2="290"/>
+    <!-- Base -->
+    <line x1="120" y1="290" x2="200" y2="290"/>
+  </g>
+
+  <!-- Wordmark text below -->
+  <text x="256" y="430" text-anchor="middle" fill="#EDE8E0"
+        font-family="'Georgia', 'Times New Roman', serif"
+        font-size="36" font-weight="700" letter-spacing="0.02em">
+    void
+    <tspan fill="#8A8278" font-family="'Menlo', 'Consolas', monospace" font-size="30" font-weight="400"> --news</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="256" y="462" text-anchor="middle" fill="#5A5550"
+        font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
+        font-size="16" font-weight="400" letter-spacing="0.06em">
+    See every side of the story
+  </text>
+</svg>

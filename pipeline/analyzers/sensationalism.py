@@ -20,6 +20,28 @@ import string
 from textblob import TextBlob
 
 # ---------------------------------------------------------------------------
+# Common institutional acronyms — excluded from ALL-CAPS sensationalism check.
+# These are proper nouns, not clickbait; treating them as hyperbole inflates
+# scores on wire-service and policy articles. (Priority 1 fix)
+# ---------------------------------------------------------------------------
+COMMON_ACRONYMS: frozenset[str] = frozenset({
+    # US government / agencies
+    "CIA", "FBI", "NSA", "DHS", "DOJ", "DOD", "DOE", "HHS", "EPA",
+    "IRS", "SEC", "FTC", "FEC", "FCC", "FEMA", "CDC", "FDA", "NIH",
+    "NASA", "USDA", "OMB", "CBO", "GAO", "ICE", "DEA", "ATF",
+    # Legislative / judicial
+    "GOP", "DNC", "RNC", "SCOTUS",
+    # International bodies
+    "UN", "EU", "NATO", "WHO", "IMF", "WTO", "IAEA", "OPEC",
+    # News / wire services
+    "AP", "AFP", "UPI", "PBS", "NPR", "BBC", "CNN", "ABC", "CBS", "NBC",
+    # Economic / finance
+    "GDP", "CPI", "IMF", "FED",
+    # Misc institutional
+    "UK", "US", "UAE", "NGO", "CEO", "CFO", "COO", "CTO",
+})
+
+# ---------------------------------------------------------------------------
 # Clickbait headline patterns
 # ---------------------------------------------------------------------------
 CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
@@ -41,8 +63,9 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
     # BREAKING / EXCLUSIVE / URGENT prefix patterns
     (re.compile(r"^(BREAKING|EXCLUSIVE|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
     (re.compile(r"\.\.\.\s*$"), 5.0),
-    # All-caps words (2+ uppercase words in a row)
-    (re.compile(r"\b[A-Z]{3,}\b"), 3.0),
+    # NOTE: bare \b[A-Z]{3,}\b removed — replaced by _caps_score() which
+    # excludes COMMON_ACRONYMS (CIA, FBI, NATO, GOP, etc.) to avoid false
+    # positives on institutional acronyms in wire-service headlines. (Priority 1)
 ]
 
 # ---------------------------------------------------------------------------
@@ -100,6 +123,28 @@ MEASURED_PHRASES: list[str] = [
 ]
 
 
+def _caps_score(title: str, words: list[str]) -> float:
+    """
+    Score ALL-CAPS word usage in a headline, excluding COMMON_ACRONYMS.
+
+    Standard institutional acronyms (CIA, FBI, NATO, GOP, UN, GDP, PBS, etc.)
+    are common in straight news and should not signal sensationalism. Only
+    non-acronym all-caps words (e.g. "SHOCKING", "EXPOSED", "DESTROYED")
+    indicate hyperbolic editorial tone. (Priority 1 fix)
+
+    Returns 0-20 contribution to the headline score.
+    """
+    if not words:
+        return 0.0
+    # Count caps words that are NOT in the common-acronym whitelist
+    caps_words = sum(
+        1 for w in words
+        if w.isupper() and len(w) > 2 and w.strip(".,!?;:'\"()") not in COMMON_ACRONYMS
+    )
+    caps_ratio = caps_words / len(words)
+    return caps_ratio * 20.0
+
+
 def _headline_score(title: str) -> float:
     """Score headline sensationalism from 0-100."""
     if not title or not title.strip():
@@ -120,12 +165,9 @@ def _headline_score(title: str) -> float:
     multi_punct = len(re.findall(r"[!?]{2,}", title))
     score += multi_punct * 5.0
 
-    # All-caps words count
+    # All-caps words (excluding institutional acronyms — Priority 1 fix)
     words = title.split()
-    if len(words) > 0:
-        caps_words = sum(1 for w in words if w.isupper() and len(w) > 2)
-        caps_ratio = caps_words / len(words)
-        score += caps_ratio * 20.0
+    score += _caps_score(title, words)
 
     # Check superlatives in title
     title_lower = title.lower()

@@ -416,7 +416,7 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
       aria-expanded={open}
       aria-label={`Coverage: ${label}, ${sourceCount} sources, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
       aria-controls={open ? tooltipId : undefined}
-      style={{ width: diameter, height: diameter, cursor: "pointer" }}
+      style={{ width: diameter, height: diameter, cursor: "pointer", position: "relative" }}
     >
       <svg
         width={diameter}
@@ -447,7 +447,8 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
           style={{ transition: "stroke-dasharray 500ms var(--ease-out), stroke 300ms var(--ease-out)" }}
         />
       </svg>
-      {/* Source count number */}
+      {/* Source count — absolutely positioned over ring center.
+          Parent div carries position: relative to anchor this correctly. */}
       <span style={{
         position: "absolute",
         top: "50%",

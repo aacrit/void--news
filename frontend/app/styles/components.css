@@ -93,6 +93,22 @@
   gap: var(--space-4);
 }
 
+.story-card__why,
+.lead-story__why {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
+
+.lead-story__why {
+  font-size: var(--text-sm);
+}
+
 /* ---- Lead Story -------------------------------------------------------- */
 .lead-story {
   padding: var(--space-6) 0;
@@ -381,11 +397,15 @@
   color: var(--fg-tertiary);
   padding: var(--space-2) var(--space-4);
   border-bottom: 2px solid transparent;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out);
   min-height: 44px;
   min-width: 44px;
+  white-space: nowrap;
 }
 
 .nav-tab--active {
@@ -486,7 +506,7 @@
   }
 }
 
-/* Mobile bottom nav */
+/* Mobile bottom nav — 5 editions spread evenly */
 .nav-bottom {
   position: fixed;
   bottom: 0;
@@ -496,23 +516,28 @@
   background-color: var(--bg-primary);
   border-top: var(--rule-thin);
   display: none;
-  padding: var(--space-2) var(--space-5);
-  justify-content: center;
-  gap: var(--space-5);
+  padding: var(--space-2) 0;
+  justify-content: space-around;
+  gap: 0;
   transition: background-color var(--dur-morph) var(--ease-out);
 }
 
 .nav-bottom-tab {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: 400;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--fg-tertiary);
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-2) var(--space-3);
   border-top: 2px solid transparent;
   min-height: 44px;
   min-width: 44px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out);
@@ -910,9 +935,21 @@
 /* ---- Loading Skeleton -------------------------------------------------- */
 .loading-indicator {
   display: flex;
-  justify-content: center;
-  padding: var(--space-5) 0 var(--space-4);
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) 0 var(--space-5);
   color: var(--fg-tertiary);
+}
+
+.loading-indicator::after {
+  content: "Typesetting the latest edition...";
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: var(--space-1);
 }
 
 .skeleton-lead {
@@ -926,6 +963,24 @@
   gap: var(--space-5);
   border-bottom: var(--rule-thin);
   padding: var(--space-5) 0;
+}
+
+/* ---- Empty State Enhancements ----------------------------------------- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.empty-state .edition-meta {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.04em;
+  border-top: var(--rule-thin);
+  padding-top: var(--space-3);
+  margin-top: var(--space-2);
 }
 
 /* ---- Error Boundary ---------------------------------------------------- */

@@ -135,6 +135,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [contentVisible, setContentVisible] = useState(false);
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -149,6 +150,19 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
     }
     return counts;
   }, [sources]);
+
+  /* ---- Detect desktop vs mobile for directional animation -------------- */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(mq.matches);
+
+    function handleChange(e: MediaQueryListEvent) {
+      setIsDesktop(e.matches);
+    }
+
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
+  }, []);
 
   /* ---- Fetch live data from Supabase ----------------------------------- */
   useEffect(() => {
@@ -338,7 +352,11 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         tabIndex={-1}
         className="deep-dive-panel"
         style={{
-          transform: isVisible ? "translateY(0)" : "translateY(100%)",
+          /* Desktop: slide from right (translateX). Mobile: slide from bottom (translateY).
+             Both open and close use the same axis — symmetric animation. */
+          transform: isVisible
+            ? "translate(0, 0)"
+            : isDesktop ? "translateX(100%)" : "translateY(100%)",
           transition: "transform 400ms var(--ease-out)",
         }}
       >

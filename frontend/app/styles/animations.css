@@ -132,17 +132,11 @@
   animation: springChipPress var(--dur-normal) var(--spring);
 }
 
-/* DeepDive spring entrance — desktop (slide from right) */
-.deep-dive-panel {
-  animation: springSlideInRight var(--dur-morph) var(--spring) both;
-}
-
-/* DeepDive spring entrance — mobile (slide from bottom) */
-@media (max-width: 1023px) {
-  .deep-dive-panel {
-    animation: springSlideInUp var(--dur-morph) var(--spring) both;
-  }
-}
+/* DeepDive panel entrance/exit is driven by JS inline transform + transition
+   (translateX on desktop ≥1024px, translateY on mobile <1024px).
+   CSS keyframe animations are intentionally absent here to avoid conflicting
+   with the JS-controlled state. The springSlideInRight / springSlideInUp
+   keyframes are kept above for potential future use. */
 
 /* RefreshButton spring press — activated by .refresh-btn:active */
 .refresh-btn:active:not([disabled]) {

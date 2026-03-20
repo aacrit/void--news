@@ -176,8 +176,11 @@ def _attribution_score(text: str) -> float:
 
     attr_per_100 = attr_count / max(word_count / 100, 1)
     # High attribution = low score (factual)
-    # 0 attributions = 80, 3+ per 100 words = 0
-    raw = 80.0 - attr_per_100 * 25.0
+    # Fix: floor lowered from 80 to 50 — the old 80-point starting value
+    # inflated opinion scores for straight news with no attribution phrases,
+    # pushing Reporting/Analysis boundary articles ~30 pts too high.
+    # 0 attributions = 50, 2 per 100 words = 0; 3+ = 0 (clamped). (Priority 2 fix)
+    raw = 50.0 - attr_per_100 * 25.0
     return max(0.0, min(100.0, raw))
 
 

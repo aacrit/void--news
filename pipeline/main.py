@@ -97,6 +97,18 @@ _US_DOMESTIC_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# ---------------------------------------------------------------------------
+# Country-to-edition mapping for multi-edition support
+# Sources from these countries are routed to their respective editions.
+# All other countries route to "world" edition.
+# ---------------------------------------------------------------------------
+_COUNTRY_EDITION_MAP: dict[str, str] = {
+    "US": "us",
+    "IN": "india",
+    "NP": "nepal",
+    "DE": "germany",
+}
+
 
 def _has_us_domestic_signal(article_data: dict) -> bool:
     """
@@ -138,8 +150,13 @@ def compute_confidence(article: dict, scores: dict) -> float:
     # 100 words = 0.2, 300 = 0.6, 500+ = 1.0
     length_conf = min(1.0, word_count / 500.0) if word_count > 0 else 0.1
 
-    # Text availability: no full text means analysis ran on title/summary only
-    text_conf = 1.0 if len(full_text) > 200 else (0.5 if full_text else 0.1)
+    # Text availability: smooth ramp instead of a binary cliff.
+    # Old formula (1.0 / 0.5 / 0.1) created a confidence step-function that
+    # undervalued 201-999-char articles and overvalued 200-char ones equally.
+    # New formula: confidence scales linearly from 0.1 (no text) to 1.0 at
+    # 1000+ chars, giving proportional credit to summaries and partial text.
+    # (Priority 5 fix)
+    text_conf = min(1.0, max(0.1, len(full_text) / 1000.0)) if full_text else 0.1
 
     # Signal strength: how many axes deviated from defaults
     defaults = {
@@ -703,19 +720,18 @@ def _scrape_single(article_data, source_map):
             article_data["full_text"] = f"{title}\n\n{summary}"
             article_data["word_count"] = len(article_data["full_text"].split())
 
-    # Determine section — use source_slug (always the slug string) for lookup
+    # Determine section (edition) — route by source country first,
+    # then fall back to content-based detection for US stories.
     source_slug = article_data.get("source_slug", "") or article_data.get("source_id", "")
     source_info = source_map.get(source_slug, {})
-    source_tier = source_info.get("tier", "")
     source_country = source_info.get("country", "")
-    if source_tier == "us_major":
-        article_data["section"] = "us"
-    elif source_country == "US" and source_tier == "independent":
-        article_data["section"] = "us"
+
+    if source_country in _COUNTRY_EDITION_MAP:
+        # Country-specific edition: US, India, Nepal, Germany
+        article_data["section"] = _COUNTRY_EDITION_MAP[source_country]
     elif _has_us_domestic_signal(article_data):
-        # Content-based override: international/unknown-tier sources covering
-        # clearly US domestic stories (e.g., BBC covering AIPAC, Rand Paul,
-        # Evanston Mayor) should appear in the US section.
+        # Content-based override: international sources covering clearly
+        # US domestic stories should appear in the US edition.
         article_data["section"] = "us"
     else:
         article_data["section"] = "world"
@@ -1044,41 +1060,16 @@ def main():
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
 
-        # Step 6 post-process: detect and wrap orphaned articles.
-        # Articles that had empty documents (no title/text) are silently
-        # dropped by cluster_stories() before TF-IDF vectorization.
-        # These articles have been stored with bias scores but are invisible
-        # to the frontend (no cluster_articles row). Wrap each orphan in its
-        # own single-article cluster so it appears in the feed.
-        clustered_article_ids: set[str] = set()
-        for c in clusters:
-            for aid in c.get("article_ids", []):
-                if aid:
-                    clustered_article_ids.add(aid)
-
-        orphan_articles = [
-            a for a in stored_articles
-            if a.get("id") and a["id"] not in clustered_article_ids
-        ]
-        if orphan_articles:
-            print(f"  Orphaned articles (no cluster): {len(orphan_articles)} — wrapping in solo clusters")
-            for orphan in orphan_articles:
-                art_id = orphan.get("id", "")
-                # Build a minimal single-article cluster identical to what
-                # cluster_stories() returns for a 1-article input.
-                source_id = orphan.get("source_id", "")
-                solo_cluster = {
-                    "title": orphan.get("title") or "Developing Story",
-                    "summary": orphan.get("summary") or orphan.get("title") or "",
-                    "article_ids": [art_id],
-                    "source_ids": [source_id],
-                    "source_count": 1,
-                    "section": orphan.get("section", "world"),
-                    "first_published": orphan.get("published_at", ""),
-                    "articles": [orphan],
-                }
-                clusters.append(solo_cluster)
-            print(f"  Clusters after orphan wrap: {len(clusters)}")
+        # Step 6 post-process: skip single-source orphan wrapping.
+        # Single-article stories are omitted from the DB — only clusters
+        # with 2+ sources provide meaningful multi-perspective value.
+        # Orphaned articles (not in any cluster) remain in the articles
+        # table with bias scores but are not surfaced in the frontend feed.
+        pre_filter = len(clusters)
+        clusters = [c for c in clusters if c.get("source_count", len(c.get("article_ids", []))) >= 2]
+        dropped = pre_filter - len(clusters)
+        if dropped:
+            print(f"  Dropped {dropped} single-source clusters (2+ sources required for feed)")
 
         # Step 6b: Re-run framing analysis with cluster context
         # Framing's omission detection benefits from knowing what other
@@ -1199,15 +1190,33 @@ def main():
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
-            # Categorize
+            # Categorize — use up to 3 articles for more reliable classification.
+            # The old approach used only the first article, which could be a
+            # brief wire bulletin that miscategorizes the whole cluster.
             try:
-                categories = categorize_article(cluster_articles_list[0]) if cluster_articles_list else ["politics"]
-                cluster["category"] = categories[0] if categories else "politics"
-                # Store all categories for each article in the cluster
+                cat_votes: dict[str, int] = {}
+                sample = cluster_articles_list[:3] if cluster_articles_list else []
+                all_categories: list[str] = []
+                for art in sample:
+                    cats = categorize_article(art)
+                    for cat in cats:
+                        cat_votes[cat] = cat_votes.get(cat, 0) + 1
+                    if not all_categories:
+                        all_categories = cats
+                # Pick the category with the most votes across sampled articles
+                if cat_votes:
+                    best_cat = max(cat_votes, key=cat_votes.get)
+                    cluster["category"] = best_cat
+                    if best_cat not in all_categories:
+                        all_categories.insert(0, best_cat)
+                else:
+                    cluster["category"] = "politics"
+                    all_categories = ["politics"]
+                # Store categories for each article in the cluster
                 for art in cluster_articles_list:
                     art_id = art.get("id", "")
                     if art_id:
-                        article_categories_map[art_id] = categories
+                        article_categories_map[art_id] = all_categories
             except Exception:
                 cluster["category"] = "politics"
 
@@ -1227,10 +1236,23 @@ def main():
                 avg_opinion = 25.0
             cluster["content_type"] = "opinion" if avg_opinion > 50 else "reporting"
 
-            # Rank with v2 engine (7 signals + divergence)
+            # Compute cluster confidence: 25th-percentile confidence across
+            # articles. Using p25 instead of min() so one bad article doesn't
+            # tank an otherwise well-analyzed cluster.
+            cluster_confidence = 1.0
+            if cluster_bias_scores:
+                conf_values = sorted(
+                    bs.get("confidence", 0.5) for bs in cluster_bias_scores
+                )
+                if conf_values:
+                    p25_idx = max(0, len(conf_values) // 4)
+                    cluster_confidence = conf_values[p25_idx]
+
+            # Rank with v3 engine (9 signals + confidence multiplier)
             try:
                 rank_result = rank_importance(
-                    cluster_articles_list, sources, cluster_bias_scores
+                    cluster_articles_list, sources, cluster_bias_scores,
+                    cluster_confidence=cluster_confidence,
                 )
                 cluster["importance_score"] = rank_result["importance_score"]
                 cluster["divergence_score"] = rank_result["divergence_score"]
@@ -1245,19 +1267,78 @@ def main():
 
         # Rank separately within each content_type so opinion #1 doesn't
         # compete with facts #1 for headline_rank position.
+        #
+        # IMPORTANT: We no longer collapse ranks linearly to 0-100. The old
+        # approach mapped position 1 → 100, last position → 0 regardless of
+        # raw score, destroying inter-run comparability (a weak news day and
+        # a strong news day would both produce a "100" lead story).
+        #
+        # New approach: sort by raw score, then apply a soft floor so the
+        # worst story in a pool never falls below 5, while the top story
+        # retains its raw score. This preserves absolute score meaning and
+        # allows downstream comparison across runs.
+        #
+        #   floor = 5.0
+        #   rescaled = floor + raw_score * (100 - floor) / 100
+        #           = 5 + raw_score * 0.95
+        #
+        # A raw score of 70 → 71.5 (nearly unchanged at the top).
+        # A raw score of 20 → 24.0 (floor lifted slightly).
+        # The ordering is preserved; the spread is preserved.
         for ctype in ("reporting", "opinion"):
             pool = [c for c in clusters if c.get("content_type") == ctype]
             pool.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
-            # Re-assign ranks within pool (normalize to 0-100 within type)
-            for i, c in enumerate(pool):
-                if len(pool) > 1:
-                    c["headline_rank"] = round(
-                        100.0 * (1.0 - i / (len(pool) - 1)), 2
-                    )
-                else:
-                    c["headline_rank"] = 100.0
+            for c in pool:
+                raw = max(0.0, min(100.0, c.get("headline_rank", 0)))
+                c["headline_rank"] = round(5.0 + raw * 0.95, 2)
 
         clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+
+        # Topic diversity re-ranking: prevent any single category from
+        # dominating the top of the feed. Within each content_type pool,
+        # demote stories that would put >3 of the same category in the top 10.
+        # Algorithm: walk the ranked list in order; when a story would exceed
+        # the category cap, skip it and try the next one. Skipped stories are
+        # re-inserted after position TOP_N in their original order.
+        for ctype in ("reporting", "opinion"):
+            pool = [c for c in clusters if c.get("content_type") == ctype]
+            if len(pool) <= 10:
+                continue
+            MAX_SAME_CAT = 3
+            TOP_N = 10
+            promoted: list[dict] = []
+            deferred: list[dict] = []
+            cat_counts: dict[str, int] = {}
+
+            for c in pool:
+                if len(promoted) >= TOP_N:
+                    deferred.append(c)
+                    continue
+                cat = c.get("category", "general")
+                if cat_counts.get(cat, 0) < MAX_SAME_CAT:
+                    promoted.append(c)
+                    cat_counts[cat] = cat_counts.get(cat, 0) + 1
+                else:
+                    deferred.append(c)
+
+            # If we couldn't fill TOP_N due to all categories being capped,
+            # pull from deferred in original rank order.
+            while len(promoted) < TOP_N and deferred:
+                promoted.append(deferred.pop(0))
+
+            # Write back headline_rank to reflect new positions.
+            # Top item keeps its raw score; demoted items get a small penalty
+            # so the DB sort order matches our diversity-adjusted order.
+            final_order = promoted + deferred
+            if final_order:
+                top_rank = final_order[0].get("headline_rank", 100.0)
+                for i, c in enumerate(final_order):
+                    # Preserve original rank for items outside TOP_N
+                    if i < TOP_N:
+                        # Gentle monotonic decrease within top N
+                        c["headline_rank"] = round(
+                            top_rank - (i * 0.01), 2
+                        )
 
         # Step 8: Store clusters with enrichment data
         print("\n[8/9] Storing clusters with enrichment data...")
@@ -1268,21 +1349,15 @@ def main():
         for ci, cluster in enumerate(clusters):
             cluster_articles_list = cluster.get("articles", [])
 
-            # Determine cluster section from its articles.
-            # Strategy: if any article was assigned "us" section (meaning it
-            # came from a us_major source, a US independent, or matched US
-            # domestic content patterns), the cluster is a US story — even if
-            # more international sources are covering it. This prevents US
-            # domestic stories from falling under "world" just because more
-            # international outlets picked up the story.
+            # Determine cluster section (edition) from its articles.
+            # Strategy: majority vote — whichever edition has the most
+            # articles in this cluster determines the cluster's edition.
+            # This works fairly across all 5 editions (world/us/india/nepal/germany).
             section_counts: dict[str, int] = {}
             for art in cluster_articles_list:
                 sec = art.get("section", "world")
                 section_counts[sec] = section_counts.get(sec, 0) + 1
-            if section_counts.get("us", 0) > 0:
-                cluster_section = "us"
-            else:
-                cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
+            cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
             # Use pre-generated summary from clustering or Gemini step
             cluster_summary = cluster.get("summary", "") or ""
@@ -1336,11 +1411,26 @@ def main():
         # Enrich clusters with aggregated bias data (Step 9)
         # For Gemini-enriched clusters, only run numeric aggregation (RPC),
         # skip rule-based consensus/divergence text generation.
-        for cluster_id in cluster_ids_to_enrich:
-            if cluster_id in gemini_enriched_ids:
-                enrich_cluster(cluster_id, skip_text=True)
-            else:
-                enrich_cluster(cluster_id)
+        # Run enrichment in parallel (8 workers) — each call is an independent
+        # Supabase RPC + optional text generation with no shared state.
+        # This reduces N*~150ms sequential RPCs to ceil(N/8)*~150ms.
+        if cluster_ids_to_enrich:
+            print(f"  Enriching {len(cluster_ids_to_enrich)} clusters (parallel, 8 workers)...")
+            with ThreadPoolExecutor(max_workers=8) as enrich_executor:
+                enrich_futures = {
+                    enrich_executor.submit(
+                        enrich_cluster,
+                        cluster_id,
+                        cluster_id in gemini_enriched_ids,
+                    ): cluster_id
+                    for cluster_id in cluster_ids_to_enrich
+                }
+                for future in as_completed(enrich_futures):
+                    try:
+                        future.result()
+                    except Exception as enrich_err:
+                        cid = enrich_futures[future]
+                        print(f"  [warn] Enrichment failed for {cid}: {enrich_err}")
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
@@ -1444,18 +1534,33 @@ def main():
         if truncation_rows:
             # Direct UPDATE (not upsert) — rows already exist; upsert with only
             # {id, full_text} triggers an INSERT that violates NOT NULL on source_id.
+            # Parallelise individual UPDATE calls (8 workers) — each is an
+            # independent HTTP request with no ordering dependency.
             truncated_count = 0
-            for i in range(0, len(truncation_rows), 200):
-                chunk = truncation_rows[i:i + 200]
-                for row in chunk:
-                    try:
-                        supabase.table("articles").update(
-                            {"full_text": row["full_text"]}
-                        ).eq("id", row["id"]).execute()
+            failed_count = 0
+
+            def _truncate_one(row: dict) -> bool:
+                try:
+                    supabase.table("articles").update(
+                        {"full_text": row["full_text"]}
+                    ).eq("id", row["id"]).execute()
+                    return True
+                except Exception:
+                    return False
+
+            with ThreadPoolExecutor(max_workers=8) as trunc_executor:
+                trunc_futures = {
+                    trunc_executor.submit(_truncate_one, row): row
+                    for row in truncation_rows
+                }
+                for future in as_completed(trunc_futures):
+                    if future.result():
                         truncated_count += 1
-                    except Exception as trunc_err:
-                        print(f"  [warn] Truncation update failed for {row['id']}: {trunc_err}")
-            print(f"  Truncated {truncated_count} articles to 300-char excerpts")
+                    else:
+                        failed_count += 1
+
+            print(f"  Truncated {truncated_count} articles to 300-char excerpts"
+                  + (f" ({failed_count} failed)" if failed_count else ""))
         else:
             print("  No articles needed truncation")
     except Exception as e:

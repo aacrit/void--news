@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import type { Section } from "../lib/types";
+import type { Edition } from "../lib/types";
+import { EDITIONS } from "../lib/types";
 import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
@@ -10,16 +11,15 @@ import LogoFull from "./LogoFull";
 export type ViewMode = "facts" | "opinion";
 
 interface NavBarProps {
-  activeSection: Section;
-  onSectionChange: (section: Section) => void;
+  activeEdition: Edition;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
 }
 
 /* ---------------------------------------------------------------------------
    NavBar — Newspaper masthead
-   Desktop: LogoFull (36px) + full dateline, section tabs, theme toggle
-   Mobile:  LogoFull (22px) + edition/date, bottom nav for sections
+   Desktop: LogoFull (36px) + full dateline, edition tabs, theme toggle
+   Mobile:  LogoFull (22px) + edition/date, bottom nav for editions
    --------------------------------------------------------------------------- */
 
 function getEditionLabel(): string {
@@ -43,7 +43,20 @@ function formatDateCompact(): string {
   });
 }
 
-export default function NavBar({ activeSection, onSectionChange, viewMode, onViewModeChange }: NavBarProps) {
+function getEditionHref(slug: Edition): string {
+  if (slug === "world") return "/";
+  return `/${slug}`;
+}
+
+function EditionIcon({ slug, size }: { slug: Edition; size: number }) {
+  if (slug === "world") return <Globe size={size} weight="light" aria-hidden="true" />;
+  if (slug === "us") return <Flag size={size} weight="light" aria-hidden="true" />;
+  return null;
+}
+
+export default function NavBar({ activeEdition, viewMode, onViewModeChange }: NavBarProps) {
+  const activeEditionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
+
   return (
     <>
       <header className="nav-header">
@@ -60,36 +73,34 @@ export default function NavBar({ activeSection, onSectionChange, viewMode, onVie
               </span>
             </Link>
 
-            {/* Dateline — newspaper date + edition */}
+            {/* Dateline — edition name + time of day + date */}
             <span className="nav-dateline">
               {/* Desktop: full edition + date */}
               <span className="nav-dateline__full">
-                {getEditionLabel()} &middot; {formatDateFull()}
+                {activeEditionMeta.label} Edition &middot; {getEditionLabel()} &middot; {formatDateFull()}
               </span>
               {/* Mobile: edition + compact date */}
               <span className="nav-dateline__medium">
-                {getEditionLabel()} &middot; {formatDateCompact()}
+                {activeEditionMeta.label} Edition &middot; {formatDateCompact()}
               </span>
             </span>
           </div>
 
-          <div className="nav-tabs">
-            {(["world", "us"] as Section[]).map((section) => (
-              <button
-                key={section}
-                onClick={() => onSectionChange(section)}
-                aria-current={activeSection === section ? "page" : undefined}
-                className={`nav-tab${activeSection === section ? " nav-tab--active" : ""}`}
+          <div className="nav-tabs" role="tablist" aria-label="Edition selector">
+            {EDITIONS.map((edition) => (
+              <Link
+                key={edition.slug}
+                href={getEditionHref(edition.slug)}
+                role="tab"
+                aria-selected={activeEdition === edition.slug}
+                aria-current={activeEdition === edition.slug ? "page" : undefined}
+                className={`nav-tab${activeEdition === edition.slug ? " nav-tab--active" : ""}`}
               >
                 <span className="nav-tab__inner">
-                  {section === "world" ? (
-                    <Globe size={14} weight="light" aria-hidden="true" />
-                  ) : (
-                    <Flag size={14} weight="light" aria-hidden="true" />
-                  )}
-                  {section === "world" ? "World" : "US"}
+                  <EditionIcon slug={edition.slug} size={14} />
+                  {edition.label}
                 </span>
-              </button>
+              </Link>
             ))}
 
             {/* Section divider */}
@@ -125,24 +136,20 @@ export default function NavBar({ activeSection, onSectionChange, viewMode, onVie
         </nav>
       </header>
 
-      {/* Mobile bottom nav */}
-      <nav className="nav-bottom" aria-label="Section navigation">
-        {(["world", "us"] as Section[]).map((section) => (
-          <button
-            key={`mobile-${section}`}
-            onClick={() => onSectionChange(section)}
-            aria-pressed={activeSection === section}
-            className={`nav-bottom-tab${activeSection === section ? " nav-bottom-tab--active" : ""}`}
+      {/* Mobile bottom nav — all 5 editions */}
+      <nav className="nav-bottom" aria-label="Edition navigation">
+        {EDITIONS.map((edition) => (
+          <Link
+            key={`mobile-${edition.slug}`}
+            href={getEditionHref(edition.slug)}
+            aria-current={activeEdition === edition.slug ? "page" : undefined}
+            className={`nav-bottom-tab${activeEdition === edition.slug ? " nav-bottom-tab--active" : ""}`}
           >
             <span className="nav-tab__inner">
-              {section === "world" ? (
-                <Globe size={18} weight="light" aria-hidden="true" />
-              ) : (
-                <Flag size={18} weight="light" aria-hidden="true" />
-              )}
-              {section === "world" ? "World" : "US"}
+              <EditionIcon slug={edition.slug} size={18} />
+              {edition.label}
             </span>
-          </button>
+          </Link>
         ))}
       </nav>
     </>

@@ -89,6 +89,13 @@ LEFT_KEYWORDS: dict[str, int] = {
     # Community
     "community organizing": 2, "grassroots": 1, "solidarity": 1,
     "mutual aid": 2, "collective action": 2, "people power": 2,
+    # Additional high-value terms (Priority 3b fix — closing lexicon gap)
+    "critical race theory": 3,     # appears in left rebuttal framing
+    "student debt forgiveness": 2,
+    "student loan relief": 2,
+    "gentrification": 2,
+    "housing justice": 2,
+    "food insecurity": 2,
 }
 
 RIGHT_KEYWORDS: dict[str, int] = {
@@ -158,6 +165,15 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "progressive agenda": 2, "culture war": 1,
     # Patriotism
     "taxpayer": 1, "patriot": 2, "patriotic": 1,
+    # Additional high-value terms (Priority 3b fix — closing lexicon gap)
+    # NOTE: bare "globalists" intentionally excluded — phrase-scoped only to
+    # avoid false positives in international finance/trade coverage.
+    "globalist agenda": 3,
+    "globalist elite": 3,
+    "transgenderism": 2,
+    "medical freedom": 2,
+    "parental rights": 2,
+    "america first": 2,
 }
 
 # ---------------------------------------------------------------------------
@@ -165,19 +181,31 @@ RIGHT_KEYWORDS: dict[str, int] = {
 # ---------------------------------------------------------------------------
 FRAMING_PHRASES: list[tuple[str, float]] = [
     # Left-leaning framing (negative shift = toward left)
+    # Weights raised on strongest ideological markers to match right-side
+    # phrase weights (e.g. "far-left" = 0.8, "liberal media" = 0.8).
+    # Rebalanced per bias-auditor Priority 3a fix.
     ("advocates argue", -0.3), ("critics of the administration", -0.3),
-    ("reproductive freedom", -0.5), ("voting access", -0.3),
+    ("reproductive freedom", -0.8),   # raised from -0.5 (Priority 3a)
+    ("voting access", -0.3),
     ("gun violence prevention", -0.4), ("common sense reform", -0.3),
     ("communities of color", -0.3), ("people of color", -0.2),
     ("working families", -0.3), ("corporate interests", -0.4),
     ("the most vulnerable", -0.3), ("safety net", -0.2),
     ("access to healthcare", -0.3), ("climate science", -0.2),
     ("experts warn", -0.2), ("studies show", -0.1),
-    ("assault-style weapon", -0.5), ("weapons of war", -0.5),
+    ("assault-style weapon", -0.8),   # raised from -0.5 (Priority 3a)
+    ("weapons of war", -0.5),
     ("crisis at the border", -0.1),  # neutral-ish but used left
     ("undocumented immigrant", -0.3),
-    ("threat to democracy", -0.5), ("democratic norms", -0.3),
-    ("power grab", -0.3), ("erosion of rights", -0.3),
+    ("threat to democracy", -0.8),   # raised from -0.5 (Priority 3a)
+    ("democratic norms", -0.3),
+    ("power grab", -0.7),             # raised from -0.3 (Priority 3a)
+    ("erosion of rights", -0.7),      # raised from -0.3 (Priority 3a)
+    # New left framing phrases — added to match right-side phrase count (Priority 3c)
+    ("corporate capture", -0.5),
+    ("voter intimidation", -0.5),
+    ("book banning", -0.5),
+    ("forced birth", -0.7),
     # Right-leaning framing (positive shift = toward right)
     ("critics say", 0.3), ("some argue", 0.1), ("many believe", 0.1),
     ("radical", 0.5), ("far-left", 0.8), ("extremist left", 0.8),

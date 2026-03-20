@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" fill="none">
+  <!--
+    void --news — Twitter Card Image (1024x512)
+    Minimal. Dark background. Void circle mark centered with wordmark.
+    Clean enough to work at small sizes in Twitter feed.
+  -->
+
+  <!-- Background — dark walnut -->
+  <rect width="1024" height="512" fill="#1C1A17"/>
+
+  <!-- Subtle grain -->
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch"/>
+  </filter>
+  <rect width="1024" height="512" filter="url(#grain)" opacity="0.05"/>
+
+  <!-- Top double rule -->
+  <line x1="100" y1="60" x2="924" y2="60" stroke="#4A4540" stroke-width="1"/>
+  <line x1="100" y1="64" x2="924" y2="64" stroke="#4A4540" stroke-width="2.5"/>
+
+  <!-- Void circle + scale mark (centered, prominent) -->
+  <g transform="translate(430, 95)" stroke="#EDE8E0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Void circle -->
+    <circle cx="82" cy="60" r="42"/>
+    <!-- Beam -->
+    <line x1="18" y1="60" x2="146" y2="60"/>
+    <!-- Left tick -->
+    <line x1="28" y1="51" x2="28" y2="69"/>
+    <!-- Right tick -->
+    <line x1="136" y1="51" x2="136" y2="69"/>
+    <!-- Post -->
+    <line x1="82" y1="102" x2="82" y2="132"/>
+    <!-- Base -->
+    <line x1="63" y1="132" x2="101" y2="132"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="360" y="310" fill="#EDE8E0"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="60" font-weight="700" letter-spacing="0.02em">
+    void
+  </text>
+  <text x="560" y="310" fill="#8A8278"
+        font-family="'JetBrains Mono', Menlo, Consolas, monospace"
+        font-size="46" font-weight="400" letter-spacing="0.02em">
+    --news
+  </text>
+
+  <!-- Tagline -->
+  <text x="512" y="370" text-anchor="middle" fill="#B8B0A5"
+        font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
+        font-size="20" font-weight="400" letter-spacing="0.04em">
+    See every side of the story
+  </text>
+
+  <!-- Small bias spectrum dots -->
+  <g transform="translate(387, 410)">
+    <circle cx="0" cy="0" r="6" fill="#3B82F6"/>
+    <circle cx="60" cy="0" r="6" fill="#60A5FA"/>
+    <circle cx="120" cy="0" r="6" fill="#9CA3AF"/>
+    <circle cx="180" cy="0" r="6" fill="#F97316"/>
+    <circle cx="240" cy="0" r="6" fill="#EF4444"/>
+    <!-- Connecting line -->
+    <line x1="6" y1="0" x2="54" y2="0" stroke="#3A3530" stroke-width="1.5"/>
+    <line x1="66" y1="0" x2="114" y2="0" stroke="#3A3530" stroke-width="1.5"/>
+    <line x1="126" y1="0" x2="174" y2="0" stroke="#3A3530" stroke-width="1.5"/>
+    <line x1="186" y1="0" x2="234" y2="0" stroke="#3A3530" stroke-width="1.5"/>
+  </g>
+
+  <!-- Bottom rule -->
+  <line x1="100" y1="452" x2="924" y2="452" stroke="#4A4540" stroke-width="1"/>
+
+  <!-- Footer -->
+  <text x="512" y="480" text-anchor="middle" fill="#5A5550"
+        font-family="'JetBrains Mono', Menlo, monospace" font-size="12" letter-spacing="0.06em">
+    200 SOURCES  ·  6-AXIS BIAS ANALYSIS  ·  FREE
+  </text>
+</svg>
