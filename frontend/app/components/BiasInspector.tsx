@@ -200,7 +200,7 @@ function DensityChart({ superlative, urgency, hyperbole, measured }: DensityChar
           </div>
           <span className="bi-density-chart__label">{label}</span>
           <span className="bi-density-chart__value" style={{ color }}>
-            {value.toFixed(1)}
+            {(value ?? 0).toFixed(1)}
           </span>
         </div>
       ))}
@@ -388,7 +388,7 @@ function LeanAxis({ score, rationale, isExpanded, onToggle, axisId }: {
                       className="bi-entity-item__value"
                       style={{ color: sentiment > 0 ? "var(--sense-low)" : sentiment < 0 ? "var(--sense-high)" : "var(--fg-muted)" }}
                     >
-                      {sentiment > 0 ? "+" : ""}{sentiment.toFixed(2)}
+                      {(sentiment ?? 0) > 0 ? "+" : ""}{(sentiment ?? 0).toFixed(2)}
                     </span>
                   </div>
                 ))}

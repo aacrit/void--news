@@ -134,11 +134,76 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           const opinionVal = (bias?.opinion_fact as number) ?? 25;
           const rigor = (bias?.factual_rigor as number) ?? 75;
 
-          // Parse rationale if available
+          // Parse rationale if available — pipeline stores snake_case keys,
+          // frontend types use camelCase, so we map here.
           let rationale: Record<string, unknown> | null = null;
           if (bias?.rationale && typeof bias.rationale === "object") {
             rationale = bias.rationale;
           }
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rawLean = rationale?.lean as any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rawOpinion = rationale?.opinion as any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rawCoverage = rationale?.coverage as any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rawSense = rationale?.sensationalism as any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rawFraming = rationale?.framing as any;
+
+          const mappedLean = rawLean ? {
+            keywordScore: rawLean.keyword_score ?? rawLean.keywordScore ?? 0,
+            framingShift: rawLean.framing_shift ?? rawLean.framingShift ?? 0,
+            entityShift: rawLean.entity_shift ?? rawLean.entityShift ?? 0,
+            sourceBaseline: rawLean.source_baseline ?? rawLean.sourceBaseline ?? 50,
+            topLeftKeywords: rawLean.top_left_keywords ?? rawLean.topLeftKeywords ?? [],
+            topRightKeywords: rawLean.top_right_keywords ?? rawLean.topRightKeywords ?? [],
+            framingPhrasesFound: rawLean.framing_phrases_found ?? rawLean.framingPhrasesFound ?? [],
+            entitySentiments: rawLean.entity_sentiments ?? rawLean.entitySentiments ?? {},
+          } : undefined;
+
+          const mappedOpinion = rawOpinion ? {
+            pronounScore: rawOpinion.pronoun_score ?? rawOpinion.pronounScore ?? 0,
+            subjectivityScore: rawOpinion.subjectivity_score ?? rawOpinion.subjectivityScore ?? 0,
+            modalScore: rawOpinion.modal_score ?? rawOpinion.modalScore ?? 0,
+            hedgingScore: rawOpinion.hedging_score ?? rawOpinion.hedgingScore ?? 0,
+            attributionScore: rawOpinion.attribution_score ?? rawOpinion.attributionScore ?? 0,
+            metadataScore: rawOpinion.metadata_score ?? rawOpinion.metadataScore ?? 0,
+            rhetoricalScore: rawOpinion.rhetorical_score ?? rawOpinion.rhetoricalScore ?? 0,
+            valueJudgmentScore: rawOpinion.value_judgment_score ?? rawOpinion.valueJudgmentScore ?? 0,
+            classification: rawOpinion.classification ?? "Reporting",
+            dominantSignals: rawOpinion.dominant_signals ?? rawOpinion.dominantSignals ?? [],
+          } : undefined;
+
+          const mappedCoverage = rawCoverage ? {
+            factualRigor: rawCoverage.factual_rigor ?? rawCoverage.factualRigor ?? 0,
+            namedSourcesCount: rawCoverage.named_sources_count ?? rawCoverage.namedSourcesCount ?? 0,
+            orgCitationsCount: rawCoverage.org_citations_count ?? rawCoverage.orgCitationsCount ?? 0,
+            dataPointsCount: rawCoverage.data_points_count ?? rawCoverage.dataPointsCount ?? 0,
+            directQuotesCount: rawCoverage.direct_quotes_count ?? rawCoverage.directQuotesCount ?? 0,
+            vagueSourcesCount: rawCoverage.vague_sources_count ?? rawCoverage.vagueSourcesCount ?? 0,
+            specificityRatio: rawCoverage.specificity_ratio ?? rawCoverage.specificityRatio ?? 0,
+          } : undefined;
+
+          const mappedSense = rawSense ? {
+            headlineScore: rawSense.headline_score ?? rawSense.headlineScore ?? 0,
+            bodyScore: rawSense.body_score ?? rawSense.bodyScore ?? 0,
+            clickbaitSignals: rawSense.clickbait_signals ?? rawSense.clickbaitSignals ?? 0,
+            superlativeDensity: rawSense.superlative_density ?? rawSense.superlativeDensity ?? 0,
+            urgencyDensity: rawSense.urgency_density ?? rawSense.urgencyDensity ?? 0,
+            hyperboleDensity: rawSense.hyperbole_density ?? rawSense.hyperboleDensity ?? 0,
+            measuredDensity: rawSense.measured_density ?? rawSense.measuredDensity ?? 0,
+          } : undefined;
+
+          const mappedFraming = rawFraming ? {
+            connotationScore: rawFraming.connotation_score ?? rawFraming.connotationScore ?? 0,
+            keywordEmphasisScore: rawFraming.keyword_emphasis_score ?? rawFraming.keywordEmphasisScore ?? 0,
+            omissionScore: rawFraming.omission_score ?? rawFraming.omissionScore ?? 0,
+            headlineBodyDivergence: rawFraming.headline_body_divergence ?? rawFraming.headlineBodyDivergence ?? 0,
+            passiveVoiceScore: rawFraming.passive_voice_score ?? rawFraming.passiveVoiceScore ?? 0,
+            hasClusterContext: rawFraming.has_cluster_context ?? rawFraming.hasClusterContext ?? false,
+          } : undefined;
 
           // Derive opinion label
           let opinionLabel: OpinionLabel = "Reporting";
@@ -156,16 +221,11 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             sourceCount: 1,
             opinion: opinionVal,
             opinionLabel,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            leanRationale: (rationale?.lean as any) ?? undefined,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            opinionRationale: (rationale?.opinion as any) ?? undefined,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            coverageRationale: (rationale?.coverage as any) ?? undefined,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            sensationalismRationale: (rationale?.sensationalism as any) ?? undefined,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            framingRationale: (rationale?.framing as any) ?? undefined,
+            leanRationale: mappedLean,
+            opinionRationale: mappedOpinion,
+            coverageRationale: mappedCoverage,
+            sensationalismRationale: mappedSense,
+            framingRationale: mappedFraming,
           };
 
           storySourceList.push({
