@@ -255,8 +255,8 @@ h1, h2, h3 {
     --shadow-e3: 0 8px 24px rgba(0, 0, 0, 0.4);
     --accent: #EDE8E0;
     --accent-hover: #D4CCC2;
-    --wrinkle-line:    rgba(0, 0, 0, 0.08);
-    --wrinkle-dark:    rgba(0, 0, 0, 0.14);
-    --wrinkle-vignette: rgba(0, 0, 0, 0.10);
+    --wrinkle-line:    rgba(0, 0, 0, 0.18);
+    --wrinkle-dark:    rgba(0, 0, 0, 0.30);
+    --wrinkle-vignette: rgba(0, 0, 0, 0.20);
   }
 }

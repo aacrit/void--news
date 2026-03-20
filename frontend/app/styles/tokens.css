@@ -48,9 +48,9 @@
   --overlay-backdrop: rgba(28, 26, 23, 0.15);
 
   /* Wrinkle effect — fold lines and vignette (light mode: warm sepia) */
-  --wrinkle-line:    rgba(140, 120, 90, 0.06);
-  --wrinkle-dark:    rgba(140, 120, 90, 0.10);
-  --wrinkle-vignette: rgba(120, 100, 70, 0.08);
+  --wrinkle-line:    rgba(120, 100, 60, 0.15);
+  --wrinkle-dark:    rgba(120, 100, 60, 0.25);
+  --wrinkle-vignette: rgba(100, 80, 40, 0.18);
 }
 
 /* --------------------------------------------------------------------------
@@ -105,10 +105,10 @@
   /* Overlay backdrop */
   --overlay-backdrop: rgba(0, 0, 0, 0.3);
 
-  /* Wrinkle effect — fold lines and vignette (dark mode: lighter creases) */
-  --wrinkle-line:    rgba(0, 0, 0, 0.08);
-  --wrinkle-dark:    rgba(0, 0, 0, 0.14);
-  --wrinkle-vignette: rgba(0, 0, 0, 0.10);
+  /* Wrinkle effect — fold lines and vignette (dark mode: visible creases) */
+  --wrinkle-line:    rgba(0, 0, 0, 0.18);
+  --wrinkle-dark:    rgba(0, 0, 0, 0.30);
+  --wrinkle-vignette: rgba(0, 0, 0, 0.20);
 }
 
 /* --------------------------------------------------------------------------
