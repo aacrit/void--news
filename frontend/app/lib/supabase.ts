@@ -106,7 +106,7 @@ export async function fetchOpinionArticles(section: "world" | "us" | "india") {
     const chunk = articleIds.slice(i, i + 30);
     const { data: arts } = await supabase
       .from("articles")
-      .select("id, title, author, url, source_id, published_at")
+      .select("id, title, summary, full_text, author, url, source_id, published_at")
       .in("id", chunk);
     if (arts) allArticles.push(...arts);
   }
@@ -142,8 +142,9 @@ export async function fetchOpinionArticles(section: "world" | "us" | "india") {
 
     return {
       id: cluster.id as string,
-      title: cluster.title as string,
-      summary: (cluster.summary || "") as string,
+      // Prefer the original article's headline and text over cluster summary
+      title: (art?.title || cluster.title) as string,
+      summary: (art?.full_text || art?.summary || cluster.summary || "") as string,
       author: (art?.author || null) as string | null,
       url: art?.url || "" as string,
       publishedAt: (art?.published_at || cluster.first_published || "") as string,
