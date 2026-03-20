@@ -119,7 +119,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="np-section-label" role="separator">
       <hr className="np-section-label__rule-top" />
-      <p className="np-section-label__text">&starf; &ensp;{label}&ensp; &starf;</p>
+      <p className="np-section-label__text">{label}</p>
       <hr className="np-section-label__rule-bottom" />
     </div>
   );
