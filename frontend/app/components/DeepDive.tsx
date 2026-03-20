@@ -342,7 +342,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               <div className="dd-spectrum__center-tick" />
 
               {/* Source dots positioned by lean, max 3 rows */}
-              <div className="dd-spectrum__dots" style={{ height: Math.min(3, Math.max(1, ...leanPositions.map(p => p.row + 1))) * 30 + 4 }}>
+              <div className="dd-spectrum__dots" style={{ height: (leanPositions.length > 0 ? Math.min(3, Math.max(...leanPositions.map(p => p.row + 1))) : 1) * 30 + 4 }}>
                 {leanPositions.map(({ src, idx, lean, row, isOverflow }) => {
                   const favicon = faviconUrl(src.url);
                   return (
