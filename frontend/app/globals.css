@@ -90,50 +90,26 @@ body {
   font-size: var(--text-base);
   color: var(--fg-primary);
   background-color: var(--bg-primary);
-  background-image:
-    /* ── Main diagonal fold (upper-left to lower-right) ──────────── */
-    linear-gradient(
-      132deg,
-      transparent 0%,
-      transparent 38.5%,
-      var(--wrinkle-line) 39%,
-      var(--wrinkle-dark) 40%,
-      var(--wrinkle-line) 41%,
-      transparent 41.5%,
-      transparent 100%
-    ),
-    /* ── Counter fold (upper-right to lower-left) ────────────────── */
-    linear-gradient(
-      228deg,
-      transparent 0%,
-      transparent 57.5%,
-      var(--wrinkle-line) 58%,
-      var(--wrinkle-dark) 59%,
-      var(--wrinkle-line) 60%,
-      transparent 60.5%,
-      transparent 100%
-    ),
-    /* ── Horizontal center crease (newspaper half-fold) ──────────── */
-    linear-gradient(
-      180deg,
-      transparent 0%,
-      transparent 46%,
-      var(--wrinkle-line) 47.5%,
-      var(--wrinkle-dark) 50%,
-      var(--wrinkle-line) 52.5%,
-      transparent 54%,
-      transparent 100%
-    ),
-    /* ── Worn-edge vignette ──────────────────────────────────────── */
-    radial-gradient(
-      ellipse at center,
-      transparent 40%,
-      var(--wrinkle-vignette) 100%
-    );
-  background-attachment: fixed;
   transition:
     color var(--dur-morph) var(--ease-out),
     background-color var(--dur-morph) var(--ease-out);
+}
+
+/* --------------------------------------------------------------------------
+   Paper Texture — Subtle grain overlay simulating newsprint
+   -------------------------------------------------------------------------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: var(--paper-texture);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* --------------------------------------------------------------------------
@@ -239,8 +215,6 @@ h1, h2, h3 {
     --shadow-e3: 0 8px 24px rgba(0, 0, 0, 0.4);
     --accent: #EDE8E0;
     --accent-hover: #D4CCC2;
-    --wrinkle-line:    rgba(0, 0, 0, 0.18);
-    --wrinkle-dark:    rgba(0, 0, 0, 0.30);
-    --wrinkle-vignette: rgba(0, 0, 0, 0.20);
+    --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
   }
 }
