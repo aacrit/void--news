@@ -110,6 +110,11 @@
     font-size: var(--text-lg);
   }
 
+  /* Compact summaries: 4 lines */
+  .grid-compact .story-card__summary {
+    -webkit-line-clamp: 4;
+  }
+
   /* Deep Dive: side panel from right */
   .deep-dive-panel {
     left: auto;
@@ -185,18 +190,9 @@
     display: block;
   }
 
-  /* Dateline: show edition + compact date, hide full weekday date */
-  .nav-dateline__full {
+  /* Dateline row: hidden entirely on mobile — nav is already compact */
+  .nav-dateline-row {
     display: none;
-  }
-
-  .nav-dateline__medium {
-    display: inline;
-  }
-
-  .nav-dateline {
-    border-left: none;
-    padding-left: 0;
   }
 
   /* Tighter nav inner padding + gap to fit logo + edition on one row */
@@ -217,6 +213,13 @@
     padding: var(--space-3) var(--space-2);
     min-height: 48px;
     min-width: 0;
+  }
+
+  /* Filter toggle — full touch target on mobile */
+  .filter-toggle {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    margin-top: var(--space-2);
   }
 
   /* === LAYOUT === */
@@ -278,7 +281,7 @@
 
   .story-card__summary {
     margin-bottom: var(--space-2);
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
   }
 
   /* [CRITICAL-5] Reserve space for Sigil to prevent layout shift */
@@ -372,5 +375,11 @@
   /* Hide filter chip icons on ultra-narrow to save space */
   .filter-chip__icon {
     display: none;
+  }
+
+  /* Filter toggle — tighter on very small screens */
+  .filter-toggle {
+    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
+    padding: var(--space-2);
   }
 }
