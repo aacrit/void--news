@@ -11,7 +11,7 @@ import type {
 } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
-   BiasInspector — "Score breakdown" pop-out panel
+   BiasInspector — "Press Analysis" pop-out panel
 
    Secondary panel that slides out from the Deep Dive panel. Shows cluster-
    level aggregate bias scores (averaged across all sources in the cluster)
@@ -1063,7 +1063,7 @@ export function BiasInspectorTrigger({
     <button
       className="bi-trigger"
       onClick={onClick}
-      aria-label="Open score breakdown panel"
+      aria-label="Open press analysis panel"
       aria-haspopup="dialog"
     >
       <div className="bi-trigger__dots" aria-hidden="true">
@@ -1072,7 +1072,7 @@ export function BiasInspectorTrigger({
         <ScoreDot color={getRigorColor(rigorAvg)} />
         <ScoreDot color={getFramingColor(framingAvg)} />
       </div>
-      <span className="bi-trigger__label">Score breakdown</span>
+      <span className="bi-trigger__label">Press Analysis</span>
       <svg
         className="bi-trigger__arrow"
         width="12"
@@ -1193,7 +1193,7 @@ export function BiasInspectorPanel({
   const slideTransform = isOpen
     ? "translate(0, 0)"
     : isDesktop
-      ? "translateX(-100%)"
+      ? "translateX(100%)"
       : "translateY(100%)";
 
   return (
@@ -1230,7 +1230,7 @@ export function BiasInspectorPanel({
           >
             <div>
               <h3 id={headingId} className="bi-panel__title">
-                Score breakdown
+                Press Analysis
               </h3>
               <p className="bi-panel__subtitle">
                 Cluster average across {sources.length}{" "}
@@ -1240,7 +1240,7 @@ export function BiasInspectorPanel({
             <button
               className="bi-panel__close"
               onClick={onClose}
-              aria-label="Close score breakdown"
+              aria-label="Close press analysis"
             >
               <X size={18} weight="regular" aria-hidden="true" />
             </button>

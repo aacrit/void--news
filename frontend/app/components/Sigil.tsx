@@ -380,7 +380,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
               width: 11, height: 11, borderRadius: "50%", backgroundColor: lc,
               transform: stage >= 2 ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
               transition: "transform 450ms var(--spring) 100ms, left 450ms var(--spring) 100ms, background-color 300ms var(--ease-out)",
-              boxShadow: `0 0 0 2.5px var(--bg-card), 0 0 10px ${lc}44`,
+              boxShadow: `0 0 0 2.5px var(--bg-card)`,
             }} />
           </div>
         </div>

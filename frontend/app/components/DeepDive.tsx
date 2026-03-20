@@ -482,6 +482,16 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               </div>
             </div>
           )}
+
+          {/* Press Analysis trigger — below source spectrum */}
+          {sources.length > 0 && (
+            <div style={{ marginTop: "var(--space-3)" }}>
+              <BiasInspectorTrigger
+                sources={sources}
+                onClick={() => setShowScorePanel(true)}
+              />
+            </div>
+          )}
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
@@ -547,25 +557,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </section>
           )}
 
-          {/* ---- Score breakdown trigger ------------------------------------- */}
-          {sources.length > 0 && (
-            <div
-              className="anim-dd-section"
-              style={{
-                marginBottom: "var(--space-5)",
-                transitionDelay: "400ms",
-                ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}),
-              }}
-            >
-              <BiasInspectorTrigger
-                sources={sources}
-                onClick={() => setShowScorePanel(true)}
-              />
-            </div>
-          )}
-
-          {/* Score breakdown pop-out panel — rendered inside the Deep Dive panel
-              so it overlays only that panel, not the full viewport */}
+          {/* Press analysis pop-out panel */}
           {sources.length > 0 && (
             <BiasInspectorPanel
               sources={sources}

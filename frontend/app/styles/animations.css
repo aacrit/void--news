@@ -191,20 +191,15 @@
 
 /* ---- Sigil — Unified Bias Indicator ------------------------------------ */
 
-/* Divergence pulse glow — faster pulse = higher disagreement.
+/* Divergence indicator — subtle border, no glow.
    Applied via .sigil--divergent on stories with agreement > 55. */
-@keyframes sigilPulse {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.06); }
-}
-
 .sigil--divergent::after {
   content: "";
   position: absolute;
-  inset: -4px;
+  inset: -3px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--sense-medium) 0%, transparent 70%);
-  animation: sigilPulse 2.4s ease-in-out infinite;
+  border: 1px solid var(--sense-medium);
+  opacity: 0.3;
   pointer-events: none;
   z-index: -1;
 }
