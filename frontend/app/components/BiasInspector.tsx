@@ -1221,6 +1221,7 @@ export function BiasInspectorPanel({
         style={{
           transform: slideTransform,
           transition: "transform 500ms var(--spring)",
+          pointerEvents: isOpen ? "auto" : "none",
         }}
       >
         {/* Header */}
