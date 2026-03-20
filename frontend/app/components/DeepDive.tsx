@@ -64,8 +64,9 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
 
-  /* ---- Compute lean spectrum positions (stack overlapping dots) ---------- */
+  /* ---- Compute lean spectrum positions (max 3 rows, overflow collapses) -- */
   const leanPositions = useMemo(() => {
+    const MAX_VISIBLE_ROWS = 3;
     const items = sources
       .map((src, idx) => ({ src, idx, lean: src.biasScores.politicalLean }))
       .sort((a, b) => a.lean - b.lean);
@@ -79,11 +80,12 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         }
       }
       placed.push({ lean: item.lean, row });
-      return { ...item, row };
+      // If row exceeds max, collapse into the last visible row (will overlap)
+      const visibleRow = Math.min(row, MAX_VISIBLE_ROWS - 1);
+      const isOverflow = row >= MAX_VISIBLE_ROWS;
+      return { ...item, row: visibleRow, isOverflow };
     });
   }, [sources]);
-
-  const spectrumMaxRow = Math.max(0, ...leanPositions.map((p) => p.row));
 
   /* ---- Detect desktop vs mobile for directional animation -------------- */
   useEffect(() => {
@@ -328,44 +330,54 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           )}
 
-          {/* Source favicons — compact row linking to original articles */}
+          {/* Source spectrum — merged lean visualization + clickable source links.
+              No section header. Favicons positioned on spectrum by lean score.
+              Max 3 rows; overflow sources overlap and expand on hover. */}
           {sources.length > 0 && (
-            <div className="dd-source-icons" style={{
-              display: "flex", flexWrap: "wrap", gap: 6,
-              marginTop: "var(--space-3)", alignItems: "center",
-            }}>
-              {sources.map((src, i) => {
-                const favicon = faviconUrl(src.url);
-                return (
-                  <a
-                    key={`${src.name}-${i}`}
-                    href={src.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={src.name}
-                    aria-label={`Read on ${src.name}`}
-                    style={{
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      width: 28, height: 28, borderRadius: "50%",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "var(--bg-card)",
-                      transition: "transform 150ms var(--ease-out), border-color 150ms",
-                    }}
-                    className="dd-source-icon"
-                  >
-                    {favicon ? (
-                      <img src={favicon} alt="" width={16} height={16} style={{ borderRadius: 2 }} loading="lazy" />
-                    ) : (
-                      <span style={{
-                        fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
-                        color: "var(--fg-tertiary)",
-                      }}>
-                        {src.name.charAt(0)}
-                      </span>
-                    )}
-                  </a>
-                );
-              })}
+            <div className="dd-spectrum" style={{ marginTop: "var(--space-4)" }}>
+              {/* Gradient track */}
+              <div className="dd-spectrum__track" />
+
+              {/* Center tick */}
+              <div className="dd-spectrum__center-tick" />
+
+              {/* Source dots positioned by lean, max 3 rows */}
+              <div className="dd-spectrum__dots" style={{ height: Math.min(3, Math.max(1, ...leanPositions.map(p => p.row + 1))) * 30 + 4 }}>
+                {leanPositions.map(({ src, idx, lean, row, isOverflow }) => {
+                  const favicon = faviconUrl(src.url);
+                  return (
+                    <a
+                      key={`${src.name}-${idx}`}
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                      aria-label={`${src.name}: ${leanLabel(lean)}`}
+                      className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                      style={{
+                        left: `${lean}%`,
+                        top: row * 30,
+                        zIndex: isOverflow ? 1 : sources.length - row,
+                      }}
+                    >
+                      {favicon ? (
+                        <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
+                      ) : (
+                        <span className="dd-spectrum__dot-initial">
+                          {src.name.charAt(0)}
+                        </span>
+                      )}
+                    </a>
+                  );
+                })}
+              </div>
+
+              {/* Axis labels */}
+              <div className="dd-spectrum__labels">
+                <span>Left</span>
+                <span>Center</span>
+                <span>Right</span>
+              </div>
             </div>
           )}
         </header>
@@ -396,88 +408,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </p>
           </section>
 
-          {/* ---- Section: Source Lean Spectrum ------------------------------ */}
-          {sources.length > 1 && (
-            <section aria-labelledby="dd-lean" style={{ marginBottom: "var(--space-6)" }}>
-              <h3 id="dd-lean" className="section-heading">How sources lean</h3>
-              <div style={{ position: "relative", padding: "var(--space-2) 0" }}>
-                {/* Gradient track */}
-                <div style={{
-                  height: 3,
-                  background: "linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right))",
-                  borderRadius: 2,
-                  opacity: 0.5,
-                }} />
-
-                {/* Center tick mark */}
-                <div style={{
-                  position: "absolute", left: "50%", top: "var(--space-2)",
-                  width: 1, height: 11,
-                  backgroundColor: "var(--fg-tertiary)", opacity: 0.4,
-                  transform: "translateX(-50%)",
-                }} />
-
-                {/* Source dots — positioned by lean score, stacked when overlapping */}
-                <div style={{
-                  position: "relative",
-                  height: (spectrumMaxRow + 1) * 28 + 4,
-                  marginTop: 8,
-                }}>
-                  {leanPositions.map(({ src, idx, lean, row }) => {
-                    const favicon = faviconUrl(src.url);
-                    return (
-                      <a
-                        key={`${src.name}-${idx}`}
-                        href={src.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                        aria-label={`${src.name}: ${leanLabel(lean)}`}
-                        className="dd-source-icon"
-                        style={{
-                          position: "absolute",
-                          left: `${lean}%`,
-                          top: row * 28,
-                          transform: "translateX(-50%)",
-                          width: 24, height: 24, borderRadius: "50%",
-                          border: "2px solid var(--bg-surface)",
-                          backgroundColor: "var(--bg-card)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                          transition: "transform 150ms var(--ease-out)",
-                          zIndex: sources.length - row,
-                        }}
-                      >
-                        {favicon ? (
-                          <img src={favicon} alt="" width={14} height={14} style={{ borderRadius: 2 }} loading="lazy" />
-                        ) : (
-                          <span style={{
-                            fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
-                            color: "var(--fg-tertiary)",
-                          }}>
-                            {src.name.charAt(0)}
-                          </span>
-                        )}
-                      </a>
-                    );
-                  })}
-                </div>
-
-                {/* Axis labels */}
-                <div style={{
-                  display: "flex", justifyContent: "space-between",
-                  fontFamily: "var(--font-data)", fontSize: "var(--text-xs)",
-                  color: "var(--fg-tertiary)", letterSpacing: "0.04em",
-                  textTransform: "uppercase" as const,
-                  marginTop: 4,
-                }}>
-                  <span>Left</span>
-                  <span>Center</span>
-                  <span>Right</span>
-                </div>
-              </div>
-            </section>
-          )}
+          {/* Source lean spectrum removed — merged into header spectrum above */}
 
           {/* ---- Section: Where sources agree ----------------------------- */}
           {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
