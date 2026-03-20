@@ -46,74 +46,31 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
   return Math.round((sourceNorm * 0.35 + 0.2 + confNorm * 0.20 + rigorNorm * 0.25) * 100);
 }
 
-// --- Datelines ---
+// --- Datelines (section-aware: US cities for US news, international for world) ---
 
-const DATELINES: Record<string, string> = {
+const US_DATELINES: Record<string, string> = {
   Politics: "WASHINGTON, D.C.",
   Economy: "NEW YORK",
-  Conflict: "INTERNATIONAL",
+  Conflict: "WASHINGTON, D.C.",
   Tech: "SAN FRANCISCO",
-  Health: "GENEVA",
-  Environment: "NAIROBI",
-  Science: "LONDON",
-  Culture: "PARIS",
-  Sports: "REUTERS",
+  Health: "WASHINGTON, D.C.",
+  Environment: "WASHINGTON, D.C.",
+  Science: "BOSTON",
+  Culture: "NEW YORK",
+  Sports: "NEW YORK",
 };
 
-// --- Bias Prose Generation ---
-
-function composeBiasNote(
-  scores: BiasScores,
-  sourceCount: number,
-  opinionLabel: OpinionLabel,
-  tierBreakdown?: Record<string, number>,
-): string {
-  const lean = scores.politicalLean;
-  const leanWord =
-    lean < 20 ? "decidedly left-leaning"
-    : lean < 35 ? "left-leaning"
-    : lean < 45 ? "slightly left of centre"
-    : lean < 55 ? "centrist"
-    : lean < 65 ? "slightly right of centre"
-    : lean < 80 ? "right-leaning"
-    : "decidedly right-leaning";
-
-  const tone = scores.sensationalism;
-  const toneWord = tone < 25 ? "measured and restrained"
-    : tone < 50 ? "measured"
-    : tone < 70 ? "elevated"
-    : "sensational";
-
-  const typeMap: Record<string, string> = {
-    Reporting: "factual reporting",
-    Analysis: "analysis and interpretation",
-    Opinion: "opinion and commentary",
-    Editorial: "editorial advocacy",
-  };
-  const typeWord = typeMap[opinionLabel] || "factual reporting";
-
-  const rigor = scores.factualRigor;
-  const sourcingWord = rigor > 75 ? "strong"
-    : rigor > 50 ? "adequate"
-    : rigor > 33 ? "moderate"
-    : "limited";
-
-  let tierPhrase = "";
-  if (tierBreakdown) {
-    const parts: string[] = [];
-    if (tierBreakdown.us_major) parts.push(`${tierBreakdown.us_major} major`);
-    if (tierBreakdown.international) parts.push(`${tierBreakdown.international} international`);
-    if (tierBreakdown.independent) parts.push(`${tierBreakdown.independent} independent`);
-    if (parts.length > 0) {
-      tierPhrase = ` (${parts.join(", ")})`;
-    }
-  }
-
-  const sourceWord = sourceCount === 1 ? "source" : "sources";
-  return `This dispatch draws from ${sourceCount} ${sourceWord}${tierPhrase}. `
-    + `Coverage leans ${leanWord}, with ${sourcingWord} sourcing and a ${toneWord} tone. `
-    + `The account is primarily ${typeWord}.`;
-}
+const WORLD_DATELINES: Record<string, string> = {
+  Politics: "LONDON",
+  Economy: "LONDON",
+  Conflict: "BEIRUT",
+  Tech: "TOKYO",
+  Health: "GENEVA",
+  Environment: "NAIROBI",
+  Science: "GENEVA",
+  Culture: "PARIS",
+  Sports: "LAUSANNE",
+};
 
 // --- Masthead ---
 
@@ -137,7 +94,7 @@ function Masthead({ lastUpdated, storyCount }: { lastUpdated: string | null; sto
       <hr className="np-masthead__motto-rule" />
       <p className="np-masthead__motto">&ldquo;All the Bias That&rsquo;s Fit to Print&rdquo;</p>
       <hr className="np-masthead__thick-rule" />
-      <h1 className="np-masthead__nameplate">void &mdash;news</h1>
+      <h1 className="np-masthead__nameplate">void --news</h1>
       <p className="np-masthead__subtitle">The Digital Broadsheet</p>
       <hr className="np-double-rule" aria-hidden="true" />
       <div className="np-masthead__info">
@@ -178,9 +135,8 @@ function Article({
   story: Story;
   size: "lead" | "primary" | "secondary";
 }) {
-  const dateline = DATELINES[story.category] || "INTERNATIONAL";
-  const consensus = story.deepDive?.consensus || [];
-  const divergence = story.deepDive?.divergence || [];
+  const datelineMap = story.section === "us" ? US_DATELINES : WORLD_DATELINES;
+  const dateline = datelineMap[story.category] || (story.section === "us" ? "WASHINGTON, D.C." : "LONDON");
 
   return (
     <article className={`np-article np-article--${size}`}>
@@ -191,39 +147,6 @@ function Article({
       <p className="np-article__summary">
         <span className="np-article__dateline">{dateline} &mdash; </span>
         {story.summary}
-      </p>
-
-      {/* Consensus & Divergence — the full detail */}
-      {consensus.length > 0 && (
-        <div className="np-consensus">
-          <p className="np-consensus__heading">Points of Agreement</p>
-          <ul className="np-consensus__list">
-            {consensus.map((point, i) => (
-              <li key={i} className="np-consensus__item">{point}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {divergence.length > 0 && (
-        <div className="np-consensus">
-          <p className="np-consensus__heading">Points of Divergence</p>
-          <ul className="np-consensus__list">
-            {divergence.map((point, i) => (
-              <li key={i} className="np-consensus__item">{point}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Press Analysis — bias as editorial prose on every article */}
-      <p className="np-press-analysis">
-        <span className="np-press-analysis__label">Press Analysis &mdash; </span>
-        {composeBiasNote(
-          story.biasScores,
-          story.source.count,
-          story.sigilData.opinionLabel,
-          story.sigilData.tierBreakdown,
-        )}
       </p>
     </article>
   );

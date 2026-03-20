@@ -9,11 +9,11 @@
    -------------------------------------------------------------------------- */
 :root,
 :root[data-mode="light"] {
-  /* Surfaces */
-  --bg-primary:    #FAF8F5;
-  --bg-secondary:  #F2EDE8;
-  --bg-card:       #FFFFFF;
-  --bg-elevated:   #FFFFFF;
+  /* Surfaces — warm newsprint tones */
+  --bg-primary:    #F0EBDD;
+  --bg-secondary:  #E8E2D4;
+  --bg-card:       #F5F0E4;
+  --bg-elevated:   #F5F0E4;
 
   /* Text */
   --fg-primary:    #1A1A1A;
