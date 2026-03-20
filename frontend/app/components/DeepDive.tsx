@@ -70,7 +70,8 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   /* ---- Compute lean spectrum: 1 above + 1 below track, overlap at 3+ ---- */
   const leanPositions = useMemo(() => {
     const items = sources
-      .map((src, idx) => ({ src, idx, lean: src.biasScores.politicalLean }))
+      .filter((src) => src.biasScores != null)
+      .map((src, idx) => ({ src, idx, lean: src.biasScores?.politicalLean ?? 50 }))
       .sort((a, b) => a.lean - b.lean);
 
     // Alternate: first source at a lean position goes above, second below.
@@ -334,12 +335,12 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* Source spectrum — 1 row above, track with inline labels, 1 row below.
               Sources at same lean position: first above, second below, 3+ overlap. */}
-          {sources.length > 0 && (
+          {sources.length > 0 && leanPositions.length > 0 && (
             <div className="dd-spectrum" style={{ marginTop: "var(--space-4)" }}>
               {/* Row above track */}
               <div className="dd-spectrum__row dd-spectrum__row--above">
                 {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
-                  const favicon = faviconUrl(src.url);
+                  const favicon = src.url ? faviconUrl(src.url) : "";
                   return (
                     <a
                       key={`above-${src.name}-${idx}`}
@@ -371,7 +372,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               {/* Row below track */}
               <div className="dd-spectrum__row dd-spectrum__row--below">
                 {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
-                  const favicon = faviconUrl(src.url);
+                  const favicon = src.url ? faviconUrl(src.url) : "";
                   return (
                     <a
                       key={`below-${src.name}-${idx}`}
