@@ -568,10 +568,14 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
             "avg_opinion_label": opinion_label,
         }
 
+        # Classify as reporting vs opinion based on avg opinion score
+        content_type = "opinion" if avg_of > 50 else "reporting"
+
         # Build the update payload — always include numeric aggregates
         update_payload = {
             "divergence_score": round(divergence, 2),
             "bias_diversity": bias_diversity,
+            "content_type": content_type,
         }
 
         # Generate consensus/divergence text unless Gemini already provided it
@@ -1214,6 +1218,15 @@ def main():
                 if art_id in article_bias_map:
                     cluster_bias_scores.append(article_bias_map[art_id])
 
+            # Classify as reporting vs opinion based on avg opinion score
+            if cluster_bias_scores:
+                avg_opinion = sum(
+                    bs.get("opinion_fact", 25) for bs in cluster_bias_scores
+                ) / len(cluster_bias_scores)
+            else:
+                avg_opinion = 25.0
+            cluster["content_type"] = "opinion" if avg_opinion > 50 else "reporting"
+
             # Rank with v2 engine (7 signals + divergence)
             try:
                 rank_result = rank_importance(
@@ -1229,6 +1242,20 @@ def main():
                 cluster["divergence_score"] = 0.0
                 cluster["coverage_velocity"] = 0
                 cluster["headline_rank"] = 20.0
+
+        # Rank separately within each content_type so opinion #1 doesn't
+        # compete with facts #1 for headline_rank position.
+        for ctype in ("reporting", "opinion"):
+            pool = [c for c in clusters if c.get("content_type") == ctype]
+            pool.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+            # Re-assign ranks within pool (normalize to 0-100 within type)
+            for i, c in enumerate(pool):
+                if len(pool) > 1:
+                    c["headline_rank"] = round(
+                        100.0 * (1.0 - i / (len(pool) - 1)), 2
+                    )
+                else:
+                    c["headline_rank"] = 100.0
 
         clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
 
@@ -1269,6 +1296,7 @@ def main():
                 "summary": cluster_summary,
                 "category": cluster.get("category", "politics"),
                 "section": cluster_section,
+                "content_type": cluster.get("content_type", "reporting"),
                 "importance_score": round(cluster.get("importance_score", 0.0), 2),
                 "source_count": cluster.get("source_count", 0),
                 "first_published": cluster.get("first_published") or None,
