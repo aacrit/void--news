@@ -28,9 +28,7 @@ export default function OpEdPage({ edition }: OpEdPageProps) {
     setIsLoading(true);
     setError(null);
 
-    const section = edition === "india" ? "world" : edition as "world" | "us";
-
-    fetchOpinionArticles(section)
+    fetchOpinionArticles(edition)
       .then((data) => {
         if (controller.signal.aborted) return;
         setArticles(data as OpinionArticle[]);

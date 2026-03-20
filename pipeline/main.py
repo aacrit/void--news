@@ -1340,16 +1340,16 @@ def main():
         clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
 
         # Topic diversity re-ranking: prevent any single category from
-        # dominating the top of the feed. Within each content_type pool,
-        # demote stories that would put >3 of the same category in the top 10.
+        # dominating the top of the feed. Within each section pool (world/us),
+        # demote stories that would put >2 of the same category in the top 10.
         # Algorithm: walk the ranked list in order; when a story would exceed
         # the category cap, skip it and try the next one. Skipped stories are
         # re-inserted after position TOP_N in their original order.
-        for ctype in ("reporting", "opinion"):
-            pool = [c for c in clusters if c.get("content_type") == ctype]
+        for section_val in ("world", "us", "india"):
+            pool = [c for c in clusters if c.get("section") == section_val]
             if len(pool) <= 10:
                 continue
-            MAX_SAME_CAT = 3
+            MAX_SAME_CAT = 2  # v3.3: reduced from 3 to prevent category flooding (sports×3, BTS×2)
             TOP_N = 10
             promoted: list[dict] = []
             deferred: list[dict] = []
@@ -1404,6 +1404,11 @@ def main():
                 section_counts[sec] = section_counts.get(sec, 0) + 1
             cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
+            # Multi-section: list ALL editions that have articles in this cluster.
+            # This allows cross-listing — e.g., a global Iran war cluster with
+            # 3 India-source articles appears in both "world" and "india" feeds.
+            all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
+
             # Use pre-generated summary from clustering or Gemini step
             cluster_summary = cluster.get("summary", "") or ""
             if not cluster_summary and cluster_articles_list:
@@ -1416,6 +1421,7 @@ def main():
                 "summary": cluster_summary,
                 "category": cluster.get("category", "politics"),
                 "section": cluster_section,
+                "sections": all_sections,
                 "content_type": cluster.get("content_type", "reporting"),
                 "importance_score": round(cluster.get("importance_score", 0.0), 2),
                 "source_count": cluster.get("source_count", 0),

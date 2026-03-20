@@ -152,6 +152,7 @@ export interface Story {
   lensData: ThreeLensData;
   sigilData: SigilData;
   section: Edition;
+  sections: Edition[];
   importance: number;
   divergenceScore: number;
   headlineRank: number;

@@ -1,25 +1,40 @@
 """
-Importance/impact ranker v3.1 for the void --news pipeline.
+Importance/impact ranker v3.3 for the void --news pipeline.
 
 Scores story clusters by importance for feed ordering on the homepage.
 Higher scores appear first in the news feed.
 
 Uses rule-based heuristics (no LLM API calls) with 9 signals:
-    - Source coverage breadth (25%) — diminishing returns curve
-    - Recency with adaptive decay (15%) — breaking news decays slower
-    - Perspective diversity (12%) — editorial viewpoint spread (bias-blind)
-    - Coverage velocity (10%) — sources added in recent window
-    - Consequentiality (10%) — outcome/action verbs signal real-world impact
-    - Divergence score (8%) — framing-weighted source disagreement
-    - Geographic impact via NER (8%)
-    - Tier diversity (8%) — coverage across us_major/intl/independent
-    - Factual density (4%) — average factual rigor across cluster
+    - Source coverage breadth (27%) — diminishing returns curve; up from 25%
+    - Recency with adaptive decay (14%) — breaking news decays slower; down from 15%
+    - Perspective diversity (10%) — editorial viewpoint spread (bias-blind); down from 12%
+    - Coverage velocity (9%) — sources added in recent window; down from 10%
+    - Consequentiality (10%) — outcome/action verbs; gate: 0-score stories get 0.82x multiplier
+    - Divergence score (7%) — framing-weighted source disagreement; down from 8%
+    - Geographic impact via NER (6%) — down from 8%
+    - Tier diversity (13%) — now composition-aware: us_major presence explicitly rewarded; up from 8%
+    - Factual density (4%) — average factual rigor across cluster; unchanged
 
 Design principle: ranking is BIAS-BLIND. Bias analysis belongs in the
 display layer (BiasLens, Sigil, Deep Dive), not in story selection.
 We never boost or penalize a story for its political lean distribution.
 
-v3.1 optimizations:
+v3.3 calibration changes (2026-03-20):
+    - Tier diversity weight: 8% → 13% (primary fix for editorial consensus alignment)
+    - Tier scoring is now composition-aware: us_major presence gets explicit reward
+      (us_major only: 20 → 50; us_major+other: 55 → 70-80)
+    - Coverage breadth: 25% → 27%
+    - Consequentiality gate: stories with zero consequentiality score (no outcome/action
+      verbs — entertainment, celebrity, sports fluff) receive a 0.82x multiplier on
+      final score. Fixes sports/entertainment floating into top 10 on recency+velocity.
+    - Geographic impact: 8% → 6% (was overweighted vs editorial signal)
+    - Redistributed 4pp from recency(1), perspective_div(2), velocity(1), divergence(1)
+      to coverage(2) and tier_diversity(5). Weights still sum to 1.0.
+    - Confidence multiplier softened: linear floor 0.4 → soft curve (0.65 + 0.35 * conf).
+      Prevents high-source clusters from being crushed by poorly-scraped articles.
+    - Topic diversity re-rank now per section (world/us) instead of per content_type.
+
+v3.1 optimizations (retained):
     - Source map built once, shared across all sub-functions
     - Timestamps parsed once, shared between recency and velocity
     - Consequentiality uses word-boundary regex (no false substring matches)
@@ -360,8 +375,28 @@ def _tier_diversity_score(
     cluster_articles: list[dict],
     source_map: dict[str, dict],
 ) -> float:
-    """Coverage across all 3 source tiers. Returns 0-100."""
-    tiers_covered = set()
+    """
+    Coverage across source tiers, weighted by tier composition.
+
+    v3.3: composition-aware scoring. The presence of us_major sources
+    (AP, Reuters, NYT, CNN, WSJ, etc.) is a strong editorial consensus
+    signal — major wire services only cover a story when it clears a
+    high significance threshold. Simply counting tiers treated
+    "3 niche independent outlets" the same as "us_major + international",
+    which inflated scores for obscure-source clusters.
+
+    New scores (0-100):
+      us_major alone:              50  (up from 20)
+      international alone:         30  (up from 20)
+      independent alone:           15  (down from 20)
+      us_major + international:    80  (up from 55)
+      us_major + independent:      70  (up from 55)
+      intl + independent:          50  (down from 55)
+      all 3 tiers:                100  (unchanged)
+
+    Returns 0-100.
+    """
+    tiers_covered: set[str] = set()
     for article in cluster_articles:
         sid = article.get("source_id", "")
         src = source_map.get(sid, {})
@@ -369,13 +404,24 @@ def _tier_diversity_score(
         if tier:
             tiers_covered.add(tier)
 
-    tier_count = len(tiers_covered)
-    if tier_count >= 3:
+    has_major = "us_major" in tiers_covered
+    has_intl = "international" in tiers_covered
+    has_independent = "independent" in tiers_covered
+
+    if has_major and has_intl and has_independent:
         return 100.0
-    elif tier_count == 2:
-        return 55.0
-    elif tier_count == 1:
-        return 20.0
+    if has_major and has_intl:
+        return 80.0
+    if has_major and has_independent:
+        return 70.0
+    if has_major:
+        return 50.0
+    if has_intl and has_independent:
+        return 50.0
+    if has_intl:
+        return 30.0
+    if has_independent:
+        return 15.0
     return 0.0
 
 
@@ -540,23 +586,45 @@ def rank_importance(
     )
     consequentiality = _consequentiality_score(cluster_articles)
 
-    # v3 weighted combination (9 signals, weights sum to 1.0)
+    # v3.3 weighted combination (9 signals, weights sum to 1.0)
+    # Key changes from v3.2:
+    #   coverage: 0.25 → 0.27  (+2pp)
+    #   tier_div: 0.08 → 0.13  (+5pp, PRIMARY FIX — us_major presence rewarded)
+    #   recency:  0.15 → 0.14  (-1pp)
+    #   spectrum: 0.12 → 0.10  (-2pp)
+    #   velocity: 0.10 → 0.09  (-1pp)
+    #   diverge:  0.08 → 0.07  (-1pp)
+    #   geo:      0.08 → 0.06  (-2pp, was overweighted)
     headline_rank = (
-        coverage * 0.25
-        + recency * 0.15
-        + spectrum * 0.12
-        + velocity * 0.10
+        coverage * 0.27
+        + recency * 0.14
+        + spectrum * 0.10
+        + velocity * 0.09
         + consequentiality * 0.10
-        + divergence * 0.08
-        + geographic * 0.08
-        + tier_div * 0.08
+        + divergence * 0.07
+        + geographic * 0.06
+        + tier_div * 0.13
         + factual * 0.04
     )
 
     # Confidence multiplier: discount low-confidence clusters.
-    # Floor at 0.4 so even low-confidence clusters aren't completely buried.
-    conf_mult = max(0.4, min(1.0, cluster_confidence))
+    # v3.3: softened curve — 0.65 + 0.35 * confidence.
+    # Maps: 0.0→0.65, 0.5→0.825, 0.7→0.895, 1.0→1.0
+    # Previous linear multiplier (floor 0.4) was too aggressive: a 20-source
+    # cluster with p25 confidence 0.5 got halved, losing to 4-source clusters
+    # with higher confidence. The soft curve preserves the signal direction
+    # while preventing high-source editorial consensus stories from being
+    # crushed by a few poorly-scraped articles.
+    conf_mult = 0.65 + 0.35 * max(0.0, min(1.0, cluster_confidence))
     headline_rank *= conf_mult
+
+    # Consequentiality gate (v3.3): stories with zero consequentiality score
+    # have no outcome/action verbs — they are entertainment, celebrity news,
+    # or sports previews that should not surface above hard news via recency
+    # or velocity alone. Apply a 0.82x multiplier to final score.
+    # Threshold <5 instead of ==0 to handle minor false-negative matches.
+    if consequentiality < 5.0:
+        headline_rank *= 0.82
 
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
 
