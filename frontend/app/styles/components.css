@@ -947,27 +947,35 @@
   height: 28px;
 }
 
-/* Track — gradient bar with inline Left/Center/Right labels */
+/* Track — gradient bar with inline Left/Center/Right labels.
+   The gradient is applied via ::before so it can be faded independently
+   without affecting label text contrast (WCAG 1.4.3). */
 .dd-spectrum__track {
   position: relative;
   height: 20px;
-  background: linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right));
   border-radius: 3px;
-  opacity: 0.35;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 6px;
 }
 
+.dd-spectrum__track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right));
+  border-radius: 3px;
+  opacity: 0.35;
+}
+
 .dd-spectrum__inline-label {
   font-family: var(--font-data);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fg-tertiary);
-  opacity: 0.9;
+  color: var(--fg-secondary);
   pointer-events: none;
   position: relative;
   z-index: 1;
@@ -1259,7 +1267,7 @@
 .rationale-pending {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
-  color: var(--fg-muted);
+  color: var(--fg-tertiary);
   font-style: italic;
   line-height: 1.5;
   padding-top: var(--space-1);

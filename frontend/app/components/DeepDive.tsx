@@ -430,43 +430,33 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* Source lean spectrum removed — merged into header spectrum above */}
 
-          {/* ---- Section: Where sources agree (collapsible) ----------------- */}
+          {/* ---- Section: Where sources agree -------------------------------- */}
           {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
             <section aria-labelledby="dd-consensus" style={{ marginBottom: "var(--space-5)" }}>
               <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
-              <div className={`dd-collapsible${consensusExpanded ? " dd-collapsible--expanded" : ""}`}>
-                <ul className="evidence-list">
-                  {deepDive.consensus.map((point, i) => (
-                    <li key={i} className="evidence-item">
-                      <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
-                      <span className="evidence-item__text">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {deepDive.consensus.length > 3 && !consensusExpanded && (
-                <button className="dd-read-more" onClick={() => setConsensusExpanded(true)}>Read more</button>
-              )}
+              <ul className="evidence-list">
+                {deepDive.consensus.map((point, i) => (
+                  <li key={i} className="evidence-item">
+                    <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
+                    <span className="evidence-item__text">{point}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
 
-          {/* ---- Section: Where sources diverge (collapsible) -------------- */}
+          {/* ---- Section: Where sources diverge ------------------------------ */}
           {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
             <section aria-labelledby="dd-divergence" style={{ marginBottom: "var(--space-5)" }}>
               <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
-              <div className={`dd-collapsible${divergenceExpanded ? " dd-collapsible--expanded" : ""}`}>
-                <ul className="evidence-list">
-                  {deepDive.divergence.map((point, i) => (
-                    <li key={i} className="evidence-item">
-                      <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
-                      <span className="evidence-item__text">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {deepDive.divergence.length > 3 && !divergenceExpanded && (
-                <button className="dd-read-more" onClick={() => setDivergenceExpanded(true)}>Read more</button>
-              )}
+              <ul className="evidence-list">
+                {deepDive.divergence.map((point, i) => (
+                  <li key={i} className="evidence-item">
+                    <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
+                    <span className="evidence-item__text">{point}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
 
