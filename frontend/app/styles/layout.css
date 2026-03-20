@@ -8,7 +8,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* No background — body handles bg-color + wrinkle texture */
+  background-color: var(--bg-primary);
+  transition: background-color var(--dur-morph) var(--ease-out);
 }
 
 .page-main {
