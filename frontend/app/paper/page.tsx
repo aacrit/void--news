@@ -15,8 +15,9 @@ import { supabase } from "../lib/supabase";
 import "./paper.css";
 
 /* ---------------------------------------------------------------------------
-   E-Paper Edition — 1930s Static Newspaper
-   Pure reading. No interactivity. Bias expressed as editorial prose.
+   E-Paper Edition — 1930s Static Broadsheet Newspaper
+   Full-size broadsheet. All stories. Full summaries. Bias as editorial prose.
+   No interactivity. Period typography. Aged paper texture.
    --------------------------------------------------------------------------- */
 
 // --- Helpers (duplicated from HomeContent to keep blast radius zero) ---
@@ -67,20 +68,22 @@ function composeBiasNote(
   opinionLabel: OpinionLabel,
   tierBreakdown?: Record<string, number>,
 ): string {
-  // Lean
   const lean = scores.politicalLean;
   const leanWord =
-    lean < 25 ? "left-leaning"
-    : lean < 40 ? "slightly left of centre"
-    : lean < 60 ? "centrist"
-    : lean < 75 ? "slightly right of centre"
-    : "right-leaning";
+    lean < 20 ? "decidedly left-leaning"
+    : lean < 35 ? "left-leaning"
+    : lean < 45 ? "slightly left of centre"
+    : lean < 55 ? "centrist"
+    : lean < 65 ? "slightly right of centre"
+    : lean < 80 ? "right-leaning"
+    : "decidedly right-leaning";
 
-  // Tone
   const tone = scores.sensationalism;
-  const toneWord = tone < 33 ? "measured" : tone < 66 ? "elevated" : "sensational";
+  const toneWord = tone < 25 ? "measured and restrained"
+    : tone < 50 ? "measured"
+    : tone < 70 ? "elevated"
+    : "sensational";
 
-  // Content type
   const typeMap: Record<string, string> = {
     Reporting: "factual reporting",
     Analysis: "analysis and interpretation",
@@ -89,23 +92,23 @@ function composeBiasNote(
   };
   const typeWord = typeMap[opinionLabel] || "factual reporting";
 
-  // Sourcing
   const rigor = scores.factualRigor;
-  const sourcingWord = rigor > 66 ? "strong" : rigor > 33 ? "moderate" : "limited";
+  const sourcingWord = rigor > 75 ? "strong"
+    : rigor > 50 ? "adequate"
+    : rigor > 33 ? "moderate"
+    : "limited";
 
-  // Tier description
   let tierPhrase = "";
   if (tierBreakdown) {
     const parts: string[] = [];
-    if (tierBreakdown.us_major) parts.push("major");
-    if (tierBreakdown.international) parts.push("international");
-    if (tierBreakdown.independent) parts.push("independent");
+    if (tierBreakdown.us_major) parts.push(`${tierBreakdown.us_major} major`);
+    if (tierBreakdown.international) parts.push(`${tierBreakdown.international} international`);
+    if (tierBreakdown.independent) parts.push(`${tierBreakdown.independent} independent`);
     if (parts.length > 0) {
-      tierPhrase = `, spanning ${parts.join(" and ")} outlets`;
+      tierPhrase = ` (${parts.join(", ")})`;
     }
   }
 
-  // Compose
   const sourceWord = sourceCount === 1 ? "source" : "sources";
   return `This dispatch draws from ${sourceCount} ${sourceWord}${tierPhrase}. `
     + `Coverage leans ${leanWord}, with ${sourcingWord} sourcing and a ${toneWord} tone. `
@@ -126,7 +129,6 @@ function Masthead({ lastUpdated, storyCount }: { lastUpdated: string | null; sto
     day: "numeric",
   }).toUpperCase();
 
-  // Issue number: days since project epoch (March 1, 2026)
   const epoch = new Date("2026-03-01T00:00:00Z");
   const issueNo = Math.max(1, Math.floor((now.getTime() - epoch.getTime()) / 86400000));
 
@@ -177,7 +179,8 @@ function Article({
   size: "lead" | "primary" | "secondary";
 }) {
   const dateline = DATELINES[story.category] || "INTERNATIONAL";
-  const showBiasNote = size === "lead" || size === "primary";
+  const consensus = story.deepDive?.consensus || [];
+  const divergence = story.deepDive?.divergence || [];
 
   return (
     <article className={`np-article np-article--${size}`}>
@@ -189,17 +192,39 @@ function Article({
         <span className="np-article__dateline">{dateline} &mdash; </span>
         {story.summary}
       </p>
-      {showBiasNote && (
-        <p className="np-press-analysis">
-          <span className="np-press-analysis__label">Press Analysis &mdash; </span>
-          {composeBiasNote(
-            story.biasScores,
-            story.source.count,
-            story.sigilData.opinionLabel,
-            story.sigilData.tierBreakdown,
-          )}
-        </p>
+
+      {/* Consensus & Divergence — the full detail */}
+      {consensus.length > 0 && (
+        <div className="np-consensus">
+          <p className="np-consensus__heading">Points of Agreement</p>
+          <ul className="np-consensus__list">
+            {consensus.map((point, i) => (
+              <li key={i} className="np-consensus__item">{point}</li>
+            ))}
+          </ul>
+        </div>
       )}
+      {divergence.length > 0 && (
+        <div className="np-consensus">
+          <p className="np-consensus__heading">Points of Divergence</p>
+          <ul className="np-consensus__list">
+            {divergence.map((point, i) => (
+              <li key={i} className="np-consensus__item">{point}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Press Analysis — bias as editorial prose on every article */}
+      <p className="np-press-analysis">
+        <span className="np-press-analysis__label">Press Analysis &mdash; </span>
+        {composeBiasNote(
+          story.biasScores,
+          story.source.count,
+          story.sigilData.opinionLabel,
+          story.sigilData.tierBreakdown,
+        )}
+      </p>
     </article>
   );
 }
@@ -219,13 +244,14 @@ function Classifieds({ lastUpdated, storyCount }: { lastUpdated: string | null; 
 
   return (
     <div className="np-classifieds">
-      <SectionLabel label="CLASSIFIEDS" />
+      <SectionLabel label="CLASSIFIEDS &amp; NOTICES" />
       <div className="np-classifieds__grid">
         <div className="np-classified-ad">
           <span className="np-classified-ad__heading">Public Notice &mdash;</span>
           This edition compiled from {storyCount} stories across 200 curated news
-          organisations. All bias assessments computed algorithmically. No editorial
-          judgments were made in the preparation of this broadsheet.
+          organisations. All bias assessments computed algorithmically by rule-based
+          natural language processing. No editorial judgments were made in the
+          preparation of this broadsheet.
         </div>
         <div className="np-classified-ad">
           <span className="np-classified-ad__heading">Lost &amp; Found &mdash;</span>
@@ -236,12 +262,20 @@ function Classifieds({ lastUpdated, storyCount }: { lastUpdated: string | null; 
         <div className="np-classified-ad">
           <span className="np-classified-ad__heading">Free of Charge &mdash;</span>
           This publication costs nothing. It will always cost nothing. No subscription
-          required. No advertisements. No data collection. This is not a trick.
+          required. No advertisements placed. No data collected from readers. This is
+          not a trick. Enquiries to the publisher.
         </div>
         <div className="np-classified-ad">
           <span className="np-classified-ad__heading">Last Dispatch &mdash;</span>
           Press closed: {closedTime}. Next edition at dawn. Weather forecast: partly
-          cloudy with a high probability of framing divergence. Outlook: contested.
+          cloudy with a high probability of framing divergence across the major wire
+          services. Outlook: contested.
+        </div>
+        <div className="np-classified-ad">
+          <span className="np-classified-ad__heading">Situations Vacant &mdash;</span>
+          Wanted: news consumers willing to read beyond the headline. Must possess
+          critical thinking skills and tolerance for nuance. Experience with multiple
+          news sources preferred. Apply within.
         </div>
       </div>
     </div>
@@ -265,7 +299,7 @@ function Colophon({ edition }: { edition: string }) {
         void --news &middot; The {edition} Edition &middot; {dateStr}
       </p>
       <p>
-        Printed on digital presses &middot; 200 sources &middot; 6-axis bias analysis
+        Printed on digital presses &middot; 200 curated sources &middot; 6-axis bias analysis
       </p>
       <p>
         <a href="/void--news/" className="np-colophon__link">
@@ -338,6 +372,9 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
     opinionLabel,
   };
 
+  const rawConsensus = usingEnriched ? cluster.consensus_points : null;
+  const rawDivergence = usingEnriched ? cluster.divergence_points : null;
+
   return {
     id: cluster.id,
     title: cluster.title,
@@ -354,6 +391,13 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
     divergenceScore: cluster.divergence_score || 0,
     headlineRank: cluster.headline_rank || cluster.importance_score || 50,
     coverageVelocity: cluster.coverage_velocity || 0,
+    deepDive: (Array.isArray(rawConsensus) && rawConsensus.length > 0) || (Array.isArray(rawDivergence) && rawDivergence.length > 0)
+      ? {
+          consensus: Array.isArray(rawConsensus) ? rawConsensus : [],
+          divergence: Array.isArray(rawDivergence) ? rawDivergence : [],
+          sources: [],
+        }
+      : undefined,
   };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -369,20 +413,20 @@ export default function PaperPage() {
     async function load() {
       const enrichedFields = `id,title,summary,category,section,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
 
-      // Fetch both sections
+      // Fetch all stories from both sections
       const [worldRes, usRes] = await Promise.all([
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .eq("section", "world")
           .order("headline_rank", { ascending: false })
-          .limit(40),
+          .limit(100),
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .eq("section", "us")
           .order("headline_rank", { ascending: false })
-          .limit(40),
+          .limit(100),
       ]);
 
       const worldClusters = worldRes.data || [];
@@ -396,7 +440,6 @@ export default function PaperPage() {
       setAllStories(stories);
       setIsLoading(false);
 
-      // Pipeline timestamp
       const { data: run } = await supabase
         .from("pipeline_runs")
         .select("completed_at")
@@ -411,21 +454,20 @@ export default function PaperPage() {
     load();
   }, []);
 
-  // Derive sections
+  // --- Section derivation — show ALL stories ---
   const frontPage = allStories.slice(0, 3);
   const lead = frontPage[0];
   const primaryLeft = frontPage[1];
   const primaryRight = frontPage[2];
 
+  // All remaining stories split by section
   const worldStories = allStories
     .filter((s) => s.section === "world")
-    .filter((s) => !frontPage.includes(s))
-    .slice(0, 8);
+    .filter((s) => !frontPage.includes(s));
 
   const usStories = allStories
     .filter((s) => s.section === "us")
-    .filter((s) => !frontPage.includes(s))
-    .slice(0, 8);
+    .filter((s) => !frontPage.includes(s));
 
   const hour = new Date().getUTCHours();
   const editionName = hour < 17 ? "Morning" : "Evening";
@@ -435,18 +477,18 @@ export default function PaperPage() {
       <Masthead lastUpdated={lastUpdated} storyCount={allStories.length} />
 
       {isLoading && (
-        <p className="np-loading">Setting type &mdash; your edition is being prepared.</p>
+        <p className="np-loading">Setting type &mdash; your edition is being prepared&hellip;</p>
       )}
 
-      {/* Front Page */}
+      {/* Front Page — 3-column hero layout */}
       {!isLoading && lead && (
-        <div className="np-broadsheet">
+        <div className="np-broadsheet np-broadsheet--front">
           {primaryLeft && (
             <div className="np-col">
               <Article story={primaryLeft} size="primary" />
             </div>
           )}
-          <div className="np-col np-col--span2">
+          <div className="np-col">
             <Article story={lead} size="lead" />
           </div>
           {primaryRight && (
@@ -457,7 +499,7 @@ export default function PaperPage() {
         </div>
       )}
 
-      {/* World News */}
+      {/* World News — all stories */}
       {!isLoading && worldStories.length > 0 && (
         <>
           <SectionLabel label="WORLD NEWS" />
@@ -471,7 +513,7 @@ export default function PaperPage() {
         </>
       )}
 
-      {/* Domestic */}
+      {/* Domestic — all stories */}
       {!isLoading && usStories.length > 0 && (
         <>
           <SectionLabel label="DOMESTIC" />
@@ -485,7 +527,7 @@ export default function PaperPage() {
         </>
       )}
 
-      {/* Classifieds */}
+      {/* Classifieds & Notices */}
       {!isLoading && allStories.length > 0 && (
         <Classifieds lastUpdated={lastUpdated} storyCount={allStories.length} />
       )}
