@@ -170,6 +170,11 @@
 
   /* === NAVIGATION === */
 
+  /* Safe-area inset for notched phones — pushes nav below status bar */
+  .nav-header {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
   /* Bottom nav visible */
   .nav-bottom {
     display: flex;
@@ -195,9 +200,11 @@
     display: none;
   }
 
-  /* Tighter nav inner padding + gap to fit logo + edition on one row */
+  /* Tighter vertical padding + explicit gap — horizontal is already --space-5
+     in the base rule (components.css), so only override what changes on mobile */
   .nav-inner {
-    padding: var(--space-2) var(--space-5);
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
     gap: var(--space-2);
   }
 
@@ -224,25 +231,37 @@
 
   /* === LAYOUT === */
 
-  /* Padding normalization — 16px horizontal matches iOS HIG / Material */
+  /* page-main: shorthand overrides the base rule's padding: 0 var(--space-7)
+     on all sides. Bottom accounts for fixed bottom nav + safe area inset. */
   .page-main {
-    padding-left: var(--space-5);
-    padding-right: var(--space-5);
-    /* [CRITICAL-3] Match actual bottom nav height (~56px) + safe area inset
-       env() adds iPhone home indicator clearance; falls back to 0px on Android/desktop */
+    padding: 0 var(--space-5);
     padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
-    padding-left: var(--space-5);
-    padding-right: var(--space-5);
-    /* Safe area clearance for iPhone notch/dynamic island */
-    margin-bottom: var(--space-5);
+    /* Shorthand overrides the base rule's padding on all sides.
+       margin-bottom clears the fixed bottom nav + home indicator. */
+    padding: var(--space-5);
+    margin-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Bottom nav — pad below tabs so they clear iPhone home indicator */
+  /* Stronger backdrop on mobile so fixed bottom nav doesn't bleed through.
+     Light mode token is 0.15 opacity — too transparent against the nav.
+     Override to match dark mode value for legible modal layering. */
+  .deep-dive-backdrop {
+    background-color: rgba(28, 26, 23, 0.55);
+  }
+
+  /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
+     on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
+  body::before {
+    will-change: auto;
+  }
+
+  /* Bottom nav — pad below tabs so they clear iPhone home indicator.
+     max() ensures at least --space-2 even when safe-area-inset-bottom is 0. */
   .nav-bottom {
-    padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom, 0px));
   }
 
   /* Section header — allow RefreshButton timestamp to wrap */
@@ -342,6 +361,16 @@
 
   .deep-dive-panel::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Deep Dive header: clear the notch on full-screen mobile panel */
+  .deep-dive-panel__header {
+    padding-top: max(var(--space-4), env(safe-area-inset-top, 0px));
+  }
+
+  /* Deep Dive content: clear bottom nav + safe area so last item isn't clipped */
+  .deep-dive-panel__content {
+    padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
   }
 
   /* Hide "Back to feed" text, keep arrow */

@@ -320,7 +320,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       {/* Backdrop overlay on mobile */}
       {isMobile && (
         <div onClick={onClose} style={{
-          position: "fixed", inset: 0, zIndex: 9998,
+          position: "fixed", inset: 0, zIndex: 150,
           backgroundColor: "var(--overlay-backdrop)",
           opacity: stage >= 1 ? 1 : 0,
           transition: "opacity 200ms var(--ease-out)",
@@ -329,7 +329,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       <div id={id} role={isMobile ? "dialog" : "tooltip"} aria-modal={isMobile ? true : undefined} aria-label={isMobile ? "Bias analysis details" : undefined} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
         style={isMobile ? {
           // Mobile: bottom sheet
-          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9999,
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 151,
           background: "var(--bg-card)", borderTop: "1px solid var(--border-subtle)",
           boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
           borderRadius: "12px 12px 0 0",
@@ -338,7 +338,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           transition: "transform 350ms var(--spring)",
         } : {
           // Desktop: floating popup
-          position: "fixed", top: pos.y, left: pos.x, width: 280, zIndex: 9999,
+          position: "fixed", top: pos.y, left: pos.x, width: 280, zIndex: 151,
           background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
           boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
           opacity: stage >= 1 ? 1 : 0, transform: stage >= 1 ? "scale(1) translateY(0)" : "scale(0.94) translateY(6px)",
