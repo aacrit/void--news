@@ -12,7 +12,7 @@ import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
-import BiasInspector from "./BiasInspector";
+import { BiasInspectorTrigger, BiasInspectorPanel } from "./BiasInspector";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -61,6 +61,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [consensusExpanded, setConsensusExpanded] = useState(false);
   const [divergenceExpanded, setDivergenceExpanded] = useState(false);
+  const [showScorePanel, setShowScorePanel] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -546,11 +547,31 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </section>
           )}
 
-          {/* ---- Section: Bias Inspector ------------------------------------- */}
+          {/* ---- Score breakdown trigger ------------------------------------- */}
           {sources.length > 0 && (
-            <section aria-labelledby="dd-bias-inspector" className="anim-dd-section" style={{ marginBottom: "var(--space-5)", transitionDelay: "400ms", ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}) }}>
-              <BiasInspector sources={sources} />
-            </section>
+            <div
+              className="anim-dd-section"
+              style={{
+                marginBottom: "var(--space-5)",
+                transitionDelay: "400ms",
+                ...(contentVisible ? { opacity: 1, transform: "translateY(0)" } : {}),
+              }}
+            >
+              <BiasInspectorTrigger
+                sources={sources}
+                onClick={() => setShowScorePanel(true)}
+              />
+            </div>
+          )}
+
+          {/* Score breakdown pop-out panel — rendered inside the Deep Dive panel
+              so it overlays only that panel, not the full viewport */}
+          {sources.length > 0 && (
+            <BiasInspectorPanel
+              sources={sources}
+              isOpen={showScorePanel}
+              onClose={() => setShowScorePanel(false)}
+            />
           )}
 
           {/* No deep dive data at all */}

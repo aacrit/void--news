@@ -2275,6 +2275,295 @@
   margin: 0;
 }
 
+/* ---- Axis row layout update — left column (name + gradient bar) -------- */
+.bi-axis__left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Gradient bar (Tier 1 axis summary) --------------------------------- */
+.bi-gradient-bar {
+  width: 100%;
+  position: relative;
+}
+
+.bi-gradient-bar__track {
+  height: 5px;
+  border-radius: 3px;
+  overflow: visible;
+  position: relative;
+}
+
+.bi-gradient-bar__marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: left var(--dur-normal) var(--ease-out);
+  /* Promoted to GPU */
+  will-change: left;
+}
+
+/* ---- Score breakdown trigger button ------------------------------------ */
+.bi-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  background-color: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
+}
+
+.bi-trigger:hover {
+  color: var(--fg-secondary);
+  border-color: var(--border-strong);
+  background-color: var(--bg-secondary);
+}
+
+.bi-trigger:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.bi-trigger:active {
+  transform: scale(0.98);
+}
+
+.bi-trigger__dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.bi-trigger__dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bi-trigger__label {
+  flex: 1;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bi-trigger__arrow {
+  flex-shrink: 0;
+  color: var(--fg-muted);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.bi-trigger:hover .bi-trigger__arrow {
+  transform: translateX(3px);
+}
+
+/* ---- Pop-out panel: backdrop ------------------------------------------- */
+.bi-panel__backdrop {
+  position: fixed;
+  /* Overlays the entire Deep Dive panel area */
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  /* Sits above Deep Dive content (z-modal = 100) but below the drawer (z-modal + 1) */
+  z-index: calc(var(--z-modal) + 1);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+}
+
+/* ---- Pop-out panel: drawer ---------------------------------------------- */
+/*
+  Desktop (≥1024px): slides in from the left edge of the Deep Dive panel.
+  The Deep Dive panel is right: 0; width: 50%. The drawer takes 60% of that
+  = 30vw from the left edge of the Deep Dive panel.
+  → positioned: right: 50%; width: 30vw (relative to viewport).
+  Mobile: slides up from bottom as a sheet (85vh, full-width).
+*/
+.bi-panel__drawer {
+  position: fixed;
+  /* Mobile default: bottom sheet */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  height: 85vh;
+  max-height: 85vh;
+  border-radius: 12px 12px 0 0;
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-e3);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: calc(var(--z-modal) + 2);
+  outline: none;
+  will-change: transform;
+  /* Drag handle affordance on mobile — pseudo-element */
+}
+
+.bi-panel__drawer::before {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 4px;
+  background-color: var(--border-strong);
+  border-radius: 2px;
+  margin: var(--space-3) auto var(--space-2);
+  flex-shrink: 0;
+}
+
+/* Desktop: slide from left edge of Deep Dive panel */
+@media (min-width: 1024px) {
+  .bi-panel__drawer {
+    /* Deep Dive is right: 0; width: 50vw.
+       Drawer is left portion: starts at left edge of DD panel,
+       covers 60% of the DD panel width ≈ 30vw.
+       right side = the left edge of DD, i.e. 50vw from the left. */
+    left: auto;
+    right: 50vw;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    max-height: none;
+    width: 30vw;
+    min-width: 280px;
+    max-width: 400px;
+    border-radius: 0;
+    border-right: var(--rule-thin);
+  }
+
+  .bi-panel__drawer::before {
+    display: none;
+  }
+}
+
+/* Wide desktop: Deep Dive is narrower (40%, max 640px) — adjust drawer */
+@media (min-width: 1440px) {
+  .bi-panel__drawer {
+    /* DD panel is max 640px wide, right: 0.
+       Right edge of drawer = right edge of DD panel left side.
+       Since max DD width is 640px, drawer starts at (100vw - 640px). */
+    right: auto;
+    left: max(0px, calc(100vw - 640px));
+    width: min(384px, 60%);
+  }
+}
+
+/* ---- Panel header ------------------------------------------------------- */
+.bi-panel__header {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-card);
+  border-bottom: var(--rule-thin);
+  z-index: 2;
+  padding: var(--space-4) var(--space-5);
+}
+
+.bi-panel__header-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.bi-panel__title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin: 0 0 var(--space-1);
+  line-height: 1.2;
+}
+
+.bi-panel__subtitle {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ---- Panel close button ------------------------------------------------- */
+.bi-panel__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  border: none;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
+}
+
+.bi-panel__close:hover {
+  background-color: var(--bg-secondary);
+  color: var(--fg-primary);
+}
+
+.bi-panel__close:active {
+  transform: scale(0.90);
+}
+
+.bi-panel__close:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Panel body (scrollable content) ------------------------------------ */
+.bi-panel__body {
+  padding: var(--space-4) var(--space-5) var(--space-7);
+}
+
+/* ---- Stagger entrance animation for panel content ----------------------- */
+.bi-panel__axis-stagger {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity var(--dur-normal) var(--ease-out),
+    transform var(--dur-normal) var(--ease-out);
+}
+
+.bi-panel__axis-stagger--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ---- Reduced motion overrides ----------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .bi-minibar__fill,
@@ -2285,7 +2574,21 @@
     transition: none;
   }
 
-  .bi-axis__caret {
+  .bi-axis__caret,
+  .bi-gradient-bar__marker,
+  .bi-trigger,
+  .bi-trigger__arrow {
     transition: none;
+  }
+
+  .bi-panel__axis-stagger {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .bi-panel__backdrop,
+  .bi-panel__drawer {
+    transition: none !important;
   }
 }
