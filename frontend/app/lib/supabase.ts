@@ -70,58 +70,92 @@ export async function fetchDeepDiveData(clusterId: string) {
 }
 
 export async function fetchOpinionArticles(section: "world" | "us" | "india") {
-  // Step 1: Find article IDs with opinion_fact > 50
-  const { data: biasRows } = await supabase
-    .from("bias_scores")
-    .select("article_id, political_lean, sensationalism, opinion_fact, confidence")
-    .gt("opinion_fact", 50);
+  // Use the opinion clusters approach: query story_clusters with
+  // content_type=opinion, then fetch their linked articles for metadata.
+  // This avoids the large .in() URL problem with 180+ article UUIDs.
+  const { data: clusters } = await supabase
+    .from("story_clusters")
+    .select("id, title, summary, source_count, first_published, headline_rank, bias_diversity")
+    .contains("sections", [section])
+    .eq("content_type", "opinion")
+    .order("headline_rank", { ascending: false })
+    .limit(50);
 
-  if (!biasRows || biasRows.length === 0) return [];
+  if (!clusters || clusters.length === 0) return [];
 
-  const biasMap = new Map(biasRows.map((b) => [b.article_id, b]));
-  const articleIds = biasRows.map((b) => b.article_id);
+  // Fetch linked articles for author/URL/source info
+  const clusterIds = clusters.map((c) => c.id);
 
-  // Step 2: Fetch articles for those IDs in the right section
-  const { data: articles } = await supabase
-    .from("articles")
-    .select("id, title, summary, author, url, published_at, section, source_id")
-    .in("id", articleIds)
-    .eq("section", section)
-    .order("published_at", { ascending: false })
-    .limit(200);
+  // Batch in chunks of 20 to stay within URL limits
+  const allLinks: { cluster_id: string; article_id: string }[] = [];
+  for (let i = 0; i < clusterIds.length; i += 20) {
+    const chunk = clusterIds.slice(i, i + 20);
+    const { data: links } = await supabase
+      .from("cluster_articles")
+      .select("cluster_id, article_id")
+      .in("cluster_id", chunk);
+    if (links) allLinks.push(...links);
+  }
 
-  if (!articles || articles.length === 0) return [];
+  const articleIds = [...new Set(allLinks.map((l) => l.article_id))];
+  if (articleIds.length === 0) return [];
 
-  // Step 3: Fetch source metadata
-  const sourceIds = [...new Set(articles.map((a) => a.source_id).filter(Boolean))];
-  const { data: sources } = await supabase
-    .from("sources")
-    .select("id, name, slug, tier")
-    .in("id", sourceIds);
+  // Fetch articles in chunks
+  const allArticles: Record<string, any>[] = [];
+  for (let i = 0; i < articleIds.length; i += 30) {
+    const chunk = articleIds.slice(i, i + 30);
+    const { data: arts } = await supabase
+      .from("articles")
+      .select("id, title, author, url, source_id, published_at")
+      .in("id", chunk);
+    if (arts) allArticles.push(...arts);
+  }
+  const articleMap = new Map(allArticles.map((a) => [a.id, a]));
 
-  const sourceMap = new Map((sources || []).map((s) => [s.id, s]));
+  // Map cluster→first article for author/URL
+  const clusterArticleMap = new Map<string, string>();
+  for (const link of allLinks) {
+    if (!clusterArticleMap.has(link.cluster_id)) {
+      clusterArticleMap.set(link.cluster_id, link.article_id);
+    }
+  }
+
+  // Fetch source metadata
+  const sourceIds = [...new Set(allArticles.map((a) => a.source_id).filter(Boolean))];
+  const allSources: Record<string, any>[] = [];
+  for (let i = 0; i < sourceIds.length; i += 30) {
+    const chunk = sourceIds.slice(i, i + 30);
+    const { data: srcs } = await supabase
+      .from("sources")
+      .select("id, name, slug, tier")
+      .in("id", chunk);
+    if (srcs) allSources.push(...srcs);
+  }
+  const sourceMap = new Map(allSources.map((s) => [s.id, s]));
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const normalized = articles.map((row: any) => {
-    const src = sourceMap.get(row.source_id);
-    const bs = biasMap.get(row.id);
-    if (!src || !bs) return null;
+  const normalized = clusters.map((cluster: any) => {
+    const artId = clusterArticleMap.get(cluster.id);
+    const art = artId ? articleMap.get(artId) : null;
+    const src = art ? sourceMap.get(art.source_id) : null;
+    const bd = cluster.bias_diversity || {};
+
     return {
-      id: row.id as string,
-      title: row.title as string,
-      summary: (row.summary || "") as string,
-      author: (row.author || null) as string | null,
-      url: row.url as string,
-      publishedAt: row.published_at as string,
-      sourceName: src.name as string,
-      sourceSlug: src.slug as string,
-      sourceTier: src.tier as "us_major" | "international" | "independent",
-      section: row.section as "world" | "us",
-      politicalLean: Number(bs.political_lean ?? 50),
-      sensationalism: Number(bs.sensationalism ?? 30),
-      confidence: Number(bs.confidence ?? 0.5),
+      id: cluster.id as string,
+      title: cluster.title as string,
+      summary: (cluster.summary || "") as string,
+      author: (art?.author || null) as string | null,
+      url: art?.url || "" as string,
+      publishedAt: (art?.published_at || cluster.first_published || "") as string,
+      sourceName: (src?.name || "Unknown") as string,
+      sourceSlug: (src?.slug || "") as string,
+      sourceTier: (src?.tier || "independent") as "us_major" | "international" | "independent",
+      section: section as "world" | "us",
+      politicalLean: Number(bd.avg_political_lean ?? 50),
+      sensationalism: Number(bd.avg_sensationalism ?? 30),
+      confidence: Number(bd.aggregate_confidence ?? 0.5),
     };
-  }).filter(Boolean);
+  });
 
   // Per-outlet cap: max 2 per source_slug
   const slugCount: Record<string, number> = {};
