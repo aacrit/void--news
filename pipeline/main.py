@@ -105,8 +105,6 @@ _US_DOMESTIC_PATTERN = re.compile(
 _COUNTRY_EDITION_MAP: dict[str, str] = {
     "US": "us",
     "IN": "india",
-    "NP": "nepal",
-    "DE": "germany",
 }
 
 
