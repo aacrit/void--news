@@ -5,14 +5,16 @@ Groups articles covering the same story/event into clusters.
 Each cluster represents one news story as seen through multiple sources.
 
 Uses rule-based NLP (no LLM API calls):
-    - TF-IDF vectorization of article titles + first 200 words
+    - TF-IDF vectorization of article titles + first 500 words
     - Cosine similarity via sklearn
-    - Agglomerative clustering with distance threshold
+    - Agglomerative clustering with distance threshold (0.2)
+    - Entity-overlap merge pass (Phase 2) to consolidate evolving-story fragments
     - Cluster title generation from most common named entities (spaCy NER)
 """
 
 import re
 from collections import Counter
+from datetime import datetime, timezone
 
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -66,10 +68,15 @@ def _clean_title(title: str) -> str:
 
 
 def _build_document(article: dict) -> str:
-    """Build a text document from title + first 200 words of full_text."""
+    """Build a text document from title + first 500 words of full_text.
+
+    500 words (up from 200) gives TF-IDF a richer vocabulary, capturing
+    supporting context — actor names, locations, policy references — that
+    bridges sub-event articles belonging to the same evolving story.
+    """
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""
-    words = full_text.split()[:200]
+    words = full_text.split()[:500]
     body_snippet = " ".join(words)
     return f"{title} {body_snippet}".strip()
 
@@ -280,18 +287,212 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
     return "world"
 
 
+def _extract_cluster_entities(articles: list[dict]) -> set[str]:
+    """
+    Extract a set of prominent named entities (PERSON, ORG, GPE, NORP, EVENT)
+    from the titles and summaries of up to 10 articles in a cluster.
+
+    Used by merge_related_clusters() to find narrative overlap across
+    initially-separate clusters. Returns lowercase entity strings.
+    """
+    nlp = get_nlp()
+    entities: set[str] = set()
+    for article in articles[:10]:
+        title = article.get("title", "") or ""
+        summary = article.get("summary", "") or ""
+        text = f"{title} {summary}"[:1000]
+        if not text.strip():
+            continue
+        doc = nlp(text)
+        for ent in doc.ents:
+            if ent.label_ in ("PERSON", "ORG", "GPE", "NORP", "EVENT"):
+                # Normalize: lowercase, strip possessives
+                normalized = ent.text.lower().rstrip("'s").strip()
+                if len(normalized) >= 3:  # skip trivial single-letter matches
+                    entities.add(normalized)
+    return entities
+
+
+def merge_related_clusters(
+    clusters: list[dict],
+    min_shared_entities: int = 2,
+    max_age_spread_hours: float = 72.0,
+) -> list[dict]:
+    """
+    Post-clustering merge pass: consolidate micro-clusters that belong to the
+    same evolving story narrative.
+
+    This addresses the Iran-war fragmentation problem where sub-events
+    ("Israel Strikes Gas Field", "Hegseth Defends $200B Request",
+    "Hormuz Tensions") form separate clusters because they share no
+    overlapping TF-IDF terms, yet share named entities (Iran, Pentagon,
+    Netanyahu, Israel) that identify them as facets of one story.
+
+    Algorithm:
+        1. For each cluster, extract its top named entities.
+        2. Compare entity sets pairwise across clusters.
+        3. If two clusters share >= min_shared_entities AND their
+           first_published timestamps are within max_age_spread_hours,
+           merge the smaller into the larger.
+        4. Repeat until stable (no more merges in a pass).
+
+    Args:
+        clusters: List of cluster dicts from cluster_stories().
+        min_shared_entities: How many entities two clusters must share to
+            trigger a merge (default 2 — requires two matching actors/places,
+            preventing false merges on single common words like "Trump").
+        max_age_spread_hours: Maximum time between the earliest articles of
+            two clusters for them to be eligible for merging. Prevents
+            cross-month merges (e.g., "Iran nuclear deal 2015" with
+            "Iran-Israel war 2026"). Default 72h covers evolving stories
+            that span 2-3 pipeline runs.
+
+    Returns:
+        Reduced list of cluster dicts with merged source counts and article
+        lists. Preserves all existing cluster dict keys.
+    """
+    if len(clusters) <= 1:
+        return clusters
+
+    def _parse_first_pub(cluster: dict):
+        fp = cluster.get("first_published", "") or ""
+        if not fp:
+            return None
+        try:
+            dt = datetime.fromisoformat(fp.replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt
+        except (ValueError, TypeError):
+            return None
+
+    # Extract entities for each cluster once (O(N) spaCy parses)
+    cluster_entities: list[set[str]] = [
+        _extract_cluster_entities(c.get("articles", [])) for c in clusters
+    ]
+
+    # Union-Find for transitive merge closure
+    n = len(clusters)
+    parent = list(range(n))
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    timestamps = [_parse_first_pub(c) for c in clusters]
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if find(i) == find(j):
+                continue  # already in same group
+
+            shared = cluster_entities[i] & cluster_entities[j]
+            if len(shared) < min_shared_entities:
+                continue
+
+            # Time spread gate: don't merge stories far apart in time
+            ti, tj = timestamps[i], timestamps[j]
+            if ti is not None and tj is not None:
+                spread_hours = abs((ti - tj).total_seconds()) / 3600.0
+                if spread_hours > max_age_spread_hours:
+                    continue
+
+            union(i, j)
+
+    # Group cluster indices by their root
+    groups: dict[int, list[int]] = {}
+    for i in range(n):
+        root = find(i)
+        groups.setdefault(root, []).append(i)
+
+    # Build merged cluster dicts
+    merged_clusters: list[dict] = []
+    for root, members in groups.items():
+        if len(members) == 1:
+            merged_clusters.append(clusters[root])
+            continue
+
+        # Merge all member clusters into one
+        all_articles: list[dict] = []
+        all_article_ids: list[str] = []
+        all_source_ids: set[str] = set()
+        all_pub_dates: list[str] = []
+
+        for idx in members:
+            c = clusters[idx]
+            all_articles.extend(c.get("articles", []))
+            all_article_ids.extend(c.get("article_ids", []))
+            all_source_ids.update(c.get("source_ids", []))
+            fp = c.get("first_published", "")
+            if fp:
+                all_pub_dates.append(fp)
+
+        # Pick the cluster with the most sources as the "anchor" for title/summary
+        anchor = max(members, key=lambda idx: clusters[idx].get("source_count", 0))
+        anchor_cluster = clusters[anchor]
+
+        first_published = min(all_pub_dates) if all_pub_dates else ""
+
+        # Regenerate title and summary from the full merged article set
+        merged_title = _generate_cluster_title(all_articles)
+        merged_summary = _generate_cluster_summary(all_articles)
+
+        # Determine section from majority vote across all articles
+        merged_section = _determine_section(
+            all_articles, merged_title, merged_summary
+        )
+
+        merged_clusters.append({
+            "title": merged_title,
+            "summary": merged_summary,
+            "article_ids": all_article_ids,
+            "source_ids": list(all_source_ids),
+            "source_count": len(all_source_ids),
+            "section": merged_section,
+            "first_published": first_published,
+            "articles": all_articles,
+            # Preserve any extra keys from the anchor (e.g., Gemini enrichment)
+            **{
+                k: v for k, v in anchor_cluster.items()
+                if k not in ("title", "summary", "article_ids", "source_ids",
+                             "source_count", "section", "first_published", "articles")
+            },
+        })
+
+    return merged_clusters
+
+
 def cluster_stories(
     articles: list[dict],
-    similarity_threshold: float = 0.3,
+    similarity_threshold: float = 0.2,
+    run_merge_pass: bool = True,
 ) -> list[dict]:
     """
     Group articles into story clusters based on content similarity.
+
+    Two-phase approach:
+        Phase 1: TF-IDF cosine similarity + agglomerative clustering.
+            Threshold 0.2 (down from 0.3) captures sub-events that share
+            some overlapping terms but diverge in actor/action vocabulary.
+        Phase 2 (optional): Entity-overlap merge pass via merge_related_clusters().
+            Consolidates clusters that represent facets of the same evolving
+            story narrative (e.g., 20 Iran-war micro-clusters → 3-5 mega-clusters).
 
     Args:
         articles: List of article dicts with keys: id, title, summary,
             full_text, source_id, published_at, section.
         similarity_threshold: Minimum cosine similarity to consider
-            two articles as covering the same story (default 0.3).
+            two articles as covering the same story (default 0.2).
+        run_merge_pass: Whether to run the entity-overlap merge pass after
+            initial clustering (default True). Set False to disable for
+            debugging or performance profiling.
 
     Returns:
         List of cluster dicts, each with:
@@ -403,5 +604,11 @@ def cluster_stories(
             "first_published": first_published,
             "articles": cluster_articles,
         })
+
+    # Phase 2: entity-overlap merge pass
+    # Consolidates micro-clusters that represent sub-events of the same
+    # ongoing story (e.g., 20 Iran-war fragments → 3-5 mega-clusters).
+    if run_merge_pass and len(clusters) > 1:
+        clusters = merge_related_clusters(clusters)
 
     return clusters
