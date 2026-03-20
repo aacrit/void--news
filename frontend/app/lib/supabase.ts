@@ -142,9 +142,13 @@ export async function fetchOpinionArticles(section: "world" | "us" | "india") {
 
     return {
       id: cluster.id as string,
-      // Prefer the original article's headline and text over cluster summary
       title: (art?.title || cluster.title) as string,
-      summary: (art?.full_text || art?.summary || cluster.summary || "") as string,
+      // Use the longest available text — full_text is truncated to 300 chars
+      // by the pipeline, article summary is often 1-2 sentences, but the
+      // cluster summary is a Gemini 150-250 word briefing (usually longest)
+      summary: [art?.full_text, art?.summary, cluster.summary]
+        .filter(Boolean)
+        .sort((a, b) => (b as string).length - (a as string).length)[0] as string || "",
       author: (art?.author || null) as string | null,
       url: art?.url || "" as string,
       publishedAt: (art?.published_at || cluster.first_published || "") as string,

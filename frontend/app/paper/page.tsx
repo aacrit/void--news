@@ -418,14 +418,14 @@ export default function PaperPage() {
           // Exclude opinion clusters — those appear as individual op-eds below
           .neq("content_type", "opinion")
           .order("headline_rank", { ascending: false })
-          .limit(100),
+          .limit(25),
         supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", ["us"])
           .neq("content_type", "opinion")
           .order("headline_rank", { ascending: false })
-          .limit(100),
+          .limit(25),
         fetchOpinionArticles("world"),
         fetchOpinionArticles("us"),
       ]);
@@ -480,19 +480,26 @@ export default function PaperPage() {
     load();
   }, []);
 
-  // --- Section derivation — show ALL stories, no duplicates ---
-  const frontPage = allStories.slice(0, 3);
+  // --- Section derivation — realistic broadsheet count ---
+  // A real 1920s front page had ~15-20 stories total, not 100+.
+  // Keep only the highest-ranked stories for a readable edition.
+  const FRONT_PAGE_COUNT = 3;
+  const SECTION_CAP = 8;       // max news stories per section
+  const OPED_CAP = 3;          // max op-eds per section
+
+  const frontPage = allStories.slice(0, FRONT_PAGE_COUNT);
   const lead = frontPage[0];
   const primaryLeft = frontPage[1];
   const primaryRight = frontPage[2];
   const frontPageIds = new Set(frontPage.map((s) => s.id));
 
-  // All remaining stories split by section
   const worldStories = allStories
-    .filter((s) => s.section === "world" && !frontPageIds.has(s.id));
+    .filter((s) => s.section === "world" && !frontPageIds.has(s.id))
+    .slice(0, SECTION_CAP);
 
   const usStories = allStories
-    .filter((s) => s.section === "us" && !frontPageIds.has(s.id));
+    .filter((s) => s.section === "us" && !frontPageIds.has(s.id))
+    .slice(0, SECTION_CAP);
 
   // --- Interleave op-eds into a story list ---
   // Returns a flat array of tagged items: cluster stories with an op-ed
@@ -518,8 +525,8 @@ export default function PaperPage() {
     return result;
   }
 
-  const worldItems = interleave(worldStories, worldOpEds);
-  const usItems = interleave(usStories, usOpEds);
+  const worldItems = interleave(worldStories, worldOpEds.slice(0, OPED_CAP));
+  const usItems = interleave(usStories, usOpEds.slice(0, OPED_CAP));
 
   const hour = new Date().getUTCHours();
   const editionName = hour < 17 ? "Morning" : "Evening";
