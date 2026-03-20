@@ -309,7 +309,7 @@ def analyze_opinion(article: dict) -> dict:
     rhetorical = _rhetorical_question_score(combined)
     value_judg = _value_judgment_score(combined)
 
-    # Weighted combination
+    # Weighted combination (text-based signals)
     weighted = (
         pronoun * 0.12
         + subjectivity * 0.23
@@ -320,6 +320,21 @@ def analyze_opinion(article: dict) -> dict:
         + rhetorical * 0.08
         + value_judg * 0.10
     )
+
+    # Metadata override: when URL/section explicitly marks content as
+    # opinion/editorial, treat that as a hard floor — the publisher's own
+    # classification is the strongest signal. Without this, paywalled
+    # opinion articles with little scraped text score 15-25 despite being
+    # opinion, because all text signals return near-zero on 25 words.
+    if metadata >= 90:
+        # Explicit opinion/editorial marker → floor at 70
+        weighted = max(weighted, 70.0)
+    elif metadata >= 50:
+        # Analysis/column marker → floor at 45
+        weighted = max(weighted, 45.0)
+    elif metadata >= 30:
+        # Blog/personal essay → floor at 35
+        weighted = max(weighted, 35.0)
 
     score = max(0, min(100, int(round(weighted))))
 
