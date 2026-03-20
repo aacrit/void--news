@@ -294,6 +294,30 @@ function HomeContent() {
       />
 
       <main id="main-content" className="page-main">
+        {/* Facts / Opinion toggle — mobile only (desktop lives in nav-tabs) */}
+        <div className="view-mode-toggle--mobile" aria-hidden="false">
+          <div
+            className="view-mode-toggle"
+            role="group"
+            aria-label="Content type filter"
+          >
+            <button
+              className={`view-mode-toggle__btn${viewMode === "facts" ? " view-mode-toggle__btn--active" : ""}`}
+              onClick={() => { setViewMode("facts"); setActiveCategory("All"); setShowAllCompact(false); }}
+              aria-pressed={viewMode === "facts"}
+            >
+              Facts
+            </button>
+            <button
+              className={`view-mode-toggle__btn${viewMode === "opinion" ? " view-mode-toggle__btn--active" : ""}`}
+              onClick={() => { setViewMode("opinion"); setActiveCategory("All"); setShowAllCompact(false); }}
+              aria-pressed={viewMode === "opinion"}
+            >
+              Opinion
+            </button>
+          </div>
+        </div>
+
         {/* Filter bar */}
         <FilterBar
           activeCategory={activeCategory}

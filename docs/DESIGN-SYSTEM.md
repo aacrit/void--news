@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.2
-**Last updated:** 2026-03-19
+**Version:** 1.3
+**Last updated:** 2026-03-19 (rev 2)
 
 ---
 
@@ -101,15 +101,19 @@ Dark walnut warmth. Retains newspaper character — not terminal black, not pure
 
 Colors are consistent across light/dark modes for instant recognition. Designed for accessibility (min 4.5:1 contrast on both backgrounds).
 
-#### Political Lean Spectrum
+#### Political Lean Spectrum (7-point)
 
 ```css
+--bias-far-left:    #1D4ED8;   /* Deep blue — far left */
 --bias-left:        #3B82F6;   /* Blue — left lean */
 --bias-center-left: #60A5FA;   /* Light blue — center-left */
 --bias-center:      #9CA3AF;   /* Neutral gray — center */
 --bias-center-right:#F97316;   /* Orange — center-right */
 --bias-right:       #EF4444;   /* Red — right lean */
+--bias-far-right:   #B91C1C;   /* Deep red — far right */
 ```
+
+Source `political_lean_baseline` values: `far-left`, `left`, `center-left`, `center`, `center-right`, `right`, `far-right`, `varies`. Enforced by DB check constraint (migration 007).
 
 #### Sensationalism Scale
 
@@ -422,6 +426,9 @@ Active components in `frontend/app/components/`:
 | `LogoIcon` | Icon-only wrapper around `ScaleIcon`. Use in mobile nav, loading indicators, compact contexts. `animation="none"` shows void circle only (favicon mark). | -- |
 | `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
 | `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping), `loading` (dramatic tipping), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
+| `PageToggle` | Switches between Feed and Sources views. | -- |
+| `SpectrumChart` | Horizontal political spectrum bar visualization. Used on `/sources` page to show left:right source distribution. | -- |
+| `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. | -- |
 
 **Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).
 

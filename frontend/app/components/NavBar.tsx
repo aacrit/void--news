@@ -7,9 +7,13 @@ import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 
+export type ViewMode = "facts" | "opinion";
+
 interface NavBarProps {
   activeSection: Section;
   onSectionChange: (section: Section) => void;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -39,7 +43,7 @@ function formatDateCompact(): string {
   });
 }
 
-export default function NavBar({ activeSection, onSectionChange }: NavBarProps) {
+export default function NavBar({ activeSection, onSectionChange, viewMode, onViewModeChange }: NavBarProps) {
   return (
     <>
       <header className="nav-header">
@@ -87,6 +91,31 @@ export default function NavBar({ activeSection, onSectionChange }: NavBarProps) 
                 </span>
               </button>
             ))}
+
+            {/* Section divider */}
+            <span className="nav-tabs__divider" aria-hidden="true" />
+
+            {/* Facts / Opinion toggle */}
+            <div
+              className="view-mode-toggle"
+              role="group"
+              aria-label="Content type filter"
+            >
+              <button
+                className={`view-mode-toggle__btn${viewMode === "facts" ? " view-mode-toggle__btn--active" : ""}`}
+                onClick={() => onViewModeChange("facts")}
+                aria-pressed={viewMode === "facts"}
+              >
+                Facts
+              </button>
+              <button
+                className={`view-mode-toggle__btn${viewMode === "opinion" ? " view-mode-toggle__btn--active" : ""}`}
+                onClick={() => onViewModeChange("opinion")}
+                aria-pressed={viewMode === "opinion"}
+              >
+                Opinion
+              </button>
+            </div>
           </div>
 
           <div className="nav-right">
