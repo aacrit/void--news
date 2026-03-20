@@ -90,22 +90,7 @@ body {
   font-size: var(--text-base);
   color: var(--fg-primary);
   background-color: var(--bg-primary);
-  transition:
-    color var(--dur-morph) var(--ease-out),
-    background-color var(--dur-morph) var(--ease-out);
-}
-
-/* --------------------------------------------------------------------------
-   Paper Wrinkle — Creased newspaper overlay (pure CSS, no SVG filters)
-   Diagonal fold lines + horizontal center crease + worn-edge vignette.
-   -------------------------------------------------------------------------- */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
+  background-image:
     /* ── Main diagonal fold (upper-left to lower-right) ──────────── */
     linear-gradient(
       132deg,
@@ -145,11 +130,10 @@ body::before {
       transparent 40%,
       var(--wrinkle-vignette) 100%
     );
-}
-
-body > * {
-  position: relative;
-  z-index: 1;
+  background-attachment: fixed;
+  transition:
+    color var(--dur-morph) var(--ease-out),
+    background-color var(--dur-morph) var(--ease-out);
 }
 
 /* --------------------------------------------------------------------------
