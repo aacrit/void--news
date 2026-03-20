@@ -266,9 +266,6 @@ function Colophon({ edition }: { edition: string }) {
         Void News &middot; The {edition} Edition &middot; {dateStr}
       </p>
       <p>
-        Printed on digital presses &middot; 200 curated sources &middot; 6-axis bias analysis
-      </p>
-      <p>
         <a href="/void--news/" className="np-colophon__link">
           Return to the Digital Edition
         </a>
