@@ -1,27 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="void --news">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="void --news">
   <!--
-    void --news — Brand Icon (Void Circle + Scale Beam)
-    The void circle is the primary mark. A scale beam passes through it,
-    using the circle as the natural fulcrum. Weight ticks at beam ends.
-    Post and base anchor the scale below.
-    Works at 16x16px (favicon) through 512x512px.
+    void --news — SVG Favicon (Void Circle + Scale Beam)
+    Uses CSS media query for automatic light/dark mode adaptation.
+    At 16x16: the circle dominates, beam provides subtle weight.
+    At 32x32+: full detail is visible.
   -->
+  <style>
+    .icon-stroke { stroke: #1A1A1A; stroke-width: 2; }
+    @media (prefers-color-scheme: dark) {
+      .icon-stroke { stroke: #EDE8E0; }
+    }
+  </style>
 
   <!-- Void circle — the primary mark, analytical lens -->
-  <circle cx="16" cy="13" r="9"/>
+  <circle cx="16" cy="13" r="9" class="icon-stroke"/>
 
   <!-- Scale beam — extends through circle -->
-  <line x1="3" y1="13" x2="29" y2="13"/>
+  <line x1="3" y1="13" x2="29" y2="13" class="icon-stroke"/>
 
   <!-- Left weight tick -->
-  <line x1="5" y1="11" x2="5" y2="15"/>
+  <line x1="5" y1="11" x2="5" y2="15" class="icon-stroke"/>
 
   <!-- Right weight tick -->
-  <line x1="27" y1="11" x2="27" y2="15"/>
+  <line x1="27" y1="11" x2="27" y2="15" class="icon-stroke"/>
 
   <!-- Center post -->
-  <line x1="16" y1="22" x2="16" y2="29"/>
+  <line x1="16" y1="22" x2="16" y2="29" class="icon-stroke"/>
 
   <!-- Base -->
-  <line x1="12" y1="29" x2="20" y2="29"/>
+  <line x1="12" y1="29" x2="20" y2="29" class="icon-stroke"/>
 </svg>

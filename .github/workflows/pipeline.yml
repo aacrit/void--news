@@ -12,9 +12,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      - name: Cache spaCy model
+        id: spacy-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
       - name: Download spaCy model
+        if: steps.spacy-cache.outputs.cache-hit != 'true'
         run: python -m spacy download en_core_web_sm
       - name: Run pipeline
         env:

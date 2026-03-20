@@ -211,11 +211,12 @@
   }
 
   /* [CRITICAL-1] Bottom nav touch targets — WCAG 44×44px minimum.
-     Increase min-height + padding for thumb-reachable targets. */
+     5 editions fit in space-around layout; reduce horizontal padding to fit.
+     min-height stays 48px for thumb comfort. */
   .nav-bottom-tab {
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-3) var(--space-2);
     min-height: 48px;
-    min-width: 48px;
+    min-width: 0;
   }
 
   /* === LAYOUT === */
@@ -224,8 +225,9 @@
   .page-main {
     padding-left: var(--space-5);
     padding-right: var(--space-5);
-    /* [CRITICAL-3] Match actual bottom nav height (~56px) + safe area */
-    padding-bottom: 68px;
+    /* [CRITICAL-3] Match actual bottom nav height (~56px) + safe area inset
+       env() adds iPhone home indicator clearance; falls back to 0px on Android/desktop */
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
@@ -233,6 +235,11 @@
     padding-right: var(--space-5);
     /* Safe area clearance for iPhone notch/dynamic island */
     margin-bottom: var(--space-5);
+  }
+
+  /* Bottom nav — pad below tabs so they clear iPhone home indicator */
+  .nav-bottom {
+    padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
   }
 
   /* Section header — allow RefreshButton timestamp to wrap */

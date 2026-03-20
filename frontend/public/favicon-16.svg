@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!--
+    void --news — 16px Favicon (Simplified)
+    At 16px, the full scale beam is too detailed.
+    Show: void circle + beam line only. No ticks, no post, no base.
+    Thicker strokes for pixel-grid clarity.
+  -->
+  <style>
+    .s { stroke: #1A1A1A; stroke-width: 1.8; }
+    @media (prefers-color-scheme: dark) {
+      .s { stroke: #EDE8E0; }
+    }
+  </style>
+  <!-- Void circle -->
+  <circle cx="8" cy="7" r="5" class="s"/>
+  <!-- Beam through circle -->
+  <line x1="1.5" y1="7" x2="14.5" y2="7" class="s"/>
+  <!-- Post -->
+  <line x1="8" y1="12" x2="8" y2="14.5" class="s"/>
+  <!-- Base -->
+  <line x1="5.5" y1="14.5" x2="10.5" y2="14.5" class="s"/>
+</svg>

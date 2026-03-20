@@ -137,7 +137,7 @@ def _deduplicate_chunk(
 
 def deduplicate_articles(
     articles: list[dict],
-    similarity_threshold: float = 0.85,
+    similarity_threshold: float = 0.80,
 ) -> list[dict]:
     """
     Remove near-duplicate articles based on text similarity.

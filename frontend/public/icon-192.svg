@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!--
+    void --news — PWA Icon 192x192
+    Dark walnut background (Evening Edition) with cream icon.
+    For Android home screen, PWA install prompt.
+  -->
+  <!-- Background — dark walnut -->
+  <rect width="192" height="192" rx="0" fill="#1C1A17"/>
+
+  <!-- Icon centered -->
+  <g transform="translate(36, 30)" stroke="#EDE8E0" stroke-width="6">
+    <!-- Void circle -->
+    <circle cx="60" cy="48.75" r="33.75"/>
+    <!-- Beam -->
+    <line x1="11.25" y1="48.75" x2="108.75" y2="48.75"/>
+    <!-- Left tick -->
+    <line x1="18.75" y1="41.25" x2="18.75" y2="56.25"/>
+    <!-- Right tick -->
+    <line x1="101.25" y1="41.25" x2="101.25" y2="56.25"/>
+    <!-- Post -->
+    <line x1="60" y1="82.5" x2="60" y2="108.75"/>
+    <!-- Base -->
+    <line x1="45" y1="108.75" x2="75" y2="108.75"/>
+  </g>
+
+  <!-- Brand text -->
+  <text x="96" y="164" text-anchor="middle" fill="#8A8278"
+        font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="500" letter-spacing="0.08em">
+    void --news
+  </text>
+</svg>

@@ -68,9 +68,20 @@ def calls_remaining() -> int:
     return max(0, _MAX_CALLS_PER_RUN - _call_count)
 
 
-def generate_json(prompt: str, max_retries: int = 1) -> dict | None:
+def generate_json(
+    prompt: str,
+    system_instruction: str | None = None,
+    max_retries: int = 1,
+) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
+
+    Args:
+        prompt: The user-turn prompt text.
+        system_instruction: Optional persistent role/style instruction passed
+            as the system turn. When None (default), no system instruction is
+            sent and behavior is identical to the previous implementation.
+        max_retries: Number of additional attempts on transient failures.
 
     Returns parsed JSON dict, or None on failure (caller falls back
     to rule-based generation).
@@ -89,6 +100,7 @@ def generate_json(prompt: str, max_retries: int = 1) -> dict | None:
         response_mime_type="application/json",
         temperature=0.2,
         max_output_tokens=8192,  # Gemini 2.5 Flash uses thinking tokens internally
+        system_instruction=system_instruction,  # None = no system turn (backward-compatible)
     )
 
     for attempt in range(max_retries + 1):

@@ -8,24 +8,24 @@
 :root {
   /* Zone background tints — earned through data, not decoration.
      Light mode: subtle washes that don't overwhelm the paper surface. */
-  --spectrum-zone-far-left:    rgba(59, 130, 246, 0.12);
+  --spectrum-zone-far-left:    rgba(29, 78, 216, 0.12);
   --spectrum-zone-left:        rgba(59, 130, 246, 0.07);
   --spectrum-zone-center-left: rgba(96, 165, 250, 0.05);
   --spectrum-zone-center:      rgba(156, 163, 175, 0.05);
   --spectrum-zone-center-right:rgba(249, 115, 22, 0.05);
   --spectrum-zone-right:       rgba(239, 68, 68, 0.07);
-  --spectrum-zone-far-right:   rgba(239, 68, 68, 0.12);
+  --spectrum-zone-far-right:   rgba(185, 28, 28, 0.12);
 }
 
 :root[data-mode="dark"] {
   /* Dark mode tints — slightly more visible against warm dark surfaces */
-  --spectrum-zone-far-left:    rgba(59, 130, 246, 0.16);
+  --spectrum-zone-far-left:    rgba(29, 78, 216, 0.16);
   --spectrum-zone-left:        rgba(59, 130, 246, 0.10);
   --spectrum-zone-center-left: rgba(96, 165, 250, 0.07);
   --spectrum-zone-center:      rgba(156, 163, 175, 0.07);
   --spectrum-zone-center-right:rgba(249, 115, 22, 0.07);
   --spectrum-zone-right:       rgba(239, 68, 68, 0.10);
-  --spectrum-zone-far-right:   rgba(239, 68, 68, 0.16);
+  --spectrum-zone-far-right:   rgba(185, 28, 28, 0.16);
 }
 
 /* ---- Sources Page Wrapper ---------------------------------------------- */
@@ -424,13 +424,13 @@
 }
 
 /* Lean dot colors — bias data, earned via the Dot Matrix Rule */
-.spectrum-tooltip__lean-dot[data-lean="far-left"]    { background-color: var(--bias-left); }
+.spectrum-tooltip__lean-dot[data-lean="far-left"]    { background-color: var(--bias-far-left); }
 .spectrum-tooltip__lean-dot[data-lean="left"]        { background-color: var(--bias-left); }
 .spectrum-tooltip__lean-dot[data-lean="center-left"] { background-color: var(--bias-center-left); }
 .spectrum-tooltip__lean-dot[data-lean="center"]      { background-color: var(--bias-center); }
 .spectrum-tooltip__lean-dot[data-lean="center-right"]{ background-color: var(--bias-center-right); }
 .spectrum-tooltip__lean-dot[data-lean="right"]       { background-color: var(--bias-right); }
-.spectrum-tooltip__lean-dot[data-lean="far-right"]   { background-color: var(--bias-right); }
+.spectrum-tooltip__lean-dot[data-lean="far-right"]   { background-color: var(--bias-far-right); }
 
 .spectrum-tooltip__tier {
   font-family: var(--font-structural);
@@ -534,13 +534,13 @@
 }
 
 /* Lean-tinted left border — bias data earns the color (Dot Matrix Rule) */
-.spectrum-mobile-card[data-lean="far-left"]     { border-left: 3px solid var(--bias-left); }
+.spectrum-mobile-card[data-lean="far-left"]     { border-left: 3px solid var(--bias-far-left); }
 .spectrum-mobile-card[data-lean="left"]         { border-left: 3px solid var(--bias-left); }
 .spectrum-mobile-card[data-lean="center-left"]  { border-left: 3px solid var(--bias-center-left); }
 .spectrum-mobile-card[data-lean="center"]       { border-left: 3px solid var(--bias-center); }
 .spectrum-mobile-card[data-lean="center-right"] { border-left: 3px solid var(--bias-center-right); }
 .spectrum-mobile-card[data-lean="right"]        { border-left: 3px solid var(--bias-right); }
-.spectrum-mobile-card[data-lean="far-right"]    { border-left: 3px solid var(--bias-right); }
+.spectrum-mobile-card[data-lean="far-right"]    { border-left: 3px solid var(--bias-far-right); }
 
 /* Card header: dot + label on one row */
 .spectrum-mobile-card__header {
@@ -557,13 +557,13 @@
 }
 
 /* Card dot colors — bias data */
-.spectrum-mobile-card__dot[data-lean="far-left"]     { background-color: var(--bias-left); }
+.spectrum-mobile-card__dot[data-lean="far-left"]     { background-color: var(--bias-far-left); }
 .spectrum-mobile-card__dot[data-lean="left"]         { background-color: var(--bias-left); opacity: 0.8; }
 .spectrum-mobile-card__dot[data-lean="center-left"]  { background-color: var(--bias-center-left); }
 .spectrum-mobile-card__dot[data-lean="center"]       { background-color: var(--bias-center); }
 .spectrum-mobile-card__dot[data-lean="center-right"] { background-color: var(--bias-center-right); }
 .spectrum-mobile-card__dot[data-lean="right"]        { background-color: var(--bias-right); opacity: 0.8; }
-.spectrum-mobile-card__dot[data-lean="far-right"]    { background-color: var(--bias-right); }
+.spectrum-mobile-card__dot[data-lean="far-right"]    { background-color: var(--bias-far-right); }
 
 .spectrum-mobile-card__label {
   font-family: var(--font-editorial);
@@ -720,13 +720,13 @@
 }
 
 /* Active dot colors — lean data earns the color */
-.spectrum-mobile-dots__dot--active[data-lean="far-left"]     { background-color: var(--bias-left); }
+.spectrum-mobile-dots__dot--active[data-lean="far-left"]     { background-color: var(--bias-far-left); }
 .spectrum-mobile-dots__dot--active[data-lean="left"]         { background-color: var(--bias-left); }
 .spectrum-mobile-dots__dot--active[data-lean="center-left"]  { background-color: var(--bias-center-left); }
 .spectrum-mobile-dots__dot--active[data-lean="center"]       { background-color: var(--bias-center); }
 .spectrum-mobile-dots__dot--active[data-lean="center-right"] { background-color: var(--bias-center-right); }
 .spectrum-mobile-dots__dot--active[data-lean="right"]        { background-color: var(--bias-right); }
-.spectrum-mobile-dots__dot--active[data-lean="far-right"]    { background-color: var(--bias-right); }
+.spectrum-mobile-dots__dot--active[data-lean="far-right"]    { background-color: var(--bias-far-right); }
 
 /* Reduced motion: disable card strip transitions */
 @media (prefers-reduced-motion: reduce) {
@@ -778,13 +778,13 @@
   flex-shrink: 0;
 }
 
-.spectrum-scale__dot[data-lean="far-left"]    { background-color: var(--bias-left); }
+.spectrum-scale__dot[data-lean="far-left"]    { background-color: var(--bias-far-left); }
 .spectrum-scale__dot[data-lean="left"]        { background-color: var(--bias-left); opacity: 0.75; }
 .spectrum-scale__dot[data-lean="center-left"] { background-color: var(--bias-center-left); }
 .spectrum-scale__dot[data-lean="center"]      { background-color: var(--bias-center); }
 .spectrum-scale__dot[data-lean="center-right"]{ background-color: var(--bias-center-right); }
 .spectrum-scale__dot[data-lean="right"]       { background-color: var(--bias-right); opacity: 0.75; }
-.spectrum-scale__dot[data-lean="far-right"]   { background-color: var(--bias-right); }
+.spectrum-scale__dot[data-lean="far-right"]   { background-color: var(--bias-far-right); }
 
 .spectrum-scale__label {
   font-family: var(--font-structural);

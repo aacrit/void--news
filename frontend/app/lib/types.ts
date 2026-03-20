@@ -135,7 +135,7 @@ export interface Story {
   biasSpread?: BiasSpread;
   lensData: ThreeLensData;
   sigilData: SigilData;
-  section: "world" | "us";
+  section: Edition;
   importance: number;
   divergenceScore: number;
   headlineRank: number;
@@ -155,4 +155,23 @@ export type Category =
   | "Culture"
   | "Sports";
 
-export type Section = "world" | "us";
+export type Edition = "world" | "us" | "india" | "nepal" | "germany";
+
+// Keep Section as alias for backward compat
+export type Section = Edition;
+
+export interface EditionMeta {
+  slug: Edition;
+  label: string;
+  country: string;
+  sourceCount: string;
+  description: string;
+}
+
+export const EDITIONS: EditionMeta[] = [
+  { slug: "world", label: "World", country: "Global", sourceCount: "130+ sources", description: "International coverage" },
+  { slug: "us", label: "US", country: "United States", sourceCount: "130+ sources", description: "United States coverage" },
+  { slug: "india", label: "India", country: "India", sourceCount: "19 sources", description: "Indian news in English" },
+  { slug: "nepal", label: "Nepal", country: "Nepal", sourceCount: "5 sources", description: "Nepali news in English" },
+  { slug: "germany", label: "Germany", country: "Germany", sourceCount: "4 sources", description: "German news in English" },
+];

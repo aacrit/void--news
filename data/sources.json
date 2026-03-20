@@ -740,12 +740,12 @@
     "id": "the-east-african",
     "name": "The East African",
     "url": "https://www.theeastafrican.co.ke",
-    "rss_url": "https://news.google.com/rss/search?q=site:theeastafrican.co.ke+when:7d&ceid=US:en&hl=en-US&gl=US",
+    "rss_url": "https://news.google.com/rss/search?q=site:theeastafrican.co.ke+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "KE",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Regional weekly covering Kenya, Uganda, Tanzania, Rwanda, Burundi, and South Sudan. Published by Nation Media Group, East Africa's largest media company. RSS via Google News filter (site blocks direct RSS)"
+    "credibility_notes": "Regional weekly covering Kenya, Uganda, Tanzania, Rwanda, Burundi, and South Sudan. Published by Nation Media Group, East Africa's largest media company. RSS via Google News filter (site blocks direct RSS; when:7d changed to when:24h 2026-03-19)"
   },
   {
     "id": "daily-maverick",
@@ -828,12 +828,12 @@
     "id": "cgtn",
     "name": "CGTN (China Global Television Network)",
     "url": "https://www.cgtn.com",
-    "rss_url": "https://www.cgtn.com/subscribe/feeds/english/video.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:cgtn.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "CN",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "China's English-language international broadcaster. Part of China Media Group, state-controlled. Provides official Chinese government perspective on international affairs. Essential for understanding Beijing's messaging; editorial independence is limited."
+    "credibility_notes": "China's English-language international broadcaster. Part of China Media Group, state-controlled. Provides official Chinese government perspective on international affairs. Essential for understanding Beijing's messaging; editorial independence is limited. RSS via Google News filter (direct video.xml feed returned 404 as of 2026-03-19)"
   },
   {
     "id": "dawn-pakistan",
@@ -916,7 +916,7 @@
     "id": "propublica",
     "name": "ProPublica",
     "url": "https://www.propublica.org",
-    "rss_url": "https://feeds.propublica.org/propublica/main",
+    "rss_url": "https://www.propublica.org/feeds/propublica/main",
     "tier": "independent",
     "country": "US",
     "type": "investigative",
@@ -1895,7 +1895,7 @@
     "id": "radio-free-europe",
     "name": "Radio Free Europe / Radio Liberty",
     "url": "https://www.rferl.org",
-    "rss_url": "https://www.rferl.org/api/zprmdpqmveq",
+    "rss_url": "https://www.rferl.org/api/",
     "tier": "international",
     "country": "US",
     "type": "broadcast",
@@ -1906,7 +1906,7 @@
     "id": "voice-of-america",
     "name": "Voice of America",
     "url": "https://www.voanews.com",
-    "rss_url": "https://www.voanews.com/api/zr-yqtkqe",
+    "rss_url": "https://www.voanews.com/api/",
     "tier": "international",
     "country": "US",
     "type": "broadcast",
@@ -1961,12 +1961,12 @@
     "id": "latin-america-reports",
     "name": "Latin America Reports",
     "url": "https://www.latinamericareports.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:latinamericareports.com+when:7d&ceid=US:en&hl=en-US&gl=US",
+    "rss_url": "https://www.latinamericareports.com/feed/",
     "tier": "international",
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "center",
-    "credibility_notes": "English-language coverage of Latin American affairs. Centrist analytical perspective on regional politics, economics, and society. RSS via Google News."
+    "credibility_notes": "English-language coverage of Latin American affairs. Centrist analytical perspective on regional politics, economics, and society. Direct RSS feed confirmed live 2026-03-19 (replaced Google News when:7d proxy)."
   },
   {
     "id": "religion-news-service",
@@ -2159,12 +2159,12 @@
     "id": "global-times",
     "name": "Global Times (China)",
     "url": "https://www.globaltimes.cn",
-    "rss_url": "https://www.globaltimes.cn/rss/outboundpage.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:globaltimes.cn+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "CN",
     "type": "digital",
     "political_lean_baseline": "far-right",
-    "credibility_notes": "Tabloid under People's Daily, official organ of the Communist Party of China. Nationalist and state-aligned editorial perspective. Nationalistic and sometimes combative in tone. Included for Chinese state/nationalist viewpoint."
+    "credibility_notes": "Tabloid under People's Daily, official organ of the Communist Party of China. Nationalist and state-aligned editorial perspective. Nationalistic and sometimes combative in tone. Included for Chinese state/nationalist viewpoint. RSS via Google News filter (direct outboundpage.xml returned 404 as of 2026-03-19)"
   },
   {
     "id": "associated-press-fact-check",
@@ -2198,5 +2198,250 @@
     "type": "digital",
     "political_lean_baseline": "center-right",
     "credibility_notes": "Liberal-to-center-right publication founded 2020 by Yascha Mounk. Focuses on defending liberal democracy against authoritarianism from left and right. Expert contributors. Center-right on free speech and institutional issues."
+  },
+
+  {
+    "id": "hindustan-times",
+    "name": "Hindustan Times",
+    "url": "https://www.hindustantimes.com",
+    "rss_url": "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "India's second-largest English-language daily, founded 1924. HT Media owned. Strong national political coverage. Broad readership across northern India. Centrist editorial line."
+  },
+  {
+    "id": "ndtv",
+    "name": "NDTV",
+    "url": "https://www.ndtv.com",
+    "rss_url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadcast",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "India's leading English-language news channel, founded 1988. Acquired by Adani Group in 2022 — editorial independence under observation. Strong reporting legacy. Center-left on democratic accountability."
+  },
+  {
+    "id": "indian-express",
+    "name": "The Indian Express",
+    "url": "https://indianexpress.com",
+    "rss_url": "https://indianexpress.com/feed/",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Respected English broadsheet, founded 1932. Ramnath Goenka tradition of institutional accountability. Strong political and investigative reporting. Maintains editorial independence."
+  },
+  {
+    "id": "economic-times-india",
+    "name": "The Economic Times",
+    "url": "https://economictimes.indiatimes.com",
+    "rss_url": "https://economictimes.indiatimes.com/rssfeedsdefault.cms",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "India's largest financial daily, founded 1961. Part of Times Group. Business, markets, and economic policy focus. Centrist editorial line on economic issues."
+  },
+  {
+    "id": "business-standard-india",
+    "name": "Business Standard",
+    "url": "https://www.business-standard.com",
+    "rss_url": "https://www.business-standard.com/rss/latest.rss",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "India's leading independent business newspaper, founded 1975. Known for credible economic journalism. Relatively independent from political ownership. Strong on policy and markets."
+  },
+  {
+    "id": "the-print-india",
+    "name": "The Print",
+    "url": "https://theprint.in",
+    "rss_url": "https://theprint.in/feed/",
+    "tier": "international",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Digital news outlet founded 2017 by veteran journalist Shekhar Gupta. Strong on policy, defense, and political analysis. Editorially independent. Centrist-liberal editorial perspective."
+  },
+  {
+    "id": "india-today",
+    "name": "India Today",
+    "url": "https://www.indiatoday.in",
+    "rss_url": "https://www.indiatoday.in/rss/home",
+    "tier": "international",
+    "country": "IN",
+    "type": "magazine",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "India's leading weekly news magazine and digital platform. TV18/India Today Group. Soft-nationalist editorial drift post-2014 but maintains journalistic standards. Broad coverage."
+  },
+  {
+    "id": "firstpost",
+    "name": "Firstpost",
+    "url": "https://www.firstpost.com",
+    "rss_url": "https://www.firstpost.com/rss/India.xml",
+    "tier": "international",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Network18/Reliance-owned digital outlet. Editorial drift toward pro-government since 2014. Covers wide range of topics. Center-right editorial framing."
+  },
+  {
+    "id": "deccan-herald",
+    "name": "Deccan Herald",
+    "url": "https://www.deccanherald.com",
+    "rss_url": "https://www.deccanherald.com/rss-feed.rss",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "South India-based English broadsheet (Bengaluru), founded 1948. Covers Karnataka and South Indian politics. Independent ownership by The Printers (Mysore) Group."
+  },
+  {
+    "id": "scroll-in",
+    "name": "Scroll.in",
+    "url": "https://scroll.in",
+    "rss_url": "https://scroll.in/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Independent Indian digital outlet founded 2014. Known for long-form journalism, investigative reports, and arts coverage. Donor/reader-funded model. Center-left secular-liberal perspective."
+  },
+  {
+    "id": "the-quint",
+    "name": "The Quint",
+    "url": "https://www.thequint.com",
+    "rss_url": "https://www.thequint.com/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Digital outlet with strong video-first approach. Has a fact-checking arm (QuintFit). Bloomberg-backed. Center-left on democratic accountability and human rights."
+  },
+  {
+    "id": "newslaundry",
+    "name": "Newslaundry",
+    "url": "https://www.newslaundry.com",
+    "rss_url": "https://www.newslaundry.com/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Subscription-funded independent media outlet founded 2012. Covers media accountability and original investigative reporting. Full transparency on funding. Center-left perspective."
+  },
+  {
+    "id": "alt-news",
+    "name": "Alt News",
+    "url": "https://altnews.in",
+    "rss_url": "https://altnews.in/feed/",
+    "tier": "independent",
+    "country": "IN",
+    "type": "fact_check",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "India's premier independent fact-checking organization, founded 2017. IFCN signatory. Transparent methodology. Essential counterweight to political misinformation."
+  },
+  {
+    "id": "caravan-magazine",
+    "name": "The Caravan",
+    "url": "https://caravanmagazine.in",
+    "rss_url": "https://caravanmagazine.in/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "magazine",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Long-form journalism magazine. Investigative and literary. Critical of the Modi government. Widely respected in Indian media circles. Founded 1988, relaunched 2010."
+  },
+  {
+    "id": "swarajya-magazine",
+    "name": "Swarajya",
+    "url": "https://swarajyamag.com",
+    "rss_url": "https://swarajyamag.com/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Online magazine representing the Hindu nationalist intellectual right, founded 2014. Pro-BJP, pro-Hindu civilizational perspective. Generally factual but with a strong right-wing editorial framework."
+  },
+  {
+    "id": "republic-tv",
+    "name": "Republic TV",
+    "url": "https://www.republicworld.com",
+    "rss_url": "https://www.republicworld.com/rss/top-news.xml",
+    "tier": "independent",
+    "country": "IN",
+    "type": "broadcast",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Founded by Arnab Goswami. Aggressively pro-BJP, high ratings. Represents a genuine right-of-center viewpoint in Indian media. Contested editorial standards — credibility caution noted."
+  },
+
+  {
+    "id": "kathmandu-post",
+    "name": "The Kathmandu Post",
+    "url": "https://kathmandupost.com",
+    "rss_url": "https://kathmandupost.com/feed",
+    "tier": "international",
+    "country": "NP",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Nepal's leading English-language daily, founded 1993. Published by Kantipur Publications (Nepal's largest media group). Strong on Nepali politics and governance."
+  },
+  {
+    "id": "nepali-times",
+    "name": "Nepali Times",
+    "url": "https://www.nepalitimes.com",
+    "rss_url": "https://www.nepalitimes.com/feed/",
+    "tier": "international",
+    "country": "NP",
+    "type": "magazine",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Nepal's leading English-language weekly magazine, founded 2000. Published by Himalmedia. Known for in-depth analysis of South Asian politics, environment, and culture."
+  },
+  {
+    "id": "the-himalayan-times-nepal",
+    "name": "The Himalayan Times",
+    "url": "https://thehimalayantimes.com",
+    "rss_url": "https://thehimalayantimes.com/feed/",
+    "tier": "international",
+    "country": "NP",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Nepal's second-largest English-language daily. Owned by IME Group (financial conglomerate). Broad national coverage with decent business reporting."
+  },
+  {
+    "id": "republica-nepal",
+    "name": "Republica",
+    "url": "https://myrepublica.nagariknetwork.com",
+    "rss_url": "https://myrepublica.nagariknetwork.com/feed",
+    "tier": "international",
+    "country": "NP",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language daily published by Nagarik Network. Reasonable editorial standards. Covers Nepali politics, development, and regional issues."
+  },
+  {
+    "id": "record-nepal",
+    "name": "Record Nepal",
+    "url": "https://www.recordnepal.com",
+    "rss_url": "https://www.recordnepal.com/feed",
+    "tier": "independent",
+    "country": "NP",
+    "type": "investigative",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Independent investigative journalism outlet focused on Nepal. Founded 2019. Covers accountability, governance, human rights, and political transparency."
+  },
+
+  {
+    "id": "the-local-germany",
+    "name": "The Local Germany",
+    "url": "https://www.thelocal.de",
+    "rss_url": "https://feeds.thelocal.com/rss/de",
+    "tier": "international",
+    "country": "DE",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language news site covering Germany for international readers, founded 2004. Part of The Local Europe network. Credible English-language reporting on German politics and society."
   }
 ]

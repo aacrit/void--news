@@ -107,6 +107,12 @@ SPECIFIC_ATTRIBUTION = re.compile(
 def _named_source_score(text: str, doc=None) -> float:
     """
     Count unique named persons used as sources via spaCy NER.
+
+    Also counts SPECIFIC_ATTRIBUTION regex matches (titled persons like
+    "Secretary Smith", "Director Johnson") as named sources. Wire-service
+    articles heavily cite titled officials without always tagging them as
+    PERSON entities — this corrects the resulting underscoring. (Priority 4 fix)
+
     Returns 0-100.
     """
     if doc is None:
@@ -123,6 +129,11 @@ def _named_source_score(text: str, doc=None) -> float:
             context = text[context_start:context_end]
             if ATTRIBUTION_VERBS.search(context):
                 named_sources.add(ent.text.lower().strip())
+
+    # Also count titled-person attributions (e.g. "Secretary Smith said")
+    # that spaCy may miss as PERSON entities, particularly in wire copy.
+    for match in SPECIFIC_ATTRIBUTION.finditer(text[:15000]):
+        named_sources.add(match.group(0).lower().strip())
 
     count = len(named_sources)
     # 0 sources = 0, 1 = 20, 2 = 40, 3 = 60, 5+ = 100
