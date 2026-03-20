@@ -4,8 +4,8 @@
    Scoped to .np-root. No color. No interaction. Pure static reading.
    ========================================================================== */
 
-/* --- 1930s Period Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400;1,700&family=UnifrakturMaguntia&display=swap');
+/* --- 1920s NYT-style Period Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap');
 
 /* --- Tokens --- */
 .np-root {
@@ -19,10 +19,11 @@
   --np-rule: #A89D88;
   --np-rule-dark: #8A7F6C;
   --np-stain: rgba(139, 119, 75, 0.08);
-  --np-font-nameplate: 'UnifrakturMaguntia', 'Old Standard TT', 'Georgia', serif;
-  --np-font-head: 'Old Standard TT', 'Georgia', 'Times New Roman', serif;
+  --np-font-nameplate: 'UnifrakturCook', 'Old Standard TT', 'Georgia', serif;
+  --np-font-head: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
   --np-font-body: 'Lora', 'Georgia', 'Times New Roman', serif;
-  --np-font-label: var(--font-inter, 'Helvetica Neue', 'Arial', sans-serif);
+  --np-font-deck: 'Old Standard TT', 'Georgia', 'Times New Roman', serif;
+  --np-font-label: 'Old Standard TT', 'Georgia', serif;
 }
 
 /* --- Full-page paper background (covers viewport) --- */
@@ -90,10 +91,10 @@ html:has(.np-root) body {
 }
 
 .np-masthead__motto {
-  font-family: var(--np-font-body);
+  font-family: var(--np-font-deck);
   font-style: italic;
-  font-size: 13px;
-  letter-spacing: 0.15em;
+  font-size: 14px;
+  letter-spacing: 0.12em;
   color: var(--np-ink-light);
   margin: 0 0 10px;
 }
@@ -106,12 +107,12 @@ html:has(.np-root) body {
 
 .np-masthead__nameplate {
   font-family: var(--np-font-nameplate);
-  font-size: 96px;
-  font-weight: 400;
+  font-size: 100px;
+  font-weight: 700;
   line-height: 1.0;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   color: var(--np-ink);
-  margin: 0 0 8px;
+  margin: 0 0 12px;
   text-shadow: 0.5px 0.5px 0 rgba(26, 23, 16, 0.12);
 }
 
@@ -132,8 +133,8 @@ html:has(.np-root) body {
   align-items: center;
   padding: 10px 0;
   font-family: var(--np-font-label);
-  font-size: 10px;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--np-ink-light);
 }
@@ -155,8 +156,8 @@ html:has(.np-root) body {
   justify-content: space-between;
   padding: 8px 0 10px;
   font-family: var(--np-font-label);
-  font-size: 10px;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--np-ink-light);
 }
@@ -174,10 +175,10 @@ html:has(.np-root) body {
 }
 
 .np-section-label__text {
-  font-family: var(--np-font-head);
-  font-size: 18px;
+  font-family: var(--np-font-deck);
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--np-ink);
   margin: 0;
@@ -240,10 +241,10 @@ html:has(.np-root) body {
 .np-article--secondary .np-article__headline { font-size: 22px; }
 
 .np-article__byline {
-  font-family: var(--np-font-label);
-  font-size: 10px;
+  font-family: var(--np-font-deck);
+  font-size: 11px;
   font-variant-caps: small-caps;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--np-ink-light);
   margin: 0 0 10px;
@@ -261,7 +262,7 @@ html:has(.np-root) body {
 }
 
 .np-article__dateline {
-  font-family: var(--np-font-head);
+  font-family: var(--np-font-deck);
   font-variant-caps: small-caps;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -314,7 +315,7 @@ html:has(.np-root) body {
 .np-classified-ad:last-child { border-right: 1px solid var(--np-rule); }
 
 .np-classified-ad__heading {
-  font-family: var(--np-font-head);
+  font-family: var(--np-font-deck);
   font-weight: 700;
   font-variant-caps: small-caps;
   letter-spacing: 0.06em;
