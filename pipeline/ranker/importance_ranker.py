@@ -909,40 +909,33 @@ def rank_importance(
                         if editorial_importance is not None else None)
 
     # v5.0 weighted combination
-    # When Gemini editorial_importance is available (not None):
-    #   editorial gets 12% weight, all deterministic signals scale to 88%.
-    # When unavailable: pure deterministic v4.0 (backward-compatible).
+    # Deterministic base score (always computed, sum = 1.00)
+    headline_rank = (
+        coverage * 0.20
+        + maturity * 0.16
+        + tier_div * 0.13
+        + consequentiality * 0.10
+        + authority * 0.08
+        + factual * 0.08
+        + divergence * 0.07
+        + spectrum * 0.06
+        + geographic * 0.06
+        + velocity * 0.06
+    )
+
+    # v5.0: Gemini editorial adjustment (additive, not scaling)
+    # When editorial_importance is available, apply a ±10% adjustment
+    # based on how Gemini's judgment differs from the deterministic score.
+    # ei=10 → up to +10 points; ei=1 → up to -5 points; ei=5 → neutral.
+    # This avoids bloating: deterministic base is never scaled down.
+    # Clusters without Gemini data score identically to v4.0.
     if editorial_signal is not None:
-        # v5.0: Gemini-augmented weights (sum = 1.00)
-        G = 0.12  # Gemini editorial weight
-        D = 1.0 - G  # 0.88 — deterministic scale factor
-        headline_rank = (
-            editorial_signal * G
-            + coverage * 0.20 * D
-            + maturity * 0.16 * D
-            + tier_div * 0.13 * D
-            + consequentiality * 0.10 * D
-            + authority * 0.08 * D
-            + factual * 0.08 * D
-            + divergence * 0.07 * D
-            + spectrum * 0.06 * D
-            + geographic * 0.06 * D
-            + velocity * 0.06 * D
-        )
-    else:
-        # v4.0: purely deterministic (unchanged, sum = 1.00)
-        headline_rank = (
-            coverage * 0.20
-            + maturity * 0.16
-            + tier_div * 0.13
-            + consequentiality * 0.10
-            + authority * 0.08
-            + factual * 0.08
-            + divergence * 0.07
-            + spectrum * 0.06
-            + geographic * 0.06
-            + velocity * 0.06
-        )
+        # editorial_signal is 0-100 (mapped from 1-10)
+        # Compute adjustment: positive for ei>=6, negative for ei<=4, ~0 for ei=5
+        # Max boost: +10 points at ei=10; max penalty: -5 at ei=1
+        midpoint = 55.6  # corresponds to ei ≈ 6 (slightly generous neutral)
+        adjustment = (editorial_signal - midpoint) * 0.15  # ±6.7 max
+        headline_rank += adjustment
 
     # Confidence multiplier: discount low-confidence clusters.
     # v3.3: softened curve — 0.65 + 0.35 * confidence.
