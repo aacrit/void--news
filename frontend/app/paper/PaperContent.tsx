@@ -615,7 +615,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
               <Article
                 key={story.id}
                 story={story}
-                tier={assignTier(20 + i, story)}
+                tier={assignTier(8 + i, story)}
                 edition={edition}
               />
             ))}
