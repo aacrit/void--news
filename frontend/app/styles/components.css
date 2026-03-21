@@ -3375,7 +3375,8 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--fg-tertiary);
+  /* WCAG AA 4.5:1 — fg-secondary not fg-tertiary for small text */
+  color: var(--fg-secondary);
   /* Minimum 44x44 touch target via padding compensation */
   min-height: 44px;
   padding-inline: var(--space-2);
@@ -3384,7 +3385,7 @@
 }
 
 .dd-press-trigger:hover {
-  color: var(--fg-secondary);
+  color: var(--fg-primary);
 }
 
 .dd-press-trigger:focus-visible {
