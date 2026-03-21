@@ -3385,48 +3385,13 @@
   50% { opacity: 0.8; }
 }
 
-/* Hide cue once user has interacted with analysis section */
-.dd-analysis-grid:has(.bi-axis__header--expanded) + .dd-interaction-cue,
-.dd-analysis-grid:hover + .dd-interaction-cue {
+/* Hide cue once user has interacted with press analysis */
+.deep-dive-panel__content:has(.bi-axis__header--expanded) .dd-interaction-cue {
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);
 }
 
-/* ---- Deep Dive: Analysis grid (lean spectrum + press analysis) ---------- */
-/* Desktop: 2-column flex row. Mobile: stacked (see responsive.css). */
-.dd-analysis-grid {
-  display: flex;
-  gap: var(--space-5);
-  align-items: flex-start;
-  padding: var(--space-4);
-  background-color: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-}
-
-.dd-analysis-grid__lean {
-  flex: 0 0 auto;
-  width: 180px;
-  min-width: 0;
-}
-
-.dd-analysis-grid__press {
-  flex: 1;
-  min-width: 0;
-}
-
-.dd-analysis-grid__label {
-  display: block;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-2);
-}
-
-/* ---- BiasInspectorInline — inline header inside dd-analysis-grid ------- */
+/* ---- BiasInspectorInline — inline scorecard in Deep Dive content ------- */
 .bi-inline {
   display: flex;
   flex-direction: column;

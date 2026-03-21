@@ -459,83 +459,79 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             )}
           </section>
 
-          {/* ---- Analysis grid: lean spectrum + press analysis side by side --- */}
+          {/* ---- Source lean spectrum ------------------------------------------- */}
           {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Bias analysis" className={`dd-analysis-grid anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "150ms" }}>
+            <section aria-label="Source political lean" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "150ms" }}>
+              <div className="dd-spectrum">
+                {/* Row above track */}
+                <div className="dd-spectrum__row dd-spectrum__row--above">
+                  {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
+                    const favicon = src.url ? faviconUrl(src.url) : "";
+                    return (
+                      <a
+                        key={`above-${src.name}-${idx}`}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                        aria-label={`${src.name}: ${leanLabel(lean)}`}
+                        className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                        style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
+                      >
+                        {favicon ? (
+                          <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
+                        ) : (
+                          <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
+                        )}
+                      </a>
+                    );
+                  })}
+                </div>
 
-              {/* Left col: lean spectrum */}
-              <div className="dd-analysis-grid__lean">
-                <span className="dd-analysis-grid__label">Political Lean</span>
-                <div className="dd-spectrum">
-                  {/* Row above track */}
-                  <div className="dd-spectrum__row dd-spectrum__row--above">
-                    {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
-                      const favicon = src.url ? faviconUrl(src.url) : "";
-                      return (
-                        <a
-                          key={`above-${src.name}-${idx}`}
-                          href={src.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                          aria-label={`${src.name}: ${leanLabel(lean)}`}
-                          className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                          style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
-                        >
-                          {favicon ? (
-                            <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
-                          ) : (
-                            <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
-                          )}
-                        </a>
-                      );
-                    })}
-                  </div>
+                {/* Track with inline labels */}
+                <div className="dd-spectrum__track">
+                  <span className="dd-spectrum__inline-label dd-spectrum__inline-label--left">Left</span>
+                  <span className="dd-spectrum__inline-label dd-spectrum__inline-label--center">Center</span>
+                  <span className="dd-spectrum__inline-label dd-spectrum__inline-label--right">Right</span>
+                </div>
 
-                  {/* Track with inline labels */}
-                  <div className="dd-spectrum__track">
-                    <span className="dd-spectrum__inline-label dd-spectrum__inline-label--left">Left</span>
-                    <span className="dd-spectrum__inline-label dd-spectrum__inline-label--center">Center</span>
-                    <span className="dd-spectrum__inline-label dd-spectrum__inline-label--right">Right</span>
-                  </div>
-
-                  {/* Row below track */}
-                  <div className="dd-spectrum__row dd-spectrum__row--below">
-                    {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
-                      const favicon = src.url ? faviconUrl(src.url) : "";
-                      return (
-                        <a
-                          key={`below-${src.name}-${idx}`}
-                          href={src.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                          aria-label={`${src.name}: ${leanLabel(lean)}`}
-                          className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                          style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
-                        >
-                          {favicon ? (
-                            <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
-                          ) : (
-                            <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
-                          )}
-                        </a>
-                      );
-                    })}
-                  </div>
+                {/* Row below track */}
+                <div className="dd-spectrum__row dd-spectrum__row--below">
+                  {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
+                    const favicon = src.url ? faviconUrl(src.url) : "";
+                    return (
+                      <a
+                        key={`below-${src.name}-${idx}`}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                        aria-label={`${src.name}: ${leanLabel(lean)}`}
+                        className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                        style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
+                      >
+                        {favicon ? (
+                          <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
+                        ) : (
+                          <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
+                        )}
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
+            </section>
+          )}
 
-              {/* Right col: press analysis inline scorecard */}
-              <div className="dd-analysis-grid__press">
-                <BiasInspectorInline sources={sources} />
-              </div>
-
+          {/* ---- Press Analysis — inline scorecard ----------------------------- */}
+          {sources.length > 0 && (
+            <section aria-label="Press analysis" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "200ms" }}>
+              <BiasInspectorInline sources={sources} />
             </section>
           )}
 
           {/* Subtle cue: encourage interaction with the analysis */}
-          {sources.length > 0 && leanPositions.length > 0 && (
+          {sources.length > 0 && (
             <div className="dd-interaction-cue" aria-hidden="true">
               <span className="dd-interaction-cue__dots">
                 <span className="dd-interaction-cue__dot" />
