@@ -115,15 +115,15 @@
     -webkit-line-clamp: 4;
   }
 
-  /* Deep Dive: side panel from right */
+  /* Deep Dive: side panel from right — over half the screen */
   .deep-dive-panel {
     left: auto;
     right: 0;
     top: 0;
     bottom: 0;
-    width: 50%;
-    min-width: 480px;
-    max-width: 860px;
+    width: 55%;
+    min-width: 560px;
+    max-width: none;
     border-left: var(--rule-thin);
   }
 
@@ -159,8 +159,8 @@
 
 @media (min-width: 1440px) {
   .deep-dive-panel {
-    width: 45%;
-    max-width: 860px;
+    width: 55%;
+    max-width: none;
   }
 }
 
@@ -376,6 +376,17 @@
   /* Hide "Back to feed" text, keep arrow */
   .deep-dive-back-label {
     display: none;
+  }
+
+  /* Analysis row: stack on mobile */
+  .dd-analysis-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Perspectives: single column on mobile */
+  .dd-perspectives-grid {
+    grid-template-columns: 1fr;
   }
 
   /* [ENHANCEMENT-5] Source rows — better stacking on narrow screens */

@@ -164,16 +164,19 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — sections fade in sequentially */
+/* Deep Dive content section stagger — casino slot-machine cascade reveal.
+   Each section clips from below and snaps into place with spring overshoot. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 350ms var(--spring);
 }
 
 .anim-dd-section--visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 /* Filter chip active spring press feedback */

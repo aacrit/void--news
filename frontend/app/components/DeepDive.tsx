@@ -441,19 +441,19 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           )}
 
-          {/* ---- Sigil — cluster-level bias indicator (first in content) ------- */}
-          {story.sigilData && !story.sigilData.pending && (
-            <div
-              className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "50ms" }}
-            >
-              <Sigil data={story.sigilData} size="lg" />
-            </div>
-          )}
-
-          {/* ---- Source lean spectrum ------------------------------------------- */}
+          {/* ---- Analysis row: Sigil + Spectrum + Press trigger in one line ---- */}
           {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Source political lean" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "100ms" }}>
+            <section aria-label="Bias analysis" className={`dd-analysis-row anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "60ms" }}>
+
+              {/* Sigil — compact bias mark */}
+              {story.sigilData && !story.sigilData.pending && (
+                <div className="dd-analysis-row__sigil">
+                  <Sigil data={story.sigilData} size="lg" />
+                </div>
+              )}
+
+              {/* Spectrum — fills remaining space */}
+              <div className="dd-analysis-row__spectrum">
               <div className="dd-spectrum">
                 {/* Row above track */}
                 <div className="dd-spectrum__row dd-spectrum__row--above">
@@ -512,8 +512,9 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                   })}
                 </div>
               </div>
+              </div>{/* end dd-analysis-row__spectrum */}
 
-              {/* Press Analysis inline expand — anchored below spectrum */}
+              {/* Press Analysis trigger — right end of the row */}
               <button
                 className="dd-press-trigger"
                 onClick={() => setPressAnalysisOpen(v => !v)}
@@ -529,7 +530,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                 </span>
               </button>
 
-              {/* True dynamic-height expand: grid-template-rows 0fr → 1fr */}
+              {/* Press Analysis expand — full width below the row */}
               <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}>
                 <div className="dd-press-expand__inner">
                   <BiasInspectorInline sources={sources} />
@@ -550,43 +551,45 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             )}
           </section>
 
-          {/* ---- Source perspectives: explicit Agreement / Divergence labels -- */}
+          {/* ---- Source perspectives: Agreement | Divergence two-column grid --- */}
           {deepDive && (
             (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
             (Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0)
           ) && (
-            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "250ms" }}>
-              <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
+            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "200ms" }}>
+              <div className="dd-perspectives-grid">
+                <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
 
-              {/* Agreement sub-section */}
-              {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-                <>
-                  <span className="dd-perspectives-sublabel dd-perspectives-sublabel--agree">Agreement</span>
-                  <ul className="dd-perspectives-list">
-                    {deepDive.consensus.map((point, i) => (
-                      <li key={`agree-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
-                        <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
-                        <span className="dd-perspectives-item__text">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+                {/* Agreement column */}
+                {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
+                  <div className="dd-perspectives-col">
+                    <span className="dd-perspectives-sublabel dd-perspectives-sublabel--agree">Agreement</span>
+                    <ul className="dd-perspectives-list">
+                      {deepDive.consensus.map((point, i) => (
+                        <li key={`agree-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
+                          <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
+                          <span className="dd-perspectives-item__text">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-              {/* Divergence sub-section */}
-              {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-                <>
-                  <span className="dd-perspectives-sublabel dd-perspectives-sublabel--diverge">Divergence</span>
-                  <ul className="dd-perspectives-list">
-                    {deepDive.divergence.map((point, i) => (
-                      <li key={`diverge-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
-                        <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
-                        <span className="dd-perspectives-item__text">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+                {/* Divergence column */}
+                {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
+                  <div className="dd-perspectives-col">
+                    <span className="dd-perspectives-sublabel dd-perspectives-sublabel--diverge">Divergence</span>
+                    <ul className="dd-perspectives-list">
+                      {deepDive.divergence.map((point, i) => (
+                        <li key={`diverge-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
+                          <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
+                          <span className="dd-perspectives-item__text">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </section>
           )}
 
