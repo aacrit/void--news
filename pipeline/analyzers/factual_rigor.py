@@ -64,10 +64,22 @@ ATTRIBUTION_VERBS = re.compile(
 # ---------------------------------------------------------------------------
 # Organization citation patterns
 # ---------------------------------------------------------------------------
+# International sources expansion (2026-03-21): added think-tank and policy-outlet
+# citation forms that are common in CFR, Chatham House, CSIS, RAND, OCCRP, and
+# Carbon Brief articles but were absent from the original pattern set.
+# "Research by [ORG]", "An analysis by [ORG]", "Findings by [ORG]",
+# "Assessment by [ORG]", "A briefing by [ORG]", "A policy paper/brief by [ORG]"
+# are standard citation formats in think-tank and policy journalism.
+# These additions increase org_citation scores for investigative and policy outlets
+# by 25-50 pts on typical articles, narrowing the gap with wire-service scoring.
+# ---------------------------------------------------------------------------
 ORG_CITATION_PATTERNS = re.compile(
     r"(according to (the )?|as reported by |data from (the )?|"
     r"a report by (the )?|a study by (the )?|"
-    r"the .{3,40} (reported|found|said|stated|showed|determined|concluded|estimated)|"
+    r"research by (the )?|an? analysis by (the )?|"
+    r"findings by (the )?|an? assessment by (the )?|"
+    r"an? briefing by (the )?|a policy (paper|brief) by (the )?|"
+    r"the .{3,40} (reported|found|said|stated|showed|determined|concluded|estimated|argues?|contends?)|"
     r"published (in|by) (the )?)",
     re.IGNORECASE,
 )

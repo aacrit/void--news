@@ -143,13 +143,31 @@ OPINION_MARKERS: list[str] = [
 
 
 def _pronoun_score(text: str) -> float:
-    """Score first-person pronoun usage. Returns 0-100."""
-    words = text.lower().split()
-    if not words:
+    """Score first-person pronoun usage. Returns 0-100.
+
+    International English fix (2026-03-21): iterate the ORIGINAL (un-lowercased)
+    words and skip any token whose stripped form is exactly 'US' (all-caps) before
+    lowercasing.  The country abbreviation 'US' (United States) appears dozens of
+    times per article in wire-service copy and lowercases to 'us', which is a valid
+    first-person pronoun.  This caused AP/Reuters US-news articles to receive
+    pronoun_score=100 and a ~12-point opinion inflation relative to equivalent
+    non-US articles (AFP Africa, Jakarta Post, etc.).  All-caps 'US' is
+    unambiguously a country code, not a pronoun, in news text.
+    """
+    words_original = text.split()
+    if not words_original:
         return 0.0
 
-    pronoun_count = sum(1 for w in words if w.strip(".,!?;:'\"()") in FIRST_PERSON_PRONOUNS)
-    pronoun_ratio = pronoun_count / len(words)
+    pronoun_count = 0
+    for w in words_original:
+        stripped = w.strip(".,!?;:'\"()")
+        # Skip 'US' (all-caps country abbreviation) before lowercasing
+        if stripped == "US":
+            continue
+        if stripped.lower() in FIRST_PERSON_PRONOUNS:
+            pronoun_count += 1
+
+    pronoun_ratio = pronoun_count / len(words_original)
 
     # More than 2% first-person pronouns = strong opinion signal
     # 0% = 0, 1% = 25, 2% = 50, 4%+ = 100

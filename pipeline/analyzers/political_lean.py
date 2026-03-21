@@ -188,7 +188,17 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "rigged election": 3, "ballot harvesting": 3,
     "stolen election": 3, "election fraud": 3,
     # Gun rights
-    "second amendment": 3, "right to bear arms": 3, "gun rights": 3,
+    # NOTE: bare "second amendment" removed — fires as a false positive on any
+    # article mentioning "a second amendment to [non-US constitution/treaty]"
+    # (e.g. "a second amendment to Nigeria's constitution was approved").
+    # Replaced with phrase-scoped forms that are unambiguously US gun-rights framing.
+    # "the second amendment" (with definite article) still fires via the phrase
+    # forms below; generic "second amendment to the X" is excluded by negative
+    # lookahead in the _keyword_score substitution logic.
+    # (international-sources fix 2026-03-21)
+    "second amendment rights": 3, "second amendment protection": 3,
+    "second amendment supporters": 2, "second amendment advocates": 2,
+    "right to bear arms": 3, "gun rights": 3,
     "stand your ground": 2, "constitutional carry": 3,
     "shall not be infringed": 3, "responsible gun owners": 1,
     # Law and order
@@ -400,6 +410,23 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
             right_total += count * weight
             right_distinct += 1
             right_hits[phrase] = count * weight
+
+    # Supplemental: "the second amendment" or "second amendment [noun]" — US gun-rights
+    # framing where the phrase is not followed by "to [any word]" (which would indicate
+    # an ordinal constitutional/treaty amendment in non-US contexts, e.g. "second
+    # amendment to the Nigerian constitution" or "second amendment to the treaty").
+    # The phrase-scoped forms in RIGHT_KEYWORDS (rights, protection, supporters, advocates)
+    # catch the most common uses; this catches residual standalone uses.
+    # Negative lookahead: exclude "second amendment to [word]" (any prepositional form).
+    _sa_matches = re.findall(
+        r'\bsecond amendment(?!\s+to\s+\w)',
+        text_lower,
+    )
+    if _sa_matches:
+        _sa_weight = 3
+        right_total += len(_sa_matches) * _sa_weight
+        right_distinct += 1
+        right_hits["second amendment"] = len(_sa_matches) * _sa_weight
 
     # Top keywords by weighted impact (unchanged)
     top_left = sorted(left_hits, key=left_hits.get, reverse=True)[:5]
