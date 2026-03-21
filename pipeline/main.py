@@ -1422,13 +1422,21 @@ def main():
                     p25_idx = max(0, len(conf_values) // 4)
                     cluster_confidence = conf_values[p25_idx]
 
-            # Rank with v5.0 engine (10 signals + Gemini editorial + gates)
+            # Rank with v5.1 engine (10 signals + Gemini editorial + gates)
+            # Pre-compute sections so the US-only divergence damper and
+            # cross-spectrum bonus can be applied correctly at scoring time.
+            # (The authoritative sections[] written to DB is computed in step 8;
+            # this early read gives the same result since both use article.section.)
+            _rank_sections = sorted(
+                {a.get("section", "world") for a in cluster_articles_list}
+            ) or ["world"]
             try:
                 rank_result = rank_importance(
                     cluster_articles_list, sources, cluster_bias_scores,
                     cluster_confidence=cluster_confidence,
                     category=cluster.get("category"),
                     editorial_importance=cluster.get("editorial_importance"),
+                    sections=_rank_sections,
                 )
                 cluster["importance_score"] = rank_result["importance_score"]
                 cluster["divergence_score"] = rank_result["divergence_score"]

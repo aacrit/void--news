@@ -1,5 +1,5 @@
 """
-Importance/impact ranker v4.0 for the void --news pipeline.
+Importance/impact ranker v5.1 for the void --news pipeline.
 
 Scores story clusters by importance for feed ordering on the homepage.
 Higher scores appear first in the news feed.
@@ -207,6 +207,13 @@ _HIGH_AUTHORITY_PHRASES: list[str] = [
     "genocide", "ethnic cleansing", "war crimes",
     "peace agreement", "ceasefire agreement",
     "coup attempt", "military coup",
+    # v5.1 (2026-03-20): geopolitical-economic events that competitors (BBC, CNBC,
+    # NPR) consistently front-page but that the engine was scoring below threshold.
+    # "sanctions lifted/waived" = consequential foreign-policy action.
+    # "oil prices" alone is not high-authority; qualifier phrases below narrow it.
+    "sanctions lifted", "sanctions waiver", "sanctions removed",
+    "oil price surge", "oil price collapse", "oil price spike",
+    "gas prices soar", "energy prices spike",
     "pandemic declared", "public health emergency",
     "territorial invasion", "airspace violation",
 ]
@@ -844,9 +851,23 @@ def rank_importance(
     cluster_confidence: float = 1.0,
     category: str | None = None,
     editorial_importance: int | None = None,
+    sections: list[str] | None = None,
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
+
+    v5.1 changes (2026-03-20):
+        - NEW: sections param — US-only clusters get 0.85x damper on
+          divergence contribution. Divergence on a US-only domestic story
+          (partisan framing of a purely domestic event) is a weaker
+          front-page signal than divergence on an internationally covered
+          story. Purely additive damper, does not affect other signals.
+        - NEW: Cross-spectrum interest bonus — when per-article bias scores
+          show genuine left-right split (min lean < 35 AND max lean > 65),
+          the story is contested across the spectrum. AllSides surfaces
+          these explicitly; we add a small bonus (+2.5 pts max) to reflect
+          that contested stories have multi-audience importance. Bonus only
+          applies when the cluster has 3+ articles with scored lean.
 
     v5.0 formula: 10 deterministic signals + optional Gemini editorial
     importance. When editorial_importance is available, it gets 12% weight
@@ -867,6 +888,9 @@ def rank_importance(
             Used for soft-news gate.
         editorial_importance: Optional Gemini-assigned 1-10 score.
             When available, blended into ranking as 12% weight signal.
+        sections: Optional list of edition strings this cluster belongs to
+            (e.g., ["us"] or ["us", "world"]). Used for US-only divergence
+            damper. Defaults to None (no damper applied).
 
     Returns:
         Dict with:
@@ -908,6 +932,21 @@ def rank_importance(
     editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
                         if editorial_importance is not None else None)
 
+    # v5.1: US-only divergence damper.
+    # Domestic US stories often score high divergence (partisan framing) even
+    # when the story has no international significance. "Federal judge rules
+    # against DoD press policy" is genuinely important domestically but the
+    # divergence score should not catapult it past internationally-covered events.
+    # Apply 0.85x to the divergence contribution when sections is exclusively
+    # ["us"] (not cross-listed with world/india/etc).
+    # Backward-compatible: when sections is None, no damper is applied.
+    _is_us_only = (
+        sections is not None
+        and len(sections) == 1
+        and sections[0] == "us"
+    )
+    effective_divergence = divergence * (0.85 if _is_us_only else 1.0)
+
     # v5.0 weighted combination
     # Deterministic base score (always computed, sum = 1.00)
     headline_rank = (
@@ -917,11 +956,35 @@ def rank_importance(
         + consequentiality * 0.10
         + authority * 0.08
         + factual * 0.08
-        + divergence * 0.07
+        + effective_divergence * 0.07
         + spectrum * 0.06
         + geographic * 0.06
         + velocity * 0.06
     )
+
+    # v5.1: Cross-spectrum interest bonus.
+    # When per-article bias scores show genuine left-right split (at least
+    # one article lean < 35 AND at least one > 65), the story is actively
+    # contested across the political spectrum. AllSides surfaces these
+    # explicitly as their core value proposition. We add a small bonus
+    # (max +2.5 pts) to reflect cross-spectrum newsworthiness.
+    # Guard: requires 3+ articles with lean scores to avoid noise from
+    # 2-article clusters. Does not apply to US-only domestic stories
+    # (where left-right split is more about partisan reaction than genuine
+    # news contestation). Additive — cannot hurt any story.
+    if bias_scores and len(bias_scores) >= 3 and not _is_us_only:
+        lean_vals = [
+            float(bs["political_lean"])
+            for bs in bias_scores
+            if bs.get("political_lean") is not None
+        ]
+        if len(lean_vals) >= 3:
+            has_left = any(v < 35.0 for v in lean_vals)
+            has_right = any(v > 65.0 for v in lean_vals)
+            if has_left and has_right:
+                # Scale bonus by how far apart the extremes are (0–2.5 pts)
+                lean_spread = max(lean_vals) - min(lean_vals)
+                headline_rank += min(2.5, lean_spread * 0.025)
 
     # v5.0: Gemini editorial adjustment (additive, not scaling)
     # When editorial_importance is available, apply a ±10% adjustment
