@@ -574,23 +574,29 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             </div>
           )}
 
-          {/* ---- Bias Analysis Section — vertical stack -------------------- */}
-          {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Bias analysis" className={`dd-analysis-section anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}>
+          {/* ---- Bias verdict — always visible when sigil data exists -------- */}
+          {story.sigilData && (
+            <div
+              className={`dd-bias-verdict anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-3)", transitionDelay: "0ms" }}
+            >
+              <Sigil data={story.sigilData} size="xl" />
+            </div>
+          )}
 
-              {/* Bias verdict — large centered Sigil */}
-              {story.sigilData && !story.sigilData.pending && (
-                <div className="dd-bias-verdict">
-                  <Sigil data={story.sigilData} size="xl" />
-                </div>
-              )}
+          {/* ---- Spectrum + Press Analysis (requires source data) ------------ */}
+          {sources.length > 0 && leanPositions.length > 0 && (
+            <section aria-label="Source spectrum" className={`dd-analysis-section anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}>
 
               {/* Compact spectrum — dots ON the track, no above/below rows */}
               <div className="dd-compact-spectrum">
+                {/* Labels above the track — explicit Left/Center/Right */}
+                <div className="dd-compact-spectrum__labels">
+                  <span className="dd-compact-spectrum__label">Left</span>
+                  <span className="dd-compact-spectrum__label">Center</span>
+                  <span className="dd-compact-spectrum__label">Right</span>
+                </div>
                 <div className="dd-compact-spectrum__track">
-                  <span className="dd-compact-spectrum__label dd-compact-spectrum__label--left">L</span>
-                  <span className="dd-compact-spectrum__label dd-compact-spectrum__label--center">C</span>
-                  <span className="dd-compact-spectrum__label dd-compact-spectrum__label--right">R</span>
 
                   {/* Source dots positioned ON the track */}
                   {leanPositions.map(({ src, idx, lean, isOverflow }) => {
