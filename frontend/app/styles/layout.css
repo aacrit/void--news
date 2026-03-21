@@ -133,6 +133,9 @@
   background-color: var(--overlay-backdrop);
   z-index: var(--z-overlay);
   cursor: pointer;
+  /* Desktop: blur the feed behind the panel — draws focus to the deep dive */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .deep-dive-panel {

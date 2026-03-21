@@ -286,6 +286,48 @@ def main():
                 pool[:] = new_pool
                 print(f"  Lead gate ({section_val}): enforced 3+ sources in top-{LEAD_SLOTS} ({len(lead_deferred)} stories deferred)")
 
+        # --- Same-event cap (v5.1): max 3 stories about the same event ---
+        # Detects event clusters by keyword overlap in titles.
+        # "Iran war" stories all share keywords like iran/tehran/hormuz.
+        # Without this, 11/20 top stories can be Iran war variants.
+        MAX_SAME_EVENT = 3
+        _EVENT_KEYWORDS = {
+            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth"},
+            "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky"},
+            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf"},
+            "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
+        }
+
+        def _detect_event(title: str) -> str | None:
+            """Return event key if title matches a known event, else None."""
+            t = title.lower()
+            for event_key, keywords in _EVENT_KEYWORDS.items():
+                if any(kw in t for kw in keywords):
+                    return event_key
+            return None
+
+        if len(pool) > TOP_N:
+            event_counts: dict[str, int] = {}
+            event_promoted: list[dict] = []
+            event_deferred: list[dict] = []
+
+            for u in pool:
+                title = next((c["title"] for c in clusters if c["id"] == u["id"]), "")
+                event = _detect_event(title)
+                if event and event_counts.get(event, 0) >= MAX_SAME_EVENT:
+                    event_deferred.append(u)
+                else:
+                    event_promoted.append(u)
+                    if event:
+                        event_counts[event] = event_counts.get(event, 0) + 1
+
+            # Merge: promoted first, deferred after
+            pool[:] = event_promoted + event_deferred
+
+            event_demoted = len(event_deferred)
+            if event_demoted:
+                print(f"  Event diversity ({section_val}): demoted {event_demoted} stories exceeding same-event cap (max {MAX_SAME_EVENT})")
+
         # --- Topic diversity: soft-news max 1 slot, others max 2 ---
         if len(pool) > TOP_N:
             promoted: list[dict] = []
@@ -309,9 +351,6 @@ def main():
 
             final_order = promoted + deferred
             if final_order and len(promoted) >= 2:
-                # Preserve raw scores for promoted items but ensure monotonic
-                # ordering so DB sort matches diversity-adjusted order.
-                # Only nudge items that are out of order after the shuffle.
                 for j in range(1, len(promoted)):
                     if promoted[j]["headline_rank"] >= promoted[j-1]["headline_rank"]:
                         promoted[j]["headline_rank"] = round(promoted[j-1]["headline_rank"] - 0.01, 2)

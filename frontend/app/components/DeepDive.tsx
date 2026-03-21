@@ -12,7 +12,7 @@ import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
-import { BiasInspectorTrigger, BiasInspectorPanel } from "./BiasInspector";
+import { BiasInspectorInline } from "./BiasInspector";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -59,9 +59,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
-  const [consensusExpanded, setConsensusExpanded] = useState(false);
-  const [divergenceExpanded, setDivergenceExpanded] = useState(false);
-  const [showScorePanel, setShowScorePanel] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -430,79 +427,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
               <Sigil data={story.sigilData} size="lg" />
             </div>
           )}
-
-          {/* Source spectrum — 1 row above, track with inline labels, 1 row below.
-              Sources at same lean position: first above, second below, 3+ overlap. */}
-          {sources.length > 0 && leanPositions.length > 0 && (
-            <div className="dd-spectrum" style={{ marginTop: "var(--space-4)" }}>
-              {/* Row above track */}
-              <div className="dd-spectrum__row dd-spectrum__row--above">
-                {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
-                  const favicon = src.url ? faviconUrl(src.url) : "";
-                  return (
-                    <a
-                      key={`above-${src.name}-${idx}`}
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                      aria-label={`${src.name}: ${leanLabel(lean)}`}
-                      className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                      style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
-                    >
-                      {favicon ? (
-                        <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
-                      ) : (
-                        <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
-                      )}
-                    </a>
-                  );
-                })}
-              </div>
-
-              {/* Track with inline labels */}
-              <div className="dd-spectrum__track">
-                <span className="dd-spectrum__inline-label dd-spectrum__inline-label--left">Left</span>
-                <span className="dd-spectrum__inline-label dd-spectrum__inline-label--center">Center</span>
-                <span className="dd-spectrum__inline-label dd-spectrum__inline-label--right">Right</span>
-              </div>
-
-              {/* Row below track */}
-              <div className="dd-spectrum__row dd-spectrum__row--below">
-                {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
-                  const favicon = src.url ? faviconUrl(src.url) : "";
-                  return (
-                    <a
-                      key={`below-${src.name}-${idx}`}
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                      aria-label={`${src.name}: ${leanLabel(lean)}`}
-                      className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                      style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
-                    >
-                      {favicon ? (
-                        <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
-                      ) : (
-                        <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
-                      )}
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Press Analysis trigger — below source spectrum */}
-          {sources.length > 0 && (
-            <div style={{ marginTop: "var(--space-3)" }}>
-              <BiasInspectorTrigger
-                sources={sources}
-                onClick={() => setShowScorePanel(true)}
-              />
-            </div>
-          )}
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
@@ -523,11 +447,10 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           )}
 
-          {/* ---- Section: What Happened (collapsible) ---------------------- */}
-          <section aria-labelledby="dd-summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms" }}>
-            <h3 id="dd-summary" className="section-heading">What happened</h3>
+          {/* ---- Summary — no heading, flows as article lede ------------------ */}
+          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
-              <p className="text-base" style={{ lineHeight: 1.7, color: "var(--fg-secondary)", margin: 0 }}>
+              <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
                 {story.summary}
               </p>
             </div>
@@ -536,45 +459,113 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             )}
           </section>
 
-          {/* Source lean spectrum removed — merged into header spectrum above */}
+          {/* ---- Analysis grid: lean spectrum + press analysis side by side --- */}
+          {sources.length > 0 && leanPositions.length > 0 && (
+            <section aria-label="Bias analysis" className={`dd-analysis-grid anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "150ms" }}>
 
-          {/* ---- Section: Where sources agree -------------------------------- */}
-          {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-            <section aria-labelledby="dd-consensus" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "200ms" }}>
-              <h3 id="dd-consensus" className="section-heading">Where sources agree</h3>
-              <ul className="evidence-list">
-                {deepDive.consensus.map((point, i) => (
-                  <li key={i} className="evidence-item">
-                    <Check size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-low)" }} />
-                    <span className="evidence-item__text">{point}</span>
-                  </li>
-                ))}
-              </ul>
+              {/* Left col: lean spectrum */}
+              <div className="dd-analysis-grid__lean">
+                <span className="dd-analysis-grid__label">Political Lean</span>
+                <div className="dd-spectrum">
+                  {/* Row above track */}
+                  <div className="dd-spectrum__row dd-spectrum__row--above">
+                    {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
+                      const favicon = src.url ? faviconUrl(src.url) : "";
+                      return (
+                        <a
+                          key={`above-${src.name}-${idx}`}
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                          aria-label={`${src.name}: ${leanLabel(lean)}`}
+                          className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                          style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
+                        >
+                          {favicon ? (
+                            <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
+                          ) : (
+                            <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
+                          )}
+                        </a>
+                      );
+                    })}
+                  </div>
+
+                  {/* Track with inline labels */}
+                  <div className="dd-spectrum__track">
+                    <span className="dd-spectrum__inline-label dd-spectrum__inline-label--left">Left</span>
+                    <span className="dd-spectrum__inline-label dd-spectrum__inline-label--center">Center</span>
+                    <span className="dd-spectrum__inline-label dd-spectrum__inline-label--right">Right</span>
+                  </div>
+
+                  {/* Row below track */}
+                  <div className="dd-spectrum__row dd-spectrum__row--below">
+                    {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
+                      const favicon = src.url ? faviconUrl(src.url) : "";
+                      return (
+                        <a
+                          key={`below-${src.name}-${idx}`}
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`${src.name} — ${leanLabel(lean)} (${lean})`}
+                          aria-label={`${src.name}: ${leanLabel(lean)}`}
+                          className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                          style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
+                        >
+                          {favicon ? (
+                            <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
+                          ) : (
+                            <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
+                          )}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right col: press analysis inline scorecard */}
+              <div className="dd-analysis-grid__press">
+                <BiasInspectorInline sources={sources} />
+              </div>
+
             </section>
           )}
 
-          {/* ---- Section: Where sources diverge ------------------------------ */}
-          {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-            <section aria-labelledby="dd-divergence" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "300ms" }}>
-              <h3 id="dd-divergence" className="section-heading">Where sources diverge</h3>
-              <ul className="evidence-list">
-                {deepDive.divergence.map((point, i) => (
-                  <li key={i} className="evidence-item">
-                    <Warning size={18} weight="bold" aria-hidden="true" className="evidence-item__icon" style={{ color: "var(--sense-medium)" }} />
-                    <span className="evidence-item__text">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {/* ---- Source perspectives: agree + diverge in one compact section -- */}
+          {deepDive && (
+            (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
+            (Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0)
+          ) && (
+            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "250ms" }}>
+              <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
 
-          {/* Press analysis pop-out panel */}
-          {sources.length > 0 && (
-            <BiasInspectorPanel
-              sources={sources}
-              isOpen={showScorePanel}
-              onClose={() => setShowScorePanel(false)}
-            />
+              {/* Agree items */}
+              {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
+                <ul className="dd-perspectives-list">
+                  {deepDive.consensus.map((point, i) => (
+                    <li key={`agree-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
+                      <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
+                      <span className="dd-perspectives-item__text">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Diverge items */}
+              {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
+                <ul className="dd-perspectives-list">
+                  {deepDive.divergence.map((point, i) => (
+                    <li key={`diverge-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
+                      <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
+                      <span className="dd-perspectives-item__text">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
           )}
 
           {/* No deep dive data at all */}

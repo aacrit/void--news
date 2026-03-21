@@ -361,6 +361,7 @@ def _source_coverage_score(
     tier_weights = {"independent": 1.5, "international": 1.2, "us_major": 1.0}
 
     seen_sources: set[str] = set()
+    tier_counts: dict[str, int] = {}
     weighted_count = 0.0
     for a in cluster_articles:
         sid = a.get("source_id", "")
@@ -369,6 +370,18 @@ def _source_coverage_score(
             src = source_map.get(sid, {})
             tier = src.get("tier", "us_major")
             weighted_count += tier_weights.get(tier, 1.0)
+            tier_counts[tier] = tier_counts.get(tier, 0) + 1
+
+    raw_count = len(seen_sources)
+
+    # v5.1: Tier concentration penalty — when >70% of sources are from
+    # the same tier, the coverage is likely wire roundup inflation
+    # (9 us_major outlets all running the same AP story).
+    # Apply 0.85x to weighted count to deflate the score.
+    if raw_count >= 4:
+        max_tier_pct = max(tier_counts.values()) / raw_count if tier_counts else 0
+        if max_tier_pct > 0.70:
+            weighted_count *= 0.85
 
     # Diminishing returns: 100 * (1 - e^(-weighted_count/5))
     return 100.0 * (1.0 - math.exp(-weighted_count / 5.0))
@@ -758,6 +771,22 @@ def _consequentiality_score(cluster_articles: list[dict]) -> float:
     # v4.0: high-authority floor — these events are intrinsically consequential
     if has_high_authority:
         score = max(score, 70.0)
+
+    # v5.1: Deliberation dampener — speculation verbs ("considers",
+    # "weighs", "discusses") reduce consequentiality by 30%.
+    # "Trump considers ground invasion" is speculation, not action.
+    # Only dampens if the speculation verb appears in a TITLE (not summary).
+    _DELIBERATION_VERBS = {
+        "considers", "considering", "weighs", "weighing",
+        "discusses", "discussing", "mulls", "mulling",
+        "eyes", "eyeing", "explores", "exploring",
+        "may ", "might ", "could ",
+    }
+    for article in cluster_articles[:5]:
+        title_lower = (article.get("title", "") or "").lower()
+        if any(v in title_lower for v in _DELIBERATION_VERBS):
+            score *= 0.70
+            break  # one match is enough
 
     return score
 

@@ -1538,12 +1538,51 @@ def main():
 
         clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
 
+        # Same-event cap (v5.1): max 3 stories about the same major event.
+        # Without this, 11/20 top stories can be Iran war variants.
+        _EVENT_KEYWORDS = {
+            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth"},
+            "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky"},
+            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf"},
+            "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
+        }
+        MAX_SAME_EVENT = 3
+
+        for section_val in ("world", "us", "india"):
+            pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
+            if len(pool) <= 10:
+                continue
+
+            event_counts: dict[str, int] = {}
+            event_promoted: list[dict] = []
+            event_deferred: list[dict] = []
+            for c in pool:
+                title_lower = (c.get("title", "") or "").lower()
+                event = None
+                for ek, kws in _EVENT_KEYWORDS.items():
+                    if any(kw in title_lower for kw in kws):
+                        event = ek
+                        break
+                if event and event_counts.get(event, 0) >= MAX_SAME_EVENT:
+                    event_deferred.append(c)
+                else:
+                    event_promoted.append(c)
+                    if event:
+                        event_counts[event] = event_counts.get(event, 0) + 1
+            if event_deferred:
+                # Replace pool in-place for this section
+                for c in event_deferred:
+                    idx = clusters.index(c)
+                    # Nudge headline_rank down so it sorts below promoted
+                    if event_promoted:
+                        floor = event_promoted[-1].get("headline_rank", 0) - 0.1
+                        clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
+
+            clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+
         # Topic diversity re-ranking: prevent any single category from
         # dominating the top of the feed. Within each section pool (world/us),
         # demote stories that would put >2 of the same category in the top 10.
-        # Algorithm: walk the ranked list in order; when a story would exceed
-        # the category cap, skip it and try the next one. Skipped stories are
-        # re-inserted after position TOP_N in their original order.
         for section_val in ("world", "us", "india"):
             pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
             if len(pool) <= 10:

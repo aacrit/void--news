@@ -1361,6 +1361,89 @@ export function BiasInspectorPanel({
   );
 }
 
+/* ── Inline scorecard — embedded directly in Deep Dive content ──────────── */
+
+export interface BiasInspectorInlineProps {
+  sources: StorySource[];
+}
+
+export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
+  const [expandedAxes, setExpandedAxes] = useState<Set<string>>(new Set());
+  const headingId = useId();
+
+  function toggleAxis(key: string) {
+    setExpandedAxes((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  if (sources.length === 0) return null;
+
+  const averages = computeClusterAverages(sources);
+
+  return (
+    <div className="bi-inline" role="region" aria-label="Press analysis">
+      <div className="bi-inline__header">
+        <span className="bi-inline__title" id={headingId}>Press Analysis</span>
+        <span className="bi-inline__subtitle">
+          Cluster avg · {sources.length} {sources.length === 1 ? "source" : "sources"}
+        </span>
+      </div>
+      <div
+        className="bi-scorecard"
+        role="region"
+        aria-labelledby={headingId}
+        aria-label="Cluster bias scores"
+      >
+        <LeanAxis
+          axisId={`${headingId}-lean`}
+          score={averages.lean}
+          rationale={averages.leanRationale}
+          geminiText={averages.geminiReasoning?.political_lean}
+          isExpanded={expandedAxes.has("lean")}
+          onToggle={() => toggleAxis("lean")}
+          staggerIndex={0}
+          contentVisible={true}
+        />
+        <SensationalismAxis
+          axisId={`${headingId}-sense`}
+          score={averages.sensationalism}
+          rationale={averages.sensationalismRationale}
+          geminiText={averages.geminiReasoning?.sensationalism}
+          isExpanded={expandedAxes.has("sense")}
+          onToggle={() => toggleAxis("sense")}
+          staggerIndex={1}
+          contentVisible={true}
+        />
+        <RigorAxis
+          axisId={`${headingId}-rigor`}
+          score={averages.factualRigor}
+          rationale={averages.coverageRationale}
+          geminiText={averages.geminiReasoning?.factual_rigor}
+          isExpanded={expandedAxes.has("rigor")}
+          onToggle={() => toggleAxis("rigor")}
+          staggerIndex={2}
+          contentVisible={true}
+        />
+        <FramingAxis
+          axisId={`${headingId}-framing`}
+          score={averages.framing}
+          rationale={averages.framingRationale}
+          geminiText={averages.geminiReasoning?.framing}
+          isExpanded={expandedAxes.has("framing")}
+          onToggle={() => toggleAxis("framing")}
+          staggerIndex={3}
+          contentVisible={true}
+        />
+      </div>
+      <ConfidenceMeter confidence={averages.confidence} contentVisible={true} />
+    </div>
+  );
+}
+
 /* ── Default export: legacy inline version (kept for any other callers) ─── */
 // This is now a no-op shell — callers should use BiasInspectorTrigger +
 // BiasInspectorPanel instead. Exported for backward compatibility.
