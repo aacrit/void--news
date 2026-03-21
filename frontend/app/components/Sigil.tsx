@@ -84,15 +84,6 @@ function leanLabel(v: number): string {
   return "Far Right";
 }
 
-function leanShort(v: number): string {
-  if (v <= 20) return "Far L";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Ctr-L";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Ctr-R";
-  if (v <= 80) return "Right";
-  return "Far R";
-}
 
 function qualityColor(v: number, invert = false): string {
   const c = gc(); const s = invert ? 100 - v : v;
@@ -490,7 +481,6 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
   const tooltipId = `sigil-${useId()}`;
 
   const ll = leanLabel(data.politicalLean);
-  const ls = leanShort(data.politicalLean);
   const lc = leanColor(data.politicalLean);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
@@ -545,7 +535,7 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
           lineHeight: 1,
           letterSpacing: "0.02em",
         }}>
-          {size === "lg" ? ll : ls}
+          {ll}
         </span>
 
         {/* Source count — facts mode only */}
