@@ -534,6 +534,23 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </section>
           )}
 
+          {/* Subtle cue: encourage interaction with the analysis */}
+          {sources.length > 0 && leanPositions.length > 0 && (
+            <div className="dd-interaction-cue" aria-hidden="true">
+              <span className="dd-interaction-cue__dots">
+                <span className="dd-interaction-cue__dot" />
+                <span className="dd-interaction-cue__dot" />
+                <span className="dd-interaction-cue__dot" />
+              </span>
+              <span className="dd-interaction-cue__text">Tap scores to explore</span>
+              <span className="dd-interaction-cue__dots">
+                <span className="dd-interaction-cue__dot" />
+                <span className="dd-interaction-cue__dot" />
+                <span className="dd-interaction-cue__dot" />
+              </span>
+            </div>
+          )}
+
           {/* ---- Source perspectives: agree + diverge in one compact section -- */}
           {deepDive && (
             (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
