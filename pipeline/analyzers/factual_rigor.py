@@ -27,7 +27,9 @@ ATTRIBUTION_VERBS = re.compile(
     r"\b(said|says|told|stated|reported|confirmed|announced|testified|"
     r"explained|noted|argued|claimed|contended|acknowledged|insisted|"
     r"emphasized|stressed|warned|cautioned|added|remarked|commented|"
-    r"responded|replied|wrote|published|revealed|disclosed)\b",
+    r"responded|replied|wrote|published|revealed|disclosed|"
+    r"revised|projects|projected|estimated|estimates|found|concluded|"
+    r"determined|calculated|forecasts|forecast|released|issued)\b",
     re.IGNORECASE,
 )
 

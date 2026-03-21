@@ -8,6 +8,7 @@ import type {
   CoverageRationale,
   SensationalismRationale,
   FramingRationale,
+  GeminiReasoning,
 } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
@@ -147,6 +148,7 @@ interface ClusterAverages {
   sensationalismRationale?: SensationalismRationale;
   coverageRationale?: CoverageRationale;
   framingRationale?: FramingRationale;
+  geminiReasoning?: GeminiReasoning;
 }
 
 function avg(values: number[]): number {
@@ -251,6 +253,24 @@ function computeClusterAverages(sources: StorySource[]): ClusterAverages {
         }
       : undefined;
 
+  // Gemini reasoning: pick the first non-empty text per axis across all sources.
+  // Reasoning is LLM-generated prose — averaging is not meaningful, so we surface
+  // the first available example as a representative sample.
+  const geminiTexts = valid
+    .map((s) => s.lensData?.geminiReasoning)
+    .filter(Boolean) as GeminiReasoning[];
+
+  const geminiReasoning: GeminiReasoning | undefined =
+    geminiTexts.length > 0
+      ? {
+          political_lean: geminiTexts.find((g) => g.political_lean)?.political_lean,
+          sensationalism: geminiTexts.find((g) => g.sensationalism)?.sensationalism,
+          opinion_fact: geminiTexts.find((g) => g.opinion_fact)?.opinion_fact,
+          factual_rigor: geminiTexts.find((g) => g.factual_rigor)?.factual_rigor,
+          framing: geminiTexts.find((g) => g.framing)?.framing,
+        }
+      : undefined;
+
   return {
     lean,
     sensationalism,
@@ -261,6 +281,7 @@ function computeClusterAverages(sources: StorySource[]): ClusterAverages {
     sensationalismRationale,
     coverageRationale,
     framingRationale,
+    geminiReasoning,
   };
 }
 
@@ -576,6 +597,7 @@ function AxisRow({
 function LeanAxis({
   score,
   rationale,
+  geminiText,
   isExpanded,
   onToggle,
   axisId,
@@ -584,6 +606,7 @@ function LeanAxis({
 }: {
   score: number;
   rationale?: LeanRationale;
+  geminiText?: string;
   isExpanded: boolean;
   onToggle: () => void;
   axisId: string;
@@ -604,10 +627,16 @@ function LeanAxis({
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      hasRationale={!!rationale}
+      hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
+      {geminiText && (
+        <p className="bi-gemini-reasoning">
+          <span className="bi-gemini-label">AI Analysis</span>
+          {geminiText}
+        </p>
+      )}
       {rationale && (
         <>
           <div className="bi-subscore-group">
@@ -727,6 +756,7 @@ function LeanAxis({
 function SensationalismAxis({
   score,
   rationale,
+  geminiText,
   isExpanded,
   onToggle,
   axisId,
@@ -735,6 +765,7 @@ function SensationalismAxis({
 }: {
   score: number;
   rationale?: SensationalismRationale;
+  geminiText?: string;
   isExpanded: boolean;
   onToggle: () => void;
   axisId: string;
@@ -755,10 +786,16 @@ function SensationalismAxis({
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      hasRationale={!!rationale}
+      hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
+      {geminiText && (
+        <p className="bi-gemini-reasoning">
+          <span className="bi-gemini-label">AI Analysis</span>
+          {geminiText}
+        </p>
+      )}
       {rationale && (
         <>
           <div className="bi-subscore-group">
@@ -807,6 +844,7 @@ function SensationalismAxis({
 function RigorAxis({
   score,
   rationale,
+  geminiText,
   isExpanded,
   onToggle,
   axisId,
@@ -815,6 +853,7 @@ function RigorAxis({
 }: {
   score: number;
   rationale?: CoverageRationale;
+  geminiText?: string;
   isExpanded: boolean;
   onToggle: () => void;
   axisId: string;
@@ -836,10 +875,16 @@ function RigorAxis({
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      hasRationale={!!rationale}
+      hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
+      {geminiText && (
+        <p className="bi-gemini-reasoning">
+          <span className="bi-gemini-label">AI Analysis</span>
+          {geminiText}
+        </p>
+      )}
       {rationale && (
         <>
           <EvidenceTally
@@ -895,6 +940,7 @@ function RigorAxis({
 function FramingAxis({
   score,
   rationale,
+  geminiText,
   isExpanded,
   onToggle,
   axisId,
@@ -903,6 +949,7 @@ function FramingAxis({
 }: {
   score: number;
   rationale?: FramingRationale;
+  geminiText?: string;
   isExpanded: boolean;
   onToggle: () => void;
   axisId: string;
@@ -923,10 +970,16 @@ function FramingAxis({
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      hasRationale={!!rationale}
+      hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
+      {geminiText && (
+        <p className="bi-gemini-reasoning">
+          <span className="bi-gemini-label">AI Analysis</span>
+          {geminiText}
+        </p>
+      )}
       {rationale && (
         <>
           <div className="bi-subscore-group">
@@ -1259,6 +1312,7 @@ export function BiasInspectorPanel({
               axisId={`${headingId}-lean`}
               score={averages.lean}
               rationale={averages.leanRationale}
+              geminiText={averages.geminiReasoning?.political_lean}
               isExpanded={expandedAxes.has("lean")}
               onToggle={() => toggleAxis("lean")}
               staggerIndex={0}
@@ -1268,6 +1322,7 @@ export function BiasInspectorPanel({
               axisId={`${headingId}-sense`}
               score={averages.sensationalism}
               rationale={averages.sensationalismRationale}
+              geminiText={averages.geminiReasoning?.sensationalism}
               isExpanded={expandedAxes.has("sense")}
               onToggle={() => toggleAxis("sense")}
               staggerIndex={1}
@@ -1277,6 +1332,7 @@ export function BiasInspectorPanel({
               axisId={`${headingId}-rigor`}
               score={averages.factualRigor}
               rationale={averages.coverageRationale}
+              geminiText={averages.geminiReasoning?.factual_rigor}
               isExpanded={expandedAxes.has("rigor")}
               onToggle={() => toggleAxis("rigor")}
               staggerIndex={2}
@@ -1286,6 +1342,7 @@ export function BiasInspectorPanel({
               axisId={`${headingId}-framing`}
               score={averages.framing}
               rationale={averages.framingRationale}
+              geminiText={averages.geminiReasoning?.framing}
               isExpanded={expandedAxes.has("framing")}
               onToggle={() => toggleAxis("framing")}
               staggerIndex={3}

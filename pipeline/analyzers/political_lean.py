@@ -104,6 +104,17 @@ LEFT_KEYWORDS: dict[str, int] = {
     "gentrification": 2,
     "housing justice": 2,
     "food insecurity": 2,
+    # Economic inequality framing — left-coded phrases describing upward wealth
+    # transfer or disparity that appear in progressive critique and satire alike.
+    # Balances right-coded "trickle down" / "fiscal responsibility" hits in
+    # articles framing policy as benefiting the wealthy. (bias-auditor final cycle fix)
+    "tax cut for the rich": 3,
+    "tax cuts for the wealthy": 3,
+    "tax break for the rich": 3,
+    "top 1%": 2,
+    "for the wealthy": 2,
+    "struggling families": 2,
+    "trickle-down economics": 3,
 }
 
 RIGHT_KEYWORDS: dict[str, int] = {

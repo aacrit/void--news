@@ -333,6 +333,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const mediumStories = filteredStories.slice(2, 5);
   const compactStories = filteredStories.slice(5);
 
+  // Stable key that changes whenever the active filter changes.
+  // Keying the <section> elements on this value causes React to unmount+remount
+  // them, which replays the .anim-filter-card entrance animation on every filter
+  // change — giving a "reshuffling" feel with no JS animation library.
+  const filterKey = `${leanRange?.min ?? "x"}-${leanRange?.max ?? "x"}-${activeCategory}`;
+
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
@@ -479,9 +485,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
             {/* Lead section — two primary headlines side by side on desktop */}
             {!isLoading && leadStories.length > 0 && (
-              <section aria-label="Lead stories" className="lead-section">
+              <section key={filterKey} aria-label="Lead stories" className="lead-section">
                 {leadStories.map((story, i) => (
-                  <div key={story.id} className="lead-section__col">
+                  <div
+                    key={story.id}
+                    className="lead-section__col anim-filter-card"
+                    style={{ animationDelay: `${i * 50}ms` }}
+                  >
                     <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} />
                   </div>
                 ))}
@@ -490,9 +500,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
             {/* Medium stories — broadsheet grid on desktop */}
             {!isLoading && mediumStories.length > 0 && (
-              <section aria-label="Top stories" className="grid-medium">
+              <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
                 {mediumStories.map((story, idx) => (
-                  <div key={story.id} className="grid-medium__item">
+                  <div
+                    key={story.id}
+                    className="grid-medium__item anim-filter-card"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
                     <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
                   </div>
                 ))}
@@ -506,9 +520,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               const hasMore = compactStories.length > COMPACT_CAP && !showAllCompact;
               return (
                 <>
-                  <section aria-label="More stories" className="grid-compact">
+                  <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
                     {visible.map((story, idx) => (
-                      <div key={story.id} className="grid-compact__item">
+                      <div
+                        key={story.id}
+                        className="grid-compact__item anim-filter-card"
+                        style={{ animationDelay: `${idx * 50}ms` }}
+                      >
                         <StoryCard
                           story={story}
                           index={idx + mediumStories.length + 1}

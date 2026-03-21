@@ -23,13 +23,13 @@ interface LeanFilterProps {
  * weighting compress most cluster averages toward 50. Wider flanks ensure
  * NPR-heavy clusters land in Center-Left, Fox-heavy in Center-Right, etc. */
 const ZONES = [
-  { label: "Far Left",     short: "FL",  min: 0,   max: 20  },
-  { label: "Left",         short: "L",   min: 20,  max: 35  },
-  { label: "Center-Left",  short: "CL",  min: 35,  max: 46  },
-  { label: "Center",       short: "C",   min: 46,  max: 54  },
-  { label: "Center-Right", short: "CR",  min: 54,  max: 65  },
-  { label: "Right",        short: "R",   min: 65,  max: 80  },
-  { label: "Far Right",    short: "FR",  min: 80,  max: 100 },
+  { label: "Far Left",     short: "FL",  min: 0,   max: 20,  colorVar: "var(--bias-far-left)"     },
+  { label: "Left",         short: "L",   min: 20,  max: 35,  colorVar: "var(--bias-left)"          },
+  { label: "Center-Left",  short: "CL",  min: 35,  max: 46,  colorVar: "var(--bias-center-left)"  },
+  { label: "Center",       short: "C",   min: 46,  max: 54,  colorVar: "var(--bias-center)"        },
+  { label: "Center-Right", short: "CR",  min: 54,  max: 65,  colorVar: "var(--bias-center-right)" },
+  { label: "Right",        short: "R",   min: 65,  max: 80,  colorVar: "var(--bias-right)"         },
+  { label: "Far Right",    short: "FR",  min: 80,  max: 100, colorVar: "var(--bias-far-right)"     },
 ] as const;
 
 function getLeanLabel(value: number): string {
@@ -236,9 +236,14 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
   /* Determine if all stories are included (filter is effectively off) */
   const isFullRange = localRange.min <= 0 && localRange.max >= 100;
 
+  /* Active zone detection — which zone exactly matches the current range? */
+  const activeZone = ZONES.find(
+    (z) => z.min === localRange.min && z.max === localRange.max,
+  ) ?? null;
+
   return (
     <div
-      className={`lean-filter${isActive ? " lean-filter--active" : ""}${isExpanded ? " lean-filter--expanded" : ""}`}
+      className={`lean-filter${isActive ? " lean-filter--active" : ""}${isExpanded ? " lean-filter--expanded" : ""}${dragging ? " lean-filter--dragging" : ""}`}
       ref={containerRef}
     >
       {/* ---- Collapsed pill ---- */}
@@ -254,7 +259,7 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
             : "Filter stories by political lean"
         }
       >
-        {/* Spectrum indicator — 3 dots showing the gradient */}
+        {/* Spectrum indicator — 3 colored dots (blue / gray / red) */}
         <span className="lean-filter__spectrum-dots" aria-hidden="true">
           <span className="lean-filter__dot lean-filter__dot--left" />
           <span className="lean-filter__dot lean-filter__dot--center" />
@@ -263,17 +268,9 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
 
         <span className="lean-filter__pill-label">
           {isActive && !isFullRange ? (
-            <>
-              <span
-                className="lean-filter__pill-range"
-                style={{
-                  "--lean-min-color": minColor,
-                  "--lean-max-color": maxColor,
-                } as React.CSSProperties}
-              >
-                {minLabel} — {maxLabel}
-              </span>
-            </>
+            <span className="lean-filter__pill-range">
+              {minLabel} — {maxLabel}
+            </span>
           ) : (
             "Lean"
           )}
@@ -295,7 +292,7 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
         </span>
       </button>
 
-      {/* ---- Expanded panel ---- */}
+      {/* ---- Expanded panel (grid-template-rows animation) ---- */}
       <div
         id={panelId}
         className="lean-filter__panel"
@@ -303,126 +300,134 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
         role="group"
         aria-label="Political lean range selector"
       >
-        <div className="lean-filter__panel-inner">
-          {/* Panel header */}
-          <div className="lean-filter__panel-header">
-            <span className="lean-filter__panel-title">Political Lean</span>
-            {isActive && !isFullRange && (
-              <button
-                className="lean-filter__clear"
-                onClick={handleClear}
-                onKeyDown={handleClear}
-                aria-label="Clear lean filter"
-                tabIndex={isExpanded ? 0 : -1}
+        {/* Overflow wrapper for the grid-rows collapse trick */}
+        <div className="lean-filter__panel-overflow">
+          <div className="lean-filter__panel-inner">
+            {/* Panel header */}
+            <div className="lean-filter__panel-header">
+              <span className="lean-filter__panel-title">Political Lean</span>
+              {isActive && !isFullRange && (
+                <button
+                  className="lean-filter__clear"
+                  onClick={handleClear}
+                  onKeyDown={handleClear}
+                  aria-label="Clear lean filter"
+                  tabIndex={isExpanded ? 0 : -1}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Range labels */}
+            <div className="lean-filter__range-labels" aria-live="polite" aria-atomic="true">
+              <span
+                className="lean-filter__range-label lean-filter__range-label--min"
+                style={{ color: minColor }}
               >
-                Clear
-              </button>
-            )}
-          </div>
+                {minLabel}
+              </span>
+              <span className="lean-filter__range-sep">to</span>
+              <span
+                className="lean-filter__range-label lean-filter__range-label--max"
+                style={{ color: maxColor }}
+              >
+                {maxLabel}
+              </span>
+            </div>
 
-          {/* Range labels */}
-          <div className="lean-filter__range-labels" aria-live="polite" aria-atomic="true">
-            <span
-              className="lean-filter__range-label lean-filter__range-label--min"
-              style={{ color: minColor }}
-            >
-              {minLabel}
-            </span>
-            <span className="lean-filter__range-sep">to</span>
-            <span
-              className="lean-filter__range-label lean-filter__range-label--max"
-              style={{ color: maxColor }}
-            >
-              {maxLabel}
-            </span>
-          </div>
-
-          {/* Slider track */}
-          <div className="lean-filter__track-area">
-            {/* Gradient track */}
-            <div
-              ref={trackRef}
-              className="lean-filter__track"
-              onClick={handleTrackClick}
-              aria-hidden="true"
-            >
-              {/* Selected range highlight */}
+            {/* Slider track */}
+            <div className="lean-filter__track-area">
+              {/* Gradient track */}
               <div
-                className="lean-filter__selection"
-                style={{ left: selLeft, width: selWidth }}
+                ref={trackRef}
+                className="lean-filter__track"
+                onClick={handleTrackClick}
                 aria-hidden="true"
-              />
-
-              {/* Min thumb */}
-              <button
-                ref={minThumbRef}
-                className="lean-filter__thumb lean-filter__thumb--min"
-                style={{ left: selLeft, "--thumb-color": minColor } as React.CSSProperties}
-                role="slider"
-                aria-label={`Minimum lean: ${minLabel} (${localRange.min})`}
-                aria-valuemin={0}
-                aria-valuemax={localRange.max - 5}
-                aria-valuenow={localRange.min}
-                aria-valuetext={minLabel}
-                tabIndex={isExpanded ? 0 : -1}
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  (e.target as HTMLElement).setPointerCapture(e.pointerId);
-                  setDragging("min");
-                }}
-                onKeyDown={(e) => handleThumbKey(e, "min")}
-              />
-
-              {/* Max thumb */}
-              <button
-                ref={maxThumbRef}
-                className="lean-filter__thumb lean-filter__thumb--max"
-                style={{ left: `${localRange.max}%`, "--thumb-color": maxColor } as React.CSSProperties}
-                role="slider"
-                aria-label={`Maximum lean: ${maxLabel} (${localRange.max})`}
-                aria-valuemin={localRange.min + 5}
-                aria-valuemax={100}
-                aria-valuenow={localRange.max}
-                aria-valuetext={maxLabel}
-                tabIndex={isExpanded ? 0 : -1}
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  (e.target as HTMLElement).setPointerCapture(e.pointerId);
-                  setDragging("max");
-                }}
-                onKeyDown={(e) => handleThumbKey(e, "max")}
-              />
-            </div>
-
-            {/* Zone tick marks */}
-            <div className="lean-filter__ticks" aria-hidden="true">
-              {ZONES.map((zone) => (
-                <span
-                  key={zone.label}
-                  className="lean-filter__tick"
-                  style={{ left: `${zone.min}%` }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Zone labels row */}
-          <div className="lean-filter__zone-labels" aria-hidden="true">
-            {ZONES.map((zone) => (
-              <button
-                key={zone.label}
-                className="lean-filter__zone-btn"
-                tabIndex={isExpanded ? 0 : -1}
-                aria-label={`Set range to ${zone.label} only`}
-                onClick={() => {
-                  const next = { min: zone.min, max: zone.max };
-                  setLocalRange(next);
-                  onChange(next);
-                }}
               >
-                {zone.short}
-              </button>
-            ))}
+                {/* Selected range highlight */}
+                <div
+                  className="lean-filter__selection"
+                  style={{ left: selLeft, width: selWidth }}
+                  aria-hidden="true"
+                />
+
+                {/* Min thumb */}
+                <button
+                  ref={minThumbRef}
+                  className={`lean-filter__thumb lean-filter__thumb--min${dragging === "min" ? " lean-filter__thumb--dragging" : ""}`}
+                  style={{ left: selLeft, "--thumb-color": minColor } as React.CSSProperties}
+                  role="slider"
+                  aria-label={`Minimum lean: ${minLabel} (${localRange.min})`}
+                  aria-valuemin={0}
+                  aria-valuemax={localRange.max - 5}
+                  aria-valuenow={localRange.min}
+                  aria-valuetext={minLabel}
+                  tabIndex={isExpanded ? 0 : -1}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+                    setDragging("min");
+                  }}
+                  onKeyDown={(e) => handleThumbKey(e, "min")}
+                />
+
+                {/* Max thumb */}
+                <button
+                  ref={maxThumbRef}
+                  className={`lean-filter__thumb lean-filter__thumb--max${dragging === "max" ? " lean-filter__thumb--dragging" : ""}`}
+                  style={{ left: `${localRange.max}%`, "--thumb-color": maxColor } as React.CSSProperties}
+                  role="slider"
+                  aria-label={`Maximum lean: ${maxLabel} (${localRange.max})`}
+                  aria-valuemin={localRange.min + 5}
+                  aria-valuemax={100}
+                  aria-valuenow={localRange.max}
+                  aria-valuetext={maxLabel}
+                  tabIndex={isExpanded ? 0 : -1}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+                    setDragging("max");
+                  }}
+                  onKeyDown={(e) => handleThumbKey(e, "max")}
+                />
+              </div>
+
+              {/* Zone tick marks */}
+              <div className="lean-filter__ticks" aria-hidden="true">
+                {ZONES.map((zone) => (
+                  <span
+                    key={zone.label}
+                    className="lean-filter__tick"
+                    style={{ left: `${zone.min}%` }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Zone labels row */}
+            <div className="lean-filter__zone-labels" aria-hidden="true">
+              {ZONES.map((zone) => {
+                const isZoneActive = activeZone?.label === zone.label;
+                return (
+                  <button
+                    key={zone.label}
+                    className={`lean-filter__zone-btn${isZoneActive ? " lean-filter__zone-btn--active" : ""}`}
+                    tabIndex={isExpanded ? 0 : -1}
+                    aria-label={`Set range to ${zone.label} only`}
+                    aria-pressed={isZoneActive}
+                    style={{ "--zone-color": zone.colorVar } as React.CSSProperties}
+                    onClick={() => {
+                      const next = { min: zone.min, max: zone.max };
+                      setLocalRange(next);
+                      onChange(next);
+                    }}
+                  >
+                    {zone.short}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

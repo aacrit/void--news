@@ -25,7 +25,9 @@ what sources report; you do not editorialize.
 
 Core standards that apply to all output:
 - Active voice. Present tense for current and recent events.
-- Every significant factual claim is attributed to a named or specific source.
+- Every significant factual claim is attributed to a named or specific source. \
+Prohibited pseudo-attribution: "it was widely reported," "it is understood that," \
+"sources close to" (unless followed by a specific entity).
 - No loaded, charged, or sensationalist language — including language borrowed \
 from source headlines.
 - No value judgments. Prohibited adjectives: controversial, divisive, landmark, \
@@ -33,10 +35,18 @@ historic, shocking, stunning, explosive, devastating, unprecedented (as rhetoric
 emphasis), radical, extreme, common-sense.
 - No unattributed predictions or expert opinions. "Experts say" without a named \
 or described expert is not attribution.
+- In headlines, state what happened — not what might happen. Headlines use \
+"passes," not "could pass." Hedge modal verbs (could, may, might, would) signal \
+speculation in a headline and are prohibited unless directly quoting a source \
+statement.
 - Neutral framing of competing legitimate perspectives. No false balance on \
 empirical questions with clear factual consensus.
 - Precise language: name individuals when known, state exact figures, specify \
 locations when central.
+- When attribution is needed, use actual outlet names (e.g., "Reuters reported," \
+"according to The Washington Post"). Do not use generic labels like "a US major \
+source" or "an international outlet." Only attribute when it adds value — not \
+every sentence needs a citation.
 - NEVER use bracketed citations, footnotes, or reference markers like [1], [2,5], \
 [Source], (1), etc. This is a news briefing, not an academic paper. Attribute \
 inline using natural language ("according to...", "...X reported").\
@@ -51,6 +61,7 @@ Analyze the following news cluster and return a JSON object with exactly seven \
 fields: headline, summary, consensus, divergence, editorial_importance, story_type, has_binding_consequences.
 
 {context_line}
+{source_names_line}
 ARTICLES:
 {articles_block}
 
@@ -61,28 +72,47 @@ Write an 8-12 word factual headline. Count the words carefully.
 - Title Case. Active voice. Present tense.
 - State the action, the actor, and location if essential.
 - No question marks, exclamation marks, or ellipses.
+- No hedge constructions: "could," "may," "might," "would" are prohibited \
+unless directly quoting a source statement.
 - Prohibited words: crackdown, explosive, bombshell, shocking, stunning, chaos, \
 chaotic, slams, blasts, doubles down, firestorm, war of words, crisis (unless an \
 official designation).
 - Do not reproduce sensationalist language from source headlines.
 Good: "Senate Passes $1.2 Trillion Infrastructure Bill After Weekend Vote"
 Bad: "Shocking Vote Shakes Washington as Senate Acts on Roads"
+Bad: "US Senate Could Pass Immigration Bill as Talks Continue"
 
 ---
 
-TASK 2 — summary (string, 150-250 words)
-Write a factual briefing in inverted pyramid structure.
+TASK 2 — summary (string, 400-500 words)
+Write a comprehensive factual briefing in inverted pyramid structure. This should \
+read like a complete news intelligence brief — rich with specifics, diverse \
+perspectives, and contextual depth.
 
-Paragraph 1 (1-2 sentences): The single most newsworthy fact — what happened, \
-who, when, where. Do not open with "According to." Lead with the event, then \
-attribute in the same sentence or the next.
-Paragraph 2 (2-3 sentences): Context and significance. Why this matters, what \
-preceded it. Attribute all background claims.
-Paragraph 3 (2-3 sentences): Key specifics. Named individuals, exact figures, \
-direct quotes, competing stated positions. Represent perspectives with equal \
-syntactic weight.
-Final sentence: Next steps, a deadline, an expected decision, or stated \
-consequences.
+Paragraph 1 (2-3 sentences): The single most newsworthy fact — what happened, \
+who, when, where. Lead with the event, then attribute. Include the most \
+significant number, name, or outcome.
+
+Paragraph 2 (3-4 sentences): Context and significance. Why this matters, what \
+preceded it, how it connects to broader developments. Attribute all background \
+claims to specific outlets by name when the attribution adds value.
+
+Paragraph 3 (3-4 sentences): Diverse perspectives. What different sources \
+emphasize — present the range of reported angles, reactions from named officials \
+or organizations, and any competing stated positions. Represent perspectives with \
+equal syntactic weight.
+
+Paragraph 4 (2-3 sentences): Key specifics. Exact figures, direct quotes, \
+technical details, geographic scope, affected populations. This is where data \
+density matters most.
+
+Paragraph 5 (1-2 sentences): Next steps, a deadline, an expected decision, or \
+stated consequences. What to watch for next.
+
+When attributing, use actual outlet names from the SOURCE NAMES list below \
+(e.g., "Reuters reported," "according to The Washington Post"). Only attribute \
+when it adds value — not every sentence needs a citation. Most factual statements \
+confirmed across sources need no attribution.
 
 Prohibited constructions:
 - "In a stunning/shocking/unprecedented development..."
@@ -90,6 +120,7 @@ Prohibited constructions:
 - "Experts say..." or "Analysts believe..." without named or described attribution
 - "...raising questions about..." (vague concern framing)
 - "...sparking outrage/controversy..." (importing reaction framing)
+- Generic tier labels like "a US major source" or "an international outlet"
 - Any adjective that expresses editorial judgment rather than factual description
 - Bracketed citations or reference numbers like [1], [2,5], [Source 3], (1). \
 This is a news article, not a research paper. Use natural inline attribution.
@@ -111,23 +142,36 @@ TASK 4 — divergence (array of 2-4 strings)
 List 2-4 observable ways sources differ in what they cover, emphasize, or frame.
 - One sentence per point.
 - Describe coverage patterns, not outlet credibility or character.
-- Reference outlet type where useful (US major outlets, international sources, \
-independent media) — not specific outlet names.
+- Reference outlets by name where useful for specific divergence points.
 - Permitted verbs: emphasize, include, omit, lead with, frame as, devote more \
 coverage to, focus on, give less prominence to.
-- Prohibited words: bias, ignore, spin, push, hide, downplay, agenda, chose not \
-to report.
+- Prohibited words: bias, ignore, spin, push, hide, downplay, downplayed, \
+agenda, chose not to report, failed to mention.
 - When sources cite conflicting verifiable facts, describe the conflict neutrally: \
-"US and international outlets cite differing figures for [specific metric]."
+"Reuters and Al Jazeera cite differing figures for [specific metric]."
 
 ---
 
 TASK 5 — editorial_importance (integer, 1-10)
-Rate this story's editorial importance on a 1-10 scale. Ask: "Would a senior New York Times editor put this on the front page?"
-10 = once-in-a-decade event (war declaration, pandemic, constitutional crisis)
-7-9 = major national/global development (supreme court ruling, trade deal, mass protest)
-4-6 = significant but routine (quarterly earnings, bilateral meeting, policy proposal)
-1-3 = ceremonial, human interest, or incremental update on a stable story
+Rate this story's editorial importance. Primary question: "Would a senior NYT \
+editor put this on the front page?"
+
+10 = once-in-a-decade event (war declaration, pandemic, constitutional crisis, \
+regime change)
+8-9 = major irreversible development: supreme court ruling, military action, \
+central bank rate change, treaty signed
+6-7 = significant development with binding or structural consequences: \
+legislation passed, sanctions imposed, major leader speech with policy commitment, \
+election result
+4-5 = significant but reversible or provisional: policy proposal, summit meeting, \
+bilateral statement, major indictment without verdict, large protest
+2-3 = incremental update on a known story: day-N of ongoing talks, progress \
+report, reaction statement to a prior event
+1 = ceremonial, human interest, or symbolic: award, anniversary, cultural event
+
+Tiebreaker: if uncertain between two adjacent scores, score lower if (a) this is \
+a continuation of a story already widely reported, or (b) the primary action is a \
+statement rather than a decision.
 
 ---
 
@@ -136,8 +180,13 @@ Classify into exactly one type:
 - "breaking_crisis": active unfolding emergency with immediate consequences
 - "policy_action": government/institutional decision with binding consequences
 - "investigation": journalistic investigation revealing unknown information
-- "ongoing_crisis": continuation of a known crisis (war, pandemic, famine)
-- "incremental_update": minor development on a previously reported story
+- "ongoing_crisis": the story is about an active situation (war, famine, pandemic, \
+political crisis) where no single news cycle contains the entire story. Choose \
+this when articles primarily describe the state of an ongoing situation.
+- "incremental_update": a specific narrow development on a story that has already \
+been reported. Choose this when articles primarily describe a reaction, a minor \
+announcement, or a scheduled event within a larger story. Example: spokesperson \
+declining comment, scheduled hearing update.
 - "human_interest": individual-focused story without policy implications
 - "ceremonial": commemorative events, symbolic actions, awards, anniversaries
 - "entertainment": arts, culture, sports, celebrity
@@ -162,10 +211,16 @@ _PROHIBITED_TERMS = frozenset({
     "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
     "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
     "doubles down", "war of words", "sparking outrage", "raising questions",
-    "in an unprecedented", "in a stunning", "the world watched",
+    "raises concerns", "casts doubt", "throws into question",
+    "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
     "experts say", "analysts believe", "experts believe", "analysts say",
+    "it was widely reported", "it is widely understood",
     "controversial", "divisive", "landmark", "historic",
     "radical", "extreme", "common-sense",
+    "could signal", "may mark", "might reshape",
+    "most significant", "most important development", "key moment",
+    "downplayed", "failed to mention", "chose not to report",
+    "a us major source", "an international outlet", "a major source",
 })
 
 # Minimum sources for a cluster to qualify for Gemini summarization.
@@ -178,8 +233,9 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     """
     Log quality warnings for out-of-spec generated content.
 
-    Checks headline word count (target: 8-12 words) and scans all text
-    fields for prohibited sensationalist or value-laden terms.
+    Checks headline word count (8-12), summary word count (400-500),
+    consensus/divergence item counts, and scans all text fields for
+    prohibited sensationalist or value-laden terms.
 
     Does not modify or discard the result — warnings are surfaced to the
     analytics-expert during post-run audit.
@@ -194,6 +250,24 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
             f"{headline!r}"
         )
 
+    # Summary word count (target: 400-500, warn at 350-600 range)
+    summary = result.get("summary", "")
+    summary_wc = len(summary.split())
+    if summary_wc > 0 and not (350 <= summary_wc <= 600):
+        print(
+            f"  [quality]{cid_str} Summary word count {summary_wc} (expected 400-500): "
+            f"first 80 chars: {summary[:80]!r}"
+        )
+
+    # Consensus/divergence item counts
+    consensus_count = len(result.get("consensus", []))
+    if consensus_count > 0 and not (3 <= consensus_count <= 5):
+        print(f"  [quality]{cid_str} Consensus count {consensus_count} (expected 3-5)")
+
+    divergence_count = len(result.get("divergence", []))
+    if divergence_count > 0 and not (2 <= divergence_count <= 4):
+        print(f"  [quality]{cid_str} Divergence count {divergence_count} (expected 2-4)")
+
     ei = result.get("editorial_importance")
     if ei is not None and not (1 <= int(ei) <= 10):
         print(f"  [quality]{cid_str} editorial_importance out of range: {ei}")
@@ -201,7 +275,7 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     # Scan headline + summary + all consensus + all divergence items
     all_text = " ".join([
         headline,
-        result.get("summary", ""),
+        summary,
         *result.get("consensus", []),
         *result.get("divergence", []),
     ]).lower()
@@ -242,16 +316,33 @@ def _build_context_line(articles: list[dict]) -> str:
         parts.append(f"{tier_counts['independent']} independent")
 
     distribution = ", ".join(parts) if parts else "mixed sources"
-    return f"Cluster: {total} articles from {distribution} outlets.\n"
+    return f"CLUSTER METADATA: {total} articles from {distribution} outlets.\n"
+
+
+def _build_source_names_line(articles: list[dict]) -> str:
+    """
+    Build a SOURCE NAMES reference line mapping article numbers to outlet names.
+
+    Provides real outlet names so Gemini can use them for attribution in
+    summaries and divergence points, instead of generic tier labels.
+    """
+    names = []
+    for i, art in enumerate(articles[:10]):
+        source_name = (art.get("source_name", "") or "").strip()
+        if source_name:
+            names.append(f"[{i + 1}] {source_name}")
+    if not names:
+        return ""
+    return "SOURCE NAMES: " + ", ".join(names) + "\n"
 
 
 def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     """
     Build the articles context block for the prompt.
 
-    Replaces source slugs with tier-based labels (US Source, International
-    Source, Independent Source) to prevent Gemini from applying outlet-level
-    political heuristics learned from training data.
+    Uses tier-based labels in the article block itself (to prevent Gemini
+    from weighting outlets by brand recognition), but real outlet names are
+    provided separately via _build_source_names_line for attribution use.
 
     Limits to max_articles and includes summaries up to 400 chars to give
     Gemini sufficient material for comprehensive synthesis.
@@ -267,10 +358,10 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
         title = (art.get("title", "") or "").strip()
         summary = (art.get("summary", "") or "").strip()
 
-        # Use tier as source label to prevent outlet-name heuristics in Gemini.
-        # Falls back to ordinal label if tier is unavailable.
-        tier = (art.get("tier", "") or "").strip()
-        source_label = _TIER_LABEL_MAP.get(tier, f"Source {i + 1}")
+        # Use tier as source label in the article block.
+        # Normalize tier value: lowercase + replace hyphens with underscores.
+        tier_raw = (art.get("tier", "") or "").strip().lower().replace("-", "_")
+        source_label = _TIER_LABEL_MAP.get(tier_raw, f"Source {i + 1}")
 
         if len(summary) > 400:
             summary = summary[:397] + "..."
@@ -296,9 +387,11 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
         return None
 
     context_line = _build_context_line(articles)
+    source_names_line = _build_source_names_line(articles)
     articles_block = _build_articles_block(articles)
     prompt = _USER_PROMPT_TEMPLATE.format(
         context_line=context_line,
+        source_names_line=source_names_line,
         articles_block=articles_block,
     )
     result = generate_json(prompt, system_instruction=_SYSTEM_INSTRUCTION)
@@ -379,9 +472,12 @@ def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
     if not is_available():
         return {}
 
-    # Build list of (original_index, source_count) for qualifying clusters
+    # Build list of (original_index, source_count) for qualifying clusters.
+    # Opinion clusters are always skipped — they use original article text.
     candidates = []
     for i, cluster in enumerate(clusters):
+        if cluster.get("_is_opinion"):
+            continue
         source_count = cluster.get("source_count", 0) or len(cluster.get("articles", []))
         if source_count >= _MIN_SOURCES:
             candidates.append((i, source_count))
@@ -408,5 +504,18 @@ def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
     skipped = len(clusters) - processed
     print(f"  Gemini: {processed} clusters summarized, "
           f"{skipped} using rule-based (cap: {calls_remaining()} calls left)")
+
+    # Per-run aggregate quality instrumentation
+    if results:
+        headline_lens = [len(r["headline"].split()) for r in results.values()]
+        summary_lens = [len(r["summary"].split()) for r in results.values()]
+        avg_h = sum(headline_lens) / len(headline_lens)
+        avg_s = sum(summary_lens) / len(summary_lens)
+        out_of_range_h = sum(1 for wc in headline_lens if not (8 <= wc <= 12))
+        out_of_range_s = sum(1 for wc in summary_lens if not (350 <= wc <= 600))
+        print(f"  Headline avg {avg_h:.1f} words, "
+              f"{out_of_range_h}/{len(headline_lens)} out of 8-12 range")
+        print(f"  Summary avg {avg_s:.1f} words, "
+              f"{out_of_range_s}/{len(summary_lens)} out of 400-500 range")
 
     return results
