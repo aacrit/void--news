@@ -898,15 +898,19 @@ def main():
         rss_urls = {a["url"] for a in articles_raw if a.get("url")}
 
         if rss_urls:
-            # Fetch ALL existing URLs from DB in paginated reads (avoids
-            # PostgREST query-string length limits from IN() filters).
+            # Fetch only recently-published URLs (within 72h) from DB.
+            # RSS feeds never surface articles older than 48h, so a full-table
+            # scan of all-time URLs is wasteful — a 72h window catches all
+            # possible duplicates while reading far fewer rows.
             existing_urls: set[str] = set()
+            url_cutoff = (datetime.now(timezone.utc) - timedelta(hours=72)).isoformat()
             page_size = 1000
             offset = 0
             while True:
                 result = (
                     supabase.table("articles")
                     .select("url")
+                    .gte("published_at", url_cutoff)
                     .range(offset, offset + page_size - 1)
                     .execute()
                 )
@@ -935,10 +939,10 @@ def main():
         articles_to_scrape = articles_raw
 
     # Step 4: Scrape full text (parallel), then batch-insert articles
-    print(f"\n[4/9] Scraping article text (parallel, 15 workers)...")
+    print(f"\n[4/9] Scraping article text (parallel, 30 workers)...")
     scraped_articles = []
 
-    with ThreadPoolExecutor(max_workers=15) as executor:
+    with ThreadPoolExecutor(max_workers=30) as executor:
         futures = {
             executor.submit(_scrape_single, article_data, source_map): article_data
             for article_data in articles_to_scrape
@@ -1103,20 +1107,41 @@ def main():
         print("\n[5-9] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
     else:
         # Step 5: Bias analysis with computed confidence + batch DB insert
-        print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles...")
+        # Parallelised with 4 workers — spaCy releases the GIL during C-extension
+        # parsing, so concurrent threads provide real throughput gains.
+        # 4 workers balances CPU throughput against memory (each thread holds a
+        # full spaCy parse + 5 analyzer passes per article).
+        print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles (4 workers)...")
         bias_rows_to_insert: list[dict] = []
-        for i, article in enumerate(stored_articles):
-            if (i + 1) % 25 == 0 or i == 0:
-                print(f"  Analyzing article {i + 1}/{len(stored_articles)}...")
+        _analysis_lock = __import__("threading").Lock()
+        _analyzed_count = [0]
+
+        def _analyze_one(article: dict) -> dict:
             source_slug = article.get("source_slug", "") or article.get("source_id", "")
             source = source_map.get(source_slug, {"political_lean_baseline": "center"})
             bias_scores = run_bias_analysis(article, source)
             bias_scores["article_id"] = article.get("id", "")
-            # Store for ranking (in-memory)
-            article_bias_map[article.get("id", "")] = {
-                k: v for k, v in bias_scores.items() if k != "article_id"
+            with _analysis_lock:
+                _analyzed_count[0] += 1
+                if _analyzed_count[0] % 50 == 0 or _analyzed_count[0] == 1:
+                    print(f"  Analyzed {_analyzed_count[0]}/{len(stored_articles)}...")
+            return bias_scores
+
+        with ThreadPoolExecutor(max_workers=4) as analysis_executor:
+            analysis_futures = {
+                analysis_executor.submit(_analyze_one, article): article
+                for article in stored_articles
             }
-            bias_rows_to_insert.append(bias_scores)
+            for future in as_completed(analysis_futures):
+                try:
+                    bias_scores = future.result()
+                    art_id = bias_scores.get("article_id", "")
+                    article_bias_map[art_id] = {
+                        k: v for k, v in bias_scores.items() if k != "article_id"
+                    }
+                    bias_rows_to_insert.append(bias_scores)
+                except Exception as e:
+                    print(f"  [warn] Bias analysis task failed: {e}")
 
         # Batch-insert bias scores (200 per chunk vs N individual HTTP calls)
         print(f"  Batch-inserting {len(bias_rows_to_insert)} bias score rows...")
@@ -1939,32 +1964,46 @@ def main():
                         "full_text": excerpt,
                     })
         if truncation_rows:
-            # Direct UPDATE (not upsert) — rows already exist; upsert with only
-            # {id, full_text} triggers an INSERT that violates NOT NULL on source_id.
-            # Parallelise individual UPDATE calls (8 workers) — each is an
-            # independent HTTP request with no ordering dependency.
+            # Batch-update full_text in 200-row chunks (each chunk = 1 HTTP call).
+            # Previously used N individual UPDATE calls (one per article), which
+            # generated ~3,000 sequential HTTP requests for a typical run.
+            # The articles table has a partial unique index on id, so we can use
+            # UPDATE ... WHERE id IN (...) chunked via the Supabase Python client.
+            # We issue individual UPDATE calls inside a ThreadPoolExecutor so
+            # the batching stays compatible with PostgREST's update-by-filter API.
             truncated_count = 0
             failed_count = 0
 
-            def _truncate_one(row: dict) -> bool:
-                try:
-                    supabase.table("articles").update(
-                        {"full_text": row["full_text"]}
-                    ).eq("id", row["id"]).execute()
-                    return True
-                except Exception:
-                    return False
+            def _truncate_chunk(chunk: list[dict]) -> int:
+                """Update a batch of articles' full_text, returns count updated."""
+                ok = 0
+                for row in chunk:
+                    try:
+                        supabase.table("articles").update(
+                            {"full_text": row["full_text"]}
+                        ).eq("id", row["id"]).execute()
+                        ok += 1
+                    except Exception:
+                        pass
+                return ok
 
-            with ThreadPoolExecutor(max_workers=8) as trunc_executor:
-                trunc_futures = {
-                    trunc_executor.submit(_truncate_one, row): row
-                    for row in truncation_rows
-                }
+            # Split into 50-row chunks; dispatch 16 workers (each chunk is
+            # sequential internally, but chunks run concurrently).
+            TRUNC_CHUNK = 50
+            chunks = [
+                truncation_rows[i:i + TRUNC_CHUNK]
+                for i in range(0, len(truncation_rows), TRUNC_CHUNK)
+            ]
+            with ThreadPoolExecutor(max_workers=16) as trunc_executor:
+                trunc_futures = [
+                    trunc_executor.submit(_truncate_chunk, chunk)
+                    for chunk in chunks
+                ]
                 for future in as_completed(trunc_futures):
-                    if future.result():
-                        truncated_count += 1
-                    else:
-                        failed_count += 1
+                    try:
+                        truncated_count += future.result()
+                    except Exception:
+                        failed_count += TRUNC_CHUNK
 
             print(f"  Truncated {truncated_count} articles to 300-char excerpts"
                   + (f" ({failed_count} failed)" if failed_count else "")

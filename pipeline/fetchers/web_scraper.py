@@ -87,7 +87,7 @@ USER_AGENT = (
     "Mozilla/5.0 (compatible; VoidNews/1.0; "
     "+https://github.com/aacrit/void--news)"
 )
-REQUEST_TIMEOUT = 15  # seconds
+REQUEST_TIMEOUT = 8  # seconds — reduced from 15 to avoid blocking on slow/dead URLs
 
 # Cache for robots.txt parsers (keyed by domain)
 _robots_cache: dict[str, urllib.robotparser.RobotFileParser] = {}
@@ -346,9 +346,10 @@ def _scrape_with_playwright(url: str) -> str:
                 viewport={"width": 1280, "height": 800},
             )
             page = context.new_page()
-            page.goto(url, wait_until="domcontentloaded", timeout=20000)
-            # Wait for article content to render (most sites load within 2s)
-            page.wait_for_timeout(2500)
+            page.goto(url, wait_until="domcontentloaded", timeout=15000)
+            # Wait for article content to render — 1s is enough for most sites;
+            # reduced from 2500ms to avoid padding every JS-rendered page load.
+            page.wait_for_timeout(1000)
 
             html = page.content()
             browser.close()
