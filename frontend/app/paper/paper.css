@@ -231,11 +231,12 @@ html:has(.np-root) body { background: transparent; }
   column-fill: balance;
 }
 
-/* Lead zone — bordered, no multi-column (single column for banner) */
+/* Lead zone — single column for banner, consistent hairline borders */
 .np-front__zone-b {
+  column-count: 1;
   padding: 0 var(--np-col-gap);
-  border-left: 1px solid var(--np-rule);
-  border-right: 1px solid var(--np-rule);
+  border-left: 0.5px solid var(--np-rule);
+  border-right: 0.5px solid var(--np-rule);
 }
 
 /* ==========================================================================
@@ -289,8 +290,8 @@ html:has(.np-root) body { background: transparent; }
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
-  margin-bottom: 0;
-  padding: 8px 0;
+  margin: 0 0 3px;
+  padding: 3px 0;
   border-bottom: var(--np-cutoff);
 }
 
@@ -663,11 +664,12 @@ html:has(.np-root) body { background: transparent; }
 
   .np-front__zone-a {
     column-count: 1;
-    border-right: 1px solid var(--np-rule);
+    border-right: 0.5px solid var(--np-rule);
     padding-right: var(--np-col-gap);
   }
 
   .np-front__zone-b {
+    column-count: 1;
     border-left: none;
     border-right: none;
     padding: 0;
@@ -680,6 +682,7 @@ html:has(.np-root) body { background: transparent; }
 
   .np-front__zone-c {
     column-count: 1;
+    border-left: 0.5px solid var(--np-rule);
     padding-left: var(--np-col-gap);
   }
 
