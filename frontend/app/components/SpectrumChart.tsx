@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
-   Matches DeepDive dd-spectrum style: continuous gradient track with
-   favicon dots positioned by lean percentage above and below.
+   Sources positioned horizontally by lean score, stacked vertically
+   in columns. Collapsed by default, expands with spring animation.
    --------------------------------------------------------------------------- */
 
 export interface SpectrumSource {
@@ -37,30 +37,19 @@ export function normalizeLean(raw: string | null): LeanCategory {
   return valid.includes(s as LeanCategory) ? (s as LeanCategory) : "center";
 }
 
-/* Map 7-point categorical lean to a percentage on the 0-100 spectrum */
-const LEAN_PERCENT: Record<LeanCategory, number> = {
-  "far-left": 7,
-  "left": 21,
-  "center-left": 36,
-  "center": 50,
-  "center-right": 64,
-  "right": 79,
-  "far-right": 93,
-};
-
-/* Zone metadata for the seven-point scale legend */
+/* Seven zones, evenly spaced across 7 columns */
 const LEAN_ZONES: {
   key: LeanCategory;
   label: string;
-  desc: string;
+  shortLabel: string;
 }[] = [
-  { key: "far-left", label: "Far Left", desc: "Strongly progressive framing" },
-  { key: "left", label: "Left", desc: "Consistent left-leaning framing" },
-  { key: "center-left", label: "Center Left", desc: "Leans progressive, journalistic standards" },
-  { key: "center", label: "Center", desc: "Multiple perspectives, wire services" },
-  { key: "center-right", label: "Center Right", desc: "Leans conservative, diverse viewpoints" },
-  { key: "right", label: "Right", desc: "Consistent right-leaning framing" },
-  { key: "far-right", label: "Far Right", desc: "Strongly conservative framing" },
+  { key: "far-left", label: "Far Left", shortLabel: "Far L" },
+  { key: "left", label: "Left", shortLabel: "Left" },
+  { key: "center-left", label: "Center Left", shortLabel: "Ctr L" },
+  { key: "center", label: "Center", shortLabel: "Ctr" },
+  { key: "center-right", label: "Center Right", shortLabel: "Ctr R" },
+  { key: "right", label: "Right", shortLabel: "Right" },
+  { key: "far-right", label: "Far Right", shortLabel: "Far R" },
 ];
 
 function tierLabel(tier: string): string {
@@ -82,45 +71,52 @@ function getFaviconUrl(sourceUrl: string): string {
 }
 
 /* ---------------------------------------------------------------------------
-   Position sources above/below the track with jitter to reduce overlap
+   SourceDot — single favicon circle with hover tooltip
    --------------------------------------------------------------------------- */
-interface PositionedSource {
+function SourceDot({
+  source,
+  onTooltip,
+}: {
   source: SpectrumSource;
-  lean: number;
-  side: "above" | "below";
-  isOverflow: boolean;
-}
+  onTooltip: (source: SpectrumSource | null, el: HTMLElement | null) => void;
+}) {
+  const favicon = source.url ? getFaviconUrl(source.url) : "";
 
-function computePositions(sources: SpectrumSource[]): PositionedSource[] {
-  // Group sources by lean category, then alternate above/below
-  const buckets = new Map<LeanCategory, SpectrumSource[]>();
-  for (const s of sources) {
-    const lean = normalizeLean(s.political_lean_baseline);
-    if (!buckets.has(lean)) buckets.set(lean, []);
-    buckets.get(lean)!.push(s);
-  }
-
-  const result: PositionedSource[] = [];
-
-  for (const [cat, srcs] of buckets) {
-    const basePct = LEAN_PERCENT[cat];
-    // Sort by name for stable ordering
-    const sorted = [...srcs].sort((a, b) => a.name.localeCompare(b.name));
-
-    sorted.forEach((s, i) => {
-      // Alternate above/below; slight jitter to spread overlapping dots
-      const side: "above" | "below" = i % 2 === 0 ? "above" : "below";
-      // Spread sources within a zone: ±3% range to reduce pile-ups
-      const jitter = sorted.length > 1
-        ? ((i / (sorted.length - 1)) - 0.5) * 6
-        : 0;
-      const lean = Math.max(2, Math.min(98, basePct + jitter));
-      const isOverflow = i >= 6; // Mark overflow sources as smaller
-      result.push({ source: s, lean, side, isOverflow });
-    });
-  }
-
-  return result;
+  return (
+    <button
+      className="src-dot"
+      aria-label={`${source.name} — ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
+      onPointerEnter={(e) => onTooltip(source, e.currentTarget)}
+      onPointerLeave={() => onTooltip(null, null)}
+      onFocus={(e) => onTooltip(source, e.currentTarget)}
+      onBlur={() => onTooltip(null, null)}
+    >
+      {favicon ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={favicon}
+            alt=""
+            width={18}
+            height={18}
+            style={{ borderRadius: 2 }}
+            loading="lazy"
+            onError={(e) => {
+              const t = e.currentTarget;
+              t.style.display = "none";
+              const fb = t.nextElementSibling as HTMLElement | null;
+              if (fb) fb.style.display = "flex";
+            }}
+          />
+          <span className="src-dot__initial" style={{ display: "none" }}>
+            {source.name.charAt(0)}
+          </span>
+        </>
+      ) : (
+        <span className="src-dot__initial">{source.name.charAt(0)}</span>
+      )}
+    </button>
+  );
 }
 
 /* ---------------------------------------------------------------------------
@@ -131,15 +127,27 @@ interface SpectrumChartProps {
 }
 
 export default function SpectrumChart({ sources }: SpectrumChartProps) {
+  const [expanded, setExpanded] = useState(false);
   const [tooltip, setTooltip] = useState<{
     source: SpectrumSource;
     x: number;
     y: number;
   } | null>(null);
 
-  const positions = useMemo(() => computePositions(sources), [sources]);
-  const abovePositions = useMemo(() => positions.filter(p => p.side === "above"), [positions]);
-  const belowPositions = useMemo(() => positions.filter(p => p.side === "below"), [positions]);
+  // Group sources into 7 lean columns, sorted by name within each
+  const columns = useMemo(() => {
+    const groups = new Map<LeanCategory, SpectrumSource[]>();
+    for (const zone of LEAN_ZONES) groups.set(zone.key, []);
+    for (const s of sources) {
+      const lean = normalizeLean(s.political_lean_baseline);
+      groups.get(lean)!.push(s);
+    }
+    // Sort each column alphabetically
+    for (const [, srcs] of groups) {
+      srcs.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return groups;
+  }, [sources]);
 
   // Close tooltip on Escape
   useEffect(() => {
@@ -150,7 +158,11 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const handleDotEnter = useCallback((source: SpectrumSource, el: HTMLElement) => {
+  const handleTooltip = useCallback((source: SpectrumSource | null, el: HTMLElement | null) => {
+    if (!source || !el) {
+      setTooltip(null);
+      return;
+    }
     const rect = el.getBoundingClientRect();
     setTooltip({
       source,
@@ -159,215 +171,69 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     });
   }, []);
 
-  const handleDotLeave = useCallback(() => {
-    setTooltip(null);
-  }, []);
+  const maxInColumn = useMemo(() => {
+    let max = 0;
+    for (const [, srcs] of columns) {
+      if (srcs.length > max) max = srcs.length;
+    }
+    return max;
+  }, [columns]);
 
   return (
     <div className="spectrum-chart" role="img" aria-label="Political lean spectrum showing all curated news sources">
-      {/* ---- Desktop: DeepDive-style continuous spectrum ---- */}
-      <div className="spectrum-chart__desktop">
-        <div className="src-spectrum">
-          {/* Row above track */}
-          <div className="src-spectrum__row src-spectrum__row--above">
-            {abovePositions.map(({ source, lean, isOverflow }) => {
-              const favicon = source.url ? getFaviconUrl(source.url) : "";
-              return (
-                <button
-                  key={`above-${source.slug}`}
-                  className={`src-spectrum__dot${isOverflow ? " src-spectrum__dot--overflow" : ""}`}
-                  style={{ left: `${lean}%` }}
-                  aria-label={`${source.name} — ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
-                  onPointerEnter={(e) => handleDotEnter(source, e.currentTarget)}
-                  onPointerLeave={handleDotLeave}
-                  onFocus={(e) => handleDotEnter(source, e.currentTarget)}
-                  onBlur={handleDotLeave}
-                >
-                  {favicon ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={favicon}
-                        alt=""
-                        width={18}
-                        height={18}
-                        style={{ borderRadius: 2 }}
-                        loading="lazy"
-                        onError={(e) => {
-                          const t = e.currentTarget;
-                          t.style.display = "none";
-                          const fb = t.nextElementSibling as HTMLElement | null;
-                          if (fb) fb.style.display = "flex";
-                        }}
-                      />
-                      <span className="src-spectrum__dot-initial" style={{ display: "none" }}>
-                        {source.name.charAt(0)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="src-spectrum__dot-initial">{source.name.charAt(0)}</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
 
-          {/* Gradient track with inline labels */}
-          <div className="src-spectrum__track">
-            <span className="src-spectrum__inline-label src-spectrum__inline-label--left">Left</span>
-            <span className="src-spectrum__inline-label src-spectrum__inline-label--center">Center</span>
-            <span className="src-spectrum__inline-label src-spectrum__inline-label--right">Right</span>
-          </div>
-
-          {/* Row below track */}
-          <div className="src-spectrum__row src-spectrum__row--below">
-            {belowPositions.map(({ source, lean, isOverflow }) => {
-              const favicon = source.url ? getFaviconUrl(source.url) : "";
-              return (
-                <button
-                  key={`below-${source.slug}`}
-                  className={`src-spectrum__dot${isOverflow ? " src-spectrum__dot--overflow" : ""}`}
-                  style={{ left: `${lean}%` }}
-                  aria-label={`${source.name} — ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
-                  onPointerEnter={(e) => handleDotEnter(source, e.currentTarget)}
-                  onPointerLeave={handleDotLeave}
-                  onFocus={(e) => handleDotEnter(source, e.currentTarget)}
-                  onBlur={handleDotLeave}
-                >
-                  {favicon ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={favicon}
-                        alt=""
-                        width={18}
-                        height={18}
-                        style={{ borderRadius: 2 }}
-                        loading="lazy"
-                        onError={(e) => {
-                          const t = e.currentTarget;
-                          t.style.display = "none";
-                          const fb = t.nextElementSibling as HTMLElement | null;
-                          if (fb) fb.style.display = "flex";
-                        }}
-                      />
-                      <span className="src-spectrum__dot-initial" style={{ display: "none" }}>
-                        {source.name.charAt(0)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="src-spectrum__dot-initial">{source.name.charAt(0)}</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Seven-point scale legend */}
-        <div className="spectrum-scale">
-          {LEAN_ZONES.map((zone) => (
-            <div key={zone.key} className="spectrum-scale__item" data-lean={zone.key}>
-              <span className="spectrum-scale__dot" data-lean={zone.key} />
-              <span className="spectrum-scale__label">{zone.label}</span>
-              <span className="spectrum-scale__desc">{zone.desc}</span>
-            </div>
-          ))}
-        </div>
+      {/* Gradient track with inline labels */}
+      <div className="src-track">
+        <span className="src-track__label src-track__label--left">Left</span>
+        <span className="src-track__label src-track__label--center">Center</span>
+        <span className="src-track__label src-track__label--right">Right</span>
       </div>
 
-      {/* ---- Mobile: Same continuous spectrum, stacked ---- */}
-      <div className="spectrum-chart__mobile" aria-label="Political lean spectrum" role="region">
-        <div className="src-spectrum">
-          <div className="src-spectrum__row src-spectrum__row--above">
-            {abovePositions.map(({ source, lean, isOverflow }) => {
-              const favicon = source.url ? getFaviconUrl(source.url) : "";
-              return (
-                <button
-                  key={`m-above-${source.slug}`}
-                  className={`src-spectrum__dot src-spectrum__dot--mobile${isOverflow ? " src-spectrum__dot--overflow" : ""}`}
-                  style={{ left: `${lean}%` }}
-                  aria-label={`${source.name}`}
-                  onPointerEnter={(e) => handleDotEnter(source, e.currentTarget)}
-                  onPointerLeave={handleDotLeave}
-                >
-                  {favicon ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={favicon}
-                        alt=""
-                        width={14}
-                        height={14}
-                        style={{ borderRadius: 2 }}
-                        loading="lazy"
-                        onError={(e) => {
-                          const t = e.currentTarget;
-                          t.style.display = "none";
-                          const fb = t.nextElementSibling as HTMLElement | null;
-                          if (fb) fb.style.display = "flex";
-                        }}
-                      />
-                      <span className="src-spectrum__dot-initial" style={{ display: "none" }}>
-                        {source.name.charAt(0)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="src-spectrum__dot-initial">{source.name.charAt(0)}</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+      {/* Seven columns of stacked sources */}
+      <div className={`src-columns${expanded ? " src-columns--expanded" : ""}`}>
+        <div className="src-columns__inner">
+          {LEAN_ZONES.map((zone) => {
+            const srcs = columns.get(zone.key) || [];
+            return (
+              <div key={zone.key} className="src-col" data-lean={zone.key}>
+                {/* Column header */}
+                <span className="src-col__label">
+                  <span className="src-col__label-full">{zone.label}</span>
+                  <span className="src-col__label-short">{zone.shortLabel}</span>
+                </span>
+                <span className="src-col__count">{srcs.length}</span>
 
-          <div className="src-spectrum__track">
-            <span className="src-spectrum__inline-label src-spectrum__inline-label--left">Left</span>
-            <span className="src-spectrum__inline-label src-spectrum__inline-label--center">Center</span>
-            <span className="src-spectrum__inline-label src-spectrum__inline-label--right">Right</span>
-          </div>
-
-          <div className="src-spectrum__row src-spectrum__row--below">
-            {belowPositions.map(({ source, lean, isOverflow }) => {
-              const favicon = source.url ? getFaviconUrl(source.url) : "";
-              return (
-                <button
-                  key={`m-below-${source.slug}`}
-                  className={`src-spectrum__dot src-spectrum__dot--mobile${isOverflow ? " src-spectrum__dot--overflow" : ""}`}
-                  style={{ left: `${lean}%` }}
-                  aria-label={`${source.name}`}
-                  onPointerEnter={(e) => handleDotEnter(source, e.currentTarget)}
-                  onPointerLeave={handleDotLeave}
-                >
-                  {favicon ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={favicon}
-                        alt=""
-                        width={14}
-                        height={14}
-                        style={{ borderRadius: 2 }}
-                        loading="lazy"
-                        onError={(e) => {
-                          const t = e.currentTarget;
-                          t.style.display = "none";
-                          const fb = t.nextElementSibling as HTMLElement | null;
-                          if (fb) fb.style.display = "flex";
-                        }}
-                      />
-                      <span className="src-spectrum__dot-initial" style={{ display: "none" }}>
-                        {source.name.charAt(0)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="src-spectrum__dot-initial">{source.name.charAt(0)}</span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                {/* Stacked dots */}
+                <div className="src-col__dots">
+                  {srcs.map((s) => (
+                    <SourceDot
+                      key={s.slug}
+                      source={s}
+                      onTooltip={handleTooltip}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
+
+        {/* Gradient fade when collapsed */}
+        {!expanded && maxInColumn > 3 && (
+          <div className="src-columns__fade" aria-hidden="true" />
+        )}
       </div>
+
+      {/* Expand/collapse with spring */}
+      {maxInColumn > 3 && (
+        <button
+          className="src-expand"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+        >
+          {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
+        </button>
+      )}
 
       {/* Tooltip */}
       {tooltip && (
