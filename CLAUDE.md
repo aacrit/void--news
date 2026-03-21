@@ -53,25 +53,26 @@ The bias engine analyzes **each article individually** across multiple axes. All
 
 All bias analysis is algorithmic/rule-based using NLP heuristics. No LLM API calls for scoring. Confidence is computed per-article based on text length, text availability, and signal strength (deviation from defaults).
 
-### Importance Ranking — v3.3
+### Importance Ranking — v4.0
 
 **Design principle: ranking is BIAS-BLIND.** Bias analysis belongs in the display layer (BiasLens, Sigil, Deep Dive), not in story selection. Stories are never boosted or penalized for political lean distribution.
 
-9-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0):
+10-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0):
 
 | Signal | Weight | Notes |
 |--------|--------|-------|
-| Source coverage breadth | 27% | Diminishing returns curve (1 - e^(-n/5)); up from 25% |
-| Recency (adaptive decay) | 14% | Half-life 12h standard, 15-18h for breaking news; down from 15% |
-| Perspective diversity | 10% | Editorial viewpoint spread; bias-blind; consensus floor; down from 12% |
-| Coverage velocity | 9% | Sources added in last 6h; age-gated (fades after 48h); down from 10% |
-| Consequentiality | 10% | Outcome/action verb detection via pre-compiled word-boundary regex |
-| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean range); down from 8% |
-| Geographic impact | 6% | Two-phase NER: titles first, full text only if needed; down from 8% |
-| Tier diversity | 13% | Composition-aware: us_major presence explicitly rewarded; up from 8% |
-| Factual density | 4% | Average factual rigor across cluster articles |
+| Source coverage breadth | 20% | Tier-weighted diminishing returns: independent 1.5x, international 1.2x, us_major 1.0x |
+| Story maturity | 16% | recency × log2(1 + source_count); rewards "recent AND thoroughly reported" |
+| Tier diversity | 13% | Composition-aware: us_major presence explicitly rewarded |
+| Consequentiality | 10% | Outcome/action verbs + high-authority phrase floor (70+) |
+| Institutional authority | 8% | Heads of state, supreme courts, central banks, UN Security Council |
+| Factual density | 8% | Average factual rigor; gate: <30 gets 0.88x multiplier |
+| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean range) |
+| Perspective diversity | 6% | Editorial viewpoint spread; bias-blind; consensus floor |
+| Geographic impact | 6% | Geopolitically weighted: G20/P5 nations score 3x |
+| Coverage velocity | 6% | Sources added in last 6h; diminishing returns curve |
 
-Tier diversity scoring (composition-aware, v3.3):
+Tier diversity scoring (composition-aware, unchanged from v3.3):
 
 | Tier combination | Score |
 |-----------------|-------|
@@ -83,12 +84,14 @@ Tier diversity scoring (composition-aware, v3.3):
 | international alone | 30 |
 | independent alone | 15 |
 
-Additional modifiers:
-- **Confidence multiplier**: soft curve `0.65 + 0.35 * conf` (replaces linear floor 0.4); prevents large-source clusters from being crushed by poorly-scraped articles
-- **Consequentiality gate**: stories with zero consequentiality score (no outcome/action verbs — entertainment, celebrity, sports fluff) receive a 0.82x multiplier on final score
-- **Soft-floor normalization**: `5 + raw * 0.95` replaces linear rank collapse; preserves score meaning at the top
-- **Lead eligibility gate**: top 5 feed positions require 3+ sources; under-sourced stories are demoted (v3.3: relaxed from top-2 / 5+ sources)
-- **Topic diversity re-rank**: max 2 stories of the same category in top 10, applied per section pool (world/us/india); down from max 3 per content_type pool
+Gates and modifiers:
+- **Confidence multiplier**: soft curve `0.65 + 0.35 * conf`; prevents large-source clusters from being crushed by poorly-scraped articles
+- **Consequentiality gate**: stories with consequentiality < 5 receive 0.82x multiplier on final score
+- **Soft-news category gate**: sports/entertainment/culture/lifestyle categories receive 0.78x multiplier
+- **Low factual rigor gate**: clusters with avg factual_rigor < 30 receive 0.88x multiplier
+- **Lead eligibility gate**: top 10 per-section positions require 3+ sources; exception for independent-tier stories with factual_rigor > 70 (investigative exclusives)
+- **Topic diversity re-rank**: max 2 per hard-news category, max 1 per soft-news category in top 10, applied per section pool
+- **Cross-edition demotion**: stories top-5 in their primary section are demoted below position 5 in secondary sections (prevents same story leading both World and US)
 
 `pipeline/rerank.py` — standalone script to re-apply the formula to existing clusters without a full pipeline run.
 

@@ -1,5 +1,5 @@
 """
-Re-rank existing clusters using the v3.3 ranking engine.
+Re-rank existing clusters using the v4.0 ranking engine.
 
 Reads clusters + articles + bias scores from Supabase, runs rank_importance()
 on each, and writes back updated headline_rank + divergence_score +
@@ -34,6 +34,26 @@ def _get_section(cluster_id: str, clusters: list[dict]) -> str:
     return "world"
 
 
+def _get_cluster_tier_info(articles: list[dict], sources: list[dict]) -> dict:
+    """Get tier breakdown and independent factual rigor for lead gate exemptions."""
+    source_map = {}
+    for s in sources:
+        if s.get("db_id"):
+            source_map[s["db_id"]] = s
+        if s.get("id"):
+            source_map[s["id"]] = s
+
+    tiers = set()
+    for a in articles:
+        sid = a.get("source_id", "")
+        src = source_map.get(sid, {})
+        tier = src.get("tier", "")
+        if tier:
+            tiers.add(tier)
+
+    return {"tiers": tiers}
+
+
 def load_sources() -> list[dict]:
     with open(SOURCES_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -54,7 +74,7 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
 def main():
     start = time.time()
     print("=" * 60)
-    print(f"void --news re-ranker v3.3 {'(DRY RUN)' if DRY_RUN else ''}")
+    print(f"void --news re-ranker v4.0 {'(DRY RUN)' if DRY_RUN else ''}")
     print("=" * 60)
 
     # 1. Load sources with DB IDs
@@ -67,7 +87,7 @@ def main():
     # 2. Fetch all clusters
     print("\n[2/4] Fetching clusters from Supabase...")
     clusters_res = supabase.table("story_clusters").select(
-        "id,title,category,section,content_type,headline_rank,source_count"
+        "id,title,category,section,sections,content_type,headline_rank,source_count"
     ).execute()
     clusters = clusters_res.data or []
     print(f"  {len(clusters)} clusters found")
@@ -141,11 +161,12 @@ def main():
         except Exception:
             category = cluster.get("category", "politics")
 
-        # Run v3.1 ranker
+        # Run v4.0 ranker
         try:
             result = rank_importance(
                 articles, sources, bias_scores,
                 cluster_confidence=cluster_confidence,
+                category=category,
             )
         except Exception as e:
             errors += 1
@@ -166,6 +187,8 @@ def main():
             "content_type": content_type,
             "category": category,
             "source_count": source_count,
+            "_articles": articles,
+            "_bias_scores": bias_scores,
         })
 
         # Progress
@@ -176,80 +199,140 @@ def main():
 
     print(f"\n  Scored {len(updates)} clusters, {errors} errors")
 
-    # Lead eligibility gate (v3.3): top 10 positions require 3+ sources.
-    # 2-source stories were slipping into positions 6-10 despite the gate
-    # only covering top 5. Extended to full top 10 for editorial quality.
+    # Per-section lead gate + topic diversity (v4.0)
+    # Both gates run PER SECTION so each section's top 10 is independently curated.
     LEAD_MIN_SOURCES = 3
     LEAD_SLOTS = 10
+    _SOFT_CATS = {"sports", "entertainment", "culture", "lifestyle",
+                  "celebrity", "music", "film", "television", "gaming"}
+    MAX_SAME_CAT_DEFAULT = 2
+    MAX_SAME_CAT_SOFT = 1
+    TOP_N = 10
+
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    lead_ineligible_in_top = []
-
-    # Check if any top-LEAD_SLOTS items are ineligible
-    for i in range(min(LEAD_SLOTS, len(updates))):
-        if updates[i]["source_count"] < LEAD_MIN_SOURCES:
-            lead_ineligible_in_top.append(i)
-
-    if lead_ineligible_in_top:
-        # Swap ineligible leads with the best eligible stories not in top LEAD_SLOTS
-        eligible_idx = 0
-        for slot in lead_ineligible_in_top:
-            while eligible_idx < len(updates):
-                if updates[eligible_idx]["source_count"] >= LEAD_MIN_SOURCES and eligible_idx >= LEAD_SLOTS:
-                    updates[eligible_idx]["headline_rank"] = updates[slot]["headline_rank"] + 0.01
-                    eligible_idx += 1
-                    break
-                eligible_idx += 1
-        updates.sort(key=lambda u: u["headline_rank"], reverse=True)
-        print(f"  Lead gate: promoted {len(lead_ineligible_in_top)} stories with 3+ sources into top-5 slots")
-
-    # Topic diversity re-rank (v3.3): max 2 stories per category in the
-    # top 10 of each section. Prevents sports×3, BTS×2, etc.
-    # Runs per section (world/us) since that's how the frontend displays.
-    MAX_SAME_CAT = 2
-    TOP_N = 10
     for section_val in ("world", "us", "india"):
         pool = [u for u in updates if _get_section(u["id"], clusters) == section_val]
-        if len(pool) <= TOP_N:
+        if not pool:
             continue
-        promoted: list[dict] = []
-        deferred: list[dict] = []
-        cat_counts: dict[str, int] = {}
 
+        # --- Lead gate: top LEAD_SLOTS positions require 3+ sources ---
+        # Exception: independent-tier stories with factual_rigor > 70
+        # Strategy: separate eligible vs ineligible, rebuild the pool
+        # with eligible stories first (up to LEAD_SLOTS), then backfill.
+        def _is_lead_exempt(u: dict) -> bool:
+            """Check if a low-source story qualifies for lead gate exemption."""
+            tier_info = _get_cluster_tier_info(u.get("_articles", []), sources)
+            avg_rigor = 0.0
+            bs_list = u.get("_bias_scores", [])
+            if bs_list:
+                rigor_vals = [bs.get("factual_rigor", 0) for bs in bs_list if bs.get("factual_rigor") is not None]
+                avg_rigor = sum(rigor_vals) / len(rigor_vals) if rigor_vals else 0.0
+            return "independent" in tier_info["tiers"] and avg_rigor > 70
+
+        lead_eligible = []
+        lead_deferred = []
         for u in pool:
-            if len(promoted) >= TOP_N:
-                deferred.append(u)
-                continue
-            cat = u.get("category", "general")
-            if cat_counts.get(cat, 0) < MAX_SAME_CAT:
-                promoted.append(u)
-                cat_counts[cat] = cat_counts.get(cat, 0) + 1
+            if u["source_count"] >= LEAD_MIN_SOURCES or _is_lead_exempt(u):
+                lead_eligible.append(u)
             else:
-                deferred.append(u)
+                lead_deferred.append(u)
 
-        # Backfill if we couldn't fill TOP_N
-        while len(promoted) < TOP_N and deferred:
-            promoted.append(deferred.pop(0))
+        # Rebuild: eligible stories fill the top, ineligible go after
+        if lead_eligible and lead_deferred:
+            new_pool = lead_eligible[:LEAD_SLOTS]
+            # Backfill remaining slots with deferred if not enough eligible
+            remaining_eligible = lead_eligible[LEAD_SLOTS:]
+            # Merge remaining eligible + deferred by score
+            overflow = remaining_eligible + lead_deferred
+            overflow.sort(key=lambda u: u["headline_rank"], reverse=True)
+            new_pool.extend(overflow)
+            demoted = len(pool) - len(new_pool)  # should be 0
+            if len(new_pool) == len(pool):
+                pool[:] = new_pool
+                print(f"  Lead gate ({section_val}): enforced 3+ sources in top-{LEAD_SLOTS} ({len(lead_deferred)} stories deferred)")
 
-        # Adjust headline_rank for demoted items so DB sort order matches
-        final_order = promoted + deferred
-        if final_order:
-            top_rank = final_order[0]["headline_rank"]
-            for i, u in enumerate(final_order):
-                if i < TOP_N:
-                    u["headline_rank"] = round(top_rank - (i * 0.01), 2)
+        # --- Topic diversity: soft-news max 1 slot, others max 2 ---
+        if len(pool) > TOP_N:
+            promoted: list[dict] = []
+            deferred: list[dict] = []
+            cat_counts: dict[str, int] = {}
 
-        demoted_count = sum(1 for d in deferred if d not in pool[TOP_N:])
-        if demoted_count:
-            print(f"  Topic diversity ({section_val}): demoted {demoted_count} stories exceeding category cap")
+            for u in pool:
+                if len(promoted) >= TOP_N:
+                    deferred.append(u)
+                    continue
+                cat = u.get("category", "general")
+                cat_limit = MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
+                if cat_counts.get(cat, 0) < cat_limit:
+                    promoted.append(u)
+                    cat_counts[cat] = cat_counts.get(cat, 0) + 1
+                else:
+                    deferred.append(u)
 
-    # Re-sort after topic diversity adjustments
+            while len(promoted) < TOP_N and deferred:
+                promoted.append(deferred.pop(0))
+
+            final_order = promoted + deferred
+            if final_order and len(promoted) >= 2:
+                # Preserve raw scores for promoted items but ensure monotonic
+                # ordering so DB sort matches diversity-adjusted order.
+                # Only nudge items that are out of order after the shuffle.
+                for j in range(1, len(promoted)):
+                    if promoted[j]["headline_rank"] >= promoted[j-1]["headline_rank"]:
+                        promoted[j]["headline_rank"] = round(promoted[j-1]["headline_rank"] - 0.01, 2)
+
+            demoted_count = sum(1 for d in deferred if d not in pool[TOP_N:])
+            if demoted_count:
+                print(f"  Topic diversity ({section_val}): demoted {demoted_count} stories exceeding category cap")
+
+    updates.sort(key=lambda u: u["headline_rank"], reverse=True)
+
+    # Cross-edition demotion (v4.0): if a story is top-5 in one edition,
+    # demote it below position 5 in other editions it appears in.
+    # This prevents the same story being #1 in both World and US.
+    # Each cluster's primary edition = its `section` field (majority vote).
+    # Secondary editions = other entries in `sections[]` array.
+    CROSS_EDITION_TOP = 5
+    cluster_sections_map = {c["id"]: (c.get("section", "world"), c.get("sections") or [c.get("section", "world")]) for c in clusters}
+
+    # Build per-section ranked lists
+    section_pools: dict[str, list[dict]] = {}
+    for section_val in ("world", "us", "india"):
+        section_pools[section_val] = [u for u in updates if _get_section(u["id"], clusters) == section_val]
+
+    # Identify cross-listed clusters in top-5 of any section
+    top5_ids_by_section: dict[str, set[str]] = {}
+    for section_val, pool in section_pools.items():
+        top5_ids_by_section[section_val] = {u["id"] for u in pool[:CROSS_EDITION_TOP]}
+
+    # For each cluster in top-5 of one section, check if it also appears
+    # in another section's top-5. If so, keep it in its primary section
+    # and demote in secondary sections.
+    cross_demoted = 0
+    for section_val, pool in section_pools.items():
+        for i, u in enumerate(pool[:CROSS_EDITION_TOP]):
+            cid = u["id"]
+            primary, all_sections = cluster_sections_map.get(cid, ("world", ["world"]))
+            # If this cluster's primary section is NOT this section,
+            # and it's already top-5 in its primary section, demote it here
+            if primary != section_val and cid in top5_ids_by_section.get(primary, set()):
+                # Push it to position 6+ by setting rank just below position 5
+                if len(pool) > CROSS_EDITION_TOP:
+                    target_rank = pool[CROSS_EDITION_TOP]["headline_rank"] - 0.01
+                    u["headline_rank"] = round(target_rank, 2)
+                    cross_demoted += 1
+
+    if cross_demoted:
+        print(f"  Cross-edition: demoted {cross_demoted} stories already leading in their primary section")
+
+    # Final re-sort
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
     # Print top 15 per section
     for section_val in ("world", "us", "india"):
         section_updates = [u for u in updates if _get_section(u["id"], clusters) == section_val]
-        print(f"\n  --- Top 15 {section_val.upper()} by v3.3 headline_rank ---")
+        print(f"\n  --- Top 15 {section_val.upper()} by v4.0 headline_rank ---")
         for j, u in enumerate(section_updates[:15]):
             title = next(
                 (c["title"] for c in clusters if c["id"] == u["id"]), "?"
