@@ -439,6 +439,7 @@ Removed from frontend. Pipeline still computes opinion_fact (Axis 3). `OpEdPage.
 
 - **Always push to `claude/*` branches.** Never push directly to `main`.
 - GitHub auto-merge is enabled — pushing to `claude/*` auto-creates a PR and merges.
+- **After every completed change:** commit, push to `claude/*`, and confirm deployment succeeds (`gh run watch`). Do not consider work done until the deploy workflow passes.
 
 ## Development Notes
 

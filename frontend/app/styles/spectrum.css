@@ -79,6 +79,9 @@
 }
 
 .sources-edition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--font-structural);
   font-size: var(--text-xs);
   font-weight: 400;
@@ -280,6 +283,147 @@
   }
 }
 
+/* ==========================================================================
+   Sources Spectrum — continuous track with positioned favicon dots
+   Matches DeepDive dd-spectrum style, enlarged for the sources page.
+   ========================================================================== */
+
+.src-spectrum {
+  position: relative;
+}
+
+/* Rows above and below the track — contain positioned favicon dots */
+.src-spectrum__row {
+  position: relative;
+  height: 36px;
+}
+
+@media (min-width: 768px) {
+  .src-spectrum__row {
+    height: 48px;
+  }
+}
+
+/* Track — gradient bar with inline Left/Center/Right labels.
+   Gradient via ::before at 35% opacity — matches DeepDive exactly. */
+.src-spectrum__track {
+  position: relative;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+@media (min-width: 768px) {
+  .src-spectrum__track {
+    height: 36px;
+    padding: 0 12px;
+  }
+}
+
+.src-spectrum__track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right));
+  border-radius: 4px;
+  opacity: 0.35;
+}
+
+.src-spectrum__inline-label {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .src-spectrum__inline-label {
+    font-size: 11px;
+  }
+}
+
+/* Source dots — positioned absolutely by lean % within each row */
+.src-spectrum__dot {
+  position: absolute;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+  background-color: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-e1);
+  transition: transform 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+  cursor: pointer;
+  padding: 0;
+}
+
+.src-spectrum__row--above .src-spectrum__dot { top: auto; bottom: 0; }
+.src-spectrum__row--below .src-spectrum__dot { top: 0; }
+
+.src-spectrum__dot:hover {
+  transform: translateX(-50%) scale(1.35) translateY(-2px);
+  box-shadow: var(--shadow-e2);
+  z-index: 100;
+}
+
+.src-spectrum__dot:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  z-index: 100;
+}
+
+/* Overflow dots (7+ at same position) — smaller */
+.src-spectrum__dot--overflow {
+  width: 22px;
+  height: 22px;
+  opacity: 0.6;
+}
+
+.src-spectrum__dot--overflow:hover {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.35) translateY(-2px);
+}
+
+/* Mobile dots — slightly smaller */
+.src-spectrum__dot--mobile {
+  width: 24px;
+  height: 24px;
+}
+
+.src-spectrum__dot--mobile.src-spectrum__dot--overflow {
+  width: 18px;
+  height: 18px;
+}
+
+.src-spectrum__dot-initial {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--fg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .src-spectrum__dot {
+    transition: none;
+  }
+}
+
+/* ---- Legacy: Logo grid rows (above and below) — kept for reference ---- */
 /* ---- Logo grid rows (above and below) --------------------------------- */
 .spectrum-above,
 .spectrum-below {
