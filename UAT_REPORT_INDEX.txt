@@ -1,0 +1,259 @@
+================================================================================
+VOID --NEWS FRONTEND UAT REPORT INDEX
+Date: 2026-03-21
+================================================================================
+
+This audit examined the entire void --news frontend codebase:
+- All React/TypeScript components
+- All CSS (17,663 lines across 7 files)
+- All support libraries (supabase.ts, types.ts, utils.ts)
+- TypeScript compilation (passed with zero errors)
+- Responsive design at 4 breakpoints (375px, 768px, 1024px, 1440px)
+
+DELIVERABLES IN THIS DIRECTORY:
+================================================================================
+
+1. UAT_EXECUTIVE_SUMMARY_20260321.txt
+   ├─ High-level overview
+   ├─ Overall score: 82/100
+   ├─ Breakdown by dimension
+   ├─ All 16 issues listed with severity and effort
+   └─ Top 10 fixes table with time estimates
+   
+   👉 START HERE for a quick read (5 minutes)
+
+2. UAT_REPORT_FINAL_20260321.md
+   ├─ Comprehensive audit report (321 lines)
+   ├─ Detailed findings per issue
+   ├─ Reproduction steps for each bug
+   ├─ Accessibility audit (WCAG 2.1 AA)
+   ├─ Performance notes
+   ├─ Design system evaluation
+   └─ Accessibility checklist
+   
+   👉 FULL DETAILS here (20 minutes)
+
+3. UAT_CODE_FIXES_20260321.md
+   ├─ Code snippets for all critical/high/medium fixes
+   ├─ Before/after comparisons
+   ├─ Reasoning for each fix
+   ├─ Testing instructions
+   └─ Complexity and effort estimates
+   
+   👉 FOR DEVELOPERS implementing fixes (30 minutes)
+
+================================================================================
+CRITICAL ISSUES REQUIRING IMMEDIATE ACTION (3 TOTAL)
+================================================================================
+
+C1. Supabase Hardcoded Credentials Exposed
+    File: frontend/app/lib/supabase.ts:4-5
+    Risk Level: CRITICAL (security vulnerability)
+    Effort: 5 minutes
+    Status: NOT FIXED
+    
+C2. Edition Routing Not Implemented (/us, /india pages missing)
+    File: frontend/app/page.tsx, NavBar.tsx
+    Risk Level: CRITICAL (UX blocker — navigation fails)
+    Effort: 15 minutes
+    Status: NOT FIXED
+
+C3. DeepDive Data Fetch Race Condition
+    File: frontend/app/components/DeepDive.tsx:107-117
+    Risk Level: CRITICAL (data integrity — spinner disappears before data loads)
+    Effort: 10 minutes
+    Status: NOT FIXED
+
+================================================================================
+HIGH-PRIORITY ISSUES (5 TOTAL)
+================================================================================
+
+H1. Story Title Null Check Missing
+    File: frontend/app/components/DeepDive.tsx:420
+    Effort: 2 minutes | Impact: Medium
+
+H2. Lean Filter Ranges Overlap (inconsistent filtering)
+    File: frontend/app/components/FilterBar.tsx:17-22
+    Effort: 5 minutes | Impact: Medium
+
+H3. Missing Error State for Failed Supabase Queries
+    File: frontend/app/lib/supabase.ts:9-37
+    Effort: 20 minutes | Impact: High
+
+H4. Mobile Press Analysis Panel Overflow
+    File: frontend/app/components/DeepDive.tsx:543-547
+    Effort: 10 minutes | Impact: Medium
+
+H5. FilterBar Chips Overlap on 375px Mobile
+    File: frontend/app/components/FilterBar.tsx
+    Effort: 15 minutes | Impact: High
+
+================================================================================
+MEDIUM-PRIORITY ISSUES (4 TOTAL)
+================================================================================
+
+M1. Sigil Divergence Flag Visual Feedback Too Subtle
+    File: frontend/app/components/Sigil.tsx + CSS
+    Effort: 20 minutes | Impact: UX Polish
+
+M2. "Why This Story" Not Accessible on Mobile Touch
+    File: frontend/app/components/StoryCard.tsx:85
+    Effort: 15 minutes | Impact: Accessibility
+
+M3. Edition Not Persisted Across Page Refreshes
+    File: frontend/app/components/HomeContent.tsx + routing
+    Effort: 10 minutes | Impact: UX Friction
+
+M4. Consensus/Divergence Fallback Text Always Shown
+    File: frontend/app/components/DeepDive.tsx:277-282
+    Effort: 5 minutes | Impact: Data Quality
+
+================================================================================
+LOW-PRIORITY ISSUES (4 TOTAL)
+================================================================================
+
+L1. Animation Performance on Low-End Mobile Devices
+    File: frontend/app/styles/animations.css
+    Effort: 30 minutes | Impact: Performance
+
+L2. Missing Image Alt Text (Favicons)
+    File: frontend/app/components/DeepDive.tsx:483
+    Effort: 2 minutes | Impact: Accessibility
+
+L3. RefreshButton Dialog Lacks Close Animation Feedback
+    File: frontend/app/components/RefreshButton.tsx:58-92
+    Effort: 10 minutes | Impact: UX Polish
+
+L4. Focus Visible Not Always Sufficient on Interactive Elements
+    File: Various components
+    Effort: 30 minutes | Impact: Accessibility
+
+================================================================================
+OVERALL ASSESSMENT
+================================================================================
+
+Code Quality:      A- (clean TypeScript, good null-safety, no compiler errors)
+Design System:     A  (Press & Precision well-executed, excellent typography)
+Accessibility:     B  (good base, some keyboard/focus gaps)
+Mobile UX:         B- (mostly works, but FilterBar and Sigil popup issues)
+Performance:       B+ (smooth on desktop, potential jank on budget mobile)
+Error Handling:    C  (safe nulls but silent network failures)
+
+VERDICT: Ready for launch AFTER critical fixes. The foundation is solid; 
+issues are resolvable in 2-3 hours of focused work.
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+IMMEDIATE (Before Deploy):
+  1. Fix hardcoded Supabase credentials → remove fallback key
+  2. Implement /us and /india routes → unblock edition navigation
+  3. Fix fetch race condition → remove 5s timeout
+
+BEFORE BETA:
+  4. Fix high-priority issues (5 items) → smooth UX, prevent frustration
+  
+NICE-TO-HAVE:
+  6. Fix medium-priority issues → polish and accessibility
+  7. Fix low-priority issues → performance tuning and refinement
+
+================================================================================
+TESTING CHECKLIST FOR FIXES
+================================================================================
+
+After applying fixes, test these scenarios:
+
+Credentials & Routes:
+  [ ] Environment variables set correctly in CI/CD
+  [ ] Homepage loads without fallback key
+  [ ] /us route loads US edition
+  [ ] /india route loads India edition
+  [ ] Browser back button works across editions
+
+Deep Dive:
+  [ ] Deep Dive panel opens on story click
+  [ ] Spinner visible until data loads (even on Slow 3G)
+  [ ] Data appears and spinner closes
+  [ ] No blank panels or missing titles
+  [ ] Network error shows error state (not silent)
+
+Filters:
+  [ ] Each lean chip (Left/Center/Right) filters correctly
+  [ ] No stories appear in multiple categories when filtered
+  [ ] FilterBar doesn't overflow on 375px
+  [ ] Category chips wrap cleanly on mobile
+
+Mobile:
+  [ ] Bottom sheet Deep Dive works (swipe down to close)
+  [ ] Press Analysis expands without overflow
+  [ ] Sigil popup doesn't clip edges
+  [ ] "Why This Story" visible on mobile
+
+Accessibility:
+  [ ] All interactive elements have visible focus outline
+  [ ] Tab key navigates all buttons
+  [ ] Escape key closes modals
+  [ ] No color-only indicators
+
+================================================================================
+REFERENCE DOCUMENTS
+================================================================================
+
+Component Files Analyzed (22 total):
+  ✓ HomeContent.tsx (537 lines)
+  ✓ NavBar.tsx (170 lines)
+  ✓ DeepDive.tsx (500+ lines)
+  ✓ BiasInspector.tsx (400+ lines)
+  ✓ BiasLens.tsx (200+ lines)
+  ✓ Sigil.tsx (562 lines)
+  ✓ StoryCard.tsx (94 lines)
+  ✓ LeadStory.tsx (68 lines)
+  ✓ FilterBar.tsx (80+ lines)
+  ✓ RefreshButton.tsx (168 lines)
+  ✓ ErrorBoundary.tsx (67 lines)
+  ✓ Footer.tsx (57 lines)
+  + 10 more (logos, toggles, charts, etc.)
+
+Support Files Analyzed:
+  ✓ frontend/app/lib/supabase.ts (90 lines)
+  ✓ frontend/app/lib/types.ts (229 lines)
+  ✓ frontend/app/lib/utils.ts (124 lines)
+  ✓ frontend/app/page.tsx (5 lines)
+  ✓ All CSS files (17,663 lines across 7 files)
+
+Technology Checklist:
+  ✓ TypeScript: Strict mode, zero errors
+  ✓ React: 19.2.3, functional components + hooks
+  ✓ Next.js: 16 App Router (static export ready)
+  ✓ Supabase: Client-side only, PostgREST queries
+  ✓ CSS: Custom properties, mobile-first, no Tailwind
+  ✓ Animation: Motion One v11 via CDN
+
+================================================================================
+CONTACT & ESCALATION
+================================================================================
+
+Report Author: UAT Tester Agent (Claude Haiku 4.5)
+Report Date: 2026-03-21
+Model: claude-haiku-4-5-20251001
+Context: 200K token budget (full codebase + design docs analyzed)
+
+Questions or Clarifications:
+  1. For architecture/routing issues → escalate to frontend-builder agent
+  2. For performance optimization → escalate to perf-optimizer agent
+  3. For security (credentials) → escalate to void-ciso agent
+  4. For design polish → invoke /pressdesign skill
+
+Next Steps:
+  1. Share findings with team
+  2. Create GitHub issues for each finding
+  3. Prioritize CRITICAL fixes (2-3 hour sprint)
+  4. Review fixes with UAT tester before deploy
+  5. Validate responsive testing on real devices
+
+================================================================================
+Document Status: FINAL
+Revision: 1.0
+Last Updated: 2026-03-21 14:32 UTC
+================================================================================

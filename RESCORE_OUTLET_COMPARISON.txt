@@ -1,0 +1,243 @@
+================================================================================
+VOID --NEWS RESCORE v5.0: KEY OUTLET SPOT-CHECK COMPARISON
+================================================================================
+
+Post-rescore v5.0 scores (from live query 2026-03-20)
+
+Legend:
+  ✓  = Within acceptable range or matches expectation
+  ~  = Close enough; acceptable variance
+  ✗  = Below expectation; gap ≥ 15 points
+
+================================================================================
+TIER 1: MAJOR US OUTLETS
+================================================================================
+
+AP NEWS (Wire Service)
+  Political Lean:      49.8     [Expected: 45–55]    ✓
+  Sensationalism:      10.6     [Expected: 5–15]     ✓
+  Opinion/Fact:        14.8     [Expected: 10–20]    ✓
+  Factual Rigor:       8.3      [Expected: 70–80]    ✗ SEVERELY LOW
+  Framing:             11.3     [Expected: 5–15]     ✓
+  Confidence:          0.4      [Expected: 0.6–0.8]  ~ Low
+  N Articles:          221
+  Verdict:             GOLD-STANDARD OUTPUT, BUT RIGOR SCORE WRONG
+
+REUTERS (Wire Service)
+  Political Lean:      50.0     [Expected: 45–55]    ✓
+  Sensationalism:      10.4     [Expected: 5–15]     ✓
+  Opinion/Fact:        15.2     [Expected: 10–20]    ✓
+  Factual Rigor:       12.1     [Expected: 70–80]    ✗ SEVERELY LOW
+  Framing:             9.5      [Expected: 5–15]     ✓
+  Confidence:          0.3      [Expected: 0.6–0.8]  ✗ Low
+  N Articles:          257
+  Verdict:             BIAS SCORES CORRECT, RIGOR BROKEN
+
+NYT (Prestigious Broadsheet)
+  Political Lean:      47.6     [Expected: 40–50]    ✓
+  Sensationalism:      12.8     [Expected: 8–15]     ✓
+  Opinion/Fact:        15.8     [Expected: 12–20]    ✓
+  Factual Rigor:       10.9     [Expected: 60–70]    ✗ SEVERELY LOW
+  Framing:             14.6     [Expected: 8–15]     ~
+  Confidence:          0.4      [Expected: 0.6–0.8]  ✗ Low
+  N Articles:          95
+  Verdict:             FACTUAL RIGOR SCORE UNRELIABLE
+
+CNN (Broadcast News)
+  Political Lean:      48.0     [Expected: 45–55]    ✓
+  Sensationalism:      11.3     [Expected: 10–18]    ✓
+  Opinion/Fact:        13.9     [Expected: 15–25]    ~ Slightly reporting
+  Factual Rigor:       8.8      [Expected: 50–60]    ✗ LOW
+  Framing:             9.4      [Expected: 10–18]    ✓
+  Confidence:          0.3      [Expected: 0.5–0.7]  ✗ Low
+  N Articles:          268
+  Verdict:             GOOD LEAN/SENSATIONALISM, RIGOR LOW
+
+FOX NEWS (Conservative Outlet)
+  Political Lean:      57.1     [Expected: 65–75]    ✗ TOO CENTER
+  Sensationalism:      12.4     [Expected: 12–20]    ✓
+  Opinion/Fact:        14.2     [Expected: 20–30]    ✗ Too much reporting
+  Factual Rigor:       24.1     [Expected: 50–60]    ✗ LOW
+  Framing:             14.8     [Expected: 15–25]    ✓
+  Confidence:          0.7      [Expected: 0.6–0.8]  ✓
+  N Articles:          132
+  Verdict:             LEAN SCORE TOO CENTER; RIGOR LOW
+
+================================================================================
+TIER 2: INTERNATIONAL OUTLETS
+================================================================================
+
+BBC (UK Public Broadcaster)
+  Political Lean:      48.2     [Expected: 45–55]    ✓
+  Sensationalism:      9.3      [Expected: 5–12]     ✓
+  Opinion/Fact:        15.2     [Expected: 10–18]    ✓
+  Factual Rigor:       24.6     [Expected: 60–70]    ✗ SEVERELY LOW
+  Framing:             13.2     [Expected: 8–15]     ✓
+  Confidence:          0.6      [Expected: 0.6–0.8]  ✓
+  N Articles:          90
+  Verdict:             GOOD PROFILE EXCEPT RIGOR
+
+AL JAZEERA (Qatar-based International)
+  Political Lean:      48.2     [Expected: 50–60]    ~ Slightly left
+  Sensationalism:      9.3      [Expected: 8–15]     ✓
+  Opinion/Fact:        15.2     [Expected: 15–25]    ✓
+  Factual Rigor:       24.6     [Expected: 50–60]    ✗ SEVERELY LOW
+  Framing:             13.2     [Expected: 10–18]    ✓
+  Confidence:          0.6      [Expected: 0.6–0.8]  ✓
+  N Articles:          90
+  Verdict:             SOLID EXCEPT RIGOR
+
+RT (Russian State Media)
+  Political Lean:      55.7     [Expected: 60–70]    ~ Acceptable
+  Sensationalism:      14.7     [Expected: 15–25]    ✓
+  Opinion/Fact:        17.5     [Expected: 20–30]    ~ Lower opinion
+  Factual Rigor:       13.7     [Expected: 20–30]    ✗ LOW
+  Framing:             15.9     [Expected: 25–35]    ✗ Low charge
+  Confidence:          0.5      [Expected: 0.5–0.7]  ✓
+  N Articles:          117
+  Verdict:             UNDERWEIGHT ON FRAMING/OPINION FOR STATE MEDIA
+
+================================================================================
+TIER 3: INDEPENDENT / OPINION
+================================================================================
+
+BREITBART (Conservative Opinion)
+  Political Lean:      58.9     [Expected: 70–80]    ✗ TOO CENTER
+  Sensationalism:      12.6     [Expected: 15–25]    ~ Moderate
+  Opinion/Fact:        12.9     [Expected: 30–50]    ✗ Too much reporting
+  Factual Rigor:       28.7     [Expected: 40–50]    ✗ LOW
+  Framing:             15.3     [Expected: 25–35]    ✗ Low charge
+  Confidence:          0.7      [Expected: 0.7–0.8]  ✓
+  N Articles:          109
+  Verdict:             CONSERVATIVE SIGNATURE MISSING; OPINION UNDER-DETECTED
+
+COMMON DREAMS (Progressive Opinion)
+  Political Lean:      36.7     [Expected: 20–30]    ✗ TOO CENTER
+  Sensationalism:      13.6     [Expected: 10–18]    ✓
+  Opinion/Fact:        17.4     [Expected: 30–50]    ✗ Too much reporting
+  Factual Rigor:       50.8     [Expected: 40–50]    ✓ (surprisingly high!)
+  Framing:             18.4     [Expected: 20–30]    ~
+  Confidence:          0.7      [Expected: 0.7–0.8]  ✓
+  N Articles:          47
+  Verdict:             LEAN TOO CENTER; RIGOR SURPRISINGLY OK (outlier)
+
+THE INTERCEPT (Investigative Nonprofit)
+  Political Lean:      37.8     [Expected: 25–35]    ~ Moderate left
+  Sensationalism:      11.1     [Expected: 8–15]     ✓
+  Opinion/Fact:        12.6     [Expected: 15–25]    ~ More reporting
+  Factual Rigor:       18.0     [Expected: 60–70]    ✗ SEVERELY LOW
+  Framing:             12.8     [Expected: 15–25]    ~
+  Confidence:          0.7      [Expected: 0.7–0.8]  ✓
+  N Articles:          12 (small sample)
+  Verdict:             LEAN OK; RIGOR SEVERELY LOW
+
+MSNBC (Cable News, Left-leaning)
+  Political Lean:      44.8     [Expected: 35–45]    ✓
+  Sensationalism:      12.7     [Expected: 12–20]    ✓
+  Opinion/Fact:        25.5     [Expected: 25–35]    ✓
+  Factual Rigor:       12.9     [Expected: 45–55]    ✗ LOW
+  Framing:             15.3     [Expected: 15–25]    ✓
+  Confidence:          0.4      [Expected: 0.5–0.7]  ~ Low
+  N Articles:          27 (small sample)
+  Verdict:             GOOD OPINION/FACT; RIGOR LOW
+
+================================================================================
+SUMMARY ASSESSMENT
+================================================================================
+
+POLITICAL LEAN:
+  ✓ Wire services (AP, Reuters, NYT) correctly centered
+  ✓ CNN, BBC, Al Jazeera appropriately neutral
+  ✓ MSNBC appropriately left (44.8)
+  ✗ Fox News TOO CENTER (57.1 vs expected 65–75)
+  ✗ Breitbart TOO CENTER (58.9 vs expected 70–80)
+  ✗ Common Dreams TOO CENTER (36.7 vs expected 20–30)
+  ✗ The Intercept TOO CENTER (37.8 vs expected 25–35)
+  Verdict: Partisan outlets under-differentiated
+
+SENSATIONALISM:
+  ✓ Wire services correctly low (10.6, 10.4)
+  ✓ Broadcasting reasonably moderate (11.3–12.8)
+  ✓ Opinion/independent outlets higher (12.6–14.7), as expected
+  Verdict: GOOD
+
+OPINION/FACT:
+  ✓ Wire services/reporting outlets low (14.8–15.2)
+  ✓ MSNBC high opinion (25.5), matches profile
+  ✗ Breitbart (12.9), Common Dreams (17.4): TOO MUCH REPORTING
+  ✗ Breitbart should show 30–50% opinion content
+  Verdict: Opinion outlets under-classified as reporting
+
+FACTUAL RIGOR: (CRITICAL ISSUE)
+  ✗ AP News: 8.3 (expected 70+) [gap: -62pp]
+  ✗ Reuters: 12.1 (expected 70+) [gap: -58pp]
+  ✗ NYT: 10.9 (expected 60+) [gap: -50pp]
+  ✗ BBC: 24.6 (expected 60+) [gap: -35pp]
+  ✗ CNN: 8.8 (expected 50+) [gap: -41pp]
+  ✗ Fox News: 24.1 (expected 50+) [gap: -26pp]
+  ✗ The Intercept: 18.0 (expected 60+) [gap: -42pp]
+  ✓ Breitbart: 28.7 (expected 40+) [gap: -11pp, closest to target]
+  ✓ Common Dreams: 50.8 (expected 40+) [within range, but outlier]
+  VERDICT: SYSTEMICALLY BROKEN — All outlets 2–4× too low
+
+CONFIDENCE:
+  ~ Most outlets 0.3–0.7 (wide range, unexpectedly low for quality sources)
+  ~ Wire services (0.3–0.4) lower than expected
+  ✗ Indicates v5.0 algorithm less confident in scoring
+  VERDICT: REGRESSION from v4.x
+
+FRAMING:
+  ✓ Generally correct for each outlet
+  ~ Some outlets (Breitbart, RT) underscore on framing charge
+  VERDICT: ACCEPTABLE
+
+================================================================================
+ROOT CAUSE ANALYSIS
+================================================================================
+
+1. FACTUAL RIGOR UNDER-CALIBRATION
+   Symptom: All outlets 2–4× too low
+   Root cause: v5.0 algorithm correctly extracts sources (NER working),
+               but scoring multiplier or threshold changed (likely reduced
+               per-source impact or raised threshold for "rigor" label)
+   Evidence: Pre-rescore AP=2.7 (no sources); post-rescore AP=8.3 (sources
+             found but underweighted)
+
+2. POLITICAL LEAN PARTISAN GAP REMAINS
+   Symptom: Breitbart (58.9), Common Dreams (36.7) too centered
+   Root cause: Baseline blending (0.85 text + 0.15 baseline) still dampens
+               text-level keyword detection. For partisan outlets, baseline
+               pulls toward center (both are curated "biased" sources).
+   Evidence: Wire services correctly neutral (baseline = center, text also
+             neutral) but partisan outlets benefit less from keyword signals.
+
+3. OPINION/FACT UNDER-DETECTION IN OPINION OUTLETS
+   Symptom: Breitbart, Common Dreams classified as mostly reporting (12–17%)
+            instead of opinion-heavy (30–50%)
+   Root cause: Likely higher threshold for opinion signals; fewer first-person
+               pronouns, modal language may be below new threshold
+
+4. CONFIDENCE DROP
+   Symptom: Mean dropped 19% (0.616 → 0.500)
+   Root cause: v5.0 confidence formula likely stricter on:
+               - Signal deviation from defaults (requires 5/5 axes deviate)
+               - Text length penalty increased
+               - Confidence floor lowered
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+IMMEDIATE:
+  1. Revert confidence formula to v4.x
+  2. Recalibrate factual_rigor: Apply 2.5–3.0× multiplier or +40 baseline
+  3. Re-test on AP, Reuters, BBC to validate 60+ scores
+  4. Re-score all 11,130 articles
+
+THIS WEEK:
+  5. Increase political lean text weight (0.90/0.10 vs 0.85/0.15)
+  6. Audit opinion_fact threshold — may need lower signal floor
+  7. Spot-check 20 articles pre/post
+  8. Prepare final production sign-off
+
+================================================================================

@@ -1,0 +1,282 @@
+
+
+▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪
+DATA QUALITY AUDIT — void --news
+Date: 2026-03-20 21:39:33 UTC
+▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪▪
+
+======================================================================
+DOMAIN 1: SOURCE COVERAGE
+======================================================================
+Expected sources: 222
+Sources in DB: 223
+Tier distribution:
+  independent: 92
+  international: 82
+  us_major: 49
+Sources without rss_url: 0
+Sources without political_lean_baseline: 0
+Active sources: 223
+
+======================================================================
+DOMAIN 2: ARTICLE QUALITY
+======================================================================
+Total articles: 9999
+NULL full_text: 507 (5.1%)
+NULL published_at: 68 (0.7%)
+NULL summary: 970 (9.7%)
+Articles with word_count < 100: 4823 (50.8%)
+Word count range: 4 - 9528
+Word count mean: 390
+Word count stdev: 558
+Section distribution:
+  india: 1965 (19.7%)
+  us: 4565 (45.7%)
+  world: 3469 (34.7%)
+Duplicate URLs: 0
+
+======================================================================
+DOMAIN 3: BIAS SCORE QUALITY
+======================================================================
+Total bias scores: 9999
+Coverage: 100.0% (9999/9999 articles)
+Scores matching default pattern (50/10/25/50): 0 (0.0%)
+
+political_lean:
+  Mean: 50.1
+  Stdev: 8.9
+  Range: 2 - 98
+  Histogram: {'60-80': 346, '40-60': 9005, '20-40': 346, '0-20': 144, '80-100': 158}
+
+sensationalism:
+  Mean: 10.1
+  Stdev: 7.0
+  Range: 0 - 55
+  Histogram: {'0-20': 9100, '20-40': 859, '40-60': 40}
+  Outliers: 853 at 0, 0 at 100
+
+opinion_fact:
+  Mean: 17.8
+  Stdev: 8.9
+  Range: 0 - 70
+  Histogram: {'20-40': 3338, '0-20': 6504, '60-80': 80, '40-60': 77}
+  Outliers: 13 at 0, 0 at 100
+
+factual_rigor:
+  Mean: 26.6
+  Stdev: 28.0
+  Range: 0 - 100
+  Histogram: {'20-40': 1425, '80-100': 201, '40-60': 1319, '60-80': 1760, '0-20': 5294}
+  Outliers: 3239 at 0, 8 at 100
+
+framing:
+  Mean: 14.2
+  Stdev: 7.6
+  Range: 3 - 60
+  Histogram: {'0-20': 7981, '20-40': 1952, '40-60': 65, '60-80': 1}
+
+Confidence:
+  Mean: 0.616
+  Stdev: 0.202
+  Range: 0.210 - 1.000
+  Low confidence (<0.3): 186 (1.9%)
+
+Rationale JSONB populated: 9999/9999 (100.0%)
+
+======================================================================
+DOMAIN 4: CLUSTER QUALITY
+======================================================================
+Total clusters: 2938
+Average articles per cluster: 2.1
+Single-article clusters: 1581 (54.6%)
+Cluster size range: 1 - 78
+Cluster size histogram: {'0-16': 2878, '16-33': 12, '33-50': 3, '66-83': 1}
+Orphaned clusters (0 articles): 44
+Clusters without summary: 0
+Clusters with 'Untitled Story' title: 0
+
+Divergence score:
+  Mean: 7.5
+  Stdev: 11.2
+  Range: 0.0 - 79.8
+
+Headline rank:
+  Mean: 15.8
+  Stdev: 9.2
+  Range: 5.4 - 66.0
+
+bias_diversity JSONB populated: 2938/2938 (100.0%)
+
+======================================================================
+DOMAIN 5: ENRICHMENT QUALITY
+======================================================================
+bias_diversity populated: 2938/2938 (100.0%)
+divergence_score non-zero: 1328/2938 (45.2%)
+divergence_score zero/null: 1610/2938 (54.8%)
+headline_rank unique values: 1592/2938
+headline_rank variance: 9.15
+coverage_velocity populated: 201/2938 (6.8%)
+
+======================================================================
+DOMAIN 6: TEMPORAL FRESHNESS
+======================================================================
+Most recent article: 2026-03-21T00:19:41+00:00
+Oldest article: 2026-03-18T20:39:48+00:00
+Articles > 7 days old: 0/9918 (0.0%)
+
+Total pipeline runs: 13
+Completed runs: 13
+Last pipeline run: 2026-03-19T23:02:35.05217+00:00
+
+======================================================================
+DOMAIN 7: REFERENTIAL INTEGRITY
+======================================================================
+Total articles: 9999
+Articles in clusters: 6060
+Orphaned articles (not in any cluster): 4553
+Invalid cluster_articles refs (bad cluster_id): 0
+Invalid cluster_articles refs (bad article_id): 614
+Invalid bias_scores refs (article doesn't exist): 326
+
+======================================================================
+DOMAIN 8: CROSS-FIELD CONSISTENCY
+======================================================================
+Center-baseline sources with avg lean 40-60: 73/93
+
+Per-tier average political lean:
+  us_major: 50.2
+  international: 49.7
+  independent: 51.0
+
+Per-tier average factual rigor:
+  us_major: 27.4
+  international: 27.9
+  independent: 19.8
+
+Key outlet patterns:
+  ap-news: lean=49.6, rigor=2.7, articles=194
+  reuters: lean=50.0, rigor=5.7, articles=222
+  nyt: lean=47.8, rigor=5.3, articles=77
+  washington-post: lean=48.0, rigor=6.1, articles=15
+  fox-news: lean=58.9, rigor=59.2, articles=101
+  breitbart: lean=63.7, rigor=54.4, articles=91
+
+======================================================================
+AUDIT SUMMARY
+======================================================================
+{
+  "1_source_coverage": {
+    "expected": 222,
+    "actual": 223,
+    "tier_distribution": {
+      "international": 82,
+      "us_major": 49,
+      "independent": 92
+    },
+    "missing_rss_url": 0,
+    "missing_lean": 0,
+    "active": 223
+  },
+  "2_article_quality": {
+    "total": 9999,
+    "null_full_text": 507,
+    "null_published_at": 68,
+    "null_summary": 970,
+    "suspicious_low_wc": 4823,
+    "sections": {
+      "world": 3469,
+      "us": 4565,
+      "india": 1965
+    },
+    "duplicate_urls": 0
+  },
+  "3_bias_score_quality": {
+    "total": 9999,
+    "coverage": 100.0,
+    "default_pattern": 0,
+    "axes_stats": {
+      "political_lean": {
+        "mean": 50.13861386138614,
+        "stdev": 8.9334959332128,
+        "min": 2,
+        "max": 98,
+        "count": 9999
+      },
+      "sensationalism": {
+        "mean": 10.073707370737074,
+        "stdev": 7.034953154069519,
+        "min": 0,
+        "max": 55,
+        "count": 9999
+      },
+      "opinion_fact": {
+        "mean": 17.843384338433843,
+        "stdev": 8.898489231859566,
+        "min": 0,
+        "max": 70,
+        "count": 9999
+      },
+      "factual_rigor": {
+        "mean": 26.57925792579258,
+        "stdev": 27.96879948367989,
+        "min": 0,
+        "max": 100,
+        "count": 9999
+      },
+      "framing": {
+        "mean": 14.175917591759175,
+        "stdev": 7.57294037879645,
+        "min": 3,
+        "max": 60,
+        "count": 9999
+      }
+    },
+    "confidence_mean": 0.6159035903590359,
+    "rationale_populated": 9999
+  },
+  "4_cluster_quality": {
+    "total": 2938,
+    "avg_articles_per_cluster": 2.093987560469938,
+    "single_article_clusters": 1581,
+    "orphaned": 44,
+    "missing_summary": 0,
+    "untitled": 0,
+    "bias_diversity_filled": 2938
+  },
+  "5_enrichment_quality": {
+    "bias_diversity_filled": 2938,
+    "divergence_nonzero": 1328,
+    "headline_rank_variance": 9.153985279441422,
+    "coverage_velocity_filled": 201
+  },
+  "6_temporal_freshness": {
+    "articles_count": 9999,
+    "articles_with_date": 9918,
+    "pipeline_runs": 13,
+    "completed_runs": 13
+  },
+  "7_referential_integrity": {
+    "total_articles": 9999,
+    "orphaned_articles": 4553,
+    "invalid_cluster_refs": 0,
+    "invalid_article_refs": 614,
+    "invalid_bias_refs": 326
+  },
+  "8_cross_field_consistency": {
+    "center_sources_consistent": 73,
+    "tier_patterns": {
+      "us_major": {
+        "avg_lean": 50.23500491642085,
+        "avg_rigor": 27.367092756473287
+      },
+      "international": {
+        "avg_lean": 49.73857513470365,
+        "avg_rigor": 27.9327479545001
+      },
+      "independent": {
+        "avg_lean": 50.98661567877629,
+        "avg_rigor": 19.769279796048437
+      }
+    }
+  }
+}

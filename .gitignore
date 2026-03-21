@@ -39,3 +39,19 @@ build/
 
 # Supabase temp
 supabase/.temp/
+
+# Agent report artifacts
+AUDIT_*.txt
+AUDIT_*.md
+DATA_QUALITY_*.md
+DEEP_DIVE_*.txt
+DEEP_DIVE_*.md
+DEEPDIVE_*.md
+PIPELINE_QUALITY_*.md
+PIPELINE_VALIDATION_*.md
+RESCORE_*.txt
+RESCORE_*.md
+UAT_*.txt
+UAT_*.md
+IMPLEMENTATION_GUIDE_*.md
+audit_output.txt

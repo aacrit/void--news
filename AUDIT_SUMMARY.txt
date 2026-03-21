@@ -1,0 +1,146 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DATA QUALITY AUDIT — void --news Supabase
+Generated: 2026-03-20 21:39 UTC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OVERALL SCORE: 68/100 (Functional but needs critical fixes)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DOMAIN SCORES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Source Coverage           9/10  ✓ All sources present
+2. Article Quality          6/10  ⚠ 50.8% low word count
+3. Bias Score Quality       7/10  ✗ Factual rigor broken (53% at 0)
+4. Cluster Quality          6/10  ✗ 45% articles orphaned
+5. Enrichment Quality       5/10  ✗ Coverage velocity missing
+6. Temporal Freshness      10/10  ✓ Fresh data, pipeline healthy
+7. Referential Integrity    4/10  ✗ 614+326 dangling refs
+8. Cross-Field Consistency  8/10  ✓ Tiers balanced
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+KEY STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sources:
+  • Expected: 222 | Actual: 223 (+1 test data)
+  • Active: 223 | Tiers: us_major=49, international=82, independent=92
+
+Articles:
+  • Total: 9,999 | Sections: world=3,469, us=4,565, india=1,965
+  • Full text NULL: 507 (5.1%) ✓
+  • Published date NULL: 68 (0.7%) ✓
+  • Word count < 100: 4,823 (50.8%) ✗ CRITICAL
+  • Duplicate URLs: 0 ✓
+
+Bias Scores:
+  • Coverage: 100% (9,999/9,999) ✓
+  • Default patterns: 0 ✓
+  • Political lean mean: 50.1 (centered) ✓
+  • Sensationalism mean: 10.1 (measured) ✓
+  • Opinion/fact mean: 17.8 (reporting-heavy) ✓
+  • Factual rigor mean: 26.6 (LOW) ✗
+  • Factual rigor @ 0: 3,239 (32.4%) ✗ CRITICAL
+  • Confidence mean: 0.616 ✓
+  • Rationale populated: 100% ✓
+
+Clusters:
+  • Total: 2,938
+  • Articles in clusters: 6,060
+  • Orphaned articles: 4,553 (45.6%) ✗ CRITICAL
+  • Avg articles/cluster: 2.1 (expected 3–5) ✗
+  • Single-article clusters: 1,581 (54%) ✗
+  • Orphaned clusters (0 articles): 44 ✗
+  • Summaries missing: 0 ✓
+  • Divergence score mean: 7.5 (low due to single-article clusters)
+  • Headline rank populated: 100% ✓
+  • Coverage velocity populated: 201 (6.8%) ✗ CRITICAL
+
+Pipeline Runs:
+  • Total: 13 ✓
+  • Completed: 13 (100%) ✓
+  • Last run: 2026-03-19 23:02 UTC ✓
+  • Article age: 2–3 days (fresh) ✓
+
+Integrity:
+  • Invalid cluster_articles refs: 614 ✗ CRITICAL
+  • Invalid bias_scores refs: 326 ✗ CRITICAL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL ISSUES (Fix Immediately)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. FACTUAL RIGOR BROKEN
+   • 53% of articles score 0 (catastrophic)
+   • AP, Reuters, NYT average rigor < 10 (should be 70+)
+   • Root: NER pipeline not extracting sourcing evidence
+   • Fix: Debug pipeline/analyzers/factual_rigor.py, re-score all articles
+
+2. ARTICLES ORPHANED FROM CLUSTERS
+   • 4,553/9,999 articles (45.6%) not linked to any cluster
+   • Impacts feed quality and user discovery
+   • Root: Clustering algorithm too strict or orphan-wrapper not running
+   • Fix: Check pipeline/clustering/story_cluster.py step 6b (ORPHANS)
+
+3. DANGLING REFERENCES
+   • 614 cluster_articles rows → non-existent articles
+   • 326 bias_scores rows → non-existent articles
+   • Breaks Deep Dive views, query correctness
+   • Fix: Verify ON DELETE CASCADE in migration 001, clean up dangling rows
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MUST-HAVE ISSUES (High Priority)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4. COVERAGE VELOCITY MISSING (93.2%)
+   • Only 201/2,938 clusters have coverage_velocity field
+   • Ranking formula includes 6% weight for this signal
+   • Root: Pipeline step 7 not writing field
+   • Fix: Check pipeline/ranker/importance_ranker.py
+
+5. LOW WORD COUNT (50.8%)
+   • 4,823 articles < 100 words (expected <10%)
+   • Suggests scraper fallback to headlines/snippets
+   • Root: Web scraper full_text extraction failing
+   • Fix: Audit pipeline/fetchers/web_scraper.py fallback logic
+
+6. POLITICAL LEAN TOO FLAT (90% @ 40–60)
+   • 90% of articles in neutral range
+   • Real outlets (Fox, Breitbart) show correct lean
+   • Root: Keyword lexicons weak or baseline blending too strong
+   • Fix: Audit pipeline/analyzers/political_lean.py
+
+7. OVER-FRAGMENTED CLUSTERS (54% single-article)
+   • Expected avg 3–5 articles per cluster; actual 2.1
+   • Weakens consensus/divergence signals
+   • Root: TF-IDF threshold (0.2) too strict
+   • Fix: Tune similarity threshold, re-cluster
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+THE ONE THING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+If you fix one issue, fix this:
+
+  THE FACTUAL RIGOR AXIS IS COMPLETELY BROKEN.
+
+  53% of articles score 0, including AP, Reuters, and NYT. This undermines
+  the entire bias analysis premise—you can't distinguish gold-standard wire
+  services from tabloids. The NER pipeline in pipeline/analyzers/factual_rigor.py
+  is not extracting named sources. Debug and re-score all articles immediately.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REFERENCE FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Audit scripts:
+  • /home/aacrit/projects/void-news/db_audit.py
+  • /home/aacrit/projects/void-news/db_audit_detailed.py
+
+Full report:
+  • /home/aacrit/projects/void-news/DATA_QUALITY_AUDIT_REPORT.md
+
+Raw output:
+  • /home/aacrit/projects/void-news/audit_output.txt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.5
-**Last updated:** 2026-03-21 (rev 4)
+**Version:** 1.6
+**Last updated:** 2026-03-21 (rev 5)
 
 ---
 
@@ -22,7 +22,7 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 |-------|------|--------|-----|
 | **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes |
 | **Structural** | Inter | 400, 500, 600 | Body text, navigation, labels, buttons, UI chrome |
-| **Data** | JetBrains Mono | 400, 500 | Bias scores, source counts, timestamps, metrics, dot matrix |
+| **Data** | JetBrains Mono | 400, 500 | Bias scores, source counts, timestamps, metrics, BiasLens data labels |
 
 ### Type Scale (Fluid)
 
@@ -499,7 +499,7 @@ Minimal. Line-style icons only. No filled icons except for active/selected state
 
 - **Category icons**: Minimal line illustrations (politics gavel, economy chart, health cross, etc.)
 - **Navigation**: Standard line icons (home, search, settings, back)
-- **Bias**: Dot matrix (no traditional icons needed)
+- **Bias**: BiasLens Three Lenses (Needle, Ring, Prism) — no traditional icons needed
 - **Actions**: Minimal line (refresh, external link, expand, collapse)
 
 ---
@@ -515,18 +515,18 @@ Minimal. Line-style icons only. No filled icons except for active/selected state
 - **Reduced motion**: All animations instant under `prefers-reduced-motion`
 - **Touch targets**: ≥ 44×44px on mobile
 - **Zoom**: Content readable at 200% zoom, no horizontal scroll
-- **Color independence**: Dot matrix uses shape + color (never color alone)
+- **Color independence**: BiasLens uses shape + angle + fill + morph (never color alone) — Needle angle, Ring fill percentage, and Prism square-to-circle morph all encode data independently of color.
 
-### Dot Matrix Screen Reader Pattern
+### BiasLens Screen Reader Pattern
 
 ```html
-<div class="dot-matrix" role="group" aria-label="Bias analysis for this article">
-  <span class="dot dot--lean-center-left" aria-label="Political lean: center-left"></span>
-  <span class="dot dot--sense-low" aria-label="Sensationalism: low"></span>
-  <span class="dot dot--type-reporting" aria-label="Type: factual reporting"></span>
-  <span class="dot dot--rigor-high" aria-label="Factual rigor: high"></span>
-  <span class="dot dot--framing-moderate" aria-label="Framing: moderate"></span>
+<!-- Each lens has role="img" with descriptive aria-label -->
+<div class="bias-lens" role="group" aria-label="Bias analysis for this article">
+  <div class="bias-lens__needle" role="img" aria-label="Political lean: Center-Left, score 42"></div>
+  <div class="bias-lens__ring" role="img" aria-label="Coverage confidence: 67%, 8 sources"></div>
+  <div class="bias-lens__prism" role="img" aria-label="Article type: Reporting (factual)"></div>
 </div>
+<!-- Popups use role="tooltip" with aria-describedby linking -->
 ```
 
 ---
