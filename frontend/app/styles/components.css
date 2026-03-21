@@ -2848,9 +2848,9 @@
   transition: transform var(--dur-fast) var(--spring);
   /* Prevent the glyph from inheriting italic from any editorial context */
   font-style: normal;
-  /* Attention-drawing bounce plays once, 800ms after panel opens —
-     by which time the cascade stagger has settled */
-  animation: arrowBounce 600ms var(--ease-out) 800ms both;
+  /* Attention-drawing bounce plays once, 600ms after panel opens —
+     overlaps the tail of content cascade for a tighter feel */
+  animation: arrowBounce 600ms var(--ease-out) 600ms both;
 }
 
 .dd-press-trigger__arrow--open {
