@@ -574,71 +574,42 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             </div>
           )}
 
-          {/* ---- Analysis row: Sigil + Spectrum + Press trigger in one line ---- */}
+          {/* ---- Bias Analysis Section — vertical stack -------------------- */}
           {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Bias analysis" className={`dd-analysis-row anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}>
+            <section aria-label="Bias analysis" className={`dd-analysis-section anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}>
 
-              {/* Sigil — compact bias mark */}
+              {/* Bias verdict — large centered Sigil */}
               {story.sigilData && !story.sigilData.pending && (
-                <div className="dd-analysis-row__sigil">
-                  <Sigil data={story.sigilData} size="lg" />
+                <div className="dd-bias-verdict">
+                  <Sigil data={story.sigilData} size="xl" />
                 </div>
               )}
 
-              {/* Spectrum — fills remaining space */}
-              <div className="dd-analysis-row__spectrum">
-              <div className="dd-spectrum">
-                {/* Row above track */}
-                <div className="dd-spectrum__row dd-spectrum__row--above">
-                  {leanPositions.filter(p => p.side === "above").map(({ src, idx, lean, isOverflow }) => {
+              {/* Compact spectrum — dots ON the track, no above/below rows */}
+              <div className="dd-compact-spectrum">
+                <div className="dd-compact-spectrum__track">
+                  <span className="dd-compact-spectrum__label dd-compact-spectrum__label--left">L</span>
+                  <span className="dd-compact-spectrum__label dd-compact-spectrum__label--center">C</span>
+                  <span className="dd-compact-spectrum__label dd-compact-spectrum__label--right">R</span>
+
+                  {/* Source dots positioned ON the track */}
+                  {leanPositions.map(({ src, idx, lean, isOverflow }) => {
                     const favicon = src.url ? faviconUrl(src.url) : "";
                     return (
                       <a
-                        key={`above-${src.name}-${idx}`}
+                        key={`dot-${src.name}-${idx}`}
                         href={src.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         title={`${src.name} — ${leanLabel(lean)} (${lean})`}
                         aria-label={`${src.name}: ${leanLabel(lean)}`}
-                        className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
+                        className={`dd-compact-spectrum__dot${isOverflow ? " dd-compact-spectrum__dot--overflow" : ""}`}
                         style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
                       >
                         {favicon ? (
-                          <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
+                          <img src={favicon} alt="" width={16} height={16} style={{ borderRadius: 2 }} loading="lazy" />
                         ) : (
-                          <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
-                        )}
-                      </a>
-                    );
-                  })}
-                </div>
-
-                {/* Track with inline labels */}
-                <div className="dd-spectrum__track">
-                  <span className="dd-spectrum__inline-label dd-spectrum__inline-label--left">Left</span>
-                  <span className="dd-spectrum__inline-label dd-spectrum__inline-label--center">Center</span>
-                  <span className="dd-spectrum__inline-label dd-spectrum__inline-label--right">Right</span>
-                </div>
-
-                {/* Row below track */}
-                <div className="dd-spectrum__row dd-spectrum__row--below">
-                  {leanPositions.filter(p => p.side === "below").map(({ src, idx, lean, isOverflow }) => {
-                    const favicon = src.url ? faviconUrl(src.url) : "";
-                    return (
-                      <a
-                        key={`below-${src.name}-${idx}`}
-                        href={src.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                        aria-label={`${src.name}: ${leanLabel(lean)}`}
-                        className={`dd-spectrum__dot${isOverflow ? " dd-spectrum__dot--overflow" : ""}`}
-                        style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
-                      >
-                        {favicon ? (
-                          <img src={favicon} alt="" width={18} height={18} style={{ borderRadius: 2 }} loading="lazy" />
-                        ) : (
-                          <span className="dd-spectrum__dot-initial">{src.name.charAt(0)}</span>
+                          <span className="dd-compact-spectrum__initial">{src.name.charAt(0)}</span>
                         )}
                       </a>
                     );
@@ -646,29 +617,28 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
                 </div>
               </div>
 
-                {/* Press Analysis trigger — below spectrum, right-aligned */}
-                <button
-                  className="dd-press-trigger"
-                  onClick={() => setPressAnalysisOpen(v => !v)}
-                  aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
-                  aria-expanded={pressAnalysisOpen}
+              {/* Press Analysis trigger — center-aligned, inviting label */}
+              <button
+                className="dd-press-trigger"
+                onClick={() => setPressAnalysisOpen(v => !v)}
+                aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
+                aria-expanded={pressAnalysisOpen}
+              >
+                <span>How was this scored?</span>
+                <span
+                  className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`}
+                  aria-hidden="true"
                 >
-                  <span>Press Analysis</span>
-                  <span
-                    className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`}
-                    aria-hidden="true"
-                  >
-                    &#9658;
-                  </span>
-                </button>
+                  &#9658;
+                </span>
+              </button>
 
-                {/* Press Analysis expand — below trigger, inside spectrum column */}
-                <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}>
-                  <div className="dd-press-expand__inner">
-                    <BiasInspectorInline sources={sources} />
-                  </div>
+              {/* Press Analysis expand */}
+              <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`} style={{ width: "100%" }}>
+                <div className="dd-press-expand__inner">
+                  <BiasInspectorInline sources={sources} />
                 </div>
-              </div>{/* end dd-analysis-row__spectrum */}
+              </div>
             </section>
           )}
 
