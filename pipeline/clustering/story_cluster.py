@@ -333,7 +333,7 @@ def _extract_cluster_entities(articles: list[dict]) -> set[str]:
 def merge_related_clusters(
     clusters: list[dict],
     min_shared_entities: int = 3,
-    max_age_spread_hours: float = 72.0,
+    max_age_spread_hours: float = 48.0,
 ) -> list[dict]:
     """
     Post-clustering merge pass: consolidate micro-clusters that belong to the

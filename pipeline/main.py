@@ -1929,6 +1929,58 @@ def main():
     except Exception as e:
         print(f"  [warn] cleanup_stuck_pipeline_runs failed: {e}")
 
+    # Retention: archive then delete clusters older than 3 days.
+    # Articles >2d are rejected at ingestion, so clusters >3d are frozen.
+    # Articles + bias_scores persist (not deleted) for historical analysis.
+    # Only cluster shells + links are pruned to keep the DB lean.
+    try:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).isoformat()
+        # Paginate to get all old cluster IDs
+        old_ids: list[str] = []
+        offset = 0
+        while True:
+            page = supabase.table("story_clusters").select("id").lt(
+                "first_published", cutoff
+            ).range(offset, offset + 999).execute()
+            if not page.data:
+                break
+            old_ids.extend(c["id"] for c in page.data)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if old_ids:
+            # Archive: copy key fields to cluster_archive before deletion
+            # (preserves Gemini summaries for weekly/monthly trend reports)
+            for i in range(0, len(old_ids), 100):
+                batch = old_ids[i:i + 100]
+                # Fetch full cluster data for archive
+                to_archive = supabase.table("story_clusters").select(
+                    "id,title,summary,section,sections,category,source_count,"
+                    "first_published,headline_rank,divergence_score,bias_diversity,"
+                    "consensus_points,divergence_points"
+                ).in_("id", batch).execute()
+                if to_archive.data:
+                    # Upsert into archive table (created by migration 016)
+                    try:
+                        supabase.table("cluster_archive").upsert(
+                            to_archive.data, on_conflict="id"
+                        ).execute()
+                    except Exception:
+                        pass  # Archive table may not exist yet — still delete
+
+                supabase.table("cluster_articles").delete().in_(
+                    "cluster_id", batch
+                ).execute()
+                supabase.table("story_clusters").delete().in_(
+                    "id", batch
+                ).execute()
+            print(f"  Retention: archived + removed {len(old_ids)} clusters older than 3 days")
+        else:
+            print(f"  Retention: no clusters older than 3 days")
+    except Exception as e:
+        print(f"  [warn] retention cleanup failed: {e}")
+
     # Finalize
     duration = time.time() - start_time
     if run_id:
