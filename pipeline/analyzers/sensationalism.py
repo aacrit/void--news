@@ -45,9 +45,17 @@ COMMON_ACRONYMS: frozenset[str] = frozenset({
 # Clickbait headline patterns
 # ---------------------------------------------------------------------------
 CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
-    # Questions as headlines
+    # Questions as headlines.
+    # Pattern 0: interrogative-led question (e.g. "Will Trump win?") — strongest
+    # clickbait signal because the question IS the whole content structure.
     (re.compile(r"^(will|can|could|should|is|are|was|does|did|has|have)\b.+\?$", re.I), 8.0),
-    (re.compile(r"\?$"), 5.0),
+    # Pattern 1: any other question ending (e.g. "Trump wins — or does he?").
+    # Weight reduced 5.0 → 2.0: a bare terminal ? on a non-interrogative headline
+    # is a much weaker signal than a full question headline.  Previously, a
+    # headline matching pattern 0 also always matched pattern 1, creating an
+    # undifferentiated 13-point cliff vs a 5-point plain-question score.
+    # With 8+2=10 vs 2, the gap is narrower and proportional.
+    (re.compile(r"\?$"), 2.0),
     # Listicles
     (re.compile(r"^\d+\s+(shocking|surprising|incredible|amazing|stunning|things|reasons|ways|facts|secrets)", re.I), 10.0),
     (re.compile(r"^\d+\s+\w+", re.I), 3.0),
@@ -83,15 +91,45 @@ SUPERLATIVES: list[str] = [
     "eviscerated", "demolished", "crushed", "torched", "blasted",
     "absolute", "total", "complete", "utter", "sheer",
     "historic", "record-breaking", "all-time",
+    # Partisan / ideological charged language not previously captured.
+    # These appear routinely in attack-style editorial and opinion pieces
+    # but are absent from measured wire reporting. Added to lift sensationalism
+    # scores for Fox/Breitbart opinion pieces that use charged framing but
+    # avoid traditional clickbait patterns. (bias-auditor Wave-3 fix)
+    #
+    # Excluded from this list (regression analysis 2026-03-20):
+    #   "crisis"    — already in URGENCY_WORDS; also appears neutrally in
+    #                 "crisis-level fire danger", "housing crisis", DHS briefings
+    #   "dangerous" — extremely common in neutral disaster/safety reporting
+    #                 ("dangerous conditions", "dangerous levels", "dangerous driving")
+    #   "flooding"  — standard meteorological term in disaster/weather coverage
+    #   "invasion"  — too common in geo-political/military neutral reporting
+    #   "rampage"   — narrow use case, captured by "massacre"/"riot" already
+    #
+    # Words below only appear in genuinely inflammatory editorial framing,
+    # not in standard wire/policy/disaster reporting:
+    "catastrophe", "chaos", "extremism", "extremist",
+    "takeover", "radical", "socialist", "destroying",
 ]
 
 # ---------------------------------------------------------------------------
 # Urgency language
+#
+# NOTE: compound phrases are listed in LONGEST-FIRST order so that a phrase
+# like "breaking news" is counted once as a unit rather than twice via its
+# constituent "breaking" + "breaking news".  The bare single-word forms
+# "breaking" and "developing" were removed because they triggered double-
+# counting with their compound forms ("breaking news", "developing story")
+# and because the single words produce false positives in body text
+# ("breaking records", "developing countries").  The compound forms are
+# the true urgency signal. (Priority C2 fix — urgency double-count)
 # ---------------------------------------------------------------------------
 URGENCY_WORDS: list[str] = [
-    "breaking", "just in", "developing", "urgent", "exclusive",
-    "live updates", "happening now", "alert", "flash",
-    "breaking news", "this just in", "developing story",
+    # Compound phrases first (most specific — prevent substring double-count)
+    "breaking news", "this just in", "developing story", "live updates",
+    "happening now",
+    # Single-word urgency terms with no compound risk
+    "just in", "urgent", "exclusive", "alert", "flash",
     "emergency", "crisis", "immediate", "right now",
 ]
 
@@ -111,6 +149,54 @@ HYPERBOLIC_MODIFIERS: list[str] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Partisan attack / demonization language
+#
+# These are concentrated ideological attack phrases that appear in editorial
+# content aimed at demonizing the opposing side rather than describing policy.
+# Distinct from LEFT_KEYWORDS/RIGHT_KEYWORDS in political_lean.py (which score
+# *direction*) — these score *inflammatory intensity* regardless of which side.
+#
+# Design constraints for regression safety:
+#   - Phrase-level matching only (no bare single words like "radical" or
+#     "socialist" that appear in neutral reporting contexts such as
+#     "radical surgery", "socialist party of X country").
+#   - Scored by DENSITY per 100 words: one isolated phrase in a 500-word
+#     AP analysis piece contributes 0.2/100 = negligible.  A 40-word
+#     attack paragraph with 4 phrases contributes 10/100 = meaningful.
+#   - Capped so even a pure attack paragraph contributes at most 25 pts
+#     to body_score before the weighted 15% blend.
+# ---------------------------------------------------------------------------
+PARTISAN_ATTACK_PHRASES: list[str] = [
+    # Attack + demonization framing — right-wing editorial registers
+    # (phrases specific enough that they cannot appear in neutral wire reporting)
+    "radical left", "the radical left",
+    "destroying america", "destroy america",
+    "dangerous agenda", "radical agenda", "socialist agenda",
+    "socialist takeover", "communist takeover", "radical takeover",
+    "open border agenda", "open borders agenda",
+    "before it's too late", "before its too late",
+    "wake up america", "save america", "take back america",
+    "the end of america", "end of our freedom",
+    # Demonization patterns: paired accusation structures
+    "refuses to enforce the law", "refuses to protect our",
+    "radical democrats", "democrat mob", "democrat agenda",
+    "liberal mob", "leftist mob", "woke mob",
+    "illegal aliens flooding", "flooding our communities",
+    # Alarmist / end-times framing (only specific compound forms)
+    "threat to our way of life", "america is dying",
+    "america is under attack", "freedom is under attack",
+    "our children will inherit", "our children are being",
+    # Cross-ideological: left-wing attack equivalents
+    # (comparably specific — cannot appear in neutral science/economics reporting)
+    "fascist agenda", "white supremacist agenda",
+    "billionaire takeover", "oligarch takeover",
+    "genocide agenda", "climate genocide",
+    "fascist takeover", "nazi agenda",
+    "destroy our democracy", "destroying our democracy",
+    "corporate coup", "billionaire coup",
+]
+
+# ---------------------------------------------------------------------------
 # Measured / professional indicators (inverse signals)
 # ---------------------------------------------------------------------------
 MEASURED_PHRASES: list[str] = [
@@ -121,6 +207,37 @@ MEASURED_PHRASES: list[str] = [
     "on condition of anonymity", "declined to comment",
     "could not be independently verified", "it remains unclear",
 ]
+
+
+def _partisan_attack_score(text_lower: str, word_count: int) -> float:
+    """
+    Score concentrated partisan attack / demonization language.
+
+    Returns 0-25 contribution to body_score.
+
+    Fires on DENSITY of PARTISAN_ATTACK_PHRASES per 100 words, not mere
+    presence. This ensures a single phrase in a long AP analysis article
+    contributes < 1 pt, while a short attack-editorial paragraph dense with
+    demonization language contributes up to 25 pts.
+
+    The 15% weight in _body_score() then caps the actual contribution to
+    ~3.75 pts at max, but more practically delivers the ~8-12 pt body_score
+    lift needed to push calm-but-ideological content from ~29 to 40+.
+    """
+    if word_count == 0:
+        return 0.0
+
+    hit_count = 0
+    for phrase in PARTISAN_ATTACK_PHRASES:
+        hit_count += text_lower.count(phrase)
+
+    if hit_count == 0:
+        return 0.0
+
+    # Density: hits per 100 words
+    density = hit_count / max(word_count / 100, 1)
+    # Each density unit contributes 8 pts; cap at 25
+    return min(density * 8.0, 25.0)
 
 
 def _caps_score(title: str, words: list[str]) -> float:
@@ -244,6 +361,22 @@ def _body_score(text: str) -> float:
         if short_ratio > 0.3:
             score += (short_ratio - 0.3) * 40.0
 
+    # --- Partisan attack / demonization density ---
+    # Detects concentrated ideological attack language (e.g. "radical left's
+    # dangerous agenda", "socialist takeover", "before it's too late") that
+    # signals inflammatory editorial tone even when traditional clickbait
+    # patterns (ALL-CAPS, urgency words, exclamation marks) are absent.
+    #
+    # The raw score (0-25) is added directly to the body_score at a 2x
+    # multiplier, capping at 50 pts contribution. This yields:
+    #   - 1 isolated phrase in 500-word AP article: density=0.2 → raw=1.6 → +3.2 pts
+    #   - 3 phrases in 200-word editorial: density=1.5 → raw=12 → +24 pts
+    #   - Dense 60-word attack paragraph (10+ phrases): density=16+ → raw=25 → +50 pts
+    # The measured_density inverse signal partially offsets low-density cases
+    # where AP articles quote partisan language in a well-attributed context.
+    partisan_raw = _partisan_attack_score(text_lower, word_count)
+    score += min(partisan_raw * 2.0, 50.0)
+
     # --- Attribution gaps (inverse: measured articles have more attribution) ---
     measured_count = 0
     for phrase in MEASURED_PHRASES:
@@ -295,7 +428,17 @@ def analyze_sensationalism(article: dict) -> dict:
     else:
         stretched = 50.0 + (combined - 30.0) * (50.0 / 70.0)
 
-    score = max(0, min(100, int(round(stretched))))
+    # Minimum floor for articles with actual text content.
+    # Heavy attribution-language in wire copy pushes body_score to 0 via the
+    # measured_density inverse signal, which correctly reduces the body score
+    # but can produce a combined=0 → stretched=0 → score=0 outcome.  A score
+    # of 0 is unreachable by any real journalism — even the most neutral wire
+    # story carries some baseline subjectivity.  Floor of 8 preserves the
+    # intent (AP ≈ 10-20, tabloid ≈ 50-80) without clamping genuine low-end
+    # reporting to zero. (Priority H2 fix — sensationalism floor for real text)
+    has_content = bool(title.strip() or full_text.strip())
+    floor = 8 if has_content else 0
+    score = max(floor, min(100, int(round(stretched))))
 
     # Compute sub-signal rationale
     text_lower = (full_text or "").lower()
@@ -308,6 +451,7 @@ def analyze_sensationalism(article: dict) -> dict:
     urg_count = sum(text_lower.count(p) for p in URGENCY_WORDS)
     hyp_count = sum(text_lower.count(m) for m in HYPERBOLIC_MODIFIERS)
     meas_count = sum(text_lower.count(p) for p in MEASURED_PHRASES)
+    partisan_attack_count = sum(text_lower.count(p) for p in PARTISAN_ATTACK_PHRASES)
 
     return {
         "score": score,
@@ -319,5 +463,6 @@ def analyze_sensationalism(article: dict) -> dict:
             "urgency_density": round(urg_count / per_100, 2),
             "hyperbole_density": round(hyp_count / per_100, 2),
             "measured_density": round(meas_count / per_100, 2),
+            "partisan_attack_density": round(partisan_attack_count / per_100, 2),
         },
     }

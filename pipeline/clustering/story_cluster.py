@@ -488,7 +488,7 @@ def merge_related_clusters(
 
 def cluster_stories(
     articles: list[dict],
-    similarity_threshold: float = 0.3,
+    similarity_threshold: float = 0.2,
     run_merge_pass: bool = True,
 ) -> list[dict]:
     """

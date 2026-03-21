@@ -811,7 +811,8 @@
     "country": "TR",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "English-language arm of Turkish Radio and Television Corporation (state broadcaster). State-affiliated: editorial line generally aligns with Turkish government positions, particularly on foreign policy. Valuable for Turkish/regional perspective but readers should note state connection. Added 2026-03-18 to address Turkey coverage gap."
+    "credibility_notes": "English-language arm of Turkish Radio and Television Corporation (state broadcaster). State-affiliated: editorial line generally aligns with Turkish government positions, particularly on foreign policy. Valuable for Turkish/regional perspective but readers should note state connection. Added 2026-03-18 to address Turkey coverage gap.",
+    "state_affiliated": true
   },
   {
     "id": "rt",
@@ -822,7 +823,8 @@
     "country": "RU",
     "type": "broadcast",
     "political_lean_baseline": "far-right",
-    "credibility_notes": "Russian state-funded international broadcaster. Editorially reflects Russian government positions; classified as state media by multiple governments. Included for perspective on Russian/Kremlin viewpoint; editorial reliability is heavily qualified. Readers must apply strong critical lens."
+    "credibility_notes": "Russian state-funded international broadcaster. Editorially reflects Russian government positions; classified as state media by multiple governments. Included for perspective on Russian/Kremlin viewpoint; editorial reliability is heavily qualified. Readers must apply strong critical lens.",
+    "state_affiliated": true
   },
   {
     "id": "cgtn",
@@ -832,8 +834,9 @@
     "tier": "international",
     "country": "CN",
     "type": "broadcast",
-    "political_lean_baseline": "center",
-    "credibility_notes": "China's English-language international broadcaster. Part of China Media Group, state-controlled. Provides official Chinese government perspective on international affairs. Essential for understanding Beijing's messaging; editorial independence is limited. RSS via Google News filter (direct video.xml feed returned 404 as of 2026-03-19)"
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "China's English-language international broadcaster. Part of China Media Group, state-controlled. Provides official Chinese government perspective on international affairs. Essential for understanding Beijing's messaging; editorial independence is limited. RSS via Google News filter (direct video.xml feed returned 404 as of 2026-03-19)",
+    "state_affiliated": true
   },
   {
     "id": "dawn-pakistan",
@@ -2153,7 +2156,8 @@
     "country": "RU",
     "type": "digital",
     "political_lean_baseline": "far-right",
-    "credibility_notes": "Russian state-funded news agency and website. Editorially reflects Russian government positions. Classified as foreign state media by multiple governments. Included for perspective on Russian/Kremlin messaging; readers must apply strong critical lens."
+    "credibility_notes": "Russian state-funded news agency and website. Editorially reflects Russian government positions. Classified as foreign state media by multiple governments. Included for perspective on Russian/Kremlin messaging; readers must apply strong critical lens.",
+    "state_affiliated": true
   },
   {
     "id": "global-times",
@@ -2164,7 +2168,8 @@
     "country": "CN",
     "type": "digital",
     "political_lean_baseline": "far-right",
-    "credibility_notes": "Tabloid under People's Daily, official organ of the Communist Party of China. Nationalist and state-aligned editorial perspective. Nationalistic and sometimes combative in tone. Included for Chinese state/nationalist viewpoint. RSS via Google News filter (direct outboundpage.xml returned 404 as of 2026-03-19)"
+    "credibility_notes": "Tabloid under People's Daily, official organ of the Communist Party of China. Nationalist and state-aligned editorial perspective. Nationalistic and sometimes combative in tone. Included for Chinese state/nationalist viewpoint. RSS via Google News filter (direct outboundpage.xml returned 404 as of 2026-03-19)",
+    "state_affiliated": true
   },
   {
     "id": "associated-press-fact-check",
@@ -2199,7 +2204,6 @@
     "political_lean_baseline": "center-right",
     "credibility_notes": "Liberal-to-center-right publication founded 2020 by Yascha Mounk. Focuses on defending liberal democracy against authoritarianism from left and right. Expert contributors. Center-right on free speech and institutional issues."
   },
-
   {
     "id": "hindustan-times",
     "name": "Hindustan Times",
@@ -2220,7 +2224,7 @@
     "country": "IN",
     "type": "broadcast",
     "political_lean_baseline": "center-left",
-    "credibility_notes": "India's leading English-language news channel, founded 1988. Acquired by Adani Group in 2022 — editorial independence under observation. Strong reporting legacy. Center-left on democratic accountability."
+    "credibility_notes": "India's leading English-language news channel, founded 1988. Acquired by Adani Group in 2022 \u2014 editorial independence under observation. Strong reporting legacy. Center-left on democratic accountability."
   },
   {
     "id": "indian-express",
@@ -2374,9 +2378,8 @@
     "country": "IN",
     "type": "broadcast",
     "political_lean_baseline": "right",
-    "credibility_notes": "Founded by Arnab Goswami. Aggressively pro-BJP, high ratings. Represents a genuine right-of-center viewpoint in Indian media. Contested editorial standards — credibility caution noted."
+    "credibility_notes": "Founded by Arnab Goswami. Aggressively pro-BJP, high ratings. Represents a genuine right-of-center viewpoint in Indian media. Contested editorial standards \u2014 credibility caution noted."
   },
-
   {
     "id": "kathmandu-post",
     "name": "The Kathmandu Post",
@@ -2432,7 +2435,6 @@
     "political_lean_baseline": "center-left",
     "credibility_notes": "Independent investigative journalism outlet focused on Nepal. Founded 2019. Covers accountability, governance, human rights, and political transparency."
   },
-
   {
     "id": "the-local-germany",
     "name": "The Local Germany",

@@ -385,6 +385,695 @@
   border-color: var(--fg-primary);
 }
 
+/* ---- Filter row — wraps FilterBar + LeanFilter on one line ------------ */
+
+/*
+ * Desktop: FilterBar scrolls horizontally on the left; LeanFilter sits
+ * on the right edge. A thin vertical rule separates them.
+ * Mobile: stacked vertically. LeanFilter goes full-width below the chips.
+ *
+ * Sticky behaviour: on 768px+ the filter-row pins below the nav-header so
+ * category chips + lean filter stay reachable while reading. Mobile omits
+ * sticky — bottom-nav already provides navigation, and safe-area insets
+ * complicate top stacking on notched devices.
+ */
+.filter-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  /* Allow the filter bar to shrink so the lean filter doesn't get pushed off */
+  min-width: 0;
+  /* Padding + border-bottom so the stuck row is visually separated from content */
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+/* Sticky filter-row on tablet + desktop — pins just below the nav-header.
+   top: var(--nav-height) clears the sticky nav (defined in tokens.css).
+   z-index var(--z-sticky) = 10, which is below nav's 20 — nav always wins. */
+@media (min-width: 768px) {
+  .filter-row {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: var(--z-sticky);
+    background-color: var(--bg-primary);
+    backdrop-filter: blur(var(--blur-e1));
+    -webkit-backdrop-filter: blur(var(--blur-e1));
+    border-bottom: var(--rule-thin);
+    /* Negative side margins + matching padding cancel out page-main's horizontal
+       padding so the sticky background extends edge-to-edge. */
+    margin-left: calc(-1 * var(--space-7));
+    margin-right: calc(-1 * var(--space-7));
+    padding-left: var(--space-7);
+    padding-right: var(--space-7);
+  }
+}
+
+/* FilterBar wrapper grows to fill available space */
+.filter-row .filter-bar-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+/* LeanFilter sits at the right; shrinks 0 so it doesn't get compressed */
+.filter-row .lean-filter {
+  flex-shrink: 0;
+}
+
+/*
+ * Opinion mode — LeanFilter is the sole child of filter-row (no FilterBar).
+ * .lean-filter is normally inline-flex (shrinks to content width). In solo
+ * mode we expand it to fill the row and center the pill horizontally.
+ * flex-direction stays column so the expanded panel drops below the pill.
+ */
+.filter-row > .lean-filter:only-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* Horizontally centers the pill */
+}
+
+/* The pill itself must not stretch to fill the centered container */
+.filter-row > .lean-filter:only-child .lean-filter__pill {
+  width: auto;
+  align-self: center;
+}
+
+/* Panel in solo mode: center it under the pill on desktop.
+   Transform-based centering keeps it within the viewport regardless of
+   where the pill lands. */
+@media (min-width: 768px) {
+  .filter-row > .lean-filter:only-child .lean-filter__panel {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Thin vertical rule between filter bar and lean filter.
+   Only visible when there IS a FilterBar (i.e. lean-filter is not only-child). */
+.filter-row .lean-filter:not(:only-child)::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-3) / 2);
+  top: var(--space-2);
+  bottom: var(--space-2);
+  width: 1px;
+  background-color: var(--divider);
+}
+
+@media (max-width: 767px) {
+  .filter-row {
+    flex-direction: column;
+    gap: var(--space-2);
+    /* Mobile: reset sticky; full-bleed bg via page-main side padding match */
+    margin-left: calc(-1 * var(--space-5));
+    margin-right: calc(-1 * var(--space-5));
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  /* No vertical rule on mobile — stacked layout */
+  .filter-row .lean-filter::before {
+    display: none;
+  }
+
+  /* Solo lean filter on mobile: don't center — left-align, full width */
+  .filter-row > .lean-filter:only-child {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .filter-row > .lean-filter:only-child .lean-filter__pill {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ---- Lean Filter — Political lean range selector ----------------------- */
+
+/*
+ * Anatomy:
+ *   .lean-filter              — wrapper, relative positioned
+ *   .lean-filter__pill        — always-visible collapsed trigger
+ *   .lean-filter__panel       — expandable panel (max-height transition)
+ *   .lean-filter__panel-inner — inner padding (prevents clipping during transition)
+ *   .lean-filter__track       — the gradient slider track
+ *   .lean-filter__thumb       — draggable range handle (min / max)
+ *   .lean-filter__selection   — colored strip between the two thumbs
+ *   .lean-filter__zone-btn    — quick-select zone shortcuts
+ */
+
+/* Container — inline-block so it doesn't stretch full width */
+.lean-filter {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  /* Sit alongside FilterBar chips on desktop; block on mobile */
+}
+
+/* ---- Collapsed pill ---- */
+.lean-filter__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  /*
+   * Spectrum gradient hint — "hey I exist" signal.
+   * Implemented as a pseudo-element underline (see ::after) to preserve border-radius.
+   * box-shadow here handles the rest of the pill's elevation.
+   */
+  position: relative;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring);
+}
+
+/* Spectrum gradient underline — faint on inactive, full on active */
+.lean-filter__pill::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px; /* sit on top of the bottom border */
+  height: 2px;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--bias-left) 35%, transparent),
+    color-mix(in srgb, var(--bias-center) 35%, transparent),
+    color-mix(in srgb, var(--bias-right) 35%, transparent)
+  );
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter__pill:hover {
+  color: var(--fg-secondary);
+  border-color: var(--border-strong);
+  background-color: var(--bg-secondary);
+}
+
+.lean-filter__pill:active {
+  transform: scale(0.97);
+}
+
+.lean-filter__pill:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* Active pill — filter is on */
+.lean-filter--active .lean-filter__pill {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
+/* Active: full-opacity spectrum underline */
+.lean-filter--active .lean-filter__pill::after {
+  background: linear-gradient(
+    to right,
+    var(--bias-left),
+    var(--bias-center),
+    var(--bias-right)
+  );
+}
+
+/* ---- Three spectrum dots in the pill ---- */
+.lean-filter__spectrum-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.lean-filter__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lean-filter__dot--left   { background-color: var(--bias-left); }
+.lean-filter__dot--center { background-color: var(--bias-center); }
+.lean-filter__dot--right  { background-color: var(--bias-right); }
+
+/* Active state dots — slightly brighter */
+.lean-filter--active .lean-filter__dot--left  { background-color: var(--bias-left); opacity: 0.9; }
+.lean-filter--active .lean-filter__dot--right { background-color: var(--bias-right); opacity: 0.9; }
+
+/* ---- One-time idle pulse: left→center→right wave on page load ---- */
+/* The animation runs once (1 iteration) and leaves the dots at their natural opacity */
+.lean-filter:not(.lean-filter--active) .lean-filter__dot--left {
+  animation: leanDotWaveLeft 1.5s var(--ease-out) 0.6s 1 both;
+}
+.lean-filter:not(.lean-filter--active) .lean-filter__dot--center {
+  animation: leanDotWaveCenter 1.5s var(--ease-out) 0.6s 1 both;
+}
+.lean-filter:not(.lean-filter--active) .lean-filter__dot--right {
+  animation: leanDotWaveRight 1.5s var(--ease-out) 0.6s 1 both;
+}
+
+@keyframes leanDotWaveLeft {
+  0%   { opacity: 0.4; }
+  20%  { opacity: 1; }
+  60%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+@keyframes leanDotWaveCenter {
+  0%   { opacity: 0.4; }
+  20%  { opacity: 0.4; }
+  40%  { opacity: 1; }
+  80%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+@keyframes leanDotWaveRight {
+  0%   { opacity: 0.4; }
+  40%  { opacity: 0.4; }
+  60%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* ---- Pill label ---- */
+.lean-filter__pill-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Range text shows the active selection using two lean colors */
+.lean-filter__pill-range {
+  background: linear-gradient(
+    to right,
+    var(--lean-min-color, var(--bias-left)),
+    var(--lean-max-color, var(--bias-right))
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+/* ---- Active indicator dot ---- */
+.lean-filter__active-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--bias-center-left);
+  flex-shrink: 0;
+  /* Small pulse to signal active state */
+  animation: leanActivePulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes leanActivePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ---- Caret arrow ---- */
+.lean-filter__caret {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter__caret--open {
+  transform: rotate(180deg);
+}
+
+/* ---- Expanded panel ---- */
+.lean-filter__panel {
+  /* max-height transition for smooth expand/collapse */
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height var(--dur-morph) var(--ease-out),
+    opacity var(--dur-normal) var(--ease-out);
+  opacity: 0;
+  /* Absolute positioning on desktop so it floats above the feed */
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  min-width: 320px;
+  max-width: min(420px, calc(100vw - var(--space-5) * 2));
+  z-index: var(--z-dropdown);
+  /* Glass morphism — E2 elevation */
+  background-color: var(--bg-elevated);
+  backdrop-filter: blur(var(--blur-e2));
+  -webkit-backdrop-filter: blur(var(--blur-e2));
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-e2);
+  border-radius: var(--radius-md);
+}
+
+.lean-filter--expanded .lean-filter__panel {
+  max-height: 220px;
+  opacity: 1;
+}
+
+/* On mobile: full-width inline panel — not a floating dropdown.
+   The panel is already inside a 100%-wide .lean-filter, so it matches
+   the lean filter container width. No horizontal overflow. */
+@media (max-width: 767px) {
+  .lean-filter__panel {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    min-width: unset;
+    border-radius: var(--radius-md);
+    margin-top: var(--space-2);
+    /* Slightly tighter max-height on mobile — zone labels stack and all
+       content is ~180px; 220px leaves comfortable breathing room. */
+    box-sizing: border-box;
+  }
+
+  /* Thumbs: 20px visual, ::after expands to 48×48px hit area (WCAG 2.1 AA) */
+  .lean-filter__thumb::after {
+    inset: -14px; /* 20px + 14*2 = 48px — already set in base; explicit here for clarity */
+  }
+}
+
+/* Tablet (768px–1023px): panel is position: absolute, left-anchored to the
+   lean-filter container. max-width is already viewport-clamped in the base rule
+   (min(420px, calc(100vw - var(--space-5) * 2))). At 768px that evaluates to
+   420px, which sits comfortably within the viewport. No additional rules needed. */
+
+/* ---- Panel inner — padding lives here, not on panel (avoids overflow clip) ---- */
+.lean-filter__panel-inner {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---- Panel header ---- */
+.lean-filter__panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lean-filter__panel-title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-primary);
+  letter-spacing: -0.01em;
+}
+
+.lean-filter__clear {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: var(--space-1) var(--space-2);
+  min-height: 44px;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter__clear:hover {
+  color: var(--fg-secondary);
+}
+
+.lean-filter__clear:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Range labels ---- */
+.lean-filter__range-labels {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.lean-filter__range-label {
+  font-weight: 500;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter__range-sep {
+  font-family: var(--font-structural);
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+}
+
+/* ---- Track area (contains gradient track + thumbs + ticks) ---- */
+.lean-filter__track-area {
+  position: relative;
+  padding-bottom: var(--space-2);
+}
+
+/* ---- Gradient track ---- */
+.lean-filter__track {
+  position: relative;
+  height: 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  /* The spectrum gradient — matches the established blue→gray→red system */
+  background: linear-gradient(
+    to right,
+    var(--bias-far-left),
+    var(--bias-left) 15%,
+    var(--bias-center-left) 30%,
+    var(--bias-center) 42%,
+    var(--bias-center-right) 57%,
+    var(--bias-right) 71%,
+    var(--bias-far-right)
+  );
+  box-shadow: var(--shadow-e1);
+  /* Dimmed by default; selection highlight overlays the active zone */
+  opacity: 0.45;
+}
+
+/* ---- Selection strip — sits on top of dimmed track ---- */
+/*
+ * The selection strip uses a mask approach:
+ * - The track (.lean-filter__track) is the full gradient at 45% opacity
+ * - The selection overlay duplicates the gradient at 100% opacity
+ * - background-size: 100% ensures the gradient aligns with the full track width
+ *   even though .lean-filter__selection has a smaller width (left + width set inline)
+ * - background-position: pulls the gradient start to x=0 of the *parent*,
+ *   not the element, by offsetting with a negative left offset
+ */
+.lean-filter__selection {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    to right,
+    var(--bias-far-left),
+    var(--bias-left) 15%,
+    var(--bias-center-left) 30%,
+    var(--bias-center) 42%,
+    var(--bias-center-right) 57%,
+    var(--bias-right) 71%,
+    var(--bias-far-right)
+  );
+  background-size: 100% 100%;
+  /*
+   * background-size 100% is relative to the element, not the parent.
+   * To make the gradient look like it spans the full track, we use a
+   * wider background-size with background-position to offset.
+   * This is set as inline style in the component instead (see LeanFilter.tsx).
+   */
+  pointer-events: none;
+  opacity: 1;
+  transition:
+    left var(--dur-fast) linear,
+    width var(--dur-fast) linear;
+}
+
+/* ---- Thumbs ---- */
+.lean-filter__thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--bg-elevated);
+  /* Thumb ring takes the lean color */
+  border: 2px solid var(--thumb-color, var(--bias-center));
+  box-shadow: var(--shadow-e2);
+  cursor: grab;
+  z-index: var(--z-card);
+  /* WCAG 44px touch target via padding + pseudo */
+  padding: 0;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Thumb touch target expansion */
+.lean-filter__thumb::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+}
+
+.lean-filter__thumb:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  box-shadow: var(--shadow-e3);
+}
+
+.lean-filter__thumb:active,
+.lean-filter__thumb[aria-grabbed="true"] {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.lean-filter__thumb:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* ---- Tick marks ---- */
+.lean-filter__ticks {
+  position: relative;
+  height: 6px;
+  margin-top: 2px;
+}
+
+.lean-filter__tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 4px;
+  background-color: var(--border-subtle);
+  transform: translateX(-50%);
+}
+
+/* ---- Zone quick-select buttons ---- */
+.lean-filter__zone-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.lean-filter__zone-btn {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--fg-muted);
+  text-align: center;
+  padding: var(--space-1) 0;
+  min-height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter__zone-btn:hover {
+  color: var(--fg-secondary);
+  background-color: var(--bg-secondary);
+}
+
+.lean-filter__zone-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- "No stories" empty state message ---- */
+.lean-filter-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+
+.lean-filter-empty__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-lg);
+  color: var(--fg-tertiary);
+}
+
+.lean-filter-empty__hint {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.lean-filter-empty__action {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter-empty__action:hover {
+  color: var(--fg-primary);
+}
+
+/* ---- Mobile: full-width layout ---- */
+@media (max-width: 767px) {
+  .lean-filter {
+    width: 100%;
+  }
+
+  .lean-filter__pill {
+    width: 100%;
+    justify-content: space-between;
+    min-height: 44px;
+  }
+}
+
+/* ---- Reduced motion: instant transitions + no idle pulse ---- */
+@media (prefers-reduced-motion: reduce) {
+  .lean-filter__panel,
+  .lean-filter__thumb,
+  .lean-filter__selection,
+  .lean-filter__active-dot {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .lean-filter__dot--left,
+  .lean-filter__dot--center,
+  .lean-filter__dot--right {
+    animation: none !important;
+  }
+}
+
 /* RefreshButton text — hidden on mobile via responsive.css */
 .refresh-btn__text {
   white-space: nowrap;

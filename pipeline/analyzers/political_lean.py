@@ -13,6 +13,7 @@ Uses rule-based NLP heuristics (no LLM API calls):
     - Framing phrase detection
 """
 
+import math
 import re
 from collections import Counter
 
@@ -50,11 +51,18 @@ LEFT_KEYWORDS: dict[str, int] = {
     "predatory lending": 2, "housing crisis": 1,
     # Environment / climate
     "climate crisis": 3, "climate emergency": 3, "environmental justice": 2,
-    "green new deal": 3, "fossil fuel": 1, "climate justice": 3,
-    "carbon neutral": 1, "renewable energy": 1, "clean energy": 1,
+    "green new deal": 3, "climate justice": 3,
     "climate catastrophe": 3, "environmental racism": 3,
     "frontline communities": 2, "just transition": 3,
-    "big oil": 3, "carbon footprint": 1, "net zero": 1,
+    "big oil": 3,
+    # NOTE: Removed from LEFT_KEYWORDS (all weight=1) — energy industry terms used
+    # neutrally across the full political spectrum including WSJ, Bloomberg, Fox Business:
+    #   "fossil fuel", "carbon neutral", "net zero", "carbon footprint",
+    #   "renewable energy", "clean energy"
+    # These terms in AP/Reuters energy/climate reporting caused false left-scoring
+    # of 20-30 pts below center. Genuine left-coded climate terms remain at weight 3
+    # (climate crisis, climate emergency, green new deal, climate justice, etc.).
+    # (bias-auditor fix)
     # Healthcare
     "healthcare access": 2, "universal healthcare": 3, "single payer": 3,
     "medicare for all": 3, "public option": 2, "healthcare is a right": 3,
@@ -101,7 +109,13 @@ LEFT_KEYWORDS: dict[str, int] = {
 RIGHT_KEYWORDS: dict[str, int] = {
     # Immigration
     "illegal alien": 3, "illegal immigrant": 2, "illegal aliens": 3,
-    "border security": 3, "secure the border": 3, "build the wall": 3,
+    # NOTE: "border security" removed entirely — even at weight=1 it causes
+    # false positives in short NPR/AP articles that reference "border security
+    # organizations" or "border security issues" neutrally. The phrase appears
+    # across the full spectrum (DHS briefings, AP wire, congressional testimony).
+    # "secure the border" (weight=3) and "build the wall" (weight=3) remain as
+    # the genuinely partisan formulations. (bias-auditor Wave-3 fix)
+    "secure the border": 3, "build the wall": 3,
     "illegal invasion": 3, "border crisis": 3, "mass deportation": 3,
     "open borders": 3, "migrant crime": 3, "criminal aliens": 3,
     "chain migration": 3, "anchor baby": 3, "catch and release": 2,
@@ -154,8 +168,9 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "right to life": 2, "abortion industry": 3,
     # Military / defense
     "national security": 1, "strong military": 2,
-    "peace through strength": 2, "military readiness": 1,
-    "china threat": 2, "woke military": 3,
+    "peace through strength": 2, "china threat": 2, "woke military": 3,
+    # NOTE: "military readiness"(1) removed — standard institutional/defense reporting
+    # term used across spectrum. Not genuinely partisan. (bias-auditor fix)
     # Anti-left labels
     "radical left": 3, "socialist agenda": 3, "socialism": 2,
     "radical agenda": 3, "liberal elite": 3, "coastal elite": 3,
@@ -164,7 +179,10 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "far-left agenda": 3, "radical democrat": 3, "leftist": 2,
     "progressive agenda": 2, "culture war": 1,
     # Patriotism
-    "taxpayer": 1, "patriot": 2, "patriotic": 1,
+    # NOTE: "taxpayer"(1) removed — used neutrally across spectrum in all tax/budget
+    # reporting. "taxpayer-funded" remains covered by FRAMING_PHRASES at weight 0.4
+    # where it appears in explicitly political contexts. (bias-auditor fix)
+    "patriot": 2, "patriotic": 1,
     # Additional high-value terms (Priority 3b fix — closing lexicon gap)
     # NOTE: bare "globalists" intentionally excluded — phrase-scoped only to
     # avoid false positives in international finance/trade coverage.
@@ -298,8 +316,14 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
             right_total += count * weight
             right_hits[phrase] = count * weight
 
-    # Normalize by article length (per 500 words)
-    word_count = max(len(text_lower.split()) / 500, 1)
+    # Normalize by article length (per 500 words).
+    # M2 fix: floor changed from 1.0 to 0.2 so short articles (<500 words)
+    # receive proportional damping rather than artificial parity with 500-word
+    # articles.  A 100-word article gets divisor 0.2; a 500-word article gets
+    # 1.0; a 1000-word article gets 2.0.  Raw keyword hits are thus amplified
+    # for short articles but not clamped at full 500-word equivalence.
+    raw_wc = len(text_lower.split())
+    word_count = max(raw_wc / 500, 0.2)
     left_total = left_total / word_count
     right_total = right_total / word_count
 
@@ -311,12 +335,26 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
     if total == 0:
         return 50.0, top_left, top_right
 
-    if total < 4:
-        right_ratio = right_total / total
-        return 50.0 + (right_ratio - 0.5) * (total / 4.0) * 100.0, top_left, top_right
-
     right_ratio = right_total / total
-    return right_ratio * 100.0, top_left, top_right
+
+    # M1 fix: replace hard step-function at total<4 with a smooth sigmoid
+    # ramp.  The old formula jumped discontinuously when total crossed 4:
+    #   total=3.9 → damped by 0.975, total=4.1 → full score (jump of ~2.5pts).
+    #   total=3   → damped by 0.75,  total=4   → full score (jump of ~25pts
+    #   on a fully one-sided article).
+    # The sigmoid S(x) = 1 / (1 + exp(-k*(x - x0))) gives a smooth 0→1 curve
+    # centred at x0=4 keyword-weight units with steepness k=1.2, reaching
+    # ~0.95 at total=6 and ~0.05 at total=2.  At total=0 the score is already
+    # short-circuited above; this branch only runs when total>0.
+    #
+    # Full formula:
+    #   S = sigmoid(total, x0=4, k=1.2)   [0-1 confidence weight]
+    #   score = 50 + (right_ratio - 0.5) * S * 100
+    # This smoothly transitions from centre-biased (near-zero evidence) to
+    # full partisan signal (strong keyword evidence).
+    sigmoid_weight = 1.0 / (1.0 + math.exp(-1.2 * (total - 4.0)))
+    score = 50.0 + (right_ratio - 0.5) * sigmoid_weight * 100.0
+    return score, top_left, top_right
 
 
 def _framing_score(text: str) -> tuple[float, list[str]]:
@@ -336,7 +374,13 @@ def _framing_score(text: str) -> tuple[float, list[str]]:
     if count == 0:
         return 0.0, phrases_found
 
-    return max(-15.0, min(15.0, shift * 3.0)), phrases_found
+    # Multiplier reduced from 3.0 to 1.5.  At 3.0, a single high-weight phrase
+    # (e.g. "reproductive freedom" at -0.8) produced a shift of -2.4 which,
+    # multiplied by 3, yielded -7.2 — roughly equivalent to 7 left-coded
+    # keyword weight units.  That overweights isolated framing language relative
+    # to keyword evidence.  At 1.5, the same phrase contributes -3.6, keeping
+    # framing as a secondary signal that tilts but does not dominate lean.
+    return max(-15.0, min(15.0, shift * 1.5)), phrases_found
 
 
 def _entity_sentiment_score(text: str) -> tuple[float, dict[str, float]]:
@@ -358,20 +402,32 @@ def _entity_sentiment_score(text: str) -> tuple[float, dict[str, float]]:
         blob = None
 
         for ent_name in LEFT_CODED_ENTITIES:
-            if ent_name in sent_lower:
-                if blob is None:
-                    blob = TextBlob(sent.text)
-                left_sentiment += blob.sentiment.polarity
-                left_count += 1
-                entity_sentiments.setdefault(ent_name, []).append(blob.sentiment.polarity)
+            # Use word-boundary matching: "democrat" must not hit "undemocratic",
+            # "republican" must not hit "unrepublican", etc.
+            # Single-word entity names get \b regex; multi-word phrases use
+            # substring search (safe by construction — cannot be sub-words).
+            if " " not in ent_name:
+                if not re.search(r"\b" + re.escape(ent_name) + r"\b", sent_lower):
+                    continue
+            elif ent_name not in sent_lower:
+                continue
+            if blob is None:
+                blob = TextBlob(sent.text)
+            left_sentiment += blob.sentiment.polarity
+            left_count += 1
+            entity_sentiments.setdefault(ent_name, []).append(blob.sentiment.polarity)
 
         for ent_name in RIGHT_CODED_ENTITIES:
-            if ent_name in sent_lower:
-                if blob is None:
-                    blob = TextBlob(sent.text)
-                right_sentiment += blob.sentiment.polarity
-                right_count += 1
-                entity_sentiments.setdefault(ent_name, []).append(blob.sentiment.polarity)
+            if " " not in ent_name:
+                if not re.search(r"\b" + re.escape(ent_name) + r"\b", sent_lower):
+                    continue
+            elif ent_name not in sent_lower:
+                continue
+            if blob is None:
+                blob = TextBlob(sent.text)
+            right_sentiment += blob.sentiment.polarity
+            right_count += 1
+            entity_sentiments.setdefault(ent_name, []).append(blob.sentiment.polarity)
 
     shift = 0.0
     if left_count > 0:
@@ -403,7 +459,8 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
 
     Args:
         article: Dict with keys: full_text, title, summary, source_id.
-        source: Dict with keys: political_lean_baseline, tier, name.
+        source: Dict with keys: political_lean_baseline, tier, name,
+                state_affiliated (optional bool).
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with evidence).
@@ -413,13 +470,24 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     combined = f"{title} {full_text}"
     source_baseline = _get_source_baseline(source)
 
+    # State-affiliated outlets (RT, CGTN, Sputnik, Global Times, TRT World)
+    # publish geopolitical content that uses neither Western left nor Western
+    # right keyword vocabulary.  Their partisan bias is government alignment,
+    # not ideological L/R.  The 0.85 text weight systematically underestimates
+    # their actual editorial lean because the text signal is near-zero.  For
+    # these sources, raise the baseline weight from 0.15 to 0.30 so the known
+    # editorial alignment exerts stronger pull toward the calibrated baseline.
+    is_state_affiliated = bool(source.get("state_affiliated"))
+    text_weight = 0.70 if is_state_affiliated else 0.85
+    baseline_weight = 0.30 if is_state_affiliated else 0.15
+
     if not combined.strip():
         return {
             "score": source_baseline,
             "rationale": {"keyword_score": 50, "framing_shift": 0, "entity_shift": 0,
                           "source_baseline": source_baseline, "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
-                          "entity_sentiments": {}},
+                          "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
         }
 
     # 1. Keyword-based score (0-100) + top keywords
@@ -435,8 +503,10 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     text_score = kw_score + framing_shift + entity_shift
     text_score = max(0.0, min(100.0, text_score))
 
-    # 4. Blend with source baseline (0.85 text + 0.15 baseline)
-    final_score = 0.85 * text_score + 0.15 * source_baseline
+    # 4. Blend with source baseline.
+    # Standard: 0.85 text + 0.15 baseline.
+    # State-affiliated: 0.70 text + 0.30 baseline.
+    final_score = text_weight * text_score + baseline_weight * source_baseline
     score = max(0, min(100, int(round(final_score))))
 
     return {
@@ -450,5 +520,6 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
             "top_right_keywords": top_right,
             "framing_phrases_found": framing_phrases,
             "entity_sentiments": entity_sentiments,
+            "state_affiliated": is_state_affiliated,
         },
     }

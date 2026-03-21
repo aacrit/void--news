@@ -19,6 +19,14 @@ from textblob import TextBlob
 
 from utils.nlp_shared import get_nlp
 
+# Pre-compiled word-boundary patterns for SYNONYM_PAIRS single-word terms.
+# Using simple str.count() on the raw text caused substring false positives:
+# "killed" matched in "unskilled", "mob" in "mobilize", "riot" in "patriot",
+# "slam" in "Islam", "radical" in "radicalization". Word-boundary regex fixes this.
+# Multi-word phrases (e.g. "illegal alien") continue to use str.count() since
+# they cannot appear as sub-strings of other words by construction.
+_SYNONYM_PATTERNS: list[tuple[re.Pattern | None, str, str, int]] = []
+
 
 # ---------------------------------------------------------------------------
 # Charged vs neutral synonym pairs
@@ -45,10 +53,15 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("swarm", "large number", 3),
     ("illegal alien", "undocumented immigrant", 3),
     ("anchor baby", "child of immigrants", 3),
+    ("migrant caravan", "group of migrants", 2),        # added: partisan vs neutral
     # Political
     ("slammed", "criticized", 2),
     ("blasted", "responded to", 2),
-    ("destroyed", "countered", 3),
+    # NOTE: "destroyed" reduced 3->2 — "hurricane destroyed homes", "flood destroyed
+    # infrastructure" are common in AP/Reuters disaster coverage; weight=3 inflated
+    # framing scores for neutral disaster reporting. Still captures political "A destroyed
+    # B's argument" usage. (bias-auditor fix)
+    ("destroyed", "countered", 2),
     ("eviscerated", "challenged", 3),
     ("ripped", "criticized", 2),
     ("torched", "denounced", 2),
@@ -64,6 +77,8 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("big tech", "technology companies", 2),
     ("bailout", "financial assistance", 2),
     ("wealth grab", "tax policy", 3),
+    ("death tax", "estate tax", 3),                    # added: charged vs neutral
+    ("job creators", "wealthy", 2),                    # added: right economic framing
     # Social
     ("radical", "progressive", 2),
     ("extremist", "activist", 3),
@@ -71,7 +86,66 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("cancel culture", "public accountability", 3),
     ("indoctrination", "education", 3),
     ("propaganda", "messaging", 3),
+    ("anarchist", "protester", 2),                     # added: civil unrest framing
+    # Abortion
+    ("baby killing", "abortion", 3),                   # added: charged vs neutral
+    ("pro-abortion", "pro-choice", 2),                 # added: framing of opposing view
+    ("unborn child", "fetus", 2),                      # added: moral loading
+    # Media / information
+    ("fake news", "misinformation", 2),                # added: partisan media attack term
+    ("enemy of the people", "press criticism", 3),     # added: anti-press framing
+    # Healthcare
+    ("death panels", "end-of-life care", 3),           # added: ACA-era charged term
+    ("socialized medicine", "universal healthcare", 2), # added: charged vs descriptive
+    # Climate
+    ("climate alarmism", "climate concern", 2),        # added: dismissive framing
+    ("climate hoax", "climate skepticism", 3),         # added: denial framing
+    # Race / equity
+    ("reverse discrimination", "affirmative action", 2), # added: charged framing
+    ("race hustler", "civil rights advocate", 3),      # added: dismissive vs neutral
+    # Geopolitical / state-media framing pairs
+    # These catch the actual charged language that state broadcasters (RT,
+    # CGTN, Sputnik, Global Times, TRT World) deploy instead of Western L/R
+    # ideological vocabulary.  Both the pro-state euphemism and the adversarial
+    # charged form are listed as "charged" relative to neutral wire-service
+    # alternatives because both signal geopolitical framing intent.
+    ("special military operation", "invasion", 3),     # Kremlin euphemism for Ukraine war
+    ("western aggression", "western policy", 3),       # state-media adversarial frame
+    ("anti-russia hysteria", "criticism of russia", 3),
+    ("russophobia", "anti-russia sentiment", 2),
+    ("western hegemony", "western influence", 2),
+    ("proxy war", "conflict", 2),                      # used by RT/Sputnik for Ukraine
+    ("puppet regime", "government", 3),                # state-media delegitimization
+    ("neo-nazis", "ukrainian forces", 3),              # Kremlin framing of Ukraine
+    ("denazification", "military campaign", 3),        # Kremlin justification phrase
+    ("bioweapons labs", "research facilities", 3),     # RT/Sputnik disinformation frame
+    ("nato expansion", "nato enlargement", 2),         # charged vs neutral formulation
+    ("collective west", "western countries", 2),       # RT/Sputnik us-vs-them framing
+    ("reunification", "annexation", 3),                # CCP framing of Taiwan/territories
+    ("separatists", "independence movement", 2),       # state framing of dissent
+    ("anti-china forces", "critics of china", 3),      # CGTN/Global Times frame
+    ("splittists", "independence advocates", 3),       # CCP term for Tibet/Taiwan activists
+    ("interference in internal affairs", "human rights concern", 3),
+    ("century of humiliation", "historical grievance", 2),  # nationalist framing
+    ("hostile forces", "opposition groups", 2),        # CCP/state media catch-all
+    ("western smear", "western criticism", 3),         # CGTN dismissive framing
+    ("genocide allegations", "human rights abuses", 2),    # state denial framing
 ]
+
+# ---------------------------------------------------------------------------
+# Build pre-compiled word-boundary patterns for SYNONYM_PAIRS.
+# Single-word charged terms get a \b-bounded regex (prevents substring FPs).
+# Multi-word phrases get pat=None (use str.count, which is safe for phrases).
+# Populated at module load time — zero per-call overhead.
+# ---------------------------------------------------------------------------
+for _charged, _neutral, _intensity in SYNONYM_PAIRS:
+    if " " not in _charged:
+        _pat: re.Pattern | None = re.compile(
+            r"\b" + re.escape(_charged) + r"\b", re.IGNORECASE
+        )
+    else:
+        _pat = None
+    _SYNONYM_PATTERNS.append((_pat, _charged, _neutral, _intensity))
 
 # ---------------------------------------------------------------------------
 # One-sided sourcing indicators
@@ -146,6 +220,11 @@ def _keyword_emphasis_score(text: str) -> float:
     """
     Check for emotionally charged synonyms vs neutral alternatives.
     Returns 0-100.
+
+    Uses word-boundary regex for single-word terms to prevent substring
+    false positives: "killed" in "unskilled", "mob" in "mobilize",
+    "riot" in "patriot", "slam" in "Islam", "radical" in "radicalization".
+    Multi-word phrases use str.count() (cannot be substrings by construction).
     """
     text_lower = text.lower()
     word_count = len(text_lower.split())
@@ -155,8 +234,13 @@ def _keyword_emphasis_score(text: str) -> float:
     charged_score = 0
     total_pairs_found = 0
 
-    for charged, neutral, intensity in SYNONYM_PAIRS:
-        charged_count = text_lower.count(charged)
+    for pat, charged, neutral, intensity in _SYNONYM_PATTERNS:
+        if pat is not None:
+            # Single-word: use word-boundary regex to avoid substring matches
+            charged_count = len(pat.findall(text_lower))
+        else:
+            # Multi-word phrase: substring search is safe
+            charged_count = text_lower.count(charged)
         if charged_count > 0:
             charged_score += charged_count * intensity
             total_pairs_found += charged_count
