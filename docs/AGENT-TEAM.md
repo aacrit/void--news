@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-20 (rev 4)
+Last updated: 2026-03-21 (rev 5)
 
 ## Philosophy
 
@@ -242,3 +242,13 @@ These are read-only advisory agents — they propose, they don't implement.
 | `update-docs` | Infrastructure | CLAUDE.md + AGENT-TEAM.md updated to reflect: ranking v3.3 (rebalanced weights, composition-aware tier scoring, consequentiality gate, soft confidence curve, lead gate top-5/3+, topic diversity cap 2 per section); clustering v2 (similarity threshold 0.2, doc length 500 words, Phase 2 entity-overlap merge pass via merge_related_clusters); multi-section cross-listing (sections[] column on story_clusters, migration 011, GIN index, frontend .contains() filter); source count corrected 200→222; migration count updated 009→011 |
 
 **Files modified this session:** `CLAUDE.md`, `docs/AGENT-TEAM.md`
+
+### 2026-03-21 — Ranking v5.1, Gemini reasoning, Deep Dive redesign
+
+**Agents run:** `update-docs`
+
+| Agent | Division | Outcome |
+|-------|----------|---------|
+| `update-docs` | Infrastructure | CLAUDE.md + DESIGN-SYSTEM.md + AGENT-TEAM.md updated to reflect: ranking engine v5.1 (Gemini editorial importance 12% weight signal, US-only divergence damper 0.85x, cross-spectrum interest bonus +2.5pts, step 6c Gemini bias reasoning, step 7c editorial triage); new pipeline analyzer `gemini_reasoning.py`; migration count updated 011→013; Deep Dive redesign (seamless lede, lean spectrum above/below track, "Press Analysis ▶" collapsed trigger with BiasInspectorInline, Source Perspectives with color-coded borders, backdrop blur on desktop); new components BiasInspector, HomeContent, OpEdPage, OpinionCard; split CSS architecture (globals.css → ./styles/); DESIGN-SYSTEM.md component inventory + layout diagrams updated |
+
+**Files modified this session:** `CLAUDE.md`, `docs/DESIGN-SYSTEM.md`, `docs/AGENT-TEAM.md`

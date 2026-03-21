@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-20 (rev 5)
+Last updated: 2026-03-21 (rev 6)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -53,11 +53,11 @@ The bias engine analyzes **each article individually** across multiple axes. All
 
 All bias analysis is algorithmic/rule-based using NLP heuristics. No LLM API calls for scoring. Confidence is computed per-article based on text length, text availability, and signal strength (deviation from defaults).
 
-### Importance Ranking — v4.0
+### Importance Ranking — v5.1
 
 **Design principle: ranking is BIAS-BLIND.** Bias analysis belongs in the display layer (BiasLens, Sigil, Deep Dive), not in story selection. Stories are never boosted or penalized for political lean distribution.
 
-10-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0):
+10-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0 for deterministic path; 0.88 when Gemini editorial importance available):
 
 | Signal | Weight | Notes |
 |--------|--------|-------|
@@ -67,10 +67,14 @@ All bias analysis is algorithmic/rule-based using NLP heuristics. No LLM API cal
 | Consequentiality | 10% | Outcome/action verbs + high-authority phrase floor (70+) |
 | Institutional authority | 8% | Heads of state, supreme courts, central banks, UN Security Council |
 | Factual density | 8% | Average factual rigor; gate: <30 gets 0.88x multiplier |
-| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean range) |
+| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean range); US-only stories get 0.85x damper |
 | Perspective diversity | 6% | Editorial viewpoint spread; bias-blind; consensus floor |
 | Geographic impact | 6% | Geopolitically weighted: G20/P5 nations score 3x |
 | Coverage velocity | 6% | Sources added in last 6h; diminishing returns curve |
+
+**v5.0 addition — Gemini editorial importance**: When available, a Gemini-assigned 1-10 editorial importance score adds a 12% weight signal; all 10 deterministic signals scale to 88%. Backward-compatible: pure deterministic scoring when Gemini unavailable.
+
+**v5.1 additions**: US-only divergence damper (0.85x on divergence contribution when `sections == ["us"]`) and cross-spectrum interest bonus (+2.5 pts max when lean scores show genuine left-right split across 3+ articles, non-US-only clusters only).
 
 Tier diversity scoring (composition-aware, unchanged from v3.3):
 
@@ -125,8 +129,10 @@ Political lean baseline uses a **7-point spectrum**: far-left, left, center-left
                     sharing 2+ named entities within 72h time window
  6b. RE-FRAME     — Re-run framing analysis with cluster context (omission detection across articles)
      ORPHANS      — Wrap unclustered articles in single-article clusters so they appear in feed
- 7b. SUMMARIZE    — Gemini Flash: 150-250 word briefings + consensus/divergence for 3+-source clusters (25-call cap)
- 7.  CATEGORIZE & RANK — Auto-tag topics (3-article majority vote) + v3.3 importance ranking (9 signals + confidence curve); topic diversity re-rank (max 2 per category in top 10 per section)
+ 6c. GEMINI REASON — Gemini bias reasoning: contextual score adjustments on low-confidence/high-divergence clusters (separate 25-call budget); mutates article_bias_map in place
+ 7b. SUMMARIZE    — Gemini Flash: 150-250 word briefings + consensus/divergence + editorial_importance (1-10) for 3+-source clusters (25-call cap)
+ 7.  CATEGORIZE & RANK — Auto-tag topics (3-article majority vote) + v5.1 importance ranking (10 signals + confidence curve + optional Gemini editorial importance); topic diversity re-rank (max 2 per category in top 10 per section)
+ 7c. EDITORIAL TRIAGE — Gemini reorders top 10 per section using editorial importance scores when available
  8.  STORE        — Write clusters with enrichment data; sections[] array computed from all editions covered
  9.  ENRICH       — Compute cluster-level aggregated bias data, consensus/divergence points
  9b. ARTICLE CATS — Populate article_categories junction table
@@ -215,12 +221,15 @@ Single Next.js project with **device-optimized layouts** sharing the same data l
 
 #### 2. Deep Dive Dashboard
 - Story clustering view — same event from multiple sources side-by-side
-- Full multi-axis bias breakdown with visualizations
-- Framing comparison: what each source emphasizes/omits
-- Coverage distribution charts (which outlet types are covering this?)
-- Source credibility context
-- **Desktop**: split-screen comparison, inline charts
-- **Mobile**: full-screen with swipe between sources, vertically stacked charts
+- Summary flows as seamless article lede (no "What happened" heading)
+- Source lean spectrum: favicons positioned above/below a gradient track by lean score
+- "Press Analysis ▶" trigger: small button below the spectrum, collapsed by default; click/tap expands BiasInspectorInline (4-axis scorecard with Gemini reasoning per axis, each axis collapsible for sub-scores)
+- Compact "Source Perspectives" section: consensus/divergence combined, color-coded left borders (green = agree, red = diverge)
+- Coverage distribution view (tier breakdown bars) + per-source BiasLens
+- Backdrop blur (6px) on desktop when Deep Dive opens
+- Progressive disclosure: compact on arrival, press analysis hidden behind expand arrow
+- **Desktop**: side panel (50% width), backdrop blur on main feed
+- **Mobile**: full-screen modal sliding up from bottom
 
 ### Interaction Model
 - **On arrival**: clean, minimal, newspaper-like. Headlines and importance.
@@ -483,6 +492,7 @@ void-news/
 │   │   ├── opinion_detector.py
 │   │   ├── factual_rigor.py
 │   │   ├── framing.py             # Cluster-aware: accepts cluster_articles for omission detection
+│   │   ├── gemini_reasoning.py    # Optional: Gemini contextual score adjustments (step 6c); mutates article_bias_map
 │   │   └── topic_outlet_tracker.py # Axis 6: EMA-based per-source per-topic tracking
 │   ├── clustering/                # Story deduplication and grouping
 │   │   ├── deduplicator.py        # TF-IDF + cosine similarity content dedup
@@ -491,7 +501,7 @@ void-news/
 │   │   ├── gemini_client.py       # API client with rate limiting + call caps
 │   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence generation
 │   ├── categorizer/               # Auto-topic classification
-│   ├── ranker/                    # Importance/impact scoring (v3.3: 9 signals + confidence curve + consequentiality gate + lead gate)
+│   ├── ranker/                    # Importance/impact scoring (v5.1: 10 signals + confidence curve + optional Gemini editorial importance + US-only divergence damper)
 │   ├── utils/                     # Shared utilities, Supabase client, nlp_shared
 │   ├── main.py                    # Pipeline orchestrator (12 steps + cleanup)
 │   ├── rerank.py                  # Standalone re-ranker: apply formula changes without full pipeline run
@@ -499,9 +509,13 @@ void-news/
 ├── frontend/                      # Next.js 16 App Router
 │   ├── app/
 │   │   ├── components/            # React components
+│   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; exports BiasInspectorInline (rendered inside DeepDive "Press Analysis ▶" expandable section), BiasInspectorTrigger, BiasInspectorPanel (backward-compat); each axis collapsible with Gemini reasoning text
 │   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism (active bias viz)
-│   │   │   ├── DeepDive.tsx       # Slide-in panel: consensus/divergence, source coverage
+│   │   │   ├── DeepDive.tsx       # Slide-in panel: seamless lede, lean spectrum, "Press Analysis ▶" collapsible trigger (BiasInspectorInline), Source Perspectives, source coverage; backdrop blur on desktop
+│   │   │   ├── HomeContent.tsx    # News feed container (page logic, edition switching, lean filter, opinion mode)
 │   │   │   ├── LeadStory.tsx      # Hero story card
+│   │   │   ├── OpEdPage.tsx       # Opinion/editorial feed view
+│   │   │   ├── OpinionCard.tsx    # Op-ed story card
 │   │   │   ├── StoryCard.tsx      # Standard story card
 │   │   │   ├── NavBar.tsx         # Section navigation (World/US)
 │   │   │   ├── FilterBar.tsx      # Category filter chips
@@ -526,7 +540,8 @@ void-news/
 │   │   ├── sources/
 │   │   │   └── page.tsx           # /sources: spectrum visualization + source list with favicons
 │   │   ├── layout.tsx             # Root layout with fonts and metadata
-│   │   └── globals.css            # All styles (tokens, layout, components, animations)
+│   │   ├── globals.css            # Style entry point: @imports from ./styles/ in cascade order
+│   │   └── styles/                # Split CSS: tokens.css, layout.css, typography.css, components.css, animations.css, responsive.css, spectrum.css
 │   ├── public/
 │   ├── package.json               # Next.js 16.1.7, React 19.2.3
 │   └── next.config.ts
@@ -542,7 +557,7 @@ void-news/
 │   └── sources.json               # 222 curated sources with RSS URLs and metadata (7-point lean spectrum)
 └── supabase/
     ├── config.toml
-    └── migrations/                # Database schema migrations (001-011)
+    └── migrations/                # Database schema migrations (001-013)
 ```
 
 ## MVP Scope
@@ -550,7 +565,7 @@ void-news/
 ### Phase 1 — Foundation (Week 1-2) -- COMPLETE
 - [x] Project scaffolding (Next.js, Python pipeline, Supabase)
 - [x] Source list curation (222 sources with RSS/scrape configs; 7-point lean spectrum)
-- [x] Supabase schema setup (all tables + migrations 001-011)
+- [x] Supabase schema setup (all tables + migrations 001-013)
 - [x] Basic RSS fetcher (feedparser)
 - [x] Basic web scraper (BeautifulSoup)
 - [x] Article storage pipeline
@@ -566,7 +581,7 @@ void-news/
 - [x] Factual rigor scoring (with rationale)
 - [x] Framing analysis (cluster-aware omission detection, with rationale)
 - [x] Auto-categorization (topic tagging, 3-article majority vote) + article_categories junction table populated
-- [x] Importance/impact ranking (v3.3: 9 signals + confidence curve + consequentiality gate + composition-aware tier scoring)
+- [x] Importance/impact ranking (v5.1: 10 signals + confidence curve + optional Gemini editorial importance + US-only divergence damper + cross-spectrum bonus)
 - [x] Multi-section cross-listing (sections[] array on story_clusters, migration 011, frontend queries via .contains())
 - [x] Confidence scoring per article
 - [x] Consensus/divergence generation per cluster
@@ -590,10 +605,12 @@ void-news/
 - [ ] GitHub Pages deployment
 
 ### Phase 4 — Deep Dive Dashboard (Week 9-11) -- IN PROGRESS
-- [x] Deep Dive Dashboard view (slide-in panel, mobile full-screen)
+- [x] Deep Dive Dashboard view (slide-in panel, mobile full-screen; backdrop blur on desktop)
 - [x] Multi-source story comparison (per-source BiasLens in Deep Dive)
 - [x] Coverage distribution view (tier breakdown bars)
-- [x] Consensus/divergence display (pipeline-generated, read from JSONB)
+- [x] Consensus/divergence display combined in "Source Perspectives" section (pipeline-generated, read from JSONB)
+- [x] Press Analysis inline (BiasInspectorInline): 4-axis scorecard with Gemini reasoning per axis, collapsible rows; hidden behind "Press Analysis ▶" trigger below lean spectrum
+- [x] Lean spectrum + Press Analysis stacked vertically; progressive disclosure (spectrum visible, press analysis collapsed by default)
 - [ ] Framing analysis display (detailed framing comparison)
 - [ ] Source credibility context panels
 
