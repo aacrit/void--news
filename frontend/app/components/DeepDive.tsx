@@ -352,14 +352,14 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   /* ---- Close with animation — sequenced: content fades first, then panel slides out */
   const handleClose = useCallback(() => {
     setContentVisible(false);
-    // Content fades out over 150ms, then panel slides out
+    // Content fades out over 120ms, then panel slides out
     setTimeout(() => {
       setIsVisible(false);
       setTimeout(() => {
         previousFocusRef.current?.focus();
         onClose();
-      }, 400);
-    }, 150);
+      }, 600); // Match the 600ms panel transition
+    }, 120); // Slightly faster content fade for snappier feel
   }, [onClose]);
 
   return (
@@ -371,7 +371,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         className="deep-dive-backdrop"
         style={{
           opacity: isVisible ? 1 : 0,
-          transition: "opacity 300ms var(--ease-out)",
+          transition: "opacity 400ms var(--ease-out)",
         }}
       />
 
@@ -388,15 +388,18 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
              Both open and close use the same axis — symmetric animation.
              Spring easing gives physical weight to the panel.
              opacity transitions in sync: instant-on (0ms) when opening so content
-             isn't invisible during slide-in; delayed-off (500ms) when closing so
-             it stays visible during the slide-out transform. */
+             isn't invisible during slide-in; delayed-off (600ms) when closing so
+             it stays visible during the slide-out transform.
+             box-shadow grows in as the panel arrives (200ms delay on open),
+             and fades quickly on close. */
           transform: isVisible
             ? "translate(0, 0)"
             : isDesktop ? "translateX(100%)" : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
+          boxShadow: isVisible ? "var(--shadow-e3)" : "none",
           transition: isVisible
-            ? "transform 500ms var(--spring), opacity 0ms"
-            : "transform 500ms var(--spring), opacity 0ms 500ms",
+            ? "transform 600ms var(--spring), opacity 0ms, box-shadow 400ms var(--ease-out) 200ms"
+            : "transform 600ms var(--spring), opacity 0ms 600ms, box-shadow 200ms var(--ease-out)",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
@@ -450,7 +453,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
           {/* ---- Analysis row: Sigil + Spectrum + Press trigger in one line ---- */}
           {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Bias analysis" className={`dd-analysis-row anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "60ms" }}>
+            <section aria-label="Bias analysis" className={`dd-analysis-row anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "40ms" }}>
 
               {/* Sigil — compact bias mark */}
               {story.sigilData && !story.sigilData.pending && (
@@ -547,7 +550,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           )}
 
           {/* ---- Summary — flows as article lede, after spectrum -------------- */}
-          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "150ms" }}>
+          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "120ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
               <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
                 {story.summary}
@@ -563,7 +566,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
             (Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0)
           ) && (
-            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "200ms" }}>
+            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "180ms" }}>
               <div className="dd-perspectives-grid">
                 <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
 

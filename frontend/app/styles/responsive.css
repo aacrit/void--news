@@ -396,6 +396,8 @@
     background-color: var(--border-subtle);
     margin: var(--space-2) auto var(--space-1);
     opacity: 0.6;
+    /* Brief width-expansion entrance that draws attention to the handle */
+    animation: dragIndicatorReveal 500ms var(--ease-out) 300ms both;
   }
 
   /* Hide "Back to feed" text, keep arrow */
@@ -434,7 +436,9 @@
   }
 
   /* Simpler, faster section animations on mobile — ease-out instead of spring
-     avoids spring overshoot jank on low-frame-rate GPU compositing */
+     avoids spring overshoot jank on low-frame-rate GPU compositing.
+     translateY(8px) intentionally smaller than desktop (16px): less travel
+     reduces perceived jank on lower-frame-rate devices. */
   .anim-dd-section {
     transform: translateY(8px);
     transition:
