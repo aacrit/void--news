@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-21 (rev 6)
+Last updated: 2026-03-21 (rev 7)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -221,15 +221,20 @@ Single Next.js project with **device-optimized layouts** sharing the same data l
 
 #### 2. Deep Dive Dashboard
 - Story clustering view — same event from multiple sources side-by-side
-- Summary flows as seamless article lede (no "What happened" heading)
+- Summary flows as seamless article lede (no "What happened" heading); viewport-responsive height via `clamp(12em, 25vh, 22em)` with "Read more" toggle at 600+ chars
+- Analysis row (`dd-analysis-row`): Sigil + Spectrum + Press Analysis trigger in a single flex row on desktop; stacks vertically on mobile
 - Source lean spectrum: favicons positioned above/below a gradient track by lean score
-- "Press Analysis ▶" trigger: small button below the spectrum, collapsed by default; click/tap expands BiasInspectorInline (4-axis scorecard with Gemini reasoning per axis, each axis collapsible for sub-scores)
-- Compact "Source Perspectives" section: consensus/divergence combined, color-coded left borders (green = agree, red = diverge)
+- "Press Analysis ▶" trigger: anchored to analysis row, collapsed by default; expand via `grid-template-rows 0fr→1fr` (no max-height jank); opens BiasInspectorInline (4-axis scorecard with Gemini reasoning per axis, each axis collapsible for sub-scores). Press Analysis expand uses `var(--ease-out)` easing, `var(--dur-morph)` duration. Mobile overrides to 300ms ease-out.
+- "Source Perspectives" section: Agreement | Divergence in a 2-column grid on desktop; collapses to single column on mobile. Green left borders (agree), red left borders (diverge)
 - Coverage distribution view (tier breakdown bars) + per-source BiasLens
-- Backdrop blur (6px) on desktop when Deep Dive opens
+- Slot-machine cascade animation: Deep Dive content sections reveal with `translateY(12px) → 0` stagger. Desktop: `opacity 200ms ease-out, transform 350ms spring`. Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring — avoids GPU jitter on low-end devices).
+- Content reveal delays: 120ms on desktop (lets panel slide partially in first), 30ms on mobile (prevents blank header flash)
+- Panel flash prevention: `opacity: 0` CSS safety net on `.deep-dive-panel` before JS takes over; asymmetric JS transition (opacity instant-on when opening, delayed when closing)
+- Backdrop blur 6px on desktop, 2px on mobile (expensive on low-end devices)
+- iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator pill, `-webkit-overflow-scrolling: touch` momentum scrolling, `padding-bottom: safe-area-inset-bottom` for home indicator
 - Progressive disclosure: compact on arrival, press analysis hidden behind expand arrow
-- **Desktop**: side panel (50% width), backdrop blur on main feed
-- **Mobile**: full-screen modal sliding up from bottom
+- **Desktop**: side panel (55% width, min-width 560px, no max-width cap), backdrop blur 6px on main feed
+- **Mobile**: full-screen modal sliding up from bottom, iOS bottom-sheet style
 
 ### Interaction Model
 - **On arrival**: clean, minimal, newspaper-like. Headlines and importance.
@@ -517,7 +522,7 @@ void-news/
 │   │   │   ├── OpEdPage.tsx       # Opinion/editorial feed view
 │   │   │   ├── OpinionCard.tsx    # Op-ed story card
 │   │   │   ├── StoryCard.tsx      # Standard story card
-│   │   │   ├── NavBar.tsx         # Section navigation (World/US)
+│   │   │   ├── NavBar.tsx         # Section navigation (World/US/India); dateline row with compact edition badge pills, time-of-day badge (Morning/Evening), regional timestamps (US: "9 AM ET", World: "HH:MM UTC", India: "HH:MM IST"); India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only)
 │   │   │   ├── FilterBar.tsx      # Category filter chips
 │   │   │   ├── RefreshButton.tsx  # Refresh with last-updated timestamp
 │   │   │   ├── ThemeToggle.tsx    # Light/dark mode
