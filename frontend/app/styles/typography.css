@@ -99,6 +99,12 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--fg-tertiary);
+  display: inline-block;
+  transition: transform 200ms var(--spring-bouncy), background-color 150ms var(--ease-out);
+}
+
+.category-tag:hover {
+  transform: scale(1.05);
 }
 
 .category-tag--lead {
