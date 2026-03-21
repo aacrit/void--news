@@ -1703,7 +1703,7 @@ def main():
 
                 # Determine if this is an audio run (2x/day: morning + evening)
                 utc_hour = datetime.now(timezone.utc).hour
-                should_generate_audio = utc_hour in (5, 6, 7, 17, 18, 19)
+                should_generate_audio = utc_hour in (5, 6, 7, 11, 12, 17, 18, 19, 23, 0)
 
                 for edition, brief in brief_results.items():
                     brief_row = {
