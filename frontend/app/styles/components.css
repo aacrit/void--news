@@ -3443,6 +3443,12 @@
   overflow: hidden;
 }
 
+/* ---- Deep Dive: Drag indicator (mobile bottom-sheet handle) ------------ */
+/* Hidden by default on desktop — shown via responsive.css mobile override */
+.dd-drag-indicator {
+  display: none;
+}
+
 /* ---- BiasInspectorInline — inline scorecard in Deep Dive content ------- */
 .bi-inline {
   display: flex;

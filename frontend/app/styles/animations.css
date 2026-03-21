@@ -164,11 +164,12 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — casino slot-machine cascade reveal.
-   Each section clips from below and snaps into place with spring overshoot. */
+/* Deep Dive content section stagger — cascade reveal on open.
+   GPU-only: translateY only (no scale) to avoid layout recalculations.
+   Desktop: spring easing for physical weight. Mobile: ease-out for smoothness. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(12px) scale(0.98);
+  transform: translateY(12px);
   transition:
     opacity 200ms var(--ease-out),
     transform 350ms var(--spring);
@@ -176,7 +177,7 @@
 
 .anim-dd-section--visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 /* Filter chip active spring press feedback */
