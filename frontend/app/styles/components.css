@@ -3329,12 +3329,67 @@
   .bi-panel__drawer {
     transition: none !important;
   }
+
+  .dd-interaction-cue__dot {
+    animation: none;
+    opacity: 0.5;
+  }
 }
 
 /* ---- Deep Dive: Summary text — editorial lede style -------------------- */
 .dd-summary-text {
   color: var(--fg-secondary);
   font-family: var(--font-structural);
+}
+
+/* ---- Deep Dive: Subtle interaction cue --------------------------------- */
+/* Faint hint that encourages tap/hover to explore the analysis.
+   Uses a pulsing dot pattern — 1920s typographic ornament feel. */
+.dd-interaction-cue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0 var(--space-3);
+  opacity: 0.45;
+  transition: opacity var(--dur-normal) var(--ease-out);
+}
+
+.dd-interaction-cue__text {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.dd-interaction-cue__dots {
+  display: flex;
+  gap: 3px;
+}
+
+.dd-interaction-cue__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--fg-tertiary);
+  animation: cue-pulse 2s ease-in-out infinite;
+}
+
+.dd-interaction-cue__dot:nth-child(2) { animation-delay: 0.3s; }
+.dd-interaction-cue__dot:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes cue-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Hide cue once user has interacted with analysis section */
+.dd-analysis-grid:has(.bi-axis__header--expanded) + .dd-interaction-cue,
+.dd-analysis-grid:hover + .dd-interaction-cue {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
 }
 
 /* ---- Deep Dive: Analysis grid (lean spectrum + press analysis) ---------- */
