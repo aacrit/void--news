@@ -1,82 +1,80 @@
 # void --news
 
-Last updated: 2026-03-21 (rev 7)
+Last updated: 2026-03-21 (rev 8)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
-A modern news aggregation platform with a sophisticated, multi-dimensional bias analysis engine. Built from first principles to make bias analysis free, central, and per-article — not per-outlet. Every source is curated for credibility. Covers World News and US News with a 6-axis rule-based NLP approach that goes far beyond simple left/center/right labels.
+A modern news aggregation platform with per-article, 6-axis rule-based NLP bias analysis. Every source is curated for credibility. Covers World, US, and India editions.
 
 ## Architecture
 
 ```
-GitHub Actions (2x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
+GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
 ```
 
-- **No backend server.** The entire system runs serverless.
-- **Python pipeline** runs on GitHub Actions (morning + evening), handles ingestion, NLP analysis, and writes results to Supabase.
-- **Next.js frontend** is statically exported and hosted on GitHub Pages. Reads directly from Supabase client-side.
+- **No backend server.** Fully serverless.
+- **Python pipeline** runs on GitHub Actions, handles ingestion, NLP analysis, writes to Supabase.
+- **Next.js frontend** is statically exported, hosted on GitHub Pages, reads Supabase client-side.
 - **Supabase** is the single data layer: articles, bias scores, source metadata, story clusters.
 
 ## Tech Stack
 
-| Layer          | Technology                                    |
-|----------------|-----------------------------------------------|
-| Ingestion      | Python, feedparser, BeautifulSoup/Scrapy      |
-| NLP/Bias Engine| Python, spaCy, NLTK, TextBlob                |
-| Summarization  | Gemini 2.5 Flash (free tier, google-genai SDK)|
-| Database       | Supabase (PostgreSQL)                         |
-| Frontend       | Next.js 16 (App Router), React 19, TypeScript  |
-| Animation      | Motion One v11 (spring physics, ~6.5KB CDN)   |
-| Styling        | CSS custom properties, mobile-first, clamp()  |
-| Fonts          | Playfair Display (editorial), Inter (structural), JetBrains Mono (data) |
-| Hosting        | GitHub Pages (frontend), GitHub Actions (pipeline) |
+| Layer | Technology |
+|-------|------------|
+| Ingestion | Python, feedparser, BeautifulSoup/Scrapy |
+| NLP/Bias Engine | Python, spaCy, NLTK, TextBlob |
+| Summarization | Gemini 2.5 Flash (free tier, google-genai SDK) |
+| Database | Supabase (PostgreSQL) |
+| Frontend | Next.js 16 (App Router), React 19, TypeScript |
+| Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
+| Styling | CSS custom properties, mobile-first, clamp() |
+| Fonts | Playfair Display (editorial), Inter (structural), JetBrains Mono (data) |
+| Hosting | GitHub Pages (frontend), GitHub Actions (pipeline) |
 
 ## Core Principles
 
 ### Zero Operational Cost
-- No paid APIs. All bias analysis is rule-based NLP running locally in the pipeline.
-- Gemini 2.5 Flash free tier for cluster summarization (1500 RPD limit, pipeline uses ~50 RPD = 25 calls/run × 2 runs).
-- GitHub Actions free tier (2000 min/month private, unlimited public).
-- Supabase free tier for database.
-- GitHub Pages free tier for hosting.
+- No paid APIs. All bias analysis is rule-based NLP running locally.
+- Gemini 2.5 Flash free tier: ~156 RPD used (10.4% of 1500 RPD limit). 6x daily runs × ~26 calls/run.
+- GitHub Actions, Supabase, GitHub Pages — all free tier.
 - Motion One via CDN importmap (no npm install needed).
 
 ### Bias Analysis — The Differentiator
-The bias engine analyzes **each article individually** across multiple axes. All 6 axes are implemented. Axes 1-5 return both a numeric score (0-100) and a structured rationale dict with sub-scores and evidence, stored as JSONB for hover-popup display in the frontend's "Three Lenses" visualization. Axis 6 tracks longitudinal trends per source per topic.
+Per-article analysis across 6 axes. Axes 1-5 return score (0-100) + structured rationale dict (JSONB) for frontend hover display. Axis 6 tracks longitudinal trends per source per topic.
 
-1. **Political Lean** — left/center/right spectrum based on keyword lexicons, entity sentiment (spaCy NER + TextBlob), framing phrases, source baseline blending (0.85 text + 0.15 baseline). Rationale includes top left/right keywords, framing phrases found, entity sentiments.
-2. **Sensationalism Score** — headline clickbait pattern matching, superlative/urgency/hyperbole density, TextBlob sentiment extremity, short-sentence ratio, measured-phrase inverse signal. Rationale includes headline_score, body_score, clickbait_signals, per-100-word densities.
-3. **Opinion vs. Reporting** — first-person pronouns, TextBlob subjectivity, modal/prescriptive language, hedging, attribution density (inverse), metadata markers (URL/section), rhetorical questions, unattributed value judgments. Rationale includes all 8 sub-scores, classification label, dominant signals.
-4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs), organization citations, data/statistics patterns, direct quote density, reference/link counting, attribution specificity vs. vague sourcing penalties. Rationale includes named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
-5. **Framing Analysis** — connotation analysis (entity-sentence sentiment), charged synonym detection (50+ pairs), omission detection (one-sided sourcing + cross-article entity comparison when cluster context available), headline-body sentiment divergence, passive voice (evasive patterns + spaCy dep parsing). Rationale includes all 5 sub-scores and has_cluster_context flag.
-6. **Per-Topic Per-Outlet Tracking** — EMA-based tracking (alpha=0.3) of how each source's lean, sensationalism, and opinion scores vary by topic category. Stored in `source_topic_lean` table. Updated as pipeline step 9c after each run.
+1. **Political Lean** — keyword lexicons, entity sentiment (spaCy NER + TextBlob), framing phrases, source baseline blending (0.85 text + 0.15 baseline). Rationale: top left/right keywords, framing phrases, entity sentiments.
+2. **Sensationalism** — headline clickbait patterns, superlative/urgency density, TextBlob extremity, short-sentence ratio, measured-phrase inverse. Rationale: headline_score, body_score, clickbait_signals.
+3. **Opinion vs. Reporting** — first-person pronouns, TextBlob subjectivity, modal language, hedging, attribution density, metadata markers, rhetorical questions. Rationale: 8 sub-scores, classification label, dominant signals.
+4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs), organization citations, data patterns, direct quotes, attribution specificity vs. vague sourcing penalties. Rationale: named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
+5. **Framing Analysis** — connotation analysis, charged synonym detection (50+ pairs), omission detection (one-sided sourcing + cross-article entity comparison), headline-body divergence, passive voice. Rationale: 5 sub-scores + has_cluster_context flag.
+6. **Per-Topic Per-Outlet Tracking** — EMA (alpha=0.3) of lean/sensationalism/opinion per source per topic. Stored in `source_topic_lean`. Updated at step 9c.
 
-All bias analysis is algorithmic/rule-based using NLP heuristics. No LLM API calls for scoring. Confidence is computed per-article based on text length, text availability, and signal strength (deviation from defaults).
+No LLM API calls for scoring. Confidence computed per-article: text length + availability + signal strength.
 
 ### Importance Ranking — v5.1
 
-**Design principle: ranking is BIAS-BLIND.** Bias analysis belongs in the display layer (BiasLens, Sigil, Deep Dive), not in story selection. Stories are never boosted or penalized for political lean distribution.
+**Ranking is BIAS-BLIND.** Bias analysis belongs in the display layer, not story selection.
 
-10-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0 for deterministic path; 0.88 when Gemini editorial importance available):
+10-signal formula in `pipeline/ranker/importance_ranker.py`. Deterministic weights sum to 1.0 (0.88 when Gemini editorial importance available):
 
 | Signal | Weight | Notes |
 |--------|--------|-------|
-| Source coverage breadth | 20% | Tier-weighted diminishing returns: independent 1.5x, international 1.2x, us_major 1.0x |
+| Source coverage breadth | 20% | Tier-weighted: independent 1.5x, international 1.2x, us_major 1.0x |
 | Story maturity | 16% | recency × log2(1 + source_count); rewards "recent AND thoroughly reported" |
-| Tier diversity | 13% | Composition-aware: us_major presence explicitly rewarded |
+| Tier diversity | 13% | Composition-aware; us_major presence explicitly rewarded |
 | Consequentiality | 10% | Outcome/action verbs + high-authority phrase floor (70+) |
 | Institutional authority | 8% | Heads of state, supreme courts, central banks, UN Security Council |
-| Factual density | 8% | Average factual rigor; gate: <30 gets 0.88x multiplier |
-| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean range); US-only stories get 0.85x damper |
-| Perspective diversity | 6% | Editorial viewpoint spread; bias-blind; consensus floor |
-| Geographic impact | 6% | Geopolitically weighted: G20/P5 nations score 3x |
-| Coverage velocity | 6% | Sources added in last 6h; diminishing returns curve |
+| Factual density | 8% | Avg factual rigor; gate: <30 → 0.88x |
+| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean); US-only → 0.85x damper |
+| Perspective diversity | 6% | Editorial viewpoint spread; bias-blind |
+| Geographic impact | 6% | G20/P5 nations score 3x |
+| Coverage velocity | 6% | Sources added in last 6h; diminishing returns |
 
-**v5.0 addition — Gemini editorial importance**: When available, a Gemini-assigned 1-10 editorial importance score adds a 12% weight signal; all 10 deterministic signals scale to 88%. Backward-compatible: pure deterministic scoring when Gemini unavailable.
+**Gemini editorial importance** (v5.0): When available, 1-10 editorial score adds 12% weight; deterministic signals scale to 88%.
 
-**v5.1 additions**: US-only divergence damper (0.85x on divergence contribution when `sections == ["us"]`) and cross-spectrum interest bonus (+2.5 pts max when lean scores show genuine left-right split across 3+ articles, non-US-only clusters only).
+**v5.1 additions**: US-only divergence damper (0.85x); cross-spectrum interest bonus (+2.5 pts max when genuine left-right split across 3+ articles, non-US clusters only).
 
-Tier diversity scoring (composition-aware, unchanged from v3.3):
+Tier diversity scoring:
 
 | Tier combination | Score |
 |-----------------|-------|
@@ -89,66 +87,69 @@ Tier diversity scoring (composition-aware, unchanged from v3.3):
 | independent alone | 15 |
 
 Gates and modifiers:
-- **Confidence multiplier**: soft curve `0.65 + 0.35 * conf`; prevents large-source clusters from being crushed by poorly-scraped articles
-- **Consequentiality gate**: stories with consequentiality < 5 receive 0.82x multiplier on final score
-- **Soft-news category gate**: sports/entertainment/culture/lifestyle categories receive 0.78x multiplier
-- **Low factual rigor gate**: clusters with avg factual_rigor < 30 receive 0.88x multiplier
-- **Lead eligibility gate**: top 10 per-section positions require 3+ sources; exception for independent-tier stories with factual_rigor > 70 (investigative exclusives)
-- **Topic diversity re-rank**: max 2 per hard-news category, max 1 per soft-news category in top 10, applied per section pool
-- **Cross-edition demotion**: stories top-5 in their primary section are demoted below position 5 in secondary sections (prevents same story leading both World and US)
+- **Confidence multiplier**: `0.65 + 0.35 * conf` (soft curve)
+- **Consequentiality gate**: consequentiality < 5 → 0.82x
+- **Soft-news gate**: sports/entertainment/culture/lifestyle → 0.78x
+- **Low factual rigor gate**: avg factual_rigor < 30 → 0.88x
+- **Lead eligibility gate**: top 10 per-section require 3+ sources; exception: independent investigative exclusives (factual_rigor > 70)
+- **Topic diversity re-rank**: max 2 per hard-news category, max 1 per soft-news in top 10 per section pool
+- **Cross-edition demotion**: top-5 in primary section demoted below pos 5 in secondary sections
+- **Same-event cap**: max 3 per event (Iran/Ukraine/Gaza/Taiwan)
+- **Deliberation dampener**: 0.7x for "considers"/"weighs"/"discusses"
+- **Tier concentration penalty**: 0.85x when >70% same tier
 
-`pipeline/rerank.py` — standalone script to re-apply the formula to existing clusters without a full pipeline run.
-
-Source map keyed by both slug and db_id (UUID) to prevent source resolution mismatches.
+`pipeline/rerank.py` — standalone re-ranker without full pipeline run. Source map keyed by slug + db_id (UUID).
 
 ### Cluster Summarization (Gemini Flash)
-Cluster headlines, summaries, and consensus/divergence points are generated by **Gemini 2.5 Flash** (free tier). Only high-value clusters qualify (3+ sources), processed in descending source-count order. Hard-capped at **25 API calls per pipeline run** (50 RPD = 3.3% of free limit). Summaries are 150-250 word comprehensive briefings; `max_output_tokens=8192` (Gemini 2.5 Flash uses thinking tokens internally). Falls back to rule-based selection (best article title/summary) when Gemini is unavailable or cap is reached.
+3+-source clusters only, processed descending source-count. Hard cap: **25 API calls per run** (6 runs/day = 150 RPD + Gemini reasoning budget). Summaries: 250-350 words. `max_output_tokens=8192`. Falls back to rule-based when unavailable or cap reached.
 
-**Gemini Voice architecture** (`cluster_summarizer.py`): Uses a persistent `_SYSTEM_INSTRUCTION` (editorial role, journalistic voice constraints) passed via `generate_json(system_instruction=...)` alongside a `_USER_PROMPT_TEMPLATE` for per-cluster context. A `_PROHIBITED_TERMS` frozenset (26 terms) and `_check_quality()` post-generation validator enforce output quality — source slugs are rendered as tier labels (e.g., "major US outlet") in prompts to prevent brand bias. `generate_json()` in `gemini_client.py` accepts an optional `system_instruction` parameter (backward-compatible, defaults to None).
+**Gemini Voice** (`cluster_summarizer.py`): `_SYSTEM_INSTRUCTION` (editorial role) + `_USER_PROMPT_TEMPLATE` per cluster. `_PROHIBITED_TERMS` frozenset (26 terms) + `_check_quality()` validator enforce output. Source names used directly (not tier labels — per feedback). `generate_json()` in `gemini_client.py` accepts optional `system_instruction` (backward-compatible).
+
+**Op-eds** (opinion_fact > 50): No clustering, no Gemini. Single-article clusters using original text/headline. Author/pub shown only if available.
 
 ### Source Curation
-222 vetted sources organized in three tiers:
+222 vetted sources in three tiers:
+- **Major US (49)** — AP, Reuters, NYT, WSJ, WaPo, Fox, CNN, NPR, PBS, Bloomberg, Breitbart, Newsmax, Daily Wire, etc.
+- **International (67)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
+- **Independent/Nonprofit (84+)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
 
-- **Major US Outlets (49)** — AP, Reuters, NYT, WSJ, Washington Post, Fox News, CNN, NPR, PBS, Bloomberg, Breitbart, Newsmax, Daily Wire, Washington Examiner, NY Post, etc.
-- **International Outlets (67)** — BBC, Al Jazeera, DW, France24, Reuters International, The Guardian, NHK, Mexico News Daily, The Brazilian Report, Yonhap, TRT World, RT, CGTN, etc.
-- **Independent/Nonprofit (84+)** — ProPublica, The Intercept, Bellingcat, The Markup, Center for Public Integrity, Premium Times Nigeria, RealClearPolitics, The Free Press, Epoch Times, etc.
+7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.15:1 (61 left : 53 right : 86 center).
 
-Political lean baseline uses a **7-point spectrum**: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio is 1.15:1 (61 left-leaning : 53 right-leaning; 86 center). All sources must meet credibility criteria before inclusion.
+**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=131, World=72, India=19.
 
-## Pipeline Flow (2x Daily)
+## Pipeline Flow (6x Daily)
 
 ```
- 1.  LOAD SOURCES — Load 222 sources from data/sources.json, sync to Supabase
- 2.  PIPELINE RUN — Create pipeline_runs record for tracking
- 3.  FETCH        — Pull articles via RSS feeds from 222 sources (parallel)
- 4.  SCRAPE       — Extract full article text via web scraper (15 parallel workers), RSS summary fallback
- 4b. DEDUPLICATE  — Content-based dedup (TF-IDF + cosine similarity, threshold 0.80, Union-Find grouping)
- 5.  ANALYZE      — Run 5-axis bias scoring on each article (all return score + rationale)
- 6.  CLUSTER      — Phase 1: TF-IDF + agglomerative clustering (similarity threshold 0.2, doc length 500 words);
-                    Phase 2: entity-overlap merge pass (merge_related_clusters) consolidates micro-clusters
-                    sharing 2+ named entities within 72h time window
- 6b. RE-FRAME     — Re-run framing analysis with cluster context (omission detection across articles)
-     ORPHANS      — Wrap unclustered articles in single-article clusters so they appear in feed
- 6c. GEMINI REASON — Gemini bias reasoning: contextual score adjustments on low-confidence/high-divergence clusters (separate 25-call budget); mutates article_bias_map in place
- 7b. SUMMARIZE    — Gemini Flash: 150-250 word briefings + consensus/divergence + editorial_importance (1-10) for 3+-source clusters (25-call cap)
- 7.  CATEGORIZE & RANK — Auto-tag topics (3-article majority vote) + v5.1 importance ranking (10 signals + confidence curve + optional Gemini editorial importance); topic diversity re-rank (max 2 per category in top 10 per section)
- 7c. EDITORIAL TRIAGE — Gemini reorders top 10 per section using editorial importance scores when available
- 8.  STORE        — Write clusters with enrichment data; sections[] array computed from all editions covered
- 9.  ENRICH       — Compute cluster-level aggregated bias data, consensus/divergence points
- 9b. ARTICLE CATS — Populate article_categories junction table
- 9c. TOPIC TRACK  — Update per-source per-topic tracking (Axis 6, EMA-based)
-10.  TRUNCATE     — Truncate full_text to 300-char excerpts for IP compliance
-     CLEANUP      — Call cleanup_stale_clusters and cleanup_stuck_pipeline_runs RPCs
+ 1.  LOAD SOURCES  — 222 sources from data/sources.json, sync to Supabase
+ 2.  PIPELINE RUN  — Create pipeline_runs record
+ 3.  FETCH         — RSS feeds from 222 sources (parallel)
+ 4.  SCRAPE        — Full text via web scraper (15 workers), RSS summary fallback
+ 4b. DEDUPLICATE   — TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
+ 5.  ANALYZE       — 5-axis bias scoring (all return score + rationale)
+ 6.  CLUSTER       — Phase 1: TF-IDF agglomerative (threshold 0.2, doc length 500 words)
+                     Phase 2: entity-overlap merge pass (2+ shared entities, 72h window)
+ 6b. RE-FRAME      — Framing re-run with cluster context (omission detection)
+     ORPHANS       — Unclustered articles wrapped as single-article clusters
+ 6c. GEMINI REASON — Contextual score adjustments on low-confidence/high-divergence clusters (25-call budget); mutates article_bias_map
+ 7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
+ 7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
+ 7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
+ 8.  STORE         — Write clusters; sections[] array from all editions covered
+ 9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
+ 9b. ARTICLE CATS  — Populate article_categories junction table
+ 9c. TOPIC TRACK   — Axis 6 EMA update (source_topic_lean)
+10.  TRUNCATE      — full_text → 300-char excerpts (IP compliance)
+     CLEANUP       — cleanup_stale_clusters + cleanup_stuck_pipeline_runs RPCs
 ```
 
 ## Frontend Design
 
 ### Design Philosophy — "Press & Precision"
-Modern newspaper aesthetic — pays tribute to the printing press era in design philosophy. Serif headlines, editorial layout sensibility. **Clean and minimal on arrival, data-dense on interaction.** Progressive disclosure is the core interaction pattern.
+Modern newspaper aesthetic. Serif headlines, editorial layout sensibility. **Clean on arrival, data-dense on interaction.** Progressive disclosure is the core interaction pattern. 1920s low-tech aesthetic: space-efficient, enriched only on user interaction.
 
-Adapted from DondeAI's "Ink & Momentum" philosophy: every interaction has weight and intention. Spring physics for user-initiated actions, ease-out for system reveals.
+Adapted from DondeAI's "Ink & Momentum": spring physics for user-initiated actions, ease-out for system reveals.
 
-### Three Voices of Type (from DondeAI)
+### Three Voices of Type
 
 | Voice | Font | Use For |
 |-------|------|---------|
@@ -158,93 +159,48 @@ Adapted from DondeAI's "Ink & Momentum" philosophy: every interaction has weight
 
 ### Responsive Strategy — One Project, Two Layouts
 
-Single Next.js project with **device-optimized layouts** sharing the same data layer and component logic. Not two separate apps — one codebase with layout switching.
-
-#### What Changes Between Desktop and Mobile
-
 | Aspect | Desktop | Mobile |
 |--------|---------|--------|
-| **Layout** | Multi-column newspaper grid, sidebar for filters/deep dive | Single-column feed, bottom sheet for filters |
-| **Story cards** | Horizontal layout with inline bias indicators | Vertical stack, bias indicators below headline |
-| **Deep Dive** | Side panel or split-screen comparison | Full-screen modal with swipe navigation |
-| **Navigation** | Top nav bar with section tabs | Bottom nav bar (thumb-reachable) |
-| **Bias viz** | Inline charts, hover to expand | Tap to expand, full-width charts |
-| **Data density** | High — show more metrics at a glance | Progressive — show headline + key score, tap for more |
-| **Interactions** | Hover reveals, click expands | Tap reveals, swipe navigates |
-| **Typography** | Larger editorial headings, wider measure | Tighter line lengths, slightly smaller scale |
+| Layout | Multi-column newspaper grid | Single-column feed, bottom sheet |
+| Story cards | Horizontal, inline bias indicators | Vertical stack, indicators below headline |
+| Deep Dive | 55% side panel (min 560px), backdrop blur 6px | Full-screen bottom sheet, blur 2px |
+| Navigation | Top nav bar | Bottom nav bar (thumb-reachable) |
+| Data density | High — more metrics at a glance | Progressive — tap to reveal |
 
-#### What Stays the Same
+Shared: component logic, Supabase queries, animation system, color system, accessibility (WCAG 2.1 AA).
 
-- Component logic and data fetching
-- Supabase queries and data shapes
-- Animation system (spring physics, motion tokens)
-- Color system and design tokens
-- Accessibility (WCAG 2.1 AA)
-- Bias scoring display and color coding
-
-#### Implementation
-
-```tsx
-// Layout detection via CSS media queries + React context
-// Breakpoints (mobile-first):
-//   375px  — mobile (primary target)
-//   768px  — tablet
-//   1024px — desktop
-//   1440px — wide desktop
-
-// Component pattern:
-// <StoryCard /> — shared logic
-//   ├── <StoryCardDesktop /> — multi-column with inline charts
-//   └── <StoryCardMobile />  — vertical stack with tap-to-reveal
-```
-
-- Use CSS `clamp()` for fluid scaling between breakpoints
-- Mobile touch targets ≥ 44×44px (WCAG compliance)
-- Horizontal scroll strips with scroll-snap on mobile
-- Bottom sheet pattern for filters/detail on mobile
-- One-handed reachability: critical actions in bottom 40% of screen
-- Mobile edge padding: `--space-5` (~16px) on `.page-main`, `.nav-inner`, `.site-footer` (not `--space-7`)
-- `overflow-wrap: break-word` on all headline elements to prevent horizontal overflow
-- Section header and Deep Dive source rows use `flex-wrap: wrap` on mobile
+Mobile rules:
+- Edge padding: `--space-5` (~16px) on `.page-main`, `.nav-inner`, `.site-footer`
+- `overflow-wrap: break-word` on all headline elements
+- `.section-header` and Deep Dive source rows: `flex-wrap: wrap`
+- Touch targets ≥ 44×44px
 
 ### Two Core Views
 
 #### 1. Homepage — News Feed
-- Organic, importance-ranked flow of stories (no rigid category sections)
-- Auto-generated category tags for filtering
-- Each story card shows: headline, source count, key bias indicators at a glance
-- "Last updated" timestamp showing pipeline freshness
-- Refresh button (re-fetches from Supabase, with confirmation dialog to avoid accidental clicks)
-- Sections: World News and US News
-- **Desktop**: newspaper-style multi-column grid with sidebar
-- **Mobile**: single-column feed with bottom navigation
+- Importance-ranked story flow. Auto-generated category tags for filtering.
+- Each card: headline, source count, key bias indicators (BiasLens).
+- "Last updated" timestamp + Refresh button (confirmation dialog).
+- Sections: World / US / India.
 
 #### 2. Deep Dive Dashboard
-- Story clustering view — same event from multiple sources side-by-side
-- Summary flows as seamless article lede (no "What happened" heading); viewport-responsive height via `clamp(12em, 25vh, 22em)` with "Read more" toggle at 600+ chars
-- Analysis row (`dd-analysis-row`): Sigil + Spectrum + Press Analysis trigger in a single flex row on desktop; stacks vertically on mobile
-- Source lean spectrum: favicons positioned above/below a gradient track by lean score
-- "Press Analysis ▶" trigger: anchored to analysis row, collapsed by default; expand via `grid-template-rows 0fr→1fr` (no max-height jank); opens BiasInspectorInline (4-axis scorecard with Gemini reasoning per axis, each axis collapsible for sub-scores). Press Analysis expand uses `var(--ease-out)` easing, `var(--dur-morph)` duration. Mobile overrides to 300ms ease-out.
-- "Source Perspectives" section: Agreement | Divergence in a 2-column grid on desktop; collapses to single column on mobile. Green left borders (agree), red left borders (diverge)
-- Coverage distribution view (tier breakdown bars) + per-source BiasLens
-- Slot-machine cascade animation: Deep Dive content sections reveal with `translateY(12px) → 0` stagger. Desktop: `opacity 200ms ease-out, transform 350ms spring`. Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring — avoids GPU jitter on low-end devices).
-- Content reveal delays: 120ms on desktop (lets panel slide partially in first), 30ms on mobile (prevents blank header flash)
-- Panel flash prevention: `opacity: 0` CSS safety net on `.deep-dive-panel` before JS takes over; asymmetric JS transition (opacity instant-on when opening, delayed when closing)
-- Backdrop blur 6px on desktop, 2px on mobile (expensive on low-end devices)
-- iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator pill, `-webkit-overflow-scrolling: touch` momentum scrolling, `padding-bottom: safe-area-inset-bottom` for home indicator
-- Progressive disclosure: compact on arrival, press analysis hidden behind expand arrow
-- **Desktop**: side panel (55% width, min-width 560px, no max-width cap), backdrop blur 6px on main feed
-- **Mobile**: full-screen modal sliding up from bottom, iOS bottom-sheet style
+- Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
+- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" toggle at 600+ chars.
+- **`dd-analysis-row`**: Sigil + lean spectrum (favicons above/below gradient track) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile).
+- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text).
+- **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
+- Slot-machine cascade: `translateY(12px) → 0`. Desktop: `opacity 200ms ease-out, transform 350ms spring`, reveal delay 120ms. Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms.
+- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition.
+- iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator, momentum scroll, safe-area insets.
 
 ### Interaction Model
-- **On arrival**: clean, minimal, newspaper-like. Headlines and importance.
-- **On interaction**: rich data layers reveal — hover/click to expose bias scores, source comparisons, framing analysis.
-- Progressive disclosure throughout.
+- **On arrival**: clean, minimal, newspaper-like.
+- **On interaction**: rich data layers reveal via hover/click/tap.
+- Progressive disclosure throughout. Unified interaction: Press Analysis and lean spectrum details use the same system.
 
-## Animation System (Adapted from DondeAI)
+## Animation System
 
-### Motion Library
-**Motion One v11** via CDN importmap (~6.5KB). Provides real spring physics with CSS transition fallback.
+**Motion One v11** via CDN importmap (~6.5KB).
 
 ### Spring Presets
 
@@ -253,154 +209,69 @@ Single Next.js project with **device-optimized layouts** sharing the same data l
 | snappy | 600 | 35 | 1 | Buttons, toggles, filter chips |
 | smooth | 280 | 22 | 1 | Cards, panels, story expansion |
 | gentle | 150 | 12 | 1.2 | Page transitions, view switches |
-| bouncy | 450 | 12 | 1.1 | Celebrations, data reveals |
 
 ### Duration Tokens
 
 ```css
-:root {
-  --dur-instant:  0ms;
-  --dur-fast:     150ms;
-  --dur-normal:   300ms;
-  --dur-morph:    400ms;
-  --dur-step:     450ms;
-  --dur-slow:     600ms;
-}
+--dur-instant: 0ms; --dur-fast: 150ms; --dur-normal: 300ms;
+--dur-morph: 400ms; --dur-step: 450ms; --dur-slow: 600ms;
 ```
 
 ### Easing Curves
 
 ```css
-:root {
-  --spring: linear(/* damped oscillation with real overshoot */);
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);  /* Apple-sharp deceleration */
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);       /* Use sparingly */
-}
+--ease-out: cubic-bezier(0.16, 1, 0.3, 1);  /* Apple-sharp deceleration */
+--ease-in:  cubic-bezier(0.4, 0, 1, 1);     /* Use sparingly */
+/* --spring: linear(/* damped oscillation */) — defined in tokens.css */
 ```
 
-### Animation Patterns
+### Rules
+- GPU-only: animate transform + opacity only.
+- Accessible: all → 0ms under `prefers-reduced-motion`.
+- Symmetric: open/close use identical duration and easing.
+- Interruptible: no animation locks.
+- Max 3 simultaneous springs, 60fps target.
 
-| Trigger | Curve | Duration | Example |
-|---------|-------|----------|---------|
-| User tap/click | var(--spring) | 300-450ms | Filter chip select, story expand |
-| System reveal | var(--ease-out) | 300-600ms | Data fade-in, chart animate |
-| View transition | var(--ease-out) | 400ms | Feed ↔ Deep Dive |
-| Reduced motion | instant | 0ms | All animations |
+## CSS Architecture
 
-### Motion Utilities (Ported from DondeAI)
+Load order: `reset.css → tokens.css → layout.css → typography.css → components.css → animations.css → responsive.css` (split into `frontend/app/styles/`; `globals.css` is the entry point via `@import`).
 
-- `springAnimate(el, keyframes, opts)` — Motion One with CSS fallback
-- `springPress(el, opts)` — Button press interaction (0.97x scale, 300ms return)
-- `springStagger(elements, opts)` — Stagger reveals across story cards
-- `countUp(el, target, opts)` — Numeric count animation for bias scores
-- `timeline()` — Sequential animation orchestrator
-- `trackedRaf(name, tickFn)` — Named RAF loops with auto-cleanup
-- `isReducedMotion()` — Accessibility check
+- CSS custom properties only (no Sass/LESS). BEM-like naming. Mobile-first `min-width` queries.
+- `clamp()` for all fluid scaling. No `!important`.
 
-### Animation Rules
-- **Symmetric**: open/close, in/out use identical duration and easing in both directions
-- **GPU-only**: only animate transform and opacity (composite properties)
-- **Accessible**: all animations → 0ms under `prefers-reduced-motion: reduce`
-- **Interruptible**: no animation locks, user can interact during transitions
-- **Performance budget**: max 3 simultaneous spring animations, 60fps target
-
-### Glass Morphism Elevation (from DondeAI)
-
-| Level | Blur | Use Case |
-|-------|------|----------|
-| E0 Surface | 0px | Base content |
-| E1 Floating | 16px | Headers, nav bars |
-| E2 Popout | 24px | Tooltips, bias popups |
-| E3 Modal | 32px | Deep dive overlay (mobile) |
-
-## CSS Architecture (Adapted from DondeAI)
-
-### Load Order (Cascade)
-```
-reset.css → tokens.css → layout.css → typography.css → components.css → animations.css → responsive.css
-```
-
-### Design Tokens
-- CSS custom properties only — no preprocessor (no Sass/LESS)
-- BEM-like naming convention (`.component__element--modifier`)
-- Mobile-first with `min-width` media queries
-- `clamp()` for all fluid scaling (typography, spacing)
-- No `!important` — ever
-
-### Color System — Bias Scoring
-
-| Axis | Color Coding |
-|------|-------------|
-| Political Lean | Blue (left) ← Neutral (gray) → Red (right) |
-| Sensationalism | Green (measured) → Yellow → Red (inflammatory) |
-| Opinion vs. Fact | Blue (reporting) ↔ Orange (opinion) |
-| Factual Rigor | Green (high) → Yellow → Red (low) |
-
-### Breakpoints (Mobile-First with clamp())
-
-```
-375px  — mobile (primary target)
-768px  — tablet
-1024px — desktop
-1440px — wide desktop
-```
-
-### Fluid Scaling
-```css
-/* Typography */
---text-xs:   clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
---text-sm:   clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
---text-base: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
---text-lg:   clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
---text-xl:   clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
---text-hero: clamp(2rem, 1.5rem + 2vw, 4rem);
-
-/* Spacing */
---space-xs:  clamp(0.25rem, 0.2rem + 0.2vw, 0.5rem);
---space-sm:  clamp(0.5rem, 0.4rem + 0.4vw, 1rem);
---space-md:  clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
---space-lg:  clamp(1.5rem, 1rem + 1.5vw, 3rem);
---space-xl:  clamp(2rem, 1.5rem + 2vw, 4rem);
-```
+Breakpoints: 375px (mobile), 768px (tablet), 1024px (desktop), 1440px (wide).
 
 ## Data Model (Supabase)
 
 ### Key Tables
-- `sources` — outlet metadata, credibility info, RSS/scrape config, tier (us_major/international/independent), slug
-- `articles` — excerpt text (truncated post-analysis for IP compliance), metadata, source_id, publish_date, url, section, updated_at (auto-trigger)
-- `bias_scores` — per-article multi-axis scores + rationale JSONB (linked to article_id)
-- `story_clusters` — groups of articles about the same event; includes bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity, updated_at (auto-trigger), `sections text[]` (all editions the cluster belongs to, GIN-indexed for containment queries)
-- `cluster_articles` — junction table linking articles to clusters
-- `categories` — auto-generated topic tags
-- `article_categories` — junction table linking articles to categories (populated by pipeline)
-- `source_topic_lean` — per-source per-topic EMA-averaged lean/sensationalism/opinion scores, article_count (Axis 6)
-- `pipeline_runs` — tracking pipeline execution history
+- `sources` — outlet metadata, RSS/scrape config, tier, slug, 7-point lean baseline
+- `articles` — 300-char excerpt (truncated post-analysis), metadata, source_id, publish_date, url, section, updated_at
+- `bias_scores` — per-article multi-axis scores + rationale JSONB
+- `story_clusters` — event groups; bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity, updated_at, `sections text[]` (GIN-indexed)
+- `cluster_articles` — junction: articles ↔ clusters
+- `categories` + `article_categories` — topic tags + junction (populated by pipeline)
+- `source_topic_lean` — EMA lean/sensationalism/opinion per source per topic (Axis 6)
+- `pipeline_runs` — execution history
 
-Frontend queries filter by edition using `.contains("sections", [edition])` (PostgREST array containment) rather than `.eq("section", edition)`. This allows cross-listed clusters (e.g., an Iran war story with US + World + India coverage) to appear in all matching edition feeds simultaneously.
+Frontend filters by edition: `.contains("sections", [edition])` (PostgREST array containment). Cross-listed clusters appear in all matching edition feeds.
 
 ### Key Views & Functions
-- `cluster_bias_summary` — view aggregating bias scores per cluster (weighted averages, spreads)
-- `refresh_cluster_enrichment(p_cluster_id)` — function computing divergence_score, bias_diversity, coverage_score, tier_breakdown
-- `update_updated_at_column()` — trigger function for auto-updating updated_at on articles and story_clusters
-- `cleanup_stale_clusters()` — removes clusters with no linked articles
-- `cleanup_stuck_pipeline_runs()` — marks stale running pipeline entries as failed
+- `cluster_bias_summary` — weighted bias averages/spreads per cluster
+- `refresh_cluster_enrichment(p_cluster_id)` — computes divergence_score, bias_diversity, coverage_score, tier_breakdown
+- `update_updated_at_column()` — auto-trigger on articles + story_clusters
+- `cleanup_stale_clusters()` + `cleanup_stuck_pipeline_runs()` — maintenance RPCs
+
+Migrations: `supabase/migrations/` (001-013).
 
 ## Skills (`.claude/skills/`)
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
-| `/pressdesign` | "Press & Precision" design system enforcement — anti-slop, typography, motion grammar, dot matrix rule, newspaper layout, responsive strategy | Auto on UI tasks, manual for design review |
+| `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
 
-**Also recommended:** Install the official Anthropic `frontend-design` plugin for additional anti-slop design foundations:
-```bash
-/plugin install frontend-design@claude-plugins-official
-```
+## Agent Team (17 Agents, 7 Divisions)
 
-## Agent Team (Adapted from DondeAI — 17 Agents, 7 Divisions)
-
-> Full team structure, R&R, and sequential cycles: `docs/AGENT-TEAM.md`
-
-### Agent Hierarchy
+> Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
 
 ```
 CEO (Aacrit)
@@ -413,69 +284,45 @@ CEO (Aacrit)
   └── Branding ————————— logo-designer
 ```
 
-### Cost Policy — $0 Absolute Ceiling
+**$0 Cost — Claude Max CLI Only.** No Anthropic API keys. No OpenAI. No paid inference. Gemini Flash free tier only (capped per run).
 
-```
-ALL AI/LLM WORK USES CLAUDE CODE CLI (Max subscription).
-No Anthropic API keys. No OpenAI. No paid inference. Anywhere. Ever.
+### Agent Routing Rules
 
-Pipeline NLP:    Rule-based only (spaCy, NLTK, TextBlob) — $0
-Summarization:   Gemini 2.5 Flash free tier (25 calls/run, 50 RPD) — $0
-Agent work:      Claude Code CLI (opus via Max subscription) — $0
-Database:        Supabase free tier — $0
-Hosting:         GitHub Pages — $0
-CI/CD:           GitHub Actions free tier — $0
-```
-
-### Agent Design Principles (from DondeAI)
-
-1. **No Hierarchical Delegation** — Agents cannot spawn other agents. Task routing at CEO level.
-2. **Read-First Protocol** — Every agent reads CLAUDE.md + relevant docs before any work.
-3. **Execution Protocol** — Assess → Plan → Build → Verify → Report. No exceptions.
-4. **Max Blast Radius** — Each agent bounded: max 4 CSS, 2 JS/TS, 3 Python files per run.
-5. **$0 Cost — Claude CLI Only** — All AI work via `claude` CLI command. No API keys, no per-token billing.
-6. **Model: Opus** — All agents use Claude Opus via CLI. No model downgrades.
-7. **Parallel-Safe vs Sequential** — Read-only agents run concurrently; write agents require sequencing.
+| Task Pattern | Agent |
+|---|---|
+| RSS health, article collection, deduplication, cluster summaries, content quality | `feed-intelligence` |
+| Bias score accuracy, calibration, benchmarking | `analytics-expert` |
+| Ground-truth validation, known-outlet comparison | `bias-auditor` |
+| Pipeline output validation, clustering quality | `pipeline-tester` |
+| Post-test bug fixing | `bug-fixer` |
+| Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` |
+| Article/cluster data quality, NULL audits | `db-reviewer` |
+| Sync docs with codebase | `update-docs` |
+| Build UI components, new features | `frontend-builder` |
+| Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` |
+| Desktop/mobile layout, responsive issues | `responsive-specialist` |
+| Browser testing, click-through QA | `uat-tester` |
+| spaCy models, bias scoring, NER | `nlp-engineer` |
+| Source vetting, RSS config, credibility | `source-curator` |
+| Security audit, secrets scan, RLS, OWASP | `void-ciso` |
+| Strategic advice, roadmap, priorities | `ceo-advisor` |
+| Logo, favicon, brand identity | `logo-designer` |
 
 ### Sequential Cycles
-
 ```
-Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester (retest)
+Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
 Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
 Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
 ```
 
-### Agent Routing Rules
-
-| Task Pattern | Agent | Division |
-|---|---|---|
-| RSS feed health, article collection, deduplication, cluster summaries, frontend content quality | `feed-intelligence` | Pipeline |
-| Bias score accuracy, calibration, benchmarking | `analytics-expert` | Quality |
-| Ground-truth validation, known-outlet comparison | `bias-auditor` | Quality |
-| Pipeline output validation, clustering quality | `pipeline-tester` | Quality |
-| Post-test bug fixing, scoring fixes | `bug-fixer` | Quality |
-| Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` | Infrastructure |
-| Article/cluster data quality, NULL audits | `db-reviewer` | Infrastructure |
-| Sync docs with codebase | `update-docs` | Infrastructure |
-| Build UI components, new features | `frontend-builder` | Frontend |
-| Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` | Frontend |
-| Desktop/mobile layout, responsive issues | `responsive-specialist` | Frontend |
-| Browser testing, click-through QA | `uat-tester` | Frontend |
-| spaCy models, bias scoring algorithms, NER | `nlp-engineer` | Pipeline |
-| Source vetting, RSS config, credibility | `source-curator` | Pipeline |
-| Security audit, secrets scan, RLS, OWASP | `void-ciso` | Security |
-| Strategic advice, roadmap, priorities | `ceo-advisor` | Product |
-| Logo, favicon, brand identity | `logo-designer` | Branding |
-
 ### Locked Decisions (Require CEO Approval)
-
-- Press & Precision design system (3-voice type, dot matrix rule, newspaper grid)
+- Press & Precision design system (3-voice type, BiasLens Three Lenses, newspaper grid)
 - 6-axis bias scoring model + confidence
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 222-source curated list structure (3 tiers); 7-point political spectrum
+- 222-source curated list (3 tiers); 7-point political spectrum
 - $0 operational cost constraint
-- Claude Max CLI for all AI work (no API LLMs)
+- Claude Max CLI for all AI work
 
 ## Project Structure
 
@@ -484,194 +331,120 @@ void-news/
 ├── CLAUDE.md
 ├── docs/
 │   ├── PROJECT-CHARTER.md         # Project charter and scope
-│   ├── DESIGN-SYSTEM.md           # Press & Precision design system
+│   ├── DESIGN-SYSTEM.md           # Press & Precision design system (component inventory, layout diagrams)
 │   ├── IMPLEMENTATION-PLAN.md     # Phased implementation roadmap
-│   └── GEMINI-VOICE-PLAN.md       # Gemini summary/headline voice architecture
-├── pipeline/                      # Python ingestion + analysis
-│   ├── fetchers/                  # RSS and scraping modules
+│   └── GEMINI-VOICE-PLAN.md       # Gemini voice architecture, prompt templates, anti-bias guardrails
+├── pipeline/
+│   ├── fetchers/
 │   │   ├── rss_fetcher.py
 │   │   └── web_scraper.py
-│   ├── analyzers/                 # NLP bias analysis engine (all return score + rationale)
+│   ├── analyzers/
 │   │   ├── political_lean.py
 │   │   ├── sensationalism.py
 │   │   ├── opinion_detector.py
 │   │   ├── factual_rigor.py
-│   │   ├── framing.py             # Cluster-aware: accepts cluster_articles for omission detection
-│   │   ├── gemini_reasoning.py    # Optional: Gemini contextual score adjustments (step 6c); mutates article_bias_map
-│   │   └── topic_outlet_tracker.py # Axis 6: EMA-based per-source per-topic tracking
-│   ├── clustering/                # Story deduplication and grouping
-│   │   ├── deduplicator.py        # TF-IDF + cosine similarity content dedup
-│   │   └── story_cluster.py       # Two-phase clustering: TF-IDF agglomerative (Phase 1) + entity-overlap merge pass (Phase 2)
-│   ├── summarizer/                # Gemini Flash cluster summarization
-│   │   ├── gemini_client.py       # API client with rate limiting + call caps
-│   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence generation
-│   ├── categorizer/               # Auto-topic classification
-│   ├── ranker/                    # Importance/impact scoring (v5.1: 10 signals + confidence curve + optional Gemini editorial importance + US-only divergence damper)
-│   ├── utils/                     # Shared utilities, Supabase client, nlp_shared
-│   ├── main.py                    # Pipeline orchestrator (12 steps + cleanup)
-│   ├── rerank.py                  # Standalone re-ranker: apply formula changes without full pipeline run
-│   └── requirements.txt
-├── frontend/                      # Next.js 16 App Router
+│   │   ├── framing.py             # Cluster-aware omission detection
+│   │   ├── gemini_reasoning.py    # Step 6c: contextual score adjustments; mutates article_bias_map
+│   │   └── topic_outlet_tracker.py # Axis 6: EMA per-source per-topic
+│   ├── clustering/
+│   │   ├── deduplicator.py        # TF-IDF + cosine dedup
+│   │   └── story_cluster.py       # Two-phase: TF-IDF agglomerative + entity-overlap merge
+│   ├── summarizer/
+│   │   ├── gemini_client.py       # Rate limiting, call caps, optional system_instruction
+│   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence + editorial_importance
+│   ├── categorizer/
+│   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
+│   ├── utils/                     # Supabase client, nlp_shared
+│   ├── main.py                    # Orchestrator (12 steps + cleanup)
+│   └── rerank.py                  # Standalone re-ranker
+├── frontend/
 │   ├── app/
-│   │   ├── components/            # React components
-│   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; exports BiasInspectorInline (rendered inside DeepDive "Press Analysis ▶" expandable section), BiasInspectorTrigger, BiasInspectorPanel (backward-compat); each axis collapsible with Gemini reasoning text
-│   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism (active bias viz)
-│   │   │   ├── DeepDive.tsx       # Slide-in panel: seamless lede, lean spectrum, "Press Analysis ▶" collapsible trigger (BiasInspectorInline), Source Perspectives, source coverage; backdrop blur on desktop
-│   │   │   ├── HomeContent.tsx    # News feed container (page logic, edition switching, lean filter)
+│   │   ├── components/
+│   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; BiasInspectorInline (Deep Dive inline), BiasInspectorTrigger + BiasInspectorPanel (legacy); each axis collapsible with Gemini reasoning
+│   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism
+│   │   │   ├── DeepDive.tsx       # Slide-in panel: lede, dd-analysis-row, Press Analysis ▶, Source Perspectives, coverage
+│   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid
 │   │   │   ├── LeadStory.tsx      # Hero story card
-│   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending complete redesign
-│   │   │   ├── OpinionCard.tsx    # SHELVED — commented out, pending complete redesign
+│   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending redesign
+│   │   │   ├── OpinionCard.tsx    # SHELVED — commented out, pending redesign
 │   │   │   ├── StoryCard.tsx      # Standard story card
-│   │   │   ├── NavBar.tsx         # Section navigation (World/US/India); dateline row with compact edition badge pills, time-of-day badge (Morning/Evening), regional timestamps (US: "9 AM ET", World: "HH:MM UTC", India: "HH:MM IST"); India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only)
-│   │   │   ├── FilterBar.tsx      # Category filter chips
-│   │   │   ├── RefreshButton.tsx  # Refresh with last-updated timestamp
-│   │   │   ├── ThemeToggle.tsx    # Light/dark mode
+│   │   │   ├── NavBar.tsx         # World/US/India nav; dateline row with edition badge pills, time-of-day badge, regional timestamps (US: "9 AM ET", World: HH:MM UTC, India: HH:MM IST); India: Ashoka Chakra SVG icon
+│   │   │   ├── FilterBar.tsx
+│   │   │   ├── RefreshButton.tsx
+│   │   │   ├── ThemeToggle.tsx
 │   │   │   ├── LoadingSkeleton.tsx
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── Footer.tsx
-│   │   │   ├── LogoFull.tsx       # Combination mark: void circle + scale beam icon + wordmark (single SVG, Direction 5)
-│   │   │   ├── LogoIcon.tsx       # Icon-only wrapper around ScaleIcon (compact contexts, mobile nav)
-│   │   │   ├── LogoWordmark.tsx   # Text-only "void --news" with hollow-O treatment (no icon mark)
-│   │   │   ├── ScaleIcon.tsx      # Void Circle + Scale Beam hybrid icon; 8 animation states (idle/loading/hover/analyzing/balanced/pulse/draw/none)
-│   │   │   ├── PageToggle.tsx     # Feed / Sources page switcher
-│   │   │   ├── SpectrumChart.tsx  # Horizontal political spectrum bar chart (used on /sources page)
-│   │   │   └── Sigil.tsx          # Compact bias sigil using SigilData type
+│   │   │   ├── LogoFull.tsx       # Combo mark: void circle + scale beam + wordmark (SVG, Direction 5)
+│   │   │   ├── LogoIcon.tsx       # Icon-only wrapper around ScaleIcon
+│   │   │   ├── LogoWordmark.tsx   # Text-only "void --news" SVG, hollow-O
+│   │   │   ├── ScaleIcon.tsx      # Void Circle + Scale Beam; 8 animation states (idle/loading/hover/analyzing/balanced/pulse/draw/none)
+│   │   │   ├── PageToggle.tsx     # Feed / Sources view switcher
+│   │   │   ├── SpectrumChart.tsx  # Political spectrum bar (used on /sources)
+│   │   │   └── Sigil.tsx          # Compact bias sigil (SigilData type)
 │   │   ├── lib/
 │   │   │   ├── supabase.ts        # Supabase client, fetchDeepDiveData, fetchLastPipelineRun
-│   │   │   ├── types.ts           # TypeScript types (BiasScores, ThreeLensData, Story, etc.)
+│   │   │   ├── types.ts           # BiasScores, ThreeLensData, Story, etc.
 │   │   │   ├── mockData.ts        # Fallback mock data
-│   │   │   └── utils.ts           # Helpers (timeAgo, etc.)
-│   │   ├── page.tsx               # Homepage: news feed with live Supabase queries
-│   │   ├── sources/
-│   │   │   └── page.tsx           # /sources: spectrum visualization + source list with favicons
-│   │   ├── layout.tsx             # Root layout with fonts and metadata
-│   │   ├── globals.css            # Style entry point: @imports from ./styles/ in cascade order
-│   │   └── styles/                # Split CSS: tokens.css, layout.css, typography.css, components.css, animations.css, responsive.css, spectrum.css
+│   │   │   └── utils.ts           # timeAgo, etc.
+│   │   ├── page.tsx               # Homepage: live Supabase queries
+│   │   ├── sources/page.tsx       # /sources: SpectrumChart + source list with favicons
+│   │   ├── layout.tsx             # Root layout: fonts, metadata
+│   │   ├── globals.css            # Style entry point: @imports from ./styles/
+│   │   └── styles/                # tokens.css, layout.css, typography.css, components.css, animations.css, responsive.css, spectrum.css
 │   ├── public/
 │   ├── package.json               # Next.js 16.1.7, React 19.2.3
 │   └── next.config.ts
 ├── .claude/
-│   ├── agents/                    # 17 Claude agent definitions
+│   ├── agents/                    # 17 agent definitions
 │   └── skills/                    # pressdesign skill
-├── .github/
-│   └── workflows/
-│       ├── pipeline.yml           # 2x daily news pipeline cron
-│       ├── deploy.yml             # Frontend build + deploy to GitHub Pages
-│       └── migrate.yml            # Supabase migration runner
-├── data/
-│   └── sources.json               # 222 curated sources with RSS URLs and metadata (7-point lean spectrum)
-└── supabase/
-    ├── config.toml
-    └── migrations/                # Database schema migrations (001-013)
+├── .github/workflows/
+│   ├── pipeline.yml               # 6x daily cron
+│   ├── deploy.yml                 # Build + deploy to GitHub Pages
+│   └── migrate.yml                # Supabase migration runner
+├── data/sources.json              # 222 curated sources (7-point lean spectrum)
+└── supabase/migrations/           # 001-013
 ```
 
 ## MVP Scope
 
-### Phase 1 — Foundation (Week 1-2) -- COMPLETE
-- [x] Project scaffolding (Next.js, Python pipeline, Supabase)
-- [x] Source list curation (222 sources with RSS/scrape configs; 7-point lean spectrum)
-- [x] Supabase schema setup (all tables + migrations 001-013)
-- [x] Basic RSS fetcher (feedparser)
-- [x] Basic web scraper (BeautifulSoup)
-- [x] Article storage pipeline
-- [x] GitHub Actions cron (2x daily)
-- [x] Pipeline orchestrator (main.py)
+### Phase 1 — Foundation -- COMPLETE
+- [x] Project scaffolding, 222 sources, Supabase schema (migrations 001-013), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
 
-### Phase 2 — Analysis Engine (Week 3-5) -- COMPLETE
-- [x] Content-based deduplication (TF-IDF + cosine similarity, threshold 0.80, Union-Find grouping)
-- [x] Story clustering algorithm
-- [x] Political lean scoring (with rationale)
-- [x] Sensationalism detection (with rationale)
-- [x] Opinion vs. reporting classifier (with rationale)
-- [x] Factual rigor scoring (with rationale)
-- [x] Framing analysis (cluster-aware omission detection, with rationale)
-- [x] Auto-categorization (topic tagging, 3-article majority vote) + article_categories junction table populated
-- [x] Importance/impact ranking (v5.1: 10 signals + confidence curve + optional Gemini editorial importance + US-only divergence damper + cross-spectrum bonus)
-- [x] Multi-section cross-listing (sections[] array on story_clusters, migration 011, frontend queries via .contains())
-- [x] Confidence scoring per article
-- [x] Consensus/divergence generation per cluster
-- [x] IP compliance: full_text truncation post-analysis
-- [x] Per-topic per-outlet tracking (Axis 6, EMA-based, source_topic_lean table)
+### Phase 2 — Analysis Engine -- COMPLETE
+- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c).
 
-### Phase 3 — Frontend MVP (Week 6-8) -- COMPLETE
-- [x] Next.js project setup with TypeScript (App Router, Next.js 16)
-- [x] Design token system (CSS custom properties in globals.css)
-- [ ] Animation system (Motion One spring presets, utilities)
-- [x] Desktop layout — newspaper-style multi-column grid
-- [x] Mobile layout — single-column feed
-- [x] Story card component (LeadStory + StoryCard)
-- [x] Homepage news feed (importance-ranked via headline_rank)
-- [x] "Why This Story" tooltip on StoryCard + LeadStory (derives top ranking signals from story data)
-- [x] Category tag filtering (FilterBar)
-- [x] Bias indicator display on story cards (BiasLens: Three Lenses)
-- [x] Refresh button with last-updated timestamp (RefreshButton)
-- [x] "Last updated" timestamp
-- [x] Light/dark mode (ThemeToggle)
-- [ ] GitHub Pages deployment
+### Phase 3 — Frontend MVP -- COMPLETE
+- [x] Next.js 16 App Router, design token system, desktop + mobile layouts, StoryCard + LeadStory, news feed (headline_rank), "Why This Story" tooltip, category filtering, BiasLens Three Lenses, RefreshButton, light/dark mode.
+- [ ] Animation system (Motion One spring presets, utilities) — pending.
+- [ ] GitHub Pages deployment — pending.
 
-### Phase 4 — Deep Dive Dashboard (Week 9-11) -- IN PROGRESS
-- [x] Deep Dive Dashboard view (slide-in panel, mobile full-screen; backdrop blur on desktop)
-- [x] Multi-source story comparison (per-source BiasLens in Deep Dive)
-- [x] Coverage distribution view (tier breakdown bars)
-- [x] Consensus/divergence display combined in "Source Perspectives" section (pipeline-generated, read from JSONB)
-- [x] Press Analysis inline (BiasInspectorInline): 4-axis scorecard with Gemini reasoning per axis, collapsible rows; hidden behind "Press Analysis ▶" trigger below lean spectrum
-- [x] Lean spectrum + Press Analysis stacked vertically; progressive disclosure (spectrum visible, press analysis collapsed by default)
-- [ ] Framing analysis display (detailed framing comparison)
-- [ ] Source credibility context panels
+### Phase 4 — Deep Dive Dashboard -- IN PROGRESS
+- [x] Slide-in panel (desktop 55% / mobile full-screen), per-source BiasLens, tier breakdown bars, Source Perspectives (Agreement/Divergence), Press Analysis inline (BiasInspectorInline), lean spectrum above/below track.
+- [ ] Detailed framing comparison view.
+- [ ] Source credibility context panels.
 
-### SHELVED — Op-Ed / Opinion Page (Future Feature, Needs Complete Redesign)
-The Op-Ed page, opinion card, and Facts/Op-Ed toggle have been removed from the frontend. The pipeline still computes `opinion_fact` scores (Axis 3) but no longer creates opinion clusters or surfaces them in the feed. Components are commented out in `OpEdPage.tsx` and `OpinionCard.tsx` for reference.
+### SHELVED — Op-Ed / Opinion Page
+Removed from frontend. Pipeline still computes opinion_fact (Axis 3). `OpEdPage.tsx` and `OpinionCard.tsx` commented out for reference. Future redesign needs: dedicated curation, distinct visual treatment, author-first display, no Gemini, no clustering.
 
-**Why shelved:** The first implementation mixed opinion content into the news feed via a toggle, which didn't work well editorially. A future version needs:
-- Dedicated editorial curation (not just algorithmic opinion_fact > 50 threshold)
-- Distinct visual treatment — op-eds are not news stories and shouldn't look like them
-- Author/publication attribution as first-class display elements
-- No Gemini summarization — original voice is the value
-- No clustering — each op-ed stands alone
-- Complete UX redesign separate from the news feed
-
-**What's preserved:**
-- `opinion_fact` bias axis still computed per article (pipeline Axis 3)
-- Opinion articles excluded from news clustering (won't pollute reporting clusters)
-- `OpEdPage.tsx` and `OpinionCard.tsx` kept for reference code
-- `fetchOpinionArticles()` in supabase.ts stubbed out
-
-### Phase 5 — Polish & Launch (Week 12)
-- [ ] Accessibility audit (WCAG 2.1 AA)
-- [ ] Performance optimization (Lighthouse 90+)
-- [ ] Animation polish (spring physics, micro-interactions)
+### Phase 5 — Polish & Launch
+- [ ] WCAG 2.1 AA accessibility audit
+- [ ] Lighthouse 90+ performance
+- [ ] Animation polish
 - [ ] Cross-browser testing
 - [ ] Mobile touch gesture refinement
 - [ ] Launch
 
 ## Git Workflow
 
-- **Always push to `claude/*` branches** (e.g., `claude/feature-name`). Never push directly to `main`.
-- GitHub auto-merge is enabled — pushing to `claude/*` auto-creates a PR and merges to `main`.
-- No need to manually create PRs, merge, or push to `main`. Just push to `claude/*` and it handles the rest.
+- **Always push to `claude/*` branches.** Never push directly to `main`.
+- GitHub auto-merge is enabled — pushing to `claude/*` auto-creates a PR and merges.
 
 ## Development Notes
 
-- Python 3.11+ for pipeline
-- Node 18+ / Next.js 16 (App Router) for frontend
-- TypeScript for all frontend code
-- All bias analysis must be rule-based — no external API dependencies
-- Pipeline must complete within GitHub Actions time limits (~6 min for 200 sources)
-- Frontend must work as a fully static site (next export)
-- Supabase client-side reads only (no server-side operations from frontend)
-- Animation system adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`)
-- CSS architecture adapted from DondeAI (`/home/aacrit/projects/dondeAI/css/tokens.css`)
-- Agent definitions adapted from DondeAI/DondeBackend agent ecosystem
-
-## Reference: DondeAI Source Files
-
-Animation and design patterns to port/adapt:
-
-| Source | Path | What to Adapt |
-|--------|------|---------------|
-| Spring presets | `/home/aacrit/projects/dondeAI/js/spring.js` | Spring configs, animate function, fallback |
-| Motion utilities | `/home/aacrit/projects/dondeAI/js/motion.js` | Timeline, trackedRaf, springPress, springStagger, countUp |
-| CSS tokens | `/home/aacrit/projects/dondeAI/css/tokens.css` | Duration tokens, easing curves, spacing scale |
-| Animations | `/home/aacrit/projects/dondeAI/css/animations.css` | Keyframes, reduced-motion handling |
-| Responsive | `/home/aacrit/projects/dondeAI/css/responsive.css` | Breakpoints, clamp() patterns, touch targets |
-| Swipe cards | `/home/aacrit/projects/dondeAI/js/swipe-cards.js` | Touch gesture detection for mobile Deep Dive |
+- Python 3.11+, Node 18+, TypeScript for all frontend.
+- All bias analysis must be rule-based (no external API dependencies).
+- Pipeline completes within ~6 min (GitHub Actions limit).
+- Frontend is fully static (next export). Supabase client-side reads only.
+- Animation adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`).
+- CSS adapted from DondeAI (`/home/aacrit/projects/dondeAI/css/tokens.css`).

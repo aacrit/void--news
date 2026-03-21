@@ -1,14 +1,12 @@
 name: News Pipeline
 on:
   schedule:
-    # Per-edition primetime scheduling — morning + evening for each region.
-    # Each cron triggers the same job; the edition is resolved from the schedule.
-    - cron: '0 1 * * *'      # US evening  (8 PM ET)
-    - cron: '0 4 * * *'      # India morning (9:30 AM IST)
-    - cron: '0 11 * * *'     # World morning (EU morning + Asia afternoon)
-    - cron: '0 13 * * *'     # India evening (6:30 PM IST)
-    - cron: '0 14 * * *'     # US morning (9 AM ET / 6 AM PT)
-    - cron: '0 23 * * *'     # World evening (US afternoon wrap-up)
+    # 4x daily, every 6 hours — all editions each run.
+    # Covers morning + evening for US, India, and EU simultaneously.
+    - cron: '0 0 * * *'      # 00:00 UTC — US evening (7 PM ET), India morning (5:30 AM IST)
+    - cron: '0 6 * * *'      # 06:00 UTC — EU morning (7 AM CET), India midday (11:30 AM IST)
+    - cron: '0 12 * * *'     # 12:00 UTC — US morning (7 AM ET), India evening (5:30 PM IST)
+    - cron: '0 18 * * *'     # 18:00 UTC — US afternoon (1 PM ET), EU evening (7 PM CET)
   workflow_dispatch:
     inputs:
       editions:
@@ -45,15 +43,8 @@ jobs:
           if [ -n "${{ inputs.editions }}" ]; then
             echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
           else
-            case "${{ github.event.schedule }}" in
-              "0 1 * * *")  echo "filter=us" >> $GITHUB_OUTPUT ;;
-              "0 4 * * *")  echo "filter=india" >> $GITHUB_OUTPUT ;;
-              "0 11 * * *") echo "filter=world" >> $GITHUB_OUTPUT ;;
-              "0 13 * * *") echo "filter=india" >> $GITHUB_OUTPUT ;;
-              "0 14 * * *") echo "filter=us" >> $GITHUB_OUTPUT ;;
-              "0 23 * * *") echo "filter=world" >> $GITHUB_OUTPUT ;;
-              *)            echo "filter=" >> $GITHUB_OUTPUT ;;
-            esac
+            # All editions run on every scheduled trigger (4x daily)
+            echo "filter=" >> $GITHUB_OUTPUT
           fi
       - name: Run pipeline
         env:
