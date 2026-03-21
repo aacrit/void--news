@@ -2742,7 +2742,14 @@
   opacity: 0.3;
 }
 
-/* Track labels */
+/* Labels row — sits ABOVE the track */
+.dd-compact-spectrum__labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 6px;
+  margin-bottom: var(--space-1);
+}
+
 .dd-compact-spectrum__label {
   font-family: var(--font-data);
   font-size: 8px;
@@ -2750,8 +2757,6 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--fg-tertiary);
-  position: relative;
-  z-index: 1;
 }
 
 /* Source dots — positioned absolutely on the track */
@@ -2817,11 +2822,10 @@
   cursor: pointer;
   font-family: var(--font-data);
   font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  /* WCAG AA 4.5:1 — fg-secondary not fg-tertiary for small text */
-  color: var(--fg-secondary);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--fg-tertiary);
   /* Minimum 44x44 touch target via padding compensation */
   min-height: 44px;
   padding-inline: var(--space-2);
