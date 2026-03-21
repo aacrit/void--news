@@ -3,9 +3,10 @@ import { EDITIONS } from "../lib/types";
 import HomeContent from "../components/HomeContent";
 
 export function generateStaticParams() {
-  // "world" is handled by the root page.tsx (/) — exclude it here to avoid
-  // a duplicate /world route that conflicts with the World tab's href="/".
-  return EDITIONS.filter((e) => e.slug !== "world").map((e) => ({ edition: e.slug }));
+  // Return all edition slugs for static generation.
+  // The root page.tsx (/) also handles "world" to provide a canonical / route.
+  // This route supports both /world and /us, /india, etc. for direct access.
+  return EDITIONS.map((e) => ({ edition: e.slug }));
 }
 
 export default async function EditionPage({
