@@ -97,10 +97,17 @@ def main():
 
     # 2. Fetch all clusters
     print("\n[2/4] Fetching clusters from Supabase...")
-    clusters_res = supabase.table("story_clusters").select(
-        "id,title,category,section,sections,content_type,headline_rank,source_count,"
-        "editorial_importance,story_type"
-    ).execute()
+    # Try fetching with v5.0 editorial columns; fall back without them
+    try:
+        clusters_res = supabase.table("story_clusters").select(
+            "id,title,category,section,sections,content_type,headline_rank,source_count,"
+            "editorial_importance,story_type"
+        ).execute()
+    except Exception:
+        # editorial columns may not exist yet (migration 013 not applied)
+        clusters_res = supabase.table("story_clusters").select(
+            "id,title,category,section,sections,content_type,headline_rank,source_count"
+        ).execute()
     clusters = clusters_res.data or []
     print(f"  {len(clusters)} clusters found")
 
