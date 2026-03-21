@@ -12,7 +12,7 @@ import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
-import { BiasInspectorInline } from "./BiasInspector";
+import { BiasInspectorPanel } from "./BiasInspector";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -59,7 +59,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
-  const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
+  const [showScorePanel, setShowScorePanel] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -521,29 +521,18 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                   })}
                 </div>
               </div>
-            </section>
-          )}
 
-          {/* ---- Press Analysis — collapsed by default, expand via trigger ------- */}
-          {sources.length > 0 && (
-            <div className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "200ms" }}>
+              {/* Arrow trigger: opens press analysis as separate pop-out panel */}
               <button
                 className="dd-press-trigger"
-                onClick={() => setPressAnalysisOpen((v) => !v)}
-                aria-expanded={pressAnalysisOpen}
-                aria-controls="dd-press-expand"
+                onClick={() => setShowScorePanel(true)}
+                aria-label="Open press analysis"
+                aria-haspopup="dialog"
               >
                 <span>Press Analysis</span>
-                <span className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`} aria-hidden="true">&#9658;</span>
+                <span className="dd-press-trigger__arrow" aria-hidden="true">&#9658;</span>
               </button>
-              <div
-                id="dd-press-expand"
-                className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}
-                aria-hidden={!pressAnalysisOpen}
-              >
-                <BiasInspectorInline sources={sources} />
-              </div>
-            </div>
+            </section>
           )}
 
           {/* ---- Source perspectives: agree + diverge in one compact section -- */}
@@ -578,6 +567,15 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                 </ul>
               )}
             </section>
+          )}
+
+          {/* Press analysis pop-out panel — separate from Deep Dive content */}
+          {sources.length > 0 && (
+            <BiasInspectorPanel
+              sources={sources}
+              isOpen={showScorePanel}
+              onClose={() => setShowScorePanel(false)}
+            />
           )}
 
           {/* No deep dive data at all */}
