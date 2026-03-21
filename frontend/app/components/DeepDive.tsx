@@ -59,6 +59,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -523,27 +524,25 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </section>
           )}
 
-          {/* ---- Press Analysis — inline scorecard ----------------------------- */}
+          {/* ---- Press Analysis — collapsed by default, expand via trigger ------- */}
           {sources.length > 0 && (
-            <section aria-label="Press analysis" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "200ms" }}>
-              <BiasInspectorInline sources={sources} />
-            </section>
-          )}
-
-          {/* Subtle cue: encourage interaction with the analysis */}
-          {sources.length > 0 && (
-            <div className="dd-interaction-cue" aria-hidden="true">
-              <span className="dd-interaction-cue__dots">
-                <span className="dd-interaction-cue__dot" />
-                <span className="dd-interaction-cue__dot" />
-                <span className="dd-interaction-cue__dot" />
-              </span>
-              <span className="dd-interaction-cue__text">Tap scores to explore</span>
-              <span className="dd-interaction-cue__dots">
-                <span className="dd-interaction-cue__dot" />
-                <span className="dd-interaction-cue__dot" />
-                <span className="dd-interaction-cue__dot" />
-              </span>
+            <div className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "200ms" }}>
+              <button
+                className="dd-press-trigger"
+                onClick={() => setPressAnalysisOpen((v) => !v)}
+                aria-expanded={pressAnalysisOpen}
+                aria-controls="dd-press-expand"
+              >
+                <span>Press Analysis</span>
+                <span className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`} aria-hidden="true">&#9658;</span>
+              </button>
+              <div
+                id="dd-press-expand"
+                className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}
+                aria-hidden={!pressAnalysisOpen}
+              >
+                <BiasInspectorInline sources={sources} />
+              </div>
             </div>
           )}
 
