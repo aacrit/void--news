@@ -427,17 +427,21 @@
     display: none;
   }
 
-  /* Analysis row: stack on mobile, tighter gap */
-  .dd-analysis-row {
-    flex-direction: column;
-    align-items: flex-start;
+  /* Analysis section: tighter padding and gap on mobile */
+  .dd-analysis-section {
+    padding: var(--space-3) 0;
     gap: var(--space-2);
   }
 
-  /* Spectrum track: full width on mobile, prevent overflow */
-  .dd-analysis-row__spectrum {
-    min-width: 0;
-    width: 100%;
+  /* Compact spectrum dots: slightly smaller on mobile */
+  .dd-compact-spectrum__dot {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* No lift on mobile — tap targets are large enough without translateY */
+  .dd-compact-spectrum__dot:hover {
+    transform: translate(-50%, -50%);
   }
 
   /* Press expand: faster transition on mobile */

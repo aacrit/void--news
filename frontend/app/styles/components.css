@@ -2797,32 +2797,116 @@
   font-family: var(--font-structural);
 }
 
-/* ---- Deep Dive: Analysis row (Sigil + Spectrum + Press trigger) --------- */
-/* Single horizontal row on desktop. Wraps on mobile. The row uses flex-wrap
-   so the press-expand spans full width below all three items. */
-.dd-analysis-row {
+/* ---- Deep Dive: Analysis Section — vertical stack ---------------------- */
+.dd-analysis-section {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-3);
+  padding: var(--space-4) 0;
 }
 
-.dd-analysis-row__sigil {
-  flex-shrink: 0;
+/* Bias verdict — centered Sigil */
+.dd-bias-verdict {
+  display: flex;
+  justify-content: center;
 }
 
-.dd-analysis-row__spectrum {
-  flex: 1;
-  min-width: 0;
+/* ---- Compact Spectrum — single-row track with dots -------------------- */
+.dd-compact-spectrum {
+  width: 100%;
+  padding: 0 var(--space-2);
+}
+
+.dd-compact-spectrum__track {
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+}
+
+/* Gradient background track */
+.dd-compact-spectrum__track::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  transform: translateY(-50%);
+  height: 6px;
+  background: linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right));
+  border-radius: 3px;
+  opacity: 0.3;
+}
+
+/* Track labels */
+.dd-compact-spectrum__label {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  position: relative;
+  z-index: 1;
+}
+
+/* Source dots — positioned absolutely on the track */
+.dd-compact-spectrum__dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+  background-color: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-e1);
+  transition: transform 200ms var(--spring-bouncy), box-shadow 150ms var(--ease-out);
+  cursor: pointer;
+  text-decoration: none;
+  z-index: 2;
+}
+
+.dd-compact-spectrum__dot:hover {
+  transform: translate(-50%, -50%) scale(1.4) translateY(-2px);
+  box-shadow: var(--shadow-e2);
+  z-index: 10;
+}
+
+.dd-compact-spectrum__dot:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  z-index: 10;
+}
+
+.dd-compact-spectrum__dot--overflow {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+
+.dd-compact-spectrum__dot--overflow:hover {
+  opacity: 1;
+}
+
+.dd-compact-spectrum__initial {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--fg-tertiary);
 }
 
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
-/* Sits below the spectrum inside the spectrum column, right-aligned. */
+/* Centered below the compact spectrum. */
 .dd-press-trigger {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-left: auto;
+  margin: 0 auto;
   margin-top: var(--space-1);
   padding: var(--space-1) 0;
   background: none;

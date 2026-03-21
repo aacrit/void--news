@@ -20,7 +20,7 @@ import type { SigilData } from "../lib/types";
 
 interface SigilProps {
   data: SigilData;
-  size?: "sm" | "lg";
+  size?: "sm" | "lg" | "xl";
   /** "facts" = standard cluster mode (coverage ring + source count) */
   mode?: "facts";
 }
@@ -142,13 +142,13 @@ function senseColor(v: number): string {
 }
 
 function DataMark({ data, size, mounted, mode = "facts" }: {
-  data: SigilData; size: "sm" | "lg"; mounted: boolean; mode?: "facts";
+  data: SigilData; size: "sm" | "lg" | "xl"; mounted: boolean; mode?: "facts";
 }) {
   const lean = data.politicalLean;
   const beamAngle = (lean - 50) * 0.30; // ±15° range
   const beamCol = leanColor(lean);
 
-  const px = size === "lg" ? 42 : 28;
+  const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
 
   // Source coverage Harvey ball
   const coverage = Math.min(data.sourceCount / 10, 1);
@@ -157,7 +157,7 @@ function DataMark({ data, size, mounted, mode = "facts" }: {
   const ringFill = coverageFill;
 
   const showNum = data.sourceCount > 0;
-  const numSize = size === "lg" ? 8 : 6;
+  const numSize = size === "xl" ? 10 : size === "lg" ? 8 : 6;
 
   return (
     <svg
@@ -501,7 +501,7 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
       aria-controls={open ? tooltipId : undefined}
       style={{
         display: "inline-flex", alignItems: "center",
-        gap: size === "lg" ? 8 : 5,
+        gap: size === "xl" ? 12 : size === "lg" ? 8 : 5,
         cursor: "pointer", position: "relative",
         minHeight: 44,
         opacity: data.pending ? 0.3 : 1,
@@ -515,14 +515,14 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
       {/* Text labels — makes the mark self-explanatory */}
       <div style={{
         display: "flex", flexDirection: "column",
-        gap: size === "lg" ? 3 : 1,
+        gap: size === "xl" ? 4 : size === "lg" ? 3 : 1,
         opacity: mounted ? 1 : 0,
         transition: "opacity 350ms var(--ease-out) 350ms",
       }}>
         {/* Lean label — the hero text */}
         <span style={{
           fontFamily: "var(--font-data)", fontWeight: 600,
-          fontSize: size === "lg" ? 11 : 10,
+          fontSize: size === "xl" ? 14 : size === "lg" ? 11 : 10,
           color: lc,
           lineHeight: 1,
           letterSpacing: "0.02em",
@@ -533,7 +533,7 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
         {/* Source count */}
         <span style={{
           fontFamily: "var(--font-data)",
-          fontSize: size === "lg" ? 9 : 8,
+          fontSize: size === "xl" ? 11 : size === "lg" ? 9 : 8,
           color: "var(--fg-tertiary)",
           lineHeight: 1,
         }}>
