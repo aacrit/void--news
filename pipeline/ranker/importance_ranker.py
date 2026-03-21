@@ -133,25 +133,46 @@ _GEOPOLITICAL_WEIGHT: dict[str, float] = {
 # Compiled into a single regex for O(n) matching instead of O(n*m).
 # ---------------------------------------------------------------------------
 _CONSEQUENTIALITY_TERMS: list[str] = [
-    # Legislative/executive actions
-    "passed", "signed into law", "enacted", "vetoed", "ratified", "repealed",
-    "approved", "rejected", "overturned", "upheld", "ruled",
-    # Conflict/security
-    "invaded", "attacked", "bombed", "killed", "assassinated",
-    "arrested", "detained", "charged", "convicted", "sentenced",
-    "sanctioned", "deployed", "evacuated",
-    # Political transitions
-    "elected", "resigned", "impeached", "ousted", "appointed",
-    "inaugurated", "abdicated", "overthrown",
-    # Economic outcomes
-    "collapsed", "defaulted", "bankrupt", "crashed", "surged",
-    "plunged", "acquired", "merged",
+    # Legislative/executive actions (past + present tense)
+    "passed", "passes", "signed into law", "signs into law",
+    "enacted", "enacts", "vetoed", "vetoes",
+    "ratified", "ratifies", "repealed", "repeals",
+    "approved", "approves", "rejected", "rejects",
+    "overturned", "overturns", "upheld", "upholds",
+    "ruled", "rules against", "rules in favor",
+    "blocked", "blocks",
+    # Conflict/security (past + present tense)
+    "invaded", "invades", "attacked", "attacks",
+    "bombed", "bombs", "killed", "kills",
+    "assassinated", "assassinates",
+    "arrested", "arrests", "detained", "detains",
+    "charged", "charges", "convicted", "convicts",
+    "sentenced", "sentences",
+    "sanctioned", "sanctions", "deployed", "deploys",
+    "evacuated", "evacuates",
+    # Political transitions (past + present tense)
+    "elected", "resigns", "resigned",
+    "impeached", "impeaches", "ousted", "ousts",
+    "appointed", "appoints", "inaugurated",
+    "abdicated", "abdicates", "overthrown", "overthrows",
+    "fired", "fires", "sacked", "sacks",
+    # Economic outcomes (past + present tense)
+    "collapsed", "collapses", "defaulted", "defaults",
+    "bankrupt", "crashed", "crashes", "surged", "surges",
+    "plunged", "plunges", "acquired", "acquires",
+    "merged", "merges",
     # Disasters/events
-    "struck", "devastated", "erupted", "declared emergency",
+    "struck", "strikes", "devastated", "devastates",
+    "erupted", "erupts", "declared emergency", "declares emergency",
     "state of emergency",
     # Agreements/diplomacy
     "ceasefire", "peace deal", "trade deal", "agreement reached",
-    "treaty signed", "broke off", "severed ties",
+    "treaty signed", "broke off", "severed ties", "severs ties",
+    # Orders/bans (v5.0 — common headline verbs)
+    "bans", "banned", "orders", "ordered",
+    "suspends", "suspended", "freezes", "froze",
+    "launches", "launched", "declares", "declared",
+    "indicted", "indicts",
 ]
 
 # Pre-compile regex with word boundaries to prevent false matches
@@ -822,12 +843,15 @@ def rank_importance(
     bias_scores: list[dict] | None = None,
     cluster_confidence: float = 1.0,
     category: str | None = None,
+    editorial_importance: int | None = None,
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
 
-    v4.0 formula: 10 signals with confidence multiplier + 3 gates.
-    Optimized: source map built once, timestamps parsed once, NER two-phase.
+    v5.0 formula: 10 deterministic signals + optional Gemini editorial
+    importance. When editorial_importance is available, it gets 12% weight
+    and all deterministic signals scale to 88%. When unavailable, pure
+    deterministic v4.0 scoring is used (backward-compatible).
 
     Args:
         cluster_articles: List of article dicts belonging to this cluster,
@@ -841,6 +865,8 @@ def rank_importance(
             Low-confidence clusters get discounted.
         category: Optional category label (e.g., "sports", "politics").
             Used for soft-news gate.
+        editorial_importance: Optional Gemini-assigned 1-10 score.
+            When available, blended into ranking as 12% weight signal.
 
     Returns:
         Dict with:
@@ -878,37 +904,45 @@ def rank_importance(
     authority = _institutional_authority_score(cluster_articles)
     maturity = _story_maturity_score(timestamps, source_count)
 
-    # v4.0 weighted combination (10 signals, weights sum to 1.0)
-    #
-    # Key design: authority + maturity + tier_diversity = 37% of score.
-    # These three signals together answer: "Is this about powerful
-    # institutions (authority), thoroughly reported (maturity), and
-    # validated by editorial consensus across tiers (tier_diversity)?"
-    # That's the front-page test.
-    #
-    # Weight table (sum = 1.00):
-    #   coverage:          0.20  (down from 0.27 — tier-weighted now)
-    #   maturity:          0.16  (NEW — replaces recency 0.14 + velocity 0.09)
-    #   tier_diversity:    0.13  (unchanged)
-    #   consequentiality:  0.10  (unchanged)
-    #   authority:         0.08  (NEW — institutional power signal)
-    #   factual:           0.08  (up from 0.04 — rewards real journalism)
-    #   divergence:        0.07  (unchanged)
-    #   spectrum:          0.06  (down from 0.10 — partially redundant w/ tier)
-    #   geographic:        0.06  (unchanged)
-    #   velocity:          0.06  (retained as independent breaking-news signal)
-    headline_rank = (
-        coverage * 0.20
-        + maturity * 0.16
-        + tier_div * 0.13
-        + consequentiality * 0.10
-        + authority * 0.08
-        + factual * 0.08
-        + divergence * 0.07
-        + spectrum * 0.06
-        + geographic * 0.06
-        + velocity * 0.06
-    )
+    # Gemini editorial importance: normalize 1-10 to 0-100
+    editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
+                        if editorial_importance is not None else None)
+
+    # v5.0 weighted combination
+    # When Gemini editorial_importance is available (not None):
+    #   editorial gets 12% weight, all deterministic signals scale to 88%.
+    # When unavailable: pure deterministic v4.0 (backward-compatible).
+    if editorial_signal is not None:
+        # v5.0: Gemini-augmented weights (sum = 1.00)
+        G = 0.12  # Gemini editorial weight
+        D = 1.0 - G  # 0.88 — deterministic scale factor
+        headline_rank = (
+            editorial_signal * G
+            + coverage * 0.20 * D
+            + maturity * 0.16 * D
+            + tier_div * 0.13 * D
+            + consequentiality * 0.10 * D
+            + authority * 0.08 * D
+            + factual * 0.08 * D
+            + divergence * 0.07 * D
+            + spectrum * 0.06 * D
+            + geographic * 0.06 * D
+            + velocity * 0.06 * D
+        )
+    else:
+        # v4.0: purely deterministic (unchanged, sum = 1.00)
+        headline_rank = (
+            coverage * 0.20
+            + maturity * 0.16
+            + tier_div * 0.13
+            + consequentiality * 0.10
+            + authority * 0.08
+            + factual * 0.08
+            + divergence * 0.07
+            + spectrum * 0.06
+            + geographic * 0.06
+            + velocity * 0.06
+        )
 
     # Confidence multiplier: discount low-confidence clusters.
     # v3.3: softened curve — 0.65 + 0.35 * confidence.

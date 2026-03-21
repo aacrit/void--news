@@ -27,11 +27,22 @@ DRY_RUN = "--dry-run" in sys.argv
 
 
 def _get_section(cluster_id: str, clusters: list[dict]) -> str:
-    """Look up the section (world/us) for a cluster by ID."""
+    """Look up the primary section (world/us) for a cluster by ID."""
     for c in clusters:
         if c["id"] == cluster_id:
             return c.get("section", "world")
     return "world"
+
+
+def _cluster_in_section(cluster_id: str, clusters: list[dict], section: str) -> bool:
+    """Check if a cluster belongs to a section via sections[] array.
+    This matches the frontend query logic (.contains("sections", [section]))
+    so that ranking pools see the same stories the user sees."""
+    for c in clusters:
+        if c["id"] == cluster_id:
+            sections = c.get("sections") or [c.get("section", "world")]
+            return section in sections
+    return section == "world"
 
 
 def _get_cluster_tier_info(articles: list[dict], sources: list[dict]) -> dict:
@@ -74,7 +85,7 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
 def main():
     start = time.time()
     print("=" * 60)
-    print(f"void --news re-ranker v4.0 {'(DRY RUN)' if DRY_RUN else ''}")
+    print(f"void --news re-ranker v5.0 {'(DRY RUN)' if DRY_RUN else ''}")
     print("=" * 60)
 
     # 1. Load sources with DB IDs
@@ -87,7 +98,8 @@ def main():
     # 2. Fetch all clusters
     print("\n[2/4] Fetching clusters from Supabase...")
     clusters_res = supabase.table("story_clusters").select(
-        "id,title,category,section,sections,content_type,headline_rank,source_count"
+        "id,title,category,section,sections,content_type,headline_rank,source_count,"
+        "editorial_importance,story_type"
     ).execute()
     clusters = clusters_res.data or []
     print(f"  {len(clusters)} clusters found")
@@ -161,18 +173,31 @@ def main():
         except Exception:
             category = cluster.get("category", "politics")
 
-        # Run v4.0 ranker
+        # Read editorial intelligence from DB (Gemini-generated, may be NULL)
+        editorial_importance = cluster.get("editorial_importance")
+        story_type = cluster.get("story_type")
+
+        # Run v5.0 ranker
         try:
             result = rank_importance(
                 articles, sources, bias_scores,
                 cluster_confidence=cluster_confidence,
                 category=category,
+                editorial_importance=editorial_importance,
             )
         except Exception as e:
             errors += 1
             if errors <= 5:
                 print(f"  [err] Cluster {cid[:8]}: {e}")
             continue
+
+        # Story-type gates (v5.0): demote incremental updates and ceremonial
+        if story_type == "incremental_update":
+            result["headline_rank"] *= 0.75
+            result["importance_score"] = result["headline_rank"]
+        elif story_type == "ceremonial":
+            result["headline_rank"] *= 0.82
+            result["importance_score"] = result["headline_rank"]
 
         old_rank = cluster.get("headline_rank") or 0
         new_rank = result["headline_rank"]
@@ -212,7 +237,7 @@ def main():
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
     for section_val in ("world", "us", "india"):
-        pool = [u for u in updates if _get_section(u["id"], clusters) == section_val]
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
         if not pool:
             continue
 
@@ -299,7 +324,7 @@ def main():
     # Build per-section ranked lists
     section_pools: dict[str, list[dict]] = {}
     for section_val in ("world", "us", "india"):
-        section_pools[section_val] = [u for u in updates if _get_section(u["id"], clusters) == section_val]
+        section_pools[section_val] = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
 
     # Identify cross-listed clusters in top-5 of any section
     top5_ids_by_section: dict[str, set[str]] = {}
@@ -331,7 +356,7 @@ def main():
 
     # Print top 15 per section
     for section_val in ("world", "us", "india"):
-        section_updates = [u for u in updates if _get_section(u["id"], clusters) == section_val]
+        section_updates = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
         print(f"\n  --- Top 15 {section_val.upper()} by v4.0 headline_rank ---")
         for j, u in enumerate(section_updates[:15]):
             title = next(

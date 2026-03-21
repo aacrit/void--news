@@ -1248,6 +1248,13 @@ def main():
                     clusters[idx]["consensus_points"] = result["consensus"]
                     clusters[idx]["divergence_points"] = result["divergence"]
                     clusters[idx]["_gemini_enriched"] = True
+                    # v5.0: editorial intelligence fields
+                    if result.get("editorial_importance") is not None:
+                        clusters[idx]["editorial_importance"] = result["editorial_importance"]
+                    if result.get("story_type") is not None:
+                        clusters[idx]["story_type"] = result["story_type"]
+                    if result.get("has_binding_consequences") is not None:
+                        clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
             except Exception as e:
                 print(f"  [warn] Gemini summarization failed: {e}")
         elif SUMMARIZER_AVAILABLE:
@@ -1318,12 +1325,13 @@ def main():
                     p25_idx = max(0, len(conf_values) // 4)
                     cluster_confidence = conf_values[p25_idx]
 
-            # Rank with v4.0 engine (10 signals + 3 gates + confidence)
+            # Rank with v5.0 engine (10 signals + Gemini editorial + gates)
             try:
                 rank_result = rank_importance(
                     cluster_articles_list, sources, cluster_bias_scores,
                     cluster_confidence=cluster_confidence,
                     category=cluster.get("category"),
+                    editorial_importance=cluster.get("editorial_importance"),
                 )
                 cluster["importance_score"] = rank_result["importance_score"]
                 cluster["divergence_score"] = rank_result["divergence_score"]
@@ -1363,6 +1371,66 @@ def main():
                 raw = max(0.0, min(100.0, c.get("headline_rank", 0)))
                 c["headline_rank"] = round(5.0 + raw * 0.95, 2)
 
+        # Story-type gates (v5.0): demote incremental updates and ceremonial stories
+        for cluster in clusters:
+            st = cluster.get("story_type")
+            if st == "incremental_update":
+                cluster["headline_rank"] = round(cluster.get("headline_rank", 0) * 0.75, 2)
+            elif st == "ceremonial":
+                cluster["headline_rank"] = round(cluster.get("headline_rank", 0) * 0.82, 2)
+
+        clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+
+        # Step 7c: Editorial triage (Gemini) — reorder top 10 per section
+        # Uses 1 API call per section (3 total). Falls back to deterministic
+        # ranking if Gemini is unavailable.
+        if SUMMARIZER_AVAILABLE and gemini_is_available():
+            try:
+                from summarizer.gemini_client import editorial_triage
+                print("\n[7c] Running editorial triage (Gemini)...")
+                for section_val in ("world", "us", "india"):
+                    pool = [c for c in clusters
+                            if section_val in (c.get("sections") or [c.get("section", "world")])]
+                    pool.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+                    top_30 = pool[:30]
+                    if len(top_30) < 5:
+                        continue
+
+                    # Build candidate list with IDs
+                    triage_candidates = []
+                    for c in top_30:
+                        triage_candidates.append({
+                            "id": c.get("_db_id", "") or str(id(c)),
+                            "title": c.get("title", ""),
+                            "summary": c.get("summary", ""),
+                            "source_count": c.get("source_count", 0),
+                        })
+
+                    triage_result = editorial_triage(triage_candidates, section_val)
+                    if not triage_result:
+                        print(f"  [{section_val}] Triage unavailable, using deterministic ranking")
+                        continue
+
+                    # Flag incremental updates
+                    incr_flags = set(triage_result.get("incremental_flags", []))
+                    for cid in incr_flags:
+                        for c in top_30:
+                            if (c.get("_db_id", "") or str(id(c))) == cid:
+                                c["story_type"] = c.get("story_type") or "incremental_update"
+                                c["headline_rank"] = round(c.get("headline_rank", 0) * 0.75, 2)
+                    if incr_flags:
+                        print(f"  [{section_val}] Incremental updates flagged: {len(incr_flags)}")
+
+                    # Log duplicate flags
+                    dupe_flags = triage_result.get("duplicate_flags", [])
+                    if dupe_flags:
+                        print(f"  [{section_val}] Potential duplicate clusters: {dupe_flags[:3]}")
+
+                    applied = len(incr_flags)
+                    print(f"  [{section_val}] Editorial triage applied ({applied} stories adjusted)")
+            except Exception as e:
+                print(f"  [warn] Editorial triage failed, using deterministic ranking: {e}")
+
         clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
 
         # Topic diversity re-ranking: prevent any single category from
@@ -1372,7 +1440,7 @@ def main():
         # the category cap, skip it and try the next one. Skipped stories are
         # re-inserted after position TOP_N in their original order.
         for section_val in ("world", "us", "india"):
-            pool = [c for c in clusters if c.get("section") == section_val]
+            pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
             if len(pool) <= 10:
                 continue
             # v4.0: soft-news categories (sports/entertainment/culture) get
@@ -1459,6 +1527,14 @@ def main():
                 "headline_rank": round(cluster.get("headline_rank", 0.0), 2),
                 "coverage_velocity": cluster.get("coverage_velocity", 0),
             }
+
+            # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)
+            if cluster.get("editorial_importance") is not None:
+                cluster_row["editorial_importance"] = cluster["editorial_importance"]
+            if cluster.get("story_type") is not None:
+                cluster_row["story_type"] = cluster["story_type"]
+            if cluster.get("has_binding_consequences") is not None:
+                cluster_row["has_binding_consequences"] = cluster["has_binding_consequences"]
 
             # Include Gemini-generated consensus/divergence in the initial insert
             has_gemini = cluster.get("_gemini_enriched", False)
