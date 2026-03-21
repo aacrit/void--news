@@ -30,8 +30,8 @@ interface SigilProps {
 
 let cssVarCache: Record<string, string> | null = null;
 const SSR: Record<string, string> = {
-  "--bias-left": "#3B82F6", "--bias-center-left": "#60A5FA",
-  "--bias-center": "#9CA3AF", "--bias-center-right": "#F97316",
+  "--bias-left": "#3B82F6", "--bias-center-left": "#93C5FD",
+  "--bias-center": "#9CA3AF", "--bias-center-right": "#FCA5A5",
   "--bias-right": "#EF4444", "--sense-low": "#22C55E",
   "--sense-medium": "#EAB308", "--sense-high": "#EF4444",
   "--type-reporting": "#3B82F6", "--type-opinion": "#F97316",

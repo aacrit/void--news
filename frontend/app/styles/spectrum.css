@@ -10,9 +10,9 @@
      Light mode: subtle washes that don't overwhelm the paper surface. */
   --spectrum-zone-far-left:    rgba(29, 78, 216, 0.12);
   --spectrum-zone-left:        rgba(59, 130, 246, 0.07);
-  --spectrum-zone-center-left: rgba(96, 165, 250, 0.05);
+  --spectrum-zone-center-left: rgba(147, 197, 253, 0.05);
   --spectrum-zone-center:      rgba(156, 163, 175, 0.05);
-  --spectrum-zone-center-right:rgba(249, 115, 22, 0.05);
+  --spectrum-zone-center-right:rgba(252, 165, 165, 0.05);
   --spectrum-zone-right:       rgba(239, 68, 68, 0.07);
   --spectrum-zone-far-right:   rgba(185, 28, 28, 0.12);
 }
@@ -21,9 +21,9 @@
   /* Dark mode tints — slightly more visible against warm dark surfaces */
   --spectrum-zone-far-left:    rgba(29, 78, 216, 0.16);
   --spectrum-zone-left:        rgba(59, 130, 246, 0.10);
-  --spectrum-zone-center-left: rgba(96, 165, 250, 0.07);
+  --spectrum-zone-center-left: rgba(147, 197, 253, 0.07);
   --spectrum-zone-center:      rgba(156, 163, 175, 0.07);
-  --spectrum-zone-center-right:rgba(249, 115, 22, 0.07);
+  --spectrum-zone-center-right:rgba(252, 165, 165, 0.07);
   --spectrum-zone-right:       rgba(239, 68, 68, 0.10);
   --spectrum-zone-far-right:   rgba(185, 28, 28, 0.16);
 }
