@@ -132,20 +132,38 @@ def main():
         if not article_ids:
             continue
 
-        # Fetch article data
-        art_res = supabase.table("articles").select(
-            "id,source_id,title,summary,full_text,published_at,word_count"
-        ).in_("id", article_ids).execute()
-        articles = art_res.data or []
+        # Fetch article data (batch if too many IDs for PostgREST URL limit)
+        try:
+            articles = []
+            for j in range(0, len(article_ids), 50):
+                batch_ids = article_ids[j:j + 50]
+                art_res = supabase.table("articles").select(
+                    "id,source_id,title,summary,full_text,published_at,word_count"
+                ).in_("id", batch_ids).execute()
+                articles.extend(art_res.data or [])
+        except Exception as e:
+            errors += 1
+            if errors <= 5:
+                print(f"  [err] Cluster {cid[:8]} articles: {e}")
+            continue
 
         if not articles:
             continue
 
-        # Fetch bias scores
-        bs_res = supabase.table("bias_scores").select(
-            "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
-        ).in_("article_id", article_ids).execute()
-        bias_scores = bs_res.data or []
+        # Fetch bias scores (batched)
+        try:
+            bias_scores = []
+            for j in range(0, len(article_ids), 50):
+                batch_ids = article_ids[j:j + 50]
+                bs_res = supabase.table("bias_scores").select(
+                    "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
+                ).in_("article_id", batch_ids).execute()
+                bias_scores.extend(bs_res.data or [])
+        except Exception as e:
+            errors += 1
+            if errors <= 5:
+                print(f"  [err] Cluster {cid[:8]} bias: {e}")
+            continue
 
         # Map articles for ranker (add published_at key it expects)
         for art in articles:
