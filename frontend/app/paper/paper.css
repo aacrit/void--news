@@ -329,11 +329,14 @@ html:has(.np-root) body { background: transparent; }
   margin: 0 0 4px;
   text-shadow: 0.4px 0.4px 0 rgba(26, 23, 16, 0.08);
   overflow-wrap: break-word;
+  text-wrap: balance;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 /* Banner tier — lead story */
 .np-article--banner .np-article__headline {
-  font-size: 42px;
+  font-size: clamp(24px, 3vw, 42px);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   text-align: center;
@@ -342,7 +345,7 @@ html:has(.np-root) body { background: transparent; }
 
 /* Major tier */
 .np-article--major .np-article__headline {
-  font-size: 24px;
+  font-size: clamp(16px, 2vw, 24px);
 }
 
 /* Standard tier */
