@@ -219,6 +219,13 @@ def _attribution_specificity_score(text: str) -> float:
     Score based on specificity of attribution.
     Specific titles + names score high; vague sourcing scores low.
     Returns 0-100.
+
+    Neutral baseline (50) when no SPECIFIC_ATTRIBUTION matches and no vague
+    sourcing: the article is neither confirmed specific nor confirmed vague.
+    This avoids penalising wire-service articles where named sources are
+    cited without formal title prefixes (e.g. "Powell said" vs
+    "Chair Powell said"). Previously returning 0 here caused a 10% weight
+    penalty on all such articles.
     """
     text_lower = text.lower()
     word_count = len(text_lower.split())
@@ -233,14 +240,11 @@ def _attribution_specificity_score(text: str) -> float:
     for phrase in VAGUE_SOURCES:
         vague_count += text_lower.count(phrase)
 
-    # Net specificity: specific attributions boost, vague ones penalize
+    # No evidence either way: neutral score (neither credited nor penalised)
     if specific_count == 0 and vague_count == 0:
-        return 0.0  # no sourcing = no specificity credit
+        return 50.0
 
     total = specific_count + vague_count
-    if total == 0:
-        return 0.0
-
     specific_ratio = specific_count / total
     # All specific = 100, all vague = 0, mixed = proportional
     return specific_ratio * 100.0
@@ -255,12 +259,32 @@ def analyze_factual_rigor(article: dict) -> dict:
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with evidence counts).
+
+    Text assembly: title + full_text + summary (in that order, summary appended
+    last so longer full_text dominates signal). Including summary ensures that
+    RSS-only articles (scrape failure fallback) still contribute their summary
+    signal — otherwise short combined text causes all sub-scorers to return 0.
+
+    Minimum floor: a length-proportional floor prevents scores of 0 for
+    articles with very short text (title-only, RSS stubs). The floor scales
+    from 5 (empty) to 0 at 200+ words, so genuinely short articles are not
+    penalised to zero but also don't artificially inflate the score.
+    Short-text floor values:
+        0 words  -> 10 (early-return)
+        1-50 words   -> floor ~7
+        50-100 words -> floor ~4
+        100-200 words -> floor ~1
+        200+ words   -> floor 0 (no correction needed)
     """
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
-    combined = f"{title} {full_text}"
+    summary = article.get("summary", "") or ""
 
-    if not combined.strip():
+    # Include summary in analysis text so RSS-fallback articles have signal.
+    # Append after full_text (not before) so full_text dominates NER context.
+    combined = f"{title} {full_text} {summary}".strip()
+
+    if not combined:
         return {
             "score": 10,
             "rationale": {
@@ -293,7 +317,19 @@ def analyze_factual_rigor(article: dict) -> dict:
     ref_bonus = min(refs * 0.05, 5.0)
     weighted += ref_bonus
 
-    score = max(0, min(100, int(round(weighted))))
+    raw_score = max(0.0, min(100.0, weighted))
+
+    # Length-proportional minimum floor: prevents score=0 for short text
+    # articles where all NLP sub-scorers return 0 due to insufficient signal.
+    # Floor decays linearly from 8 (<=50 words) to 0 (>=200 words).
+    # This is a conservative floor — it does not inflate good articles, only
+    # prevents catastrophic under-scoring of stubs and RSS-fallback articles.
+    word_count = len(combined.split())
+    if word_count < 200:
+        floor = max(0.0, 8.0 * (1.0 - word_count / 200.0))
+        raw_score = max(raw_score, floor)
+
+    score = max(0, min(100, int(round(raw_score))))
 
     # Collect counts for rationale
     # Named sources: score / 20 gives approximate count (0=0, 20=1, 40=2, etc.)
