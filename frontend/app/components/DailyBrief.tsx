@@ -19,18 +19,18 @@ function formatTime(seconds: number): string {
 export default function DailyBrief({ edition }: DailyBriefProps) {
   const [brief, setBrief] = useState<DailyBriefData | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isOutOfView, setIsOutOfView] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch brief whenever edition changes
   useEffect(() => {
     let cancelled = false;
     setBrief(null);
     setIsPlaying(false);
+    setShowPlayer(false);
     setCurrentTime(0);
     setDuration(0);
 
@@ -48,7 +48,7 @@ export default function DailyBrief({ edition }: DailyBriefProps) {
 
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onLoaded = () => setDuration(audio.duration || 0);
-    const onEnded = () => setIsPlaying(false);
+    const onEnded = () => { setIsPlaying(false); };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoaded);
@@ -61,21 +61,7 @@ export default function DailyBrief({ edition }: DailyBriefProps) {
     };
   }, [brief]);
 
-  // IntersectionObserver — track when container scrolls out of view (mobile sticky)
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || typeof IntersectionObserver === "undefined") return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsOutOfView(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(container);
-
-    return () => observer.disconnect();
-  }, [brief]);
-
-  const togglePlay = useCallback(() => {
+  const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -83,9 +69,9 @@ export default function DailyBrief({ edition }: DailyBriefProps) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play().catch(() => {
-        // Autoplay blocked — silently fail, user already clicked
-      });
+      // Reveal player on first play
+      setShowPlayer(true);
+      audio.play().catch(() => {});
       setIsPlaying(true);
     }
   }, [isPlaying]);
@@ -111,21 +97,9 @@ export default function DailyBrief({ edition }: DailyBriefProps) {
     ? brief.audio_duration_seconds
     : duration;
 
-  const PlayIcon = (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-      <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-
-  const PauseIcon = (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-    </svg>
-  );
-
   return (
-    <div className="daily-brief" ref={containerRef}>
-      {/* Hidden audio element — no native controls */}
+    <>
+      {/* Hidden audio element */}
       {hasAudio && (
         <audio
           ref={audioRef}
@@ -134,8 +108,8 @@ export default function DailyBrief({ edition }: DailyBriefProps) {
         />
       )}
 
-      <div className="daily-brief__content">
-        {/* Text column */}
+      {/* TL;DR Section — standalone editorial brief */}
+      <div className="daily-brief">
         <div className="daily-brief__text">
           <p className="daily-brief__label">Daily Brief</p>
           <div className="daily-brief__body">
@@ -144,79 +118,53 @@ export default function DailyBrief({ edition }: DailyBriefProps) {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Audio player column — only when audio is available */}
-        {hasAudio && (
-          <div className="daily-brief__player">
-            <button
-              className="daily-brief__play-btn"
-              onClick={togglePlay}
-              aria-label={isPlaying ? "Pause daily brief" : "Play daily brief"}
-              type="button"
-            >
-              {isPlaying ? PauseIcon : PlayIcon}
-            </button>
+      {/* "On Air" CTA button — separate from TL;DR, below it */}
+      {hasAudio && (
+        <div className="on-air">
+          <button
+            className={`on-air__btn ${isPlaying ? "on-air__btn--active" : ""}`}
+            onClick={handlePlayPause}
+            aria-label={isPlaying ? "Pause broadcast" : "Listen to broadcast"}
+            type="button"
+          >
+            <span className="on-air__dot" aria-hidden="true" />
+            <span className="on-air__text">
+              {isPlaying ? "On Air" : "On Air"}
+            </span>
+            {showPlayer && (
+              <span className="on-air__time">
+                {formatTime(currentTime)} / {formatTime(displayDuration)}
+              </span>
+            )}
+          </button>
 
+          {/* Progress slider — reveals smoothly on play */}
+          <div className={`on-air__track ${showPlayer ? "on-air__track--visible" : ""}`}>
             <input
               type="range"
-              className="daily-brief__progress"
+              className="on-air__progress"
               min={0}
               max={displayDuration || 100}
               value={currentTime}
-              step={1}
+              step={0.5}
               onChange={handleSeek}
               role="slider"
               aria-valuemin={0}
               aria-valuemax={displayDuration || 100}
               aria-valuenow={Math.floor(currentTime)}
-              aria-label="Audio progress"
+              aria-label="Broadcast progress"
+              tabIndex={showPlayer ? 0 : -1}
             />
-
-            <span className="daily-brief__time">
-              {formatTime(currentTime)} / {formatTime(displayDuration)}
-            </span>
-
             {brief.audio_voice_label && (
-              <span className="daily-brief__voice-label">
+              <span className="on-air__voice">
                 {brief.audio_voice_label}
               </span>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Sticky mini-player — mobile only, visible when playing and scrolled past */}
-      {isPlaying && isOutOfView && hasAudio && (
-        <div className="daily-brief__sticky daily-brief__sticky--visible" role="region" aria-label="Audio mini-player">
-          <button
-            className="daily-brief__play-btn"
-            onClick={togglePlay}
-            aria-label="Pause daily brief"
-            type="button"
-          >
-            {PauseIcon}
-          </button>
-
-          <input
-            type="range"
-            className="daily-brief__progress"
-            min={0}
-            max={displayDuration || 100}
-            value={currentTime}
-            step={1}
-            onChange={handleSeek}
-            role="slider"
-            aria-valuemin={0}
-            aria-valuemax={displayDuration || 100}
-            aria-valuenow={Math.floor(currentTime)}
-            aria-label="Audio progress"
-          />
-
-          <span className="daily-brief__time">
-            {formatTime(currentTime)} / {formatTime(displayDuration)}
-          </span>
         </div>
       )}
-    </div>
+    </>
   );
 }
