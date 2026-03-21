@@ -307,7 +307,10 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
     requestAnimationFrame(() => {
       setIsVisible(true);
-      setTimeout(() => setContentVisible(true), 200);
+      // Desktop: 120ms delay lets the panel slide partially in before content reveals.
+      // Mobile: near-instant (30ms) prevents the "blank header flash" perception.
+      const delay = window.innerWidth >= 1024 ? 120 : 30;
+      setTimeout(() => setContentVisible(true), delay);
     });
 
     return () => {
