@@ -40,7 +40,11 @@ from utils.nlp_shared import get_nlp
 TIER_BASELINES: dict[str, float] = {
     "us_major":      65.0,   # AP, Reuters, NYT, WSJ, Bloomberg, etc.
     "international": 55.0,   # BBC, Al Jazeera, DW, France24, etc.
-    "independent":   40.0,   # ProPublica, The Intercept, Bellingcat, etc.
+    # NOTE: raised from 40.0 to 50.0. ProPublica, Bellingcat, ICIJ, and similar
+    # investigative independents consistently demonstrate rigorous sourcing;
+    # 40.0 unfairly equated them with unvetted blogs. Still below us_major (65.0)
+    # and international (55.0). (bias-auditor fix)
+    "independent":   50.0,   # ProPublica, The Intercept, Bellingcat, ICIJ, etc.
 }
 _DEFAULT_BASELINE = 45.0     # Fallback for unknown/missing tier
 
@@ -72,15 +76,18 @@ ORG_CITATION_PATTERNS = re.compile(
 # Data/statistics patterns
 # ---------------------------------------------------------------------------
 DATA_PATTERNS: list[re.Pattern] = [
-    re.compile(r"\d+(\.\d+)?%"),                    # percentages
+    re.compile(r"\d+(\.\d+)?%"),                    # percentages (% symbol)
+    re.compile(r"\d+(\.\d+)?\s*percent\b", re.I),  # percentages spelled out (AP style)
     re.compile(r"\$\d[\d,]*(\.\d+)?"),              # dollar amounts
     re.compile(r"\d[\d,]*\s*(million|billion|trillion)", re.I),  # large numbers
     re.compile(r"(rose|fell|increased|decreased|grew|dropped|declined|surged|plummeted)\s+by\s+\d", re.I),
+    re.compile(r"(rose|fell|increased|decreased|grew|dropped|declined|surged)\s+to\s+\d", re.I),  # directional
     re.compile(r"\d{4}\s*(study|survey|poll|report|analysis)", re.I),  # dated studies
     re.compile(r"(data|statistics|figures|numbers)\s+(show|indicate|suggest|reveal)", re.I),
     re.compile(r"(per|every)\s+\d[\d,]*\s+\w+"),   # rates (per 100,000)
     re.compile(r"(average|median|mean)\s+of\s+\d"),  # statistical measures
     re.compile(r"\d+\s*-\s*\d+\s*(percent|%|year|month|day)", re.I),  # ranges
+    re.compile(r"\d[\d,]+\s+(people|workers|citizens|soldiers|patients|refugees|cases|deaths|killed|wounded|displaced|arrested)\b", re.I),  # count nouns
 ]
 
 # ---------------------------------------------------------------------------

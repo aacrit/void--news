@@ -4,10 +4,11 @@ Gemini API client for the void --news pipeline.
 Uses the google-genai SDK (not the deprecated google-generativeai).
 Aggressive free-tier protection:
     - Rate limited to ~14 RPM (4.2s between calls)
-    - Hard cap of 15 calls per pipeline run
+    - Hard cap of 25 calls per pipeline run (summarization budget)
+    - Separate 5-call budget for editorial triage
     - 1 retry max on transient failures
 
-At 2 pipeline runs/day: max 30 RPD = 2% of the 1500 RPD free limit.
+At 2 pipeline runs/day: max 50 RPD (summarization) + 10 RPD (triage) = 3.3% of the 1500 RPD free limit.
 
 Environment:
     GEMINI_API_KEY — required. Get one free at https://aistudio.google.com/apikey

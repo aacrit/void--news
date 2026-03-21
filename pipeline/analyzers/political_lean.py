@@ -31,7 +31,11 @@ LEFT_KEYWORDS: dict[str, int] = {
     "social justice": 3, "marginalized": 2, "racial justice": 3,
     "intersectionality": 3, "white privilege": 3, "toxic masculinity": 3,
     "institutional racism": 3, "structural racism": 3,
-    "inclusivity": 1, "diversity": 1, "equity": 1,
+    # NOTE: "inclusivity": 1, "diversity": 1, "equity": 1 removed — these fire on
+    # neutral financial/corporate reporting ("equity markets", "private equity",
+    # "board diversity", "home equity"). Signal captured by higher-specificity terms:
+    # "dei" (weight 2), "structural racism" (weight 3), "intersectionality" (weight 3).
+    # (Cycle 3 fix)
     "hate speech": 2, "microaggression": 3, "decolonize": 3,
     "non-binary": 2, "gender-affirming": 3, "trans rights": 3,
     "reparations": 3, "dei": 2, "anti-racist": 3,
@@ -48,7 +52,9 @@ LEFT_KEYWORDS: dict[str, int] = {
     "wealth gap": 2, "universal basic income": 3, "price gouging": 2,
     "wage theft": 3, "corporate accountability": 2, "profit motive": 2,
     "late capitalism": 3, "wealth redistribution": 3, "tax the rich": 3,
-    "predatory lending": 2, "housing crisis": 1,
+    "predatory lending": 2,
+    # NOTE: "housing crisis": 1 removed — neutral policy/reporting term used across
+    # the full spectrum (Reuters, Bloomberg, AP housing beat). (bias-auditor fix)
     # Environment / climate
     "climate crisis": 3, "climate emergency": 3, "environmental justice": 2,
     "green new deal": 3, "climate justice": 3,
@@ -66,21 +72,31 @@ LEFT_KEYWORDS: dict[str, int] = {
     # Healthcare
     "healthcare access": 2, "universal healthcare": 3, "single payer": 3,
     "medicare for all": 3, "public option": 2, "healthcare is a right": 3,
-    "insulin prices": 1, "big pharma": 2, "drug pricing": 1,
+    "insulin prices": 1, "big pharma": 2,
+    # NOTE: "drug pricing": 1 removed — neutral policy/reporting term used across
+    # the full spectrum (Bloomberg, Reuters, healthcare beat). (bias-auditor fix)
     # Gun control
     "gun control": 3, "ban assault weapons": 3,
     "gun violence epidemic": 3, "common sense gun laws": 2,
-    "gun safety": 1, "weapons of war": 3,
+    # NOTE: "gun safety": 1 removed — neutral policy/reporting term used across
+    # the spectrum. "gun violence epidemic" and "common sense gun laws" capture
+    # the genuinely left-coded framing. (bias-auditor fix)
+    "weapons of war": 3,
     # Immigration
     "undocumented": 2, "sanctuary city": 2, "abolish ice": 3,
-    "pathway to citizenship": 3, "daca": 2, "asylum seekers": 1,
+    "pathway to citizenship": 3, "daca": 2,
+    # NOTE: "asylum seekers": 1 removed — neutral immigration/legal reporting term
+    # used across the full spectrum (AP, Reuters, BBC). (bias-auditor fix)
     "immigrant rights": 2, "dreamers": 2, "family separation": 2,
     "undocumented workers": 2, "migrant rights": 2,
     # Governance / democracy
     "voter suppression": 3, "gerrymandering": 2,
     "dark money": 2, "citizens united": 2, "right-wing extremism": 3,
     "authoritarianism": 2, "fascism": 2, "neo-nazi": 3,
-    "disinformation": 1, "protect democracy": 2, "threat to democracy": 2,
+    # NOTE: "disinformation": 1 removed — same rationale as "misinformation":
+    # neutral tech/policy term used by AP, Reuters, government agencies, and
+    # academics without partisan intent. (bias-auditor fix)
+    "protect democracy": 2, "threat to democracy": 2,
     "authoritarian": 2, "autocratic": 2, "democratic backsliding": 3,
     "voting rights": 1, "project 2025": 3, "anti-woke": 2,
     # Police / criminal justice
@@ -90,10 +106,17 @@ LEFT_KEYWORDS: dict[str, int] = {
     "school to prison pipeline": 3, "carceral state": 3,
     # Gender / pay
     "gender equity": 2, "pay gap": 2, "gender pay gap": 2,
-    "glass ceiling": 2, "equal pay": 1,
+    "glass ceiling": 2,
+    # NOTE: "equal pay": 1 removed — neutral policy/reporting term used across
+    # the full spectrum (AP, Reuters, Bloomberg). (bias-auditor fix)
     # Tech / media
-    "misinformation": 1, "content moderation": 1, "algorithmic bias": 2,
-    "big tech accountability": 2, "digital rights": 1,
+    # NOTE: "misinformation": 1, "content moderation": 1, "digital rights": 1
+    # removed — these are neutral tech/policy reporting terms used routinely by
+    # AP, Reuters, Bloomberg, and NYT. They caused AP/Reuters tech articles to
+    # score far-left (35-point error). "algorithmic bias" and
+    # "big tech accountability" retain their directional signal. (bias-auditor fix)
+    "algorithmic bias": 2,
+    "big tech accountability": 2,
     # Community
     "community organizing": 2, "grassroots": 1, "solidarity": 1,
     "mutual aid": 2, "collective action": 2, "people power": 2,
@@ -172,7 +195,13 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "law and order": 2, "tough on crime": 2,
     "blue lives matter": 3, "back the blue": 3, "thin blue line": 3,
     "soft on crime": 3, "pro-criminal": 3,
-    "defund" : 1,  # opposing context — right uses "defund" as attack term
+    # NOTE: bare "defund": 1 replaced with phrase-scoped forms. The bare word
+    # also hits "defunding education", "defunding the arts", NPR budget coverage,
+    # etc., causing false-right scoring of neutral budget reporting.
+    # Phrase-scoped forms are unambiguously partisan attack language. (bias-auditor fix)
+    "defund police": 3,           # right's attack phrase — "they want to defund police"
+    "defund our military": 3,     # right's attack phrase
+    "defund law enforcement": 2,  # right's attack phrase
     # Pro-life
     "pro-life": 3, "unborn": 3, "sanctity of life": 3,
     "abortion on demand": 3, "heartbeat bill": 3, "protect the unborn": 3,
@@ -201,7 +230,8 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "globalist elite": 3,
     "transgenderism": 2,
     "medical freedom": 2,
-    "parental rights": 2,
+    # NOTE: "parental rights": 2 removed here — duplicate of line ~164 (Social/culture
+    # section). Keeping only the first occurrence. (Cycle 3 fix)
     "america first": 2,
 }
 
@@ -237,7 +267,12 @@ FRAMING_PHRASES: list[tuple[str, float]] = [
     ("forced birth", -0.7),
     # Right-leaning framing (positive shift = toward right)
     ("critics say", 0.3), ("some argue", 0.1), ("many believe", 0.1),
-    ("radical", 0.5), ("far-left", 0.8), ("extremist left", 0.8),
+    # NOTE: ("radical", 0.5) removed — bare "radical" fires on radicalization,
+    # radical surgery, radical transparency, etc. Genuinely partisan uses are
+    # already captured by "radical left" (weight=3), "radical agenda" (weight=3),
+    # "radical democrat" (weight=3), etc. in both keywords and longer phrases.
+    # (bias-auditor fix)
+    ("far-left", 0.8), ("extremist left", 0.8),
     ("so-called experts", 0.6), ("government overreach", 0.5),
     ("mainstream media", 0.5), ("liberal media", 0.8),
     ("taxpayer-funded", 0.4), ("government handout", 0.5),
@@ -302,10 +337,47 @@ BASELINE_MAP: dict[str, int] = {
 
 def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
     """Compute keyword-based lean score from 0-100. 50 = neutral.
-    Returns (score, top_left_keywords, top_right_keywords)."""
+    Returns (score, top_left_keywords, top_right_keywords).
+
+    M3 fix: Use DISTINCT keyword count for sigmoid confidence (instead of
+    density-weighted total).  The previous formula (floor=0.2, density-based
+    total) caused short articles (<150 words) to saturate the sigmoid from
+    just 1-2 keyword hits, because:
+        right_total_raw = 4 (one gov-overreach hit, weight 3 + one small-biz, weight 1)
+        divisor = max(107/500, 0.2) = 0.214
+        right_norm = 4 / 0.214 = 18.7  →  sigmoid(18.7 - 4) ≈ 1.0  →  kw_score = 100
+
+    A 107-word AP article mentioning 'government overreach' once in a quote
+    should NOT score 100 (pure right). Scaling by density amplified sparse hits
+    in short articles catastrophically.
+
+    Fix: base the sigmoid on the count of DISTINCT keyword TYPES that fired
+    (regardless of how many times each was repeated or how long the article is).
+    Rationale: genuine partisan content reliably uses MULTIPLE different partisan
+    terms; quoting one critic who says 'government overreach' should not behave
+    identically to an op-ed that deploys 7 different right-coded terms throughout.
+
+    Direction (right_ratio) is still computed from weighted totals so that
+    high-weight terms (weight=3) count more than low-weight fillers (weight=1)
+    — preserving the intensity weighting.  Only the CONFIDENCE (sigmoid) input
+    switches from amplified density to distinct-type count.
+
+    Sigmoid parameters (k=0.9, x0=3):
+        1 distinct type  → sigmoid = 0.40  (cautious signal)
+        2 distinct types → sigmoid = 0.60  (moderate signal)
+        3 distinct types → sigmoid = 0.75  (solid signal)
+        5 distinct types → sigmoid = 0.90  (strong signal)
+        7+ distinct types → sigmoid ≥ 0.97 (saturated — clearly partisan)
+
+    This gives NPR equity stories (2 left keywords) a score of ~35-40 (center-left)
+    rather than 0 (extreme left), and prevents a Fox article quoting one right-wing
+    critic from scoring 100 (pure right).
+    """
     text_lower = text.lower()
     left_total = 0
     right_total = 0
+    left_distinct = 0
+    right_distinct = 0
     left_hits: dict[str, float] = {}
     right_hits: dict[str, float] = {}
 
@@ -316,6 +388,7 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
             count = text_lower.count(phrase)
         if count > 0:
             left_total += count * weight
+            left_distinct += 1
             left_hits[phrase] = count * weight
 
     for phrase, weight in RIGHT_KEYWORDS.items():
@@ -325,45 +398,26 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
             count = text_lower.count(phrase)
         if count > 0:
             right_total += count * weight
+            right_distinct += 1
             right_hits[phrase] = count * weight
 
-    # Normalize by article length (per 500 words).
-    # M2 fix: floor changed from 1.0 to 0.2 so short articles (<500 words)
-    # receive proportional damping rather than artificial parity with 500-word
-    # articles.  A 100-word article gets divisor 0.2; a 500-word article gets
-    # 1.0; a 1000-word article gets 2.0.  Raw keyword hits are thus amplified
-    # for short articles but not clamped at full 500-word equivalence.
-    raw_wc = len(text_lower.split())
-    word_count = max(raw_wc / 500, 0.2)
-    left_total = left_total / word_count
-    right_total = right_total / word_count
-
-    # Top keywords by impact
+    # Top keywords by weighted impact (unchanged)
     top_left = sorted(left_hits, key=left_hits.get, reverse=True)[:5]
     top_right = sorted(right_hits, key=right_hits.get, reverse=True)[:5]
 
-    total = left_total + right_total
-    if total == 0:
+    total_weight = left_total + right_total
+    if total_weight == 0:
         return 50.0, top_left, top_right
 
-    right_ratio = right_total / total
+    # Direction: weighted ratio (high-weight terms count more than low-weight fillers)
+    right_ratio = right_total / total_weight
 
-    # M1 fix: replace hard step-function at total<4 with a smooth sigmoid
-    # ramp.  The old formula jumped discontinuously when total crossed 4:
-    #   total=3.9 → damped by 0.975, total=4.1 → full score (jump of ~2.5pts).
-    #   total=3   → damped by 0.75,  total=4   → full score (jump of ~25pts
-    #   on a fully one-sided article).
-    # The sigmoid S(x) = 1 / (1 + exp(-k*(x - x0))) gives a smooth 0→1 curve
-    # centred at x0=4 keyword-weight units with steepness k=1.2, reaching
-    # ~0.95 at total=6 and ~0.05 at total=2.  At total=0 the score is already
-    # short-circuited above; this branch only runs when total>0.
-    #
-    # Full formula:
-    #   S = sigmoid(total, x0=4, k=1.2)   [0-1 confidence weight]
-    #   score = 50 + (right_ratio - 0.5) * S * 100
-    # This smoothly transitions from centre-biased (near-zero evidence) to
-    # full partisan signal (strong keyword evidence).
-    sigmoid_weight = 1.0 / (1.0 + math.exp(-1.2 * (total - 4.0)))
+    # Confidence: sigmoid on DISTINCT keyword count (k=0.9, x0=3).
+    # This is independent of article length and repetition, so short articles
+    # with 1-2 keyword hits no longer saturate the sigmoid.
+    total_distinct = left_distinct + right_distinct
+    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.9 * (total_distinct - 3.0)))
+
     score = 50.0 + (right_ratio - 0.5) * sigmoid_weight * 100.0
     return score, top_left, top_right
 
@@ -544,6 +598,17 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     # Combine text-based score
     text_score = kw_score + framing_shift + entity_shift
     text_score = max(0.0, min(100.0, text_score))
+
+    # Divergence guard: when text_score diverges >30 points from source_baseline
+    # AND word_count < 150, the keyword evidence is thin (short articles can
+    # saturate on 1-2 incidental keyword hits).  Raise baseline_weight to at
+    # least 0.60 so the calibrated source baseline anchors the final score more
+    # strongly.  This corrects short AP/Reuters articles that pick up one
+    # partisan keyword in a quote and score 30 points away from their baseline.
+    # (bias-auditor fix)
+    if _wc < 150 and abs(text_score - source_baseline) > 30:
+        baseline_weight = max(baseline_weight, 0.60)
+        text_weight = 1.0 - baseline_weight
 
     # 4. Blend with source baseline (length-adaptive weights computed above).
     final_score = text_weight * text_score + baseline_weight * source_baseline

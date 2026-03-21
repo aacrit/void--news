@@ -109,10 +109,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
 
     async function loadClusterData() {
       setIsLoadingData(true);
-      // Safety timeout: force-close spinner after 5s if fetch never resolves
-      const safetyTimeout = setTimeout(() => {
-        if (!cancelled) setIsLoadingData(false);
-      }, 5000);
       try {
         const raw = await fetchDeepDiveData(story.id);
         if (cancelled || !raw || raw.length === 0) {
@@ -290,7 +286,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
       } catch {
         /* Silently fall back to mock deepDive data */
       } finally {
-        clearTimeout(safetyTimeout);
         if (!cancelled) setIsLoadingData(false);
       }
     }
