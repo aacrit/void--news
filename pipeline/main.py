@@ -23,7 +23,7 @@ import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 # Add pipeline root to path so imports work when run directly
@@ -1122,7 +1122,6 @@ def main():
         print(f"\n[6/9] Clustering articles into stories...")
         recent_articles = []
         try:
-            from datetime import datetime, timezone, timedelta
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
             current_ids = {a.get("id", "") for a in stored_articles}
             recent_res = supabase.table("articles").select(
