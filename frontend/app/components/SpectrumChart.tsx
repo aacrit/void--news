@@ -45,7 +45,7 @@ const LEAN_ZONES: {
   {
     key: "far-left",
     label: "Far Left",
-    shortLabel: "Far L",
+    shortLabel: "Far Left",
     desc: "Strongly progressive framing. Frequent left-coded language.",
     cssVar: "--bias-left",
     bgVar: "--spectrum-zone-far-left",
@@ -61,7 +61,7 @@ const LEAN_ZONES: {
   {
     key: "center-left",
     label: "Center Left",
-    shortLabel: "Ctr-L",
+    shortLabel: "Center Left",
     desc: "Leans progressive but maintains journalistic standards.",
     cssVar: "--bias-center-left",
     bgVar: "--spectrum-zone-center-left",
@@ -77,7 +77,7 @@ const LEAN_ZONES: {
   {
     key: "center-right",
     label: "Center Right",
-    shortLabel: "Ctr-R",
+    shortLabel: "Center Right",
     desc: "Leans conservative but covers diverse viewpoints.",
     cssVar: "--bias-center-right",
     bgVar: "--spectrum-zone-center-right",
@@ -93,7 +93,7 @@ const LEAN_ZONES: {
   {
     key: "far-right",
     label: "Far Right",
-    shortLabel: "Far R",
+    shortLabel: "Far Right",
     desc: "Strongly conservative framing. Frequent right-coded language.",
     cssVar: "--bias-right",
     bgVar: "--spectrum-zone-far-right",
