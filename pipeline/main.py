@@ -50,7 +50,7 @@ try:
     from analyzers.factual_rigor import analyze_factual_rigor
     from analyzers.framing import analyze_framing
     from clustering.story_cluster import cluster_stories
-    from categorizer.auto_categorize import categorize_article
+    from categorizer.auto_categorize import categorize_article, map_to_desk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
     ANALYSIS_AVAILABLE = True
 except ImportError as e:
@@ -1373,16 +1373,17 @@ def main():
                         cat_votes[cat] = cat_votes.get(cat, 0) + 1
                     if not all_categories:
                         all_categories = cats
-                # Pick the category with the most votes across sampled articles
+                # Pick the category with the most votes across sampled articles,
+                # then map to merged desk slug for display.
                 if cat_votes:
                     best_cat = max(cat_votes, key=cat_votes.get)
-                    cluster["category"] = best_cat
+                    cluster["category"] = map_to_desk(best_cat)
                     if best_cat not in all_categories:
                         all_categories.insert(0, best_cat)
                 else:
                     cluster["category"] = "politics"
                     all_categories = ["politics"]
-                # Store categories for each article in the cluster
+                # Store fine-grained categories for article_categories table
                 for art in cluster_articles_list:
                     art_id = art.get("id", "")
                     if art_id:
@@ -1539,10 +1540,9 @@ def main():
             pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
             if len(pool) <= 10:
                 continue
-            # v4.0: soft-news categories (sports/entertainment/culture) get
-            # MAX_SAME_CAT=1 (max 1 slot in top 10). All other categories get 2.
-            _SOFT_CATS = {"sports", "entertainment", "culture", "lifestyle",
-                          "celebrity", "music", "film", "television", "gaming"}
+            # v4.0: soft-news desk "culture" (merges culture+sports) gets
+            # MAX_SAME_CAT=1 (max 1 slot in top 10). All other desks get 2.
+            _SOFT_CATS = {"culture"}
             MAX_SAME_CAT_DEFAULT = 2
             MAX_SAME_CAT_SOFT = 1
             TOP_N = 10

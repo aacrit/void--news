@@ -578,7 +578,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "After weeks of shuttle diplomacy, both sides have committed to a temporary halt in hostilities. The agreement includes provisions for prisoner exchanges and humanitarian corridor access.",
     source: { name: "Al Jazeera", count: 28 },
-    category: "Conflict",
+    category: "Politics",
     publishedAt: "2026-03-18T03:00:00Z",
     biasScores: {
       politicalLean: 42,
@@ -601,7 +601,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "Three major fires have broken out across Southern California, forcing evacuations in Ventura and San Bernardino counties. Climate scientists warn this could be the most severe season in a decade.",
     source: { name: "Los Angeles Times", count: 12 },
-    category: "Environment",
+    category: "Health",
     publishedAt: "2026-03-17T20:00:00Z",
     biasScores: {
       politicalLean: 38,
@@ -624,7 +624,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "ISRO successfully deployed a test satellite capable of beaming solar energy to ground stations, marking a milestone in space-based renewable energy technology.",
     source: { name: "The Guardian", count: 14 },
-    category: "Tech",
+    category: "Science",
     publishedAt: "2026-03-18T01:00:00Z",
     biasScores: {
       politicalLean: 50,
@@ -670,7 +670,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "TSMC and Intel report increased output from newly operational fabrication plants, signaling relief for automakers and electronics manufacturers after three years of supply constraints.",
     source: { name: "Bloomberg", count: 19 },
-    category: "Tech",
+    category: "Science",
     publishedAt: "2026-03-17T16:00:00Z",
     biasScores: {
       politicalLean: 55,
@@ -716,7 +716,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "Satellite data confirms a 42% reduction in forest loss compared to the previous year, attributed to strengthened enforcement and community-led conservation programs.",
     source: { name: "DW", count: 10 },
-    category: "Environment",
+    category: "Health",
     publishedAt: "2026-03-17T12:00:00Z",
     biasScores: {
       politicalLean: 45,
@@ -739,7 +739,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "The Department of Defense demonstrated a new interceptor capable of tracking and neutralizing hypersonic threats, responding to advances by China and Russia in the weapons category.",
     source: { name: "Fox News", count: 13 },
-    category: "Conflict",
+    category: "Politics",
     publishedAt: "2026-03-17T10:00:00Z",
     biasScores: {
       politicalLean: 68,
@@ -785,7 +785,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "Senators introduced legislation that would force Google and Meta to divest their ad exchanges, arguing the current structure stifles competition and inflates costs for small businesses.",
     source: { name: "The Intercept", count: 8 },
-    category: "Tech",
+    category: "Science",
     publishedAt: "2026-03-17T06:00:00Z",
     biasScores: {
       politicalLean: 32,
@@ -808,7 +808,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "Leaders from 38 nations gathered in Cape Town to coordinate responses to rising sea levels, drought, and extreme heat events disproportionately affecting the continent.",
     source: { name: "France24", count: 11 },
-    category: "Environment",
+    category: "Health",
     publishedAt: "2026-03-16T20:00:00Z",
     biasScores: {
       politicalLean: 44,
@@ -900,7 +900,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "The launch drew immediate condemnation from Japan and South Korea. US Pacific Command raised alert levels as the UN Security Council convened an emergency session.",
     source: { name: "Yonhap", count: 20 },
-    category: "Conflict",
+    category: "Politics",
     publishedAt: "2026-03-16T12:00:00Z",
     biasScores: {
       politicalLean: 50,
@@ -946,7 +946,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "ERCOT projections indicate the state's power grid may face a 15 GW shortfall during peak demand, raising fears of a repeat of the 2021 grid failure under extreme conditions.",
     source: { name: "Houston Chronicle", count: 9 },
-    category: "Environment",
+    category: "Health",
     publishedAt: "2026-03-16T08:00:00Z",
     biasScores: {
       politicalLean: 42,
@@ -969,7 +969,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "China's People's Liberation Army conducted live-fire drills in waters east of Taiwan for the third consecutive week, drawing sharp warnings from Washington and Taipei.",
     source: { name: "South China Morning Post", count: 16 },
-    category: "Conflict",
+    category: "Politics",
     publishedAt: "2026-03-16T06:00:00Z",
     biasScores: {
       politicalLean: 55,
@@ -1015,7 +1015,7 @@ const rawMockStories: Omit<Story, "lensData" | "sigilData">[] = [
     summary:
       "The Northern Sea Route became navigable in mid-March for the first time in recorded history, raising both commercial opportunities and environmental alarm.",
     source: { name: "The Guardian", count: 12 },
-    category: "Environment",
+    category: "Health",
     publishedAt: "2026-03-15T18:00:00Z",
     biasScores: {
       politicalLean: 40,

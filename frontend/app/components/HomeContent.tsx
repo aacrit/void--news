@@ -18,12 +18,17 @@ import ErrorBoundary from "./ErrorBoundary";
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 
+/** Map pipeline category slugs (both fine-grained and desk) to display names.
+ *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
 function capitalize(s: string): string {
   if (!s) return s;
   const map: Record<string, string> = {
-    politics: "Politics", economy: "Economy", tech: "Tech", technology: "Tech",
-    health: "Health", environment: "Environment", conflict: "Conflict",
-    science: "Science", culture: "Culture", sports: "Sports",
+    // Desk slugs (current pipeline output)
+    politics: "Politics", economy: "Economy", science: "Science",
+    health: "Health", culture: "Culture",
+    // Legacy fine-grained slugs (old data in DB) → merged desk names
+    conflict: "Politics", tech: "Science", technology: "Science",
+    environment: "Health", sports: "Culture",
   };
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
 }
