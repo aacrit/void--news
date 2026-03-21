@@ -114,8 +114,11 @@ def _check_robots_txt(url: str) -> bool:
 
     rp = _robots_cache[domain]
     if rp is None:
-        # Conservative: if robots.txt is unreachable, assume disallowed
-        return False
+        # Permissive: if robots.txt is unreachable (network error, 404, etc.),
+        # assume allowed. The alternative — refusing to scrape any site whose
+        # robots.txt we can't fetch — blocks too many legitimate sources and
+        # is the primary cause of word_count=0 on valid articles.
+        return True
 
     return rp.can_fetch("*", url)
 

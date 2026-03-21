@@ -307,14 +307,26 @@ def analyze_factual_rigor(article: dict) -> dict:
     specificity = _attribution_specificity_score(combined)
 
     # Weighted combination
+    #
+    # Weight rationale (recalibrated for institutional wire reporting):
+    #   named_src  0.22 — PERSON NER under-fires on short text; reduced from 0.30
+    #   org_cite   0.24 — institutional orgs (ECB, Fed, Eurostat) are the primary
+    #                     sourcing vehicle for wire copy; raised from 0.15
+    #   data_stats 0.27 — wire stories lead with numbers; slightly raised from 0.25
+    #   quotes     0.17 — wire copy often paraphrases rather than direct-quotes;
+    #                     reduced from 0.20
+    #   specificity 0.10 — unchanged; neutral baseline holds for titled persons
+    #
+    # ref_bonus cap raised from 5.0 to 8.0 — "according to [report/agency]"
+    # patterns are common in wire copy and deserve additional credit.
     weighted = (
-        named_src * 0.30
-        + data_stats * 0.25
-        + quotes * 0.20
-        + org_cite * 0.15
+        named_src * 0.22
+        + org_cite * 0.24
+        + data_stats * 0.27
+        + quotes * 0.17
         + specificity * 0.10
     )
-    ref_bonus = min(refs * 0.05, 5.0)
+    ref_bonus = min(refs * 0.05, 8.0)
     weighted += ref_bonus
 
     raw_score = max(0.0, min(100.0, weighted))

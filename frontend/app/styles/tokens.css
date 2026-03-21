@@ -205,6 +205,18 @@
 }
 
 /* --------------------------------------------------------------------------
+   Layout Measurements
+   Kept here so filter-row sticky top can reference nav height without
+   hard-coding a magic number in components.css.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Approximate height of .nav-header on tablet/desktop:
+     padding-top --space-3 (~8px) + content (~36px) + padding-bottom --space-3 (~8px)
+     + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
+  --nav-height: 53px;
+}
+
+/* --------------------------------------------------------------------------
    Z-Index Scale
    -------------------------------------------------------------------------- */
 :root {

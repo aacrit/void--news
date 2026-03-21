@@ -934,6 +934,18 @@ def rank_importance(
     if factual < 30.0:
         headline_rank *= 0.88
 
+    # Gate 4: Single-source gate — orphaned articles (source_count=1) get
+    # a 0.65x multiplier so they cannot displace multi-source stories in
+    # the feed. They still appear (important for coverage completeness) but
+    # are naturally ranked below any 2+-source cluster on the same topic.
+    # Independent-tier investigative exclusives (factual_rigor > 70) get
+    # a softer 0.75x to preserve their lead eligibility per the spec.
+    if source_count == 1:
+        if factual >= 70.0:
+            headline_rank *= 0.75  # investigative exclusive exemption
+        else:
+            headline_rank *= 0.65
+
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
 
     return {

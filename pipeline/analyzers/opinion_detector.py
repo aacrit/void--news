@@ -73,9 +73,18 @@ ATTRIBUTION_PHRASES: list[str] = [
 
 # ---------------------------------------------------------------------------
 # Value judgment words (opinion signals when used without attribution)
+#
+# This list was pruned to remove high-frequency words that appear routinely
+# in factual reporting WITHOUT being genuine editorial value judgments:
+#   "good", "bad"       — "good morning", "bad weather", "good governance"
+#   "wrong", "right"    — "the wrong number", "the right approach"
+#   "important"         — "it is important to note", "important legislation"
+#   "dangerous"         — "dangerous conditions", "dangerous levels of X"
+# Keeping them produced false positives inflating opinion scores for wire
+# stories by 5-15 points.  The remaining terms are higher-charge evaluative
+# words that are unlikely to appear in purely factual reporting. (H3 fix)
 # ---------------------------------------------------------------------------
 VALUE_JUDGMENTS: list[str] = [
-    "good", "bad", "wrong", "right", "dangerous", "important",
     "terrible", "wonderful", "excellent", "horrible", "disgraceful",
     "shameful", "courageous", "brilliant", "foolish", "reckless",
     "irresponsible", "admirable", "despicable", "outrageous",

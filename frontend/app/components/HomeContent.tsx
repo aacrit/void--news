@@ -8,6 +8,7 @@ import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar, { type ViewMode } from "./NavBar";
 import FilterBar from "./FilterBar";
+import LeanFilter, { type LeanRange } from "./LeanFilter";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
@@ -63,6 +64,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("facts");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showAllCompact, setShowAllCompact] = useState(false);
+  const [leanRange, setLeanRange] = useState<LeanRange | null>(null);
 
   const handleStoryClick = useCallback((story: Story) => {
     setSelectedStory(story);
@@ -72,7 +74,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setSelectedStory(null);
   }, []);
 
-  // Reset filters and scroll to top when edition changes
+  // Reset category filter and scroll to top when edition changes.
+  // Lean filter is intentionally preserved — it's a universal preference
+  // that persists until the user explicitly toggles it off.
   useEffect(() => {
     setActiveCategory("All");
     setShowAllCompact(false);
@@ -278,8 +282,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
+    // Lean range filter — uses lensData.lean (cluster-level average political lean)
+    if (leanRange !== null) {
+      filtered = filtered.filter(
+        (s) => s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max,
+      );
+    }
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
-  }, [stories, activeCategory]);
+  }, [stories, activeCategory, leanRange]);
 
   const leadStories = filteredStories.slice(0, 2);
   const mediumStories = filteredStories.slice(2, 5);
@@ -326,16 +336,22 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
         {/* Op-Ed page — renders its own data when in opinion mode */}
         {viewMode === "opinion" && (
-          <OpEdPage edition={activeEdition} />
+          <OpEdPage edition={activeEdition} leanRange={leanRange} />
         )}
 
-        {/* Filter bar — facts mode only */}
-        {viewMode === "facts" && (
-        <FilterBar
-          activeCategory={activeCategory}
-          onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
-        />
-        )}
+        {/* Filter bar + Lean filter — lean filter is universal (both modes) */}
+        <div className="filter-row">
+          {viewMode === "facts" && (
+            <FilterBar
+              activeCategory={activeCategory}
+              onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
+            />
+          )}
+          <LeanFilter
+            value={leanRange}
+            onChange={(range) => { setLeanRange(range); setShowAllCompact(false); }}
+          />
+        </div>
 
         {/* Facts mode — live region, loading, error, empty states, story grids */}
         {viewMode === "facts" && (
@@ -345,7 +361,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               {!isLoading && filteredStories.length > 0 &&
                 `${filteredStories.length} stories loaded`}
               {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
-                "No stories match the current filter"}
+                leanRange !== null
+                  ? "No stories match the current lean filter. Try widening the range."
+                  : "No stories match the current filter"}
             </div>
 
             {/* Loading skeleton */}
@@ -387,31 +405,37 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* No stories in selected filter */}
+            {/* No stories in selected filter(s) */}
             {!isLoading && !error && stories.length > 0 && filteredStories.length === 0 && (
-              <div className="empty-state--inline">
-                <p style={{
-                  fontFamily: "var(--font-structural)",
-                  fontSize: "var(--text-lg)",
-                  color: "var(--fg-tertiary)",
-                }}>
-                  No stories in this category.
+              <div className="lean-filter-empty">
+                <p className="lean-filter-empty__text">
+                  {leanRange !== null
+                    ? "No stories in this lean range."
+                    : "No stories in this category."}
                 </p>
-                {activeCategory !== "All" && (
-                  <button
-                    onClick={() => setActiveCategory("All")}
-                    style={{
-                      fontFamily: "var(--font-structural)",
-                      fontSize: "var(--text-sm)",
-                      color: "var(--fg-secondary)",
-                      marginTop: "var(--space-3)",
-                      textDecoration: "underline",
-                      textUnderlineOffset: "3px",
-                    }}
-                  >
-                    View all stories
-                  </button>
+                {leanRange !== null && (
+                  <p className="lean-filter-empty__hint">
+                    Try widening the range or clearing the filter.
+                  </p>
                 )}
+                <div style={{ display: "flex", gap: "var(--space-4)", flexWrap: "wrap", justifyContent: "center" }}>
+                  {leanRange !== null && (
+                    <button
+                      className="lean-filter-empty__action"
+                      onClick={() => setLeanRange(null)}
+                    >
+                      Clear lean filter
+                    </button>
+                  )}
+                  {activeCategory !== "All" && (
+                    <button
+                      className="lean-filter-empty__action"
+                      onClick={() => setActiveCategory("All")}
+                    >
+                      View all categories
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 

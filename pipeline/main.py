@@ -1127,16 +1127,19 @@ def main():
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
 
-        # Step 6 post-process: skip single-source orphan wrapping.
-        # Single-article stories are omitted from the DB — only clusters
-        # with 2+ sources provide meaningful multi-perspective value.
-        # Orphaned articles (not in any cluster) remain in the articles
-        # table with bias scores but are not surfaced in the frontend feed.
-        pre_filter = len(clusters)
-        clusters = [c for c in clusters if c.get("source_count", len(c.get("article_ids", []))) >= 2]
-        dropped = pre_filter - len(clusters)
-        if dropped:
-            print(f"  Dropped {dropped} single-source clusters (2+ sources required for feed)")
+        # Step 6 post-process: orphan wrapping.
+        # Articles that didn't cluster with any other source get kept as
+        # single-article clusters so they appear in the frontend feed.
+        # They receive a reduced importance score at ranking time (source_count=1
+        # means coverage breadth and tier diversity signals are minimal).
+        # Single-article clusters are only excluded for the lead gate (top-10
+        # positions require 3+ sources, per the ranker's lead eligibility gate).
+        single_source_count = sum(
+            1 for c in clusters
+            if c.get("source_count", len(c.get("article_ids", []))) < 2
+        )
+        if single_source_count:
+            print(f"  Orphan wrapping: {single_source_count} single-source clusters kept for feed")
 
         # Step 6b: Re-run framing analysis with cluster context
         # Framing's omission detection benefits from knowing what other

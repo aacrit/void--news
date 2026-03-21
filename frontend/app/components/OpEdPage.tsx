@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { Edition } from "../lib/types";
 import type { OpinionArticle } from "../lib/types";
+import type { LeanRange } from "./LeanFilter";
 import { fetchOpinionArticles } from "../lib/supabase";
 import OpinionCard from "./OpinionCard";
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -16,9 +17,10 @@ import LoadingSkeleton from "./LoadingSkeleton";
 
 interface OpEdPageProps {
   edition: Edition;
+  leanRange?: LeanRange | null;
 }
 
-export default function OpEdPage({ edition }: OpEdPageProps) {
+export default function OpEdPage({ edition, leanRange }: OpEdPageProps) {
   const [articles, setArticles] = useState<OpinionArticle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +45,16 @@ export default function OpEdPage({ edition }: OpEdPageProps) {
     return () => controller.abort();
   }, [edition]);
 
-  const featured = articles[0] ?? null;
-  const rest = articles.slice(1);
+  // Universal lean filter — applied to opinion articles by their politicalLean score
+  const filteredArticles = useMemo(() => {
+    if (!leanRange) return articles;
+    return articles.filter(
+      (a) => a.politicalLean >= leanRange.min && a.politicalLean <= leanRange.max,
+    );
+  }, [articles, leanRange]);
+
+  const featured = filteredArticles[0] ?? null;
+  const rest = filteredArticles.slice(1);
 
   return (
     <div className="oped-page">
@@ -98,10 +108,19 @@ export default function OpEdPage({ edition }: OpEdPageProps) {
         </section>
       )}
 
+      {/* Empty state when lean filter hides everything */}
+      {!isLoading && !error && articles.length > 0 && filteredArticles.length === 0 && (
+        <div className="lean-filter-empty">
+          <p className="lean-filter-empty__text">No opinion pieces in this lean range.</p>
+          <p className="lean-filter-empty__hint">Try widening the range or clearing the lean filter.</p>
+        </div>
+      )}
+
       {/* Count line */}
-      {!isLoading && articles.length > 0 && (
+      {!isLoading && filteredArticles.length > 0 && (
         <p className="oped-page__count">
-          {articles.length} opinion piece{articles.length !== 1 ? "s" : ""} &mdash; curated from {edition === "world" ? "world" : "US"} sources
+          {filteredArticles.length} opinion piece{filteredArticles.length !== 1 ? "s" : ""}
+          {leanRange ? " (filtered)" : ""} &mdash; curated from {edition === "world" ? "world" : "US"} sources
         </p>
       )}
     </div>
