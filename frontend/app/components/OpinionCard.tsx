@@ -84,7 +84,7 @@ export default function OpinionCard({ article, featured = false }: OpinionCardPr
 
       {/* Expand / collapse + source link row */}
       <div className="opinion-card__footer">
-        <Sigil data={sigilData} mode="oped" size="sm" />
+        <Sigil data={sigilData} size="sm" />
 
         <div className="opinion-card__actions">
           {isLong && (

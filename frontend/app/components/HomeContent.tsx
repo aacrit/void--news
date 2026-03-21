@@ -6,12 +6,11 @@ import { EDITIONS } from "../lib/types";
 import { supabase } from "../lib/supabase";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
-import NavBar, { type ViewMode } from "./NavBar";
+import NavBar from "./NavBar";
 import FilterBar, { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
-import OpEdPage from "./OpEdPage";
 import ErrorBoundary from "./ErrorBoundary";
 
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -101,7 +100,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
-  const [viewMode, setViewMode] = useState<ViewMode>("facts");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showAllCompact, setShowAllCompact] = useState(false);
   const [activeLean, setActiveLean] = useState<LeanChip>("All");
@@ -131,32 +129,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       setError(null);
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         let res;
         let usingEnriched = true;
 
-        // Fetch reporting + opinion separately so opinion pieces (fewer
-        // sources, lower headline_rank) aren't crowded out of the top 100.
-        const [reportingRes, opinionRes] = await Promise.all([
-          supabase
-            .from("story_clusters")
-            .select(enrichedFields)
-            .contains("sections", [activeEdition])
-            .eq("content_type", "reporting")
-            .order("headline_rank", { ascending: false })
-            .limit(100),
-          supabase
-            .from("story_clusters")
-            .select(enrichedFields)
-            .contains("sections", [activeEdition])
-            .eq("content_type", "opinion")
-            .order("headline_rank", { ascending: false })
-            .limit(50),
-        ]);
-
-        res = reportingRes;
+        res = await supabase
+          .from("story_clusters")
+          .select(enrichedFields)
+          .contains("sections", [activeEdition])
+          .order("headline_rank", { ascending: false })
+          .limit(100);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -171,11 +155,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
         if (controller.signal.aborted) return;
 
-        // Merge reporting + opinion clusters
-        const clusters = [
-          ...(res.data || []),
-          ...(!res.error && opinionRes.data ? opinionRes.data : []),
-        ];
+        const clusters = res.data || [];
 
         if (clusters.length === 0) {
           setStories([]);
@@ -337,9 +317,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   }, [activeEdition]);
 
   const filteredStories = useMemo(() => {
-    // In facts mode: show only reporting/facts clusters (opinionFact <= 50)
-    // In opinion mode: OpEdPage handles its own data fetching — show nothing here
-    let filtered = stories.filter((s) => s.biasScores.opinionFact <= 50);
+    let filtered = stories;
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
@@ -369,59 +347,21 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     <div className="page-container">
       <NavBar
         activeEdition={activeEdition}
-        viewMode={viewMode}
-        onViewModeChange={(mode) => {
-          setViewMode(mode);
-          setActiveCategory("All");
-          setShowAllCompact(false);
-        }}
       />
 
       <main id="main-content" className="page-main">
-        {/* Facts / Op-Ed toggle — mobile only (desktop lives in nav-tabs) */}
-        <div className="view-mode-toggle--mobile" aria-hidden="false">
-          <div
-            className="view-mode-toggle"
-            role="group"
-            aria-label="Content type filter"
-          >
-            <button
-              className={`view-mode-toggle__btn${viewMode === "facts" ? " view-mode-toggle__btn--active" : ""}`}
-              onClick={() => { setViewMode("facts"); setActiveCategory("All"); setShowAllCompact(false); }}
-              aria-pressed={viewMode === "facts"}
-            >
-              Facts
-            </button>
-            <button
-              className={`view-mode-toggle__btn${viewMode === "opinion" ? " view-mode-toggle__btn--active" : ""}`}
-              onClick={() => { setViewMode("opinion"); setActiveCategory("All"); setShowAllCompact(false); }}
-              aria-pressed={viewMode === "opinion"}
-            >
-              Op-Ed
-            </button>
-          </div>
+        {/* Filter bar — category + lean chips in one row */}
+        <div className="filter-row">
+          <FilterBar
+            activeCategory={activeCategory}
+            onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
+            activeLean={activeLean}
+            onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
+          />
         </div>
 
-        {/* Filter bar — category + lean chips in one row */}
-        {viewMode === "facts" && (
-          <div className="filter-row">
-            <FilterBar
-              activeCategory={activeCategory}
-              onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
-              activeLean={activeLean}
-              onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
-            />
-          </div>
-        )}
-
-        {/* Op-Ed page — renders its own data when in opinion mode */}
-        {viewMode === "opinion" && (
-          <OpEdPage edition={activeEdition} activeLean={activeLean} />
-        )}
-
-        {/* Facts mode — live region, loading, error, empty states, story grids */}
-        {viewMode === "facts" && (
-          <>
+        {/* Live region, loading, error, empty states, story grids */}
+        <>
             {/* Live region for screen readers */}
             <div aria-live="polite" className="sr-only">
               {!isLoading && filteredStories.length > 0 &&
@@ -572,8 +512,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 <LogoWordmark height={14} />
               </div>
             )}
-          </>
-        )}
+        </>
       </main>
 
       {/* Footer */}

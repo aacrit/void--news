@@ -233,7 +233,7 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     """
     Log quality warnings for out-of-spec generated content.
 
-    Checks headline word count (8-12), summary word count (400-500),
+    Checks headline word count (8-12), summary word count (250-350),
     consensus/divergence item counts, and scans all text fields for
     prohibited sensationalist or value-laden terms.
 
