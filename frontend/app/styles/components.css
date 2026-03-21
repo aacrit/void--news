@@ -385,12 +385,17 @@
   border-color: var(--fg-primary);
 }
 
-/* Colored dot inside lean chips */
+/* Colored dot inside lean chips — ring ensures visibility on cream/walnut */
 .filter-chip__dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+:root[data-mode="dark"] .filter-chip__dot {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 /* Thin vertical divider between category and lean chips */

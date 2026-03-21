@@ -67,7 +67,7 @@
   --bias-far-left:     #3B82F6;
   --bias-left:         #60A5FA;
   --bias-center-left:  #93C5FD;
-  --bias-center:       #4B5563;  /* dark neutral gray */
+  --bias-center:       #6B7280;  /* dark neutral gray — visible on walnut */
   --bias-center-right: #FCA5A5;  /* light red — same as light mode */
   --bias-far-right:    #DC2626;
   --type-reporting:    #60A5FA;
@@ -119,7 +119,7 @@
   --bias-far-left:     #1D4ED8;  /* deep blue */
   --bias-left:         #3B82F6;  /* blue */
   --bias-center-left:  #93C5FD;  /* light blue */
-  --bias-center:       #D1D5DB;  /* light gray — neutral */
+  --bias-center:       #9CA3AF;  /* medium gray — neutral, visible on cream */
   --bias-center-right: #FCA5A5;  /* light red / salmon */
   --bias-right:        #EF4444;  /* red */
   --bias-far-right:    #B91C1C;  /* deep red */

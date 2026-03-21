@@ -26,9 +26,9 @@ let cssVarCache: Record<string, string> | null = null;
 
 const SSR_FALLBACK: Record<string, string> = {
   "--bias-left": "#3B82F6",
-  "--bias-center-left": "#60A5FA",
+  "--bias-center-left": "#93C5FD",
   "--bias-center": "#9CA3AF",
-  "--bias-center-right": "#F97316",
+  "--bias-center-right": "#FCA5A5",
   "--bias-right": "#EF4444",
   "--sense-low": "#22C55E",
   "--sense-medium": "#EAB308",
