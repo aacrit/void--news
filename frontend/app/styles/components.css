@@ -1899,7 +1899,7 @@
 
 /* ---- Deep Dive: Collapsible sections ------------------------------------ */
 .dd-collapsible {
-  max-height: 7.5em; /* ~4-5 lines */
+  max-height: 18em; /* ~10-12 lines at 1.75 line-height */
   overflow: hidden;
   position: relative;
   transition: max-height var(--dur-morph) var(--ease-out);
@@ -1930,15 +1930,31 @@
   font-size: var(--text-xs);
   font-weight: 500;
   color: var(--fg-tertiary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
   cursor: pointer;
   margin-top: var(--space-2);
+  text-decoration: none;
+  position: relative;
   transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* Underline slide-in on hover — slides from left 0% to 100% width */
+.dd-read-more::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--fg-primary);
+  transition: width var(--dur-normal) var(--ease-out);
 }
 
 .dd-read-more:hover {
   color: var(--fg-primary);
+}
+
+.dd-read-more:hover::after {
+  width: 100%;
 }
 
 .dd-read-more:active {
@@ -3379,9 +3395,29 @@
 .dd-press-trigger__arrow {
   display: inline-block;
   font-size: 8px;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--spring);
   /* Prevent the glyph from inheriting italic from any editorial context */
   font-style: normal;
+}
+
+.dd-press-trigger__arrow--open {
+  transform: rotate(90deg);
+}
+
+/* ---- Deep Dive: Press Analysis inline expand (grid-template-rows trick) - */
+/* TRUE dynamic height — no arbitrary max-height, content determines height. */
+.dd-press-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-morph) var(--ease-out);
+}
+
+.dd-press-expand--open {
+  grid-template-rows: 1fr;
+}
+
+.dd-press-expand__inner {
+  overflow: hidden;
 }
 
 /* ---- BiasInspectorInline — inline scorecard in Deep Dive content ------- */
@@ -3423,6 +3459,25 @@
   text-transform: uppercase;
   color: var(--fg-tertiary);
   margin-bottom: var(--space-3);
+}
+
+.dd-perspectives-sublabel {
+  display: block;
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.dd-perspectives-sublabel--agree {
+  color: var(--sense-low);
+}
+
+.dd-perspectives-sublabel--diverge {
+  color: var(--sense-medium);
 }
 
 .dd-perspectives-list {

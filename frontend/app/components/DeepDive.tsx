@@ -12,7 +12,7 @@ import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
-import { BiasInspectorPanel } from "./BiasInspector";
+import { BiasInspectorInline } from "./BiasInspector";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -59,7 +59,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
-  const [showScorePanel, setShowScorePanel] = useState(false);
+  const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -421,13 +421,6 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
           </div>
-
-          {/* Cluster-level bias indicator */}
-          {story.sigilData && !story.sigilData.pending && (
-            <div style={{ marginTop: "var(--space-3)" }}>
-              <Sigil data={story.sigilData} size="lg" />
-            </div>
-          )}
         </header>
 
         {/* ---- Content (fades in after panel) ----------------------------- */}
@@ -448,21 +441,19 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             </div>
           )}
 
-          {/* ---- Summary — no heading, flows as article lede ------------------ */}
-          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms" }}>
-            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
-              <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                {story.summary}
-              </p>
+          {/* ---- Sigil — cluster-level bias indicator (first in content) ------- */}
+          {story.sigilData && !story.sigilData.pending && (
+            <div
+              className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-4)", transitionDelay: "50ms" }}
+            >
+              <Sigil data={story.sigilData} size="lg" />
             </div>
-            {story.summary && story.summary.length > 300 && !summaryExpanded && (
-              <button className="dd-read-more" onClick={() => setSummaryExpanded(true)}>Read more</button>
-            )}
-          </section>
+          )}
 
           {/* ---- Source lean spectrum ------------------------------------------- */}
           {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Source political lean" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "150ms" }}>
+            <section aria-label="Source political lean" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "100ms" }}>
               <div className="dd-spectrum">
                 {/* Row above track */}
                 <div className="dd-spectrum__row dd-spectrum__row--above">
@@ -522,20 +513,44 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
                 </div>
               </div>
 
-              {/* Arrow trigger: opens press analysis as separate pop-out panel */}
+              {/* Press Analysis inline expand — anchored below spectrum */}
               <button
                 className="dd-press-trigger"
-                onClick={() => setShowScorePanel(true)}
-                aria-label="Open press analysis"
-                aria-haspopup="dialog"
+                onClick={() => setPressAnalysisOpen(v => !v)}
+                aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
+                aria-expanded={pressAnalysisOpen}
               >
                 <span>Press Analysis</span>
-                <span className="dd-press-trigger__arrow" aria-hidden="true">&#9658;</span>
+                <span
+                  className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`}
+                  aria-hidden="true"
+                >
+                  &#9658;
+                </span>
               </button>
+
+              {/* True dynamic-height expand: grid-template-rows 0fr → 1fr */}
+              <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}>
+                <div className="dd-press-expand__inner">
+                  <BiasInspectorInline sources={sources} />
+                </div>
+              </div>
             </section>
           )}
 
-          {/* ---- Source perspectives: agree + diverge in one compact section -- */}
+          {/* ---- Summary — flows as article lede, after spectrum -------------- */}
+          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "150ms" }}>
+            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
+              <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                {story.summary}
+              </p>
+            </div>
+            {story.summary && story.summary.length > 600 && !summaryExpanded && (
+              <button className="dd-read-more" onClick={() => setSummaryExpanded(true)}>Read more</button>
+            )}
+          </section>
+
+          {/* ---- Source perspectives: explicit Agreement / Divergence labels -- */}
           {deepDive && (
             (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
             (Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0)
@@ -543,39 +558,36 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "250ms" }}>
               <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
 
-              {/* Agree items */}
+              {/* Agreement sub-section */}
               {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-                <ul className="dd-perspectives-list">
-                  {deepDive.consensus.map((point, i) => (
-                    <li key={`agree-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
-                      <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
-                      <span className="dd-perspectives-item__text">{point}</span>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <span className="dd-perspectives-sublabel dd-perspectives-sublabel--agree">Agreement</span>
+                  <ul className="dd-perspectives-list">
+                    {deepDive.consensus.map((point, i) => (
+                      <li key={`agree-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
+                        <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
+                        <span className="dd-perspectives-item__text">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
 
-              {/* Diverge items */}
+              {/* Divergence sub-section */}
               {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-                <ul className="dd-perspectives-list">
-                  {deepDive.divergence.map((point, i) => (
-                    <li key={`diverge-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
-                      <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
-                      <span className="dd-perspectives-item__text">{point}</span>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <span className="dd-perspectives-sublabel dd-perspectives-sublabel--diverge">Divergence</span>
+                  <ul className="dd-perspectives-list">
+                    {deepDive.divergence.map((point, i) => (
+                      <li key={`diverge-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
+                        <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
+                        <span className="dd-perspectives-item__text">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
             </section>
-          )}
-
-          {/* Press analysis pop-out panel — separate from Deep Dive content */}
-          {sources.length > 0 && (
-            <BiasInspectorPanel
-              sources={sources}
-              isOpen={showScorePanel}
-              onClose={() => setShowScorePanel(false)}
-            />
           )}
 
           {/* No deep dive data at all */}
