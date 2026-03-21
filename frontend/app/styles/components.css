@@ -748,84 +748,21 @@
 /* Tablet (768px–1023px): panel is position: absolute, left-anchored to the
    lean-filter container. max-width is already viewport-clamped in the base rule. */
 
-/* ---- Panel inner — padding lives here, not on panel (avoids overflow clip) ---- */
+/* ---- Panel inner — horizontal layout: track fills, reset icon at end ---- */
 .lean-filter__panel-inner {
   padding: var(--space-4) var(--space-5);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: var(--space-3);
 }
 
-/* ---- Panel header ---- */
-.lean-filter__panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.lean-filter__panel-title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--fg-primary);
-  letter-spacing: -0.01em;
-}
-
-.lean-filter__clear {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--fg-tertiary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  padding: var(--space-1) var(--space-2);
-  min-height: 44px;
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out);
-}
-
-.lean-filter__clear:hover {
-  color: var(--fg-secondary);
-}
-
-.lean-filter__clear:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-/* ---- Range labels ---- */
-.lean-filter__range-labels {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-variant-numeric: tabular-nums;
-}
-
-.lean-filter__range-label {
-  font-weight: 500;
-  /* Fixed width prevents layout shift when label text changes length during drag.
-     "Center-Right" is the longest single label at ~10ch in JetBrains Mono. */
-  min-width: 8ch;
-  transition: color var(--dur-fast) var(--ease-out);
-}
-
-.lean-filter__range-label--max {
-  text-align: right;
-}
-
-.lean-filter__range-sep {
-  font-family: var(--font-structural);
-  color: var(--fg-muted);
-  font-size: var(--text-xs);
-}
-
-/* ---- Track area (contains gradient track + thumbs + ticks) ---- */
+/* ---- Track area (contains gradient track + thumbs + ruler labels) ---- */
 .lean-filter__track-area {
   position: relative;
-  padding-bottom: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  /* Bottom padding for ruler labels */
+  padding-bottom: 18px;
 }
 
 /* ---- Gradient track — 10px tall, full pill shape ---- */
@@ -961,66 +898,63 @@
   border-color: var(--bg-elevated);
 }
 
-/* ---- Tick marks ---- */
-.lean-filter__ticks {
-  position: relative;
-  height: 6px;
-  margin-top: 2px;
-}
-
-.lean-filter__tick {
+/* ---- Ruler labels — zone shortcuts positioned at midpoints below the track ---- */
+.lean-filter__ruler {
   position: absolute;
-  top: 0;
-  width: 1px;
-  height: 4px;
-  background-color: var(--border-subtle);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14px;
+  pointer-events: none;
+}
+
+.lean-filter__ruler-label {
+  position: absolute;
   transform: translateX(-50%);
-}
-
-/* ---- Zone quick-select buttons ---- */
-.lean-filter__zone-labels {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-}
-
-.lean-filter__zone-btn {
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: 9px;
   font-weight: 400;
+  letter-spacing: 0.03em;
   color: var(--fg-muted);
-  text-align: center;
-  padding: var(--space-1) 0;
-  min-height: 32px;
-  border-radius: var(--radius-sm);
   cursor: pointer;
-  letter-spacing: 0.02em;
+  pointer-events: auto;
+  user-select: none;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+
+.lean-filter__ruler-label:hover {
+  color: var(--fg-secondary);
+}
+
+/* ---- Reset (✕) button — small, appears only when filter is active ---- */
+.lean-filter__reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--fg-muted);
+  cursor: pointer;
   transition:
     color var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--spring);
 }
 
-/* Hover: zone color at 10% opacity tint */
-.lean-filter__zone-btn:hover {
-  color: var(--fg-secondary);
-  background-color: color-mix(in srgb, var(--zone-color, var(--fg-muted)) 10%, transparent);
+.lean-filter__reset:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
 }
 
-/* Active (this zone exactly matches the selected range):
-   15% opacity tint + zone color text */
-.lean-filter__zone-btn--active {
-  color: var(--zone-color, var(--fg-secondary));
-  background-color: color-mix(in srgb, var(--zone-color, var(--fg-muted)) 15%, transparent);
-  font-weight: 600;
+.lean-filter__reset:active {
+  transform: scale(0.9);
 }
 
-/* Spring press feedback */
-.lean-filter__zone-btn:active {
-  transform: scale(0.95);
-}
-
-.lean-filter__zone-btn:focus-visible {
+.lean-filter__reset:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
 }
