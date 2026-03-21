@@ -3333,10 +3333,6 @@
   .dd-press-trigger__arrow {
     transition: none;
   }
-
-  .dd-press-expand {
-    transition: none;
-  }
 }
 
 /* ---- Deep Dive: Summary text — editorial lede style -------------------- */
@@ -3386,22 +3382,6 @@
   transition: transform var(--dur-fast) var(--ease-out);
   /* Prevent the glyph from inheriting italic from any editorial context */
   font-style: normal;
-}
-
-.dd-press-trigger__arrow--open {
-  transform: rotate(90deg);
-}
-
-/* ---- Press Analysis expandable container -------------------------------- */
-.dd-press-expand {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height var(--dur-morph) var(--ease-out);
-}
-
-.dd-press-expand--open {
-  /* 600px covers all 4 axes fully expanded including rationale */
-  max-height: 600px;
 }
 
 /* ---- BiasInspectorInline — inline scorecard in Deep Dive content ------- */
