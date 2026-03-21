@@ -84,7 +84,7 @@ Bad: "US Senate Could Pass Immigration Bill as Talks Continue"
 
 ---
 
-TASK 2 — summary (string, 400-500 words)
+TASK 2 — summary (string, 250-350 words)
 Write a comprehensive factual briefing in inverted pyramid structure. This should \
 read like a complete news intelligence brief — rich with specifics, diverse \
 perspectives, and contextual depth.
@@ -250,12 +250,12 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
             f"{headline!r}"
         )
 
-    # Summary word count (target: 400-500, warn at 350-600 range)
+    # Summary word count (target: 250-350, warn outside 200-400 range)
     summary = result.get("summary", "")
     summary_wc = len(summary.split())
-    if summary_wc > 0 and not (350 <= summary_wc <= 600):
+    if summary_wc > 0 and not (200 <= summary_wc <= 400):
         print(
-            f"  [quality]{cid_str} Summary word count {summary_wc} (expected 400-500): "
+            f"  [quality]{cid_str} Summary word count {summary_wc} (expected 250-350): "
             f"first 80 chars: {summary[:80]!r}"
         )
 
@@ -512,10 +512,10 @@ def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
         avg_h = sum(headline_lens) / len(headline_lens)
         avg_s = sum(summary_lens) / len(summary_lens)
         out_of_range_h = sum(1 for wc in headline_lens if not (8 <= wc <= 12))
-        out_of_range_s = sum(1 for wc in summary_lens if not (350 <= wc <= 600))
+        out_of_range_s = sum(1 for wc in summary_lens if not (200 <= wc <= 400))
         print(f"  Headline avg {avg_h:.1f} words, "
               f"{out_of_range_h}/{len(headline_lens)} out of 8-12 range")
         print(f"  Summary avg {avg_s:.1f} words, "
-              f"{out_of_range_s}/{len(summary_lens)} out of 400-500 range")
+              f"{out_of_range_s}/{len(summary_lens)} out of 250-350 range")
 
     return results
