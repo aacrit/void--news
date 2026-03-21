@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import type {
   Edition,
   Category,
@@ -507,6 +507,7 @@ function ExportButton() {
 export default function PaperContent({ edition }: { edition: Edition }) {
   const [allStories, setAllStories] = useState<Story[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [tldr, setTldr] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -530,7 +531,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
         setIsLoading(false);
       }
 
-      // Pipeline timestamp
+      // Pipeline timestamp + TL;DR (fire-and-forget)
       try {
         const { data: run } = await supabase
           .from("pipeline_runs")
@@ -540,9 +541,18 @@ export default function PaperContent({ edition }: { edition: Edition }) {
           .limit(1)
           .single();
         if (run?.completed_at) setLastUpdated(run.completed_at);
-      } catch {
-        /* ignore */
-      }
+      } catch { /* ignore */ }
+
+      try {
+        const { data: brief } = await supabase
+          .from("daily_briefs")
+          .select("tldr_text")
+          .eq("edition", edition)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+        if (brief?.tldr_text) setTldr(brief.tldr_text);
+      } catch { /* ignore */ }
     }
 
     load();
@@ -570,6 +580,14 @@ export default function PaperContent({ edition }: { edition: Edition }) {
         <p className="np-loading">
           Setting type &mdash; your edition is being prepared&hellip;
         </p>
+      )}
+
+      {/* ===== TODAY'S BRIEF (TL;DR) ===== */}
+      {!isLoading && tldr && (
+        <div className="np-brief">
+          <p className="np-brief__label">Today&rsquo;s Brief</p>
+          <p className="np-brief__text">{tldr}</p>
+        </div>
       )}
 
       {/* ===== FRONT PAGE — 3-Zone Layout ===== */}

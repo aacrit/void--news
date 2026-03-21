@@ -469,6 +469,43 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
+   TODAY'S BRIEF (TL;DR) — subtle boxed editorial summary
+   ========================================================================== */
+
+.np-brief {
+  border-top: 1px solid var(--np-ink);
+  border-bottom: 1px solid var(--np-ink);
+  padding: 8px 0;
+  margin-bottom: 10px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.np-brief__label {
+  font-family: var(--np-font-label);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.20em;
+  color: var(--np-ink-light);
+  margin: 0 0 4px;
+}
+
+.np-brief__text {
+  font-family: var(--np-font-body);
+  font-style: italic;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--np-ink-mid);
+  margin: 0 auto;
+  max-width: 90%;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* ==========================================================================
    FILLER ITEMS
    ========================================================================== */
 
