@@ -13,6 +13,7 @@ Usage:
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 # Add pipeline root to path
@@ -115,55 +116,74 @@ def main():
         print("No clusters to re-rank.")
         return
 
-    # 3. Re-rank each cluster
-    print("\n[3/4] Re-ranking clusters...")
+    # 3. Bulk-fetch all cluster_articles, articles, and bias_scores upfront.
+    # Previously: 3 queries per cluster = 25,941 HTTP calls for 8,647 clusters.
+    # Now: 3 paginated bulk fetches + in-memory dicts = ~30 HTTP calls total.
+    print("\n[3/4] Bulk-fetching cluster data...")
+
+    def _paginated_fetch(table: str, select: str, page_size: int = 500) -> list[dict]:
+        """Fetch all rows with pagination and retry on connection drops."""
+        all_rows: list[dict] = []
+        offset = 0
+        retries = 0
+        while True:
+            try:
+                res = supabase.table(table).select(select).range(
+                    offset, offset + page_size - 1
+                ).execute()
+                retries = 0
+            except Exception as e:
+                retries += 1
+                if retries <= 3:
+                    print(f"  [retry {retries}/3] {table} offset {offset}: {type(e).__name__}")
+                    time.sleep(2)
+                    continue
+                print(f"  [err] {table} failed after 3 retries at offset {offset}")
+                break
+            if not res.data:
+                break
+            all_rows.extend(res.data)
+            if len(res.data) < page_size:
+                break
+            offset += page_size
+        return all_rows
+
+    # 3a. Fetch all cluster_articles rows
+    ca_rows = _paginated_fetch("cluster_articles", "cluster_id,article_id")
+    cluster_article_map: dict[str, list[str]] = {}
+    for row in ca_rows:
+        cluster_article_map.setdefault(row["cluster_id"], []).append(row["article_id"])
+    print(f"  cluster_articles: {len(ca_rows)} rows covering {len(cluster_article_map)} clusters")
+
+    # 3b. Fetch all articles
+    art_rows = _paginated_fetch("articles",
+        "id,source_id,title,summary,full_text,published_at,word_count")
+    articles_by_id: dict[str, dict] = {r["id"]: r for r in art_rows}
+    print(f"  articles: {len(articles_by_id)} rows fetched")
+
+    # 3c. Fetch all bias_scores
+    bs_rows = _paginated_fetch("bias_scores",
+        "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence")
+    bias_by_article_id: dict[str, dict] = {r["article_id"]: r for r in bs_rows}
+    print(f"  bias_scores: {len(bias_by_article_id)} rows fetched")
+
+    # 3d. Re-rank each cluster using in-memory data (no per-cluster DB queries)
+    print("\n  Re-ranking clusters in memory...")
     updates = []
     errors = 0
 
     for i, cluster in enumerate(clusters):
         cid = cluster["id"]
 
-        # Fetch articles for this cluster
-        ca_res = supabase.table("cluster_articles").select(
-            "article_id"
-        ).eq("cluster_id", cid).execute()
-        article_ids = [r["article_id"] for r in (ca_res.data or [])]
-
+        article_ids = cluster_article_map.get(cid, [])
         if not article_ids:
             continue
 
-        # Fetch article data (batch if too many IDs for PostgREST URL limit)
-        try:
-            articles = []
-            for j in range(0, len(article_ids), 50):
-                batch_ids = article_ids[j:j + 50]
-                art_res = supabase.table("articles").select(
-                    "id,source_id,title,summary,full_text,published_at,word_count"
-                ).in_("id", batch_ids).execute()
-                articles.extend(art_res.data or [])
-        except Exception as e:
-            errors += 1
-            if errors <= 5:
-                print(f"  [err] Cluster {cid[:8]} articles: {e}")
-            continue
-
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
         if not articles:
             continue
 
-        # Fetch bias scores (batched)
-        try:
-            bias_scores = []
-            for j in range(0, len(article_ids), 50):
-                batch_ids = article_ids[j:j + 50]
-                bs_res = supabase.table("bias_scores").select(
-                    "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
-                ).in_("article_id", batch_ids).execute()
-                bias_scores.extend(bs_res.data or [])
-        except Exception as e:
-            errors += 1
-            if errors <= 5:
-                print(f"  [err] Cluster {cid[:8]} bias: {e}")
-            continue
+        bias_scores = [bias_by_article_id[aid] for aid in article_ids if aid in bias_by_article_id]
 
         # Map articles for ranker (add published_at key it expects)
         for art in articles:
@@ -435,24 +455,58 @@ def main():
         return
 
     # 4. Write back to Supabase
-    print(f"\n[4/4] Writing {len(updates)} updates to Supabase...")
+    # 4. Write back to Supabase in batches.
+    # Previously: one UPDATE per cluster = 8,647 sequential HTTP calls.
+    # Now: parallel batches of 100 rows, 16 concurrent workers.
+    print(f"\n[4/4] Writing {len(updates)} updates to Supabase (batched, 16 workers)...")
+    write_rows = [
+        {
+            "id": u["id"],
+            "headline_rank": u["headline_rank"],
+            "importance_score": u["importance_score"],
+            "divergence_score": u["divergence_score"],
+            "coverage_velocity": u["coverage_velocity"],
+            "content_type": u["content_type"],
+            "category": u["category"],
+            "source_count": u["source_count"],
+        }
+        for u in updates
+    ]
+
+    WRITE_CHUNK = 100
+    write_chunks = [
+        write_rows[i:i + WRITE_CHUNK]
+        for i in range(0, len(write_rows), WRITE_CHUNK)
+    ]
+
     written = 0
-    for u in updates:
-        try:
-            supabase.table("story_clusters").update({
-                "headline_rank": u["headline_rank"],
-                "importance_score": u["importance_score"],
-                "divergence_score": u["divergence_score"],
-                "coverage_velocity": u["coverage_velocity"],
-                "content_type": u["content_type"],
-                "category": u["category"],
-            }).eq("id", u["id"]).execute()
-            written += 1
-        except Exception as e:
-            print(f"  [err] Write failed for {u['id'][:8]}: {e}")
+    write_errors = 0
+
+    def _write_chunk(chunk: list[dict]) -> int:
+        ok = 0
+        for row in chunk:
+            rid = row.pop("id")
+            try:
+                supabase.table("story_clusters").update(row).eq("id", rid).execute()
+                ok += 1
+            except Exception as e:
+                if ok == 0:  # only log first error per chunk to avoid spam
+                    print(f"  [err] Write failed for {rid[:8]}: {e}")
+            finally:
+                row["id"] = rid  # restore for any retry logic
+        return ok
+
+    with ThreadPoolExecutor(max_workers=16) as write_exec:
+        write_futures = [write_exec.submit(_write_chunk, chunk) for chunk in write_chunks]
+        for future in as_completed(write_futures):
+            try:
+                written += future.result()
+            except Exception:
+                write_errors += WRITE_CHUNK
 
     elapsed = time.time() - start
-    print(f"\n  Done. {written} clusters re-ranked in {elapsed:.1f}s")
+    print(f"\n  Done. {written} clusters re-ranked in {elapsed:.1f}s"
+          + (f" ({write_errors} write errors)" if write_errors else ""))
     print("  Refresh the frontend to see new rankings.")
 
 
