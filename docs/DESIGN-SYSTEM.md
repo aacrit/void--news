@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.3
-**Last updated:** 2026-03-19 (rev 2)
+**Version:** 1.4
+**Last updated:** 2026-03-21 (rev 3)
 
 ---
 
@@ -254,36 +254,36 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  ← Back to feed        Story: [Headline]              │
+│  ← Back          Story headline [BiasLens]            │
 ├──────────────────────────────────────────────────────┤
 │                                                      │
-│  ┌─────────── UNIFIED SUMMARY ───────────────┐      │
-│  │                                           │      │
-│  │  What happened:  [synthesized narrative]   │      │
-│  │                                           │      │
-│  │  Where sources agree:  [consensus points] │      │
-│  │                                           │      │
-│  │  Where sources diverge: [divergence map]  │      │
-│  │                                           │      │
-│  └───────────────────────────────────────────┘      │
+│  [Summary as lede text — no "What happened" heading] │
+│                                                      │
+│  POLITICAL LEAN                                      │
+│  [favicon dots above ──── gradient track ──── below] │
+│                                                      │
+│  Press Analysis ▶  (collapsed by default)            │
+│  ┌── (expanded) ──────────────────────────────────┐  │
+│  │  [4-axis scorecard — BiasInspectorInline]      │  │
+│  │  [tap axis to expand sub-scores + AI reasoning]│  │
+│  └────────────────────────────────────────────────┘  │
+│                                                      │
+│  SOURCE PERSPECTIVES                                  │
+│  ┌── ✓ [consensus point] (green left border) ────┐  │
+│  └── ⚠ [divergence point] (red left border) ──────┘  │
 │                                                      │
 │  COVERAGE BREAKDOWN                                  │
 │  ┌─────────────────────────────────────────┐        │
 │  │  Source A (NYT)        ● ● ○ ● ●  [→]  │        │
 │  │  Source B (Fox)        ● ○ ● ○ ●  [→]  │        │
 │  │  Source C (BBC)        ○ ● ● ● ○  [→]  │        │
-│  │  Source D (Al Jazeera) ● ● ● ● ●  [→]  │        │
 │  │  ...                                     │        │
 │  └─────────────────────────────────────────┘        │
 │                                                      │
-│  BIAS DISTRIBUTION          FRAMING ANALYSIS         │
-│  ┌────────────────┐        ┌────────────────┐       │
-│  │  [dot density]  │        │ [emphasis map]  │       │
-│  │  [chart]        │        │                 │       │
-│  └────────────────┘        └────────────────┘       │
-│                                                      │
 └──────────────────────────────────────────────────────┘
 ```
+
+Desktop: 50% width side panel; main feed blurred (6px backdrop blur) when open. Lean spectrum and Press Analysis stacked vertically. Progressive disclosure: press analysis collapsed behind ▶ trigger.
 
 ### Deep Dive — Mobile
 
@@ -411,10 +411,14 @@ Active components in `frontend/app/components/`:
 
 | Component | Purpose | Bias Visualization |
 |-----------|---------|-------------------|
+| `BiasInspector` | "Press Analysis" 4-axis scorecard (Lean, Sensationalism, Factual Rigor, Framing). Three exports: `BiasInspectorInline` (rendered inline in Deep Dive, expanded via ▶ trigger — no dialog wrapper), `BiasInspectorTrigger` + `BiasInspectorPanel` (legacy pop-out, kept for backward compat). Each axis row is collapsible — expand for sub-scores + Gemini reasoning text. | Cluster-averaged across all sources |
 | `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: consensus, divergence, source coverage, tier breakdown | Per-source BiasLens (sm) |
+| `DeepDive` | Slide-in panel: seamless lede, lean spectrum, "Press Analysis ▶" trigger (collapsed by default), Source Perspectives, source coverage. Backdrop blur (6px) on desktop. | Per-source BiasLens (sm) |
+| `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
+| `OpEdPage` | Opinion/editorial feed view | -- |
+| `OpinionCard` | Op-ed story card | -- |
 | `FilterBar` | Category filter chips | -- |
 | `NavBar` | Section navigation (World/US) with logo and theme toggle | -- |
 | `RefreshButton` | Refresh with "last updated" timestamp | -- |
