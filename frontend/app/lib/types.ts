@@ -202,13 +202,9 @@ export interface Story {
 export type Category =
   | "Politics"
   | "Economy"
-  | "Tech"
-  | "Health"
-  | "Environment"
-  | "Conflict"
   | "Science"
-  | "Culture"
-  | "Sports";
+  | "Health"
+  | "Culture";
 
 export type Edition = "world" | "us" | "india";
 

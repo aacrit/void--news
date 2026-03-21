@@ -6,31 +6,22 @@ import {
   SquaresFour,
   Scales,
   ChartLineUp,
-  Cpu,
-  Heartbeat,
-  Leaf,
-  ShieldWarning,
   Flask,
-  PaintBrush,
-  Trophy,
+  Heartbeat,
+  MaskHappy,
 } from "@phosphor-icons/react";
 
 const CATEGORY_ICONS: Record<string, Icon> = {
   All: SquaresFour,
-  Politics: Scales,
-  Economy: ChartLineUp,
-  Tech: Cpu,
-  Health: Heartbeat,
-  Environment: Leaf,
-  Conflict: ShieldWarning,
-  Science: Flask,
-  Culture: PaintBrush,
-  Sports: Trophy,
+  Politics: Scales,        // Politics + Conflict
+  Economy: ChartLineUp,    // Economy
+  Science: Flask,           // Science + Tech
+  Health: Heartbeat,        // Health + Environment
+  Culture: MaskHappy,       // Culture + Sports
 };
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
-  "All", "Politics", "Economy", "Tech", "Health",
-  "Environment", "Conflict", "Science", "Culture", "Sports",
+  "All", "Politics", "Economy", "Science", "Health", "Culture",
 ];
 
 interface FilterBarProps {
@@ -40,6 +31,8 @@ interface FilterBarProps {
 
 /* ---------------------------------------------------------------------------
    FilterBar — Horizontal scrollable chips for category filtering
+   5 merged desks: Politics (+ Conflict), Economy, Science (+ Tech),
+   Health (+ Environment), Culture (+ Sports).
    --------------------------------------------------------------------------- */
 
 export default function FilterBar({ activeCategory, onCategoryChange }: FilterBarProps) {

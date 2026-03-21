@@ -197,6 +197,30 @@ NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Desk mapping — fine-grained categories → merged display desks
+# The pipeline still uses fine-grained keywords for NLP accuracy, but the
+# cluster-level category stored in the DB uses these merged desk slugs.
+# ---------------------------------------------------------------------------
+DESK_MAP: dict[str, str] = {
+    "politics": "politics",       # Politics + Conflict → "Politics"
+    "conflict": "politics",
+    "economy": "economy",         # Economy (unchanged)
+    "technology": "science",      # Science + Tech → "Science"
+    "science": "science",
+    "health": "health",           # Health + Environment → "Health"
+    "environment": "health",
+    "culture": "culture",         # Culture + Sports → "Culture"
+    "sports": "culture",
+    "general": "general",
+}
+
+
+def map_to_desk(fine_category: str) -> str:
+    """Map a fine-grained category slug to its merged desk slug."""
+    return DESK_MAP.get(fine_category, fine_category)
+
+
 def categorize_article(article: dict) -> list[str]:
     """
     Assign topic categories to an article.
@@ -208,6 +232,7 @@ def categorize_article(article: dict) -> list[str]:
         List of category slugs (e.g., ['politics', 'economy']).
         An article may belong to multiple categories.
         Returns at least one category.
+        Slugs are fine-grained — call map_to_desk() to get display desks.
     """
     title = article.get("title", "") or ""
     summary = article.get("summary", "") or ""

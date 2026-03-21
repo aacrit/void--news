@@ -65,9 +65,10 @@ function safeTierBreakdown(bd: Record<string, unknown>): Record<string, number> 
 function capitalize(s: string): string {
   if (!s) return s;
   const map: Record<string, string> = {
-    politics: "Politics", economy: "Economy", tech: "Tech", technology: "Tech",
-    health: "Health", environment: "Environment", conflict: "Conflict",
-    science: "Science", culture: "Culture", sports: "Sports",
+    politics: "Politics", economy: "Economy", science: "Science",
+    health: "Health", culture: "Culture",
+    conflict: "Politics", tech: "Science", technology: "Science",
+    environment: "Health", sports: "Culture",
   };
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
 }

@@ -514,8 +514,8 @@
 /*
  * Anatomy:
  *   .lean-filter                — wrapper, relative positioned
- *   .lean-filter__pill          — always-visible collapsed trigger
- *   .lean-filter__spectrum-bar  — mini continuous gradient capsule inside pill
+ *   .lean-filter__pill          — always-visible collapsed trigger (matches .filter-chip sizing)
+ *   .lean-filter__spectrum-dots — 3 colored dots: blue / gray / red
  *   .lean-filter__panel         — expandable panel (grid-template-rows animation)
  *   .lean-filter__panel-overflow — clip wrapper for collapse trick
  *   .lean-filter__panel-inner   — inner padding + flex column
@@ -533,25 +533,25 @@
   position: relative;
 }
 
-/* ---- Collapsed pill ---- */
+/* ---- Collapsed pill — matches .filter-chip sizing exactly ---- */
 .lean-filter__pill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 500;
+  font-size: var(--text-xs);
+  font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--fg-secondary);
-  background-color: var(--bg-secondary);
+  color: var(--fg-tertiary);
+  background-color: transparent;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-3);
   min-height: 44px;
   /* Reserve enough width for the longest possible label ("Center-Left — Center-Right")
      so the pill never resizes while dragging crosses zone boundaries. */
-  min-width: 210px;
+  min-width: 185px;
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
@@ -560,39 +560,17 @@
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
-    min-width var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
-}
-
-/* Spectrum gradient underline — faint on inactive, full on active */
-.lean-filter__pill::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--bias-left) 35%, transparent),
-    color-mix(in srgb, var(--bias-center) 35%, transparent),
-    color-mix(in srgb, var(--bias-right) 35%, transparent)
-  );
-  pointer-events: none;
-  transition:
-    height var(--dur-fast) var(--ease-out),
-    opacity var(--dur-fast) var(--ease-out);
+    transform var(--dur-step) var(--spring);
 }
 
 .lean-filter__pill:hover {
   color: var(--fg-secondary);
-  border-color: var(--border-strong);
   background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
 }
 
 .lean-filter__pill:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .lean-filter__pill:focus-visible {
@@ -600,99 +578,88 @@
   outline-offset: 2px;
 }
 
-/* Active pill — filter is on */
+/* Active pill — matches .filter-chip--active */
 .lean-filter--active .lean-filter__pill {
+  font-weight: 600;
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
-  border-color: var(--border-strong);
+  border-color: var(--fg-primary);
 }
 
-/* Active: thicker (3px) full-opacity spectrum underline */
-.lean-filter--active .lean-filter__pill::after {
-  height: 3px;
-  background: linear-gradient(
-    to right,
-    var(--bias-left),
-    var(--bias-center),
-    var(--bias-right)
-  );
-}
-
-/* ---- Mini continuous spectrum bar inside the pill ---- */
+/* ---- Three spectrum dots in the pill — the only special visual element ---- */
 /*
- * Replaces the 3-dot approach. A 32×6px pill showing the full lean gradient.
- * When active: a CSS clip-path mask reveals only the selected range.
- * The clip uses CSS custom properties set via inline style:
- *   --spectrum-clip-left  (% from left edge to min)
- *   --spectrum-clip-right (% from right edge to max)
+ * Dots stay clearly colored (blue / gray / red) whether the pill is active or not.
+ * They provide the spectrum identity without making the pill shout.
  */
-.lean-filter__spectrum-bar {
-  display: inline-block;
+.lean-filter__spectrum-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   flex-shrink: 0;
-  width: 32px;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(
-    to right,
-    var(--bias-far-left),
-    var(--bias-left) 15%,
-    var(--bias-center-left) 30%,
-    var(--bias-center) 42%,
-    var(--bias-center-right) 57%,
-    var(--bias-right) 71%,
-    var(--bias-far-right)
-  );
-  /* Inactive: low opacity so it reads as a subtle hint */
-  opacity: 0.45;
-  transition: opacity var(--dur-fast) var(--ease-out);
-  /* Clip to selected range when active — set via inline style vars */
-  /* clip-path is applied below in .lean-filter--active */
 }
 
-/* Active: full opacity and clip to show only selected range */
-.lean-filter--active .lean-filter__spectrum-bar {
-  opacity: 1;
-  clip-path: inset(0 var(--spectrum-clip-right, 0%) 0 var(--spectrum-clip-left, 0%) round 3px);
-  /* Subtle pulsing glow on the mini bar when filter is active */
-  animation: leanSpectrumBarPulse 2.4s var(--ease-out) infinite;
+.lean-filter__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-/* Idle wave animation on the bar when filter is not active */
-.lean-filter:not(.lean-filter--active) .lean-filter__spectrum-bar {
-  animation: leanBarWave 1.8s var(--ease-out) 0.5s 1 both;
+.lean-filter__dot--left   { background-color: var(--bias-left); }
+.lean-filter__dot--center { background-color: var(--bias-center); }
+.lean-filter__dot--right  { background-color: var(--bias-right); }
+
+/* One-time idle wave: left→center→right on page load — runs once, leaves dots at rest */
+.lean-filter:not(.lean-filter--active) .lean-filter__dot--left {
+  animation: leanDotWaveLeft 1.5s var(--ease-out) 0.6s 1 both;
+}
+.lean-filter:not(.lean-filter--active) .lean-filter__dot--center {
+  animation: leanDotWaveCenter 1.5s var(--ease-out) 0.6s 1 both;
+}
+.lean-filter:not(.lean-filter--active) .lean-filter__dot--right {
+  animation: leanDotWaveRight 1.5s var(--ease-out) 0.6s 1 both;
 }
 
-@keyframes leanBarWave {
-  0%   { opacity: 0.2; }
-  40%  { opacity: 0.55; }
-  70%  { opacity: 0.3; }
-  100% { opacity: 0.45; }
+@keyframes leanDotWaveLeft {
+  0%   { opacity: 0.5; }
+  20%  { opacity: 1; }
+  60%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@keyframes leanDotWaveCenter {
+  0%   { opacity: 0.5; }
+  20%  { opacity: 0.5; }
+  40%  { opacity: 1; }
+  80%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@keyframes leanDotWaveRight {
+  0%   { opacity: 0.5; }
+  40%  { opacity: 0.5; }
+  60%  { opacity: 1; }
+  100% { opacity: 1; }
 }
 
-/* ---- Pill label — fixed width to prevent layout shift during drag ---- */
+/* ---- Pill label — fixed min-width to prevent layout shift during drag ---- */
+/*
+ * The label alternates between "Lean" (4 chars) and range text like
+ * "Center-Left — Center-Right" (26 chars). Without a min-width the pill
+ * narrows/widens on every zone crossing during drag, causing visible flicker.
+ */
 .lean-filter__pill-label {
   display: inline-flex;
   align-items: center;
-  /* Wide enough for "Center-Left — Center-Right" in the data font.
-     Using ch units on the structural font as a stable approximation. */
-  min-width: 13ch;
+  /* Reserve space for the longest possible range text: "Center-Left — Center-Right".
+     Using ch units against the structural (Inter) font at --text-xs size. */
+  min-width: 14ch;
   flex: 1;
 }
 
-/* Range text shows the active selection using two lean colors */
+/* Range text — plain theme color, no gradient. Matches filter-chip text style. */
 .lean-filter__pill-range {
   display: inline-block;
-  background: linear-gradient(
-    to right,
-    var(--lean-min-color, var(--bias-left)),
-    var(--lean-max-color, var(--bias-right))
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 600;
-  /* Tabular nums so digit-containing labels don't shift width */
   font-variant-numeric: tabular-nums;
+  /* Inherits color from the pill — no special gradient treatment */
 }
 
 /* ---- Active indicator dot ---- */
@@ -1123,7 +1090,9 @@
   .lean-filter__thumb,
   .lean-filter__selection,
   .lean-filter__active-dot,
-  .lean-filter__spectrum-bar {
+  .lean-filter__dot--left,
+  .lean-filter__dot--center,
+  .lean-filter__dot--right {
     transition: none !important;
     animation: none !important;
   }
