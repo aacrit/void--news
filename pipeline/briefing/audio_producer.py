@@ -39,9 +39,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 ASSETS_DIR = Path(__file__).parent / "assets"
 
-# Segment markers in order of broadcast
+# Segment markers in order of broadcast (clean BBC style — no sound effects)
 _SEGMENT_ORDER = [
-    "COUNTDOWN",
     "GREETING",
     "HEADLINES",
     "STORY_1",
@@ -51,25 +50,16 @@ _SEGMENT_ORDER = [
     "SIGNOFF",
 ]
 
-# Silence gaps (ms) inserted AFTER each segment in the stitch sequence
+# Silence gaps (ms) inserted AFTER each segment
 _SILENCE_AFTER: dict[str, int] = {
-    "PIPS": 200,
-    "COUNTDOWN": 0,      # ident follows immediately after countdown TTS
-    "IDENT": 300,
-    "GREETING": 500,
-    "HEADLINES": 600,
-    "STORY_1": 400,
-    "STORY_2": 400,
-    "STORY_3": 500,
-    "EDITORIAL_NOTE": 400,
-    "SIGNOFF": 300,
-    "OUTRO": 0,
+    "GREETING": 600,
+    "HEADLINES": 700,
+    "STORY_1": 500,
+    "STORY_2": 500,
+    "STORY_3": 600,
+    "EDITORIAL_NOTE": 500,
+    "SIGNOFF": 0,
 }
-
-# SSML wrapper for countdown — slow prosody for gravitas
-_COUNTDOWN_SSML_TEMPLATE = (
-    '<speak><prosody rate="slow">{text}</prosody></speak>'
-)
 
 
 def _parse_script(script: str) -> dict[str, str]:
@@ -286,62 +276,24 @@ def produce_audio(
         if ms > 0:
             combined += _silence(ms)
 
-    def _append_tts(marker: str, ssml: bool = False) -> None:
+    def _append_tts(marker: str) -> None:
         """Synthesize and append a script segment."""
         text = segments.get(marker, "").strip()
         if not text:
             print(f"  [warn][audio] No text for marker [{marker}] — skipping")
             return
-        if ssml:
-            text = _COUNTDOWN_SSML_TEMPLATE.format(text=text)
-        mp3_bytes = _synthesize_segment(text, voice_id, language_code, ssml=ssml)
+        mp3_bytes = _synthesize_segment(text, voice_id, language_code)
         if mp3_bytes:
             seg = _bytes_to_segment(mp3_bytes)
             _append(seg, marker)
         else:
             print(f"  [warn][audio] TTS failed for [{marker}] — segment omitted")
 
-    # ── Stitching sequence ──────────────────────────────────────────────────
+    # ── Stitching sequence — clean BBC narration, no sound effects ────────
 
-    # 1. Pips asset
-    pips = _load_asset("pips.wav")
-    _append(pips, "pips")
-    _append_silence(_SILENCE_AFTER["PIPS"])
-
-    # 2. Countdown (slow SSML)
-    _append_tts("COUNTDOWN", ssml=True)
-    _append_silence(_SILENCE_AFTER["COUNTDOWN"])
-
-    # 3. Ident asset
-    ident = _load_asset("ident.wav")
-    _append(ident, "ident")
-    _append_silence(_SILENCE_AFTER["IDENT"])
-
-    # 4. Greeting
-    _append_tts("GREETING")
-    _append_silence(_SILENCE_AFTER["GREETING"])
-
-    # 5. Headlines
-    _append_tts("HEADLINES")
-    _append_silence(_SILENCE_AFTER["HEADLINES"])
-
-    # 6. Stories 1-3
-    for story_marker in ("STORY_1", "STORY_2", "STORY_3"):
-        _append_tts(story_marker)
-        _append_silence(_SILENCE_AFTER[story_marker])
-
-    # 7. Editorial note
-    _append_tts("EDITORIAL_NOTE")
-    _append_silence(_SILENCE_AFTER["EDITORIAL_NOTE"])
-
-    # 8. Sign-off
-    _append_tts("SIGNOFF")
-    _append_silence(_SILENCE_AFTER["SIGNOFF"])
-
-    # 9. Outro asset
-    outro = _load_asset("outro.wav")
-    _append(outro, "outro")
-    _append_silence(_SILENCE_AFTER["OUTRO"])
+    for marker in _SEGMENT_ORDER:
+        _append_tts(marker)
+        _append_silence(_SILENCE_AFTER.get(marker, 400))
 
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")

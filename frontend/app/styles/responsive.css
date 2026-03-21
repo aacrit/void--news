@@ -137,9 +137,9 @@
     display: none;
   }
 
-  /* Daily Brief: wider player column on desktop */
-  .daily-brief__player {
-    width: 220px;
+  /* On Air: more room for progress track on desktop */
+  .on-air__track--visible {
+    max-width: 500px;
   }
 }
 
@@ -631,41 +631,44 @@
     outline-offset: 2px;
   }
 
-  /* === DAILY BRIEF === */
+  /* === ON AIR — mobile floating button === */
 
-  /* Stacked layout on mobile */
-  .daily-brief__content {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  /* Horizontal player row on mobile */
-  .daily-brief__player {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .daily-brief__progress {
-    flex: 1;
-  }
-
-  /* Sticky bottom player — visible when playing and scrolled past */
-  .daily-brief__sticky--visible {
-    display: flex;
+  .on-air {
     position: fixed;
-    bottom: calc(var(--nav-bottom-height, 68px) + env(safe-area-inset-bottom, 0px));
-    left: 0;
-    right: 0;
+    bottom: calc(var(--nav-bottom-height, 68px) + env(safe-area-inset-bottom, 0px) + 12px);
+    right: var(--space-4);
     z-index: var(--z-sticky, 10);
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    border-top: 1px solid var(--glass-border, var(--border-subtle));
-    padding: var(--space-2) var(--space-5);
-    align-items: center;
-    gap: var(--space-3);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+  }
+
+  .on-air__btn {
+    border-radius: 24px;
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-e2);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .on-air__track {
+    flex-direction: column;
+    max-width: 0;
+    max-height: 0;
+  }
+
+  .on-air__track--visible {
+    max-width: 200px;
+    max-height: 60px;
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-e2);
+    border-radius: 12px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .on-air__progress {
+    min-width: 140px;
   }
 }
 

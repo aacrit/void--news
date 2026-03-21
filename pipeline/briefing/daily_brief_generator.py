@@ -61,15 +61,15 @@ For the TL;DR:
 For the audio script:
 - BBC World Service 1970s style: formal, measured, authoritative, intellectual.
 - Total spoken duration target: 3-5 minutes (approximately 450-750 words of speech).
+- Pure narration — no sound effects, no countdown, no jingles.
 - Structure using exact markers on their own lines:
-  [COUNTDOWN] Three. Two. One.
   [GREETING] This is void news. {edition} edition. {date}.
   [HEADLINES] (headline roundup, 3 stories, ~15 seconds)
   [STORY_1] (first story, ~60 seconds, with attribution)
   [STORY_2] (second story, ~50 seconds, with attribution)
   [STORY_3] (third story, ~40 seconds, with attribution)
   [EDITORIAL_NOTE] (one observation about coverage divergence, ~20 seconds)
-  [SIGNOFF] This has been the void news {edition} brief. Reporting continues.
+  [SIGNOFF] This was void news.
 - Keep sentences short and spoken-word friendly.
 - Numbers: write out small numbers. Use figures for large numbers.
 - No questions. No exclamation marks. Declarative sentences only.\
@@ -120,7 +120,7 @@ def _check_quality(result: dict, edition: str) -> None:
 
     script = result.get("audio_script", "")
     required_markers = [
-        "[COUNTDOWN]", "[GREETING]", "[HEADLINES]",
+        "[GREETING]", "[HEADLINES]",
         "[STORY_1]", "[STORY_2]", "[STORY_3]",
         "[EDITORIAL_NOTE]", "[SIGNOFF]",
     ]
