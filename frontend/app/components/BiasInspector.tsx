@@ -311,25 +311,41 @@ function mergeEntitySentiments(
   );
 }
 
-/* ── Mini score bar ─────────────────────────────────────────────────────── */
+/* ── Dot scale — 5-dot progress indicator ──────────────────────────────── */
 
-interface MiniBarProps {
-  value: number;
-  color: string;
-  max?: number;
-  animate?: boolean;
+function DotScale({ value, max = 100 }: { value: number; max?: number }) {
+  const filled = Math.max(0, Math.min(5, Math.round((value / max) * 5)));
+  return (
+    <span
+      className="bi-dots"
+      aria-label={`${Math.round(value)} out of ${max}`}
+    >
+      {Array.from({ length: 5 }, (_, i) => (
+        <span
+          key={i}
+          className={`bi-dots__dot${i < filled ? " bi-dots__dot--filled" : ""}`}
+        />
+      ))}
+    </span>
+  );
 }
 
-function MiniBar({ value, color, max = 100, animate = false }: MiniBarProps) {
-  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+/* ── Sub-factor grid — 2-column compact layout ──────────────────────────── */
+
+function SubFactorGrid({
+  items,
+}: {
+  items: { label: string; value: number; max?: number }[];
+}) {
   return (
-    <div className="bi-minibar">
-      <div className="bi-minibar__track">
-        <div
-          className={`bi-minibar__fill${animate ? " bi-minibar__fill--animate" : ""}`}
-          style={{ width: `${pct}%`, backgroundColor: color }}
-        />
-      </div>
+    <div className="bi-subfactors">
+      {items.map(({ label, value, max }) => (
+        <div key={label} className="bi-subfactors__item">
+          <span className="bi-subfactors__label">{label}</span>
+          <DotScale value={value} max={max} />
+          <span className="bi-subfactors__value">{Math.round(value)}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -358,140 +374,7 @@ function GradientBar({ value, gradient, color }: GradientBarProps) {
   );
 }
 
-/* ── Sub-score row (label + thin bar + value) ───────────────────────────── */
 
-interface SubScoreProps {
-  label: string;
-  value: number;
-  color: string;
-  max?: number;
-  isPct?: boolean;
-  suffix?: string;
-}
-
-function SubScore({
-  label,
-  value,
-  color,
-  max = 100,
-  isPct,
-  suffix,
-}: SubScoreProps) {
-  const displayVal = isPct
-    ? `${Math.round(value * 100)}%`
-    : `${Math.round(value)}${suffix ?? ""}`;
-  const barVal = isPct ? value * 100 : value;
-
-  return (
-    <div className="bi-subscore">
-      <span className="bi-subscore__label">{label}</span>
-      <div className="bi-subscore__bar-wrap">
-        <div className="bi-subscore__track">
-          <div
-            className="bi-subscore__fill"
-            style={{
-              width: `${Math.max(0, Math.min(100, (barVal / max) * 100))}%`,
-              backgroundColor: color,
-            }}
-          />
-        </div>
-      </div>
-      <span className="bi-subscore__value" style={{ color }}>
-        {displayVal}
-      </span>
-    </div>
-  );
-}
-
-/* ── Density mini-chart (4 bars side by side for sensationalism) ────────── */
-
-interface DensityChartProps {
-  superlative: number;
-  urgency: number;
-  hyperbole: number;
-  measured: number;
-}
-
-function DensityChart({
-  superlative,
-  urgency,
-  hyperbole,
-  measured,
-}: DensityChartProps) {
-  const max = Math.max(superlative, urgency, hyperbole, measured, 1);
-  const bars = [
-    { label: "Supr.", value: superlative, color: "#EF4444" },
-    { label: "Urgn.", value: urgency, color: "#F97316" },
-    { label: "Hypr.", value: hyperbole, color: "#EAB308" },
-    { label: "Mesr.", value: measured, color: "#22C55E" },
-  ];
-  return (
-    <div className="bi-density-chart" aria-label="Word density comparison chart">
-      {bars.map(({ label, value, color }) => (
-        <div key={label} className="bi-density-chart__col">
-          <div className="bi-density-chart__bar-wrap">
-            <div
-              className="bi-density-chart__bar"
-              style={{
-                height: `${Math.round((value / max) * 100)}%`,
-                backgroundColor: color,
-              }}
-            />
-          </div>
-          <span className="bi-density-chart__label">{label}</span>
-          <span className="bi-density-chart__value" style={{ color }}>
-            {(value ?? 0).toFixed(1)}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Evidence tally (factual rigor) ────────────────────────────────────── */
-
-interface TallyProps {
-  items: { label: string; value: number; positive: boolean }[];
-}
-
-function EvidenceTally({ items }: TallyProps) {
-  return (
-    <div className="bi-tally">
-      {items.map(({ label, value, positive }) => (
-        <div key={label} className="bi-tally__item">
-          <span
-            className="bi-tally__count"
-            style={{
-              color: positive ? "var(--rigor-high)" : "var(--rigor-low)",
-            }}
-          >
-            {value}
-          </span>
-          <span className="bi-tally__label">{label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Tag chip ───────────────────────────────────────────────────────────── */
-
-function Tag({
-  children,
-  color,
-}: {
-  children: React.ReactNode;
-  color?: string;
-}) {
-  return (
-    <span
-      className="bi-tag"
-      style={color ? { borderColor: color, color } : undefined}
-    >
-      {children}
-    </span>
-  );
-}
 
 /* ── Axis row component ─────────────────────────────────────────────────── */
 
@@ -509,6 +392,8 @@ interface AxisRowProps {
   /** Stagger index for entrance animation delay */
   staggerIndex: number;
   contentVisible: boolean;
+  /** When true: monochrome gradient bar, fg-secondary score, muted badge */
+  monochrome?: boolean;
 }
 
 function AxisRow({
@@ -524,6 +409,7 @@ function AxisRow({
   hasRationale,
   staggerIndex,
   contentVisible,
+  monochrome = false,
 }: AxisRowProps) {
   const headingId = `${axisId}-heading`;
   const contentId = `${axisId}-content`;
@@ -547,15 +433,32 @@ function AxisRow({
         {/* Left: axis name + gradient bar */}
         <div className="bi-axis__left">
           <span className="bi-axis__name">{label}</span>
-          <GradientBar value={score} gradient={gradient} color={color} />
+          <GradientBar
+            value={score}
+            gradient={
+              monochrome
+                ? "linear-gradient(to right, var(--border-subtle), var(--fg-tertiary))"
+                : gradient
+            }
+            color={monochrome ? "var(--fg-secondary)" : color}
+          />
         </div>
 
         {/* Right: score number + label + caret */}
         <div className="bi-axis__score-row">
-          <span className="bi-axis__score" style={{ color }}>
+          <span
+            className="bi-axis__score"
+            style={{ color: monochrome ? "var(--fg-secondary)" : color }}
+          >
             {score}
           </span>
-          <span className="bi-axis__badge" style={{ color }}>
+          <span
+            className="bi-axis__badge"
+            style={{
+              color,
+              opacity: monochrome ? 0.7 : undefined,
+            }}
+          >
             {scoreLabel}
           </span>
           {hasRationale && (
@@ -639,112 +542,39 @@ function LeanAxis({
       )}
       {rationale && (
         <>
-          <div className="bi-subscore-group">
-            <SubScore
-              label="Keyword score"
-              value={rationale.keywordScore}
-              color={getLeanColor(rationale.keywordScore)}
-            />
-            <SubScore
-              label="Framing shift"
-              value={rationale.framingShift + 15}
-              color={getLeanColor(
-                ((rationale.framingShift + 15) * 100) / 30
-              )}
-              max={30}
-            />
-            <SubScore
-              label="Entity shift"
-              value={rationale.entityShift + 15}
-              color={getLeanColor(
-                ((rationale.entityShift + 15) * 100) / 30
-              )}
-              max={30}
-            />
-            <SubScore
-              label="Source baseline"
-              value={rationale.sourceBaseline}
-              color={getLeanColor(rationale.sourceBaseline)}
-            />
-          </div>
+          <SubFactorGrid
+            items={[
+              { label: "Keyword score", value: rationale.keywordScore },
+              { label: "Source baseline", value: rationale.sourceBaseline },
+            ]}
+          />
           {(rationale.topLeftKeywords?.length > 0 ||
             rationale.topRightKeywords?.length > 0) && (
-            <div className="bi-evidence-group">
+            <div className="bi-keyword-signals">
               {rationale.topLeftKeywords?.length > 0 && (
-                <div className="bi-keyword-row">
+                <p className="bi-keyword-signals__line">
                   <span
-                    className="bi-keyword-row__label"
+                    className="bi-keyword-signals__dir"
                     style={{ color: "var(--bias-left)" }}
                   >
-                    Left signals
-                  </span>
-                  <div className="bi-keyword-row__tags">
-                    {rationale.topLeftKeywords.slice(0, 5).map((kw) => (
-                      <Tag key={kw} color="var(--bias-left)">
-                        {kw}
-                      </Tag>
-                    ))}
-                  </div>
-                </div>
+                    Left signals:
+                  </span>{" "}
+                  {rationale.topLeftKeywords.slice(0, 5).join(", ")}
+                </p>
               )}
               {rationale.topRightKeywords?.length > 0 && (
-                <div className="bi-keyword-row">
+                <p className="bi-keyword-signals__line">
                   <span
-                    className="bi-keyword-row__label"
+                    className="bi-keyword-signals__dir"
                     style={{ color: "var(--bias-right)" }}
                   >
-                    Right signals
-                  </span>
-                  <div className="bi-keyword-row__tags">
-                    {rationale.topRightKeywords.slice(0, 5).map((kw) => (
-                      <Tag key={kw} color="var(--bias-right)">
-                        {kw}
-                      </Tag>
-                    ))}
-                  </div>
-                </div>
+                    Right signals:
+                  </span>{" "}
+                  {rationale.topRightKeywords.slice(0, 5).join(", ")}
+                </p>
               )}
             </div>
           )}
-          {rationale.framingPhrasesFound?.length > 0 && (
-            <div className="bi-evidence-group">
-              <span className="bi-evidence-label">Framing phrases detected</span>
-              <div className="bi-keyword-row__tags">
-                {rationale.framingPhrasesFound.slice(0, 4).map((ph) => (
-                  <Tag key={ph}>{ph}</Tag>
-                ))}
-              </div>
-            </div>
-          )}
-          {rationale.entitySentiments &&
-            Object.keys(rationale.entitySentiments).length > 0 && (
-              <div className="bi-evidence-group">
-                <span className="bi-evidence-label">Entity sentiments</span>
-                <div className="bi-entity-grid">
-                  {Object.entries(rationale.entitySentiments)
-                    .slice(0, 6)
-                    .map(([entity, sentiment]) => (
-                      <div key={entity} className="bi-entity-item">
-                        <span className="bi-entity-item__name">{entity}</span>
-                        <span
-                          className="bi-entity-item__value"
-                          style={{
-                            color:
-                              sentiment > 0
-                                ? "var(--sense-low)"
-                                : sentiment < 0
-                                  ? "var(--sense-high)"
-                                  : "var(--fg-muted)",
-                          }}
-                        >
-                          {sentiment > 0 ? "+" : ""}
-                          {sentiment.toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
         </>
       )}
     </AxisRow>
@@ -789,6 +619,7 @@ function SensationalismAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
+      monochrome
     >
       {geminiText && (
         <p className="bi-gemini-reasoning">
@@ -797,43 +628,13 @@ function SensationalismAxis({
         </p>
       )}
       {rationale && (
-        <>
-          <div className="bi-subscore-group">
-            <SubScore
-              label="Headline score"
-              value={rationale.headlineScore}
-              color={getSenseColor(rationale.headlineScore)}
-            />
-            <SubScore
-              label="Body score"
-              value={rationale.bodyScore}
-              color={getSenseColor(rationale.bodyScore)}
-            />
-          </div>
-          <div className="bi-evidence-group">
-            <span className="bi-evidence-label">Clickbait signals detected</span>
-            <span
-              className="bi-evidence-value"
-              style={{
-                color:
-                  rationale.clickbaitSignals > 0
-                    ? "var(--sense-high)"
-                    : "var(--sense-low)",
-              }}
-            >
-              {rationale.clickbaitSignals}
-            </span>
-          </div>
-          <div className="bi-evidence-group">
-            <span className="bi-evidence-label">Word density (per 100 words)</span>
-            <DensityChart
-              superlative={rationale.superlativeDensity}
-              urgency={rationale.urgencyDensity}
-              hyperbole={rationale.hyperboleDensity}
-              measured={rationale.measuredDensity}
-            />
-          </div>
-        </>
+        <SubFactorGrid
+          items={[
+            { label: "Headline score", value: rationale.headlineScore },
+            { label: "Body score", value: rationale.bodyScore },
+            { label: "Clickbait signals", value: rationale.clickbaitSignals, max: 10 },
+          ]}
+        />
       )}
     </AxisRow>
   );
@@ -878,6 +679,7 @@ function RigorAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
+      monochrome
     >
       {geminiText && (
         <p className="bi-gemini-reasoning">
@@ -886,50 +688,19 @@ function RigorAxis({
         </p>
       )}
       {rationale && (
-        <>
-          <EvidenceTally
-            items={[
-              {
-                label: "Named sources",
-                value: rationale.namedSourcesCount,
-                positive: true,
-              },
-              {
-                label: "Org. citations",
-                value: rationale.orgCitationsCount,
-                positive: true,
-              },
-              {
-                label: "Data points",
-                value: rationale.dataPointsCount,
-                positive: true,
-              },
-              {
-                label: "Direct quotes",
-                value: rationale.directQuotesCount,
-                positive: true,
-              },
-              {
-                label: "Vague sources",
-                value: rationale.vagueSourcesCount,
-                positive: false,
-              },
-            ]}
-          />
-          {typeof rationale.specificityRatio === "number" && (
-            <div
-              className="bi-subscore-group"
-              style={{ marginTop: "var(--space-3)" }}
-            >
-              <SubScore
-                label="Specificity ratio"
-                value={rationale.specificityRatio}
-                color={getRigorColor(rationale.specificityRatio * 100)}
-                isPct
-              />
-            </div>
-          )}
-        </>
+        <SubFactorGrid
+          items={[
+            { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
+            { label: "Data points", value: rationale.dataPointsCount, max: 10 },
+            { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
+            {
+              label: "Specificity ratio",
+              value: typeof rationale.specificityRatio === "number"
+                ? rationale.specificityRatio * 100
+                : 0,
+            },
+          ]}
+        />
       )}
     </AxisRow>
   );
@@ -973,6 +744,7 @@ function FramingAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
+      monochrome
     >
       {geminiText && (
         <p className="bi-gemini-reasoning">
@@ -981,48 +753,14 @@ function FramingAxis({
         </p>
       )}
       {rationale && (
-        <>
-          <div className="bi-subscore-group">
-            <SubScore
-              label="Connotation"
-              value={rationale.connotationScore}
-              color={getFramingColor(rationale.connotationScore)}
-            />
-            <SubScore
-              label="Keyword emphasis"
-              value={rationale.keywordEmphasisScore}
-              color={getFramingColor(rationale.keywordEmphasisScore)}
-            />
-            <SubScore
-              label="Omission"
-              value={rationale.omissionScore}
-              color={getFramingColor(rationale.omissionScore)}
-            />
-            <SubScore
-              label="Headline/body divergence"
-              value={rationale.headlineBodyDivergence}
-              color={getFramingColor(rationale.headlineBodyDivergence)}
-            />
-            <SubScore
-              label="Passive voice"
-              value={rationale.passiveVoiceScore}
-              color={getFramingColor(rationale.passiveVoiceScore)}
-            />
-          </div>
-          <div className="bi-evidence-group">
-            <Tag
-              color={
-                rationale.hasClusterContext
-                  ? "var(--sense-low)"
-                  : "var(--fg-muted)"
-              }
-            >
-              {rationale.hasClusterContext
-                ? "Cross-article analysis"
-                : "Single-article only"}
-            </Tag>
-          </div>
-        </>
+        <SubFactorGrid
+          items={[
+            { label: "Connotation", value: rationale.connotationScore },
+            { label: "Omission", value: rationale.omissionScore },
+            { label: "Headline-body gap", value: rationale.headlineBodyDivergence },
+            { label: "Passive voice", value: rationale.passiveVoiceScore },
+          ]}
+        />
       )}
     </AxisRow>
   );
