@@ -174,16 +174,44 @@
 
 @media (max-width: 767px) {
 
+  /* === NATIVE SCROLL FEEL === */
+
+  /* Momentum scrolling — matches iOS/Android kinetic scroll physics */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .page-main {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Filter bar horizontal scroll — proximity snap keeps chips reachable
+     without forcing scroll to land exactly on a chip edge */
+  .filter-bar {
+    scroll-snap-type: x proximity;
+  }
+
   /* === NAVIGATION === */
 
   /* Safe-area inset for notched phones — pushes nav below status bar */
   .nav-header {
     padding-top: env(safe-area-inset-top, 0px);
+    /* Lighter blur on mobile — blur(8px) is ~half the cost of desktop blur(16px) */
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
   }
 
-  /* Bottom nav visible */
+  /* Bottom nav visible — glass morphism: iOS tab bar aesthetic */
   .nav-bottom {
     display: flex;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border-top: 1px solid var(--glass-border);
+    /* Pad below tabs so they clear iPhone home indicator.
+       max() ensures at least --space-2 even when safe-area-inset-bottom is 0. */
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom, 0px));
   }
 
   /* Desktop tabs hidden on mobile — sections via bottom nav */
@@ -265,12 +293,6 @@
      on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
   body::before {
     will-change: auto;
-  }
-
-  /* Bottom nav — pad below tabs so they clear iPhone home indicator.
-     max() ensures at least --space-2 even when safe-area-inset-bottom is 0. */
-  .nav-bottom {
-    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom, 0px));
   }
 
   /* Section header — allow RefreshButton timestamp to wrap */
@@ -451,6 +473,145 @@
   /* [ENHANCEMENT-6] Scale down empty state for mobile */
   .empty-state {
     padding: var(--space-4) var(--space-5);
+  }
+
+  /* === NATIVE APP TOUCH FEEDBACK === */
+
+  /* Bottom nav tab — snappy haptic-feel press (60ms snap, 300ms return) */
+  .nav-bottom-tab {
+    position: relative;
+  }
+
+  .nav-bottom-tab:active {
+    transform: scale(0.9);
+    transition: transform 60ms var(--ease-out);
+  }
+
+  /* Active tab — dot indicator below icon (iOS convention) */
+  .nav-bottom-tab--active::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--fg-primary);
+  }
+
+  /* Story card — no hover lift on mobile (no pointer hover), use active press */
+  .story-card:hover {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .story-card:active {
+    transform: scale(0.975);
+    opacity: 0.9;
+    transition: transform 60ms var(--ease-out), opacity 60ms var(--ease-out);
+    box-shadow: none;
+  }
+
+  /* Lead story — same native-press treatment at slightly larger scale */
+  .lead-story:hover {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .lead-story:active {
+    transform: scale(0.985);
+    transition: transform 60ms var(--ease-out);
+    box-shadow: none;
+  }
+
+  /* Filter chip — aggressive press for snappy tap feel */
+  .filter-chip:hover {
+    color: var(--fg-tertiary);
+    background-color: transparent;
+    border-color: var(--border-subtle);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .filter-chip:active {
+    transform: scale(0.88);
+    transition: transform 50ms var(--ease-out);
+  }
+
+  /* === PERFORMANCE — DISABLE PAINT-HEAVY EFFECTS === */
+
+  /* Box-shadow transitions require composited paint layers — skip on mobile.
+     Active states above use transform + opacity (GPU-only). */
+  .story-card,
+  .lead-story {
+    box-shadow: none;
+    transition:
+      background-color 200ms var(--ease-out),
+      transform 200ms var(--ease-out),
+      opacity 200ms var(--ease-out);
+  }
+
+  /* Nav tab underline animations: instant on mobile — avoids layout thrash */
+  .nav-tab::after {
+    transition: none;
+  }
+
+  /* === STAGGER ANIMATION — FASTER ON MOBILE === */
+
+  /* Shorter duration + ease-out instead of spring: avoids overshoot jank on
+     lower-fps devices. Overrides animation-duration + easing from animations.css.
+     animation-play-state paused/running contract is preserved. */
+  .anim-stagger {
+    animation-duration: 220ms;
+    animation-timing-function: var(--ease-out);
+    animation-play-state: paused;
+  }
+
+  .anim-stagger--visible {
+    animation-play-state: running;
+  }
+
+  /* === TOUCH TARGETS — WCAG 44×44px MINIMUM === */
+
+  /* These elements already meet WCAG in most cases; this rule is the safety net */
+  .nav-bottom-tab,
+  .filter-chip,
+  .page-toggle,
+  .theme-toggle,
+  .deep-dive-close {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Deep Dive: press trigger and read-more targets */
+  .dd-press-trigger,
+  .dd-read-more {
+    min-height: 44px;
+  }
+
+  /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
+
+  /* Native apps don't allow text selection on buttons / cards */
+  .nav-bottom-tab,
+  .filter-chip,
+  .story-card,
+  .lead-story,
+  .page-toggle,
+  .theme-toggle {
+    -webkit-user-select: none;
+    user-select: none;
+    /* Remove the default blue tap highlight — we use transform feedback instead */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* === PAGE TOGGLE — GLASS PILL === */
+
+  .page-toggle {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
 
   /* === ACCESSIBILITY === */
