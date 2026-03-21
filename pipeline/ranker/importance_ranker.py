@@ -684,38 +684,46 @@ def _tier_diversity_score(
 def _coverage_velocity_score(
     cluster_articles: list[dict],
     timestamps: list[datetime],
-    window_hours: float = 6.0,
+    window_hours: float = 24.0,
 ) -> tuple[float, int]:
     """
     Normalized velocity score + raw count.
-    v3.1: reuses pre-parsed timestamps instead of re-parsing.
+
+    v3.1: originally reused pre-parsed timestamps. However, the zip() approach
+    was broken: _parse_timestamps() skips articles with missing published_at,
+    producing a shorter list than cluster_articles. The zip() would then pair
+    articles with the wrong timestamps (off-by-one misalignment).
+
+    v5.2 fix: iterate directly over cluster_articles per-article. For each
+    article, prefer fetched_at (DB insert time, accurate measure of when the
+    pipeline saw this article) over published_at (RSS publication time, which
+    can lag hours or days behind pipeline ingestion). The window is extended
+    from 6h to 24h to cover a full twice-daily pipeline cycle: a story that
+    started gaining sources in the previous run (up to 12h ago) will now
+    register velocity rather than silently scoring 0.
+
     Returns (score 0-100, raw_velocity int).
     """
     now = datetime.now(timezone.utc)
     recent_sources: set[str] = set()
 
-    for article, ts in zip(cluster_articles, timestamps):
-        hours_ago = (now - ts).total_seconds() / 3600.0
-        if hours_ago <= window_hours:
-            recent_sources.add(article.get("source_id", ""))
-
-    # Also check articles without parsed timestamps (best-effort)
-    if len(timestamps) < len(cluster_articles):
-        for article in cluster_articles[len(timestamps):]:
-            pub = article.get("published_at", "")
-            if not pub:
-                continue
-            try:
-                if isinstance(pub, str):
-                    pub_dt = datetime.fromisoformat(pub.replace("Z", "+00:00"))
-                else:
-                    pub_dt = pub
-                if pub_dt.tzinfo is None:
-                    pub_dt = pub_dt.replace(tzinfo=timezone.utc)
-                if (now - pub_dt).total_seconds() / 3600.0 <= window_hours:
-                    recent_sources.add(article.get("source_id", ""))
-            except (ValueError, TypeError):
-                continue
+    for article in cluster_articles:
+        # Prefer fetched_at (pipeline ingestion time) if available.
+        # Fall back to published_at (RSS-reported publication time).
+        ts_raw = article.get("fetched_at") or article.get("published_at", "")
+        if not ts_raw:
+            continue
+        try:
+            if isinstance(ts_raw, str):
+                ts_dt = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
+            else:
+                ts_dt = ts_raw
+            if ts_dt.tzinfo is None:
+                ts_dt = ts_dt.replace(tzinfo=timezone.utc)
+            if (now - ts_dt).total_seconds() / 3600.0 <= window_hours:
+                recent_sources.add(article.get("source_id", ""))
+        except (ValueError, TypeError):
+            continue
 
     velocity = len(recent_sources)
     # Diminishing returns: 100 * (1 - e^(-velocity/4))
@@ -844,27 +852,30 @@ def _institutional_authority_score(cluster_articles: list[dict]) -> float:
 
 def compute_coverage_velocity(
     cluster_articles: list[dict],
-    window_hours: float = 6.0,
+    window_hours: float = 24.0,
 ) -> int:
     """
     Count how many sources were added within the last N hours.
     Public API — used by main.py directly for DB storage.
+
+    v5.2: window extended from 6h to 24h (covers one full pipeline cycle);
+    prefers fetched_at over published_at (same fix as _coverage_velocity_score).
     """
     now = datetime.now(timezone.utc)
     recent_sources: set[str] = set()
 
     for article in cluster_articles:
-        pub = article.get("published_at", "")
-        if not pub:
+        ts_raw = article.get("fetched_at") or article.get("published_at", "")
+        if not ts_raw:
             continue
         try:
-            if isinstance(pub, str):
-                pub_dt = datetime.fromisoformat(pub.replace("Z", "+00:00"))
+            if isinstance(ts_raw, str):
+                ts_dt = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
             else:
-                pub_dt = pub
-            if pub_dt.tzinfo is None:
-                pub_dt = pub_dt.replace(tzinfo=timezone.utc)
-            hours_ago = (now - pub_dt).total_seconds() / 3600.0
+                ts_dt = ts_raw
+            if ts_dt.tzinfo is None:
+                ts_dt = ts_dt.replace(tzinfo=timezone.utc)
+            hours_ago = (now - ts_dt).total_seconds() / 3600.0
             if hours_ago <= window_hours:
                 recent_sources.add(article.get("source_id", ""))
         except (ValueError, TypeError):

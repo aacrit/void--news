@@ -90,10 +90,18 @@ def update_source_topic_lean(
         existing = existing_map.get((source_id, category))
 
         if existing and existing.get("article_count", 0) > 0:
-            # EMA blend with existing averages
-            new_lean = _ema(float(existing["avg_lean"]), batch_lean)
-            new_sens = _ema(float(existing["avg_sensationalism"]), batch_sens)
-            new_opin = _ema(float(existing["avg_opinion"]), batch_opin)
+            # Adaptive EMA alpha: use 0.15 instead of 0.3 when article_count < 10
+            # for this (source, category) pair. A low article count means the
+            # existing average is based on very few data points and is therefore
+            # sensitive to individual outliers. A smaller alpha (0.15) reduces
+            # oscillation — each new batch only shifts the average by 15% instead
+            # of 30%, preventing a single atypical article from dominating the
+            # running average for rarely-covered topics. (bias-auditor fix)
+            existing_count = existing.get("article_count", 0)
+            alpha = 0.15 if existing_count < 10 else EMA_ALPHA
+            new_lean = _ema(float(existing["avg_lean"]), batch_lean, alpha)
+            new_sens = _ema(float(existing["avg_sensationalism"]), batch_sens, alpha)
+            new_opin = _ema(float(existing["avg_opinion"]), batch_opin, alpha)
             new_count = existing["article_count"] + len(articles)
         else:
             # First time: use batch averages directly

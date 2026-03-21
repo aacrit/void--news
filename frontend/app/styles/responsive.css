@@ -96,6 +96,12 @@
     padding-right: var(--space-5);
   }
 
+  /* Reset 2-col rule from 768px breakpoint so the 3-col layout takes over */
+  .grid-compact__item:nth-child(2n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
   .grid-compact__item:nth-child(3n) {
     border-right: none;
     padding-right: 0;
@@ -235,7 +241,7 @@
      on all sides. Bottom accounts for fixed bottom nav + safe area inset. */
   .page-main {
     padding: 0 var(--space-5);
-    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--nav-bottom-height) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
@@ -402,6 +408,12 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-2);
+  }
+
+  /* Spectrum track: full width on mobile, prevent overflow */
+  .dd-analysis-row__spectrum {
+    min-width: 0;
+    width: 100%;
   }
 
   /* Press expand: faster transition on mobile */

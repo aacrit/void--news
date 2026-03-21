@@ -329,6 +329,9 @@ def _scrape_with_playwright(url: str) -> str:
         _PLAYWRIGHT_AVAILABLE = True
     except ImportError:
         _PLAYWRIGHT_AVAILABLE = False
+        # Log once — this fires the first time a JS-heavy page needs Tier 2
+        print("  [scraper] Playwright not available — Tier 2 JS-rendering disabled. "
+              "Articles needing JS will fall back to RSS summary text.")
         return ""
 
     try:
@@ -364,11 +367,19 @@ def scrape_article(url: str) -> dict:
     Two-tier: tries requests+BeautifulSoup first (fast). If text < 500 chars,
     retries with Playwright headless browser (handles JS-rendered sites).
     Checks robots.txt before scraping.
+
+    Returns:
+        Dict with keys: full_text, word_count, image_url, canonical_url.
+        canonical_url is the final URL after any redirects (e.g., Google News
+        RSS links redirect to the original article). Callers should use
+        canonical_url as the stored article URL when it differs from the
+        input URL to ensure proper deduplication across pipeline runs.
     """
     result = {
         "full_text": "",
         "word_count": 0,
         "image_url": None,
+        "canonical_url": url,  # default: same as input
     }
 
     # Check robots.txt
@@ -393,6 +404,15 @@ def scrape_article(url: str) -> dict:
         response.raise_for_status()
     except requests.RequestException:
         return result
+
+    # Capture canonical URL: final URL after following redirects.
+    # Google News RSS entries have 'link' fields pointing to
+    # news.google.com/rss/articles/CBMi... which redirect to the original
+    # article. Storing the canonical URL ensures deduplication works across
+    # pipeline runs and avoids storing ephemeral Google redirect URLs.
+    final_url = response.url
+    if final_url and final_url != url:
+        result["canonical_url"] = final_url
 
     # Ensure we got HTML
     content_type = response.headers.get("Content-Type", "")

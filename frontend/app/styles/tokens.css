@@ -218,6 +218,10 @@
      padding-top --space-3 (~8px) + content (~36px) + padding-bottom --space-3 (~8px)
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
   --nav-height: 53px;
+
+  /* Height of the mobile bottom navigation bar.
+     Used for padding-bottom on .page-main so content clears the fixed nav. */
+  --nav-bottom-height: 68px;
 }
 
 /* --------------------------------------------------------------------------

@@ -148,7 +148,7 @@ def deduplicate_articles(
     Args:
         articles: List of article dicts with title, full_text, tier, word_count.
         similarity_threshold: Cosine similarity above which two articles
-            are considered duplicates (default 0.85).
+            are considered duplicates (default 0.80).
 
     Returns:
         Deduplicated list of articles.

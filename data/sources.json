@@ -421,7 +421,7 @@
     "id": "breitbart",
     "name": "Breitbart News",
     "url": "https://www.breitbart.com",
-    "rss_url": "https://feeds.feedburner.com/breitbart",
+    "rss_url": "https://www.breitbart.com/feed/",
     "tier": "us_major",
     "country": "US",
     "type": "digital",
@@ -511,7 +511,7 @@
     "url": "https://www.dw.com/en",
     "rss_url": "https://rss.dw.com/rdf/rss-en-all",
     "tier": "international",
-    "country": "",
+    "country": "DE",
     "type": "broadcast",
     "political_lean_baseline": "center",
     "credibility_notes": "Germany's international broadcaster, funded by German federal tax revenue. Publishes in 30 languages. Known for balanced European perspective."
@@ -544,7 +544,7 @@
     "url": "https://www.spiegel.de/international/",
     "rss_url": "https://www.spiegel.de/international/index.rss",
     "tier": "international",
-    "country": "",
+    "country": "DE",
     "type": "magazine",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Germany's most influential news magazine. Known for investigative journalism. Survived a 2018 fabrication scandal with strengthened fact-checking."
@@ -679,7 +679,7 @@
     "country": "JP",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics. Paywalled; ToS restricts redistribution \u2014 use RSS summaries only"
+    "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics. Paywalled; ToS restricts redistribution — use RSS summaries only"
   },
   {
     "id": "straits-times",
@@ -834,7 +834,7 @@
     "tier": "international",
     "country": "CN",
     "type": "broadcast",
-    "political_lean_baseline": "center-right",
+    "political_lean_baseline": "far-right",
     "credibility_notes": "China's English-language international broadcaster. Part of China Media Group, state-controlled. Provides official Chinese government perspective on international affairs. Essential for understanding Beijing's messaging; editorial independence is limited. RSS via Google News filter (direct video.xml feed returned 404 as of 2026-03-19)",
     "state_affiliated": true
   },
@@ -886,7 +886,7 @@
     "id": "the-irish-times",
     "name": "The Irish Times",
     "url": "https://www.irishtimes.com",
-    "rss_url": "https://www.irishtimes.com/cmlink/news-1.1319192",
+    "rss_url": "https://www.irishtimes.com/feed/",
     "tier": "international",
     "country": "IE",
     "type": "broadsheet",
@@ -1609,7 +1609,7 @@
     "credibility_notes": "Australian edition of the Spectator. Conservative political and cultural commentary on Australian and international affairs. Founded 2008. Right-leaning editorial perspective."
   },
   {
-    "id": "quadrant-online",
+    "id": "quillette",
     "name": "Quillette",
     "url": "https://quillette.com",
     "rss_url": "https://quillette.com/feed/",
@@ -1653,7 +1653,7 @@
     "credibility_notes": "American Enterprise Institute think-tank publication. Right-of-center economic and policy analysis. One of the most credible conservative think-tanks in the US. Expert commentary on policy, economics, and foreign affairs."
   },
   {
-    "id": "heritage-foundation",
+    "id": "the-daily-signal",
     "name": "The Daily Signal",
     "url": "https://www.dailysignal.com",
     "rss_url": "https://www.dailysignal.com/feed/",
@@ -1774,7 +1774,7 @@
     "credibility_notes": "Foreign policy and national security magazine. Center-right realist perspective on international affairs. Published by the Center for the National Interest. Expert contributors from government and academia."
   },
   {
-    "id": "the-american-interest",
+    "id": "american-affairs",
     "name": "American Affairs",
     "url": "https://americanaffairsjournal.org",
     "rss_url": "https://americanaffairsjournal.org/feed/",
@@ -1796,7 +1796,7 @@
     "credibility_notes": "British center-left magazine of politics, ideas, and culture, founded 1995. In-depth analysis of UK and international politics. High-quality journalism and intellectual commentary."
   },
   {
-    "id": "la-jornada-english",
+    "id": "mexico-news-network",
     "name": "Mexico News Network",
     "url": "https://mexiconewsnetwork.com",
     "rss_url": "https://mexiconewsnetwork.com/feed/",
@@ -1862,26 +1862,37 @@
     "credibility_notes": "Pan-African English-language news outlet, covering politics, business, and culture across the continent. Owned by Groupe Jeune Afrique (Tunis-based). Centrist analytical perspective."
   },
   {
-    "id": "allafrica",
-    "name": "AllAfrica",
-    "url": "https://allafrica.com",
-    "rss_url": "https://allafrica.com/tools/headlines/rdf/latest/headlines.rdf",
+    "id": "afp",
+    "name": "Agence France-Presse",
+    "url": "https://www.afp.com",
+    "rss_url": "https://www.afp.com/en/agency/rss",
     "tier": "international",
-    "country": "US",
-    "type": "digital",
+    "country": "FR",
+    "type": "wire",
     "political_lean_baseline": "center",
-    "credibility_notes": "African news aggregator republishing stories from major African newspapers and news organizations. Founded 1997. Essential aggregation point for African news in English. Wide geographic and editorial diversity."
+    "credibility_notes": "World's third-largest wire service (after AP and Reuters). Founded 1835. Dominant global wire for Africa, Middle East, and Latin America with the deepest bureaus in those regions. French government-funded but editorially independent. Gold-standard wire journalism."
   },
   {
-    "id": "eurasia-review",
-    "name": "Eurasian Review",
-    "url": "https://www.eurasiareview.com",
-    "rss_url": "https://www.eurasiareview.com/feed/",
+    "id": "politico-europe",
+    "name": "Politico Europe",
+    "url": "https://www.politico.eu",
+    "rss_url": "https://www.politico.eu/feed/",
     "tier": "international",
-    "country": "US",
+    "country": "BE",
     "type": "digital",
     "political_lean_baseline": "center",
-    "credibility_notes": "Analysis and news on Eurasian affairs. Founded 2009. Publishes expert commentary on geopolitics, international relations, and regional affairs across Eurasia and beyond. Centrist analytical perspective."
+    "credibility_notes": "Leading English-language outlet covering EU policy, Brussels politics, and European affairs. Strong editorial standards, corrections policy, and original reporting. Essential for EU institutional coverage. Owned by Axel Springer."
+  },
+  {
+    "id": "rappler",
+    "name": "Rappler",
+    "url": "https://www.rappler.com",
+    "rss_url": "https://www.rappler.com/feed/",
+    "tier": "international",
+    "country": "PH",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Leading Philippine investigative news outlet. Founded by Maria Ressa (2021 Nobel Peace Prize laureate). IFCN-certified fact-checking arm. Pulitzer Prize-nominated. Known for courageous reporting on Duterte drug war. Highest-credibility SE Asian English-language source."
   },
   {
     "id": "asia-times",
@@ -1983,7 +1994,7 @@
     "credibility_notes": "Nonprofit news agency covering religion, ethics, and spirituality since 1934. Nonpartisan. Widely syndicated in major news outlets. Essential for faith community coverage."
   },
   {
-    "id": "the-intercept-uk",
+    "id": "bureau-investigative-journalism",
     "name": "Bureau of Investigative Journalism",
     "url": "https://www.thebureauinvestigates.com",
     "rss_url": "https://www.thebureauinvestigates.com/feed",
@@ -2183,7 +2194,7 @@
     "credibility_notes": "Fact-checking operation of the Associated Press. Non-partisan verification of claims by politicians, public figures, and viral content. Highest factual credibility standard."
   },
   {
-    "id": "conservative-treehouse",
+    "id": "daily-caller-news-foundation",
     "name": "Daily Caller News Foundation",
     "url": "https://dailycallernewsfoundation.org",
     "rss_url": "https://dailycallernewsfoundation.org/feed/",
@@ -2194,7 +2205,7 @@
     "credibility_notes": "Investigative arm of The Daily Caller. Nonprofit. Produces original investigative journalism with a right-leaning editorial perspective. Content widely republished. Founded 2010."
   },
   {
-    "id": "heterodox-academy",
+    "id": "persuasion",
     "name": "Persuasion",
     "url": "https://www.persuasion.community",
     "rss_url": "https://www.persuasion.community/feed",
@@ -2219,12 +2230,12 @@
     "id": "ndtv",
     "name": "NDTV",
     "url": "https://www.ndtv.com",
-    "rss_url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+    "rss_url": "https://www.ndtv.com/rss/top-stories",
     "tier": "international",
     "country": "IN",
     "type": "broadcast",
     "political_lean_baseline": "center-left",
-    "credibility_notes": "India's leading English-language news channel, founded 1988. Acquired by Adani Group in 2022 \u2014 editorial independence under observation. Strong reporting legacy. Center-left on democratic accountability."
+    "credibility_notes": "India's leading English-language news channel, founded 1988. Acquired by Adani Group in 2022 — editorial independence under observation. Strong reporting legacy. Center-left on democratic accountability."
   },
   {
     "id": "indian-express",
@@ -2378,7 +2389,7 @@
     "country": "IN",
     "type": "broadcast",
     "political_lean_baseline": "right",
-    "credibility_notes": "Founded by Arnab Goswami. Aggressively pro-BJP, high ratings. Represents a genuine right-of-center viewpoint in Indian media. Contested editorial standards \u2014 credibility caution noted."
+    "credibility_notes": "Founded by Arnab Goswami. Aggressively pro-BJP, high ratings. Represents a genuine right-of-center viewpoint in Indian media. Contested editorial standards — credibility caution noted."
   },
   {
     "id": "kathmandu-post",
@@ -2386,7 +2397,7 @@
     "url": "https://kathmandupost.com",
     "rss_url": "https://news.google.com/rss/search?q=site:kathmandupost.com+when:24h&ceid=NP:en&hl=en&gl=NP",
     "tier": "international",
-    "country": "",
+    "country": "NP",
     "type": "broadsheet",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Nepal's leading English-language daily, founded 1993. Published by Kantipur Publications (Nepal's largest media group). Strong on Nepali politics and governance."
@@ -2397,7 +2408,7 @@
     "url": "https://www.nepalitimes.com",
     "rss_url": "https://news.google.com/rss/search?q=site:nepalitimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "",
+    "country": "NP",
     "type": "magazine",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Nepal's leading English-language weekly magazine, founded 2000. Published by Himalmedia. Known for in-depth analysis of South Asian politics, environment, and culture."
@@ -2408,7 +2419,7 @@
     "url": "https://thehimalayantimes.com",
     "rss_url": "https://news.google.com/rss/search?q=site:thehimalayantimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "",
+    "country": "NP",
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Nepal's second-largest English-language daily. Owned by IME Group (financial conglomerate). Broad national coverage with decent business reporting."
@@ -2419,7 +2430,7 @@
     "url": "https://myrepublica.nagariknetwork.com",
     "rss_url": "https://news.google.com/rss/search?q=site:myrepublica.nagariknetwork.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "",
+    "country": "NP",
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "English-language daily published by Nagarik Network. Reasonable editorial standards. Covers Nepali politics, development, and regional issues."
@@ -2428,9 +2439,9 @@
     "id": "record-nepal",
     "name": "Record Nepal",
     "url": "https://www.recordnepal.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:recordnepal.com&ceid=NP:en&hl=en&gl=NP",
+    "rss_url": "https://news.google.com/rss/search?q=site:recordnepal.com+when:24h&ceid=NP:en&hl=en&gl=NP",
     "tier": "independent",
-    "country": "",
+    "country": "NP",
     "type": "investigative",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Independent investigative journalism outlet focused on Nepal. Founded 2019. Covers accountability, governance, human rights, and political transparency."
@@ -2441,9 +2452,10 @@
     "url": "https://www.thelocal.de",
     "rss_url": "https://feeds.thelocal.com/rss/de",
     "tier": "international",
-    "country": "",
+    "country": "DE",
     "type": "digital",
     "political_lean_baseline": "center",
     "credibility_notes": "English-language news site covering Germany for international readers, founded 2004. Part of The Local Europe network. Credible English-language reporting on German politics and society."
   }
 ]
+

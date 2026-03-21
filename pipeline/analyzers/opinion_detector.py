@@ -210,6 +210,21 @@ def _attribution_score(text: str) -> float:
     """
     Score attribution density (inverse: high attribution = low opinion).
     Returns 0-100 where 0 = heavy attribution (factual), 100 = no attribution (opinion).
+
+    M3 fix: Distinguish between "no attribution found" states:
+    - word_count < 50: too short to signal either way → return 50 (neutral)
+    - word_count >= 50 AND attr_count == 0: clear absence of attribution
+      in a substantive text → return 75 (strong opinion signal).
+      Propaganda, pure-advocacy, and attack content never cite sources.
+      The old value of 50 (neutral) was too forgiving — it made zero-attribution
+      attack pieces indistinguishable from wire stories with mixed coverage.
+    - attr_count > 0: formula as before (50 - density * 25), decreasing toward 0
+      as attribution density increases.
+
+    This pushes Breitbart-style declarative attack content (0 attribution in 80+
+    words) from ~28 to ~35+ on the opinion scale, crossing the Reporting/Analysis
+    boundary more reliably.  Wire stories that quote sources still score low (0-30)
+    because their attr_per_100 is typically 2-5.
     """
     text_lower = text.lower()
     word_count = len(text_lower.split())
@@ -221,13 +236,19 @@ def _attribution_score(text: str) -> float:
         attr_count += text_lower.count(phrase)
 
     attr_per_100 = attr_count / max(word_count / 100, 1)
-    # High attribution = low score (factual)
-    # Fix: floor lowered from 80 to 50 — the old 80-point starting value
-    # inflated opinion scores for straight news with no attribution phrases,
-    # pushing Reporting/Analysis boundary articles ~30 pts too high.
-    # 0 attributions = 50, 2 per 100 words = 0; 3+ = 0 (clamped). (Priority 2 fix)
+    # High attribution = low score (factual); no attribution in substantial text
+    # = elevated opinion signal (75 rather than 50).
+    if attr_count == 0 and word_count >= 50:
+        # Substantive text with zero attribution markers → opinion signal
+        return 75.0
     raw = 50.0 - attr_per_100 * 25.0
     return max(0.0, min(100.0, raw))
+
+
+ANALYSIS_TITLE_PREFIXES: list[str] = [
+    "analysis:", "in depth:", "explainer:", "background:",
+    "deep dive:", "fact check:", "q&a:", "primer:",
+]
 
 
 def _metadata_score(article: dict) -> float:
@@ -238,6 +259,11 @@ def _metadata_score(article: dict) -> float:
         50 = analysis/column (interpretive but sourced)
         30 = blog/personal essay (lighter opinion signal)
          0 = no markers found
+
+    Title prefix detection: headlines like "Analysis: ...", "Explainer: ...",
+    "Fact check: ..." are journalistic format labels that signal interpretive
+    content (not news wire reporting) but are distinct from opinion. These
+    return 50.0, matching the analysis/column tier. (bias-auditor fix)
     """
     url = (article.get("url", "") or "").lower()
     section = (article.get("section", "") or "").lower()
@@ -254,6 +280,14 @@ def _metadata_score(article: dict) -> float:
     mid_markers = ["analysis", "column", "perspective"]
     for marker in mid_markers:
         if marker in combined:
+            return 50.0
+
+    # Title prefix detection: "Analysis: ...", "Explainer: ...", "Fact check: ...",
+    # etc. These are distinct from the URL/section "analysis" match above because
+    # they signal the publisher explicitly labeled the piece as interpretive format.
+    # Return 50.0 (same tier as analysis/column). (bias-auditor fix)
+    for prefix in ANALYSIS_TITLE_PREFIXES:
+        if title.startswith(prefix):
             return 50.0
 
     light_markers = [

@@ -90,7 +90,10 @@ SUPERLATIVES: list[str] = [
     "slam", "slammed", "slams", "destroyed", "obliterated", "annihilated",
     "eviscerated", "demolished", "crushed", "torched", "blasted",
     "absolute", "total", "complete", "utter", "sheer",
-    "historic", "record-breaking", "all-time",
+    # NOTE: "historic" removed — used routinely in factual AP/Reuters contexts
+    # ("historic vote", "historic agreement", "historic low"). Not tabloid language.
+    # (Cycle 3 fix)
+    "record-breaking", "all-time",
     # Partisan / ideological charged language not previously captured.
     # These appear routinely in attack-style editorial and opinion pieces
     # but are absent from measured wire reporting. Added to lift sensationalism
@@ -108,8 +111,21 @@ SUPERLATIVES: list[str] = [
     #
     # Words below only appear in genuinely inflammatory editorial framing,
     # not in standard wire/policy/disaster reporting:
-    "catastrophe", "chaos", "extremism", "extremist",
-    "takeover", "radical", "socialist", "destroying",
+    # NOTE: "extremism" and "extremist" removed — these are factual law-enforcement
+    # and policy category labels used neutrally across wire services (AP, Reuters,
+    # DHS briefings). Not tabloid hyperbole. (bias-auditor fix)
+    # NOTE: "radical" removed — as hyperbole it is rare in journalism; phrase-scoped
+    # forms ("radical left", "radical agenda") already captured in political_lean.py
+    # and PARTISAN_ATTACK_PHRASES. (bias-auditor fix)
+    # NOTE: "socialist" removed — this is a government/party designation used in
+    # factual political reporting worldwide ("socialist party", "socialist government",
+    # "socialist candidate"). Phrase-scoped form ("socialist agenda", "socialist
+    # takeover") already captured in PARTISAN_ATTACK_PHRASES. (bias-auditor fix)
+    # NOTE: "takeover" removed — used neutrally in M&A/business reporting
+    # ("hostile takeover", "corporate takeover"). Sensational compound forms
+    # ("socialist takeover", "communist takeover") remain in PARTISAN_ATTACK_PHRASES.
+    # (Cycle 3 fix)
+    "catastrophe", "chaos", "destroying",
 ]
 
 # ---------------------------------------------------------------------------
@@ -137,7 +153,10 @@ URGENCY_WORDS: list[str] = [
 # Hyperbolic modifiers
 # ---------------------------------------------------------------------------
 HYPERBOLIC_MODIFIERS: list[str] = [
-    "massive", "devastating", "incredible", "terrifying", "unbelievable",
+    # NOTE: "devastating", "incredible", "terrifying", "unbelievable", "horrifying"
+    # removed — these appear in SUPERLATIVES and counting them here too caused
+    # double-counting in _body_score(). They remain in SUPERLATIVES only. (Cycle 3 fix)
+    "massive",
     "staggering", "astonishing", "extraordinary", "phenomenal", "miraculous",
     "extremely", "absolutely", "totally", "completely", "utterly",
     "hugely", "enormously", "tremendously", "spectacularly",
