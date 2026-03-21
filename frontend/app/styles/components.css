@@ -399,7 +399,7 @@
  */
 .filter-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-3);
   /* Allow the filter bar to shrink so the lean filter doesn't get pushed off */
   min-width: 0;
@@ -549,9 +549,6 @@
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
   min-height: 44px;
-  /* Reserve enough width for the longest possible label ("Center-Left — Center-Right")
-     so the pill never resizes while dragging crosses zone boundaries. */
-  min-width: 185px;
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
@@ -559,8 +556,7 @@
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-step) var(--spring);
+    background-color var(--dur-fast) var(--ease-out);
 }
 
 .lean-filter__pill:hover {
@@ -578,12 +574,15 @@
   outline-offset: 2px;
 }
 
-/* Active pill — matches .filter-chip--active */
+/* Active pill — matches .filter-chip--active + fixed width to prevent flicker */
 .lean-filter--active .lean-filter__pill {
   font-weight: 600;
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
   border-color: var(--fg-primary);
+  /* Lock width so zone label changes during drag don't resize the pill.
+     185px fits "Center-Left — Center-Right" at --text-xs. */
+  width: 185px;
 }
 
 /* ---- Three spectrum dots in the pill — the only special visual element ---- */
@@ -640,18 +639,12 @@
   100% { opacity: 1; }
 }
 
-/* ---- Pill label — fixed min-width to prevent layout shift during drag ---- */
-/*
- * The label alternates between "Lean" (4 chars) and range text like
- * "Center-Left — Center-Right" (26 chars). Without a min-width the pill
- * narrows/widens on every zone crossing during drag, causing visible flicker.
- */
+/* ---- Pill label ---- */
 .lean-filter__pill-label {
   display: inline-flex;
   align-items: center;
-  /* Reserve space for the longest possible range text: "Center-Left — Center-Right".
-     Using ch units against the structural (Inter) font at --text-xs size. */
-  min-width: 14ch;
+  /* flex: 1 lets the label fill the fixed-width pill when active,
+     keeping text left-aligned and preventing jitter. */
   flex: 1;
 }
 
