@@ -164,15 +164,15 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — cascade reveal on open.
-   GPU-only: translateY only (no scale) to avoid layout recalculations.
-   Desktop: spring easing for physical weight. Mobile: ease-out for smoothness. */
+/* Deep Dive content section stagger — snappy cascade reveal.
+   Short opacity (instant feel) + bouncy spring transform (physical pop).
+   Content appears to already be there — animation just adds life. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(10px);
   transition:
-    opacity 180ms var(--ease-out),
-    transform 400ms var(--spring);
+    opacity 100ms var(--ease-out),
+    transform 280ms var(--spring-bouncy);
 }
 
 .anim-dd-section--visible {

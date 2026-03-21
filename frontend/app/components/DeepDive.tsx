@@ -357,7 +357,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           transition: "none",
         });
 
-        // Step 4: On next paint, animate from card → final
+        // Step 4: On next paint, animate from card → final (FAST + BOUNCY)
         requestAnimationFrame(() => {
           setMorphStyle({
             transform: "translate(0, 0) scale(1, 1)",
@@ -365,17 +365,18 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             opacity: 1,
             boxShadow: "var(--shadow-e3)",
             transition: [
-              "transform 650ms var(--spring)",
-              "border-radius 400ms var(--ease-out)",
-              "box-shadow 500ms var(--ease-out) 150ms",
+              "transform 420ms var(--spring-bouncy)",
+              "border-radius 250ms var(--ease-out)",
+              "box-shadow 300ms var(--ease-out) 100ms",
             ].join(", "),
           });
 
-          // Step 5: After morph settles, clear override → content cascades
-          setTimeout(() => {
-            setMorphStyle(null);
-            setTimeout(() => setContentVisible(true), isDesktopNow ? 80 : 20);
-          }, 650);
+          // Step 5: Content starts cascading DURING the morph tail (overlap)
+          // Panel is ~80% settled by 250ms — start content then, not after 420ms
+          setTimeout(() => setContentVisible(true), isDesktopNow ? 220 : 150);
+
+          // Clear morph style after spring fully settles
+          setTimeout(() => setMorphStyle(null), 420);
         });
       });
     } else {
@@ -450,29 +451,29 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
-        // Phase 2: Panel morphs back to card rect
+        // Phase 2: Panel morphs back to card rect (fast + snappy)
         setMorphStyle({
           transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
           borderRadius: "8px",
           opacity: 0,
           boxShadow: "none",
           transition: [
-            "transform 550ms var(--spring)",
-            "border-radius 300ms var(--ease-out)",
-            "opacity 250ms var(--ease-out) 250ms",  // fade starts midway through morph
-            "box-shadow 200ms var(--ease-out)",
+            "transform 380ms var(--spring-bouncy)",
+            "border-radius 200ms var(--ease-out)",
+            "opacity 180ms var(--ease-out) 180ms",
+            "box-shadow 150ms var(--ease-out)",
           ].join(", "),
         });
 
-        // Phase 3: Backdrop fades out as panel nears card
-        setTimeout(() => setIsVisible(false), 200);
+        // Phase 3: Backdrop fades as panel shrinks
+        setTimeout(() => setIsVisible(false), 150);
 
-        // Phase 4: Cleanup after morph completes
+        // Phase 4: Cleanup
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 550);
-      }, 100); // Wait for content fade
+        }, 380);
+      }, 80); // Quick content fade
     } else {
       /* ═══ FALLBACK: directional slide-out ═══ */
       setTimeout(() => {
@@ -480,8 +481,8 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 600);
-      }, 120);
+        }, 400);
+      }, 80);
     }
   }, [onClose, originRect]);
 
@@ -494,7 +495,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         className="deep-dive-backdrop"
         style={{
           opacity: isVisible ? 1 : 0,
-          transition: "opacity 400ms var(--ease-out)",
+          transition: "opacity 250ms var(--ease-out)",
         }}
       />
 
@@ -520,8 +521,8 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-e3)" : "none",
           transition: isVisible
-            ? "transform 600ms var(--spring), opacity 0ms, box-shadow 400ms var(--ease-out) 200ms"
-            : "transform 600ms var(--spring), opacity 0ms 600ms, box-shadow 200ms var(--ease-out)",
+            ? "transform 420ms var(--spring-bouncy), opacity 0ms, box-shadow 300ms var(--ease-out) 100ms"
+            : "transform 380ms var(--spring-bouncy), opacity 0ms 380ms, box-shadow 150ms var(--ease-out)",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
@@ -575,7 +576,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
 
           {/* ---- Analysis row: Sigil + Spectrum + Press trigger in one line ---- */}
           {sources.length > 0 && leanPositions.length > 0 && (
-            <section aria-label="Bias analysis" className={`dd-analysis-row anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "40ms" }}>
+            <section aria-label="Bias analysis" className={`dd-analysis-row anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}>
 
               {/* Sigil — compact bias mark */}
               {story.sigilData && !story.sigilData.pending && (
@@ -672,7 +673,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           )}
 
           {/* ---- Summary — flows as article lede, after spectrum -------------- */}
-          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "120ms" }}>
+          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
               <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
                 {story.summary}
@@ -688,7 +689,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
             (Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0)
           ) && (
-            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "180ms" }}>
+            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "80ms" }}>
               <div className="dd-perspectives-grid">
                 <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
 
