@@ -122,8 +122,8 @@
     top: 0;
     bottom: 0;
     width: 50%;
-    min-width: 420px;
-    max-width: 720px;
+    min-width: 480px;
+    max-width: 860px;
     border-left: var(--rule-thin);
   }
 
@@ -159,8 +159,8 @@
 
 @media (min-width: 1440px) {
   .deep-dive-panel {
-    width: 40%;
-    max-width: 640px;
+    width: 45%;
+    max-width: 860px;
   }
 }
 
