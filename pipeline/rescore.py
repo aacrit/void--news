@@ -205,19 +205,33 @@ def fetch_sources_from_db() -> dict[str, dict]:
 
     The source dict is shaped to match what the analyzers expect:
         political_lean_baseline, tier, name, state_affiliated, slug
+
+    state_affiliated is loaded from data/sources.json since the column
+    may not exist in the DB yet.
     """
+    # Load state_affiliated flags from sources.json
+    import json as _json
+    sources_json_path = Path(__file__).parent.parent / "data" / "sources.json"
+    state_affiliated_map: dict[str, bool] = {}
+    if sources_json_path.exists():
+        with open(sources_json_path) as f:
+            for s in _json.load(f):
+                if s.get("state_affiliated"):
+                    state_affiliated_map[s.get("slug", "")] = True
+
     result = supabase.table("sources").select(
-        "id,slug,name,tier,political_lean_baseline,state_affiliated"
+        "id,slug,name,tier,political_lean_baseline"
     ).execute()
     sources_by_id: dict[str, dict] = {}
     for row in (result.data or []):
+        slug = row.get("slug", "")
         src = {
-            "id": row.get("slug", ""),          # slug used as "id" key in sources.json
+            "id": slug,                         # slug used as "id" key in sources.json
             "db_id": row["id"],
             "name": row.get("name", ""),
             "tier": row.get("tier", ""),
             "political_lean_baseline": row.get("political_lean_baseline", "center"),
-            "state_affiliated": bool(row.get("state_affiliated", False)),
+            "state_affiliated": state_affiliated_map.get(slug, False),
         }
         sources_by_id[row["id"]] = src          # keyed by UUID for article.source_id lookup
     return sources_by_id
