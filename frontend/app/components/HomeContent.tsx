@@ -7,8 +7,7 @@ import { supabase } from "../lib/supabase";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar, { type ViewMode } from "./NavBar";
-import FilterBar from "./FilterBar";
-import LeanFilter, { type LeanRange } from "./LeanFilter";
+import FilterBar, { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
@@ -105,7 +104,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("facts");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showAllCompact, setShowAllCompact] = useState(false);
-  const [leanRange, setLeanRange] = useState<LeanRange | null>(null);
+  const [activeLean, setActiveLean] = useState<LeanChip>("All");
 
   const handleStoryClick = useCallback((story: Story) => {
     setSelectedStory(story);
@@ -325,14 +324,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
-    // Lean range filter — uses lensData.lean (cluster-level average political lean)
-    if (leanRange !== null) {
+    // Lean chip filter — uses lensData.lean (cluster-level average political lean)
+    const leanRange = LEAN_RANGES[activeLean];
+    if (leanRange) {
       filtered = filtered.filter(
         (s) => s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max,
       );
     }
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
-  }, [stories, activeCategory, leanRange]);
+  }, [stories, activeCategory, activeLean]);
 
   const leadStories = filteredStories.slice(0, 2);
   const mediumStories = filteredStories.slice(2, 5);
@@ -342,7 +342,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Keying the <section> elements on this value causes React to unmount+remount
   // them, which replays the .anim-filter-card entrance animation on every filter
   // change — giving a "reshuffling" feel with no JS animation library.
-  const filterKey = `${leanRange?.min ?? "x"}-${leanRange?.max ?? "x"}-${activeCategory}`;
+  const filterKey = `${activeLean}-${activeCategory}`;
 
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
@@ -383,23 +383,21 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           </div>
         </div>
 
-        {/* Filter bar + Lean filter — ABOVE content in both modes */}
-        <div className="filter-row">
-          {viewMode === "facts" && (
+        {/* Filter bar — category + lean chips in one row */}
+        {viewMode === "facts" && (
+          <div className="filter-row">
             <FilterBar
               activeCategory={activeCategory}
               onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
+              activeLean={activeLean}
+              onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
             />
-          )}
-          <LeanFilter
-            value={leanRange}
-            onChange={(range) => { setLeanRange(range); setShowAllCompact(false); }}
-          />
-        </div>
+          </div>
+        )}
 
         {/* Op-Ed page — renders its own data when in opinion mode */}
         {viewMode === "opinion" && (
-          <OpEdPage edition={activeEdition} leanRange={leanRange} />
+          <OpEdPage edition={activeEdition} activeLean={activeLean} />
         )}
 
         {/* Facts mode — live region, loading, error, empty states, story grids */}
@@ -410,9 +408,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               {!isLoading && filteredStories.length > 0 &&
                 `${filteredStories.length} stories loaded`}
               {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
-                leanRange !== null
-                  ? "No stories match the current lean filter. Try widening the range."
-                  : "No stories match the current filter"}
+                "No stories match the current filter"}
             </div>
 
             {/* Loading skeleton */}
@@ -458,20 +454,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {!isLoading && !error && stories.length > 0 && filteredStories.length === 0 && (
               <div className="lean-filter-empty">
                 <p className="lean-filter-empty__text">
-                  {leanRange !== null
-                    ? "No stories in this lean range."
-                    : "No stories in this category."}
+                  No stories match this filter.
                 </p>
-                {leanRange !== null && (
-                  <p className="lean-filter-empty__hint">
-                    Try widening the range or clearing the filter.
-                  </p>
-                )}
                 <div style={{ display: "flex", gap: "var(--space-4)", flexWrap: "wrap", justifyContent: "center" }}>
-                  {leanRange !== null && (
+                  {activeLean !== "All" && (
                     <button
                       className="lean-filter-empty__action"
-                      onClick={() => setLeanRange(null)}
+                      onClick={() => setActiveLean("All")}
                     >
                       Clear lean filter
                     </button>

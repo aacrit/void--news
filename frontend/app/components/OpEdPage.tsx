@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import type { Edition } from "../lib/types";
 import type { OpinionArticle } from "../lib/types";
-import type { LeanRange } from "./LeanFilter";
+import { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import { fetchOpinionArticles } from "../lib/supabase";
 import OpinionCard from "./OpinionCard";
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -17,10 +17,10 @@ import LoadingSkeleton from "./LoadingSkeleton";
 
 interface OpEdPageProps {
   edition: Edition;
-  leanRange?: LeanRange | null;
+  activeLean?: LeanChip;
 }
 
-export default function OpEdPage({ edition, leanRange }: OpEdPageProps) {
+export default function OpEdPage({ edition, activeLean = "All" }: OpEdPageProps) {
   const [articles, setArticles] = useState<OpinionArticle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,13 +45,14 @@ export default function OpEdPage({ edition, leanRange }: OpEdPageProps) {
     return () => controller.abort();
   }, [edition]);
 
-  // Universal lean filter — applied to opinion articles by their politicalLean score
+  // Lean chip filter — applied to opinion articles by their politicalLean score
   const filteredArticles = useMemo(() => {
-    if (!leanRange) return articles;
+    const range = LEAN_RANGES[activeLean];
+    if (!range) return articles;
     return articles.filter(
-      (a) => a.politicalLean >= leanRange.min && a.politicalLean <= leanRange.max,
+      (a) => a.politicalLean >= range.min && a.politicalLean <= range.max,
     );
-  }, [articles, leanRange]);
+  }, [articles, activeLean]);
 
   const featured = filteredArticles[0] ?? null;
   const rest = filteredArticles.slice(1);
@@ -120,7 +121,7 @@ export default function OpEdPage({ edition, leanRange }: OpEdPageProps) {
       {!isLoading && filteredArticles.length > 0 && (
         <p className="oped-page__count">
           {filteredArticles.length} opinion piece{filteredArticles.length !== 1 ? "s" : ""}
-          {leanRange ? " (filtered)" : ""} &mdash; curated from {edition === "world" ? "world" : "US"} sources
+          {activeLean !== "All" ? " (filtered)" : ""} &mdash; curated from {edition === "world" ? "world" : "US"} sources
         </p>
       )}
     </div>
