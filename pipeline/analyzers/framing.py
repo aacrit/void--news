@@ -442,10 +442,24 @@ def analyze_framing(
     headline_div = _headline_body_divergence(title, full_text)  # 0-100
     passive = _passive_voice_score(full_text, doc=doc)     # 0-100
 
-    # Weighted combination
+    # Weighted combination.
+    # When geopolitical synonym pairs fire strongly (kw_emphasis > 60), the
+    # standard 25% weight under-represents actual framing because TextBlob
+    # returns near-zero polarity on declarative geopolitical assertions
+    # ("historical inevitability", "firmly opposes") — reducing the connotation
+    # sub-score that makes up the other 25%.  In these cases we shift 10 pts
+    # of weight from connotation to kw_emphasis to reflect that keyword
+    # detection is the more reliable signal for state-media geopolitical framing.
+    if keyword_emp > 60:
+        w_connotation = 0.15
+        w_keyword_emp = 0.35
+    else:
+        w_connotation = 0.25
+        w_keyword_emp = 0.25
+
     weighted = (
-        connotation * 0.25
-        + keyword_emp * 0.25
+        connotation * w_connotation
+        + keyword_emp * w_keyword_emp
         + omission * 0.20
         + headline_div * 0.15
         + passive * 0.15

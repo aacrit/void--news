@@ -156,6 +156,8 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
           const rawSense = rationale?.sensationalism as any;
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const rawFraming = rationale?.framing as any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rawGemini = rationale?.gemini_reasoning as any;
 
           const mappedLean = rawLean ? {
             keywordScore: rawLean.keyword_score ?? rawLean.keywordScore ?? 0,
@@ -210,6 +212,14 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             hasClusterContext: rawFraming.has_cluster_context ?? rawFraming.hasClusterContext ?? false,
           } : undefined;
 
+          const mappedGemini = rawGemini ? {
+            political_lean: typeof rawGemini.political_lean === "string" ? rawGemini.political_lean : undefined,
+            sensationalism: typeof rawGemini.sensationalism === "string" ? rawGemini.sensationalism : undefined,
+            opinion_fact: typeof rawGemini.opinion_fact === "string" ? rawGemini.opinion_fact : undefined,
+            factual_rigor: typeof rawGemini.factual_rigor === "string" ? rawGemini.factual_rigor : undefined,
+            framing: typeof rawGemini.framing === "string" ? rawGemini.framing : undefined,
+          } : undefined;
+
           // Derive opinion label
           let opinionLabel: OpinionLabel = "Reporting";
           if (opinionVal > 75) opinionLabel = "Editorial";
@@ -231,6 +241,7 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
             coverageRationale: mappedCoverage,
             sensationalismRationale: mappedSense,
             framingRationale: mappedFraming,
+            geminiReasoning: mappedGemini,
           };
 
           storySourceList.push({

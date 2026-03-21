@@ -85,6 +85,15 @@ export interface FramingRationale {
   hasClusterContext: boolean;
 }
 
+/** Gemini LLM reasoning text per bias axis — stored under rationale.gemini_reasoning */
+export interface GeminiReasoning {
+  political_lean?: string;
+  sensationalism?: string;
+  opinion_fact?: string;
+  factual_rigor?: string;
+  framing?: string;
+}
+
 /** Three-lens data model for bias visualization */
 export interface ThreeLensData {
   /** Political lean: 0=far left, 50=center, 100=far right */
@@ -103,6 +112,8 @@ export interface ThreeLensData {
   sensationalismRationale?: SensationalismRationale;
   /** Framing rationale — populated from bias_scores.rationale.framing */
   framingRationale?: FramingRationale;
+  /** Gemini LLM reasoning — populated from bias_scores.rationale.gemini_reasoning */
+  geminiReasoning?: GeminiReasoning;
   /** True when bias scores are fallback placeholders, not real analysis data */
   pending?: boolean;
 }

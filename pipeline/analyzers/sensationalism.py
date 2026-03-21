@@ -194,6 +194,20 @@ PARTISAN_ATTACK_PHRASES: list[str] = [
     "fascist takeover", "nazi agenda",
     "destroy our democracy", "destroying our democracy",
     "corporate coup", "billionaire coup",
+    # State-media propaganda phrases (RT, CGTN, Sputnik, Global Times, TRT World)
+    # These are inflammatory in the geopolitical register the same way "radical
+    # left" is in the Western register: concentrated demonization language that
+    # goes well beyond neutral wire-service description of the same events.
+    # Phrase-level only — cannot appear in neutral reporting by construction.
+    "denazification of ukraine", "puppet regime in kiev", "puppet regime in kyiv",
+    "collective west's proxy war", "nato's proxy war", "western proxy war",
+    "collective west refuses", "collective west continues",
+    "anti-china forces in", "hostile forces in", "separatist forces",
+    "century of humiliation", "historical inevitability of",
+    "western aggression against", "nato aggression",
+    "hegemonism and power politics", "cold war mentality",
+    "interference in china's internal affairs", "interference in russia's",
+    "the so-called", "so-called human rights",
 ]
 
 # ---------------------------------------------------------------------------

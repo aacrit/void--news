@@ -65,6 +65,18 @@ try:
 except ImportError:
     pass
 
+# Gemini bias reasoning — optional (requires gemini_reasoning module + API key)
+GEMINI_REASONING_AVAILABLE = False
+try:
+    from analyzers.gemini_reasoning import (
+        reason_clusters_batch,
+        apply_reasoning_to_bias_map,
+        blend_score,
+    )
+    GEMINI_REASONING_AVAILABLE = True
+except ImportError:
+    pass
+
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
@@ -1050,6 +1062,7 @@ def main():
             src_slug = art.get("source_slug", "") or art.get("source_id", "")
             src_info = source_map.get(src_slug, {})
             art["tier"] = src_info.get("tier", "")
+            art["source_name"] = src_info.get("name", "")
 
         articles_before_dedup = len(stored_articles)
         stored_articles = deduplicate_articles(stored_articles)
@@ -1119,10 +1132,28 @@ def main():
             print(f"  [warn] 48h lookback fetch failed, clustering current batch only: {e}")
 
         all_articles_for_clustering = stored_articles + recent_articles
-        print(f"  Total for clustering: {len(all_articles_for_clustering)}")
+
+        # Separate opinion articles — they should NOT be clustered with reporting.
+        # Opinion/op-ed content (opinion_fact > 50) is wrapped as single-article
+        # clusters later so each piece stands alone rather than being merged with
+        # news coverage of the same topic.
+        opinion_article_ids = {
+            aid for aid, scores in article_bias_map.items()
+            if scores.get("opinion_fact", 0) > 50
+        }
+        reporting_for_clustering = [
+            a for a in all_articles_for_clustering
+            if a.get("id", "") not in opinion_article_ids
+        ]
+        opinion_articles_list = [
+            a for a in all_articles_for_clustering
+            if a.get("id", "") in opinion_article_ids
+        ]
+        print(f"  Total for clustering: {len(reporting_for_clustering)} reporting + {len(opinion_articles_list)} opinion (separate)")
+
         clusters = []
         try:
-            clusters = cluster_stories(all_articles_for_clustering)
+            clusters = cluster_stories(reporting_for_clustering)
             print(f"  Clusters formed: {len(clusters)}")
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
@@ -1140,6 +1171,40 @@ def main():
         )
         if single_source_count:
             print(f"  Orphan wrapping: {single_source_count} single-source clusters kept for feed")
+
+        # Wrap opinion articles as single-article clusters (never clustered).
+        # Each op-ed stands alone: original title and summary are preserved,
+        # Gemini summarization is skipped naturally (source_count=1 < _MIN_SOURCES=3),
+        # and content_type="opinion" is pre-set so the classifier below won't
+        # overwrite it.
+        for art in opinion_articles_list:
+            art_id = art.get("id", "")
+            if not art_id:
+                continue
+            opinion_cluster = {
+                "title": art.get("title", ""),
+                "summary": art.get("summary", "") or art.get("full_text", "")[:500] or "",
+                "articles": [art],
+                "article_ids": [art_id],
+                "source_count": 1,
+                "first_published": art.get("published_at"),
+                "content_type": "opinion",
+                "_is_opinion": True,
+            }
+            # Include author only when genuinely known
+            author = (art.get("author") or "").strip()
+            if author and author.lower() not in ("unknown", "n/a", ""):
+                opinion_cluster["author"] = author
+            # Resolve source name from source_map
+            src_slug = art.get("source_slug", "") or art.get("source_id", "")
+            src_info = source_map.get(src_slug, {})
+            source_name = src_info.get("name", "")
+            if source_name:
+                opinion_cluster["source_name"] = source_name
+            clusters.append(opinion_cluster)
+
+        if opinion_articles_list:
+            print(f"  Opinion articles: {len(opinion_articles_list)} wrapped as single-source clusters (no clustering)")
 
         # Step 6b: Re-run framing analysis with cluster context
         # Framing's omission detection benefits from knowing what other
@@ -1233,6 +1298,34 @@ def main():
         else:
             print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
 
+        # Step 6c: Gemini bias reasoning (contextual score adjustments)
+        # Uses a separate call budget (_MAX_REASONING_CALLS = 25) that does
+        # not draw from the summarization cap. Prioritises low-confidence,
+        # large, and high-divergence clusters. Mutates article_bias_map in
+        # place; downstream steps (ranking, storage) pick up the adjustments
+        # automatically since they reference the same dict.
+        if GEMINI_REASONING_AVAILABLE and gemini_is_available():
+            print("\n[6c] Running Gemini bias reasoning...")
+            start_6c = time.time()
+            try:
+                reasoning_results = reason_clusters_batch(
+                    clusters, article_bias_map, source_map
+                )
+                adjusted_count = apply_reasoning_to_bias_map(
+                    clusters, article_bias_map, reasoning_results
+                )
+                elapsed_6c = time.time() - start_6c
+                print(
+                    f"  Gemini reasoning: {len(reasoning_results)} clusters processed, "
+                    f"{adjusted_count} axis-scores adjusted ({elapsed_6c:.1f}s)"
+                )
+            except Exception as e:
+                print(f"  [warn] Gemini reasoning failed: {e}")
+        elif GEMINI_REASONING_AVAILABLE:
+            print("\n[6c] Skipping Gemini bias reasoning (GEMINI_API_KEY not set)")
+        else:
+            print("\n[6c] Skipping Gemini bias reasoning (module not available)")
+
         # Step 7b: Summarize clusters with Gemini Flash
         # Generates polished headlines, summaries, and consensus/divergence.
         # Falls back to rule-based generation (already set by cluster_stories)
@@ -1304,14 +1397,17 @@ def main():
                 if art_id in article_bias_map:
                     cluster_bias_scores.append(article_bias_map[art_id])
 
-            # Classify as reporting vs opinion based on avg opinion score
-            if cluster_bias_scores:
-                avg_opinion = sum(
-                    bs.get("opinion_fact", 25) for bs in cluster_bias_scores
-                ) / len(cluster_bias_scores)
-            else:
-                avg_opinion = 25.0
-            cluster["content_type"] = "opinion" if avg_opinion > 50 else "reporting"
+            # Classify as reporting vs opinion based on avg opinion score.
+            # Skip if already set — opinion articles are pre-classified in step 6
+            # (_is_opinion=True) and must not be overwritten here.
+            if not cluster.get("_is_opinion"):
+                if cluster_bias_scores:
+                    avg_opinion = sum(
+                        bs.get("opinion_fact", 25) for bs in cluster_bias_scores
+                    ) / len(cluster_bias_scores)
+                else:
+                    avg_opinion = 25.0
+                cluster["content_type"] = "opinion" if avg_opinion > 50 else "reporting"
 
             # Compute cluster confidence: 25th-percentile confidence across
             # articles. Using p25 instead of min() so one bad article doesn't

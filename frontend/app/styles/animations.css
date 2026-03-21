@@ -133,6 +133,14 @@
   animation-play-state: running;
 }
 
+/* Filter-change card entrance — fires immediately (not paused).
+   Applied to card wrappers when lean/category filter changes.
+   animationDelay is set via inline style for per-card stagger (max 50ms gap).
+   Re-mount via React key triggers re-play on every filter change. */
+.anim-filter-card {
+  animation: springEntranceCard var(--dur-step) var(--spring) both;
+}
+
 /* Lead story stagger — primary lead fades in first, secondary 120ms later */
 .anim-lead-primary {
   animation: fadeInUp var(--dur-morph) var(--ease-out) both;
@@ -187,6 +195,18 @@
 /* Theme toggle spring entrance on icon swap */
 .theme-toggle__icon:not(.theme-toggle__icon--hidden) {
   animation: springToggleSpin var(--dur-normal) var(--spring) both;
+}
+
+/* ---- Lean Filter -------------------------------------------------------- */
+
+/* Active spectrum bar pulse — very subtle brightness cycle (2.4s, matches active dot) */
+@keyframes leanSpectrumBarPulse {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
 }
 
 /* ---- Sigil — Unified Bias Indicator ------------------------------------ */
