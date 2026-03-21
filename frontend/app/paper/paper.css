@@ -219,18 +219,19 @@ html:has(.np-root) body { background: transparent; }
   grid-template-columns: 3fr 2fr 3fr;
   gap: 0;
   margin-bottom: 0;
+  align-items: start;
 }
 
-/* Side zones flow articles into 3 columns each */
+/* Side zones flow articles into columns */
 .np-front__zone-a,
 .np-front__zone-c {
   column-count: 3;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: auto;
+  column-fill: balance;
 }
 
-/* Lead zone — single column, bordered */
+/* Lead zone — bordered, no multi-column (single column for banner) */
 .np-front__zone-b {
   padding: 0 var(--np-col-gap);
   border-left: 1px solid var(--np-rule);
@@ -288,19 +289,16 @@ html:has(.np-root) body { background: transparent; }
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
-  display: inline-block;
-  width: 100%;
   margin-bottom: 0;
-  padding-bottom: 6px;
+  padding: 8px 0;
   border-bottom: var(--np-cutoff);
-  padding-top: 6px;
 }
 
-/* Remove top padding from first article in a column flow context */
-.np-front__zone-a .np-article:first-child,
-.np-front__zone-b .np-article:first-child,
-.np-front__zone-c .np-article:first-child,
-.np-section-flow .np-article:first-child {
+/* First article in each zone/section — no top padding */
+.np-front__zone-a > .np-article:first-child,
+.np-front__zone-b > .np-article:first-child,
+.np-front__zone-c > .np-article:first-child,
+.np-section-flow > .np-article:first-child {
   padding-top: 0;
 }
 
@@ -467,9 +465,7 @@ html:has(.np-root) body { background: transparent; }
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
-  display: inline-block;
-  width: 100%;
-  padding: 5px 0;
+  padding: 6px 0;
   border-bottom: var(--np-cutoff);
 }
 
@@ -717,13 +713,16 @@ html:has(.np-root) body { background: transparent; }
     column-count: 2;
     column-gap: var(--np-col-gap);
     column-rule: var(--np-col-rule);
+    column-fill: balance;
     border: none;
+    border-left: none;
+    border-right: none;
     padding: 0;
     margin-bottom: 6px;
+    order: unset;
   }
 
   .np-front__zone-b {
-    order: unset;
     border-bottom: 2px solid var(--np-ink);
     padding-bottom: 6px;
     margin-bottom: 6px;

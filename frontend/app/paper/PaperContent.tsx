@@ -17,7 +17,6 @@ import {
   type FillerItem,
   assignTier,
   generateDecks,
-  generateSubheads,
   getDateline,
   truncateSummary,
   distributeStories,
@@ -327,22 +326,16 @@ function Article({
   story,
   tier,
   edition,
-  index,
 }: {
   story: Story;
   tier: ArticleTier;
   edition: Edition;
-  index: number;
 }) {
   const dateline = getDateline(story, edition);
   const decks = generateDecks(story.summary, tier);
-  const body = truncateSummary(story.summary, tier);
-  const showJumpLine = tier !== "banner" && story.summary.length > body.length;
-  const subheads = generateSubheads(story.summary, tier, story.category);
 
   // Extract remaining summary after decks for body text
-  // For banner/major: body text starts after the deck sentences
-  let bodyText = body;
+  let bodyText = truncateSummary(story.summary, tier);
   if (decks.length > 0) {
     let remaining = story.summary;
     for (const deck of decks) {
@@ -351,23 +344,7 @@ function Article({
         remaining = remaining.slice(deckPos + deck.length).replace(/^[.!?\s]+/, "");
       }
     }
-    bodyText = truncateSummary(remaining || body, tier);
-  }
-
-  // Split body into paragraphs for subhead insertion (banner/major only)
-  const bodyParagraphs: { text: string; subhead?: string }[] = [];
-  if (subheads.length > 0) {
-    const sentences = bodyText.split(/(?<=[.!?])\s+/);
-    const chunkSize = Math.ceil(sentences.length / (subheads.length + 1));
-    for (let i = 0; i <= subheads.length; i++) {
-      const chunk = sentences.slice(i * chunkSize, (i + 1) * chunkSize).join(" ");
-      if (chunk) {
-        bodyParagraphs.push({
-          text: chunk,
-          subhead: i > 0 ? subheads[i - 1] : undefined,
-        });
-      }
-    }
+    bodyText = truncateSummary(remaining || bodyText, tier);
   }
 
   return (
@@ -393,32 +370,10 @@ function Article({
         {articleByline(story.source.count, story.sigilData.tierBreakdown)}
       </p>
 
-      {/* Body text — with subheads for banner/major, plain for others */}
-      {bodyParagraphs.length > 0 ? (
-        bodyParagraphs.map((para, i) => (
-          <div key={i}>
-            {para.subhead && <p className="np-subhead">{para.subhead}</p>}
-            <p className="np-article__summary">
-              {i === 0 && (
-                <span className="np-article__dateline">{dateline} &mdash; </span>
-              )}
-              {para.text}
-            </p>
-          </div>
-        ))
-      ) : (
-        <p className="np-article__summary">
-          <span className="np-article__dateline">{dateline} &mdash; </span>
-          {bodyText}
-        </p>
-      )}
-
-      {showJumpLine && (
-        <p className="np-jumpline">
-          (Continued on Page {2 + Math.floor(index / 8)}, Column{" "}
-          {(index % 8) + 1})
-        </p>
-      )}
+      <p className="np-article__summary">
+        <span className="np-article__dateline">{dateline} &mdash; </span>
+        {bodyText}
+      </p>
     </article>
   );
 }
@@ -613,7 +568,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
                 story={story}
                 tier={assignTier(i === 0 ? 2 : 4 + i, story)}
                 edition={edition}
-                index={i}
+
               />
             ))}
           </div>
@@ -626,7 +581,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
                 story={story}
                 tier={i === 0 ? "banner" : "standard"}
                 edition={edition}
-                index={i}
+
               />
             ))}
           </div>
@@ -639,7 +594,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
                 story={story}
                 tier={assignTier(i === 0 ? 1 : 4 + i, story)}
                 edition={edition}
-                index={i}
+
               />
             ))}
           </div>
@@ -662,7 +617,6 @@ export default function PaperContent({ edition }: { edition: Edition }) {
                 story={story}
                 tier={assignTier(20 + i, story)}
                 edition={edition}
-                index={20 + i}
               />
             ))}
             {/* Fillers fill remaining column space */}
