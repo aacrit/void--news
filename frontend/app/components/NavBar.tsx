@@ -126,17 +126,9 @@ export default function NavBar({ activeEdition }: NavBarProps) {
       {/* Dateline row — thin data strip below masthead (desktop only, hidden on mobile via CSS) */}
       <div className="nav-dateline-row">
         <div className="nav-dateline-row__inner">
-          {/* Edition badge */}
-          <span className="nav-dateline-row__badge">
-            {activeEditionMeta.label}
-          </span>
-          {/* Time-of-day badge */}
-          <span className="nav-dateline-row__badge">
-            {getEditionTimeOfDay(activeEdition)}
-          </span>
-          {/* "Edition" label */}
+          {/* "World Evening Edition" — one continuous label, same font */}
           <span className="nav-dateline-row__text">
-            Edition
+            {activeEditionMeta.label} {getEditionTimeOfDay(activeEdition)} Edition
           </span>
           {/* Separator + full date + regional timestamp */}
           <span className="nav-dateline-row__text nav-dateline-row__date">
