@@ -485,50 +485,18 @@ function Colophon({ edition }: { edition: string }) {
   );
 }
 
-// --- Export Button (PNG via html2canvas, loaded from CDN) ---
+// --- Export Button — triggers browser print (Save as PDF for multi-page) ---
 
 function ExportButton() {
-  const [exporting, setExporting] = useState(false);
-
-  const handleExport = useCallback(async () => {
-    setExporting(true);
-    try {
-      const { default: html2canvas } = await import(
-        /* webpackIgnore: true */
-        // @ts-expect-error — CDN module, no types
-        "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.esm.js"
-      );
-      const root = document.querySelector(".np-root") as HTMLElement;
-      if (!root) return;
-      const canvas = await html2canvas(root, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#E8DFC8",
-        logging: false,
-      });
-      const link = document.createElement("a");
-      const dateStr = new Date().toISOString().slice(0, 10);
-      link.download = `void-news-${dateStr}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    } catch (err) {
-      console.error("Export failed:", err);
-      window.print();
-    } finally {
-      setExporting(false);
-    }
-  }, []);
-
   return (
     <div className="np-pdf-action">
       <button
         type="button"
         className="np-pdf-btn"
-        onClick={handleExport}
-        disabled={exporting}
-        title="Export as PNG image"
+        onClick={() => window.print()}
+        title="Save as PDF (use browser's Save as PDF option)"
       >
-        {exporting ? "..." : "Export"}
+        PDF
       </button>
     </div>
   );

@@ -810,50 +810,126 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   PRINT — Faithful mirror of on-screen layout
-   Use browser "Save as PDF" for exact replica including columns and fonts.
+   PRINT — Multi-page landscape broadsheet
+   Browser "Save as PDF" → landscape A3 pages, 4-col flow, page numbers.
    ========================================================================== */
+
+/* Page setup: landscape, warm background, page counter */
 @page {
-  margin: 0.4in;
-  size: tabloid landscape;
+  margin: 0.5in 0.6in;
+  size: A3 landscape;
+
+  /* Page number bottom-center (Chrome/Edge support) */
+  @bottom-center {
+    content: "— " counter(page) " —";
+    font-family: 'Old Standard TT', Georgia, serif;
+    font-size: 9pt;
+    color: #6B6354;
+  }
+}
+
+/* First page: nameplate at top */
+@page :first {
+  margin-top: 0.4in;
 }
 
 @media print {
-  /* Keep the newspaper look — aged paper background prints faithfully */
+  /* Force background colors/images to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Root: full width, keep aged paper look */
   .np-root {
     max-width: none;
-    padding: 24px 32px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
     box-shadow: none;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    background: var(--np-paper);
+    overflow: visible;
   }
 
-  /* Keep textures for PDF fidelity */
+  /* Keep paper texture in print */
   .np-root::before,
   .np-root::after {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    position: fixed;
   }
 
-  .np-article__headline { text-shadow: none; }
-  .np-masthead__nameplate { text-shadow: none; }
+  /* Masthead: centered, no overflow */
+  .np-masthead {
+    text-align: center;
+    margin-bottom: 12px;
+  }
 
-  /* Keep multi-column layout in print */
-  .np-front { display: grid; }
-  .np-section-flow { column-count: 6; }
+  .np-masthead__nameplate {
+    font-size: 72pt;
+    text-shadow: none;
+  }
 
-  /* Avoid article splits across pages */
-  .np-article { break-inside: avoid; }
+  .np-article__headline {
+    text-shadow: none;
+  }
 
-  /* No page breaks within front page */
-  .np-front { break-inside: avoid; }
+  /* Front page: 4-column grid in landscape */
+  .np-front {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr;
+    gap: 0;
+    break-inside: avoid;
+  }
 
-  /* Section labels don't force page breaks — let content flow */
+  /* Side zones: 2 columns each */
+  .np-front__zone-a,
+  .np-front__zone-c {
+    column-count: 2;
+    column-gap: 10px;
+    column-rule: 0.5px solid #A89D88;
+  }
+
+  .np-front__zone-b {
+    column-count: 1;
+    border-left: 0.5px solid #A89D88;
+    border-right: 0.5px solid #A89D88;
+    padding: 0 10px;
+  }
+
+  /* Section flow: 4-column in landscape pages */
+  .np-section-flow {
+    column-count: 4;
+    column-gap: 10px;
+    column-rule: 0.5px solid #A89D88;
+    column-fill: auto;
+  }
+
+  /* Articles: avoid splitting across pages */
+  .np-article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Section labels: clean page break before each section */
   .np-section-label {
+    break-before: page;
+    page-break-before: always;
+    padding-top: 8px;
+  }
+
+  /* First section label doesn't force a new page */
+  .np-section-label:first-of-type {
     break-before: auto;
     page-break-before: auto;
   }
 
-  .np-colophon__link { text-decoration: none; }
+  /* Classifieds: 3-column in landscape */
+  .np-classifieds__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Hide export button and edition nav */
   .np-pdf-action { display: none !important; }
+  .np-edition-nav { display: none; }
+
+  .np-colophon__link { text-decoration: none; }
 }
