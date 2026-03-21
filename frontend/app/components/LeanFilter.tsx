@@ -277,6 +277,11 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
                 onClick={handleTrackClick}
                 aria-hidden="true"
               >
+                {/* Inline labels — Left / Center / Right inside the gradient bar */}
+                <span className="lean-filter__track-label">Left</span>
+                <span className="lean-filter__track-label">Center</span>
+                <span className="lean-filter__track-label">Right</span>
+
                 <div
                   className="lean-filter__selection"
                   style={{ left: selLeft, width: selWidth }}
@@ -318,36 +323,18 @@ export default function LeanFilter({ value, onChange }: LeanFilterProps) {
                 />
               </div>
 
-              {/* Zone labels as ruler marks — positioned at zone midpoints */}
-              <div className="lean-filter__ruler" aria-hidden="true">
-                {ZONES.map((zone) => (
-                  <span
-                    key={zone.label}
-                    className="lean-filter__ruler-label"
-                    style={{ left: `${(zone.min + zone.max) / 2}%` }}
-                    onClick={() => {
-                      const next = { min: zone.min, max: zone.max };
-                      setLocalRange(next);
-                      onChange(next);
-                    }}
-                  >
-                    {zone.short}
-                  </span>
-                ))}
-              </div>
+              {/* Ruler labels removed — inline Left/Center/Right inside the track */}
             </div>
 
-            {/* Clear — ✕ icon, only when filter is active */}
+            {/* Reset — text button, only when filter is active */}
             {isActive && !isFullRange && (
               <button
                 className="lean-filter__reset"
                 onClick={handleClear}
-                aria-label="Clear lean filter"
+                aria-label="Reset lean filter to show all stories"
                 tabIndex={isExpanded ? 0 : -1}
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
+                Reset
               </button>
             )}
           </div>

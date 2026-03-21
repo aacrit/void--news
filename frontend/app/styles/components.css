@@ -574,15 +574,21 @@
   outline-offset: 2px;
 }
 
-/* Active pill — matches .filter-chip--active + fixed width to prevent flicker */
+/* Active pill — matches .filter-chip--active */
 .lean-filter--active .lean-filter__pill {
   font-weight: 600;
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
   border-color: var(--fg-primary);
-  /* Lock width so zone label changes during drag don't resize the pill.
-     185px fits "Center-Left — Center-Right" at --text-xs. */
-  width: 185px;
+  max-width: 200px;
+  overflow: hidden;
+}
+
+/* Prevent pill-label text from causing overflow */
+.lean-filter--active .lean-filter__pill-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---- Three spectrum dots in the pill — the only special visual element ---- */
@@ -761,18 +767,27 @@
   position: relative;
   flex: 1;
   min-width: 0;
-  /* Bottom padding for ruler labels */
-  padding-bottom: 18px;
 }
 
-/* ---- Gradient track — 10px tall, full pill shape ---- */
+/* ---- Gradient track — 22px tall with inline labels, matches dd-spectrum__track ---- */
 .lean-filter__track {
   position: relative;
-  height: 10px;
-  /* Full pill shape — matches the modern capsule aesthetic */
-  border-radius: 5px;
+  height: 22px;
+  border-radius: 4px;
   cursor: pointer;
-  /* The spectrum gradient */
+  /* Flex layout for inline labels */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+/* Gradient via ::before so labels sit above it with full contrast */
+.lean-filter__track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
   background: linear-gradient(
     to right,
     var(--bias-far-left),
@@ -783,12 +798,21 @@
     var(--bias-right) 71%,
     var(--bias-far-right)
   );
-  /* Inner shadow for depth — subtle press-down look */
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.15),
-    var(--shadow-e1);
-  /* Dimmed by default; selection highlight overlays the active zone */
-  opacity: 0.4;
+  opacity: 0.35;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Inline labels: Left / Center / Right — inside the track bar */
+.lean-filter__track-label {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Selection strip — glass morphism overlay on the active zone ---- */
@@ -800,7 +824,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  border-radius: 5px;
+  border-radius: 4px;
   background: linear-gradient(
     to right,
     var(--bias-far-left),
@@ -928,30 +952,35 @@
   color: var(--fg-secondary);
 }
 
-/* ---- Reset (✕) button — small, appears only when filter is active ---- */
+/* ---- Reset button — text pill, appears only when filter is active ---- */
 .lean-filter__reset {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
   flex-shrink: 0;
-  border-radius: 50%;
-  color: var(--fg-muted);
+  font-family: var(--font-structural);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
   cursor: pointer;
+  white-space: nowrap;
   transition:
     color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--spring);
 }
 
 .lean-filter__reset:hover {
   color: var(--fg-primary);
+  border-color: var(--border-strong);
   background-color: var(--bg-secondary);
 }
 
 .lean-filter__reset:active {
-  transform: scale(0.9);
+  transform: scale(0.95);
 }
 
 .lean-filter__reset:focus-visible {
