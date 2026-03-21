@@ -1315,11 +1315,12 @@ def main():
                     p25_idx = max(0, len(conf_values) // 4)
                     cluster_confidence = conf_values[p25_idx]
 
-            # Rank with v3 engine (9 signals + confidence multiplier)
+            # Rank with v4.0 engine (10 signals + 3 gates + confidence)
             try:
                 rank_result = rank_importance(
                     cluster_articles_list, sources, cluster_bias_scores,
                     cluster_confidence=cluster_confidence,
+                    category=cluster.get("category"),
                 )
                 cluster["importance_score"] = rank_result["importance_score"]
                 cluster["divergence_score"] = rank_result["divergence_score"]
@@ -1371,7 +1372,12 @@ def main():
             pool = [c for c in clusters if c.get("section") == section_val]
             if len(pool) <= 10:
                 continue
-            MAX_SAME_CAT = 2  # v3.3: reduced from 3 to prevent category flooding (sports×3, BTS×2)
+            # v4.0: soft-news categories (sports/entertainment/culture) get
+            # MAX_SAME_CAT=1 (max 1 slot in top 10). All other categories get 2.
+            _SOFT_CATS = {"sports", "entertainment", "culture", "lifestyle",
+                          "celebrity", "music", "film", "television", "gaming"}
+            MAX_SAME_CAT_DEFAULT = 2
+            MAX_SAME_CAT_SOFT = 1
             TOP_N = 10
             promoted: list[dict] = []
             deferred: list[dict] = []
@@ -1382,7 +1388,8 @@ def main():
                     deferred.append(c)
                     continue
                 cat = c.get("category", "general")
-                if cat_counts.get(cat, 0) < MAX_SAME_CAT:
+                cat_limit = MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
+                if cat_counts.get(cat, 0) < cat_limit:
                     promoted.append(c)
                     cat_counts[cat] = cat_counts.get(cat, 0) + 1
                 else:
@@ -1393,18 +1400,15 @@ def main():
             while len(promoted) < TOP_N and deferred:
                 promoted.append(deferred.pop(0))
 
-            # Write back headline_rank to reflect new positions.
-            # Top item keeps its raw score; demoted items get a small penalty
-            # so the DB sort order matches our diversity-adjusted order.
+            # Write back headline_rank to reflect diversity-adjusted order.
+            # Preserve raw scores but ensure monotonic ordering so DB sort
+            # matches our diversity-adjusted order.
             final_order = promoted + deferred
-            if final_order:
-                top_rank = final_order[0].get("headline_rank", 100.0)
-                for i, c in enumerate(final_order):
-                    # Preserve original rank for items outside TOP_N
-                    if i < TOP_N:
-                        # Gentle monotonic decrease within top N
-                        c["headline_rank"] = round(
-                            top_rank - (i * 0.01), 2
+            if final_order and len(promoted) >= 2:
+                for j in range(1, len(promoted)):
+                    if promoted[j].get("headline_rank", 0) >= promoted[j-1].get("headline_rank", 0):
+                        promoted[j]["headline_rank"] = round(
+                            promoted[j-1].get("headline_rank", 0) - 0.01, 2
                         )
 
         # Step 8: Store clusters with enrichment data
