@@ -201,8 +201,8 @@
     display: block;
   }
 
-  /* Dateline row: hidden entirely on mobile — nav is already compact */
-  .nav-dateline-row {
+  /* Inline dateline: hidden on mobile — bottom nav carries edition context */
+  .nav-dateline-inline {
     display: none;
   }
 
