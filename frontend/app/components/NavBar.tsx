@@ -14,17 +14,16 @@ interface NavBarProps {
 }
 
 /* ---------------------------------------------------------------------------
-   NavBar — Newspaper masthead
-   Desktop: LogoFull (36px) + full dateline, edition tabs, theme toggle
-   Mobile:  LogoFull (22px) + edition/date, bottom nav for editions
+   NavBar — Newspaper masthead (single compact row)
+   Desktop: Logo (32px) | Edition tabs | Dateline (tertiary) | Sources | Theme
+   Mobile:  Logo (22px) | Sources + Theme (top bar) | Edition tabs (bottom nav)
    --------------------------------------------------------------------------- */
 
-function formatDateFull(): string {
+function formatDateCompact(): string {
   return new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -69,32 +68,25 @@ function EditionIcon({ slug, size }: { slug: Edition; size: number }) {
 }
 
 export default function NavBar({ activeEdition }: NavBarProps) {
-  const activeEditionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
-
   return (
     <>
       <header className="nav-header">
         <nav className="nav-inner" aria-label="Main navigation">
+          {/* Logo — P1 */}
           <div className="nav-left">
             <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
-              {/* Desktop: full combination mark at 36px */}
+              {/* Desktop: full combination mark at 32px */}
               <span className="nav-logo-desktop">
-                <LogoFull height={36} />
+                <LogoFull height={32} />
               </span>
-              {/* Mobile: same full logo at 22px — brand stays visible */}
+              {/* Mobile: same full logo at 22px */}
               <span className="nav-logo-mobile">
                 <LogoFull height={22} />
               </span>
             </Link>
-
-            {/* Dateline — edition name + time of day + date.
-                Uses nav-dateline-row__text class (visible) instead of
-                legacy nav-dateline (display:none). */}
-            <span className="nav-dateline-row__text" style={{ display: "none" }}>
-              {/* Desktop: rendered in the dateline row below instead */}
-            </span>
           </div>
 
+          {/* Edition tabs — P1 primary navigation */}
           <div className="nav-tabs" role="tablist" aria-label="Edition selector">
             {EDITIONS.map((edition) => (
               <Link
@@ -111,34 +103,24 @@ export default function NavBar({ activeEdition }: NavBarProps) {
                 </span>
               </Link>
             ))}
-
-            {/* Section divider */}
-            <span className="nav-tabs__divider" aria-hidden="true" />
           </div>
 
+          {/* Dateline — P3 tertiary, desktop only, fills remaining flex space */}
+          <span className="nav-dateline-inline" aria-hidden="true">
+            {getEditionTimeOfDay(activeEdition)} Edition
+            <span className="nav-dateline-inline__sep">&middot;</span>
+            {formatDateCompact()}
+            <span className="nav-dateline-inline__sep">&middot;</span>
+            <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
+          </span>
+
+          {/* Utility actions — P2 */}
           <div className="nav-right">
             <PageToggle activePage="feed" />
             <ThemeToggle />
           </div>
         </nav>
       </header>
-
-      {/* Dateline row — thin data strip below masthead (desktop only, hidden on mobile via CSS) */}
-      <div className="nav-dateline-row">
-        <div className="nav-dateline-row__inner">
-          {/* "World Evening Edition" — one continuous label, same font */}
-          <span className="nav-dateline-row__text">
-            {activeEditionMeta.label} {getEditionTimeOfDay(activeEdition)} Edition
-          </span>
-          {/* Separator + full date + regional timestamp */}
-          <span className="nav-dateline-row__text nav-dateline-row__date">
-            &middot; {formatDateFull()}
-            <span className="nav-dateline-row__timestamp">
-              &middot; {getEditionTimestamp(activeEdition)}
-            </span>
-          </span>
-        </div>
-      </div>
 
       {/* Mobile bottom nav — all 3 editions */}
       <nav className="nav-bottom" aria-label="Edition navigation">
