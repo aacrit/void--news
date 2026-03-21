@@ -184,13 +184,15 @@ def main():
         editorial_importance = cluster.get("editorial_importance")
         story_type = cluster.get("story_type")
 
-        # Run v5.0 ranker
+        # Run v5.1 ranker — pass sections for US-only divergence damper
+        cluster_sections = cluster.get("sections") or [cluster.get("section", "world")]
         try:
             result = rank_importance(
                 articles, sources, bias_scores,
                 cluster_confidence=cluster_confidence,
                 category=category,
                 editorial_importance=editorial_importance,
+                sections=cluster_sections,
             )
         except Exception as e:
             errors += 1
