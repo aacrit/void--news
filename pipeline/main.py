@@ -77,6 +77,16 @@ try:
 except ImportError:
     pass
 
+# Daily Brief generator — optional (requires google-cloud-texttospeech + pydub)
+BRIEFING_AVAILABLE = False
+try:
+    from briefing.daily_brief_generator import generate_daily_briefs
+    from briefing.audio_producer import produce_audio
+    from briefing.voice_rotation import get_voice_for_today
+    BRIEFING_AVAILABLE = True
+except ImportError as e:
+    print(f"[warn] Briefing modules not available ({e}). Skipping daily brief.")
+
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
@@ -1656,6 +1666,58 @@ def main():
                             promoted[j-1].get("headline_rank", 0) - 0.01, 2
                         )
 
+        # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
+        if BRIEFING_AVAILABLE:
+            print("\n[7d] Generating Daily Briefs...")
+            start_7d = time.time()
+            try:
+                brief_results = generate_daily_briefs(
+                    clusters, source_map,
+                    edition_sections=["world", "us", "india"],
+                )
+
+                # Determine if this is an audio run (2x/day: morning + evening)
+                utc_hour = datetime.now(timezone.utc).hour
+                should_generate_audio = utc_hour in (5, 6, 7, 17, 18, 19)
+
+                for edition, brief in brief_results.items():
+                    brief_row = {
+                        "edition": edition,
+                        "pipeline_run_id": run_id,
+                        "tldr_text": brief["tldr_text"],
+                        "audio_script": brief.get("audio_script"),
+                        "top_cluster_ids": brief.get("top_cluster_ids", []),
+                    }
+
+                    # Generate audio only during morning/evening runs
+                    if should_generate_audio and brief.get("audio_script"):
+                        voice = get_voice_for_today(edition)
+                        audio_result = produce_audio(
+                            brief["audio_script"], voice["id"],
+                            voice["language_code"], edition,
+                        )
+                        if audio_result:
+                            brief_row["audio_url"] = audio_result["audio_url"]
+                            brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
+                            brief_row["audio_file_size"] = audio_result["file_size"]
+                            brief_row["audio_voice"] = voice["id"]
+                            brief_row["audio_voice_label"] = voice["label"]
+
+                    try:
+                        supabase.table("daily_briefs").upsert(
+                            brief_row, on_conflict="edition,pipeline_run_id"
+                        ).execute()
+                    except Exception as e:
+                        print(f"  [warn] Failed to store brief for {edition}: {e}")
+
+                elapsed_7d = time.time() - start_7d
+                audio_status = "with audio" if should_generate_audio else "text only"
+                print(f"  Daily briefs: {len(brief_results)} editions ({audio_status}, {elapsed_7d:.1f}s)")
+            except Exception as e:
+                print(f"  [warn] Daily brief generation failed: {e}")
+        else:
+            print("\n[7d] Skipping daily briefs (modules not installed)")
+
         # Step 8: Store clusters with enrichment data
         print("\n[8/9] Storing clusters with enrichment data...")
         all_cluster_article_links: list[dict] = []  # batch insert
@@ -1927,6 +1989,20 @@ def main():
         print(f"  Stuck pipeline runs cleaned: {cleaned}")
     except Exception as e:
         print(f"  [warn] cleanup_stuck_pipeline_runs failed: {e}")
+
+    # Clean old daily briefs (keep only latest per edition)
+    try:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        for ed in ("world", "us", "india"):
+            old = supabase.table("daily_briefs").select("id").eq(
+                "edition", ed
+            ).lt("created_at", cutoff).execute()
+            if old.data:
+                ids = [b["id"] for b in old.data]
+                supabase.table("daily_briefs").delete().in_("id", ids).execute()
+                print(f"  Cleaned {len(ids)} old briefs for {ed}")
+    except Exception as e:
+        print(f"  [warn] Daily brief cleanup failed: {e}")
 
     # Retention: archive then delete clusters older than 3 days.
     # Articles >2d are rejected at ingestion, so clusters >3d are frozen.
