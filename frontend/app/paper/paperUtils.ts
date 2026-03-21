@@ -222,26 +222,10 @@ export function capitalize(s: string): string {
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-// --- Body text truncation by tier ---
+// --- Body text — never truncated in epaper view ---
 
-export function truncateSummary(summary: string, tier: ArticleTier): string {
-  const limits: Record<ArticleTier, number> = {
-    banner: 9999,   // Full summary
-    major: 400,
-    standard: 250,
-    brief: 150,
-    bulletin: 100,
-    filler: 80,
-  };
-
-  const limit = limits[tier];
-  if (summary.length <= limit) return summary;
-
-  // Cut at sentence boundary
-  const truncated = summary.slice(0, limit);
-  const lastPeriod = truncated.lastIndexOf(".");
-  if (lastPeriod > limit * 0.5) return truncated.slice(0, lastPeriod + 1);
-  return truncated + "\u2026";
+export function truncateSummary(summary: string, _tier: ArticleTier): string {
+  return summary;
 }
 
 // --- Subhead generation (every ~3 sentences for banner/major) ---
