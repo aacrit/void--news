@@ -52,6 +52,25 @@
   white-space: nowrap;
 }
 
+.sources-toolbar__count {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Lean filter chips (sources page) ---------------------------------- */
+.sources-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.sources-leans {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
 /* ---- Edition filter chips --------------------------------------------- */
 .sources-editions {
   display: flex;
@@ -376,16 +395,16 @@
   height: 28px;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  /* Gradient bar: blue through gray to red */
+  /* Gradient bar: uses bias tokens — adapts to dark mode */
   background: linear-gradient(
     to right,
-    #1d4ed8,
-    #3b82f6 14%,
-    #93c5fd 28%,
-    #9ca3af 42%,
-    #fdba74 57%,
-    #ef4444 71%,
-    #b91c1c
+    var(--bias-far-left),
+    var(--bias-left) 14%,
+    var(--bias-center-left) 28%,
+    var(--bias-center) 42%,
+    var(--bias-center-right) 57%,
+    var(--bias-right) 71%,
+    var(--bias-far-right)
   );
   position: relative;
   box-shadow: var(--shadow-e1);
@@ -527,13 +546,13 @@
   margin: 0 var(--space-5) var(--space-4);
   background: linear-gradient(
     to right,
-    #1d4ed8,
-    #3b82f6 14%,
-    #93c5fd 28%,
-    #9ca3af 42%,
-    #fdba74 57%,
-    #ef4444 71%,
-    #b91c1c
+    var(--bias-far-left),
+    var(--bias-left) 14%,
+    var(--bias-center-left) 28%,
+    var(--bias-center) 42%,
+    var(--bias-center-right) 57%,
+    var(--bias-right) 71%,
+    var(--bias-far-right)
   );
   box-shadow: var(--shadow-e1);
   flex-shrink: 0;
@@ -878,10 +897,6 @@
   color: var(--fg-primary);
 }
 
-/* Mobile: bottom nav not shown on Sources page (no section toggle needed).
-   The standard nav-bottom display:none default handles this — Sources page
-   doesn't render <nav className="nav-bottom"> at all. */
-
 /* ---- Mobile: sources page compact ------------------------------------- */
 @media (max-width: 767px) {
   .sources-page {
@@ -902,15 +917,21 @@
     font-size: var(--text-base);
   }
 
-  .sources-editions {
+  .sources-filters {
     width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .sources-editions,
+  .sources-leans {
     overflow-x: auto;
     flex-wrap: nowrap;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
 
-  .sources-editions::-webkit-scrollbar {
+  .sources-editions::-webkit-scrollbar,
+  .sources-leans::-webkit-scrollbar {
     display: none;
   }
 

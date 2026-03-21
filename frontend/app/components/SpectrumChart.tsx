@@ -100,7 +100,7 @@ const LEAN_ZONES: {
   },
 ];
 
-function normalizeLean(raw: string | null): LeanCategory {
+export function normalizeLean(raw: string | null): LeanCategory {
   if (!raw) return "center";
   const s = raw.toLowerCase().trim().replace(/\s+/g, "-");
   const valid: LeanCategory[] = [
@@ -122,13 +122,14 @@ function tierLabel(tier: string): string {
 }
 
 function getFaviconUrl(sourceUrl: string): string {
+  if (!sourceUrl) return "";
   try {
     const domain = new URL(
       sourceUrl.startsWith("http") ? sourceUrl : `https://${sourceUrl}`
     ).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+    return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
   } catch {
-    return `https://www.google.com/s2/favicons?domain=${sourceUrl}&sz=32`;
+    return "";
   }
 }
 
@@ -201,30 +202,40 @@ function SourceLogo({
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={getFaviconUrl(source.url)}
-        alt=""
-        width={20}
-        height={20}
-        className="spectrum-logo__img"
-        loading="lazy"
-        aria-hidden="true"
-        onError={(e) => {
-          // Fallback: show first letter of source name
-          const target = e.currentTarget as HTMLImageElement;
-          target.style.display = "none";
-          const fallback = target.nextElementSibling as HTMLElement | null;
-          if (fallback) fallback.style.display = "flex";
-        }}
-      />
-      <span
-        className="spectrum-logo__fallback"
-        aria-hidden="true"
-        style={{ display: "none" }}
-      >
-        {source.name.charAt(0).toUpperCase()}
-      </span>
+      {(() => {
+        const faviconUrl = source.url ? getFaviconUrl(source.url) : "";
+        return faviconUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={faviconUrl}
+              alt=""
+              width={20}
+              height={20}
+              className="spectrum-logo__img"
+              loading="lazy"
+              aria-hidden="true"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                target.style.display = "none";
+                const fallback = target.nextElementSibling as HTMLElement | null;
+                if (fallback) fallback.style.display = "flex";
+              }}
+            />
+            <span
+              className="spectrum-logo__fallback"
+              aria-hidden="true"
+              style={{ display: "none" }}
+            >
+              {source.name.charAt(0).toUpperCase()}
+            </span>
+          </>
+        ) : (
+          <span className="spectrum-logo__fallback" aria-hidden="true" style={{ display: "flex" }}>
+            {source.name.charAt(0).toUpperCase()}
+          </span>
+        );
+      })()}
     </button>
   );
 }
@@ -259,9 +270,6 @@ function SourceTooltipCard({
         {lean.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
       </p>
       <p className="spectrum-tooltip__tier">{tierLabel(source.tier)}</p>
-      {source.country && source.country !== "US" && (
-        <p className="spectrum-tooltip__country">{source.country}</p>
-      )}
       {source.credibility_notes && (
         <p className="spectrum-tooltip__notes">{source.credibility_notes}</p>
       )}
@@ -277,35 +285,44 @@ function MobileSpectrumFavicon({
 }: {
   source: SpectrumSource;
 }) {
+  const faviconUrl = source.url ? getFaviconUrl(source.url) : "";
   return (
     <span
       className="spectrum-mobile-card__favicon"
       title={source.name}
       aria-label={source.name}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={getFaviconUrl(source.url)}
-        alt=""
-        width={20}
-        height={20}
-        className="spectrum-mobile-card__favicon-img"
-        loading="lazy"
-        aria-hidden="true"
-        onError={(e) => {
-          const target = e.currentTarget as HTMLImageElement;
-          target.style.display = "none";
-          const fallback = target.nextElementSibling as HTMLElement | null;
-          if (fallback) fallback.style.display = "flex";
-        }}
-      />
-      <span
-        className="spectrum-mobile-card__favicon-fallback"
-        aria-hidden="true"
-        style={{ display: "none" }}
-      >
-        {source.name.charAt(0).toUpperCase()}
-      </span>
+      {faviconUrl ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={faviconUrl}
+            alt=""
+            width={20}
+            height={20}
+            className="spectrum-mobile-card__favicon-img"
+            loading="lazy"
+            aria-hidden="true"
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              target.style.display = "none";
+              const fallback = target.nextElementSibling as HTMLElement | null;
+              if (fallback) fallback.style.display = "flex";
+            }}
+          />
+          <span
+            className="spectrum-mobile-card__favicon-fallback"
+            aria-hidden="true"
+            style={{ display: "none" }}
+          >
+            {source.name.charAt(0).toUpperCase()}
+          </span>
+        </>
+      ) : (
+        <span className="spectrum-mobile-card__favicon-fallback" aria-hidden="true" style={{ display: "flex" }}>
+          {source.name.charAt(0).toUpperCase()}
+        </span>
+      )}
     </span>
   );
 }
