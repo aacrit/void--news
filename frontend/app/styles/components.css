@@ -1898,8 +1898,10 @@
 }
 
 /* ---- Deep Dive: Collapsible sections ------------------------------------ */
+/* Dynamic height: scales with viewport — shows more on tall screens, less on
+   small. clamp() ensures 8 lines min (mobile) → 14 lines max (desktop). */
 .dd-collapsible {
-  max-height: 18em; /* ~10-12 lines at 1.75 line-height */
+  max-height: clamp(12em, 25vh, 22em);
   overflow: hidden;
   position: relative;
   transition: max-height var(--dur-morph) var(--ease-out);
@@ -3357,16 +3359,33 @@
   font-family: var(--font-structural);
 }
 
+/* ---- Deep Dive: Analysis row (Sigil + Spectrum + Press trigger) --------- */
+/* Single horizontal row on desktop. Wraps on mobile. The row uses flex-wrap
+   so the press-expand spans full width below all three items. */
+.dd-analysis-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dd-analysis-row__sigil {
+  flex-shrink: 0;
+}
+
+.dd-analysis-row__spectrum {
+  flex: 1;
+  min-width: 180px;
+}
+
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
-/* 1920s low-tech aesthetic: data font, small caps, triangular glyph arrow.
-   Right-aligned below the spectrum. Hidden by default, revealed on demand. */
 .dd-press-trigger {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-left: auto;
-  margin-top: var(--space-2);
+  margin-top: 0;
   padding: var(--space-1) 0;
+  flex-shrink: 0;
   background: none;
   border: none;
   cursor: pointer;
@@ -3406,11 +3425,14 @@
 }
 
 /* ---- Deep Dive: Press Analysis inline expand (grid-template-rows trick) - */
-/* TRUE dynamic height — no arbitrary max-height, content determines height. */
+/* TRUE dynamic height — content determines height. Full width of the row. */
 .dd-press-expand {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--dur-morph) var(--ease-out);
+  /* Span full width in the flex-wrap parent */
+  flex-basis: 100%;
+  width: 100%;
 }
 
 .dd-press-expand--open {
@@ -3451,6 +3473,13 @@
 }
 
 /* ---- Deep Dive: Source Perspectives (compact agree/diverge) ------------- */
+/* Two-column grid on desktop: Agreement left, Divergence right */
+.dd-perspectives-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
 .dd-perspectives-label {
   display: block;
   font-family: var(--font-data);
@@ -3460,6 +3489,8 @@
   text-transform: uppercase;
   color: var(--fg-tertiary);
   margin-bottom: var(--space-3);
+  /* Span both columns */
+  grid-column: 1 / -1;
 }
 
 .dd-perspectives-sublabel {
@@ -3470,7 +3501,6 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: var(--space-1);
-  margin-top: var(--space-2);
 }
 
 .dd-perspectives-sublabel--agree {
