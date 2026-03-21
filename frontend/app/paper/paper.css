@@ -437,25 +437,15 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* --- Subheads (banner/major articles) --- */
-.np-subhead {
-  font-family: var(--np-font-deck);
-  font-size: 9px;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin: 6px 0 4px;
-  color: var(--np-ink);
-}
-
-/* --- Jump lines --- */
-.np-jumpline {
+/* --- Article meta: source count + lean — subtle, end of article --- */
+.np-article__meta {
   font-family: var(--np-font-deck);
   font-size: 8px;
-  font-style: italic;
-  text-align: right;
+  letter-spacing: 0.08em;
   color: var(--np-ink-light);
-  margin-top: 3px;
+  margin: 3px 0 0;
+  text-align: right;
+  opacity: 0.65;
 }
 
 /* ==========================================================================
@@ -800,37 +790,50 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   PRINT
+   PRINT — Faithful mirror of on-screen layout
+   Use browser "Save as PDF" for exact replica including columns and fonts.
    ========================================================================== */
 @page {
-  margin: 0.6in;
+  margin: 0.4in;
   size: tabloid landscape;
 }
 
 @media print {
+  /* Keep the newspaper look — aged paper background prints faithfully */
   .np-root {
-    background: white;
     max-width: none;
-    padding: 0;
+    padding: 24px 32px;
     box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
+  /* Keep textures for PDF fidelity */
   .np-root::before,
-  .np-root::after { display: none; }
+  .np-root::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .np-article__headline { text-shadow: none; }
   .np-masthead__nameplate { text-shadow: none; }
 
-  .np-section-label {
-    page-break-before: always;
-    break-before: page;
-  }
+  /* Keep multi-column layout in print */
+  .np-front { display: grid; }
+  .np-section-flow { column-count: 6; }
 
-  .np-section-label:first-of-type {
-    page-break-before: avoid;
-    break-before: avoid;
-  }
-
+  /* Avoid article splits across pages */
   .np-article { break-inside: avoid; }
+
+  /* No page breaks within front page */
+  .np-front { break-inside: avoid; }
+
+  /* Section labels don't force page breaks — let content flow */
+  .np-section-label {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
   .np-colophon__link { text-decoration: none; }
-  .np-pdf-action { display: none; }
+  .np-pdf-action { display: none !important; }
 }
