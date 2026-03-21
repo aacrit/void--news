@@ -72,7 +72,7 @@ JUNK_TITLE_PATTERNS = [
 ]
 
 # Maximum article age in days (reject stale evergreen content)
-MAX_ARTICLE_AGE_DAYS = 3
+MAX_ARTICLE_AGE_DAYS = 2
 
 # Minimum title length (catches junk like "CNN", "BTS", etc.)
 MIN_TITLE_LENGTH = 10
