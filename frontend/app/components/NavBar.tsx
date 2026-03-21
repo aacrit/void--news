@@ -7,13 +7,10 @@ import { Globe, Flag } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-
-export type ViewMode = "facts" | "opinion";
+import { getEditionTimeOfDay, getEditionTimestamp } from "../lib/utils";
 
 interface NavBarProps {
   activeEdition: Edition;
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -21,11 +18,6 @@ interface NavBarProps {
    Desktop: LogoFull (36px) + full dateline, edition tabs, theme toggle
    Mobile:  LogoFull (22px) + edition/date, bottom nav for editions
    --------------------------------------------------------------------------- */
-
-function getEditionLabel(): string {
-  const hour = new Date().getHours();
-  return hour < 12 ? "Morning Edition" : "Evening Edition";
-}
 
 function formatDateFull(): string {
   return new Date().toLocaleDateString("en-US", {
@@ -36,25 +28,47 @@ function formatDateFull(): string {
   });
 }
 
-function formatDateCompact(): string {
-  return new Date().toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
-
 function getEditionHref(slug: Edition): string {
   if (slug === "world") return "/";
   return `/${slug}`;
 }
 
+/* Ashoka Chakra — circle + 12 spokes, stroke only. Cleanly readable at 14–18px. */
+function IndiaIcon({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" strokeWidth="1.5" />
+      <circle cx="12" cy="12" r="2" strokeWidth="1" />
+      {Array.from({ length: 12 }, (_, i) => {
+        const angle = (i * 30 * Math.PI) / 180;
+        const x1 = 12 + 2.4 * Math.cos(angle);
+        const y1 = 12 + 2.4 * Math.sin(angle);
+        const x2 = 12 + 9 * Math.cos(angle);
+        const y2 = 12 + 9 * Math.sin(angle);
+        return (
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="1" />
+        );
+      })}
+    </svg>
+  );
+}
+
 function EditionIcon({ slug, size }: { slug: Edition; size: number }) {
   if (slug === "world") return <Globe size={size} weight="light" aria-hidden="true" />;
   if (slug === "us") return <Flag size={size} weight="light" aria-hidden="true" />;
+  if (slug === "india") return <IndiaIcon size={size} />;
   return null;
 }
 
-export default function NavBar({ activeEdition, viewMode, onViewModeChange }: NavBarProps) {
+export default function NavBar({ activeEdition }: NavBarProps) {
   const activeEditionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
@@ -100,28 +114,6 @@ export default function NavBar({ activeEdition, viewMode, onViewModeChange }: Na
 
             {/* Section divider */}
             <span className="nav-tabs__divider" aria-hidden="true" />
-
-            {/* Facts / Opinion toggle */}
-            <div
-              className="view-mode-toggle"
-              role="group"
-              aria-label="Content type filter"
-            >
-              <button
-                className={`view-mode-toggle__btn${viewMode === "facts" ? " view-mode-toggle__btn--active" : ""}`}
-                onClick={() => onViewModeChange("facts")}
-                aria-pressed={viewMode === "facts"}
-              >
-                Facts
-              </button>
-              <button
-                className={`view-mode-toggle__btn${viewMode === "opinion" ? " view-mode-toggle__btn--active" : ""}`}
-                onClick={() => onViewModeChange("opinion")}
-                aria-pressed={viewMode === "opinion"}
-              >
-                Op-Ed
-              </button>
-            </div>
           </div>
 
           <div className="nav-right">
@@ -134,8 +126,24 @@ export default function NavBar({ activeEdition, viewMode, onViewModeChange }: Na
       {/* Dateline row — thin data strip below masthead (desktop only, hidden on mobile via CSS) */}
       <div className="nav-dateline-row">
         <div className="nav-dateline-row__inner">
+          {/* Edition badge */}
+          <span className="nav-dateline-row__badge">
+            {activeEditionMeta.label}
+          </span>
+          {/* Time-of-day badge */}
+          <span className="nav-dateline-row__badge">
+            {getEditionTimeOfDay(activeEdition)}
+          </span>
+          {/* "Edition" label */}
           <span className="nav-dateline-row__text">
-            {activeEditionMeta.label} Edition &middot; {getEditionLabel()} &middot; {formatDateFull()}
+            Edition
+          </span>
+          {/* Separator + full date + regional timestamp */}
+          <span className="nav-dateline-row__text nav-dateline-row__date">
+            &middot; {formatDateFull()}
+            <span className="nav-dateline-row__timestamp">
+              &middot; {getEditionTimestamp(activeEdition)}
+            </span>
           </span>
         </div>
       </div>

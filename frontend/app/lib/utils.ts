@@ -1,4 +1,70 @@
 /**
+ * Returns "Morning" or "Evening" based on the edition's regional time zone.
+ * US → America/New_York, India → Asia/Kolkata, World → UTC.
+ */
+export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
+  const now = new Date();
+  let hour: number;
+
+  if (edition === "us") {
+    hour = parseInt(
+      now.toLocaleString("en-US", {
+        hour: "numeric",
+        hour12: false,
+        timeZone: "America/New_York",
+      }),
+      10,
+    );
+  } else if (edition === "india") {
+    hour = parseInt(
+      now.toLocaleString("en-US", {
+        hour: "numeric",
+        hour12: false,
+        timeZone: "Asia/Kolkata",
+      }),
+      10,
+    );
+  } else {
+    // World edition — UTC
+    hour = now.getUTCHours();
+  }
+
+  return hour < 12 ? "Morning" : "Evening";
+}
+
+/**
+ * Returns a compact regional timestamp string for the dateline.
+ * US: "9 AM ET"  World: "14:05 UTC"  India: "19:35 IST"
+ */
+export function getEditionTimestamp(edition: string): string {
+  const now = new Date();
+
+  if (edition === "us") {
+    const et = now
+      .toLocaleString("en-US", {
+        hour: "numeric",
+        hour12: true,
+        timeZone: "America/New_York",
+      })
+      .replace(" AM", " AM")
+      .replace(" PM", " PM");
+    return `${et} ET`;
+  } else if (edition === "india") {
+    const ist = now.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Kolkata",
+    });
+    return `${ist} IST`;
+  } else {
+    const h = String(now.getUTCHours()).padStart(2, "0");
+    const m = String(now.getUTCMinutes()).padStart(2, "0");
+    return `${h}:${m} UTC`;
+  }
+}
+
+/**
  * Relative time formatting — "5m ago", "2h ago", "1d ago"
  */
 export function timeAgo(dateStr: string): string {
