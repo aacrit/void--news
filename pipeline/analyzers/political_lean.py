@@ -8,7 +8,7 @@ Scores each article on a 0-100 political lean spectrum:
 
 Uses rule-based NLP heuristics (no LLM API calls):
     - Partisan keyword lexicons (90+ terms per side)
-    - Source baseline blending (0.85 * text + 0.15 * baseline)
+    - Length-adaptive baseline blending (0.50/0.50 short → 0.90/0.10 long)
     - Entity sentiment via spaCy NER + TextBlob
     - Framing phrase detection
 """
@@ -489,8 +489,39 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     # these sources, raise the baseline weight from 0.15 to 0.30 so the known
     # editorial alignment exerts stronger pull toward the calibrated baseline.
     is_state_affiliated = bool(source.get("state_affiliated"))
-    text_weight = 0.70 if is_state_affiliated else 0.85
-    baseline_weight = 0.30 if is_state_affiliated else 0.15
+
+    # Length-adaptive baseline blending.
+    #
+    # Most RSS-sourced articles arrive as 30-80 word summaries.  With so little
+    # text, the keyword scorer rarely accumulates enough total weight (>=4) to
+    # move the sigmoid past 50%, so the text score stays near 50 regardless of
+    # the source's actual lean.  The source baseline — which encodes calibrated
+    # editorial lean from data/sources.json — should carry proportionally more
+    # weight when text evidence is thin.
+    #
+    # Word-count buckets (based on combined title + full_text):
+    #   <50 words   → 0.50 text / 0.50 baseline  (almost no evidence)
+    #   50-150 words → 0.70 text / 0.30 baseline  (RSS summary range)
+    #   150-500 words → 0.85 text / 0.15 baseline (current default, enough for signal)
+    #   500+ words   → 0.90 text / 0.10 baseline  (full article, trust text)
+    #
+    # For state-affiliated sources, the baseline weight floors at 0.30 (the
+    # existing state-media correction) so that correction is never weakened by
+    # long articles that happen to use neutral geopolitical vocabulary.
+    _wc = len(combined.split())
+    if _wc < 50:
+        text_weight, baseline_weight = 0.50, 0.50
+    elif _wc < 150:
+        text_weight, baseline_weight = 0.70, 0.30
+    elif _wc < 500:
+        text_weight, baseline_weight = 0.85, 0.15
+    else:
+        text_weight, baseline_weight = 0.90, 0.10
+
+    if is_state_affiliated:
+        # State-media correction: baseline weight never falls below 0.30.
+        baseline_weight = max(baseline_weight, 0.30)
+        text_weight = 1.0 - baseline_weight
 
     if not combined.strip():
         return {
@@ -514,9 +545,7 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     text_score = kw_score + framing_shift + entity_shift
     text_score = max(0.0, min(100.0, text_score))
 
-    # 4. Blend with source baseline.
-    # Standard: 0.85 text + 0.15 baseline.
-    # State-affiliated: 0.70 text + 0.30 baseline.
+    # 4. Blend with source baseline (length-adaptive weights computed above).
     final_score = text_weight * text_score + baseline_weight * source_baseline
     score = max(0, min(100, int(round(final_score))))
 
