@@ -213,6 +213,17 @@ export type Edition = "world" | "us" | "india";
 // Keep Section as alias for backward compat
 export type Section = Edition;
 
+/** Daily Brief data from Supabase */
+export interface DailyBriefData {
+  id: string;
+  edition: Edition;
+  tldr_text: string;
+  audio_url: string | null;
+  audio_duration_seconds: number | null;
+  audio_voice_label: string | null;
+  created_at: string;
+}
+
 export interface EditionMeta {
   slug: Edition;
   label: string;

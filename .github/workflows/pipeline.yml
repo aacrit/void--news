@@ -24,6 +24,8 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
       - name: Install Playwright browser
@@ -46,6 +48,13 @@ jobs:
             # All editions run on every scheduled trigger (4x daily)
             echo "filter=" >> $GITHUB_OUTPUT
           fi
+      - name: Setup Google Cloud TTS credentials
+        if: env.GOOGLE_CLOUD_TTS_KEY != ''
+        env:
+          GOOGLE_CLOUD_TTS_KEY: ${{ secrets.GOOGLE_CLOUD_TTS_KEY }}
+        run: |
+          echo "$GOOGLE_CLOUD_TTS_KEY" > /tmp/gcloud-tts-sa.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-tts-sa.json" >> $GITHUB_ENV
       - name: Run pipeline
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
