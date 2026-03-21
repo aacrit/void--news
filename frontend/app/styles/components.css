@@ -1690,7 +1690,8 @@
   transition: max-height var(--dur-morph) var(--ease-out);
 }
 
-.opinion-card__text::after {
+/* Fade gradient only appears when text is actually truncated */
+.opinion-card__text--truncated::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -1704,10 +1705,6 @@
 
 .opinion-card__text--expanded {
   max-height: none;
-}
-
-.opinion-card__text--expanded::after {
-  opacity: 0;
 }
 
 .opinion-card__text-content {

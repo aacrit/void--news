@@ -76,7 +76,7 @@ export default function OpinionCard({ article, featured = false }: OpinionCardPr
       {/* Inline article text — 10-12 lines collapsed, expandable */}
       {fullText && (
         <div
-          className={`opinion-card__text${expanded ? " opinion-card__text--expanded" : ""}`}
+          className={`opinion-card__text${expanded ? " opinion-card__text--expanded" : ""}${isLong && !expanded ? " opinion-card__text--truncated" : ""}`}
         >
           <p className="opinion-card__text-content">{fullText}</p>
         </div>
