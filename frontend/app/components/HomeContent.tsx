@@ -28,6 +28,42 @@ function capitalize(s: string): string {
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/**
+ * Runtime guard for bias_diversity JSONB from Supabase.
+ * Returns null if the value is not a plain object — guards against malformed
+ * JSONB (strings, arrays, unexpected types) that would cause property-access
+ * errors downstream. Accepts null/undefined as a valid "no data" signal.
+ */
+function parseBiasDiversity(raw: unknown): Record<string, unknown> | null {
+  if (raw == null) return null;
+  if (typeof raw !== "object" || Array.isArray(raw)) return null;
+  return raw as Record<string, unknown>;
+}
+
+/**
+ * Safely coerce a bias_diversity field value to number, returning fallback
+ * if the field is missing, null, not a number, or NaN.
+ */
+function safeNum(bd: Record<string, unknown>, key: string, fallback: number): number {
+  const v = bd[key];
+  if (typeof v === "number" && !Number.isNaN(v)) return v;
+  return fallback;
+}
+
+/**
+ * Safely extract tier_breakdown as Record<string, number> — only keeps
+ * entries where the value is a finite number.
+ */
+function safeTierBreakdown(bd: Record<string, unknown>): Record<string, number> | undefined {
+  const raw = bd["tier_breakdown"];
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const result: Record<string, number> = {};
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof v === "number" && Number.isFinite(v)) result[k] = v;
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
 function deriveOpinionLabel(score: number): OpinionLabel {
   if (score <= 25) return "Reporting";
   if (score <= 50) return "Analysis";
@@ -148,16 +184,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         /* eslint-disable @typescript-eslint/no-explicit-any */
         const liveStories: Story[] = clusters.map(
           (cluster: any) => {
-            const bd = usingEnriched ? cluster.bias_diversity : null;
-            const hasBiasData = !!(bd && bd.avg_political_lean != null);
+            // M002: Runtime-validate bias_diversity JSONB before any property access.
+            // parseBiasDiversity returns null for strings, arrays, or non-plain-objects.
+            const bd = usingEnriched ? parseBiasDiversity(cluster.bias_diversity) : null;
+            const hasBiasData = !!(bd && bd["avg_political_lean"] != null);
 
             const biasScores: BiasScores = hasBiasData
               ? {
-                  politicalLean: bd.avg_political_lean ?? 50,
-                  sensationalism: bd.avg_sensationalism ?? 30,
-                  opinionFact: bd.avg_opinion_fact ?? 25,
-                  factualRigor: bd.avg_factual_rigor ?? 75,
-                  framing: bd.avg_framing ?? 40,
+                  politicalLean: safeNum(bd!, "avg_political_lean", 50),
+                  sensationalism: safeNum(bd!, "avg_sensationalism", 30),
+                  opinionFact: safeNum(bd!, "avg_opinion_fact", 25),
+                  factualRigor: safeNum(bd!, "avg_factual_rigor", 75),
+                  framing: safeNum(bd!, "avg_framing", 40),
                 }
               : {
                   politicalLean: 50,
@@ -167,27 +205,27 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   framing: 40,
                 };
 
-            const biasSpread: BiasSpread | undefined = bd && bd.lean_spread != null
+            const biasSpread: BiasSpread | undefined = bd && bd["lean_spread"] != null
               ? {
-                  leanSpread: bd.lean_spread ?? 0,
-                  framingSpread: bd.framing_spread ?? 0,
-                  leanRange: bd.lean_range ?? 0,
-                  sensationalismSpread: bd.sensationalism_spread ?? 0,
-                  opinionSpread: bd.opinion_spread ?? 0,
-                  aggregateConfidence: bd.aggregate_confidence ?? 0,
-                  analyzedCount: bd.analyzed_count ?? 0,
+                  leanSpread: safeNum(bd, "lean_spread", 0),
+                  framingSpread: safeNum(bd, "framing_spread", 0),
+                  leanRange: safeNum(bd, "lean_range", 0),
+                  sensationalismSpread: safeNum(bd, "sensationalism_spread", 0),
+                  opinionSpread: safeNum(bd, "opinion_spread", 0),
+                  aggregateConfidence: safeNum(bd, "aggregate_confidence", 0),
+                  analyzedCount: safeNum(bd, "analyzed_count", 0),
                 }
               : undefined;
 
             const sourceCount = cluster.source_count || 1;
-            const opinionLabel = (bd?.avg_opinion_label as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact);
+            const opinionLabel = (bd?.["avg_opinion_label"] as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact);
             const lensData: ThreeLensData = {
               lean: biasScores.politicalLean,
-              coverage: bd?.coverage_score ?? deriveCoverageScore(
+              coverage: bd ? safeNum(bd, "coverage_score", deriveCoverageScore(
                 sourceCount, biasScores.factualRigor, biasSpread?.aggregateConfidence ?? 0.5,
-              ),
+              )) : deriveCoverageScore(sourceCount, biasScores.factualRigor, 0.5),
               sourceCount,
-              tierBreakdown: bd?.tier_breakdown,
+              tierBreakdown: bd ? safeTierBreakdown(bd) : undefined,
               opinion: biasScores.opinionFact,
               opinionLabel,
               pending: !hasBiasData,
@@ -200,7 +238,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               framing: biasScores.framing,
               agreement: cluster.divergence_score || 0,
               sourceCount,
-              tierBreakdown: bd?.tier_breakdown,
+              tierBreakdown: bd ? safeTierBreakdown(bd) : undefined,
               biasSpread,
               pending: !hasBiasData,
               opinionLabel,
@@ -334,12 +372,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           </div>
         </div>
 
-        {/* Op-Ed page — renders its own data when in opinion mode */}
-        {viewMode === "opinion" && (
-          <OpEdPage edition={activeEdition} leanRange={leanRange} />
-        )}
-
-        {/* Filter bar + Lean filter — lean filter is universal (both modes) */}
+        {/* Filter bar + Lean filter — ABOVE content in both modes */}
         <div className="filter-row">
           {viewMode === "facts" && (
             <FilterBar
@@ -352,6 +385,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             onChange={(range) => { setLeanRange(range); setShowAllCompact(false); }}
           />
         </div>
+
+        {/* Op-Ed page — renders its own data when in opinion mode */}
+        {viewMode === "opinion" && (
+          <OpEdPage edition={activeEdition} leanRange={leanRange} />
+        )}
 
         {/* Facts mode — live region, loading, error, empty states, story grids */}
         {viewMode === "facts" && (
