@@ -169,10 +169,10 @@
    Desktop: spring easing for physical weight. Mobile: ease-out for smoothness. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px);
   transition:
-    opacity 200ms var(--ease-out),
-    transform 350ms var(--spring);
+    opacity 180ms var(--ease-out),
+    transform 400ms var(--spring);
 }
 
 .anim-dd-section--visible {
@@ -263,6 +263,23 @@
   }
 }
 
+/* ---- Deep Dive: Drag indicator entrance (mobile bottom-sheet) ---------- */
+/* Width expands from 16px → 40px with a slight overshoot, then settles at 36px.
+   Plays once, 300ms after the panel arrives. */
+@keyframes dragIndicatorReveal {
+  0%   { width: 16px; opacity: 0; }
+  60%  { width: 40px; opacity: 0.7; }
+  100% { width: 36px; opacity: 0.6; }
+}
+
+/* ---- Deep Dive: Press Analysis arrow attention bounce ------------------ */
+/* Single subtle lateral bounce — draws attention to the trigger on first render. */
+@keyframes arrowBounce {
+  0%, 100% { transform: translateX(0); }
+  30%       { transform: translateX(3px); }
+  60%       { transform: translateX(-1px); }
+}
+
 /* ---- Reduced Motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -281,5 +298,23 @@
 
   .skeleton {
     animation: none !important;
+  }
+
+  /* Deep Dive micro-interactions: explicit overrides for clarity.
+     The * rule above already zeroes animation-duration; these ensure
+     no unexpected visual state from animation fill-mode. */
+  .dd-drag-indicator {
+    animation: none;
+  }
+
+  .dd-press-trigger__arrow {
+    animation: none;
+  }
+
+  /* Spectrum dot hover: suppress the translateY lift — only keep the
+     base translateX(-50%) centering. Scale is still suppressed via
+     transition-duration: 0ms from the * rule above. */
+  .dd-spectrum__dot:hover {
+    transform: translateX(-50%);
   }
 }
