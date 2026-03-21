@@ -645,30 +645,30 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
                   })}
                 </div>
               </div>
-              </div>{/* end dd-analysis-row__spectrum */}
 
-              {/* Press Analysis trigger — right end of the row */}
-              <button
-                className="dd-press-trigger"
-                onClick={() => setPressAnalysisOpen(v => !v)}
-                aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
-                aria-expanded={pressAnalysisOpen}
-              >
-                <span>Press Analysis</span>
-                <span
-                  className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`}
-                  aria-hidden="true"
+                {/* Press Analysis trigger — below spectrum, right-aligned */}
+                <button
+                  className="dd-press-trigger"
+                  onClick={() => setPressAnalysisOpen(v => !v)}
+                  aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
+                  aria-expanded={pressAnalysisOpen}
                 >
-                  &#9658;
-                </span>
-              </button>
+                  <span>Press Analysis</span>
+                  <span
+                    className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`}
+                    aria-hidden="true"
+                  >
+                    &#9658;
+                  </span>
+                </button>
 
-              {/* Press Analysis expand — full width below the row */}
-              <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}>
-                <div className="dd-press-expand__inner">
-                  <BiasInspectorInline sources={sources} />
+                {/* Press Analysis expand — below trigger, inside spectrum column */}
+                <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}>
+                  <div className="dd-press-expand__inner">
+                    <BiasInspectorInline sources={sources} />
+                  </div>
                 </div>
-              </div>
+              </div>{/* end dd-analysis-row__spectrum */}
             </section>
           )}
 

@@ -10,22 +10,22 @@
   border-bottom: var(--rule-thin);
   cursor: pointer;
   transition:
-    background-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-normal) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
+    background-color 200ms var(--ease-out),
+    box-shadow 280ms var(--ease-out),
+    transform 280ms var(--spring-bouncy);
 }
 
 .story-card:hover {
   background-color: var(--bg-secondary);
-  box-shadow: var(--shadow-e2);
+  box-shadow: var(--glass-shadow);
   transform: translateY(-2px);
 }
 
 /* Desktop press feedback — spring scale on mousedown */
 .story-card:active {
-  transform: scale(0.995) translateY(0);
+  transform: translateY(0px) scale(0.985);
   box-shadow: var(--shadow-e1);
-  transition-duration: var(--dur-fast);
+  transition: transform 100ms var(--ease-out), box-shadow 100ms var(--ease-out);
 }
 
 .story-card:focus-visible {
@@ -125,21 +125,21 @@
   border-bottom: var(--rule-strong);
   cursor: pointer;
   transition:
-    background-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-normal) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
+    background-color 200ms var(--ease-out),
+    box-shadow 280ms var(--ease-out),
+    transform 280ms var(--spring-bouncy);
 }
 
 .lead-story:hover {
   background-color: var(--bg-secondary);
-  box-shadow: var(--shadow-e2);
-  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow);
+  transform: translateY(-3px);
 }
 
 .lead-story:active {
-  transform: scale(0.995) translateY(0);
+  transform: translateY(0px) scale(0.99);
   box-shadow: var(--shadow-e1);
-  transition-duration: var(--dur-fast);
+  transition: transform 100ms var(--ease-out), box-shadow 100ms var(--ease-out);
 }
 
 /* Primary lead: larger headline to establish visual hierarchy over secondary */
@@ -348,10 +348,11 @@
   min-height: 44px;
   scroll-snap-align: start;
   transition:
-    color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-step) var(--spring);
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    transform 250ms var(--spring-bouncy),
+    box-shadow 200ms var(--ease-out);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -362,10 +363,13 @@
   color: var(--fg-secondary);
   background-color: var(--bg-secondary);
   border-color: var(--border-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .filter-chip:active {
-  transform: scale(0.96);
+  transform: scale(0.94);
+  transition: transform 80ms var(--ease-out);
 }
 
 .filter-chip:focus-visible {
@@ -383,6 +387,7 @@
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
   border-color: var(--fg-primary);
+  box-shadow: 0 0 0 1px var(--accent-warm), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 /* Colored dot inside lean chips — ring ensures visibility on cream/walnut */
@@ -438,10 +443,10 @@
     position: sticky;
     top: var(--nav-height);
     z-index: var(--z-sticky);
-    background-color: var(--bg-primary);
-    backdrop-filter: blur(var(--blur-e1));
-    -webkit-backdrop-filter: blur(var(--blur-e1));
-    border-bottom: var(--rule-thin);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border-bottom: 1px solid var(--glass-border);
     /* Negative side margins + matching padding cancel out page-main's horizontal
        padding so the sticky background extends edge-to-edge. */
     margin-left: calc(-1 * var(--space-7));
@@ -1086,8 +1091,10 @@
   position: sticky;
   top: 0;
   z-index: var(--z-nav);
-  background-color: var(--bg-primary);
-  border-bottom: var(--rule-thin);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom: 1px solid var(--glass-border);
   transition: background-color var(--dur-morph) var(--ease-out);
 }
 
@@ -1134,25 +1141,32 @@
   color: var(--fg-tertiary);
   text-decoration: none;
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   min-height: 36px;
   white-space: nowrap;
   transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
+    color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    background-color 150ms var(--ease-out),
+    transform 200ms var(--spring-bouncy),
+    box-shadow 200ms var(--ease-out);
 }
 
 .page-toggle:hover {
   color: var(--fg-primary);
   border-color: var(--border-strong);
   background-color: var(--bg-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--glass-shadow);
 }
 
 .page-toggle:active {
   transform: scale(0.95);
+  transition: transform 80ms var(--ease-out);
 }
 
 .page-toggle:focus-visible {
@@ -1243,6 +1257,8 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
@@ -1252,8 +1268,34 @@
   white-space: nowrap;
 }
 
+/* Sliding underline pseudo-element */
+.nav-tab::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--fg-primary);
+  border-radius: 1px;
+  transition:
+    width 250ms var(--spring-bouncy),
+    left 250ms var(--spring-bouncy);
+}
+
+.nav-tab--active::after {
+  width: 100%;
+  left: 0;
+}
+
 .nav-tab:hover:not(.nav-tab--active) {
   color: var(--fg-secondary);
+}
+
+.nav-tab:hover:not(.nav-tab--active)::after {
+  width: 60%;
+  left: 20%;
+  background-color: var(--fg-tertiary);
 }
 
 .nav-tab:active {
@@ -1268,7 +1310,7 @@
 .nav-tab--active {
   font-weight: 600;
   color: var(--fg-primary);
-  border-bottom-color: var(--fg-primary);
+  border-bottom-color: transparent;
 }
 
 .nav-tab__inner {
@@ -1284,8 +1326,10 @@
   left: 0;
   right: 0;
   z-index: var(--z-nav);
-  background-color: var(--bg-primary);
-  border-top: var(--rule-thin);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-top: 1px solid var(--glass-border);
   display: none;
   padding: var(--space-2) 0;
   justify-content: space-around;
@@ -1340,12 +1384,13 @@
   border-radius: var(--radius-md);
   transition:
     background-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-step) var(--spring);
+    transform 250ms var(--spring-bouncy);
   position: relative;
 }
 
 .theme-toggle:active {
-  transform: scale(0.92);
+  transform: scale(0.85) rotate(15deg);
+  transition: transform 80ms var(--ease-out);
 }
 
 .theme-toggle:focus-visible {
@@ -1369,20 +1414,21 @@
   align-items: center;
   justify-content: center;
   transition:
-    opacity var(--dur-morph) var(--ease-out),
-    transform var(--dur-morph) var(--ease-out);
+    opacity 200ms var(--ease-out),
+    transform 300ms var(--spring-bouncy);
 }
 
 .theme-toggle__icon--hidden {
   opacity: 0;
+  transform: rotate(90deg) scale(0.5);
 }
 
 .theme-toggle__icon--sun-hidden {
-  transform: rotate(-90deg);
+  transform: rotate(-90deg) scale(0.5);
 }
 
 .theme-toggle__icon--moon-hidden {
-  transform: rotate(90deg);
+  transform: rotate(90deg) scale(0.5);
 }
 
 /* (RefreshButton removed — pipeline runs on cron, browser refresh suffices) */
@@ -2762,8 +2808,7 @@
 }
 
 .dd-analysis-row__sigil {
-  flex: 0 0 25%;
-  max-width: 25%;
+  flex-shrink: 0;
 }
 
 .dd-analysis-row__spectrum {
@@ -2772,13 +2817,14 @@
 }
 
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
+/* Sits below the spectrum inside the spectrum column, right-aligned. */
 .dd-press-trigger {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: 0;
+  margin-left: auto;
+  margin-top: var(--space-1);
   padding: var(--space-1) 0;
-  flex-shrink: 0;
   background: none;
   border: none;
   cursor: pointer;
@@ -2821,14 +2867,11 @@
 }
 
 /* ---- Deep Dive: Press Analysis inline expand (grid-template-rows trick) - */
-/* TRUE dynamic height — content determines height. Full width of the row. */
+/* TRUE dynamic height — content determines height. */
 .dd-press-expand {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--dur-morph) var(--ease-out);
-  /* Span full width in the flex-wrap parent */
-  flex-basis: 100%;
-  width: 100%;
 }
 
 .dd-press-expand--open {
