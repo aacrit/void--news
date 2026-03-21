@@ -95,3 +95,17 @@ export async function fetchLastPipelineRun() {
   if (error) return null;
   return data;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function fetchDailyBrief(edition: string): Promise<any | null> {
+  const { data, error } = await supabase
+    .from('daily_briefs')
+    .select('id, edition, tldr_text, audio_url, audio_duration_seconds, audio_voice_label, created_at')
+    .eq('edition', edition)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error || !data) return null;
+  return data;
+}

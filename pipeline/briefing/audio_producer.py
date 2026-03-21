@@ -170,7 +170,8 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
     if not path.exists():
         return None
     try:
-        return AudioSegment.from_mp3(str(path))
+        fmt = "wav" if filename.endswith(".wav") else "mp3"
+        return AudioSegment.from_file(str(path), format=fmt)
     except Exception as e:
         print(f"  [warn][audio] Failed to load asset {filename}: {e}")
         return None
@@ -303,7 +304,7 @@ def produce_audio(
     # ── Stitching sequence ──────────────────────────────────────────────────
 
     # 1. Pips asset
-    pips = _load_asset("pips.mp3")
+    pips = _load_asset("pips.wav")
     _append(pips, "pips")
     _append_silence(_SILENCE_AFTER["PIPS"])
 
@@ -312,7 +313,7 @@ def produce_audio(
     _append_silence(_SILENCE_AFTER["COUNTDOWN"])
 
     # 3. Ident asset
-    ident = _load_asset("ident.mp3")
+    ident = _load_asset("ident.wav")
     _append(ident, "ident")
     _append_silence(_SILENCE_AFTER["IDENT"])
 
@@ -338,7 +339,7 @@ def produce_audio(
     _append_silence(_SILENCE_AFTER["SIGNOFF"])
 
     # 9. Outro asset
-    outro = _load_asset("outro.mp3")
+    outro = _load_asset("outro.wav")
     _append(outro, "outro")
     _append_silence(_SILENCE_AFTER["OUTRO"])
 

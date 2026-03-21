@@ -2992,6 +2992,158 @@
   color: var(--fg-tertiary);
 }
 
+/* ---- Daily Brief — TL;DR + audio player -------------------------------- */
+
+.daily-brief {
+  border-left: 3px solid var(--accent-warm);
+  padding: var(--space-4) var(--space-5);
+  margin: var(--space-4) 0;
+  background-color: var(--bg-secondary);
+  border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+}
+
+.daily-brief__content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.daily-brief__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.daily-brief__label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  margin-bottom: var(--space-2);
+}
+
+.daily-brief__body {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--fg-primary);
+  max-width: 65ch;
+}
+
+.daily-brief__body p {
+  margin-bottom: var(--space-1);
+}
+
+.daily-brief__body p:last-child {
+  margin-bottom: 0;
+  color: var(--fg-secondary);
+}
+
+/* Player controls */
+.daily-brief__player {
+  flex-shrink: 0;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.daily-brief__play-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--accent-warm);
+  color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.daily-brief__play-btn:hover {
+  transform: scale(1.08);
+}
+
+.daily-brief__play-btn:active {
+  transform: scale(0.95);
+}
+
+.daily-brief__play-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+/* Progress bar */
+.daily-brief__progress {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background-color: var(--border-subtle);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.daily-brief__progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--accent-warm);
+  cursor: pointer;
+}
+
+.daily-brief__progress::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--accent-warm);
+  cursor: pointer;
+  border: none;
+}
+
+.daily-brief__progress::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.daily-brief__progress::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--border-subtle);
+}
+
+.daily-brief__time {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.daily-brief__voice-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Sticky mobile player bar — hidden by default, shown via --visible modifier */
+.daily-brief__sticky {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daily-brief__play-btn {
+    transition: none;
+  }
+}
+
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */
 /* Prevents sticky hover states after tap on iOS/Android (no mouse, no hover). */
 @media (hover: none) {

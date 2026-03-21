@@ -136,6 +136,11 @@
   .deep-dive-close {
     display: none;
   }
+
+  /* Daily Brief: wider player column on desktop */
+  .daily-brief__player {
+    width: 220px;
+  }
 }
 
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
@@ -624,6 +629,43 @@
   :focus-visible {
     outline: 3px solid var(--accent-warm);
     outline-offset: 2px;
+  }
+
+  /* === DAILY BRIEF === */
+
+  /* Stacked layout on mobile */
+  .daily-brief__content {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Horizontal player row on mobile */
+  .daily-brief__player {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .daily-brief__progress {
+    flex: 1;
+  }
+
+  /* Sticky bottom player — visible when playing and scrolled past */
+  .daily-brief__sticky--visible {
+    display: flex;
+    position: fixed;
+    bottom: calc(var(--nav-bottom-height, 68px) + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky, 10);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border-top: 1px solid var(--glass-border, var(--border-subtle));
+    padding: var(--space-2) var(--space-5);
+    align-items: center;
+    gap: var(--space-3);
   }
 }
 

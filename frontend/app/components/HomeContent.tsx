@@ -15,6 +15,7 @@ import ErrorBoundary from "./ErrorBoundary";
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
+import DailyBrief from "./DailyBrief";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -364,6 +365,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
           />
         </div>
+
+        {/* Daily Brief — TL;DR + audio player */}
+        {!isLoading && stories.length > 0 && (
+          <DailyBrief edition={activeEdition} />
+        )}
 
         {/* Live region, loading, error, empty states, story grids */}
         <>
