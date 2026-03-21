@@ -125,12 +125,16 @@
    to play only when the card enters the viewport. Falls back to
    animationDelay inline style for per-card stagger. */
 .anim-stagger {
-  animation: springEntranceCard var(--dur-step) var(--spring) both;
-  animation-play-state: paused;
+  opacity: 0;
+  transform: translateY(12px);
 }
 
 .anim-stagger--visible {
-  animation-play-state: running;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 120ms var(--ease-out),
+    transform 300ms var(--spring-bouncy);
 }
 
 /* Filter-change card entrance — fires immediately (not paused).
@@ -316,5 +320,48 @@
      transition-duration: 0ms from the * rule above. */
   .dd-spectrum__dot:hover {
     transform: translateX(-50%);
+  }
+
+  /* Glass morphism + micro-interaction overrides */
+  .story-card,
+  .lead-story,
+  .filter-chip,
+  .nav-tab,
+  .nav-tab::after,
+  .page-toggle,
+  .theme-toggle,
+  .theme-toggle__icon,
+  .category-tag {
+    transition: none !important;
+  }
+
+  /* Suppress hover transforms — keep visual hover feedback via color only */
+  .story-card:hover,
+  .lead-story:hover {
+    transform: none;
+  }
+
+  .filter-chip:hover {
+    transform: none;
+  }
+
+  .page-toggle:hover {
+    transform: none;
+  }
+
+  .category-tag:hover {
+    transform: none;
+  }
+
+  /* Stagger entrance: skip transform, just fade in instantly */
+  .anim-stagger {
+    opacity: 0;
+    transform: none;
+  }
+
+  .anim-stagger--visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0ms !important;
   }
 }
