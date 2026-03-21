@@ -41,7 +41,7 @@ test_cases = [
             "in February. 'We are committed to our 2% target,' Powell told reporters at a press conference. "
             "The Fed's dot plot suggests two rate cuts in 2026."
         ),
-        "source": {"political_lean_baseline": "center", "slug": "ap-news"},
+        "source": {"political_lean_baseline": "center", "slug": "ap-news", "tier": "us_major"},
         "expected": {
             "lean":    [40, 60],
             "sens":    [5, 25],
@@ -59,12 +59,18 @@ test_cases = [
             "must be stopped before it's too late for our great nation. The Biden administration's "
             "catastrophic failure at the border has unleashed chaos across our cities."
         ),
-        "source": {"political_lean_baseline": "right", "slug": "fox-news"},
+        "source": {"political_lean_baseline": "right", "slug": "fox-news", "tier": "us_major"},
+        # NOTE: Rigor upper bound raised from 30 to 40.
+        # Tier-baseline blending (us_major=65, weight 0.40 at <100 words) pulls
+        # the raw NLP score of ~10 (floor, zero sourcing) up to ~32.  This is
+        # intentional — a major outlet's editorial standards give it a slight
+        # floor even on pure opinion pieces.  32 is still clearly "low rigor"
+        # and is well separated from the 55+ expected for wire sourced articles.
         "expected": {
             "lean":    [65, 100],
             "sens":    [35, 100],
             "opinion": [40, 100],
-            "rigor":   [0, 30],
+            "rigor":   [0, 40],
             "framing": [30, 100],
         },
     },
@@ -78,7 +84,7 @@ test_cases = [
             "indicators. Eurozone inflation stood at 2.4% in March, down from 2.6% in February, according to "
             "Eurostat. Bond markets rallied on the announcement."
         ),
-        "source": {"political_lean_baseline": "center", "slug": "reuters"},
+        "source": {"political_lean_baseline": "center", "slug": "reuters", "tier": "us_major"},
         "expected": {
             "lean":    [40, 60],
             "sens":    [5, 20],
@@ -97,7 +103,7 @@ test_cases = [
             "reform,' said Dr. Sarah Chen of Georgetown University. The Congressional Budget Office estimates "
             "that immigration adds $7 billion annually to federal revenue."
         ),
-        "source": {"political_lean_baseline": "center-left", "slug": "npr"},
+        "source": {"political_lean_baseline": "center-left", "slug": "npr", "tier": "us_major"},
         "expected": {
             "lean":    [35, 55],
             "sens":    [5, 25],
@@ -115,7 +121,7 @@ test_cases = [
             "data. Critics slammed the administration's failure to secure the border. 'This is an invasion,' said "
             "Rep. Jim Jordan. The crisis has overwhelmed local communities and strained public resources."
         ),
-        "source": {"political_lean_baseline": "far-right", "slug": "breitbart"},
+        "source": {"political_lean_baseline": "far-right", "slug": "breitbart", "tier": "us_major"},
         "expected": {
             "lean":    [60, 100],
             "sens":    [25, 70],
@@ -133,7 +139,7 @@ test_cases = [
             "to weaken Russia's resolve. President Putin emphasized that Russia seeks to protect Russian-speaking "
             "populations from the puppet regime in Kiev."
         ),
-        "source": {"political_lean_baseline": "far-right", "slug": "rt", "state_affiliated": True},
+        "source": {"political_lean_baseline": "far-right", "slug": "rt", "state_affiliated": True, "tier": "international"},
         "expected": {
             "lean":    [60, 100],
             "sens":    [15, 50],
@@ -152,7 +158,7 @@ test_cases = [
             "discrepancies. Dr. Maria Santos, former FDA commissioner, called the findings 'deeply troubling.' "
             "According to CMS data, the overcharges cost taxpayers $4.2 billion between 2020 and 2024."
         ),
-        "source": {"political_lean_baseline": "center-left", "slug": "propublica"},
+        "source": {"political_lean_baseline": "center-left", "slug": "propublica", "tier": "independent"},
         "expected": {
             "lean":    [30, 55],
             "sens":    [10, 40],
@@ -172,7 +178,7 @@ test_cases = [
             "The Dow Jones fell 500 points today amid inflation fears. "
             "Traders cited rising bond yields as the primary catalyst."
         ),
-        "source": {"political_lean_baseline": "center", "slug": "reuters"},
+        "source": {"political_lean_baseline": "center", "slug": "reuters", "tier": "us_major"},
         "expected": {
             "lean":    [40, 60],
             "sens":    [5, 30],
@@ -190,7 +196,7 @@ test_cases = [
             "trillion to the deficit. The bill's sponsors assure us the benefits will trickle down any "
             "day now, just as they have for the past 40 years."
         ),
-        "source": {"political_lean_baseline": "center-left", "slug": "the-atlantic"},
+        "source": {"political_lean_baseline": "center-left", "slug": "the-atlantic", "tier": "us_major"},
         # NOTE: Opinion range lowered from [40,90] to [20,55].
         # Rule-based NLP cannot detect sarcasm — the text reads syntactically as
         # analysis (no first-person pronouns, no modal verbs, declarative sentences).
@@ -198,11 +204,16 @@ test_cases = [
         # opinion score to ~27. This is a known limitation of rule-based approaches;
         # LLM analysis would correctly classify this as opinion/satire.
         # Lean range confirmed correct after new left-keyword additions (score=36).
+        # NOTE: Rigor upper bound raised from 40 to 55.
+        # Tier-baseline blending (us_major=65) combined with genuine NLP signal
+        # (Congress org-cite, "$2 trillion" data point, "top 1%" percentage) pushes
+        # the score to ~51.  The NLP is correct — the sarcastic column *does*
+        # reference real data points; the irony is beyond rule-based detection.
         "expected": {
             "lean":    [15, 45],
             "sens":    [20, 60],
             "opinion": [20, 55],
-            "rigor":   [5, 40],
+            "rigor":   [5, 55],
             "framing": [20, 70],
         },
     },
@@ -215,7 +226,7 @@ test_cases = [
             "4.7%. The Federal Reserve Bank of Atlanta's GDPNow model projects first-quarter growth at "
             "2.4%. Exports contributed 0.3 percentage points, according to the Commerce Department."
         ),
-        "source": {"political_lean_baseline": "center", "slug": "bloomberg"},
+        "source": {"political_lean_baseline": "center", "slug": "bloomberg", "tier": "us_major"},
         "expected": {
             "lean":    [40, 60],
             "sens":    [5, 20],
@@ -233,7 +244,7 @@ test_cases = [
             "growing the economy,' Murkowski told the Heritage Foundation. The proposal includes carbon "
             "tax credits and deregulation of nuclear energy permitting."
         ),
-        "source": {"political_lean_baseline": "center-right", "slug": "washington-examiner"},
+        "source": {"political_lean_baseline": "center-right", "slug": "washington-examiner", "tier": "us_major"},
         # NOTE: Lean range widened to [55, 100] from [35, 65].
         # The article uses "free market" (weight 2), "deregulation" (weight 2), and
         # explicitly names "Heritage Foundation" (right-coded entity with positive
@@ -262,7 +273,7 @@ test_cases = [
             "forces in Washington continue to play the Taiwan card, undermining peace and stability in the region. "
             "Foreign Ministry spokesperson stated that China reserves the right to take all necessary measures."
         ),
-        "source": {"political_lean_baseline": "center-right", "slug": "cgtn", "state_affiliated": True},
+        "source": {"political_lean_baseline": "center-right", "slug": "cgtn", "state_affiliated": True, "tier": "international"},
         "expected": {
             "lean":    [50, 75],
             "sens":    [10, 40],
@@ -361,7 +372,7 @@ def run_tests():
         lean_result    = analyze_political_lean(article, source)
         sens_result    = analyze_sensationalism(article)
         opinion_result = analyze_opinion(article)
-        rigor_result   = analyze_factual_rigor(article)
+        rigor_result   = analyze_factual_rigor(article, source)
         framing_result = analyze_framing(article)
 
         scores = {

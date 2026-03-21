@@ -21,6 +21,30 @@ from utils.nlp_shared import get_nlp
 
 
 # ---------------------------------------------------------------------------
+# Tier-based factual rigor baselines for source reputation blending.
+#
+# When an article has very short text (RSS stubs, 15-80 words), NER-based
+# sub-scorers return near-zero because there is insufficient signal.  A
+# tier baseline lets us weight in the source's editorial reputation so that
+# an AP wire stub is not treated identically to an unsourced blog post.
+#
+# Blending weight is INVERSELY proportional to text length:
+#   <100 words  → 0.60 text + 0.40 baseline  (lean on reputation)
+#   100-300 words → 0.80 text + 0.20 baseline
+#   300+ words  → 0.90 text + 0.10 baseline
+#
+# Tier values are intentionally conservative — reputation gives a floor,
+# not a free pass.  A 15-word AP stub with baseline 65 blends to ~30,
+# not 65, because text weight still dominates.
+# ---------------------------------------------------------------------------
+TIER_BASELINES: dict[str, float] = {
+    "us_major":      65.0,   # AP, Reuters, NYT, WSJ, Bloomberg, etc.
+    "international": 55.0,   # BBC, Al Jazeera, DW, France24, etc.
+    "independent":   40.0,   # ProPublica, The Intercept, Bellingcat, etc.
+}
+_DEFAULT_BASELINE = 45.0     # Fallback for unknown/missing tier
+
+# ---------------------------------------------------------------------------
 # Attribution verb patterns (for named source detection)
 # ---------------------------------------------------------------------------
 ATTRIBUTION_VERBS = re.compile(
@@ -252,12 +276,15 @@ def _attribution_specificity_score(text: str) -> float:
     return specific_ratio * 100.0
 
 
-def analyze_factual_rigor(article: dict) -> dict:
+def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
     """
     Score the factual rigor of an article.
 
     Args:
         article: Dict with keys: full_text, title, summary.
+        source:  Optional source dict.  If provided, must include "tier"
+                 (one of "us_major", "international", "independent").
+                 Used for tier-baseline blending on short-text articles.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with evidence counts).
@@ -267,16 +294,19 @@ def analyze_factual_rigor(article: dict) -> dict:
     RSS-only articles (scrape failure fallback) still contribute their summary
     signal — otherwise short combined text causes all sub-scorers to return 0.
 
-    Minimum floor: a length-proportional floor prevents scores of 0 for
-    articles with very short text (title-only, RSS stubs). The floor scales
-    from 5 (empty) to 0 at 200+ words, so genuinely short articles are not
-    penalised to zero but also don't artificially inflate the score.
-    Short-text floor values:
-        0 words  -> 10 (early-return)
-        1-50 words   -> floor ~7
-        50-100 words -> floor ~4
-        100-200 words -> floor ~1
-        200+ words   -> floor 0 (no correction needed)
+    Tier-baseline blending: on short articles (< 300 words) the raw NLP score
+    is blended with a tier-based reputation baseline so that a 15-word AP stub
+    does not receive the same score as a 15-word unsourced stub.  Blending
+    weights are inversely proportional to word count:
+        < 100 words  : 0.60 text + 0.40 baseline
+        100-299 words: 0.80 text + 0.20 baseline
+        300+ words   : 0.90 text + 0.10 baseline  (baseline almost invisible)
+
+    Short-text floor (applied before blending):
+        <= 30 words  : floor = 15  (nearly no signal — benefit of the doubt)
+        31-100 words : floor = 10
+        101-199 words: floor = 8
+        200+ words   : no floor (enough text to score properly)
     """
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
@@ -333,15 +363,48 @@ def analyze_factual_rigor(article: dict) -> dict:
 
     raw_score = max(0.0, min(100.0, weighted))
 
-    # Length-proportional minimum floor: prevents score=0 for short text
-    # articles where all NLP sub-scorers return 0 due to insufficient signal.
-    # Floor decays linearly from 8 (<=50 words) to 0 (>=200 words).
-    # This is a conservative floor — it does not inflate good articles, only
-    # prevents catastrophic under-scoring of stubs and RSS-fallback articles.
+    # ---------------------------------------------------------------------------
+    # Short-text floor: prevents catastrophic under-scoring of RSS stubs where
+    # all NLP sub-scorers return 0 due to insufficient signal.
+    # Floors are step-based (not linear) and calibrated to give benefit of the
+    # doubt to very short articles while not inflating scores for medium-length
+    # text where the NLP scorers already have enough signal.
+    # ---------------------------------------------------------------------------
     word_count = len(combined.split())
-    if word_count < 200:
-        floor = max(0.0, 8.0 * (1.0 - word_count / 200.0))
-        raw_score = max(raw_score, floor)
+    if word_count <= 30:
+        floor = 15.0
+    elif word_count <= 100:
+        floor = 10.0
+    elif word_count < 200:
+        floor = 8.0
+    else:
+        floor = 0.0
+    raw_score = max(raw_score, floor)
+
+    # ---------------------------------------------------------------------------
+    # Tier-baseline blending: on short articles the raw NLP score is blended
+    # with a tier reputation baseline so that a reputable wire-service stub
+    # is distinguished from an unsourced short stub.
+    #
+    # Blending weight on the baseline is inversely proportional to word count:
+    #   < 100 words   → baseline_weight = 0.40
+    #   100-299 words → baseline_weight = 0.20
+    #   300+ words    → baseline_weight = 0.10  (baseline nearly invisible)
+    # ---------------------------------------------------------------------------
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = TIER_BASELINES.get(tier, _DEFAULT_BASELINE)
+
+        if word_count < 100:
+            baseline_weight = 0.40
+        elif word_count < 300:
+            baseline_weight = 0.20
+        else:
+            baseline_weight = 0.10
+
+        text_weight = 1.0 - baseline_weight
+        raw_score = raw_score * text_weight + tier_baseline * baseline_weight
+        raw_score = max(0.0, min(100.0, raw_score))
 
     score = max(0, min(100, int(round(raw_score))))
 

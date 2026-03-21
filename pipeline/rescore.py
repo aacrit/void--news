@@ -50,18 +50,41 @@ except ImportError as _err:
 def compute_confidence(article: dict, scores: dict) -> float:
     """
     Compute per-article analysis confidence based on text quality and signal
-    strength.  Identical formula to main.py compute_confidence().
+    strength.  Mirrors main.py compute_confidence() with one important
+    adjustment for the rescore context:
+
+    During a live pipeline run full_text is the complete scraped article body,
+    so `len(full_text)` is a valid proxy for text richness.  In rescore.py the
+    DB has already had full_text truncated to 300 chars (pipeline step 10, IP
+    compliance), so measuring `len(full_text)` would always give text_conf ≈ 0.3
+    regardless of the article's true length — causing a systematic confidence
+    regression (~19% observed in v5.0 rescore).
+
+    Fix: prefer word_count (stored pre-truncation in the articles table) to
+    derive text_conf.  150 words ≈ 1000 chars, so `word_count / 150` maps to
+    the same 0.1–1.0 range as the main.py `len(full_text) / 1000` ramp.
+    Fall back to the raw full_text length only when word_count is absent.
 
     Factors:
-        - Word count:       short articles have less signal      (30%)
+        - Word count:        short articles have less signal      (30%)
         - Text availability: no full text = very low confidence  (30%)
-        - Signal variance:  scores near defaults = low confidence (40%)
+        - Signal variance:   scores near defaults = low confidence (40%)
     """
     word_count = article.get("word_count", 0) or 0
     full_text = article.get("full_text", "") or ""
 
     length_conf = min(1.0, word_count / 500.0) if word_count > 0 else 0.1
-    text_conf = min(1.0, max(0.1, len(full_text) / 1000.0)) if full_text else 0.1
+
+    # Use word_count (pre-truncation) instead of len(full_text) (post-truncation)
+    # to avoid systematic underestimation of text richness in rescore context.
+    if word_count > 0:
+        # 150 words ≈ 1000 chars; same 0.1–1.0 ramp as main.py
+        text_conf = min(1.0, max(0.1, word_count / 150.0))
+    elif full_text:
+        # Fallback: article has text but no word_count stored (legacy rows)
+        text_conf = min(1.0, max(0.1, len(full_text) / 1000.0))
+    else:
+        text_conf = 0.1
 
     defaults = {
         "political_lean": 50, "sensationalism": 10,
@@ -141,7 +164,7 @@ def run_bias_analysis(article: dict, source: dict,
         print(f"    [warn] opinion_detector failed: {exc}")
 
     try:
-        result = analyze_factual_rigor(article)
+        result = analyze_factual_rigor(article, source)
         if isinstance(result, dict):
             scores["factual_rigor"] = result["score"]
             rationale["coverage"] = result["rationale"]

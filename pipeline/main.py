@@ -277,7 +277,7 @@ def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] 
         print(f"    [warn] Opinion detection failed: {e}")
 
     try:
-        result = analyze_factual_rigor(article)
+        result = analyze_factual_rigor(article, source)
         if isinstance(result, dict):
             scores["factual_rigor"] = result["score"]
             rationale["coverage"] = result["rationale"]
