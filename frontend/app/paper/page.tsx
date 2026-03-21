@@ -11,22 +11,8 @@ import type {
   OpinionLabel,
   SigilData,
 } from "../lib/types";
-import { supabase, fetchOpinionArticles } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 import "./paper.css";
-
-// --- Op-ed article type (individual source articles, not cluster summaries) ---
-interface OpEdArticle {
-  id: string;
-  title: string;       // Original source headline
-  summary: string;     // Full article summary — shown without truncation
-  url: string;         // Source link
-  sourceName: string;  // e.g., "The Washington Post"
-  sourceTier: string;  // us_major, international, independent
-  publishedAt: string;
-  opinionLabel: OpinionLabel;
-  politicalLean: number;
-  sensationalism: number;
-}
 
 /* ---------------------------------------------------------------------------
    E-Paper Edition — 1930s Static Broadsheet Newspaper
@@ -218,10 +204,6 @@ function articleByline(sourceCount: number, tierBreakdown?: Record<string, numbe
   return `From multiple outlets \u2014 ${sourceCount} Sources`;
 }
 
-function isOpinionPiece(label: OpinionLabel): boolean {
-  return label === "Opinion" || label === "Editorial";
-}
-
 function Article({
   story,
   size,
@@ -231,13 +213,9 @@ function Article({
 }) {
   const datelineMap = story.section === "us" ? US_DATELINES : WORLD_DATELINES;
   const dateline = datelineMap[story.category] || (story.section === "us" ? "WASHINGTON, D.C." : "LONDON");
-  const opinion = isOpinionPiece(story.sigilData.opinionLabel);
 
   return (
-    <article className={`np-article np-article--${size}${opinion ? " np-article--opinion" : ""}`}>
-      {opinion && (
-        <p className="np-article__opinion-label">{story.sigilData.opinionLabel}</p>
-      )}
+    <article className={`np-article np-article--${size}`}>
       <h2 className="np-article__headline">{story.title}</h2>
       <p className="np-article__byline">
         {articleByline(story.source.count, story.sigilData.tierBreakdown)}
@@ -246,21 +224,6 @@ function Article({
         <span className="np-article__dateline">{dateline} &mdash; </span>
         {story.summary}
       </p>
-    </article>
-  );
-}
-
-// --- Op-Ed Article Component ---
-// Renders individual opinion/editorial pieces from a single source.
-// No dateline — the source attribution IS the provenance.
-
-function OpEdArticleComponent({ oped }: { oped: OpEdArticle }) {
-  return (
-    <article className="np-article np-article--secondary np-article--opinion np-article--oped">
-      <p className="np-article__opinion-label">{oped.opinionLabel}</p>
-      <h2 className="np-article__headline">{oped.title}</h2>
-      <p className="np-article__byline">From {oped.sourceName}</p>
-      <p className="np-article__summary">{oped.summary}</p>
     </article>
   );
 }
@@ -428,17 +391,14 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
 
 export default function PaperPage() {
   const [allStories, setAllStories] = useState<Story[]>([]);
-  const [worldOpEds, setWorldOpEds] = useState<OpEdArticle[]>([]);
-  const [usOpEds, setUsOpEds] = useState<OpEdArticle[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,content_type,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
 
-        // Fetch stories — try enriched query with content_type filter first
         let worldClusters: any[] = [];
         let usClusters: any[] = [];
 
@@ -447,40 +407,18 @@ export default function PaperPage() {
             .from("story_clusters")
             .select(enrichedFields)
             .contains("sections", ["world"])
-            .eq("content_type", "reporting")
             .order("headline_rank", { ascending: false })
             .limit(100),
           supabase
             .from("story_clusters")
             .select(enrichedFields)
             .contains("sections", ["us"])
-            .eq("content_type", "reporting")
             .order("headline_rank", { ascending: false })
             .limit(100),
         ]);
 
         worldClusters = worldRes.data || [];
         usClusters = usRes.data || [];
-
-        // Fallback: if content_type filter returned nothing, fetch without it
-        if (worldClusters.length === 0 && usClusters.length === 0) {
-          const [wFallback, uFallback] = await Promise.all([
-            supabase
-              .from("story_clusters")
-              .select(enrichedFields)
-              .contains("sections", ["world"])
-              .order("headline_rank", { ascending: false })
-              .limit(100),
-            supabase
-              .from("story_clusters")
-              .select(enrichedFields)
-              .contains("sections", ["us"])
-              .order("headline_rank", { ascending: false })
-              .limit(100),
-          ]);
-          worldClusters = wFallback.data || [];
-          usClusters = uFallback.data || [];
-        }
 
         // Deduplicate
         const seen = new Set<string>();
@@ -493,36 +431,7 @@ export default function PaperPage() {
         }
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
 
-        // Fetch op-eds (non-blocking — if this fails, we still show news)
-        let worldOpEdRaw: any[] = [];
-        let usOpEdRaw: any[] = [];
-        try {
-          [worldOpEdRaw, usOpEdRaw] = await Promise.all([
-            fetchOpinionArticles("world"),
-            fetchOpinionArticles("us"),
-          ]);
-        } catch {
-          // Op-ed fetch failed — continue without them
-        }
-
-        function mapOpEd(raw: any): OpEdArticle {
-          return {
-            id: raw.id,
-            title: raw.title,
-            summary: raw.summary,
-            url: raw.url,
-            sourceName: raw.sourceName,
-            sourceTier: raw.sourceTier,
-            publishedAt: raw.publishedAt,
-            opinionLabel: deriveOpinionLabel(65),
-            politicalLean: raw.politicalLean,
-            sensationalism: raw.sensationalism,
-          };
-        }
-
         setAllStories(stories);
-        setWorldOpEds(worldOpEdRaw.map(mapOpEd));
-        setUsOpEds(usOpEdRaw.map(mapOpEd));
       } catch (err) {
         console.error("Paper page load failed:", err);
       } finally {
@@ -550,7 +459,6 @@ export default function PaperPage() {
   // Keep only the highest-ranked stories for a readable edition.
   const FRONT_PAGE_COUNT = 3;
   const SECTION_CAP = 50;      // max news stories per section
-  const OPED_CAP = 20;         // max op-eds per section
 
   const frontPage = allStories.slice(0, FRONT_PAGE_COUNT);
   const lead = frontPage[0];
@@ -565,33 +473,6 @@ export default function PaperPage() {
   const usStories = allStories
     .filter((s) => s.section === "us" && !frontPageIds.has(s.id))
     .slice(0, SECTION_CAP);
-
-  // --- Interleave op-eds into a story list ---
-  // Returns a flat array of tagged items: cluster stories with an op-ed
-  // inserted after every 4th cluster story. Op-eds are consumed in order.
-  type SectionItem =
-    | { kind: "story"; story: Story }
-    | { kind: "oped"; oped: OpEdArticle };
-
-  function interleave(stories: Story[], opeds: OpEdArticle[]): SectionItem[] {
-    const result: SectionItem[] = [];
-    let opedIndex = 0;
-    for (let i = 0; i < stories.length; i++) {
-      result.push({ kind: "story", story: stories[i] });
-      // After every 4th story, insert the next op-ed if available
-      if ((i + 1) % 4 === 0 && opedIndex < opeds.length) {
-        result.push({ kind: "oped", oped: opeds[opedIndex++] });
-      }
-    }
-    // Append any remaining op-eds at the end of the section
-    while (opedIndex < opeds.length) {
-      result.push({ kind: "oped", oped: opeds[opedIndex++] });
-    }
-    return result;
-  }
-
-  const worldItems = interleave(worldStories, worldOpEds.slice(0, OPED_CAP));
-  const usItems = interleave(usStories, usOpEds.slice(0, OPED_CAP));
 
   const hour = new Date().getUTCHours();
   const editionName = hour < 17 ? "Morning" : "Evening";
@@ -625,42 +506,30 @@ export default function PaperPage() {
         </div>
       )}
 
-      {/* World News — cluster stories interleaved with op-eds */}
-      {!isLoading && worldItems.length > 0 && (
+      {/* World News */}
+      {!isLoading && worldStories.length > 0 && (
         <>
           <SectionLabel label="WORLD NEWS" />
           <div className="np-broadsheet">
-            {worldItems.map((item) =>
-              item.kind === "story" ? (
-                <div key={item.story.id} className="np-col">
-                  <Article story={item.story} size="secondary" />
-                </div>
-              ) : (
-                <div key={`oped-${item.oped.id}`} className="np-col">
-                  <OpEdArticleComponent oped={item.oped} />
-                </div>
-              )
-            )}
+            {worldStories.map((story) => (
+              <div key={story.id} className="np-col">
+                <Article story={story} size="secondary" />
+              </div>
+            ))}
           </div>
         </>
       )}
 
-      {/* Domestic — cluster stories interleaved with op-eds */}
-      {!isLoading && usItems.length > 0 && (
+      {/* Domestic */}
+      {!isLoading && usStories.length > 0 && (
         <>
           <SectionLabel label="DOMESTIC" />
           <div className="np-broadsheet">
-            {usItems.map((item) =>
-              item.kind === "story" ? (
-                <div key={item.story.id} className="np-col">
-                  <Article story={item.story} size="secondary" />
-                </div>
-              ) : (
-                <div key={`oped-${item.oped.id}`} className="np-col">
-                  <OpEdArticleComponent oped={item.oped} />
-                </div>
-              )
-            )}
+            {usStories.map((story) => (
+              <div key={story.id} className="np-col">
+                <Article story={story} size="secondary" />
+              </div>
+            ))}
           </div>
         </>
       )}

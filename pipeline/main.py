@@ -750,6 +750,13 @@ def _scrape_single(article_data, source_map):
         article_data["full_text"] = scraped.get("full_text", "")
         article_data["word_count"] = scraped.get("word_count", 0)
         article_data["image_url"] = scraped.get("image_url")
+        # Use canonical URL (final URL after redirects) when available.
+        # Google News RSS entries link to news.google.com/rss/articles/CBMi...
+        # which redirect to the real article. Storing the canonical URL ensures
+        # deduplication works correctly across pipeline runs.
+        canonical = scraped.get("canonical_url", "")
+        if canonical and canonical != url:
+            article_data["url"] = canonical
     except Exception:
         pass  # Article proceeds with empty full_text
 
@@ -1119,13 +1126,20 @@ def main():
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
             current_ids = {a.get("id", "") for a in stored_articles}
             recent_res = supabase.table("articles").select(
-                "id,title,summary,full_text,source_id,published_at,word_count"
-            ).gte("published_at", cutoff).limit(800).execute()
+                "id,title,summary,full_text,source_id,published_at,fetched_at,word_count,section"
+            ).gte("published_at", cutoff).limit(1500).execute()
             # Only add articles NOT in the current batch (avoid duplicates)
+            # Also enrich with tier/source_name so Gemini prompts can attribute correctly
+            db_id_to_source = {s.get("db_id"): s for s in source_map.values() if s.get("db_id")}
             for art in (recent_res.data or []):
                 if art["id"] not in current_ids:
-                    # Resolve source_slug from source_map for clustering
-                    art["section"] = art.get("section", "world")
+                    # Preserve stored section (already computed at scrape time)
+                    art["section"] = art.get("section") or "world"
+                    # Backfill tier, source_slug, source_name from source_map
+                    src_info = db_id_to_source.get(art.get("source_id", ""), {})
+                    art["tier"] = src_info.get("tier", "")
+                    art["source_slug"] = src_info.get("id", "")
+                    art["source_name"] = src_info.get("name", "")
                     recent_articles.append(art)
             print(f"  Current batch: {len(stored_articles)}, 48h lookback: {len(recent_articles)}")
         except Exception as e:
@@ -1471,7 +1485,10 @@ def main():
         # The ordering is preserved; the spread is preserved.
         for ctype in ("reporting", "opinion"):
             pool = [c for c in clusters if c.get("content_type") == ctype]
-            pool.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+            pool.sort(
+                key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), str(id(c))),
+                reverse=True,
+            )
             for c in pool:
                 raw = max(0.0, min(100.0, c.get("headline_rank", 0)))
                 c["headline_rank"] = round(5.0 + raw * 0.95, 2)
@@ -1484,7 +1501,13 @@ def main():
             elif st == "ceremonial":
                 cluster["headline_rank"] = round(cluster.get("headline_rank", 0) * 0.82, 2)
 
-        clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+        # v5.2: deterministic sort — tiebreak on source_count (more sources = higher
+        # priority), then cluster _db_id or object id as final tiebreaker to ensure
+        # identical headline_rank values always sort the same way across runs.
+        clusters.sort(
+            key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
+            reverse=True,
+        )
 
         # Step 7c: Editorial triage (Gemini) — reorder top 10 per section
         # Uses 1 API call per section (3 total). Falls back to deterministic
@@ -1496,7 +1519,10 @@ def main():
                 for section_val in ("world", "us", "india"):
                     pool = [c for c in clusters
                             if section_val in (c.get("sections") or [c.get("section", "world")])]
-                    pool.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+                    pool.sort(
+                        key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
+                        reverse=True,
+                    )
                     top_30 = pool[:30]
                     if len(top_30) < 5:
                         continue
@@ -1536,7 +1562,10 @@ def main():
             except Exception as e:
                 print(f"  [warn] Editorial triage failed, using deterministic ranking: {e}")
 
-        clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+        clusters.sort(
+            key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
+            reverse=True,
+        )
 
         # Same-event cap (v5.1): max 3 stories about the same major event.
         # Without this, 11/20 top stories can be Iran war variants.
@@ -1578,7 +1607,10 @@ def main():
                         floor = event_promoted[-1].get("headline_rank", 0) - 0.1
                         clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
 
-            clusters.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+            clusters.sort(
+                key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
+                reverse=True,
+            )
 
         # Topic diversity re-ranking: prevent any single category from
         # dominating the top of the feed. Within each section pool (world/us),

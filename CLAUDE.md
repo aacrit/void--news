@@ -517,10 +517,10 @@ void-news/
 │   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; exports BiasInspectorInline (rendered inside DeepDive "Press Analysis ▶" expandable section), BiasInspectorTrigger, BiasInspectorPanel (backward-compat); each axis collapsible with Gemini reasoning text
 │   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism (active bias viz)
 │   │   │   ├── DeepDive.tsx       # Slide-in panel: seamless lede, lean spectrum, "Press Analysis ▶" collapsible trigger (BiasInspectorInline), Source Perspectives, source coverage; backdrop blur on desktop
-│   │   │   ├── HomeContent.tsx    # News feed container (page logic, edition switching, lean filter, opinion mode)
+│   │   │   ├── HomeContent.tsx    # News feed container (page logic, edition switching, lean filter)
 │   │   │   ├── LeadStory.tsx      # Hero story card
-│   │   │   ├── OpEdPage.tsx       # Opinion/editorial feed view
-│   │   │   ├── OpinionCard.tsx    # Op-ed story card
+│   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending complete redesign
+│   │   │   ├── OpinionCard.tsx    # SHELVED — commented out, pending complete redesign
 │   │   │   ├── StoryCard.tsx      # Standard story card
 │   │   │   ├── NavBar.tsx         # Section navigation (World/US/India); dateline row with compact edition badge pills, time-of-day badge (Morning/Evening), regional timestamps (US: "9 AM ET", World: "HH:MM UTC", India: "HH:MM IST"); India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only)
 │   │   │   ├── FilterBar.tsx      # Category filter chips
@@ -618,6 +618,23 @@ void-news/
 - [x] Lean spectrum + Press Analysis stacked vertically; progressive disclosure (spectrum visible, press analysis collapsed by default)
 - [ ] Framing analysis display (detailed framing comparison)
 - [ ] Source credibility context panels
+
+### SHELVED — Op-Ed / Opinion Page (Future Feature, Needs Complete Redesign)
+The Op-Ed page, opinion card, and Facts/Op-Ed toggle have been removed from the frontend. The pipeline still computes `opinion_fact` scores (Axis 3) but no longer creates opinion clusters or surfaces them in the feed. Components are commented out in `OpEdPage.tsx` and `OpinionCard.tsx` for reference.
+
+**Why shelved:** The first implementation mixed opinion content into the news feed via a toggle, which didn't work well editorially. A future version needs:
+- Dedicated editorial curation (not just algorithmic opinion_fact > 50 threshold)
+- Distinct visual treatment — op-eds are not news stories and shouldn't look like them
+- Author/publication attribution as first-class display elements
+- No Gemini summarization — original voice is the value
+- No clustering — each op-ed stands alone
+- Complete UX redesign separate from the news feed
+
+**What's preserved:**
+- `opinion_fact` bias axis still computed per article (pipeline Axis 3)
+- Opinion articles excluded from news clustering (won't pollute reporting clusters)
+- `OpEdPage.tsx` and `OpinionCard.tsx` kept for reference code
+- `fetchOpinionArticles()` in supabase.ts stubbed out
 
 ### Phase 5 — Polish & Launch (Week 12)
 - [ ] Accessibility audit (WCAG 2.1 AA)
