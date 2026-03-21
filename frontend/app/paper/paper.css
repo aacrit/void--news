@@ -45,6 +45,9 @@ html:has(.np-root) body { background: transparent; }
   padding: 32px 40px 48px;
   position: relative;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Paper grain texture */
@@ -249,6 +252,20 @@ html:has(.np-root) body { background: transparent; }
   column-rule: var(--np-col-rule);
   column-fill: balance;
   margin-bottom: 0;
+}
+
+/* Compact mode for editions with fewer stories (e.g. India) */
+.np-front--compact {
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+.np-front--compact .np-front__zone-a,
+.np-front--compact .np-front__zone-c {
+  column-count: 1;
+}
+
+.np-section-flow--compact {
+  column-count: 4;
 }
 
 /* ==========================================================================
