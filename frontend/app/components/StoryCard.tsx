@@ -9,7 +9,7 @@ import Sigil from "./Sigil";
 interface StoryCardProps {
   story: Story;
   index: number;
-  onStoryClick?: (story: Story) => void;
+  onStoryClick?: (story: Story, rect: DOMRect) => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -40,11 +40,16 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
       role="button"
       tabIndex={0}
       aria-label={`Open deep dive for: ${story.title}`}
-      onClick={() => onStoryClick?.(story)}
+      onClick={() => {
+        if (cardRef.current && onStoryClick) {
+          onStoryClick(story, cardRef.current.getBoundingClientRect());
+        }
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onStoryClick?.(story);
+          // Keyboard nav: no origin rect (panel will slide in normally)
+          onStoryClick?.(story, new DOMRect());
         }
       }}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}`}

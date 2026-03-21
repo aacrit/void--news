@@ -23,6 +23,8 @@ import { BiasInspectorInline } from "./BiasInspector";
 interface DeepDiveProps {
   story: Story;
   onClose: () => void;
+  /** Card's DOMRect at click time — drives FLIP morph. Null = slide-in fallback. */
+  originRect?: DOMRect | null;
 }
 
 /* --- Favicon helper ------------------------------------------------------ */
@@ -52,7 +54,7 @@ function leanLabel(lean: number): string {
 
 /* --- Main DeepDive component --------------------------------------------- */
 
-export default function DeepDive({ story, onClose }: DeepDiveProps) {
+export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
@@ -60,6 +62,8 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
+  /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
+  const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -300,17 +304,78 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    requestAnimationFrame(() => {
-      setIsVisible(true);
-      // Desktop: 120ms delay lets the panel slide partially in before content reveals.
-      // Mobile: near-instant (30ms) prevents the "blank header flash" perception.
-      const delay = window.innerWidth >= 1024 ? 120 : 30;
-      setTimeout(() => setContentVisible(true), delay);
-    });
+    if (originRect && originRect.width > 0 && panelRef.current) {
+      /* FLIP morph: card → panel
+         Step 1 — panel is already in its natural (final) position in the DOM.
+         Measure it, then compute the inverse transform to make it appear at
+         the card's position. Two rAF frames guarantee the panel has painted
+         before we read its rect and apply the transition. */
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const panel = panelRef.current;
+          if (!panel) return;
+
+          const finalRect = panel.getBoundingClientRect();
+          if (finalRect.width === 0) {
+            // Panel not yet measurable — fall through to slide-in
+            setIsVisible(true);
+            const delay = window.innerWidth >= 1024 ? 120 : 30;
+            setTimeout(() => setContentVisible(true), delay);
+            return;
+          }
+
+          const scaleX = originRect.width / finalRect.width;
+          const scaleY = originRect.height / finalRect.height;
+          const translateX =
+            (originRect.left + originRect.width / 2) -
+            (finalRect.left + finalRect.width / 2);
+          const translateY =
+            (originRect.top + originRect.height / 2) -
+            (finalRect.top + finalRect.height / 2);
+
+          const isDesktopNow = window.innerWidth >= 1024;
+
+          /* Phase 1 — panel sits at the card's position, no transition */
+          setMorphStyle({
+            transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`,
+            borderRadius: "8px",
+            opacity: 1,
+            transition: "none",
+          });
+
+          /* Phase 2 — on the next frame, animate to final position */
+          requestAnimationFrame(() => {
+            setMorphStyle({
+              transform: "translate(0, 0) scale(1, 1)",
+              borderRadius: isDesktopNow ? "0px" : "16px 16px 0 0",
+              opacity: 1,
+              transition:
+                "transform 600ms var(--spring), border-radius 400ms var(--ease-out), opacity 0ms",
+            });
+            setIsVisible(true);
+
+            /* Phase 3 — content cascades in after the morph lands */
+            setTimeout(() => {
+              setMorphStyle(null);
+              setTimeout(() => setContentVisible(true), isDesktopNow ? 60 : 20);
+            }, 600);
+          });
+        });
+      });
+    } else {
+      /* Fallback: regular directional slide-in (no originRect or keyboard nav) */
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+        const delay = window.innerWidth >= 1024 ? 120 : 30;
+        setTimeout(() => setContentVisible(true), delay);
+      });
+    }
 
     return () => {
       document.body.style.overflow = originalOverflow;
     };
+    // originRect is intentionally excluded — we only want this to run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ---- Focus trap + Escape key ----------------------------------------- */
@@ -349,18 +414,54 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  /* ---- Close with animation — sequenced: content fades first, then panel slides out */
+  /* ---- Close with animation — reverse FLIP morph when originRect available */
   const handleClose = useCallback(() => {
     setContentVisible(false);
-    // Content fades out over 120ms, then panel slides out
-    setTimeout(() => {
-      setIsVisible(false);
+
+    if (originRect && originRect.width > 0 && panelRef.current) {
+      /* Reverse FLIP: panel morphs back to the card's original position */
       setTimeout(() => {
-        previousFocusRef.current?.focus();
-        onClose();
-      }, 600); // Match the 600ms panel transition
-    }, 120); // Slightly faster content fade for snappier feel
-  }, [onClose]);
+        const panel = panelRef.current;
+        if (!panel) {
+          previousFocusRef.current?.focus();
+          onClose();
+          return;
+        }
+
+        const currentRect = panel.getBoundingClientRect();
+        const scaleX = originRect.width / currentRect.width;
+        const scaleY = originRect.height / currentRect.height;
+        const translateX =
+          (originRect.left + originRect.width / 2) -
+          (currentRect.left + currentRect.width / 2);
+        const translateY =
+          (originRect.top + originRect.height / 2) -
+          (currentRect.top + currentRect.height / 2);
+
+        setMorphStyle({
+          transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`,
+          borderRadius: "8px",
+          opacity: 0,
+          transition:
+            "transform 500ms var(--spring), border-radius 300ms var(--ease-out), opacity 300ms var(--ease-out) 200ms",
+        });
+
+        setTimeout(() => {
+          previousFocusRef.current?.focus();
+          onClose();
+        }, 500);
+      }, 120);
+    } else {
+      /* Fallback: regular directional slide-out */
+      setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => {
+          previousFocusRef.current?.focus();
+          onClose();
+        }, 600);
+      }, 120);
+    }
+  }, [onClose, originRect]);
 
   return (
     <>
@@ -383,15 +484,14 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         aria-label={`Deep dive: ${story.title}`}
         tabIndex={-1}
         className="deep-dive-panel"
-        style={{
-          /* Desktop: slide from right (translateX). Mobile: slide from bottom (translateY).
-             Both open and close use the same axis — symmetric animation.
+        style={morphStyle ?? {
+          /* Default slide-in/out when no FLIP morph is active.
+             Desktop: slide from right (translateX). Mobile: slide from bottom (translateY).
              Spring easing gives physical weight to the panel.
-             opacity transitions in sync: instant-on (0ms) when opening so content
-             isn't invisible during slide-in; delayed-off (600ms) when closing so
-             it stays visible during the slide-out transform.
-             box-shadow grows in as the panel arrives (200ms delay on open),
-             and fades quickly on close. */
+             opacity: instant-on (0ms) when opening so content isn't invisible during
+             slide-in; delayed-off (600ms) when closing so it stays visible during
+             the slide-out transform.
+             box-shadow grows in as the panel arrives (200ms delay on open). */
           transform: isVisible
             ? "translate(0, 0)"
             : isDesktop ? "translateX(100%)" : "translateY(100%)",

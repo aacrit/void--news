@@ -101,15 +101,20 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
   const [showAllCompact, setShowAllCompact] = useState(false);
   const [activeLean, setActiveLean] = useState<LeanChip>("All");
 
-  const handleStoryClick = useCallback((story: Story) => {
+  const handleStoryClick = useCallback((story: Story, rect: DOMRect) => {
+    // Only use the rect for the FLIP morph when it has real dimensions.
+    // DOMRect() with no args gives a zeroed rect (keyboard nav fallback).
+    setOriginRect(rect.width > 0 ? rect : null);
     setSelectedStory(story);
   }, []);
 
   const handleDeepDiveClose = useCallback(() => {
     setSelectedStory(null);
+    setOriginRect(null);
   }, []);
 
   // Reset category filter and scroll to top when edition changes.
@@ -520,7 +525,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* Deep Dive panel */}
       {selectedStory && (
-        <DeepDive story={selectedStory} onClose={handleDeepDiveClose} />
+        <DeepDive story={selectedStory} onClose={handleDeepDiveClose} originRect={originRect} />
       )}
     </div>
   );
