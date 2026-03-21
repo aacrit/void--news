@@ -250,6 +250,9 @@
      Override to match dark mode value for legible modal layering. */
   .deep-dive-backdrop {
     background-color: rgba(28, 26, 23, 0.55);
+    /* Reduce backdrop blur on mobile — blur(6px) is expensive on low-end devices */
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
   }
 
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
@@ -353,24 +356,40 @@
 
   /* === DEEP DIVE === */
 
-  /* [CRITICAL-4] Hide scrollbar on mobile Deep Dive — standard mobile pattern */
+  /* iOS bottom-sheet feel: rounded top corners, momentum scroll, hidden scrollbar */
   .deep-dive-panel {
+    border-radius: 16px 16px 0 0;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    /* Momentum scrolling — native iOS kinetic feel */
+    -webkit-overflow-scrolling: touch;
   }
 
   .deep-dive-panel::-webkit-scrollbar {
     display: none;
   }
 
-  /* Deep Dive header: clear the notch on full-screen mobile panel */
+  /* Deep Dive header: tighter padding on mobile, clears notch */
   .deep-dive-panel__header {
-    padding-top: max(var(--space-4), env(safe-area-inset-top, 0px));
+    padding: var(--space-3) var(--space-4);
+    padding-top: max(var(--space-3), env(safe-area-inset-top, 0px));
   }
 
-  /* Deep Dive content: clear bottom nav + safe area so last item isn't clipped */
+  /* Deep Dive content: tighter padding, clears bottom home indicator */
   .deep-dive-panel__content {
-    padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Drag indicator pill — iOS bottom sheet handle */
+  .dd-drag-indicator {
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--border-subtle);
+    margin: var(--space-2) auto var(--space-1);
+    opacity: 0.6;
   }
 
   /* Hide "Back to feed" text, keep arrow */
@@ -378,10 +397,16 @@
     display: none;
   }
 
-  /* Analysis row: stack on mobile */
+  /* Analysis row: stack on mobile, tighter gap */
   .dd-analysis-row {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  /* Press expand: faster transition on mobile */
+  .dd-press-expand {
+    transition: grid-template-rows 300ms var(--ease-out);
   }
 
   /* Perspectives: single column on mobile */
@@ -394,6 +419,15 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: flex-start;
+  }
+
+  /* Simpler, faster section animations on mobile — ease-out instead of spring
+     avoids spring overshoot jank on low-frame-rate GPU compositing */
+  .anim-dd-section {
+    transform: translateY(8px);
+    transition:
+      opacity 150ms var(--ease-out),
+      transform 250ms var(--ease-out);
   }
 
   /* === EMPTY STATE === */

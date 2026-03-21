@@ -388,13 +388,22 @@ export default function DeepDive({ story, onClose }: DeepDiveProps) {
         style={{
           /* Desktop: slide from right (translateX). Mobile: slide from bottom (translateY).
              Both open and close use the same axis — symmetric animation.
-             Spring easing gives physical weight to the panel. */
+             Spring easing gives physical weight to the panel.
+             opacity transitions in sync: instant-on (0ms) when opening so content
+             isn't invisible during slide-in; delayed-off (500ms) when closing so
+             it stays visible during the slide-out transform. */
           transform: isVisible
             ? "translate(0, 0)"
             : isDesktop ? "translateX(100%)" : "translateY(100%)",
-          transition: "transform 500ms var(--spring)",
+          opacity: isVisible ? 1 : 0,
+          transition: isVisible
+            ? "transform 500ms var(--spring), opacity 0ms"
+            : "transform 500ms var(--spring), opacity 0ms 500ms",
         }}
       >
+        {/* Mobile drag indicator — pill handle at top of bottom sheet */}
+        <div className="dd-drag-indicator" aria-hidden="true" />
+
         {/* ---- Header --------------------------------------------------- */}
         <header className="deep-dive-panel__header">
           <div className="deep-dive-header-bar">
