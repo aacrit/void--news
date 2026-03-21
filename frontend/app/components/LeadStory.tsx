@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import type { Story } from "../lib/types";
 import { timeAgo, whyThisStory } from "../lib/utils";
 import Sigil from "./Sigil";
@@ -8,7 +9,7 @@ interface LeadStoryProps {
   story: Story;
   /** 0 = primary (first/most important), 1+ = secondary */
   rank?: number;
-  onStoryClick?: (story: Story) => void;
+  onStoryClick?: (story: Story, rect: DOMRect) => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -17,16 +18,24 @@ interface LeadStoryProps {
    --------------------------------------------------------------------------- */
 
 export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryProps) {
+  const cardRef = useRef<HTMLElement>(null);
+
   return (
     <article
+      ref={cardRef}
       role="button"
       tabIndex={0}
       aria-label={`Open deep dive for: ${story.title}`}
-      onClick={() => onStoryClick?.(story)}
+      onClick={() => {
+        if (cardRef.current && onStoryClick) {
+          onStoryClick(story, cardRef.current.getBoundingClientRect());
+        }
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onStoryClick?.(story);
+          // Keyboard nav: no origin rect (panel will slide in normally)
+          onStoryClick?.(story, new DOMRect());
         }
       }}
       className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}`}

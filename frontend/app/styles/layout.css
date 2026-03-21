@@ -150,6 +150,8 @@
   inset: 0;
   /* GPU layer promotion during transform animation — eliminates repaint */
   will-change: transform;
+  /* Scaling from center keeps the FLIP morph visually anchored to the card's center */
+  transform-origin: center center;
   /* Prevent flash of full-screen panel before JS applies translateY(100%).
      opacity: 0 is the safety net; JS-driven isVisible controls actual opacity
      via inline style on the backdrop. The panel itself fades with the transform. */
