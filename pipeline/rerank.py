@@ -164,7 +164,7 @@ def main():
         # Classify content type
         if bias_scores:
             avg_opinion = sum(
-                bs.get("opinion_fact", 25) for bs in bias_scores
+                (bs.get("opinion_fact") or 25) for bs in bias_scores
             ) / len(bias_scores)
         else:
             avg_opinion = 25.0

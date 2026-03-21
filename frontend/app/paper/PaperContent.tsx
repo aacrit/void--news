@@ -485,11 +485,38 @@ function Colophon({ edition }: { edition: string }) {
   );
 }
 
-// --- PDF Export ---
+// --- Export Button (PNG via html2canvas, loaded from CDN) ---
 
-function PdfExportButton() {
-  const handleExport = useCallback(() => {
-    window.print();
+function ExportButton() {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = useCallback(async () => {
+    setExporting(true);
+    try {
+      const { default: html2canvas } = await import(
+        /* webpackIgnore: true */
+        // @ts-expect-error — CDN module, no types
+        "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.esm.js"
+      );
+      const root = document.querySelector(".np-root") as HTMLElement;
+      if (!root) return;
+      const canvas = await html2canvas(root, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#E8DFC8",
+        logging: false,
+      });
+      const link = document.createElement("a");
+      const dateStr = new Date().toISOString().slice(0, 10);
+      link.download = `void-news-${dateStr}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (err) {
+      console.error("Export failed:", err);
+      window.print();
+    } finally {
+      setExporting(false);
+    }
   }, []);
 
   return (
@@ -498,9 +525,10 @@ function PdfExportButton() {
         type="button"
         className="np-pdf-btn"
         onClick={handleExport}
-        title="Export to PDF via browser print dialog"
+        disabled={exporting}
+        title="Export as PNG image"
       >
-        PDF
+        {exporting ? "..." : "Export"}
       </button>
     </div>
   );
@@ -578,7 +606,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
 
       {/* ===== FRONT PAGE — 3-Zone Layout ===== */}
       {!isLoading && allStories.length > 0 && (
-        <div className="np-front">
+        <div className={`np-front${allStories.length < 15 ? " np-front--compact" : ""}`}>
           {/* Zone A — Left columns */}
           <div className="np-front__zone-a">
             {layout.zoneA.map((story, i) => (
@@ -629,7 +657,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
       {!isLoading && layout.sectionStories.length > 0 && (
         <>
           <SectionLabel label={sectionConfig.primary} />
-          <div className="np-section-flow">
+          <div className={`np-section-flow${allStories.length < 15 ? " np-section-flow--compact" : ""}`}>
             {layout.sectionStories.map((story, i) => (
               <Article
                 key={story.id}
@@ -658,7 +686,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
       {!isLoading && <Colophon edition={editionDisplayName} />}
 
       {/* ===== PDF EXPORT (subtle, outside canvas) ===== */}
-      <PdfExportButton />
+      <ExportButton />
     </div>
   );
 }
