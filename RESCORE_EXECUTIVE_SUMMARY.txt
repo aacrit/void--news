@@ -1,0 +1,160 @@
+================================================================================
+VOID --NEWS RESCORE v5.0 EXECUTIVE SUMMARY
+Date: 2026-03-20 22:15 UTC
+================================================================================
+
+RESCORE STATUS: COMPLETE (11,130 articles processed)
+
+OVERALL RESULT: MIXED SUCCESS
+  ✓ Fixed critical zero-score bug
+  ✗ Introduced scoring regressions
+  ⚠ Not production-ready without fixes
+
+================================================================================
+KEY METRICS (PRE → POST)
+================================================================================
+
+FACTUAL RIGOR (THE CRITICAL FIX)
+  Mean:           26.6 → 16.7  (DOWN 9.9 points) ✗
+  Zero scores:    53.0% → 3.3% (DOWN 49.7pp)  ✓✓✓ CRITICAL SUCCESS
+  Verdict:        Bug FIXED, but scoring formula MISCALIBRATED
+                  Wire services (AP, Reuters) now 8–12 instead of 60–80
+
+CONFIDENCE (MAJOR REGRESSION)
+  Mean:           0.616 → 0.500  (DOWN 19%)   ✗
+  Impact:         Ranking multiplier drops by 4pp across all stories
+  Verb:           20% fewer "sure" stories — ranking quality degraded
+
+POLITICAL LEAN (STABLE, IMPROVED SPREAD)
+  Mean:           50.1 → 50.26  (STABLE)      ~
+  Stdev:          8.9 → 7.68    (TIGHTER)     ~
+  % Center (40–60): 90.1% → 64.4% (REDUCED)  ✓
+  Verdict:        Better spread; partisan outlets still too centered
+
+SENSATIONALISM (HEALTHY RECALIBRATION)
+  Mean:           10.1 → 12.0   (+1.9)        ~
+  Zero scores:    8.5% → 0.8%   (DOWN)        ✓
+  % Measured:     91% → 53%     (inflation)   ~ More realistic
+
+OPINION/FACT (STABLE, REPORTING-FOCUSED)
+  Mean:           17.8 → 15.8   (-2.0)        ~
+  Verdict:        Acceptable shift toward reporting
+
+FRAMING (STABLE, BETTER DETECTION)
+  Mean:           14.2 → 13.3   (-0.9)        ~
+  Distribution:   Significantly redistributed; v5.0 detects more charged language
+
+================================================================================
+CRITICAL ISSUES
+================================================================================
+
+ISSUE #1: FACTUAL RIGOR UNDER-CALIBRATED (CRITICAL)
+  Status: NER bug FIXED, but absolute scores 3–4× too low
+  Evidence:
+    AP News:      8.3  (should be 70+)  [gap: -62pp]
+    Reuters:      12.1 (should be 70+)  [gap: -58pp]
+    NYT:          10.9 (should be 60+)  [gap: -50pp]
+    Breitbart:    28.7 (should be 50+)  [gap: -21pp]
+  Impact:        Can't distinguish wire services from tabloids
+  Fix:           Recalibrate formula (2.5–3.0× multiplier or +40 baseline)
+  Timeline:      IMMEDIATE
+
+ISSUE #2: CONFIDENCE DROPPED 19% (HIGH)
+  Status: All stories now have lower confidence
+  Impact: Ranking multiplier: 0.65 + 0.35×conf
+    Before: 0.65 + 0.35×0.616 = 0.866
+    After:  0.65 + 0.35×0.500 = 0.825
+    Δ:      -4.1pp per story (approximately 120 clusters drop 1+ position)
+  Fix:     Revert to v4.x confidence formula (keep v5.0 bias scores)
+  Timeline: IMMEDIATE
+
+ISSUE #3: POLITICAL LEAN STILL TOO CENTERED (MEDIUM)
+  Status: Improved spread but partisan outlets under-differentiated
+  Evidence:
+    Breitbart:      58.9 (should be 70+)  [too center]
+    Common Dreams:  36.7 (should be 20–30) [too center]
+  Cause:  Baseline blending (0.85 text + 0.15 baseline) over-dampens
+  Fix:    Try 0.90 text / 0.10 baseline; re-test on known outlets
+  Timeline: This week
+
+================================================================================
+VERDICT BY AXIS
+================================================================================
+
+FACTUAL RIGOR:     PARTIAL SUCCESS
+  Zero-bug fixed:   YES ✓✓✓
+  Absolute scores:  TOO LOW ✗
+  Overall:          Production NOT READY
+
+CONFIDENCE:        REGRESSION
+  Pre-rescore:     Working well
+  Post-rescore:    19% lower
+  Impact:          Ranking quality degraded
+  Fix:             Revert formula
+  Overall:         NEEDS FIXING
+
+POLITICAL LEAN:    ACCEPTABLE
+  Spread improved: YES ✓
+  Partisan gap:    STILL WIDE ✗
+  Overall:         ACCEPTABLE WITH CAVEATS
+
+SENSATIONALISM:    ACCEPTABLE
+  Zero-bug fixed:  YES ✓
+  Inflation noted: EXPECTED (~20% more sensational)
+  Overall:         HEALTHY RECALIBRATION
+
+OPINION/FACT:      STABLE
+  Minor shift:     More reporting-focused
+  Overall:         ACCEPTABLE
+
+FRAMING:           IMPROVED
+  Detection:       Better (more variance)
+  Overall:         ACCEPTABLE
+
+================================================================================
+IMMEDIATE ACTION ITEMS
+================================================================================
+
+TODAY (CRITICAL PATH):
+  [ ] Revert confidence formula to v4.x (keep v5.0 bias scores)
+  [ ] Analyze factual_rigor rationale JSONB for AP articles
+  [ ] Determine correct multiplier/baseline for factual_rigor recalibration
+  [ ] Prepare recalibrated formula
+  [ ] Re-score all articles with fixed formulas
+  [ ] Validate wire services now score 60+
+
+THIS WEEK:
+  [ ] Audit v4.x vs v5.0 bias analyzers (line-by-line comparison)
+  [ ] Test political lean baseline blending adjustment (0.90/0.10)
+  [ ] Spot-check 20 articles across tiers pre/post
+  [ ] Re-validate ranking formula with recalibrated scores
+  [ ] Prepare final report for production sign-off
+
+================================================================================
+THE ONE THING
+================================================================================
+
+The v5.0 rescore FIXED the critical zero-score bug (53% → 3.3%), which is a
+MASSIVE SUCCESS. BUT it introduced a calibration problem: all outlets are now
+scoring 3–4× too low on factual rigor (AP: 8.3 instead of 70+), and confidence
+dropped 19% (hurting ranking).
+
+DO NOT SHIP v5.0 TO PRODUCTION without:
+  1. Recalibrating factual_rigor (2.5–3.0× multiplier or +40 baseline)
+  2. Reverting confidence formula to v4.x
+  3. Re-scoring all 11,130 articles with fixes
+  4. Validating wire services now score 60–80+
+
+Timeline: 4–6 hours to fix and re-score. Worth it.
+
+================================================================================
+ARTIFACTS
+================================================================================
+
+Full Report:           /home/aacrit/projects/void-news/RESCORE_COMPARISON_REPORT.md
+Analysis Script:       /home/aacrit/projects/void-news/rescore_comparison_analysis.py
+Raw Data:              queries/full audit results in report
+
+Pre-rescore Baselines: See DATA_QUALITY_AUDIT_REPORT.md (2026-03-20 21:39 UTC)
+
+================================================================================

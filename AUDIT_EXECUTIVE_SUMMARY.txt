@@ -1,0 +1,242 @@
+================================================================================
+void --news DATA QUALITY AUDIT EXECUTIVE SUMMARY
+Date: 2026-03-21
+================================================================================
+
+OVERALL HEALTH SCORE: 72/100
+
+Status Summary:
+  Source Coverage:        10/10 ✓ Perfect
+  Article Quality:         7/10 ⚠ Minor issues
+  Bias Score Quality:      9/10 ✓ Excellent
+  Cluster Quality:         6/10 ⚠ CRITICAL ISSUES
+  Enrichment Quality:      5/10 ⚠ MAJOR GAPS
+  Temporal Freshness:      9/10 ✓ Excellent
+  Referential Integrity:   5/10 ⚠ CRITICAL
+  Cross-Field Consistency: 8/10 ✓ Good
+
+================================================================================
+CRITICAL FINDINGS (MUST FIX)
+================================================================================
+
+1. 45.5% ORPHANED ARTICLES (4,553/9,999)
+   - Articles analyzed but NOT linked to any cluster
+   - Invisible to frontend (feed only queries story_clusters table)
+   - Represents wasted analysis effort
+   - FIX: Create single-article wrapper clusters for orphaned articles
+   - TIME: 10 minutes SQL
+   - MIGRATION: See DATA_QUALITY_REPORT_FINAL.md "Migration 014"
+
+2. 614 INVALID ARTICLE_ID REFERENCES IN cluster_articles
+   - These rows reference articles that no longer exist
+   - Violates referential integrity
+   - Should be prevented by ON DELETE CASCADE constraint (verify!)
+   - FIX: DELETE FROM cluster_articles WHERE article_id NOT IN (SELECT id FROM articles);
+   - TIME: 5 minutes
+   - IMPACT: Data corruption risk if not addressed
+
+3. coverage_velocity IS 99.9% ZERO (Only 3/2,938 Non-Zero)
+   - Ranking signal completely broken
+   - Supposed to reward recent multi-source coverage (6-hour lookback)
+   - Only 0.1% of clusters have any velocity value
+   - FIX: Debug pipeline/ranker/importance_ranker.py compute_coverage_velocity()
+   - TIME: 30-60 minutes + investigation
+   - ROOT CAUSE: Check last 3 pipeline run logs
+
+================================================================================
+MAJOR FINDINGS (SHOULD FIX)
+================================================================================
+
+1. 53.3% ARTICLES ARE <100 WORDS (5,330/9,999)
+   - Extreme density of short-form content
+   - Likely RSS summaries (full_text NULL on many)
+   - Impacts clustering quality and analysis validity
+   - INVESTIGATION: Sample by source tier, check full_text NULL rate
+   - TIME: 1-2 hours audit + potential algorithm tuning
+
+2. headline_rank COLLISIONS (1,536 Unique Values for 2,938 Clusters)
+   - Frontend feed sorting becomes non-deterministic when ranks tie
+   - Indicates rounding/precision loss in ranking formula
+   - FIX: Increase REAL → NUMERIC precision or add secondary sort key
+   - TIME: 30-60 minutes
+
+3. factual_rigor AVERAGE IS ONLY 31.0/100
+   - Low but not necessarily wrong (articles may be under-sourced)
+   - INVESTIGATION: Sample high vs low rigor articles, review rationale
+   - TIME: 2-4 hours validation
+
+4. editorial_importance ONLY 16.8% POPULATED (493/2,938)
+   - Expected (Gemini budget = 25 calls/run)
+   - But limits v5.0 ranking signal
+   - NICE TO HAVE: Increase Gemini budget or fall back to rules
+
+================================================================================
+DATA QUALITY METRICS
+================================================================================
+
+Sources:
+  - Expected: 222 (from data/sources.json)
+  - Actual DB: 223 (minor discrepancy, likely duplicate)
+  - All have political_lean_baseline ✓
+  - All have rss_url ✓
+  - Tier distribution: 49 us_major, 82 international, 92 independent ✓
+
+Articles:
+  - Total: 9,999
+  - NULL full_text: 507 (5.1%) — OK (threshold <10%)
+  - NULL published_at: 68 (0.7%) — OK (threshold <5%)
+  - Word count <100: 5,330 (53.3%) — CONCERN
+  - Section: world 3,469, us 4,565, india 1,965
+
+Bias Scores:
+  - Coverage: 100% (all 9,999 articles scored)
+  - No NULLs on any of 5 axes ✓
+  - No default scores (50/50/50/50/50) ✓
+  - political_lean: avg 50.5 (balanced left-right)
+  - sensationalism: avg 11.9 (measured articles)
+  - opinion_fact: avg 15.7 (news-focused)
+  - factual_rigor: avg 31.0 (LOW but calibrated)
+  - framing: avg 13.3 (neutral dominant)
+  - Confidence: bimodal (48.6% <0.5, 43.6% >=0.7, 7.8% medium)
+
+Clusters:
+  - Total: 2,938
+  - Avg articles/cluster: 2.1
+  - Single-article clusters: 1,581 (54.6%)
+  - Orphaned articles: 4,553 (45.5%)
+  - Divergence_score = 0: 1,637 (55.7%)
+  - bias_diversity: 100% populated ✓
+  - Missing summaries: 0 ✓
+
+Enrichment:
+  - bias_diversity: 100% populated ✓
+  - divergence_score: 44.3% non-zero
+  - headline_rank: 1,536 unique values (collision problem)
+  - coverage_velocity: 0.1% non-zero (BROKEN)
+  - editorial_importance: 16.8% populated (expected, Gemini budget limited)
+
+Pipeline:
+  - Latest run: 2026-03-20 18:22:25 (completed) ✓
+  - All articles current: 0 articles >7 days old ✓
+  - Running on schedule (2x daily) ✓
+
+Referential Integrity:
+  - Orphaned articles: 4,553 (not in clusters)
+  - Invalid article_id refs in cluster_articles: 614
+  - Invalid cluster_id refs: 0 ✓
+  - Orphaned bias_scores: 0 ✓
+
+================================================================================
+TOP 10 RECOMMENDED IMPROVEMENTS (By Priority)
+================================================================================
+
+1. [CRITICAL] Fix 614 invalid article_id references
+   Impact: Referential integrity violation
+   Time: 5 min
+   SQL: DELETE FROM cluster_articles WHERE article_id NOT IN (SELECT id FROM articles);
+
+2. [CRITICAL] Create single-article clusters for 2,972 orphaned articles
+   Impact: 45.5% of data currently invisible to users
+   Time: 10 min
+   SQL: See Migration 014 in DATA_QUALITY_REPORT_FINAL.md
+
+3. [CRITICAL] Investigate and fix coverage_velocity (99.9% zeros)
+   Impact: Ranking signal completely broken
+   Time: 30-60 min
+   Action: Debug pipeline/ranker/importance_ranker.py
+
+4. [MUST HAVE] Investigate factual_rigor calibration (avg 31.0)
+   Impact: May indicate miscalibration or under-sourced articles
+   Time: 2-4 hours
+   Action: Sample high/low articles, review rationale JSONB
+
+5. [MUST HAVE] Fix headline_rank collisions (1,536 unique for 2,938)
+   Impact: Frontend feed sorting non-deterministic
+   Time: 30-60 min
+   Action: Increase precision (REAL → NUMERIC) or add secondary sort
+
+6. [NICE] Increase editorial_importance coverage (currently 16.8%)
+   Impact: v5.0 ranking signal underutilized
+   Time: 1-2 hours
+   Action: Increase Gemini budget or fall back to rule-based scoring
+
+7. [NICE] Investigate 53.3% short articles (<100 words)
+   Impact: Data quality perception, clustering skew
+   Time: 1-2 hours
+   Action: Sample by tier, check if full_text NULL, implement filters
+
+8. [NICE] Add duplicate source check
+   Impact: Minor (223 vs 222 expected sources)
+   Time: 15 min
+   SQL: SELECT slug, COUNT(*) FROM sources GROUP BY slug HAVING COUNT(*) > 1;
+
+9. [NICE] Add data quality monitoring views
+   Impact: Enables proactive regression detection
+   Time: 20 min
+   Action: Create MATERIALIZED VIEW tracking key metrics
+
+10. [NICE] Document data model assumptions
+    Impact: Reduces future audit overhead
+    Time: 30 min
+    Action: Create docs/DATA_ASSUMPTIONS.md
+
+================================================================================
+THE ONE THING (If you can only do one fix)
+================================================================================
+
+CREATE SINGLE-ARTICLE CLUSTERS FOR THE 2,972 ORPHANED ARTICLES.
+
+Why: 45.5% of your collected articles are currently invisible to users because
+they're not linked to any story cluster. The frontend's feed queries only
+select from story_clusters, so orphaned articles never appear. This is a
+complete waste of analysis effort.
+
+Impact: Every article you fetch, scrape, and analyze should be discoverable
+by users. Right now, nearly half aren't. Fixing this is a simple SQL operation
+and immediately improves user experience.
+
+Time: 10 minutes
+
+SQL: See Migration 014, Steps 3-4 in DATA_QUALITY_REPORT_FINAL.md
+
+================================================================================
+FULL AUDIT REPORT
+================================================================================
+
+Comprehensive findings, code snippets, and detailed analysis available in:
+  /home/aacrit/projects/void-news/DATA_QUALITY_REPORT_FINAL.md
+
+Key sections:
+  - Section 1: Source Coverage (perfect)
+  - Section 2: Article Quality (minor word count concerns)
+  - Section 3: Bias Score Quality (excellent)
+  - Section 4: Cluster Quality (critical orphaning issue)
+  - Section 5: Enrichment Quality (coverage_velocity broken)
+  - Section 6: Temporal Freshness (excellent)
+  - Section 7: Referential Integrity (614 invalid refs)
+  - Section 8: Cross-Field Consistency (good)
+  - Migration 014: Recommended SQL fixes
+  - Appendix: Audit methodology
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. IMMEDIATE (Today):
+   - Run the 614 invalid reference deletion
+   - Create orphaned article clusters
+   - File bug on coverage_velocity
+
+2. SHORT TERM (This sprint):
+   - Debug and fix coverage_velocity
+   - Investigate factual_rigor + short articles
+   - Fix headline_rank collisions
+   - Add data quality views
+
+3. MEDIUM TERM (Next sprint):
+   - Increase editorial_importance coverage
+   - Optimize article clustering thresholds
+   - Add monitoring/alerting for future regressions
+   - Document data assumptions
+
+================================================================================
