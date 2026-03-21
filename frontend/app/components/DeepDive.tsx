@@ -298,72 +298,88 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
     return () => { cancelled = true; };
   }, [story.id, story.deepDive]);
 
-  /* ---- Open animation sequence ----------------------------------------- */
+  /* ---- Open animation — FLIP morph or slide-in fallback ----------------- */
   useEffect(() => {
     previousFocusRef.current = document.activeElement as HTMLElement;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    if (originRect && originRect.width > 0 && panelRef.current) {
-      /* FLIP morph: card → panel
-         Step 1 — panel is already in its natural (final) position in the DOM.
-         Measure it, then compute the inverse transform to make it appear at
-         the card's position. Two rAF frames guarantee the panel has painted
-         before we read its rect and apply the transition. */
+    const hasMorph = originRect && originRect.width > 0 && panelRef.current;
+
+    if (hasMorph) {
+      /* ═══ FLIP MORPH: card expands into panel ═══
+         Choreography:
+         1. Backdrop blur fades in (feed goes soft behind the card)
+         2. Panel appears at the card's exact rect
+         3. Panel morphs from card → final panel rect (spring physics)
+         4. Content cascades in after morph settles
+
+         The panel is position:fixed with opacity:0 in CSS. We need to
+         measure its final rect. We briefly make it visible but off-screen
+         via the morphStyle override, then compute the inverse transform. */
+
+      const isDesktopNow = window.innerWidth >= 1024;
+
+      // Step 1: Backdrop blur starts immediately
+      setIsVisible(true);
+
+      // Step 2: Measure the panel's final position
+      // The panel is already in the DOM at its final CSS position (inset:0 or
+      // right:0 on desktop). We read that rect, then position it at the card.
       requestAnimationFrame(() => {
+        const panel = panelRef.current;
+        if (!panel) return;
+
+        // Temporarily make panel visible at final position to measure
+        panel.style.opacity = "1";
+        panel.style.transform = "none";
+        const finalRect = panel.getBoundingClientRect();
+
+        if (finalRect.width === 0) {
+          // Can't measure — fall through to slide
+          const delay = isDesktopNow ? 120 : 30;
+          setTimeout(() => setContentVisible(true), delay);
+          return;
+        }
+
+        // Compute inverse transform: final → card origin
+        const scaleX = originRect.width / finalRect.width;
+        const scaleY = originRect.height / finalRect.height;
+        const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
+        const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
+
+        // Step 3: Snap panel to card position (no transition)
+        setMorphStyle({
+          transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+          borderRadius: "8px",
+          opacity: 1,
+          boxShadow: "var(--shadow-e1)",
+          transition: "none",
+        });
+
+        // Step 4: On next paint, animate from card → final
         requestAnimationFrame(() => {
-          const panel = panelRef.current;
-          if (!panel) return;
-
-          const finalRect = panel.getBoundingClientRect();
-          if (finalRect.width === 0) {
-            // Panel not yet measurable — fall through to slide-in
-            setIsVisible(true);
-            const delay = window.innerWidth >= 1024 ? 120 : 30;
-            setTimeout(() => setContentVisible(true), delay);
-            return;
-          }
-
-          const scaleX = originRect.width / finalRect.width;
-          const scaleY = originRect.height / finalRect.height;
-          const translateX =
-            (originRect.left + originRect.width / 2) -
-            (finalRect.left + finalRect.width / 2);
-          const translateY =
-            (originRect.top + originRect.height / 2) -
-            (finalRect.top + finalRect.height / 2);
-
-          const isDesktopNow = window.innerWidth >= 1024;
-
-          /* Phase 1 — panel sits at the card's position, no transition */
           setMorphStyle({
-            transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`,
-            borderRadius: "8px",
+            transform: "translate(0, 0) scale(1, 1)",
+            borderRadius: isDesktopNow ? "0px" : "16px 16px 0 0",
             opacity: 1,
-            transition: "none",
+            boxShadow: "var(--shadow-e3)",
+            transition: [
+              "transform 650ms var(--spring)",
+              "border-radius 400ms var(--ease-out)",
+              "box-shadow 500ms var(--ease-out) 150ms",
+            ].join(", "),
           });
 
-          /* Phase 2 — on the next frame, animate to final position */
-          requestAnimationFrame(() => {
-            setMorphStyle({
-              transform: "translate(0, 0) scale(1, 1)",
-              borderRadius: isDesktopNow ? "0px" : "16px 16px 0 0",
-              opacity: 1,
-              transition:
-                "transform 600ms var(--spring), border-radius 400ms var(--ease-out), opacity 0ms",
-            });
-            setIsVisible(true);
-
-            /* Phase 3 — content cascades in after the morph lands */
-            setTimeout(() => {
-              setMorphStyle(null);
-              setTimeout(() => setContentVisible(true), isDesktopNow ? 60 : 20);
-            }, 600);
-          });
+          // Step 5: After morph settles, clear override → content cascades
+          setTimeout(() => {
+            setMorphStyle(null);
+            setTimeout(() => setContentVisible(true), isDesktopNow ? 80 : 20);
+          }, 650);
         });
       });
     } else {
-      /* Fallback: regular directional slide-in (no originRect or keyboard nav) */
+      /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
       requestAnimationFrame(() => {
         setIsVisible(true);
         const delay = window.innerWidth >= 1024 ? 120 : 30;
@@ -371,10 +387,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
       });
     }
 
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-    // originRect is intentionally excluded — we only want this to run on mount
+    return () => { document.body.style.overflow = originalOverflow; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -414,45 +427,54 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  /* ---- Close with animation — reverse FLIP morph when originRect available */
+  /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
+    // Phase 1: Content fades out quickly
     setContentVisible(false);
 
     if (originRect && originRect.width > 0 && panelRef.current) {
-      /* Reverse FLIP: panel morphs back to the card's original position */
+      /* ═══ REVERSE MORPH: panel collapses back into the card ═══
+         Choreography:
+         1. Content fades out (100ms)
+         2. Panel morphs from current rect → card origin (500ms spring)
+         3. Panel fades to transparent as it nears the card
+         4. Backdrop blur fades out — article becomes clear again
+         5. onClose fires, DOM unmounts */
       setTimeout(() => {
         const panel = panelRef.current;
-        if (!panel) {
-          previousFocusRef.current?.focus();
-          onClose();
-          return;
-        }
+        if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
 
         const currentRect = panel.getBoundingClientRect();
         const scaleX = originRect.width / currentRect.width;
         const scaleY = originRect.height / currentRect.height;
-        const translateX =
-          (originRect.left + originRect.width / 2) -
-          (currentRect.left + currentRect.width / 2);
-        const translateY =
-          (originRect.top + originRect.height / 2) -
-          (currentRect.top + currentRect.height / 2);
+        const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
+        const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
+        // Phase 2: Panel morphs back to card rect
         setMorphStyle({
-          transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`,
+          transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
           borderRadius: "8px",
           opacity: 0,
-          transition:
-            "transform 500ms var(--spring), border-radius 300ms var(--ease-out), opacity 300ms var(--ease-out) 200ms",
+          boxShadow: "none",
+          transition: [
+            "transform 550ms var(--spring)",
+            "border-radius 300ms var(--ease-out)",
+            "opacity 250ms var(--ease-out) 250ms",  // fade starts midway through morph
+            "box-shadow 200ms var(--ease-out)",
+          ].join(", "),
         });
 
+        // Phase 3: Backdrop fades out as panel nears card
+        setTimeout(() => setIsVisible(false), 200);
+
+        // Phase 4: Cleanup after morph completes
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 500);
-      }, 120);
+        }, 550);
+      }, 100); // Wait for content fade
     } else {
-      /* Fallback: regular directional slide-out */
+      /* ═══ FALLBACK: directional slide-out ═══ */
       setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
