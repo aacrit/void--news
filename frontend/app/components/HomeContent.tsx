@@ -291,6 +291,25 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           }
         );
 
+        // Compute divergence percentiles (p10/p90) and flag top/bottom 10%
+        const divScores = liveStories
+          .map((s) => s.divergenceScore)
+          .filter((d) => d > 0)
+          .sort((a, b) => a - b);
+        if (divScores.length >= 5) {
+          const p10 = divScores[Math.floor(divScores.length * 0.1)];
+          const p90 = divScores[Math.floor(divScores.length * 0.9)];
+          for (const s of liveStories) {
+            if (s.divergenceScore > 0) {
+              if (s.divergenceScore >= p90) {
+                s.sigilData.divergenceFlag = "divergent";
+              } else if (s.divergenceScore <= p10) {
+                s.sigilData.divergenceFlag = "consensus";
+              }
+            }
+          }
+        }
+
         setStories(liveStories);
         setIsLoading(false);
 

@@ -499,10 +499,20 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
     ? `Political lean: ${ll} (${data.politicalLean}). Press Enter for details.`
     : `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
-  const isDivergent = data.agreement > 55;
+  const ringClass = data.divergenceFlag === "divergent"
+    ? " sigil--divergent"
+    : data.divergenceFlag === "consensus"
+      ? " sigil--consensus"
+      : "";
+
+  const ringTitle = data.divergenceFlag === "divergent"
+    ? "Sources disagree significantly on this story"
+    : data.divergenceFlag === "consensus"
+      ? "Sources largely agree on this story"
+      : undefined;
 
   return (
-    <div ref={ref} className={`sigil${isDivergent ? " sigil--divergent" : ""}`}
+    <div ref={ref} className={`sigil${ringClass}`} title={ringTitle}
       onMouseEnter={show} onFocus={show} onMouseLeave={hide} onBlur={hide}
       onClick={toggle} onKeyDown={onKey}
       tabIndex={0} role="button" aria-expanded={open} aria-label={aria}

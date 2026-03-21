@@ -62,11 +62,13 @@
   --bg-card:       #2A2725;
   --bg-elevated:   #333028;
 
-  /* Bias color overrides for dark mode — increase blue saturation.
-     Blues appear muted against warm dark backgrounds; boost to vibrant. */
+  /* Bias color overrides for dark mode — boost saturation for readability.
+     Blues/reds appear muted against warm dark backgrounds. */
   --bias-far-left:     #3B82F6;
   --bias-left:         #60A5FA;
   --bias-center-left:  #93C5FD;
+  --bias-center:       #4B5563;  /* dark neutral gray */
+  --bias-center-right: #FCA5A5;  /* light red — same as light mode */
   --bias-far-right:    #DC2626;
   --type-reporting:    #60A5FA;
 
@@ -111,14 +113,16 @@
    Consistent across light/dark. Colors earned through data, not decoration.
    -------------------------------------------------------------------------- */
 :root {
-  /* Political Lean Spectrum */
-  --bias-far-left:     #1D4ED8;
-  --bias-left:         #3B82F6;
-  --bias-center-left:  #60A5FA;
-  --bias-center:       #9CA3AF;
-  --bias-center-right: #F97316;
-  --bias-right:        #EF4444;
-  --bias-far-right:    #B91C1C;
+  /* Political Lean Spectrum — blue → light gray ← red
+     Deep at extremes, fading to neutral gray at center.
+     No orange on right side — pure red shading throughout. */
+  --bias-far-left:     #1D4ED8;  /* deep blue */
+  --bias-left:         #3B82F6;  /* blue */
+  --bias-center-left:  #93C5FD;  /* light blue */
+  --bias-center:       #D1D5DB;  /* light gray — neutral */
+  --bias-center-right: #FCA5A5;  /* light red / salmon */
+  --bias-right:        #EF4444;  /* red */
+  --bias-far-right:    #B91C1C;  /* deep red */
 
   /* Sensationalism Scale */
   --sense-low:    #22C55E;
