@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.4
-**Last updated:** 2026-03-21 (rev 3)
+**Version:** 1.5
+**Last updated:** 2026-03-21 (rev 4)
 
 ---
 
@@ -253,44 +253,51 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 ### Deep Dive — Desktop
 
 ```
-┌──────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────┐  ← 55% width, min 560px
 │  ← Back          Story headline [BiasLens]            │
 ├──────────────────────────────────────────────────────┤
 │                                                      │
 │  [Summary as lede text — no "What happened" heading] │
+│  [viewport-responsive height; "Read more" at 600+ chars]│
 │                                                      │
-│  POLITICAL LEAN                                      │
-│  [favicon dots above ──── gradient track ──── below] │
-│                                                      │
-│  Press Analysis ▶  (collapsed by default)            │
-│  ┌── (expanded) ──────────────────────────────────┐  │
+│  ┌── dd-analysis-row (single flex row) ────────────┐ │
+│  │  [Sigil]  [── gradient track w/ favicons ──]    │ │
+│  │                             [Press Analysis ▶]  │ │
+│  └─────────────────────────────────────────────────┘ │
+│  ┌── (Press Analysis expanded) ───────────────────┐  │
 │  │  [4-axis scorecard — BiasInspectorInline]      │  │
 │  │  [tap axis to expand sub-scores + AI reasoning]│  │
 │  └────────────────────────────────────────────────┘  │
 │                                                      │
-│  SOURCE PERSPECTIVES                                  │
-│  ┌── ✓ [consensus point] (green left border) ────┐  │
-│  └── ⚠ [divergence point] (red left border) ──────┘  │
+│  SOURCE PERSPECTIVES (2-column grid)                 │
+│  ┌── Agreement ──────┐  ┌── Divergence ────────┐    │
+│  │ ✓ [agree point]   │  │ ⚠ [diverge point]    │    │
+│  │   (green border)  │  │   (red border)       │    │
+│  └───────────────────┘  └──────────────────────┘    │
 │                                                      │
 │  COVERAGE BREAKDOWN                                  │
 │  ┌─────────────────────────────────────────┐        │
 │  │  Source A (NYT)        ● ● ○ ● ●  [→]  │        │
 │  │  Source B (Fox)        ● ○ ● ○ ●  [→]  │        │
 │  │  Source C (BBC)        ○ ● ● ● ○  [→]  │        │
-│  │  ...                                     │        │
 │  └─────────────────────────────────────────┘        │
 │                                                      │
 └──────────────────────────────────────────────────────┘
 ```
 
-Desktop: 50% width side panel; main feed blurred (6px backdrop blur) when open. Lean spectrum and Press Analysis stacked vertically. Progressive disclosure: press analysis collapsed behind ▶ trigger.
+Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blurred (6px backdrop blur) when open. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
 
 ### Deep Dive — Mobile
 
-- Full-screen modal with swipe-to-dismiss
-- Vertically stacked sections (summary → sources → charts)
+- Full-screen modal sliding up from bottom; iOS bottom-sheet style: `border-radius: 16px 16px 0 0`, drag indicator pill, `-webkit-overflow-scrolling: touch` momentum scrolling
+- `padding-bottom: env(safe-area-inset-bottom)` for home indicator; `padding-top: env(safe-area-inset-top)` for notch
+- Backdrop blur reduced to 2px (6px is too expensive on low-end devices)
+- Slot-machine cascade: `opacity 150ms ease-out, transform 250ms ease-out` (no spring — avoids GPU jitter); `translateY(8px) → 0` (shallower than 12px desktop)
+- Content reveal delay: 30ms (prevents blank header flash)
+- Analysis row stacks vertically on mobile (dd-analysis-row: `flex-direction: column`)
+- Source Perspectives collapses to single column on mobile (dd-perspectives-grid: `grid-template-columns: 1fr`)
+- Press Analysis expand: 300ms ease-out on mobile
 - Each source row is tappable → opens article in browser
-- Charts render full-width, scroll horizontally if needed
 - Source rows use `flex-wrap: wrap` so metadata wraps instead of overflowing on narrow viewports
 
 ### Mobile Layout Rules (max-width: 767px)
@@ -386,7 +393,9 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Story card | Page load | fadeInUp (opacity + translateY 12px→0) | 300ms, 40ms stagger |
 | Dot matrix | Card appear | Dots fade in left-to-right | 150ms, 30ms stagger |
 | Bias tooltip | Hover/tap | Scale from 0.95→1, opacity 0→1 | 150ms ease-out |
-| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile) | 400ms spring |
+| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile); JS-driven translateX/translateY | 500ms spring (panel), instant opacity-on, 500ms delay opacity-off |
+| Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: opacity 200ms + transform 350ms spring; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Content reveal: 120ms delay desktop, 30ms delay mobile |
+| Press Analysis expand | Click ▶ trigger | grid-template-rows 0fr→1fr | var(--dur-morph) ease-out desktop; 300ms ease-out mobile |
 | Filter chips | Select | Scale 1→0.97→1, fill color wipe | 200ms spring |
 | Refresh confirm | Tap refresh | Modal scale from 0.95, backdrop fade | 300ms ease-out |
 | Dark mode toggle | Tap | Cross-fade colors, 0 layout shift | 400ms ease-out |
@@ -415,12 +424,12 @@ Active components in `frontend/app/components/`:
 | `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: seamless lede, lean spectrum, "Press Analysis ▶" trigger (collapsed by default), Source Perspectives, source coverage. Backdrop blur (6px) on desktop. | Per-source BiasLens (sm) |
+| `DeepDive` | Slide-in panel: seamless lede (viewport-responsive height, "Read more" at 600+ chars), `dd-analysis-row` flex row (Sigil + Spectrum + Press Analysis ▶ in one row on desktop, stacked on mobile), "Press Analysis ▶" trigger expands via `grid-template-rows 0fr→1fr`, Source Perspectives in 2-column Agreement\|Divergence grid (desktop) or single column (mobile), source coverage. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet on mobile. Content reveal cascade: 120ms delay desktop, 30ms mobile. Panel `opacity:0` CSS safety + JS asymmetric opacity transition. | Per-source BiasLens (sm) |
 | `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
 | `FilterBar` | Category filter chips | -- |
-| `NavBar` | Section navigation (World/US) with logo and theme toggle | -- |
+| `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
 | `RefreshButton` | Refresh with "last updated" timestamp | -- |
 | `ThemeToggle` | Light/dark mode toggle | -- |
 | `LoadingSkeleton` | Animated skeleton loading state | -- |

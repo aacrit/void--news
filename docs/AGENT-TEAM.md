@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-21 (rev 5)
+Last updated: 2026-03-21 (rev 6)
 
 ## Philosophy
 
@@ -250,5 +250,15 @@ These are read-only advisory agents — they propose, they don't implement.
 | Agent | Division | Outcome |
 |-------|----------|---------|
 | `update-docs` | Infrastructure | CLAUDE.md + DESIGN-SYSTEM.md + AGENT-TEAM.md updated to reflect: ranking engine v5.1 (Gemini editorial importance 12% weight signal, US-only divergence damper 0.85x, cross-spectrum interest bonus +2.5pts, step 6c Gemini bias reasoning, step 7c editorial triage); new pipeline analyzer `gemini_reasoning.py`; migration count updated 011→013; Deep Dive redesign (seamless lede, lean spectrum above/below track, "Press Analysis ▶" collapsed trigger with BiasInspectorInline, Source Perspectives with color-coded borders, backdrop blur on desktop); new components BiasInspector, HomeContent, OpEdPage, OpinionCard; split CSS architecture (globals.css → ./styles/); DESIGN-SYSTEM.md component inventory + layout diagrams updated |
+
+**Files modified this session:** `CLAUDE.md`, `docs/DESIGN-SYSTEM.md`, `docs/AGENT-TEAM.md`
+
+### 2026-03-21 — Deep Dive final state, NavBar dateline, mobile premium polish
+
+**Agents run:** `update-docs`
+
+| Agent | Division | Outcome |
+|-------|----------|---------|
+| `update-docs` | Infrastructure | CLAUDE.md + DESIGN-SYSTEM.md + AGENT-TEAM.md updated to reflect final state of Deep Dive panel and NavBar from branch `claude/fix-pipeline-20260320`: Deep Dive pane width corrected 50%→55% (min 560px, no max-width); dd-analysis-row flex row (Sigil + Spectrum + Press Analysis ▶ in one row, stacks on mobile); Press Analysis expand via grid-template-rows 0fr→1fr; Source Perspectives 2-column Agreement\|Divergence grid (desktop), single column (mobile); slot-machine cascade animation (translateY 12px, 200ms/350ms spring desktop, 150ms/250ms ease-out mobile); content reveal 120ms desktop / 30ms mobile; panel flash prevention (CSS opacity:0 + JS asymmetric transition); backdrop blur 6px desktop / 2px mobile; iOS bottom-sheet (rounded corners, drag indicator, momentum scroll, safe-area insets); NavBar compact edition badge pills in dateline row, regional timestamps (US: "9 AM ET", World: "HH:MM UTC", India: "HH:MM IST"), Morning/Evening auto-detected from edition timezone, India Ashoka Chakra SVG icon |
 
 **Files modified this session:** `CLAUDE.md`, `docs/DESIGN-SYSTEM.md`, `docs/AGENT-TEAM.md`
