@@ -160,6 +160,8 @@ export interface SigilData {
   pending?: boolean;
   /** Opinion classification label */
   opinionLabel: OpinionLabel;
+  /** Percentile-based divergence flag: "divergent" (top 10%), "consensus" (bottom 10%), or null */
+  divergenceFlag?: "divergent" | "consensus" | null;
 }
 
 export interface OpinionArticle {

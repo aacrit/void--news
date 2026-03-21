@@ -211,15 +211,26 @@
 
 /* ---- Sigil — Unified Bias Indicator ------------------------------------ */
 
-/* Divergence indicator — subtle border, no glow.
-   Applied via .sigil--divergent on stories with agreement > 55. */
+/* Divergence ring — amber. Top 10% divergence: sources disagree significantly. */
 .sigil--divergent::after {
   content: "";
   position: absolute;
-  inset: -3px;
+  inset: -4px;
   border-radius: 50%;
-  border: 1px solid var(--sense-medium);
-  opacity: 0.3;
+  border: 1.5px solid var(--sense-medium);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Consensus ring — green. Bottom 10% divergence: sources largely agree. */
+.sigil--consensus::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sense-low);
+  opacity: 0.5;
   pointer-events: none;
   z-index: -1;
 }
