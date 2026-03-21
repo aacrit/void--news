@@ -47,8 +47,8 @@ inline using natural language ("according to...", "...X reported").\
 # {context_line} and {articles_block} are replaced at call time.
 # ---------------------------------------------------------------------------
 _USER_PROMPT_TEMPLATE = """\
-Analyze the following news cluster and return a JSON object with exactly four \
-fields: headline, summary, consensus, divergence.
+Analyze the following news cluster and return a JSON object with exactly seven \
+fields: headline, summary, consensus, divergence, editorial_importance, story_type, has_binding_consequences.
 
 {context_line}
 ARTICLES:
@@ -122,9 +122,36 @@ to report.
 
 ---
 
+TASK 5 — editorial_importance (integer, 1-10)
+Rate this story's editorial importance on a 1-10 scale. Ask: "Would a senior New York Times editor put this on the front page?"
+10 = once-in-a-decade event (war declaration, pandemic, constitutional crisis)
+7-9 = major national/global development (supreme court ruling, trade deal, mass protest)
+4-6 = significant but routine (quarterly earnings, bilateral meeting, policy proposal)
+1-3 = ceremonial, human interest, or incremental update on a stable story
+
+---
+
+TASK 6 — story_type (string, one of these exact values)
+Classify into exactly one type:
+- "breaking_crisis": active unfolding emergency with immediate consequences
+- "policy_action": government/institutional decision with binding consequences
+- "investigation": journalistic investigation revealing unknown information
+- "ongoing_crisis": continuation of a known crisis (war, pandemic, famine)
+- "incremental_update": minor development on a previously reported story
+- "human_interest": individual-focused story without policy implications
+- "ceremonial": commemorative events, symbolic actions, awards, anniversaries
+- "entertainment": arts, culture, sports, celebrity
+
+---
+
+TASK 7 — has_binding_consequences (boolean)
+Does this story report a decision or event with binding policy, legal, military, or economic consequences? True if it changes the legal/military/economic status quo (law signed, sanctions imposed, rate decision, military deployment, court ruling). False for proposals, discussions, reactions, commentary, or ceremonial events.
+
+---
+
 Return JSON only. No markdown fences. No text outside the JSON object.
 
-{{"headline": "...", "summary": "...", "consensus": ["...", ...], "divergence": ["...", ...]}}\
+{{"headline": "...", "summary": "...", "consensus": ["...", ...], "divergence": ["...", ...], "editorial_importance": N, "story_type": "...", "has_binding_consequences": true/false}}\
 """
 
 # ---------------------------------------------------------------------------
@@ -157,13 +184,19 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     Does not modify or discard the result — warnings are surfaced to the
     analytics-expert during post-run audit.
     """
+    cid_str = f" {cluster_id}" if cluster_id != "" else ""
+
     headline = result.get("headline", "")
     word_count = len(headline.split())
     if not (8 <= word_count <= 12):
         print(
-            f"  [quality] Headline word count {word_count} (expected 8-12): "
+            f"  [quality]{cid_str} Headline word count {word_count} (expected 8-12): "
             f"{headline!r}"
         )
+
+    ei = result.get("editorial_importance")
+    if ei is not None and not (1 <= int(ei) <= 10):
+        print(f"  [quality]{cid_str} editorial_importance out of range: {ei}")
 
     # Scan headline + summary + all consensus + all divergence items
     all_text = " ".join([
@@ -291,11 +324,32 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     consensus = [str(c) for c in consensus if c]
     divergence = [str(d) for d in divergence if d]
 
+    # Extract editorial intelligence fields (v5.0)
+    editorial_importance = result.get("editorial_importance")
+    if isinstance(editorial_importance, (int, float)):
+        editorial_importance = max(1, min(10, int(editorial_importance)))
+    else:
+        editorial_importance = None
+
+    _VALID_STORY_TYPES = {
+        "breaking_crisis", "policy_action", "investigation",
+        "ongoing_crisis", "incremental_update", "human_interest",
+        "ceremonial", "entertainment",
+    }
+    story_type_raw = result.get("story_type", "")
+    story_type = story_type_raw if story_type_raw in _VALID_STORY_TYPES else None
+
+    has_binding = result.get("has_binding_consequences")
+    has_binding_consequences = bool(has_binding) if isinstance(has_binding, bool) else None
+
     validated = {
         "headline": headline.strip()[:500],
         "summary": summary.strip(),
         "consensus": consensus,
         "divergence": divergence,
+        "editorial_importance": editorial_importance,
+        "story_type": story_type,
+        "has_binding_consequences": has_binding_consequences,
     }
 
     # Quality gate: log warnings for out-of-spec output (no discards).

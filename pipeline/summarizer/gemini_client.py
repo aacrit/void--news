@@ -72,6 +72,7 @@ def generate_json(
     prompt: str,
     system_instruction: str | None = None,
     max_retries: int = 1,
+    count_call: bool = True,
 ) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
@@ -82,6 +83,10 @@ def generate_json(
             as the system turn. When None (default), no system instruction is
             sent and behavior is identical to the previous implementation.
         max_retries: Number of additional attempts on transient failures.
+        count_call: When True (default), increments the per-run call counter
+            and enforces the 25-call summarization budget cap. When False,
+            both the cap check and the increment are skipped — use for
+            editorial triage calls that have their own separate budget.
 
     Returns parsed JSON dict, or None on failure (caller falls back
     to rule-based generation).
@@ -92,8 +97,8 @@ def generate_json(
     if client is None:
         return None
 
-    # Hard cap: stop calling to protect free tier
-    if _call_count >= _MAX_CALLS_PER_RUN:
+    # Hard cap: stop calling to protect free tier (skipped for out-of-budget callers)
+    if count_call and _call_count >= _MAX_CALLS_PER_RUN:
         return None
 
     config = types.GenerateContentConfig(
@@ -106,7 +111,8 @@ def generate_json(
     for attempt in range(max_retries + 1):
         try:
             _rate_limit()
-            _call_count += 1
+            if count_call:
+                _call_count += 1
             response = client.models.generate_content(
                 model=_MODEL,
                 contents=prompt,
@@ -153,3 +159,96 @@ def is_available() -> bool:
 def get_call_count() -> int:
     """Return the number of Gemini API calls made this run."""
     return _call_count
+
+
+# ---------------------------------------------------------------------------
+# Editorial triage — ask Gemini to editorially rank top candidates
+# Separate budget from summarization (max 5 calls per run)
+# ---------------------------------------------------------------------------
+_triage_call_count: int = 0
+_MAX_TRIAGE_CALLS: int = 5
+
+_TRIAGE_SYSTEM_INSTRUCTION = (
+    "You are a senior front-page editor at a major international newspaper. "
+    "Your job is to look at a list of today's stories and decide which deserve "
+    "the most prominent placement. You select and order — you do not write.\n\n"
+    "Selection criteria (priority order):\n"
+    "1. Scale of real-world consequences: how many people affected, how binding, "
+    "how irreversible?\n"
+    "2. Novelty: genuinely new, or incremental update on yesterday's story?\n"
+    "3. Institutional authority: head of state > cabinet minister > local official\n"
+    "4. Global vs local: multiple countries > one country > one city\n"
+    "5. Source consensus: many independent outlets covering it = editors agree it matters\n\n"
+    "NEVER consider political lean or partisan implications. A conservative policy "
+    "win and a progressive policy win of equal consequence receive equal placement."
+)
+
+
+def editorial_triage(
+    candidates: list[dict],
+    section: str,
+) -> dict | None:
+    """
+    Ask Gemini to editorially rank top ~30 cluster candidates for a section.
+
+    Args:
+        candidates: List of cluster dicts with id, title, summary, source_count
+        section: Section name (world/us/india)
+
+    Returns dict with:
+        ranked_ids: list of cluster IDs in editorial priority order (top 10)
+        duplicate_flags: list of [id_a, id_b] pairs (possible same story)
+        incremental_flags: list of cluster IDs that are incremental updates
+    Returns None if unavailable or budget exhausted.
+    """
+    global _triage_call_count
+
+    if not is_available():
+        return None
+    if _triage_call_count >= _MAX_TRIAGE_CALLS:
+        return None
+
+    # Build candidate list
+    lines = []
+    for c in candidates[:30]:
+        cid = c.get("id", "")
+        title = (c.get("title", "") or "")[:120]
+        summary = (c.get("summary", "") or "")[:200]
+        src_count = c.get("source_count", 0)
+        lines.append(f"[{cid}] ({src_count} sources) {title}")
+        if summary:
+            lines.append(f"  {summary}")
+
+    candidate_block = "\n".join(lines)
+
+    prompt = (
+        f"You are editing the {section.upper()} section front page. "
+        f"Below are today's top candidate stories. Return a JSON object with "
+        f"exactly three fields:\n\n"
+        f'1. "ranked_ids" — array of up to 10 cluster IDs from the list below, '
+        f"ordered from most front-page-worthy to least. Only include IDs from the list.\n"
+        f'2. "duplicate_flags" — array of [id_a, id_b] pairs where two stories '
+        f"appear to be about the same event. Empty array if none.\n"
+        f'3. "incremental_flags" — array of cluster IDs that are incremental '
+        f"updates on a prior story (not genuinely new). Empty array if none.\n\n"
+        f"CANDIDATES:\n{candidate_block}\n\n"
+        f"Return JSON only. No markdown fences.\n"
+        f'{{"ranked_ids": ["...", ...], "duplicate_flags": [["...", "..."], ...], '
+        f'"incremental_flags": ["...", ...]}}'
+    )
+
+    _triage_call_count += 1
+    result = generate_json(
+        prompt,
+        system_instruction=_TRIAGE_SYSTEM_INSTRUCTION,
+        count_call=False,  # Don't count against summarization budget
+    )
+
+    if not result:
+        return None
+
+    return {
+        "ranked_ids": result.get("ranked_ids", []),
+        "duplicate_flags": result.get("duplicate_flags", []),
+        "incremental_flags": result.get("incremental_flags", []),
+    }
