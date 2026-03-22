@@ -83,7 +83,7 @@ CEO (Aacrit)
 |-------|---------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 222-source list | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 370-source list | Yes | Source list changes |
 
 ### Security Division
 
