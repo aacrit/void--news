@@ -13,6 +13,8 @@ import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import { BiasInspectorInline } from "./BiasInspector";
+import DeepDiveSpectrum from "./DeepDiveSpectrum";
+import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -71,28 +73,20 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
 
-  /* ---- Compute lean spectrum: 1 above + 1 below track, overlap at 3+ ---- */
-  const leanPositions = useMemo(() => {
-    const items = sources
-      .filter((src) => src.biasScores != null)
-      .map((src, idx) => ({ src, idx, lean: src.biasScores?.politicalLean ?? 50 }))
-      .sort((a, b) => a.lean - b.lean);
-
-    // Alternate: first source at a lean position goes above, second below.
-    // Third+ at the same lean position overlap on the below row.
-    const positionCounts: Record<string, number> = {};
-    return items.map((item) => {
-      // Bucket by ~7% lean proximity
-      const bucket = Math.round(item.lean / 7);
-      const count = positionCounts[bucket] || 0;
-      positionCounts[bucket] = count + 1;
-
-      // 0 = above track, 1 = below track
-      const side: "above" | "below" = count === 0 ? "above" : "below";
-      const isOverflow = count >= 2; // 3rd+ source at same position
-      return { ...item, side, isOverflow };
-    });
-  }, [sources]);
+  /* ---- Map sources for mini-spectrum component ---- */
+  const spectrumSources: DeepDiveSpectrumSource[] = useMemo(
+    () =>
+      sources
+        .filter((src) => src.biasScores != null)
+        .map((src) => ({
+          name: src.name,
+          articleUrl: src.url,
+          sourceUrl: src.url,
+          tier: src.tier,
+          politicalLean: src.biasScores?.politicalLean ?? 50,
+        })),
+    [sources]
+  );
 
   /* ---- Detect desktop vs mobile for directional animation -------------- */
   useEffect(() => {
@@ -585,43 +579,10 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           )}
 
           {/* ---- Spectrum + Press Analysis (requires source data) ------------ */}
-          {sources.length > 0 && leanPositions.length > 0 && (
+          {spectrumSources.length > 0 && (
             <section aria-label="Source spectrum" className={`dd-analysis-section anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}>
 
-              {/* Compact spectrum — dots ON the track, no above/below rows */}
-              <div className="dd-compact-spectrum">
-                {/* Labels above the track — explicit Left/Center/Right */}
-                <div className="dd-compact-spectrum__labels">
-                  <span className="dd-compact-spectrum__label">Left</span>
-                  <span className="dd-compact-spectrum__label">Center</span>
-                  <span className="dd-compact-spectrum__label">Right</span>
-                </div>
-                <div className="dd-compact-spectrum__track">
-
-                  {/* Source dots positioned ON the track */}
-                  {leanPositions.map(({ src, idx, lean, isOverflow }) => {
-                    const favicon = src.url ? faviconUrl(src.url) : "";
-                    return (
-                      <a
-                        key={`dot-${src.name}-${idx}`}
-                        href={src.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={`${src.name} — ${leanLabel(lean)} (${lean})`}
-                        aria-label={`${src.name}: ${leanLabel(lean)}`}
-                        className={`dd-compact-spectrum__dot${isOverflow ? " dd-compact-spectrum__dot--overflow" : ""}`}
-                        style={{ left: `${Math.max(3, Math.min(97, lean))}%` }}
-                      >
-                        {favicon ? (
-                          <img src={favicon} alt="" width={16} height={16} style={{ borderRadius: 2 }} loading="lazy" />
-                        ) : (
-                          <span className="dd-compact-spectrum__initial">{src.name.charAt(0)}</span>
-                        )}
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
+              <DeepDiveSpectrum sources={spectrumSources} />
 
               {/* Press Analysis trigger — center-aligned, inviting label */}
               <button

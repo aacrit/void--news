@@ -434,17 +434,6 @@
     gap: var(--space-2);
   }
 
-  /* Compact spectrum dots: slightly smaller on mobile */
-  .dd-compact-spectrum__dot {
-    width: 18px;
-    height: 18px;
-  }
-
-  /* No lift on mobile — tap targets are large enough without translateY */
-  .dd-compact-spectrum__dot:hover {
-    transform: translate(-50%, -50%);
-  }
-
   /* Press expand: faster transition on mobile */
   .dd-press-expand {
     transition: grid-template-rows 300ms var(--ease-out);
