@@ -1,0 +1,522 @@
+{
+  "ap-fed-rate-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "ap-fed-rate-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "ap-fed-rate-2026.opinion": {
+    "score": 7,
+    "grade": "CORRECT"
+  },
+  "ap-fed-rate-2026.rigor": {
+    "score": 73,
+    "grade": "CORRECT"
+  },
+  "ap-fed-rate-2026.framing": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "reuters-ecb-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "reuters-ecb-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "reuters-ecb-2026.opinion": {
+    "score": 4,
+    "grade": "CORRECT"
+  },
+  "reuters-ecb-2026.rigor": {
+    "score": 74,
+    "grade": "CORRECT"
+  },
+  "reuters-ecb-2026.framing": {
+    "score": 10,
+    "grade": "CORRECT"
+  },
+  "ap-ukraine-diplomacy-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "ap-ukraine-diplomacy-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "ap-ukraine-diplomacy-2026.opinion": {
+    "score": 7,
+    "grade": "CORRECT"
+  },
+  "ap-ukraine-diplomacy-2026.rigor": {
+    "score": 51,
+    "grade": "ACCEPTABLE"
+  },
+  "ap-ukraine-diplomacy-2026.framing": {
+    "score": 14,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-gun-2026.lean": {
+    "score": 27,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-gun-2026.sens": {
+    "score": 15,
+    "grade": "ACCEPTABLE"
+  },
+  "nyt-opinion-gun-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-gun-2026.rigor": {
+    "score": 21,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-gun-2026.framing": {
+    "score": 18,
+    "grade": "ACCEPTABLE"
+  },
+  "fox-opinion-immigration-2026.lean": {
+    "score": 97,
+    "grade": "CORRECT"
+  },
+  "fox-opinion-immigration-2026.sens": {
+    "score": 51,
+    "grade": "CORRECT"
+  },
+  "fox-opinion-immigration-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "fox-opinion-immigration-2026.rigor": {
+    "score": 22,
+    "grade": "CORRECT"
+  },
+  "fox-opinion-immigration-2026.framing": {
+    "score": 46,
+    "grade": "CORRECT"
+  },
+  "jacobin-opinion-labor-2026.lean": {
+    "score": 5,
+    "grade": "CORRECT"
+  },
+  "jacobin-opinion-labor-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "jacobin-opinion-labor-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "jacobin-opinion-labor-2026.rigor": {
+    "score": 16,
+    "grade": "CORRECT"
+  },
+  "jacobin-opinion-labor-2026.framing": {
+    "score": 16,
+    "grade": "CORRECT"
+  },
+  "propublica-medicare-2026.lean": {
+    "score": 38,
+    "grade": "CORRECT"
+  },
+  "propublica-medicare-2026.sens": {
+    "score": 8,
+    "grade": "ACCEPTABLE"
+  },
+  "propublica-medicare-2026.opinion": {
+    "score": 3,
+    "grade": "ACCEPTABLE"
+  },
+  "propublica-medicare-2026.rigor": {
+    "score": 64,
+    "grade": "CORRECT"
+  },
+  "propublica-medicare-2026.framing": {
+    "score": 10,
+    "grade": "CORRECT"
+  },
+  "bellingcat-disinfo-2026.lean": {
+    "score": 38,
+    "grade": "CORRECT"
+  },
+  "bellingcat-disinfo-2026.sens": {
+    "score": 8,
+    "grade": "ACCEPTABLE"
+  },
+  "bellingcat-disinfo-2026.opinion": {
+    "score": 2,
+    "grade": "ACCEPTABLE"
+  },
+  "bellingcat-disinfo-2026.rigor": {
+    "score": 48,
+    "grade": "ACCEPTABLE"
+  },
+  "bellingcat-disinfo-2026.framing": {
+    "score": 14,
+    "grade": "CORRECT"
+  },
+  "intercept-military-2026.lean": {
+    "score": 25,
+    "grade": "CORRECT"
+  },
+  "intercept-military-2026.sens": {
+    "score": 8,
+    "grade": "ACCEPTABLE"
+  },
+  "intercept-military-2026.opinion": {
+    "score": 6,
+    "grade": "CORRECT"
+  },
+  "intercept-military-2026.rigor": {
+    "score": 72,
+    "grade": "CORRECT"
+  },
+  "intercept-military-2026.framing": {
+    "score": 5,
+    "grade": "ACCEPTABLE"
+  },
+  "intercept-climate-left-2026.lean": {
+    "score": 3,
+    "grade": "CORRECT"
+  },
+  "intercept-climate-left-2026.sens": {
+    "score": 30,
+    "grade": "CORRECT"
+  },
+  "intercept-climate-left-2026.opinion": {
+    "score": 21,
+    "grade": "CORRECT"
+  },
+  "intercept-climate-left-2026.rigor": {
+    "score": 17,
+    "grade": "CORRECT"
+  },
+  "intercept-climate-left-2026.framing": {
+    "score": 9,
+    "grade": "CORRECT"
+  },
+  "motherjones-wealth-left-2026.lean": {
+    "score": 11,
+    "grade": "CORRECT"
+  },
+  "motherjones-wealth-left-2026.sens": {
+    "score": 9,
+    "grade": "CORRECT"
+  },
+  "motherjones-wealth-left-2026.opinion": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "motherjones-wealth-left-2026.rigor": {
+    "score": 39,
+    "grade": "CORRECT"
+  },
+  "motherjones-wealth-left-2026.framing": {
+    "score": 15,
+    "grade": "CORRECT"
+  },
+  "breitbart-border-2026.lean": {
+    "score": 98,
+    "grade": "CORRECT"
+  },
+  "breitbart-border-2026.sens": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "breitbart-border-2026.opinion": {
+    "score": 10,
+    "grade": "CORRECT"
+  },
+  "breitbart-border-2026.rigor": {
+    "score": 43,
+    "grade": "CORRECT"
+  },
+  "breitbart-border-2026.framing": {
+    "score": 43,
+    "grade": "CORRECT"
+  },
+  "dailywire-gender-2026.lean": {
+    "score": 98,
+    "grade": "CORRECT"
+  },
+  "dailywire-gender-2026.sens": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "dailywire-gender-2026.opinion": {
+    "score": 18,
+    "grade": "CORRECT"
+  },
+  "dailywire-gender-2026.rigor": {
+    "score": 14,
+    "grade": "CORRECT"
+  },
+  "dailywire-gender-2026.framing": {
+    "score": 40,
+    "grade": "CORRECT"
+  },
+  "newsmax-election-2026.lean": {
+    "score": 98,
+    "grade": "CORRECT"
+  },
+  "newsmax-election-2026.sens": {
+    "score": 37,
+    "grade": "CORRECT"
+  },
+  "newsmax-election-2026.opinion": {
+    "score": 20,
+    "grade": "CORRECT"
+  },
+  "newsmax-election-2026.rigor": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "newsmax-election-2026.framing": {
+    "score": 22,
+    "grade": "CORRECT"
+  },
+  "rt-ukraine-2026.lean": {
+    "score": 84,
+    "grade": "CORRECT"
+  },
+  "rt-ukraine-2026.sens": {
+    "score": 33,
+    "grade": "CORRECT"
+  },
+  "rt-ukraine-2026.opinion": {
+    "score": 22,
+    "grade": "CORRECT"
+  },
+  "rt-ukraine-2026.rigor": {
+    "score": 32,
+    "grade": "ACCEPTABLE"
+  },
+  "rt-ukraine-2026.framing": {
+    "score": 43,
+    "grade": "CORRECT"
+  },
+  "cgtn-taiwan-2026.lean": {
+    "score": 63,
+    "grade": "CORRECT"
+  },
+  "cgtn-taiwan-2026.sens": {
+    "score": 30,
+    "grade": "CORRECT"
+  },
+  "cgtn-taiwan-2026.opinion": {
+    "score": 21,
+    "grade": "ACCEPTABLE"
+  },
+  "cgtn-taiwan-2026.rigor": {
+    "score": 21,
+    "grade": "CORRECT"
+  },
+  "cgtn-taiwan-2026.framing": {
+    "score": 40,
+    "grade": "ACCEPTABLE"
+  },
+  "sputnik-nato-2026.lean": {
+    "score": 84,
+    "grade": "CORRECT"
+  },
+  "sputnik-nato-2026.sens": {
+    "score": 29,
+    "grade": "CORRECT"
+  },
+  "sputnik-nato-2026.opinion": {
+    "score": 26,
+    "grade": "CORRECT"
+  },
+  "sputnik-nato-2026.rigor": {
+    "score": 26,
+    "grade": "CORRECT"
+  },
+  "sputnik-nato-2026.framing": {
+    "score": 41,
+    "grade": "CORRECT"
+  },
+  "ap-breaking-earthquake-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "ap-breaking-earthquake-2026.sens": {
+    "score": 20,
+    "grade": "CORRECT"
+  },
+  "ap-breaking-earthquake-2026.opinion": {
+    "score": 3,
+    "grade": "CORRECT"
+  },
+  "ap-breaking-earthquake-2026.rigor": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "ap-breaking-earthquake-2026.framing": {
+    "score": 12,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-market-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-market-2026.sens": {
+    "score": 16,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-market-2026.opinion": {
+    "score": 2,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-market-2026.rigor": {
+    "score": 53,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-market-2026.framing": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "npr-analysis-immigration-2026.lean": {
+    "score": 38,
+    "grade": "CORRECT"
+  },
+  "npr-analysis-immigration-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "npr-analysis-immigration-2026.opinion": {
+    "score": 45,
+    "grade": "CORRECT"
+  },
+  "npr-analysis-immigration-2026.rigor": {
+    "score": 62,
+    "grade": "CORRECT"
+  },
+  "npr-analysis-immigration-2026.framing": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "economist-analysis-china-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "economist-analysis-china-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "economist-analysis-china-2026.opinion": {
+    "score": 5,
+    "grade": "ACCEPTABLE"
+  },
+  "economist-analysis-china-2026.rigor": {
+    "score": 66,
+    "grade": "CORRECT"
+  },
+  "economist-analysis-china-2026.framing": {
+    "score": 10,
+    "grade": "CORRECT"
+  },
+  "atlantic-analysis-democracy-2026.lean": {
+    "score": 35,
+    "grade": "CORRECT"
+  },
+  "atlantic-analysis-democracy-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "atlantic-analysis-democracy-2026.opinion": {
+    "score": 12,
+    "grade": "ACCEPTABLE"
+  },
+  "atlantic-analysis-democracy-2026.rigor": {
+    "score": 47,
+    "grade": "ACCEPTABLE"
+  },
+  "atlantic-analysis-democracy-2026.framing": {
+    "score": 19,
+    "grade": "CORRECT"
+  },
+  "data-heavy-gdp-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "data-heavy-gdp-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "data-heavy-gdp-2026.opinion": {
+    "score": 3,
+    "grade": "CORRECT"
+  },
+  "data-heavy-gdp-2026.rigor": {
+    "score": 65,
+    "grade": "CORRECT"
+  },
+  "data-heavy-gdp-2026.framing": {
+    "score": 7,
+    "grade": "CORRECT"
+  },
+  "nyt-sarcasm-tax-2026.lean": {
+    "score": 17,
+    "grade": "CORRECT"
+  },
+  "nyt-sarcasm-tax-2026.sens": {
+    "score": 16,
+    "grade": "ACCEPTABLE"
+  },
+  "nyt-sarcasm-tax-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "nyt-sarcasm-tax-2026.rigor": {
+    "score": 35,
+    "grade": "CORRECT"
+  },
+  "nyt-sarcasm-tax-2026.framing": {
+    "score": 31,
+    "grade": "CORRECT"
+  },
+  "wsj-analysis-trade-2026.lean": {
+    "score": 82,
+    "grade": "ACCEPTABLE"
+  },
+  "wsj-analysis-trade-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "wsj-analysis-trade-2026.opinion": {
+    "score": 45,
+    "grade": "CORRECT"
+  },
+  "wsj-analysis-trade-2026.rigor": {
+    "score": 71,
+    "grade": "CORRECT"
+  },
+  "wsj-analysis-trade-2026.framing": {
+    "score": 15,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-climate-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-climate-2026.sens": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-climate-2026.opinion": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-climate-2026.rigor": {
+    "score": 61,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-climate-2026.framing": {
+    "score": 13,
+    "grade": "CORRECT"
+  }
+}
