@@ -1,7 +1,7 @@
 /* ==========================================================================
    void --news — Spectrum Chart & Sources Page
-   Political lean spectrum: logos plotted above/below a gradient bar,
-   overlapping within lean zones, fanning out on hover.
+   Bar on top, all sources below in 7 lean zones.
+   Logos overlap, fan out on hover. Single expand, scrollable zones.
    ========================================================================== */
 
 /* ---- Spectrum zone tint tokens ----------------------------------------- */
@@ -122,55 +122,107 @@
 }
 
 /* ==========================================================================
-   Spectrum Chart — scatter layout with overlap + fan-out
+   Spectrum Chart
    ========================================================================== */
 
 .spectrum-chart {
   margin-bottom: var(--space-4);
 }
 
-/* ---- Section (above or below the bar) --------------------------------- */
-.spectrum-section {
+/* ==========================================================================
+   Spectrum Bar — gradient track with lean labels (top anchor)
+   ========================================================================== */
+
+.spectrum-bar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 34px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: linear-gradient(
+    to right,
+    var(--bias-far-left),
+    var(--bias-left) 14%,
+    var(--bias-center-left) 28%,
+    var(--bias-center) 42%,
+    var(--bias-center-right) 57%,
+    var(--bias-right) 71%,
+    var(--bias-far-right)
+  );
+  position: relative;
+  box-shadow:
+    var(--shadow-e1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
   margin-bottom: 2px;
 }
 
-.spectrum-section__header {
+.spectrum-bar__zone {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-  padding-left: 2px;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
 }
 
-.spectrum-section__label {
+.spectrum-bar__zone:last-child {
+  border-right: none;
+}
+
+.spectrum-bar__label {
   font-family: var(--font-structural);
-  font-size: var(--text-xs);
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--fg-tertiary);
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
+  display: none;
 }
 
-.spectrum-section__count {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  font-variant-numeric: tabular-nums;
+.spectrum-bar__label--short {
+  font-family: var(--font-structural);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
-/* ---- Side container (collapsible) ------------------------------------- */
-.spectrum-side {
+@media (min-width: 1024px) {
+  .spectrum-bar__label { display: block; }
+  .spectrum-bar__label--short { display: none; }
+}
+
+@media (min-width: 768px) {
+  .spectrum-bar {
+    height: 36px;
+  }
+  .spectrum-bar__label--short {
+    font-size: 9px;
+  }
+}
+
+/* ==========================================================================
+   Body — all sources below the bar, collapsible
+   ========================================================================== */
+
+.spectrum-body {
   position: relative;
   transition: max-height var(--dur-slow) var(--spring);
 }
 
-.spectrum-side--collapsed {
+.spectrum-body--collapsed {
   max-height: 160px;
   overflow: hidden;
 }
 
 /* Gradient fade when collapsed */
-.spectrum-side__fade {
+.spectrum-body__fade {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -181,8 +233,8 @@
   z-index: 5;
 }
 
-/* ---- Grid: 7 lean zones across the spectrum --------------------------- */
-.spectrum-side__grid {
+/* ---- Grid: 7 lean zones ---- */
+.spectrum-body__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0;
@@ -194,7 +246,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-1) 1px;
+  padding: var(--space-1) 1px var(--space-2);
   border-left: 1px solid var(--divider);
   transition: background-color 0.25s var(--ease-out);
 }
@@ -217,12 +269,44 @@
   background-color: var(--zone-tint);
 }
 
+/* Scrollable zone when expanded — capped at ~60vh so tall zones scroll */
+.spectrum-zone--scrollable .spectrum-zone__logos {
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.spectrum-zone--scrollable .spectrum-zone__logos::-webkit-scrollbar {
+  width: 4px;
+}
+
+.spectrum-zone--scrollable .spectrum-zone__logos::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.spectrum-zone--scrollable .spectrum-zone__logos::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 2px;
+}
+
 /* ---- Logo cluster within zone ----------------------------------------- */
 .spectrum-zone__logos {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-content: flex-start;
+  flex: 1;
+}
+
+/* Zone count — subtle data below logos */
+.spectrum-zone__count {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: var(--space-1);
+  opacity: 0.6;
 }
 
 /* ==========================================================================
@@ -293,86 +377,6 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-}
-
-/* ==========================================================================
-   Spectrum Bar — gradient track with lean labels
-   ========================================================================== */
-
-.spectrum-bar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  height: 34px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  background: linear-gradient(
-    to right,
-    var(--bias-far-left),
-    var(--bias-left) 14%,
-    var(--bias-center-left) 28%,
-    var(--bias-center) 42%,
-    var(--bias-center-right) 57%,
-    var(--bias-right) 71%,
-    var(--bias-far-right)
-  );
-  position: relative;
-  box-shadow:
-    var(--shadow-e1),
-    inset 0 1px 2px rgba(255, 255, 255, 0.15);
-  margin: var(--space-1) 0;
-}
-
-.spectrum-bar__zone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-}
-
-.spectrum-bar__zone:last-child {
-  border-right: none;
-}
-
-/* Full labels — desktop wide */
-.spectrum-bar__label {
-  font-family: var(--font-structural);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  white-space: nowrap;
-  pointer-events: none;
-  display: none;
-}
-
-/* Short labels — tablet/narrow desktop */
-.spectrum-bar__label--short {
-  font-family: var(--font-structural);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-@media (min-width: 1024px) {
-  .spectrum-bar__label { display: block; }
-  .spectrum-bar__label--short { display: none; }
-}
-
-@media (min-width: 768px) {
-  .spectrum-bar {
-    height: 36px;
-  }
-  .spectrum-bar__label--short {
-    font-size: 9px;
-  }
 }
 
 /* ==========================================================================
@@ -507,7 +511,7 @@
     height: 20px;
   }
 
-  .spectrum-side--collapsed {
+  .spectrum-body--collapsed {
     max-height: 180px;
   }
 }
@@ -574,12 +578,16 @@
     font-size: 7px;
   }
 
-  .spectrum-side--collapsed {
+  .spectrum-body--collapsed {
     max-height: 120px;
   }
 
-  .spectrum-side__fade {
+  .spectrum-body__fade {
     height: 36px;
+  }
+
+  .spectrum-zone--scrollable .spectrum-zone__logos {
+    max-height: 50vh;
   }
 }
 
@@ -591,7 +599,7 @@
   .spectrum-logo {
     transition: none;
   }
-  .spectrum-side {
+  .spectrum-body {
     transition: none;
   }
   .spectrum-zone {
