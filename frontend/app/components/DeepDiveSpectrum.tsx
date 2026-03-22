@@ -180,7 +180,7 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
       <div className="dd-spectrum__bar" aria-hidden="true">
         {LEAN_ZONES.map((zone) => (
           <div key={zone.key} className="dd-spectrum__bar-zone" data-lean={zone.key}>
-            <span className="dd-spectrum__zone-label">{zone.shortLabel}</span>
+            <span className="dd-spectrum__zone-label">{zone.label}</span>
           </div>
         ))}
       </div>
