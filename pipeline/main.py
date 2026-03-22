@@ -82,7 +82,7 @@ BRIEFING_AVAILABLE = False
 try:
     from briefing.daily_brief_generator import generate_daily_briefs
     from briefing.audio_producer import produce_audio
-    from briefing.voice_rotation import get_voice_for_today
+    from briefing.voice_rotation import get_voice_for_today, get_voices_for_today
     BRIEFING_AVAILABLE = True
 except ImportError as e:
     print(f"[warn] Briefing modules not available ({e}). Skipping daily brief.")
@@ -1714,19 +1714,18 @@ def main():
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }
 
-                    # Generate audio only during morning/evening runs
+                    # Generate two-host audio
                     if should_generate_audio and brief.get("audio_script"):
-                        voice = get_voice_for_today(edition)
+                        voices = get_voices_for_today(edition)
                         audio_result = produce_audio(
-                            brief["audio_script"], voice["id"],
-                            voice["language_code"], edition,
+                            brief["audio_script"], voices, edition,
                         )
                         if audio_result:
                             brief_row["audio_url"] = audio_result["audio_url"]
                             brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
                             brief_row["audio_file_size"] = audio_result["file_size"]
-                            brief_row["audio_voice"] = voice["id"]
-                            brief_row["audio_voice_label"] = voice["label"]
+                            brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
+                            brief_row["audio_voice_label"] = "Two hosts"
 
                     try:
                         supabase.table("daily_briefs").upsert(

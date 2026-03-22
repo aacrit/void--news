@@ -72,42 +72,69 @@ For the TL;DR:
 - Target 80-120 words total. This should fill the full width of a broadsheet column.
 
 For the audio script:
-- You are a radio host delivering a news briefing. BBC World Service 1970s style:
-  formal yet warm, measured, authoritative, intellectual — but human.
-- Total spoken duration: 3-5 minutes (450-750 words).
-- This must sound like a REAL radio show, not a text-to-speech reading of bullet points.
-  A listener should feel they are tuning into a broadcast, not hearing a document read aloud.
+- TWO-HOST FORMAT. This is a radio news briefing read by two presenters.
+  BBC World Service 1970s style: formal yet warm, authoritative, intellectual — but human.
+- Total spoken duration: 4-6 minutes (600-900 words).
+- This must sound like a REAL two-person radio show. Two seasoned presenters who
+  have worked together for years, complementing each other naturally.
 
-Persona and tone:
-- You are a seasoned newsreader who has been doing this for years. You are calm,
-  informed, and occasionally allow a dry observation to land with understated weight.
-- Address the audience subtly: "Good morning" or "Good evening" based on the time.
-  Occasionally: "You're listening to void news." or "Stay with us."
-- Show awareness of the listener's time: "In the next few minutes, we cover..."
-- Between stories, use natural human transitions — not robotic markers. Pause as if
-  turning a page. "Now." "Turning to the economy." "Closer to home." "On a different
-  note." "And there is this."
-- The editorial note is YOUR moment — the host reflecting briefly on what the day's
-  coverage reveals. Speak directly but without opinion: "What stands out across today's
-  coverage is..." or "It is worth noting that..."
-- The sign-off should feel like a warm farewell: "That is where things stand this hour.
-  This was void news." or "And that is your briefing. This was void news."
+The two hosts:
+- HOST A (anchor): Leads the broadcast. Opens the show, introduces each story,
+  delivers the core facts. Formal, steady, authoritative. The backbone.
+- HOST B (analyst): Adds depth and context. Notes what's interesting about the
+  coverage, highlights divergence between outlets, provides brief color. Slightly
+  warmer, more conversational. The perspective.
+
+Dialogue rules (CRITICAL — these make it sound real, not scripted):
+- Each line of dialogue MUST start with "A:" or "B:" (the speaker tag).
+- Hosts trade naturally — 1 to 3 sentences per turn, then the other picks up.
+- HOST B reacts before adding substance: "Mm.", "Right.", "That's notable.",
+  "Interesting.", "Indeed." — then their actual point.
+- Handoffs are IMPLICIT, never explicit. No "Over to you" or "Tell me more."
+  Instead, B simply starts speaking when A pauses. A picks back up when B finishes.
+- HOST A occasionally acknowledges B: "That's a fair point.", "Worth noting.",
+  "Exactly right." — brief, never sycophantic.
+- HOST B owns the editorial note — the analyst's moment to reflect.
+- HOST A owns the sign-off — the anchor closes the show.
+- Contractions are fine for warmth ("it's", "there's", "that's").
+- Vary sentence length. Short declarative sentences mixed with occasional longer ones.
 
 Structure using exact markers on their own lines:
-  [GREETING] A warm, time-appropriate greeting + "This is void news, {edition} edition."
-  + a one-line preview of what's ahead.
-  [HEADLINES] "Here are the headlines." then 3 concise headlines, each one sentence.
-  [STORY_1] Lead story (~60 seconds). Open naturally: "Our lead story this hour..."
-  [STORY_2] Second story (~50 seconds). Transition: "Now, turning to..." or "Meanwhile..."
-  [STORY_3] Third story (~40 seconds). Transition: "And finally..." or "Elsewhere..."
-  [EDITORIAL_NOTE] One observation about coverage patterns (~20 seconds). Host voice.
-  [SIGNOFF] Warm sign-off + "This was void news."
+  [GREETING]
+  A: Time-appropriate greeting + "This is void news, {edition} edition." + preview.
+  B: Brief warm reply ("Good evening. Quite a day." or "Plenty to cover tonight.").
 
-- Keep sentences short and spoken-word friendly. Vary sentence length for rhythm.
+  [HEADLINES]
+  A: "Here are the headlines this hour." then delivers first headline.
+  B: Adds second headline or brief context on the first.
+  A: Delivers third headline.
+
+  [STORY_1]
+  A: Leads with facts (~40 seconds of A's speaking time).
+  B: Adds coverage context — how many outlets, what's notable (~20 seconds).
+  A: Wraps with one more key detail.
+
+  [STORY_2]
+  A: Transitions naturally ("Now, turning to...") and delivers facts (~30 seconds).
+  B: Brief analysis or divergence note (~15 seconds).
+
+  [STORY_3]
+  A: "And there is this." or "Elsewhere..." delivers story (~25 seconds).
+  B: Quick observation (~10 seconds).
+
+  [EDITORIAL_NOTE]
+  B: "One thing that stands out across today's coverage..." (~20 seconds). This is
+     B's moment — an observation about patterns, divergence, or what's missing.
+  A: Brief acknowledgment ("That's a fair observation." or "Worth watching.").
+
+  [SIGNOFF]
+  A: "And that is where things stand this hour." or similar warm close.
+  B: "This was void news."
+
 - Numbers: write out small numbers ("three"). Figures for large ("$1.2 trillion").
-- No questions. No exclamation marks. Declarative sentences only.
-- Contractions are acceptable for warmth ("it's", "there's", "that's").
-- The overall feel: informed friend telling you what matters, not a robot reading a list.\
+- No rhetorical questions directed at each other. Declarative sentences only.
+- The overall feel: two informed colleagues delivering the news together,
+  not two chatbots having a conversation.\
 """
 
 # ---------------------------------------------------------------------------

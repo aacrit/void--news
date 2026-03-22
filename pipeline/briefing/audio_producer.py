@@ -62,39 +62,71 @@ _SILENCE_AFTER: dict[str, int] = {
 }
 
 
-def _parse_script(script: str) -> dict[str, str]:
+def _parse_script(script: str) -> list[tuple[str, str, str]]:
     """
-    Parse the audio script into a dict of marker -> segment text.
+    Parse a two-host audio script into a list of (marker, speaker, text) tuples.
 
-    Markers are lines in the format [MARKER_NAME] followed by text
-    on subsequent lines until the next marker or end of script.
-    The marker name is stored without brackets.
+    Input format:
+        [GREETING]
+        A: Good evening. This is void news.
+        B: Good evening. Plenty to cover.
+        [STORY_1]
+        A: Our lead story...
+        B: What's notable here...
+
+    Returns:
+        [("GREETING", "A", "Good evening. This is void news."),
+         ("GREETING", "B", "Good evening. Plenty to cover."),
+         ("STORY_1", "A", "Our lead story..."),
+         ("STORY_1", "B", "What's notable here...")]
+
+    Lines without A:/B: prefix are assigned to "A" (anchor) by default.
     """
-    segments: dict[str, str] = {}
-    current_marker: Optional[str] = None
+    turns: list[tuple[str, str, str]] = []
+    current_marker: str = "GREETING"
+    current_speaker: str = "A"
     current_lines: list[str] = []
 
+    def _flush():
+        text = " ".join(current_lines).strip()
+        if text:
+            turns.append((current_marker, current_speaker, text))
+        current_lines.clear()
+
     for line in script.splitlines():
-        # Detect [MARKER] lines (bracket-enclosed, uppercase)
-        marker_match = re.match(r"^\[([A-Z_]+)\](.*)$", line.strip())
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        # Detect [MARKER] lines
+        marker_match = re.match(r"^\[([A-Z_]+)\](.*)$", stripped)
         if marker_match:
-            # Save previous segment
-            if current_marker is not None:
-                segments[current_marker] = " ".join(current_lines).strip()
+            _flush()
             current_marker = marker_match.group(1)
-            # Text may appear on the same line as the marker
-            inline_text = marker_match.group(2).strip()
-            current_lines = [inline_text] if inline_text else []
-        elif current_marker is not None:
-            text = line.strip()
-            if text:
-                current_lines.append(text)
+            inline = marker_match.group(2).strip()
+            if inline:
+                # Check if inline text has speaker tag
+                sp_match = re.match(r"^([AB]):\s*(.+)$", inline)
+                if sp_match:
+                    current_speaker = sp_match.group(1)
+                    current_lines.append(sp_match.group(2))
+                else:
+                    current_speaker = "A"
+                    current_lines.append(inline)
+            continue
 
-    # Save last segment
-    if current_marker is not None:
-        segments[current_marker] = " ".join(current_lines).strip()
+        # Detect speaker tags: "A: ..." or "B: ..."
+        sp_match = re.match(r"^([AB]):\s*(.+)$", stripped)
+        if sp_match:
+            _flush()
+            current_speaker = sp_match.group(1)
+            current_lines.append(sp_match.group(2))
+        else:
+            # Continuation of current speaker's turn
+            current_lines.append(stripped)
 
-    return segments
+    _flush()
+    return turns
 
 
 def _synthesize_segment(
@@ -215,51 +247,39 @@ def _upload_to_supabase(
 
 def produce_audio(
     audio_script: str,
-    voice_id: str,
-    language_code: str,
+    voices: dict,
     edition: str,
 ) -> Optional[dict]:
     """
-    Synthesize the broadcast audio from the script and upload to Supabase.
-
-    Stitching sequence:
-      pips.mp3 → 200ms silence
-      → TTS: Countdown (SSML slow rate)
-      → ident.mp3 → 300ms silence
-      → TTS: Greeting → 500ms silence
-      → TTS: Headlines → 600ms silence
-      → TTS: Story 1 → 400ms silence
-      → TTS: Story 2 → 400ms silence
-      → TTS: Story 3 → 500ms silence
-      → TTS: Editorial note → 400ms silence
-      → TTS: Sign-off → 300ms silence
-      → outro.mp3
+    Synthesize a two-host broadcast from the script and upload to Supabase.
 
     Args:
-        audio_script: Full broadcast script with [MARKER] segments.
-        voice_id: Google Cloud TTS Neural2 voice name.
-        language_code: BCP-47 code matching the voice.
+        audio_script: Full broadcast script with [MARKER] + A:/B: speaker tags.
+        voices: {"host_a": {"id": ..., "language_code": ...},
+                 "host_b": {"id": ..., "language_code": ...}}
         edition: Edition slug (world/us/india), used for storage path.
 
     Returns dict with audio_url, duration_seconds, file_size (bytes),
     or None if synthesis is unavailable or fails.
     """
     if not TTS_AVAILABLE:
-        print("  [audio] google-cloud-texttospeech not installed — skipping audio production")
+        print("  [audio] google-cloud-texttospeech not installed — skipping")
         return None
 
     if not PYDUB_AVAILABLE:
-        print("  [audio] pydub not installed — skipping audio production")
+        print("  [audio] pydub not installed — skipping")
         return None
 
-    # Parse script into segments
-    segments = _parse_script(audio_script)
-    if not segments:
-        print("  [warn][audio] Script parsing produced no segments")
+    # Parse script into speaker-tagged turns
+    turns = _parse_script(audio_script)
+    if not turns:
+        print("  [warn][audio] Script parsing produced no turns")
         return None
 
-    print(f"  [audio] Synthesizing {len(segments)} segments for {edition} edition "
-          f"(voice: {voice_id})")
+    voice_a = voices["host_a"]
+    voice_b = voices["host_b"]
+    print(f"  [audio] Synthesizing {len(turns)} turns for {edition} "
+          f"(A: {voice_a['id']}, B: {voice_b['id']})")
 
     # Build stitch sequence
     combined: AudioSegment = AudioSegment.empty()
@@ -277,27 +297,12 @@ def produce_audio(
             combined += _silence(ms)
 
     def _clean_tts_text(text: str) -> str:
-        """Remove any leaked marker names or formatting artifacts from TTS text."""
-        # Remove any bracketed markers that Gemini might have included inline
+        """Remove leaked marker names or speaker tags from TTS text."""
         text = re.sub(r"\[/?[A-Z_]+\]", "", text)
-        # Remove literal "Story 1:", "Story_1", "STORY_1" etc.
+        text = re.sub(r"^[AB]:\s*", "", text)
         text = re.sub(r"\b(?:STORY|HEADLINE|GREETING|SIGNOFF|EDITORIAL)[_ ]?\d*:?\s*", "", text, flags=re.IGNORECASE)
-        # Clean up double spaces
         text = re.sub(r"  +", " ", text).strip()
         return text
-
-    def _append_tts(marker: str) -> None:
-        """Synthesize and append a script segment."""
-        text = _clean_tts_text(segments.get(marker, ""))
-        if not text:
-            print(f"  [warn][audio] No text for marker [{marker}] — skipping")
-            return
-        mp3_bytes = _synthesize_segment(text, voice_id, language_code)
-        if mp3_bytes:
-            seg = _bytes_to_segment(mp3_bytes)
-            _append(seg, marker)
-        else:
-            print(f"  [warn][audio] TTS failed for [{marker}] — segment omitted")
 
     # ── Stitching sequence ──────────────────────────────────────────────────
 
@@ -310,10 +315,33 @@ def produce_audio(
     _append(countdown, "countdown")
     _append_silence(500)
 
-    # 2. All narration segments
-    for marker in _SEGMENT_ORDER:
-        _append_tts(marker)
-        _append_silence(_SILENCE_AFTER.get(marker, 400))
+    # 2. Two-host narration — alternate voices per speaker tag
+    prev_marker = None
+    for marker, speaker, text in turns:
+        text = _clean_tts_text(text)
+        if not text:
+            continue
+
+        # Add section pause when marker changes
+        if prev_marker is not None and marker != prev_marker:
+            _append_silence(_SILENCE_AFTER.get(prev_marker, 400))
+
+        # Select voice based on speaker
+        voice = voice_a if speaker == "A" else voice_b
+        mp3_bytes = _synthesize_segment(text, voice["id"], voice["language_code"])
+        if mp3_bytes:
+            seg = _bytes_to_segment(mp3_bytes)
+            _append(seg, f"{marker}:{speaker}")
+        else:
+            print(f"  [warn][audio] TTS failed for [{marker}:{speaker}] — skipped")
+
+        # Short gap between speaker turns within the same section
+        _append_silence(150)
+        prev_marker = marker
+
+    # Final section pause
+    if prev_marker:
+        _append_silence(_SILENCE_AFTER.get(prev_marker, 0))
 
     # 3. Soft chime + bass outro
     _append_silence(300)
