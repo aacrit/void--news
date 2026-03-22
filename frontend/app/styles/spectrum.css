@@ -607,6 +607,295 @@
   }
 }
 
+/* ==========================================================================
+   Deep Dive Mini-Spectrum — scaled-down version for slide-in panel.
+   Same 7-zone bar + overlap/fan-out, fitted to ~400px pane width.
+   ========================================================================== */
+
+.dd-spectrum {
+  width: 100%;
+}
+
+/* ---- Bar: 7-zone gradient (matches Sources page) ---- */
+.dd-spectrum__bar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 28px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: linear-gradient(
+    to right,
+    var(--bias-far-left),
+    var(--bias-left) 14%,
+    var(--bias-center-left) 28%,
+    var(--bias-center) 42%,
+    var(--bias-center-right) 57%,
+    var(--bias-right) 71%,
+    var(--bias-far-right)
+  );
+  box-shadow:
+    var(--shadow-e1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  margin-bottom: 2px;
+}
+
+.dd-spectrum__bar-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dd-spectrum__bar-zone:last-child {
+  border-right: none;
+}
+
+.dd-spectrum__zone-label {
+  font-family: var(--font-structural);
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---- Body: 7-column grid for logos below bar ---- */
+.dd-spectrum__body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+/* ---- Zone column ---- */
+.dd-spectrum__zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2px 1px;
+  border-left: 1px solid var(--divider);
+  transition: background-color 0.25s var(--ease-out);
+}
+
+.dd-spectrum__zone:first-child {
+  border-left: none;
+}
+
+/* Zone tint on hover */
+.dd-spectrum__zone[data-lean="far-left"]     { --zone-tint: var(--spectrum-zone-far-left); }
+.dd-spectrum__zone[data-lean="left"]         { --zone-tint: var(--spectrum-zone-left); }
+.dd-spectrum__zone[data-lean="center-left"]  { --zone-tint: var(--spectrum-zone-center-left); }
+.dd-spectrum__zone[data-lean="center"]       { --zone-tint: var(--spectrum-zone-center); }
+.dd-spectrum__zone[data-lean="center-right"] { --zone-tint: var(--spectrum-zone-center-right); }
+.dd-spectrum__zone[data-lean="right"]        { --zone-tint: var(--spectrum-zone-right); }
+.dd-spectrum__zone[data-lean="far-right"]    { --zone-tint: var(--spectrum-zone-far-right); }
+
+.dd-spectrum__zone:hover {
+  background-color: var(--zone-tint);
+}
+
+/* ---- Logo cluster ---- */
+.dd-spectrum__zone-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+}
+
+/* ---- Logo (link) — overlap + fan-out ---- */
+.dd-spectrum__logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--bg-card);
+  border: 2px solid var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+  text-decoration: none;
+  margin: -3px;
+  transition:
+    margin 0.35s var(--ease-out),
+    transform 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    border-color 0.15s var(--ease-out);
+}
+
+/* Fan-out on zone hover */
+.dd-spectrum__zone:hover .dd-spectrum__logo {
+  margin: 2px;
+}
+
+/* Individual hover — pop above */
+.dd-spectrum__logo:hover {
+  transform: scale(1.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+  border-color: var(--border-strong);
+}
+
+.dd-spectrum__logo:active {
+  transform: scale(0.95);
+}
+
+.dd-spectrum__logo:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  z-index: 20;
+}
+
+.dd-spectrum__logo-img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+.dd-spectrum__fallback {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--fg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+/* ---- Tooltip ---- */
+.dd-spectrum__tooltip {
+  position: fixed;
+  transform: translate(-50%, calc(-100% - 10px));
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-e2);
+  padding: var(--space-2) var(--space-3);
+  pointer-events: none;
+  z-index: var(--z-tooltip);
+  min-width: 140px;
+  max-width: 220px;
+  animation: sigilPopupIn var(--dur-normal) var(--ease-out) both;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.dd-spectrum__tooltip-name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin-bottom: 2px;
+}
+
+.dd-spectrum__tooltip-lean {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: 2px;
+}
+
+.dd-spectrum__tooltip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dd-spectrum__tooltip-dot[data-lean="far-left"]     { background-color: var(--bias-far-left); }
+.dd-spectrum__tooltip-dot[data-lean="left"]         { background-color: var(--bias-left); }
+.dd-spectrum__tooltip-dot[data-lean="center-left"]  { background-color: var(--bias-center-left); }
+.dd-spectrum__tooltip-dot[data-lean="center"]       { background-color: var(--bias-center); }
+.dd-spectrum__tooltip-dot[data-lean="center-right"] { background-color: var(--bias-center-right); }
+.dd-spectrum__tooltip-dot[data-lean="right"]        { background-color: var(--bias-right); }
+.dd-spectrum__tooltip-dot[data-lean="far-right"]    { background-color: var(--bias-far-right); }
+
+.dd-spectrum__tooltip-score {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+.dd-spectrum__tooltip-tier {
+  font-family: var(--font-structural);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin-bottom: 2px;
+}
+
+.dd-spectrum__tooltip-hint {
+  font-family: var(--font-structural);
+  font-size: 9px;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+/* ---- Desktop Deep Dive panel (768px+) ---- */
+@media (min-width: 768px) {
+  .dd-spectrum__logo-img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 767px) {
+  .dd-spectrum__bar {
+    height: 24px;
+  }
+
+  .dd-spectrum__zone-label {
+    font-size: 6px;
+  }
+
+  .dd-spectrum__logo {
+    width: 22px;
+    height: 22px;
+    margin: -2px;
+  }
+
+  .dd-spectrum__zone:hover .dd-spectrum__logo {
+    margin: 1px;
+  }
+
+  .dd-spectrum__logo:hover {
+    transform: none;
+  }
+
+  .dd-spectrum__logo-img {
+    width: 12px;
+    height: 12px;
+  }
+
+  .dd-spectrum__fallback {
+    font-size: 8px;
+  }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .dd-spectrum__logo {
+    transition: none;
+  }
+  .dd-spectrum__zone {
+    transition: none;
+  }
+}
+
 /* ---- NavBar: Sources link (shared) ------------------------------------ */
 .nav-tab--link:hover {
   color: var(--fg-primary);
