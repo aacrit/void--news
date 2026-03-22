@@ -19,8 +19,8 @@
   --np-stain: rgba(139, 119, 75, 0.08);
 
   /* Font stacks — CSS variables from next/font/google override when loaded */
-  --np-font-nameplate: var(--np-fell), 'IM Fell English', 'Georgia', serif;
-  --np-font-head: var(--np-fell), 'IM Fell English', 'Playfair Display', 'Georgia', serif;
+  --np-font-nameplate: var(--np-playfair), 'Playfair Display', 'Georgia', serif;
+  --np-font-head: var(--np-playfair), 'Playfair Display', 'Georgia', serif;
   --np-font-body: var(--np-lora), 'Lora', 'Georgia', 'Times New Roman', serif;
   --np-font-deck: var(--np-oldstandard), 'Old Standard TT', 'Georgia', serif;
   --np-font-label: var(--np-oldstandard), 'Old Standard TT', 'Georgia', serif;
