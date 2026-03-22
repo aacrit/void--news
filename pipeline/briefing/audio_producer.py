@@ -50,14 +50,14 @@ _SEGMENT_ORDER = [
     "SIGNOFF",
 ]
 
-# Silence gaps (ms) inserted AFTER each segment
+# Silence gaps (ms) inserted AFTER each segment — deliberate broadcast pacing
 _SILENCE_AFTER: dict[str, int] = {
-    "GREETING": 600,
-    "HEADLINES": 700,
-    "STORY_1": 500,
-    "STORY_2": 500,
-    "STORY_3": 600,
-    "EDITORIAL_NOTE": 500,
+    "GREETING": 900,          # Pause before headlines — gravitas
+    "HEADLINES": 1000,        # Pause after headlines before first story
+    "STORY_1": 800,           # Breath between stories
+    "STORY_2": 800,
+    "STORY_3": 900,           # Longer pause before editorial note
+    "EDITORIAL_NOTE": 700,    # Pause before sign-off
     "SIGNOFF": 0,
 }
 
@@ -132,8 +132,8 @@ def _synthesize_segment(
 
         audio_config = texttospeech.AudioConfig(
             audio_encoding=texttospeech.AudioEncoding.MP3,
-            speaking_rate=1.0,
-            pitch=0.0,
+            speaking_rate=0.9,   # Slower, measured BBC broadcast pace
+            pitch=-1.0,          # Slightly deeper — authoritative
         )
 
         response = client.synthesize_speech(
@@ -289,11 +289,26 @@ def produce_audio(
         else:
             print(f"  [warn][audio] TTS failed for [{marker}] — segment omitted")
 
-    # ── Stitching sequence — clean BBC narration, no sound effects ────────
+    # ── Stitching sequence ──────────────────────────────────────────────────
 
+    # 1. BBC pips + countdown intro
+    pips = _load_asset("pips.wav")
+    _append(pips, "pips")
+    _append_silence(300)
+
+    countdown = _load_asset("countdown.wav")
+    _append(countdown, "countdown")
+    _append_silence(500)
+
+    # 2. All narration segments
     for marker in _SEGMENT_ORDER:
         _append_tts(marker)
         _append_silence(_SILENCE_AFTER.get(marker, 400))
+
+    # 3. Soft chime + bass outro
+    _append_silence(300)
+    outro = _load_asset("outro.wav")
+    _append(outro, "outro")
 
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")

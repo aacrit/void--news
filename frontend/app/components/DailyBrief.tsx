@@ -171,71 +171,63 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
   const displayDuration = brief.audio_duration_seconds || duration;
 
   return (
-    <div className="on-air-cta" data-playing={isPlaying ? "true" : undefined}>
-      <button
-        className={`on-air-cta__btn${isPlaying ? " on-air-cta__btn--active" : ""}`}
-        onClick={handlePlayPause}
-        aria-label={isPlaying ? "Pause broadcast" : "Play daily broadcast"}
-        aria-pressed={isPlaying}
-        type="button"
-      >
-        {/* ScaleIcon: pulse when playing, idle when not */}
-        <ScaleIcon
-          size={14}
-          animation={isPlaying ? "analyzing" : "idle"}
-          className="on-air-cta__icon"
-          aria-hidden
-        />
-
-        {/* Red live dot — only when playing */}
-        <span className="on-air-cta__dot" aria-hidden="true" />
-
-        <span className="on-air-cta__label">On Air</span>
-
-        {/* Play / pause SVG glyph */}
-        <span className="on-air-cta__glyph" aria-hidden="true">
-          {isPlaying ? (
-            /* Pause bars */
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
-              <rect x="1" y="1" width="3" height="8" rx="0.5" />
-              <rect x="6" y="1" width="3" height="8" rx="0.5" />
-            </svg>
-          ) : (
-            /* Play triangle */
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
-              <path d="M2 1.5 L9 5 L2 8.5 Z" />
-            </svg>
-          )}
-        </span>
-
-        {/* Time display — only when player is open */}
-        {showPlayer && (
-          <span className="on-air-cta__time" aria-live="off">
-            {formatTime(currentTime)} / {formatTime(displayDuration)}
+    <div
+      className={`on-air-cta${isPlaying ? " on-air-cta--active" : ""}`}
+      data-playing={isPlaying ? "true" : undefined}
+    >
+      {/* Single unified pill — button + slider + time all inside */}
+      <div className="on-air-cta__pill">
+        <button
+          className="on-air-cta__btn"
+          onClick={handlePlayPause}
+          aria-label={isPlaying ? "Pause broadcast" : "Play daily broadcast"}
+          aria-pressed={isPlaying}
+          type="button"
+        >
+          <ScaleIcon
+            size={14}
+            animation={isPlaying ? "analyzing" : "idle"}
+            className="on-air-cta__icon"
+            aria-hidden
+          />
+          <span className="on-air-cta__dot" aria-hidden="true" />
+          <span className="on-air-cta__label">On Air</span>
+          <span className="on-air-cta__glyph" aria-hidden="true">
+            {isPlaying ? (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                <rect x="1" y="1" width="3" height="8" rx="0.5" />
+                <rect x="6" y="1" width="3" height="8" rx="0.5" />
+              </svg>
+            ) : (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                <path d="M2 1.5 L9 5 L2 8.5 Z" />
+              </svg>
+            )}
           </span>
-        )}
-      </button>
+        </button>
 
-      {/* Progress bar — expands below button when playing */}
-      <div
-        className={`on-air-cta__track${showPlayer ? " on-air-cta__track--visible" : ""}`}
-        aria-hidden={!showPlayer}
-      >
-        <input
-          type="range"
-          className="on-air-cta__progress"
-          min={0}
-          max={displayDuration || 100}
-          value={currentTime}
-          step={0.5}
-          onChange={handleSeek}
-          role="slider"
-          aria-valuemin={0}
-          aria-valuemax={displayDuration || 100}
-          aria-valuenow={Math.floor(currentTime)}
-          aria-label="Broadcast progress"
-          tabIndex={showPlayer ? 0 : -1}
-        />
+        {/* Slider + time — inside the pill, expands on play */}
+        {showPlayer && (
+          <>
+            <input
+              type="range"
+              className="on-air-cta__progress"
+              min={0}
+              max={displayDuration || 100}
+              value={currentTime}
+              step={0.5}
+              onChange={handleSeek}
+              role="slider"
+              aria-valuemin={0}
+              aria-valuemax={displayDuration || 100}
+              aria-valuenow={Math.floor(currentTime)}
+              aria-label="Broadcast progress"
+            />
+            <span className="on-air-cta__time">
+              {formatTime(currentTime)}/{formatTime(displayDuration)}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );
