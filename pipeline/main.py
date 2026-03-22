@@ -1119,7 +1119,7 @@ def main():
         # parsing, so concurrent threads provide real throughput gains.
         # 4 workers balances CPU throughput against memory (each thread holds a
         # full spaCy parse + 5 analyzer passes per article).
-        print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles (4 workers)...")
+        print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles (8 workers)...")
         bias_rows_to_insert: list[dict] = []
         _analysis_lock = __import__("threading").Lock()
         _analyzed_count = [0]
@@ -1158,7 +1158,7 @@ def main():
                     print(f"  Analyzed {_analyzed_count[0]}/{len(stored_articles)}...")
             return bias_scores
 
-        with ThreadPoolExecutor(max_workers=4) as analysis_executor:
+        with ThreadPoolExecutor(max_workers=8) as analysis_executor:
             analysis_futures = {
                 analysis_executor.submit(_analyze_one, article): article
                 for article in stored_articles

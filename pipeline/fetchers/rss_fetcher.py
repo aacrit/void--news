@@ -207,7 +207,11 @@ def _fetch_single_feed(source: dict) -> list[dict]:
 
         articles = []
         skipped = 0
-        for entry in feed.entries:
+        # Limit to the 30 most-recent entries per feed. RSS feeds are ordered
+        # newest-first; entries beyond 30 are typically older than MAX_ARTICLE_AGE_DAYS
+        # and will be filtered anyway. Capping here avoids downloading and parsing
+        # large feeds (100-200 entries) that produce minimal net new articles.
+        for entry in feed.entries[:30]:
             # --- Junk content filtering (before parse/scrape) ---
             url = entry.get("link", "")
             title = entry.get("title", "") or ""
