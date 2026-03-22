@@ -1,32 +1,29 @@
-import {
-  Playfair_Display,
-  Inter,
-  JetBrains_Mono,
-} from "next/font/google";
+import { IM_Fell_English, Lora, Old_Standard_TT } from "next/font/google";
 
 /* ---------------------------------------------------------------------------
-   Paper Edition Layout — Reuses Three Voices from the digital edition.
-   No extra font downloads. Brand continuity.
+   Paper Edition Layout — Period Font Loading
+   Loads IM Fell English, Lora, Old Standard TT for the broadsheet view.
+   These fonts only load on /paper routes (not the digital edition).
    --------------------------------------------------------------------------- */
 
-const playfair = Playfair_Display({
+const imFell = IM_Fell_English({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--np-fell",
+  display: "swap",
+});
+
+const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "700"],
-  variable: "--font-playfair",
+  variable: "--np-lora",
   display: "swap",
 });
 
-const inter = Inter({
+const oldStandard = Old_Standard_TT({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-jetbrains",
+  weight: ["400", "700"],
+  variable: "--np-oldstandard",
   display: "swap",
 });
 
@@ -37,7 +34,7 @@ export default function PaperLayout({
 }) {
   return (
     <div
-      className={`${playfair.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={`${imFell.variable} ${lora.variable} ${oldStandard.variable}`}
     >
       {children}
     </div>
