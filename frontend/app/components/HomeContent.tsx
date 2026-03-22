@@ -15,7 +15,7 @@ import ErrorBoundary from "./ErrorBoundary";
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import DailyBrief from "./DailyBrief";
+import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -105,6 +105,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
   const [showAllCompact, setShowAllCompact] = useState(false);
   const [activeLean, setActiveLean] = useState<LeanChip>("All");
+
+  // Daily Brief state — lifted so OnAirButton can live in filter-row
+  // while DailyBriefText renders in the content area
+  const dailyBriefState = useDailyBrief(activeEdition);
 
   const handleStoryClick = useCallback((story: Story, rect: DOMRect) => {
     // Only use the rect for the FLIP morph when it has real dimensions.
@@ -356,7 +360,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       />
 
       <main id="main-content" className="page-main">
-        {/* Filter bar — category + lean chips in one row */}
+        {/* Filter bar row — category chips + lean chips + On Air CTA */}
         <div className="filter-row">
           <FilterBar
             activeCategory={activeCategory}
@@ -364,11 +368,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             activeLean={activeLean}
             onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
           />
+          {/* On Air CTA — right side of filter row, only after stories load */}
+          {!isLoading && stories.length > 0 && (
+            <OnAirButton state={dailyBriefState} />
+          )}
         </div>
 
-        {/* Daily Brief — TL;DR + audio player */}
+        {/* Daily Brief — TL;DR editorial box, on canvas between filter row and lead */}
         {!isLoading && stories.length > 0 && (
-          <DailyBrief edition={activeEdition} />
+          <DailyBriefText state={dailyBriefState} />
         )}
 
         {/* Live region, loading, error, empty states, story grids */}
