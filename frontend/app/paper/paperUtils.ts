@@ -158,8 +158,7 @@ export function distributeStories(
   const zoneA: Story[] = [];
   const zoneC: Story[] = [];
 
-  // Front page: top stories across 3 zones — scale with available content
-  const FRONT_PAGE_CAP = Math.min(sorted.length, Math.max(20, Math.floor(sorted.length * 0.4)));
+  const FRONT_PAGE_CAP = 20;
 
   // #1 -> Zone B (banner lead, center)
   if (sorted.length > 0) zoneB.push(sorted[0]);
@@ -171,7 +170,7 @@ export function distributeStories(
   if (sorted.length > 3) zoneB.push(sorted[3]);
 
   // #5+ -> Alternate between zones A and C
-  for (let i = 4; i < FRONT_PAGE_CAP; i++) {
+  for (let i = 4; i < Math.min(sorted.length, FRONT_PAGE_CAP); i++) {
     if (zoneA.length <= zoneC.length) {
       zoneA.push(sorted[i]);
     } else {
@@ -179,10 +178,11 @@ export function distributeStories(
     }
   }
 
-  // All remaining stories go to section flow — no cap
-  const sectionStories = sorted.slice(FRONT_PAGE_CAP);
+  // Overflow stories become section flow + fillers
+  const sectionStories = sorted.slice(FRONT_PAGE_CAP, 60);
+  const overflowForFillers = sorted.slice(60);
 
-  const fillers = generateFillers([], stories.length, edition);
+  const fillers = generateFillers(overflowForFillers, stories.length, edition);
 
   return { zoneA, zoneB, zoneC, fillers, sectionStories };
 }
