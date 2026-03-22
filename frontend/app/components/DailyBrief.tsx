@@ -112,11 +112,12 @@ export function useDailyBrief(edition: string): DailyBriefState {
    --------------------------------------------------------------------------- */
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
-  const { brief, audioRef } = state;
+  const { brief, isPlaying, showPlayer, currentTime, duration, audioRef, handlePlayPause, handleSeek } = state;
   const [expanded, setExpanded] = useState(false);
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url;
+  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
 
   const paragraphs = brief.tldr_text
     .split("\n")
@@ -125,7 +126,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
   return (
     <>
-      {/* Hidden audio element — lives here so it mounts with the text, not the button */}
+      {/* Hidden audio element */}
       {hasAudio && (
         <audio
           ref={audioRef}
@@ -138,6 +139,57 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         <div className="daily-brief__header">
           <ScaleIcon size={16} animation="idle" className="daily-brief__sigil" />
           <span className="daily-brief__label">Daily Brief</span>
+
+          {/* On Air pill — lives in the header row, right-aligned */}
+          {hasAudio && (
+            <div className={`on-air-cta${isPlaying ? " on-air-cta--active" : ""}`}>
+              <div className="on-air-cta__pill">
+                <button
+                  className="on-air-cta__btn"
+                  onClick={handlePlayPause}
+                  aria-label={isPlaying ? "Pause broadcast" : "Play daily broadcast"}
+                  aria-pressed={isPlaying}
+                  type="button"
+                >
+                  <span className="on-air-cta__dot" aria-hidden="true" />
+                  <span className="on-air-cta__label">On Air</span>
+                  <span className="on-air-cta__glyph" aria-hidden="true">
+                    {isPlaying ? (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                        <rect x="1" y="1" width="3" height="8" rx="0.5" />
+                        <rect x="6" y="1" width="3" height="8" rx="0.5" />
+                      </svg>
+                    ) : (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                        <path d="M2 1.5 L9 5 L2 8.5 Z" />
+                      </svg>
+                    )}
+                  </span>
+                </button>
+                {showPlayer && (
+                  <>
+                    <input
+                      type="range"
+                      className="on-air-cta__progress"
+                      min={0}
+                      max={displayDuration || 100}
+                      value={currentTime}
+                      step={0.5}
+                      onChange={handleSeek}
+                      role="slider"
+                      aria-valuemin={0}
+                      aria-valuemax={displayDuration || 100}
+                      aria-valuenow={Math.floor(currentTime)}
+                      aria-label="Broadcast progress"
+                    />
+                    <span className="on-air-cta__time">
+                      {formatTime(currentTime)}/{formatTime(displayDuration)}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         <div className={`daily-brief__body${!expanded ? " daily-brief__body--mobile-clamp" : ""}`}>
           {paragraphs.map((p, i) => (

@@ -3023,12 +3023,17 @@
   margin: var(--space-4) 0 var(--space-2);
 }
 
-/* Header row: ScaleIcon + "DAILY BRIEF" label side by side */
+/* Header row: ScaleIcon + "DAILY BRIEF" label + On Air pill */
 .daily-brief__header {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
+}
+
+/* Push On Air pill to the right */
+.daily-brief__header .on-air-cta {
+  margin-left: auto;
 }
 
 /* ScaleIcon in the label row — inherits currentColor, auto light/dark */
@@ -3050,10 +3055,11 @@
 .daily-brief__body {
   font-family: var(--font-editorial);
   font-style: italic;
-  font-size: var(--text-base);
+  /* Slightly larger than --text-base to match lead summary visual weight
+     (Playfair italic renders smaller than Inter at same font-size) */
+  font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.1rem);
   line-height: 1.7;
   color: var(--fg-primary);
-  /* Full canvas width — no max-width constraint */
 }
 
 /* Clamp class — only takes effect on mobile via media query below */
