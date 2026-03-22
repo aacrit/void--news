@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
-   Sources positioned horizontally by lean score, stacked vertically
-   in columns. Collapsed by default, expands with spring animation.
+   Sources plotted on a continuous spectrum bar.
+   Above: US Major. Below: International + Independent.
+   Logos overlap within each lean zone and fan out on hover.
+   Collapsible after ~4 rows per side.
    --------------------------------------------------------------------------- */
 
 export interface SpectrumSource {
@@ -37,12 +39,7 @@ export function normalizeLean(raw: string | null): LeanCategory {
   return valid.includes(s as LeanCategory) ? (s as LeanCategory) : "center";
 }
 
-/* Seven zones, evenly spaced across 7 columns */
-const LEAN_ZONES: {
-  key: LeanCategory;
-  label: string;
-  shortLabel: string;
-}[] = [
+const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
   { key: "far-left", label: "Far Left", shortLabel: "Far L" },
   { key: "left", label: "Left", shortLabel: "Left" },
   { key: "center-left", label: "Center Left", shortLabel: "Ctr L" },
@@ -71,9 +68,9 @@ function getFaviconUrl(sourceUrl: string): string {
 }
 
 /* ---------------------------------------------------------------------------
-   SourceDot — single favicon circle with hover tooltip
+   SourceLogo — favicon circle with overlap + fan-out on zone hover
    --------------------------------------------------------------------------- */
-function SourceDot({
+function SourceLogo({
   source,
   onTooltip,
 }: {
@@ -84,7 +81,7 @@ function SourceDot({
 
   return (
     <button
-      className="src-dot"
+      className="spectrum-logo"
       aria-label={`${source.name} — ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
       onPointerEnter={(e) => onTooltip(source, e.currentTarget)}
       onPointerLeave={() => onTooltip(null, null)}
@@ -97,9 +94,9 @@ function SourceDot({
           <img
             src={favicon}
             alt=""
-            width={18}
-            height={18}
-            style={{ borderRadius: 2 }}
+            width={20}
+            height={20}
+            className="spectrum-logo__img"
             loading="lazy"
             onError={(e) => {
               const t = e.currentTarget;
@@ -108,12 +105,12 @@ function SourceDot({
               if (fb) fb.style.display = "flex";
             }}
           />
-          <span className="src-dot__initial" style={{ display: "none" }}>
+          <span className="spectrum-logo__fallback" style={{ display: "none" }}>
             {source.name.charAt(0)}
           </span>
         </>
       ) : (
-        <span className="src-dot__initial">{source.name.charAt(0)}</span>
+        <span className="spectrum-logo__fallback">{source.name.charAt(0)}</span>
       )}
     </button>
   );
@@ -126,30 +123,53 @@ interface SpectrumChartProps {
   sources: SpectrumSource[];
 }
 
+const COLLAPSE_THRESHOLD = 4;
+
 export default function SpectrumChart({ sources }: SpectrumChartProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [aboveExpanded, setAboveExpanded] = useState(false);
+  const [belowExpanded, setBelowExpanded] = useState(false);
   const [tooltip, setTooltip] = useState<{
     source: SpectrumSource;
     x: number;
     y: number;
   } | null>(null);
 
-  // Group sources into 7 lean columns, sorted by name within each
-  const columns = useMemo(() => {
-    const groups = new Map<LeanCategory, SpectrumSource[]>();
-    for (const zone of LEAN_ZONES) groups.set(zone.key, []);
+  /* Group sources by lean, split into above (us_major) / below (intl+ind) */
+  const { above, below, aboveTotal, belowTotal } = useMemo(() => {
+    const aboveMap = new Map<LeanCategory, SpectrumSource[]>();
+    const belowMap = new Map<LeanCategory, SpectrumSource[]>();
+    for (const zone of LEAN_ZONES) {
+      aboveMap.set(zone.key, []);
+      belowMap.set(zone.key, []);
+    }
+    let at = 0;
+    let bt = 0;
     for (const s of sources) {
       const lean = normalizeLean(s.political_lean_baseline);
-      groups.get(lean)!.push(s);
+      if (s.tier === "us_major") {
+        aboveMap.get(lean)!.push(s);
+        at++;
+      } else {
+        belowMap.get(lean)!.push(s);
+        bt++;
+      }
     }
-    // Sort each column alphabetically
-    for (const [, srcs] of groups) {
+    for (const [, srcs] of aboveMap)
       srcs.sort((a, b) => a.name.localeCompare(b.name));
-    }
-    return groups;
+    for (const [, srcs] of belowMap)
+      srcs.sort((a, b) => a.name.localeCompare(b.name));
+    return { above: aboveMap, below: belowMap, aboveTotal: at, belowTotal: bt };
   }, [sources]);
 
-  // Close tooltip on Escape
+  const aboveMaxInZone = useMemo(
+    () => Math.max(...Array.from(above.values()).map((s) => s.length)),
+    [above]
+  );
+  const belowMaxInZone = useMemo(
+    () => Math.max(...Array.from(below.values()).map((s) => s.length)),
+    [below]
+  );
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setTooltip(null);
@@ -158,84 +178,147 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const handleTooltip = useCallback((source: SpectrumSource | null, el: HTMLElement | null) => {
-    if (!source || !el) {
-      setTooltip(null);
-      return;
-    }
-    const rect = el.getBoundingClientRect();
-    setTooltip({
-      source,
-      x: rect.left + rect.width / 2,
-      y: rect.top,
-    });
-  }, []);
-
-  const maxInColumn = useMemo(() => {
-    let max = 0;
-    for (const [, srcs] of columns) {
-      if (srcs.length > max) max = srcs.length;
-    }
-    return max;
-  }, [columns]);
+  const handleTooltip = useCallback(
+    (source: SpectrumSource | null, el: HTMLElement | null) => {
+      if (!source || !el) {
+        setTooltip(null);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      setTooltip({
+        source,
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      });
+    },
+    []
+  );
 
   return (
-    <div className="spectrum-chart" role="img" aria-label="Political lean spectrum showing all curated news sources">
-
-      {/* Gradient track with inline labels */}
-      <div className="src-track">
-        <span className="src-track__label src-track__label--left">Left</span>
-        <span className="src-track__label src-track__label--center">Center</span>
-        <span className="src-track__label src-track__label--right">Right</span>
-      </div>
-
-      {/* Seven columns of stacked sources */}
-      <div className={`src-columns${expanded ? " src-columns--expanded" : ""}`}>
-        <div className="src-columns__inner">
-          {LEAN_ZONES.map((zone) => {
-            const srcs = columns.get(zone.key) || [];
-            return (
-              <div key={zone.key} className="src-col" data-lean={zone.key}>
-                {/* Column header */}
-                <span className="src-col__label">
-                  <span className="src-col__label-full">{zone.label}</span>
-                  <span className="src-col__label-short">{zone.shortLabel}</span>
-                </span>
-                <span className="src-col__count">{srcs.length}</span>
-
-                {/* Stacked dots */}
-                <div className="src-col__dots">
-                  {srcs.map((s) => (
-                    <SourceDot
-                      key={s.slug}
-                      source={s}
-                      onTooltip={handleTooltip}
-                    />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+    <div
+      className="spectrum-chart"
+      role="img"
+      aria-label="Political lean spectrum showing all curated news sources"
+    >
+      {/* ---- Above: US Major ---- */}
+      <div className="spectrum-section">
+        <div className="spectrum-section__header">
+          <span className="spectrum-section__label">US Major</span>
+          <span className="spectrum-section__count">{aboveTotal}</span>
         </div>
-
-        {/* Gradient fade when collapsed */}
-        {!expanded && maxInColumn > 3 && (
-          <div className="src-columns__fade" aria-hidden="true" />
+        <div
+          className={`spectrum-side${
+            aboveMaxInZone > COLLAPSE_THRESHOLD && !aboveExpanded
+              ? " spectrum-side--collapsed"
+              : ""
+          }`}
+        >
+          <div className="spectrum-side__grid">
+            {LEAN_ZONES.map((zone) => {
+              const srcs = above.get(zone.key) || [];
+              return (
+                <div
+                  key={zone.key}
+                  className="spectrum-zone"
+                  data-lean={zone.key}
+                >
+                  <div className="spectrum-zone__logos">
+                    {srcs.map((s) => (
+                      <SourceLogo
+                        key={s.slug}
+                        source={s}
+                        onTooltip={handleTooltip}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {aboveMaxInZone > COLLAPSE_THRESHOLD && !aboveExpanded && (
+            <div className="spectrum-side__fade" aria-hidden="true" />
+          )}
+        </div>
+        {aboveMaxInZone > COLLAPSE_THRESHOLD && (
+          <button
+            className="spectrum-expand-btn"
+            onClick={() => setAboveExpanded(!aboveExpanded)}
+            aria-expanded={aboveExpanded}
+          >
+            {aboveExpanded ? "Show fewer" : `Show all ${aboveTotal}`}
+          </button>
         )}
       </div>
 
-      {/* Expand/collapse with spring */}
-      {maxInColumn > 3 && (
-        <button
-          className="src-expand"
-          onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-        >
-          {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
-        </button>
-      )}
+      {/* ---- Spectrum Bar ---- */}
+      <div className="spectrum-bar" aria-hidden="true">
+        {LEAN_ZONES.map((zone) => (
+          <div
+            key={zone.key}
+            className="spectrum-bar__zone"
+            data-lean={zone.key}
+          >
+            <span className="spectrum-bar__label">{zone.label}</span>
+            <span className="spectrum-bar__label--short">
+              {zone.shortLabel}
+            </span>
+          </div>
+        ))}
+      </div>
 
-      {/* Tooltip */}
+      {/* ---- Below: International & Independent ---- */}
+      <div className="spectrum-section">
+        <div className="spectrum-section__header">
+          <span className="spectrum-section__label">
+            International & Independent
+          </span>
+          <span className="spectrum-section__count">{belowTotal}</span>
+        </div>
+        <div
+          className={`spectrum-side${
+            belowMaxInZone > COLLAPSE_THRESHOLD && !belowExpanded
+              ? " spectrum-side--collapsed"
+              : ""
+          }`}
+        >
+          <div className="spectrum-side__grid">
+            {LEAN_ZONES.map((zone) => {
+              const srcs = below.get(zone.key) || [];
+              return (
+                <div
+                  key={zone.key}
+                  className="spectrum-zone"
+                  data-lean={zone.key}
+                >
+                  <div className="spectrum-zone__logos">
+                    {srcs.map((s) => (
+                      <SourceLogo
+                        key={s.slug}
+                        source={s}
+                        onTooltip={handleTooltip}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {belowMaxInZone > COLLAPSE_THRESHOLD && !belowExpanded && (
+            <div className="spectrum-side__fade" aria-hidden="true" />
+          )}
+        </div>
+        {belowMaxInZone > COLLAPSE_THRESHOLD && (
+          <button
+            className="spectrum-expand-btn"
+            onClick={() => setBelowExpanded(!belowExpanded)}
+            aria-expanded={belowExpanded}
+          >
+            {belowExpanded ? "Show fewer" : `Show all ${belowTotal}`}
+          </button>
+        )}
+      </div>
+
+      {/* ---- Tooltip ---- */}
       {tooltip && (
         <div
           className="spectrum-tooltip"
@@ -249,11 +332,22 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
               data-lean={normalizeLean(tooltip.source.political_lean_baseline)}
               aria-hidden="true"
             />
-            {normalizeLean(tooltip.source.political_lean_baseline).replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+            {normalizeLean(tooltip.source.political_lean_baseline)
+              .replace(/-/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase())}
           </p>
-          <p className="spectrum-tooltip__tier">{tierLabel(tooltip.source.tier)}</p>
+          <p className="spectrum-tooltip__tier">
+            {tierLabel(tooltip.source.tier)}
+          </p>
+          {tooltip.source.country && (
+            <p className="spectrum-tooltip__country">
+              {tooltip.source.country}
+            </p>
+          )}
           {tooltip.source.credibility_notes && (
-            <p className="spectrum-tooltip__notes">{tooltip.source.credibility_notes}</p>
+            <p className="spectrum-tooltip__notes">
+              {tooltip.source.credibility_notes}
+            </p>
           )}
         </div>
       )}
