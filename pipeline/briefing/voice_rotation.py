@@ -1,76 +1,57 @@
 """Voice rotation for two-host daily audio briefs.
 
-Each edition gets a male+female pair. Roles (anchor vs analyst) swap
-on alternate days so listeners hear variety.
+Uses Gemini 2.5 Flash TTS prebuilt voices. Each edition gets a distinct
+voice pair. Roles (anchor vs analyst) swap on alternate days.
 
-Two engine mappings:
-  - edge-tts (Microsoft Neural, free, $0) — primary
-  - Google Cloud TTS Neural2 — fallback
+30 available voices: Achernar, Achird, Algenib, Algieba, Alnilam, Aoede,
+Autonoe, Callirrhoe, Charon, Despina, Enceladus, Erinome, Fenrir, Gacrux,
+Iapetus, Kore, Laomedeia, Leda, Orus, Puck, Pulcherrima, Rasalgethi,
+Sadachbia, Sadaltager, Schedar, Sulafat, Umbriel, Vindemiatrix, Zephyr,
+Zubenelgenubi.
 """
 
 from datetime import datetime, timezone
 
-# Google Cloud TTS Neural2 voices (legacy, costs money)
+# Gemini TTS voice pairs per edition — chosen for broadcast clarity + contrast
 VOICE_PAIRS: dict[str, dict[str, dict]] = {
     "world": {
-        "male":   {"id": "en-GB-Neural2-B", "label": "British Male", "gender": "M", "language_code": "en-GB"},
-        "female": {"id": "en-GB-Neural2-A", "label": "British Female", "gender": "F", "language_code": "en-GB"},
+        "anchor": {"id": "Charon",  "label": "Charon (deep, authoritative)"},
+        "analyst": {"id": "Aoede",  "label": "Aoede (warm, conversational)"},
     },
     "us": {
-        "male":   {"id": "en-US-Neural2-D", "label": "American Male", "gender": "M", "language_code": "en-US"},
-        "female": {"id": "en-US-Neural2-F", "label": "American Female", "gender": "F", "language_code": "en-US"},
+        "anchor": {"id": "Enceladus", "label": "Enceladus (steady, clear)"},
+        "analyst": {"id": "Kore",     "label": "Kore (bright, analytical)"},
     },
     "india": {
-        "male":   {"id": "en-IN-Neural2-B", "label": "Indian Male", "gender": "M", "language_code": "en-IN"},
-        "female": {"id": "en-IN-Neural2-A", "label": "Indian Female", "gender": "F", "language_code": "en-IN"},
-    },
-}
-
-# edge-tts voices (free, $0, no API key needed)
-EDGE_VOICE_PAIRS: dict[str, dict[str, dict]] = {
-    "world": {
-        "male":   {"id": "en-GB-RyanNeural",  "label": "British Male",  "gender": "M", "language_code": "en-GB"},
-        "female": {"id": "en-GB-SoniaNeural",  "label": "British Female","gender": "F", "language_code": "en-GB"},
-    },
-    "us": {
-        "male":   {"id": "en-US-AndrewNeural", "label": "American Male", "gender": "M", "language_code": "en-US"},
-        "female": {"id": "en-US-AvaNeural",    "label": "American Female","gender": "F", "language_code": "en-US"},
-    },
-    "india": {
-        "male":   {"id": "en-IN-PrabhatNeural","label": "Indian Male",  "gender": "M", "language_code": "en-IN"},
-        "female": {"id": "en-IN-NeerjaExpressiveNeural", "label": "Indian Female", "gender": "F", "language_code": "en-IN"},
+        "anchor": {"id": "Puck",     "label": "Puck (measured, precise)"},
+        "analyst": {"id": "Leda",     "label": "Leda (warm, engaging)"},
     },
 }
 
 
-def get_voices_for_today(edition: str, engine: str = "edge") -> dict:
+def get_voices_for_today(edition: str) -> dict:
     """
     Return a two-host voice pair for today's broadcast.
 
-    On even days: male = Host A (anchor), female = Host B (analyst).
+    On even days: first voice = Anchor (Host A), second = Analyst (Host B).
     On odd days: roles swap for variety.
-
-    Args:
-        edition: world/us/india
-        engine: "edge" (default, free) or "gcloud" (legacy, paid)
 
     Returns:
         {
-            "host_a": {"id": "...", "language_code": "...", ...},
-            "host_b": {"id": "...", "language_code": "...", ...},
+            "host_a": {"id": "Charon", "label": "...", ...},
+            "host_b": {"id": "Aoede", "label": "...", ...},
         }
     """
     day = datetime.now(timezone.utc).timetuple().tm_yday
-    voice_map = EDGE_VOICE_PAIRS if engine == "edge" else VOICE_PAIRS
-    pair = voice_map.get(edition, voice_map["world"])
+    pair = VOICE_PAIRS.get(edition, VOICE_PAIRS["world"])
 
     if day % 2 == 0:
-        return {"host_a": pair["male"], "host_b": pair["female"]}
+        return {"host_a": pair["anchor"], "host_b": pair["analyst"]}
     else:
-        return {"host_a": pair["female"], "host_b": pair["male"]}
+        return {"host_a": pair["analyst"], "host_b": pair["anchor"]}
 
 
-# Backward compat — single voice (returns host_a)
+# Backward compat
 def get_voice_for_today(edition: str) -> dict:
     """Return a single voice for backward compatibility."""
     return get_voices_for_today(edition)["host_a"]

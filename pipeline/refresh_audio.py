@@ -18,7 +18,6 @@ from utils.supabase_client import supabase
 from briefing.daily_brief_generator import generate_daily_briefs
 from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
-from briefing.audio_producer import _detect_tts_engine
 
 
 def main():
@@ -57,16 +56,14 @@ def main():
     briefs = generate_daily_briefs(all_clusters, {}, edition_sections=editions)
 
     # Synthesize audio and upload
-    print("\n[3/3] Synthesizing audio...")
+    print("\n[3/3] Synthesizing audio via Gemini Flash TTS...")
     for edition, brief in briefs.items():
         script = brief.get("audio_script")
         if not script:
             print(f"  {edition}: no audio script — skipping")
             continue
 
-        tts_engine = _detect_tts_engine()
-        voice_engine = "edge" if tts_engine == "edge" else "gcloud"
-        voices = get_voices_for_today(edition, engine=voice_engine)
+        voices = get_voices_for_today(edition)
         result = produce_audio(script, voices, edition)
 
         if result:
@@ -78,7 +75,6 @@ def main():
                 "audio_duration_seconds": result["duration_seconds"],
             }
             try:
-                # Delete old briefs for this edition, insert new
                 supabase.table("daily_briefs").delete().eq("edition", edition).execute()
                 supabase.table("daily_briefs").insert(row).execute()
                 print(f"  {edition}: audio uploaded — {result['duration_seconds']}s, {result['file_size'] / 1024:.0f} KB")

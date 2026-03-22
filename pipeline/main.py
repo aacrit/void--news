@@ -77,7 +77,7 @@ try:
 except ImportError:
     pass
 
-# Daily Brief generator — optional (requires google-cloud-texttospeech + pydub)
+# Daily Brief generator — optional (requires google-genai + pydub)
 BRIEFING_AVAILABLE = False
 try:
     from briefing.daily_brief_generator import generate_daily_briefs
@@ -1790,12 +1790,9 @@ def main():
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }
 
-                    # Generate two-host audio (edge-tts $0 primary, gcloud fallback)
+                    # Generate two-host audio via Gemini Flash TTS
                     if should_generate_audio and brief.get("audio_script"):
-                        from briefing.audio_producer import _detect_tts_engine
-                        tts_engine = _detect_tts_engine()
-                        voice_engine = "edge" if tts_engine == "edge" else "gcloud"
-                        voices = get_voices_for_today(edition, engine=voice_engine)
+                        voices = get_voices_for_today(edition)
                         audio_result = produce_audio(
                             brief["audio_script"], voices, edition,
                         )
