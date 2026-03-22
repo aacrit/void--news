@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import type {
   Edition,
   Category,
@@ -14,11 +14,8 @@ import type {
 import { supabase } from "../lib/supabase";
 import {
   type ArticleTier,
-  type FillerItem,
   assignTier,
-  generateDecks,
   getDateline,
-  truncateSummary,
   distributeStories,
   getSectionConfig,
   capitalize,
@@ -27,12 +24,12 @@ import {
 import "./paper.css";
 
 /* ---------------------------------------------------------------------------
-   E-Paper Edition — 1924 New York Times Broadsheet
-   8-column broadsheet. Zero whitespace. CSS multi-column flow.
-   Period typography. Full summaries. Bias as editorial prose.
+   E-Paper Edition — Modern Broadsheet
+   Clean 4-column layout. Playfair/Inter/JetBrains typography.
+   Full summaries. No decks, no fillers, no costume.
    --------------------------------------------------------------------------- */
 
-// --- Helpers (duplicated from HomeContent to keep blast radius zero) ---
+// --- Helpers ---
 
 function parseBiasDiversity(raw: unknown): Record<string, unknown> | null {
   if (raw == null) return null;
@@ -80,6 +77,16 @@ function deriveCoverageScore(
   return Math.round(
     (sourceNorm * 0.35 + 0.2 + confNorm * 0.2 + rigorNorm * 0.25) * 100,
   );
+}
+
+/** Strip trailing ellipsis from RSS fallback summaries */
+function cleanSummary(text: string): string {
+  let cleaned = text
+    .replace(/[\s.]*\.{2,}$/, "")
+    .replace(/\u2026$/, "")
+    .trimEnd();
+  if (cleaned && !/[.!?"]$/.test(cleaned)) cleaned += ".";
+  return cleaned;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -191,23 +198,7 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-// --- Byline ---
-
-function articleByline(
-  sourceCount: number,
-  tierBreakdown?: Record<string, number>,
-): string {
-  if (sourceCount === 1) {
-    if (tierBreakdown?.us_major) return "From a major U.S. outlet";
-    if (tierBreakdown?.international) return "From an international bureau";
-    if (tierBreakdown?.independent) return "From an independent outlet";
-    return "From a single report";
-  }
-  if (sourceCount <= 3) return `Compiled from ${sourceCount} sources`;
-  return `From multiple outlets \u2014 ${sourceCount} sources`;
-}
-
-// --- Lean label from 0-100 score ---
+// --- Lean label ---
 
 function leanLabel(score: number): string {
   if (score <= 15) return "Far Left";
@@ -241,65 +232,37 @@ function Masthead({
     })
     .toUpperCase();
 
-  const epoch = new Date("2026-03-01T00:00:00Z");
-  const issueNo = Math.max(
-    1,
-    Math.floor((now.getTime() - epoch.getTime()) / 86400000),
-  );
-  const year = now.getFullYear();
-
-  const pressTime = lastUpdated
-    ? new Date(lastUpdated).toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-    : null;
-
   const subtitle = editionSubtitle(edition);
   const basePath = "/void--news/paper";
 
   return (
     <header className="np-masthead">
-      <div className="np-masthead__ears">
-        <div className="np-masthead__ear np-masthead__ear--left">
-          <span className="np-masthead__ear-text">
-            An ode to simpler times. A quiet pursuit of balance.
-          </span>
-        </div>
-        <div className="np-masthead__ear np-masthead__ear--right">
-          <span className="np-masthead__ear-text">
-            Copyright {year}, Void News
-            {pressTime && <> &mdash; Press closed {pressTime}</>}
-          </span>
-        </div>
-      </div>
-
-      <hr className="np-masthead__top-rule" />
+      <hr className="np-masthead__rule-top" />
 
       <h1 className="np-masthead__nameplate">Void News.</h1>
-      {subtitle && (
-        <p className="np-masthead__edition-subtitle">{subtitle}</p>
-      )}
+      <p className="np-masthead__date">
+        {dateStr}
+        {subtitle && <> &middot; {subtitle}</>}
+        {lastUpdated && (
+          <>
+            {" "}&middot; Updated{" "}
+            {new Date(lastUpdated).toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })}
+          </>
+        )}
+      </p>
 
-      <hr className="np-double-rule" aria-hidden="true" />
-
-      <div className="np-masthead__info">
-        <span className="np-masthead__info-left">
-          No.&thinsp;{issueNo}
-        </span>
-        <span className="np-masthead__info-center">{dateStr}</span>
-        <span className="np-masthead__info-right">Free of Charge</span>
-      </div>
-
-      <hr className="np-double-rule" aria-hidden="true" />
+      <hr className="np-masthead__rule-bottom" />
 
       <nav className="np-edition-nav" aria-label="Edition">
         <a
           href={basePath}
           className={edition === "world" ? "np-edition-nav__active" : ""}
         >
-          World Edition
+          World
         </a>
         {" \u00B7 "}
         <a
@@ -324,10 +287,8 @@ function Masthead({
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <div className="np-section-label" role="separator">
-      <hr className="np-section-label__rule-top" />
+    <div className="np-section-label">
       <p className="np-section-label__text">{label}</p>
-      <hr className="np-section-label__rule-bottom" />
     </div>
   );
 }
@@ -344,125 +305,29 @@ function Article({
   edition: Edition;
 }) {
   const dateline = getDateline(story, edition);
-  const decks = generateDecks(story.summary, tier);
-
-  // Extract remaining summary after decks for body text
-  let bodyText = truncateSummary(story.summary, tier);
-  if (decks.length > 0) {
-    let remaining = story.summary;
-    for (const deck of decks) {
-      const deckPos = remaining.indexOf(deck);
-      if (deckPos !== -1) {
-        remaining = remaining.slice(deckPos + deck.length).replace(/^[.!?\s]+/, "");
-      }
-    }
-    bodyText = truncateSummary(remaining || bodyText, tier);
-  }
+  const bodyText = cleanSummary(story.summary);
 
   return (
     <article className={`np-article np-article--${tier}`}>
-      {/* Headline + Decks */}
-      {decks.length > 0 ? (
-        <div className="np-headline-deck">
-          <h2 className="np-article__headline">{story.title}</h2>
-          {decks.map((deck, i) => (
-            <p
-              key={i}
-              className={`np-headline-deck__sub np-headline-deck__sub--${i + 1}`}
-            >
-              {deck}
-            </p>
-          ))}
-        </div>
-      ) : (
-        <h2 className="np-article__headline">{story.title}</h2>
-      )}
+      <h2 className="np-article__headline">{story.title}</h2>
 
       <p className="np-article__byline">
-        {articleByline(story.source.count, story.sigilData.tierBreakdown)}
+        {story.source.count} {story.source.count === 1 ? "source" : "sources"}
+        {" \u00B7 "}
+        {leanLabel(story.biasScores.politicalLean)}
       </p>
 
       <p className="np-article__summary">
         <span className="np-article__dateline">{dateline} &mdash; </span>
         {bodyText}
       </p>
-
-      {/* Subtle footer: source count + lean indicator */}
-      <p className="np-article__meta">
-        {story.source.count} {story.source.count === 1 ? "source" : "sources"}
-        {" \u00B7 "}
-        {leanLabel(story.biasScores.politicalLean)}
-      </p>
     </article>
-  );
-}
-
-// --- Filler ---
-
-function Filler({ item }: { item: FillerItem }) {
-  return (
-    <div className="np-filler">
-      {item.heading && <p className="np-filler__heading">{item.heading}</p>}
-      <p className="np-filler__text">{item.text}</p>
-    </div>
-  );
-}
-
-// --- Classifieds ---
-
-function Classifieds({
-  lastUpdated,
-  storyCount,
-}: {
-  lastUpdated: string | null;
-  storyCount: number;
-}) {
-  const closedTime = lastUpdated
-    ? new Date(lastUpdated).toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-        month: "short",
-        day: "numeric",
-      })
-    : "twice daily";
-
-  return (
-    <div className="np-classifieds">
-      <div className="np-classifieds__grid">
-        <div className="np-classified-ad">
-          <span className="np-classified-ad__heading">
-            Public Notice &mdash;
-          </span>
-          This edition compiled from {storyCount} stories across 200 curated
-          news organisations. All bias assessments computed algorithmically by
-          rule-based natural language processing. No editorial judgments were
-          made in the preparation of this broadsheet.
-        </div>
-        <div className="np-classified-ad">
-          <span className="np-classified-ad__heading">
-            Free of Charge &mdash;
-          </span>
-          This publication costs nothing. It will always cost nothing. No
-          subscription required. No advertisements placed. No data collected
-          from readers. This is not a trick. Enquiries to the publisher.
-        </div>
-        <div className="np-classified-ad">
-          <span className="np-classified-ad__heading">
-            Last Dispatch &mdash;
-          </span>
-          Press closed: {closedTime}. Next edition at dawn. Weather forecast:
-          partly cloudy with a high probability of framing divergence across
-          the major wire services. Outlook: contested.
-        </div>
-      </div>
-    </div>
   );
 }
 
 // --- Colophon ---
 
-function Colophon({ edition }: { edition: string }) {
+function Colophon({ edition, storyCount }: { edition: string; storyCount: number }) {
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-US", {
     month: "long",
@@ -472,9 +337,9 @@ function Colophon({ edition }: { edition: string }) {
 
   return (
     <footer className="np-colophon">
-      <hr className="np-colophon__rule" />
       <p>
-        Void News &middot; The {edition} Edition &middot; {dateStr}
+        Void News &middot; {edition} Edition &middot; {dateStr}
+        &middot; {storyCount} stories from 200+ sources
       </p>
       <p>
         <a href="/void--news/" className="np-colophon__link">
@@ -485,26 +350,71 @@ function Colophon({ edition }: { edition: string }) {
   );
 }
 
-// --- Export Button — triggers browser print (Save as PDF for multi-page) ---
+// --- Export Button — PNG snapshot ---
 
-function ExportButton() {
+function ExportButton({
+  targetRef,
+  edition,
+}: {
+  targetRef: React.RefObject<HTMLDivElement | null>;
+  edition: Edition;
+}) {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = useCallback(async () => {
+    if (!targetRef.current || exporting) return;
+    setExporting(true);
+
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(targetRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#F8F6F1",
+        logging: false,
+        ignoreElements: (el: Element) => el.classList?.contains("np-pdf-action"),
+      });
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const date = new Date().toISOString().slice(0, 10);
+          a.href = url;
+          a.download = `void-news-${edition}-${date}.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+          setExporting(false);
+        },
+        "image/png",
+        1.0,
+      );
+    } catch (err) {
+      console.error("Export failed:", err);
+      setExporting(false);
+    }
+  }, [targetRef, edition, exporting]);
+
   return (
     <div className="np-pdf-action">
       <button
         type="button"
         className="np-pdf-btn"
-        onClick={() => window.print()}
-        title="Save as PDF (use browser's Save as PDF option)"
+        onClick={handleExport}
+        disabled={exporting}
+        title="Download as PNG image"
       >
-        PDF
+        {exporting ? "Exporting\u2026" : "PNG"}
       </button>
     </div>
   );
 }
 
-// ===== MAIN PAGE COMPONENT =====
+// ===== MAIN COMPONENT =====
 
 export default function PaperContent({ edition }: { edition: Edition }) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const [allStories, setAllStories] = useState<Story[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [tldr, setTldr] = useState<string | null>(null);
@@ -520,7 +430,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
           .select(enrichedFields)
           .contains("sections", [edition])
           .order("headline_rank", { ascending: false })
-          .limit(150);
+          .limit(500);
 
         const stories = (clusters || []).map((c) => buildStory(c, true));
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
@@ -531,7 +441,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
         setIsLoading(false);
       }
 
-      // Pipeline timestamp + TL;DR (fire-and-forget)
+      // Pipeline timestamp + TL;DR
       try {
         const { data: run } = await supabase
           .from("pipeline_runs")
@@ -558,31 +468,25 @@ export default function PaperContent({ edition }: { edition: Edition }) {
     load();
   }, [edition]);
 
-  // --- Distribute stories into zones ---
-  const layout = distributeStories(allStories, edition);
+  const layout = distributeStories(allStories);
   const sectionConfig = getSectionConfig(edition);
 
-  const hour = new Date().getUTCHours();
   const editionDisplayName =
     edition === "us"
       ? "United States"
       : edition === "india"
         ? "India"
-        : hour < 17
-          ? "Morning"
-          : "Evening";
+        : "World";
 
   return (
-    <div className="np-root">
+    <div className="np-root" ref={rootRef}>
       <Masthead lastUpdated={lastUpdated} edition={edition} />
 
       {isLoading && (
-        <p className="np-loading">
-          Setting type &mdash; your edition is being prepared&hellip;
-        </p>
+        <p className="np-loading">Loading edition&hellip;</p>
       )}
 
-      {/* ===== TODAY'S BRIEF (TL;DR) ===== */}
+      {/* ===== TODAY'S BRIEF ===== */}
       {!isLoading && tldr && (
         <div className="np-brief">
           <p className="np-brief__label">Today&rsquo;s Brief</p>
@@ -590,89 +494,58 @@ export default function PaperContent({ edition }: { edition: Edition }) {
         </div>
       )}
 
-      {/* ===== FRONT PAGE — 3-Zone Layout ===== */}
-      {!isLoading && allStories.length > 0 && (
-        <div className={`np-front${allStories.length < 15 ? " np-front--compact" : ""}`}>
-          {/* Zone A — Left columns */}
-          <div className="np-front__zone-a">
-            {layout.zoneA.map((story, i) => (
-              <Article
-                key={story.id}
-                story={story}
-                tier={assignTier(i === 0 ? 2 : 4 + i, story)}
-                edition={edition}
-
-              />
-            ))}
-          </div>
-
-          {/* Zone B — Center (Lead) */}
-          <div className="np-front__zone-b">
-            {layout.zoneB.map((story, i) => (
-              <Article
-                key={story.id}
-                story={story}
-                tier={i === 0 ? "banner" : "standard"}
-                edition={edition}
-
-              />
-            ))}
-          </div>
-
-          {/* Zone C — Right columns */}
-          <div className="np-front__zone-c">
-            {layout.zoneC.map((story, i) => (
-              <Article
-                key={story.id}
-                story={story}
-                tier={assignTier(i === 0 ? 1 : 4 + i, story)}
-                edition={edition}
-
-              />
-            ))}
-          </div>
+      {/* ===== LEAD STORY ===== */}
+      {!isLoading && layout.leadStory && (
+        <div className="np-lead">
+          <Article
+            story={layout.leadStory}
+            tier="lead"
+            edition={edition}
+          />
         </div>
       )}
 
-      {/* ===== ORNAMENTAL RULE ===== */}
-      {!isLoading && allStories.length > 0 && (
-        <hr className="np-ornamental-rule" aria-hidden="true" />
+      {/* ===== TOP STORIES — 2-column grid ===== */}
+      {!isLoading && layout.topStories.length > 0 && (
+        <div className="np-top-grid">
+          {layout.topStories.map((story) => (
+            <Article
+              key={story.id}
+              story={story}
+              tier="standard"
+              edition={edition}
+            />
+          ))}
+        </div>
       )}
 
-      {/* ===== SECTION FLOW — CSS Multi-Column ===== */}
-      {!isLoading && layout.sectionStories.length > 0 && (
+      {/* ===== REMAINING — 4-column flow ===== */}
+      {!isLoading && layout.remaining.length > 0 && (
         <>
           <SectionLabel label={sectionConfig.primary} />
-          <div className={`np-section-flow${allStories.length < 15 ? " np-section-flow--compact" : ""}`}>
-            {layout.sectionStories.map((story, i) => (
+          <div className="np-section-flow">
+            {layout.remaining.map((story, i) => (
               <Article
                 key={story.id}
                 story={story}
-                tier={assignTier(8 + i, story)}
+                tier={assignTier(5 + i, story)}
                 edition={edition}
               />
-            ))}
-            {/* Fillers fill remaining column space */}
-            {layout.fillers.map((filler, i) => (
-              <Filler key={`filler-${i}`} item={filler} />
             ))}
           </div>
         </>
       )}
 
-      {/* ===== CLASSIFIEDS ===== */}
-      {!isLoading && allStories.length > 0 && (
-        <Classifieds
-          lastUpdated={lastUpdated}
+      {/* ===== COLOPHON ===== */}
+      {!isLoading && (
+        <Colophon
+          edition={editionDisplayName}
           storyCount={allStories.length}
         />
       )}
 
-      {/* ===== COLOPHON ===== */}
-      {!isLoading && <Colophon edition={editionDisplayName} />}
-
-      {/* ===== PDF EXPORT (subtle, outside canvas) ===== */}
-      <ExportButton />
+      {/* ===== PNG EXPORT ===== */}
+      <ExportButton targetRef={rootRef} edition={edition} />
     </div>
   );
 }
