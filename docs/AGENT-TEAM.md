@@ -173,7 +173,7 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 222-source curated list (3 tiers); 7-point political lean spectrum
+- 370-source curated list (3 tiers); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline summarization
 
