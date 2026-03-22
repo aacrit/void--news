@@ -3056,12 +3056,9 @@
   /* Full canvas width — no max-width constraint */
 }
 
-/* Mobile: collapse long briefs with "Read more" toggle */
-.daily-brief__body--collapsed {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Clamp class — only takes effect on mobile via media query below */
+.daily-brief__body--mobile-clamp {
+  /* No clamp on desktop — full text always visible */
 }
 
 .daily-brief__toggle {

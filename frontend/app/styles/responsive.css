@@ -633,6 +633,14 @@
 
   /* === DAILY BRIEF — mobile layout === */
 
+  /* Clamp long briefs on mobile — expand via toggle */
+  .daily-brief__body--mobile-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   /* Show "Read more" toggle on mobile */
   .daily-brief__toggle {
     display: inline-block;
