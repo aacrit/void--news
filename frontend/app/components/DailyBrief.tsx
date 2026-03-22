@@ -151,8 +151,14 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
                   aria-pressed={isPlaying}
                   type="button"
                 >
+                  <ScaleIcon
+                    size={12}
+                    animation={isPlaying ? "analyzing" : "idle"}
+                    className="on-air-cta__icon"
+                    aria-hidden
+                  />
                   <span className="on-air-cta__dot" aria-hidden="true" />
-                  <span className="on-air-cta__label">On Air</span>
+                  <span className="on-air-cta__label">void --onair</span>
                   <span className="on-air-cta__glyph" aria-hidden="true">
                     {isPlaying ? (
                       <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
