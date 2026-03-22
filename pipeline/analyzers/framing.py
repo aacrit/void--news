@@ -34,7 +34,12 @@ _SYNONYM_PATTERNS: list[tuple[re.Pattern | None, str, str, int]] = []
 # ---------------------------------------------------------------------------
 SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     # Conflict & violence
-    ("killed", "died", 2),
+    # NOTE: intensity reduced 2→1. AP style mandates "killed" for violent death
+    # (vs "died" for natural causes). Two occurrences in a 30-word conflict brief
+    # previously scored kw_emphasis=60, at the weight-shift boundary. At intensity=1
+    # the same article scores kw_emphasis=30 — a mild framing signal, not a trigger.
+    # (analytics-expert audit 2026-03-21)
+    ("killed", "died", 1),
     ("slaughtered", "killed", 3),
     ("massacre", "mass killing", 3),
     ("regime", "government", 3),
@@ -44,7 +49,14 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("mob", "crowd", 2),
     ("riot", "protest", 2),
     ("looting", "property damage", 2),
-    ("invasion", "military operation", 3),
+    # NOTE: intensity reduced 3→1. "Invasion" is the factually correct AP/Reuters/UN
+    # term for Russia's Ukraine entry and other military incursions. Two uses in a
+    # 100-word AP article previously scored kw_emphasis=90, triggering the geopolitical
+    # weight shift and inflating framing scores for neutral conflict reporting. The
+    # genuine state-media Kremlin euphemism is captured by "special military operation"
+    # (intensity=3), making "invasion" at weight=1 a mild secondary signal only.
+    # (analytics-expert audit 2026-03-21)
+    ("invasion", "military operation", 1),
     ("occupation", "presence", 2),
     ("terrorist", "militant", 3),
     ("freedom fighter", "rebel", 3),
@@ -161,13 +173,6 @@ ANTI_INDICATORS = re.compile(
 )
 
 # ---------------------------------------------------------------------------
-# Passive voice pattern (simplified via spaCy dep parsing)
-# ---------------------------------------------------------------------------
-PASSIVE_MARKERS = re.compile(
-    r"\b(was|were|been|being|is|are)\s+\w+ed\b",
-    re.IGNORECASE,
-)
-
 # Evasive passive patterns
 EVASIVE_PASSIVE: list[str] = [
     "mistakes were made", "errors were committed",
@@ -387,10 +392,13 @@ def _passive_voice_score(text: str, doc=None) -> float:
     # Evasive patterns are more heavily weighted
     evasive_score = min(evasive_count * 15.0, 40.0)
 
-    # General passive ratio: > 0.3 is notable, > 0.5 is heavy
-    passive_score = max(0.0, (passive_ratio - 0.2)) * 100.0
+    # General passive ratio: > 0.3 is notable, > 0.5 is heavy.
+    # Cap at 30 to prevent translated text (DW, NHK, Xinhua) and scientific
+    # articles from over-scoring on idiomatic passive voice. Evasive-phrase
+    # detection above carries full weight for genuinely evasive constructions.
+    ratio_score = min(30.0, max(0.0, (passive_ratio - 0.2)) * 100.0)
 
-    return min(100.0, evasive_score + passive_score)
+    return min(100.0, evasive_score + ratio_score)
 
 
 def analyze_framing(

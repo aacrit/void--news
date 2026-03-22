@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-21 (rev 7)
+Last updated: 2026-03-21 (rev 8)
 
 ## Philosophy
 
@@ -192,3 +192,4 @@ R&I advisory agents (read-only, propose but don't implement):
 | 2026-03-20 | Ranking v3.2→v3.3: 9 signals, confidence multiplier, lead gate, soft-floor normalization, topic diversity re-rank; dedup threshold 0.80; 3-article majority vote categorization; rerank.py; "Why This Story" tooltip; bias-blind ranking principle |
 | 2026-03-20 | Clustering v2 (threshold 0.2, entity-overlap merge pass); multi-section cross-listing (sections[], migration 011); source count corrected to 222 |
 | 2026-03-21 | Ranking v5.1 (Gemini editorial importance 12%, US-only divergence damper, cross-spectrum bonus, step 6c Gemini reasoning, step 7c editorial triage); new gemini_reasoning.py analyzer; migrations 012-013; Deep Dive redesign (seamless lede, dd-analysis-row, BiasInspectorInline, Source Perspectives, slot-machine cascade, iOS bottom-sheet, NavBar dateline with edition badge pills + regional timestamps) |
+| 2026-03-21 | Daily Brief (step 7d): pipeline/briefing/ module (daily_brief_generator.py, audio_producer.py, voice_rotation.py, generate_assets.py); Gemini BBC-style two-host TL;DR + audio script; edge-tts synthesis + pydub stitching; migration 017 (daily_briefs table + audio-briefs Storage); DailyBrief.tsx frontend component ("void --onair" pill + ScaleIcon + progress bar); pipeline cron corrected to 4x daily |

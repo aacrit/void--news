@@ -227,7 +227,12 @@ def compute_confidence(article: dict, scores: dict) -> float:
     return round(max(0.1, min(1.0, confidence)), 2)
 
 
-def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] | None = None) -> dict:
+def run_bias_analysis(
+    article: dict,
+    source: dict,
+    cluster_articles: list[dict] | None = None,
+    topic_lean_data: dict | None = None,
+) -> dict:
     """
     Run all 5 bias analyzers on a single article with computed confidence.
 
@@ -240,6 +245,9 @@ def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] 
         source: Source dict with political_lean_baseline, etc.
         cluster_articles: Optional list of other articles in the same cluster,
             passed to the framing analyzer for cross-article omission detection.
+        topic_lean_data: Optional Axis 6 EMA data for this source+topic pair
+            (e.g. {"avg_lean": 42.0}). Passed to analyze_political_lean so it
+            can blend longitudinal per-source-per-topic lean into the score.
 
     Returns a dict with score keys ready for DB insertion.
     Each analyzer is run independently; failures fall back to defaults.
@@ -257,7 +265,7 @@ def run_bias_analysis(article: dict, source: dict, cluster_articles: list[dict] 
     rationale = {}
 
     try:
-        result = analyze_political_lean(article, source)
+        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data)
         if isinstance(result, dict):
             scores["political_lean"] = result["score"]
             rationale["lean"] = result["rationale"]
@@ -1116,10 +1124,33 @@ def main():
         _analysis_lock = __import__("threading").Lock()
         _analyzed_count = [0]
 
+        # Fix 20 (Axis 6 wire-in): Fetch source_topic_lean EMA data so the
+        # political lean analyzer can blend in longitudinal per-source-per-topic
+        # baselines. Keyed by (source_id, category). Note: article categories
+        # are assigned at step 7, so topic_lean_data will be None for all
+        # articles in this run's first pass. The parameter wiring is in place
+        # for when categorization is moved earlier in a future refactor.
+        topic_lean_map: dict[tuple, dict] = {}
+        try:
+            topic_lean_result = supabase.table("source_topic_lean").select(
+                "source_id,category,avg_lean"
+            ).execute()
+            for row in (topic_lean_result.data or []):
+                key = (row["source_id"], row.get("category", ""))
+                topic_lean_map[key] = {"avg_lean": row["avg_lean"]}
+        except Exception as _tl_err:
+            print(f"    [warn] Could not fetch source_topic_lean: {_tl_err}")
+
         def _analyze_one(article: dict) -> dict:
             source_slug = article.get("source_slug", "") or article.get("source_id", "")
             source = source_map.get(source_slug, {"political_lean_baseline": "center"})
-            bias_scores = run_bias_analysis(article, source)
+            # Axis 6: look up topic lean for this article's source + category.
+            # Category is not yet assigned at step 5 (assigned at step 7), so
+            # this will resolve to None until categorization is moved earlier.
+            source_id = source.get("db_id", "")
+            category = article.get("category", "")
+            topic_lean_data = topic_lean_map.get((source_id, category)) if source_id else None
+            bias_scores = run_bias_analysis(article, source, topic_lean_data=topic_lean_data)
             bias_scores["article_id"] = article.get("id", "")
             with _analysis_lock:
                 _analyzed_count[0] += 1
@@ -1278,9 +1309,13 @@ def main():
             if len(cluster_articles_list) < 2:
                 continue  # single-article clusters gain nothing
 
-            # Pre-compute cluster entity cache: parse each article ONCE,
-            # collect all entities into a shared set
-            cluster_entity_cache: set[str] = set()
+            # Pre-compute per-article entity sets: parse each article ONCE,
+            # then build per-article caches that EXCLUDE the article's own
+            # entities. This prevents self-inclusion bias in omission scoring
+            # where an article is penalised for "omitting" its own entities.
+            # (Fix 9: cluster_entity_cache self-inclusion bug)
+            all_cluster_entities: set[str] = set()
+            per_article_entities: dict[str, set[str]] = {}
             article_docs: dict[str, object] = {}  # art_id -> spaCy doc
             if _nlp is not None:
                 for art in cluster_articles_list[:10]:
@@ -1289,21 +1324,31 @@ def main():
                     if art_text and art_id:
                         doc = _nlp(art_text[:15000])
                         article_docs[art_id] = doc
-                        for ent in doc.ents:
-                            if ent.label_ in ("PERSON", "ORG", "GPE"):
-                                cluster_entity_cache.add(ent.text.lower())
+                        art_ents = {
+                            ent.text.lower()
+                            for ent in doc.ents
+                            if ent.label_ in ("PERSON", "ORG", "GPE")
+                        }
+                        per_article_entities[art_id] = art_ents
+                        all_cluster_entities.update(art_ents)
 
             for art in cluster_articles_list:
                 art_id = art.get("id", "")
                 if not art_id:
                     continue
                 try:
+                    # Build entity cache for this article: all cluster entities
+                    # minus this article's own entities (self-exclusion guard)
+                    self_ents = per_article_entities.get(art_id, set())
+                    cache_without_self = all_cluster_entities - self_ents
+                    article_entity_cache = cache_without_self if cache_without_self else None
+
                     # Reuse pre-computed spaCy doc if available
                     cached_doc = article_docs.get(art_id)
                     result = analyze_framing(
                         art, cluster_articles=cluster_articles_list,
                         doc=cached_doc,
-                        cluster_entity_cache=cluster_entity_cache if cluster_entity_cache else None,
+                        cluster_entity_cache=article_entity_cache,
                     )
                     new_framing = result["score"] if isinstance(result, dict) else result
                     new_rationale = result.get("rationale") if isinstance(result, dict) else None

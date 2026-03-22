@@ -475,7 +475,9 @@ def _validate_reasoning(result: dict, cluster_idx: int = 0) -> dict | None:
             # Hard clamp
             delta = max(-_MAX_DELTA, min(_MAX_DELTA, delta))
 
-            reasoning = str(axis_data.get("reasoning", "")).strip()
+            # Cap reasoning at 300 chars to prevent memory bloat from verbose
+            # or hallucinated responses. One concise sentence fits in ~150 chars.
+            reasoning = str(axis_data.get("reasoning", "")).strip()[:300]
 
             validated_adjustments[axis] = {"delta": delta, "reasoning": reasoning}
 
