@@ -12,6 +12,6 @@ and before cluster storage (8).
 
 from .daily_brief_generator import generate_daily_briefs
 from .audio_producer import produce_audio
-from .voice_rotation import get_voice_for_today
+from .voice_rotation import get_voice_for_today, get_voices_for_today
 
-__all__ = ["generate_daily_briefs", "produce_audio", "get_voice_for_today"]
+__all__ = ["generate_daily_briefs", "produce_audio", "get_voice_for_today", "get_voices_for_today"]
