@@ -539,11 +539,14 @@
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-2);
-    /* Mobile: reset sticky; full-bleed bg via page-main side padding match */
+    /* Mobile: full-bleed bg matches sticky tablet/desktop treatment.
+       Negative margins cancel page-main padding; matching padding restores inset. */
     margin-left: calc(-1 * var(--space-5));
     margin-right: calc(-1 * var(--space-5));
     padding-left: var(--space-5);
     padding-right: var(--space-5);
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--divider);
   }
 
   /* No vertical rule on mobile — stacked layout */
@@ -3119,13 +3122,21 @@
 }
 
 .daily-brief__body {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  /* Slightly larger than --text-base to match lead summary visual weight
-     (Playfair italic renders smaller than Inter at same font-size) */
-  font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.1rem);
+  /* Structural font (Inter) for body text — italic serif at body size hurts
+     readability. Blockquote left-border is the newspaper tradition for
+     editorial asides; editorial voice (Playfair) reserved for headlines. */
+  font-family: var(--font-structural);
+  font-style: normal;
+  font-size: var(--text-base);
   line-height: 1.7;
-  color: var(--fg-primary);
+  color: var(--fg-secondary);
+  /* Newspaper norm: justified body copy with automatic hyphenation */
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  /* Blockquote left-border rule — newspaper editorial aside tradition */
+  border-left: 2px solid var(--accent-warm);
+  padding-left: var(--space-4);
 }
 
 /* Clamp class — only takes effect on mobile via media query below */
@@ -3153,7 +3164,6 @@
 
 .daily-brief__body p:last-child {
   margin-bottom: 0;
-  color: var(--fg-secondary);
 }
 
 /* ---- void --onair — minimal broadcast pill ------------------------------ */
