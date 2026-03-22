@@ -63,15 +63,18 @@ For the TL;DR:
 For the audio script:
 - BBC World Service 1970s style: formal, measured, authoritative, intellectual.
 - Total spoken duration target: 3-5 minutes (approximately 450-750 words of speech).
-- Pure narration — no sound effects, no countdown, no jingles.
+- This should feel like a real radio broadcast with natural verbal transitions.
 - Structure using exact markers on their own lines:
   [GREETING] This is void news. {edition} edition. {date}.
-  [HEADLINES] (headline roundup, 3 stories, ~15 seconds)
-  [STORY_1] (first story, ~60 seconds, with attribution)
-  [STORY_2] (second story, ~50 seconds, with attribution)
-  [STORY_3] (third story, ~40 seconds, with attribution)
-  [EDITORIAL_NOTE] (one observation about coverage divergence, ~20 seconds)
-  [SIGNOFF] This was void news.
+  [HEADLINES] Begin with "Here are the headlines this hour." then list 3 headlines.
+  [STORY_1] Begin with "First, ..." or "Our lead story." then the full story (~60 seconds).
+  [STORY_2] Begin with "Now, ..." or "Turning to ..." then the story (~50 seconds).
+  [STORY_3] Begin with "And finally, ..." or "Meanwhile, ..." then the story (~40 seconds).
+  [EDITORIAL_NOTE] Begin with "A note from the newsroom." then one observation (~20 seconds).
+  [SIGNOFF] End with "This was void news."
+- Use natural broadcast transitions between sections. Each section should feel
+  like a distinct moment with its own opener, as if a newsreader is pausing and
+  looking at the next page.
 - Keep sentences short and spoken-word friendly.
 - Numbers: write out small numbers. Use figures for large numbers.
 - No questions. No exclamation marks. Declarative sentences only.\

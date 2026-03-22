@@ -3096,24 +3096,40 @@
  * Progress bar: thin strip that expands below the button on play.
  */
 
-/* Outer container — column so progress bar can drop below the button */
+/* Outer container */
 .on-air-cta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0;
   flex-shrink: 0;
+}
+
+/* Unified pill — button + slider + time all in one rounded container */
+.on-air-cta__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: 32px;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background-color: transparent;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.on-air-cta--active .on-air-cta__pill {
+  border-color: var(--accent-warm);
+}
+
+.on-air-cta__pill:hover {
+  border-color: var(--accent-warm);
 }
 
 .on-air-cta__btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  /* Pill — compact height matches filter chips (~44px touch target with padding) */
-  padding: var(--space-2) var(--space-3);
-  min-height: 32px;
-  border: 1px solid var(--border-strong);
-  border-radius: 20px;
+  padding: 0;
+  border: none;
   background-color: transparent;
   color: var(--fg-secondary);
   font-family: var(--font-data);
@@ -3122,14 +3138,10 @@
   letter-spacing: 0.06em;
   cursor: pointer;
   white-space: nowrap;
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
 .on-air-cta__btn:hover {
-  border-color: var(--accent-warm);
   color: var(--fg-primary);
 }
 
@@ -3138,10 +3150,8 @@
   outline-offset: 2px;
 }
 
-.on-air-cta__btn--active {
-  border-color: var(--accent-warm);
+.on-air-cta--active .on-air-cta__btn {
   color: var(--accent-warm);
-  background-color: transparent;
 }
 
 /* ScaleIcon color follows the button's current color */
@@ -3159,7 +3169,7 @@
   transition: background-color var(--dur-fast) var(--ease-out);
 }
 
-.on-air-cta__btn--active .on-air-cta__dot {
+.on-air-cta--active .on-air-cta__dot {
   background-color: #c0392b;
   animation: on-air-dot-pulse 1.5s ease-in-out infinite;
 }
@@ -3186,28 +3196,7 @@
   margin-left: var(--space-1);
 }
 
-/* Progress track — collapses to 0 height until visible */
-.on-air-cta__track {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  padding-top: 0;
-  transition:
-    max-height var(--dur-morph, 400ms) var(--ease-out),
-    opacity var(--dur-normal, 300ms) var(--ease-out),
-    padding-top var(--dur-fast) var(--ease-out);
-}
-
-.on-air-cta__track--visible {
-  max-height: 28px;
-  opacity: 1;
-  padding-top: var(--space-2);
-}
-
+/* Progress slider — sits inside the pill inline with the button */
 .on-air-cta__progress {
   flex: 1;
   -webkit-appearance: none;
