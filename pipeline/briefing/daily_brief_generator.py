@@ -101,7 +101,7 @@ Dialogue rules (CRITICAL — these make it sound real, not scripted):
 
 Structure using exact markers on their own lines:
   [GREETING]
-  A: Time-appropriate greeting + "This is void news, {edition} edition." + preview.
+  A: Time-appropriate greeting + "This is void news." + brief preview of what's ahead.
   B: Brief warm reply ("Good evening. Quite a day." or "Plenty to cover tonight.").
 
   [HEADLINES]
@@ -141,20 +141,20 @@ Structure using exact markers on their own lines:
 # User prompt template — injected per edition call.
 # ---------------------------------------------------------------------------
 _USER_PROMPT_TEMPLATE = """\
-Generate the daily brief for the {EDITION} edition of void --news.
+Generate the daily brief for void --news.
 Date: {DATE}
 
-Below are today's top {N} stories for this edition, ranked by importance.
+Below are today's top {N} stories from across 222 global sources, ranked by importance.
 
 STORIES:
 {stories_block}
 
 Return JSON with exactly two fields:
 1. "tldr_text" — 5-7 sentences as a flowing editorial paragraph, separated by \\n.
-2. "audio_script" — full broadcast script with segment markers ([GREETING], [HEADLINES],
-   [STORY_1], [STORY_2], [STORY_3], [EDITORIAL_NOTE], [SIGNOFF]). Each marker on its own
-   line, followed by the spoken text. Do NOT include the marker names in the spoken text
-   itself — they are structural delimiters only, never read aloud.\
+2. "audio_script" — full two-host broadcast script with segment markers ([GREETING],
+   [HEADLINES], [STORY_1], [STORY_2], [STORY_3], [EDITORIAL_NOTE], [SIGNOFF]).
+   Each marker on its own line. Speaker tags (A: and B:) on each dialogue line.
+   Do NOT include marker names in spoken text — they are structural delimiters only.\
 """
 
 # ---------------------------------------------------------------------------
@@ -198,25 +198,28 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
     """
     Build the stories context block for the prompt.
 
-    Filters clusters by edition (sections array containment), takes top N
-    by headline_rank, and formats each with title, summary excerpt,
-    source_count, consensus_points, and divergence_points.
+    For "world" edition: uses ALL clusters regardless of section assignment,
+    ranked globally by importance. This gives the briefing a true world-news
+    perspective drawing from all 222 sources.
 
     Returns (filtered_clusters, stories_block_text).
     """
-    edition_clusters = []
-    for c in clusters:
-        sections = c.get("sections") or [c.get("section", "world")]
-        if edition in sections:
-            edition_clusters.append(c)
+    if edition == "world":
+        # World brief draws from ALL clusters globally
+        all_clusters = list(clusters)
+    else:
+        all_clusters = []
+        for c in clusters:
+            sections = c.get("sections") or [c.get("section", "world")]
+            if edition in sections:
+                all_clusters.append(c)
 
-    # Sort by headline_rank descending (already sorted in pipeline, but be safe)
-    edition_clusters.sort(
+    all_clusters.sort(
         key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0)),
         reverse=True,
     )
 
-    top = edition_clusters[:max_stories]
+    top = all_clusters[:max_stories]
     lines = []
     for i, c in enumerate(top, 1):
         title = (c.get("title", "") or "").strip()
