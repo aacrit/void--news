@@ -392,7 +392,7 @@ def _body_score(text: str) -> float:
     score = 0.0
 
     # --- Emotional word density (TextBlob) ---
-    blob = TextBlob(text[:50000])  # limit for performance
+    blob = TextBlob(text[:5000])  # limit for performance — sentiment signal saturates within first ~1000 words; 50000 was 10x too large
     # Very positive or very negative = more sensational
     polarity_extremity = abs(blob.sentiment.polarity)
     subjectivity = blob.sentiment.subjectivity
