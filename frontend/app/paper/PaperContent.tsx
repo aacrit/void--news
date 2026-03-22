@@ -520,7 +520,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
           .select(enrichedFields)
           .contains("sections", [edition])
           .order("headline_rank", { ascending: false })
-          .limit(150);
+          .limit(500);
 
         const stories = (clusters || []).map((c) => buildStory(c, true));
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
