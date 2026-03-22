@@ -92,6 +92,10 @@
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* Newspaper norm: justified body copy with hyphenation */
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .story-card__footer {
@@ -198,6 +202,10 @@
   -webkit-line-clamp: 8;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* Newspaper norm: justified body copy with hyphenation */
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .lead-story__footer {
@@ -403,13 +411,27 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-/* Thin vertical divider between category and lean chips */
+/* Divider between category and lean chips.
+   On desktop: flex spacer pushes lean chips right (newspaper convention:
+   primary category left, secondary perspective filter right).
+   On mobile: thin vertical rule in the scrollable row. */
 .filter-bar__divider {
   width: 1px;
   height: 20px;
   background-color: var(--divider);
   flex-shrink: 0;
   margin: 0 var(--space-1);
+}
+
+@media (min-width: 768px) {
+  .filter-bar__divider {
+    flex: 1;
+    width: auto;
+    height: auto;
+    background-color: transparent;
+    margin: 0;
+    min-width: var(--space-4);
+  }
 }
 
 /* ---- Filter row — wraps FilterBar + LeanFilter on one line ------------ */
@@ -1445,43 +1467,94 @@
 
 /* (RefreshButton removed — pipeline runs on cron, browser refresh suffices) */
 
-/* ---- Show More --------------------------------------------------------- */
-.show-more {
+/* ---- Feed Continuation — newspaper section continuation --------------- */
+/* Editorial "Continue reading" link with gradient fade hint above.
+   Desktop: text link with slide-in underline (dd-read-more pattern).
+   Mobile: sentinel-only (infinite scroll), link hidden. */
+
+.feed-continuation {
+  position: relative;
   text-align: center;
-  padding: var(--space-5) 0;
-  border-top: var(--rule-thin);
+  padding: var(--space-4) 0 var(--space-5);
 }
 
-.show-more__btn {
+/* Gradient fade — hints at more content below the last visible card.
+   Overlaps the bottom of .grid-compact by 3em. */
+.feed-continuation__fade {
+  position: absolute;
+  top: -3em;
+  left: 0;
+  right: 0;
+  height: 3em;
+  background: linear-gradient(transparent, var(--bg-primary));
+  pointer-events: none;
+}
+
+/* "Continue reading" text link — editorial, not SaaS.
+   Mirrors .dd-read-more: tertiary color, underline slides in on hover,
+   spring press feedback. */
+.feed-continuation__link {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--fg-secondary);
-  padding: var(--space-3) var(--space-6);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  color: var(--fg-tertiary);
   cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
   min-height: 44px;
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+  background: none;
+  border: none;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
-.show-more__btn:hover {
+/* Underline slide-in — identical to .dd-read-more::after */
+.feed-continuation__link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--fg-primary);
+  transition: width var(--dur-normal) var(--ease-out);
+}
+
+.feed-continuation__link:hover {
   color: var(--fg-primary);
-  border-color: var(--border-strong);
-  background-color: var(--bg-secondary);
 }
 
-.show-more__btn:active {
-  transform: scale(0.97);
-  transition: transform var(--dur-fast) var(--spring);
+.feed-continuation__link:hover::after {
+  width: 100%;
 }
 
-.show-more__btn:focus-visible {
+.feed-continuation__link:active {
+  transform: scale(0.95);
+  transition: transform 100ms var(--spring);
+}
+
+.feed-continuation__link:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
+}
+
+/* Story count — data voice, muted, parenthetical */
+.feed-continuation__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+}
+
+.feed-continuation__count::before {
+  content: "(";
+}
+
+.feed-continuation__count::after {
+  content: ")";
 }
 
 /* ---- Buttons (shared) -------------------------------------------------- */
@@ -3031,11 +3104,6 @@
   margin-bottom: var(--space-3);
 }
 
-/* Push On Air pill to the right */
-.daily-brief__header .on-air-cta {
-  margin-left: auto;
-}
-
 /* ScaleIcon in the label row — inherits currentColor, auto light/dark */
 .daily-brief__sigil {
   color: var(--accent-warm);
@@ -3090,168 +3158,116 @@
   color: var(--fg-secondary);
 }
 
-/* ---- On Air CTA — filter-row pill button ------------------------------- */
-/*
- * Lives in the filter-row alongside FilterBar, on the right.
- * Pill shape: accent border, ScaleIcon, dot, label, play/pause glyph.
- * Compact — doesn't dominate when not playing.
- * When playing: dot turns red + pulses, ScaleIcon pulses, border warm.
- * Progress bar: thin strip that expands below the button on play.
- */
+/* ---- void --onair — minimal broadcast pill ------------------------------ */
 
-/* Outer container */
-.on-air-cta {
-  flex-shrink: 0;
-}
-
-/* Unified pill — button + slider + time all in one rounded container */
-.on-air-cta__pill {
+.void-onair {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  min-height: 32px;
+  margin-left: auto;
+  padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-strong);
   border-radius: 20px;
-  background-color: transparent;
-  transition:
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
-}
-
-.on-air-cta--active .on-air-cta__pill {
-  border-color: var(--accent-warm);
-}
-
-.on-air-cta__pill:hover {
-  border-color: var(--accent-warm);
-}
-
-.on-air-cta__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 0;
-  border: none;
-  background-color: transparent;
+  background: none;
   color: var(--fg-secondary);
   font-family: var(--font-data);
   font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   cursor: pointer;
   white-space: nowrap;
-  transition: color var(--dur-fast) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
 }
 
-.on-air-cta__btn:hover {
+.void-onair:hover {
+  border-color: var(--accent-warm);
   color: var(--fg-primary);
 }
 
-.on-air-cta__btn:focus-visible {
+.void-onair:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
 }
 
-.on-air-cta--active .on-air-cta__btn {
+.void-onair--playing {
+  border-color: var(--accent-warm);
   color: var(--accent-warm);
 }
 
-/* ScaleIcon color follows the button's current color */
-.on-air-cta__icon {
-  flex-shrink: 0;
-}
-
-/* Red live dot — hidden by default, visible + pulsing when playing */
-.on-air-cta__dot {
+.void-onair__dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: transparent;
-  flex-shrink: 0;
-  transition: background-color var(--dur-fast) var(--ease-out);
-}
-
-.on-air-cta--active .on-air-cta__dot {
   background-color: #c0392b;
-  animation: on-air-dot-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+  animation: onair-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes on-air-dot-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+@keyframes onair-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 
-.on-air-cta__label {
+.void-onair__name {
   line-height: 1;
 }
 
-.on-air-cta__glyph {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
+.void-onair__glyph {
+  font-size: 0.65em;
+  line-height: 1;
 }
 
-.on-air-cta__time {
+.void-onair__time {
   font-variant-numeric: tabular-nums;
-  opacity: 0.65;
-  /* Small additional gap before the time */
-  margin-left: var(--space-1);
+  opacity: 0.6;
 }
 
-/* Progress slider — sits inside the pill inline with the button */
-.on-air-cta__progress {
-  flex: 1;
+/* Progress track — full-width thin bar below the header */
+.void-onair__track {
+  position: relative;
+  height: 3px;
+  background-color: var(--border-subtle);
+  border-radius: 2px;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.void-onair__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--accent-warm);
+  border-radius: 2px;
+  transition: width 250ms linear;
+}
+
+/* Invisible range input overlaid on the track for seeking */
+.void-onair__seek {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 100%;
+  height: 16px;
+  margin: 0;
   -webkit-appearance: none;
   appearance: none;
-  height: 3px;
-  background-color: var(--border-subtle);
-  border-radius: 2px;
-  outline: none;
+  background: transparent;
   cursor: pointer;
-  min-width: 80px;
+  opacity: 0;
 }
 
-.on-air-cta__progress::-webkit-slider-thumb {
+.void-onair__seek::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: var(--accent-warm);
-  cursor: pointer;
-}
-
-.on-air-cta__progress::-moz-range-thumb {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: var(--accent-warm);
-  cursor: pointer;
-  border: none;
-}
-
-.on-air-cta__progress::-webkit-slider-runnable-track {
-  height: 3px;
-  border-radius: 2px;
-}
-
-.on-air-cta__progress::-moz-range-track {
-  height: 3px;
-  border-radius: 2px;
-  background-color: var(--border-subtle);
-}
-
-.on-air-cta__voice {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  white-space: nowrap;
+  width: 16px;
+  height: 16px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .on-air-cta__btn { transition: none; }
-  .on-air-cta__track { transition: none; }
-  .on-air-cta__btn--active .on-air-cta__dot { animation: none; }
+  .void-onair { transition: none; }
+  .void-onair__dot { animation: none; opacity: 1; }
+  .void-onair__fill { transition: none; }
 }
 
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */

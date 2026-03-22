@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { supabase } from "../lib/supabase";
@@ -15,7 +15,7 @@ import ErrorBoundary from "./ErrorBoundary";
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
+import { useDailyBrief, DailyBriefText } from "./DailyBrief";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -103,10 +103,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
-  const [showAllCompact, setShowAllCompact] = useState(false);
   const [activeLean, setActiveLean] = useState<LeanChip>("All");
 
-  // Daily Brief state — lifted so OnAirButton can live in filter-row
+  // Batch reveal for compact stories — no hard cap, progressive loading
+  const BATCH_SIZE = 8;
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Daily Brief state — shared between text + onair player
   // while DailyBriefText renders in the content area
   const dailyBriefState = useDailyBrief(activeEdition);
 
@@ -122,12 +127,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setOriginRect(null);
   }, []);
 
+  // Detect mobile for infinite scroll vs editorial link
+  useEffect(() => {
+    setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+  }, []);
+
   // Reset category filter and scroll to top when edition changes.
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
   useEffect(() => {
     setActiveCategory("All");
-    setShowAllCompact(false);
+    setVisibleCount(BATCH_SIZE);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeEdition]);
 
@@ -345,6 +355,29 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const mediumStories = filteredStories.slice(2, 5);
   const compactStories = filteredStories.slice(5);
 
+  // Progressive batch reveal — no hard cap
+  const visibleCompact = compactStories.slice(0, visibleCount);
+  const remainingCount = compactStories.length - visibleCount;
+  const hasMore = remainingCount > 0;
+
+  const loadMoreStories = useCallback(() => {
+    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
+  }, [compactStories.length]);
+
+  // Mobile: infinite scroll via IntersectionObserver on sentinel
+  useEffect(() => {
+    if (!isMobile) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) loadMoreStories(); },
+      { rootMargin: "200px" },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [isMobile, hasMore, loadMoreStories]);
+
   // Stable key that changes whenever the active filter changes.
   // Keying the <section> elements on this value causes React to unmount+remount
   // them, which replays the .anim-filter-card entrance animation on every filter
@@ -364,9 +397,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         <div className="filter-row">
           <FilterBar
             activeCategory={activeCategory}
-            onCategoryChange={(cat) => { setActiveCategory(cat); setShowAllCompact(false); }}
+            onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
             activeLean={activeLean}
-            onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
+            onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
           />
         </div>
 
@@ -481,41 +514,43 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </section>
             )}
 
-            {/* Compact stories — capped at 8 (2 desktop rows) with "More" */}
-            {!isLoading && compactStories.length > 0 && (() => {
-              const COMPACT_CAP = 8;
-              const visible = showAllCompact ? compactStories : compactStories.slice(0, COMPACT_CAP);
-              const hasMore = compactStories.length > COMPACT_CAP && !showAllCompact;
-              return (
-                <>
-                  <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                    {visible.map((story, idx) => (
-                      <div
-                        key={story.id}
-                        className="grid-compact__item anim-filter-card"
-                        style={{ animationDelay: `${idx * 50}ms` }}
-                      >
-                        <StoryCard
-                          story={story}
-                          index={idx + mediumStories.length + 1}
-                          onStoryClick={handleStoryClick}
-                        />
-                      </div>
-                    ))}
-                  </section>
-                  {hasMore && (
-                    <div className="show-more">
-                      <button
-                        className="show-more__btn"
-                        onClick={() => setShowAllCompact(true)}
-                      >
-                        More stories ({compactStories.length - COMPACT_CAP} remaining)
-                      </button>
+            {/* Compact stories — progressive batch reveal, no hard cap */}
+            {!isLoading && compactStories.length > 0 && (
+              <>
+                <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
+                  {visibleCompact.map((story, idx) => (
+                    <div
+                      key={story.id}
+                      className="grid-compact__item anim-filter-card"
+                      style={{ animationDelay: `${(idx % BATCH_SIZE) * 50}ms` }}
+                    >
+                      <StoryCard
+                        story={story}
+                        index={idx + mediumStories.length + 1}
+                        onStoryClick={handleStoryClick}
+                      />
                     </div>
-                  )}
-                </>
-              );
-            })()}
+                  ))}
+                </section>
+
+                {/* Feed continuation — gradient fade + editorial link (desktop) / sentinel (mobile) */}
+                {hasMore && (
+                  <div className="feed-continuation" ref={sentinelRef}>
+                    <div className="feed-continuation__fade" aria-hidden="true" />
+                    {!isMobile && (
+                      <button
+                        className="feed-continuation__link"
+                        onClick={loadMoreStories}
+                        aria-label={`Show ${Math.min(BATCH_SIZE, remainingCount)} more stories`}
+                      >
+                        Continue reading
+                        <span className="feed-continuation__count">{remainingCount}</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
 
             {/* Edition line — newspaper tradition */}
             {!isLoading && filteredStories.length > 0 && (

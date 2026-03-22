@@ -306,13 +306,9 @@ def produce_audio(
 
     # ── Stitching sequence ──────────────────────────────────────────────────
 
-    # 1. BBC pips + countdown intro
+    # 1. Four beeps intro
     pips = _load_asset("pips.wav")
     _append(pips, "pips")
-    _append_silence(300)
-
-    countdown = _load_asset("countdown.wav")
-    _append(countdown, "countdown")
     _append_silence(500)
 
     # 2. Two-host narration — alternate voices per speaker tag
@@ -343,10 +339,8 @@ def produce_audio(
     if prev_marker:
         _append_silence(_SILENCE_AFTER.get(prev_marker, 0))
 
-    # 3. Soft chime + bass outro
-    _append_silence(300)
-    outro = _load_asset("outro.wav")
-    _append(outro, "outro")
+    # 3. Clean ending — just silence after sign-off
+    _append_silence(500)
 
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")
