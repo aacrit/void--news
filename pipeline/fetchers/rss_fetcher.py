@@ -287,26 +287,41 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
             for source in sources_with_rss
         }
 
-        for future in as_completed(future_to_source, timeout=FEED_TIMEOUT * 2):
-            source = future_to_source[future]
-            try:
-                articles = future.result(timeout=FEED_TIMEOUT)
-                all_articles.extend(articles)
-                print(f"  [ok] {source.get('name', 'unknown')}: {len(articles)} articles")
-            except TimeoutError:
-                error_msg = f"Timeout after {FEED_TIMEOUT}s"
-                print(f"  [timeout] {source.get('name', 'unknown')}: {error_msg}")
+        # as_completed raises TimeoutError during iteration if any futures
+        # are still pending after the timeout. Catch it gracefully so one
+        # hung feed doesn't crash the entire pipeline.
+        try:
+            for future in as_completed(future_to_source, timeout=FEED_TIMEOUT * 2):
+                source = future_to_source[future]
+                try:
+                    articles = future.result(timeout=FEED_TIMEOUT)
+                    all_articles.extend(articles)
+                    print(f"  [ok] {source.get('name', 'unknown')}: {len(articles)} articles")
+                except TimeoutError:
+                    error_msg = f"Timeout after {FEED_TIMEOUT}s"
+                    print(f"  [timeout] {source.get('name', 'unknown')}: {error_msg}")
+                    errors.append({
+                        "source": source.get("name", "unknown"),
+                        "error": error_msg,
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    })
+                except Exception as e:
+                    error_msg = str(e)
+                    print(f"  [error] {source.get('name', 'unknown')}: {error_msg}")
+                    errors.append({
+                        "source": source.get("name", "unknown"),
+                        "error": error_msg,
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    })
+        except TimeoutError:
+            # Some futures still pending after global timeout — log and continue
+            # with whatever articles we collected so far.
+            pending = [s.get("name", "?") for f, s in future_to_source.items() if not f.done()]
+            print(f"  [warn] Global timeout: {len(pending)} feeds still pending, continuing with {len(all_articles)} articles")
+            for name in pending:
                 errors.append({
-                    "source": source.get("name", "unknown"),
-                    "error": error_msg,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                })
-            except Exception as e:
-                error_msg = str(e)
-                print(f"  [error] {source.get('name', 'unknown')}: {error_msg}")
-                errors.append({
-                    "source": source.get("name", "unknown"),
-                    "error": error_msg,
+                    "source": name,
+                    "error": "Global fetch timeout — feed still pending",
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
 
