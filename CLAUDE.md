@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-22 (rev 11)
+Last updated: 2026-03-22 (rev 12)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -24,7 +24,7 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 | Ingestion | Python, feedparser, BeautifulSoup/Scrapy |
 | NLP/Bias Engine | Python, spaCy, NLTK, TextBlob |
 | Summarization | Gemini 2.5 Flash (free tier, google-genai SDK) |
-| Audio | edge-tts (Microsoft Neural, free, no API key), pydub, ffmpeg |
+| Audio | Google Cloud TTS Neural2 (service account key), pydub |
 | Database | Supabase (PostgreSQL) |
 | Frontend | Next.js 16 (App Router), React 19, TypeScript |
 | Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
@@ -37,7 +37,7 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 ### Zero Operational Cost
 - No paid APIs. All bias analysis is rule-based NLP running locally.
 - Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 3 brief calls per run.
-- edge-tts (Microsoft Neural TTS): free, unlimited, no API key. Used for two-host audio broadcast.
+- Google Cloud TTS Neural2: free-tier service account (GOOGLE_APPLICATION_CREDENTIALS). Used for two-host audio broadcast.
 - GitHub Actions, Supabase, GitHub Pages — all free tier.
 - Motion One via CDN importmap (no npm install needed).
 
@@ -139,30 +139,30 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
 
 **TL;DR** (`tldr_text`): 5-7 sentences as a flowing editorial paragraph (80-120 words). Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
 
-**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. edge-tts synthesizes each turn with edition-appropriate neural voice pair; pydub stitches with 4 BBC pips intro (1kHz); clean ending, no outro. Exported as 128k mono MP3, uploaded to Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
+**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. Google Cloud TTS Neural2 synthesizes each turn with edition-appropriate neural voice pair; `_clean_tts_text()` strips Gemini artifacts (asterisks, citation brackets, markdown, stray HTML) before synthesis; pydub stitches with 4 BBC pips intro (1kHz); clean ending, no outro. Exported as 128k mono MP3, uploaded to Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
 
-**Voice pairs** (`pipeline/briefing/voice_rotation.py`): world=en-GB-Ryan/Sonia, us=en-US-Guy/Jenny, india=en-IN-Prabhat/Neerja. Roles swap on alternate days (UTC day-of-year parity). Voice labels not shown to users.
+**Voice pairs** (`pipeline/briefing/voice_rotation.py`): world=en-GB-Neural2-B/A, us=en-US-Neural2-D/F, india=en-IN-Neural2-B/A. Male/female roles swap on alternate days (UTC day-of-year parity). Voice labels not shown to users.
 
 **Gemini budget**: 3 calls/run (one per edition requested, currently world-only). Uses `count_call=False` — does not consume 25-call cluster summarization cap. Falls back to rule-based TL;DR (top 5 cluster titles) when Gemini unavailable. No audio without Gemini script.
 
 **Audio cadence**: currently always-on (testing mode). Production target: 2x/day (morning + evening UTC).
 
 ### Source Curation
-222 vetted sources in three tiers:
+370 vetted sources in three tiers:
 - **Major US (49)** — AP, Reuters, NYT, WSJ, WaPo, Fox, CNN, NPR, PBS, Bloomberg, Breitbart, Newsmax, Daily Wire, etc.
-- **International (67)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
-- **Independent/Nonprofit (84+)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
+- **International (154)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
+- **Independent/Nonprofit (167)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
 
-7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.15:1 (61 left : 53 right : 86 center).
+7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.91:1 (113 left : 59 right : 198 center).
 
-**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=131, World=72, India=19.
+**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=150, World=200, India=20.
 
 ## Pipeline Flow (4x Daily)
 
 ```
- 1.  LOAD SOURCES  — 222 sources from data/sources.json, sync to Supabase
+ 1.  LOAD SOURCES  — 370 sources from data/sources.json, sync to Supabase
  2.  PIPELINE RUN  — Create pipeline_runs record
- 3.  FETCH         — RSS feeds from 222 sources (parallel)
+ 3.  FETCH         — RSS feeds from 370 sources (parallel)
  4.  SCRAPE        — Full text via web scraper (15 workers), RSS summary fallback
  4b. DEDUPLICATE   — TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
  5.  ANALYZE       — 5-axis bias scoring (all return score + rationale)
@@ -174,8 +174,9 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
  7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
  7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
  7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); edge-tts synthesizes two-host dialogue; pydub stitches with 4 pips intro; MP3 uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
+ 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Google Cloud TTS Neural2 synthesizes two-host dialogue (text cleaned via _clean_tts_text()); pydub stitches with 4 pips intro; MP3 uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
  8.  STORE         — Write clusters; sections[] array from all editions covered
+ 8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
  9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
  9b. ARTICLE CATS  — Populate article_categories junction table
  9c. TOPIC TRACK   — Axis 6 EMA update (source_topic_lean)
@@ -223,7 +224,7 @@ Mobile rules:
 - Each card: headline, source count, key bias indicators (BiasLens).
 - "Last updated" timestamp + Refresh button (confirmation dialog).
 - Sections: World / US / India.
-- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Playfair Display italic, top/bottom rules. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 4 lines with "Read more" toggle. Always fetches world brief regardless of active edition.
+- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 4 lines with "Read more" toggle. Always fetches world brief regardless of active edition.
 
 #### 2. Deep Dive Dashboard
 - Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
@@ -280,6 +281,9 @@ Load order: `reset.css → tokens.css → layout.css → typography.css → comp
 
 - CSS custom properties only (no Sass/LESS). BEM-like naming. Mobile-first `min-width` queries.
 - `clamp()` for all fluid scaling. No `!important`.
+- Body text (story summaries, lead story, Daily Brief): `text-align: justify; hyphens: auto` — newspaper norm.
+- Sticky `.filter-row` uses `background-color: var(--bg-primary)` (opaque) to prevent text bleed-through on scroll.
+- `overflow-x: hidden` on `.page-container`; `min-width: 0` on all CSS Grid children to prevent blowout from long headlines.
 
 Breakpoints: 375px (mobile), 768px (tablet), 1024px (desktop), 1440px (wide).
 
@@ -365,7 +369,7 @@ Frontend Build:    frontend-builder → responsive-specialist → uat-tester →
 - 6-axis bias scoring model + confidence
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 222-source curated list (3 tiers); 7-point political spectrum
+- 370-source curated list (3 tiers); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all AI work
 
@@ -382,7 +386,7 @@ void-news/
 │   └── PERF-REPORT-2026-03-22.md  # Vol I: pipeline + frontend performance analysis
 ├── pipeline/
 │   ├── fetchers/
-│   │   ├── rss_fetcher.py
+│   │   ├── rss_fetcher.py         # Parallel RSS fetch; global as_completed TimeoutError caught gracefully — hung feeds logged and skipped without crashing pipeline
 │   │   └── web_scraper.py
 │   ├── analyzers/
 │   │   ├── political_lean.py      # Length-adaptive + sparsity-weighted blending; entity lists include key political figures
@@ -400,7 +404,7 @@ void-news/
 │   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence + editorial_importance
 │   ├── briefing/
 │   │   ├── daily_brief_generator.py # Gemini: TL;DR (5-7 sentences) + two-host audio script; 3-call budget; rule-based fallback
-│   │   ├── audio_producer.py      # edge-tts synthesis, pydub stitching, 4 pips intro, Supabase Storage upload
+│   │   ├── audio_producer.py      # Google Cloud TTS Neural2 synthesis, _clean_tts_text() artifact stripping, pydub stitching, 4 pips intro, Supabase Storage upload
 │   │   ├── voice_rotation.py      # Neural voice pairs per edition; roles swap daily
 │   │   ├── generate_assets.py     # Generates assets/pips.wav (4 beeps at 1kHz)
 │   │   └── assets/                # pips.wav + reserved audio assets
@@ -409,7 +413,8 @@ void-news/
 │   ├── validation/                # Bias engine test suite: 26 ground-truth articles, signal_tracker, AllSides cross-ref, runner (96.9% accuracy), snapshot
 │   ├── utils/                     # Supabase client, nlp_shared
 │   ├── main.py                    # Orchestrator (12 steps + cleanup)
-│   └── rerank.py                  # Standalone re-ranker
+│   ├── rerank.py                  # Standalone re-ranker
+│   └── refresh_audio.py           # Standalone audio brief refresh — regenerates TTS from current DB without full pipeline run (~60-90s)
 ├── frontend/
 │   ├── app/
 │   │   ├── components/
@@ -417,7 +422,7 @@ void-news/
 │   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism
 │   │   │   ├── DeepDive.tsx       # Slide-in panel: FLIP morph open/close, lede, DeepDiveSpectrum, Press Analysis ▶, Source Perspectives
 │   │   │   ├── DeepDiveSpectrum.tsx # Continuous lean spectrum: 7-zone gradient bar + logos at exact politicalLean %, nearby sources alternate rows, each logo links to source article, tooltip on hover
-│   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid
+│   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid; progressive batch reveal (BATCH_SIZE=8, visibleCount); desktop "Continue reading" link; mobile infinite scroll via IntersectionObserver sentinel; Supabase limit 500
 │   │   │   ├── LeadStory.tsx      # Hero story card
 │   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending redesign
 │   │   │   ├── OpinionCard.tsx    # SHELVED — commented out, pending redesign
@@ -436,7 +441,7 @@ void-news/
 │   │   │   ├── PageToggle.tsx     # Feed / Sources view switcher
 │   │   │   ├── SpectrumChart.tsx  # /sources political spectrum: gradient bar + all sources below in 7 lean zone columns (mixed tiers), logos overlap with -3px margin / fan out on hover, zone counts below, single "Show all" expand button, each zone scrollable at 60vh when expanded
 │   │   │   ├── Sigil.tsx          # Compact bias sigil (SigilData type)
-│   │   │   └── DailyBrief.tsx     # useDailyBrief() hook + DailyBriefText; "void --onair" pill + ScaleIcon; progress bar; TL;DR in Playfair italic; mobile 4-line collapse
+│   │   │   └── DailyBrief.tsx     # useDailyBrief() hook + DailyBriefText; "void --onair" pill + ScaleIcon; progress bar; TL;DR in Inter regular with blockquote left-border; text-align justify; mobile 4-line collapse
 │   │   ├── lib/
 │   │   │   ├── supabase.ts        # Supabase client, fetchDeepDiveData, fetchLastPipelineRun
 │   │   │   ├── types.ts           # BiasScores, ThreeLensData, Story, etc.
@@ -451,24 +456,24 @@ void-news/
 │   ├── package.json               # Next.js 16.1.7, React 19.2.3
 │   └── next.config.ts
 ├── .claude/
-│   ├── agents/                    # 17 agent definitions
+│   ├── agents/                    # 18 agent definitions
 │   └── skills/                    # pressdesign skill
 ├── .github/workflows/
 │   ├── pipeline.yml               # 4x daily cron
 │   ├── deploy.yml                 # Build + deploy to GitHub Pages
 │   ├── migrate.yml                # Supabase migration runner
 │   └── validate-bias.yml          # CI gate: bias engine regression on every push
-├── data/sources.json              # 222 curated sources (7-point lean spectrum)
+├── data/sources.json              # 370 curated sources (7-point lean spectrum)
 └── supabase/migrations/           # 001-017
 ```
 
 ## MVP Scope
 
 ### Phase 1 — Foundation -- COMPLETE
-- [x] Project scaffolding, 222 sources, Supabase schema (migrations 001-017), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
+- [x] Project scaffolding, 370 sources (expanded from 222), Supabase schema (migrations 001-017), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
 
 ### Phase 2 — Analysis Engine -- COMPLETE
-- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via edge-tts).
+- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Google Cloud TTS Neural2), cluster dedup (step 8b), RSS fetch global timeout handling.
 
 ### Phase 3 — Frontend MVP -- COMPLETE
 - [x] Next.js 16 App Router, design token system, desktop + mobile layouts, StoryCard + LeadStory, news feed (headline_rank), "Why This Story" tooltip, category filtering, BiasLens Three Lenses, RefreshButton, light/dark mode, DailyBrief ("void --onair" TL;DR + audio player).
@@ -501,7 +506,7 @@ Removed from frontend. Pipeline still computes opinion_fact (Axis 3). `OpEdPage.
 
 - Python 3.11+, Node 18+, TypeScript for all frontend.
 - All bias analysis must be rule-based (no external API dependencies).
-- Pipeline completes within ~6 min (GitHub Actions limit).
+- Pipeline runtime: realistic target is **25-35 min** for normal incremental runs (after perf optimizations). Fresh DB run (Vol I, 2026-03-22) took 108 min. The 6-min GitHub Actions soft limit does not apply — pipeline runs to completion.
 - Frontend is fully static (next export). Supabase client-side reads only.
 - Animation adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`).
 - CSS adapted from DondeAI (`/home/aacrit/projects/dondeAI/css/tokens.css`).
