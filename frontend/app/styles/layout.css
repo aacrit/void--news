@@ -89,12 +89,18 @@
   border-right: none;
 }
 
+/* Compact stories — CSS multi-column flow (newspaper column fill).
+   Stories flow top-to-bottom, left-to-right with variable heights.
+   Mobile: single column (no column-count needed). */
 .grid-compact {
-  display: grid;
-  grid-template-columns: 1fr;
+  column-count: 1;
+  column-gap: var(--space-5);
+  column-rule: var(--rule-thin);
+  column-fill: auto;
 }
 
 .grid-compact__item {
+  break-inside: avoid;
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
 }
