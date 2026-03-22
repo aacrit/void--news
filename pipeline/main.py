@@ -1698,7 +1698,7 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
-                    edition_sections=["world", "us", "india"],
+                    edition_sections=["world"],
                 )
 
                 # Determine if this is an audio run (2x/day: morning + evening)

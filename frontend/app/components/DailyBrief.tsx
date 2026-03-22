@@ -43,7 +43,8 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
-    fetchDailyBrief(edition).then((data) => {
+    // Single daily brief — always world, edition-agnostic
+    fetchDailyBrief("world").then((data) => {
       if (!cancelled) setBrief(data);
     });
     return () => { cancelled = true; };
