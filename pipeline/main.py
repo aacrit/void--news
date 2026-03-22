@@ -1790,9 +1790,12 @@ def main():
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }
 
-                    # Generate two-host audio
+                    # Generate two-host audio (edge-tts $0 primary, gcloud fallback)
                     if should_generate_audio and brief.get("audio_script"):
-                        voices = get_voices_for_today(edition)
+                        from briefing.audio_producer import _detect_tts_engine
+                        tts_engine = _detect_tts_engine()
+                        voice_engine = "edge" if tts_engine == "edge" else "gcloud"
+                        voices = get_voices_for_today(edition, engine=voice_engine)
                         audio_result = produce_audio(
                             brief["audio_script"], voices, edition,
                         )
