@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import type {
   Edition,
   Category,
@@ -219,6 +219,13 @@ function leanLabel(score: number): string {
   return "Far Right";
 }
 
+/** Strip trailing ellipsis from RSS fallback summaries */
+function cleanSummary(text: string): string {
+  let cleaned = text.replace(/[\s.]*\.{2,}$/, "").replace(/\u2026$/, "").trimEnd();
+  if (cleaned && !/[.!?"]$/.test(cleaned)) cleaned += ".";
+  return cleaned;
+}
+
 // ===== COMPONENTS =====
 
 // --- Masthead ---
@@ -344,12 +351,13 @@ function Article({
   edition: Edition;
 }) {
   const dateline = getDateline(story, edition);
-  const decks = generateDecks(story.summary, tier);
+  const summary = cleanSummary(story.summary);
+  const decks = generateDecks(summary, tier);
 
   // Extract remaining summary after decks for body text
-  let bodyText = truncateSummary(story.summary, tier);
+  let bodyText = truncateSummary(summary, tier);
   if (decks.length > 0) {
-    let remaining = story.summary;
+    let remaining = summary;
     for (const deck of decks) {
       const deckPos = remaining.indexOf(deck);
       if (deckPos !== -1) {
@@ -485,18 +493,64 @@ function Colophon({ edition }: { edition: string }) {
   );
 }
 
-// --- Export Button — triggers browser print (Save as PDF for multi-page) ---
+// --- Export Buttons — PDF (browser print) + PNG (html2canvas) ---
 
-function ExportButton() {
+function ExportButtons({
+  targetRef,
+  edition,
+}: {
+  targetRef: React.RefObject<HTMLDivElement | null>;
+  edition: Edition;
+}) {
+  const [exporting, setExporting] = useState(false);
+
+  const handlePng = useCallback(async () => {
+    if (!targetRef.current || exporting) return;
+    setExporting(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(targetRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#F2F0EB",
+        logging: false,
+        ignoreElements: (el: Element) => el.classList?.contains("np-pdf-action"),
+      });
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `void-news-${edition}-${new Date().toISOString().slice(0, 10)}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setExporting(false);
+      }, "image/png", 1.0);
+    } catch (err) {
+      console.error("PNG export failed:", err);
+      setExporting(false);
+    }
+  }, [targetRef, edition, exporting]);
+
   return (
     <div className="np-pdf-action">
       <button
         type="button"
         className="np-pdf-btn"
         onClick={() => window.print()}
-        title="Save as PDF (use browser's Save as PDF option)"
+        title="Save as PDF via browser print"
       >
         PDF
+      </button>
+      {" "}
+      <button
+        type="button"
+        className="np-pdf-btn"
+        onClick={handlePng}
+        disabled={exporting}
+        title="Download as PNG image"
+      >
+        {exporting ? "..." : "PNG"}
       </button>
     </div>
   );
@@ -505,6 +559,7 @@ function ExportButton() {
 // ===== MAIN PAGE COMPONENT =====
 
 export default function PaperContent({ edition }: { edition: Edition }) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const [allStories, setAllStories] = useState<Story[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [tldr, setTldr] = useState<string | null>(null);
@@ -520,7 +575,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
           .select(enrichedFields)
           .contains("sections", [edition])
           .order("headline_rank", { ascending: false })
-          .limit(150);
+          .limit(500);
 
         const stories = (clusters || []).map((c) => buildStory(c, true));
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
@@ -573,7 +628,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
           : "Evening";
 
   return (
-    <div className="np-root">
+    <div className="np-root" ref={rootRef}>
       <Masthead lastUpdated={lastUpdated} edition={edition} />
 
       {isLoading && (
@@ -671,8 +726,8 @@ export default function PaperContent({ edition }: { edition: Edition }) {
       {/* ===== COLOPHON ===== */}
       {!isLoading && <Colophon edition={editionDisplayName} />}
 
-      {/* ===== PDF EXPORT (subtle, outside canvas) ===== */}
-      <ExportButton />
+      {/* ===== EXPORT (PDF + PNG) ===== */}
+      <ExportButtons targetRef={rootRef} edition={edition} />
     </div>
   );
 }
