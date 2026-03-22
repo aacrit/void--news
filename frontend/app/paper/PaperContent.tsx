@@ -512,7 +512,7 @@ function ExportButtons({
       const canvas = await html2canvas(targetRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#F2F0EB",
+        backgroundColor: "#EDE8DC",
         logging: false,
         ignoreElements: (el: Element) => el.classList?.contains("np-pdf-action"),
       });

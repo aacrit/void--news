@@ -6,10 +6,10 @@
 
 /* --- Tokens --- */
 .np-root {
-  --np-paper: #F2F0EB;
-  --np-paper-mid: #E8E5DE;
-  --np-paper-aged: #DDD9D0;
-  --np-paper-dark: #D0CBC0;
+  --np-paper: #EDE8DC;
+  --np-paper-mid: #E3DECE;
+  --np-paper-aged: #D8D2C4;
+  --np-paper-dark: #CBC5B5;
   --np-ink: #1A1710;
   --np-ink-mid: #3D382C;
   --np-ink-light: #6B6354;
@@ -31,7 +31,7 @@
 }
 
 /* --- Viewport background --- */
-html:has(.np-root) { background: #E8E6E2; }
+html:has(.np-root) { background: #E5E0D6; }
 html:has(.np-root) body { background: transparent; }
 
 /* --- Base --- */
@@ -49,10 +49,28 @@ html:has(.np-root) body { background: transparent; }
   word-break: break-word;
 }
 
-/* Paper textures removed — 1969 clean newsprint */
-.np-root::before,
+/* Subtle paper grain — toned down for 1969 (not aged, just texture) */
+.np-root::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+}
+
+/* Light fold crease — very subtle */
 .np-root::after {
-  display: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.015 0.04' numOctaves='3' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 400px 400px;
 }
 
 /* All content above textures */
@@ -212,7 +230,7 @@ html:has(.np-root) body { background: transparent; }
   column-count: 2;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: balance;
+  column-fill: auto;
 }
 
 /* Lead zone — single column for banner, consistent hairline borders */
