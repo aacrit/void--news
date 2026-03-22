@@ -7,15 +7,12 @@
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
 @media (min-width: 768px) {
-  /* Tablet medium: asymmetric 2-column, first story dominates left */
   .grid-medium {
-    grid-template-columns: 3fr 2fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: repeat(2, 1fr);
     gap: 0 var(--space-5);
   }
 
-  .grid-medium__item:first-child {
-    grid-row: 1 / -1;
+  .grid-medium__item {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
   }
@@ -25,22 +22,28 @@
     padding-right: 0;
   }
 
-  .grid-medium__item:nth-child(2) {
-    border-bottom: var(--rule-thin);
+  .grid-compact {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 var(--space-5);
   }
 
-  /* Tablet: 2-column newspaper flow */
-  .grid-compact {
-    column-count: 2;
+  .grid-compact__item {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(2n) {
+    border-right: none;
+    padding-right: 0;
   }
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
 @media (min-width: 1024px) {
-  /* Asymmetric lead — primary story dominates like a broadsheet front page */
+  /* Two equal lead stories side by side */
   .lead-section {
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: 1fr 1fr;
     gap: 0;
   }
 
@@ -54,35 +57,58 @@
     padding-left: var(--space-5);
   }
 
-  /* Asymmetric medium grid — first story dominates left column,
-     remaining stories stack on the right. Newspaper hierarchy. */
   .grid-medium {
-    grid-template-columns: 3fr 2fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: repeat(3, 1fr);
     gap: 0 var(--space-5);
   }
 
-  .grid-medium__item:first-child {
-    grid-row: 1 / -1;
+  .grid-medium__item {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
+    padding-left: var(--space-5);
+  }
+
+  .grid-medium__item:first-child {
     padding-left: 0;
   }
 
-  .grid-medium__item:not(:first-child) {
-    padding-left: 0;
+  .grid-medium__item:nth-child(2n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .grid-medium__item:nth-child(3n) {
+    border-right: none;
     padding-right: 0;
+  }
+
+  .grid-medium__item:last-child {
     border-right: none;
   }
 
-  /* Rule between stacked right-column stories */
-  .grid-medium__item:nth-child(2) {
-    border-bottom: var(--rule-thin);
+  .grid-compact {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 var(--space-5);
   }
 
-  /* Desktop: 3-column newspaper flow */
-  .grid-compact {
-    column-count: 3;
+  .grid-compact__item {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  /* Reset 2-col rule from 768px breakpoint so the 3-col layout takes over */
+  .grid-compact__item:nth-child(2n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(3n) {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .grid-compact__item:last-child {
+    border-right: none;
   }
 
   /* Compact headlines: slightly smaller */
@@ -116,9 +142,23 @@
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
 
 @media (min-width: 1280px) {
-  /* Wide desktop: 4-column newspaper flow */
   .grid-compact {
-    column-count: 4;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(3n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(4n) {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .grid-compact__item:last-child {
+    border-right: none;
   }
 }
 
