@@ -276,9 +276,19 @@ def produce_audio(
         if ms > 0:
             combined += _silence(ms)
 
+    def _clean_tts_text(text: str) -> str:
+        """Remove any leaked marker names or formatting artifacts from TTS text."""
+        # Remove any bracketed markers that Gemini might have included inline
+        text = re.sub(r"\[/?[A-Z_]+\]", "", text)
+        # Remove literal "Story 1:", "Story_1", "STORY_1" etc.
+        text = re.sub(r"\b(?:STORY|HEADLINE|GREETING|SIGNOFF|EDITORIAL)[_ ]?\d*:?\s*", "", text, flags=re.IGNORECASE)
+        # Clean up double spaces
+        text = re.sub(r"  +", " ", text).strip()
+        return text
+
     def _append_tts(marker: str) -> None:
         """Synthesize and append a script segment."""
-        text = segments.get(marker, "").strip()
+        text = _clean_tts_text(segments.get(marker, ""))
         if not text:
             print(f"  [warn][audio] No text for marker [{marker}] — skipping")
             return
