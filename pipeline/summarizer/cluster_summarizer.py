@@ -89,9 +89,15 @@ Write a comprehensive factual briefing in inverted pyramid structure. This shoul
 read like a complete news intelligence brief — rich with specifics, diverse \
 perspectives, and contextual depth.
 
-Paragraph 1 (2-3 sentences): The single most newsworthy fact — what happened, \
-who, when, where. Lead with the event, then attribute. Include the most \
-significant number, name, or outcome.
+IMPORTANT: Articles are sorted newest-first and include publication timestamps. \
+Lead with the MOST RECENT development — what is new as of the latest articles. \
+Older articles in the cluster provide context and background, but the lede must \
+reflect the freshest reported facts. If a cluster spans multiple days, clearly \
+distinguish what happened today from prior developments.
+
+Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
+happened, who, when, where. Lead with the latest event, then attribute. Include \
+the most significant number, name, or outcome from the freshest reporting.
 
 Paragraph 2 (3-4 sentences): Context and significance. Why this matters, what \
 preceded it, how it connects to broader developments. Attribute all background \
@@ -298,14 +304,18 @@ def _build_context_line(articles: list[dict]) -> str:
     """
     Build a one-line cluster metadata header for the prompt.
 
-    Tells Gemini total article count and tier distribution so it can
-    calibrate synthesis depth — without exposing individual outlet names.
+    Tells Gemini total article count, tier distribution, and time range
+    so it can calibrate synthesis depth and prioritize recent developments.
     """
     total = len(articles)
     tier_counts: dict[str, int] = {}
+    timestamps = []
     for art in articles:
         tier = (art.get("tier", "") or "unknown")
         tier_counts[tier] = tier_counts.get(tier, 0) + 1
+        pub = art.get("published_at", "")
+        if pub:
+            timestamps.append(pub[:16])
 
     parts = []
     if tier_counts.get("us_major"):
@@ -316,7 +326,18 @@ def _build_context_line(articles: list[dict]) -> str:
         parts.append(f"{tier_counts['independent']} independent")
 
     distribution = ", ".join(parts) if parts else "mixed sources"
-    return f"CLUSTER METADATA: {total} articles from {distribution} outlets.\n"
+
+    # Add time range so Gemini knows how fresh the cluster is
+    time_range = ""
+    if timestamps:
+        oldest = min(timestamps)
+        newest = max(timestamps)
+        if oldest != newest:
+            time_range = f" Coverage spans {oldest} to {newest}. Lead with the most recent developments."
+        else:
+            time_range = f" Published around {newest}."
+
+    return f"CLUSTER METADATA: {total} articles from {distribution} outlets.{time_range}\n"
 
 
 def _build_source_names_line(articles: list[dict]) -> str:
@@ -344,6 +365,11 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     from weighting outlets by brand recognition), but real outlet names are
     provided separately via _build_source_names_line for attribution use.
 
+    Articles are sorted newest-first so Gemini sees the most recent
+    developments at the top of the context window. Each article includes
+    its publication timestamp so Gemini can distinguish fresh developments
+    from older background.
+
     Limits to max_articles and includes summaries up to 400 chars to give
     Gemini sufficient material for comprehensive synthesis.
     """
@@ -353,20 +379,32 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
         "independent": "Independent Source",
     }
 
+    # Sort newest-first so Gemini prioritizes recent developments
+    sorted_articles = sorted(
+        articles[:max_articles],
+        key=lambda a: a.get("published_at", "") or "",
+        reverse=True,
+    )
+
     lines = []
-    for i, art in enumerate(articles[:max_articles]):
+    for i, art in enumerate(sorted_articles):
         title = (art.get("title", "") or "").strip()
         summary = (art.get("summary", "") or "").strip()
+        pub_date = (art.get("published_at", "") or "")[:16]  # YYYY-MM-DDTHH:MM
 
         # Use tier as source label in the article block.
         # Normalize tier value: lowercase + replace hyphens with underscores.
         tier_raw = (art.get("tier", "") or "").strip().lower().replace("-", "_")
         source_label = _TIER_LABEL_MAP.get(tier_raw, f"Source {i + 1}")
 
+        header = f"[{i + 1}] {source_label}: {title}"
+        if pub_date:
+            header += f"  ({pub_date})"
+
         if len(summary) > 400:
             summary = summary[:397] + "..."
 
-        lines.append(f"[{i + 1}] {source_label}: {title}")
+        lines.append(header)
         if summary:
             lines.append(f"    {summary}")
         lines.append("")
