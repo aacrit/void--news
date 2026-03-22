@@ -53,10 +53,12 @@ Core standards:
 - No bracketed citations or reference numbers.
 
 For the TL;DR:
-- Exactly 3 lines. Each line is one sentence.
-- Line 1: The single most consequential development right now.
-- Line 2: A second significant story from a different category.
-- Line 3: An editorial observation — a pattern, a divergence, or a quiet signal.
+- Write 5-7 sentences as a flowing editorial paragraph (separated by \\n).
+- Open with the single most consequential development right now (1-2 sentences).
+- Cover 2-3 additional significant stories from different categories (1 sentence each).
+- Close with an editorial observation — a pattern, a divergence, or a quiet signal
+  worth noting across the day's coverage (1-2 sentences).
+- Target 80-120 words total. This should fill the full width of a broadsheet column.
 
 For the audio script:
 - BBC World Service 1970s style: formal, measured, authoritative, intellectual.
@@ -106,8 +108,8 @@ def _check_quality(result: dict, edition: str) -> None:
     """Log quality warnings for out-of-spec brief output."""
     tldr = result.get("tldr_text", "")
     lines = [l.strip() for l in tldr.split("\n") if l.strip()]
-    if len(lines) != 3:
-        print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 3)")
+    if len(lines) < 3 or len(lines) > 10:
+        print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 5-7)")
 
     all_text = " ".join([
         tldr,
@@ -179,23 +181,27 @@ def _rule_based_tldr(top_clusters: list[dict]) -> str:
     """
     Rule-based TL;DR fallback when Gemini is unavailable.
 
-    Takes the top 3 cluster titles and formats them as three declarative
-    sentences. Audio script is not generated (returns None separately).
+    Takes the top 5 cluster titles and summaries, formats as a brief.
+    Audio script is not generated (returns None separately).
     """
     sentences = []
-    for c in top_clusters[:3]:
+    for c in top_clusters[:5]:
         title = (c.get("title", "") or "").strip()
+        summary = (c.get("summary", "") or "").strip()
         if title:
-            # Ensure sentence ends with a period
-            if not title.endswith((".","!","?")):
+            if not title.endswith((".", "!", "?")):
                 title = title + "."
             sentences.append(title)
+            # Add first sentence of summary if available
+            if summary:
+                first_sent = summary.split(".")[0].strip()
+                if first_sent and len(first_sent) > 20:
+                    sentences.append(first_sent + ".")
 
-    # Pad to 3 lines if fewer clusters are available
-    while len(sentences) < 3:
-        sentences.append("No additional top stories available for this edition.")
+    if not sentences:
+        sentences.append("No stories available for this edition.")
 
-    return "\n".join(sentences[:3])
+    return "\n".join(sentences[:7])
 
 
 def generate_daily_briefs(

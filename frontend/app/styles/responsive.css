@@ -632,9 +632,11 @@
   }
 
   /* === DAILY BRIEF — mobile layout === */
-  /* On mobile, brief is in-flow just like desktop — no special changes needed.
-     The filter-row already stacks vertically on mobile, so on-air-cta sits
-     in the second row below the FilterBar wrapper. */
+
+  /* Show "Read more" toggle on mobile */
+  .daily-brief__toggle {
+    display: inline-block;
+  }
 
   /* On Air CTA: label-only on narrow screens to save space */
   .on-air-cta__time {

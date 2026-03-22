@@ -3053,8 +3053,29 @@
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--fg-primary);
-  /* Newspaper column width — comfortable editorial read */
-  max-width: 70ch;
+  /* Full canvas width — no max-width constraint */
+}
+
+/* Mobile: collapse long briefs with "Read more" toggle */
+.daily-brief__body--collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.daily-brief__toggle {
+  display: none;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--accent-warm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  margin-top: var(--space-2);
+  letter-spacing: 0.04em;
 }
 
 .daily-brief__body p {

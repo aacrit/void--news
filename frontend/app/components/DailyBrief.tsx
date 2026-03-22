@@ -113,6 +113,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
   const { brief, audioRef } = state;
+  const [expanded, setExpanded] = useState(false);
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url;
@@ -135,15 +136,22 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
       <div className="daily-brief" role="complementary" aria-label="Daily Brief">
         <div className="daily-brief__header">
-          {/* ScaleIcon at 16px with idle animation — brand signal, not decoration */}
           <ScaleIcon size={16} animation="idle" className="daily-brief__sigil" />
           <span className="daily-brief__label">Daily Brief</span>
         </div>
-        <div className="daily-brief__body">
+        <div className={`daily-brief__body${!expanded ? " daily-brief__body--collapsed" : ""}`}>
           {paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
+        {/* "Read more" toggle — visible only on mobile via CSS */}
+        <button
+          className="daily-brief__toggle"
+          onClick={() => setExpanded(!expanded)}
+          type="button"
+        >
+          {expanded ? "Read less" : "Read more"}
+        </button>
       </div>
     </>
   );
