@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-21 (rev 8)
+Last updated: 2026-03-21 (rev 9)
 
 ## Philosophy
 
@@ -21,7 +21,7 @@ Adapted from DondeAI. Every principle is inherited and tailored for a news bias 
 COST BUDGET: $0.00 — ABSOLUTE CEILING
 
 Pipeline NLP:      Rule-based only (spaCy, NLTK, TextBlob) — $0
-Summarization:     Gemini Flash free tier (~156 RPD used, 10.4% of 1500 limit) — $0
+Summarization:     Gemini Flash free tier (~116 RPD used, 7.7% of 1500 limit) — $0
 Database:          Supabase free tier — $0
 Hosting:           GitHub Pages — $0
 CI/CD:             GitHub Actions free tier — $0
@@ -34,7 +34,7 @@ Agent work:        Claude Code CLI (Max subscription) — $0
 
 ```
 CEO (Aacrit)
-  ├── Quality ————————— analytics-expert, bias-auditor, pipeline-tester, bug-fixer
+  ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
@@ -43,7 +43,7 @@ CEO (Aacrit)
   └── Branding ————————— logo-designer
 ```
 
-**Total: 17 agents across 7 divisions**
+**Total: 18 agents across 7 divisions**
 
 ---
 
@@ -55,6 +55,7 @@ CEO (Aacrit)
 |-------|---------|-------------|---------|
 | `analytics-expert` | Bias engine benchmarking, ranking calibration | Yes | After algorithm changes |
 | `bias-auditor` | Ground-truth validation against known outlet profiles | Yes | After scoring changes |
+| `bias-calibrator` | Validation suite execution, score regression detection, axis weight tuning, ground-truth corpus maintenance. Quantitative counterpart to bias-auditor (qualitative). CI gate: `validate-bias.yml` runs on every push to `claude/*` touching `pipeline/analyzers/`; blocks merge on CATASTROPHIC failures. | Yes | After analyzer changes, on regression alert |
 | `pipeline-tester` | Pipeline quality gate — parsing, clustering, scoring validation | No | After every pipeline change |
 | `bug-fixer` | Post-test bug remediation, surgical fixes | Yes | After test failures |
 
@@ -115,6 +116,11 @@ pipeline-tester → bug-fixer → pipeline-tester (retest)
 analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
 ```
 
+**Bias Calibration Cycle:**
+```
+nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
+```
+
 **Frontend Cycle:**
 ```
 frontend-builder → responsive-specialist → uat-tester → frontend-fixer
@@ -134,6 +140,7 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 | RSS feed health, article collection, deduplication, cluster summaries, content quality | `feed-intelligence` | Pipeline |
 | Bias score accuracy, calibration, benchmarking | `analytics-expert` | Quality |
 | Ground-truth validation, known-outlet comparison | `bias-auditor` | Quality |
+| Bias score regression, validation suite, weight tuning | `bias-calibrator` | Quality |
 | Pipeline output validation, clustering quality | `pipeline-tester` | Quality |
 | Post-test bug fixing | `bug-fixer` | Quality |
 | Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` | Infrastructure |
@@ -193,3 +200,4 @@ R&I advisory agents (read-only, propose but don't implement):
 | 2026-03-20 | Clustering v2 (threshold 0.2, entity-overlap merge pass); multi-section cross-listing (sections[], migration 011); source count corrected to 222 |
 | 2026-03-21 | Ranking v5.1 (Gemini editorial importance 12%, US-only divergence damper, cross-spectrum bonus, step 6c Gemini reasoning, step 7c editorial triage); new gemini_reasoning.py analyzer; migrations 012-013; Deep Dive redesign (seamless lede, dd-analysis-row, BiasInspectorInline, Source Perspectives, slot-machine cascade, iOS bottom-sheet, NavBar dateline with edition badge pills + regional timestamps) |
 | 2026-03-21 | Daily Brief (step 7d): pipeline/briefing/ module (daily_brief_generator.py, audio_producer.py, voice_rotation.py, generate_assets.py); Gemini BBC-style two-host TL;DR + audio script; edge-tts synthesis + pydub stitching; migration 017 (daily_briefs table + audio-briefs Storage); DailyBrief.tsx frontend component ("void --onair" pill + ScaleIcon + progress bar); pipeline cron corrected to 4x daily |
+| 2026-03-21 | Bias engine calibration (all 5 analyzers): sparsity-weighted baseline blending; LOW_CREDIBILITY_US_MAJOR (22 outlets) baseline 35; SPECIFIC_ATTRIBUTION verb-proximity gate; value_judgment denominator fix (weight 0.06); partisan_attack cap 30pts; superlative word-boundary regex; "invasion"/"killed" intensity reduced; passive voice ratio capped at 30; adaptive EMA alpha (0.3/0.15); cluster entity cache excludes current article. New: pipeline/validation/ (28-fixture ground-truth suite, signal_tracker, AllSides cross-ref, runner with --verbose/--quick/--json/--update-snapshot, snapshot.json). |

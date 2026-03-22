@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-21 (rev 9)
+Last updated: 2026-03-21 (rev 10)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -44,14 +44,39 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 ### Bias Analysis — The Differentiator
 Per-article analysis across 6 axes. Axes 1-5 return score (0-100) + structured rationale dict (JSONB) for frontend hover display. Axis 6 tracks longitudinal trends per source per topic.
 
-1. **Political Lean** — keyword lexicons, entity sentiment (spaCy NER + TextBlob), framing phrases, source baseline blending (0.85 text + 0.15 baseline). Rationale: top left/right keywords, framing phrases, entity sentiments.
-2. **Sensationalism** — headline clickbait patterns, superlative/urgency density, TextBlob extremity, short-sentence ratio, measured-phrase inverse. Rationale: headline_score, body_score, clickbait_signals.
-3. **Opinion vs. Reporting** — first-person pronouns, TextBlob subjectivity, modal language, hedging, attribution density, metadata markers, rhetorical questions. Rationale: 8 sub-scores, classification label, dominant signals.
-4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs), organization citations, data patterns, direct quotes, attribution specificity vs. vague sourcing penalties. Rationale: named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
-5. **Framing Analysis** — connotation analysis, charged synonym detection (50+ pairs), omission detection (one-sided sourcing + cross-article entity comparison), headline-body divergence, passive voice. Rationale: 5 sub-scores + has_cluster_context flag.
-6. **Per-Topic Per-Outlet Tracking** — EMA (alpha=0.3) of lean/sensationalism/opinion per source per topic. Stored in `source_topic_lean`. Updated at step 9c.
+1. **Political Lean** — keyword lexicons (90+ terms per side), entity sentiment (spaCy NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending. Blending: `<50w → 0.50/0.50`, `50-150w → 0.70/0.30`, `150-500w → 0.85/0.15`, `500+w → 0.90/0.10`. Sparsity override: when ≤3 distinct keywords found, baseline weight increases further (up to 0.8× of available slack) — a Fox article with zero keyword hits scores ~75 not 53. Short-article divergence guard: when `<150w` and text diverges `>30pts` from baseline, baseline weight floors at 0.60. State-affiliated outlets (RT, CGTN, Sputnik, CGTN): baseline weight floors at 0.30 regardless of length. Optional `topic_lean_data` from Axis 6 EMA blends into prior: `source_baseline = baseline×0.7 + topic_avg×0.3`. Figures added to entity lists: Trump/Soros/Musk (RIGHT), Biden/Sanders/AOC/Harris (LEFT). "critics say"/"some argue"/"many believe" framing weights: 0.05 each (reduced from 0.3/0.1/0.1). "crisis at the border" moved from LEFT to RIGHT framing. Rationale: top left/right keywords, framing phrases, entity sentiments.
+2. **Sensationalism** — headline clickbait patterns, superlative/urgency density (word-boundary regex, no substring hits), TextBlob extremity, short-sentence ratio, partisan attack phrase density (capped at 30pts, was 50pts), measured-phrase inverse. Rationale: headline_score, body_score, clickbait_signals, partisan_attack_density.
+3. **Opinion vs. Reporting** — first-person pronouns (excludes all-caps "US" country code), TextBlob subjectivity (weight 0.18, reduced from 0.22), modal language, hedging, attribution density (includes 14 investigative sourcing patterns: "a review of", "obtained by", "documents show", etc.), absolutist assertion density (state-media correction), value judgment score (weight 0.06, restored from 0.02; denominator is total_judgments not sentence count), metadata markers, rhetorical questions. Rationale: 8 sub-scores, classification label, dominant signals.
+4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs, ±120 char window), organization citations (requires ORG_CITATION_PATTERNS or verb within 80 chars; normalizes "the " prefix), data patterns, direct quotes, attribution specificity (SPECIFIC_ATTRIBUTION regex requires verb within ±150 chars — prevents biographical mentions), 8 vague-source phrases added, direct vague-source penalty up to -15pts. Tier baselines: `us_major=65`, `international=55`, `independent=50`. LOW_CREDIBILITY_US_MAJOR frozenset (22 slugs: Breitbart, Newsmax, Daily Wire, Daily Caller, Gateway Pundit, Infowars, OANN, NY Post, Daily Mail, Occupy Democrats, Palmer Report, Daily Kos, Raw Story, etc.) receives baseline 35 instead of 65. Rationale: named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
+5. **Framing Analysis** — connotation analysis, charged synonym detection (50+ pairs; word-boundary regex for single-word terms), omission detection (one-sided sourcing + cross-article entity comparison; cluster entity cache excludes current article's own entities), headline-body divergence, passive voice ratio (capped at 30, was ~80). "killed" intensity 3→1, "invasion" intensity 3→1 (AP wire false positive fixes). Rationale: 5 sub-scores + has_cluster_context flag.
+6. **Per-Topic Per-Outlet Tracking** — Adaptive EMA: alpha=0.3 for new series (<10 articles), alpha=0.15 for established series (≥10 articles). Category normalized to lowercase before grouping. Wired to `analyze_political_lean` via `topic_lean_data` parameter but dormant until categorization moves before step 5. Stored in `source_topic_lean`. Updated at step 9c.
 
 No LLM API calls for scoring. Confidence computed per-article: text length + availability + signal strength.
+
+### Bias Engine Validation Framework (`pipeline/validation/`)
+
+Ground-truth test suite for regression-safe bias engine development.
+
+| File | Purpose |
+|------|---------|
+| `fixtures.py` | 28 synthetic articles across 8 categories (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis) with expected score ranges + rationale |
+| `signal_tracker.py` | Per-signal decomposition — `decompose_lean`, `decompose_sensationalism`, `decompose_opinion`, `decompose_rigor`, `decompose_framing`, `detect_dead_signals` |
+| `source_profiles.py` | AllSides cross-reference alignment — maps AllSides ratings to expected lean ranges per article |
+| `runner.py` | Validation runner; distribution health checks, directional invariants, regression snapshots |
+| `snapshot.json` | Regression baseline snapshot |
+
+**Run it:**
+```bash
+cd /home/aacrit/projects/void-news
+python pipeline/validation/runner.py              # Full validation
+python pipeline/validation/runner.py --quick      # Skip distribution checks
+python pipeline/validation/runner.py --verbose    # Per-signal decomposition
+python pipeline/validation/runner.py --json       # JSON output for CI
+python pipeline/validation/runner.py --update-snapshot  # Refresh regression baseline
+python pipeline/validation/runner.py --category wire    # Single category
+```
+
+Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on regression). Run after any bias engine change.
 
 ### Importance Ranking — v5.1
 
@@ -103,7 +128,7 @@ Gates and modifiers:
 `pipeline/rerank.py` — standalone re-ranker without full pipeline run. Source map keyed by slug + db_id (UUID).
 
 ### Cluster Summarization (Gemini Flash)
-3+-source clusters only, processed descending source-count. Hard cap: **25 API calls per run** (6 runs/day = 150 RPD + Gemini reasoning budget). Summaries: 250-350 words. `max_output_tokens=8192`. Falls back to rule-based when unavailable or cap reached.
+3+-source clusters only, processed descending source-count. Hard cap: **25 API calls per run** (4 runs/day = 100 RPD for cluster summaries + reasoning budget). Summaries: 250-350 words. `max_output_tokens=8192`. Falls back to rule-based when unavailable or cap reached.
 
 **Gemini Voice** (`cluster_summarizer.py`): `_SYSTEM_INSTRUCTION` (editorial role) + `_USER_PROMPT_TEMPLATE` per cluster. `_PROHIBITED_TERMS` frozenset (26 terms) + `_check_quality()` validator enforce output. Source names used directly (not tier labels — per feedback). `generate_json()` in `gemini_client.py` accepts optional `system_instruction` (backward-compatible).
 
@@ -287,13 +312,13 @@ Migrations: `supabase/migrations/` (001-017).
 |-------|---------|---------|
 | `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
 
-## Agent Team (17 Agents, 7 Divisions)
+## Agent Team (18 Agents, 7 Divisions)
 
 > Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
 
 ```
 CEO (Aacrit)
-  ├── Quality ————————— analytics-expert, bias-auditor, pipeline-tester, bug-fixer
+  ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
@@ -311,6 +336,7 @@ CEO (Aacrit)
 | RSS health, article collection, deduplication, cluster summaries, content quality | `feed-intelligence` |
 | Bias score accuracy, calibration, benchmarking | `analytics-expert` |
 | Ground-truth validation, known-outlet comparison | `bias-auditor` |
+| Bias score regression, validation suite, weight tuning | `bias-calibrator` |
 | Pipeline output validation, clustering quality | `pipeline-tester` |
 | Post-test bug fixing | `bug-fixer` |
 | Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` |
@@ -330,6 +356,7 @@ CEO (Aacrit)
 ```
 Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
 Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
+Bias Calibration:  nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
 Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
 ```
 
@@ -357,13 +384,13 @@ void-news/
 │   │   ├── rss_fetcher.py
 │   │   └── web_scraper.py
 │   ├── analyzers/
-│   │   ├── political_lean.py
-│   │   ├── sensationalism.py
-│   │   ├── opinion_detector.py
-│   │   ├── factual_rigor.py
-│   │   ├── framing.py             # Cluster-aware omission detection
-│   │   ├── gemini_reasoning.py    # Step 6c: contextual score adjustments; mutates article_bias_map
-│   │   └── topic_outlet_tracker.py # Axis 6: EMA per-source per-topic
+│   │   ├── political_lean.py      # Length-adaptive + sparsity-weighted blending; entity lists include key political figures
+│   │   ├── sensationalism.py      # Word-boundary regex for superlatives; partisan_attack cap 30pts
+│   │   ├── opinion_detector.py    # Adaptive EMA alpha; 14 investigative attribution patterns; value_judgment weight 0.06
+│   │   ├── factual_rigor.py       # SPECIFIC_ATTRIBUTION verb-proximity gate; LOW_CREDIBILITY_US_MAJOR baseline 35
+│   │   ├── framing.py             # Cluster-aware omission detection; passive voice ratio capped at 30
+│   │   ├── gemini_reasoning.py    # Step 6c: contextual score adjustments; mutates article_bias_map; reasoning strings capped at 300 chars
+│   │   └── topic_outlet_tracker.py # Axis 6: adaptive EMA (0.3 new / 0.15 established); category normalized to lowercase
 │   ├── clustering/
 │   │   ├── deduplicator.py        # TF-IDF + cosine dedup
 │   │   └── story_cluster.py       # Two-phase: TF-IDF agglomerative + entity-overlap merge
@@ -378,6 +405,7 @@ void-news/
 │   │   └── assets/                # pips.wav + reserved audio assets
 │   ├── categorizer/
 │   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
+│   ├── validation/                # Bias engine test suite: 28 fixtures, signal_tracker, AllSides cross-ref, runner, snapshot
 │   ├── utils/                     # Supabase client, nlp_shared
 │   ├── main.py                    # Orchestrator (12 steps + cleanup)
 │   └── rerank.py                  # Standalone re-ranker

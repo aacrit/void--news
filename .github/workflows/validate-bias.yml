@@ -1,0 +1,52 @@
+name: Validate Bias Engine
+
+on:
+  push:
+    branches: ['claude/**']
+    paths:
+      - 'pipeline/analyzers/**'
+      - 'pipeline/validation/**'
+      - 'test_bias_engine.py'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Cache spaCy model
+        id: spacy-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+
+      - name: Download spaCy model
+        if: steps.spacy-cache.outputs.cache-hit != 'true'
+        run: python -m spacy download en_core_web_sm
+
+      - name: Run bias validation suite
+        run: python pipeline/validation/runner.py --json
+
+      - name: Check for catastrophic failures
+        run: |
+          result=$(python pipeline/validation/runner.py 2>&1)
+          echo "$result"
+          if echo "$result" | grep -q "CATASTROPHIC"; then
+            echo "::error::Bias validation found CATASTROPHIC failures"
+            exit 1
+          fi
