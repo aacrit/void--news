@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
-   Sources plotted on a continuous spectrum bar.
-   Above: US Major. Below: International + Independent.
-   Logos overlap within each lean zone and fan out on hover.
-   Collapsible after ~4 rows per side.
+   Bar on top, all sources plotted below in 7 lean zones.
+   Logos overlap and fan out on zone hover.
+   Collapsed to ~4 rows; single expand button reveals all.
+   Each zone scrollable when expanded.
    --------------------------------------------------------------------------- */
 
 export interface SpectrumSource {
@@ -123,52 +123,33 @@ interface SpectrumChartProps {
   sources: SpectrumSource[];
 }
 
-const COLLAPSE_THRESHOLD = 4;
-
 export default function SpectrumChart({ sources }: SpectrumChartProps) {
-  const [aboveExpanded, setAboveExpanded] = useState(false);
-  const [belowExpanded, setBelowExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [tooltip, setTooltip] = useState<{
     source: SpectrumSource;
     x: number;
     y: number;
   } | null>(null);
 
-  /* Group sources by lean, split into above (us_major) / below (intl+ind) */
-  const { above, below, aboveTotal, belowTotal } = useMemo(() => {
-    const aboveMap = new Map<LeanCategory, SpectrumSource[]>();
-    const belowMap = new Map<LeanCategory, SpectrumSource[]>();
-    for (const zone of LEAN_ZONES) {
-      aboveMap.set(zone.key, []);
-      belowMap.set(zone.key, []);
-    }
-    let at = 0;
-    let bt = 0;
+  /* Group all sources by lean zone, sorted alphabetically */
+  const zones = useMemo(() => {
+    const map = new Map<LeanCategory, SpectrumSource[]>();
+    for (const zone of LEAN_ZONES) map.set(zone.key, []);
     for (const s of sources) {
       const lean = normalizeLean(s.political_lean_baseline);
-      if (s.tier === "us_major") {
-        aboveMap.get(lean)!.push(s);
-        at++;
-      } else {
-        belowMap.get(lean)!.push(s);
-        bt++;
-      }
+      map.get(lean)!.push(s);
     }
-    for (const [, srcs] of aboveMap)
+    for (const [, srcs] of map)
       srcs.sort((a, b) => a.name.localeCompare(b.name));
-    for (const [, srcs] of belowMap)
-      srcs.sort((a, b) => a.name.localeCompare(b.name));
-    return { above: aboveMap, below: belowMap, aboveTotal: at, belowTotal: bt };
+    return map;
   }, [sources]);
 
-  const aboveMaxInZone = useMemo(
-    () => Math.max(...Array.from(above.values()).map((s) => s.length)),
-    [above]
+  const maxInZone = useMemo(
+    () => Math.max(0, ...Array.from(zones.values()).map((s) => s.length)),
+    [zones]
   );
-  const belowMaxInZone = useMemo(
-    () => Math.max(...Array.from(below.values()).map((s) => s.length)),
-    [below]
-  );
+
+  const needsExpand = maxInZone > 4;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -200,56 +181,6 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
       role="img"
       aria-label="Political lean spectrum showing all curated news sources"
     >
-      {/* ---- Above: US Major ---- */}
-      <div className="spectrum-section">
-        <div className="spectrum-section__header">
-          <span className="spectrum-section__label">US Major</span>
-          <span className="spectrum-section__count">{aboveTotal}</span>
-        </div>
-        <div
-          className={`spectrum-side${
-            aboveMaxInZone > COLLAPSE_THRESHOLD && !aboveExpanded
-              ? " spectrum-side--collapsed"
-              : ""
-          }`}
-        >
-          <div className="spectrum-side__grid">
-            {LEAN_ZONES.map((zone) => {
-              const srcs = above.get(zone.key) || [];
-              return (
-                <div
-                  key={zone.key}
-                  className="spectrum-zone"
-                  data-lean={zone.key}
-                >
-                  <div className="spectrum-zone__logos">
-                    {srcs.map((s) => (
-                      <SourceLogo
-                        key={s.slug}
-                        source={s}
-                        onTooltip={handleTooltip}
-                      />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          {aboveMaxInZone > COLLAPSE_THRESHOLD && !aboveExpanded && (
-            <div className="spectrum-side__fade" aria-hidden="true" />
-          )}
-        </div>
-        {aboveMaxInZone > COLLAPSE_THRESHOLD && (
-          <button
-            className="spectrum-expand-btn"
-            onClick={() => setAboveExpanded(!aboveExpanded)}
-            aria-expanded={aboveExpanded}
-          >
-            {aboveExpanded ? "Show fewer" : `Show all ${aboveTotal}`}
-          </button>
-        )}
-      </div>
-
       {/* ---- Spectrum Bar ---- */}
       <div className="spectrum-bar" aria-hidden="true">
         {LEAN_ZONES.map((zone) => (
@@ -266,57 +197,52 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
         ))}
       </div>
 
-      {/* ---- Below: International & Independent ---- */}
-      <div className="spectrum-section">
-        <div className="spectrum-section__header">
-          <span className="spectrum-section__label">
-            International & Independent
-          </span>
-          <span className="spectrum-section__count">{belowTotal}</span>
-        </div>
-        <div
-          className={`spectrum-side${
-            belowMaxInZone > COLLAPSE_THRESHOLD && !belowExpanded
-              ? " spectrum-side--collapsed"
-              : ""
-          }`}
-        >
-          <div className="spectrum-side__grid">
-            {LEAN_ZONES.map((zone) => {
-              const srcs = below.get(zone.key) || [];
-              return (
-                <div
-                  key={zone.key}
-                  className="spectrum-zone"
-                  data-lean={zone.key}
-                >
-                  <div className="spectrum-zone__logos">
-                    {srcs.map((s) => (
-                      <SourceLogo
-                        key={s.slug}
-                        source={s}
-                        onTooltip={handleTooltip}
-                      />
-                    ))}
-                  </div>
+      {/* ---- All sources below ---- */}
+      <div
+        className={`spectrum-body${expanded ? " spectrum-body--expanded" : ""}${
+          needsExpand && !expanded ? " spectrum-body--collapsed" : ""
+        }`}
+      >
+        <div className="spectrum-body__grid">
+          {LEAN_ZONES.map((zone) => {
+            const srcs = zones.get(zone.key) || [];
+            return (
+              <div
+                key={zone.key}
+                className={`spectrum-zone${expanded ? " spectrum-zone--scrollable" : ""}`}
+                data-lean={zone.key}
+              >
+                <div className="spectrum-zone__logos">
+                  {srcs.map((s) => (
+                    <SourceLogo
+                      key={s.slug}
+                      source={s}
+                      onTooltip={handleTooltip}
+                    />
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-          {belowMaxInZone > COLLAPSE_THRESHOLD && !belowExpanded && (
-            <div className="spectrum-side__fade" aria-hidden="true" />
-          )}
+                {srcs.length > 0 && (
+                  <span className="spectrum-zone__count">{srcs.length}</span>
+                )}
+              </div>
+            );
+          })}
         </div>
-        {belowMaxInZone > COLLAPSE_THRESHOLD && (
-          <button
-            className="spectrum-expand-btn"
-            onClick={() => setBelowExpanded(!belowExpanded)}
-            aria-expanded={belowExpanded}
-          >
-            {belowExpanded ? "Show fewer" : `Show all ${belowTotal}`}
-          </button>
+        {needsExpand && !expanded && (
+          <div className="spectrum-body__fade" aria-hidden="true" />
         )}
       </div>
+
+      {/* ---- Single expand/collapse ---- */}
+      {needsExpand && (
+        <button
+          className="spectrum-expand-btn"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+        >
+          {expanded ? "Show fewer" : `Show all ${sources.length}`}
+        </button>
+      )}
 
       {/* ---- Tooltip ---- */}
       {tooltip && (
