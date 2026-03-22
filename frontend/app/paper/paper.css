@@ -19,8 +19,8 @@
   --np-stain: rgba(139, 119, 75, 0.08);
 
   /* Font stacks — CSS variables from next/font/google override when loaded */
-  --np-font-nameplate: var(--np-playfair), 'Playfair Display', 'Georgia', serif;
-  --np-font-head: var(--np-playfair), 'Playfair Display', 'Georgia', serif;
+  --np-font-nameplate: var(--np-fell), 'IM Fell English', 'Georgia', serif;
+  --np-font-head: var(--np-fell), 'IM Fell English', 'Playfair Display', 'Georgia', serif;
   --np-font-body: var(--np-lora), 'Lora', 'Georgia', 'Times New Roman', serif;
   --np-font-deck: var(--np-oldstandard), 'Old Standard TT', 'Georgia', serif;
   --np-font-label: var(--np-oldstandard), 'Old Standard TT', 'Georgia', serif;
@@ -231,7 +231,7 @@ html:has(.np-root) body { background: transparent; }
   column-count: 3;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: auto;
+  column-fill: balance;
 }
 
 /* Lead zone — single column for banner, consistent hairline borders */
@@ -250,7 +250,7 @@ html:has(.np-root) body { background: transparent; }
   column-count: 8;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: auto;
+  column-fill: balance;
   margin-bottom: 0;
 }
 
@@ -656,11 +656,6 @@ html:has(.np-root) body { background: transparent; }
   color: #333;
 }
 
-.np-pdf-btn:disabled {
-  cursor: wait;
-  opacity: 0.3;
-}
-
 /* ==========================================================================
    LOADING
    ========================================================================== */
@@ -716,7 +711,6 @@ html:has(.np-root) body { background: transparent; }
 
   .np-front__zone-a {
     column-count: 1;
-    grid-column: 1;
     border-right: 0.5px solid var(--np-rule);
     padding-right: var(--np-col-gap);
   }
@@ -735,7 +729,6 @@ html:has(.np-root) body { background: transparent; }
 
   .np-front__zone-c {
     column-count: 1;
-    grid-column: 2;
     border-left: 0.5px solid var(--np-rule);
     padding-left: var(--np-col-gap);
   }

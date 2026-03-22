@@ -178,9 +178,9 @@ export function distributeStories(
     }
   }
 
-  // All remaining stories flow into sections — no cap
-  const sectionStories = sorted.slice(FRONT_PAGE_CAP);
-  const overflowForFillers: Story[] = [];
+  // Overflow stories become section flow + fillers
+  const sectionStories = sorted.slice(FRONT_PAGE_CAP, 60);
+  const overflowForFillers = sorted.slice(60);
 
   const fillers = generateFillers(overflowForFillers, stories.length, edition);
 
