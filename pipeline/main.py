@@ -906,12 +906,12 @@ def main():
         rss_urls = {a["url"] for a in articles_raw if a.get("url")}
 
         if rss_urls:
-            # Fetch only recently-published URLs (within 72h) from DB.
-            # RSS feeds never surface articles older than 48h, so a full-table
-            # scan of all-time URLs is wasteful — a 72h window catches all
+            # Fetch only recently-published URLs (within 48h) from DB.
+            # RSS feeds never surface articles older than 36h, so a full-table
+            # scan of all-time URLs is wasteful — a 48h window catches all
             # possible duplicates while reading far fewer rows.
             existing_urls: set[str] = set()
-            url_cutoff = (datetime.now(timezone.utc) - timedelta(hours=72)).isoformat()
+            url_cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
             page_size = 1000
             offset = 0
             while True:
@@ -1183,12 +1183,12 @@ def main():
         print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
 
         # Step 6: Cluster articles
-        # Include recent articles from the last 48h so stories that span
+        # Include recent articles from the last 36h so stories that span
         # multiple pipeline runs can cluster together (cross-run continuity).
         print(f"\n[6/9] Clustering articles into stories...")
         recent_articles = []
         try:
-            cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+            cutoff = (datetime.now(timezone.utc) - timedelta(hours=36)).isoformat()
             current_ids = {a.get("id", "") for a in stored_articles}
             recent_res = supabase.table("articles").select(
                 "id,title,summary,full_text,source_id,published_at,fetched_at,word_count,section"
@@ -1206,9 +1206,9 @@ def main():
                     art["source_slug"] = src_info.get("id", "")
                     art["source_name"] = src_info.get("name", "")
                     recent_articles.append(art)
-            print(f"  Current batch: {len(stored_articles)}, 48h lookback: {len(recent_articles)}")
+            print(f"  Current batch: {len(stored_articles)}, 36h lookback: {len(recent_articles)}")
         except Exception as e:
-            print(f"  [warn] 48h lookback fetch failed, clustering current batch only: {e}")
+            print(f"  [warn] 36h lookback fetch failed, clustering current batch only: {e}")
 
         all_articles_for_clustering = stored_articles + recent_articles
 
@@ -1736,6 +1736,37 @@ def main():
                             promoted[j-1].get("headline_rank", 0) - 0.01, 2
                         )
 
+        # Recency gate for top-10: ensure the front page shows today's news.
+        # After topic diversity re-rank, demote any cluster whose most recent
+        # article is older than 24h below position 10 within each section pool.
+        recency_cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+        for section_val in ("world", "us", "india"):
+            pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
+            pool.sort(key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0)), reverse=True)
+
+            top_10 = pool[:10]
+            demoted = []
+            kept = []
+            for c in top_10:
+                # Determine the most recent article timestamp in this cluster
+                cluster_arts = c.get("articles", [])
+                most_recent = c.get("first_published", "")
+                for art in cluster_arts:
+                    pub = art.get("published_at", "")
+                    if pub and pub > most_recent:
+                        most_recent = pub
+
+                if most_recent and most_recent < recency_cutoff:
+                    demoted.append(c)
+                else:
+                    kept.append(c)
+
+            if demoted:
+                floor_rank = pool[10].get("headline_rank", 0) if len(pool) > 10 else 0
+                for c in demoted:
+                    c["headline_rank"] = round(min(c.get("headline_rank", 0), floor_rank - 0.01), 2)
+                print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
+
         # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
         if BRIEFING_AVAILABLE:
             print("\n[7d] Generating Daily Briefs...")
@@ -2149,12 +2180,12 @@ def main():
     except Exception as e:
         print(f"  [warn] Daily brief cleanup failed: {e}")
 
-    # Retention: archive then delete clusters older than 3 days.
-    # Articles >2d are rejected at ingestion, so clusters >3d are frozen.
+    # Retention: archive then delete clusters older than 2 days.
+    # Articles >36h are rejected at ingestion, so clusters >2d are frozen.
     # Articles + bias_scores persist (not deleted) for historical analysis.
     # Only cluster shells + links are pruned to keep the DB lean.
     try:
-        cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
         # Paginate to get all old cluster IDs
         old_ids: list[str] = []
         offset = 0
@@ -2195,9 +2226,9 @@ def main():
                 supabase.table("story_clusters").delete().in_(
                     "id", batch
                 ).execute()
-            print(f"  Retention: archived + removed {len(old_ids)} clusters older than 3 days")
+            print(f"  Retention: archived + removed {len(old_ids)} clusters older than 2 days")
         else:
-            print(f"  Retention: no clusters older than 3 days")
+            print(f"  Retention: no clusters older than 2 days")
     except Exception as e:
         print(f"  [warn] retention cleanup failed: {e}")
 
