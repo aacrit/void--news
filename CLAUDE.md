@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-21 (rev 10)
+Last updated: 2026-03-22 (rev 11)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -59,10 +59,10 @@ Ground-truth test suite for regression-safe bias engine development.
 
 | File | Purpose |
 |------|---------|
-| `fixtures.py` | 28 synthetic articles across 8 categories (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis) with expected score ranges + rationale |
+| `fixtures.py` | 26 ground-truth articles across 8 categories (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis) with expected score ranges + rationale |
 | `signal_tracker.py` | Per-signal decomposition — `decompose_lean`, `decompose_sensationalism`, `decompose_opinion`, `decompose_rigor`, `decompose_framing`, `detect_dead_signals` |
 | `source_profiles.py` | AllSides cross-reference alignment — maps AllSides ratings to expected lean ranges per article |
-| `runner.py` | Validation runner; distribution health checks, directional invariants, regression snapshots |
+| `runner.py` | Validation runner; distribution health checks, directional invariants, regression snapshots; 96.9% accuracy on first run |
 | `snapshot.json` | Regression baseline snapshot |
 
 **Run it:**
@@ -76,7 +76,7 @@ python pipeline/validation/runner.py --update-snapshot  # Refresh regression bas
 python pipeline/validation/runner.py --category wire    # Single category
 ```
 
-Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on regression). Run after any bias engine change.
+Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on regression); CI gate via `.github/workflows/validate-bias.yml`. Run after any bias engine change.
 
 ### Importance Ranking — v5.1
 
@@ -228,7 +228,7 @@ Mobile rules:
 #### 2. Deep Dive Dashboard
 - Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
 - **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" toggle at 600+ chars.
-- **`dd-analysis-row`**: Sigil + lean spectrum (favicons above/below gradient track) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile).
+- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources alternate rows) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile).
 - **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text).
 - **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
 - Slot-machine cascade: `translateY(12px) → 0`. Desktop: `opacity 200ms ease-out, transform 350ms spring`, reveal delay 120ms. Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms.
@@ -378,7 +378,8 @@ void-news/
 │   ├── PROJECT-CHARTER.md         # Project charter and scope
 │   ├── DESIGN-SYSTEM.md           # Press & Precision design system (component inventory, layout diagrams)
 │   ├── IMPLEMENTATION-PLAN.md     # Phased implementation roadmap
-│   └── GEMINI-VOICE-PLAN.md       # Gemini voice architecture, prompt templates, anti-bias guardrails
+│   ├── GEMINI-VOICE-PLAN.md       # Gemini voice architecture, prompt templates, anti-bias guardrails
+│   └── PERF-REPORT-2026-03-22.md  # Vol I: pipeline + frontend performance analysis
 ├── pipeline/
 │   ├── fetchers/
 │   │   ├── rss_fetcher.py
@@ -405,7 +406,7 @@ void-news/
 │   │   └── assets/                # pips.wav + reserved audio assets
 │   ├── categorizer/
 │   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
-│   ├── validation/                # Bias engine test suite: 28 fixtures, signal_tracker, AllSides cross-ref, runner, snapshot
+│   ├── validation/                # Bias engine test suite: 26 ground-truth articles, signal_tracker, AllSides cross-ref, runner (96.9% accuracy), snapshot
 │   ├── utils/                     # Supabase client, nlp_shared
 │   ├── main.py                    # Orchestrator (12 steps + cleanup)
 │   └── rerank.py                  # Standalone re-ranker
@@ -414,7 +415,8 @@ void-news/
 │   │   ├── components/
 │   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; BiasInspectorInline (Deep Dive inline), BiasInspectorTrigger + BiasInspectorPanel (legacy); each axis collapsible with Gemini reasoning
 │   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism
-│   │   │   ├── DeepDive.tsx       # Slide-in panel: lede, dd-analysis-row, Press Analysis ▶, Source Perspectives, coverage
+│   │   │   ├── DeepDive.tsx       # Slide-in panel: FLIP morph open/close, lede, DeepDiveSpectrum, Press Analysis ▶, Source Perspectives
+│   │   │   ├── DeepDiveSpectrum.tsx # Continuous lean spectrum: 7-zone gradient bar + logos at exact politicalLean %, nearby sources alternate rows, each logo links to source article, tooltip on hover
 │   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid
 │   │   │   ├── LeadStory.tsx      # Hero story card
 │   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending redesign
@@ -432,7 +434,7 @@ void-news/
 │   │   │   ├── LogoWordmark.tsx   # Text-only "void --news" SVG, hollow-O
 │   │   │   ├── ScaleIcon.tsx      # Void Circle + Scale Beam; 8 animation states (idle/loading/hover/analyzing/balanced/pulse/draw/none)
 │   │   │   ├── PageToggle.tsx     # Feed / Sources view switcher
-│   │   │   ├── SpectrumChart.tsx  # Political spectrum bar (used on /sources)
+│   │   │   ├── SpectrumChart.tsx  # /sources political spectrum: gradient bar + all sources below in 7 lean zone columns (mixed tiers), logos overlap with -3px margin / fan out on hover, zone counts below, single "Show all" expand button, each zone scrollable at 60vh when expanded
 │   │   │   ├── Sigil.tsx          # Compact bias sigil (SigilData type)
 │   │   │   └── DailyBrief.tsx     # useDailyBrief() hook + DailyBriefText; "void --onair" pill + ScaleIcon; progress bar; TL;DR in Playfair italic; mobile 4-line collapse
 │   │   ├── lib/
@@ -454,7 +456,8 @@ void-news/
 ├── .github/workflows/
 │   ├── pipeline.yml               # 4x daily cron
 │   ├── deploy.yml                 # Build + deploy to GitHub Pages
-│   └── migrate.yml                # Supabase migration runner
+│   ├── migrate.yml                # Supabase migration runner
+│   └── validate-bias.yml          # CI gate: bias engine regression on every push
 ├── data/sources.json              # 222 curated sources (7-point lean spectrum)
 └── supabase/migrations/           # 001-017
 ```
@@ -502,3 +505,8 @@ Removed from frontend. Pipeline still computes opinion_fact (Axis 3). `OpEdPage.
 - Frontend is fully static (next export). Supabase client-side reads only.
 - Animation adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`).
 - CSS adapted from DondeAI (`/home/aacrit/projects/dondeAI/css/tokens.css`).
+
+### perf-optimizer: Applied Optimizations
+- TextBlob text limit: 50K → 5K chars (`sensationalism.py`; sentiment signal saturates within ~1000 words)
+- RSS entry cap: 30 per feed (`rss_fetcher.py`; reduces fetch + parse time)
+- Bias analysis workers: 4 → 8 (`main.py`; parallel analyzer threads)
