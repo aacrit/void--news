@@ -57,8 +57,13 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
     # With 8+2=10 vs 2, the gap is narrower and proportional.
     (re.compile(r"\?$"), 2.0),
     # Listicles
+    # Pattern 0 catches sensational-modifier listicles ("10 shocking things") at 10.0.
+    # The bare numeric-prefix pattern (^\d+\s+\w+) was removed because it fired on
+    # legitimate hard-news headlines: "5 killed in Gaza strike", "14 senators voted
+    # against the bill", "2024 election results finalized", "100 days since ceasefire".
+    # Body counts, vote tallies, year-dates, and day-counts all matched and added 3 pts
+    # unfairly to straight wire headlines. Real listicles are fully covered by Pattern 0.
     (re.compile(r"^\d+\s+(shocking|surprising|incredible|amazing|stunning|things|reasons|ways|facts|secrets)", re.I), 10.0),
-    (re.compile(r"^\d+\s+\w+", re.I), 3.0),
     # "You won't believe" / imperative clickbait
     (re.compile(r"you won'?t believe", re.I), 10.0),
     (re.compile(r"what happens next", re.I), 9.0),
@@ -67,7 +72,10 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
     (re.compile(r"everyone is talking about", re.I), 8.0),
     (re.compile(r"goes (wrong|viral|crazy)", re.I), 8.0),
     (re.compile(r"you need to (know|see|read|hear)", re.I), 7.0),
-    (re.compile(r"what (you|we) (need|should) to know", re.I), 5.0),
+    # "what you need to know" / "what you should know"
+    # Previous regex used "(need|should) to know" — "should to know" is ungrammatical
+    # and unreachable in real text. Fixed to capture both grammatical constructions.
+    (re.compile(r"what (you|we) (need to know|should know)", re.I), 5.0),
     # BREAKING / EXCLUSIVE / URGENT prefix patterns
     (re.compile(r"^(BREAKING|EXCLUSIVE|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
     (re.compile(r"\.\.\.\s*$"), 5.0),
@@ -78,6 +86,11 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
 
 # ---------------------------------------------------------------------------
 # Superlatives and hyperbolic words
+#
+# NOTE: matching uses _SUPERLATIVE_PATTERN (compiled word-boundary regex,
+# defined immediately after this list) rather than str.count(), to avoid
+# substring false-positives: "total" firing on "totally", "complete" on
+# "completely", "slam" on "slammed", "ultimate" on "ultimately".
 # ---------------------------------------------------------------------------
 SUPERLATIVES: list[str] = [
     "worst", "best", "unprecedented", "shocking", "explosive",
@@ -128,6 +141,14 @@ SUPERLATIVES: list[str] = [
     "catastrophe", "chaos", "destroying",
 ]
 
+# Compiled word-boundary pattern for SUPERLATIVES.
+# Using re.IGNORECASE so we can match against already-lowercased text (the flag
+# is harmless there) and also against mixed-case headline text directly.
+_SUPERLATIVE_PATTERN: re.Pattern = re.compile(
+    r'\b(' + '|'.join(re.escape(s) for s in SUPERLATIVES) + r')\b',
+    re.IGNORECASE,
+)
+
 # ---------------------------------------------------------------------------
 # Urgency language
 #
@@ -144,9 +165,23 @@ URGENCY_WORDS: list[str] = [
     # Compound phrases first (most specific — prevent substring double-count)
     "breaking news", "this just in", "developing story", "live updates",
     "happening now",
-    # Single-word urgency terms with no compound risk
-    "just in", "urgent", "exclusive", "alert", "flash",
-    "emergency", "crisis", "immediate", "right now",
+    # Single-word urgency terms with no compound risk.
+    #
+    # REMOVED "just in" — it is a substring of "this just in" (listed above).
+    # str.count() on a text containing "this just in" fires on BOTH entries,
+    # inflating urgency_count by 1 for every occurrence of the compound phrase.
+    # "just in:" as a standalone news prefix is the same journalistic construct
+    # as "this just in" and is fully covered by the compound form.
+    #
+    # REMOVED "immediate" — str.count("immediate") fires on "immediately", which
+    # is one of the most common adverbs in straight wire copy
+    # ("officials responded immediately", "the law takes effect immediately").
+    # A single body sentence with "immediately" registered as an urgency hit,
+    # adding up to 8 pts to body_score on neutral AP/Reuters articles.
+    # Genuine urgency framing ("requires immediate evacuation", "immediate danger")
+    # is already captured by "emergency" and "urgent".
+    "urgent", "exclusive", "alert", "flash",
+    "emergency", "crisis", "right now",
 ]
 
 # ---------------------------------------------------------------------------
@@ -246,16 +281,23 @@ def _partisan_attack_score(text_lower: str, word_count: int) -> float:
     """
     Score concentrated partisan attack / demonization language.
 
-    Returns 0-25 contribution to body_score.
+    Returns a raw density score (0-15) that _body_score() multiplies by 2.0
+    and caps at 30.0 pts — the single largest potential contributor to
+    body_score. This makes it the dominant signal for pure attack editorials.
 
     Fires on DENSITY of PARTISAN_ATTACK_PHRASES per 100 words, not mere
     presence. This ensures a single phrase in a long AP analysis article
-    contributes < 1 pt, while a short attack-editorial paragraph dense with
-    demonization language contributes up to 25 pts.
+    contributes negligibly, while a short attack-editorial paragraph dense
+    with demonization language contributes meaningfully:
 
-    The 15% weight in _body_score() then caps the actual contribution to
-    ~3.75 pts at max, but more practically delivers the ~8-12 pt body_score
-    lift needed to push calm-but-ideological content from ~29 to 40+.
+        1 phrase in 500-word AP article: density=0.2 → raw=1.6 → +3.2 pts
+        3 phrases in 200-word editorial: density=1.5 → raw=12 → +24 pts
+        Dense 60-word attack paragraph (10+ phrases): → raw capped at 15 → +30 pts
+
+    Max contribution to body_score: 30 pts (via min(raw * 2.0, 30.0)).
+    Each matching phrase contributes 8 pts raw (×2.0 = 16 pts per phrase),
+    but the 30-pt ceiling prevents a single dense attack paragraph from
+    consuming more than 30% of the body_score capacity on its own.
     """
     if word_count == 0:
         return 0.0
@@ -269,8 +311,8 @@ def _partisan_attack_score(text_lower: str, word_count: int) -> float:
 
     # Density: hits per 100 words
     density = hit_count / max(word_count / 100, 1)
-    # Each density unit contributes 8 pts; cap at 25
-    return min(density * 8.0, 25.0)
+    # Each density unit contributes 8 pts; raw cap at 15 (×2.0 in _body_score = 30 pts max)
+    return min(density * 8.0, 15.0)
 
 
 def _caps_score(title: str, words: list[str]) -> float:
@@ -319,11 +361,10 @@ def _headline_score(title: str) -> float:
     words = title.split()
     score += _caps_score(title, words)
 
-    # Check superlatives in title
+    # Check superlatives in title using word-boundary regex to avoid substring
+    # hits ("total" → "totally", "complete" → "completely", etc.).
     title_lower = title.lower()
-    for word in SUPERLATIVES:
-        if word in title_lower:
-            score += 3.0
+    score += len(_SUPERLATIVE_PATTERN.findall(title_lower)) * 3.0
 
     # Very short headlines (< 5 words) can be sensational
     if 0 < len(words) < 5:
@@ -366,9 +407,9 @@ def _body_score(text: str) -> float:
     score += min(urgency_density * 8.0, 20.0)
 
     # --- Superlative density ---
-    sup_count = 0
-    for word in SUPERLATIVES:
-        sup_count += text_lower.count(word)
+    # Use word-boundary regex to avoid substring hits ("total" → "totally",
+    # "complete" → "completely", "slam" → "slammed", "ultimate" → "ultimately").
+    sup_count = len(_SUPERLATIVE_PATTERN.findall(text_lower))
     sup_density = sup_count / max(word_count / 100, 1)
     score += min(sup_density * 5.0, 20.0)
 
@@ -400,15 +441,17 @@ def _body_score(text: str) -> float:
     # signals inflammatory editorial tone even when traditional clickbait
     # patterns (ALL-CAPS, urgency words, exclamation marks) are absent.
     #
-    # The raw score (0-25) is added directly to the body_score at a 2x
-    # multiplier, capping at 50 pts contribution. This yields:
+    # The raw score (0-15) is multiplied by 2.0 and capped at 30 pts — the
+    # single largest potential contributor to body_score. This yields:
     #   - 1 isolated phrase in 500-word AP article: density=0.2 → raw=1.6 → +3.2 pts
     #   - 3 phrases in 200-word editorial: density=1.5 → raw=12 → +24 pts
-    #   - Dense 60-word attack paragraph (10+ phrases): density=16+ → raw=25 → +50 pts
+    #   - Dense 60-word attack paragraph (10+ phrases): raw capped at 15 → +30 pts
     # The measured_density inverse signal partially offsets low-density cases
     # where AP articles quote partisan language in a well-attributed context.
+    # Cap reduced from 50 to 30 so a single attack paragraph cannot consume
+    # more than 30% of body_score capacity on its own.
     partisan_raw = _partisan_attack_score(text_lower, word_count)
-    score += min(partisan_raw * 2.0, 50.0)
+    score += min(partisan_raw * 2.0, 30.0)
 
     # --- Attribution gaps (inverse: measured articles have more attribution) ---
     measured_count = 0
@@ -434,10 +477,13 @@ def analyze_sensationalism(article: dict) -> dict:
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""
 
-    # If no text at all, return low default
+    # If no text at all, return low default.
+    # Score 5 (below the content floor of 8) to reflect that no-text articles carry
+    # less signal than real-text articles, not more. Previously this returned 10,
+    # which was paradoxically higher than the 8-floor for articles with actual content.
     if not title.strip() and not full_text.strip():
         return {
-            "score": 10,
+            "score": 5,
             "rationale": {
                 "headline_score": 0, "body_score": 0,
                 "clickbait_signals": 0, "superlative_density": 0,
@@ -480,7 +526,7 @@ def analyze_sensationalism(article: dict) -> dict:
     per_100 = max(word_count / 100, 1)
 
     clickbait_signals = sum(1 for p, _ in CLICKBAIT_PATTERNS if p.search(title))
-    sup_count = sum(text_lower.count(w) for w in SUPERLATIVES)
+    sup_count = len(_SUPERLATIVE_PATTERN.findall(text_lower))
     urg_count = sum(text_lower.count(p) for p in URGENCY_WORDS)
     hyp_count = sum(text_lower.count(m) for m in HYPERBOLIC_MODIFIERS)
     meas_count = sum(text_lower.count(p) for p in MEASURED_PHRASES)

@@ -44,7 +44,9 @@ def update_source_topic_lean(
     groups: dict[tuple, list[dict]] = defaultdict(list)
     for art in articles_with_scores:
         source_id = art.get("source_id")
-        category = art.get("category")
+        # Normalize category to prevent "Economics" vs "economics" split rows
+        raw_cat = art.get("category")
+        category = raw_cat.strip().lower() if raw_cat else None
         if source_id and category:
             groups[(source_id, category)].append(art)
 
@@ -90,15 +92,15 @@ def update_source_topic_lean(
         existing = existing_map.get((source_id, category))
 
         if existing and existing.get("article_count", 0) > 0:
-            # Adaptive EMA alpha: use 0.15 instead of 0.3 when article_count < 10
-            # for this (source, category) pair. A low article count means the
-            # existing average is based on very few data points and is therefore
-            # sensitive to individual outliers. A smaller alpha (0.15) reduces
-            # oscillation — each new batch only shifts the average by 15% instead
-            # of 30%, preventing a single atypical article from dominating the
-            # running average for rarely-covered topics. (bias-auditor fix)
+            # Adaptive EMA alpha: use the standard 0.3 when article_count < 10
+            # (nascent series — converge faster so the average tracks real signal
+            # quickly) and switch to 0.15 once we have 10+ articles (established
+            # series — dampen updates so a single atypical batch cannot swing a
+            # stable long-run average). A larger alpha on cold rows prevents the
+            # ghost-signal problem where early anomalous articles lock in a skewed
+            # baseline for months before enough new data dilutes it.
             existing_count = existing.get("article_count", 0)
-            alpha = 0.15 if existing_count < 10 else EMA_ALPHA
+            alpha = EMA_ALPHA if existing_count < 10 else 0.15
             new_lean = _ema(float(existing["avg_lean"]), batch_lean, alpha)
             new_sens = _ema(float(existing["avg_sensationalism"]), batch_sens, alpha)
             new_opin = _ema(float(existing["avg_opinion"]), batch_opin, alpha)

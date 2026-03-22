@@ -65,8 +65,19 @@ HEDGING_PHRASES: list[str] = [
 
 # ---------------------------------------------------------------------------
 # Attribution phrases (signal factual reporting)
+#
+# Includes two categories:
+#   1. Traditional attribution verbs / quote markers (wire-service style)
+#   2. Investigative / documentary sourcing patterns — "a review of records",
+#      "obtained by", "interviews with" — which ProPublica, The Intercept,
+#      Bellingcat, ICIJ, and similar outlets use instead of 'said'.
+#      These were previously absent, causing zero-attribution floor (75) to
+#      fire on well-sourced investigative pieces, inflating their opinion score
+#      by ~11 points and misclassifying them toward Analysis/Opinion.
+#      (analytics-expert audit 2026-03-21)
 # ---------------------------------------------------------------------------
 ATTRIBUTION_PHRASES: list[str] = [
+    # Traditional attribution / quotation markers
     "according to", "said", "told", "stated",
     "reported", "confirmed", "announced", "declined to comment",
     "in a statement", "the spokesperson said", "the official said",
@@ -76,6 +87,17 @@ ATTRIBUTION_PHRASES: list[str] = [
     "data shows", "statistics show", "figures show",
     "the document states", "the filing shows", "court records show",
     "testified", "wrote in", "published in",
+    # Investigative / documentary sourcing patterns
+    # These are the primary attribution forms in long-form investigative journalism
+    # and were entirely absent from the original list.
+    "a review of", "an analysis of", "examination of",
+    "obtained by", "reviewed by", "obtained from",
+    "interviews with", "in interviews", "in an interview",
+    "documents show", "records show", "data indicate", "data indicates",
+    "documents reveal", "records reveal", "records indicate",
+    "the indictment alleges", "the complaint alleges", "alleges that",
+    "estimates show", "projections show", "figures indicate",
+    "court filings show", "court filings indicate",
 ]
 
 # ---------------------------------------------------------------------------
@@ -193,16 +215,41 @@ def _subjectivity_score(text: str) -> float:
     return avg * 100.0  # TextBlob subjectivity is 0-1
 
 
+_ATTRIBUTION_CONTEXT_VERBS: tuple[str, ...] = (
+    "said", "stated", "told", "according to", "announced",
+    "declared", "wrote", "tweeted", "posted",
+)
+
+
 def _modal_score(text: str) -> float:
-    """Score prescriptive/modal language density. Returns 0-100."""
+    """Score prescriptive/modal language density. Returns 0-100.
+
+    Attribution context gate (Fix 12): modal phrases that appear within 100
+    characters of an attribution verb ("The senator said Congress should act")
+    are NOT opinion indicators — they report someone else's prescriptive
+    language.  Such matches are discounted 50% (counted as 0.5 instead of 1.0).
+    Simple string matching is used for performance (no regex here).
+    """
     text_lower = text.lower()
     word_count = len(text_lower.split())
     if word_count == 0:
         return 0.0
 
-    modal_count = 0
+    modal_count = 0.0
     for phrase in MODAL_PRESCRIPTIVE:
-        modal_count += text_lower.count(phrase)
+        start = 0
+        while True:
+            idx = text_lower.find(phrase, start)
+            if idx == -1:
+                break
+            ctx_start = max(0, idx - 100)
+            ctx_end = min(len(text_lower), idx + len(phrase) + 100)
+            context = text_lower[ctx_start:ctx_end]
+            if any(verb in context for verb in _ATTRIBUTION_CONTEXT_VERBS):
+                modal_count += 0.5  # Attributed modal — discount
+            else:
+                modal_count += 1.0
+            start = idx + 1
 
     modal_per_100 = modal_count / max(word_count / 100, 1)
     # 0 = 0, 2 per 100 words = 40, 5+ per 100 words = 100
@@ -341,6 +388,14 @@ def _absolutist_assertion_score(text: str) -> float:
     inevitability", "no force can prevent", "firmly opposes" as unhedged
     categorical claims — the functional equivalent of opinion without "I".
 
+    Attribution context gate (Fix 12): phrases like "strongly condemns",
+    "vows to", "pledges to defend", "categorically rejects" regularly appear
+    in diplomatic wire copy reporting official positions (AP/Reuters covering
+    State Dept statements).  When a phrase occurs within 100 chars of an
+    attribution verb, it is attributed speech — NOT editorial opinion — and
+    is counted at 0.5 instead of 1.0.  Simple string matching is used for
+    performance (no regex in the inner loop).
+
     Returns 0-100.
     """
     text_lower = text.lower()
@@ -348,9 +403,21 @@ def _absolutist_assertion_score(text: str) -> float:
     if word_count == 0:
         return 0.0
 
-    hit_count = 0
+    hit_count = 0.0
     for phrase in ABSOLUTIST_PHRASES:
-        hit_count += text_lower.count(phrase)
+        start = 0
+        while True:
+            idx = text_lower.find(phrase, start)
+            if idx == -1:
+                break
+            ctx_start = max(0, idx - 100)
+            ctx_end = min(len(text_lower), idx + len(phrase) + 100)
+            context = text_lower[ctx_start:ctx_end]
+            if any(verb in context for verb in _ATTRIBUTION_CONTEXT_VERBS):
+                hit_count += 0.5  # Attributed assertion — discount
+            else:
+                hit_count += 1.0
+            start = idx + 1
 
     if hit_count == 0:
         return 0.0
@@ -396,7 +463,14 @@ def _value_judgment_score(text: str) -> float:
     if total_judgments == 0:
         return 0.0
 
-    ratio = unattributed_judgments / len(sentences)
+    # Fix 6: denominator is total_judgments, not len(sentences).
+    # The old len(sentences) denominator created a 17x penalty ratio between
+    # short and long articles carrying the same absolute judgment content —
+    # a 5-sentence op-ed with 2 unattributed judgments (ratio 0.40) scored
+    # identically to a 90-sentence wire story with 36 unattributed judgments.
+    # Using total_judgments measures what fraction of judgments lack
+    # attribution, which is the intended signal.
+    ratio = unattributed_judgments / total_judgments
     return min(100.0, ratio * 500.0)
 
 
@@ -438,24 +512,29 @@ def analyze_opinion(article: dict) -> dict:
     absolutist = _absolutist_assertion_score(combined)
 
     # Weighted combination (text-based signals)
-    # absolutist_assertion at 0.13; subjectivity reduced 0.23→0.22 to make room;
-    # rhetorical 0.08→0.04; value_judg 0.10→0.02.  Total remains 1.0.
-    # The absolutist signal captures state-media and ideological op-ed voice
-    # ("historical inevitability", "firmly opposes", "no force can prevent")
-    # that TextBlob subjectivity misses on declarative assertions.
-    # Weight derivation (target: CGTN opinion >= 20, NPR opinion >= 5/ACCEPTABLE):
-    #   CGTN: sub=18*0.22 + attr=25*0.15 + abs=100*0.13 = 3.96+3.75+13 = 20.71
-    #   NPR:  sub=20.5*0.22 = 4.51 -> score=5 (ACCEPTABLE; factual reporting style,
-    #         high attribution correctly suppresses opinion signal)
+    # Weights sum to 1.00:
+    #   0.12 + 0.18 + 0.12 + 0.08 + 0.15 + 0.12 + 0.04 + 0.06 + 0.13 = 1.00
+    #
+    # Fix 6 (value_judg 0.02→0.06, subjectivity 0.22→0.18):
+    #   value_judg weight was reduced to 0.02 because the scorer seemed "too
+    #   sensitive".  The actual cause was the len(sentences) denominator bug —
+    #   long articles were unfairly penalised.  With the correct total_judgments
+    #   denominator, 6% weight is appropriate and the subjectivity reduction is
+    #   justified: TextBlob subjectivity is the least reliable signal for news
+    #   text, frequently missing opinion-as-assertion patterns.
+    #
+    # absolutist_assertion at 0.13 captures state-media and ideological op-ed
+    # voice ("historical inevitability", "firmly opposes", "no force can
+    # prevent") that TextBlob subjectivity misses on declarative assertions.
     weighted = (
         pronoun * 0.12
-        + subjectivity * 0.22
+        + subjectivity * 0.18
         + modal * 0.12
         + hedging * 0.08
         + attribution * 0.15
         + metadata * 0.12
         + rhetorical * 0.04
-        + value_judg * 0.02
+        + value_judg * 0.06
         + absolutist * 0.13
     )
 
@@ -488,15 +567,15 @@ def analyze_opinion(article: dict) -> dict:
 
     # Identify dominant signals (top 3 by weighted contribution)
     signal_contributions = [
-        ("subjectivity", subjectivity * 0.22),
+        ("subjectivity", subjectivity * 0.18),
         ("attribution_gaps", attribution * 0.15),
         ("absolutist_assertions", absolutist * 0.13),
         ("pronouns", pronoun * 0.12),
         ("modal_language", modal * 0.12),
         ("metadata", metadata * 0.12),
         ("hedging", hedging * 0.08),
+        ("value_judgments", value_judg * 0.06),
         ("rhetorical_questions", rhetorical * 0.04),
-        ("value_judgments", value_judg * 0.02),
     ]
     signal_contributions.sort(key=lambda x: x[1], reverse=True)
     dominant = [s[0] for s in signal_contributions[:3] if s[1] > 0]

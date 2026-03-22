@@ -118,7 +118,11 @@ LEFT_KEYWORDS: dict[str, int] = {
     "algorithmic bias": 2,
     "big tech accountability": 2,
     # Community
-    "community organizing": 2, "grassroots": 1, "solidarity": 1,
+    "community organizing": 2,
+    # NOTE: "grassroots": 1 removed — used by both left and right movements
+    # neutrally. Not a reliable partisan signal. (nlp-engineer fix)
+    # NOTE: "solidarity": 1 removed — appears in diplomatic/international
+    # coverage neutrally (e.g. "solidarity with Ukraine"). (nlp-engineer fix)
     "mutual aid": 2, "collective action": 2, "people power": 2,
     # Additional high-value terms (Priority 3b fix — closing lexicon gap)
     "critical race theory": 3,     # appears in left rebuttal framing
@@ -155,10 +159,15 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "chain migration": 3, "anchor baby": 3, "catch and release": 2,
     # Economic
     "free market": 2, "tax cuts": 2, "trickle down": 2,
-    "job creators": 3, "small business": 1, "deregulation": 2,
+    "job creators": 3, "deregulation": 2,
+    # NOTE: "small business": 1 removed — standard institutional vocabulary
+    # that causes AP/Reuters to drift rightward. (nlp-engineer fix)
     "energy independence": 2, "war on coal": 3,
     "fiscal responsibility": 2, "welfare state": 3, "entitlements": 2,
-    "government spending": 1, "balanced budget": 1,
+    # NOTE: "government spending": 1 removed — standard policy/reporting term
+    # used across the full spectrum. (nlp-engineer fix)
+    # NOTE: "balanced budget": 1 removed — standard policy/reporting term
+    # used across the full spectrum. (nlp-engineer fix)
     "government overreach": 3, "nanny state": 3, "tax burden": 2,
     "free enterprise": 2, "economic freedom": 1,
     "esg agenda": 3, "esg": 2, "woke capitalism": 3,
@@ -166,7 +175,11 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "traditional values": 2, "traditional family": 3, "family values": 2,
     "religious liberty": 3, "religious freedom": 2,
     "parental rights": 2, "school choice": 2,
-    "woke": 3, "cancel culture": 3, "virtue signaling": 3,
+    # NOTE: standalone "woke": 3 removed — double-counts inside every compound
+    # phrase: "woke ideology", "woke agenda", "woke mob", "woke capitalism",
+    # "woke military". The compound phrases already catch all legitimate uses.
+    # (nlp-engineer fix)
+    "cancel culture": 3, "virtue signaling": 3,
     "politically correct": 2, "political correctness": 2,
     "woke ideology": 3, "woke agenda": 3, "woke mob": 3,
     "grooming": 3, "indoctrination": 3, "gender ideology": 3,
@@ -217,7 +230,9 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "abortion on demand": 3, "heartbeat bill": 3, "protect the unborn": 3,
     "right to life": 2, "abortion industry": 3,
     # Military / defense
-    "national security": 1, "strong military": 2,
+    # NOTE: "national security": 1 removed — standard institutional vocabulary
+    # used across the full political spectrum. (nlp-engineer fix)
+    "strong military": 2,
     "peace through strength": 2, "china threat": 2, "woke military": 3,
     # NOTE: "military readiness"(1) removed — standard institutional/defense reporting
     # term used across spectrum. Not genuinely partisan. (bias-auditor fix)
@@ -232,7 +247,9 @@ RIGHT_KEYWORDS: dict[str, int] = {
     # NOTE: "taxpayer"(1) removed — used neutrally across spectrum in all tax/budget
     # reporting. "taxpayer-funded" remains covered by FRAMING_PHRASES at weight 0.4
     # where it appears in explicitly political contexts. (bias-auditor fix)
-    "patriot": 2, "patriotic": 1,
+    # NOTE: "patriotic": 1 removed — standard institutional vocabulary that causes
+    # AP/Reuters to drift rightward. (nlp-engineer fix)
+    "patriot": 2,
     # Additional high-value terms (Priority 3b fix — closing lexicon gap)
     # NOTE: bare "globalists" intentionally excluded — phrase-scoped only to
     # avoid false positives in international finance/trade coverage.
@@ -264,7 +281,8 @@ FRAMING_PHRASES: list[tuple[str, float]] = [
     ("experts warn", -0.2), ("studies show", -0.1),
     ("assault-style weapon", -0.8),   # raised from -0.5 (Priority 3a)
     ("weapons of war", -0.5),
-    ("crisis at the border", -0.1),  # neutral-ish but used left
+    # NOTE: "crisis at the border" moved to RIGHT framing — predominantly
+    # right-coded alarmist framing of immigration. (nlp-engineer fix)
     ("undocumented immigrant", -0.3),
     ("threat to democracy", -0.8),   # raised from -0.5 (Priority 3a)
     ("democratic norms", -0.3),
@@ -276,7 +294,13 @@ FRAMING_PHRASES: list[tuple[str, float]] = [
     ("book banning", -0.5),
     ("forced birth", -0.7),
     # Right-leaning framing (positive shift = toward right)
-    ("critics say", 0.3), ("some argue", 0.1), ("many believe", 0.1),
+    # NOTE: "critics say", "some argue", "many believe" reduced from 0.3/0.1/0.1
+    # to 0.05 each — these are standard AP/Reuters attribution phrases, not
+    # partisan signals. (nlp-engineer fix)
+    ("critics say", 0.05), ("some argue", 0.05), ("many believe", 0.05),
+    # NOTE: "crisis at the border" moved here from LEFT framing — predominantly
+    # right-coded alarmist immigration framing. (nlp-engineer fix)
+    ("crisis at the border", 0.2),
     # NOTE: ("radical", 0.5) removed — bare "radical" fires on radicalization,
     # radical surgery, radical transparency, etc. Genuinely partisan uses are
     # already captured by "radical left" (weight=3), "radical agenda" (weight=3),
@@ -319,6 +343,9 @@ LEFT_CODED_ENTITIES = {
     "black lives matter", "blm", "sunrise movement",
     "working families party", "justice democrats",
     "league of conservation voters", "earthjustice",
+    # Major political figures — Fix 16
+    "joe biden", "biden", "bernie sanders", "sanders",
+    "aoc", "alexandria ocasio-cortez", "kamala harris", "harris",
 }
 
 RIGHT_CODED_ENTITIES = {
@@ -332,6 +359,8 @@ RIGHT_CODED_ENTITIES = {
     "american conservative union", "cpac", "liberty counsel",
     "family research council", "alliance defending freedom",
     "america first", "maga", "epoch times",
+    # Major political figures — Fix 16
+    "donald trump", "trump", "george soros", "soros", "elon musk",
 }
 
 # ---------------------------------------------------------------------------
@@ -345,9 +374,9 @@ BASELINE_MAP: dict[str, int] = {
 }
 
 
-def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
+def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     """Compute keyword-based lean score from 0-100. 50 = neutral.
-    Returns (score, top_left_keywords, top_right_keywords).
+    Returns (score, top_left_keywords, top_right_keywords, total_distinct).
 
     M3 fix: Use DISTINCT keyword count for sigmoid confidence (instead of
     density-weighted total).  The previous formula (floor=0.2, density-based
@@ -411,30 +440,20 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
             right_distinct += 1
             right_hits[phrase] = count * weight
 
-    # Supplemental: "the second amendment" or "second amendment [noun]" — US gun-rights
-    # framing where the phrase is not followed by "to [any word]" (which would indicate
-    # an ordinal constitutional/treaty amendment in non-US contexts, e.g. "second
-    # amendment to the Nigerian constitution" or "second amendment to the treaty").
-    # The phrase-scoped forms in RIGHT_KEYWORDS (rights, protection, supporters, advocates)
-    # catch the most common uses; this catches residual standalone uses.
-    # Negative lookahead: exclude "second amendment to [word]" (any prepositional form).
-    _sa_matches = re.findall(
-        r'\bsecond amendment(?!\s+to\s+\w)',
-        text_lower,
-    )
-    if _sa_matches:
-        _sa_weight = 3
-        right_total += len(_sa_matches) * _sa_weight
-        right_distinct += 1
-        right_hits["second amendment"] = len(_sa_matches) * _sa_weight
+    # NOTE: Supplemental "second amendment" regex removed — it double-counts every
+    # phrase-scoped hit already captured by RIGHT_KEYWORDS ("second amendment rights",
+    # "second amendment protection", "second amendment supporters", "second amendment
+    # advocates"). Those phrase-scoped forms handle all legitimate US gun-rights uses.
+    # (nlp-engineer Fix 1)
 
     # Top keywords by weighted impact (unchanged)
     top_left = sorted(left_hits, key=left_hits.get, reverse=True)[:5]
     top_right = sorted(right_hits, key=right_hits.get, reverse=True)[:5]
 
     total_weight = left_total + right_total
+    total_distinct = left_distinct + right_distinct
     if total_weight == 0:
-        return 50.0, top_left, top_right
+        return 50.0, top_left, top_right, total_distinct
 
     # Direction: weighted ratio (high-weight terms count more than low-weight fillers)
     right_ratio = right_total / total_weight
@@ -442,11 +461,10 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str]]:
     # Confidence: sigmoid on DISTINCT keyword count (k=0.9, x0=3).
     # This is independent of article length and repetition, so short articles
     # with 1-2 keyword hits no longer saturate the sigmoid.
-    total_distinct = left_distinct + right_distinct
     sigmoid_weight = 1.0 / (1.0 + math.exp(-0.9 * (total_distinct - 3.0)))
 
     score = 50.0 + (right_ratio - 0.5) * sigmoid_weight * 100.0
-    return score, top_left, top_right
+    return score, top_left, top_right, total_distinct
 
 
 def _framing_score(text: str) -> tuple[float, list[str]]:
@@ -545,7 +563,7 @@ def _get_source_baseline(source: dict) -> int:
     return BASELINE_MAP.get(str(baseline_str).lower().strip(), 50)
 
 
-def analyze_political_lean(article: dict, source: dict) -> dict:
+def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) -> dict:
     """
     Score the political lean of an article.
 
@@ -553,6 +571,9 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
         article: Dict with keys: full_text, title, summary, source_id.
         source: Dict with keys: political_lean_baseline, tier, name,
                 state_affiliated (optional bool).
+        topic_lean_data: Optional dict from Axis 6 EMA with key "avg_lean"
+                         (float 0-100). When provided, blended with source
+                         baseline (70% baseline, 30% topic) for a topic-aware prior.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with evidence).
@@ -561,6 +582,13 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     title = article.get("title", "") or ""
     combined = f"{title} {full_text}"
     source_baseline = _get_source_baseline(source)
+
+    # Fix 20: Topic-specific source prior from Axis 6 EMA data.
+    # Blend source baseline with topic-specific lean before text blending,
+    # giving a more accurate prior for sources whose lean varies by topic.
+    if topic_lean_data and "avg_lean" in topic_lean_data:
+        topic_lean = float(topic_lean_data["avg_lean"])
+        source_baseline = source_baseline * 0.7 + topic_lean * 0.3
 
     # State-affiliated outlets (RT, CGTN, Sputnik, Global Times, TRT World)
     # publish geopolitical content that uses neither Western left nor Western
@@ -613,8 +641,8 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
                           "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
         }
 
-    # 1. Keyword-based score (0-100) + top keywords
-    kw_score, top_left, top_right = _keyword_score(combined)
+    # 1. Keyword-based score (0-100) + top keywords + distinct keyword count
+    kw_score, top_left, top_right, total_distinct = _keyword_score(combined)
 
     # 2. Framing shift (-15 to +15) + phrases found
     framing_shift, framing_phrases = _framing_score(combined)
@@ -625,6 +653,15 @@ def analyze_political_lean(article: dict, source: dict) -> dict:
     # Combine text-based score
     text_score = kw_score + framing_shift + entity_shift
     text_score = max(0.0, min(100.0, text_score))
+
+    # Fix 11: Sparsity-weighted baseline blending.
+    # When NO keywords are found, lean more heavily on the source baseline.
+    # A 600-word Fox News article with no keywords should score ~70-75, not 53.
+    # sparsity_factor: 1.0 at zero keywords, 0.0 at 4+ distinct keywords.
+    # The 0.8 multiplier prevents pure-baseline scores (keeps some text signal).
+    sparsity_factor = 1.0 - min(1.0, total_distinct / 4.0)
+    baseline_weight = baseline_weight + (1.0 - baseline_weight) * sparsity_factor * 0.8
+    text_weight = 1.0 - baseline_weight
 
     # Divergence guard: when text_score diverges >30 points from source_baseline
     # AND word_count < 150, the keyword evidence is thin (short articles can

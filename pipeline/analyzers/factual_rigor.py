@@ -49,6 +49,23 @@ TIER_BASELINES: dict[str, float] = {
 _DEFAULT_BASELINE = 45.0     # Fallback for unknown/missing tier
 
 # ---------------------------------------------------------------------------
+# Low-credibility us_major outlets (Fix 15)
+#
+# These slugs receive a reduced tier baseline (35.0) instead of the standard
+# us_major baseline (65.0).  They are us_major by audience size but
+# consistently demonstrate weaker sourcing standards.  Adding here avoids
+# touching sources.json and keeps the credibility split local to this scorer.
+# ---------------------------------------------------------------------------
+LOW_CREDIBILITY_US_MAJOR: frozenset[str] = frozenset({
+    'breitbart', 'breitbart-news', 'newsmax', 'daily-wire', 'the-daily-wire',
+    'daily-caller', 'the-daily-caller', 'gateway-pundit', 'the-gateway-pundit',
+    'infowars', 'oann', 'one-america-news', 'new-york-post',
+    'daily-mail', 'the-daily-mail', 'national-enquirer',
+    'occupy-democrats', 'palmer-report', 'bipartisan-report',
+    'daily-kos', 'rawstory', 'raw-story',
+})
+
+# ---------------------------------------------------------------------------
 # Attribution verb patterns (for named source detection)
 # ---------------------------------------------------------------------------
 ATTRIBUTION_VERBS = re.compile(
@@ -136,6 +153,15 @@ VAGUE_SOURCES: list[str] = [
     "it is believed", "it is thought", "it is said",
     "according to sources", "according to reports",
     "reports suggest", "rumors suggest", "speculation",
+    # Modern journalism variants (Fix 10)
+    "a source with knowledge of",
+    "people briefed on",
+    "officials who requested anonymity",
+    "a person familiar with the matter",
+    "officials familiar with",
+    "sources with direct knowledge",
+    "a government official said",
+    "people with knowledge of the matter",
 ]
 
 # ---------------------------------------------------------------------------
@@ -149,16 +175,17 @@ SPECIFIC_ATTRIBUTION = re.compile(
 )
 
 
-def _named_source_score(text: str, doc=None) -> float:
+def _named_source_score(text: str, doc=None) -> tuple[float, int]:
     """
     Count unique named persons used as sources via spaCy NER.
 
     Also counts SPECIFIC_ATTRIBUTION regex matches (titled persons like
-    "Secretary Smith", "Director Johnson") as named sources. Wire-service
-    articles heavily cite titled officials without always tagging them as
-    PERSON entities — this corrects the resulting underscoring. (Priority 4 fix)
+    "Secretary Smith", "Director Johnson") as named sources, but only when
+    an attribution verb appears within ±150 chars of the match. This prevents
+    biographical mentions ("Director Johnson was appointed in 2019") from
+    inflating the count. (Fix 4)
 
-    Returns 0-100.
+    Returns (score 0-100, raw_count).  (Fix 5)
     """
     if doc is None:
         nlp = get_nlp()
@@ -177,18 +204,33 @@ def _named_source_score(text: str, doc=None) -> float:
 
     # Also count titled-person attributions (e.g. "Secretary Smith said")
     # that spaCy may miss as PERSON entities, particularly in wire copy.
+    # Fix 4: require an attribution verb within ±150 chars of the match.
     for match in SPECIFIC_ATTRIBUTION.finditer(text[:15000]):
-        named_sources.add(match.group(0).lower().strip())
+        start = max(0, match.start() - 150)
+        end = min(len(text), match.end() + 150)
+        context = text[start:end]
+        if ATTRIBUTION_VERBS.search(context):
+            named_sources.add(match.group(0).lower().strip())
 
     count = len(named_sources)
     # 0 sources = 0, 1 = 20, 2 = 40, 3 = 60, 5+ = 100
-    return min(100.0, count * 20.0)
+    return min(100.0, count * 20.0), count
 
 
-def _org_citation_score(text: str, doc=None) -> float:
+def _org_citation_score(text: str, doc=None) -> tuple[float, int]:
     """
     Count organization entities cited as sources.
-    Returns 0-100.
+
+    Fix 13: Tightened proximity logic — ORG_CITATION_PATTERNS must match in
+    the full ±120-char context, OR an attribution verb must appear within the
+    first 80 chars of that context (i.e. close to the entity start).  The old
+    broad ATTRIBUTION_VERBS fallback fired on almost any sentence and inflated
+    counts.
+
+    Fix 13: ORG names are normalised by stripping a leading "the " so that
+    "the Fed" and "Federal Reserve" are not double-counted.
+
+    Fix 5: Returns (score 0-100, raw_count).
     """
     if doc is None:
         nlp = get_nlp()
@@ -200,22 +242,31 @@ def _org_citation_score(text: str, doc=None) -> float:
             context_start = max(0, ent.start_char - 120)
             context_end = min(len(text), ent.end_char + 120)
             context = text[context_start:context_end]
-            if ORG_CITATION_PATTERNS.search(context) or ATTRIBUTION_VERBS.search(context):
-                cited_orgs.add(ent.text.lower().strip())
+            if ORG_CITATION_PATTERNS.search(context):
+                org_text = ent.text.lower().strip()
+                if org_text.startswith("the "):
+                    org_text = org_text[4:]
+                cited_orgs.add(org_text)
+            elif ATTRIBUTION_VERBS.search(context[:80]):
+                # Only count when verb is close to the entity (within first 80 chars)
+                org_text = ent.text.lower().strip()
+                if org_text.startswith("the "):
+                    org_text = org_text[4:]
+                cited_orgs.add(org_text)
 
     count = len(cited_orgs)
     # 0 orgs = 0, 1 = 25, 2 = 50, 4+ = 100
-    return min(100.0, count * 25.0)
+    return min(100.0, count * 25.0), count
 
 
-def _data_statistics_score(text: str) -> float:
+def _data_statistics_score(text: str) -> tuple[float, int]:
     """
     Count data points and statistics in the text.
-    Returns 0-100.
+    Returns (score 0-100, total_matches).  (Fix 5)
     """
     word_count = len(text.split())
     if word_count == 0:
-        return 0.0
+        return 0.0, 0
 
     total_matches = 0
     for pattern in DATA_PATTERNS:
@@ -224,17 +275,17 @@ def _data_statistics_score(text: str) -> float:
     # Normalize by article length: data points per 100 words
     data_per_100 = total_matches / max(word_count / 100, 1)
     # 0 = 0, 1 per 100 words = 30, 3+ per 100 words = 100
-    return min(100.0, data_per_100 * 33.0)
+    return min(100.0, data_per_100 * 33.0), total_matches
 
 
-def _direct_quote_score(text: str) -> float:
+def _direct_quote_score(text: str) -> tuple[float, int]:
     """
     Count direct quotes in the text.
-    Returns 0-100.
+    Returns (score 0-100, total_quotes).  (Fix 5)
     """
     word_count = len(text.split())
     if word_count == 0:
-        return 0.0
+        return 0.0, 0
 
     total_quotes = 0
     for pattern in QUOTE_PATTERNS:
@@ -243,7 +294,7 @@ def _direct_quote_score(text: str) -> float:
     # Normalize: quotes per 500 words
     quotes_per_500 = total_quotes / max(word_count / 500, 1)
     # 0 = 0, 1 per 500 = 20, 3 per 500 = 60, 5+ = 100
-    return min(100.0, quotes_per_500 * 20.0)
+    return min(100.0, quotes_per_500 * 20.0), total_quotes
 
 
 def _reference_score(text: str) -> float:
@@ -349,11 +400,11 @@ def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
     nlp = get_nlp()
     doc = nlp(combined[:15000])
 
-    # Sub-scores
-    named_src = _named_source_score(combined, doc=doc)
-    org_cite = _org_citation_score(combined, doc=doc)
-    data_stats = _data_statistics_score(combined)
-    quotes = _direct_quote_score(combined)
+    # Sub-scores — each returns (score, raw_count) tuple (Fix 5)
+    named_src, named_raw = _named_source_score(combined, doc=doc)
+    org_cite, org_raw = _org_citation_score(combined, doc=doc)
+    data_stats, data_raw = _data_statistics_score(combined)
+    quotes, quotes_raw = _direct_quote_score(combined)
     refs = _reference_score(combined)
     specificity = _attribution_specificity_score(combined)
 
@@ -379,6 +430,13 @@ def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
     )
     ref_bonus = min(refs * 0.05, 8.0)
     weighted += ref_bonus
+
+    # Vague-source penalty (Fix 15): penalise articles that lean on vague sourcing
+    # language. Each vague phrase costs 3 points, capped at 15.
+    combined_lower = combined.lower()
+    vague_count_raw = sum(1 for p in VAGUE_SOURCES if p in combined_lower)
+    vague_penalty = min(15.0, vague_count_raw * 3.0)
+    weighted = max(0, weighted - vague_penalty)
 
     raw_score = max(0.0, min(100.0, weighted))
 
@@ -412,7 +470,12 @@ def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
     # ---------------------------------------------------------------------------
     if source:
         tier = (source.get("tier") or "").lower()
-        tier_baseline = TIER_BASELINES.get(tier, _DEFAULT_BASELINE)
+        # Fix 15: low-credibility us_major outlets get a reduced baseline (35.0)
+        source_slug = source.get('slug', '') if source else ''
+        if tier == 'us_major' and source_slug in LOW_CREDIBILITY_US_MAJOR:
+            tier_baseline = 35.0
+        else:
+            tier_baseline = TIER_BASELINES.get(tier, _DEFAULT_BASELINE)
 
         if word_count < 100:
             baseline_weight = 0.40
@@ -427,32 +490,21 @@ def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
 
     score = max(0, min(100, int(round(raw_score))))
 
-    # Collect counts for rationale
-    # Named sources: score / 20 gives approximate count (0=0, 20=1, 40=2, etc.)
-    named_count = int(round(named_src / 20.0))
-    org_count = int(round(org_cite / 25.0))
-    data_count = int(round(data_stats / 33.0 * (len(combined.split()) / 100.0)))
-    quote_count = int(round(quotes / 20.0 * (len(combined.split()) / 500.0)))
-
-    # Vague sources count
-    text_lower = combined.lower()
-    vague_count = 0
-    for phrase in VAGUE_SOURCES:
-        vague_count += text_lower.count(phrase)
-
-    # Specificity ratio
+    # Rationale: use raw counts directly (Fix 5 — no back-calculation from capped scores)
+    # vague_count_raw already computed above for the penalty; reuse it here.
+    # specificity_ratio: based on SPECIFIC_ATTRIBUTION matches vs vague phrases.
     specific_count = len(SPECIFIC_ATTRIBUTION.findall(combined))
-    total_attr = specific_count + vague_count
+    total_attr = specific_count + vague_count_raw
     spec_ratio = round(specific_count / total_attr, 2) if total_attr > 0 else 0.0
 
     return {
         "score": score,
         "rationale": {
-            "named_sources_count": named_count,
-            "org_citations_count": org_count,
-            "data_points_count": max(0, data_count),
-            "direct_quotes_count": max(0, quote_count),
-            "vague_sources_count": vague_count,
+            "named_sources_count": named_raw,
+            "org_citations_count": org_raw,
+            "data_points_count": data_raw,
+            "direct_quotes_count": quotes_raw,
+            "vague_sources_count": vague_count_raw,
             "specificity_ratio": spec_ratio,
         },
     }
