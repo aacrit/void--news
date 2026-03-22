@@ -10,6 +10,8 @@
   flex-direction: column;
   background-color: var(--bg-primary);
   transition: background-color var(--dur-morph) var(--ease-out);
+  /* Prevent any child from causing horizontal scroll */
+  overflow-x: hidden;
 }
 
 .page-main {
@@ -64,7 +66,8 @@
 }
 
 .lead-section__col {
-  /* On mobile, columns stack vertically */
+  /* Prevent grid blowout from long headlines */
+  min-width: 0;
 }
 
 .lead-section__col:not(:last-child) {
@@ -87,6 +90,8 @@
   padding-right: 0;
   padding-left: 0;
   border-right: none;
+  /* Prevent grid blowout from long headlines */
+  min-width: 0;
 }
 
 .grid-compact {
@@ -97,6 +102,8 @@
 .grid-compact__item {
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
+  /* Prevent grid blowout from long headlines */
+  min-width: 0;
 }
 
 /* ---- Edition Line — Newspaper tradition -------------------------------- */
@@ -183,8 +190,13 @@
 .site-footer {
   border-top: 1px solid var(--divider);
   margin-top: var(--space-6);
-  /* Mobile-first: --space-5 horizontal; --space-7 promoted at 768px+ */
+  /* Match page-main padding so footer border aligns with content canvas */
   padding: var(--space-5) var(--space-5);
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
@@ -194,7 +206,7 @@
 }
 
 .site-footer__inner {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
