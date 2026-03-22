@@ -1865,15 +1865,10 @@ def main():
                 except Exception as e:
                     print(f"  [warn] dedup query failed: {e}")
 
-            # Check Jaccard overlap: delete old clusters where overlap > 50%
-            stale_ids: list[str] = []
-            for old_cid, old_aids in old_cluster_articles.items():
-                for _new_cid, new_aids in new_cluster_articles.items():
-                    intersection = old_aids & new_aids
-                    union = old_aids | new_aids
-                    if union and len(intersection) / len(union) > 0.5:
-                        stale_ids.append(old_cid)
-                        break  # one match is enough to mark as stale
+            # Any article overlap means the old cluster is superseded by the
+            # new run (which re-clusters the same 48h article window with
+            # fresher summaries and scores). Delete the old one.
+            stale_ids: list[str] = list(old_cluster_articles.keys())
 
             if stale_ids:
                 for i in range(0, len(stale_ids), 100):
