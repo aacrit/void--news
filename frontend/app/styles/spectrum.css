@@ -662,50 +662,18 @@
   pointer-events: none;
 }
 
-/* ---- Body: 7-column grid for logos below bar ---- */
-.dd-spectrum__body {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0;
+/* ---- Track: relative container for absolutely-positioned logos ---- */
+.dd-spectrum__track {
+  position: relative;
+  width: 100%;
+  min-height: 34px;
+  transition: height 0.3s var(--ease-out);
 }
 
-/* ---- Zone column ---- */
-.dd-spectrum__zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2px 1px;
-  border-left: 1px solid var(--divider);
-  transition: background-color 0.25s var(--ease-out);
-}
-
-.dd-spectrum__zone:first-child {
-  border-left: none;
-}
-
-/* Zone tint on hover */
-.dd-spectrum__zone[data-lean="far-left"]     { --zone-tint: var(--spectrum-zone-far-left); }
-.dd-spectrum__zone[data-lean="left"]         { --zone-tint: var(--spectrum-zone-left); }
-.dd-spectrum__zone[data-lean="center-left"]  { --zone-tint: var(--spectrum-zone-center-left); }
-.dd-spectrum__zone[data-lean="center"]       { --zone-tint: var(--spectrum-zone-center); }
-.dd-spectrum__zone[data-lean="center-right"] { --zone-tint: var(--spectrum-zone-center-right); }
-.dd-spectrum__zone[data-lean="right"]        { --zone-tint: var(--spectrum-zone-right); }
-.dd-spectrum__zone[data-lean="far-right"]    { --zone-tint: var(--spectrum-zone-far-right); }
-
-.dd-spectrum__zone:hover {
-  background-color: var(--zone-tint);
-}
-
-/* ---- Logo cluster ---- */
-.dd-spectrum__zone-logos {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: flex-start;
-}
-
-/* ---- Logo (link) — overlap + fan-out ---- */
+/* ---- Logo (link) — positioned continuously on the track ---- */
 .dd-spectrum__logo {
+  position: absolute;
+  transform: translateX(-50%);
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -717,34 +685,25 @@
   overflow: hidden;
   cursor: pointer;
   padding: 0;
-  flex-shrink: 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 1;
+  z-index: 2;
   text-decoration: none;
-  margin: -3px;
   transition:
-    margin 0.35s var(--ease-out),
-    transform 0.15s var(--ease-out),
+    transform 0.2s var(--spring-bouncy),
     box-shadow 0.15s var(--ease-out),
     border-color 0.15s var(--ease-out);
 }
 
-/* Fan-out on zone hover */
-.dd-spectrum__zone:hover .dd-spectrum__logo {
-  margin: 2px;
-}
-
 /* Individual hover — pop above */
 .dd-spectrum__logo:hover {
-  transform: scale(1.35);
+  transform: translateX(-50%) scale(1.4);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   z-index: 20;
   border-color: var(--border-strong);
 }
 
 .dd-spectrum__logo:active {
-  transform: scale(0.95);
+  transform: translateX(-50%) scale(0.95);
 }
 
 .dd-spectrum__logo:focus-visible {
@@ -865,15 +824,10 @@
   .dd-spectrum__logo {
     width: 22px;
     height: 22px;
-    margin: -2px;
-  }
-
-  .dd-spectrum__zone:hover .dd-spectrum__logo {
-    margin: 1px;
   }
 
   .dd-spectrum__logo:hover {
-    transform: none;
+    transform: translateX(-50%);
   }
 
   .dd-spectrum__logo-img {
@@ -891,7 +845,7 @@
   .dd-spectrum__logo {
     transition: none;
   }
-  .dd-spectrum__zone {
+  .dd-spectrum__track {
     transition: none;
   }
 }
