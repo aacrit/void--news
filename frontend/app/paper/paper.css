@@ -382,6 +382,42 @@ html:has(.np-root) body { background: transparent; }
   line-height: 1.25;
 }
 
+/* --- Multi-Deck Headlines --- */
+.np-headline-deck {
+  margin-bottom: 4px;
+}
+
+.np-headline-deck__sub {
+  font-family: var(--np-font-deck);
+  color: var(--np-ink);
+  margin: 2px 0;
+  line-height: 1.2;
+}
+
+.np-headline-deck__sub--1 {
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+}
+
+.np-headline-deck__sub--2 {
+  font-size: 10.5px;
+  text-align: center;
+}
+
+.np-headline-deck__sub--3 {
+  font-size: 9.5px;
+  font-style: italic;
+  text-align: center;
+  color: var(--np-ink-mid);
+}
+
+/* Non-banner decks: left-aligned */
+.np-article--major .np-headline-deck__sub,
+.np-article--standard .np-headline-deck__sub {
+  text-align: left;
+}
+
 /* --- Byline --- */
 .np-article__byline {
   font-family: var(--np-font-deck);
