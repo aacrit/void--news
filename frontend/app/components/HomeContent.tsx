@@ -368,13 +368,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             activeLean={activeLean}
             onLeanChange={(lean) => { setActiveLean(lean); setShowAllCompact(false); }}
           />
-          {/* On Air CTA — right side of filter row, only after stories load */}
-          {!isLoading && stories.length > 0 && (
-            <OnAirButton state={dailyBriefState} />
-          )}
         </div>
 
-        {/* Daily Brief — TL;DR editorial box, on canvas between filter row and lead */}
+        {/* Daily Brief — TL;DR editorial box + On Air pill in header row */}
         {!isLoading && stories.length > 0 && (
           <DailyBriefText state={dailyBriefState} />
         )}
