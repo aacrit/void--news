@@ -4,7 +4,7 @@ Daily Brief generator for void --news.
 Produces per-edition editorial briefs:
   - TL;DR text (3-line summary for homepage display)
   - Audio script (BBC World Service-style broadcast)
-  - Audio file (Google Cloud TTS Neural2 + pydub stitching)
+  - Audio file (Gemini 2.5 Flash TTS, native multi-speaker)
 
 Called as step 7d in the main pipeline, after editorial triage (7c)
 and before cluster storage (8).

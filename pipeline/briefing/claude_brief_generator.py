@@ -29,7 +29,7 @@ from briefing.daily_brief_generator import (
     _build_stories_block,
     _check_quality,
 )
-from briefing.audio_producer import produce_audio, _detect_tts_engine
+from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
 
 # Claude adds natural disfluencies better than Gemini — reinforce in prompt
@@ -193,9 +193,7 @@ def generate_claude_brief(
     # 3. Synthesize audio
     if synthesize and script:
         print(f"\n[3/4] Synthesizing audio...")
-        tts_engine = _detect_tts_engine()
-        voice_engine = "edge" if tts_engine == "edge" else "gcloud"
-        voices = get_voices_for_today(edition, engine=voice_engine)
+        voices = get_voices_for_today(edition)
         audio_result = produce_audio(script, voices, edition)
 
         if audio_result:
