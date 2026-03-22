@@ -231,7 +231,7 @@ html:has(.np-root) body { background: transparent; }
   column-count: 3;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: balance;
+  column-fill: auto;
 }
 
 /* Lead zone — single column for banner, consistent hairline borders */
@@ -250,7 +250,7 @@ html:has(.np-root) body { background: transparent; }
   column-count: 8;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: balance;
+  column-fill: auto;
   margin-bottom: 0;
 }
 
@@ -310,6 +310,7 @@ html:has(.np-root) body { background: transparent; }
   margin: 0 0 3px;
   padding: 3px 0;
   border-bottom: var(--np-cutoff);
+  overflow: hidden;
 }
 
 /* First article in each zone/section — no top padding */
@@ -325,44 +326,46 @@ html:has(.np-root) body { background: transparent; }
   font-family: var(--np-font-head);
   font-weight: 700;
   color: var(--np-ink);
-  line-height: 1.05;
-  margin: 0 0 4px;
+  line-height: 1.1;
+  margin: 0 0 3px;
   text-shadow: 0.4px 0.4px 0 rgba(26, 23, 16, 0.08);
   overflow-wrap: break-word;
-  text-wrap: balance;
+  word-break: break-word;
+  text-wrap: pretty;
   hyphens: auto;
   -webkit-hyphens: auto;
+  overflow: hidden;
 }
 
 /* Banner tier — lead story */
 .np-article--banner .np-article__headline {
-  font-size: clamp(24px, 3vw, 42px);
+  font-size: clamp(18px, 2.2vw, 28px);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 /* Major tier */
 .np-article--major .np-article__headline {
-  font-size: clamp(16px, 2vw, 24px);
+  font-size: clamp(13px, 1.4vw, 17px);
 }
 
 /* Standard tier */
 .np-article--standard .np-article__headline {
-  font-size: 18px;
+  font-size: 13px;
 }
 
 /* Brief tier */
 .np-article--brief .np-article__headline {
-  font-size: 15px;
+  font-size: 11.5px;
   line-height: 1.15;
 }
 
 /* Bulletin tier */
 .np-article--bulletin .np-article__headline {
   font-family: var(--np-font-deck);
-  font-size: 13px;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -372,7 +375,7 @@ html:has(.np-root) body { background: transparent; }
 /* Filler tier */
 .np-article--filler .np-article__headline {
   font-family: var(--np-font-deck);
-  font-size: 11px;
+  font-size: 9.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -381,7 +384,7 @@ html:has(.np-root) body { background: transparent; }
 
 /* --- Multi-Deck Headlines --- */
 .np-headline-deck {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .np-headline-deck__sub {
@@ -392,18 +395,18 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-headline-deck__sub--1 {
-  font-size: 16px;
+  font-size: 12px;
   font-style: italic;
   text-align: center;
 }
 
 .np-headline-deck__sub--2 {
-  font-size: 13px;
+  font-size: 10.5px;
   text-align: center;
 }
 
 .np-headline-deck__sub--3 {
-  font-size: 11px;
+  font-size: 9.5px;
   font-style: italic;
   text-align: center;
   color: var(--np-ink-mid);
@@ -422,13 +425,13 @@ html:has(.np-root) body { background: transparent; }
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--np-ink-light);
-  margin: 0 0 4px;
+  margin: 0 0 3px;
 }
 
 /* --- Body Text --- */
 .np-article__summary {
   font-family: var(--np-font-body);
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.35;
   text-align: justify;
   hyphens: auto;
@@ -449,7 +452,7 @@ html:has(.np-root) body { background: transparent; }
 .np-article--banner .np-article__summary::first-letter {
   float: left;
   font-family: var(--np-font-head);
-  font-size: 3.5em;
+  font-size: 3em;
   font-weight: 700;
   line-height: 0.78;
   margin: 0.04em 0.10em 0 0;
@@ -460,10 +463,10 @@ html:has(.np-root) body { background: transparent; }
 /* --- Article meta: source count + lean — subtle, end of article --- */
 .np-article__meta {
   font-family: var(--np-font-deck);
-  font-size: 8px;
+  font-size: 7.5px;
   letter-spacing: 0.08em;
   color: var(--np-ink-light);
-  margin: 3px 0 0;
+  margin: 2px 0 0;
   text-align: right;
   opacity: 0.65;
 }
@@ -475,8 +478,8 @@ html:has(.np-root) body { background: transparent; }
 .np-brief {
   border-top: 1px solid var(--np-ink);
   border-bottom: 1px solid var(--np-ink);
-  padding: 8px 0;
-  margin-bottom: 10px;
+  padding: 6px 0;
+  margin-bottom: 8px;
   text-align: center;
   position: relative;
   z-index: 2;
@@ -489,14 +492,14 @@ html:has(.np-root) body { background: transparent; }
   text-transform: uppercase;
   letter-spacing: 0.20em;
   color: var(--np-ink-light);
-  margin: 0 0 4px;
+  margin: 0 0 3px;
 }
 
 .np-brief__text {
   font-family: var(--np-font-body);
   font-style: italic;
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: 10.5px;
+  line-height: 1.45;
   color: var(--np-ink-mid);
   margin: 0 auto;
   max-width: 90%;
@@ -513,13 +516,13 @@ html:has(.np-root) body { background: transparent; }
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
-  padding: 6px 0;
+  padding: 4px 0;
   border-bottom: var(--np-cutoff);
 }
 
 .np-filler__heading {
   font-family: var(--np-font-deck);
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -529,7 +532,7 @@ html:has(.np-root) body { background: transparent; }
 
 .np-filler__text {
   font-family: var(--np-font-body);
-  font-size: 10px;
+  font-size: 9.5px;
   line-height: 1.35;
   color: var(--np-ink-mid);
   margin: 0;
@@ -552,7 +555,7 @@ html:has(.np-root) body { background: transparent; }
     var(--np-ink) 3px, var(--np-ink) 4px,
     transparent 4px
   );
-  margin: 8px 0;
+  margin: 6px 0;
   position: relative;
   z-index: 2;
 }
@@ -562,7 +565,7 @@ html:has(.np-root) body { background: transparent; }
    ========================================================================== */
 
 .np-classifieds {
-  margin-top: 8px;
+  margin-top: 6px;
   position: relative;
   z-index: 2;
 }
@@ -574,12 +577,12 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-classified-ad {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid var(--np-rule);
   border-right: none;
   font-family: var(--np-font-body);
-  font-size: 10px;
-  line-height: 1.5;
+  font-size: 9.5px;
+  line-height: 1.45;
   text-align: justify;
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -594,8 +597,8 @@ html:has(.np-root) body { background: transparent; }
   text-transform: uppercase;
   letter-spacing: 0.08em;
   display: block;
-  margin-bottom: 3px;
-  font-size: 10px;
+  margin-bottom: 2px;
+  font-size: 9.5px;
 }
 
 /* ==========================================================================
@@ -604,9 +607,9 @@ html:has(.np-root) body { background: transparent; }
 
 .np-colophon {
   text-align: center;
-  padding: 20px 0 0;
+  padding: 16px 0 0;
   font-family: var(--np-font-body);
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--np-ink-light);
   line-height: 1.8;
 }
@@ -614,7 +617,7 @@ html:has(.np-root) body { background: transparent; }
 .np-colophon__rule {
   border: none;
   border-top: 1px solid var(--np-rule);
-  margin: 0 0 14px;
+  margin: 0 0 10px;
 }
 
 .np-colophon__link {
@@ -624,7 +627,7 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   PDF EXPORT BUTTON — outside the newspaper canvas
+   PNG EXPORT BUTTON — outside the newspaper canvas
    ========================================================================== */
 
 .np-pdf-action {
@@ -654,6 +657,11 @@ html:has(.np-root) body { background: transparent; }
   opacity: 1;
   border-color: #666;
   color: #333;
+}
+
+.np-pdf-btn:disabled {
+  cursor: wait;
+  opacity: 0.3;
 }
 
 /* ==========================================================================
@@ -733,7 +741,7 @@ html:has(.np-root) body { background: transparent; }
     padding-left: var(--np-col-gap);
   }
 
-  .np-article--banner .np-article__headline { font-size: 34px; }
+  .np-article--banner .np-article__headline { font-size: 24px; }
 
   .np-section-flow {
     column-count: 4;
@@ -763,7 +771,7 @@ html:has(.np-root) body { background: transparent; }
     column-count: 2;
     column-gap: var(--np-col-gap);
     column-rule: var(--np-col-rule);
-    column-fill: balance;
+    column-fill: auto;
     border: none;
     border-left: none;
     border-right: none;
@@ -778,8 +786,8 @@ html:has(.np-root) body { background: transparent; }
     margin-bottom: 6px;
   }
 
-  .np-article--banner .np-article__headline { font-size: 28px; }
-  .np-article--major .np-article__headline { font-size: 20px; }
+  .np-article--banner .np-article__headline { font-size: 20px; }
+  .np-article--major .np-article__headline { font-size: 15px; }
 
   .np-section-flow { column-count: 2; }
 }
@@ -824,10 +832,10 @@ html:has(.np-root) body { background: transparent; }
     padding: 0;
   }
 
-  .np-article--banner .np-article__headline { font-size: 26px; }
-  .np-article--major .np-article__headline { font-size: 18px; }
-  .np-article--standard .np-article__headline { font-size: 16px; }
-  .np-article__summary { font-size: 13px; line-height: 1.45; }
+  .np-article--banner .np-article__headline { font-size: 18px; }
+  .np-article--major .np-article__headline { font-size: 14px; }
+  .np-article--standard .np-article__headline { font-size: 12px; }
+  .np-article__summary { font-size: 12px; line-height: 1.4; }
 
   .np-section-flow { column-count: 1; }
 
