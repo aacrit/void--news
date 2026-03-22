@@ -16,9 +16,7 @@ import {
   type ArticleTier,
   type FillerItem,
   assignTier,
-  generateDecks,
   getDateline,
-  truncateSummary,
   distributeStories,
   getSectionConfig,
   capitalize,
@@ -356,40 +354,11 @@ function Article({
   edition: Edition;
 }) {
   const dateline = getDateline(story, edition);
-  const summary = cleanSummaryText(story.summary);
-  const decks = generateDecks(summary, tier);
-
-  // Extract remaining summary after decks for body text
-  let bodyText = truncateSummary(summary, tier);
-  if (decks.length > 0) {
-    let remaining = summary;
-    for (const deck of decks) {
-      const deckPos = remaining.indexOf(deck);
-      if (deckPos !== -1) {
-        remaining = remaining.slice(deckPos + deck.length).replace(/^[.!?\s]+/, "");
-      }
-    }
-    bodyText = truncateSummary(remaining || bodyText, tier);
-  }
+  const bodyText = cleanSummaryText(story.summary);
 
   return (
     <article className={`np-article np-article--${tier}`}>
-      {/* Headline + Decks */}
-      {decks.length > 0 ? (
-        <div className="np-headline-deck">
-          <h2 className="np-article__headline">{story.title}</h2>
-          {decks.map((deck, i) => (
-            <p
-              key={i}
-              className={`np-headline-deck__sub np-headline-deck__sub--${i + 1}`}
-            >
-              {deck}
-            </p>
-          ))}
-        </div>
-      ) : (
-        <h2 className="np-article__headline">{story.title}</h2>
-      )}
+      <h2 className="np-article__headline">{story.title}</h2>
 
       <p className="np-article__byline">
         {articleByline(story.source.count, story.sigilData.tierBreakdown)}
@@ -400,7 +369,6 @@ function Article({
         {bodyText}
       </p>
 
-      {/* Subtle footer: source count + lean indicator */}
       <p className="np-article__meta">
         {story.source.count} {story.source.count === 1 ? "source" : "sources"}
         {" \u00B7 "}
