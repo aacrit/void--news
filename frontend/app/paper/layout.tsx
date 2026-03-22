@@ -1,14 +1,15 @@
-import { Playfair_Display, Lora, Old_Standard_TT } from "next/font/google";
+import { IM_Fell_English, Lora, Old_Standard_TT } from "next/font/google";
 
 /* ---------------------------------------------------------------------------
-   Paper Edition Layout — 1969 NYT Font Loading
-   Playfair Display (Cheltenham-like headlines), Lora (body), Old Standard TT (labels).
+   Paper Edition Layout — Period Font Loading
+   Loads IM Fell English, Lora, Old Standard TT for the broadsheet view.
+   These fonts only load on /paper routes (not the digital edition).
    --------------------------------------------------------------------------- */
 
-const playfair = Playfair_Display({
+const imFell = IM_Fell_English({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--np-playfair",
+  weight: ["400"],
+  variable: "--np-fell",
   display: "swap",
 });
 
@@ -33,7 +34,7 @@ export default function PaperLayout({
 }) {
   return (
     <div
-      className={`${playfair.variable} ${lora.variable} ${oldStandard.variable}`}
+      className={`${imFell.variable} ${lora.variable} ${oldStandard.variable}`}
     >
       {children}
     </div>
