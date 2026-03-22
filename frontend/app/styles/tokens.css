@@ -69,6 +69,7 @@
   --bias-center-left:  #93C5FD;
   --bias-center:       #6B7280;  /* dark neutral gray — visible on walnut */
   --bias-center-right: #FCA5A5;  /* light red — same as light mode */
+  --bias-right:        #F87171;  /* brighter red for dark backgrounds */
   --bias-far-right:    #DC2626;
   --type-reporting:    #60A5FA;
 
