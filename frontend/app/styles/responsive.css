@@ -137,9 +137,9 @@
     display: none;
   }
 
-  /* On Air: more room for progress track on desktop */
-  .on-air__track--visible {
-    max-width: 500px;
+  /* On Air CTA: more room for progress track on desktop */
+  .on-air-cta__progress {
+    min-width: 120px;
   }
 }
 
@@ -631,44 +631,24 @@
     outline-offset: 2px;
   }
 
-  /* === ON AIR — mobile floating button === */
+  /* === DAILY BRIEF — mobile layout === */
+  /* On mobile, brief is in-flow just like desktop — no special changes needed.
+     The filter-row already stacks vertically on mobile, so on-air-cta sits
+     in the second row below the FilterBar wrapper. */
 
-  .on-air {
-    position: fixed;
-    bottom: calc(var(--nav-bottom-height, 68px) + env(safe-area-inset-bottom, 0px) + 12px);
-    right: var(--space-4);
-    z-index: var(--z-sticky, 10);
-    flex-direction: column;
-    align-items: flex-end;
-    gap: var(--space-2);
-    margin: 0;
-    padding: 0;
+  /* On Air CTA: label-only on narrow screens to save space */
+  .on-air-cta__time {
+    display: none;
   }
 
-  .on-air__btn {
-    border-radius: 24px;
-    background-color: var(--bg-card);
-    box-shadow: var(--shadow-e2);
-    padding: var(--space-2) var(--space-3);
+  /* Progress track on mobile: full width under the button */
+  .on-air-cta__track--visible {
+    max-height: 32px;
+    padding-top: var(--space-2);
   }
 
-  .on-air__track {
-    flex-direction: column;
-    max-width: 0;
-    max-height: 0;
-  }
-
-  .on-air__track--visible {
-    max-width: 200px;
-    max-height: 60px;
-    background-color: var(--bg-card);
-    box-shadow: var(--shadow-e2);
-    border-radius: 12px;
-    padding: var(--space-2) var(--space-3);
-  }
-
-  .on-air__progress {
-    min-width: 140px;
+  .on-air-cta__progress {
+    min-width: 100px;
   }
 }
 
