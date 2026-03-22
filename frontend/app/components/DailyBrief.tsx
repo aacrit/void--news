@@ -139,7 +139,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           <ScaleIcon size={16} animation="idle" className="daily-brief__sigil" />
           <span className="daily-brief__label">Daily Brief</span>
         </div>
-        <div className={`daily-brief__body${!expanded ? " daily-brief__body--collapsed" : ""}`}>
+        <div className={`daily-brief__body${!expanded ? " daily-brief__body--mobile-clamp" : ""}`}>
           {paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
