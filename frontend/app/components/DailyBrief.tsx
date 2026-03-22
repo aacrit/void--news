@@ -236,9 +236,6 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
           aria-label="Broadcast progress"
           tabIndex={showPlayer ? 0 : -1}
         />
-        {brief.audio_voice_label && (
-          <span className="on-air-cta__voice">{brief.audio_voice_label}</span>
-        )}
       </div>
     </div>
   );
