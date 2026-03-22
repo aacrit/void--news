@@ -1,13 +1,11 @@
 /* ==========================================================================
    void --news — Spectrum Chart & Sources Page
-   Political lean spectrum visualization. Desktop: horizontal bar.
-   Mobile: vertical lean-zone list.
+   Political lean spectrum: logos plotted above/below a gradient bar,
+   overlapping within lean zones, fanning out on hover.
    ========================================================================== */
 
 /* ---- Spectrum zone tint tokens ----------------------------------------- */
 :root {
-  /* Zone background tints — earned through data, not decoration.
-     Light mode: subtle washes that don't overwhelm the paper surface. */
   --spectrum-zone-far-left:    rgba(29, 78, 216, 0.12);
   --spectrum-zone-left:        rgba(59, 130, 246, 0.07);
   --spectrum-zone-center-left: rgba(147, 197, 253, 0.05);
@@ -18,7 +16,6 @@
 }
 
 :root[data-mode="dark"] {
-  /* Dark mode tints — slightly more visible against warm dark surfaces */
   --spectrum-zone-far-left:    rgba(29, 78, 216, 0.16);
   --spectrum-zone-left:        rgba(59, 130, 246, 0.10);
   --spectrum-zone-center-left: rgba(147, 197, 253, 0.07);
@@ -33,7 +30,7 @@
   padding-top: var(--space-3);
 }
 
-/* ---- Sources Toolbar (title + edition chips) -------------------------- */
+/* ---- Sources Toolbar (title + lean filter chips) ----------------------- */
 .sources-toolbar {
   display: flex;
   align-items: center;
@@ -41,7 +38,7 @@
   gap: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 2px solid var(--fg-primary);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .sources-toolbar__title {
@@ -57,22 +54,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Lean filter chips (sources page) ---------------------------------- */
-.sources-filters {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
+/* ---- Lean filter chips ------------------------------------------------- */
 .sources-leans {
-  display: flex;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
-/* ---- Edition filter chips --------------------------------------------- */
-.sources-editions {
   display: flex;
   gap: var(--space-2);
   flex-shrink: 0;
@@ -93,7 +76,6 @@
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
   cursor: pointer;
-  /* WCAG 2.1 AA: 44px touch target minimum */
   min-height: 44px;
   white-space: nowrap;
   transition:
@@ -114,125 +96,7 @@
   border-color: var(--border-strong);
 }
 
-/* ---- Sources Page Header ----------------------------------------------- */
-.sources-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-5);
-  padding-bottom: var(--space-3);
-  border-bottom: 2px solid var(--fg-primary);
-  margin-bottom: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.sources-header__text {
-  flex: 1;
-  min-width: 240px;
-}
-
-.sources-header__title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-hero);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--fg-primary);
-  margin-bottom: var(--space-3);
-}
-
-.sources-header__subtitle {
-  font-family: var(--font-structural);
-  font-size: var(--text-base);
-  line-height: 1.65;
-  color: var(--fg-secondary);
-}
-
-.sources-header__stat {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-  padding-bottom: var(--space-2);
-}
-
-.sources-header__stat-skeleton {
-  width: 120px;
-  height: 48px;
-  border-radius: var(--radius-sm);
-}
-
-.sources-header__count {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-.sources-header__count-num {
-  font-family: var(--font-data);
-  font-size: var(--text-hero);
-  font-weight: 500;
-  line-height: 1;
-  color: var(--fg-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.sources-header__count-label {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-}
-
-/* ---- Tier legend -------------------------------------------------------- */
-.sources-tier-legend {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  margin-bottom: var(--space-5);
-  flex-wrap: wrap;
-}
-
-.sources-tier-legend__item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.sources-tier-legend__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.sources-tier-legend__dot--above {
-  background-color: var(--fg-primary);
-}
-
-.sources-tier-legend__dot--below {
-  background-color: var(--fg-tertiary);
-  border: 1px solid var(--border-strong);
-}
-
-.sources-tier-legend__name {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--fg-secondary);
-}
-
-.sources-tier-legend__note {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-}
-
-/* ---- Loading skeleton for spectrum ------------------------------------ */
+/* ---- Loading skeleton -------------------------------------------------- */
 .sources-loading {
   padding: var(--space-6) 0;
 }
@@ -257,83 +121,56 @@
   border-radius: 50%;
 }
 
-/* ---- Spectrum Chart — shared ------------------------------------------- */
+/* ==========================================================================
+   Spectrum Chart — scatter layout with overlap + fan-out
+   ========================================================================== */
+
 .spectrum-chart {
   margin-bottom: var(--space-4);
 }
 
-/* Desktop/mobile toggle no longer needed — single responsive layout */
+/* ---- Section (above or below the bar) --------------------------------- */
+.spectrum-section {
+  margin-bottom: 2px;
+}
 
-/* ==========================================================================
-   Sources Spectrum — gradient track + 7 vertical columns of favicon dots.
-   Collapsed by default, spring-animated expand.
-   ========================================================================== */
-
-/* ---- Gradient track (matches DeepDive dd-spectrum__track) --------------- */
-.src-track {
-  position: relative;
-  height: 28px;
-  border-radius: 4px;
+.spectrum-section__header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  margin-bottom: var(--space-3);
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  padding-left: 2px;
 }
 
-@media (min-width: 768px) {
-  .src-track {
-    height: 32px;
-    padding: 0 12px;
-  }
-}
-
-.src-track::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right));
-  border-radius: 4px;
-  opacity: 0.35;
-}
-
-.src-track__label {
-  font-family: var(--font-data);
-  font-size: 10px;
+.spectrum-section__label {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fg-secondary);
-  pointer-events: none;
-  position: relative;
-  z-index: 1;
+  color: var(--fg-tertiary);
 }
 
-@media (min-width: 768px) {
-  .src-track__label { font-size: 11px; }
+.spectrum-section__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
 }
 
-/* ---- Seven columns ---------------------------------------------------- */
-.src-columns {
+/* ---- Side container (collapsible) ------------------------------------- */
+.spectrum-side {
   position: relative;
-  overflow: hidden;
-  /* Collapsed: show ~3 rows of dots (3 × 34px + column header) */
-  max-height: 180px;
   transition: max-height var(--dur-slow) var(--spring);
 }
 
-.src-columns--expanded {
-  max-height: 2000px;
+.spectrum-side--collapsed {
+  max-height: 160px;
+  overflow: hidden;
 }
 
-.src-columns__inner {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-}
-
-/* Gradient fade overlay when collapsed */
-.src-columns__fade {
+/* Gradient fade when collapsed */
+.spectrum-side__fade {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -341,103 +178,113 @@
   height: 48px;
   background: linear-gradient(to bottom, transparent, var(--bg-primary));
   pointer-events: none;
-  z-index: 2;
+  z-index: 5;
 }
 
-/* ---- Single column ---------------------------------------------------- */
-.src-col {
+/* ---- Grid: 7 lean zones across the spectrum --------------------------- */
+.spectrum-side__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+/* ---- Zone column ------------------------------------------------------ */
+.spectrum-zone {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2) 0;
+  padding: var(--space-1) 1px;
   border-left: 1px solid var(--divider);
+  transition: background-color 0.25s var(--ease-out);
 }
 
-.src-col:first-child {
+.spectrum-zone:first-child {
   border-left: none;
 }
 
-/* Column header label */
-.src-col__label {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--fg-primary);
-  text-align: center;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
+/* Zone tint custom properties */
+.spectrum-zone[data-lean="far-left"]     { --zone-tint: var(--spectrum-zone-far-left); }
+.spectrum-zone[data-lean="left"]         { --zone-tint: var(--spectrum-zone-left); }
+.spectrum-zone[data-lean="center-left"]  { --zone-tint: var(--spectrum-zone-center-left); }
+.spectrum-zone[data-lean="center"]       { --zone-tint: var(--spectrum-zone-center); }
+.spectrum-zone[data-lean="center-right"] { --zone-tint: var(--spectrum-zone-center-right); }
+.spectrum-zone[data-lean="right"]        { --zone-tint: var(--spectrum-zone-right); }
+.spectrum-zone[data-lean="far-right"]    { --zone-tint: var(--spectrum-zone-far-right); }
+
+/* Zone hover: subtle tint + fan-out */
+.spectrum-zone:hover {
+  background-color: var(--zone-tint);
 }
 
-.src-col__label-full { display: none; }
-.src-col__label-short { display: inline; }
-
-@media (min-width: 768px) {
-  .src-col__label-full { display: inline; }
-  .src-col__label-short { display: none; }
-}
-
-/* Source count — data voice */
-.src-col__count {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Dot container — stacks vertically */
-.src-col__dots {
+/* ---- Logo cluster within zone ----------------------------------------- */
+.spectrum-zone__logos {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding-top: var(--space-1);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
 }
 
-/* ---- Individual source dot -------------------------------------------- */
-.src-dot {
-  width: 28px;
-  height: 28px;
+/* ==========================================================================
+   Source Logo — overlap by default, fan out on zone hover
+   ========================================================================== */
+
+.spectrum-logo {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid var(--bg-primary);
   background-color: var(--bg-card);
+  border: 2px solid var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-e1);
+  overflow: hidden;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+  /* Overlap: negative margin pulls logos together */
+  margin: -3px;
   transition:
-    transform var(--dur-fast) var(--spring),
-    box-shadow var(--dur-fast) var(--ease-out);
+    margin 0.35s var(--ease-out),
+    transform 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    border-color 0.15s var(--ease-out);
 }
 
-@media (min-width: 768px) {
-  .src-dot {
-    width: 32px;
-    height: 32px;
-  }
+/* Fan-out: zone hover spreads logos apart */
+.spectrum-zone:hover .spectrum-logo {
+  margin: 2px;
 }
 
-.src-dot:hover {
-  transform: scale(1.3);
-  box-shadow: var(--shadow-e2);
-  z-index: 10;
+/* Individual logo hover: pop above neighbors */
+.spectrum-logo:hover {
+  transform: scale(1.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+  border-color: var(--border-strong);
 }
 
-.src-dot:active {
+.spectrum-logo:active {
   transform: scale(0.95);
 }
 
-.src-dot:focus-visible {
+.spectrum-logo:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
-  z-index: 10;
+  z-index: 20;
 }
 
-.src-dot__initial {
+.spectrum-logo__img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+.spectrum-logo__fallback {
   font-family: var(--font-data);
   font-size: 10px;
   font-weight: 700;
@@ -445,159 +292,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* ---- Expand/collapse button ------------------------------------------- */
-.src-expand {
-  display: block;
-  width: 100%;
-  padding: var(--space-3) 0;
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-tertiary);
-  text-align: center;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: none;
-  border: none;
-  border-top: 1px solid var(--divider);
-  transition: color var(--dur-fast) var(--ease-out);
-}
-
-.src-expand:hover {
-  color: var(--fg-secondary);
-}
-
-.src-expand:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-/* ---- Reduced motion --------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  .src-dot { transition: none; }
-  .src-columns { transition: none; }
-}
-
-/* ---- Legacy: Logo grid rows (above and below) — kept for reference ---- */
-/* ---- Logo grid rows (above and below) --------------------------------- */
-.spectrum-above,
-.spectrum-below {
-  display: block;
-}
-
-.spectrum-above {
-  margin-bottom: var(--space-2);
-}
-
-.spectrum-below {
-  margin-top: var(--space-2);
-}
-
-.spectrum-above__grid,
-.spectrum-below__grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0;
-}
-
-/* ---- Zone columns inside the logo grid -------------------------------- */
-.spectrum-zone-col {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-2) var(--space-2);
-  border-left: 1px solid var(--divider);
-  transition: background-color var(--dur-fast) var(--ease-out);
-}
-
-.spectrum-zone-col:first-child {
-  border-left: none;
-}
-
-/* Above: logos flow top-down so they're visible when collapsed */
-.spectrum-zone-col--above {
-  justify-content: flex-start;
-}
-
-.spectrum-zone-col--below {
-  justify-content: flex-start;
-}
-
-/* Zone tints removed — color lives only on the spectrum bar.
-   Logos sit on the neutral canvas per design principles. */
-
-.spectrum-zone-col__logos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-content: flex-start;
-}
-
-/* ---- Source logo button ----------------------------------------------- */
-.spectrum-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  cursor: pointer;
-  transition:
-    transform var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out);
-  flex-shrink: 0;
-  /* Meets 36px touch target on desktop — icons are decorative here */
-  position: relative;
-}
-
-.spectrum-logo:hover,
-.spectrum-logo--active {
-  transform: scale(1.18);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-e2);
-  z-index: var(--z-card);
-}
-
-.spectrum-logo:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-  transform: scale(1.18);
-  z-index: var(--z-card);
-}
-
-.spectrum-logo__img {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  border-radius: 2px;
-}
-
-.spectrum-logo__fallback {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-secondary);
-  width: 16px;
-  height: 16px;
-  align-items: center;
-  justify-content: center;
   text-transform: uppercase;
 }
 
-/* ---- Spectrum Bar itself ----------------------------------------------- */
+/* ==========================================================================
+   Spectrum Bar — gradient track with lean labels
+   ========================================================================== */
+
 .spectrum-bar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  height: 28px;
+  height: 34px;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  /* Gradient bar: uses bias tokens — adapts to dark mode */
   background: linear-gradient(
     to right,
     var(--bias-far-left),
@@ -609,7 +316,10 @@
     var(--bias-far-right)
   );
   position: relative;
-  box-shadow: var(--shadow-e1);
+  box-shadow:
+    var(--shadow-e1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  margin: var(--space-1) 0;
 }
 
 .spectrum-bar__zone {
@@ -624,7 +334,7 @@
   border-right: none;
 }
 
-/* Zone labels — full version on wider desktop */
+/* Full labels — desktop wide */
 .spectrum-bar__label {
   font-family: var(--font-structural);
   font-size: 9px;
@@ -638,7 +348,7 @@
   display: none;
 }
 
-/* Short labels — shown on tablet */
+/* Short labels — tablet/narrow desktop */
 .spectrum-bar__label--short {
   font-family: var(--font-structural);
   font-size: 8px;
@@ -652,19 +362,56 @@
 }
 
 @media (min-width: 1024px) {
-  .spectrum-bar__label {
-    display: block;
+  .spectrum-bar__label { display: block; }
+  .spectrum-bar__label--short { display: none; }
+}
+
+@media (min-width: 768px) {
+  .spectrum-bar {
+    height: 36px;
   }
   .spectrum-bar__label--short {
-    display: none;
+    font-size: 9px;
   }
 }
 
-/* ---- Tooltip ----------------------------------------------------------- */
+/* ==========================================================================
+   Expand / Collapse button
+   ========================================================================== */
+
+.spectrum-expand-btn {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  text-align: center;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--divider);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.spectrum-expand-btn:hover {
+  color: var(--fg-secondary);
+}
+
+.spectrum-expand-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Tooltip — fixed overlay on logo hover
+   ========================================================================== */
+
 .spectrum-tooltip {
   position: fixed;
-  /* translateX(-50%) centers on the logo. translateY(-100%) positions above it.
-     Additional -12px gap keeps it clear of the logo. */
   transform: translate(-50%, calc(-100% - 12px));
   background-color: var(--bg-elevated);
   border: 1px solid var(--border-strong);
@@ -675,6 +422,8 @@
   min-width: 180px;
   max-width: 260px;
   animation: sigilPopupIn var(--dur-normal) var(--ease-out) both;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .spectrum-tooltip__name {
@@ -703,14 +452,13 @@
   flex-shrink: 0;
 }
 
-/* Lean dot colors — bias data, earned via the Dot Matrix Rule */
-.spectrum-tooltip__lean-dot[data-lean="far-left"]    { background-color: var(--bias-far-left); }
-.spectrum-tooltip__lean-dot[data-lean="left"]        { background-color: var(--bias-left); }
-.spectrum-tooltip__lean-dot[data-lean="center-left"] { background-color: var(--bias-center-left); }
-.spectrum-tooltip__lean-dot[data-lean="center"]      { background-color: var(--bias-center); }
-.spectrum-tooltip__lean-dot[data-lean="center-right"]{ background-color: var(--bias-center-right); }
-.spectrum-tooltip__lean-dot[data-lean="right"]       { background-color: var(--bias-right); }
-.spectrum-tooltip__lean-dot[data-lean="far-right"]   { background-color: var(--bias-far-right); }
+.spectrum-tooltip__lean-dot[data-lean="far-left"]     { background-color: var(--bias-far-left); }
+.spectrum-tooltip__lean-dot[data-lean="left"]         { background-color: var(--bias-left); }
+.spectrum-tooltip__lean-dot[data-lean="center-left"]  { background-color: var(--bias-center-left); }
+.spectrum-tooltip__lean-dot[data-lean="center"]       { background-color: var(--bias-center); }
+.spectrum-tooltip__lean-dot[data-lean="center-right"] { background-color: var(--bias-center-right); }
+.spectrum-tooltip__lean-dot[data-lean="right"]        { background-color: var(--bias-right); }
+.spectrum-tooltip__lean-dot[data-lean="far-right"]    { background-color: var(--bias-far-right); }
 
 .spectrum-tooltip__tier {
   font-family: var(--font-structural);
@@ -739,367 +487,35 @@
   padding-top: var(--space-2);
 }
 
-/* ---- Mobile: Horizontal swipeable card strip -------------------------- */
+/* ==========================================================================
+   Desktop enhancements (768px+)
+   ========================================================================== */
 
-/* Reference gradient bar — same gradient as desktop, compressed to 6px */
-.spectrum-mobile-bar {
-  height: 6px;
-  border-radius: var(--radius-sm);
-  margin: 0 var(--space-5) var(--space-4);
-  background: linear-gradient(
-    to right,
-    var(--bias-far-left),
-    var(--bias-left) 14%,
-    var(--bias-center-left) 28%,
-    var(--bias-center) 42%,
-    var(--bias-center-right) 57%,
-    var(--bias-right) 71%,
-    var(--bias-far-right)
-  );
-  box-shadow: var(--shadow-e1);
-  flex-shrink: 0;
-}
-
-/* Scrollable strip — full-bleed so cards can peek at the right edge */
-.spectrum-mobile-strip {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  gap: var(--space-4);
-  padding-bottom: var(--space-3);
-  /* Negative margin compensates for page padding so strip bleeds to viewport edges */
-  margin-left: calc(-1 * var(--space-5));
-  margin-right: calc(-1 * var(--space-5));
-}
-
-.spectrum-mobile-strip::-webkit-scrollbar {
-  display: none;
-}
-
-/* Leading / trailing spacers restore visual page margin inside the scroll area */
-.spectrum-mobile-strip__spacer {
-  flex-shrink: 0;
-  width: var(--space-5);
-}
-
-/* ---- Swipeable zone card ---------------------------------------------- */
-.spectrum-mobile-card {
-  flex-shrink: 0;
-  /* 85vw: next card peeks by ~15vw, signalling horizontal scroll */
-  width: clamp(260px, 85vw, 360px);
-  scroll-snap-align: center;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-e1);
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  transition:
-    box-shadow var(--dur-normal) var(--ease-out),
-    border-color var(--dur-normal) var(--ease-out),
-    transform var(--dur-normal) var(--ease-out);
-  /* Prevent tap highlight on mobile */
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Active card gets a subtle lift — earned by scroll position, not decoration */
-.spectrum-mobile-card--active {
-  box-shadow: var(--shadow-e2);
-  border-color: var(--border-strong);
-}
-
-/* Lean-tinted left border — bias data earns the color (Dot Matrix Rule) */
-.spectrum-mobile-card[data-lean="far-left"]     { border-left: 3px solid var(--bias-far-left); }
-.spectrum-mobile-card[data-lean="left"]         { border-left: 3px solid var(--bias-left); }
-.spectrum-mobile-card[data-lean="center-left"]  { border-left: 3px solid var(--bias-center-left); }
-.spectrum-mobile-card[data-lean="center"]       { border-left: 3px solid var(--bias-center); }
-.spectrum-mobile-card[data-lean="center-right"] { border-left: 3px solid var(--bias-center-right); }
-.spectrum-mobile-card[data-lean="right"]        { border-left: 3px solid var(--bias-right); }
-.spectrum-mobile-card[data-lean="far-right"]    { border-left: 3px solid var(--bias-far-right); }
-
-/* Card header: dot + label on one row */
-.spectrum-mobile-card__header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.spectrum-mobile-card__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* Card dot colors — bias data */
-.spectrum-mobile-card__dot[data-lean="far-left"]     { background-color: var(--bias-far-left); }
-.spectrum-mobile-card__dot[data-lean="left"]         { background-color: var(--bias-left); opacity: 0.8; }
-.spectrum-mobile-card__dot[data-lean="center-left"]  { background-color: var(--bias-center-left); }
-.spectrum-mobile-card__dot[data-lean="center"]       { background-color: var(--bias-center); }
-.spectrum-mobile-card__dot[data-lean="center-right"] { background-color: var(--bias-center-right); }
-.spectrum-mobile-card__dot[data-lean="right"]        { background-color: var(--bias-right); opacity: 0.8; }
-.spectrum-mobile-card__dot[data-lean="far-right"]    { background-color: var(--bias-far-right); }
-
-.spectrum-mobile-card__label {
-  font-family: var(--font-editorial);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--fg-primary);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-}
-
-/* Description */
-.spectrum-mobile-card__desc {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.6;
-  color: var(--fg-secondary);
-  margin: 0;
-}
-
-/* Divider between description and source tiers */
-.spectrum-mobile-card__divider {
-  height: 1px;
-  background-color: var(--divider);
-}
-
-/* Tier group: label + favicon row */
-.spectrum-mobile-card__tier-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.spectrum-mobile-card__tier-label {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-}
-
-/* Favicon grid — wraps naturally, keeping logos tidy */
-.spectrum-mobile-card__favicons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-/* Individual favicon chip */
-.spectrum-mobile-card__favicon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  border-radius: 50%;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  overflow: hidden;
-  flex-shrink: 0;
-  /* 32px chip gives adequate touch affordance; grouped tightly so thumb can reach */
-}
-
-.spectrum-mobile-card__favicon-img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  border-radius: 2px;
-}
-
-.spectrum-mobile-card__favicon-fallback {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--fg-secondary);
-  text-transform: uppercase;
-  width: 18px;
-  height: 18px;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Source count — data voice, bottom of card */
-.spectrum-mobile-card__count {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--divider);
-}
-
-.spectrum-mobile-card__count-num {
-  font-family: var(--font-data);
-  font-size: var(--text-lg);
-  font-weight: 500;
-  color: var(--fg-primary);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.spectrum-mobile-card__count-label {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-}
-
-/* ---- Dot indicators below the strip ----------------------------------- */
-.spectrum-mobile-dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-4) 0 var(--space-3);
-}
-
-.spectrum-mobile-dots__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  background-color: var(--border-strong);
-  padding: 0;
-  /* Expand touch target with transparent padding (WCAG 2.1 AA, 44x44px) */
-  position: relative;
-  transition:
-    transform var(--dur-fast) var(--spring),
-    background-color var(--dur-fast) var(--ease-out),
-    opacity var(--dur-fast) var(--ease-out);
-  opacity: 0.35;
-}
-
-/* Invisible touch target expansion */
-.spectrum-mobile-dots__dot::after {
-  content: '';
-  position: absolute;
-  inset: -18px;
-}
-
-.spectrum-mobile-dots__dot:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 3px;
-}
-
-/* Active dot: lean color + larger size */
-.spectrum-mobile-dots__dot--active {
-  transform: scale(1.5);
-  opacity: 1;
-}
-
-/* Active dot colors — lean data earns the color */
-.spectrum-mobile-dots__dot--active[data-lean="far-left"]     { background-color: var(--bias-far-left); }
-.spectrum-mobile-dots__dot--active[data-lean="left"]         { background-color: var(--bias-left); }
-.spectrum-mobile-dots__dot--active[data-lean="center-left"]  { background-color: var(--bias-center-left); }
-.spectrum-mobile-dots__dot--active[data-lean="center"]       { background-color: var(--bias-center); }
-.spectrum-mobile-dots__dot--active[data-lean="center-right"] { background-color: var(--bias-center-right); }
-.spectrum-mobile-dots__dot--active[data-lean="right"]        { background-color: var(--bias-right); }
-.spectrum-mobile-dots__dot--active[data-lean="far-right"]    { background-color: var(--bias-far-right); }
-
-/* Reduced motion: disable card strip transitions */
-@media (prefers-reduced-motion: reduce) {
-  .spectrum-mobile-card {
-    transition: none;
+@media (min-width: 768px) {
+  .spectrum-logo {
+    width: 34px;
+    height: 34px;
+    margin: -3px;
   }
-  .spectrum-mobile-dots__dot {
-    transition: none;
+
+  .spectrum-zone:hover .spectrum-logo {
+    margin: 3px;
   }
-  .spectrum-mobile-strip {
-    scroll-behavior: auto;
+
+  .spectrum-logo__img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .spectrum-side--collapsed {
+    max-height: 180px;
   }
 }
 
-/* ---- Section labels (US Major / Intl & Independent) ------------------- */
-.spectrum-section-label {
-  display: block;
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-1);
-}
+/* ==========================================================================
+   Mobile (< 768px)
+   ========================================================================== */
 
-/* ---- Seven-point scale (aligned to bar columns) ---------------------- */
-.spectrum-scale {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0;
-  margin-top: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--divider);
-}
-
-.spectrum-scale__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) 0;
-}
-
-.spectrum-scale__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.spectrum-scale__dot[data-lean="far-left"]    { background-color: var(--bias-far-left); }
-.spectrum-scale__dot[data-lean="left"]        { background-color: var(--bias-left); opacity: 0.75; }
-.spectrum-scale__dot[data-lean="center-left"] { background-color: var(--bias-center-left); }
-.spectrum-scale__dot[data-lean="center"]      { background-color: var(--bias-center); }
-.spectrum-scale__dot[data-lean="center-right"]{ background-color: var(--bias-center-right); }
-.spectrum-scale__dot[data-lean="right"]       { background-color: var(--bias-right); opacity: 0.75; }
-.spectrum-scale__dot[data-lean="far-right"]   { background-color: var(--bias-far-right); }
-
-.spectrum-scale__label {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--fg-primary);
-  text-align: center;
-  line-height: 1.2;
-}
-
-.spectrum-scale__desc {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--fg-tertiary);
-  text-align: center;
-  line-height: 1.4;
-}
-
-/* Mobile: hide desktop scale, mobile layout has its own labels */
-@media (max-width: 767px) {
-  .spectrum-scale {
-    display: none;
-  }
-}
-
-/* (Old seven-point scale legend section removed — integrated into spectrum) */
-
-/* ---- NavBar: Sources link -------------------------------------------- */
-
-/* Link-based nav tab — <a> inherits nav-tab styles; hover matches button tab */
-.nav-tab--link:hover {
-  color: var(--fg-primary);
-}
-
-/* ---- Mobile: sources page compact ------------------------------------- */
 @media (max-width: 767px) {
   .sources-page {
     padding-left: var(--space-5);
@@ -1112,19 +528,13 @@
     align-items: flex-start;
     gap: var(--space-2);
     padding-bottom: var(--space-2);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
   }
 
   .sources-toolbar__title {
     font-size: var(--text-base);
   }
 
-  .sources-filters {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .sources-editions,
   .sources-leans {
     overflow-x: auto;
     flex-wrap: nowrap;
@@ -1132,64 +542,64 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .sources-editions::-webkit-scrollbar,
   .sources-leans::-webkit-scrollbar {
     display: none;
   }
 
   .sources-edition-chip {
-    /* Already 44px from base rule; padding reinforced for mobile */
     min-height: 44px;
     padding: var(--space-2) var(--space-3);
   }
 
-  .spectrum-legend__item-desc {
-    font-size: var(--text-xs);
+  .spectrum-logo {
+    width: 28px;
+    height: 28px;
+    margin: -2px;
+  }
+
+  .spectrum-zone:hover .spectrum-logo {
+    margin: 1px;
+  }
+
+  .spectrum-logo__img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .spectrum-bar {
+    height: 28px;
+  }
+
+  .spectrum-bar__label--short {
+    font-size: 7px;
+  }
+
+  .spectrum-side--collapsed {
+    max-height: 120px;
+  }
+
+  .spectrum-side__fade {
+    height: 36px;
   }
 }
 
-/* ---- Collapse/expand for above and below logo rows -------------------- */
-.spectrum-above--collapsed,
-.spectrum-below--collapsed {
-  max-height: 148px;
-  overflow: hidden;
-  position: relative;
+/* ==========================================================================
+   Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .spectrum-logo {
+    transition: none;
+  }
+  .spectrum-side {
+    transition: none;
+  }
+  .spectrum-zone {
+    transition: none;
+  }
 }
 
-.spectrum-above--collapsed::after,
-.spectrum-below--collapsed::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 24px;
-  background: linear-gradient(to bottom, transparent, var(--bg-primary));
-  pointer-events: none;
-}
-
-.spectrum-expand-btn {
-  display: block;
-  width: 100%;
-  padding: var(--space-2) 0;
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-tertiary);
-  text-align: center;
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: none;
-  border: none;
-}
-
-.spectrum-expand-btn:hover {
-  color: var(--fg-secondary);
-}
-
-.spectrum-expand-btn:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
+/* ---- NavBar: Sources link (shared) ------------------------------------ */
+.nav-tab--link:hover {
+  color: var(--fg-primary);
 }
