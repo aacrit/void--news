@@ -160,7 +160,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .select(enrichedFields)
           .contains("sections", [activeEdition])
           .order("headline_rank", { ascending: false })
-          .limit(100);
+          .limit(500);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -170,7 +170,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(100);
+            .limit(500);
         }
 
         if (controller.signal.aborted) return;
@@ -541,10 +541,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                       <button
                         className="feed-continuation__link"
                         onClick={loadMoreStories}
-                        aria-label={`Show ${Math.min(BATCH_SIZE, remainingCount)} more stories`}
+                        aria-label="Show more stories"
                       >
                         Continue reading
-                        <span className="feed-continuation__count">{remainingCount}</span>
                       </button>
                     )}
                   </div>
