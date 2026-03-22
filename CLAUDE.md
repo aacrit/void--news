@@ -24,7 +24,7 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 | Ingestion | Python, feedparser, BeautifulSoup/Scrapy |
 | NLP/Bias Engine | Python, spaCy, NLTK, TextBlob |
 | Summarization | Gemini 2.5 Flash (free tier, google-genai SDK) |
-| Audio | Google Cloud TTS Neural2 (service account key), pydub |
+| Audio | edge-tts (Microsoft Neural, free, $0 primary), Google Cloud TTS Neural2 (fallback), pydub |
 | Database | Supabase (PostgreSQL) |
 | Frontend | Next.js 16 (App Router), React 19, TypeScript |
 | Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
@@ -37,7 +37,7 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 ### Zero Operational Cost
 - No paid APIs. All bias analysis is rule-based NLP running locally.
 - Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 3 brief calls per run.
-- Google Cloud TTS Neural2: free-tier service account (GOOGLE_APPLICATION_CREDENTIALS). Used for two-host audio broadcast.
+- edge-tts (Microsoft Neural): free, $0, no API key. Primary TTS engine for two-host audio. Google Cloud TTS Neural2 as fallback (GOOGLE_APPLICATION_CREDENTIALS).
 - GitHub Actions, Supabase, GitHub Pages — all free tier.
 - Motion One via CDN importmap (no npm install needed).
 
@@ -139,11 +139,13 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
 
 **TL;DR** (`tldr_text`): 5-7 sentences as a flowing editorial paragraph (80-120 words). Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
 
-**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. Google Cloud TTS Neural2 synthesizes each turn with edition-appropriate neural voice pair; `_clean_tts_text()` strips Gemini artifacts (asterisks, citation brackets, markdown, stray HTML) before synthesis; pydub stitches with 4 BBC pips intro (1kHz); clean ending, no outro. Exported as 128k mono MP3, uploaded to Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
+**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. Multi-engine TTS: edge-tts ($0 primary) → Google Cloud TTS Neural2 (fallback). SSML prosody per speaker (Host A: rate 92%, pitch -0.5st; Host B: rate 96%, pitch +0.5st). Sentence-boundary micro-pauses (100-250ms), em-dash editorial pauses, disfluency injection (fillers, breathing commas). Variable inter-turn silence (60-280ms randomized by transition type). `_clean_tts_text()` strips artifacts before synthesis; pydub stitches with BBC pips intro; exported as 128k mono MP3, uploaded to Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
 
-**Voice pairs** (`pipeline/briefing/voice_rotation.py`): world=en-GB-Neural2-B/A, us=en-US-Neural2-D/F, india=en-IN-Neural2-B/A. Male/female roles swap on alternate days (UTC day-of-year parity). Voice labels not shown to users.
+**Voice pairs** (`pipeline/briefing/voice_rotation.py`): Two engine mappings. edge-tts (primary): world=en-GB-RyanNeural/SoniaNeural, us=en-US-AndrewNeural/AvaNeural, india=en-IN-PrabhatNeural/NeerjaExpressiveNeural. Google Cloud (fallback): world=en-GB-Neural2-B/A, us=en-US-Neural2-D/F, india=en-IN-Neural2-B/A. Male/female roles swap on alternate days (UTC day-of-year parity).
 
 **Gemini budget**: 3 calls/run (one per edition requested, currently world-only). Uses `count_call=False` — does not consume 25-call cluster summarization cap. Falls back to rule-based TL;DR (top 5 cluster titles) when Gemini unavailable. No audio without Gemini script.
+
+**Claude CLI premium scripts** (`pipeline/briefing/claude_brief_generator.py`): Optional manual 1x/day generation via `python -m pipeline.briefing.claude_brief_generator --edition world --model sonnet`. Uses Claude Max (Sonnet/Opus) for higher-quality conversational dialogue. Enhanced disfluency prompt addendum for natural speech patterns. Stores to Supabase, overwrites current brief for edition.
 
 **Audio cadence**: currently always-on (testing mode). Production target: 2x/day (morning + evening UTC).
 
@@ -174,7 +176,7 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
  7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
  7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
  7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Google Cloud TTS Neural2 synthesizes two-host dialogue (text cleaned via _clean_tts_text()); pydub stitches with 4 pips intro; MP3 uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
+ 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); edge-tts ($0 primary) or Google Cloud TTS (fallback) synthesizes two-host dialogue with SSML prosody + disfluency injection; pydub stitches with pips intro; MP3 uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
  8.  STORE         — Write clusters; sections[] array from all editions covered
  8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
  9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
@@ -404,7 +406,8 @@ void-news/
 │   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence + editorial_importance
 │   ├── briefing/
 │   │   ├── daily_brief_generator.py # Gemini: TL;DR (5-7 sentences) + two-host audio script; 3-call budget; rule-based fallback
-│   │   ├── audio_producer.py      # Google Cloud TTS Neural2 synthesis, _clean_tts_text() artifact stripping, pydub stitching, 4 pips intro, Supabase Storage upload
+│   │   ├── audio_producer.py      # Multi-engine TTS (edge-tts $0 primary, Google Cloud fallback), SSML prosody, disfluency injection, pydub stitching, Supabase Storage upload
+│   │   ├── claude_brief_generator.py # Claude CLI premium script generator (manual 1x/day, Claude Max)
 │   │   ├── voice_rotation.py      # Neural voice pairs per edition; roles swap daily
 │   │   ├── generate_assets.py     # Generates assets/pips.wav (4 beeps at 1kHz)
 │   │   └── assets/                # pips.wav + reserved audio assets

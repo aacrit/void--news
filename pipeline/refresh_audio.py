@@ -17,7 +17,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils.supabase_client import supabase
 from briefing.daily_brief_generator import generate_daily_briefs
 from briefing.audio_producer import produce_audio
-from briefing.voice_rotation import get_voices
+from briefing.voice_rotation import get_voices_for_today
+from briefing.audio_producer import _detect_tts_engine
 
 
 def main():
@@ -63,7 +64,9 @@ def main():
             print(f"  {edition}: no audio script — skipping")
             continue
 
-        voices = get_voices(edition)
+        tts_engine = _detect_tts_engine()
+        voice_engine = "edge" if tts_engine == "edge" else "gcloud"
+        voices = get_voices_for_today(edition, engine=voice_engine)
         result = produce_audio(script, voices, edition)
 
         if result:
