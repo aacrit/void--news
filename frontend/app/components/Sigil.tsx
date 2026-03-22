@@ -29,9 +29,9 @@ interface SigilProps {
 
 let cssVarCache: Record<string, string> | null = null;
 const SSR: Record<string, string> = {
-  "--bias-left": "#3B82F6", "--bias-center-left": "#93C5FD",
+  "--bias-far-left": "#1D4ED8", "--bias-left": "#3B82F6", "--bias-center-left": "#93C5FD",
   "--bias-center": "#9CA3AF", "--bias-center-right": "#FCA5A5",
-  "--bias-right": "#EF4444", "--sense-low": "#22C55E",
+  "--bias-right": "#EF4444", "--bias-far-right": "#B91C1C", "--sense-low": "#22C55E",
   "--sense-medium": "#EAB308", "--sense-high": "#EF4444",
   "--type-reporting": "#3B82F6", "--type-opinion": "#F97316",
   "--rigor-high": "#22C55E", "--rigor-medium": "#EAB308", "--rigor-low": "#EF4444",
@@ -64,13 +64,15 @@ function lerp(a: string, b: string, t: number): string {
 
 function leanColor(v: number): string {
   const c = gc();
-  if (v <= 20) return c["--bias-left"];
+  if (v <= 14) return c["--bias-far-left"];
+  if (v <= 20) return lerp(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
   if (v <= 35) return lerp(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
   if (v <= 45) return c["--bias-center-left"];
   if (v <= 55) return c["--bias-center"];
   if (v <= 65) return c["--bias-center-right"];
   if (v <= 80) return lerp(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  return c["--bias-right"];
+  if (v <= 86) return lerp(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
+  return c["--bias-far-right"];
 }
 
 function leanLabel(v: number): string {

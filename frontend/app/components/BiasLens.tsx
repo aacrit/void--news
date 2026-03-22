@@ -25,11 +25,13 @@ interface BiasLensProps {
 let cssVarCache: Record<string, string> | null = null;
 
 const SSR_FALLBACK: Record<string, string> = {
+  "--bias-far-left": "#1D4ED8",
   "--bias-left": "#3B82F6",
   "--bias-center-left": "#93C5FD",
   "--bias-center": "#9CA3AF",
   "--bias-center-right": "#FCA5A5",
   "--bias-right": "#EF4444",
+  "--bias-far-right": "#B91C1C",
   "--sense-low": "#22C55E",
   "--sense-medium": "#EAB308",
   "--sense-high": "#EF4444",
@@ -75,13 +77,15 @@ function lerpColor(a: string, b: string, t: number): string {
 
 function getLeanColor(v: number): string {
   const c = getColors();
-  if (v <= 20) return c["--bias-left"];
+  if (v <= 14) return c["--bias-far-left"];
+  if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
   if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
   if (v <= 45) return c["--bias-center-left"];
   if (v <= 55) return c["--bias-center"];
   if (v <= 65) return c["--bias-center-right"];
   if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  return c["--bias-right"];
+  if (v <= 86) return lerpColor(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
+  return c["--bias-far-right"];
 }
 
 function getCoverageColor(v: number): string {
