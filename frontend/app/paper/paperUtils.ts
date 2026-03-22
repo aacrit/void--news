@@ -15,6 +15,30 @@ export function assignTier(index: number, _story: Story): ArticleTier {
   return "brief";
 }
 
+// --- Filler items for e-paper layout ---
+
+export interface FillerItem {
+  heading?: string;
+  text: string;
+}
+
+// --- Deck headlines + text truncation ---
+
+export function generateDecks(summary: string, tier: ArticleTier): string[] {
+  if (!summary || tier === "brief") return [];
+  const sentences = summary.split(/(?<=[.!?])\s+/).filter(Boolean);
+  if (tier === "lead") return sentences.slice(0, 2);
+  return sentences.slice(0, 1);
+}
+
+export function truncateSummary(text: string, tier: ArticleTier): string {
+  if (!text) return "";
+  const limits: Record<ArticleTier, number> = { lead: 600, standard: 300, brief: 150 };
+  const limit = limits[tier] || 300;
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).replace(/\s+\S*$/, "") + "...";
+}
+
 // --- Dateline Maps ---
 
 export const US_DATELINES: Record<string, string> = {
@@ -75,8 +99,8 @@ export function getDateline(story: Story, edition: Edition): string {
 
 export interface FrontPageLayout {
   leadStory: Story | null;
-  topStories: Story[];   // Stories 2-5 (2-column grid)
-  remaining: Story[];    // All remaining (4-column flow)
+  topStories: Story[];
+  remaining: Story[];
 }
 
 export function distributeStories(stories: Story[]): FrontPageLayout {
@@ -102,20 +126,6 @@ export function getSectionConfig(edition: Edition): {
     default:
       return { primary: "WORLD NEWS" };
   }
-}
-
-// --- Text truncation for e-paper layout ---
-
-export function truncateSummary(text: string, tier: ArticleTier): string {
-  if (!text) return "";
-  const limits: Record<ArticleTier, number> = {
-    lead: 600,
-    standard: 300,
-    brief: 150,
-  };
-  const limit = limits[tier] || 300;
-  if (text.length <= limit) return text;
-  return text.slice(0, limit).replace(/\s+\S*$/, "") + "...";
 }
 
 // --- Category normalization ---
