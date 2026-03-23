@@ -2002,6 +2002,18 @@
   gap: var(--space-3);
 }
 
+/* ---- Deep Dive Headline — editorial Playfair, generous leading ---------- */
+.dd-headline {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+  margin-top: var(--space-3);
+  overflow-wrap: break-word;
+}
+
 /* ---- Deep Dive Meta ---------------------------------------------------- */
 .deep-dive-meta {
   display: flex;
@@ -2009,6 +2021,13 @@
   gap: var(--space-3);
   margin-top: var(--space-2);
   flex-wrap: wrap;
+}
+
+/* Source count in data font — monospace precision for quantitative signals */
+.dd-meta-sources {
+  color: var(--fg-tertiary);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
 }
 
 /* ---- Deep Dive Source Icons --------------------------------------------- */
@@ -2999,6 +3018,21 @@
 .dd-summary-text {
   color: var(--fg-secondary);
   font-family: var(--font-structural);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Drop cap — newspaper premium. First letter of the lede spans 3 lines.
+   Only applies when summary is the first visible text (after action bar). */
+.dd-summary-text::first-letter {
+  float: left;
+  font-family: var(--font-editorial);
+  font-size: 3.2em;
+  line-height: 0.8;
+  font-weight: 700;
+  color: var(--fg-primary);
+  padding-right: 0.08em;
+  padding-top: 0.06em;
 }
 
 /* ---- Deep Dive: Analysis Section — vertical stack ---------------------- */
@@ -3082,12 +3116,15 @@
 .dd-action-btn:hover {
   color: var(--fg-primary);
   background-color: var(--bg-elevated);
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .dd-action-btn--active {
   color: var(--fg-primary);
   background-color: var(--bg-elevated);
   border-color: var(--border-strong);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .dd-action-btn:focus-visible {
@@ -3096,8 +3133,8 @@
 }
 
 .dd-action-btn:active {
-  transform: scale(0.96);
-  transition: transform 100ms var(--spring);
+  transform: scale(0.94);
+  transition: transform 80ms var(--spring);
 }
 
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
@@ -3270,11 +3307,11 @@
 }
 
 .dd-perspectives-item--agree {
-  border-left-color: var(--border-subtle);
+  border-left-color: var(--sense-low);
 }
 
 .dd-perspectives-item--diverge {
-  border-left-color: var(--border-subtle);
+  border-left-color: var(--sense-medium);
 }
 
 .dd-perspectives-item__icon {
@@ -5299,8 +5336,83 @@
   }
   /* Hide separators on mobile — groups wrap naturally */
   .ubar__sep { display: none; }
+  /* Hide edition pills on mobile — bottom nav handles edition switching */
+  .ubar__editions { display: none; }
+  /* Hide lean chips on mobile — mobile-lean-bar handles perspective filter */
+  .ubar__leans { display: none; }
   /* Touch targets */
-  .ubar__edition, .ubar__lean { min-height: 36px; }
+  .ubar__lean { min-height: 36px; }
+}
+
+/* ==========================================================================
+   Mobile Lean Bar — Fixed above bottom nav, thumb-reachable
+   Hidden on desktop (lean chips live in .ubar instead).
+   ========================================================================== */
+
+.mobile-lean-bar {
+  display: none; /* Desktop: hidden — FilterBar handles lean */
+  position: fixed;
+  bottom: var(--nav-bottom-height);
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  padding-bottom: var(--space-2);
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.mobile-lean-bar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  background: none;
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 100px;
+  min-height: 40px;
+  min-width: 64px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms var(--ease-out);
+}
+
+.mobile-lean-bar__chip:active {
+  transform: scale(0.92);
+  transition: transform 50ms var(--ease-out);
+}
+
+.mobile-lean-bar__chip--active {
+  color: var(--fg-primary);
+  font-weight: 700;
+  border-color: var(--border-strong);
+  background-color: var(--bg-secondary);
+}
+
+.mobile-lean-bar__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mobile-lean-bar__chip--left .mobile-lean-bar__dot { background-color: var(--bias-left); }
+.mobile-lean-bar__chip--center .mobile-lean-bar__dot { background-color: var(--bias-center); }
+.mobile-lean-bar__chip--right .mobile-lean-bar__dot { background-color: var(--bias-right); }
+
+@media (max-width: 767px) {
+  .mobile-lean-bar {
+    display: flex;
+  }
 }
 
 /* ==========================================================================

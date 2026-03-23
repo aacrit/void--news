@@ -703,17 +703,17 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               ? "translate(-50%, -50%) scale(1)"
               : `translateY(${dragOffset}px)`
             : isDesktop
-              ? "translate(-50%, -50%) scale(0.92) translateY(20px)"
+              ? "translate(-50%, -50%) scale(0.95) translateY(12px)"
               : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-e3)" : "none",
           transition: isDragging
             ? "none"
             : isDismissing
-              ? "transform 300ms cubic-bezier(0.2, 1, 0.3, 1)"
+              ? "transform 280ms cubic-bezier(0.2, 1, 0.3, 1)"
               : isVisible
-                ? "transform 500ms var(--spring-bouncy), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 80ms"
-                : "transform 380ms var(--spring-snappy), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1) 180ms, box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+                ? "transform 520ms var(--spring-bouncy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1) 60ms"
+                : "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
@@ -757,14 +757,14 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </button>
           </div>
 
-          <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginTop: "var(--space-3)", overflowWrap: "break-word" }}>
+          <h2 className="dd-headline">
             {story.title}
           </h2>
 
           <div className="deep-dive-meta">
             <span className="category-tag">{story.category}</span>
             <span className="dot-separator" aria-hidden="true" />
-            <span className="time-tag" style={{ color: "var(--fg-tertiary)" }}>
+            <span className="dd-meta-sources text-data">
               {sources.length > 0 ? sources.length : story.source.count} sources
             </span>
             <span className="dot-separator" aria-hidden="true" />
@@ -805,7 +805,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
               className={`dd-action-bar anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}
+              style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}
             >
               {/* Sigil — xl, left anchor */}
               {story.sigilData && (
@@ -892,7 +892,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {/* ---- Summary — flows as article lede, after action bar -------------- */}
-          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "100ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
               <div className="dd-collapsible__inner" ref={summaryInnerRef}>
                 <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>

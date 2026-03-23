@@ -93,7 +93,7 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
-import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight } from "../lib/haptics";
+import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
@@ -844,6 +844,22 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
+
+      {/* Mobile lean chips — fixed above bottom nav, thumb-reachable */}
+      <div className="mobile-lean-bar" role="tablist" aria-label="Political perspective">
+        {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+          <button
+            key={lean}
+            role="tab"
+            aria-selected={activeLean === lean}
+            onClick={() => { hapticMicro(); setActiveLean(activeLean === lean ? "All" : lean); setVisibleCount(BATCH_SIZE); }}
+            className={`mobile-lean-bar__chip mobile-lean-bar__chip--${lean.toLowerCase()}${activeLean === lean ? " mobile-lean-bar__chip--active" : ""}`}
+          >
+            <span className="mobile-lean-bar__dot" aria-hidden="true" />
+            {lean}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
