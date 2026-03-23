@@ -586,6 +586,37 @@ function LeanAxis({
               )}
             </div>
           )}
+
+          {/* Entity sentiments — shows how sources feel about key figures.
+              Positive = right-shifted bar (warm), Negative = left-shifted bar (cool).
+              Data is already computed via mergeEntitySentiments but was never rendered. */}
+          {rationale.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
+            <div className="bi-entity-sentiments">
+              <p className="bi-entity-sentiments__title">Key figures mentioned</p>
+              {Object.entries(rationale.entitySentiments)
+                .slice(0, 5)
+                .map(([entity, sentiment]) => (
+                  <div key={entity} className="bi-entity-row">
+                    <span className="bi-entity-row__name">{entity}</span>
+                    <span className="bi-entity-row__bar">
+                      {/* Center line */}
+                      <span className="bi-entity-row__center" />
+                      {/* Sentiment fill — extends left (negative) or right (positive) from center */}
+                      <span
+                        className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
+                        style={{
+                          width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
+                          [sentiment >= 0 ? "left" : "right"]: "50%",
+                        }}
+                      />
+                    </span>
+                    <span className={`bi-entity-row__val${sentiment >= 0 ? " bi-entity-row__val--pos" : " bi-entity-row__val--neg"}`}>
+                      {sentiment >= 0 ? "+" : ""}{sentiment.toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+            </div>
+          )}
         </>
       )}
     </AxisRow>

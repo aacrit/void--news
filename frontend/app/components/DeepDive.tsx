@@ -769,6 +769,23 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </span>
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+
+            {/* Analysis depth — subtle dots showing exploration progress.
+                Fills as user opens analysis layers: spectrum (auto), all sides, scoring.
+                Rewards curiosity without demanding attention. */}
+            {spectrumSources.length > 0 && (
+              <>
+                <span className="dot-separator" aria-hidden="true" />
+                <span
+                  className="dd-depth"
+                  aria-label={`${[spectrumSources.length > 0, comparativeOpen, pressAnalysisOpen].filter(Boolean).length} of 3 analysis layers explored`}
+                >
+                  <span className={`dd-depth__dot${spectrumSources.length > 0 ? " dd-depth__dot--filled" : ""}`} />
+                  <span className={`dd-depth__dot${comparativeOpen ? " dd-depth__dot--filled" : ""}`} />
+                  <span className={`dd-depth__dot${pressAnalysisOpen ? " dd-depth__dot--filled" : ""}`} />
+                </span>
+              </>
+            )}
           </div>
         </header>
 

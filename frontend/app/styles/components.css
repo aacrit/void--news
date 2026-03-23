@@ -2030,6 +2030,28 @@
   letter-spacing: 0.04em;
 }
 
+/* Analysis depth dots — 3 dots showing exploration progress.
+   First dot auto-fills (spectrum), second fills on All Sides open,
+   third fills on Scoring open. Subtle reward for curiosity. */
+.dd-depth {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dd-depth__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--border-subtle);
+  transition: background-color 300ms var(--ease-out), transform 300ms var(--spring-bouncy);
+}
+
+.dd-depth__dot--filled {
+  background-color: var(--accent-warm);
+  transform: scale(1.2);
+}
+
 /* ---- Deep Dive Source Icons --------------------------------------------- */
 .dd-source-icon {
   transition: transform var(--dur-fast) var(--ease-out);
@@ -2627,6 +2649,93 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+/* ---- Entity sentiments — bidirectional bar chart for key figures ------- */
+/* Shows how sources collectively feel about political figures.
+   Positive sentiment extends right from center, negative extends left.
+   Data was already computed via mergeEntitySentiments but never rendered. */
+
+.bi-entity-sentiments {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.bi-entity-sentiments__title {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+}
+
+.bi-entity-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 3px;
+}
+
+.bi-entity-row__name {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  min-width: 80px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bi-entity-row__bar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--bg-secondary);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.bi-entity-row__center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--border-strong);
+}
+
+.bi-entity-row__fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 400ms var(--ease-out);
+}
+
+.bi-entity-row__fill--pos {
+  background-color: var(--sense-low);
+}
+
+.bi-entity-row__fill--neg {
+  background-color: var(--sense-medium);
+}
+
+.bi-entity-row__val {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-feature-settings: "tnum" 1;
+  min-width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bi-entity-row__val--pos { color: var(--sense-low); }
+.bi-entity-row__val--neg { color: var(--sense-medium); }
 
 /* ---- Confidence meter -------------------------------------------------- */
 .bi-confidence {
@@ -3759,6 +3868,35 @@
   font-feature-settings: "tnum" 1;
 }
 
+/* Key framing terms — shows vocabulary each lean side emphasizes.
+   Compact inline pills below column header. Subtle, not dominant. */
+.comp-view__key-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: var(--space-2);
+}
+
+.comp-view__term {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  background-color: var(--bg-secondary);
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid var(--border-subtle);
+}
+
+.comp-view__col--left .comp-view__term {
+  border-color: color-mix(in srgb, var(--bias-left) 30%, transparent);
+}
+
+.comp-view__col--right .comp-view__term {
+  border-color: color-mix(in srgb, var(--bias-right) 30%, transparent);
+}
+
 /* ---- Article items inside a column ---- */
 .comp-view__items {
   display: flex;
@@ -3809,6 +3947,68 @@
   font-size: var(--text-xs);
   color: var(--fg-muted);
   font-feature-settings: "tnum" 1;
+  flex-shrink: 0;
+}
+
+/* ---- Source credibility signals row ---- */
+.comp-view__signals {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+/* Type badge: Reporting / Analysis / Opinion / Editorial */
+.comp-view__type-badge {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  color: var(--fg-tertiary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.comp-view__type-badge--reporting { color: var(--sense-low); border-color: var(--sense-low); }
+.comp-view__type-badge--analysis { color: var(--fg-secondary); }
+.comp-view__type-badge--opinion { color: var(--sense-medium); border-color: var(--sense-medium); }
+.comp-view__type-badge--editorial { color: var(--sense-high); border-color: var(--sense-high); }
+
+/* Factual rigor micro-bar */
+.comp-view__rigor-bar {
+  flex: 1;
+  min-width: 30px;
+  max-width: 60px;
+  height: 3px;
+  background-color: var(--border-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.comp-view__rigor-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--sense-low);
+  transition: width 400ms var(--ease-out);
+}
+
+.comp-view__rigor-val {
+  font-size: 8px;
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+  flex-shrink: 0;
+  min-width: 14px;
+}
+
+/* Sensationalism warning icon */
+.comp-view__warn {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
 }
 
