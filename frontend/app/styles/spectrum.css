@@ -616,6 +616,15 @@
   width: 100%;
 }
 
+/* ---- Empty state ---- */
+.dd-spectrum__empty {
+  padding: var(--space-3) 0;
+  text-align: center;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
 /* ---- Bar: 7-zone gradient (matches Sources page) ---- */
 .dd-spectrum__bar {
   display: grid;
@@ -636,7 +645,7 @@
   box-shadow:
     var(--shadow-e1),
     inset 0 1px 2px var(--spectrum-inset);
-  margin-bottom: 2px;
+  margin-bottom: 0;
 }
 
 .dd-spectrum__bar-zone {
@@ -662,72 +671,153 @@
   pointer-events: none;
 }
 
-/* ---- Track: relative container for absolutely-positioned logos ---- */
-.dd-spectrum__track {
-  position: relative;
-  width: 100%;
-  min-height: 34px;
-  transition: height 0.3s var(--ease-out);
+/* ---- Source columns: 7-column grid aligned to the bar zones ---- */
+.dd-spectrum__columns {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  padding-top: var(--space-2);
+  /* Graceful height transition when expanding */
+  transition: max-height 400ms var(--ease-out);
+  overflow: hidden;
 }
 
-/* ---- Logo (link) — positioned continuously on the track ---- */
-.dd-spectrum__logo {
-  position: absolute;
-  transform: translateX(-50%);
-  width: 26px;
-  height: 26px;
+.dd-spectrum__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 2px;
+  min-width: 0;
+}
+
+.dd-spectrum__col--empty {
+  opacity: 0.3;
+}
+
+/* ---- Source item: favicon + name row ---- */
+.dd-spectrum__source {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+  width: 100%;
+  min-height: 28px;
+  transition:
+    background-color 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
+  animation: spectrumSourceIn 300ms var(--ease-out) both;
+}
+
+@keyframes spectrumSourceIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dd-spectrum__source:hover {
+  background-color: var(--bg-hover);
+  transform: translateX(1px);
+}
+
+.dd-spectrum__source:active {
+  transform: scale(0.97);
+}
+
+.dd-spectrum__source:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 1px;
+}
+
+/* Icon container — favicon circle */
+.dd-spectrum__source-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: var(--bg-card);
-  border: 2px solid var(--bg-primary);
+  border: 1.5px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   overflow: hidden;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  text-decoration: none;
-  transition:
-    transform 0.2s var(--spring-bouncy),
-    box-shadow 0.15s var(--ease-out),
-    border-color 0.15s var(--ease-out);
 }
 
-/* Individual hover — pop above */
-.dd-spectrum__logo:hover {
-  transform: translateX(-50%) scale(1.4);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  z-index: var(--z-tooltip);
-  border-color: var(--border-strong);
-}
-
-.dd-spectrum__logo:active {
-  transform: translateX(-50%) scale(0.95);
-}
-
-.dd-spectrum__logo:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-  z-index: var(--z-tooltip);
-}
-
-.dd-spectrum__logo-img {
-  width: 14px;
-  height: 14px;
+.dd-spectrum__source-favicon {
+  width: 12px;
+  height: 12px;
   object-fit: contain;
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
-.dd-spectrum__fallback {
+.dd-spectrum__source-fallback {
   font-family: var(--font-data);
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   color: var(--fg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
+}
+
+/* Source name — truncated to fit column */
+.dd-spectrum__source-name {
+  font-family: var(--font-structural);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fg-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* Per-column "more" count when collapsed */
+.dd-spectrum__col-more {
+  font-family: var(--font-data);
+  font-size: 9px;
+  color: var(--fg-muted);
+  padding: 2px 0;
+}
+
+/* ---- Expand/collapse button ---- */
+.dd-spectrum__expand {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background: none;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  transition:
+    color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    background-color 150ms var(--ease-out);
+}
+
+.dd-spectrum__expand:hover {
+  color: var(--fg-secondary);
+  border-color: var(--border-strong);
+  background-color: var(--bg-hover);
+}
+
+.dd-spectrum__expand:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 /* ---- Tooltip ---- */
@@ -803,49 +893,45 @@
   font-style: italic;
 }
 
-/* ---- Desktop Deep Dive panel (768px+) ---- */
-@media (min-width: 768px) {
-  .dd-spectrum__logo-img {
-    width: 16px;
-    height: 16px;
-  }
-}
-
 /* ---- Mobile ---- */
 @media (max-width: 767px) {
   .dd-spectrum__bar {
-    height: 24px;
-  }
-
-  .dd-spectrum__zone-label {
-    font-size: 6px;
-  }
-
-  .dd-spectrum__logo {
-    width: 22px;
     height: 22px;
   }
 
-  .dd-spectrum__logo:hover {
-    transform: translateX(-50%);
+  .dd-spectrum__zone-label {
+    font-size: 5.5px;
+    letter-spacing: 0.02em;
   }
 
-  .dd-spectrum__logo-img {
-    width: 12px;
-    height: 12px;
+  .dd-spectrum__source-name {
+    font-size: 9px;
   }
 
-  .dd-spectrum__fallback {
-    font-size: 8px;
+  .dd-spectrum__source-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dd-spectrum__source-favicon {
+    width: 10px;
+    height: 10px;
+  }
+
+  .dd-spectrum__source {
+    padding: 2px 2px;
+    gap: 3px;
+    min-height: 24px;
   }
 }
 
 /* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
-  .dd-spectrum__logo {
+  .dd-spectrum__source {
+    animation: none;
     transition: none;
   }
-  .dd-spectrum__track {
+  .dd-spectrum__columns {
     transition: none;
   }
 }

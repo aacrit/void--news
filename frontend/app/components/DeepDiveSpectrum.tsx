@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 /* ---------------------------------------------------------------------------
-   DeepDiveSpectrum — Continuous spectrum for Deep Dive panel.
-   7-zone gradient bar with labels, logos positioned fluidly below at their
-   exact politicalLean % (0-100). Nearby logos alternate rows to avoid overlap.
-   Each logo links to the source article; tooltip on hover.
+   DeepDiveSpectrum — Full-width bias spectrum with categorized sources.
+   7-zone gradient bar on top, sources grouped by lean bucket below.
+   Shows top sources per category; "More" expands gracefully downward.
    --------------------------------------------------------------------------- */
 
 export interface DeepDiveSpectrumSource {
@@ -21,20 +20,6 @@ export interface DeepDiveSpectrumSource {
   confidence?: number;
 }
 
-/** Compute trust score: tierScore * 0.4 + factualRigor * 0.4 + confidence * 0.2 */
-function computeTrustScore(source: DeepDiveSpectrumSource): number {
-  const tierScore = source.tier === "us_major" ? 60 : source.tier === "international" ? 50 : 40;
-  const rigor = source.factualRigor ?? 50;
-  const conf = (source.confidence ?? 0.5) * 100;
-  return Math.round(tierScore * 0.4 + rigor * 0.4 + conf * 0.2);
-}
-
-function trustClass(score: number): string {
-  if (score >= 70) return "dd-spectrum__trust-dot--high";
-  if (score >= 40) return "dd-spectrum__trust-dot--medium";
-  return "dd-spectrum__trust-dot--low";
-}
-
 type LeanCategory =
   | "far-left"
   | "left"
@@ -44,14 +29,14 @@ type LeanCategory =
   | "right"
   | "far-right";
 
-const LEAN_ZONES: { key: LeanCategory; label: string }[] = [
-  { key: "far-left", label: "Far Left" },
-  { key: "left", label: "Left" },
-  { key: "center-left", label: "Center Left" },
-  { key: "center", label: "Center" },
-  { key: "center-right", label: "Center Right" },
-  { key: "right", label: "Right" },
-  { key: "far-right", label: "Far Right" },
+const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
+  { key: "far-left", label: "Far Left", shortLabel: "Far L" },
+  { key: "left", label: "Left", shortLabel: "Left" },
+  { key: "center-left", label: "Center Left", shortLabel: "Ctr-L" },
+  { key: "center", label: "Center", shortLabel: "Ctr" },
+  { key: "center-right", label: "Center Right", shortLabel: "Ctr-R" },
+  { key: "right", label: "Right", shortLabel: "Right" },
+  { key: "far-right", label: "Far Right", shortLabel: "Far R" },
 ];
 
 function leanToBucket(lean: number): LeanCategory {
@@ -92,93 +77,72 @@ function getFaviconUrl(sourceUrl: string): string {
   }
 }
 
-/* ---------------------------------------------------------------------------
-   Compute positioned items — sort by lean, alternate rows when close
-   --------------------------------------------------------------------------- */
-interface PositionedSource {
-  source: DeepDiveSpectrumSource;
-  left: number; // clamped 4-96%
-  row: number;  // 0 = first row (closest to bar), 1 = second row
+/** Sort sources within a bucket: us_major first, then by factual rigor desc */
+function sortBucket(sources: DeepDiveSpectrumSource[]): DeepDiveSpectrumSource[] {
+  return [...sources].sort((a, b) => {
+    const tierRank = (t: string) => t === "us_major" ? 0 : t === "international" ? 1 : 2;
+    const td = tierRank(a.tier) - tierRank(b.tier);
+    if (td !== 0) return td;
+    return (b.factualRigor ?? 50) - (a.factualRigor ?? 50);
+  });
 }
 
-const MAX_VISIBLE_ROWS = 3;
-const COMPACT_LIMIT = 6;
-
-function computePositions(sources: DeepDiveSpectrumSource[]): PositionedSource[] {
-  const sorted = [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
-  const results: PositionedSource[] = [];
-  const PROXIMITY = 8; // % threshold to trigger row alternation
-
-  for (let i = 0; i < sorted.length; i++) {
-    const s = sorted[i];
-    const left = Math.max(4, Math.min(96, s.politicalLean));
-
-    // Check ALL nearby items to find an open row
-    const occupiedRows = new Set<number>();
-    for (let j = i - 1; j >= 0; j--) {
-      if (Math.abs(left - results[j].left) >= PROXIMITY) break;
-      occupiedRows.add(results[j].row);
-    }
-
-    // Find the first available row (0, 1, 2)
-    let row = 0;
-    while (occupiedRows.has(row) && row < MAX_VISIBLE_ROWS - 1) {
-      row++;
-    }
-
-    results.push({ source: s, left, row });
-  }
-
-  return results;
+/** Compute trust score: tierScore * 0.4 + factualRigor * 0.4 + confidence * 0.2 */
+function computeTrustScore(source: DeepDiveSpectrumSource): number {
+  const tierScore = source.tier === "us_major" ? 60 : source.tier === "international" ? 50 : 40;
+  const rigor = source.factualRigor ?? 50;
+  const conf = (source.confidence ?? 0.5) * 100;
+  return Math.round(tierScore * 0.4 + rigor * 0.4 + conf * 0.2);
 }
 
+function trustClass(score: number): string {
+  if (score >= 70) return "dd-spectrum__trust-dot--high";
+  if (score >= 40) return "dd-spectrum__trust-dot--medium";
+  return "dd-spectrum__trust-dot--low";
+}
+
+const INITIAL_PER_BUCKET = 2;
+
 /* ---------------------------------------------------------------------------
-   DeepDiveSpectrum — main component
+   Main component
    --------------------------------------------------------------------------- */
 interface DeepDiveSpectrumProps {
   sources: DeepDiveSpectrumSource[];
 }
 
 export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
+  const [expanded, setExpanded] = useState(false);
   const [tooltip, setTooltip] = useState<{
     source: DeepDiveSpectrumSource;
     x: number;
     y: number;
   } | null>(null);
-  const [expanded, setExpanded] = useState(sources.length <= COMPACT_LIMIT);
 
-  const allPositioned = useMemo(() => computePositions(sources), [sources]);
-  const positioned = expanded ? allPositioned : allPositioned.slice(0, COMPACT_LIMIT);
-  const maxRow = positioned.reduce((max, p) => Math.max(max, p.row), 0);
-  const hiddenCount = expanded ? 0 : Math.max(0, allPositioned.length - COMPACT_LIMIT);
+  // Group sources into lean buckets
+  const buckets = useMemo(() => {
+    const map = new Map<LeanCategory, DeepDiveSpectrumSource[]>();
+    for (const zone of LEAN_ZONES) map.set(zone.key, []);
+    for (const s of sources) {
+      const bucket = leanToBucket(s.politicalLean);
+      map.get(bucket)!.push(s);
+    }
+    // Sort each bucket
+    for (const [key, arr] of map) map.set(key, sortBucket(arr));
+    return map;
+  }, [sources]);
 
-  // All hooks must be declared before any early return (Rules of Hooks).
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setTooltip(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  // Count how many are hidden
+  const totalHidden = useMemo(() => {
+    let hidden = 0;
+    for (const arr of buckets.values()) {
+      if (arr.length > INITIAL_PER_BUCKET) hidden += arr.length - INITIAL_PER_BUCKET;
+    }
+    return hidden;
+  }, [buckets]);
 
-  const handleTooltip = useCallback(
-    (source: DeepDiveSpectrumSource | null, el: HTMLElement | null) => {
-      if (!source || !el) {
-        setTooltip(null);
-        return;
-      }
-      const rect = el.getBoundingClientRect();
-      setTooltip({
-        source,
-        x: rect.left + rect.width / 2,
-        y: rect.top,
-      });
-    },
-    []
-  );
+  const hasAnySources = sources.length > 0;
 
-  // Guard: render the bar frame but an empty track when no sources are available
-  if (sources.length === 0) {
+  if (!hasAnySources) {
     return (
       <div className="dd-spectrum" role="img" aria-label="No sources available for spectrum">
         <div className="dd-spectrum__bar" aria-hidden="true">
@@ -188,27 +152,16 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
             </div>
           ))}
         </div>
-        <div className="dd-spectrum__track" style={{ height: 34 }} aria-label="No source data">
-          <span style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            fontFamily: "var(--font-data)",
-            fontSize: "var(--text-xs)",
-            color: "var(--fg-muted)",
-            whiteSpace: "nowrap",
-          }}>
-            No sources
-          </span>
+        <div className="dd-spectrum__empty">
+          <span>No sources</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="dd-spectrum" role="img" aria-label="Article political lean spectrum">
-      {/* ---- Gradient Bar with zone labels ---- */}
+    <div className="dd-spectrum" role="img" aria-label="Article political lean spectrum with sources">
+      {/* ---- 7-zone gradient bar ---- */}
       <div className="dd-spectrum__bar" aria-hidden="true">
         {LEAN_ZONES.map((zone) => (
           <div key={zone.key} className="dd-spectrum__bar-zone">
@@ -217,73 +170,85 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
         ))}
       </div>
 
-      {/* ---- Track: logos positioned continuously ---- */}
-      <div
-        className="dd-spectrum__track"
-        style={{ height: 34 + maxRow * 26 }}
-      >
-        {positioned.map(({ source, left, row }, index) => {
-          const favicon = getFaviconUrl(source.sourceUrl);
+      {/* ---- Source columns: one per lean zone ---- */}
+      <div className="dd-spectrum__columns">
+        {LEAN_ZONES.map((zone) => {
+          const zoneSources = buckets.get(zone.key) || [];
+          const visible = expanded ? zoneSources : zoneSources.slice(0, INITIAL_PER_BUCKET);
+          const overflow = zoneSources.length - visible.length;
+
           return (
-            <a
-              key={source.articleUrl || `${source.name}-${index}`}
-              className="dd-spectrum__logo"
-              href={source.articleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${source.name}: ${leanLabel(source.politicalLean)} — click to read article`}
-              style={{
-                left: `${left}%`,
-                top: row === 0 ? 4 : 30,
-              }}
-              onPointerEnter={(e) => handleTooltip(source, e.currentTarget)}
-              onPointerLeave={() => handleTooltip(null, null)}
-              onFocus={(e) => handleTooltip(source, e.currentTarget)}
-              onBlur={() => handleTooltip(null, null)}
-            >
-              {favicon ? (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={favicon}
-                    alt=""
-                    width={14}
-                    height={14}
-                    className="dd-spectrum__logo-img"
-                    loading="lazy"
-                    onError={(e) => {
-                      const t = e.currentTarget;
-                      t.style.display = "none";
-                      const fb = t.nextElementSibling as HTMLElement | null;
-                      if (fb) fb.style.display = "flex";
+            <div key={zone.key} className={`dd-spectrum__col${zoneSources.length === 0 ? " dd-spectrum__col--empty" : ""}`}>
+              {visible.map((source, i) => {
+                const favicon = getFaviconUrl(source.sourceUrl);
+                return (
+                  <a
+                    key={source.articleUrl || `${source.name}-${i}`}
+                    className="dd-spectrum__source"
+                    href={source.articleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${source.name}: ${leanLabel(source.politicalLean)} — click to read article`}
+                    onPointerEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
                     }}
-                  />
-                  <span className="dd-spectrum__fallback" style={{ display: "none" }}>
-                    {source.name.charAt(0)}
-                  </span>
-                </>
-              ) : (
-                <span className="dd-spectrum__fallback">{source.name.charAt(0)}</span>
+                    onPointerLeave={() => setTooltip(null)}
+                    style={{ animationDelay: `${i * 40}ms` }}
+                  >
+                    <span className="dd-spectrum__source-icon">
+                      {favicon ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={favicon}
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="dd-spectrum__source-favicon"
+                            loading="lazy"
+                            onError={(e) => {
+                              const t = e.currentTarget;
+                              t.style.display = "none";
+                              const fb = t.nextElementSibling as HTMLElement | null;
+                              if (fb) fb.style.display = "flex";
+                            }}
+                          />
+                          <span className="dd-spectrum__source-fallback" style={{ display: "none" }}>
+                            {source.name.charAt(0)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="dd-spectrum__source-fallback">{source.name.charAt(0)}</span>
+                      )}
+                      <span
+                        className={`dd-spectrum__trust-dot ${trustClass(computeTrustScore(source))}`}
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span className="dd-spectrum__source-name">{source.name}</span>
+                  </a>
+                );
+              })}
+              {/* Overflow count (shown when collapsed) */}
+              {!expanded && overflow > 0 && (
+                <span className="dd-spectrum__col-more">+{overflow}</span>
               )}
-              {/* Trust score dot — colored indicator on logo */}
-              <span
-                className={`dd-spectrum__trust-dot ${trustClass(computeTrustScore(source))}`}
-                aria-hidden="true"
-              />
-            </a>
+            </div>
           );
         })}
       </div>
 
-      {/* ---- Expand button — shown when sources exceed COMPACT_LIMIT ---- */}
-      {hiddenCount > 0 && (
+      {/* ---- Expand / Collapse ---- */}
+      {totalHidden > 0 && (
         <button
           className="dd-spectrum__expand"
-          onClick={() => setExpanded(true)}
+          onClick={() => setExpanded(!expanded)}
           type="button"
-          aria-label={`Show ${hiddenCount} more sources`}
+          aria-expanded={expanded}
+          aria-label={expanded ? "Show fewer sources" : `Show ${totalHidden} more sources`}
         >
-          +{hiddenCount} more
+          {expanded ? "Show less" : `+${totalHidden} more sources`}
         </button>
       )}
 
