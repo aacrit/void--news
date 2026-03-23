@@ -3922,33 +3922,91 @@
   to { opacity: 0; }
 }
 
-/* Backdrop — deep cinematic black with grain texture */
+/* Backdrop — cinematic depth field with heavy blur + grain overlay.
+   The page content should be *visible but dream-like* behind the glass. */
 .intro__backdrop {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(24px) saturate(0.7);
-  -webkit-backdrop-filter: blur(24px) saturate(0.7);
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(40px) saturate(0.6) brightness(0.7);
+  -webkit-backdrop-filter: blur(40px) saturate(0.6) brightness(0.7);
   cursor: pointer;
 }
 
-/* Stage — the floating card */
+/* Grain overlay — cinematic film texture on the backdrop */
+.intro__backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--paper-texture);
+  opacity: 0.15;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Stage — frosted glass panel. Semi-transparent, blurred, with light
+   refraction edges. Content behind bleeds through at ~15% — cinematic depth. */
 .intro__stage {
   position: relative;
   width: min(520px, calc(100vw - 40px));
   max-height: calc(100vh - 80px);
   overflow-y: auto;
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
+  overflow-x: hidden;
+  /* Glass morphism: semi-transparent bg + backdrop blur */
+  background: linear-gradient(
+    165deg,
+    rgba(var(--intro-glass-r, 245), var(--intro-glass-g, 240), var(--intro-glass-b, 228), 0.82),
+    rgba(var(--intro-glass-r, 245), var(--intro-glass-g, 240), var(--intro-glass-b, 228), 0.92) 60%,
+    rgba(var(--intro-glass-r, 245), var(--intro-glass-g, 240), var(--intro-glass-b, 228), 0.88)
+  );
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  /* Layered borders: outer glow + inner light refraction + edge */
+  border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 24px 80px rgba(0, 0, 0, 0.5),
-    0 8px 32px rgba(0, 0, 0, 0.3);
+    /* Outer cinematic depth */
+    0 32px 100px rgba(0, 0, 0, 0.4),
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    /* Inner light refraction — top edge catch */
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    /* Inner glow — subtle warmth */
+    inset 0 0 60px rgba(255, 255, 255, 0.04);
   padding: var(--space-6) var(--space-6) var(--space-5);
   text-align: center;
   animation: introStageIn 700ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1)
     200ms both;
+}
+
+/* Top-edge light reflection — simulates overhead studio light */
+.intro__stage::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5) 30%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 70%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Dark mode glass variables */
+:root[data-mode="dark"] .intro__stage {
+  --intro-glass-r: 42;
+  --intro-glass-g: 39;
+  --intro-glass-b: 34;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 32px 100px rgba(0, 0, 0, 0.6),
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 60px rgba(255, 255, 255, 0.02);
 }
 
 .intro--exiting .intro__stage {
@@ -3967,19 +4025,21 @@
 
 /* Desktop: elegant rounded corners */
 @media (min-width: 480px) {
-  .intro__stage { border-radius: 12px; }
+  .intro__stage { border-radius: 16px; }
+  .intro__stage::before { border-radius: 16px 16px 0 0; }
 }
 
-/* Mobile: full-width bottom sheet */
+/* Mobile: full-width glass bottom sheet */
 @media (max-width: 479px) {
   .intro { align-items: flex-end; }
   .intro__stage {
     width: 100%;
     max-height: 92vh;
-    border-radius: 16px 16px 0 0;
+    border-radius: 20px 20px 0 0;
     padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
     animation-name: introSheetIn;
   }
+  .intro__stage::before { border-radius: 20px 20px 0 0; left: 15%; right: 15%; }
   .intro--exiting .intro__stage { animation-name: introSheetOut; }
 }
 
@@ -3993,19 +4053,21 @@
   to { opacity: 0; transform: translateY(40%); }
 }
 
-/* ---- Progress bar ---- */
+/* ---- Progress bar — luminous glass edge ---- */
 .intro__progress {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background-color: var(--border-subtle);
+  background-color: rgba(255, 255, 255, 0.06);
   overflow: hidden;
   border-radius: 2px 2px 0 0;
+  z-index: 2;
 }
 
 .intro__progress-fill {
   height: 100%;
-  background-color: var(--accent-warm);
+  background: linear-gradient(90deg, var(--accent-warm), rgba(200, 149, 108, 0.6));
+  box-shadow: 0 0 12px rgba(200, 149, 108, 0.4), 0 0 4px rgba(200, 149, 108, 0.6);
   transition: width 600ms var(--ease-out);
 }
 
@@ -4028,12 +4090,22 @@
 .intro__skip:hover { color: var(--fg-tertiary); background-color: var(--bg-secondary); }
 .intro__skip:focus-visible { outline: 2px solid var(--accent-warm); outline-offset: 2px; }
 
-/* ---- Visual area ---- */
+/* ---- Visual area — recessed glass well ---- */
 .intro__visual {
   min-height: 180px;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: var(--space-4);
+  margin: 0 calc(var(--space-4) * -1) var(--space-4);
+  padding: var(--space-5) var(--space-4);
   position: relative;
+  /* Recessed glass inset — content sits "inside" the panel */
+  background: linear-gradient(180deg, rgba(0,0,0,0.03), transparent 60%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+:root[data-mode="dark"] .intro__visual {
+  background: linear-gradient(180deg, rgba(0,0,0,0.15), transparent 60%);
+  border-top-color: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Text area (spring entrance per phase) ---- */
@@ -4089,7 +4161,7 @@
   background-color: var(--accent-warm);
   border-color: var(--accent-warm);
   transform: scale(1.5);
-  box-shadow: 0 0 8px rgba(200, 149, 108, 0.4);
+  box-shadow: 0 0 10px rgba(200, 149, 108, 0.5), 0 0 3px rgba(200, 149, 108, 0.8);
 }
 
 .intro__dot--done {
@@ -4114,32 +4186,70 @@
 }
 
 .intro__btn--next {
-  background: none; color: var(--fg-tertiary);
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .intro__btn--next:hover {
   color: var(--fg-secondary);
-  border-color: var(--border-strong);
-  background-color: var(--bg-secondary);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .intro__btn--primary {
-  background-color: var(--accent);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    transparent 40%
+  ), var(--accent);
   color: var(--bg-primary);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  animation: introBtnPulse 2s ease-in-out 0.5s infinite;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(200, 149, 108, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: introBtnPulse 2.5s ease-in-out 0.5s infinite;
+  position: relative;
+  overflow: hidden;
 }
+
+/* Glass highlight sweep — cinematic light pass */
+.intro__btn--primary::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%; right: -100%; bottom: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.2) 45%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.2) 55%,
+    transparent 60%
+  );
+  animation: introSheen 3s ease-in-out 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes introSheen {
+  0% { transform: translateX(-30%); }
+  100% { transform: translateX(130%); }
+}
+
 .intro__btn--primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.2),
+    0 0 32px rgba(200, 149, 108, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .intro__btn:active { transform: scale(0.97); }
 .intro__btn:focus-visible { outline: 2px solid var(--accent-warm); outline-offset: 2px; }
 
 @keyframes introBtnPulse {
-  0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
-  50% { box-shadow: 0 4px 24px rgba(200, 149, 108, 0.25); }
+  0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 0 20px rgba(200, 149, 108, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+  50% { box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 0 36px rgba(200, 149, 108, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
 }
 
 /* ═══ Phase illustrations — spring-animated SVGs ═══ */
@@ -4214,6 +4324,8 @@
   font-size: clamp(2rem, 1.5rem + 2vw, 3rem); font-weight: 700;
   letter-spacing: -0.02em; line-height: 1;
   transition: color 400ms ease;
+  /* Luminous projected-on-glass glow */
+  text-shadow: 0 0 24px currentColor;
 }
 
 /* Phase 2: Animated Ring */
@@ -4233,12 +4345,16 @@
 .intro-ring__count {
   font-size: clamp(2rem, 1.5rem + 2vw, 3rem); font-weight: 700;
   color: var(--fg-primary); line-height: 1;
+  text-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
 }
 .intro-ring__label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-muted); }
 .intro-ring__tiers { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
 .intro-ring__tier {
   font-family: var(--font-data); font-size: 10px; color: var(--fg-tertiary);
-  padding: 2px 8px; border: 1px solid var(--border-subtle); border-radius: 4px;
+  padding: 2px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
   opacity: 0; transform: translateY(8px);
   transition: opacity 300ms var(--ease-out), transform 400ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
@@ -4256,8 +4372,12 @@
 .intro-verdict__card {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border-subtle); border-radius: 8px;
-  min-width: 100px; background-color: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  min-width: 100px;
+  /* Glass card — semi-transparent with inner glow */
+  background: linear-gradient(165deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0,0,0,0.06);
   opacity: 0; transform: translateY(16px) scale(0.95);
   transition: opacity 400ms var(--ease-out), transform 500ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
@@ -4282,7 +4402,8 @@
   .intro-scale--active .intro-scale__line--post,
   .intro-scale--active .intro-scale__line--base,
   .intro-scale--active .intro-scale__beam,
-  .intro__dot, .intro__btn {
+  .intro__dot, .intro__btn,
+  .intro__btn--primary::after {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
