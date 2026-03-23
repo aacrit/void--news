@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { StorySource } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
@@ -115,7 +115,11 @@ function AgreementIcon({ type }: { type: "agree" | "diverge" }) {
   );
 }
 
+const VISIBLE_LIMIT = 5;
+
 export default function ComparativeView({ sources, consensusPoints, divergencePoints }: ComparativeViewProps) {
+  const [expandedBuckets, setExpandedBuckets] = useState<Record<string, boolean>>({});
+
   const buckets: Record<string, BucketSource[]> = useMemo(() => {
     const result: Record<string, BucketSource[]> = { Left: [], Center: [], Right: [] };
     for (const src of sources) {
@@ -191,6 +195,10 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
           const items = buckets[bucket.label];
           if (items.length === 0) return null;
 
+          const isExpanded = !!expandedBuckets[bucket.label];
+          const visibleItems = isExpanded ? items : items.slice(0, VISIBLE_LIMIT);
+          const hasMore = items.length > VISIBLE_LIMIT;
+
           return (
             <div key={bucket.label} className={`comp-view__col ${bucket.cssClass}`}>
               {/* Column header */}
@@ -203,7 +211,7 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
 
               {/* Source summaries */}
               <div className="comp-view__items">
-                {items.map(({ source }, i) => {
+                {visibleItems.map(({ source }, i) => {
                   const favicon = getFaviconUrl(source.url);
                   const lean = source.biasScores?.politicalLean ?? 50;
                   const rigor = source.biasScores?.factualRigor ?? 50;
@@ -279,6 +287,19 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                   );
                 })}
               </div>
+
+              {/* Expand/collapse button */}
+              {hasMore && (
+                <button
+                  className="comp-view__expand-btn"
+                  onClick={() => setExpandedBuckets(prev => ({ ...prev, [bucket.label]: !isExpanded }))}
+                  type="button"
+                >
+                  {isExpanded
+                    ? "Show less"
+                    : `+${items.length - VISIBLE_LIMIT} more`}
+                </button>
+              )}
             </div>
           );
         })}
