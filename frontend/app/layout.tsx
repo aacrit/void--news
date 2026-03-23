@@ -2,15 +2,20 @@ import type { Metadata, Viewport } from "next";
 import {
   Playfair_Display,
   Inter,
-  JetBrains_Mono,
+  IBM_Plex_Mono,
+  Barlow_Condensed,
 } from "next/font/google";
 import "./globals.css";
 
 /* ---------------------------------------------------------------------------
-   Three Voices of Type
-   Editorial: Playfair Display — headlines, story titles, section headers
+   Four Voices of Type
+   Editorial:  Playfair Display — headlines, story titles, section headers
    Structural: Inter — body text, navigation, labels, buttons
-   Data: JetBrains Mono — bias scores, source counts, timestamps
+   Meta:       Barlow Condensed — editorial metadata (source counts, categories,
+               timestamps, velocity) — condensed grotesque in the Franklin Gothic
+               / News Gothic newspaper tradition
+   Data:       IBM Plex Mono — bias scores, numeric data, tabular figures —
+               humanist mono with institutional warmth (not a coding font)
    --------------------------------------------------------------------------- */
 
 const playfair = Playfair_Display({
@@ -27,10 +32,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-barlow",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-jetbrains",
+  variable: "--font-ibm-mono",
   display: "swap",
 });
 
@@ -102,7 +114,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-mode="dark"
-      className={`${playfair.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={`${playfair.variable} ${inter.variable} ${barlowCondensed.variable} ${ibmPlexMono.variable}`}
       suppressHydrationWarning
     >
       <head>
