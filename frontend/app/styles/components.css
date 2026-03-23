@@ -34,23 +34,25 @@
   --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
-/* Radial glow pseudo-element — graceful edge fade instead of hard bg swap.
-   Strongest at center, fades to transparent at edges. Appears on hover,
-   sits below content (z-index -1) so it never obscures text. */
+/* Organic glow — irregular radial gradient that softly diffuses at edges.
+   Multiple layered gradients create natural, non-uniform light diffusion.
+   No hard rectangle boundary — warmth bleeds outward organically. */
 .story-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    ellipse 80% 70% at 50% 40%,
-    var(--bg-secondary) 0%,
-    transparent 100%
-  );
+  /* Extend beyond card bounds for soft bleed — organic, not clipped */
+  inset: -8px -12px;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse 70% 55% at 45% 35%, var(--bg-secondary) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 60% 55%, color-mix(in srgb, var(--bg-secondary) 60%, transparent) 0%, transparent 65%);
   opacity: 0;
-  transition: opacity 160ms var(--ease-out);
+  transition: opacity 200ms var(--ease-out);
   pointer-events: none;
   z-index: 0;
+  /* Soft mask to feather the very edge — dissolve, not cut */
+  mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 100%);
 }
 
 /* Ensure card content sits above the glow layer */
@@ -64,7 +66,7 @@
 }
 
 .story-card:hover {
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
@@ -177,17 +179,14 @@
 
 .story-card__why,
 .lead-story__why {
-  font-family: var(--font-data);
+  font-family: var(--font-structural);
   font-size: var(--text-xs);
-  /* --fg-secondary for WCAG 4.5:1 contrast in dark mode; --fg-tertiary
-     was too dim against --bg-primary (#1C1A17) in Evening Edition. */
-  color: var(--fg-secondary);
-  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: help;
-  /* min-width: 0 + flex: 1 allow ellipsis to work inside flex containers */
   min-width: 0;
   flex: 1;
 }
@@ -1967,6 +1966,19 @@
   outline-offset: 2px;
 }
 
+/* Brand label — subtle monospace tag in header bar */
+.dd-brand-label {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  opacity: 0.6;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: var(--space-2);
+}
+
 .deep-dive-close {
   display: inline-flex;
   align-items: center;
@@ -2182,6 +2194,31 @@
   color: var(--fg-tertiary);
   font-feature-settings: "tnum" 1;
   font-variant-numeric: tabular-nums;
+}
+
+/* Product family row in footer */
+.footer-products {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.footer-products__item {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color 150ms var(--ease-out);
+}
+a.footer-products__item:hover { color: var(--accent-warm); }
+.footer-products__sep {
+  font-size: 8px;
+  color: var(--border-strong);
+  line-height: 1;
 }
 
 .footer-github {
@@ -3287,6 +3324,45 @@
   transition: transform 80ms var(--spring);
 }
 
+/* ---- Deep Dive: Tab bar ---- */
+.dd-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
+}
+
+.dd-tab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--fg-tertiary);
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+  min-height: 44px;
+}
+
+.dd-tab:hover {
+  color: var(--fg-secondary);
+}
+
+.dd-tab--active {
+  color: var(--fg-primary);
+  border-bottom-color: var(--fg-primary);
+}
+
+.dd-tab:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
 /* Centered below the compact spectrum. */
 .dd-press-trigger {
@@ -3529,6 +3605,27 @@
   line-height: 1;
 }
 
+/* First-encounter subtitle — fades in then out after 4s */
+.daily-brief__subtitle,
+.void-onair__subtitle {
+  display: inline-block;
+  margin-left: var(--space-2);
+  font-family: var(--font-meta);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  opacity: 0;
+  animation: subtitleReveal 4s var(--ease-out) 1s both;
+}
+@keyframes subtitleReveal {
+  0% { opacity: 0; transform: translateX(-4px); }
+  15% { opacity: 1; transform: translateX(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .daily-brief__body {
   /* Structural font (Inter) for body text — editorial anchor treatment.
      Slightly larger than standard body to match lead-headline-adjacent prominence.
@@ -3577,13 +3674,13 @@
   margin-bottom: 0;
 }
 
-/* ---- Opinion section — editorial board's take ----------------------------- */
+/* ---- Opinion section — observational editorial voice ---------------------- */
 .daily-brief__opinion {
   font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: var(--text-base);
-  line-height: 1.7;
-  color: var(--fg-primary);
+  font-style: normal;
+  font-size: var(--text-sm);
+  line-height: 1.75;
+  color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
   hyphens: auto;
@@ -3594,12 +3691,14 @@
 }
 
 .daily-brief__opinion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--font-data);
   font-style: normal;
   font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--fg-tertiary);
   margin-bottom: var(--space-2);
 }
@@ -3635,6 +3734,13 @@
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
 }
+
+.void-onair--disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+.void-onair--disabled .void-onair__glyph { opacity: 0.5; }
 
 .void-onair--playing {
   border-color: var(--accent-warm);
@@ -4119,6 +4225,27 @@
   font-family: var(--font-structural);
   font-size: var(--text-xs);
   color: var(--fg-muted);
+}
+
+.comp-view__expand-btn {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) 0;
+  margin-top: var(--space-2);
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  text-align: center;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.comp-view__expand-btn:hover {
+  color: var(--fg-primary);
 }
 
 /* ---- Convergence/Divergence insights embedded in All Sides ---- */
@@ -5020,12 +5147,146 @@
 }
 .intro-verdict__sub { font-size: 9px; color: var(--fg-muted); letter-spacing: 0.02em; }
 
+/* ---- Subtitle (product labels under headlines) ---- */
+.intro__subtitle {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  margin-bottom: var(--space-1);
+}
+
+/* ---- Phase: Story Visual (five-tabs illustration) ---- */
+.intro-story-visual {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 500ms var(--ease-out), transform 600ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-story-visual--active { opacity: 1; transform: translateY(0); }
+
+.intro-story-visual__tabs {
+  display: flex; gap: 6px; justify-content: center;
+}
+.intro-story-visual__tab {
+  width: 48px; height: 56px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--fg-muted);
+  border-radius: 4px 4px 2px 2px;
+  background: rgba(255, 255, 255, 0.04);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 300ms var(--ease-out), transform 400ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-story-visual--active .intro-story-visual__tab { opacity: 1; transform: translateY(0); }
+
+.intro-story-visual__void-line {
+  width: 60px; height: 2px;
+  background: var(--accent-warm);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out) 800ms;
+}
+.intro-story-visual--active .intro-story-visual__void-line { opacity: 1; }
+
+/* ---- Phase: Product Family Visual ---- */
+.intro-products {
+  display: flex; flex-direction: column; gap: 8px;
+  width: 100%; max-width: 320px; margin: 0 auto;
+}
+.intro-products__item {
+  display: grid; grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 var(--space-3);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0; transform: translateX(-12px);
+  transition: opacity 300ms var(--ease-out), transform 400ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-products--active .intro-products__item { opacity: 1; transform: translateX(0); }
+
+.intro-products__cmd {
+  grid-row: 1 / 3;
+  align-self: center;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent-warm);
+  white-space: nowrap;
+  min-width: 110px;
+}
+.intro-products__label {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm); font-weight: 600;
+  color: var(--fg-primary);
+  line-height: 1.3;
+}
+.intro-products__desc {
+  font-family: var(--font-structural);
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1.3;
+}
+
+/* ---- Phase: Audio Product Visual ---- */
+.intro-audio {
+  display: flex; justify-content: center;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 500ms var(--ease-out), transform 600ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-audio--active { opacity: 1; transform: translateY(0); }
+
+.intro-audio__card {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  min-width: 240px;
+}
+.intro-audio__cmd {
+  font-size: 12px; font-weight: 600; color: var(--accent-warm);
+  letter-spacing: -0.02em;
+}
+.intro-audio__label {
+  font-family: var(--font-meta);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.intro-audio__waveform {
+  display: flex; align-items: center; gap: 2px;
+  height: 40px; padding: var(--space-2) 0;
+}
+.intro-audio__bar {
+  width: 3px; border-radius: 2px;
+  background: var(--accent-warm);
+  opacity: 0.5;
+  animation: introWaveBar 1.2s ease-in-out infinite alternate;
+}
+@keyframes introWaveBar {
+  from { transform: scaleY(0.3); opacity: 0.3; }
+  to { transform: scaleY(1); opacity: 0.7; }
+}
+.intro-audio__voices {
+  display: flex; gap: var(--space-4);
+  font-family: var(--font-structural);
+  font-size: 11px; color: var(--fg-tertiary);
+}
+
 /* ---- Cinematic Intro: Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   .intro, .intro__stage, .intro__text,
   .intro-scale, .intro-needle, .intro-needle__spectrum-fill,
   .intro-ring, .intro-verdict, .intro-verdict__card,
   .intro-ring__tier,
+  .intro-story-visual, .intro-story-visual__tab, .intro-story-visual__void-line,
+  .intro-products__item, .intro-audio, .intro-audio__bar,
   .intro-scale--active .intro-scale__void,
   .intro-scale--active .intro-scale__line--beam,
   .intro-scale--active .intro-scale__line--tick-l,

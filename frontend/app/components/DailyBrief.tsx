@@ -11,6 +11,25 @@ interface DailyBriefProps {
   edition: string;
 }
 
+/* ---------------------------------------------------------------------------
+   First-encounter subtitles — show English labels once per browser session
+   to teach the void -- branding, then fade away.
+   --------------------------------------------------------------------------- */
+const SUBTITLE_SEEN_KEY = "void-news-subtitles-seen";
+
+function useFirstEncounterSubtitles(): boolean {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    try {
+      if (!sessionStorage.getItem(SUBTITLE_SEEN_KEY)) {
+        setShow(true);
+        sessionStorage.setItem(SUBTITLE_SEEN_KEY, "1");
+      }
+    } catch { /* sessionStorage blocked */ }
+  }, []);
+  return show;
+}
+
 function formatTime(seconds: number): string {
   const s = Math.floor(seconds);
   const m = Math.floor(s / 60);
@@ -133,6 +152,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek } = state;
   const [expanded, setExpanded] = useState(false);
+  const showSubtitles = useFirstEncounterSubtitles();
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url && !audioError;
@@ -153,36 +173,42 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
       <div className="daily-brief" role="complementary" aria-label="Daily Brief">
         {/* Header: label + onair pill */}
         <div className="daily-brief__header">
-          <ScaleIcon size={16} animation="idle" className="daily-brief__sigil" />
-          <span className="daily-brief__label">Daily Brief</span>
+          <ScaleIcon size={14} animation="idle" className="daily-brief__sigil" />
+          <span className="daily-brief__label">
+            void --tl;dr
+            {showSubtitles && <span className="daily-brief__subtitle">The Daily Brief</span>}
+          </span>
           {brief.created_at && (
             <span className="daily-brief__timestamp">{timeAgo(brief.created_at)}</span>
           )}
 
-          {hasAudio && (
-            <button
-              className={`void-onair${isPlaying ? " void-onair--playing" : ""}`}
-              onClick={handlePlayPause}
-              aria-label={isPlaying ? "Pause broadcast" : "Play void onair"}
-              type="button"
-            >
-              <ScaleIcon
-                size={12}
-                animation={isPlaying ? "analyzing" : "idle"}
-                aria-hidden
-              />
-              {isPlaying && <span className="void-onair__dot" />}
-              <span className="void-onair__name">void --onair</span>
-              <span className="void-onair__glyph" aria-hidden="true">
-                {isPlaying ? "\u275A\u275A" : "\u25B6"}
+          <button
+            className={`void-onair${isPlaying ? " void-onair--playing" : ""}${!hasAudio ? " void-onair--disabled" : ""}`}
+            onClick={hasAudio ? handlePlayPause : undefined}
+            aria-label={!hasAudio ? "Audio broadcast — coming soon" : isPlaying ? "Pause broadcast" : "Play void onair"}
+            type="button"
+            disabled={!hasAudio}
+            title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
+          >
+            <ScaleIcon
+              size={12}
+              animation={isPlaying ? "analyzing" : "idle"}
+              aria-hidden
+            />
+            {isPlaying && <span className="void-onair__dot" />}
+            <span className="void-onair__name">
+              void --onair
+              {showSubtitles && <span className="void-onair__subtitle">Audio Broadcast</span>}
+            </span>
+            <span className="void-onair__glyph" aria-hidden="true">
+              {isPlaying ? "\u275A\u275A" : "\u25B6"}
+            </span>
+            {isPlaying && (
+              <span className="void-onair__time">
+                {formatTime(currentTime)}/{formatTime(displayDuration)}
               </span>
-              {isPlaying && (
-                <span className="void-onair__time">
-                  {formatTime(currentTime)}/{formatTime(displayDuration)}
-                </span>
-              )}
-            </button>
-          )}
+            )}
+          </button>
         </div>
 
         {/* Progress bar — thin line below header, visible when playing */}
@@ -218,7 +244,13 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         {/* Opinion section — always visible on desktop, mobile-hidden until expanded */}
         {brief.opinion_text && (
           <div className={`daily-brief__opinion${!expanded ? " daily-brief__opinion--mobile-hidden" : ""}`}>
-            <div className="daily-brief__opinion-label">The Board</div>
+            <div className="daily-brief__opinion-label">
+              <ScaleIcon size={12} animation="idle" />
+              <span>
+                void --opinion
+                {showSubtitles && <span className="daily-brief__subtitle">The Board</span>}
+              </span>
+            </div>
             <p>{brief.opinion_text}</p>
           </div>
         )}
@@ -230,7 +262,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           aria-expanded={expanded}
           aria-controls="daily-brief-body"
         >
-          {expanded ? "Read less" : (brief.opinion_text ? "Read more · The Board" : "Read more")}
+          {expanded ? "Read less" : (brief.opinion_text ? "Read more · void --opinion" : "Read more")}
         </button>
       </div>
     </>

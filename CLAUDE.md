@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-22 (rev 12)
+Last updated: 2026-03-23 (rev 13)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -29,10 +29,43 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 | Frontend | Next.js 16 (App Router), React 19, TypeScript |
 | Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
 | Styling | CSS custom properties, mobile-first, clamp() |
-| Fonts | Playfair Display (editorial), Inter (structural), JetBrains Mono (data) |
+| Fonts | Playfair Display (editorial), Inter (structural), Barlow Condensed (meta), IBM Plex Mono (data) |
 | Hosting | GitHub Pages (frontend), GitHub Actions (pipeline) |
 
 ## Core Principles
+
+### Show, Don't Tell — The Cardinal Rule
+
+Every piece of generated text in void --news — summaries, TL;DR, opinion, audio scripts — MUST embody show-don't-tell writing. This is non-negotiable and applies to all prompts, all output, all future development.
+
+**What this means:**
+- Never assert significance. Show the evidence that makes significance self-evident.
+- Never say "this is important" — place facts side by side so the reader realizes it themselves.
+- Never use "notable," "significant," "it should be noted," "interestingly," "crucially" — these are crutch words that TELL instead of SHOW.
+- Juxtapose concrete facts to reveal patterns. "Three central banks moved in the same direction. Two did so despite domestic pressure. The third didn't have a choice." — the reader sees the pattern without being told.
+- Use specific numbers, names, dates, actions. Abstraction is the enemy of show-don't-tell.
+- The opinion section shows hidden patterns by placing facts next to each other — never by declaring a conclusion.
+
+**BAD:** "It is worth noting that tensions are rising significantly between the two nations."
+**GOOD:** "Both countries recalled their ambassadors within 48 hours. Neither has done that since 1979."
+
+This principle applies to: `cluster_summarizer.py` prompts, `daily_brief_generator.py` prompts, `claude_brief_generator.py` prompts, and any future content generation. When reviewing or modifying prompts, enforce this standard.
+
+### Product Family Branding
+
+CLI-style naming convention — every feature is a command the user runs. Transparent, no mystery.
+
+| Brand | English Subtitle | Purpose |
+|-------|-----------------|---------|
+| `void --news` | — | The platform |
+| `void --tl;dr` | The Daily Brief | Top stories, editorially weighed |
+| `void --onair` | Audio Broadcast | Two-voice BBC-style news conversation |
+| `void --opinion` | The Board | Observational editorial judgment |
+| `void --sources` | Source Spectrum | 370 outlets on one axis |
+| `void --deep-dive` | Story Analysis | Per-story bias breakdown |
+| `void --paper` | Broadsheet Edition | E-paper reading experience |
+
+English subtitles appear on first encounter (sessionStorage) then fade. The CLI aesthetic signals transparency and anti-marketing — users are querying, not passively consuming. Extended branding should follow this pattern for any new feature.
 
 ### Zero Operational Cost
 - No paid APIs. All bias analysis is rule-based NLP running locally.
@@ -139,7 +172,7 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
 
 **TL;DR** (`tldr_text`): 8-12 sentences as a flowing editorial paragraph (150-220 words). Written as a joint editorial board voice — expert writers from left, center, and right. Opinionated about significance, neutral on partisanship. Writes about the world, never about coverage patterns or media behavior. Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
 
-**Opinion** (`opinion_text`): 3-5 sentences (80-120 words) from "The Board." Genuinely opinionated editorial judgment in first person plural ("we"). Where the TL;DR says what happened, the opinion says what the board thinks about it. Italic Playfair Display, separated by thin rule. Revealed on "Read more" expansion. Same Gemini API call as TL;DR — $0 extra cost.
+**Opinion** (`opinion_text`): 3-5 sentences (80-120 words) from "The Board." Genuinely opinionated editorial judgment in first person plural ("we"). Where the TL;DR says what happened, the opinion says what the board thinks about it. Italic Playfair Display, fg-primary color, text-md size. Separated from TL;DR by 2px dotted editorial firewall rule. Desktop: always visible. Mobile: hidden behind "Read more · The Board" toggle (3-line clamp). Same Gemini API call as TL;DR — $0 extra cost.
 
 **Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. **Gemini 2.5 Flash TTS** (`gemini-2.5-flash-preview-tts`) generates both speakers in a single API call with LLM-native prosody, natural turn-taking, and conversational rhythm — no per-turn synthesis or stitching needed. Script converted to `One:`/`Two:` dialogue format, artifacts stripped. PCM 24kHz output → pydub post-processing (Glass & Gravity sonic identity: D major 9th bloom intro, glass-bell story transitions, resolving outro; no background bed) → MP3 192k mono → Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
 
@@ -178,7 +211,7 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
  7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
  7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
  7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
+ 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table. Non-audio runs (00:00, 12:00 UTC) carry forward audio fields (audio_url, audio_script, audio_duration) from the previous brief so audio is never buried by text-only updates.
  8.  STORE         — Write clusters; sections[] array from all editions covered
  8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
  9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
@@ -195,13 +228,16 @@ Modern newspaper aesthetic. Serif headlines, editorial layout sensibility. **Cle
 
 Adapted from DondeAI's "Ink & Momentum": spring physics for user-initiated actions, ease-out for system reveals.
 
-### Three Voices of Type
+### Four Voices of Type
 
 | Voice | Font | Use For |
 |-------|------|---------|
 | Editorial | Playfair Display | Headlines, story titles, section headers |
 | Structural | Inter | Body text, labels, navigation, buttons |
-| Data | JetBrains Mono | Bias scores, source counts, timestamps, metrics |
+| Meta | Barlow Condensed | Category tags, source counts, timestamps, edition metadata (Franklin Gothic / News Gothic newspaper tradition) |
+| Data | IBM Plex Mono | Bias scores, numeric data (humanist monospace; institutional warmth, not a coding font) |
+
+CSS variable: `--font-meta` (Barlow Condensed). IBM Plex Mono replaces JetBrains Mono for data display.
 
 ### Responsive Strategy — One Project, Two Layouts
 
@@ -228,16 +264,18 @@ Mobile rules:
 - Each card: headline, source count, key bias indicators (BiasLens).
 - "Last updated" timestamp + Refresh button (confirmation dialog).
 - Sections: World / US / India.
-- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 4 lines with "Read more" toggle. Always fetches world brief regardless of active edition.
+- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. Opinion ("The Board") always visible on desktop; separated by 2px dotted editorial firewall rule; italic Playfair Display. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 3 lines with "Read more · The Board" toggle (opinion hidden). Always fetches world brief regardless of active edition.
 
 #### 2. Deep Dive Dashboard
 - Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
-- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" toggle at 600+ chars.
-- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources alternate rows) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile).
-- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text).
+- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" overflow detected via ResizeObserver (not character count). Gradient overlay hidden when content fits (`dd-collapsible--fits` class).
+- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources use 3-row algorithm for dense clusters, no max-height cap, "+N more" expand button when >6 sources) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile). Zone labels smaller font on mobile.
+- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text). Expand panel: max-height 60vh with overflow-y scroll.
 - **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
-- Slot-machine cascade: `translateY(12px) → 0`. Desktop: `opacity 200ms ease-out, transform 350ms spring`, reveal delay 120ms. Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms.
-- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition.
+- Action buttons: WCAG 44×44px touch targets.
+- **Panel open animation**: `var(--spring-bouncy)` 500ms with genuine overshoot. **Close**: `var(--spring-snappy)` 380ms. Asymmetric: slow open, fast close.
+- Slot-machine cascade: `translateY(12px) → 0`. Desktop: content reveal 180ms delay (was 400ms). Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms. rAF snap uses `setTimeout(0)` for 90/120Hz reliability.
+- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition; fallback 200ms opacity ramp.
 - iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator, momentum scroll, safe-area insets.
 
 ### Interaction Model
@@ -253,9 +291,10 @@ Mobile rules:
 
 | Preset | Stiffness | Damping | Mass | Use Case |
 |--------|-----------|---------|------|----------|
-| snappy | 600 | 35 | 1 | Buttons, toggles, filter chips |
+| snappy | 600 | 35 | 1 | Buttons, toggles, filter chips; Deep Dive close (380ms) |
 | smooth | 280 | 22 | 1 | Cards, panels, story expansion |
 | gentle | 150 | 12 | 1.2 | Page transitions, view switches |
+| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` token |
 
 ### Duration Tokens
 
@@ -275,9 +314,9 @@ Mobile rules:
 ### Rules
 - GPU-only: animate transform + opacity only.
 - Accessible: all → 0ms under `prefers-reduced-motion`.
-- Symmetric: open/close use identical duration and easing.
+- Asymmetric for panels: open uses `--spring-bouncy` (500ms, overshoot), close uses `--spring-snappy` (380ms, tight). Symmetric for micro-interactions (chips, toggles).
 - Interruptible: no animation locks.
-- Max 3 simultaneous springs, 60fps target.
+- Max 3 simultaneous springs, 60fps target. rAF snap via `setTimeout(0)` for 90/120Hz reliability.
 
 ## CSS Architecture
 

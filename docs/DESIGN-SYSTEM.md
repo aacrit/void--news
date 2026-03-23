@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.8
-**Last updated:** 2026-03-22 (rev 7)
+**Version:** 1.9
+**Last updated:** 2026-03-23 (rev 8)
 
 ---
 
@@ -16,13 +16,14 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 
 ---
 
-## 2. Typography — Three Voices
+## 2. Typography — Four Voices
 
 | Voice | Font | Weight | Use |
 |-------|------|--------|-----|
 | **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes |
 | **Structural** | Inter | 400, 500, 600 | Body text, navigation, labels, buttons, UI chrome |
-| **Data** | JetBrains Mono | 400, 500 | Bias scores, source counts, timestamps, metrics, BiasLens data labels |
+| **Meta** | Barlow Condensed | 400, 500, 600 | Category tags, source counts, timestamps, edition metadata; condensed grotesque in Franklin Gothic / News Gothic newspaper tradition; `--font-meta` CSS variable |
+| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels; humanist monospace with institutional warmth (not a coding font) |
 
 ### Type Scale (Fluid)
 
@@ -39,7 +40,8 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 
 - Headlines: Playfair Display 700, sentence case
 - Body: Inter 400, 1.6 line height, max 65ch measure
-- Data labels: JetBrains Mono 400, all-caps for axis labels, tabular-nums
+- Meta labels: Barlow Condensed 500, all-caps for category tags, condensed letter-spacing
+- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums
 - Never mix voices within a single element
 - Headline hierarchy: hero > xl > lg (max 3 levels visible at once)
 
@@ -365,18 +367,20 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 ### Principles
 
 1. **Purposeful** — every animation communicates state change, never decorative
-2. **Symmetric** — open/close, in/out use identical timing
+2. **Asymmetric for panels** — Deep Dive open uses `--spring-bouncy` (500ms, genuine overshoot); close uses `--spring-snappy` (380ms, tight). Micro-interactions (chips, toggles) remain symmetric.
 3. **Accessible** — all → 0ms under `prefers-reduced-motion: reduce`
 4. **Performant** — only animate transform and opacity (GPU composite)
 5. **Interruptible** — no animation locks
+6. **High-refresh ready** — rAF snap via `setTimeout(0)` for 90/120Hz reliability
 
 ### Spring Presets
 
 | Preset | Stiffness | Damping | Mass | Use |
 |--------|-----------|---------|------|-----|
-| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles |
+| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles; Deep Dive close (380ms) |
 | smooth | 280 | 22 | 1 | Card expansion, panel slides |
 | gentle | 150 | 12 | 1.2 | View transitions (feed ↔ deep dive) |
+| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` CSS token |
 
 ### Duration Tokens
 
@@ -396,8 +400,8 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Story card | Page load | fadeInUp (opacity + translateY 12px→0) | 300ms, 40ms stagger |
 | Dot matrix | Card appear | Dots fade in left-to-right | 150ms, 30ms stagger |
 | Bias tooltip | Hover/tap | Scale from 0.95→1, opacity 0→1 | 150ms ease-out |
-| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile); JS-driven translateX/translateY | 500ms spring (panel), instant opacity-on, 500ms delay opacity-off |
-| Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: opacity 200ms + transform 350ms spring; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Content reveal: 120ms delay desktop, 30ms delay mobile |
+| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile); JS-driven translateX/translateY | Open: `--spring-bouncy` 500ms (genuine overshoot); Close: `--spring-snappy` 380ms; fallback: 200ms opacity ramp |
+| Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: content reveal 180ms; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Desktop reveal delay 120ms, mobile 30ms |
 | Press Analysis expand | Click ▶ trigger | grid-template-rows 0fr→1fr | var(--dur-morph) ease-out desktop; 300ms ease-out mobile |
 | Filter chips | Select | Scale 1→0.97→1, fill color wipe | 200ms spring |
 | Refresh confirm | Tap refresh | Modal scale from 0.95, backdrop fade | 300ms ease-out |
@@ -427,8 +431,8 @@ Active components in `frontend/app/components/`:
 | `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: FLIP morph open/close (card expands into panel via inverse transform; reverse on close). Seamless lede (viewport-responsive height, "Read more" at 600+ chars). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`. Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Content reveal cascade: 120ms delay desktop, 30ms mobile. Panel `opacity:0` CSS safety + JS asymmetric opacity transition. | Per-source BiasLens (sm) |
-| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels. Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. Nearby sources (within 8%) alternate rows to avoid overlap. Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
+| `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms. Content reveal 180ms desktop, 30ms mobile. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
+| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels (smaller font on mobile). Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. No max-height cap. 3-row algorithm for dense source clustering. "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
 | `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
