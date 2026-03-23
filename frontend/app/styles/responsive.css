@@ -223,11 +223,6 @@
     padding-bottom: max(var(--space-2), env(safe-area-inset-bottom, 0px));
   }
 
-  /* Desktop tabs hidden on mobile — sections via bottom nav */
-  .nav-tabs {
-    display: none;
-  }
-
   /* [USER REQUEST] Mobile header: show full logo + edition/date.
      Desktop logo hidden; mobile logo (compact LogoFull at 22px) shown. */
   .nav-logo-desktop {
@@ -610,11 +605,6 @@
       background-color 200ms var(--ease-out),
       transform 200ms var(--ease-out),
       opacity 200ms var(--ease-out);
-  }
-
-  /* Nav tab underline animations: instant on mobile — avoids layout thrash */
-  .nav-tab::after {
-    transition: none;
   }
 
   /* === STAGGER ANIMATION — FASTER ON MOBILE === */
