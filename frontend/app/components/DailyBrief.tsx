@@ -215,9 +215,9 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           ))}
         </div>
 
-        {/* Opinion section — editorial board's take */}
-        {brief.opinion_text && expanded && (
-          <div className="daily-brief__opinion">
+        {/* Opinion section — always visible on desktop, mobile-hidden until expanded */}
+        {brief.opinion_text && (
+          <div className={`daily-brief__opinion${!expanded ? " daily-brief__opinion--mobile-hidden" : ""}`}>
             <div className="daily-brief__opinion-label">The Board</div>
             <p>{brief.opinion_text}</p>
           </div>
@@ -230,7 +230,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           aria-expanded={expanded}
           aria-controls="daily-brief-body"
         >
-          {expanded ? "Read less" : "Read more"}
+          {expanded ? "Read less" : (brief.opinion_text ? "Read more · The Board" : "Read more")}
         </button>
       </div>
     </>

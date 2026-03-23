@@ -50,6 +50,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [summaryOverflows, setSummaryOverflows] = useState(false);
+  const summaryInnerRef = useRef<HTMLDivElement>(null);
   const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
   const [comparativeOpen, setComparativeOpen] = useState(false);
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
@@ -467,6 +469,21 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
+  /* ---- Detect summary overflow — show "Read more" only when text is clipped ---- */
+  useEffect(() => {
+    const el = summaryInnerRef.current;
+    if (!el || summaryExpanded) return;
+
+    const check = () => {
+      setSummaryOverflows(el.scrollHeight > el.clientHeight + 2);
+    };
+
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [summaryExpanded, story.summary, contentVisible]);
+
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
     hapticLight();
@@ -739,14 +756,14 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
           {/* ---- Summary — flows as article lede, after action bar -------------- */}
           <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
-            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
-              <div className="dd-collapsible__inner">
+            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+              <div className="dd-collapsible__inner" ref={summaryInnerRef}>
                 <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
                   {story.summary}
                 </p>
               </div>
             </div>
-            {story.summary && story.summary.length > 600 && !summaryExpanded && (
+            {summaryOverflows && !summaryExpanded && (
               <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
             )}
           </section>

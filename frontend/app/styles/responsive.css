@@ -36,6 +36,11 @@
     border-right: none;
     padding-right: 0;
   }
+
+  /* Daily Brief: always show opinion on tablet/desktop — no expand needed */
+  .daily-brief__opinion--mobile-hidden {
+    display: block;
+  }
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
@@ -739,7 +744,7 @@
   /* Clamp long briefs on mobile — expand via toggle */
   .daily-brief__body--mobile-clamp {
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     /* Prevent last visible line from stretching when clamped */
@@ -755,6 +760,12 @@
   /* void --onair: hide time on mobile to save space */
   .void-onair__time {
     display: none;
+  }
+
+  /* Spectrum: tighter zone labels on mobile */
+  .dd-spectrum__zone-label {
+    font-size: 6px;
+    letter-spacing: 0;
   }
 }
 
