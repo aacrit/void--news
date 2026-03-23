@@ -110,9 +110,7 @@ function getFramingColor(v: number): string {
   return getSenseColor(v);
 }
 
-function getConfidenceColor(pct: number): string {
-  return getRigorColor(pct);
-}
+
 
 /* ── Label helpers ──────────────────────────────────────────────────────── */
 

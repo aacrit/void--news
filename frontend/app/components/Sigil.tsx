@@ -86,14 +86,6 @@ function leanLabel(v: number): string {
 }
 
 
-function qualityColor(v: number, invert = false): string {
-  const c = gc(); const s = invert ? 100 - v : v;
-  if (s <= 30) return c["--sense-low"];
-  if (s <= 60) return lerp(c["--sense-low"], c["--sense-medium"], (s - 30) / 30);
-  if (s <= 80) return lerp(c["--sense-medium"], c["--sense-high"], (s - 60) / 20);
-  return c["--sense-high"];
-}
-
 /* ── Hover hook ────────────────────────────────────────────────────────── */
 
 function useHover() {
