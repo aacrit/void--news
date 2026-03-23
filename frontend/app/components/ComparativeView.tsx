@@ -98,17 +98,15 @@ export default function ComparativeView({ sources }: ComparativeViewProps) {
     const result: Record<string, BucketSource[]> = { Left: [], Center: [], Right: [] };
     for (const src of sources) {
       const lean = src.biasScores?.politicalLean ?? 50;
-      const excerpt = [src.name, src.url]
-        .filter(Boolean)
-        .slice(0, 1)
-        .join(" — ")
-        .slice(0, 300);
-      // For the excerpt we use what we have: source name + a short description
-      // (full article text isn't available at this layer, only bias scores)
-      const displayText = `${src.name} — ${lean <= 40 ? "Left-leaning" : lean <= 60 ? "Center" : "Right-leaning"} coverage of this story. Political lean score: ${lean}/100. Factual rigor: ${src.biasScores?.factualRigor ?? "N/A"}/100.`;
-      if (lean <= 40) result.Left.push({ source: src, excerpt: displayText });
-      else if (lean <= 60) result.Center.push({ source: src, excerpt: displayText });
-      else result.Right.push({ source: src, excerpt: displayText });
+      // Use actual article content when available, fall back to structured metadata
+      const excerpt = src.articleSummary
+        ? src.articleSummary.slice(0, 300)
+        : src.articleTitle
+          ? src.articleTitle
+          : `${src.name} coverage. Lean: ${lean}/100.`;
+      if (lean <= 40) result.Left.push({ source: src, excerpt });
+      else if (lean <= 60) result.Center.push({ source: src, excerpt });
+      else result.Right.push({ source: src, excerpt });
     }
     return result;
   }, [sources]);
@@ -153,9 +151,11 @@ export default function ComparativeView({ sources }: ComparativeViewProps) {
                   const lean = source.biasScores?.politicalLean ?? 50;
                   const rigor = source.biasScores?.factualRigor ?? 50;
 
-                  // Build diff-highlighted title text
+                  // Build diff-highlighted text from actual article content
                   const titleText = source.name;
-                  const bodyText = `${bucket.label}-perspective coverage. Lean: ${lean}/100. Factual rigor: ${rigor}/100.`;
+                  const bodyText = source.articleSummary
+                    ? source.articleSummary.slice(0, 300)
+                    : source.articleTitle ?? `Coverage from ${source.name}`;
                   const highlighted = diffWords(bodyText, bucket.label, leftTexts, rightTexts);
 
                   return (
@@ -163,16 +163,22 @@ export default function ComparativeView({ sources }: ComparativeViewProps) {
                       {/* Source meta */}
                       <div className="comp-view__item-meta">
                         {favicon && (
-                          /* eslint-disable-next-line @next/next/no-img-element */
-                          <img
-                            src={favicon}
-                            alt=""
-                            width={14}
-                            height={14}
-                            className="comp-view__favicon"
-                            loading="lazy"
-                            onError={(e) => { e.currentTarget.style.display = "none"; }}
-                          />
+                          <span className="comp-view__favicon-wrap">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={favicon}
+                              alt=""
+                              width={14}
+                              height={14}
+                              className="comp-view__favicon"
+                              loading="lazy"
+                              onError={(e) => {
+                                // Remove the wrapper entirely to avoid gap
+                                const wrap = e.currentTarget.parentElement;
+                                if (wrap) wrap.style.display = "none";
+                              }}
+                            />
+                          </span>
                         )}
                         <span className="comp-view__source-name text-data">{titleText}</span>
                         <span className="comp-view__lean-score text-data">

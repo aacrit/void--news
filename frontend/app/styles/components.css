@@ -3085,6 +3085,11 @@
   color: var(--fg-tertiary);
 }
 
+/* Grid column — child of dd-perspectives-grid, relies on auto-placement */
+.dd-perspectives-col {
+  min-width: 0;
+}
+
 .dd-perspectives-list {
   list-style: none;
   padding: 0;
@@ -3508,6 +3513,12 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-2);
+}
+
+.comp-view__favicon-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .comp-view__favicon {
@@ -4084,6 +4095,14 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
+}
+
+.onboard-example--needle {
+  /* Needle variant — horizontal tilt */
+}
+
+.onboard-example--ring {
+  /* Ring variant — circular fill */
 }
 
 .onboard-example__label {
