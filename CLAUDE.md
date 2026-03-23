@@ -258,9 +258,10 @@ Mobile rules:
 
 | Preset | Stiffness | Damping | Mass | Use Case |
 |--------|-----------|---------|------|----------|
-| snappy | 600 | 35 | 1 | Buttons, toggles, filter chips |
+| snappy | 600 | 35 | 1 | Buttons, toggles, filter chips; Deep Dive close (380ms) |
 | smooth | 280 | 22 | 1 | Cards, panels, story expansion |
 | gentle | 150 | 12 | 1.2 | Page transitions, view switches |
+| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` token |
 
 ### Duration Tokens
 
@@ -280,9 +281,9 @@ Mobile rules:
 ### Rules
 - GPU-only: animate transform + opacity only.
 - Accessible: all → 0ms under `prefers-reduced-motion`.
-- Symmetric: open/close use identical duration and easing.
+- Asymmetric for panels: open uses `--spring-bouncy` (500ms, overshoot), close uses `--spring-snappy` (380ms, tight). Symmetric for micro-interactions (chips, toggles).
 - Interruptible: no animation locks.
-- Max 3 simultaneous springs, 60fps target.
+- Max 3 simultaneous springs, 60fps target. rAF snap via `setTimeout(0)` for 90/120Hz reliability.
 
 ## CSS Architecture
 
