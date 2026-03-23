@@ -101,6 +101,9 @@ interface PositionedSource {
   row: number;  // 0 = first row (closest to bar), 1 = second row
 }
 
+const MAX_VISIBLE_ROWS = 3;
+const COMPACT_LIMIT = 6;
+
 function computePositions(sources: DeepDiveSpectrumSource[]): PositionedSource[] {
   const sorted = [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
   const results: PositionedSource[] = [];
@@ -110,13 +113,17 @@ function computePositions(sources: DeepDiveSpectrumSource[]): PositionedSource[]
     const s = sorted[i];
     const left = Math.max(4, Math.min(96, s.politicalLean));
 
-    // Check if previous item is close — alternate row
+    // Check ALL nearby items to find an open row
+    const occupiedRows = new Set<number>();
+    for (let j = i - 1; j >= 0; j--) {
+      if (Math.abs(left - results[j].left) >= PROXIMITY) break;
+      occupiedRows.add(results[j].row);
+    }
+
+    // Find the first available row (0, 1, 2)
     let row = 0;
-    if (i > 0) {
-      const prev = results[i - 1];
-      if (Math.abs(left - prev.left) < PROXIMITY) {
-        row = prev.row === 0 ? 1 : 0;
-      }
+    while (occupiedRows.has(row) && row < MAX_VISIBLE_ROWS - 1) {
+      row++;
     }
 
     results.push({ source: s, left, row });
@@ -138,9 +145,12 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
     x: number;
     y: number;
   } | null>(null);
+  const [expanded, setExpanded] = useState(sources.length <= COMPACT_LIMIT);
 
-  const positioned = useMemo(() => computePositions(sources), [sources]);
-  const hasSecondRow = positioned.some((p) => p.row === 1);
+  const allPositioned = useMemo(() => computePositions(sources), [sources]);
+  const positioned = expanded ? allPositioned : allPositioned.slice(0, COMPACT_LIMIT);
+  const maxRow = positioned.reduce((max, p) => Math.max(max, p.row), 0);
+  const hiddenCount = expanded ? 0 : Math.max(0, allPositioned.length - COMPACT_LIMIT);
 
   // All hooks must be declared before any early return (Rules of Hooks).
   useEffect(() => {
@@ -210,7 +220,7 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
       {/* ---- Track: logos positioned continuously ---- */}
       <div
         className="dd-spectrum__track"
-        style={{ height: hasSecondRow ? 60 : 34 }}
+        style={{ height: 34 + maxRow * 26 }}
       >
         {positioned.map(({ source, left, row }, index) => {
           const favicon = getFaviconUrl(source.sourceUrl);
@@ -264,6 +274,18 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
           );
         })}
       </div>
+
+      {/* ---- Expand button — shown when sources exceed COMPACT_LIMIT ---- */}
+      {hiddenCount > 0 && (
+        <button
+          className="dd-spectrum__expand"
+          onClick={() => setExpanded(true)}
+          type="button"
+          aria-label={`Show ${hiddenCount} more sources`}
+        >
+          +{hiddenCount} more
+        </button>
+      )}
 
       {/* ---- Tooltip ---- */}
       {tooltip && (
