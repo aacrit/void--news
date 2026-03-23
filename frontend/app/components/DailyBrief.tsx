@@ -153,8 +153,8 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
       <div className="daily-brief" role="complementary" aria-label="Daily Brief">
         {/* Header: label + onair pill */}
         <div className="daily-brief__header">
-          <ScaleIcon size={16} animation="idle" className="daily-brief__sigil" />
-          <span className="daily-brief__label">Daily Brief</span>
+          <ScaleIcon size={14} animation="idle" className="daily-brief__sigil" />
+          <span className="daily-brief__label">void --tl;dr</span>
           {brief.created_at && (
             <span className="daily-brief__timestamp">{timeAgo(brief.created_at)}</span>
           )}
@@ -218,7 +218,10 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         {/* Opinion section — always visible on desktop, mobile-hidden until expanded */}
         {brief.opinion_text && (
           <div className={`daily-brief__opinion${!expanded ? " daily-brief__opinion--mobile-hidden" : ""}`}>
-            <div className="daily-brief__opinion-label">The Board</div>
+            <div className="daily-brief__opinion-label">
+              <ScaleIcon size={12} animation="idle" />
+              <span>void --opinion</span>
+            </div>
             <p>{brief.opinion_text}</p>
           </div>
         )}
@@ -230,7 +233,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           aria-expanded={expanded}
           aria-controls="daily-brief-body"
         >
-          {expanded ? "Read less" : (brief.opinion_text ? "Read more · The Board" : "Read more")}
+          {expanded ? "Read less" : (brief.opinion_text ? "Read more · void --opinion" : "Read more")}
         </button>
       </div>
     </>
