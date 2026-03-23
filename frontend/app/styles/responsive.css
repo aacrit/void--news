@@ -382,11 +382,11 @@
      to the viewport edge — mirrors UITableView section header behaviour.
      backdrop-filter adds the frosted-glass frost as the feed scrolls beneath.
      z-index: var(--z-sticky) keeps it above cards but below nav (--z-nav).
-     top calc accounts for the fixed nav-header height so the section header
-     docks immediately below the nav chrome without overlap. */
+     top calc accounts for the fixed nav-header height AND the sticky lean-bar
+     (--lean-bar-height) so the section header docks below both without overlap. */
   .section-header {
     position: sticky;
-    top: var(--nav-height);
+    top: calc(var(--nav-height) + var(--lean-bar-height));
     z-index: var(--z-sticky);
     backdrop-filter: blur(8px) saturate(1.1);
     -webkit-backdrop-filter: blur(8px) saturate(1.1);

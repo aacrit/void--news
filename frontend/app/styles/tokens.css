@@ -271,6 +271,11 @@
   /* Height of the mobile bottom navigation bar.
      Used for padding-bottom on .page-main so content clears the fixed nav. */
   --nav-bottom-height: 68px;
+
+  /* Height of the sticky lean-bar on mobile (44px min-height + 2px border).
+     Used by .section-header sticky top so it docks below the lean-bar and
+     does not overlap it when both are simultaneously stuck. */
+  --lean-bar-height: 46px;
 }
 
 /* --------------------------------------------------------------------------
