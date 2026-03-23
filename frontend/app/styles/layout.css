@@ -137,12 +137,12 @@
 .deep-dive-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.65);
+  background-color: rgba(0, 0, 0, 0.72);
   z-index: var(--z-overlay);
   cursor: pointer;
-  /* Heavy backdrop blur — full attention on the overlay */
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  /* Cinematic heavy blur — page becomes abstract texture, full attention on overlay */
+  backdrop-filter: blur(48px) saturate(0.5) brightness(0.6);
+  -webkit-backdrop-filter: blur(48px) saturate(0.5) brightness(0.6);
 }
 
 .deep-dive-panel {
@@ -161,7 +161,7 @@
      opacity: 0 safety net; JS-driven isVisible controls actual opacity. */
   opacity: 0;
 
-  /* Glass morphism — mobile base (full-screen has no glass treatment) */
+  /* Solid opaque surface — no see-through, full attention on content */
   background-color: var(--bg-primary);
   box-shadow: var(--shadow-e3);
 }
@@ -191,10 +191,8 @@
 .deep-dive-panel__header {
   position: sticky;
   top: 0;
-  background-color: var(--glass-bg);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  border-bottom: 1px solid var(--glass-border);
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-subtle);
   z-index: 2;
   padding: var(--space-4) var(--space-5);
 }

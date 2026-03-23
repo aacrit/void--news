@@ -369,8 +369,9 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           transition: "none",
         });
 
-        // Step 4: On next paint, animate from card → final (FAST + BOUNCY)
-        // Shadow trails the transform (400ms vs 420ms) — shadows lag motion in real light
+        // Step 4: On next paint, animate from card → final (CINEMATIC + SMOOTH)
+        // Slow spring — panel expands with weight and settles gracefully.
+        // Shadow trails behind (cinematic shadow lag: 80ms delay).
         requestAnimationFrame(() => {
           setMorphStyle({
             transform: "translate(0, 0) scale(1, 1)",
@@ -378,25 +379,24 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             opacity: 1,
             boxShadow: "var(--shadow-e3)",
             transition: [
-              "transform 420ms var(--spring-bouncy)",
-              "border-radius 250ms var(--ease-out)",
-              "box-shadow 400ms var(--ease-out) 50ms",
+              "transform 650ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "border-radius 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "box-shadow 550ms cubic-bezier(0.16, 1, 0.3, 1) 80ms",
             ].join(", "),
           });
 
-          // Step 5: Content starts cascading DURING the morph tail (overlap)
-          // Panel is ~80% settled by 250ms — start content then, not after 420ms
-          setTimeout(() => setContentVisible(true), isDesktopNow ? 220 : 150);
+          // Step 5: Content starts cascading AFTER morph mostly settles (~70%)
+          setTimeout(() => setContentVisible(true), isDesktopNow ? 400 : 250);
 
           // Clear morph style after spring fully settles
-          setTimeout(() => setMorphStyle(null), 420);
+          setTimeout(() => setMorphStyle(null), 700);
         });
       });
     } else {
       /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
       requestAnimationFrame(() => {
         setIsVisible(true);
-        const delay = window.innerWidth >= 768 ? 120 : 30;
+        const delay = window.innerWidth >= 768 ? 350 : 200;
         setTimeout(() => setContentVisible(true), delay);
       });
     }
@@ -472,38 +472,38 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
-        // Phase 2: Panel morphs back to card rect (fast + snappy)
+        // Phase 2: Panel morphs back to card rect (cinematic reverse)
         setMorphStyle({
           transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
           borderRadius: "8px",
           opacity: 0,
           boxShadow: "none",
           transition: [
-            "transform 380ms var(--spring-bouncy)",
-            "border-radius 200ms var(--ease-out)",
-            "opacity 180ms var(--ease-out) 180ms",
-            "box-shadow 150ms var(--ease-out)",
+            "transform 550ms cubic-bezier(0.16, 1, 0.3, 1)",
+            "border-radius 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+            "opacity 250ms cubic-bezier(0.16, 1, 0.3, 1) 250ms",
+            "box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1)",
           ].join(", "),
         });
 
-        // Phase 3: Backdrop fades as panel shrinks
-        setTimeout(() => setIsVisible(false), 150);
+        // Phase 3: Backdrop fades as panel shrinks (delayed for cinematic overlap)
+        setTimeout(() => setIsVisible(false), 220);
 
         // Phase 4: Cleanup
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 380);
-      }, 130); // Content fades 120ms, then morph begins
+        }, 550);
+      }, 180); // Content fades 150ms, pause, then morph begins
     } else {
-      /* ═══ FALLBACK: directional slide-out ═══ */
+      /* ═══ FALLBACK: cinematic slide-out ═══ */
       setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 400);
-      }, 130);
+        }, 550);
+      }, 180);
     }
   }, [onClose, originRect]);
 
@@ -516,7 +516,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         className="deep-dive-backdrop"
         style={{
           opacity: isVisible ? 1 : 0,
-          transition: "opacity 250ms var(--ease-out)",
+          transition: "opacity 450ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       />
 
@@ -530,17 +530,17 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         className="deep-dive-panel"
         style={morphStyle ?? {
           /* Default open/close when no FLIP morph is active.
-             Desktop: scale + translateY from center (spring in, spring out).
-             Mobile: slide from bottom (translateY) — bottom sheet.
-             opacity: instant-on (0ms) when opening; delayed-off when closing. */
+             Desktop: cinematic scale + translateY from center.
+             Mobile: slide from bottom — bottom sheet.
+             Slow, weighted spring — the panel has physical mass. */
           transform: isVisible
             ? isDesktop ? "translate(-50%, -50%) scale(1)" : "translateY(0)"
-            : isDesktop ? "translate(-50%, -50%) scale(0.92) translateY(20px)" : "translateY(100%)",
+            : isDesktop ? "translate(-50%, -50%) scale(0.88) translateY(30px)" : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-e3)" : "none",
           transition: isVisible
-            ? "transform 420ms var(--spring-bouncy), opacity 0ms, box-shadow 300ms var(--ease-out) 100ms"
-            : "transform 380ms var(--spring-bouncy), opacity 0ms 380ms, box-shadow 150ms var(--ease-out)",
+            ? "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), opacity 0ms, box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1) 120ms"
+            : "transform 550ms cubic-bezier(0.16, 1, 0.3, 1), opacity 0ms 550ms, box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
@@ -579,7 +579,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           className="deep-dive-panel__content"
           style={{
             opacity: contentVisible ? 1 : 0,
-            transition: `opacity ${contentVisible ? 300 : 120}ms var(--ease-out)`,
+            transition: `opacity ${contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
           {/* Loading indicator — analyzing animation while fetching deep dive data */}
