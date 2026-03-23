@@ -1526,6 +1526,13 @@ def main():
             _rank_sections = sorted(
                 {a.get("section", "world") for a in cluster_articles_list}
             ) or ["world"]
+            # Store sections on cluster dict early so steps 7c/7d can filter
+            cluster["sections"] = _rank_sections
+            cluster["section"] = max(
+                {a.get("section", "world") for a in cluster_articles_list},
+                key=lambda s: sum(1 for a in cluster_articles_list if a.get("section") == s),
+                default="world",
+            )
             try:
                 rank_result = rank_importance(
                     cluster_articles_list, sources, cluster_bias_scores,
@@ -1598,7 +1605,8 @@ def main():
             try:
                 from summarizer.gemini_client import editorial_triage
                 print("\n[7c] Running editorial triage (Gemini)...")
-                for section_val in ("world", "us", "india"):
+                _all_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
+                for section_val in _all_editions:
                     pool = [c for c in clusters
                             if section_val in (c.get("sections") or [c.get("section", "world")])]
                     pool.sort(
@@ -1659,7 +1667,8 @@ def main():
         }
         MAX_SAME_EVENT = 3
 
-        for section_val in ("world", "us", "india"):
+        _cap_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
+        for section_val in _cap_editions:
             pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
             if len(pool) <= 10:
                 continue
@@ -1695,9 +1704,10 @@ def main():
             )
 
         # Topic diversity re-ranking: prevent any single category from
-        # dominating the top of the feed. Within each section pool (world/us),
+        # dominating the top of the feed. Within each section pool,
         # demote stories that would put >2 of the same category in the top 10.
-        for section_val in ("world", "us", "india"):
+        _div_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
+        for section_val in _div_editions:
             pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
             if len(pool) <= 10:
                 continue
@@ -1743,7 +1753,8 @@ def main():
         # After topic diversity re-rank, demote any cluster whose most recent
         # article is older than 24h below position 10 within each section pool.
         recency_cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
-        for section_val in ("world", "us", "india"):
+        _rec_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
+        for section_val in _rec_editions:
             pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
             pool.sort(key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0)), reverse=True)
 
@@ -2171,7 +2182,7 @@ def main():
     # Clean old daily briefs (keep only latest per edition)
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
-        for ed in ("world", "us", "india"):
+        for ed in ("world", "us", "uk", "india", "canada"):
             old = supabase.table("daily_briefs").select("id").eq(
                 "edition", ed
             ).lt("created_at", cutoff).execute()
