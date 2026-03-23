@@ -445,7 +445,7 @@
     "url": "https://www.bbc.com/news",
     "rss_url": "https://feeds.bbci.co.uk/news/world/rss.xml",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "broadcast",
     "political_lean_baseline": "center",
     "credibility_notes": "World's largest public broadcaster. Charter requires impartiality. Globally trusted for factual reporting, though faces criticism from both left and right in the UK."
@@ -456,7 +456,7 @@
     "url": "https://www.theguardian.com",
     "rss_url": "https://www.theguardian.com/world/rss",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "broadsheet",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Major UK broadsheet owned by Scott Trust (nonprofit). Known for investigative journalism (Snowden leaks, Panama Papers). Open editorial stance."
@@ -467,7 +467,7 @@
     "url": "https://www.independent.co.uk",
     "rss_url": "https://www.independent.co.uk/news/world/rss",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "digital",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Formerly a broadsheet, now digital-only. Centrist-to-liberal editorial line. Owned by Independent Digital News & Media; majority-owned by ADNOC (Abu Dhabi National Oil Company) since 2021 — editorial independence claimed but ownership context is relevant. Replaces The Times UK (hard paywall, no RSS)."
@@ -478,7 +478,7 @@
     "url": "https://www.telegraph.co.uk",
     "rss_url": "https://www.telegraph.co.uk/rss.xml",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "broadsheet",
     "political_lean_baseline": "center-right",
     "credibility_notes": "Major UK broadsheet, founded 1855. Known as 'The Torygraph' for its conservative editorial line. Strong on UK politics and investigations."
@@ -489,7 +489,7 @@
     "url": "https://www.ft.com",
     "rss_url": "https://www.ft.com/rss/home",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Premier global business newspaper. Known for rigorous financial and economic reporting. Owned by Nikkei. Salmon-pink pages are iconic."
@@ -500,7 +500,7 @@
     "url": "https://www.economist.com",
     "rss_url": "https://news.google.com/rss/search?q=site:economist.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "magazine",
     "political_lean_baseline": "center-right",
     "credibility_notes": "Highly influential global affairs weekly. Self-describes as 'classical liberal.' Pro-free-market, socially liberal. Renowned for global analysis."
@@ -866,7 +866,7 @@
     "url": "https://www.spectator.co.uk",
     "rss_url": "https://www.spectator.co.uk/feed/",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "magazine",
     "political_lean_baseline": "right",
     "credibility_notes": "World's oldest weekly magazine (founded 1828). Conservative political and cultural commentary. Highly readable. Owned by Spectator Media. Strong conservative intellectual tradition."
@@ -877,7 +877,7 @@
     "url": "https://news.sky.com",
     "rss_url": "https://feeds.skynews.com/feeds/rss/world.xml",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "broadcast",
     "political_lean_baseline": "center",
     "credibility_notes": "UK commercial 24-hour news channel. Part of Sky Group (Comcast-owned). Generally balanced news reporting. Less partisan than US cable equivalents."
@@ -1240,7 +1240,7 @@
     "url": "https://tribunemag.co.uk",
     "rss_url": "https://tribunemag.co.uk/feed",
     "tier": "independent",
-    "country": "UK",
+    "country": "GB",
     "type": "magazine",
     "political_lean_baseline": "far-left",
     "credibility_notes": "British democratic socialist magazine, relaunched 2018. Historic Tribune was founded 1937 and associated with Aneurin Bevan and George Orwell. Covers UK and international politics from the left. Professional editorial operation."
@@ -1251,7 +1251,7 @@
     "url": "https://www.newstatesman.com",
     "rss_url": "https://www.newstatesman.com/rss/blogs",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "magazine",
     "political_lean_baseline": "left",
     "credibility_notes": "British centre-left political and cultural magazine, founded 1913. Historically associated with Fabian Society. Covers UK and international politics, arts, and culture. Strong investigative and analytical journalism."
@@ -1427,7 +1427,7 @@
     "url": "https://www.opendemocracy.net",
     "rss_url": "https://www.opendemocracy.net/en/rss.xml",
     "tier": "independent",
-    "country": "UK",
+    "country": "GB",
     "type": "digital",
     "political_lean_baseline": "left",
     "credibility_notes": "UK-based independent global media platform covering democracy and power. Founded 2001. Left-leaning editorial perspective with international scope. Funded by foundations and donations."
@@ -1504,7 +1504,7 @@
     "url": "https://unherd.com",
     "rss_url": "https://unherd.com/feed/",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "digital",
     "political_lean_baseline": "center-right",
     "credibility_notes": "UK-based media outlet founded 2017 by Tim Montgomerie. Aims to challenge mainstream consensus from various angles. Often center-right to right editorial perspective. High-quality long-form commentary."
@@ -1515,7 +1515,7 @@
     "url": "https://capx.co",
     "rss_url": "https://capx.co/feed/",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "digital",
     "political_lean_baseline": "center-right",
     "credibility_notes": "Centre for Policy Studies publication. Free-market, center-right economics and politics. UK-based. High quality intellectual conservative commentary on policy and economics."
@@ -1658,7 +1658,7 @@
     "url": "https://www.prospectmagazine.co.uk",
     "rss_url": "https://www.prospectmagazine.co.uk/feed/",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "magazine",
     "political_lean_baseline": "center-left",
     "credibility_notes": "British center-left magazine of politics, ideas, and culture, founded 1995. In-depth analysis of UK and international politics. High-quality journalism and intellectual commentary."
@@ -1702,7 +1702,7 @@
     "url": "https://www.middleeasteye.net",
     "rss_url": "https://www.middleeasteye.net/rss",
     "tier": "international",
-    "country": "UK",
+    "country": "GB",
     "type": "digital",
     "political_lean_baseline": "center-left",
     "credibility_notes": "UK-based digital news outlet covering the Middle East and North Africa. Founded 2014. Independent with center-left editorial perspective. Strong on conflict zones and human rights in the region."
@@ -1856,7 +1856,7 @@
     "url": "https://www.thebureauinvestigates.com",
     "rss_url": "https://www.thebureauinvestigates.com/feed",
     "tier": "independent",
-    "country": "UK",
+    "country": "GB",
     "type": "investigative",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Independent nonprofit investigative newsroom based in London. Founded 2010. Known for drone strike investigations, corporate accountability reporting. Generally center-left on editorial framing."
@@ -4074,5 +4074,115 @@
     "type": "investigative",
     "political_lean_baseline": "center",
     "credibility_notes": "Nigeria-based data journalism. Tracks public spending. Award-winning."
+  },
+  {
+    "id": "global-news-ca",
+    "name": "Global News",
+    "url": "https://globalnews.ca",
+    "rss_url": "https://globalnews.ca/feed/",
+    "tier": "international",
+    "country": "CA",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Corus Entertainment. Canada's second national commercial broadcast network."
+  },
+  {
+    "id": "hill-times",
+    "name": "The Hill Times",
+    "url": "https://www.hilltimes.com",
+    "rss_url": "https://www.hilltimes.com/feed",
+    "tier": "independent",
+    "country": "CA",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Ottawa-based political coverage. Covers Parliament Hill and federal policy."
+  },
+  {
+    "id": "i-news",
+    "name": "i News",
+    "url": "https://inews.co.uk",
+    "rss_url": "https://inews.co.uk/feed",
+    "tier": "international",
+    "country": "GB",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Independent-leaning UK digital newspaper. Owned by Daily Mail group but maintains editorial independence."
+  },
+  {
+    "id": "ipolitics",
+    "name": "iPolitics",
+    "url": "https://www.ipolitics.ca",
+    "rss_url": "https://www.ipolitics.ca/feed",
+    "tier": "independent",
+    "country": "CA",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Subscriber-funded parliamentary journalism. Essential for federal politics coverage."
+  },
+  {
+    "id": "macleans",
+    "name": "Maclean's",
+    "url": "https://macleans.ca",
+    "rss_url": "https://macleans.ca/feed/",
+    "tier": "international",
+    "country": "CA",
+    "type": "magazine",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Canada's weekly magazine of record. Est. 1905."
+  },
+  {
+    "id": "montreal-gazette",
+    "name": "Montreal Gazette",
+    "url": "https://montrealgazette.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:montrealgazette.com+when:24h&hl=en-CA&gl=CA&ceid=CA:en",
+    "tier": "international",
+    "country": "CA",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Postmedia. Quebec English-language daily. Essential for bilingual Canada coverage."
+  },
+  {
+    "id": "national-observer",
+    "name": "National Observer",
+    "url": "https://www.nationalobserver.com",
+    "rss_url": "https://www.nationalobserver.com/rss.xml",
+    "tier": "independent",
+    "country": "CA",
+    "type": "investigative",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Investigative journalism focused on climate and politics. Est. 2014."
+  },
+  {
+    "id": "ricochet-media",
+    "name": "Ricochet Media",
+    "url": "https://ricochet.media",
+    "rss_url": "https://ricochet.media/feed",
+    "tier": "independent",
+    "country": "CA",
+    "type": "investigative",
+    "political_lean_baseline": "left",
+    "credibility_notes": "Left investigative journalism. English and French editions. Balances right-leaning outlets."
+  },
+  {
+    "id": "the-conversation-uk",
+    "name": "The Conversation UK",
+    "url": "https://theconversation.com/uk",
+    "rss_url": "https://theconversation.com/uk/articles.atom",
+    "tier": "independent",
+    "country": "GB",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Academic-to-public journalism. Expert-written, peer-reviewed. Strong factual rigor."
+  },
+  {
+    "id": "true-north",
+    "name": "True North",
+    "url": "https://tnc.news",
+    "rss_url": "https://tnc.news/feed/",
+    "tier": "independent",
+    "country": "CA",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Right-leaning Canadian digital media. Provides conservative voice in Canadian landscape."
   }
 ]

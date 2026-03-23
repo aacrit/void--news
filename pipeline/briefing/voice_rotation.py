@@ -25,6 +25,14 @@ VOICE_PAIRS: dict[str, dict[str, dict]] = {
         "voice_a": {"id": "Puck"},
         "voice_b": {"id": "Leda"},
     },
+    "uk": {
+        "voice_a": {"id": "Achird"},
+        "voice_b": {"id": "Rasalgethi"},
+    },
+    "canada": {
+        "voice_a": {"id": "Algieba"},
+        "voice_b": {"id": "Umbriel"},
+    },
 }
 
 
