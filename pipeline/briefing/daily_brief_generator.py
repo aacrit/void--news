@@ -107,87 +107,52 @@ brief didn't make, surfaces what's hidden in plain sight.
 places three facts side by side and the reader suddenly sees the larger shape.
 
 For the audio script:
-- TWO VOICES. Think Vox's "Today Explained" energy — curious, substantive, human.
-- Total spoken duration: 3-5 minutes (500-750 words).
-- These are two journalists who genuinely find this material interesting. They \
-think out loud together. They're not reading — they're explaining.
-- No names, no titles, no introductions. Don't say "I'm your host." Just start.
-- Voice A drives most of the narrative. Voice B adds the "wait, here's why that \
-matters" angles, asks the questions the listener is forming, provides context \
-that reframes what A just said.
-- This is NOT two newsreaders alternating. It's two people who are curious about \
-the same thing and bring different angles to it.
+- Two people talking about the news. That's it. Not newsreaders. Not hosts. \
+Two smart friends who read everything and are catching each other up.
+- 3-5 minutes (500-750 words).
+- Each line starts with "A:" or "B:". No other formatting. No [MARKERS]. No \
+segment labels. Just the conversation.
+- A and B take turns naturally. Sometimes A talks for a while. Sometimes B \
+jumps in after one sentence. It flows like a real conversation — not a script \
+with assigned roles.
 
-Dialogue rules (CRITICAL):
-- Each line MUST start with "A:" or "B:" (the speaker tag).
-- NATURAL PACING. Do not rush. Let sentences breathe. Pause between ideas.
-- A talks for 2-4 sentences, then B comes in — not to react, but to ADD. \
-B might reframe, challenge, contextualize, or explain the "so what."
-- Substantive reactions are allowed and encouraged. B can say: \
-"But that contradicts what they said last month." \
-"So basically this means..." \
-"Here's what's actually going on." \
-"That's a bigger deal than it sounds." \
-These are EARNED reactions — they advance understanding. They are not filler.
-- STILL BANNED (hollow filler): "Mm.", "Right.", "That's notable.", "Indeed.", \
-"That's a fair point.", "Good point.", "Absolutely.", "Interesting."
-- Contractions everywhere. "It's", "that's", "here's the thing", "doesn't."
-- Direct address to listener is fine: "So here's what you need to know." \
-"Think about it this way."
-- Vary sentence length dramatically. Short punchy sentences next to longer ones.
+How they talk:
+- They go straight to the stories. No preamble, no "welcome to," no "let's \
+get into it." First line is already about a story.
+- They USE EACH OTHER'S WORDS. B picks up something A said and runs with it. \
+A reacts to what B just explained. They're listening to each other, not \
+delivering prepared paragraphs.
+- They think out loud. "Wait, but doesn't that mean..." / "So if they actually \
+do that..." / "The part that gets me is..."
+- Contractions everywhere. Sentence fragments are fine. "Which — honestly? \
+Kind of wild." That's how people talk.
+- They explain things with concrete details, not labels. Don't say "the economy \
+is struggling" — say "grocery prices are up 14% since January."
+- No filler reactions. BANNED: "Mm.", "Right.", "Indeed.", "Good point.", \
+"Absolutely.", "Interesting.", "That's notable.", "That's a fair point."
+- No meta-commentary about coverage or media. They talk about the world.
+- Numbers: write out small ones ("three"). Use figures for big ones ("$1.4 trillion").
 
-Explanatory style (the Vox signature):
-- Don't just say WHAT happened. Explain WHY. "Here's what's actually going on" \
-is better than delivering three facts and moving on.
-- Use concrete analogies. "That's like if your bank suddenly started buying \
-houses on your behalf" beats "The central bank expanded its balance sheet."
-- Anticipate confusion. If something is counterintuitive, say so: "Now this \
-sounds backwards, but..." or "You'd think that would mean X. It doesn't."
-- The cold open hook: start [OPEN] with a surprising fact or provocative framing \
-that makes the listener lean in. THEN explain.
+The conversation:
+- Start with the most important story. Jump right in. A or B says the thing \
+that happened, and they go from there.
+- Cover 3-5 stories. Spend more time on the big ones, less on the smaller \
+ones. Some stories get 30 seconds, some get 90. No formula.
+- Stories flow into each other naturally. Sometimes there's a real connection \
+("Speaking of money..." / "And that's not the only thing moving in Asia..."). \
+Sometimes one just ends and the next begins. Don't force transitions.
+- End clean. Last story wraps up, one of them says something that puts the \
+day in perspective — a thought, not a summary. Then: "void news." Done.
 
-Tone (through craft):
-- Conflict or loss: slow down. Shorter sentences. Let facts carry weight.
-- Economic or policy: engaged energy. You're interested in this. Show it.
-- Human interest: warmth. The one place for a genuine aside.
-- Close: direct editorial voice. What does today actually mean?
-- NEVER tell the listener how to feel. The facts and your delivery do that.
-
-Structure using exact markers on their own lines:
-  [OPEN]
-  A: Hook — a surprising fact, a provocative framing, or the single most important \
-thing that happened. Then: "This is void news. Here's what you need to know."
-
-  [STORY_1]
-  The lead — give it room. ~90 seconds total.
-  A: Sets up the story — what happened, framed with a hook.
-  B: The "so what" — why this matters, what it actually means, context that \
-reframes the headline. This is the Vox move: explain, don't just report.
-  A: The detail that makes it real — a specific number, a concrete consequence.
-
-  [STORY_2]
-  ~60 seconds total. Either voice leads.
-  Tighter coverage but still explain WHY, not just WHAT.
-
-  [STORY_3]
-  ~30-40 seconds. Quick hit. The fact, one line of context, move on.
-
-  [CLOSE]
-  B: Direct editorial take — what today means, what question hangs unanswered, \
-or what nobody is paying attention to. Say it plainly. (~15 seconds)
-  A: "void news." Clean stop.
-
-- PACE: Do not rush between stories. Insert a deliberate pause. Let each story land \
-before starting the next. The listener needs a breath.
-- Numbers: write out small numbers ("three"). Figures for large ("$1.4 trillion").
-- Rhetorical questions are allowed when they serve explanation: "So why would Iran \
-agree to that?" Then answer it.
-
-Recency and freshness:
-- Stories tagged [NEW] or [CONTINUING]. Lead with [NEW] stories.
-- For [CONTINUING]: don't repeat background. Focus only on what changed. \
-"Here's what's new on the Iran talks." One or two sentences max.
-- If everything is [CONTINUING]: "The big stories are still moving. Here's what changed."\
+What makes it good:
+- Specific details. Names, numbers, places, dates. Not "officials say" — \
+"the Treasury Secretary said Tuesday."
+- The why. Don't just say what happened. Say why it matters or what it means. \
+But show it through facts, don't announce it.
+- Surprise. The detail the listener didn't expect. The connection between \
+two stories they wouldn't have made.
+- Stories tagged [NEW] come first. [CONTINUING] stories: skip background, \
+just say what changed.\
 """
 
 # ---------------------------------------------------------------------------
@@ -245,14 +210,10 @@ def _check_quality(result: dict, edition: str) -> None:
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
     if found:
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
-    required_markers = [
-        "[OPEN]",
-        "[STORY_1]", "[STORY_2]", "[STORY_3]",
-        "[CLOSE]",
-    ]
-    missing = [m for m in required_markers if m not in script]
-    if missing:
-        print(f"  [quality][brief:{edition}] Missing script markers: {missing}")
+    # Validate script has actual dialogue (A:/B: speaker tags)
+    speaker_lines = [l for l in script.splitlines() if l.strip().startswith(("A:", "B:"))]
+    if len(speaker_lines) < 10:
+        print(f"  [quality][brief:{edition}] Script has only {len(speaker_lines)} speaker lines (expected 10+)")
 
 
 def _get_previous_cluster_ids(edition: str) -> set[str]:

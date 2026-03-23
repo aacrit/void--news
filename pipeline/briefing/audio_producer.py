@@ -94,29 +94,45 @@ def _script_to_dialogue(audio_script: str) -> str:
 # Gemini TTS synthesis
 # ---------------------------------------------------------------------------
 
-def _synthesize_gemini_tts(
-    dialogue: str,
+def _chunk_dialogue(dialogue: str, max_words: int = 350) -> list[str]:
+    """Split dialogue into chunks at natural speaker-turn boundaries.
+
+    Gemini TTS can truncate long inputs. Splitting at ~350 words per chunk
+    keeps each call well within limits. Chunks split between speaker turns
+    so no line is cut mid-sentence.
+    """
+    lines = dialogue.strip().splitlines()
+    chunks: list[str] = []
+    current_lines: list[str] = []
+    current_words = 0
+
+    for line in lines:
+        line_words = len(line.split())
+        # If adding this line exceeds limit and we have content, start new chunk
+        if current_words + line_words > max_words and current_lines:
+            chunks.append("\n".join(current_lines))
+            current_lines = []
+            current_words = 0
+        current_lines.append(line)
+        current_words += line_words
+
+    if current_lines:
+        chunks.append("\n".join(current_lines))
+
+    return chunks
+
+
+def _synthesize_single_chunk(
+    client,
+    dialogue_chunk: str,
     voice_a: str,
     voice_b: str,
 ) -> Optional[bytes]:
-    """Generate two-speaker audio via Gemini 2.5 Flash TTS.
-
-    Returns raw PCM audio bytes (24kHz 16-bit mono), or None on failure.
-    """
-    if not GEMINI_TTS_AVAILABLE:
-        return None
-
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        print("  [warn][audio] GEMINI_API_KEY not set")
-        return None
-
+    """Synthesize a single dialogue chunk via Gemini TTS. Returns raw PCM or None."""
     try:
-        client = genai.Client(api_key=api_key)
-
         response = client.models.generate_content(
             model=_TTS_MODEL,
-            contents=dialogue,
+            contents=dialogue_chunk,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
@@ -148,13 +164,50 @@ def _synthesize_gemini_tts(
             part = response.candidates[0].content.parts[0]
             if hasattr(part, "inline_data") and part.inline_data:
                 return part.inline_data.data
-
-        print("  [warn][audio] Gemini TTS returned no audio data")
-        return None
-
     except Exception as e:
-        print(f"  [warn][audio] Gemini TTS synthesis failed: {e}")
+        print(f"  [warn][audio] Gemini TTS chunk failed: {e}")
+
+    return None
+
+
+def _synthesize_gemini_tts(
+    dialogue: str,
+    voice_a: str,
+    voice_b: str,
+) -> Optional[bytes]:
+    """Generate two-speaker audio via Gemini 2.5 Flash TTS.
+
+    Chunks long dialogues to avoid TTS truncation. Each chunk is synthesized
+    separately and the raw PCM bytes are concatenated (same sample rate/format).
+
+    Returns raw PCM audio bytes (24kHz 16-bit mono), or None on failure.
+    """
+    if not GEMINI_TTS_AVAILABLE:
         return None
+
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        print("  [warn][audio] GEMINI_API_KEY not set")
+        return None
+
+    client = genai.Client(api_key=api_key)
+    chunks = _chunk_dialogue(dialogue)
+
+    if len(chunks) == 1:
+        return _synthesize_single_chunk(client, chunks[0], voice_a, voice_b)
+
+    print(f"  [audio] Long script — synthesizing in {len(chunks)} chunks")
+    all_pcm = bytearray()
+    for i, chunk in enumerate(chunks):
+        pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b)
+        if pcm is None:
+            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed — aborting")
+            return None
+        all_pcm.extend(pcm)
+        chunk_dur = len(pcm) / (24000 * 2)
+        print(f"  [audio] Chunk {i+1}/{len(chunks)}: {chunk_dur:.1f}s")
+
+    return bytes(all_pcm) if all_pcm else None
 
 
 # ---------------------------------------------------------------------------
