@@ -4,13 +4,17 @@ import { useMemo, useState } from "react";
 import type { Story } from "../lib/types";
 import type { LeanChip } from "./FilterBar";
 import { LEAN_RANGES } from "./FilterBar";
+import { timeAgo } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------
-   DivergenceAlerts — surfacing high-divergence stories + blind-spot banner.
+   DivergenceAlerts — editorial section surfacing high-divergence stories.
+
+   Understated, newspaper-style. No accent colors. Consistent fonts.
+   Positioned below lead headlines + daily brief, above medium stories.
 
    Alert cards: top 3 stories in the 80th+ divergence percentile (source ≥ 3).
    Blind Spot: when a lean filter is active and top stories have no matching
-   sources, show a dismissible banner.
+   sources, show a dismissible note.
    --------------------------------------------------------------------------- */
 
 interface DivergenceAlertsProps {
@@ -47,7 +51,6 @@ export default function DivergenceAlerts({
     const leanRange = LEAN_RANGES[activeLean];
     if (!leanRange) return null;
 
-    // Check top 10 stories for missing lean coverage
     const top10 = stories.slice(0, 10);
     const missingCount = top10.filter(
       (s) => s.lensData.lean < leanRange.min || s.lensData.lean > leanRange.max,
@@ -62,39 +65,16 @@ export default function DivergenceAlerts({
   if (alertStories.length === 0 && !blindSpotLabel) return null;
 
   return (
-    <div className="div-alerts" role="region" aria-label="Narrative divergence alerts">
-      {/* ---- Blind Spot Banner ---- */}
-      {blindSpotLabel && (
-        <div className="div-alerts__blind-spot" role="alert" aria-live="polite">
-          <div className="div-alerts__blind-spot-content">
-            <span className="div-alerts__blind-spot-icon" aria-hidden="true">&#9651;</span>
-            <p className="div-alerts__blind-spot-text text-data">
-              <strong>Blind Spot:</strong>{" "}
-              {blindSpotLabel}{" "}
-              <span className="div-alerts__blind-spot-hint">
-                Explore counter-takes?
-              </span>
-            </p>
-          </div>
-          <button
-            className="div-alerts__blind-spot-dismiss"
-            onClick={() => setBlindSpotDismissed(true)}
-            aria-label="Dismiss blind spot alert"
-          >
-            &#x2715;
-          </button>
-        </div>
-      )}
-
-      {/* ---- Alert cards ---- */}
+    <section className="div-alerts" aria-label="Sources diverge on these stories">
+      {/* ---- Section header — editorial rule + label ---- */}
       {alertStories.length > 0 && (
         <>
-          <div className="div-alerts__header">
-            <span className="div-alerts__header-label text-data">Narratives Diverge</span>
-          </div>
-          <div className="div-alerts__scroll-row" role="list">
+          <div className="div-alerts__rule" aria-hidden="true" />
+          <h3 className="div-alerts__heading">Sources Diverge</h3>
+
+          <div className="div-alerts__row" role="list">
             {alertStories.map((story) => {
-              const divergenceInsight = Array.isArray(story.deepDive?.divergence) && story.deepDive.divergence.length > 0
+              const insight = Array.isArray(story.deepDive?.divergence) && story.deepDive.divergence.length > 0
                 ? story.deepDive.divergence[0]
                 : "Sources differ significantly on framing";
 
@@ -103,53 +83,45 @@ export default function DivergenceAlerts({
                   key={story.id}
                   className="div-alert-card"
                   role="listitem"
-                  onClick={(e) => {
-                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                    onStoryClick(story, rect);
-                  }}
+                  tabIndex={0}
+                  onClick={(e) => onStoryClick(story, e.currentTarget.getBoundingClientRect())}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                      onStoryClick(story, rect);
+                      onStoryClick(story, e.currentTarget.getBoundingClientRect());
                     }
                   }}
-                  tabIndex={0}
-                  aria-label={`High divergence story: ${story.title}. ${divergenceInsight}`}
+                  aria-label={`${story.title}. ${insight}`}
                 >
-                  <div className="div-alert-card__accent" aria-hidden="true" />
-
-                  <header className="div-alert-card__header">
-                    <span className="div-alert-card__label text-data">Divergent</span>
-                    <span className="div-alert-card__score text-data">
-                      {Math.round(story.divergenceScore)}
-                    </span>
-                  </header>
-
-                  <h3 className="div-alert-card__headline">
-                    {story.title}
-                  </h3>
-
-                  <p className="div-alert-card__insight text-data">
-                    {divergenceInsight.length > 120
-                      ? divergenceInsight.slice(0, 117) + "..."
-                      : divergenceInsight}
-                  </p>
-
-                  <div className="div-alert-card__footer">
-                    <span className="div-alert-card__source-count text-data">
-                      {story.source.count} sources
-                    </span>
-                    <span className="div-alert-card__cta text-data">
-                      Deep Dive &#8594;
-                    </span>
-                  </div>
+                  <h4 className="div-alert-card__headline">{story.title}</h4>
+                  <p className="div-alert-card__insight">{
+                    insight.length > 100 ? insight.slice(0, 97) + "..." : insight
+                  }</p>
+                  <span className="div-alert-card__meta">
+                    {story.source.count} sources &middot; {timeAgo(story.publishedAt)}
+                  </span>
                 </article>
               );
             })}
           </div>
         </>
       )}
-    </div>
+
+      {/* ---- Blind Spot — subtle editorial note ---- */}
+      {blindSpotLabel && (
+        <div className="div-alerts__blind-spot">
+          <p className="div-alerts__blind-spot-text">
+            {blindSpotLabel}
+          </p>
+          <button
+            className="div-alerts__blind-spot-dismiss"
+            onClick={() => setBlindSpotDismissed(true)}
+            aria-label="Dismiss"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+    </section>
   );
 }

@@ -480,20 +480,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           />
         </div>
 
-        {/* Daily Brief — TL;DR editorial box + On Air pill in header row */}
-        {!isLoading && stories.length > 0 && (
-          <DailyBriefText state={dailyBriefState} />
-        )}
-
-        {/* Divergence Alerts — high-divergence stories + blind spot banner */}
-        {!isLoading && filteredStories.length > 0 && (
-          <DivergenceAlerts
-            stories={filteredStories}
-            activeLean={activeLean}
-            onStoryClick={handleStoryClick}
-          />
-        )}
-
         {/* Live region, loading, error, empty states, story grids */}
         <>
             {/* Live region for screen readers */}
@@ -570,7 +556,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* Lead section — two primary headlines side by side on desktop */}
+            {/* 1. Lead section — two primary headlines side by side on desktop */}
             {!isLoading && leadStories.length > 0 && (
               <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
                 {leadStories.map((story, i) => (
@@ -585,7 +571,21 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </section>
             )}
 
-            {/* Medium stories — broadsheet grid on desktop */}
+            {/* 2. Daily Brief — TL;DR editorial box, below lead headlines */}
+            {!isLoading && stories.length > 0 && (
+              <DailyBriefText state={dailyBriefState} />
+            )}
+
+            {/* 3. Divergence Alerts — high-divergence stories + blind spot banner */}
+            {!isLoading && filteredStories.length > 0 && (
+              <DivergenceAlerts
+                stories={filteredStories}
+                activeLean={activeLean}
+                onStoryClick={handleStoryClick}
+              />
+            )}
+
+            {/* 4. Medium stories — broadsheet grid on desktop */}
             {!isLoading && mediumStories.length > 0 && (
               <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
                 {mediumStories.map((story, idx) => (
