@@ -93,9 +93,10 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
-import { hapticConfirm, hapticScrollEdge } from "../lib/haptics";
+import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight } from "../lib/haptics";
 import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
+import InstallPrompt from "./InstallPrompt";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -209,6 +210,67 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
+
+  // --- Pull-to-Refresh (mobile only) ---
+  const [pullOffset, setPullOffset] = useState(0);
+  const [isPulling, setIsPulling] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const pullStartRef = useRef<{ y: number; scrollY: number } | null>(null);
+  const pullResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const PULL_THRESHOLD = 60; // px of visual displacement to trigger refresh
+
+  const handlePullStart = useCallback((e: React.TouchEvent) => {
+    if (!isMobile || isRefreshing || selectedStory) return;
+    pullStartRef.current = {
+      y: e.touches[0].clientY,
+      scrollY: window.scrollY,
+    };
+  }, [isMobile, isRefreshing, selectedStory]);
+
+  const handlePullMove = useCallback((e: React.TouchEvent) => {
+    if (!pullStartRef.current || isRefreshing) return;
+    // Only pull-to-refresh when at scroll top
+    if (pullStartRef.current.scrollY > 5 && window.scrollY > 5) return;
+    const deltaY = e.touches[0].clientY - pullStartRef.current.y;
+    if (deltaY <= 0) { setPullOffset(0); return; }
+    // Rubber-band resistance
+    const offset = Math.min(deltaY * 0.4, 100);
+    setPullOffset(offset);
+    if (!isPulling && offset > 10) setIsPulling(true);
+  }, [isRefreshing, isPulling]);
+
+  const handlePullEnd = useCallback(() => {
+    if (!isPulling) { pullStartRef.current = null; return; }
+    if (pullOffset >= PULL_THRESHOLD) {
+      // Trigger refresh
+      hapticConfirm();
+      setIsRefreshing(true);
+      setPullOffset(40); // Hold at indicator position
+      setRetryKey(k => k + 1);
+      // Reset after data loads — clear any prior timer before scheduling a new one
+      if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
+      pullResetTimerRef.current = setTimeout(() => {
+        pullResetTimerRef.current = null;
+        setIsRefreshing(false);
+        setPullOffset(0);
+        setIsPulling(false);
+      }, 1500);
+    } else {
+      // Cancel — spring back
+      hapticLight();
+      setPullOffset(0);
+      setIsPulling(false);
+    }
+    pullStartRef.current = null;
+  }, [isPulling, pullOffset]);
+
+  // Cleanup pull-to-refresh reset timer on unmount to prevent state updates
+  // on an unmounted component if the user navigates away mid-refresh.
+  useEffect(() => {
+    return () => {
+      if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
+    };
+  }, []);
 
   // Daily Brief state — shared between text + onair player
   // while DailyBriefText renders in the content area
@@ -545,7 +607,38 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         activeEdition={activeEdition}
       />
 
-      <main id="main-content" className="page-main">
+      <main
+        id="main-content"
+        className="page-main"
+        onTouchStart={handlePullStart}
+        onTouchMove={handlePullMove}
+        onTouchEnd={handlePullEnd}
+      >
+        {/* Pull-to-refresh indicator (mobile) */}
+        {(isPulling || isRefreshing) && (
+          <div
+            className="pull-to-refresh"
+            style={{
+              height: `${pullOffset}px`,
+              opacity: Math.min(1, pullOffset / PULL_THRESHOLD),
+              transition: isPulling ? "none" : "height 300ms cubic-bezier(0.2, 1, 0.3, 1), opacity 300ms ease-out",
+            }}
+          >
+            <div
+              className={`pull-to-refresh__spinner ${isRefreshing ? "pull-to-refresh__spinner--active" : ""}`}
+              style={{
+                transform: `rotate(${pullOffset * 3}deg)`,
+                transition: isPulling ? "none" : "transform 300ms ease-out",
+              }}
+            >
+              {isRefreshing ? "↻" : "↓"}
+            </div>
+            <span className="pull-to-refresh__text">
+              {isRefreshing ? "Updating…" : pullOffset >= PULL_THRESHOLD ? "Release to refresh" : "Pull to refresh"}
+            </span>
+          </div>
+        )}
+
         {/* Filter bar row — category chips + lean chips + On Air CTA */}
         <div className="filter-row">
           <FilterBar
@@ -748,6 +841,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* Keyboard shortcuts overlay — press ? to toggle */}
       <KeyboardShortcutsOverlay />
+
+      {/* PWA install prompt — 2nd+ visit, above bottom nav */}
+      <InstallPrompt />
     </div>
   );
 }

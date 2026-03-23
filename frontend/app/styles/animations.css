@@ -99,6 +99,41 @@
   border-radius: var(--radius-md);
 }
 
+/* shimmer-line — pseudo-element sweep variant for structured skeleton rows.
+   Complements .skeleton (background-position approach) with a ::after overlay
+   that sweeps a translucent highlight across any placeholder element. */
+
+@keyframes shimmerSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-line {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.shimmer-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  animation: shimmerSweep 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-line::after {
+    animation: none;
+  }
+}
+
 /* ---- Animation Utilities ----------------------------------------------- */
 
 .anim-fade-in {
@@ -408,5 +443,49 @@
     opacity: 1;
     transform: none;
     transition: opacity 0ms !important;
+  }
+}
+
+/* ==========================================================================
+   Pull-to-Refresh — native app gesture indicator
+   ========================================================================== */
+
+.pull-to-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  overflow: hidden;
+  color: var(--fg-tertiary);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+}
+
+.pull-to-refresh__spinner {
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+
+.pull-to-refresh__spinner--active {
+  animation: pullSpin 800ms linear infinite;
+}
+
+@keyframes pullSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pull-to-refresh__text {
+  font-weight: 500;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .pull-to-refresh__spinner--active {
+    animation: none;
+  }
+  .shimmer-line::after {
+    animation: none;
   }
 }
