@@ -400,8 +400,8 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Story card | Page load | fadeInUp (opacity + translateY 12px→0) | 300ms, 40ms stagger |
 | Dot matrix | Card appear | Dots fade in left-to-right | 150ms, 30ms stagger |
 | Bias tooltip | Hover/tap | Scale from 0.95→1, opacity 0→1 | 150ms ease-out |
-| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile); JS-driven translateX/translateY | 500ms spring (panel), instant opacity-on, 500ms delay opacity-off |
-| Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: opacity 200ms + transform 350ms spring; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Content reveal: 120ms delay desktop, 30ms delay mobile |
+| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile); JS-driven translateX/translateY | Open: `--spring-bouncy` 500ms (genuine overshoot); Close: `--spring-snappy` 380ms; fallback: 200ms opacity ramp |
+| Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: content reveal 180ms; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Desktop reveal delay 120ms, mobile 30ms |
 | Press Analysis expand | Click ▶ trigger | grid-template-rows 0fr→1fr | var(--dur-morph) ease-out desktop; 300ms ease-out mobile |
 | Filter chips | Select | Scale 1→0.97→1, fill color wipe | 200ms spring |
 | Refresh confirm | Tap refresh | Modal scale from 0.95, backdrop fade | 300ms ease-out |
