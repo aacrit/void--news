@@ -231,16 +231,18 @@ Mobile rules:
 - Each card: headline, source count, key bias indicators (BiasLens).
 - "Last updated" timestamp + Refresh button (confirmation dialog).
 - Sections: World / US / India.
-- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 4 lines with "Read more" toggle. Always fetches world brief regardless of active edition.
+- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. Opinion ("The Board") always visible on desktop; separated by 2px dotted editorial firewall rule; italic Playfair Display. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 3 lines with "Read more · The Board" toggle (opinion hidden). Always fetches world brief regardless of active edition.
 
 #### 2. Deep Dive Dashboard
 - Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
-- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" toggle at 600+ chars.
-- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources alternate rows) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile).
-- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text).
+- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" overflow detected via ResizeObserver (not character count). Gradient overlay hidden when content fits (`dd-collapsible--fits` class).
+- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources use 3-row algorithm for dense clusters, no max-height cap, "+N more" expand button when >6 sources) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile). Zone labels smaller font on mobile.
+- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text). Expand panel: max-height 60vh with overflow-y scroll.
 - **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
-- Slot-machine cascade: `translateY(12px) → 0`. Desktop: `opacity 200ms ease-out, transform 350ms spring`, reveal delay 120ms. Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms.
-- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition.
+- Action buttons: WCAG 44×44px touch targets.
+- **Panel open animation**: `var(--spring-bouncy)` 500ms with genuine overshoot. **Close**: `var(--spring-snappy)` 380ms. Asymmetric: slow open, fast close.
+- Slot-machine cascade: `translateY(12px) → 0`. Desktop: content reveal 180ms delay (was 400ms). Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms. rAF snap uses `setTimeout(0)` for 90/120Hz reliability.
+- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition; fallback 200ms opacity ramp.
 - iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator, momentum scroll, safe-area insets.
 
 ### Interaction Model
