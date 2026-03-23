@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-22 (rev 12)
+Last updated: 2026-03-23 (rev 13)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -29,7 +29,7 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 | Frontend | Next.js 16 (App Router), React 19, TypeScript |
 | Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
 | Styling | CSS custom properties, mobile-first, clamp() |
-| Fonts | Playfair Display (editorial), Inter (structural), JetBrains Mono (data) |
+| Fonts | Playfair Display (editorial), Inter (structural), Barlow Condensed (meta), IBM Plex Mono (data) |
 | Hosting | GitHub Pages (frontend), GitHub Actions (pipeline) |
 
 ## Core Principles
@@ -139,7 +139,7 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
 
 **TL;DR** (`tldr_text`): 8-12 sentences as a flowing editorial paragraph (150-220 words). Written as a joint editorial board voice — expert writers from left, center, and right. Opinionated about significance, neutral on partisanship. Writes about the world, never about coverage patterns or media behavior. Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
 
-**Opinion** (`opinion_text`): 3-5 sentences (80-120 words) from "The Board." Genuinely opinionated editorial judgment in first person plural ("we"). Where the TL;DR says what happened, the opinion says what the board thinks about it. Italic Playfair Display, separated by thin rule. Revealed on "Read more" expansion. Same Gemini API call as TL;DR — $0 extra cost.
+**Opinion** (`opinion_text`): 3-5 sentences (80-120 words) from "The Board." Genuinely opinionated editorial judgment in first person plural ("we"). Where the TL;DR says what happened, the opinion says what the board thinks about it. Italic Playfair Display, fg-primary color, text-md size. Separated from TL;DR by 2px dotted editorial firewall rule. Desktop: always visible. Mobile: hidden behind "Read more · The Board" toggle (3-line clamp). Same Gemini API call as TL;DR — $0 extra cost.
 
 **Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. **Gemini 2.5 Flash TTS** (`gemini-2.5-flash-preview-tts`) generates both speakers in a single API call with LLM-native prosody, natural turn-taking, and conversational rhythm — no per-turn synthesis or stitching needed. Script converted to `One:`/`Two:` dialogue format, artifacts stripped. PCM 24kHz output → pydub post-processing (Glass & Gravity sonic identity: D major 9th bloom intro, glass-bell story transitions, resolving outro; no background bed) → MP3 192k mono → Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
 
@@ -195,13 +195,16 @@ Modern newspaper aesthetic. Serif headlines, editorial layout sensibility. **Cle
 
 Adapted from DondeAI's "Ink & Momentum": spring physics for user-initiated actions, ease-out for system reveals.
 
-### Three Voices of Type
+### Four Voices of Type
 
 | Voice | Font | Use For |
 |-------|------|---------|
 | Editorial | Playfair Display | Headlines, story titles, section headers |
 | Structural | Inter | Body text, labels, navigation, buttons |
-| Data | JetBrains Mono | Bias scores, source counts, timestamps, metrics |
+| Meta | Barlow Condensed | Category tags, source counts, timestamps, edition metadata (Franklin Gothic / News Gothic newspaper tradition) |
+| Data | IBM Plex Mono | Bias scores, numeric data (humanist monospace; institutional warmth, not a coding font) |
+
+CSS variable: `--font-meta` (Barlow Condensed). IBM Plex Mono replaces JetBrains Mono for data display.
 
 ### Responsive Strategy — One Project, Two Layouts
 
