@@ -701,10 +701,12 @@
     min-height: 44px;
   }
 
-  /* Deep Dive: press trigger and read-more targets */
+  /* Deep Dive: interactive targets — WCAG 44×44px minimum */
   .dd-press-trigger,
-  .dd-read-more {
+  .dd-read-more,
+  .dd-action-btn {
     min-height: 44px;
+    min-width: 44px;
   }
 
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
