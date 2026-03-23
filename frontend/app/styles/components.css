@@ -1589,11 +1589,11 @@
 }
 
 .theme-toggle__icon--sun-hidden {
-  transform: rotate(-90deg) scale(0.5);
+  transform: rotate(45deg) scale(0.5);
 }
 
 .theme-toggle__icon--moon-hidden {
-  transform: rotate(90deg) scale(0.5);
+  transform: rotate(-45deg) scale(0.5);
 }
 
 /* (RefreshButton removed — pipeline runs on cron, browser refresh suffices) */
@@ -1957,10 +1957,18 @@
 /* ---- Deep Dive: Collapsible sections ------------------------------------ */
 /* Dynamic height: scales with viewport — shows more on tall screens, less on
    small. clamp() ensures 8 lines min (mobile) → 14 lines max (desktop). */
+/* Summary collapsible — uses grid-template-rows for true animated expand.
+   Collapsed: clamp-limited via max-height on the inner wrapper.
+   Expanded: grid-template-rows 0fr→1fr reveals the overflow smoothly. */
 .dd-collapsible {
-  max-height: clamp(12em, 25vh, 22em);
-  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr;
   position: relative;
+}
+
+.dd-collapsible__inner {
+  overflow: hidden;
+  max-height: clamp(12em, 25vh, 22em);
   transition: max-height var(--dur-morph) var(--ease-out);
 }
 
@@ -1976,7 +1984,7 @@
   transition: opacity var(--dur-fast) var(--ease-out);
 }
 
-.dd-collapsible--expanded {
+.dd-collapsible--expanded .dd-collapsible__inner {
   max-height: none;
 }
 
@@ -2980,6 +2988,11 @@
 
 .dd-press-trigger__arrow--open {
   transform: rotate(90deg);
+}
+
+/* After user has seen the bounce once, suppress on subsequent panel opens */
+.dd-press-trigger__arrow--no-bounce {
+  animation: none;
 }
 
 /* ---- Deep Dive: Press Analysis inline expand (grid-template-rows trick) - */

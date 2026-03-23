@@ -53,7 +53,7 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
         }
       }}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}`}
-      style={{ animationDelay: `${index * 40}ms` }}
+      style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
       {/* Category tag + time */}
       <div className="story-card__meta">
