@@ -158,9 +158,27 @@ just say what changed.\
 # ---------------------------------------------------------------------------
 # User prompt template — injected per edition call.
 # ---------------------------------------------------------------------------
+_EDITION_FOCUS = {
+    "WORLD": "Global perspective. Lead with the story that reshapes the most borders, "
+             "markets, or alliances. Emphasize international dynamics — how events in "
+             "one region ripple elsewhere.",
+    "US": "American lens. Lead with what matters most to someone living in the US. "
+          "Domestic policy, economy, courts, elections come first. International stories "
+          "only when they directly affect Americans.",
+    "INDIA": "Indian lens. Lead with what matters most to someone living in India. "
+             "Domestic politics, economy, regional security, tech sector come first. "
+             "Global stories only when they directly affect India.",
+    "UK": "British lens. Lead with what matters most to someone in the UK. "
+          "Domestic politics, economy, NHS, Brexit aftereffects come first.",
+    "CANADA": "Canadian lens. Lead with what matters most to someone in Canada. "
+              "Domestic politics, economy, US-Canada relations come first.",
+}
+
 _USER_PROMPT_TEMPLATE = """\
 Generate the daily brief for the {EDITION} edition of void --news.
 Date: {DATE}
+
+EDITION FOCUS: {EDITION_FOCUS}
 
 Below are today's top {N} stories for this edition, ranked by importance.
 
@@ -172,9 +190,8 @@ Return JSON with exactly three fields:
    150-220 words.
 2. "opinion_text" — 5-8 sentences. Observational editorial voice. Show, don't tell. \
    Passive/impersonal constructions. No first person. 120-180 words.
-3. "audio_script" — full two-voice script with segment markers ([OPEN],
-   [STORY_1], [STORY_2], [STORY_3], [CLOSE]). Each marker on its own line,
-   followed by the spoken text. Markers are structural delimiters — never read aloud.\
+3. "audio_script" — two-voice conversation (A: and B: speaker tags, one per line). \
+   No segment markers, no formatting. Just the dialogue, 500-750 words.\
 """
 
 # ---------------------------------------------------------------------------
@@ -381,8 +398,11 @@ def generate_daily_briefs(
         # Attempt Gemini generation within budget
         brief_result = None
         if gemini_ok and _brief_calls_remaining() > 0:
+            edition_key = edition.upper()
+            edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
             prompt = _USER_PROMPT_TEMPLATE.format(
-                EDITION=edition.upper(),
+                EDITION=edition_key,
+                EDITION_FOCUS=edition_focus,
                 DATE=date_str,
                 N=len(top_clusters),
                 stories_block=stories_block,
