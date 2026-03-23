@@ -1,10 +1,10 @@
-"""Generate static audio assets for the daily brief broadcast.
+"""Generate void --news sonic identity assets.
 Run once: python3 -m pipeline.briefing.generate_assets
 
-Exports as WAV (no ffmpeg required). Assets:
-  - pips.wav: BBC-style time pips (5 short + 1 long at 1kHz)
-  - countdown.wav: "3... 2... 1..." tonal countdown (descending frequencies)
-  - outro.wav: Soft chime + warm bass resolution (broadcast ends)
+Assets:
+  - ident.wav:      0.8s intro — ascending A-major triad (data terminal online)
+  - transition.wav: 0.3s section break — descending two-note (same interval, inverted)
+  - outro.wav:      1.2s close — intro motif reversed, resolving down
 """
 
 from pathlib import Path
@@ -14,80 +14,81 @@ from pydub.generators import Sine
 ASSETS_DIR = Path(__file__).parent / "assets"
 
 
-def generate_pips():
-    """BBC Greenwich time pips: 5 short beeps (100ms, 1kHz) + 1 long beep (500ms).
-    Each pip separated by 900ms silence. Classic analog broadcast opener."""
-    short = Sine(1000).to_audio_segment(duration=100).fade_in(5).fade_out(20) - 8
-    silence = AudioSegment.silent(duration=900)
-    long_pip = Sine(1000).to_audio_segment(duration=500).fade_in(5).fade_out(80) - 6
-
-    audio = AudioSegment.empty()
-    for _ in range(5):
-        audio += short + silence
-    audio += long_pip
-
-    audio.export(ASSETS_DIR / "pips.wav", format="wav")
-    print(f"  pips.wav ({len(audio)}ms)")
+def _tone(freq_hz: int, duration_ms: int, gain_db: float = -6) -> AudioSegment:
+    """Clean sine tone with sharp attack, soft release."""
+    return (
+        Sine(freq_hz)
+        .to_audio_segment(duration=duration_ms)
+        .apply_gain(gain_db)
+        .fade_in(15)
+        .fade_out(30)
+    )
 
 
-def generate_countdown():
-    """Tonal countdown: three descending tones representing 3...2...1.
-    Each tone is a clean sine at descending pitch with a gap.
-    Evokes analog broadcast count-in without spoken words."""
-    # Three descending tones: E5 (659Hz), C5 (523Hz), A4 (440Hz)
-    freqs = [659, 523, 440]
-    audio = AudioSegment.empty()
+def generate_ident():
+    """Intro ident: three ascending tones, A-major triad. 0.8s.
+    A4 (440) → C#5 (554) → E5 (660). Staccato, precise.
+    Reads as 'system ready' — data terminal coming online."""
+    canvas = AudioSegment.silent(duration=800)
+    canvas = canvas.overlay(_tone(440, 120, -6), position=0)
+    canvas = canvas.overlay(_tone(554, 120, -6), position=150)
+    canvas = canvas.overlay(_tone(660, 280, -4), position=300)
+    canvas.export(ASSETS_DIR / "ident.wav", format="wav")
+    print(f"  ident.wav ({len(canvas)}ms)")
 
-    for i, freq in enumerate(freqs):
-        tone = Sine(freq).to_audio_segment(duration=250).fade_in(10).fade_out(60) - 6
-        gap = AudioSegment.silent(duration=600)
-        audio += tone + gap
 
-    # Final long tone at A4 — the "zero" moment
-    final = Sine(440).to_audio_segment(duration=600).fade_in(10).fade_out(150) - 4
-    audio += final
-
-    audio.export(ASSETS_DIR / "countdown.wav", format="wav")
-    print(f"  countdown.wav ({len(audio)}ms)")
+def generate_transition():
+    """Section transition: descending two-note. 0.3s.
+    C#5 (554) → A4 (440). Same interval as intro, inverted.
+    Subtle — sits under speech level at -12dB."""
+    canvas = AudioSegment.silent(duration=300)
+    canvas = canvas.overlay(_tone(554, 140, -12), position=0)
+    canvas = canvas.overlay(_tone(440, 140, -12), position=160)
+    canvas.export(ASSETS_DIR / "transition.wav", format="wav")
+    print(f"  transition.wav ({len(canvas)}ms)")
 
 
 def generate_outro():
-    """Soft chime + warm bass resolution. Two layers:
-    1. High chime: C6 (1047Hz) bell-like tone, short, bright
-    2. Warm bass: C3 (131Hz) sustained underneath, slow fade
-    Mixed together for a "broadcast ends" feeling."""
+    """Outro ident: intro motif reversed, resolving down. 1.2s.
+    E5 (660) → C#5 (554) → A4 (440, sustained with fade).
+    The long A4 fade = system powering down."""
+    canvas = AudioSegment.silent(duration=1200)
+    canvas = canvas.overlay(_tone(660, 120, -6), position=0)
+    canvas = canvas.overlay(_tone(554, 120, -6), position=150)
+    # Final A4: longer, fades out slowly
+    final_a = (
+        Sine(440)
+        .to_audio_segment(duration=600)
+        .apply_gain(-4)
+        .fade_in(15)
+        .fade_out(400)
+    )
+    canvas = canvas.overlay(final_a, position=300)
+    canvas.export(ASSETS_DIR / "outro.wav", format="wav")
+    print(f"  outro.wav ({len(canvas)}ms)")
 
-    # Chime: bright, short, bell-like
-    chime = Sine(1047).to_audio_segment(duration=400).fade_in(5).fade_out(200) - 8
-    chime_pad = chime + AudioSegment.silent(duration=200)
 
-    # Second softer chime a fifth below: G5 (784Hz)
-    chime2 = Sine(784).to_audio_segment(duration=500).fade_in(5).fade_out(250) - 10
-    chime2_pad = AudioSegment.silent(duration=300) + chime2
+def build_background_bed(duration_ms: int) -> AudioSegment:
+    """Broadcast-floor presence bed. Three stacked sine layers, felt more than heard.
 
-    # Warm bass: C3, long sustain, slow fade
-    bass = Sine(131).to_audio_segment(duration=2500).fade_in(100).fade_out(1200) - 6
+    85 Hz  (E2)  — floor presence, -32dB
+    170 Hz (E3)  — warmth, -36dB
+    520 Hz (C5)  — faint room tone, -40dB
 
-    # Layer: bass is the bed, chimes sit on top
-    # Make all same length
-    total_ms = 2500
-    chime_full = chime_pad + AudioSegment.silent(duration=total_ms - len(chime_pad))
-    chime2_full = chime2_pad + AudioSegment.silent(duration=total_ms - len(chime2_pad))
-
-    # Overlay
-    mixed = bass.overlay(chime_full).overlay(chime2_full)
-
-    # Final fade
-    mixed = mixed.fade_out(800)
-
-    mixed.export(ASSETS_DIR / "outro.wav", format="wav")
-    print(f"  outro.wav ({len(mixed)}ms)")
+    Constant, not pulsing. 600ms fade-in, 1200ms fade-out.
+    Call at runtime — duration matches dialogue length.
+    """
+    bed_85 = Sine(85).to_audio_segment(duration=duration_ms).apply_gain(-32)
+    bed_170 = Sine(170).to_audio_segment(duration=duration_ms).apply_gain(-36)
+    bed_520 = Sine(520).to_audio_segment(duration=duration_ms).apply_gain(-40)
+    bed = bed_85.overlay(bed_170).overlay(bed_520)
+    return bed.fade_in(600).fade_out(1200)
 
 
 if __name__ == "__main__":
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    print("Generating broadcast assets:")
-    generate_pips()
-    generate_countdown()
+    print("Generating void --news sonic identity:")
+    generate_ident()
+    generate_transition()
     generate_outro()
     print("Done.")

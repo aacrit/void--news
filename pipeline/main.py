@@ -1801,7 +1801,7 @@ def main():
                             brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
                             brief_row["audio_file_size"] = audio_result["file_size"]
                             brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
-                            brief_row["audio_voice_label"] = "Two hosts"
+                            brief_row["audio_voice_label"] = "Two voices"
 
                     try:
                         supabase.table("daily_briefs").upsert(
