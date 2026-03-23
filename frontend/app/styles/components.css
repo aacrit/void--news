@@ -2776,17 +2776,20 @@
   background-color: var(--sense-medium);
 }
 
-.bi-entity-row__val {
+/* Tone label — plain language instead of opaque ±float */
+.bi-entity-row__tone {
   font-family: var(--font-data);
   font-size: 8px;
-  font-feature-settings: "tnum" 1;
-  min-width: 28px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  min-width: 44px;
   text-align: right;
   flex-shrink: 0;
+  color: var(--fg-muted);
 }
 
-.bi-entity-row__val--pos { color: var(--sense-low); }
-.bi-entity-row__val--neg { color: var(--sense-medium); }
+.bi-entity-row__tone--pos { color: var(--sense-low); }
+.bi-entity-row__tone--neg { color: var(--sense-medium); }
 
 /* ---- Confidence badge — 3-state: strong / moderate / pending ----------- */
 .bi-confidence {

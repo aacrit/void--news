@@ -625,29 +625,47 @@ function LeanAxis({
             </div>
           )}
 
+          {/* Framing phrases — computed but previously never rendered.
+              These are the actual editorial phrases that reveal framing intent. */}
+          {rationale.framingPhrasesFound && rationale.framingPhrasesFound.length > 0 && (
+            <div className="bi-keyword-signals">
+              <p className="bi-keyword-signals__line">
+                <span className="bi-keyword-signals__dir" style={{ color: "var(--fg-tertiary)" }}>
+                  Framing phrases:
+                </span>{" "}
+                {rationale.framingPhrasesFound.slice(0, 4).join(", ")}
+              </p>
+            </div>
+          )}
+
+          {/* Entity sentiments — plain language instead of opaque ±floats */}
           {rationale.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
             <div className="bi-entity-sentiments">
               <p className="bi-entity-sentiments__title">Key figures mentioned</p>
               {Object.entries(rationale.entitySentiments)
                 .slice(0, 5)
-                .map(([entity, sentiment]) => (
-                  <div key={entity} className="bi-entity-row">
-                    <span className="bi-entity-row__name">{entity}</span>
-                    <span className="bi-entity-row__bar">
-                      <span className="bi-entity-row__center" />
-                      <span
-                        className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
-                        style={{
-                          width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
-                          [sentiment >= 0 ? "left" : "right"]: "50%",
-                        }}
-                      />
-                    </span>
-                    <span className={`bi-entity-row__val${sentiment >= 0 ? " bi-entity-row__val--pos" : " bi-entity-row__val--neg"}`}>
-                      {sentiment >= 0 ? "+" : ""}{sentiment.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+                .map(([entity, sentiment]) => {
+                  const tone = Math.abs(sentiment) < 0.1 ? "Neutral" : sentiment > 0 ? "Favorable" : "Critical";
+                  const toneClass = Math.abs(sentiment) < 0.1 ? "" : sentiment > 0 ? " bi-entity-row__tone--pos" : " bi-entity-row__tone--neg";
+                  return (
+                    <div key={entity} className="bi-entity-row">
+                      <span className="bi-entity-row__name">{entity}</span>
+                      <span className="bi-entity-row__bar">
+                        <span className="bi-entity-row__center" />
+                        <span
+                          className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
+                          style={{
+                            width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
+                            [sentiment >= 0 ? "left" : "right"]: "50%",
+                          }}
+                        />
+                      </span>
+                      <span className={`bi-entity-row__tone${toneClass}`}>
+                        {tone}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           )}
         </AxisDetails>
@@ -791,10 +809,18 @@ function RigorAxis({
           <SubFactorGrid
             items={[
               { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
-              { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
               { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
+              { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
             ]}
           />
+          {/* Vague sources — computed but previously never rendered.
+              A high vague count with low named sources is a key journalistic red flag. */}
+          {rationale.vagueSourcesCount > 0 && (
+            <p className="bi-axis-summary" style={{ marginTop: "var(--space-2)" }}>
+              {rationale.vagueSourcesCount} vague source{rationale.vagueSourcesCount !== 1 ? "s" : ""} detected
+              {rationale.vagueSourcesCount > 2 ? " — relies on anonymous or unverifiable attribution." : "."}
+            </p>
+          )}
         </AxisDetails>
       )}
     </AxisRow>
