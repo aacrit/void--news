@@ -145,14 +145,10 @@ function DataMark({ data, size, mounted }: {
 
   const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
 
-  // Source coverage Harvey ball
+  // Source coverage Harvey ball — ring fill proportional to source count
   const coverage = Math.min(data.sourceCount / 10, 1);
-  const coverageFill = coverage * CIRC;
+  const ringFill = coverage * CIRC;
   const ringCol = beamCol;
-  const ringFill = coverageFill;
-
-  const showNum = data.sourceCount > 0;
-  const numSize = size === "xl" ? 10 : size === "lg" ? 8 : 6;
 
   return (
     <svg
@@ -179,20 +175,6 @@ function DataMark({ data, size, mounted }: {
         }}
         opacity={0.9}
       />
-
-      {/* Source count number inside circle — facts mode only */}
-      {showNum && (
-        <text x="16" y="13" textAnchor="middle" dominantBaseline="central"
-          style={{
-            fontFamily: "var(--font-data)", fontSize: numSize, fontWeight: 700,
-            fill: "var(--fg-secondary)",
-            opacity: mounted ? 1 : 0,
-            transition: "opacity 350ms var(--ease-out) 300ms",
-          }}
-        >
-          {data.sourceCount}
-        </text>
-      )}
 
       {/* Beam group — pivots around circle center, tilts by lean */}
       <g style={{
@@ -507,34 +489,18 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
       {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
-      {/* Text labels — makes the mark self-explanatory */}
-      <div style={{
-        display: "flex", flexDirection: "column",
-        gap: size === "xl" ? 4 : size === "lg" ? 3 : 1,
+      {/* Lean label — the only text, makes the mark self-explanatory */}
+      <span style={{
+        fontFamily: "var(--font-data)", fontWeight: 600,
+        fontSize: size === "xl" ? 14 : size === "lg" ? 11 : 10,
+        color: lc,
+        lineHeight: 1,
+        letterSpacing: "0.02em",
         opacity: mounted ? 1 : 0,
         transition: "opacity 350ms var(--ease-out) 350ms",
       }}>
-        {/* Lean label — the hero text */}
-        <span style={{
-          fontFamily: "var(--font-data)", fontWeight: 600,
-          fontSize: size === "xl" ? 14 : size === "lg" ? 11 : 10,
-          color: lc,
-          lineHeight: 1,
-          letterSpacing: "0.02em",
-        }}>
-          {ll}
-        </span>
-
-        {/* Source count */}
-        <span style={{
-          fontFamily: "var(--font-data)",
-          fontSize: size === "xl" ? 11 : size === "lg" ? 9 : 8,
-          color: "var(--fg-tertiary)",
-          lineHeight: 1,
-        }}>
-          {data.sourceCount} src
-        </span>
-      </div>
+        {ll}
+      </span>
 
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
