@@ -1369,9 +1369,9 @@
   color: var(--fg-primary);
 }
 
-/* ---- Dateline inline (Tier 3) — between tabs and utility buttons -------- */
+/* ---- Dateline inline (Tier 3) — between logo and utility buttons -------- */
 /* JetBrains Mono, very subtle. Fills remaining flex space, right-aligned.   */
-/* Hidden on mobile — bottom nav carries edition context there.              */
+/* Hidden on mobile — masthead stays pure: logo + utility only.              */
 .nav-dateline-inline {
   flex: 1;
   text-align: right;
@@ -1404,80 +1404,7 @@
   display: none;
 }
 
-.nav-tabs {
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-
-.nav-tab {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  padding: var(--space-2) var(--space-4);
-  border-bottom: 2px solid transparent;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
-  min-height: 44px;
-  min-width: 44px;
-  white-space: nowrap;
-}
-
-/* Sliding underline pseudo-element */
-.nav-tab::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background-color: var(--fg-primary);
-  border-radius: 1px;
-  transition:
-    width 250ms var(--spring-bouncy),
-    left 250ms var(--spring-bouncy);
-}
-
-.nav-tab--active::after {
-  width: 100%;
-  left: 0;
-}
-
-.nav-tab:hover:not(.nav-tab--active) {
-  color: var(--fg-secondary);
-}
-
-.nav-tab:hover:not(.nav-tab--active)::after {
-  width: 60%;
-  left: 20%;
-  background-color: var(--fg-tertiary);
-}
-
-.nav-tab:active {
-  transform: scale(0.97);
-}
-
-.nav-tab:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.nav-tab--active {
-  font-weight: 600;
-  color: var(--fg-primary);
-  border-bottom-color: transparent;
-}
-
+/* nav-tab__inner — shared by mobile bottom-nav tabs */
 .nav-tab__inner {
   display: flex;
   align-items: center;

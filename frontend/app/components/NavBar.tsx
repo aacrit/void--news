@@ -7,7 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import EditionIcon from "./EditionIcon";
-import { getEditionTimeOfDay, getEditionTimestamp } from "../lib/utils";
+import { getEditionTimestamp } from "../lib/utils";
 
 interface NavBarProps {
   activeEdition: Edition;
@@ -15,8 +15,12 @@ interface NavBarProps {
 
 /* ---------------------------------------------------------------------------
    NavBar — Newspaper masthead (single compact row)
-   Desktop: Logo (32px) | Edition tabs | Dateline (tertiary) | Sources | Theme
-   Mobile:  Logo (22px) | Sources + Theme (top bar) | Edition tabs (bottom nav)
+
+   Desktop: Logo (32px) | [flex spacer] | Dateline | Sources | Theme
+   Mobile:  Logo (22px) | [flex spacer] | Sources | Theme  +  bottom nav
+
+   Edition tabs live exclusively in FilterBar (desktop) and bottom nav (mobile).
+   The masthead stays clean: brand + orientation + utility only.
    --------------------------------------------------------------------------- */
 
 function formatDateCompact(): string {
@@ -37,7 +41,7 @@ export default function NavBar({ activeEdition }: NavBarProps) {
     <>
       <header className="nav-header">
         <nav className="nav-inner" aria-label="Main navigation">
-          {/* Logo — P1 */}
+          {/* Logo — P1: brand identity, always left-anchored */}
           <div className="nav-left">
             <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
               {/* Desktop: full combination mark at 32px */}
@@ -51,35 +55,15 @@ export default function NavBar({ activeEdition }: NavBarProps) {
             </Link>
           </div>
 
-          {/* Edition tabs — P1 primary navigation */}
-          <div className="nav-tabs" role="tablist" aria-label="Edition selector">
-            {EDITIONS.map((edition) => (
-              <Link
-                key={edition.slug}
-                href={getEditionHref(edition.slug)}
-                role="tab"
-                aria-selected={activeEdition === edition.slug}
-                aria-current={activeEdition === edition.slug ? "page" : undefined}
-                className={`nav-tab${activeEdition === edition.slug ? " nav-tab--active" : ""}`}
-              >
-                <span className="nav-tab__inner">
-                  <EditionIcon slug={edition.slug} size={14} />
-                  {edition.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {/* Dateline — P3 tertiary, desktop only, fills remaining flex space */}
+          {/* Dateline — P3: temporal orientation, JetBrains Mono, muted */}
+          {/* Desktop only — fills flex space, right-aligns against utility row */}
           <span className="nav-dateline-inline" aria-hidden="true">
-            {getEditionTimeOfDay(activeEdition)} Edition
-            <span className="nav-dateline-inline__sep">&middot;</span>
             {formatDateCompact()}
             <span className="nav-dateline-inline__sep">&middot;</span>
             <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
           </span>
 
-          {/* Utility actions — P2 */}
+          {/* Utility actions — P2: secondary nav + mode toggle */}
           <div className="nav-right">
             <PageToggle activePage="feed" />
             <ThemeToggle />
@@ -87,7 +71,7 @@ export default function NavBar({ activeEdition }: NavBarProps) {
         </nav>
       </header>
 
-      {/* Mobile bottom nav — all 3 editions */}
+      {/* Mobile bottom nav — edition switching, thumb-reachable */}
       <nav className="nav-bottom" aria-label="Edition navigation">
         {EDITIONS.map((edition) => (
           <Link
