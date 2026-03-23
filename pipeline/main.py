@@ -1777,7 +1777,6 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
-                    edition_sections=["world", "us", "india"],
                 )
 
                 # Audio runs 2x/day: 06:00 and 18:00 UTC shifts
