@@ -22,6 +22,10 @@ import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
    Mobile: full-screen modal sliding up from the bottom.
    --------------------------------------------------------------------------- */
 
+// Press Analysis arrow bounce plays once per session — after the user has seen
+// it, repeating the animation on every panel open is visual noise.
+let hasSeenPressHint = false;
+
 interface DeepDiveProps {
   story: Story;
   onClose: () => void;
@@ -333,11 +337,12 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
           borderRadius: "8px",
           opacity: 1,
-          boxShadow: "var(--shadow-e1)",
+          boxShadow: "var(--shadow-e0)",
           transition: "none",
         });
 
         // Step 4: On next paint, animate from card → final (FAST + BOUNCY)
+        // Shadow trails the transform (400ms vs 420ms) — shadows lag motion in real light
         requestAnimationFrame(() => {
           setMorphStyle({
             transform: "translate(0, 0) scale(1, 1)",
@@ -347,7 +352,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             transition: [
               "transform 420ms var(--spring-bouncy)",
               "border-radius 250ms var(--ease-out)",
-              "box-shadow 300ms var(--ease-out) 100ms",
+              "box-shadow 400ms var(--ease-out) 50ms",
             ].join(", "),
           });
 
@@ -460,7 +465,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           previousFocusRef.current?.focus();
           onClose();
         }, 380);
-      }, 80); // Quick content fade
+      }, 130); // Content fades 120ms, then morph begins
     } else {
       /* ═══ FALLBACK: directional slide-out ═══ */
       setTimeout(() => {
@@ -469,7 +474,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           previousFocusRef.current?.focus();
           onClose();
         }, 400);
-      }, 80);
+      }, 130);
     }
   }, [onClose, originRect]);
 
@@ -543,12 +548,12 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           </div>
         </header>
 
-        {/* ---- Content (fades in after panel) ----------------------------- */}
+        {/* ---- Content (fades in after panel, fades out faster on close) ---- */}
         <div
           className="deep-dive-panel__content"
           style={{
             opacity: contentVisible ? 1 : 0,
-            transition: "opacity 300ms var(--ease-out)",
+            transition: `opacity ${contentVisible ? 300 : 120}ms var(--ease-out)`,
           }}
         >
           {/* Loading indicator — analyzing animation while fetching deep dive data */}
@@ -580,14 +585,14 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               {/* Press Analysis trigger — center-aligned, inviting label */}
               <button
                 className="dd-press-trigger"
-                onClick={() => setPressAnalysisOpen(v => !v)}
+                onClick={() => { setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
                 aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
                 aria-expanded={pressAnalysisOpen}
                 aria-controls="dd-press-expand-panel"
               >
                 <span>How was this scored?</span>
                 <span
-                  className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}`}
+                  className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}${hasSeenPressHint ? " dd-press-trigger__arrow--no-bounce" : ""}`}
                   aria-hidden="true"
                 >
                   &#9658;
@@ -606,9 +611,11 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           {/* ---- Summary — flows as article lede, after spectrum -------------- */}
           <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
-              <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                {story.summary}
-              </p>
+              <div className="dd-collapsible__inner">
+                <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                  {story.summary}
+                </p>
+              </div>
             </div>
             {story.summary && story.summary.length > 600 && !summaryExpanded && (
               <button className="dd-read-more" onClick={() => setSummaryExpanded(true)}>Read more</button>

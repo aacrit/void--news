@@ -558,12 +558,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
             {/* Lead section — two primary headlines side by side on desktop */}
             {!isLoading && leadStories.length > 0 && (
-              <section key={filterKey} aria-label="Lead stories" className="lead-section">
+              <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
                 {leadStories.map((story, i) => (
                   <VisibleCard
                     key={story.id}
                     className="lead-section__col"
-                    style={{ animationDelay: `${i * 50}ms` }}
+                    style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
                     <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} />
                   </VisibleCard>
@@ -578,7 +578,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   <VisibleCard
                     key={story.id}
                     className="grid-medium__item"
-                    style={{ animationDelay: `${idx * 50}ms` }}
+                    style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
                   >
                     <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
                   </VisibleCard>
@@ -594,7 +594,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     <VisibleCard
                       key={story.id}
                       className="grid-compact__item"
-                      style={{ animationDelay: `${(idx % BATCH_SIZE) * 50}ms` }}
+                      style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
                     >
                       <StoryCard
                         story={story}
