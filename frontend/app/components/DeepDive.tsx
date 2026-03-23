@@ -10,6 +10,7 @@ import {
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
+import { hapticMedium, hapticLight } from "../lib/haptics";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import { BiasInspectorInline } from "./BiasInspector";
@@ -288,6 +289,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
     document.body.style.width = "100%";
     document.body.style.top = `-${scrollY}px`;
 
+    hapticMedium();
     const hasMorph = originRect && originRect.width > 0 && panelRef.current;
 
     if (hasMorph) {
@@ -422,6 +424,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
 
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
+    hapticLight();
     // Phase 1: Content fades out quickly
     setContentVisible(false);
 
@@ -585,7 +588,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               {/* Press Analysis trigger — center-aligned, inviting label */}
               <button
                 className="dd-press-trigger"
-                onClick={() => { setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
+                onClick={() => { hapticLight(); setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
                 aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
                 aria-expanded={pressAnalysisOpen}
                 aria-controls="dd-press-expand-panel"
@@ -618,7 +621,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               </div>
             </div>
             {story.summary && story.summary.length > 600 && !summaryExpanded && (
-              <button className="dd-read-more" onClick={() => setSummaryExpanded(true)}>Read more</button>
+              <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
             )}
           </section>
 

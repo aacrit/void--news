@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { Category } from "../lib/types";
+import { hapticMicro } from "../lib/haptics";
 
 export type LeanChip = "All" | "Left" | "Center" | "Right";
 
@@ -40,12 +41,12 @@ export default function FilterBar({
   const topicRef = useRef<HTMLDivElement>(null);
 
   const handleLeanTap = (lean: LeanChip) => {
-    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
+    hapticMicro();
     onLeanChange(lean === activeLean ? "All" : lean);
   };
 
   const handleTopicTap = (cat: "All" | Category) => {
-    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
+    hapticMicro();
     onCategoryChange(cat);
     setTopicOpen(false);
   };

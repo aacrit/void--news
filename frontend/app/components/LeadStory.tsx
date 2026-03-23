@@ -4,6 +4,7 @@ import { useRef } from "react";
 import type { Story } from "../lib/types";
 import { timeAgo, whyThisStory } from "../lib/utils";
 import Sigil from "./Sigil";
+import { hapticLight } from "../lib/haptics";
 
 interface LeadStoryProps {
   story: Story;
@@ -28,13 +29,14 @@ export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryPr
       aria-label={`Open deep dive for: ${story.title}`}
       onClick={() => {
         if (cardRef.current && onStoryClick) {
+          hapticLight();
           onStoryClick(story, cardRef.current.getBoundingClientRect());
         }
       }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          // Keyboard nav: no origin rect (panel will slide in normally)
+          hapticLight();
           onStoryClick?.(story, new DOMRect());
         }
       }}
