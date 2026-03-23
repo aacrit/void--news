@@ -350,11 +350,10 @@ function SubFactorGrid({
 }) {
   return (
     <div className="bi-subfactors">
-      {items.map(({ label, value, max }) => (
+      {items.slice(0, 3).map(({ label, value, max }) => (
         <div key={label} className="bi-subfactors__item">
           <span className="bi-subfactors__label">{label}</span>
           <DotScale value={value} max={max} />
-          <span className="bi-subfactors__value">{Math.round(value)}</span>
         </div>
       ))}
     </div>
@@ -555,8 +554,8 @@ function LeanAxis({
         <>
           <SubFactorGrid
             items={[
-              { label: "Keyword score", value: rationale.keywordScore },
-              { label: "Source baseline", value: rationale.sourceBaseline },
+              { label: "Partisan language", value: rationale.keywordScore },
+              { label: "Outlet pattern", value: rationale.sourceBaseline },
             ]}
           />
           {(rationale.topLeftKeywords?.length > 0 ||
@@ -672,9 +671,9 @@ function SensationalismAxis({
       {rationale && (
         <SubFactorGrid
           items={[
-            { label: "Headline score", value: rationale.headlineScore },
-            { label: "Body score", value: rationale.bodyScore },
-            { label: "Clickbait signals", value: rationale.clickbaitSignals, max: 10 },
+            { label: "Headline tone", value: rationale.headlineScore },
+            { label: "Body tone", value: rationale.bodyScore },
+            { label: "Clickbait patterns", value: rationale.clickbaitSignals, max: 10 },
           ]}
         />
       )}
@@ -733,14 +732,8 @@ function RigorAxis({
         <SubFactorGrid
           items={[
             { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
-            { label: "Data points", value: rationale.dataPointsCount, max: 10 },
+            { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
             { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
-            {
-              label: "Specificity ratio",
-              value: typeof rationale.specificityRatio === "number"
-                ? rationale.specificityRatio * 100
-                : 0,
-            },
           ]}
         />
       )}
@@ -797,10 +790,9 @@ function FramingAxis({
       {rationale && (
         <SubFactorGrid
           items={[
-            { label: "Connotation", value: rationale.connotationScore },
-            { label: "Omission", value: rationale.omissionScore },
-            { label: "Headline-body gap", value: rationale.headlineBodyDivergence },
-            { label: "Passive voice", value: rationale.passiveVoiceScore },
+            { label: "Loaded language", value: rationale.connotationScore },
+            { label: "One-sided sourcing", value: rationale.omissionScore },
+            { label: "Headline mismatch", value: rationale.headlineBodyDivergence },
           ]}
         />
       )}
@@ -810,7 +802,11 @@ function FramingAxis({
 
 /* ── Confidence meter ───────────────────────────────────────────────────── */
 
-function ConfidenceMeter({
+/** 3-state confidence badge — replaces the fake-precision progress bar.
+ *  Strong (≥70%): green checkmark — all rationales available, substantial text.
+ *  Moderate (40-69%): yellow dot — some signals sparse or short text.
+ *  Pending (<40%): gray — fallback scores, limited analysis. */
+function ConfidenceBadge({
   confidence,
   contentVisible,
 }: {
@@ -818,36 +814,40 @@ function ConfidenceMeter({
   contentVisible: boolean;
 }) {
   const pct = Math.round(confidence * 100);
-  const color = getConfidenceColor(pct);
+  const tier = pct >= 70 ? "strong" : pct >= 40 ? "moderate" : "pending";
+  const labels = {
+    strong: "Strong analysis",
+    moderate: "Moderate confidence",
+    pending: "Limited analysis",
+  };
 
   return (
     <div
       className={`bi-confidence bi-panel__axis-stagger${contentVisible ? " bi-panel__axis-stagger--visible" : ""}`}
       style={{ transitionDelay: contentVisible ? "300ms" : "0ms" }}
     >
-      <div className="bi-confidence__header">
-        <span className="bi-confidence__label">Analysis confidence</span>
-        <span className="bi-confidence__value" style={{ color }}>
-          {pct}%
+      <div className="bi-confidence__badge-row">
+        <span className={`bi-confidence__badge bi-confidence__badge--${tier}`} aria-label={`${labels[tier]}: ${pct}%`}>
+          {tier === "strong" && (
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+              <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              <path d="M3 5L4.5 6.5L7 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+          {tier === "moderate" && (
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+              <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              <line x1="3.5" y1="5" x2="6.5" y2="5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+          )}
+          {tier === "pending" && (
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+              <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+            </svg>
+          )}
+          <span className="bi-confidence__badge-label">{labels[tier]}</span>
         </span>
       </div>
-      <div
-        className="bi-confidence__track"
-        role="meter"
-        aria-valuenow={pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`Analysis confidence: ${pct}%`}
-      >
-        <div
-          className="bi-confidence__fill"
-          style={{ width: `${pct}%`, backgroundColor: color }}
-        />
-      </div>
-      <p className="bi-confidence__note">
-        Cluster average: text length, text availability, and signal strength
-        relative to source baselines.
-      </p>
     </div>
   );
 }
@@ -1131,7 +1131,7 @@ export function BiasInspectorPanel({
           </div>
 
           {/* Confidence meter */}
-          <ConfidenceMeter
+          <ConfidenceBadge
             confidence={averages.confidence}
             contentVisible={contentVisible}
           />
@@ -1219,7 +1219,7 @@ export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
           contentVisible={true}
         />
       </div>
-      <ConfidenceMeter confidence={averages.confidence} contentVisible={true} />
+      <ConfidenceBadge confidence={averages.confidence} contentVisible={true} />
     </div>
   );
 }

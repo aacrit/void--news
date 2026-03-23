@@ -726,7 +726,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* 1. Lead section — two primary headlines side by side on desktop */}
+            {/* 1. Daily Brief — editorial anchor, above lead headlines.
+                The board's voice sets context before readers dive into stories. */}
+            {!isLoading && stories.length > 0 && (
+              <DailyBriefText state={dailyBriefState} />
+            )}
+
+            {/* 2. Lead section — two primary headlines side by side on desktop */}
             {!isLoading && leadStories.length > 0 && (
               <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
                 {leadStories.map((story, i) => (
@@ -741,11 +747,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   </VisibleCard>
                 ))}
               </section>
-            )}
-
-            {/* 2. Daily Brief — TL;DR editorial box, below lead headlines */}
-            {!isLoading && stories.length > 0 && (
-              <DailyBriefText state={dailyBriefState} />
             )}
 
             {/* Medium stories — broadsheet grid on desktop */}
