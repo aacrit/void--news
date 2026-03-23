@@ -188,12 +188,14 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
 
 
 def _insert_section_transitions(dialogue_seg: "AudioSegment") -> "AudioSegment":
-    """Detect silence gaps (story breaks) and overlay glass-bell transitions.
+    """Detect silence gaps (story breaks) and insert musical transition phrases.
 
-    Looks for silence >= 800ms at -35dB — these are structural breaks between
-    stories, not natural speech pauses (which are 200-500ms). Overlays the
-    transition chime at the midpoint of each gap.
+    Finds silences ≥600ms at -35dB — structural story breaks (natural speech
+    pauses are 200-400ms). At each gap:
+    1. Extends the gap to ~2s if shorter (adds breathing room)
+    2. Overlays the 1.5s musical transition phrase centered in the gap
 
+    The result: unhurried pacing with musical beats between stories.
     If no gaps found, returns dialogue unchanged.
     """
     transition = _load_asset("transition.wav")
@@ -201,25 +203,37 @@ def _insert_section_transitions(dialogue_seg: "AudioSegment") -> "AudioSegment":
         return dialogue_seg
 
     try:
-        silences = detect_silence(dialogue_seg, min_silence_len=800, silence_thresh=-35)
+        silences = detect_silence(dialogue_seg, min_silence_len=600, silence_thresh=-35)
     except Exception:
         return dialogue_seg
 
     if not silences:
         return dialogue_seg
 
+    # Build new audio with extended gaps and transition overlays
+    # Work from end to start so positions don't shift
     result = dialogue_seg
     inserted = 0
-    for start_ms, end_ms in silences:
+    pad_ms = 500  # extra silence to add if gap < 2000ms
+
+    for start_ms, end_ms in reversed(silences):
+        gap_len = end_ms - start_ms
         midpoint = (start_ms + end_ms) // 2
-        # Center the transition chime at the midpoint of the silence gap
+
+        # If gap is shorter than 2s, extend it for breathing room
+        if gap_len < 2000:
+            extra = AudioSegment.silent(duration=pad_ms)
+            result = result[:end_ms] + extra + result[end_ms:]
+            midpoint += pad_ms // 2
+
+        # Center the transition in the gap
         insert_pos = midpoint - len(transition) // 2
         if insert_pos > 0:
             result = result.overlay(transition, position=insert_pos)
             inserted += 1
 
     if inserted:
-        print(f"  [audio] Inserted {inserted} story transition(s)")
+        print(f"  [audio] Inserted {inserted} musical transition(s)")
     return result
 
 

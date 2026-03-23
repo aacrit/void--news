@@ -176,37 +176,49 @@ def generate_ident():
 
 
 # ---------------------------------------------------------------------------
-# Transition: "The Breath"
+# Transition: "The Pulse" — musical interstitial between stories
 # ---------------------------------------------------------------------------
 
 def generate_transition():
-    """Story transition: a soft glass-bell dyad. ~0.6s.
+    """Story transition: a 1.5s musical phrase that breathes. Not a chime — a moment.
 
-    Two notes — D5 and A4 — arrive almost together with bell attacks
-    and fast decay. The effect is a gentle chime, like a crystal glass
-    touched lightly. It says "next" without shouting.
+    Built from the same D major palette as the ident, but rhythmic:
+    - A soft rhythmic pulse (bass notes with space between them)
+    - Harmonic shimmer that swells and fades
+    - The feel of a page turning in a magazine — unhurried, active, alive
 
-    Sits well under speech level at -16/-18 dB. The listener registers
-    the boundary subconsciously.
+    This plays between stories. It gives the listener a breath, signals
+    "next topic," and keeps the energy moving without rushing.
     """
-    canvas = AudioSegment.silent(duration=600)
+    canvas = AudioSegment.silent(duration=1500)
 
-    # Primary bell: D5 (587 Hz) — bright but not harsh
-    bell_hi = _bell(587.0, 500, -16)
-    canvas = canvas.overlay(bell_hi, position=0)
+    # Rhythmic bass pulse: two soft D3 hits with space — heartbeat feel
+    pulse1 = _bell(_CHORD["root"], 200, -14)
+    pulse2 = _bell(_CHORD["root"], 250, -12)
+    canvas = canvas.overlay(pulse1, position=100)
+    canvas = canvas.overlay(pulse2, position=500)
 
-    # Harmonic: A4 (440 Hz) — perfect fifth below, grounds the chime
-    bell_lo = _bell(440.0, 450, -18)
-    canvas = canvas.overlay(bell_lo, position=40)
+    # Harmonic swell between the pulses — the "active" quality
+    # A3 + E4 (fifth + ninth) shimmer pair, breathes in and out
+    swell = _shimmer_pair(_CHORD["fifth"], 1.2, 900, -16)
+    canvas = canvas.overlay(swell, position=200)
 
-    # Ghost harmonic: D4 (294 Hz) — barely there, adds depth
-    ghost = _pad(294.0, 350, -24)
-    canvas = canvas.overlay(ghost, position=60)
+    # High color: a brief F#4 bell at the midpoint — the "turn"
+    turn = _bell(_CHORD["third"], 300, -18)
+    canvas = canvas.overlay(turn, position=700)
 
-    canvas = canvas.fade_out(200)
+    # Ghost A4 shimmer trailing off — movement, not static
+    trail = _pad(_CHORD["hi_fifth"], 600, -22)
+    canvas = canvas.overlay(trail, position=800)
+
+    # Shape: fade in gently, fade out naturally
+    canvas = canvas.fade_in(80).fade_out(400)
+
+    # Pull back gain for layered content
+    canvas = canvas.apply_gain(-4)
 
     canvas.export(ASSETS_DIR / "transition.wav", format="wav")
-    print(f"  transition.wav ({len(canvas)}ms) — glass bell dyad")
+    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase")
 
 
 # ---------------------------------------------------------------------------

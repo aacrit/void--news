@@ -32,20 +32,20 @@ from briefing.daily_brief_generator import (
 from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
 
-# Claude-specific craft additions (no filler — craft only)
+# Claude-specific craft — Vox-style explanatory energy
 _CLAUDE_SYSTEM_ADDENDUM = """
 
-ADDITIONAL CRAFT RULES (for Claude-generated scripts):
-- Pacing variation is critical. Some turns are one short sentence. Others are
-  two or three. Never uniform length.
-- Self-correction is allowed sparingly: "The figure is — roughly $1.4 trillion,
-  depending on the estimate."
-- Commas create natural pauses: "The markets, for their part, have been unmoved."
-- Do NOT add filler reactions, verbal acknowledgments, or disfluencies. No "Well,",
-  "You know,", "I mean,", "Look,", "Mm.", "Right.", "Indeed."
-- When editorial, point at the data. Let the numbers speak. Do not narrate
-  your own analysis process.
-- The close should be matter-of-fact. These are journalists finishing work.
+ADDITIONAL CRAFT RULES (Claude-generated scripts):
+- Think Vox "Today Explained" energy. You're curious about this material. Show it.
+- Voice B is the audience proxy — asks "so what does that actually mean?",
+  reframes headlines, explains WHY not just WHAT.
+- Use concrete analogies to make abstract policy real.
+- Pacing variation is critical. Short punchy sentences next to longer unpacking.
+- Self-correction allowed: "roughly $1.4 trillion — depending on the estimate."
+- Still banned (hollow filler): "Mm.", "Right.", "Indeed.", "Good point."
+- Substantive reactions encouraged: "But that contradicts..." "So basically..."
+- Direct address: "Here's what you need to know." "Think about it this way."
+- The close: direct editorial take. What does today actually mean?
 """
 
 
