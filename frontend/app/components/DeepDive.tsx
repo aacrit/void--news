@@ -621,7 +621,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </button>
           </div>
 
-          <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginTop: "var(--space-3)" }}>
+          <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginTop: "var(--space-3)", overflowWrap: "break-word" }}>
             {story.title}
           </h2>
 
