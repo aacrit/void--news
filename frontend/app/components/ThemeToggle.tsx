@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { Sun, Moon } from "@phosphor-icons/react";
+import { hapticMedium } from "../lib/haptics";
 
 /* ---------------------------------------------------------------------------
    ThemeToggle — Sun/Moon icon toggle
@@ -21,6 +22,7 @@ export default function ThemeToggle() {
   const [mode, setMode] = useState<"light" | "dark">(getThemeFromStorage);
 
   const toggle = () => {
+    hapticMedium();
     const next = mode === "light" ? "dark" : "light";
     setMode(next);
     document.documentElement.setAttribute("data-mode", next);

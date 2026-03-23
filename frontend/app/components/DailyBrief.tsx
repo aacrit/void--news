@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import type { DailyBriefData } from "../lib/types";
 import { fetchDailyBrief } from "../lib/supabase";
 import { ScaleIcon } from "./ScaleIcon";
+import { hapticMedium, hapticLight, hapticTick } from "../lib/haptics";
 
 interface DailyBriefProps {
   edition: string;
@@ -91,6 +92,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio || audioError) return;
+    hapticMedium();
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
@@ -105,10 +107,17 @@ export function useDailyBrief(edition: string): DailyBriefState {
     }
   }, [isPlaying, audioError]);
 
+  const lastSeekTick = useRef(0);
   const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
     const t = Number(e.target.value);
+    // Detent haptic every 5 seconds of scrub distance
+    const tick = Math.floor(t / 5);
+    if (tick !== lastSeekTick.current) {
+      lastSeekTick.current = tick;
+      hapticTick();
+    }
     audio.currentTime = t;
     setCurrentTime(t);
   }, []);
@@ -203,7 +212,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         </div>
         <button
           className="daily-brief__toggle"
-          onClick={() => setExpanded(!expanded)}
+          onClick={() => { hapticLight(); setExpanded(!expanded); }}
           type="button"
           aria-expanded={expanded}
           aria-controls="daily-brief-body"

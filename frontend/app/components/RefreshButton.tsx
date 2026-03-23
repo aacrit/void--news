@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Clock, Warning } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
 import { timeAgo } from "../lib/utils";
+import { hapticLight, hapticConfirm } from "../lib/haptics";
 
 /* ---------------------------------------------------------------------------
    RefreshButton — Subtle "Last updated" with refresh action
@@ -95,7 +96,7 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
     <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
       <button
         ref={refreshButtonRef}
-        onClick={() => setShowConfirm(true)}
+        onClick={() => { hapticLight(); setShowConfirm(true); }}
         disabled={refreshing}
         aria-label={displayTime ? `Last updated ${displayTime}. Click to refresh.` : "Loading update time. Click to refresh."}
         className={`refresh-btn${refreshing ? " refresh-btn--loading" : ""}`}
@@ -155,7 +156,7 @@ export default function RefreshButton({ externalLastUpdated, onRefresh }: Refres
               <button ref={cancelButtonRef} onClick={closeDialog} className="btn-secondary">
                 Cancel
               </button>
-              <button onClick={handleRefresh} className="btn-primary">
+              <button onClick={() => { hapticConfirm(); handleRefresh(); }} className="btn-primary">
                 Refresh
               </button>
             </div>

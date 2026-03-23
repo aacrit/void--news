@@ -67,6 +67,7 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
+import { hapticConfirm, hapticScrollEdge } from "../lib/haptics";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -195,6 +196,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
   useEffect(() => {
+    hapticConfirm();
     setSelectedStory(null);
     setOriginRect(null);
     setActiveCategory("All");
@@ -433,6 +435,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const hasMore = remainingCount > 0;
 
   const loadMoreStories = useCallback(() => {
+    hapticScrollEdge();
     setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
   }, [compactStories.length]);
 
