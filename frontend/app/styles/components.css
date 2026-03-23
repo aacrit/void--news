@@ -1585,7 +1585,7 @@
 
 .theme-toggle__icon--hidden {
   opacity: 0;
-  transform: rotate(90deg) scale(0.5);
+  transform: rotate(45deg) scale(0.5);
 }
 
 .theme-toggle__icon--sun-hidden {
