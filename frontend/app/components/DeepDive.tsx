@@ -743,6 +743,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               <ArrowLeft size={18} weight="regular" aria-hidden="true" />
               <span className="deep-dive-back-label">Back to feed</span>
             </button>
+            <span className="dd-brand-label" aria-hidden="true">void --deep-dive</span>
 
             {/* Inter-story navigation */}
             {onNavigate && totalStories > 1 && (

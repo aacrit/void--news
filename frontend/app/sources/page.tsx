@@ -205,7 +205,7 @@ function SourcesPageInner() {
         {/* ---- Toolbar: title + lean filter ---- */}
         <div className="sources-toolbar">
           <div className="sources-toolbar__text">
-            <h1 className="sources-toolbar__title">
+            <h1 className="sources-toolbar__title" title="void --sources">
               <span className="sources-toolbar__count">{totalCount}</span> Sources
             </h1>
           </div>

@@ -11,9 +11,9 @@ import { useState, useEffect, useCallback } from "react";
 const SHORTCUTS = [
   { keys: ["J"], action: "Next story" },
   { keys: ["K"], action: "Previous story" },
-  { keys: ["Enter"], action: "Open Deep Dive" },
+  { keys: ["Enter"], action: "Open void --deep-dive" },
   { keys: ["Esc"], action: "Close panel" },
-  { keys: ["\u2190", "\u2192"], action: "Prev/next in Deep Dive" },
+  { keys: ["\u2190", "\u2192"], action: "Prev/next story" },
   { keys: ["?"], action: "Toggle this overlay" },
 ];
 

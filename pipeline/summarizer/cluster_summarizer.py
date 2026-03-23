@@ -87,7 +87,9 @@ Bad: "US Senate Could Pass Immigration Bill as Talks Continue"
 TASK 2 — summary (string, 250-350 words)
 Write a comprehensive factual briefing in inverted pyramid structure. This should \
 read like a complete news intelligence brief — rich with specifics, diverse \
-perspectives, and contextual depth.
+perspectives, and contextual depth. SHOW, DON'T TELL: let concrete facts, figures, \
+and juxtaposed perspectives convey significance. Never assert that something is \
+"significant" or "notable" — show the evidence and let the reader conclude.
 
 IMPORTANT: Articles are sorted newest-first and include publication timestamps. \
 Lead with the MOST RECENT development — what is new as of the latest articles. \
