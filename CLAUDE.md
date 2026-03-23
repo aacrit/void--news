@@ -318,7 +318,7 @@ Migrations: `supabase/migrations/` (001-017).
 |-------|---------|---------|
 | `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
 
-## Agent Team (18 Agents, 7 Divisions)
+## Agent Team (19 Agents, 8 Divisions)
 
 > Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
 
@@ -328,6 +328,7 @@ CEO (Aacrit)
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
+  ├── Audio ———————————— audio-engineer
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
@@ -353,6 +354,7 @@ CEO (Aacrit)
 | Desktop/mobile layout, responsive issues | `responsive-specialist` |
 | Browser testing, click-through QA | `uat-tester` |
 | spaCy models, bias scoring, NER | `nlp-engineer` |
+| Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` |
 | Source vetting, RSS config, credibility | `source-curator` |
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` |
 | Strategic advice, roadmap, priorities | `ceo-advisor` |
@@ -364,6 +366,7 @@ Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
 Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
 Bias Calibration:  nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
 Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
+Audio Quality:     audio-engineer → pipeline-tester → bug-fixer
 ```
 
 ### Locked Decisions (Require CEO Approval)
