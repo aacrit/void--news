@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import type { Category, Edition } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import EditionIcon from "./EditionIcon";
@@ -83,7 +84,7 @@ export default function FilterBar({
       {/* ── Edition pills — navigation CTAs ── */}
       <div className="ubar__group ubar__editions" role="tablist" aria-label="Edition">
         {EDITIONS.map((ed) => (
-          <a
+          <Link
             key={ed.slug}
             href={getEditionHref(ed.slug)}
             role="tab"
@@ -92,7 +93,7 @@ export default function FilterBar({
           >
             <EditionIcon slug={ed.slug} size={12} />
             <span>{ed.label}</span>
-          </a>
+          </Link>
         ))}
       </div>
 
