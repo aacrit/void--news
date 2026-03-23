@@ -476,7 +476,7 @@ void-news/
 - [x] Project scaffolding, 370 sources (expanded from 222), Supabase schema (migrations 001-017), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
 
 ### Phase 2 — Analysis Engine -- COMPLETE
-- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Google Cloud TTS Neural2), cluster dedup (step 8b), RSS fetch global timeout handling.
+- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Gemini 2.5 Flash TTS), cluster dedup (step 8b), RSS fetch global timeout handling.
 
 ### Phase 3 — Frontend MVP -- COMPLETE
 - [x] Next.js 16 App Router, design token system, desktop + mobile layouts, StoryCard + LeadStory, news feed (headline_rank), "Why This Story" tooltip, category filtering, BiasLens Three Lenses, RefreshButton, light/dark mode, DailyBrief ("void --onair" TL;DR + audio player).
