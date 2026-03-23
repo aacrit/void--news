@@ -141,6 +141,24 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
   const leftTexts  = buckets.Left.map(b => b.excerpt);
   const rightTexts = buckets.Right.map(b => b.excerpt);
 
+  // Extract key framing terms per lean side from rationale data.
+  // These surface what vocabulary each perspective emphasizes.
+  const keyTerms = useMemo(() => {
+    const left = new Set<string>();
+    const right = new Set<string>();
+    for (const src of sources) {
+      const rat = src.lensData?.leanRationale;
+      if (!rat) continue;
+      for (const kw of rat.topLeftKeywords ?? []) left.add(kw);
+      for (const kw of rat.topRightKeywords ?? []) right.add(kw);
+    }
+    return {
+      Left: [...left].slice(0, 4),
+      Center: [] as string[],
+      Right: [...right].slice(0, 4),
+    };
+  }, [sources]);
+
   const activeBuckets = BUCKETS.filter((b) => buckets[b.label].length > 0);
 
   if (activeBuckets.length < 2) {
@@ -209,12 +227,24 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                 </span>
               </div>
 
+              {/* Key framing terms — vocabulary this side emphasizes */}
+              {keyTerms[bucket.label].length > 0 && (
+                <div className="comp-view__key-terms">
+                  {keyTerms[bucket.label].map((term) => (
+                    <span key={term} className="comp-view__term">{term}</span>
+                  ))}
+                </div>
+              )}
+
               {/* Source summaries */}
               <div className="comp-view__items">
                 {visibleItems.map(({ source }, i) => {
                   const favicon = getFaviconUrl(source.url);
                   const lean = source.biasScores?.politicalLean ?? 50;
                   const rigor = source.biasScores?.factualRigor ?? 50;
+                  const sensationalism = source.biasScores?.sensationalism ?? 30;
+                  const opinionLabel = source.lensData?.opinionLabel ?? "Reporting";
+                  const confidence = source.confidence ?? 0.5;
 
                   // Build diff-highlighted text from actual article content
                   const titleText = source.name;
@@ -249,6 +279,26 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                         <span className="comp-view__lean-score text-data">
                           {lean}
                         </span>
+                      </div>
+
+                      {/* Source credibility signals — surfaces existing unused data */}
+                      <div className="comp-view__signals">
+                        <span className={`comp-view__type-badge comp-view__type-badge--${opinionLabel.toLowerCase()}`}>
+                          {opinionLabel}
+                        </span>
+                        <span className="comp-view__rigor-bar" aria-label={`Factual rigor: ${rigor}/100`}>
+                          <span className="comp-view__rigor-fill" style={{ width: `${rigor}%` }} />
+                        </span>
+                        <span className="comp-view__rigor-val text-data">{rigor}</span>
+                        {sensationalism > 60 && (
+                          <span className="comp-view__warn" title="High sensationalism detected" aria-label="High sensationalism">
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                              <path d="M5 1L9 9H1L5 1Z" stroke="var(--sense-high)" strokeWidth="1.2" fill="none"/>
+                              <circle cx="5" cy="7" r="0.6" fill="var(--sense-high)"/>
+                              <line x1="5" y1="4" x2="5" y2="6" stroke="var(--sense-high)" strokeWidth="1"/>
+                            </svg>
+                          </span>
+                        )}
                       </div>
 
                       {/* Diff-highlighted body */}

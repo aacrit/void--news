@@ -198,15 +198,15 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — snappy cascade reveal.
-   Short opacity (instant feel) + bouncy spring transform (physical pop).
-   Content appears to already be there — animation just adds life. */
+/* Deep Dive content section stagger — cinematic cascade reveal.
+   Opacity leads (instant presence), transform follows with spring (physical pop).
+   Slightly larger travel (14px) + longer spring (360ms) feels more deliberate. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(14px);
   transition:
-    opacity 100ms var(--ease-out),
-    transform 280ms var(--spring-bouncy);
+    opacity 120ms var(--ease-out),
+    transform 360ms var(--spring-bouncy);
 }
 
 .anim-dd-section--visible {

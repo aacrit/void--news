@@ -86,14 +86,6 @@ function leanLabel(v: number): string {
 }
 
 
-function qualityColor(v: number, invert = false): string {
-  const c = gc(); const s = invert ? 100 - v : v;
-  if (s <= 30) return c["--sense-low"];
-  if (s <= 60) return lerp(c["--sense-low"], c["--sense-medium"], (s - 30) / 30);
-  if (s <= 80) return lerp(c["--sense-medium"], c["--sense-high"], (s - 60) / 20);
-  return c["--sense-high"];
-}
-
 /* ── Hover hook ────────────────────────────────────────────────────────── */
 
 function useHover() {
@@ -400,26 +392,31 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         </div>
       </div>
 
-      {/* ═══ SECTION 3: Secondary Scores ═══ */}
+      {/* ═══ SECTION 3: Secondary Scores — dot scale (matches BiasInspector) ═══ */}
       <div style={{ padding: "10px 16px 14px" }}>
         {secondary.map((ax, i) => (
           <div key={ax.label} style={{
-            display: "flex", alignItems: "center", gap: 8, marginBottom: 4,
+            display: "flex", alignItems: "center", gap: 8, marginBottom: 5,
             opacity: stage >= 4 ? 1 : 0,
             transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
           }}>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--fg-tertiary)", width: 74, flexShrink: 0 }}>
               {ax.label}
             </span>
-            <div style={{ flex: 1, height: 3, backgroundColor: "var(--border-subtle)", borderRadius: 1.5, overflow: "hidden" }}>
-              <div style={{
-                width: stage >= 4 ? `${ax.v}%` : "0%", height: "100%",
-                backgroundColor: qualityColor(ax.v, ax.inv),
-                borderRadius: 1.5,
-                transition: `width 450ms var(--ease-out) ${150 + i * 55}ms`,
-              }} />
-            </div>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 500, color: "var(--fg-tertiary)", width: 50, textAlign: "right" as const, flexShrink: 0 }}>
+            {/* 5-dot scale — consistent with BiasInspector subfactors */}
+            <span style={{ display: "inline-flex", gap: 3 }}>
+              {Array.from({ length: 5 }, (_, di) => {
+                const filled = Math.max(0, Math.min(5, Math.round((ax.v / 100) * 5)));
+                return (
+                  <span key={di} style={{
+                    width: 6, height: 6, borderRadius: "50%",
+                    backgroundColor: di < filled ? "var(--fg-secondary)" : "var(--border-subtle)",
+                    transition: `background-color 250ms var(--ease-out) ${(150 + i * 55 + di * 30)}ms`,
+                  }} />
+                );
+              })}
+            </span>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 500, color: "var(--fg-tertiary)", flexShrink: 0 }}>
               {ax.d}
             </span>
           </div>
