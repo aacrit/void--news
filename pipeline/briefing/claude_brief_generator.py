@@ -177,12 +177,15 @@ def generate_claude_brief(
 
     _check_quality(result, edition)
     tldr = result.get("tldr_text", "")
+    opinion = result.get("opinion_text", "")
     script = result.get("audio_script")
     print(f"  TL;DR: {len(tldr.split(chr(10)))} lines")
+    print(f"  Opinion: {'yes' if opinion else 'no'}")
     print(f"  Script: {'yes' if script else 'no'} ({len(script or '')} chars)")
 
     brief = {
         "tldr_text": tldr,
+        "opinion_text": opinion if opinion else None,
         "audio_script": script,
         "top_cluster_ids": [c.get("_db_id", "") for c in top_clusters if c.get("_db_id")],
         "generator": f"claude-{model}",
@@ -209,6 +212,7 @@ def generate_claude_brief(
     brief_row = {
         "edition": edition,
         "tldr_text": brief["tldr_text"],
+        "opinion_text": brief.get("opinion_text"),
         "audio_script": brief.get("audio_script"),
         "top_cluster_ids": brief.get("top_cluster_ids", []),
     }

@@ -210,6 +210,15 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
             <p key={i}>{p}</p>
           ))}
         </div>
+
+        {/* Opinion section — editorial board's take */}
+        {brief.opinion_text && expanded && (
+          <div className="daily-brief__opinion">
+            <div className="daily-brief__opinion-label">The Board</div>
+            <p>{brief.opinion_text}</p>
+          </div>
+        )}
+
         <button
           className="daily-brief__toggle"
           onClick={() => { hapticLight(); setExpanded(!expanded); }}

@@ -65,14 +65,27 @@ Talk about the world, not about media.
 intelligence. Synthesize — do not summarize what you received.
 
 For the TL;DR:
-- Write 5-7 sentences as a flowing editorial paragraph (separated by \\n).
-- Open with the most consequential development and why it matters (1-2 sentences).
-- Cover 2-3 more stories, connecting them where genuine connections exist. \
-Interpret significance, don't just list events (1 sentence each).
+- Write 8-12 sentences as a flowing editorial paragraph (separated by \\n).
+- Open with the most consequential development and why it matters (2-3 sentences). \
+Give it room — this is the lead, explain the significance.
+- Cover 3-4 more stories, connecting them where genuine connections exist. \
+Interpret significance, don't just list events (1-2 sentences each).
 - Close with editorial judgment: what deserves more attention, what today reveals \
 about larger forces, or what question remains. Direct opinion, not meta-commentary \
 about media (1-2 sentences).
-- Target 80-120 words. Think: a brilliant editor's morning note to a smart audience.
+- Target 150-220 words. Think: a brilliant editor's morning note to a smart audience.
+
+For the opinion:
+- Write 3-5 sentences (80-120 words) as a single paragraph.
+- This is the editorial board's genuine take. Where the TL;DR says what happened \
+and why it matters, the opinion says what you THINK about it.
+- Be genuinely opinionated — not partisan, but intellectually bold. Take a position \
+on what's being underreported, what's dangerous, what's hopeful, what the real story \
+is behind the headlines.
+- Write in first person plural ("we"). This is a collective editorial judgment.
+- The opinion should NOT repeat facts from the TL;DR. It assumes the reader already \
+read the brief. It's a deeper cut — the thing you'd say after the broadcast is over.
+- Think: the last paragraph of a great editorial in The Economist or the FT.
 
 For the audio script:
 - TWO VOICES. Think Vox's "Today Explained" energy — curious, substantive, human.
@@ -170,9 +183,12 @@ Below are today's top {N} stories for this edition, ranked by importance.
 STORIES:
 {stories_block}
 
-Return JSON with exactly two fields:
-1. "tldr_text" — 5-7 sentences as a flowing editorial paragraph, separated by \\n.
-2. "audio_script" — full two-voice script with segment markers ([OPEN],
+Return JSON with exactly three fields:
+1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
+   150-220 words.
+2. "opinion_text" — 3-5 sentences. The editorial board's genuine take. Bold, \
+   non-partisan, intellectually honest. First person plural ("we"). 80-120 words.
+3. "audio_script" — full two-voice script with segment markers ([OPEN],
    [STORY_1], [STORY_2], [STORY_3], [CLOSE]). Each marker on its own line,
    followed by the spoken text. Markers are structural delimiters — never read aloud.\
 """
@@ -191,8 +207,14 @@ def _check_quality(result: dict, edition: str) -> None:
     """Log quality warnings for out-of-spec brief output."""
     tldr = result.get("tldr_text", "")
     lines = [l.strip() for l in tldr.split("\n") if l.strip()]
-    if len(lines) < 3 or len(lines) > 10:
-        print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 5-7)")
+    if len(lines) < 5 or len(lines) > 15:
+        print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 8-12)")
+
+    opinion = result.get("opinion_text", "")
+    if opinion:
+        owords = len(opinion.split())
+        if owords < 40 or owords > 180:
+            print(f"  [quality][brief:{edition}] Opinion has {owords} words (expected 80-120)")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):
@@ -370,6 +392,7 @@ def generate_daily_briefs(
             print(f"  [brief:{edition}] No clusters for this edition — skipping")
             results[edition] = {
                 "tldr_text": "No stories available for this edition.",
+                "opinion_text": None,
                 "audio_script": None,
                 "top_cluster_ids": [],
             }
@@ -392,6 +415,7 @@ def generate_daily_briefs(
             )
             if raw and isinstance(raw, dict):
                 tldr = raw.get("tldr_text", "")
+                opinion = raw.get("opinion_text", "")
                 script = raw.get("audio_script")
                 # Gemini may return script as list — coerce to string
                 if isinstance(script, list):
@@ -401,11 +425,13 @@ def generate_daily_briefs(
                 if isinstance(tldr, str) and tldr.strip():
                     brief_result = {
                         "tldr_text": tldr.strip(),
+                        "opinion_text": opinion.strip() if isinstance(opinion, str) and opinion.strip() else None,
                         "audio_script": script if isinstance(script, str) and script.strip() else None,
                         "top_cluster_ids": top_ids,
                     }
                     _check_quality(raw, edition)
                     print(f"  [brief:{edition}] Gemini OK — TL;DR {len(tldr.split(chr(10)))} lines, "
+                          f"opinion {'yes' if brief_result['opinion_text'] else 'no'}, "
                           f"script {'yes' if brief_result['audio_script'] else 'no'}")
                 else:
                     print(f"  [brief:{edition}] Gemini returned invalid tldr_text — falling back")
@@ -416,10 +442,11 @@ def generate_daily_briefs(
         else:
             print(f"  [brief:{edition}] Brief call cap reached — using rule-based TL;DR")
 
-        # Fallback: rule-based TL;DR, no audio script
+        # Fallback: rule-based TL;DR, no audio script, no opinion
         if brief_result is None:
             brief_result = {
                 "tldr_text": _rule_based_tldr(top_clusters),
+                "opinion_text": None,
                 "audio_script": None,
                 "top_cluster_ids": top_ids,
             }

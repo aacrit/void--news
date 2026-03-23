@@ -1799,6 +1799,7 @@ def main():
                         "edition": edition,
                         "pipeline_run_id": run_id,
                         "tldr_text": brief["tldr_text"],
+                        "opinion_text": brief.get("opinion_text"),
                         "audio_script": brief.get("audio_script"),
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }
