@@ -5,12 +5,17 @@ import type { Story } from "../lib/types";
 import { timeAgo, whyThisStory } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
+import { VelocityIndicator } from "./StoryMeta";
 import { hapticLight } from "../lib/haptics";
 
 interface StoryCardProps {
   story: Story;
   index: number;
   onStoryClick?: (story: Story, rect: DOMRect) => void;
+  /** Global story index for keyboard navigation — sets data-story-index attribute */
+  globalIndex?: number;
+  /** True when this card is focused via keyboard (J/K) navigation */
+  kbdFocused?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -20,7 +25,7 @@ interface StoryCardProps {
    the card enters the viewport — below-fold cards don't waste their entrance.
    --------------------------------------------------------------------------- */
 
-export default function StoryCard({ story, index, onStoryClick }: StoryCardProps) {
+export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused }: StoryCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -54,12 +59,14 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
           onStoryClick?.(story, new DOMRect());
         }
       }}
-      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}`}
+      data-story-index={globalIndex}
+      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
-      {/* Category tag + time */}
+      {/* Category tag + time + velocity */}
       <div className="story-card__meta">
         <span className="category-tag">{story.category}</span>
+        <VelocityIndicator velocity={story.coverageVelocity} />
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>
       </div>
 

@@ -274,7 +274,7 @@
   max-height: 60vh;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .spectrum-zone--scrollable .spectrum-zone__logos::-webkit-scrollbar {
@@ -286,7 +286,7 @@
 }
 
 .spectrum-zone--scrollable .spectrum-zone__logos::-webkit-scrollbar-thumb {
-  background-color: var(--border-strong);
+  background-color: var(--scrollbar-thumb);
   border-radius: 2px;
 }
 

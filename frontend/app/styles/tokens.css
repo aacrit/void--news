@@ -35,6 +35,10 @@
   --border-strong: #C8C0B5;
   --divider:       #D4CCC2;
 
+  /* Scrollbar */
+  --scrollbar-thumb: #C8C0B5;
+  --scrollbar-thumb-hover: #B8B0A5;
+
   /* Shadows — warm, barely there */
   --shadow-e0: none;
   --shadow-e1: 0 1px 3px rgba(28, 26, 23, 0.04);
@@ -102,6 +106,10 @@
   --border-subtle: #3A3530;
   --border-strong: #4A4540;
   --divider:       #403B35;
+
+  /* Scrollbar — brighter thumb for dark backgrounds */
+  --scrollbar-thumb: #6A6560;
+  --scrollbar-thumb-hover: #7A756E;
 
   /* Shadows — cooler in dark mode */
   --shadow-e0: none;

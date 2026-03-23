@@ -44,6 +44,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryPr
     >
       {/* Category tag + time */}
       <div className="lead-story__meta">
+        {rank === 0 && <span className="lead-story__badge">Top Story</span>}
         <span className="category-tag category-tag--lead">{story.category}</span>
         <span className="dot-separator" aria-hidden="true" />
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>

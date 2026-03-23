@@ -251,6 +251,14 @@
     display: none;
   }
 
+  /* Mobile dateline: compact date only */
+  .nav-dateline-mobile {
+    display: block;
+    flex: 1;
+    text-align: right;
+    padding: 0 var(--space-2);
+  }
+
   /* Tighter vertical padding + explicit gap — horizontal is already --space-5
      in the base rule (components.css), so only override what changes on mobile */
   .nav-inner {
