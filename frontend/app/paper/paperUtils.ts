@@ -1,7 +1,7 @@
 import type { Edition, Story } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
-   E-Paper Utilities — 1924 NYT Broadsheet Layout Engine
+   E-Paper Utilities — 1970s NYT Broadsheet Layout Engine
    Tier assignment, headline deck generation, story distribution, filler generation.
    --------------------------------------------------------------------------- */
 

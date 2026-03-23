@@ -121,14 +121,17 @@
     -webkit-line-clamp: 4;
   }
 
-  /* Deep Dive: side panel from right — over half the screen */
+  /* Deep Dive: side panel from right — over half the screen.
+     min-width 400px at 1024px: prevents feed from being squeezed below
+     ~460px on a 1024px viewport (55% = 563px > 560px old min-width left
+     only 464px for feed). Full 560px restored at 1280px+. */
   .deep-dive-panel {
     left: auto;
     right: 0;
     top: 0;
     bottom: 0;
     width: 55%;
-    min-width: 560px;
+    min-width: 400px;
     max-width: none;
     border-left: var(--rule-thin);
   }
@@ -142,6 +145,11 @@
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
 
 @media (min-width: 1280px) {
+  /* Restore full min-width on wider viewports — 1280px leaves ~576px for feed */
+  .deep-dive-panel {
+    min-width: 560px;
+  }
+
   .grid-compact {
     grid-template-columns: repeat(4, 1fr);
     gap: 0 var(--space-5);
@@ -547,6 +555,50 @@
     transition: transform 50ms var(--ease-out);
   }
 
+  /* Lean bar segments — disable hover lift, use press feedback */
+  .lean-bar__seg:hover {
+    background-color: transparent;
+    color: var(--fg-tertiary);
+  }
+
+  .lean-bar__seg:active {
+    transform: scale(0.95);
+    transition: transform 50ms var(--ease-out);
+  }
+
+  /* Keep active segment color on mobile even without hover */
+  .lean-bar__seg--active:hover {
+    color: var(--fg-primary);
+  }
+
+  .lean-bar__seg--active.lean-bar__seg--left:hover {
+    background-color: color-mix(in srgb, var(--bias-left) 14%, transparent);
+  }
+
+  .lean-bar__seg--active.lean-bar__seg--center:hover {
+    background-color: color-mix(in srgb, var(--bias-center) 14%, transparent);
+  }
+
+  .lean-bar__seg--active.lean-bar__seg--right:hover {
+    background-color: color-mix(in srgb, var(--bias-right) 14%, transparent);
+  }
+
+  /* Topic chip — native press feel */
+  .topic-bar__chip:hover {
+    color: var(--fg-tertiary);
+    border-color: transparent;
+  }
+
+  .topic-bar__chip:active {
+    transform: scale(0.88);
+    transition: transform 50ms var(--ease-out);
+  }
+
+  .topic-bar__chip--active:hover {
+    color: var(--fg-primary);
+    border-color: var(--border-strong);
+  }
+
   /* === PERFORMANCE — DISABLE PAINT-HEAVY EFFECTS === */
 
   /* Box-shadow transitions require composited paint layers — skip on mobile.
@@ -585,6 +637,8 @@
   /* These elements already meet WCAG in most cases; this rule is the safety net */
   .nav-bottom-tab,
   .filter-chip,
+  .lean-bar__seg,
+  .topic-bar__chip,
   .page-toggle,
   .theme-toggle,
   .deep-dive-close {
@@ -603,6 +657,8 @@
   /* Native apps don't allow text selection on buttons / cards */
   .nav-bottom-tab,
   .filter-chip,
+  .lean-bar__seg,
+  .topic-bar__chip,
   .story-card,
   .lead-story,
   .page-toggle,
@@ -636,6 +692,8 @@
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    /* Prevent last visible line from stretching when clamped */
+    text-align-last: left;
   }
 
   /* Show "Read more" toggle on mobile */
@@ -653,22 +711,40 @@
 /* ---- Ultra-narrow (max-width: 375px) ----------------------------------- */
 
 @media (max-width: 375px) {
-  /* [CRITICAL-2] FilterBar — tighter chips, reduced gradient on iPhone SE */
-  .filter-bar-wrapper::after {
-    width: 32px;
+  /* Lean bar — tighter segments on iPhone SE.
+     min-height: 44px re-stated explicitly (WCAG 2.1 AA) — the reduced
+     padding in this block would otherwise shrink the visual hit area even
+     though the max-width: 767px rule already sets it. Explicit override
+     guards against cascade order surprises. */
+  .lean-bar__seg {
+    padding: var(--space-2) var(--space-1);
+    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
+    gap: 4px;
+    min-height: 44px;
   }
 
+  .lean-bar__dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Topic chips — compact on ultra-narrow */
+  .topic-bar__chip {
+    padding: 3px 6px;
+    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
+    min-height: 32px;
+  }
+
+  /* Legacy filter-chip — tighter on ultra-narrow */
   .filter-chip {
     padding: var(--space-2);
     font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
   }
 
-  /* Hide filter chip icons on ultra-narrow to save space */
   .filter-chip__icon {
     display: none;
   }
 
-  /* Filter toggle — tighter on very small screens */
   .filter-toggle {
     font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
     padding: var(--space-2);

@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.6
-**Last updated:** 2026-03-21 (rev 5)
+**Version:** 1.8
+**Last updated:** 2026-03-22 (rev 7)
 
 ---
 
@@ -27,12 +27,12 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 ### Type Scale (Fluid)
 
 ```css
---text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);     /* 9-10px: metadata */
---text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);         /* 12-14px: captions */
---text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);            /* 14-16px: body */
---text-lg:    clamp(1.125rem, 1rem + 0.5vw, 1.5rem);            /* 18-24px: subheads */
---text-xl:    clamp(1.5rem, 1.2rem + 1vw, 2.5rem);              /* 24-40px: headlines */
---text-hero:  clamp(2rem, 1.5rem + 2vw, 4rem);                  /* 32-64px: lead story */
+--text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);      /* 9-10px: metadata */
+--text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);          /* 12-14px: captions */
+--text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);             /* 14-16px: body */
+--text-lg:    clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);         /* 17-21px: subheads */
+--text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);           /* 20-28px: headlines */
+--text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);               /* 24-48px: lead story */
 ```
 
 ### Editorial Rules
@@ -54,10 +54,10 @@ Warm paper tones. Think aged broadsheet under morning light, not sterile white.
 ```css
 :root[data-mode="light"] {
   /* Surfaces */
-  --bg-primary:    #FAF8F5;   /* Warm paper */
-  --bg-secondary:  #F2EDE8;   /* Aged newsprint */
-  --bg-card:       #FFFFFF;   /* Clean card surface */
-  --bg-elevated:   #FFFFFF;   /* Elevated surfaces */
+  --bg-primary:    #F0EBDD;   /* Warm paper */
+  --bg-secondary:  #E8E2D4;   /* Aged newsprint */
+  --bg-card:       #F5F0E4;   /* Clean card surface */
+  --bg-elevated:   #F5F0E4;   /* Elevated surfaces */
 
   /* Text */
   --fg-primary:    #1A1A1A;   /* Near-black ink */
@@ -104,14 +104,16 @@ Colors are consistent across light/dark modes for instant recognition. Designed 
 #### Political Lean Spectrum (7-point)
 
 ```css
---bias-far-left:    #1D4ED8;   /* Deep blue — far left */
---bias-left:        #3B82F6;   /* Blue — left lean */
---bias-center-left: #60A5FA;   /* Light blue — center-left */
---bias-center:      #9CA3AF;   /* Neutral gray — center */
---bias-center-right:#F97316;   /* Orange — center-right */
---bias-right:       #EF4444;   /* Red — right lean */
---bias-far-right:   #B91C1C;   /* Deep red — far right */
+--bias-far-left:     #1D4ED8;  /* Deep blue — far left */
+--bias-left:         #3B82F6;  /* Blue — left lean */
+--bias-center-left:  #93C5FD;  /* Light blue — center-left */
+--bias-center:       #9CA3AF;  /* Neutral gray — center */
+--bias-center-right: #FCA5A5;  /* Light red / salmon — center-right */
+--bias-right:        #EF4444;  /* Red — right lean */
+--bias-far-right:    #B91C1C;  /* Deep red — far right */
 ```
+
+Dark mode overrides (in `tokens.css` under `[data-mode="dark"]`): blues boosted for saturation on dark walnut; `--bias-right` brightened to `#F87171`.
 
 Source `political_lean_baseline` values: `far-left`, `left`, `center-left`, `center`, `center-right`, `right`, `far-right`, `varies`. Enforced by DB check constraint (migration 007).
 
@@ -382,8 +384,9 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 |-------|-------|-----|
 | --dur-instant | 0ms | Reduced motion, immediate feedback |
 | --dur-fast | 150ms | Hover states, small reveals |
-| --dur-normal | 300ms | Card interactions, dot tooltips |
+| --dur-normal | 300ms | Card interactions, tooltips |
 | --dur-morph | 400ms | View transitions |
+| --dur-step | 450ms | Step-by-step reveals, stagger sequences |
 | --dur-slow | 600ms | Page-level animations |
 
 ### Key Animations
@@ -424,7 +427,8 @@ Active components in `frontend/app/components/`:
 | `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: seamless lede (viewport-responsive height, "Read more" at 600+ chars), `dd-analysis-row` flex row (Sigil + Spectrum + Press Analysis ▶ in one row on desktop, stacked on mobile), "Press Analysis ▶" trigger expands via `grid-template-rows 0fr→1fr`, Source Perspectives in 2-column Agreement\|Divergence grid (desktop) or single column (mobile), source coverage. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet on mobile. Content reveal cascade: 120ms delay desktop, 30ms mobile. Panel `opacity:0` CSS safety + JS asymmetric opacity transition. | Per-source BiasLens (sm) |
+| `DeepDive` | Slide-in panel: FLIP morph open/close (card expands into panel via inverse transform; reverse on close). Seamless lede (viewport-responsive height, "Read more" at 600+ chars). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`. Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Content reveal cascade: 120ms delay desktop, 30ms mobile. Panel `opacity:0` CSS safety + JS asymmetric opacity transition. | Per-source BiasLens (sm) |
+| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels. Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. Nearby sources (within 8%) alternate rows to avoid overlap. Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
 | `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
@@ -440,7 +444,7 @@ Active components in `frontend/app/components/`:
 | `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
 | `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping), `loading` (dramatic tipping), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
 | `PageToggle` | Switches between Feed and Sources views. | -- |
-| `SpectrumChart` | Horizontal political spectrum bar visualization. Used on `/sources` page to show left:right source distribution. | -- |
+| `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
 | `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. | -- |
 
 **Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).

@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import type { Edition } from "../lib/types";
-import { supabase } from "../lib/supabase";
+import { supabase, supabaseError } from "../lib/supabase";
 import SpectrumChart, { type SpectrumSource, normalizeLean } from "../components/SpectrumChart";
 import ThemeToggle from "../components/ThemeToggle";
 import PageToggle from "../components/PageToggle";
@@ -12,6 +12,7 @@ import LogoFull from "../components/LogoFull";
 import LogoIcon from "../components/LogoIcon";
 import Footer from "../components/Footer";
 import { getEditionTimeOfDay, getEditionTimestamp } from "../lib/utils";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 /* ---------------------------------------------------------------------------
    Sources Page — /sources
@@ -61,7 +62,7 @@ function formatDateCompact(): string {
   });
 }
 
-export default function SourcesPage() {
+function SourcesPageInner() {
   const [sources, setSources] = useState<SpectrumSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +73,11 @@ export default function SourcesPage() {
     const controller = new AbortController();
 
     async function loadSources() {
+      if (!supabase) {
+        setError(supabaseError ?? "Unable to connect to data source.");
+        setIsLoading(false);
+        return;
+      }
       try {
         const { data, error: fetchError } = await supabase
           .from("sources")
@@ -313,5 +319,13 @@ export default function SourcesPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function SourcesPage() {
+  return (
+    <ErrorBoundary>
+      <SourcesPageInner />
+    </ErrorBoundary>
   );
 }

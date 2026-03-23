@@ -1,21 +1,40 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 // Supabase project credentials — must be set via environment variables.
 // Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
 // (dev) or as GitHub Actions secrets (CI/CD deploy).
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+//
+// If credentials are absent the client is null and all data functions return
+// empty results. The UI shows "Unable to connect to data source" rather than
+// crashing. This prevents a module-load throw from breaking the entire app.
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing Supabase credentials. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'
-  );
+let _client: SupabaseClient | null = null;
+let _clientError: string | null = null;
+
+try {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    _clientError =
+      'Unable to connect to data source. Configuration is missing.';
+  } else {
+    _client = createClient(supabaseUrl, supabaseAnonKey);
+  }
+} catch (err) {
+  _clientError =
+    err instanceof Error ? err.message : 'Unable to connect to data source.';
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+/** Possibly-null Supabase client. Always check before use. */
+export const supabase = _client as SupabaseClient;
+
+/** Non-null when credentials are absent or client creation failed. */
+export const supabaseError: string | null = _clientError;
 
 export async function fetchDeepDiveData(clusterId: string) {
-  const { data, error } = await supabase
+  if (!_client) return null;
+  const { data, error } = await _client
     .from('cluster_articles')
     .select(`
       article:articles (
@@ -84,7 +103,8 @@ export async function fetchOpinionArticles(_section: "world" | "us" | "india"): 
 }
 
 export async function fetchLastPipelineRun() {
-  const { data, error } = await supabase
+  if (!_client) return null;
+  const { data, error } = await _client
     .from('pipeline_runs')
     .select('completed_at, articles_fetched, status')
     .eq('status', 'completed')
@@ -98,7 +118,8 @@ export async function fetchLastPipelineRun() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function fetchDailyBrief(edition: string): Promise<any | null> {
-  const { data, error } = await supabase
+  if (!_client) return null;
+  const { data, error } = await _client
     .from('daily_briefs')
     .select('id, edition, tldr_text, audio_url, audio_duration_seconds, audio_voice_label, created_at')
     .eq('edition', edition)

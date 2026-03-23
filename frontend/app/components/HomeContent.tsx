@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
-import { supabase } from "../lib/supabase";
+import { supabase, supabaseError } from "../lib/supabase";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar from "./NavBar";
@@ -12,6 +12,57 @@ import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
 import ErrorBoundary from "./ErrorBoundary";
+
+/* ---------------------------------------------------------------------------
+   VisibleCard — defers anim-filter-card until the element enters the viewport.
+
+   On initial page load, story cards below the fold are in the DOM (batch
+   rendering limits them to visibleCount) but not visible. Without this guard,
+   the CSS animation fires immediately for all rendered cards, including those
+   off-screen — wasting GPU work and producing jank on low-end devices.
+
+   On filter changes (React key re-mount), cards are already in the viewport
+   at the moment of mount, so IntersectionObserver fires immediately and the
+   animation plays as intended — no change to the filter-change UX.
+   --------------------------------------------------------------------------- */
+interface VisibleCardProps {
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}
+
+function VisibleCard({ className = "", style, children }: VisibleCardProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // If already in the viewport on mount (e.g. filter re-render), mark
+    // immediately without waiting for the observer callback.
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 100) {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
+      { rootMargin: "100px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`${className}${inView ? " anim-filter-card" : ""}`}
+      style={style}
+    >
+      {children}
+    </div>
+  );
+}
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
@@ -100,6 +151,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  // retryKey: incrementing triggers the data-fetch useEffect without a full
+  // page reload — gives users a clean retry path from the error state.
+  const [retryKey, setRetryKey] = useState(0);
   const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
@@ -147,6 +201,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     async function loadFromSupabase() {
       setIsLoading(true);
       setError(null);
+
+      // Guard: if Supabase client is unavailable, surface a user-friendly error
+      // rather than throwing a TypeError on the first .from() call.
+      if (!supabase) {
+        setError(supabaseError ?? "Unable to connect to data source.");
+        setIsLoading(false);
+        return;
+      }
 
       try {
         const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
@@ -221,7 +283,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 }
               : undefined;
 
-            const sourceCount = cluster.source_count || 1;
+            // Use nullish coalescing so a genuine 0 is preserved rather than
+            // defaulting to 1. The pending flag on lensData/sigilData already
+            // handles the no-bias-data display state.
+            const sourceCount = cluster.source_count ?? 0;
             const opinionLabel = (bd?.["avg_opinion_label"] as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact);
             const lensData: ThreeLensData = {
               lean: biasScores.politicalLean,
@@ -334,7 +399,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
     loadFromSupabase();
     return () => controller.abort();
-  }, [activeEdition]);
+  }, [activeEdition, retryKey]);
 
   const filteredStories = useMemo(() => {
     let filtered = stories;
@@ -432,7 +497,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 </p>
                 <button
                   className="btn-primary"
-                  onClick={() => window.location.reload()}
+                  onClick={() => setRetryKey((k) => k + 1)}
                 >
                   Try again
                 </button>
@@ -488,13 +553,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {!isLoading && leadStories.length > 0 && (
               <section key={filterKey} aria-label="Lead stories" className="lead-section">
                 {leadStories.map((story, i) => (
-                  <div
+                  <VisibleCard
                     key={story.id}
-                    className="lead-section__col anim-filter-card"
+                    className="lead-section__col"
                     style={{ animationDelay: `${i * 50}ms` }}
                   >
                     <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} />
-                  </div>
+                  </VisibleCard>
                 ))}
               </section>
             )}
@@ -503,13 +568,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {!isLoading && mediumStories.length > 0 && (
               <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
                 {mediumStories.map((story, idx) => (
-                  <div
+                  <VisibleCard
                     key={story.id}
-                    className="grid-medium__item anim-filter-card"
+                    className="grid-medium__item"
                     style={{ animationDelay: `${idx * 50}ms` }}
                   >
                     <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
-                  </div>
+                  </VisibleCard>
                 ))}
               </section>
             )}
@@ -519,9 +584,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               <>
                 <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
                   {visibleCompact.map((story, idx) => (
-                    <div
+                    <VisibleCard
                       key={story.id}
-                      className="grid-compact__item anim-filter-card"
+                      className="grid-compact__item"
                       style={{ animationDelay: `${(idx % BATCH_SIZE) * 50}ms` }}
                     >
                       <StoryCard
@@ -529,7 +594,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                         index={idx + mediumStories.length + 1}
                         onStoryClick={handleStoryClick}
                       />
-                    </div>
+                    </VisibleCard>
                   ))}
                 </section>
 

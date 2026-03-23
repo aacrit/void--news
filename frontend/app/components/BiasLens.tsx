@@ -136,9 +136,11 @@ function LensPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, ti
     const rect = triggerRef.current.getBoundingClientRect();
     const cardW = 260;
     const spaceRight = window.innerWidth - rect.right;
-    const x = spaceRight > cardW + 12
+    const rawX = spaceRight > cardW + 12
       ? rect.right + 8
       : rect.left - cardW - 8;
+    // Clamp x so the popup never overflows either edge of the viewport
+    const x = Math.max(8, Math.min(rawX, window.innerWidth - cardW - 8));
     const y = Math.max(8, Math.min(rect.top - 20, window.innerHeight - 320));
     setPos({ x, y });
   }, [isOpen, triggerRef]);
