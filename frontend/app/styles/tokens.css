@@ -80,16 +80,17 @@
   --bg-card:       #2A2725;
   --bg-elevated:   #333028;
 
-  /* Bias color overrides for dark mode — boost saturation for readability.
-     Blues/reds appear muted against warm dark backgrounds. */
-  --bias-far-left:     #3B82F6;
-  --bias-left:         #60A5FA;
-  --bias-center-left:  #93C5FD;
-  --bias-center:       #6B7280;  /* dark neutral gray — visible on walnut */
-  --bias-center-right: #FCA5A5;  /* light red — same as light mode */
-  --bias-right:        #F87171;  /* brighter red for dark backgrounds */
-  --bias-far-right:    #DC2626;
-  --type-reporting:    #60A5FA;
+  /* Bias color overrides for dark mode — desaturated, warm-shifted.
+     Readable on walnut backgrounds without being flashy or neon.
+     Pulled toward muted slate-blues and dusty reds. */
+  --bias-far-left:     #4A6FA5;  /* muted steel blue */
+  --bias-left:         #6B8DB5;  /* dusty blue */
+  --bias-center-left:  #8FAAB8;  /* faded blue-gray */
+  --bias-center:       #7A756E;  /* warm gray — blends with walnut */
+  --bias-center-right: #C09A8A;  /* dusty salmon */
+  --bias-right:        #B07060;  /* muted terracotta */
+  --bias-far-right:    #964A3A;  /* deep brick */
+  --type-reporting:    #6B8DB5;
 
   /* Text */
   --fg-primary:    #EDE8E0;
