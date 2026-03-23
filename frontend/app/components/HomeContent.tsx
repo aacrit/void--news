@@ -165,6 +165,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Scroll position before DeepDive opened — restored on close (F06)
+  const scrollBeforeDeepDive = useRef<number>(0);
+
   // Daily Brief state — shared between text + onair player
   // while DailyBriefText renders in the content area
   const dailyBriefState = useDailyBrief(activeEdition);
@@ -172,6 +175,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const handleStoryClick = useCallback((story: Story, rect: DOMRect) => {
     // Only use the rect for the FLIP morph when it has real dimensions.
     // DOMRect() with no args gives a zeroed rect (keyboard nav fallback).
+    scrollBeforeDeepDive.current = window.scrollY;
     setOriginRect(rect.width > 0 ? rect : null);
     setSelectedStory(story);
   }, []);
@@ -179,6 +183,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const handleDeepDiveClose = useCallback(() => {
     setSelectedStory(null);
     setOriginRect(null);
+    window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
   // Detect mobile for infinite scroll vs editorial link
@@ -186,10 +191,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setIsMobile(window.matchMedia("(max-width: 767px)").matches);
   }, []);
 
-  // Reset category filter and scroll to top when edition changes.
+  // Reset category filter, close DeepDive, and scroll to top when edition changes.
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
   useEffect(() => {
+    setSelectedStory(null);
+    setOriginRect(null);
     setActiveCategory("All");
     setVisibleCount(BATCH_SIZE);
     window.scrollTo({ top: 0, behavior: "smooth" });

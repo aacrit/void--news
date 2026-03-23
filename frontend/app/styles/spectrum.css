@@ -347,7 +347,7 @@
 .spectrum-logo:hover {
   transform: scale(1.35);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  z-index: 20;
+  z-index: var(--z-tooltip);
   border-color: var(--border-strong);
 }
 
@@ -358,7 +358,7 @@
 .spectrum-logo:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
-  z-index: 20;
+  z-index: var(--z-tooltip);
 }
 
 .spectrum-logo__img {
@@ -698,7 +698,7 @@
 .dd-spectrum__logo:hover {
   transform: translateX(-50%) scale(1.4);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  z-index: 20;
+  z-index: var(--z-tooltip);
   border-color: var(--border-strong);
 }
 
@@ -709,7 +709,7 @@
 .dd-spectrum__logo:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
-  z-index: 20;
+  z-index: var(--z-tooltip);
 }
 
 .dd-spectrum__logo-img {

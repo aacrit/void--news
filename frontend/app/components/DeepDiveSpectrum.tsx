@@ -124,6 +124,31 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   const positioned = useMemo(() => computePositions(sources), [sources]);
   const hasSecondRow = positioned.some((p) => p.row === 1);
 
+  // All hooks must be declared before any early return (Rules of Hooks).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setTooltip(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const handleTooltip = useCallback(
+    (source: DeepDiveSpectrumSource | null, el: HTMLElement | null) => {
+      if (!source || !el) {
+        setTooltip(null);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      setTooltip({
+        source,
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      });
+    },
+    []
+  );
+
   // Guard: render the bar frame but an empty track when no sources are available
   if (sources.length === 0) {
     return (
@@ -152,30 +177,6 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
       </div>
     );
   }
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setTooltip(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  const handleTooltip = useCallback(
-    (source: DeepDiveSpectrumSource | null, el: HTMLElement | null) => {
-      if (!source || !el) {
-        setTooltip(null);
-        return;
-      }
-      const rect = el.getBoundingClientRect();
-      setTooltip({
-        source,
-        x: rect.left + rect.width / 2,
-        y: rect.top,
-      });
-    },
-    []
-  );
 
   return (
     <div className="dd-spectrum" role="img" aria-label="Article political lean spectrum">
