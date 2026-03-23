@@ -485,7 +485,4 @@
   .pull-to-refresh__spinner--active {
     animation: none;
   }
-  .shimmer-line::after {
-    animation: none;
-  }
 }
