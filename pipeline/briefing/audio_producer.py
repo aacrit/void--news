@@ -350,7 +350,7 @@ def produce_audio(
         combined.export(
             tmp_path,
             format="mp3",
-            bitrate="128k",
+            bitrate="192k",
             parameters=["-ac", "1"],
         )
         with open(tmp_path, "rb") as f:
