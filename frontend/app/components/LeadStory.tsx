@@ -11,6 +11,8 @@ interface LeadStoryProps {
   /** 0 = primary (first/most important), 1+ = secondary */
   rank?: number;
   onStoryClick?: (story: Story, rect: DOMRect) => void;
+  /** True when this card is focused via keyboard (J/K) navigation */
+  kbdFocused?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -18,7 +20,7 @@ interface LeadStoryProps {
    Larger typography, more prominent layout, bigger bias stamp.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
   return (
@@ -40,7 +42,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryPr
           onStoryClick?.(story, new DOMRect());
         }
       }}
-      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}`}
+      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Category tag + time */}
       <div className="lead-story__meta">
