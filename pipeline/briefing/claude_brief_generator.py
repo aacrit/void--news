@@ -32,22 +32,20 @@ from briefing.daily_brief_generator import (
 from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
 
-# Claude adds natural disfluencies better than Gemini — reinforce in prompt
+# Claude-specific craft additions (no filler — craft only)
 _CLAUDE_SYSTEM_ADDENDUM = """
 
-ADDITIONAL DIALOGUE NATURALNESS RULES (critical for audio quality):
-- Include natural speech disfluencies: "Well,", "You know,", "I mean,",
-  "Look,", "So,", "Now," at the start of some (not all) B turns.
-- Host B should occasionally start with a genuine reaction before pivoting:
-  "Mm. Right. And what's interesting there is..." or "Indeed. Worth noting that..."
-- Vary turn length more aggressively: some turns just 4-6 words ("Mm. That's telling."),
-  others 2-3 full sentences.
-- Host A occasionally trails off or self-corrects: "The figure is — well, it's
-  roughly $1.4 trillion, depending on the estimate."
-- Include micro-hesitations: commas that create natural pauses.
-  "The markets, for their part, have been largely unmoved."
-- The SIGNOFF should feel slightly warmer than the rest. These are colleagues
-  wrapping up a shared task. Not robotic.
+ADDITIONAL CRAFT RULES (for Claude-generated scripts):
+- Pacing variation is critical. Some turns are one short sentence. Others are
+  two or three. Never uniform length.
+- Self-correction is allowed sparingly: "The figure is — roughly $1.4 trillion,
+  depending on the estimate."
+- Commas create natural pauses: "The markets, for their part, have been unmoved."
+- Do NOT add filler reactions, verbal acknowledgments, or disfluencies. No "Well,",
+  "You know,", "I mean,", "Look,", "Mm.", "Right.", "Indeed."
+- When editorial, point at the data. Let the numbers speak. Do not narrate
+  your own analysis process.
+- The close should be matter-of-fact. These are journalists finishing work.
 """
 
 

@@ -1,15 +1,15 @@
 """
 Audio producer for the void --news daily brief.
 
-Uses Gemini 2.5 Flash TTS for native LLM-powered multi-speaker dialogue
-synthesis. The model generates both speakers in a single API call with
-natural turn-taking, prosody, and conversational rhythm — no per-turn
-stitching needed.
+Uses Gemini 2.5 Flash TTS for native LLM-powered multi-speaker dialogue.
+Both speakers generated in a single API call — no per-turn stitching.
 
-Pipeline: broadcast script → Gemini Flash TTS (PCM 24kHz) → pydub
-(pips intro + outro + MP3 export) → Supabase Storage upload.
-
-Falls back gracefully if google-genai SDK or pydub are unavailable.
+Post-processing via pydub:
+  - Intro ident (0.8s ascending A-major triad)
+  - Background bed (85/170/520 Hz sine layers, barely audible)
+  - Section transitions (descending two-note at detected silence gaps)
+  - Outro ident (1.2s reversed intro motif)
+  - MP3 128k mono export → Supabase Storage
 """
 
 import io
@@ -33,6 +33,7 @@ except ImportError:
 
 try:
     from pydub import AudioSegment
+    from pydub.silence import detect_silence
     PYDUB_AVAILABLE = True
 except ImportError:
     pass
@@ -41,16 +42,17 @@ except ImportError:
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 ASSETS_DIR = Path(__file__).parent / "assets"
-
-# Gemini TTS model
 _TTS_MODEL = "gemini-2.5-flash-preview-tts"
 
+
+# ---------------------------------------------------------------------------
+# Script conversion
+# ---------------------------------------------------------------------------
 
 def _script_to_dialogue(audio_script: str) -> str:
     """Convert broadcast script (A:/B: + [MARKER]) to Gemini TTS dialogue format.
 
-    Gemini TTS expects: "SpeakerName: dialogue text" with newlines between turns.
-    Strips structural markers, cleans artifacts, maps A→Anchor, B→Analyst.
+    Maps A→One, B→Two. Strips structural markers and Gemini artifacts.
     """
     lines = []
     for line in audio_script.splitlines():
@@ -62,20 +64,19 @@ def _script_to_dialogue(audio_script: str) -> str:
         if re.match(r"^\[([A-Z_0-9]+)\]$", stripped):
             continue
 
-        # Strip inline markers: "[STORY_1] A: text" → "A: text"
+        # Strip inline markers
         stripped = re.sub(r"^\[([A-Z_0-9]+)\]\s*", "", stripped)
 
         # Map speaker tags
         sp_match = re.match(r"^([AB]):\s*(.+)$", stripped)
         if sp_match:
-            speaker = "Anchor" if sp_match.group(1) == "A" else "Analyst"
+            speaker = "One" if sp_match.group(1) == "A" else "Two"
             text = sp_match.group(2)
         else:
-            # Continuation or untagged — assign to Anchor
-            speaker = "Anchor"
+            speaker = "One"
             text = stripped
 
-        # Clean Gemini artifacts
+        # Clean artifacts
         text = re.sub(r"\*+", "", text)
         text = re.sub(r"\[(\d+)\]", "", text)
         text = re.sub(r"#{1,6}\s*", "", text)
@@ -89,17 +90,16 @@ def _script_to_dialogue(audio_script: str) -> str:
     return "\n".join(lines)
 
 
+# ---------------------------------------------------------------------------
+# Gemini TTS synthesis
+# ---------------------------------------------------------------------------
+
 def _synthesize_gemini_tts(
     dialogue: str,
     voice_a: str,
     voice_b: str,
 ) -> Optional[bytes]:
     """Generate two-speaker audio via Gemini 2.5 Flash TTS.
-
-    Args:
-        dialogue: "Anchor: ...\nAnalyst: ..." formatted dialogue.
-        voice_a: Gemini prebuilt voice name for Anchor (e.g., "Charon").
-        voice_b: Gemini prebuilt voice name for Analyst (e.g., "Aoede").
 
     Returns raw PCM audio bytes (24kHz 16-bit mono), or None on failure.
     """
@@ -123,7 +123,7 @@ def _synthesize_gemini_tts(
                     multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
                         speaker_voice_configs=[
                             types.SpeakerVoiceConfig(
-                                speaker="Anchor",
+                                speaker="One",
                                 voice_config=types.VoiceConfig(
                                     prebuilt_voice_config=types.PrebuiltVoiceConfig(
                                         voice_name=voice_a,
@@ -131,7 +131,7 @@ def _synthesize_gemini_tts(
                                 ),
                             ),
                             types.SpeakerVoiceConfig(
-                                speaker="Analyst",
+                                speaker="Two",
                                 voice_config=types.VoiceConfig(
                                     prebuilt_voice_config=types.PrebuiltVoiceConfig(
                                         voice_name=voice_b,
@@ -157,19 +157,23 @@ def _synthesize_gemini_tts(
         return None
 
 
+# ---------------------------------------------------------------------------
+# Audio post-processing
+# ---------------------------------------------------------------------------
+
 def _pcm_to_wav(pcm_data: bytes, sample_rate: int = 24000) -> bytes:
     """Convert raw PCM (16-bit mono) to WAV bytes."""
     buf = io.BytesIO()
     with wave.open(buf, "wb") as wf:
         wf.setnchannels(1)
-        wf.setsampwidth(2)  # 16-bit
+        wf.setsampwidth(2)
         wf.setframerate(sample_rate)
         wf.writeframes(pcm_data)
     return buf.getvalue()
 
 
 def _load_asset(filename: str) -> Optional["AudioSegment"]:
-    """Load a pre-recorded audio asset from the assets directory."""
+    """Load an audio asset from the assets directory."""
     if not PYDUB_AVAILABLE:
         return None
     path = ASSETS_DIR / filename
@@ -182,6 +186,66 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
         print(f"  [warn][audio] Failed to load asset {filename}: {e}")
         return None
 
+
+def _insert_section_transitions(dialogue_seg: "AudioSegment") -> "AudioSegment":
+    """Detect silence gaps (story breaks) and overlay transition tones.
+
+    Looks for silence ≥800ms at -35dB — these are structural breaks between
+    stories, not natural speech pauses (which are 200-500ms). Overlays a
+    subtle descending two-note transition at the midpoint of each gap.
+
+    If no gaps found, returns dialogue unchanged.
+    """
+    transition = _load_asset("transition.wav")
+    if not transition:
+        return dialogue_seg
+
+    try:
+        silences = detect_silence(dialogue_seg, min_silence_len=800, silence_thresh=-35)
+    except Exception:
+        return dialogue_seg
+
+    if not silences:
+        return dialogue_seg
+
+    result = dialogue_seg
+    inserted = 0
+    for start_ms, end_ms in silences:
+        midpoint = (start_ms + end_ms) // 2
+        # Center the transition tone at the midpoint
+        insert_pos = midpoint - len(transition) // 2
+        if insert_pos > 0:
+            result = result.overlay(transition, position=insert_pos)
+            inserted += 1
+
+    if inserted:
+        print(f"  [audio] Inserted {inserted} section transition(s)")
+    return result
+
+
+def _apply_background_bed(audio_seg: "AudioSegment") -> "AudioSegment":
+    """Overlay a broadcast-floor presence bed under the full audio.
+
+    Three stacked sine layers at -32/-36/-40 dB: felt more than heard.
+    Gives the audio a produced quality without competing with speech.
+    """
+    try:
+        from briefing.generate_assets import build_background_bed
+    except ImportError:
+        # Inline fallback if import fails
+        return audio_seg
+
+    try:
+        bed = build_background_bed(len(audio_seg))
+        return audio_seg.overlay(bed)
+    except Exception as e:
+        print(f"  [warn][audio] Background bed failed: {e}")
+        return audio_seg
+
+
+# ---------------------------------------------------------------------------
+# Upload
+# ---------------------------------------------------------------------------
 
 def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
     """Upload MP3 to Supabase Storage. Returns public URL or None."""
@@ -200,23 +264,26 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
         return None
 
 
+# ---------------------------------------------------------------------------
+# Main entry point
+# ---------------------------------------------------------------------------
+
 def produce_audio(
     audio_script: str,
     voices: dict,
     edition: str,
 ) -> Optional[dict]:
     """
-    Synthesize a two-host broadcast via Gemini Flash TTS and upload to Supabase.
+    Synthesize a two-voice news update via Gemini Flash TTS.
 
-    Uses LLM-native multi-speaker synthesis — the model generates both speakers
-    in a single pass with natural conversational rhythm. No per-turn stitching.
-
-    Args:
-        audio_script: Full broadcast script with [MARKER] + A:/B: speaker tags.
-        voices: {"host_a": {"id": "Charon", ...}, "host_b": {"id": "Aoede", ...}}
-        edition: Edition slug (world/us/india).
-
-    Returns dict with audio_url, duration_seconds, file_size, or None.
+    Pipeline:
+      1. Script → dialogue format (One:/Two:)
+      2. Gemini Flash TTS → single PCM output
+      3. PCM → WAV → AudioSegment
+      4. Insert section transitions at detected silence gaps
+      5. Apply background bed
+      6. Assemble: ident + dialogue + outro
+      7. Export MP3 → Supabase upload
     """
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
@@ -229,12 +296,12 @@ def produce_audio(
     voice_a_name = voices["host_a"]["id"]
     voice_b_name = voices["host_b"]["id"]
 
-    # Convert script to Gemini dialogue format
+    # 1. Convert script to Gemini dialogue format
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
     print(f"  [audio] Gemini TTS: {word_count} words, voices {voice_a_name}+{voice_b_name}")
 
-    # Synthesize via Gemini Flash TTS
+    # 2. Synthesize via Gemini Flash TTS
     pcm_data = _synthesize_gemini_tts(dialogue, voice_a_name, voice_b_name)
     if not pcm_data:
         print("  [warn][audio] Gemini TTS synthesis failed — no audio")
@@ -243,22 +310,23 @@ def produce_audio(
     dialogue_duration = len(pcm_data) / (24000 * 2)
     print(f"  [audio] Gemini TTS returned {dialogue_duration:.1f}s of dialogue")
 
-    # Convert PCM to WAV AudioSegment
+    # 3. PCM → WAV → AudioSegment
     wav_data = _pcm_to_wav(pcm_data)
     dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
 
-    # Assemble: pips + countdown + dialogue + outro
+    # 4. Insert section transitions at story breaks
+    dialogue_seg = _insert_section_transitions(dialogue_seg)
+
+    # 5. Apply background bed
+    dialogue_seg = _apply_background_bed(dialogue_seg)
+
+    # 6. Assemble: ident + gap + dialogue + gap + outro
     combined = AudioSegment.empty()
 
-    pips = _load_asset("pips.wav")
-    if pips:
-        combined += pips
-    combined += AudioSegment.silent(duration=300)
-
-    countdown = _load_asset("countdown.wav")
-    if countdown:
-        combined += countdown
-    combined += AudioSegment.silent(duration=500)
+    ident = _load_asset("ident.wav")
+    if ident:
+        combined += ident
+    combined += AudioSegment.silent(duration=200)
 
     combined += dialogue_seg
 
@@ -274,7 +342,7 @@ def produce_audio(
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
-    # Export to MP3 128kbps mono
+    # 7. Export to MP3 128kbps mono
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
         tmp_path = tmp.name
 
