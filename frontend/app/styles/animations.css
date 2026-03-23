@@ -210,10 +210,10 @@
    These use inline SVG in the Sigil component for realistic pen strokes.
    The CSS classes below handle positioning + the draw-in animation. */
 
-.sigil--divergent .sigil__ink-circle,
-.sigil--consensus .sigil__ink-circle {
+/* Circle wraps just the lean label word, not the whole sigil */
+.sigil__ink-circle {
   position: absolute;
-  inset: -6px;
+  inset: -5px -4px;
   pointer-events: none;
   z-index: 1;
 }

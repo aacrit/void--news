@@ -454,20 +454,22 @@ function CountText({ target, active }: { target: number; active: boolean }) {
  * viewBox is 100x60 to accommodate wide sigils (icon + label).
  * Stroke-dasharray length stored in --ink-len for the draw animation.
  */
+/* viewBox 100x40 — tight word-shaped ellipse, circles just the text label.
+   Paths are wobbly ovals like someone circled a word with a ballpoint pen. */
 const INK_PATHS = [
-  // Variant A: slightly tilted, starts bottom-left, wobbly ascent
-  { d: "M 12 42 C 4 36, 2 22, 8 14 C 14 6, 30 2, 52 3 C 74 4, 92 8, 96 22 C 100 36, 88 50, 68 54 C 48 58, 22 56, 14 48 C 10 44, 10 42, 14 40", len: 280 },
-  // Variant B: rounder, starts left, more closed
-  { d: "M 8 30 C 6 16, 18 4, 42 3 C 66 2, 90 10, 94 26 C 98 42, 82 56, 56 57 C 30 58, 6 48, 6 34 C 6 30, 8 28, 12 30", len: 270 },
-  // Variant C: egg-shaped, starts top, aggressive pressure
-  { d: "M 50 4 C 76 2, 96 12, 96 30 C 96 48, 78 58, 50 58 C 22 58, 4 48, 4 30 C 4 12, 22 2, 46 3 L 54 4", len: 265 },
+  // Variant A: slightly tilted clockwise, open at bottom-right
+  { d: "M 14 28 C 6 22, 4 12, 14 6 C 24 0, 52 -2, 78 4 C 94 8, 98 16, 94 24 C 88 34, 60 38, 36 36 C 18 34, 12 30, 16 26", len: 220 },
+  // Variant B: rounder, starts left-center, nearly closed
+  { d: "M 8 20 C 6 10, 20 2, 46 2 C 72 2, 94 8, 96 20 C 98 32, 76 38, 50 38 C 24 38, 4 32, 6 22 C 6 20, 8 18, 12 20", len: 210 },
+  // Variant C: looser, starts top-left, slight upward tilt
+  { d: "M 18 6 C 40 0, 72 0, 88 8 C 98 14, 98 26, 86 34 C 72 40, 38 40, 18 34 C 4 28, 2 16, 12 8 C 14 6, 18 6, 22 8", len: 215 },
 ];
 
 function InkCircle({ variant, color }: { variant: number; color: string }) {
   const path = INK_PATHS[variant % INK_PATHS.length];
   return (
     <div className="sigil__ink-circle" aria-hidden="true">
-      <svg viewBox="0 0 100 60" preserveAspectRatio="none" fill="none">
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" fill="none">
         {/* Faint bleed — pen ink feathering into paper grain */}
         <path
           d={path.d}
@@ -475,17 +477,17 @@ function InkCircle({ variant, color }: { variant: number; color: string }) {
           strokeWidth="1.6"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.07"
-          style={{ filter: "blur(1px)" } as React.CSSProperties}
+          opacity="0.08"
+          style={{ filter: "blur(0.8px)" } as React.CSSProperties}
         />
-        {/* Main pen stroke — fine ballpoint/felt-tip line */}
+        {/* Main pen stroke — fine ballpoint line */}
         <path
           d={path.d}
           stroke={color}
           strokeWidth="0.9"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.6"
+          opacity="0.65"
           style={{ ["--ink-len" as string]: path.len } as React.CSSProperties}
         />
       </svg>
@@ -536,18 +538,10 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
         transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
     >
-      {/* Hand-drawn ink circle — editor's pen mark for divergence/consensus */}
-      {data.divergenceFlag === "divergent" && (
-        <InkCircle variant={data.politicalLean % 3} color="var(--sense-medium)" />
-      )}
-      {data.divergenceFlag === "consensus" && (
-        <InkCircle variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
-      )}
-
       {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
-      {/* Lean label — the only text, makes the mark self-explanatory */}
+      {/* Lean label — with optional hand-drawn ink circle for divergence/consensus */}
       <span style={{
         fontFamily: "var(--font-data)", fontWeight: 600,
         fontSize: size === "xl" ? 14 : size === "lg" ? 11 : 10,
@@ -556,8 +550,15 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
         letterSpacing: "0.02em",
         opacity: mounted ? 1 : 0,
         transition: "opacity 350ms var(--ease-out) 350ms",
+        position: "relative",
       }}>
         {ll}
+        {data.divergenceFlag === "divergent" && (
+          <InkCircle variant={data.politicalLean % 3} color="var(--sense-medium)" />
+        )}
+        {data.divergenceFlag === "consensus" && (
+          <InkCircle variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
+        )}
       </span>
 
       <SigilPopup
