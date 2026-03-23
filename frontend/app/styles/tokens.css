@@ -9,6 +9,15 @@
    -------------------------------------------------------------------------- */
 :root,
 :root[data-mode="light"] {
+  /* Spectrum bar / glass inset tokens */
+  --spectrum-label:      rgba(255, 255, 255, 0.92);
+  --spectrum-inset:      rgba(255, 255, 255, 0.15);
+  --spectrum-zone-border: rgba(255, 255, 255, 0.2);
+  --glass-inset:         rgba(255, 255, 255, 0.2);
+  --glass-inset-strong:  rgba(255, 255, 255, 0.25);
+  --thumb-border:        #fff;
+  --indicator-broadcast: #c0392b;
+
   /* Surfaces — warm newsprint tones */
   --bg-primary:    #F0EBDD;
   --bg-secondary:  #E8E2D4;
@@ -56,6 +65,15 @@
    Dark walnut warmth. Not terminal black, not pure dark.
    -------------------------------------------------------------------------- */
 :root[data-mode="dark"] {
+  /* Spectrum bar / glass inset tokens */
+  --spectrum-label:      rgba(255, 255, 255, 0.85);
+  --spectrum-inset:      rgba(255, 255, 255, 0.08);
+  --spectrum-zone-border: rgba(255, 255, 255, 0.12);
+  --glass-inset:         rgba(255, 255, 255, 0.08);
+  --glass-inset-strong:  rgba(255, 255, 255, 0.12);
+  --thumb-border:        var(--bg-secondary);
+  --indicator-broadcast: #DC2626;
+
   /* Surfaces */
   --bg-primary:    #1C1A17;
   --bg-secondary:  #252320;

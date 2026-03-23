@@ -124,6 +124,35 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   const positioned = useMemo(() => computePositions(sources), [sources]);
   const hasSecondRow = positioned.some((p) => p.row === 1);
 
+  // Guard: render the bar frame but an empty track when no sources are available
+  if (sources.length === 0) {
+    return (
+      <div className="dd-spectrum" role="img" aria-label="No sources available for spectrum">
+        <div className="dd-spectrum__bar" aria-hidden="true">
+          {LEAN_ZONES.map((zone) => (
+            <div key={zone.key} className="dd-spectrum__bar-zone">
+              <span className="dd-spectrum__zone-label">{zone.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="dd-spectrum__track" style={{ height: 34 }} aria-label="No source data">
+          <span style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            fontFamily: "var(--font-data)",
+            fontSize: "var(--text-xs)",
+            color: "var(--fg-muted)",
+            whiteSpace: "nowrap",
+          }}>
+            No sources
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setTooltip(null);
@@ -164,11 +193,11 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
         className="dd-spectrum__track"
         style={{ height: hasSecondRow ? 60 : 34 }}
       >
-        {positioned.map(({ source, left, row }) => {
+        {positioned.map(({ source, left, row }, index) => {
           const favicon = getFaviconUrl(source.sourceUrl);
           return (
             <a
-              key={source.name}
+              key={source.articleUrl || `${source.name}-${index}`}
               className="dd-spectrum__logo"
               href={source.articleUrl}
               target="_blank"

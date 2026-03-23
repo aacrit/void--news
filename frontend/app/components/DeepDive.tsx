@@ -295,8 +295,19 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
   /* ---- Open animation — FLIP morph or slide-in fallback ----------------- */
   useEffect(() => {
     previousFocusRef.current = document.activeElement as HTMLElement;
+
+    // iOS Safari ignores overflow:hidden on body — position:fixed is required
+    // to actually prevent background scroll. Save scrollY so we can restore it.
+    const scrollY = window.scrollY;
     const originalOverflow = document.body.style.overflow;
+    const originalPosition = document.body.style.position;
+    const originalWidth = document.body.style.width;
+    const originalTop = document.body.style.top;
+
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.top = `-${scrollY}px`;
 
     const hasMorph = originRect && originRect.width > 0 && panelRef.current;
 
@@ -382,7 +393,14 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
       });
     }
 
-    return () => { document.body.style.overflow = originalOverflow; };
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.position = originalPosition;
+      document.body.style.width = originalWidth;
+      document.body.style.top = originalTop;
+      // Restore scroll position that was frozen by position:fixed
+      window.scrollTo(0, scrollY);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -590,6 +608,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
                 onClick={() => setPressAnalysisOpen(v => !v)}
                 aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
                 aria-expanded={pressAnalysisOpen}
+                aria-controls="dd-press-expand-panel"
               >
                 <span>How was this scored?</span>
                 <span
@@ -601,7 +620,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               </button>
 
               {/* Press Analysis expand */}
-              <div className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`} style={{ width: "100%" }}>
+              <div id="dd-press-expand-panel" className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`} style={{ width: "100%" }}>
                 <div className="dd-press-expand__inner">
                   <BiasInspectorInline sources={sources} />
                 </div>
@@ -628,7 +647,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           ) && (
             <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "80ms" }}>
               <div className="dd-perspectives-grid">
-                <span id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</span>
+                <h3 id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</h3>
 
                 {/* Agreement column */}
                 {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
@@ -636,7 +655,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
                     <span className="dd-perspectives-sublabel dd-perspectives-sublabel--agree">Agreement</span>
                     <ul className="dd-perspectives-list">
                       {deepDive.consensus.map((point, i) => (
-                        <li key={`agree-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
+                        <li key={`agree-${point.slice(0, 40)}-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
                           <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
                           <span className="dd-perspectives-item__text">{point}</span>
                         </li>
@@ -651,7 +670,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
                     <span className="dd-perspectives-sublabel dd-perspectives-sublabel--diverge">Divergence</span>
                     <ul className="dd-perspectives-list">
                       {deepDive.divergence.map((point, i) => (
-                        <li key={`diverge-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
+                        <li key={`diverge-${point.slice(0, 40)}-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
                           <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
                           <span className="dd-perspectives-item__text">{point}</span>
                         </li>

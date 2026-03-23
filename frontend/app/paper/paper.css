@@ -1,38 +1,46 @@
 /* ==========================================================================
-   E-PAPER EDITION — 1924 New York Times Broadsheet
-   8-column broadsheet. Zero whitespace. CSS multi-column flow.
-   Period typography. Aged paper texture. Pure static reading.
+   E-PAPER EDITION — 1970s New York Times Broadsheet
+   6-column broadsheet. Clean newsprint. Modular layout.
+   Cheltenham-style headlines (Playfair Display). Period typography.
    Scoped to .np-root.
    ========================================================================== */
 
 /* --- Tokens --- */
 .np-root {
-  --np-paper: #E8DFC8;
-  --np-paper-mid: #DDD4B8;
-  --np-paper-aged: #D4C9A8;
-  --np-paper-dark: #C9BD9A;
-  --np-ink: #1A1710;
-  --np-ink-mid: #3D382C;
-  --np-ink-light: #6B6354;
-  --np-rule: #A89D88;
-  --np-rule-dark: #8A7F6C;
-  --np-stain: rgba(139, 119, 75, 0.08);
+  --np-paper: #F4F1EC;
+  --np-ink: #111111;
+  --np-ink-mid: #3A3A3A;
+  --np-ink-light: #6E6E6E;
+  --np-rule: #BABABA;
+  --np-rule-dark: #888888;
 
-  /* Font stacks — CSS variables from next/font/google override when loaded */
-  --np-font-nameplate: var(--np-fell), 'IM Fell English', 'Georgia', serif;
-  --np-font-head: var(--np-fell), 'IM Fell English', 'Playfair Display', 'Georgia', serif;
-  --np-font-body: var(--np-lora), 'Lora', 'Georgia', 'Times New Roman', serif;
-  --np-font-deck: var(--np-oldstandard), 'Old Standard TT', 'Georgia', serif;
-  --np-font-label: var(--np-oldstandard), 'Old Standard TT', 'Georgia', serif;
+  /* Font stacks — 1970s NYT: Cheltenham headlines, Century body, Gothic labels */
+  --np-font-nameplate: var(--font-playfair, 'Playfair Display'), 'Georgia', serif;
+  --np-font-head: var(--font-playfair, 'Playfair Display'), 'Georgia', serif;
+  --np-font-body: var(--np-lora, 'Lora'), 'Georgia', 'Times New Roman', serif;
+  --np-font-deck: var(--np-oldstandard, 'Old Standard TT'), 'Georgia', serif;
+  --np-font-label: var(--font-inter, 'Inter'), 'Helvetica Neue', 'Arial', sans-serif;
 
   /* Column metrics */
-  --np-col-gap: 10px;
-  --np-col-rule: 0.5px solid var(--np-rule);
-  --np-cutoff: 0.5px solid var(--np-rule);
+  --np-col-gap: 20px;
+  --np-col-rule: 1px solid var(--np-rule);
+  --np-cutoff: 1px solid #D5D5D5;
+}
+
+/* --- Dark mode token overrides --- */
+:root[data-mode="dark"] .np-root {
+  --np-paper: #1C1A17;
+  --np-ink: #EDE8E0;
+  --np-ink-mid: #B8B0A5;
+  --np-ink-light: #8A8278;
+  --np-rule: #403B35;
+  --np-rule-dark: #5A5550;
+  --np-cutoff: 1px solid #403B35;
 }
 
 /* --- Viewport background --- */
-html:has(.np-root) { background: #F0EDE6; }
+html:has(.np-root) { background: #E8E5E0; }
+html[data-mode="dark"]:has(.np-root) { background: #141210; }
 html:has(.np-root) body { background: transparent; }
 
 /* --- Base --- */
@@ -40,40 +48,22 @@ html:has(.np-root) body { background: transparent; }
   min-height: 100vh;
   background: var(--np-paper);
   color: var(--np-ink);
-  max-width: 1800px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 32px 40px 48px;
+  padding: 24px 36px 48px;
   position: relative;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
-/* Paper grain texture */
-.np-root::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 300px 300px;
-}
-
-/* Crease texture */
+/* No grain/crease textures — 1970s = clean newsprint */
+.np-root::before,
 .np-root::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.015 0.04' numOctaves='3' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.12' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 400px 400px;
+  display: none;
 }
 
-/* All content above textures */
+/* All content at z-index 2 (legacy compat — textures removed) */
 .np-masthead,
 .np-front,
 .np-section-label,
@@ -87,25 +77,26 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   MASTHEAD
+   MASTHEAD — 1970s NYT: clean, authoritative, centered
    ========================================================================== */
 
 .np-masthead {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
-/* --- Ears --- */
+/* --- Ears (flanking motto) --- */
 .np-masthead__ears {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: stretch;
-  border-top: 2px solid var(--np-ink);
+  align-items: center;
+  border-top: 3px solid var(--np-ink);
   border-bottom: 1px solid var(--np-ink);
+  padding: 4px 0;
 }
 
 .np-masthead__ear {
-  padding: 5px 10px;
+  padding: 3px 8px;
   display: flex;
   align-items: center;
 }
@@ -121,11 +112,11 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-masthead__ear-text {
-  font-family: var(--np-font-deck);
-  font-style: italic;
-  font-size: 9.5px;
+  font-family: var(--np-font-label);
+  font-size: 9px;
   line-height: 1.4;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--np-ink-mid);
 }
 
@@ -136,49 +127,47 @@ html:has(.np-root) body { background: transparent; }
   margin: 0;
 }
 
-/* --- Nameplate --- */
+/* --- Nameplate — Cheltenham-style, large, bold --- */
 .np-masthead__nameplate {
   font-family: var(--np-font-nameplate);
-  font-size: 96px;
-  font-weight: 400;
+  font-size: clamp(56px, 6.5vw, 84px);
+  font-weight: 700;
   line-height: 1.0;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
   color: var(--np-ink);
-  margin: 10px 0 6px;
-  text-shadow:
-    0.4px 0.4px 0 rgba(26, 23, 16, 0.18),
-    -0.2px 0 0 rgba(26, 23, 16, 0.06);
+  margin: 12px 0 6px;
 }
 
 .np-masthead__edition-subtitle {
-  font-family: var(--np-font-deck);
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.18em;
+  font-family: var(--np-font-label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--np-ink-mid);
   margin: 0 0 4px;
 }
 
-/* --- Double rule --- */
+/* --- Double rule (thick + thin) --- */
 .np-double-rule {
   border: none;
-  border-top: 4px solid var(--np-ink);
-  padding-top: 3px;
+  border-top: 3px solid var(--np-ink);
+  padding-top: 2px;
   border-bottom: 1px solid var(--np-ink);
   margin: 0;
   height: 0;
 }
 
-/* --- Info bar --- */
+/* --- Info bar (issue no., date, price) --- */
 .np-masthead__info {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 7px 0;
+  padding: 6px 0;
   font-family: var(--np-font-label);
-  font-size: 9.5px;
-  letter-spacing: 0.10em;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--np-ink-mid);
 }
@@ -190,8 +179,9 @@ html:has(.np-root) body { background: transparent; }
 /* --- Edition navigation --- */
 .np-edition-nav {
   font-family: var(--np-font-label);
-  font-size: 9px;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
   color: var(--np-ink-light);
   padding: 5px 0 0;
@@ -203,57 +193,58 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-edition-nav a:hover {
+  color: var(--np-ink);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
 }
 
 .np-edition-nav__active {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--np-ink);
 }
 
 /* ==========================================================================
-   FRONT PAGE — 3-Zone Layout
+   FRONT PAGE — 3-Zone Layout (6 visual columns)
    ========================================================================== */
 
 .np-front {
   display: grid;
-  grid-template-columns: 3fr 2fr 3fr;
+  grid-template-columns: 5fr 4fr 5fr;
   gap: 0;
   margin-bottom: 0;
   align-items: start;
 }
 
-/* Side zones flow articles into columns */
+/* Side zones: 2 columns each (total 6 reading columns) */
 .np-front__zone-a,
 .np-front__zone-c {
-  column-count: 3;
+  column-count: 2;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: auto;
+  column-fill: balance;
 }
 
-/* Lead zone — single column for banner, consistent hairline borders */
+/* Lead zone — single column, bordered */
 .np-front__zone-b {
   column-count: 1;
   padding: 0 var(--np-col-gap);
-  border-left: 0.5px solid var(--np-rule);
-  border-right: 0.5px solid var(--np-rule);
+  border-left: 1px solid var(--np-rule);
+  border-right: 1px solid var(--np-rule);
 }
 
 /* ==========================================================================
-   SECTION FLOW — CSS Multi-Column (zero whitespace)
+   SECTION FLOW — 6-Column CSS Multi-Column
    ========================================================================== */
 
 .np-section-flow {
-  column-count: 8;
+  column-count: 6;
   column-gap: var(--np-col-gap);
   column-rule: var(--np-col-rule);
-  column-fill: auto;
+  column-fill: balance;
   margin-bottom: 0;
 }
 
-/* Compact mode for editions with fewer stories (e.g. India) */
+/* Compact mode for editions with fewer stories */
 .np-front--compact {
   grid-template-columns: 1fr 2fr 1fr;
 }
@@ -264,16 +255,16 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-section-flow--compact {
-  column-count: 4;
+  column-count: 3;
 }
 
 /* ==========================================================================
-   SECTION LABELS
+   SECTION LABELS — 1970s: clean, sans-serif, ruled
    ========================================================================== */
 
 .np-section-label {
   text-align: center;
-  padding: 8px 0 6px;
+  padding: 10px 0 8px;
 }
 
 .np-section-label__rule-top {
@@ -283,10 +274,10 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-section-label__text {
-  font-family: var(--np-font-deck);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.25em;
+  font-family: var(--np-font-label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.30em;
   text-transform: uppercase;
   color: var(--np-ink);
   margin: 0;
@@ -299,19 +290,19 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   ARTICLES — 6 Tiers
+   ARTICLES — 6 Tiers, 1970s Cheltenham-style headlines
    ========================================================================== */
 
 .np-article {
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
-  margin: 0 0 3px;
-  padding: 3px 0;
+  margin: 0 0 4px;
+  padding: 6px 0;
   border-bottom: var(--np-cutoff);
 }
 
-/* First article in each zone/section — no top padding */
+/* First article in each zone — no top padding */
 .np-front__zone-a > .np-article:first-child,
 .np-front__zone-b > .np-article:first-child,
 .np-front__zone-c > .np-article:first-child,
@@ -319,37 +310,37 @@ html:has(.np-root) body { background: transparent; }
   padding-top: 0;
 }
 
-/* --- Headlines --- */
+/* --- Headlines — Cheltenham-style (Playfair Display) --- */
 .np-article__headline {
   font-family: var(--np-font-head);
   font-weight: 700;
   color: var(--np-ink);
-  line-height: 1.05;
-  margin: 0 0 4px;
-  text-shadow: 0.4px 0.4px 0 rgba(26, 23, 16, 0.08);
+  line-height: 1.08;
+  margin: 0 0 5px;
   overflow-wrap: break-word;
   text-wrap: pretty;
   hyphens: auto;
   -webkit-hyphens: auto;
 }
 
-/* Banner tier — lead story */
+/* Banner tier — lead story, large Cheltenham */
 .np-article--banner .np-article__headline {
-  font-size: clamp(24px, 3vw, 42px);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  font-size: clamp(26px, 3vw, 40px);
+  letter-spacing: -0.01em;
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  line-height: 1.05;
 }
 
 /* Major tier */
 .np-article--major .np-article__headline {
-  font-size: clamp(16px, 2vw, 24px);
+  font-size: clamp(18px, 2vw, 26px);
+  letter-spacing: -0.005em;
 }
 
 /* Standard tier */
 .np-article--standard .np-article__headline {
-  font-size: 18px;
+  font-size: 17px;
 }
 
 /* Brief tier */
@@ -358,27 +349,27 @@ html:has(.np-root) body { background: transparent; }
   line-height: 1.15;
 }
 
-/* Bulletin tier */
+/* Bulletin tier — sans-serif, compact */
 .np-article--bulletin .np-article__headline {
-  font-family: var(--np-font-deck);
+  font-family: var(--np-font-label);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.2;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
 }
 
 /* Filler tier */
 .np-article--filler .np-article__headline {
-  font-family: var(--np-font-deck);
+  font-family: var(--np-font-label);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  line-height: 1.25;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
 }
 
-/* --- Multi-Deck Headlines --- */
+/* --- Multi-Deck Headlines (sub-heads below main) --- */
 .np-headline-deck {
   margin-bottom: 6px;
 }
@@ -386,12 +377,12 @@ html:has(.np-root) body { background: transparent; }
 .np-headline-deck__sub {
   font-family: var(--np-font-deck);
   color: var(--np-ink);
-  margin: 2px 0;
-  line-height: 1.2;
+  margin: 3px 0;
+  line-height: 1.25;
 }
 
 .np-headline-deck__sub--1 {
-  font-size: 16px;
+  font-size: 15px;
   font-style: italic;
   text-align: center;
 }
@@ -414,21 +405,22 @@ html:has(.np-root) body { background: transparent; }
   text-align: left;
 }
 
-/* --- Byline --- */
+/* --- Byline — 1970s: clean sans, caps --- */
 .np-article__byline {
-  font-family: var(--np-font-deck);
-  font-size: 8px;
+  font-family: var(--np-font-label);
+  font-size: 8.5px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.10em;
   color: var(--np-ink-light);
-  margin: 0 0 4px;
+  margin: 0 0 5px;
 }
 
-/* --- Body Text --- */
+/* --- Body Text — Century/Imperial style (Lora) --- */
 .np-article__summary {
   font-family: var(--np-font-body);
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: 13.5px;
+  line-height: 1.40;
   text-align: justify;
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -437,45 +429,46 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-article__dateline {
-  font-family: var(--np-font-deck);
+  font-family: var(--np-font-label);
   text-transform: uppercase;
-  font-size: 0.85em;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
-/* --- Drop cap (banner only) --- */
+/* --- Drop cap (banner only) — 1970s style, clean --- */
 .np-article--banner .np-article__summary::first-letter {
   float: left;
   font-family: var(--np-font-head);
-  font-size: 3.5em;
+  font-size: 3.2em;
   font-weight: 700;
-  line-height: 0.78;
-  margin: 0.04em 0.10em 0 0;
+  line-height: 0.80;
+  margin: 0.02em 0.08em 0 0;
   color: var(--np-ink);
 }
 
-/* --- Subheads (banner/major articles) --- */
-/* --- Article meta: source count + lean — subtle, end of article --- */
+/* --- Article meta: source count + lean --- */
 .np-article__meta {
-  font-family: var(--np-font-deck);
+  font-family: var(--np-font-label);
   font-size: 8px;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--np-ink-light);
-  margin: 3px 0 0;
+  margin: 4px 0 0;
   text-align: right;
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 /* ==========================================================================
-   TODAY'S BRIEF (TL;DR) — subtle boxed editorial summary
+   TODAY'S BRIEF (TL;DR)
    ========================================================================== */
 
 .np-brief {
-  border-top: 1px solid var(--np-ink);
+  border-top: 2px solid var(--np-ink);
   border-bottom: 1px solid var(--np-ink);
-  padding: 8px 0;
-  margin-bottom: 10px;
+  padding: 10px 0;
+  margin-bottom: 12px;
   text-align: center;
   position: relative;
   z-index: 2;
@@ -483,22 +476,22 @@ html:has(.np-root) body { background: transparent; }
 
 .np-brief__label {
   font-family: var(--np-font-label);
-  font-size: 8px;
-  font-weight: 700;
+  font-size: 9px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.20em;
+  letter-spacing: 0.22em;
   color: var(--np-ink-light);
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .np-brief__text {
   font-family: var(--np-font-body);
   font-style: italic;
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.55;
   color: var(--np-ink-mid);
   margin: 0 auto;
-  max-width: 90%;
+  max-width: 85%;
   text-align: justify;
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -517,19 +510,19 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-filler__heading {
-  font-family: var(--np-font-deck);
+  font-family: var(--np-font-label);
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.10em;
   color: var(--np-ink);
-  margin: 0 0 2px;
+  margin: 0 0 3px;
 }
 
 .np-filler__text {
   font-family: var(--np-font-body);
-  font-size: 10px;
-  line-height: 1.35;
+  font-size: 12px;
+  line-height: 1.40;
   color: var(--np-ink-mid);
   margin: 0;
   text-align: justify;
@@ -538,20 +531,19 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   ORNAMENTAL RULES
+   ORNAMENTAL RULE — 1970s: strong double rule
    ========================================================================== */
 
 .np-ornamental-rule {
   border: none;
-  height: 5px;
+  height: 4px;
   background: linear-gradient(
     to bottom,
     var(--np-ink) 0px, var(--np-ink) 2px,
     transparent 2px, transparent 3px,
-    var(--np-ink) 3px, var(--np-ink) 4px,
-    transparent 4px
+    var(--np-rule-dark) 3px, var(--np-rule-dark) 4px
   );
-  margin: 8px 0;
+  margin: 10px 0;
   position: relative;
   z-index: 2;
 }
@@ -561,7 +553,7 @@ html:has(.np-root) body { background: transparent; }
    ========================================================================== */
 
 .np-classifieds {
-  margin-top: 8px;
+  margin-top: 10px;
   position: relative;
   z-index: 2;
 }
@@ -573,12 +565,12 @@ html:has(.np-root) body { background: transparent; }
 }
 
 .np-classified-ad {
-  padding: 8px 12px;
+  padding: 10px 14px;
   border: 1px solid var(--np-rule);
   border-right: none;
   font-family: var(--np-font-body);
-  font-size: 10px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.55;
   text-align: justify;
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -588,12 +580,12 @@ html:has(.np-root) body { background: transparent; }
 .np-classified-ad:last-child { border-right: 1px solid var(--np-rule); }
 
 .np-classified-ad__heading {
-  font-family: var(--np-font-deck);
-  font-weight: 700;
+  font-family: var(--np-font-label);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   font-size: 10px;
 }
 
@@ -603,27 +595,29 @@ html:has(.np-root) body { background: transparent; }
 
 .np-colophon {
   text-align: center;
-  padding: 20px 0 0;
-  font-family: var(--np-font-body);
+  padding: 24px 0 0;
+  font-family: var(--np-font-label);
   font-size: 10px;
   color: var(--np-ink-light);
-  line-height: 1.8;
+  line-height: 2.0;
+  letter-spacing: 0.02em;
 }
 
 .np-colophon__rule {
   border: none;
   border-top: 1px solid var(--np-rule);
-  margin: 0 0 14px;
+  margin: 0 0 16px;
 }
 
 .np-colophon__link {
   color: var(--np-ink);
   text-decoration: underline;
   text-underline-offset: 3px;
+  text-decoration-color: var(--np-rule);
 }
 
 /* ==========================================================================
-   PDF EXPORT BUTTON — outside the newspaper canvas
+   PDF EXPORT BUTTON
    ========================================================================== */
 
 .np-pdf-action {
@@ -635,24 +629,26 @@ html:has(.np-root) body { background: transparent; }
 
 .np-pdf-btn {
   appearance: none;
-  border: 1px solid #999;
-  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #AAA;
+  background: rgba(255, 255, 255, 0.9);
   color: #555;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  padding: 6px 12px;
-  border-radius: 4px;
+  font-family: var(--np-font-label);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 2px;
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: opacity 0.15s ease-out;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .np-pdf-btn:hover {
   opacity: 1;
   border-color: #666;
-  color: #333;
+  color: #222;
 }
 
 /* ==========================================================================
@@ -661,48 +657,43 @@ html:has(.np-root) body { background: transparent; }
 
 .np-loading {
   text-align: center;
-  padding: 60px 0;
+  padding: 80px 0;
   font-family: var(--np-font-body);
   font-style: italic;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--np-ink-light);
 }
 
 /* ==========================================================================
-   RESPONSIVE — 8 -> 6 -> 4 -> 2 -> 1 columns
+   RESPONSIVE — 6 → 4 → 2 → 1 columns
    ========================================================================== */
 
-/* Desktop narrow: 6 columns */
-@media (max-width: 1600px) {
+/* Narrower desktop: keep 6, tighten spacing */
+@media (max-width: 1400px) {
   .np-root {
-    max-width: 1400px;
-    padding: 28px 32px 48px;
+    max-width: 1100px;
+    padding: 20px 28px 40px;
   }
 
-  .np-masthead__nameplate { font-size: 76px; }
+  .np-masthead__nameplate { font-size: clamp(48px, 6vw, 68px); }
 
   .np-front {
-    grid-template-columns: 2fr 2fr 2fr;
-  }
-
-  .np-front__zone-a,
-  .np-front__zone-c {
-    column-count: 2;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .np-section-flow {
-    column-count: 6;
+    column-count: 4;
   }
 }
 
-/* Tablet landscape: 4 columns */
-@media (max-width: 1200px) {
+/* Tablet landscape: 4 columns, lead on top */
+@media (max-width: 1024px) {
   .np-root {
     max-width: none;
-    padding: 24px 24px 40px;
+    padding: 20px 24px 36px;
   }
 
-  .np-masthead__nameplate { font-size: 60px; }
+  .np-masthead__nameplate { font-size: 52px; }
 
   .np-front {
     grid-template-columns: 1fr 1fr;
@@ -710,7 +701,7 @@ html:has(.np-root) body { background: transparent; }
 
   .np-front__zone-a {
     column-count: 1;
-    border-right: 0.5px solid var(--np-rule);
+    border-right: 1px solid var(--np-rule);
     padding-right: var(--np-col-gap);
   }
 
@@ -722,20 +713,19 @@ html:has(.np-root) body { background: transparent; }
     grid-column: 1 / -1;
     order: -1;
     border-bottom: 2px solid var(--np-ink);
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
   }
 
   .np-front__zone-c {
     column-count: 1;
-    border-left: 0.5px solid var(--np-rule);
     padding-left: var(--np-col-gap);
   }
 
-  .np-article--banner .np-article__headline { font-size: 34px; }
+  .np-article--banner .np-article__headline { font-size: 32px; }
 
   .np-section-flow {
-    column-count: 4;
+    column-count: 3;
   }
 
   .np-classifieds__grid {
@@ -749,8 +739,8 @@ html:has(.np-root) body { background: transparent; }
 
 /* Tablet portrait: 2 columns */
 @media (max-width: 768px) {
-  .np-root { padding: 20px 20px 36px; }
-  .np-masthead__nameplate { font-size: 48px; }
+  .np-root { padding: 16px 20px 32px; }
+  .np-masthead__nameplate { font-size: 42px; }
 
   .np-front {
     display: block;
@@ -762,19 +752,18 @@ html:has(.np-root) body { background: transparent; }
     column-count: 2;
     column-gap: var(--np-col-gap);
     column-rule: var(--np-col-rule);
-    column-fill: auto;
+    column-fill: balance;
     border: none;
-    border-left: none;
-    border-right: none;
     padding: 0;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     order: unset;
   }
 
   .np-front__zone-b {
+    column-count: 1;
     border-bottom: 2px solid var(--np-ink);
-    padding-bottom: 6px;
-    margin-bottom: 6px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .np-article--banner .np-article__headline { font-size: 28px; }
@@ -783,13 +772,13 @@ html:has(.np-root) body { background: transparent; }
   .np-section-flow { column-count: 2; }
 }
 
-/* Mobile: single column tabloid */
+/* Mobile: single column */
 @media (max-width: 560px) {
-  .np-root { padding: 14px 14px 28px; }
+  .np-root { padding: 12px 14px 24px; }
 
   .np-masthead__nameplate {
-    font-size: 36px;
-    letter-spacing: 0.01em;
+    font-size: 32px;
+    letter-spacing: 0;
   }
 
   .np-masthead__ears {
@@ -809,8 +798,8 @@ html:has(.np-root) body { background: transparent; }
     text-align: center;
   }
 
-  .np-masthead__ear-text { font-size: 9px; }
-  .np-masthead__info { font-size: 8px; letter-spacing: 0.06em; }
+  .np-masthead__ear-text { font-size: 8px; }
+  .np-masthead__info { font-size: 8px; letter-spacing: 0.05em; }
 
   .np-front { display: block; }
 
@@ -823,10 +812,10 @@ html:has(.np-root) body { background: transparent; }
     padding: 0;
   }
 
-  .np-article--banner .np-article__headline { font-size: 26px; }
+  .np-article--banner .np-article__headline { font-size: 24px; }
   .np-article--major .np-article__headline { font-size: 18px; }
   .np-article--standard .np-article__headline { font-size: 16px; }
-  .np-article__summary { font-size: 13px; line-height: 1.45; }
+  .np-article__summary { font-size: 14px; line-height: 1.50; }
 
   .np-section-flow { column-count: 1; }
 
@@ -846,126 +835,118 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   PRINT — Multi-page landscape broadsheet
-   Browser "Save as PDF" → landscape A3 pages, 4-col flow, page numbers.
+   DARK MODE — Hardcoded color overrides
    ========================================================================== */
 
-/* Page setup: landscape, warm background, page counter */
+/* Soften the paper shadow in dark mode — warm glow instead of cool shadow */
+:root[data-mode="dark"] .np-root {
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.40);
+}
+
+/* PDF action button — dark surface with warm muted text */
+:root[data-mode="dark"] .np-pdf-btn {
+  border-color: #5A5550;
+  background: rgba(28, 26, 23, 0.90);
+  color: #8A8278;
+}
+
+:root[data-mode="dark"] .np-pdf-btn:hover {
+  border-color: #8A8278;
+  color: #EDE8E0;
+}
+
+/* ==========================================================================
+   PRINT — Landscape A3, 4-column flow
+   ========================================================================== */
+
 @page {
   margin: 0.5in 0.6in;
   size: A3 landscape;
 
-  /* Page number bottom-center (Chrome/Edge support) */
   @bottom-center {
-    content: "— " counter(page) " —";
-    font-family: 'Old Standard TT', Georgia, serif;
+    content: "\2014  " counter(page) " \2014";
+    font-family: 'Georgia', serif;
     font-size: 9pt;
-    color: #6B6354;
+    color: #6E6E6E;
   }
 }
 
-/* First page: nameplate at top */
 @page :first {
   margin-top: 0.4in;
 }
 
 @media print {
-  /* Force background colors/images to print */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Root: full width, keep aged paper look */
   .np-root {
     max-width: none;
     width: 100%;
     padding: 0;
     margin: 0;
     box-shadow: none;
-    background: var(--np-paper);
+    background: #fff;
     overflow: visible;
   }
 
-  /* Keep paper texture in print */
-  .np-root::before,
-  .np-root::after {
-    position: fixed;
-  }
-
-  /* Masthead: centered, no overflow */
   .np-masthead {
     text-align: center;
     margin-bottom: 12px;
   }
 
   .np-masthead__nameplate {
-    font-size: 72pt;
-    text-shadow: none;
+    font-size: 60pt;
   }
 
-  .np-article__headline {
-    text-shadow: none;
-  }
-
-  /* Front page: 4-column grid in landscape */
   .np-front {
     display: grid;
-    grid-template-columns: 2fr 3fr 2fr;
+    grid-template-columns: 5fr 4fr 5fr;
     gap: 0;
     break-inside: avoid;
   }
 
-  /* Side zones: 2 columns each */
   .np-front__zone-a,
   .np-front__zone-c {
     column-count: 2;
-    column-gap: 10px;
-    column-rule: 0.5px solid #A89D88;
+    column-gap: 12px;
+    column-rule: 1px solid var(--np-rule);
+    column-fill: balance;
   }
 
   .np-front__zone-b {
     column-count: 1;
-    border-left: 0.5px solid #A89D88;
-    border-right: 0.5px solid #A89D88;
-    padding: 0 10px;
+    border-left: 1px solid var(--np-rule);
+    border-right: 1px solid var(--np-rule);
+    padding: 0 12px;
   }
 
-  /* Section flow: 4-column in landscape pages */
   .np-section-flow {
     column-count: 4;
-    column-gap: 10px;
-    column-rule: 0.5px solid #A89D88;
-    column-fill: auto;
+    column-gap: 12px;
+    column-rule: 1px solid var(--np-rule);
+    column-fill: balance;
   }
 
-  /* Articles: avoid splitting across pages */
   .np-article {
     break-inside: avoid;
     page-break-inside: avoid;
+    orphans: 2;
+    widows: 2;
   }
 
-  /* Section labels: clean page break before each section */
   .np-section-label {
-    break-before: page;
-    page-break-before: always;
+    break-before: auto;
+    page-break-before: auto;
     padding-top: 8px;
   }
 
-  /* First section label doesn't force a new page */
-  .np-section-label:first-of-type {
-    break-before: auto;
-    page-break-before: auto;
-  }
-
-  /* Classifieds: 3-column in landscape */
   .np-classifieds__grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  /* Hide export button and edition nav */
   .np-pdf-action { display: none !important; }
   .np-edition-nav { display: none; }
-
   .np-colophon__link { text-decoration: none; }
 }

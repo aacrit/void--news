@@ -25,6 +25,7 @@ export interface DailyBriefState {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
+  audioError: boolean;
   audioRef: React.RefObject<HTMLAudioElement | null>;
   handlePlayPause: () => void;
   handleSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -35,14 +36,26 @@ export function useDailyBrief(edition: string): DailyBriefState {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [audioError, setAudioError] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+
+    // Pause and detach audio before switching briefs to prevent a race
+    // where audio.play() is still pending when src changes.
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.src = "";
+      audio.load();
+    }
+
     setBrief(null);
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
+    setAudioError(false);
     // Single daily brief — always world, edition-agnostic
     fetchDailyBrief("world").then((data) => {
       if (!cancelled) setBrief(data);
@@ -56,27 +69,41 @@ export function useDailyBrief(edition: string): DailyBriefState {
     const onTime = () => setCurrentTime(audio.currentTime);
     const onMeta = () => setDuration(audio.duration || 0);
     const onEnd = () => setIsPlaying(false);
+    // Graceful degradation: when the audio URL 404s or fails to load, mark
+    // the error state so the play button is disabled. No disruptive alert —
+    // the brief text remains fully readable.
+    const onError = () => {
+      setAudioError(true);
+      setIsPlaying(false);
+    };
     audio.addEventListener("timeupdate", onTime);
     audio.addEventListener("loadedmetadata", onMeta);
     audio.addEventListener("ended", onEnd);
+    audio.addEventListener("error", onError);
     return () => {
       audio.removeEventListener("timeupdate", onTime);
       audio.removeEventListener("loadedmetadata", onMeta);
       audio.removeEventListener("ended", onEnd);
+      audio.removeEventListener("error", onError);
     };
   }, [brief]);
 
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || audioError) return;
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play().catch(() => {});
+      audio.play().catch(() => {
+        // play() rejection (e.g. browser autoplay policy) — mark error so the
+        // button disables gracefully rather than appearing stuck in a play state.
+        setAudioError(true);
+        setIsPlaying(false);
+      });
       setIsPlaying(true);
     }
-  }, [isPlaying]);
+  }, [isPlaying, audioError]);
 
   const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
@@ -86,7 +113,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(t);
   }, []);
 
-  return { brief, isPlaying, currentTime, duration, audioRef, handlePlayPause, handleSeek };
+  return { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek };
 }
 
 /* ---------------------------------------------------------------------------
@@ -94,11 +121,11 @@ export function useDailyBrief(edition: string): DailyBriefState {
    --------------------------------------------------------------------------- */
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioRef, handlePlayPause, handleSeek } = state;
+  const { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek } = state;
   const [expanded, setExpanded] = useState(false);
   if (!brief) return null;
 
-  const hasAudio = !!brief.audio_url;
+  const hasAudio = !!brief.audio_url && !audioError;
   const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
 
@@ -166,7 +193,10 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         )}
 
         {/* TL;DR body */}
-        <div className={`daily-brief__body${!expanded ? " daily-brief__body--mobile-clamp" : ""}`}>
+        <div
+          id="daily-brief-body"
+          className={`daily-brief__body${!expanded ? " daily-brief__body--mobile-clamp" : ""}`}
+        >
           {paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
@@ -175,6 +205,8 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           className="daily-brief__toggle"
           onClick={() => setExpanded(!expanded)}
           type="button"
+          aria-expanded={expanded}
+          aria-controls="daily-brief-body"
         >
           {expanded ? "Read less" : "Read more"}
         </button>

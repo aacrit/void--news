@@ -1,17 +1,10 @@
-import { IM_Fell_English, Lora, Old_Standard_TT } from "next/font/google";
+import { Lora, Old_Standard_TT } from "next/font/google";
 
 /* ---------------------------------------------------------------------------
-   Paper Edition Layout — Period Font Loading
-   Loads IM Fell English, Lora, Old Standard TT for the broadsheet view.
-   These fonts only load on /paper routes (not the digital edition).
+   Paper Edition Layout — 1970s NYT Typography
+   Loads Lora (body) and Old Standard TT (deck heads).
+   Playfair Display (headlines) and Inter (labels) cascade from root layout.
    --------------------------------------------------------------------------- */
-
-const imFell = IM_Fell_English({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--np-fell",
-  display: "swap",
-});
 
 const lora = Lora({
   subsets: ["latin"],
@@ -33,9 +26,7 @@ export default function PaperLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`${imFell.variable} ${lora.variable} ${oldStandard.variable}`}
-    >
+    <div className={`${lora.variable} ${oldStandard.variable}`}>
       {children}
     </div>
   );

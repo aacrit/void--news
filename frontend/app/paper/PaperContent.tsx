@@ -27,9 +27,9 @@ import {
 import "./paper.css";
 
 /* ---------------------------------------------------------------------------
-   E-Paper Edition — 1924 New York Times Broadsheet
-   8-column broadsheet. Zero whitespace. CSS multi-column flow.
-   Period typography. Full summaries. Bias as editorial prose.
+   E-Paper Edition — 1970s New York Times Broadsheet
+   6-column broadsheet. Clean newsprint. Modular layout.
+   Cheltenham-style headlines (Playfair Display). Full summaries.
    --------------------------------------------------------------------------- */
 
 // --- Helpers (duplicated from HomeContent to keep blast radius zero) ---
@@ -573,7 +573,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
           : "Evening";
 
   return (
-    <div className="np-root">
+    <div className="np-root" id="main-content" role="main">
       <Masthead lastUpdated={lastUpdated} edition={edition} />
 
       {isLoading && (
