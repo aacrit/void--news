@@ -468,35 +468,25 @@ function InkCircle({ variant, color }: { variant: number; color: string }) {
   return (
     <div className="sigil__ink-circle" aria-hidden="true">
       <svg viewBox="0 0 100 60" preserveAspectRatio="none" fill="none">
-        {/* Shadow/bleed layer — mimics ink spreading into paper fibers */}
+        {/* Faint bleed — pen ink feathering into paper grain */}
         <path
           d={path.d}
           stroke={color}
-          strokeWidth="3.5"
+          strokeWidth="1.6"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.08"
-          style={{ filter: "blur(2px)" } as React.CSSProperties}
+          opacity="0.07"
+          style={{ filter: "blur(1px)" } as React.CSSProperties}
         />
-        {/* Main ink stroke — variable width simulated via two overlapping strokes */}
+        {/* Main pen stroke — fine ballpoint/felt-tip line */}
         <path
           d={path.d}
           stroke={color}
-          strokeWidth="2.2"
+          strokeWidth="0.9"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.55"
+          opacity="0.6"
           style={{ ["--ink-len" as string]: path.len } as React.CSSProperties}
-        />
-        {/* Thin overlay — sharper detail line, offset slightly for hand tremor */}
-        <path
-          d={path.d}
-          stroke={color}
-          strokeWidth="0.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.3"
-          transform="translate(0.5, -0.3)"
         />
       </svg>
     </div>
@@ -548,7 +538,7 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
     >
       {/* Hand-drawn ink circle — editor's pen mark for divergence/consensus */}
       {data.divergenceFlag === "divergent" && (
-        <InkCircle variant={data.politicalLean % 3} color="var(--sense-high)" />
+        <InkCircle variant={data.politicalLean % 3} color="var(--sense-medium)" />
       )}
       {data.divergenceFlag === "consensus" && (
         <InkCircle variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
