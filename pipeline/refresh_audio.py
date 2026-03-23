@@ -67,12 +67,17 @@ def main():
         result = produce_audio(script, voices, edition)
 
         if result:
-            # Update daily_briefs table
+            # Update daily_briefs table with full brief data
             row = {
                 "edition": edition,
                 "tldr_text": brief["tldr_text"],
+                "opinion_text": brief.get("opinion_text"),
+                "audio_script": brief.get("audio_script"),
                 "audio_url": result["audio_url"],
                 "audio_duration_seconds": result["duration_seconds"],
+                "audio_file_size": result["file_size"],
+                "audio_voice": f"{voices['host_a']['id']}+{voices['host_b']['id']}",
+                "top_cluster_ids": brief.get("top_cluster_ids", []),
             }
             try:
                 supabase.table("daily_briefs").delete().eq("edition", edition).execute()
