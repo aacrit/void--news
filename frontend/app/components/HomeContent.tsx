@@ -68,7 +68,6 @@ import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
 import { hapticConfirm, hapticScrollEdge } from "../lib/haptics";
-import DivergenceAlerts from "./DivergenceAlerts";
 import BiasLensOnboarding from "./BiasLensOnboarding";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
@@ -577,16 +576,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               <DailyBriefText state={dailyBriefState} />
             )}
 
-            {/* 3. Divergence Alerts — high-divergence stories + blind spot banner */}
-            {!isLoading && filteredStories.length > 0 && (
-              <DivergenceAlerts
-                stories={filteredStories}
-                activeLean={activeLean}
-                onStoryClick={handleStoryClick}
-              />
-            )}
-
-            {/* 4. Medium stories — broadsheet grid on desktop */}
+            {/* Medium stories — broadsheet grid on desktop */}
             {!isLoading && mediumStories.length > 0 && (
               <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
                 {mediumStories.map((story, idx) => (

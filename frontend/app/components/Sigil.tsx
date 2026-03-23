@@ -443,6 +443,66 @@ function CountText({ target, active }: { target: number; active: boolean }) {
   return <>{v}</>;
 }
 
+/* ── Hand-drawn ink circle — rough editor's pen mark ──────────────────── */
+
+/**
+ * SVG paths traced to look like someone circled a word on a newspaper.
+ * Multiple variants to avoid all sigils looking identical.
+ * Each path is roughly elliptical with jitter, pressure variation, and
+ * a slight overlap where the pen retraces the start.
+ *
+ * viewBox is 100x60 to accommodate wide sigils (icon + label).
+ * Stroke-dasharray length stored in --ink-len for the draw animation.
+ */
+const INK_PATHS = [
+  // Variant A: slightly tilted, starts bottom-left, wobbly ascent
+  { d: "M 12 42 C 4 36, 2 22, 8 14 C 14 6, 30 2, 52 3 C 74 4, 92 8, 96 22 C 100 36, 88 50, 68 54 C 48 58, 22 56, 14 48 C 10 44, 10 42, 14 40", len: 280 },
+  // Variant B: rounder, starts left, more closed
+  { d: "M 8 30 C 6 16, 18 4, 42 3 C 66 2, 90 10, 94 26 C 98 42, 82 56, 56 57 C 30 58, 6 48, 6 34 C 6 30, 8 28, 12 30", len: 270 },
+  // Variant C: egg-shaped, starts top, aggressive pressure
+  { d: "M 50 4 C 76 2, 96 12, 96 30 C 96 48, 78 58, 50 58 C 22 58, 4 48, 4 30 C 4 12, 22 2, 46 3 L 54 4", len: 265 },
+];
+
+function InkCircle({ variant, color }: { variant: number; color: string }) {
+  const path = INK_PATHS[variant % INK_PATHS.length];
+  return (
+    <div className="sigil__ink-circle" aria-hidden="true">
+      <svg viewBox="0 0 100 60" preserveAspectRatio="none" fill="none">
+        {/* Shadow/bleed layer — mimics ink spreading into paper fibers */}
+        <path
+          d={path.d}
+          stroke={color}
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.08"
+          style={{ filter: "blur(2px)" } as React.CSSProperties}
+        />
+        {/* Main ink stroke — variable width simulated via two overlapping strokes */}
+        <path
+          d={path.d}
+          stroke={color}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.55"
+          style={{ ["--ink-len" as string]: path.len } as React.CSSProperties}
+        />
+        {/* Thin overlay — sharper detail line, offset slightly for hand tremor */}
+        <path
+          d={path.d}
+          stroke={color}
+          strokeWidth="0.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.3"
+          transform="translate(0.5, -0.3)"
+        />
+      </svg>
+    </div>
+  );
+}
+
 /* ── Main Sigil ────────────────────────────────────────────────────────── */
 
 export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps) {
@@ -486,6 +546,14 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
         transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
     >
+      {/* Hand-drawn ink circle — editor's pen mark for divergence/consensus */}
+      {data.divergenceFlag === "divergent" && (
+        <InkCircle variant={data.politicalLean % 3} color="var(--sense-high)" />
+      )}
+      {data.divergenceFlag === "consensus" && (
+        <InkCircle variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
+      )}
+
       {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
