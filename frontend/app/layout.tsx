@@ -99,6 +99,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1A17" },
@@ -125,6 +126,10 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
+        {/* PWA: iOS standalone mode + Android install support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="mobile-web-app-capable" content="yes" />
         {/* Inline script to set theme before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
@@ -137,6 +142,9 @@ export default function RootLayout({
                   }
                 } catch(e) {}
               })();
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/void--news/sw.js').catch(function() {});
+              }
             `,
           }}
         />

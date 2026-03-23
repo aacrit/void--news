@@ -341,9 +341,16 @@
 
   /* === STORY CARDS === */
 
-  /* Vertical tightening — more stories above the fold */
+  /* Native feed density — iOS News app style:
+     - Hairline separator via --separator-mobile token (0.5px, set in .story-card base rule)
+     - Subtle background tint using --bg-card for visual grouping against page-main
+     - Vertical padding tightened for more stories above the fold
+     The negative margin + matching padding pulls the tint flush to the page edge
+     (page-main has --space-5 padding), creating a full-bleed card band on the
+     warm paper surface without requiring edge-to-edge markup changes. */
   .story-card {
     padding: var(--space-3) 0;
+    border-bottom: var(--separator-mobile);
   }
 
   .story-card__meta {
@@ -355,21 +362,39 @@
     margin-bottom: var(--space-1);
   }
 
+  /* Apple News density — tighter line-height reads as native feed, not web article box */
   .story-card__summary {
     margin-bottom: var(--space-2);
     -webkit-line-clamp: 3;
+    line-height: 1.45;
   }
 
   /* [CRITICAL-5] Reserve space for Sigil to prevent layout shift */
   .story-card__footer {
     min-height: 32px;
-    margin-top: var(--space-2);
+    margin-top: var(--space-1);
   }
 
   /* === SECTION HEADERS === */
 
-  /* Mobile wayfinding: tighter section headers with visible 2px top rule */
+  /* Native iOS section header pattern: sticky, frosted, edge-to-edge.
+     Negative horizontal margin + matching padding pulls the header flush
+     to the viewport edge — mirrors UITableView section header behaviour.
+     backdrop-filter adds the frosted-glass frost as the feed scrolls beneath.
+     z-index: var(--z-sticky) keeps it above cards but below nav (--z-nav).
+     top calc accounts for the fixed nav-header height so the section header
+     docks immediately below the nav chrome without overlap. */
   .section-header {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: var(--z-sticky);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background-color: var(--bg-primary);
+    margin-left: calc(-1 * var(--space-5));
+    margin-right: calc(-1 * var(--space-5));
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
     padding-top: var(--space-3);
     padding-bottom: var(--space-1);
     margin-bottom: var(--space-1);
@@ -381,7 +406,10 @@
 
   /* === LEAD STORY === */
 
-  /* [ENHANCEMENT-3] Tighter lead story — show lead + secondary together */
+  /* Lead story V2: bolder hierarchy separates the hero from the supporting feed.
+     Headline bumped to clamp(1.5rem, 5vw, 2rem) — 1vw wider fluid range gives
+     the lead story more authority relative to .story-card at var(--text-lg).
+     Padding tightened to match story-card rhythm: both use var(--space-3) 0. */
   .lead-story {
     padding: var(--space-3) 0;
     border-bottom: var(--rule-thin);
@@ -392,7 +420,7 @@
   }
 
   .lead-story__headline {
-    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-size: clamp(1.5rem, 5vw, 2rem);
     margin-bottom: var(--space-2);
     line-height: 1.15;
   }
@@ -460,8 +488,24 @@
     background-color: var(--border-subtle);
     margin: var(--space-2) auto var(--space-1);
     opacity: 0.6;
+    transition: width 150ms var(--ease-out), opacity 150ms var(--ease-out);
     /* Brief width-expansion entrance that draws attention to the handle */
     animation: dragIndicatorReveal 500ms var(--ease-out) 300ms both;
+  }
+
+  /* Grabbed state: wider pill + full opacity — confirms the handle is active */
+  .dd-drag-indicator--grabbed {
+    width: 48px;
+    opacity: 1;
+  }
+
+  /* Dragging state: promote to compositor layer for jank-free 60fps dragging.
+     Suppress transitions so the panel tracks the finger with zero latency —
+     the inline style already sets transition:none while isDragging is true,
+     but will-change must be set before the gesture begins to avoid a layer
+     promotion stutter on the first move event. */
+  .deep-dive-panel--dragging {
+    will-change: transform;
   }
 
   /* Hide "Back to feed" text, keep arrow */
@@ -545,9 +589,15 @@
 
   /* === NATIVE APP TOUCH FEEDBACK === */
 
+  /* Bottom nav — larger touch targets, iOS tab bar feel */
+  .nav-bottom {
+    min-height: 56px;
+  }
+
   /* Bottom nav tab — snappy haptic-feel press (60ms snap, 300ms return) */
   .nav-bottom-tab {
     position: relative;
+    transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
   }
 
   .nav-bottom-tab:active {
@@ -555,17 +605,36 @@
     transition: transform 60ms var(--ease-out);
   }
 
-  /* Active tab — dot indicator below icon (iOS convention) */
+  /* Active tab — spring scale-up + dot indicator (iOS convention) */
+  .nav-bottom-tab--active {
+    transform: scale(1.05);
+  }
+
   .nav-bottom-tab--active::after {
     content: "";
     position: absolute;
-    bottom: 6px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background-color: var(--fg-primary);
+    background-color: var(--accent-warm);
+  }
+
+  /* Inactive tabs: slightly muted */
+  .nav-bottom-tab:not(.nav-bottom-tab--active) {
+    opacity: 0.6;
+  }
+
+  /* Filter chips — pill-toggle feel with sliding indicator */
+  .lean-bar__seg--active {
+    transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), transform 200ms var(--ease-out);
+  }
+
+  /* Topic chips — tighter, more native pill feel */
+  .topic-bar__chip--active {
+    font-weight: 600;
   }
 
   /* Story card — no hover lift on mobile (no pointer hover), use active press */

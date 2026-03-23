@@ -64,6 +64,23 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const onNavigateRef = useRef(onNavigate);
   onNavigateRef.current = onNavigate;
 
+  /* ---- Swipe gesture state (mobile only) -------------------------------- */
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDismissing, setIsDismissing] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal" } | null>(null);
+
+  /* Reset swipe gesture state when the parent navigates to a different story
+     without unmounting this component (handleDeepDiveNav changes story prop). */
+  useEffect(() => {
+    setIsDismissing(false);
+    setIsDragging(false);
+    setDragOffset(0);
+    touchStartRef.current = null;
+  }, [story.id]);
+  /** Cross-fade opacity for horizontal story swipe navigation */
+  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
+
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
@@ -560,6 +577,112 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     }
   }, [onClose, originRect]);
 
+  /* ---- Swipe-to-dismiss touch handlers (mobile only) -------------------- */
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isDesktop) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const touch = e.touches[0];
+    const scrollTop = panel.scrollTop;
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+      scrollTop,
+      direction: "none",
+    };
+  }, [isDesktop]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (isDesktop || !touchStartRef.current) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    // Determine direction on first significant movement
+    if (touchStartRef.current.direction === "none" && (absX > 10 || absY > 10)) {
+      touchStartRef.current.direction = absX > absY * 1.2 ? "horizontal" : "vertical";
+    }
+
+    // --- Horizontal swipe (story navigation) ---
+    if (touchStartRef.current.direction === "horizontal" && onNavigateRef.current) {
+      // Don't interfere with vertical scroll
+      return;
+    }
+
+    // --- Vertical swipe (dismiss) ---
+    if (touchStartRef.current.direction !== "vertical") return;
+    if (deltaY <= 0) return;
+
+    // Guard: if user started scrolling from mid-content, don't intercept
+    const target = e.target as Node;
+    const dragIndicator = panelRef.current?.querySelector(".dd-drag-indicator");
+    const isOnDragIndicator = dragIndicator?.contains(target) ?? false;
+    if (touchStartRef.current.scrollTop > 5 && !isOnDragIndicator) return;
+
+    // Prevent page scroll while we're handling the drag
+    e.preventDefault();
+
+    // Rubber-band resistance — dampened feel
+    const offset = deltaY * 0.6;
+    setDragOffset(offset);
+    setIsDragging(true);
+  }, [isDesktop]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (isDesktop || !touchStartRef.current) return;
+
+    const start = touchStartRef.current;
+    const touch = e.changedTouches[0];
+    touchStartRef.current = null;
+
+    // --- Horizontal swipe end → navigate stories ---
+    if (start.direction === "horizontal" && onNavigateRef.current) {
+      const deltaX = touch.clientX - start.x;
+      const elapsed = Date.now() - start.time;
+      const velocity = elapsed > 0 ? Math.abs(deltaX) / elapsed : 0;
+
+      if (Math.abs(deltaX) > 60 || velocity > 0.3) {
+        const dir = deltaX < 0 ? "next" : "prev";
+        hapticLight();
+        // Cross-fade content
+        setSwipeNavOpacity(0);
+        setTimeout(() => {
+          onNavigateRef.current?.(dir);
+          setSwipeNavOpacity(1);
+        }, 150);
+        return;
+      }
+    }
+
+    // --- Vertical swipe end → dismiss ---
+    if (!isDragging) return;
+
+    const elapsed = Date.now() - start.time;
+    const velocity = elapsed > 0 ? dragOffset / elapsed : 0;
+    const shouldDismiss = dragOffset > 120 || velocity > 0.5;
+
+    if (shouldDismiss) {
+      hapticMedium();
+      setIsDismissing(true);
+      setIsDragging(false);
+      setDragOffset(window.innerHeight);
+      setTimeout(() => {
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 300);
+    } else {
+      setIsDragging(false);
+      setDragOffset(0);
+    }
+  }, [isDesktop, isDragging, dragOffset, onClose]);
+
   return (
     <>
       {/* Backdrop */}
@@ -568,10 +691,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         onClick={handleClose}
         className="deep-dive-backdrop"
         style={{
-          opacity: isVisible ? 1 : 0,
-          transition: isVisible
-            ? "opacity 300ms cubic-bezier(0.16, 1, 0.3, 1)"
-            : "opacity 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+          opacity: isVisible ? Math.max(0, 1 - dragOffset / 400) : 0,
+          transition: isDragging
+            ? "none"
+            : isVisible
+              ? "opacity 300ms cubic-bezier(0.16, 1, 0.3, 1)"
+              : "opacity 250ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       />
 
@@ -582,23 +707,34 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         aria-modal="true"
         aria-label={`Deep dive: ${story.title}`}
         tabIndex={-1}
-        className="deep-dive-panel"
+        className={`deep-dive-panel${isDragging ? " deep-dive-panel--dragging" : ""}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={morphStyle ?? {
           /* Default open/close when no FLIP morph is active.
              Desktop: spring scale + translateY from center.
              Mobile: spring slide from bottom — bottom sheet. */
           transform: isVisible
-            ? isDesktop ? "translate(-50%, -50%) scale(1)" : "translateY(0)"
-            : isDesktop ? "translate(-50%, -50%) scale(0.92) translateY(20px)" : "translateY(100%)",
+            ? isDesktop
+              ? "translate(-50%, -50%) scale(1)"
+              : `translateY(${dragOffset}px)`
+            : isDesktop
+              ? "translate(-50%, -50%) scale(0.92) translateY(20px)"
+              : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-e3)" : "none",
-          transition: isVisible
-            ? "transform 500ms var(--spring-bouncy), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 80ms"
-            : "transform 380ms var(--spring-snappy), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1) 180ms, box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+          transition: isDragging
+            ? "none"
+            : isDismissing
+              ? "transform 300ms cubic-bezier(0.2, 1, 0.3, 1)"
+              : isVisible
+                ? "transform 500ms var(--spring-bouncy), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 80ms"
+                : "transform 380ms var(--spring-snappy), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1) 180ms, box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
-        <div className="dd-drag-indicator" aria-hidden="true" />
+        <div className={`dd-drag-indicator${isDragging ? " dd-drag-indicator--grabbed" : ""}`} aria-hidden="true" />
 
         {/* ---- Header --------------------------------------------------- */}
         <header className="deep-dive-panel__header">
@@ -657,8 +793,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         <div
           className="deep-dive-panel__content"
           style={{
-            opacity: contentVisible ? 1 : 0,
-            transition: `opacity ${contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+            opacity: contentVisible ? swipeNavOpacity : 0,
+            transition: `opacity ${swipeNavOpacity < 1 ? 120 : contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
           {/* Loading indicator — analyzing animation while fetching deep dive data */}

@@ -28,6 +28,10 @@
     background-color 120ms var(--ease-out),
     box-shadow      300ms 30ms var(--ease-out),
     transform       320ms var(--spring-snappy);
+  /* Mobile separator token — hairline iOS-convention border.
+     Referenced by the max-width: 767px block. Toggling --separator-mobile
+     here is the single-point change for the mobile card border weight. */
+  --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
 /* Organic glow — irregular radial gradient that softly diffuses at edges.
@@ -5615,4 +5619,109 @@
 /* Mobile-only: hide opinion when brief is not expanded */
 .daily-brief__opinion--mobile-hidden {
   display: none;
+}
+
+/* ---- InstallPrompt — PWA install banner -------------------------------- */
+/* Compact glass banner, fixed above bottom nav on mobile.
+   Only appears on 2nd+ visit when beforeinstallprompt fires.
+   Matches the nav's glass morphism treatment for visual continuity. */
+
+.install-prompt {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  left: var(--space-5);
+  right: var(--space-5);
+  z-index: calc(var(--z-nav) + 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  animation: fadeInUp var(--dur-normal) var(--ease-out) both;
+}
+
+.install-prompt__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--fg-primary);
+  letter-spacing: 0.01em;
+  flex: 1;
+  min-width: 0;
+}
+
+.install-prompt__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.install-prompt__btn {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  /* Minimum 44x44px touch target */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 120ms var(--ease-out),
+    color 120ms var(--ease-out),
+    transform 200ms var(--spring-snappy);
+}
+
+.install-prompt__btn:active {
+  transform: scale(0.96);
+}
+
+.install-prompt__btn--install {
+  background: var(--accent);
+  color: var(--bg-primary);
+  padding: var(--space-2) var(--space-4);
+  letter-spacing: 0.02em;
+}
+
+.install-prompt__btn--install:hover {
+  background: var(--accent-hover);
+}
+
+.install-prompt__btn--dismiss {
+  background: transparent;
+  color: var(--fg-tertiary);
+  font-size: var(--text-base);
+  padding: var(--space-2);
+}
+
+.install-prompt__btn--dismiss:hover {
+  color: var(--fg-primary);
+  background: var(--bg-secondary);
+}
+
+/* Desktop: install prompt sits in lower-right corner, not full-width */
+@media (min-width: 768px) {
+  .install-prompt {
+    left: auto;
+    right: var(--space-7);
+    bottom: var(--space-7);
+    width: auto;
+    max-width: 320px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .install-prompt {
+    animation: none;
+  }
 }
