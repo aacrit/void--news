@@ -440,51 +440,49 @@ function CountText({ target, active }: { target: number; active: boolean }) {
   return <>{v}</>;
 }
 
-/* ── Hand-drawn ink circle — rough editor's pen mark ──────────────────── */
+/* ── Hand-drawn ink underline — editor's pen stroke ──────────────────── */
 
 /**
- * SVG paths traced to look like someone circled a word on a newspaper.
- * Multiple variants to avoid all sigils looking identical.
- * Each path is roughly elliptical with jitter, pressure variation, and
- * a slight overlap where the pen retraces the start.
+ * Organic underline strokes as if an editor dragged a pen beneath a word.
+ * Multiple variants for visual variety. Slightly wavy with pressure
+ * variation — thick at the press, thin at the trail.
  *
- * viewBox is 100x60 to accommodate wide sigils (icon + label).
+ * viewBox 100x12 — wide and short, sits below the lean label.
+ * Red = divergent (sources disagree), green = consensus (sources agree).
  * Stroke-dasharray length stored in --ink-len for the draw animation.
  */
-/* viewBox 100x40 — tight word-shaped ellipse, circles just the text label.
-   Paths are wobbly ovals like someone circled a word with a ballpoint pen. */
-const INK_PATHS = [
-  // Variant A: slightly tilted clockwise, open at bottom-right
-  { d: "M 14 28 C 6 22, 4 12, 14 6 C 24 0, 52 -2, 78 4 C 94 8, 98 16, 94 24 C 88 34, 60 38, 36 36 C 18 34, 12 30, 16 26", len: 220 },
-  // Variant B: rounder, starts left-center, nearly closed
-  { d: "M 8 20 C 6 10, 20 2, 46 2 C 72 2, 94 8, 96 20 C 98 32, 76 38, 50 38 C 24 38, 4 32, 6 22 C 6 20, 8 18, 12 20", len: 210 },
-  // Variant C: looser, starts top-left, slight upward tilt
-  { d: "M 18 6 C 40 0, 72 0, 88 8 C 98 14, 98 26, 86 34 C 72 40, 38 40, 18 34 C 4 28, 2 16, 12 8 C 14 6, 18 6, 22 8", len: 215 },
+const INK_UNDERLINES = [
+  // Variant A: gentle wave, thick start tapering
+  { d: "M 4 6 C 15 4, 28 8, 42 5 C 56 2, 70 9, 96 5", len: 95 },
+  // Variant B: slight downward arc, confident stroke
+  { d: "M 3 4 C 20 6, 45 8, 60 7 C 75 6, 88 4, 97 6", len: 96 },
+  // Variant C: wobbly, quick editorial scribble
+  { d: "M 5 7 C 18 3, 30 9, 48 5 C 62 2, 78 8, 95 4", len: 94 },
 ];
 
-function InkCircle({ variant, color }: { variant: number; color: string }) {
-  const path = INK_PATHS[variant % INK_PATHS.length];
+function InkUnderline({ variant, color }: { variant: number; color: string }) {
+  const path = INK_UNDERLINES[variant % INK_UNDERLINES.length];
   return (
-    <div className="sigil__ink-circle" aria-hidden="true">
-      <svg viewBox="0 0 100 40" preserveAspectRatio="none" fill="none">
-        {/* Faint bleed — pen ink feathering into paper grain */}
+    <div className="sigil__ink-underline" aria-hidden="true">
+      <svg viewBox="0 0 100 12" preserveAspectRatio="none" fill="none">
+        {/* Faint bleed — ink feathering into paper */}
         <path
           d={path.d}
           stroke={color}
-          strokeWidth="1.6"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.08"
-          style={{ filter: "blur(0.8px)" } as React.CSSProperties}
+          opacity="0.10"
+          style={{ filter: "blur(1px)" } as React.CSSProperties}
         />
-        {/* Main pen stroke — fine ballpoint line */}
+        {/* Main pen stroke — organic pressure variation */}
         <path
           d={path.d}
           stroke={color}
-          strokeWidth="0.9"
+          strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.65"
+          opacity="0.7"
           style={{ ["--ink-len" as string]: path.len } as React.CSSProperties}
         />
       </svg>
@@ -551,10 +549,10 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
       }}>
         {ll}
         {data.divergenceFlag === "divergent" && (
-          <InkCircle variant={data.politicalLean % 3} color="var(--sense-medium)" />
+          <InkUnderline variant={data.politicalLean % 3} color="var(--sense-high)" />
         )}
         {data.divergenceFlag === "consensus" && (
-          <InkCircle variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
+          <InkUnderline variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
         )}
       </span>
 

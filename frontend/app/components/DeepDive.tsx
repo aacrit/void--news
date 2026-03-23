@@ -836,19 +836,19 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Sigil + Spectrum row (always visible above tabs) ---- */}
+          {/* ---- Sigil (stacked: icon above, lean+underline below) + full-width Spectrum ---- */}
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
-              className={`dd-action-bar anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              className={`dd-analysis-block anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
               style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}
             >
               {story.sigilData && (
-                <div className="dd-action-bar__sigil">
+                <div className="dd-analysis-block__sigil">
                   <Sigil data={story.sigilData} size="xl" />
                 </div>
               )}
               {spectrumSources.length > 0 && (
-                <div className="dd-action-bar__spectrum">
+                <div className="dd-analysis-block__spectrum">
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}

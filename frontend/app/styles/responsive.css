@@ -527,24 +527,12 @@
     gap: var(--space-2);
   }
 
-  /* Action bar: two rows on mobile — [Sigil | Spectrum] / [Buttons] */
-  .dd-action-bar {
+  /* Analysis block: stacked vertically on mobile */
+  .dd-analysis-block {
     gap: var(--space-2);
   }
 
-  .dd-action-bar__sigil {
-    /* First row: sigil + spectrum fill full width */
-    order: 1;
-  }
-
-  .dd-action-bar__spectrum {
-    order: 2;
-    flex: 1;
-  }
-
-  .dd-action-bar__buttons {
-    order: 3;
-    width: 100%;
+  .dd-analysis-block__sigil {
     justify-content: flex-start;
   }
 
