@@ -34,6 +34,39 @@ GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ←
 
 ## Core Principles
 
+### Show, Don't Tell — The Cardinal Rule
+
+Every piece of generated text in void --news — summaries, TL;DR, opinion, audio scripts — MUST embody show-don't-tell writing. This is non-negotiable and applies to all prompts, all output, all future development.
+
+**What this means:**
+- Never assert significance. Show the evidence that makes significance self-evident.
+- Never say "this is important" — place facts side by side so the reader realizes it themselves.
+- Never use "notable," "significant," "it should be noted," "interestingly," "crucially" — these are crutch words that TELL instead of SHOW.
+- Juxtapose concrete facts to reveal patterns. "Three central banks moved in the same direction. Two did so despite domestic pressure. The third didn't have a choice." — the reader sees the pattern without being told.
+- Use specific numbers, names, dates, actions. Abstraction is the enemy of show-don't-tell.
+- The opinion section shows hidden patterns by placing facts next to each other — never by declaring a conclusion.
+
+**BAD:** "It is worth noting that tensions are rising significantly between the two nations."
+**GOOD:** "Both countries recalled their ambassadors within 48 hours. Neither has done that since 1979."
+
+This principle applies to: `cluster_summarizer.py` prompts, `daily_brief_generator.py` prompts, `claude_brief_generator.py` prompts, and any future content generation. When reviewing or modifying prompts, enforce this standard.
+
+### Product Family Branding
+
+CLI-style naming convention — every feature is a command the user runs. Transparent, no mystery.
+
+| Brand | English Subtitle | Purpose |
+|-------|-----------------|---------|
+| `void --news` | — | The platform |
+| `void --tl;dr` | The Daily Brief | Top stories, editorially weighed |
+| `void --onair` | Audio Broadcast | Two-voice BBC-style news conversation |
+| `void --opinion` | The Board | Observational editorial judgment |
+| `void --sources` | Source Spectrum | 370 outlets on one axis |
+| `void --deep-dive` | Story Analysis | Per-story bias breakdown |
+| `void --paper` | Broadsheet Edition | E-paper reading experience |
+
+English subtitles appear on first encounter (sessionStorage) then fade. The CLI aesthetic signals transparency and anti-marketing — users are querying, not passively consuming. Extended branding should follow this pattern for any new feature.
+
 ### Zero Operational Cost
 - No paid APIs. All bias analysis is rule-based NLP running locally.
 - Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 3 brief calls per run.
