@@ -142,7 +142,16 @@ the numbers reveal. Say it directly. No "one thing that stands out..." (~15 seco
 - Insert a deliberate pause between story segments. Do not rush from one story to \
 the next — let the listener absorb.
 - Numbers: write out small numbers ("three"). Figures for large ("$1.4 trillion").
-- No rhetorical questions. Declarative sentences only.\
+- No rhetorical questions. Declarative sentences only.
+
+Recency and freshness:
+- Stories are tagged [NEW] or [CONTINUING]. Prioritize [NEW] stories — lead with \
+what has changed since the last update.
+- For [CONTINUING] stories: do NOT repeat the full background. Focus only on what \
+is new — a development, a reaction, an updated figure. One or two sentences max. \
+The listener has likely heard the setup before.
+- If all top stories are [CONTINUING], acknowledge it: "The major stories continue \
+to develop." Then cover what's changed in each.\
 """
 
 # ---------------------------------------------------------------------------
@@ -201,35 +210,68 @@ def _check_quality(result: dict, edition: str) -> None:
         print(f"  [quality][brief:{edition}] Missing script markers: {missing}")
 
 
+def _get_previous_cluster_ids(edition: str) -> set[str]:
+    """Fetch cluster IDs from the most recent brief for this edition.
+
+    Used to identify stories already covered — lets us prioritize fresh
+    content while still including major ongoing stories.
+    """
+    try:
+        from utils.supabase_client import supabase
+        res = supabase.table("daily_briefs").select(
+            "top_cluster_ids"
+        ).eq("edition", edition).order(
+            "created_at", desc=True
+        ).limit(1).execute()
+
+        if res.data and res.data[0].get("top_cluster_ids"):
+            return set(res.data[0]["top_cluster_ids"])
+    except Exception:
+        pass
+    return set()
+
+
 def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 20) -> tuple[list[dict], str]:
     """
     Build the stories context block for the prompt.
 
-    Filters clusters by edition (sections array containment), takes top N
-    by headline_rank, and formats each with title, summary excerpt,
-    source_count, consensus_points, and divergence_points.
+    Filters by edition, prioritizes fresh stories over previously-covered ones.
+    Stories from the last brief are deprioritized (sorted after new stories at
+    the same rank tier) but not excluded — a major ongoing story still appears
+    if it's top-ranked.
 
     Returns (filtered_clusters, stories_block_text).
     """
+    previous_ids = _get_previous_cluster_ids(edition)
+
     edition_clusters = []
     for c in clusters:
         sections = c.get("sections") or [c.get("section", "world")]
         if edition in sections:
             edition_clusters.append(c)
 
-    # Sort by headline_rank descending (already sorted in pipeline, but be safe)
-    edition_clusters.sort(
-        key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0)),
-        reverse=True,
-    )
+    # Sort by headline_rank DESC, but deprioritize previously-covered clusters.
+    # A covered cluster's effective rank is reduced by 15% — enough to let fresh
+    # stories of similar importance surface, but not enough to bury a top story.
+    def _sort_key(c):
+        rank = c.get("headline_rank", 0)
+        db_id = c.get("_db_id", "")
+        if db_id and db_id in previous_ids:
+            rank *= 0.85  # deprioritize repeat
+        return (rank, c.get("source_count", 0))
+
+    edition_clusters.sort(key=_sort_key, reverse=True)
 
     top = edition_clusters[:max_stories]
+    new_count = sum(1 for c in top if c.get("_db_id", "") not in previous_ids)
+    repeat_count = len(top) - new_count
+    if previous_ids:
+        print(f"  [brief:{edition}] {new_count} new stories, {repeat_count} continuing")
+
     lines = []
     for i, c in enumerate(top, 1):
         title = (c.get("title", "") or "").strip()
         summary = (c.get("summary", "") or "").strip()
-        # Feed full summaries (up to 500 chars) — gives Gemini rich context
-        # to write an informed editorial brief with consistent voice
         if len(summary) > 500:
             summary = summary[:497] + "..."
         source_count = c.get("source_count", 1)
@@ -238,7 +280,9 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
         divergence = c.get("divergence_points") or []
 
         cat_label = f" [{category}]" if category else ""
-        lines.append(f"[{i}] ({source_count} sources{cat_label}) {title}")
+        # Tag previously-covered stories so Gemini can lead with what's new
+        repeat_tag = " [CONTINUING]" if c.get("_db_id", "") in previous_ids else " [NEW]"
+        lines.append(f"[{i}] ({source_count} sources{cat_label}{repeat_tag}) {title}")
         if summary:
             lines.append(f"    Summary: {summary}")
         if consensus and isinstance(consensus, list):
