@@ -32,7 +32,7 @@ export default function DivergenceAlerts({
     if (eligible.length < 3) return [];
 
     const sorted = [...eligible].sort((a, b) => a.divergenceScore - b.divergenceScore);
-    const p80idx = Math.floor(sorted.length * 0.8);
+    const p80idx = Math.min(Math.ceil(sorted.length * 0.8) - 1, sorted.length - 1);
     const p80 = sorted[p80idx]?.divergenceScore ?? 0;
 
     return eligible

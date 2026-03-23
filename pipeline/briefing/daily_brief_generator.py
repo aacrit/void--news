@@ -190,16 +190,16 @@ def _check_quality(result: dict, edition: str) -> None:
     if len(lines) < 3 or len(lines) > 10:
         print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 5-7)")
 
-    all_text = " ".join([
-        tldr,
-        result.get("audio_script", ""),
-    ]).lower()
+    script_raw = result.get("audio_script", "") or ""
+    if isinstance(script_raw, list):
+        script_raw = "\n".join(str(s) for s in script_raw)
+    script = str(script_raw)
+
+    all_text = f"{tldr} {script}".lower()
 
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
     if found:
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
-
-    script = result.get("audio_script", "")
     required_markers = [
         "[OPEN]",
         "[STORY_1]", "[STORY_2]", "[STORY_3]",

@@ -128,6 +128,10 @@ export interface StorySource {
   lensData?: ThreeLensData;
   /** Raw analysis confidence 0–1 from pipeline (optional, for BiasInspector) */
   confidence?: number;
+  /** Article title from source (for ComparativeView) */
+  articleTitle?: string;
+  /** Article summary/excerpt from source (for ComparativeView) */
+  articleSummary?: string;
 }
 
 export interface DeepDiveData {

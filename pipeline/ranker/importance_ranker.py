@@ -884,6 +884,74 @@ def compute_coverage_velocity(
     return len(recent_sources)
 
 
+def _longevity_penalty(timestamps: list[datetime]) -> float:
+    """
+    v5.3: Time-decay penalty for old stories.
+
+    After 72 hours, reduce score. After 7 days, 0.70x.
+    Prevents "consensus noise" from drowning out breaking news —
+    a 7-day-old story with 50 sources shouldn't dominate a 4-hour-old
+    story with 8 sources just because it has more sources.
+
+    Returns multiplier 0.70-1.0.
+    """
+    if not timestamps:
+        return 0.85  # no timestamps = probably stale
+
+    now = datetime.now(timezone.utc)
+    most_recent = max(timestamps)
+    hours_old = max(0, (now - most_recent).total_seconds() / 3600.0)
+
+    if hours_old < 24:
+        return 1.0
+    elif hours_old < 72:
+        # Gentle decay: 1.0 → 0.90 over 24-72h
+        return 1.0 - 0.10 * ((hours_old - 24) / 48)
+    elif hours_old < 168:  # 7 days
+        # Steeper decay: 0.90 → 0.70 over 72h-168h
+        return 0.90 - 0.20 * ((hours_old - 72) / 96)
+    else:
+        return 0.70
+
+
+def _lean_diversity_score(
+    bias_scores: list[dict] | None = None,
+    source_count: int = 0,
+) -> float:
+    """
+    v5.3: Lean diversity signal — clusters where left AND right both
+    report are epistemically more valuable than echo-chamber clusters.
+
+    A story with lean_spread > 30 and 3+ sources indicates genuine
+    cross-spectrum coverage — all ideologies consider it newsworthy.
+
+    Returns 0-100.
+    """
+    if not bias_scores or source_count < 3:
+        return 0.0
+
+    lean_vals = [
+        float(bs["political_lean"])
+        for bs in bias_scores
+        if bs.get("political_lean") is not None
+    ]
+    if len(lean_vals) < 3:
+        return 0.0
+
+    lean_spread = max(lean_vals) - min(lean_vals)
+
+    if lean_spread > 50:
+        return 100.0  # strong cross-spectrum
+    elif lean_spread > 30:
+        # Scale linearly from 60-100 for spread 30-50
+        return 60.0 + (lean_spread - 30) * 2.0
+    elif lean_spread > 15:
+        # Moderate diversity: 30-60
+        return 30.0 + (lean_spread - 15) * 2.0
+    else:
+        return 0.0
+
+
 def rank_importance(
     cluster_articles: list[dict],
     sources: list[dict],
@@ -967,6 +1035,8 @@ def rank_importance(
     consequentiality = _consequentiality_score(cluster_articles)
     authority = _institutional_authority_score(cluster_articles)
     maturity = _story_maturity_score(timestamps, source_count)
+    lean_diversity = _lean_diversity_score(bias_scores, source_count)
+    longevity_mult = _longevity_penalty(timestamps)
 
     # Gemini editorial importance: normalize 1-10 to 0-100
     editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
@@ -987,8 +1057,12 @@ def rank_importance(
     )
     effective_divergence = divergence * (0.85 if _is_us_only else 1.0)
 
-    # v5.0 weighted combination
+    # v5.3 weighted combination
     # Deterministic base score (always computed, sum = 1.00)
+    # v5.3 changes: +lean_diversity (3% from velocity 6%→3%, coverage preserved at 20%)
+    # Velocity reduced because it already overlaps with maturity signal.
+    # lean_diversity partially overlaps with perspective_diversity and cross-spectrum
+    # bonus but targets a distinct dimension: whether left+right BOTH cover the story.
     headline_rank = (
         coverage * 0.20
         + maturity * 0.16
@@ -999,7 +1073,8 @@ def rank_importance(
         + effective_divergence * 0.07
         + spectrum * 0.06
         + geographic * 0.06
-        + velocity * 0.06
+        + velocity * 0.03
+        + lean_diversity * 0.03
     )
 
     # v5.1: Cross-spectrum interest bonus.
@@ -1045,6 +1120,10 @@ def rank_importance(
     # Maps: 0.0→0.65, 0.5→0.825, 0.7→0.895, 1.0→1.0
     conf_mult = 0.65 + 0.35 * max(0.0, min(1.0, cluster_confidence))
     headline_rank *= conf_mult
+
+    # v5.3: Longevity penalty — old stories decay to prevent "consensus noise"
+    # from drowning out breaking news. Applied after confidence but before gates.
+    headline_rank *= longevity_mult
 
     # Gate 1: Consequentiality gate — stories with zero consequentiality
     # score have no outcome/action verbs. Apply 0.82x multiplier.
@@ -1094,5 +1173,7 @@ def rank_importance(
             "velocity": round(velocity, 2),
             "consequentiality": round(consequentiality, 2),
             "authority": round(authority, 2),
+            "lean_diversity": round(lean_diversity, 2),
+            "longevity_mult": round(longevity_mult, 2),
         },
     }

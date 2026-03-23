@@ -255,6 +255,8 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             },
             lensData,
             confidence,
+            articleTitle: (article.title as string) ?? undefined,
+            articleSummary: (article.summary as string) ?? undefined,
           });
         }
 

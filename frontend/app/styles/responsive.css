@@ -646,6 +646,12 @@
     min-width: 44px;
   }
 
+  /* Active lean badge dismiss — base rule is 32px; bump to WCAG minimum */
+  .lean-active-badge__dismiss {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
   /* Deep Dive: press trigger and read-more targets */
   .dd-press-trigger,
   .dd-read-more {
@@ -711,10 +717,12 @@
 /* ---- Feature 3: DivergenceAlerts — mobile layout ---- */
 
 @media (max-width: 767px) {
-  /* Lean bar: sticky on mobile — thumb-reachable at scroll top */
+  /* Lean bar: sticky on mobile — thumb-reachable at scroll top.
+     top: var(--nav-height) clears the fixed nav-header (53px) so the bar
+     doesn't slide under the header chrome when the user scrolls. */
   .lean-bar {
     position: sticky;
-    top: 0;
+    top: var(--nav-height);
     z-index: var(--z-sticky);
     background-color: var(--bg-primary);
     backdrop-filter: blur(8px) saturate(1.1);
