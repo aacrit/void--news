@@ -139,7 +139,7 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
 
 **TL;DR** (`tldr_text`): 5-7 sentences as a flowing editorial paragraph (80-120 words). Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
 
-**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. **Gemini 2.5 Flash TTS** (`gemini-2.5-flash-preview-tts`) generates both speakers in a single API call with LLM-native prosody, natural turn-taking, and conversational rhythm — no per-turn synthesis or stitching needed. Script converted to `Anchor:`/`Analyst:` dialogue format, artifacts stripped. PCM 24kHz output → pydub (BBC pips intro + outro) → MP3 128k mono → Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
+**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. **Gemini 2.5 Flash TTS** (`gemini-2.5-flash-preview-tts`) generates both speakers in a single API call with LLM-native prosody, natural turn-taking, and conversational rhythm — no per-turn synthesis or stitching needed. Script converted to `One:`/`Two:` dialogue format, artifacts stripped. PCM 24kHz output → pydub post-processing (Glass & Gravity sonic identity: D major 9th bloom intro, glass-bell story transitions, resolving outro; no background bed) → MP3 192k mono → Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
 
 **Voice pairs** (`pipeline/briefing/voice_rotation.py`): Gemini prebuilt voices. world=Charon/Aoede, us=Enceladus/Kore, india=Puck/Leda. Roles swap on alternate days (UTC day-of-year parity). 30 voices available.
 
@@ -176,7 +176,7 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
  7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
  7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
  7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub adds pips intro/outro + MP3 export; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
+ 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table
  8.  STORE         — Write clusters; sections[] array from all editions covered
  8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
  9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
@@ -412,8 +412,8 @@ void-news/
 │   │   ├── audio_producer.py      # Gemini 2.5 Flash TTS: native multi-speaker dialogue synthesis, PCM→MP3 via pydub, Supabase Storage upload
 │   │   ├── claude_brief_generator.py # Claude CLI premium script generator (manual 1x/day, Claude Max)
 │   │   ├── voice_rotation.py      # Neural voice pairs per edition; roles swap daily
-│   │   ├── generate_assets.py     # Generates assets/pips.wav (4 beeps at 1kHz)
-│   │   └── assets/                # pips.wav + reserved audio assets
+│   │   ├── generate_assets.py     # Glass & Gravity sonic identity: bloom intro, glass-bell transition, resolving outro
+│   │   └── assets/                # ident.wav, transition.wav, outro.wav (generated)
 │   ├── categorizer/
 │   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
 │   ├── validation/                # Bias engine test suite: 26 ground-truth articles, signal_tracker, AllSides cross-ref, runner (96.9% accuracy), snapshot

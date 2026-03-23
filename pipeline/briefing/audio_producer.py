@@ -5,11 +5,11 @@ Uses Gemini 2.5 Flash TTS for native LLM-powered multi-speaker dialogue.
 Both speakers generated in a single API call — no per-turn stitching.
 
 Post-processing via pydub:
-  - Intro ident (0.8s ascending A-major triad)
-  - Background bed (85/170/520 Hz sine layers, barely audible)
-  - Section transitions (descending two-note at detected silence gaps)
-  - Outro ident (1.2s reversed intro motif)
-  - MP3 128k mono export → Supabase Storage
+  - Intro: ~2s D major 9th bloom chord (Glass & Gravity sonic identity)
+  - Story transitions: glass-bell dyad at detected silence gaps
+  - Outro: ~1.8s resolving chord — intro bloom returning to root
+  - No background bed — the voices carry the broadcast
+  - MP3 192k mono export → Supabase Storage
 """
 
 import io
@@ -188,11 +188,11 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
 
 
 def _insert_section_transitions(dialogue_seg: "AudioSegment") -> "AudioSegment":
-    """Detect silence gaps (story breaks) and overlay transition tones.
+    """Detect silence gaps (story breaks) and overlay glass-bell transitions.
 
-    Looks for silence ≥800ms at -35dB — these are structural breaks between
-    stories, not natural speech pauses (which are 200-500ms). Overlays a
-    subtle descending two-note transition at the midpoint of each gap.
+    Looks for silence >= 800ms at -35dB — these are structural breaks between
+    stories, not natural speech pauses (which are 200-500ms). Overlays the
+    transition chime at the midpoint of each gap.
 
     If no gaps found, returns dialogue unchanged.
     """
@@ -212,35 +212,15 @@ def _insert_section_transitions(dialogue_seg: "AudioSegment") -> "AudioSegment":
     inserted = 0
     for start_ms, end_ms in silences:
         midpoint = (start_ms + end_ms) // 2
-        # Center the transition tone at the midpoint
+        # Center the transition chime at the midpoint of the silence gap
         insert_pos = midpoint - len(transition) // 2
         if insert_pos > 0:
             result = result.overlay(transition, position=insert_pos)
             inserted += 1
 
     if inserted:
-        print(f"  [audio] Inserted {inserted} section transition(s)")
+        print(f"  [audio] Inserted {inserted} story transition(s)")
     return result
-
-
-def _apply_background_bed(audio_seg: "AudioSegment") -> "AudioSegment":
-    """Overlay a broadcast-floor presence bed under the full audio.
-
-    Three stacked sine layers at -32/-36/-40 dB: felt more than heard.
-    Gives the audio a produced quality without competing with speech.
-    """
-    try:
-        from briefing.generate_assets import build_background_bed
-    except ImportError:
-        # Inline fallback if import fails
-        return audio_seg
-
-    try:
-        bed = build_background_bed(len(audio_seg))
-        return audio_seg.overlay(bed)
-    except Exception as e:
-        print(f"  [warn][audio] Background bed failed: {e}")
-        return audio_seg
 
 
 # ---------------------------------------------------------------------------
@@ -280,10 +260,15 @@ def produce_audio(
       1. Script → dialogue format (One:/Two:)
       2. Gemini Flash TTS → single PCM output
       3. PCM → WAV → AudioSegment
-      4. Insert section transitions at detected silence gaps
-      5. Apply background bed
-      6. Assemble: ident + dialogue + outro
-      7. Export MP3 → Supabase upload
+      4. Insert glass-bell transitions at detected story breaks
+      5. Assemble: bloom intro + dialogue + resolving outro
+      6. Export MP3 → Supabase upload
+
+    Sound design: Glass & Gravity
+      - Intro: D major 9th bloom chord (~2s)
+      - Transitions: glass-bell dyad at silence gaps
+      - Outro: chord resolving to root D (~1.8s)
+      - No background bed — voices carry the broadcast
     """
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
@@ -314,23 +299,27 @@ def produce_audio(
     wav_data = _pcm_to_wav(pcm_data)
     dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
 
-    # 4. Insert section transitions at story breaks
+    # 4. Insert glass-bell transitions at story breaks
     dialogue_seg = _insert_section_transitions(dialogue_seg)
 
-    # 5. Apply background bed
-    dialogue_seg = _apply_background_bed(dialogue_seg)
-
-    # 6. Assemble: ident + gap + dialogue + gap + outro
+    # 5. Assemble: intro bloom + breath + dialogue + breath + outro resolve
     combined = AudioSegment.empty()
 
+    # Intro: the bloom chord
     ident = _load_asset("ident.wav")
     if ident:
         combined += ident
-    combined += AudioSegment.silent(duration=200)
 
+    # Brief breath before speech — not silence, intention
+    combined += AudioSegment.silent(duration=250)
+
+    # The broadcast
     combined += dialogue_seg
 
-    combined += AudioSegment.silent(duration=300)
+    # Breath before outro — let the last word land
+    combined += AudioSegment.silent(duration=350)
+
+    # Outro: the resolve
     outro = _load_asset("outro.wav")
     if outro:
         combined += outro
@@ -342,7 +331,7 @@ def produce_audio(
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
-    # 7. Export to MP3 128kbps mono
+    # 6. Export to MP3 192kbps mono
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
         tmp_path = tmp.name
 
