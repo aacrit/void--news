@@ -127,6 +127,9 @@ _US_DOMESTIC_PATTERN = re.compile(
 _COUNTRY_EDITION_MAP: dict[str, str] = {
     "US": "us",
     "IN": "india",
+    "GB": "uk",
+    "UK": "uk",  # Non-standard code in some sources; normalize to GB
+    "CA": "canada",
 }
 
 

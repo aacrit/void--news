@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { Edition } from './types';
 
 // Supabase project credentials — must be set via environment variables.
 // Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
@@ -98,7 +99,7 @@ export async function fetchDeepDiveData(clusterId: string) {
 
 // FUTURE: Op-Ed feature — commented out for redesign
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function fetchOpinionArticles(_section: "world" | "us" | "india"): Promise<any[]> {
+export async function fetchOpinionArticles(_section: Edition): Promise<any[]> {
   return [];
 }
 

@@ -6,21 +6,20 @@ export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
   const now = new Date();
   let hour: number;
 
-  if (edition === "us") {
+  const editionTimezones: Record<string, string> = {
+    us: "America/New_York",
+    india: "Asia/Kolkata",
+    uk: "Europe/London",
+    canada: "America/Toronto",
+  };
+
+  const tz = editionTimezones[edition];
+  if (tz) {
     hour = parseInt(
       now.toLocaleString("en-US", {
         hour: "numeric",
         hour12: false,
-        timeZone: "America/New_York",
-      }),
-      10,
-    );
-  } else if (edition === "india") {
-    hour = parseInt(
-      now.toLocaleString("en-US", {
-        hour: "numeric",
-        hour12: false,
-        timeZone: "Asia/Kolkata",
+        timeZone: tz,
       }),
       10,
     );
@@ -39,29 +38,38 @@ export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
 export function getEditionTimestamp(edition: string): string {
   const now = new Date();
 
-  if (edition === "us") {
-    const et = now
-      .toLocaleString("en-US", {
-        hour: "numeric",
-        hour12: true,
-        timeZone: "America/New_York",
-      })
-      .replace(" AM", " AM")
-      .replace(" PM", " PM");
-    return `${et} ET`;
-  } else if (edition === "india") {
-    const ist = now.toLocaleString("en-US", {
+  const editionFormats: Record<string, { tz: string; label: string; h12: boolean }> = {
+    us: { tz: "America/New_York", label: "ET", h12: true },
+    india: { tz: "Asia/Kolkata", label: "IST", h12: false },
+    uk: { tz: "Europe/London", label: "GMT", h12: false },
+    canada: { tz: "America/Toronto", label: "ET", h12: true },
+  };
+
+  const fmt = editionFormats[edition];
+  if (fmt) {
+    if (fmt.h12) {
+      const ts = now
+        .toLocaleString("en-US", {
+          hour: "numeric",
+          hour12: true,
+          timeZone: fmt.tz,
+        })
+        .replace(" AM", " AM")
+        .replace(" PM", " PM");
+      return `${ts} ${fmt.label}`;
+    }
+    const ts = now.toLocaleString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: false,
-      timeZone: "Asia/Kolkata",
+      timeZone: fmt.tz,
     });
-    return `${ist} IST`;
-  } else {
-    const h = String(now.getUTCHours()).padStart(2, "0");
-    const m = String(now.getUTCMinutes()).padStart(2, "0");
-    return `${h}:${m} UTC`;
+    return `${ts} ${fmt.label}`;
   }
+
+  const h = String(now.getUTCHours()).padStart(2, "0");
+  const m = String(now.getUTCMinutes()).padStart(2, "0");
+  return `${h}:${m} UTC`;
 }
 
 /**

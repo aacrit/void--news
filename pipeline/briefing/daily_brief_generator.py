@@ -26,7 +26,7 @@ from summarizer.gemini_client import generate_json, is_available
 # These are charged against a separate budget (count_call=False) so they
 # do not consume the 25-call cluster summarization budget.
 # ---------------------------------------------------------------------------
-_MAX_BRIEF_CALLS: int = 3
+_MAX_BRIEF_CALLS: int = 5
 _brief_call_count: int = 0
 
 
