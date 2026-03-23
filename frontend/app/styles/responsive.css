@@ -121,37 +121,36 @@
     -webkit-line-clamp: 4;
   }
 
-  /* Deep Dive: centered overlay modal on desktop.
-     Fixed center position — left/top 50% with translate(-50%,-50%) centering.
-     max-width 680px, max-height 85vh for comfortable reading. */
+  /* Deep Dive: centered overlay covering 75% of viewport.
+     Opaque surface — no see-through. Cinematic depth via shadow layers.
+     The backdrop blur handles the "frosted world behind" feel. */
   .deep-dive-panel {
     left: 50%;
     top: 50%;
     right: auto;
     bottom: auto;
-    width: calc(100% - var(--space-7) * 2);
-    max-width: 680px;
-    max-height: 85vh;
+    width: 75vw;
+    max-width: 920px;
+    height: 80vh;
+    max-height: 80vh;
     min-height: 0;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid var(--border-subtle);
 
-    /* Glass morphism */
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(1.3);
-    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    /* Solid opaque — content demands full attention, not transparency */
+    background-color: var(--bg-primary);
 
-    /* Multi-layer shadow: outer depth + inner refraction + warm glow */
+    /* Cinematic depth: heavy outer shadow + subtle inner edge highlights */
     box-shadow:
-      0 32px 64px rgba(0, 0, 0, 0.35),
-      0 8px 24px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+      0 40px 120px rgba(0, 0, 0, 0.45),
+      0 16px 48px rgba(0, 0, 0, 0.25),
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
-  /* Activate studio light reflection on desktop */
+  /* Studio light — subtle top-edge catch on the opaque surface */
   .deep-dive-panel::before {
-    opacity: 1;
+    opacity: 0.6;
   }
 
   /* Close button visible on desktop modal — no back arrow needed */
@@ -164,9 +163,9 @@
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
 
 @media (min-width: 1280px) {
-  /* Slightly wider modal on large screens — still capped at 680px */
+  /* Wider modal on large screens */
   .deep-dive-panel {
-    max-width: 680px;
+    max-width: 1080px;
   }
 
   .grid-compact {
