@@ -76,16 +76,20 @@ about media (1-2 sentences).
 - Target 150-220 words. Think: a brilliant editor's morning note to a smart audience.
 
 For the opinion:
-- Write 3-5 sentences (80-120 words) as a single paragraph.
-- This is the editorial board's genuine take. Where the TL;DR says what happened \
-and why it matters, the opinion says what you THINK about it.
-- Be genuinely opinionated — not partisan, but intellectually bold. Take a position \
-on what's being underreported, what's dangerous, what's hopeful, what the real story \
-is behind the headlines.
-- Write in first person plural ("we"). This is a collective editorial judgment.
+- Write 5-8 sentences (120-180 words) as a single paragraph.
+- This is observation, not declaration. Show, don't tell. Never say "we think" or \
+"we believe" — instead, surface the pattern and let the reader draw the conclusion.
+- Use passive voice and impersonal constructions: "It is worth noting that...", \
+"What becomes apparent is...", "The pattern emerging across these developments suggests..."
+- Be genuinely opinionated through framing and emphasis — not partisan, but intellectually \
+bold. Take a position on what's being underreported, what's dangerous, what's hopeful, \
+by SHOWING the evidence, not by asserting a judgment.
+- Never use first person ("we", "our", "us"). This reads as an unsigned editorial observation.
 - The opinion should NOT repeat facts from the TL;DR. It assumes the reader already \
-read the brief. It's a deeper cut — the thing you'd say after the broadcast is over.
-- Think: the last paragraph of a great editorial in The Economist or the FT.
+read the brief. It draws connections the brief didn't make, surfaces what's hidden \
+in plain sight.
+- Think: the analytical aside in a long-read piece in The Economist or Foreign Affairs — \
+where the author steps back and shows you the larger shape of things.
 
 For the audio script:
 - TWO VOICES. Think Vox's "Today Explained" energy — curious, substantive, human.
@@ -186,8 +190,8 @@ STORIES:
 Return JSON with exactly three fields:
 1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
    150-220 words.
-2. "opinion_text" — 3-5 sentences. The editorial board's genuine take. Bold, \
-   non-partisan, intellectually honest. First person plural ("we"). 80-120 words.
+2. "opinion_text" — 5-8 sentences. Observational editorial voice. Show, don't tell. \
+   Passive/impersonal constructions. No first person. 120-180 words.
 3. "audio_script" — full two-voice script with segment markers ([OPEN],
    [STORY_1], [STORY_2], [STORY_3], [CLOSE]). Each marker on its own line,
    followed by the spoken text. Markers are structural delimiters — never read aloud.\
@@ -213,8 +217,8 @@ def _check_quality(result: dict, edition: str) -> None:
     opinion = result.get("opinion_text", "")
     if opinion:
         owords = len(opinion.split())
-        if owords < 40 or owords > 180:
-            print(f"  [quality][brief:{edition}] Opinion has {owords} words (expected 80-120)")
+        if owords < 80 or owords > 250:
+            print(f"  [quality][brief:{edition}] Opinion has {owords} words (expected 120-180)")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):

@@ -54,6 +54,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const summaryInnerRef = useRef<HTMLDivElement>(null);
   const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
   const [comparativeOpen, setComparativeOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"summary" | "allsides" | "scoring">("summary");
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -356,27 +357,37 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         const panel = panelRef.current;
         if (!panel) return;
 
-        // Temporarily make panel visible at final position to measure
+        // On desktop the panel is centered via left:50%;top:50% + translate(-50%,-50%).
+        // We must measure with that centering transform applied to get the true final rect.
+        const centeringTransform = isDesktopNow ? "translate(-50%, -50%)" : "none";
         panel.style.opacity = "1";
-        panel.style.transform = "none";
+        panel.style.transform = centeringTransform;
         const finalRect = panel.getBoundingClientRect();
 
         if (finalRect.width === 0) {
-          // Can't measure — fall through to slide
           const delay = isDesktopNow ? 120 : 30;
           setTimeout(() => setContentVisible(true), delay);
           return;
         }
 
         // Compute inverse transform: final → card origin
+        // On desktop, offsets are relative to the centered position (translate(-50%,-50%))
         const scaleX = originRect.width / finalRect.width;
         const scaleY = originRect.height / finalRect.height;
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
+        // Desktop: offsets are additive to the centering transform
+        const snapTransform = isDesktopNow
+          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
+          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+        const finalTransform = isDesktopNow
+          ? "translate(-50%, -50%) scale(1, 1)"
+          : "translate(0, 0) scale(1, 1)";
+
         // Step 3: Snap panel to card position (no transition)
         setMorphStyle({
-          transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+          transform: snapTransform,
           borderRadius: "8px",
           opacity: 1,
           boxShadow: "var(--shadow-e0)",
@@ -388,7 +399,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         // transition begins — more reliable than nested rAF on 90/120Hz.
         setTimeout(() => {
           setMorphStyle({
-            transform: "translate(0, 0) scale(1, 1)",
+            transform: finalTransform,
             borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
             opacity: 1,
             boxShadow: "var(--shadow-e3)",
@@ -508,9 +519,15 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
+        // Desktop: offsets are relative to the centering transform
+        const isDesktopNow = window.innerWidth >= 768;
+        const closeTransform = isDesktopNow
+          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
+          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+
         // Phase 2: Panel morphs back to card rect — fast, decisive close
         setMorphStyle({
-          transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+          transform: closeTransform,
           borderRadius: "8px",
           opacity: 0,
           boxShadow: "none",
@@ -665,109 +682,93 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Compact action bar: [Sigil | Spectrum | All Sides ▸ | Scoring ▸] -- */}
+          {/* ---- Sigil + Spectrum row (always visible above tabs) ---- */}
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
               className={`dd-action-bar anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
               style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}
             >
-              {/* Sigil — xl, left anchor */}
               {story.sigilData && (
                 <div className="dd-action-bar__sigil">
                   <Sigil data={story.sigilData} size="xl" />
                 </div>
               )}
-
-              {/* Spectrum — fills remaining space */}
               {spectrumSources.length > 0 && (
                 <div className="dd-action-bar__spectrum">
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
-
-              {/* Action buttons */}
-              <div className="dd-action-bar__buttons">
-                {hasCrossLeanSources && (
-                  <button
-                    className={`dd-action-btn${comparativeOpen ? " dd-action-btn--active" : ""}`}
-                    onClick={() => { hapticLight(); setComparativeOpen(v => !v); }}
-                    aria-expanded={comparativeOpen}
-                    aria-controls="dd-comparative-panel"
-                    aria-label={comparativeOpen ? "Close All Sides view" : "Open All Sides view"}
-                  >
-                    <span>All Sides</span>
-                    <span
-                      className={`dd-press-trigger__arrow${comparativeOpen ? " dd-press-trigger__arrow--open" : ""}`}
-                      aria-hidden="true"
-                    >
-                      &#9658;
-                    </span>
-                  </button>
-                )}
-
-                {spectrumSources.length > 0 && (
-                  <button
-                    className={`dd-action-btn${pressAnalysisOpen ? " dd-action-btn--active" : ""}`}
-                    onClick={() => { hapticLight(); setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
-                    aria-label={pressAnalysisOpen ? "Close scoring breakdown" : "Open scoring breakdown"}
-                    aria-expanded={pressAnalysisOpen}
-                    aria-controls="dd-press-expand-panel"
-                  >
-                    <span>Scoring</span>
-                    <span
-                      className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}${hasSeenPressHint ? " dd-press-trigger__arrow--no-bounce" : ""}`}
-                      aria-hidden="true"
-                    >
-                      &#9658;
-                    </span>
-                  </button>
-                )}
-              </div>
             </div>
           )}
 
-          {/* ---- Expand panels: All Sides + Scoring (below action bar) --------- */}
-          {hasCrossLeanSources && (
-            <div
-              id="dd-comparative-panel"
-              className={`dd-press-expand${comparativeOpen ? " dd-press-expand--open" : ""}`}
-              style={{ width: "100%", marginBottom: comparativeOpen ? "var(--space-4)" : 0 }}
+          {/* ---- Tab bar ---- */}
+          <nav
+            className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+            role="tablist"
+            aria-label="Deep dive sections"
+            style={{ transitionDelay: "20ms" }}
+          >
+            <button
+              role="tab"
+              aria-selected={activeTab === "summary"}
+              className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
+              onClick={() => { hapticLight(); setActiveTab("summary"); }}
             >
-              <div className="dd-press-expand__inner">
-                <ComparativeView
-                  sources={sources}
-                  consensusPoints={deepDive?.consensus}
-                  divergencePoints={deepDive?.divergence}
-                />
-              </div>
-            </div>
-          )}
-
-          {spectrumSources.length > 0 && (
-            <div
-              id="dd-press-expand-panel"
-              className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}
-              style={{ width: "100%", marginBottom: pressAnalysisOpen ? "var(--space-4)" : 0 }}
-            >
-              <div className="dd-press-expand__inner">
-                <BiasInspectorInline sources={sources} />
-              </div>
-            </div>
-          )}
-
-          {/* ---- Summary — flows as article lede, after action bar -------------- */}
-          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
-            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
-              <div className="dd-collapsible__inner" ref={summaryInnerRef}>
-                <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                  {story.summary}
-                </p>
-              </div>
-            </div>
-            {summaryOverflows && !summaryExpanded && (
-              <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              Summary
+            </button>
+            {hasCrossLeanSources && (
+              <button
+                role="tab"
+                aria-selected={activeTab === "allsides"}
+                className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
+                onClick={() => { hapticLight(); setActiveTab("allsides"); }}
+              >
+                All Sides
+              </button>
             )}
-          </section>
+            {spectrumSources.length > 0 && (
+              <button
+                role="tab"
+                aria-selected={activeTab === "scoring"}
+                className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
+                onClick={() => { hapticLight(); setActiveTab("scoring"); }}
+              >
+                Scoring
+              </button>
+            )}
+          </nav>
+
+          {/* ---- Tab panels ---- */}
+          {activeTab === "summary" && (
+            <section role="tabpanel" aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
+                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                    {story.summary}
+                  </p>
+                </div>
+              </div>
+              {summaryOverflows && !summaryExpanded && (
+                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              )}
+            </section>
+          )}
+
+          {activeTab === "allsides" && hasCrossLeanSources && (
+            <section role="tabpanel" aria-label="All Sides comparison" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+              <ComparativeView
+                sources={sources}
+                consensusPoints={deepDive?.consensus}
+                divergencePoints={deepDive?.divergence}
+              />
+            </section>
+          )}
+
+          {activeTab === "scoring" && spectrumSources.length > 0 && (
+            <section role="tabpanel" aria-label="Scoring breakdown" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+              <BiasInspectorInline sources={sources} />
+            </section>
+          )}
 
           {/* No deep dive data at all */}
           {!deepDive && !isLoadingData && (
