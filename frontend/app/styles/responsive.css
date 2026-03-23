@@ -708,6 +708,30 @@
   }
 }
 
+/* ---- Feature 3: DivergenceAlerts — mobile layout ---- */
+
+@media (max-width: 767px) {
+  /* Lean bar: sticky on mobile — thumb-reachable at scroll top */
+  .lean-bar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background-color: var(--bg-primary);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+  }
+
+  /* DivergenceAlerts: tighter vertical spacing on mobile */
+  .div-alerts {
+    margin: var(--space-3) 0;
+  }
+
+  /* Blind spot banner: full-width stack on narrow screens */
+  .div-alerts__blind-spot {
+    padding: var(--space-3);
+  }
+}
+
 /* ---- Ultra-narrow (max-width: 375px) ----------------------------------- */
 
 @media (max-width: 375px) {

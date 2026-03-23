@@ -16,6 +16,7 @@ import LogoIcon from "./LogoIcon";
 import { BiasInspectorInline } from "./BiasInspector";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
+import ComparativeView from "./ComparativeView";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Slide-in panel showing unified summary of a story cluster.
@@ -44,6 +45,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
+  const [comparativeOpen, setComparativeOpen] = useState(false);
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -64,9 +66,33 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
           sourceUrl: src.url,
           tier: src.tier,
           politicalLean: src.biasScores?.politicalLean ?? 50,
+          factualRigor: src.biasScores?.factualRigor,
+          confidence: src.confidence,
         })),
     [sources]
   );
+
+  /* ---- Trust score helper — for trust badge computation ---- */
+  // tierScore + factualRigor * 0.4 + confidence * 0.2 (0–100 scale)
+  function computeTrustScore(src: StorySource): number {
+    const tierScore = src.tier === "us_major" ? 60 : src.tier === "international" ? 50 : 40;
+    const rigor = src.biasScores?.factualRigor ?? 50;
+    const conf = (src.confidence ?? 0.5) * 100;
+    return Math.round(tierScore * 0.4 + rigor * 0.4 + conf * 0.2);
+  }
+
+  /* ---- Check if sources span 2+ lean buckets (for Read All Sides button) ---- */
+  const hasCrossLeanSources = useMemo(() => {
+    const buckets = new Set<string>();
+    for (const src of sources) {
+      const lean = src.biasScores?.politicalLean ?? 50;
+      if (lean <= 40) buckets.add("left");
+      else if (lean <= 60) buckets.add("center");
+      else buckets.add("right");
+      if (buckets.size >= 2) return true;
+    }
+    return false;
+  }, [sources]);
 
   /* ---- Detect desktop vs mobile for directional animation -------------- */
   useEffect(() => {
@@ -569,6 +595,17 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             </div>
           )}
 
+          {/* ---- Skeleton Spectrum — shown while loading, if story has bias data ---- */}
+          {isLoadingData && !deepDive && story.biasScores && (
+            <div className="dd-skeleton-spectrum" aria-hidden="true">
+              <div className="dd-skeleton-spectrum__bar" />
+              <div className="dd-skeleton-spectrum__indicator"
+                style={{ left: `${Math.max(4, Math.min(96, story.biasScores.politicalLean))}%` }}
+              />
+              <p className="dd-skeleton-spectrum__label text-data">Loading source data...</p>
+            </div>
+          )}
+
           {/* ---- Bias verdict — always visible when sigil data exists -------- */}
           {story.sigilData && (
             <div
@@ -664,6 +701,62 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
                   </div>
                 )}
               </div>
+
+              {/* ---- Source Trust Score list ---- */}
+              {sources.length > 0 && (
+                <div className="dd-trust-list" aria-label="Source trust scores">
+                  {sources.map((src) => {
+                    const trust = computeTrustScore(src);
+                    const trustClass = trust >= 70 ? "dd-trust-dot--high" : trust >= 40 ? "dd-trust-dot--medium" : "dd-trust-dot--low";
+                    const tierLabel = src.tier === "us_major" ? "US Major" : src.tier === "international" ? "International" : "Independent";
+                    const rigor = src.biasScores?.factualRigor ?? 50;
+                    const conf = Math.round((src.confidence ?? 0.5) * 100);
+                    return (
+                      <div
+                        key={src.name}
+                        className="dd-trust-item"
+                        title={`${tierLabel} tier · Factual rigor: ${rigor} · Confidence: ${conf}%`}
+                      >
+                        <span className={`dd-trust-dot ${trustClass}`} aria-hidden="true" />
+                        <span className="dd-trust-name text-data">{src.name}</span>
+                        <span className="dd-trust-score text-data">{trust}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* ---- Read All Sides button ---- */}
+              {hasCrossLeanSources && (
+                <>
+                  <button
+                    className="dd-read-all-sides"
+                    onClick={() => { hapticLight(); setComparativeOpen(v => !v); }}
+                    aria-expanded={comparativeOpen}
+                    aria-controls="dd-comparative-panel"
+                    aria-label={comparativeOpen ? "Close Read All Sides view" : "Open Read All Sides view"}
+                  >
+                    <span>Read All Sides</span>
+                    <span
+                      className={`dd-press-trigger__arrow${comparativeOpen ? " dd-press-trigger__arrow--open" : ""}`}
+                      aria-hidden="true"
+                    >
+                      &#9658;
+                    </span>
+                  </button>
+
+                  {/* Comparative view expand */}
+                  <div
+                    id="dd-comparative-panel"
+                    className={`dd-press-expand${comparativeOpen ? " dd-press-expand--open" : ""}`}
+                    style={{ width: "100%" }}
+                  >
+                    <div className="dd-press-expand__inner">
+                      <ComparativeView sources={sources} />
+                    </div>
+                  </div>
+                </>
+              )}
             </section>
           )}
 

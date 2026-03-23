@@ -68,6 +68,8 @@ import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
 import { hapticConfirm, hapticScrollEdge } from "../lib/haptics";
+import DivergenceAlerts from "./DivergenceAlerts";
+import BiasLensOnboarding from "./BiasLensOnboarding";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -483,6 +485,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           <DailyBriefText state={dailyBriefState} />
         )}
 
+        {/* Divergence Alerts — high-divergence stories + blind spot banner */}
+        {!isLoading && filteredStories.length > 0 && (
+          <DivergenceAlerts
+            stories={filteredStories}
+            activeLean={activeLean}
+            onStoryClick={handleStoryClick}
+          />
+        )}
+
         {/* Live region, loading, error, empty states, story grids */}
         <>
             {/* Live region for screen readers */}
@@ -646,6 +657,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {selectedStory && (
         <DeepDive story={selectedStory} onClose={handleDeepDiveClose} originRect={originRect} />
       )}
+
+      {/* BiasLens onboarding — first-visit 3-slide carousel */}
+      <BiasLensOnboarding />
     </div>
   );
 }
