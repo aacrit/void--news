@@ -360,6 +360,32 @@ function SubFactorGrid({
   );
 }
 
+/* ── Progressive disclosure — summary first, details on demand ──────────── */
+
+function AxisDetails({ children }: { children: React.ReactNode }) {
+  const [showDetails, setShowDetails] = useState(false);
+  return (
+    <div className="bi-axis-details">
+      <button
+        type="button"
+        className={`bi-axis-details__toggle${showDetails ? " bi-axis-details__toggle--open" : ""}`}
+        onClick={() => setShowDetails(!showDetails)}
+        aria-expanded={showDetails}
+      >
+        {showDetails ? "Hide details" : "Show details"}
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true"
+          className={`bi-axis-details__caret${showDetails ? " bi-axis-details__caret--open" : ""}`}>
+          <path d="M1.5 3L4 5.5L6.5 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <div className={`bi-axis-details__content${showDetails ? " bi-axis-details__content--open" : ""}`}
+        aria-hidden={!showDetails}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /* ── Gradient bar for Tier 1 axis summary ───────────────────────────────── */
 
 interface GradientBarProps {
@@ -544,14 +570,27 @@ function LeanAxis({
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
+      {/* Layer 1: Summary — Gemini reasoning or auto-generated 1-liner */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
           {geminiText}
         </p>
       )}
+      {!geminiText && rationale && (
+        <p className="bi-axis-summary">
+          {rationale.keywordScore > 60
+            ? "Strong partisan language detected."
+            : rationale.keywordScore > 30
+              ? "Some partisan language present."
+              : "Minimal partisan language."}
+          {" "}Outlet baseline: {rationale.sourceBaseline > 60 ? "leans right" : rationale.sourceBaseline < 40 ? "leans left" : "centrist"}.
+        </p>
+      )}
+
+      {/* Layer 2: Details — subfactors, keywords, entity sentiments behind toggle */}
       {rationale && (
-        <>
+        <AxisDetails>
           <SubFactorGrid
             items={[
               { label: "Partisan language", value: rationale.keywordScore },
@@ -586,9 +625,6 @@ function LeanAxis({
             </div>
           )}
 
-          {/* Entity sentiments — shows how sources feel about key figures.
-              Positive = right-shifted bar (warm), Negative = left-shifted bar (cool).
-              Data is already computed via mergeEntitySentiments but was never rendered. */}
           {rationale.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
             <div className="bi-entity-sentiments">
               <p className="bi-entity-sentiments__title">Key figures mentioned</p>
@@ -598,9 +634,7 @@ function LeanAxis({
                   <div key={entity} className="bi-entity-row">
                     <span className="bi-entity-row__name">{entity}</span>
                     <span className="bi-entity-row__bar">
-                      {/* Center line */}
                       <span className="bi-entity-row__center" />
-                      {/* Sentiment fill — extends left (negative) or right (positive) from center */}
                       <span
                         className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
                         style={{
@@ -616,7 +650,7 @@ function LeanAxis({
                 ))}
             </div>
           )}
-        </>
+        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -662,20 +696,33 @@ function SensationalismAxis({
       contentVisible={contentVisible}
       monochrome
     >
+      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
           {geminiText}
         </p>
       )}
+      {!geminiText && rationale && (
+        <p className="bi-axis-summary">
+          {rationale.headlineScore > rationale.bodyScore + 20
+            ? "Headline is notably more sensational than the article body."
+            : score > 60
+              ? "Elevated sensationalism across headline and body."
+              : "Measured tone overall."}
+        </p>
+      )}
+      {/* Layer 2: Details */}
       {rationale && (
-        <SubFactorGrid
-          items={[
-            { label: "Headline tone", value: rationale.headlineScore },
-            { label: "Body tone", value: rationale.bodyScore },
-            { label: "Clickbait patterns", value: rationale.clickbaitSignals, max: 10 },
-          ]}
-        />
+        <AxisDetails>
+          <SubFactorGrid
+            items={[
+              { label: "Headline tone", value: rationale.headlineScore },
+              { label: "Body tone", value: rationale.bodyScore },
+              { label: "Clickbait patterns", value: rationale.clickbaitSignals, max: 10 },
+            ]}
+          />
+        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -722,20 +769,33 @@ function RigorAxis({
       contentVisible={contentVisible}
       monochrome
     >
+      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
           {geminiText}
         </p>
       )}
+      {!geminiText && rationale && (
+        <p className="bi-axis-summary">
+          {rationale.namedSourcesCount >= 5
+            ? `Well-sourced: ${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes.`
+            : rationale.namedSourcesCount >= 2
+              ? `Moderately sourced: ${rationale.namedSourcesCount} named sources.`
+              : "Lightly sourced. Few named sources or direct quotes."}
+        </p>
+      )}
+      {/* Layer 2: Details */}
       {rationale && (
-        <SubFactorGrid
-          items={[
-            { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
-            { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
-            { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
-          ]}
-        />
+        <AxisDetails>
+          <SubFactorGrid
+            items={[
+              { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
+              { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
+              { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
+            ]}
+          />
+        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -781,20 +841,33 @@ function FramingAxis({
       contentVisible={contentVisible}
       monochrome
     >
+      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
           {geminiText}
         </p>
       )}
+      {!geminiText && rationale && (
+        <p className="bi-axis-summary">
+          {rationale.connotationScore > 50
+            ? "Uses loaded or emotionally charged language."
+            : "Relatively neutral language."}
+          {rationale.omissionScore > 40 && " One-sided sourcing detected."}
+          {rationale.headlineBodyDivergence > 40 && " Headline doesn\u2019t match body tone."}
+        </p>
+      )}
+      {/* Layer 2: Details */}
       {rationale && (
-        <SubFactorGrid
-          items={[
-            { label: "Loaded language", value: rationale.connotationScore },
-            { label: "One-sided sourcing", value: rationale.omissionScore },
-            { label: "Headline mismatch", value: rationale.headlineBodyDivergence },
-          ]}
-        />
+        <AxisDetails>
+          <SubFactorGrid
+            items={[
+              { label: "Loaded language", value: rationale.connotationScore },
+              { label: "One-sided sourcing", value: rationale.omissionScore },
+              { label: "Headline mismatch", value: rationale.headlineBodyDivergence },
+            ]}
+          />
+        </AxisDetails>
       )}
     </AxisRow>
   );

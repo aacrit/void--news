@@ -2615,14 +2615,65 @@
   white-space: nowrap;
 }
 
-.bi-subfactors__value {
+/* .bi-subfactors__value removed — redundant number dropped in favor of dots-only */
+
+/* ---- Progressive disclosure: summary first, details on demand ---------- */
+
+/* Auto-generated 1-line summary when Gemini reasoning isn't available */
+.bi-axis-summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+/* "Show details" toggle for subfactor grid */
+.bi-axis-details {
+  margin-top: var(--space-2);
+}
+
+.bi-axis-details__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--font-data);
   font-size: 9px;
-  font-weight: 600;
-  font-feature-settings: "tnum" 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg-tertiary);
-  flex-shrink: 0;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.bi-axis-details__toggle:hover {
+  color: var(--fg-secondary);
+}
+
+.bi-axis-details__caret {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.bi-axis-details__caret--open {
+  transform: rotate(180deg);
+}
+
+/* Collapsible content — CSS grid 0fr → 1fr for smooth height animation */
+.bi-axis-details__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-morph) var(--ease-out);
+}
+
+.bi-axis-details__content--open {
+  grid-template-rows: 1fr;
+}
+
+.bi-axis-details__content > * {
+  overflow: hidden;
 }
 
 /* ---- Keyword signals — plain-text left/right keyword rows (Lean axis) -- */
