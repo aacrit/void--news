@@ -224,6 +224,16 @@
     1.033 50%, 1.008 58%, 0.998 68%,
     1.002 82%, 1
   );
+
+  /* Snappy spring — tight overshoot for card lift/press.
+     Faster attack than bouncy, settles in ~300ms.
+     Cards lift with physical authority, not floating. */
+  --spring-snappy: linear(
+    0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%,
+    0.938 20.7%, 1.017 24.3%, 1.061 27.7%,
+    1.085 32%, 1.078 36.3%, 1.042 44.4%,
+    1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1
+  );
 }
 
 /* --------------------------------------------------------------------------
@@ -263,12 +273,35 @@
   --glass-bg:     rgba(240, 235, 221, 0.72);
   --glass-border: rgba(255, 255, 255, 0.3);
   --glass-shadow: 0 4px 24px rgba(28, 26, 23, 0.08), 0 1px 2px rgba(28, 26, 23, 0.04);
+
+  /* Card lift shadows — two-layer: tight contact + soft spread.
+     Contact shadow: tight, opaque, simulates card pressing against surface.
+     Spread shadow:  loose, translucent, simulates lifted ambient shadow.
+     Together they read as physical paper rising off a wooden desk. */
+  --shadow-card-hover:
+    0 1px 2px  rgba(28, 26, 23, 0.08),
+    0 6px 20px rgba(28, 26, 23, 0.10);
+  --shadow-card-lead-hover:
+    0 2px 4px  rgba(28, 26, 23, 0.10),
+    0 10px 32px rgba(28, 26, 23, 0.13);
+  --shadow-card-active:
+    0 1px 2px  rgba(28, 26, 23, 0.06);
 }
 
 :root[data-mode="dark"] {
   --glass-bg:     rgba(28, 26, 23, 0.75);
   --glass-border: rgba(255, 255, 255, 0.07);
   --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.16);
+
+  /* Card lift shadows — dark mode: deeper, richer, slightly warmer black. */
+  --shadow-card-hover:
+    0 1px 2px  rgba(0, 0, 0, 0.20),
+    0 6px 20px rgba(0, 0, 0, 0.28);
+  --shadow-card-lead-hover:
+    0 2px 4px  rgba(0, 0, 0, 0.24),
+    0 10px 32px rgba(0, 0, 0, 0.34);
+  --shadow-card-active:
+    0 1px 2px  rgba(0, 0, 0, 0.15);
 }
 
 /* --------------------------------------------------------------------------

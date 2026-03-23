@@ -5,36 +5,92 @@
    ========================================================================== */
 
 /* ---- Story Card -------------------------------------------------------- */
+/*
+ * Interaction philosophy: paper on a wooden desk.
+ * Hover → card lifts slightly, shadow grows underneath, edges soften.
+ * The shadow trails the lift (light physics: shadow lags behind matter).
+ * Active → card compresses like paper under a finger, shadow collapses.
+ * Release → spring bounce-back, card settles with physical authority.
+ *
+ * Three-layer transition timing:
+ *   background  — fastest (instant pointer awareness, 120ms)
+ *   transform   — spring-snappy (physical lift with slight overshoot, 320ms)
+ *   box-shadow  — ease-out, 30ms delay (shadows lag behind matter, 300ms + 30ms)
+ */
 .story-card {
+  position: relative;
   padding: var(--space-5) 0;
   border-bottom: var(--rule-thin);
   cursor: pointer;
+  /* GPU layer hint — promoted at rest so lift doesn't cause layer promotion jank */
+  will-change: transform;
   transition:
-    background-color 200ms var(--ease-out),
-    box-shadow 280ms var(--ease-out),
-    transform 280ms var(--spring-bouncy);
+    background-color 120ms var(--ease-out),
+    box-shadow      300ms 30ms var(--ease-out),
+    transform       320ms var(--spring-snappy);
+}
+
+/* Radial glow pseudo-element — graceful edge fade instead of hard bg swap.
+   Strongest at center, fades to transparent at edges. Appears on hover,
+   sits below content (z-index -1) so it never obscures text. */
+.story-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 40%,
+    var(--bg-secondary) 0%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 160ms var(--ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure card content sits above the glow layer */
+.story-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.story-card:hover::before {
+  opacity: 1;
 }
 
 .story-card:hover {
-  background-color: var(--bg-secondary);
-  box-shadow: var(--glass-shadow);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
 }
 
-/* Desktop press feedback — spring scale on mousedown */
+/* Desktop press — instant compression, spring bounce-back on release.
+   Scale 0.995: barely perceptible compression (like pressing paper).
+   Shadow collapses: card "pushed into" the surface. */
 .story-card:active {
-  transform: translateY(0px) scale(0.985);
-  box-shadow: var(--shadow-e1);
-  transition: transform 100ms var(--ease-out), box-shadow 100ms var(--ease-out);
+  transform: translateY(0) scale(0.995);
+  box-shadow: var(--shadow-card-active);
+  transition:
+    transform  60ms var(--ease-out),
+    box-shadow 60ms var(--ease-out);
 }
 
+/* Focus-visible: warm outline + same spatial lift as hover.
+   Keyboard users get identical spatial feedback to pointer users. */
 .story-card:focus-visible {
   outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-  background-color: var(--bg-secondary);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
 }
 
-/* Touch-specific active state — no hover flicker on touch devices */
+.story-card:focus-visible::before {
+  opacity: 1;
+}
+
+/* Touch devices — no hover lift (prevents sticky hover after tap).
+   Active: scale + opacity dip for natural touch feedback.
+   Spring bounce-back gives satisfying physical response on release. */
 @media (hover: none) {
   .story-card:hover {
     background-color: transparent;
@@ -42,9 +98,17 @@
     transform: none;
   }
 
+  .story-card:hover::before {
+    opacity: 0;
+  }
+
   .story-card:active {
-    transform: scale(0.99);
-    opacity: 0.95;
+    transform: scale(0.985);
+    box-shadow: none;
+    opacity: 0.92;
+    transition:
+      transform  80ms var(--spring-snappy),
+      opacity    80ms var(--ease-out);
   }
 }
 
@@ -129,26 +193,61 @@
 }
 
 /* ---- Lead Story -------------------------------------------------------- */
+/*
+ * Same paper-on-desk physics as .story-card but more dramatic:
+ * hero stories lift higher (-2px), cast a heavier shadow, glow wider.
+ * The lead card is a broadsheet front page — it carries more physical weight.
+ */
 .lead-story {
+  position: relative;
   padding: var(--space-6) 0;
   border-bottom: var(--rule-strong);
   cursor: pointer;
+  will-change: transform;
   transition:
-    background-color 200ms var(--ease-out),
-    box-shadow 280ms var(--ease-out),
-    transform 280ms var(--spring-bouncy);
+    box-shadow 300ms 30ms var(--ease-out),
+    transform  320ms var(--spring-snappy);
+}
+
+/* Wider, taller radial glow — hero card casts a bigger aura */
+.lead-story::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 90% 75% at 50% 45%,
+    var(--bg-secondary) 0%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 200ms var(--ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lead-story > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lead-story:hover::before {
+  opacity: 1;
 }
 
 .lead-story:hover {
-  background-color: var(--bg-secondary);
-  box-shadow: var(--glass-shadow);
-  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-lead-hover);
+  transform: translateY(-2px);
 }
 
+/* Hero press — slightly more give than story card (0.99 vs 0.995)
+   since the lead card is visually heavier */
 .lead-story:active {
-  transform: translateY(0px) scale(0.99);
-  box-shadow: var(--shadow-e1);
-  transition: transform 100ms var(--ease-out), box-shadow 100ms var(--ease-out);
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--shadow-card-active);
+  transition:
+    transform  60ms var(--ease-out),
+    box-shadow 60ms var(--ease-out);
 }
 
 /* Primary lead: larger headline to establish visual hierarchy over secondary */
@@ -158,8 +257,13 @@
 
 .lead-story:focus-visible {
   outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-  background-color: var(--bg-secondary);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-card-lead-hover);
+  transform: translateY(-2px);
+}
+
+.lead-story:focus-visible::before {
+  opacity: 1;
 }
 
 /* Touch-specific active state */
@@ -170,9 +274,17 @@
     transform: none;
   }
 
+  .lead-story:hover::before {
+    opacity: 0;
+  }
+
   .lead-story:active {
-    transform: scale(0.99);
-    opacity: 0.95;
+    transform: scale(0.985);
+    box-shadow: none;
+    opacity: 0.92;
+    transition:
+      transform  80ms var(--spring-snappy),
+      opacity    80ms var(--ease-out);
   }
 }
 
@@ -3266,7 +3378,9 @@
 }
 
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */
-/* Prevents sticky hover states after tap on iOS/Android (no mouse, no hover). */
+/* Prevents sticky hover states after tap on iOS/Android (no mouse, no hover).
+   Redundant safety net — the (hover: none) blocks on each component already
+   handle this, but this global block provides an extra layer of protection. */
 @media (hover: none) {
   .story-card:hover,
   .lead-story:hover {
@@ -3275,6 +3389,45 @@
     background-color: transparent;
   }
 
+  .story-card:hover::before,
+  .lead-story:hover::before {
+    opacity: 0;
+  }
+}
+
+/* ---- Disable all card animations under prefers-reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .story-card,
+  .lead-story {
+    transition: none;
+    will-change: auto;
+  }
+
+  .story-card::before,
+  .lead-story::before {
+    transition: none;
+  }
+
+  .story-card:hover,
+  .lead-story:hover,
+  .story-card:focus-visible,
+  .lead-story:focus-visible {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .story-card:hover::before,
+  .lead-story:hover::before,
+  .story-card:focus-visible::before,
+  .lead-story:focus-visible::before {
+    opacity: 0;
+  }
+
+  .story-card:active,
+  .lead-story:active {
+    transform: none;
+    transition: none;
+  }
 }
 
 /* ==========================================================================
