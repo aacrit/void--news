@@ -204,28 +204,35 @@
 
 /* ---- Sigil — Unified Bias Indicator ------------------------------------ */
 
-/* Divergence ring — amber. Top 10% divergence: sources disagree significantly. */
+/* Editor marks — hand-marked editorial annotations, not UI chrome.
+   Divergent: small italic "÷" (divide), like an editor's margin note.
+   Consensus: small "✓" checkmark, like an editor's approval. */
+
 .sigil--divergent::after {
-  content: "";
+  content: "÷";
   position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1.5px solid var(--sense-medium);
-  opacity: 0.5;
+  top: -2px;
+  right: -6px;
+  font-family: var(--font-editorial);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--fg-tertiary);
+  opacity: 0.6;
   pointer-events: none;
-  z-index: -1;
+  line-height: 1;
 }
 
-/* Consensus ring — green. Bottom 10% divergence: sources largely agree. */
 .sigil--consensus::after {
-  content: "";
+  content: "✓";
   position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1.5px solid var(--sense-low);
+  top: -2px;
+  right: -6px;
+  font-family: var(--font-editorial);
+  font-size: 9px;
+  color: var(--fg-tertiary);
   opacity: 0.5;
   pointer-events: none;
-  z-index: -1;
+  line-height: 1;
 }
 
 /* Sigil popup entrance — subtle scale + translate */
