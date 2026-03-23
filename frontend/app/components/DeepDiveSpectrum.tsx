@@ -15,6 +15,24 @@ export interface DeepDiveSpectrumSource {
   sourceUrl: string;
   tier: string;
   politicalLean: number;
+  /** Factual rigor score 0–100 (from bias_scores) */
+  factualRigor?: number;
+  /** Raw confidence 0–1 from pipeline */
+  confidence?: number;
+}
+
+/** Compute trust score: tierScore * 0.4 + factualRigor * 0.4 + confidence * 0.2 */
+function computeTrustScore(source: DeepDiveSpectrumSource): number {
+  const tierScore = source.tier === "us_major" ? 60 : source.tier === "international" ? 50 : 40;
+  const rigor = source.factualRigor ?? 50;
+  const conf = (source.confidence ?? 0.5) * 100;
+  return Math.round(tierScore * 0.4 + rigor * 0.4 + conf * 0.2);
+}
+
+function trustClass(score: number): string {
+  if (score >= 70) return "dd-spectrum__trust-dot--high";
+  if (score >= 40) return "dd-spectrum__trust-dot--medium";
+  return "dd-spectrum__trust-dot--low";
 }
 
 type LeanCategory =
@@ -237,6 +255,11 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
               ) : (
                 <span className="dd-spectrum__fallback">{source.name.charAt(0)}</span>
               )}
+              {/* Trust score dot — colored indicator on logo */}
+              <span
+                className={`dd-spectrum__trust-dot ${trustClass(computeTrustScore(source))}`}
+                aria-hidden="true"
+              />
             </a>
           );
         })}
@@ -264,6 +287,19 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
           <p className="dd-spectrum__tooltip-tier">
             {tierLabel(tooltip.source.tier)}
           </p>
+          {(tooltip.source.factualRigor != null || tooltip.source.confidence != null) && (
+            <p className="dd-spectrum__tooltip-trust">
+              Trust{" "}
+              <span className={`dd-spectrum__trust-dot dd-spectrum__trust-dot--inline ${trustClass(computeTrustScore(tooltip.source))}`} aria-hidden="true" />
+              {" "}{computeTrustScore(tooltip.source)}
+              {tooltip.source.factualRigor != null && (
+                <> &middot; Rigor: {tooltip.source.factualRigor}</>
+              )}
+              {tooltip.source.confidence != null && (
+                <> &middot; Conf: {Math.round(tooltip.source.confidence * 100)}%</>
+              )}
+            </p>
+          )}
           <p className="dd-spectrum__tooltip-hint">Click to read article</p>
         </div>
       )}

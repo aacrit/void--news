@@ -257,6 +257,56 @@
   60%       { transform: translateX(-1px); }
 }
 
+/* ---- Feature 3: Divergence Alert entrance ----------------------------- */
+
+@keyframes divAlertEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Feature 3: BiasLensOnboarding dialog entrance -------------------- */
+
+@keyframes onboardDialogIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 12px)) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Mobile bottom-sheet version: slides up */
+@media (max-width: 479px) {
+  @keyframes onboardDialogIn {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ---- Feature 5b: Lean bar first-load pulse ----------------------------- */
+/* Single one-time warm amber glow to draw attention on first visit */
+
+@keyframes leanBarPulse {
+  0%   { box-shadow: none; }
+  30%  { box-shadow: 0 0 0 3px color-mix(in srgb, var(--sense-medium) 35%, transparent); }
+  60%  { box-shadow: 0 0 0 6px color-mix(in srgb, var(--sense-medium) 18%, transparent); }
+  100% { box-shadow: none; }
+}
+
 /* ---- Reduced Motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {

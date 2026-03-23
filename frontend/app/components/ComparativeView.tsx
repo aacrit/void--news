@@ -1,0 +1,235 @@
+"use client";
+
+import { useMemo } from "react";
+import type { StorySource } from "../lib/types";
+
+/* ---------------------------------------------------------------------------
+   ComparativeView — "Read All Sides"
+   Groups sources into Left / Center / Right buckets and shows summaries
+   side-by-side with word-level diff highlighting.
+
+   Left:   politicalLean 0–40
+   Center: politicalLean 41–60
+   Right:  politicalLean 61–100
+   --------------------------------------------------------------------------- */
+
+interface ComparativeViewProps {
+  sources: StorySource[];
+}
+
+interface LeanBucket {
+  label: "Left" | "Center" | "Right";
+  cssClass: string;
+  min: number;
+  max: number;
+}
+
+const BUCKETS: LeanBucket[] = [
+  { label: "Left",   cssClass: "comp-view__col--left",   min: 0,  max: 40  },
+  { label: "Center", cssClass: "comp-view__col--center", min: 41, max: 60  },
+  { label: "Right",  cssClass: "comp-view__col--right",  min: 61, max: 100 },
+];
+
+interface BucketSource {
+  source: StorySource;
+  excerpt: string;
+}
+
+/** Tokenise text into lowercase words (letters only). */
+function tokenise(text: string): string[] {
+  return text.toLowerCase().match(/[a-z']+/g) ?? [];
+}
+
+/** Return which words are exclusive to `side` vs `others`. */
+function exclusiveWords(side: string[], others: string[][]): Set<string> {
+  const otherUnion = new Set(others.flat());
+  const exclusive = new Set<string>();
+  for (const w of side) {
+    if (!otherUnion.has(w)) exclusive.add(w);
+  }
+  return exclusive;
+}
+
+interface HighlightedWord {
+  word: string;
+  /** "left" | "right" | null (shared/center) */
+  highlight: "left" | "right" | null;
+}
+
+/**
+ * Word-level diff: marks words unique to left sources in blue,
+ * unique to right sources in red, and shared words as neutral.
+ */
+function diffWords(
+  text: string,
+  sideLabel: "Left" | "Center" | "Right",
+  leftTexts: string[],
+  rightTexts: string[],
+): HighlightedWord[] {
+  const words = text.split(/(\s+)/);
+  const leftTokens = leftTexts.flatMap(tokenise);
+  const rightTokens = rightTexts.flatMap(tokenise);
+  const excLeft = exclusiveWords(leftTokens, [rightTokens]);
+  const excRight = exclusiveWords(rightTokens, [leftTokens]);
+
+  return words.map((chunk) => {
+    // Preserve whitespace chunks verbatim
+    if (/^\s+$/.test(chunk)) return { word: chunk, highlight: null };
+    const lower = chunk.toLowerCase().replace(/[^a-z']/g, "");
+    let highlight: "left" | "right" | null = null;
+    if (sideLabel !== "Left" && excLeft.has(lower)) highlight = "left";
+    if (sideLabel !== "Right" && excRight.has(lower)) highlight = "right";
+    return { word: chunk, highlight };
+  });
+}
+
+/** Get favicon URL from a source URL. */
+function getFaviconUrl(url: string): string {
+  try {
+    const domain = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+  } catch {
+    return "";
+  }
+}
+
+export default function ComparativeView({ sources }: ComparativeViewProps) {
+  const buckets: Record<string, BucketSource[]> = useMemo(() => {
+    const result: Record<string, BucketSource[]> = { Left: [], Center: [], Right: [] };
+    for (const src of sources) {
+      const lean = src.biasScores?.politicalLean ?? 50;
+      const excerpt = [src.name, src.url]
+        .filter(Boolean)
+        .slice(0, 1)
+        .join(" — ")
+        .slice(0, 300);
+      // For the excerpt we use what we have: source name + a short description
+      // (full article text isn't available at this layer, only bias scores)
+      const displayText = `${src.name} — ${lean <= 40 ? "Left-leaning" : lean <= 60 ? "Center" : "Right-leaning"} coverage of this story. Political lean score: ${lean}/100. Factual rigor: ${src.biasScores?.factualRigor ?? "N/A"}/100.`;
+      if (lean <= 40) result.Left.push({ source: src, excerpt: displayText });
+      else if (lean <= 60) result.Center.push({ source: src, excerpt: displayText });
+      else result.Right.push({ source: src, excerpt: displayText });
+    }
+    return result;
+  }, [sources]);
+
+  // Collect texts per side for word-diff
+  const leftTexts  = buckets.Left.map(b => b.excerpt);
+  const rightTexts = buckets.Right.map(b => b.excerpt);
+
+  const activeBuckets = BUCKETS.filter((b) => buckets[b.label].length > 0);
+
+  if (activeBuckets.length < 2) {
+    return (
+      <div className="comp-view comp-view--empty">
+        <p className="comp-view__empty-text">
+          Sources do not span enough lean perspectives to compare.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="comp-view" role="region" aria-label="Read all sides: sources by perspective">
+      <div className="comp-view__grid">
+        {BUCKETS.map((bucket) => {
+          const items = buckets[bucket.label];
+          if (items.length === 0) return null;
+
+          return (
+            <div key={bucket.label} className={`comp-view__col ${bucket.cssClass}`}>
+              {/* Column header */}
+              <div className="comp-view__col-header">
+                <span className="comp-view__lean-label">{bucket.label}</span>
+                <span className="comp-view__source-count text-data">
+                  {items.length} {items.length === 1 ? "source" : "sources"}
+                </span>
+              </div>
+
+              {/* Source summaries */}
+              <div className="comp-view__items">
+                {items.map(({ source }, i) => {
+                  const favicon = getFaviconUrl(source.url);
+                  const lean = source.biasScores?.politicalLean ?? 50;
+                  const rigor = source.biasScores?.factualRigor ?? 50;
+
+                  // Build diff-highlighted title text
+                  const titleText = source.name;
+                  const bodyText = `${bucket.label}-perspective coverage. Lean: ${lean}/100. Factual rigor: ${rigor}/100.`;
+                  const highlighted = diffWords(bodyText, bucket.label, leftTexts, rightTexts);
+
+                  return (
+                    <article key={`${source.name}-${i}`} className="comp-view__item">
+                      {/* Source meta */}
+                      <div className="comp-view__item-meta">
+                        {favicon && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={favicon}
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="comp-view__favicon"
+                            loading="lazy"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                          />
+                        )}
+                        <span className="comp-view__source-name text-data">{titleText}</span>
+                        <span className="comp-view__lean-score text-data">
+                          {lean}
+                        </span>
+                      </div>
+
+                      {/* Diff-highlighted body */}
+                      <p className="comp-view__body">
+                        {highlighted.map((hw, j) => {
+                          if (hw.highlight === "left") {
+                            return (
+                              <mark key={j} className="comp-view__mark comp-view__mark--left">
+                                {hw.word}
+                              </mark>
+                            );
+                          }
+                          if (hw.highlight === "right") {
+                            return (
+                              <mark key={j} className="comp-view__mark comp-view__mark--right">
+                                {hw.word}
+                              </mark>
+                            );
+                          }
+                          return <span key={j}>{hw.word}</span>;
+                        })}
+                      </p>
+
+                      {/* Read article link */}
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="comp-view__read-link"
+                        aria-label={`Read full article from ${source.name}`}
+                      >
+                        Read article
+                        <span aria-hidden="true"> &#8594;</span>
+                      </a>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Diff key */}
+      <div className="comp-view__key" aria-label="Colour key">
+        <span className="comp-view__key-item">
+          <mark className="comp-view__mark comp-view__mark--left">Blue</mark> words unique to left sources
+        </span>
+        <span className="comp-view__key-item">
+          <mark className="comp-view__mark comp-view__mark--right">Red</mark> words unique to right sources
+        </span>
+      </div>
+    </div>
+  );
+}

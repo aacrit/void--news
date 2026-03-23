@@ -3344,3 +3344,1049 @@
   }
 
 }
+
+/* ==========================================================================
+   Feature 1: ComparativeView — "Read All Sides"
+   Three lean-bucket columns: Left | Center | Right
+   Word-level diff highlighting per the Dot Matrix Rule.
+   ========================================================================== */
+
+/* ---- Read All Sides trigger button ---- */
+.dd-read-all-sides {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-2) 0;
+  background: none;
+  border: none;
+  border-top: 1px dashed var(--border-subtle);
+  width: 100%;
+  cursor: pointer;
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.dd-read-all-sides:hover {
+  color: var(--fg-primary);
+}
+
+.dd-read-all-sides:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- ComparativeView container ---- */
+.comp-view {
+  padding-top: var(--space-3);
+}
+
+.comp-view--empty {
+  padding: var(--space-4) 0;
+}
+
+.comp-view__empty-text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+  text-align: center;
+}
+
+/* ---- Three-column grid ---- */
+/* Mobile-first: stack vertically. Desktop: 3 equal columns with thin rules. */
+.comp-view__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .comp-view__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+}
+
+/* ---- Column ---- */
+.comp-view__col {
+  padding: var(--space-3) 0;
+}
+
+@media (min-width: 768px) {
+  .comp-view__col {
+    padding: 0 var(--space-3);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  .comp-view__col:first-child {
+    padding-left: 0;
+  }
+
+  .comp-view__col:last-child {
+    padding-right: 0;
+    border-right: none;
+  }
+}
+
+/* Mobile: hairline bottom rule between stacked columns */
+@media (max-width: 767px) {
+  .comp-view__col {
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--space-4);
+  }
+
+  .comp-view__col:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ---- Column header ---- */
+.comp-view__col-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Lean label: data voice, lean-colored dot encoded via modifier */
+.comp-view__lean-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.comp-view__col--left .comp-view__lean-label {
+  color: var(--bias-left);
+}
+
+.comp-view__col--right .comp-view__lean-label {
+  color: var(--bias-right);
+}
+
+.comp-view__col--center .comp-view__lean-label {
+  color: var(--bias-center);
+}
+
+.comp-view__source-count {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---- Article items inside a column ---- */
+.comp-view__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.comp-view__item {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.comp-view__item:last-child {
+  border-bottom: none;
+}
+
+/* Source meta: favicon + name + lean score */
+.comp-view__item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.comp-view__favicon {
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.comp-view__source-name {
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comp-view__lean-score {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+  flex-shrink: 0;
+}
+
+/* ---- Body text with diff highlighting ---- */
+.comp-view__body {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--fg-tertiary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+/* ---- Word-level diff marks (Dot Matrix Rule: bias colors for bias data) ---- */
+.comp-view__mark {
+  /* Reset mark default yellow background */
+  background: transparent;
+  border-radius: 2px;
+  padding: 0 1px;
+  font-style: normal;
+}
+
+.comp-view__mark--left {
+  color: var(--bias-left);
+  background-color: color-mix(in srgb, var(--bias-left) 10%, transparent);
+}
+
+.comp-view__mark--right {
+  color: var(--bias-right);
+  background-color: color-mix(in srgb, var(--bias-right) 10%, transparent);
+}
+
+/* ---- Read article link ---- */
+.comp-view__read-link {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: color var(--dur-fast) var(--ease-out);
+  min-height: 44px;
+  padding: var(--space-1) 0;
+}
+
+.comp-view__read-link:hover {
+  color: var(--fg-primary);
+}
+
+.comp-view__read-link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Colour key ---- */
+.comp-view__key {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-3);
+}
+
+.comp-view__key-item {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .comp-view__col,
+  .comp-view__item {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Feature 2 (CSS): DeepDive Spectrum — Trust Score Dots
+   Small colored dots on each source logo indicating credibility tier.
+   ========================================================================== */
+
+/* ---- Trust dot on spectrum logo ---- */
+.dd-spectrum__trust-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--bg-primary);
+  flex-shrink: 0;
+}
+
+/* Inline variant — used inside tooltip */
+.dd-spectrum__trust-dot--inline {
+  display: inline-block;
+  position: static;
+  vertical-align: middle;
+  width: 7px;
+  height: 7px;
+  border: none;
+  margin: 0 1px;
+}
+
+.dd-spectrum__trust-dot--high   { background-color: var(--sense-low); }
+.dd-spectrum__trust-dot--medium { background-color: var(--sense-medium); }
+.dd-spectrum__trust-dot--low    { background-color: var(--sense-high); }
+
+/* ---- Trust tooltip additions ---- */
+.dd-spectrum__tooltip-trust {
+  font-family: var(--font-data);
+  font-size: 9px;
+  color: var(--fg-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+/* Lean dot inside tooltip */
+.dd-spectrum__tooltip-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+/* Map data-lean attribute to correct bias color */
+.dd-spectrum__tooltip-dot[data-lean="far-left"]    { background-color: var(--bias-far-left,    var(--bias-left)); }
+.dd-spectrum__tooltip-dot[data-lean="left"]        { background-color: var(--bias-left); }
+.dd-spectrum__tooltip-dot[data-lean="center-left"] { background-color: var(--bias-center-left); }
+.dd-spectrum__tooltip-dot[data-lean="center"]      { background-color: var(--bias-center); }
+.dd-spectrum__tooltip-dot[data-lean="center-right"]{ background-color: var(--bias-center-right); }
+.dd-spectrum__tooltip-dot[data-lean="right"]       { background-color: var(--bias-right); }
+.dd-spectrum__tooltip-dot[data-lean="far-right"]   { background-color: var(--bias-far-right,   var(--bias-right)); }
+
+/* ---- Trust list — below Source Perspectives, above Read All Sides ---- */
+.dd-trust-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.dd-trust-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+}
+
+.dd-trust-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dd-trust-dot--high   { background-color: var(--sense-low); }
+.dd-trust-dot--medium { background-color: var(--sense-medium); }
+.dd-trust-dot--low    { background-color: var(--sense-high); }
+
+.dd-trust-name {
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dd-trust-score {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+  flex-shrink: 0;
+  min-width: 2ch;
+  text-align: right;
+}
+
+/* ==========================================================================
+   Feature 3: DivergenceAlerts — high-divergence story cards + blind spot
+   ========================================================================== */
+
+/* ---- Outer container ---- */
+.div-alerts {
+  margin: var(--space-4) 0;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-3);
+}
+
+/* ---- Section header label ---- */
+.div-alerts__header {
+  margin-bottom: var(--space-3);
+}
+
+.div-alerts__header-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+/* ---- Scrollable row of alert cards ---- */
+.div-alerts__scroll-row {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-1);
+  /* Prevent scroll bleed on iOS */
+  -ms-overflow-style: none;
+}
+
+.div-alerts__scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* Three fixed-width cards on desktop (auto-fill, min 200px) */
+@media (min-width: 768px) {
+  .div-alerts__scroll-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow-x: visible;
+  }
+}
+
+/* ---- Alert card ---- */
+.div-alert-card {
+  position: relative;
+  flex: 0 0 clamp(200px, 72vw, 280px);
+  /* Remove flex-basis on grid layout */
+  padding: var(--space-4);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  /* Left accent border replaces generic card shadow */
+  border-left: 3px solid var(--sense-medium);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring-bouncy);
+  /* Entrance animation */
+  animation: divAlertEnter var(--dur-normal) var(--ease-out) both;
+}
+
+@media (min-width: 768px) {
+  .div-alert-card {
+    flex: unset;
+  }
+}
+
+.div-alert-card:hover {
+  background-color: var(--bg-card);
+  border-left-color: var(--sense-medium);
+  transform: translateY(-2px);
+}
+
+.div-alert-card:active {
+  transform: scale(0.98);
+  transition: transform 80ms var(--ease-out);
+}
+
+.div-alert-card:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+@media (hover: none) {
+  .div-alert-card:hover {
+    transform: none;
+    background-color: var(--bg-secondary);
+  }
+  .div-alert-card:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+}
+
+/* ---- Warm left accent bar (visual, not data-encoded, uses border) ---- */
+/* The border-left on the card itself carries this — .div-alert-card__accent
+   is a purely decorative vertical rule that reinforces editorial urgency. */
+.div-alert-card__accent {
+  display: none; /* Card border-left handles this */
+}
+
+/* ---- Card header: label + score ---- */
+.div-alert-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.div-alert-card__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sense-medium);
+}
+
+.div-alert-card__score {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---- Headline — editorial voice, 2-line clamp ---- */
+.div-alert-card__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-2);
+  /* 2-line clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+/* ---- Divergence insight — data voice ---- */
+.div-alert-card__insight {
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-3);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---- Card footer: source count + CTA ---- */
+.div-alert-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.div-alert-card__source-count {
+  font-size: 9px;
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+}
+
+.div-alert-card__cta {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+}
+
+/* ---- Blind Spot Banner ---- */
+.div-alerts__blind-spot {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: color-mix(in srgb, var(--sense-medium) 8%, var(--bg-primary));
+  border: 1px solid color-mix(in srgb, var(--sense-medium) 30%, transparent);
+  margin-bottom: var(--space-4);
+}
+
+.div-alerts__blind-spot-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.div-alerts__blind-spot-icon {
+  font-size: 12px;
+  color: var(--sense-medium);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.div-alerts__blind-spot-text {
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.div-alerts__blind-spot-hint {
+  color: var(--fg-tertiary);
+  font-style: italic;
+}
+
+.div-alerts__blind-spot-dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 10px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.div-alerts__blind-spot-dismiss:hover {
+  color: var(--fg-secondary);
+}
+
+.div-alerts__blind-spot-dismiss:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Feature 3 (CSS): BiasLensOnboarding — 3-slide carousel, first-visit only
+   Frosted glass backdrop, focused dialog, dot navigation.
+   ========================================================================== */
+
+/* ---- Frosted backdrop ---- */
+.onboard-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: calc(var(--z-modal) + 10);
+  cursor: pointer;
+  animation: fadeIn var(--dur-normal) var(--ease-out) both;
+}
+
+/* ---- Dialog panel ---- */
+.onboard-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(480px, calc(100vw - var(--space-5) * 2));
+  max-height: calc(100vh - var(--space-7) * 2);
+  overflow-y: auto;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-e3);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  z-index: calc(var(--z-modal) + 11);
+  animation: onboardDialogIn var(--dur-morph) var(--ease-out) both;
+}
+
+/* Slightly rounded — friendlier for an onboarding context (not a news card) */
+@media (min-width: 480px) {
+  .onboard-dialog {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* Mobile: full-width bottom sheet */
+@media (max-width: 479px) {
+  .onboard-dialog {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 12px 12px 0 0;
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ---- Close button ---- */
+.onboard-close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 32px;
+  height: 32px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.onboard-close:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+.onboard-close:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Slide counter ---- */
+.onboard-counter {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+/* ---- Illustration area ---- */
+.onboard-illustration {
+  margin-bottom: var(--space-5);
+  display: flex;
+  justify-content: center;
+}
+
+/* Illustrations container (horizontal row of examples) */
+.onboard-illustrations {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-5);
+  justify-content: center;
+}
+
+/* Single illustration example */
+.onboard-example {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.onboard-example__label {
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  text-align: center;
+}
+
+/* ---- Combined slide examples ---- */
+.onboard-combined {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.onboard-combined__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.onboard-combined__verdict {
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  text-align: center;
+  width: 100%;
+}
+
+/* ---- Title ---- */
+.onboard-title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-3);
+}
+
+/* ---- Description ---- */
+.onboard-description {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--fg-secondary);
+  margin-bottom: var(--space-5);
+}
+
+/* ---- Dot navigation ---- */
+.onboard-dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.onboard-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--border-strong);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  /* Expand hit area: ::after pseudo-element */
+  position: relative;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring-bouncy);
+}
+
+.onboard-dot::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+}
+
+.onboard-dot--active {
+  background-color: var(--fg-primary);
+  transform: scale(1.3);
+}
+
+.onboard-dot:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+/* ---- Navigation row ---- */
+.onboard-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+/* Navigation buttons */
+.onboard-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  min-height: 44px;
+  min-width: 80px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--spring-bouncy);
+}
+
+.onboard-btn--prev {
+  color: var(--fg-tertiary);
+  background: none;
+  border: 1px solid var(--border-subtle);
+}
+
+.onboard-btn--prev:hover {
+  color: var(--fg-secondary);
+  border-color: var(--border-strong);
+}
+
+.onboard-btn--next {
+  color: var(--fg-primary);
+  background: none;
+  border: 1px solid var(--border-strong);
+}
+
+.onboard-btn--next:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* Primary "Got it" button — inverted, editorial-weight */
+.onboard-btn--primary {
+  color: var(--bg-primary);
+  background-color: var(--fg-primary);
+  border: 1px solid var(--fg-primary);
+}
+
+.onboard-btn--primary:hover {
+  opacity: 0.85;
+}
+
+.onboard-btn:active {
+  transform: scale(0.96);
+}
+
+.onboard-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Skip link ---- */
+.onboard-skip {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  min-height: 44px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.onboard-skip:hover {
+  color: var(--fg-tertiary);
+}
+
+.onboard-skip:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .onboard-backdrop,
+  .onboard-dialog,
+  .onboard-dot,
+  .onboard-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Feature 4 (CSS): FilterBar — Lean Active Badge + Lean Bar Pulse
+   ========================================================================== */
+
+/* ---- Active filter badge pill ---- */
+/* Shown when activeLean !== "All". Persistent reminder + dismiss button. */
+.lean-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  align-self: flex-start;
+  animation: fadeIn var(--dur-fast) var(--ease-out) both;
+}
+
+.lean-active-badge__text {
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  font-weight: 500;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+}
+
+.lean-active-badge__dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  min-width: 32px;
+  min-height: 32px;
+  margin: -4px -8px -4px 0;
+  font-size: 10px;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.lean-active-badge__dismiss:hover {
+  color: var(--fg-secondary);
+}
+
+.lean-active-badge__dismiss:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Lean bar first-load pulse (Feature 5b) ---- */
+/* One-time amber glow on the lean bar. Applied via JS, removed after 3s. */
+.lean-bar--pulse {
+  animation: leanBarPulse 3000ms var(--ease-out) both;
+}
+
+/* ==========================================================================
+   Feature 5a (CSS): Skeleton Spectrum — placeholder while DD loads
+   ========================================================================== */
+
+.dd-skeleton-spectrum {
+  position: relative;
+  margin: var(--space-3) 0 var(--space-2);
+  opacity: 0.45;
+}
+
+/* Gradient bar — same shape as dd-spectrum__bar but muted */
+.dd-skeleton-spectrum__bar {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(
+    to right,
+    var(--bias-far-left, var(--bias-left)),
+    var(--bias-left) 15%,
+    var(--bias-center-left) 30%,
+    var(--bias-center) 50%,
+    var(--bias-center-right) 70%,
+    var(--bias-right) 85%,
+    var(--bias-far-right, var(--bias-right))
+  );
+  position: relative;
+}
+
+/* Single indicator dot at story's cluster lean position */
+.dd-skeleton-spectrum__indicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--fg-secondary);
+  box-shadow: var(--shadow-e1);
+  pointer-events: none;
+}
+
+.dd-skeleton-spectrum__label {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  letter-spacing: 0.04em;
+}

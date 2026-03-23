@@ -14,6 +14,8 @@ export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> 
   Right: { min: 54, max: 100 },
 };
 
+const LEAN_PULSE_KEY = "void-news-lean-pulse-seen";
+
 const ALL_CATEGORIES: ("All" | Category)[] = [
   "All", "Politics", "Economy", "Science", "Health", "Culture",
 ];
@@ -29,6 +31,10 @@ interface FilterBarProps {
    FilterBar — Two-row filter system
    Row 1: Lean segmented control (hero) — Left / Center / Right
    Row 2: Topic filter — collapsed on desktop, compact chips on mobile
+
+   5b additions:
+   - First-load pulse on lean bar (localStorage gated, 3s, one-time)
+   - Active filter badge pill with dismiss × below the lean bar
    --------------------------------------------------------------------------- */
 
 export default function FilterBar({
@@ -39,6 +45,23 @@ export default function FilterBar({
 }: FilterBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
   const topicRef = useRef<HTMLDivElement>(null);
+  const [leanPulse, setLeanPulse] = useState(false);
+
+  // One-time lean bar pulse on first visit
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(LEAN_PULSE_KEY)) {
+        setLeanPulse(true);
+        const timer = setTimeout(() => {
+          setLeanPulse(false);
+          localStorage.setItem(LEAN_PULSE_KEY, "1");
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // localStorage blocked — skip pulse silently
+    }
+  }, []);
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
@@ -66,7 +89,11 @@ export default function FilterBar({
   return (
     <div className="filter-bar-wrapper">
       {/* Row 1: Lean segmented control — hero filter */}
-      <div className="lean-bar" role="tablist" aria-label="Filter by political perspective">
+      <div
+        className={`lean-bar${leanPulse ? " lean-bar--pulse" : ""}`}
+        role="tablist"
+        aria-label="Filter by political perspective"
+      >
         <button
           role="tab"
           aria-selected={activeLean === "Left"}
@@ -96,6 +123,22 @@ export default function FilterBar({
         </button>
         <div className="lean-bar__gradient" aria-hidden="true" />
       </div>
+
+      {/* Active lean filter badge — shown when a lean is selected */}
+      {activeLean !== "All" && (
+        <div className="lean-active-badge" role="status" aria-live="polite" aria-label={`Active filter: ${activeLean}`}>
+          <span className="lean-active-badge__text text-data">
+            Filtered by {activeLean}
+          </span>
+          <button
+            className="lean-active-badge__dismiss"
+            onClick={() => { hapticMicro(); onLeanChange("All"); }}
+            aria-label={`Clear ${activeLean} filter`}
+          >
+            &#x2715;
+          </button>
+        </div>
+      )}
 
       {/* Row 2: Topic filter — collapsed on desktop, scrollable on mobile */}
       <div
