@@ -1780,9 +1780,9 @@ def main():
                     edition_sections=["world", "us", "india"],
                 )
 
-                # Determine if this is an audio run (2x/day: morning + evening)
+                # Audio runs 2x/day: 06:00 and 18:00 UTC shifts
                 utc_hour = datetime.now(timezone.utc).hour
-                should_generate_audio = True  # TODO: restore time window after testing
+                should_generate_audio = utc_hour in (6, 18)
 
                 for edition, brief in brief_results.items():
                     brief_row = {
