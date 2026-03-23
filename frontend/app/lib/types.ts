@@ -222,6 +222,7 @@ export interface DailyBriefData {
   id: string;
   edition: Edition;
   tldr_text: string;
+  opinion_text: string | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
   audio_voice_label: string | null;
