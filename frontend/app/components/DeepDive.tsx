@@ -56,6 +56,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  // Stable ref for onNavigate — avoids stale closure in keyboard handler
+  // without adding it to the useEffect deps (which would re-focus the panel).
+  const onNavigateRef = useRef(onNavigate);
+  onNavigateRef.current = onNavigate;
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
@@ -432,10 +436,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         return;
       }
 
-      // Arrow keys for inter-story navigation
-      if (onNavigate && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+      // Arrow keys for inter-story navigation (read from ref to avoid stale closure)
+      if (onNavigateRef.current && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
         e.preventDefault();
-        onNavigate(e.key === "ArrowLeft" ? "prev" : "next");
+        onNavigateRef.current(e.key === "ArrowLeft" ? "prev" : "next");
         return;
       }
 

@@ -65,10 +65,15 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
       setInView(true);
       return;
     }
+    // Guard against state updates after unmount — the shared observer's
+    // callback may fire between cleanup starting and the observer removing
+    // the element from its observation list.
+    let unmounted = false;
     const observer = getSharedObserver();
-    observerCallbacks.set(el, () => setInView(true));
+    observerCallbacks.set(el, () => { if (!unmounted) setInView(true); });
     observer.observe(el);
     return () => {
+      unmounted = true;
       observerCallbacks.delete(el);
       observer.unobserve(el);
     };
@@ -637,7 +642,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     className="lead-section__col"
                     style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
-                    <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} />
+                    <div data-story-index={i}>
+                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                    </div>
                   </VisibleCard>
                 ))}
               </section>
