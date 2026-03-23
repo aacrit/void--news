@@ -3137,7 +3137,6 @@
 
 /* ---- Reduced motion overrides ----------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .bi-confidence__fill,
   .bi-axis__content {
     transition: none;
   }
