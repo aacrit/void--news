@@ -140,9 +140,11 @@
   background-color: rgba(0, 0, 0, 0.72);
   z-index: var(--z-overlay);
   cursor: pointer;
-  /* Cinematic heavy blur — page becomes abstract texture, full attention on overlay */
-  backdrop-filter: blur(48px) saturate(0.5) brightness(0.6);
-  -webkit-backdrop-filter: blur(48px) saturate(0.5) brightness(0.6);
+  /* Cinematic blur — page becomes abstract texture, full attention on overlay.
+     Reduced to 24px for better perf on mid-range devices.
+     @supports fallback for browsers without backdrop-filter. */
+  backdrop-filter: blur(24px) saturate(0.5) brightness(0.6);
+  -webkit-backdrop-filter: blur(24px) saturate(0.5) brightness(0.6);
 }
 
 .deep-dive-panel {

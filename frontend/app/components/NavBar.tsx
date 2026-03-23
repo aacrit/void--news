@@ -56,11 +56,14 @@ export default function NavBar({ activeEdition }: NavBarProps) {
           </div>
 
           {/* Dateline — P3: temporal orientation, JetBrains Mono, muted */}
-          {/* Desktop only — fills flex space, right-aligns against utility row */}
+          {/* Desktop: full date + time. Mobile: date only (compact). */}
           <span className="nav-dateline-inline" aria-hidden="true">
             {formatDateCompact()}
             <span className="nav-dateline-inline__sep">&middot;</span>
             <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
+          </span>
+          <span className="nav-dateline-mobile" aria-hidden="true">
+            {formatDateCompact()}
           </span>
 
           {/* Utility actions — P2: secondary nav + mode toggle */}

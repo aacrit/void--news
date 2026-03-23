@@ -5,6 +5,7 @@ import type { DailyBriefData } from "../lib/types";
 import { fetchDailyBrief } from "../lib/supabase";
 import { ScaleIcon } from "./ScaleIcon";
 import { hapticMedium, hapticLight, hapticTick } from "../lib/haptics";
+import { timeAgo } from "../lib/utils";
 
 interface DailyBriefProps {
   edition: string;
@@ -154,6 +155,9 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         <div className="daily-brief__header">
           <ScaleIcon size={16} animation="idle" className="daily-brief__sigil" />
           <span className="daily-brief__label">Daily Brief</span>
+          {brief.created_at && (
+            <span className="daily-brief__timestamp">{timeAgo(brief.created_at)}</span>
+          )}
 
           {hasAudio && (
             <button

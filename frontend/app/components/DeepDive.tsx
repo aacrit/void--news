@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
+  CaretLeft,
+  CaretRight,
   X,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
@@ -31,11 +33,17 @@ interface DeepDiveProps {
   onClose: () => void;
   /** Card's DOMRect at click time — drives FLIP morph. Null = slide-in fallback. */
   originRect?: DOMRect | null;
+  /** Navigate to previous/next story in the feed */
+  onNavigate?: (direction: "prev" | "next") => void;
+  /** Current story index in filtered list (for counter display) */
+  storyIndex?: number;
+  /** Total stories in filtered list */
+  totalStories?: number;
 }
 
 /* --- Main DeepDive component --------------------------------------------- */
 
-export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) {
+export default function DeepDive({ story, onClose, originRect, onNavigate, storyIndex = -1, totalStories = 0 }: DeepDiveProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
@@ -424,6 +432,13 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         return;
       }
 
+      // Arrow keys for inter-story navigation
+      if (onNavigate && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        e.preventDefault();
+        onNavigate(e.key === "ArrowLeft" ? "prev" : "next");
+        return;
+      }
+
       if (e.key === "Tab" && panelRef.current) {
         const focusable = panelRef.current.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -554,6 +569,31 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               <span className="deep-dive-back-label">Back to feed</span>
             </button>
 
+            {/* Inter-story navigation */}
+            {onNavigate && totalStories > 1 && (
+              <div className="dd-story-nav">
+                <button
+                  className="dd-story-nav__btn"
+                  onClick={() => { hapticLight(); onNavigate("prev"); }}
+                  disabled={storyIndex <= 0}
+                  aria-label="Previous story"
+                >
+                  <CaretLeft size={14} weight="bold" />
+                </button>
+                <span className="dd-story-nav__counter">
+                  {storyIndex + 1}/{totalStories}
+                </span>
+                <button
+                  className="dd-story-nav__btn"
+                  onClick={() => { hapticLight(); onNavigate("next"); }}
+                  disabled={storyIndex >= totalStories - 1}
+                  aria-label="Next story"
+                >
+                  <CaretRight size={14} weight="bold" />
+                </button>
+              </div>
+            )}
+
             <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
               <X size={20} weight="regular" aria-hidden="true" />
             </button>
@@ -672,7 +712,11 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               style={{ width: "100%", marginBottom: comparativeOpen ? "var(--space-4)" : 0 }}
             >
               <div className="dd-press-expand__inner">
-                <ComparativeView sources={sources} />
+                <ComparativeView
+                  sources={sources}
+                  consensusPoints={deepDive?.consensus}
+                  divergencePoints={deepDive?.divergence}
+                />
               </div>
             </div>
           )}
