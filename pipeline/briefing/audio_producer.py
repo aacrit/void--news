@@ -33,7 +33,6 @@ except ImportError:
 
 try:
     from pydub import AudioSegment
-    from pydub.silence import detect_silence
     PYDUB_AVAILABLE = True
 except ImportError:
     pass
@@ -240,56 +239,6 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
         return None
 
 
-def _insert_section_transitions(dialogue_seg: "AudioSegment") -> "AudioSegment":
-    """Detect silence gaps (story breaks) and insert musical transition phrases.
-
-    Finds silences ≥600ms at -35dB — structural story breaks (natural speech
-    pauses are 200-400ms). At each gap:
-    1. Extends the gap to ~2s if shorter (adds breathing room)
-    2. Overlays the 1.5s musical transition phrase centered in the gap
-
-    The result: unhurried pacing with musical beats between stories.
-    If no gaps found, returns dialogue unchanged.
-    """
-    transition = _load_asset("transition.wav")
-    if not transition:
-        return dialogue_seg
-
-    try:
-        silences = detect_silence(dialogue_seg, min_silence_len=600, silence_thresh=-35)
-    except Exception:
-        return dialogue_seg
-
-    if not silences:
-        return dialogue_seg
-
-    # Build new audio with extended gaps and transition overlays
-    # Work from end to start so positions don't shift
-    result = dialogue_seg
-    inserted = 0
-    pad_ms = 500  # extra silence to add if gap < 2000ms
-
-    for start_ms, end_ms in reversed(silences):
-        gap_len = end_ms - start_ms
-        midpoint = (start_ms + end_ms) // 2
-
-        # If gap is shorter than 2s, extend it for breathing room
-        if gap_len < 2000:
-            extra = AudioSegment.silent(duration=pad_ms)
-            result = result[:end_ms] + extra + result[end_ms:]
-            midpoint += pad_ms // 2
-
-        # Center the transition in the gap
-        insert_pos = midpoint - len(transition) // 2
-        if insert_pos > 0:
-            result = result.overlay(transition, position=insert_pos)
-            inserted += 1
-
-    if inserted:
-        print(f"  [audio] Inserted {inserted} musical transition(s)")
-    return result
-
-
 # ---------------------------------------------------------------------------
 # Upload
 # ---------------------------------------------------------------------------
@@ -325,17 +274,10 @@ def produce_audio(
 
     Pipeline:
       1. Script → dialogue format (One:/Two:)
-      2. Gemini Flash TTS → single PCM output
+      2. Gemini Flash TTS → PCM output (chunked if long)
       3. PCM → WAV → AudioSegment
-      4. Insert glass-bell transitions at detected story breaks
-      5. Assemble: bloom intro + dialogue + resolving outro
-      6. Export MP3 → Supabase upload
-
-    Sound design: Glass & Gravity
-      - Intro: D major 9th bloom chord (~2s)
-      - Transitions: glass-bell dyad at silence gaps
-      - Outro: chord resolving to root D (~1.8s)
-      - No background bed — voices carry the broadcast
+      4. Assemble: ident intro + dialogue + outro
+      5. Export MP3 → Supabase upload
     """
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
@@ -366,24 +308,15 @@ def produce_audio(
     wav_data = _pcm_to_wav(pcm_data)
     dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
 
-    # 4. Insert glass-bell transitions at story breaks
-    dialogue_seg = _insert_section_transitions(dialogue_seg)
-
-    # 5. Assemble: intro bloom + breath + dialogue + breath + outro resolve
+    # 4. Assemble: ident + breath + dialogue + breath + outro
     combined = AudioSegment.empty()
 
-    # Intro: the bloom chord
     ident = _load_asset("ident.wav")
     if ident:
         combined += ident
 
-    # Brief breath before speech — not silence, intention
     combined += AudioSegment.silent(duration=250)
-
-    # The broadcast
     combined += dialogue_seg
-
-    # Breath before outro — let the last word land
     combined += AudioSegment.silent(duration=350)
 
     # Outro: the resolve
