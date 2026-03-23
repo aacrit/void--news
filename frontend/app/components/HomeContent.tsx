@@ -477,6 +477,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
             activeLean={activeLean}
             onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+            activeEdition={activeEdition}
           />
         </div>
 

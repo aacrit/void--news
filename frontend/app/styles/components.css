@@ -4617,7 +4617,221 @@
 }
 
 /* ==========================================================================
-   Feature 4 (CSS): FilterBar — Lean Active Badge + Lean Bar Pulse
+   Unified Filter Bar (.ubar) — Edition + Lean + Topic in one row
+   ========================================================================== */
+
+.ubar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-2) 0;
+}
+
+/* Group wrapper — keeps related items together */
+.ubar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Thin vertical separator between groups */
+.ubar__sep {
+  width: 1px;
+  height: 16px;
+  background-color: var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* ── Edition pills — navigation CTAs, bold ── */
+.ubar__edition {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg-tertiary);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 100px;
+  min-height: 32px;
+  transition: color 150ms var(--ease-out), background-color 150ms var(--ease-out);
+}
+
+.ubar__edition:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+.ubar__edition--active {
+  color: var(--fg-primary);
+  font-weight: 700;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+}
+
+/* ── Lean chips — perspective filter, colored dots ── */
+.ubar__lean {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  background: none;
+  border: 1px solid transparent;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 100px;
+  min-height: 32px;
+  cursor: pointer;
+  transition: all 150ms var(--ease-out);
+}
+
+.ubar__lean:hover {
+  color: var(--fg-secondary);
+  background-color: var(--bg-secondary);
+}
+
+.ubar__lean--active {
+  color: var(--fg-primary);
+  font-weight: 700;
+  border-color: var(--border-strong);
+  background-color: var(--bg-secondary);
+}
+
+/* Colored dot indicator */
+.ubar__lean-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ubar__lean--left .ubar__lean-dot { background-color: var(--bias-left); }
+.ubar__lean--center .ubar__lean-dot { background-color: var(--bias-center); }
+.ubar__lean--right .ubar__lean-dot { background-color: var(--bias-right); }
+
+/* ── Topic dropdown — understated content filter ── */
+.ubar__topics {
+  position: relative;
+}
+
+.ubar__topic-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  min-height: 32px;
+  cursor: pointer;
+  transition: color 150ms var(--ease-out);
+}
+
+.ubar__topic-trigger:hover { color: var(--fg-secondary); }
+
+.ubar__topic-caret {
+  font-size: 8px;
+  transition: transform 150ms var(--ease-out);
+}
+
+.ubar__topic-caret--open {
+  transform: rotate(180deg);
+}
+
+/* Topic dropdown panel */
+.ubar__topic-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-e2);
+  padding: var(--space-2);
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeIn 150ms var(--ease-out);
+}
+
+.ubar__topic-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--fg-secondary);
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  transition: background-color 100ms var(--ease-out);
+}
+
+.ubar__topic-option:hover { background-color: var(--bg-secondary); }
+.ubar__topic-option--active { font-weight: 600; color: var(--fg-primary); }
+
+/* ── Active filter badge ── */
+.ubar__active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  padding: 2px 6px 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+}
+
+.ubar__active-badge-text { white-space: nowrap; }
+
+.ubar__active-badge-x {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  border-radius: 50%;
+  transition: color 100ms var(--ease-out), background-color 100ms var(--ease-out);
+}
+
+.ubar__active-badge-x:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+/* ── Mobile: wrap and stack ── */
+@media (max-width: 767px) {
+  .ubar {
+    gap: var(--space-2);
+  }
+  /* Hide separators on mobile — groups wrap naturally */
+  .ubar__sep { display: none; }
+  /* Touch targets */
+  .ubar__edition, .ubar__lean { min-height: 36px; }
+}
+
+/* ==========================================================================
+   LEGACY: Feature 4 (CSS): FilterBar — Lean Active Badge + Lean Bar Pulse
    ========================================================================== */
 
 /* ---- Active filter badge pill ---- */
