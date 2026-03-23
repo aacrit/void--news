@@ -17,7 +17,7 @@ interface RefreshButtonProps {
 export default function RefreshButton({ externalLastUpdated, onRefresh }: RefreshButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [localLastUpdated, setLocalLastUpdated] = useState("");
+  const [localLastUpdated] = useState("");
 
   const refreshButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);

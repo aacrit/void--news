@@ -29,31 +29,6 @@ interface DeepDiveProps {
   originRect?: DOMRect | null;
 }
 
-/* --- Favicon helper ------------------------------------------------------ */
-
-function getDomain(url: string): string {
-  try { return new URL(url).hostname.replace(/^www\./, ""); }
-  catch { return ""; }
-}
-
-function faviconUrl(articleUrl: string): string {
-  const domain = getDomain(articleUrl);
-  if (!domain) return "";
-  return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-}
-
-/* --- Lean label helper --------------------------------------------------- */
-
-function leanLabel(lean: number): string {
-  if (lean <= 20) return "Far Left";
-  if (lean <= 35) return "Left";
-  if (lean <= 45) return "Center-Left";
-  if (lean <= 55) return "Center";
-  if (lean <= 65) return "Center-Right";
-  if (lean <= 80) return "Right";
-  return "Far Right";
-}
-
 /* --- Main DeepDive component --------------------------------------------- */
 
 export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) {

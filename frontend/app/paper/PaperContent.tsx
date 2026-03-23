@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import type {
   Edition,
   Category,
@@ -477,9 +478,9 @@ function Colophon({ edition }: { edition: string }) {
         Void News &middot; The {edition} Edition &middot; {dateStr}
       </p>
       <p>
-        <a href="/void--news/" className="np-colophon__link">
+        <Link href="/void--news/" className="np-colophon__link">
           Return to the Digital Edition
-        </a>
+        </Link>
       </p>
     </footer>
   );

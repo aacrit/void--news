@@ -136,14 +136,7 @@ const CIRC = 2 * Math.PI * 9; // ~56.55, circle circumference (r=9)
 
 /* ── Compact data-mark: the logo encoding live data ───────────────────── */
 
-function senseColor(v: number): string {
-  const c = gc();
-  if (v <= 33) return c["--sense-low"];
-  if (v <= 66) return lerp(c["--sense-low"], c["--sense-medium"], (v - 33) / 33);
-  return lerp(c["--sense-medium"], c["--sense-high"], (v - 66) / 34);
-}
-
-function DataMark({ data, size, mounted, mode = "facts" }: {
+function DataMark({ data, size, mounted }: {
   data: SigilData; size: "sm" | "lg" | "xl"; mounted: boolean; mode?: "facts";
 }) {
   const lean = data.politicalLean;
