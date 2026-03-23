@@ -1816,6 +1816,29 @@ def main():
                             brief_row["audio_file_size"] = audio_result["file_size"]
                             brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
                             brief_row["audio_voice_label"] = "Two voices"
+                    else:
+                        # Non-audio run: carry forward audio fields from the most
+                        # recent brief so the frontend always has audio available.
+                        try:
+                            prev = supabase.table("daily_briefs").select(
+                                "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
+                            ).eq("edition", edition).order(
+                                "created_at", desc=True
+                            ).limit(1).execute()
+                            if prev.data and prev.data[0].get("audio_url"):
+                                p = prev.data[0]
+                                brief_row["audio_url"] = p["audio_url"]
+                                brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
+                                brief_row["audio_voice_label"] = p.get("audio_voice_label")
+                                brief_row["audio_voice"] = p.get("audio_voice")
+                                brief_row["audio_file_size"] = p.get("audio_file_size")
+                                # Preserve previous audio_script only if this run
+                                # didn't produce a new one (rule-based fallback).
+                                if not brief_row.get("audio_script"):
+                                    brief_row["audio_script"] = p.get("audio_script")
+                                print(f"  [brief:{edition}] Carried forward audio from previous brief")
+                        except Exception as e:
+                            print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
 
                     try:
                         supabase.table("daily_briefs").upsert(
