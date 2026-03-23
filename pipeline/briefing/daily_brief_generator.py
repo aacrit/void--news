@@ -389,6 +389,9 @@ def generate_daily_briefs(
             if raw and isinstance(raw, dict):
                 tldr = raw.get("tldr_text", "")
                 script = raw.get("audio_script")
+                # Gemini may return script as list — coerce to string
+                if isinstance(script, list):
+                    script = "\n".join(str(s) for s in script)
 
                 # Validate tldr shape
                 if isinstance(tldr, str) and tldr.strip():
