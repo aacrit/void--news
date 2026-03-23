@@ -1,7 +1,7 @@
 # void --news — Design System: "Press & Precision"
 
-**Version:** 1.8
-**Last updated:** 2026-03-22 (rev 7)
+**Version:** 1.9
+**Last updated:** 2026-03-23 (rev 8)
 
 ---
 
@@ -16,13 +16,14 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 
 ---
 
-## 2. Typography — Three Voices
+## 2. Typography — Four Voices
 
 | Voice | Font | Weight | Use |
 |-------|------|--------|-----|
 | **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes |
 | **Structural** | Inter | 400, 500, 600 | Body text, navigation, labels, buttons, UI chrome |
-| **Data** | JetBrains Mono | 400, 500 | Bias scores, source counts, timestamps, metrics, BiasLens data labels |
+| **Meta** | Barlow Condensed | 400, 500, 600 | Category tags, source counts, timestamps, edition metadata; condensed grotesque in Franklin Gothic / News Gothic newspaper tradition; `--font-meta` CSS variable |
+| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels; humanist monospace with institutional warmth (not a coding font) |
 
 ### Type Scale (Fluid)
 
@@ -39,7 +40,8 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 
 - Headlines: Playfair Display 700, sentence case
 - Body: Inter 400, 1.6 line height, max 65ch measure
-- Data labels: JetBrains Mono 400, all-caps for axis labels, tabular-nums
+- Meta labels: Barlow Condensed 500, all-caps for category tags, condensed letter-spacing
+- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums
 - Never mix voices within a single element
 - Headline hierarchy: hero > xl > lg (max 3 levels visible at once)
 
@@ -365,18 +367,20 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 ### Principles
 
 1. **Purposeful** — every animation communicates state change, never decorative
-2. **Symmetric** — open/close, in/out use identical timing
+2. **Asymmetric for panels** — Deep Dive open uses `--spring-bouncy` (500ms, genuine overshoot); close uses `--spring-snappy` (380ms, tight). Micro-interactions (chips, toggles) remain symmetric.
 3. **Accessible** — all → 0ms under `prefers-reduced-motion: reduce`
 4. **Performant** — only animate transform and opacity (GPU composite)
 5. **Interruptible** — no animation locks
+6. **High-refresh ready** — rAF snap via `setTimeout(0)` for 90/120Hz reliability
 
 ### Spring Presets
 
 | Preset | Stiffness | Damping | Mass | Use |
 |--------|-----------|---------|------|-----|
-| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles |
+| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles; Deep Dive close (380ms) |
 | smooth | 280 | 22 | 1 | Card expansion, panel slides |
 | gentle | 150 | 12 | 1.2 | View transitions (feed ↔ deep dive) |
+| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` CSS token |
 
 ### Duration Tokens
 
