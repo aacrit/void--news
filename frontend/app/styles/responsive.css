@@ -121,23 +121,42 @@
     -webkit-line-clamp: 4;
   }
 
-  /* Deep Dive: side panel from right — over half the screen.
-     min-width 400px at 1024px: prevents feed from being squeezed below
-     ~460px on a 1024px viewport (55% = 563px > 560px old min-width left
-     only 464px for feed). Full 560px restored at 1280px+. */
+  /* Deep Dive: centered overlay modal on desktop.
+     Fixed center position — left/top 50% with translate(-50%,-50%) centering.
+     max-width 680px, max-height 85vh for comfortable reading. */
   .deep-dive-panel {
-    left: auto;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 55%;
-    min-width: 400px;
-    max-width: none;
-    border-left: var(--rule-thin);
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    width: calc(100% - var(--space-7) * 2);
+    max-width: 680px;
+    max-height: 85vh;
+    min-height: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    /* Glass morphism */
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+
+    /* Multi-layer shadow: outer depth + inner refraction + warm glow */
+    box-shadow:
+      0 32px 64px rgba(0, 0, 0, 0.35),
+      0 8px 24px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
   }
 
+  /* Activate studio light reflection on desktop */
+  .deep-dive-panel::before {
+    opacity: 1;
+  }
+
+  /* Close button visible on desktop modal — no back arrow needed */
   .deep-dive-close {
-    display: none;
+    display: inline-flex;
   }
 
 }
@@ -145,9 +164,9 @@
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
 
 @media (min-width: 1280px) {
-  /* Restore full min-width on wider viewports — 1280px leaves ~576px for feed */
+  /* Slightly wider modal on large screens — still capped at 680px */
   .deep-dive-panel {
-    min-width: 560px;
+    max-width: 680px;
   }
 
   .grid-compact {
@@ -172,12 +191,7 @@
 
 /* ---- Very Wide (1440px+) ----------------------------------------------- */
 
-@media (min-width: 1440px) {
-  .deep-dive-panel {
-    width: 55%;
-    max-width: none;
-  }
-}
+/* Deep dive panel width is capped at 680px regardless of viewport width */
 
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
 
@@ -283,14 +297,10 @@
     margin-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Stronger backdrop on mobile so fixed bottom nav doesn't bleed through.
-     Light mode token is 0.15 opacity — too transparent against the nav.
-     Override to match dark mode value for legible modal layering. */
+  /* Mobile backdrop: reduce blur cost — blur(40px) is expensive on low-end devices */
   .deep-dive-backdrop {
-    background-color: rgba(28, 26, 23, 0.55);
-    /* Reduce backdrop blur on mobile — blur(6px) is expensive on low-end devices */
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
@@ -388,13 +398,29 @@
 
   /* === DEEP DIVE === */
 
-  /* iOS bottom-sheet feel: rounded top corners, momentum scroll, hidden scrollbar */
+  /* iOS bottom-sheet: full screen from bottom, rounded top corners, momentum scroll */
   .deep-dive-panel {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
     border-radius: 16px 16px 0 0;
+    border: none;
+    /* Reset glass to solid background on mobile */
+    background: var(--bg-primary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
     scrollbar-width: none;
     -ms-overflow-style: none;
-    /* Momentum scrolling — native iOS kinetic feel */
     -webkit-overflow-scrolling: touch;
+  }
+
+  .deep-dive-panel::before {
+    opacity: 0;
   }
 
   .deep-dive-panel::-webkit-scrollbar {
@@ -435,6 +461,27 @@
   .dd-analysis-section {
     padding: var(--space-3) 0;
     gap: var(--space-2);
+  }
+
+  /* Action bar: two rows on mobile — [Sigil | Spectrum] / [Buttons] */
+  .dd-action-bar {
+    gap: var(--space-2);
+  }
+
+  .dd-action-bar__sigil {
+    /* First row: sigil + spectrum fill full width */
+    order: 1;
+  }
+
+  .dd-action-bar__spectrum {
+    order: 2;
+    flex: 1;
+  }
+
+  .dd-action-bar__buttons {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
   }
 
   /* Press expand: faster transition on mobile */

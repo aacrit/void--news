@@ -137,19 +137,17 @@
 .deep-dive-backdrop {
   position: fixed;
   inset: 0;
-  background-color: var(--overlay-backdrop);
+  background-color: rgba(0, 0, 0, 0.65);
   z-index: var(--z-overlay);
   cursor: pointer;
-  /* Desktop: blur the feed behind the panel — draws focus to the deep dive */
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  /* Heavy backdrop blur — full attention on the overlay */
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
 }
 
 .deep-dive-panel {
   position: fixed;
   z-index: var(--z-modal);
-  background-color: var(--bg-primary);
-  box-shadow: var(--shadow-e3);
   overflow-y: auto;
   overflow-x: hidden;
   outline: none;
@@ -159,9 +157,34 @@
   will-change: transform;
   /* Scaling from center keeps the FLIP morph visually anchored to the card's center */
   transform-origin: center center;
-  /* Prevent flash of full-screen panel before JS applies translateY(100%).
-     opacity: 0 is the safety net; JS-driven isVisible controls actual opacity
-     via inline style on the backdrop. The panel itself fades with the transform. */
+  /* Prevent flash before JS applies transform.
+     opacity: 0 safety net; JS-driven isVisible controls actual opacity. */
+  opacity: 0;
+
+  /* Glass morphism — mobile base (full-screen has no glass treatment) */
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-e3);
+}
+
+/* Studio light reflection on top edge — glass refraction artifact */
+.deep-dive-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 30%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 70%,
+    transparent 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
   opacity: 0;
 }
 

@@ -4,8 +4,6 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
   X,
-  Check,
-  Warning,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
@@ -94,9 +92,9 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
     return false;
   }, [sources]);
 
-  /* ---- Detect desktop vs mobile for directional animation -------------- */
+  /* ---- Detect desktop vs mobile for animation choreography ------------- */
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia("(min-width: 768px)");
     setIsDesktop(mq.matches);
 
     function handleChange(e: MediaQueryListEvent) {
@@ -332,7 +330,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
          measure its final rect. We briefly make it visible but off-screen
          via the morphStyle override, then compute the inverse transform. */
 
-      const isDesktopNow = window.innerWidth >= 1024;
+      const isDesktopNow = window.innerWidth >= 768;
 
       // Step 1: Backdrop blur starts immediately
       setIsVisible(true);
@@ -376,7 +374,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         requestAnimationFrame(() => {
           setMorphStyle({
             transform: "translate(0, 0) scale(1, 1)",
-            borderRadius: isDesktopNow ? "0px" : "16px 16px 0 0",
+            borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
             opacity: 1,
             boxShadow: "var(--shadow-e3)",
             transition: [
@@ -398,7 +396,7 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
       /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
       requestAnimationFrame(() => {
         setIsVisible(true);
-        const delay = window.innerWidth >= 1024 ? 120 : 30;
+        const delay = window.innerWidth >= 768 ? 120 : 30;
         setTimeout(() => setContentVisible(true), delay);
       });
     }
@@ -531,16 +529,13 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         tabIndex={-1}
         className="deep-dive-panel"
         style={morphStyle ?? {
-          /* Default slide-in/out when no FLIP morph is active.
-             Desktop: slide from right (translateX). Mobile: slide from bottom (translateY).
-             Spring easing gives physical weight to the panel.
-             opacity: instant-on (0ms) when opening so content isn't invisible during
-             slide-in; delayed-off (600ms) when closing so it stays visible during
-             the slide-out transform.
-             box-shadow grows in as the panel arrives (200ms delay on open). */
+          /* Default open/close when no FLIP morph is active.
+             Desktop: scale + translateY from center (spring in, spring out).
+             Mobile: slide from bottom (translateY) — bottom sheet.
+             opacity: instant-on (0ms) when opening; delayed-off when closing. */
           transform: isVisible
-            ? "translate(0, 0)"
-            : isDesktop ? "translateX(100%)" : "translateY(100%)",
+            ? isDesktop ? "translate(-50%, -50%) scale(1)" : "translateY(0)"
+            : isDesktop ? "translate(-50%, -50%) scale(0.92) translateY(20px)" : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-e3)" : "none",
           transition: isVisible
@@ -608,49 +603,93 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             </div>
           )}
 
-          {/* ---- Bias verdict — always visible when sigil data exists -------- */}
-          {story.sigilData && (
+          {/* ---- Compact action bar: [Sigil | Spectrum | All Sides ▸ | Scoring ▸] -- */}
+          {(story.sigilData || spectrumSources.length > 0) && (
             <div
-              className={`dd-bias-verdict anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-3)", transitionDelay: "0ms" }}
+              className={`dd-action-bar anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}
             >
-              <Sigil data={story.sigilData} size="xl" />
+              {/* Sigil — xl, left anchor */}
+              {story.sigilData && (
+                <div className="dd-action-bar__sigil">
+                  <Sigil data={story.sigilData} size="xl" />
+                </div>
+              )}
+
+              {/* Spectrum — fills remaining space */}
+              {spectrumSources.length > 0 && (
+                <div className="dd-action-bar__spectrum">
+                  <DeepDiveSpectrum sources={spectrumSources} />
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="dd-action-bar__buttons">
+                {hasCrossLeanSources && (
+                  <button
+                    className={`dd-action-btn${comparativeOpen ? " dd-action-btn--active" : ""}`}
+                    onClick={() => { hapticLight(); setComparativeOpen(v => !v); }}
+                    aria-expanded={comparativeOpen}
+                    aria-controls="dd-comparative-panel"
+                    aria-label={comparativeOpen ? "Close All Sides view" : "Open All Sides view"}
+                  >
+                    <span>All Sides</span>
+                    <span
+                      className={`dd-press-trigger__arrow${comparativeOpen ? " dd-press-trigger__arrow--open" : ""}`}
+                      aria-hidden="true"
+                    >
+                      &#9658;
+                    </span>
+                  </button>
+                )}
+
+                {spectrumSources.length > 0 && (
+                  <button
+                    className={`dd-action-btn${pressAnalysisOpen ? " dd-action-btn--active" : ""}`}
+                    onClick={() => { hapticLight(); setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
+                    aria-label={pressAnalysisOpen ? "Close scoring breakdown" : "Open scoring breakdown"}
+                    aria-expanded={pressAnalysisOpen}
+                    aria-controls="dd-press-expand-panel"
+                  >
+                    <span>Scoring</span>
+                    <span
+                      className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}${hasSeenPressHint ? " dd-press-trigger__arrow--no-bounce" : ""}`}
+                      aria-hidden="true"
+                    >
+                      &#9658;
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
-          {/* ---- Spectrum + Press Analysis (requires source data) ------------ */}
-          {spectrumSources.length > 0 && (
-            <section aria-label="Source spectrum" className={`dd-analysis-section anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}>
-
-              <DeepDiveSpectrum sources={spectrumSources} />
-
-              {/* Press Analysis trigger — center-aligned, inviting label */}
-              <button
-                className="dd-press-trigger"
-                onClick={() => { hapticLight(); setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
-                aria-label={pressAnalysisOpen ? "Close press analysis" : "Open press analysis"}
-                aria-expanded={pressAnalysisOpen}
-                aria-controls="dd-press-expand-panel"
-              >
-                <span>How was this scored?</span>
-                <span
-                  className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}${hasSeenPressHint ? " dd-press-trigger__arrow--no-bounce" : ""}`}
-                  aria-hidden="true"
-                >
-                  &#9658;
-                </span>
-              </button>
-
-              {/* Press Analysis expand */}
-              <div id="dd-press-expand-panel" className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`} style={{ width: "100%" }}>
-                <div className="dd-press-expand__inner">
-                  <BiasInspectorInline sources={sources} />
-                </div>
+          {/* ---- Expand panels: All Sides + Scoring (below action bar) --------- */}
+          {hasCrossLeanSources && (
+            <div
+              id="dd-comparative-panel"
+              className={`dd-press-expand${comparativeOpen ? " dd-press-expand--open" : ""}`}
+              style={{ width: "100%", marginBottom: comparativeOpen ? "var(--space-4)" : 0 }}
+            >
+              <div className="dd-press-expand__inner">
+                <ComparativeView sources={sources} />
               </div>
-            </section>
+            </div>
           )}
 
-          {/* ---- Summary — flows as article lede, after spectrum -------------- */}
+          {spectrumSources.length > 0 && (
+            <div
+              id="dd-press-expand-panel"
+              className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}
+              style={{ width: "100%", marginBottom: pressAnalysisOpen ? "var(--space-4)" : 0 }}
+            >
+              <div className="dd-press-expand__inner">
+                <BiasInspectorInline sources={sources} />
+              </div>
+            </div>
+          )}
+
+          {/* ---- Summary — flows as article lede, after action bar -------------- */}
           <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
               <div className="dd-collapsible__inner">
@@ -663,104 +702,6 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
             )}
           </section>
-
-          {/* ---- Source perspectives: Agreement | Divergence two-column grid --- */}
-          {deepDive && (
-            (Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0) ||
-            (Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0)
-          ) && (
-            <section aria-labelledby="dd-perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "80ms" }}>
-              <div className="dd-perspectives-grid">
-                <h3 id="dd-perspectives" className="dd-perspectives-label">Source Perspectives</h3>
-
-                {/* Agreement column */}
-                {deepDive && Array.isArray(deepDive.consensus) && deepDive.consensus.length > 0 && (
-                  <div className="dd-perspectives-col">
-                    <span className="dd-perspectives-sublabel dd-perspectives-sublabel--agree">Agreement</span>
-                    <ul className="dd-perspectives-list">
-                      {deepDive.consensus.map((point, i) => (
-                        <li key={`agree-${point.slice(0, 40)}-${i}`} className="dd-perspectives-item dd-perspectives-item--agree">
-                          <Check size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
-                          <span className="dd-perspectives-item__text">{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Divergence column */}
-                {deepDive && Array.isArray(deepDive.divergence) && deepDive.divergence.length > 0 && (
-                  <div className="dd-perspectives-col">
-                    <span className="dd-perspectives-sublabel dd-perspectives-sublabel--diverge">Divergence</span>
-                    <ul className="dd-perspectives-list">
-                      {deepDive.divergence.map((point, i) => (
-                        <li key={`diverge-${point.slice(0, 40)}-${i}`} className="dd-perspectives-item dd-perspectives-item--diverge">
-                          <Warning size={13} weight="bold" aria-hidden="true" className="dd-perspectives-item__icon" />
-                          <span className="dd-perspectives-item__text">{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* ---- Source Trust Score list ---- */}
-              {sources.length > 0 && (
-                <div className="dd-trust-list" aria-label="Source trust scores">
-                  {sources.map((src) => {
-                    const trust = computeTrustScore(src);
-                    const trustClass = trust >= 70 ? "dd-trust-dot--high" : trust >= 40 ? "dd-trust-dot--medium" : "dd-trust-dot--low";
-                    const tierLabel = src.tier === "us_major" ? "US Major" : src.tier === "international" ? "International" : "Independent";
-                    const rigor = src.biasScores?.factualRigor ?? 50;
-                    const conf = Math.round((src.confidence ?? 0.5) * 100);
-                    return (
-                      <div
-                        key={src.name}
-                        className="dd-trust-item"
-                        title={`${tierLabel} tier · Factual rigor: ${rigor} · Confidence: ${conf}%`}
-                      >
-                        <span className={`dd-trust-dot ${trustClass}`} aria-hidden="true" />
-                        <span className="dd-trust-name text-data">{src.name}</span>
-                        <span className="dd-trust-score text-data">{trust}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* ---- Read All Sides button ---- */}
-              {hasCrossLeanSources && (
-                <>
-                  <button
-                    className="dd-read-all-sides"
-                    onClick={() => { hapticLight(); setComparativeOpen(v => !v); }}
-                    aria-expanded={comparativeOpen}
-                    aria-controls="dd-comparative-panel"
-                    aria-label={comparativeOpen ? "Close Read All Sides view" : "Open Read All Sides view"}
-                  >
-                    <span>Read All Sides</span>
-                    <span
-                      className={`dd-press-trigger__arrow${comparativeOpen ? " dd-press-trigger__arrow--open" : ""}`}
-                      aria-hidden="true"
-                    >
-                      &#9658;
-                    </span>
-                  </button>
-
-                  {/* Comparative view expand */}
-                  <div
-                    id="dd-comparative-panel"
-                    className={`dd-press-expand${comparativeOpen ? " dd-press-expand--open" : ""}`}
-                    style={{ width: "100%" }}
-                  >
-                    <div className="dd-press-expand__inner">
-                      <ComparativeView sources={sources} />
-                    </div>
-                  </div>
-                </>
-              )}
-            </section>
-          )}
 
           {/* No deep dive data at all */}
           {!deepDive && !isLoadingData && (
