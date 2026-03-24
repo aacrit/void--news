@@ -217,12 +217,17 @@ export type Edition = "world" | "us" | "india" | "uk" | "canada";
 // Keep Section as alias for backward compat
 export type Section = Edition;
 
+/** Editorial lean for the opinion piece — rotates daily */
+export type OpinionLean = "left" | "center" | "right";
+
 /** Daily Brief data from Supabase */
 export interface DailyBriefData {
   id: string;
   edition: Edition;
   tldr_text: string;
   opinion_text: string | null;
+  opinion_lean: OpinionLean | null;
+  opinion_cluster_id: string | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
   audio_voice_label: string | null;

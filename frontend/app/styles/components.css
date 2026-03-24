@@ -3868,6 +3868,40 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-bottom: var(--space-2);
 }
 
+/* ---- Opinion lean pill — editorial perspective indicator ---------------- */
+
+.opinion-lean-pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-left: var(--space-2);
+  line-height: 1.4;
+}
+
+.opinion-lean-pill--left {
+  color: var(--lean-left, #2563eb);
+  border: 1px solid var(--lean-left, #2563eb);
+  background: color-mix(in srgb, var(--lean-left, #2563eb) 8%, transparent);
+}
+
+.opinion-lean-pill--center {
+  color: var(--fg-secondary);
+  border: 1px solid var(--border-strong);
+  background: color-mix(in srgb, var(--fg-secondary) 5%, transparent);
+}
+
+.opinion-lean-pill--right {
+  color: var(--lean-right, #dc2626);
+  border: 1px solid var(--lean-right, #dc2626);
+  background: color-mix(in srgb, var(--lean-right, #dc2626) 8%, transparent);
+}
+
 /* ---- void --onair — minimal broadcast pill ------------------------------ */
 
 .void-onair {

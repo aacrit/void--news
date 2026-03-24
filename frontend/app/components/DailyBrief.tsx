@@ -250,6 +250,13 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
                 void --opinion
                 {showSubtitles && <span className="daily-brief__subtitle">The Board</span>}
               </span>
+              {brief.opinion_lean && (
+                <span className={`opinion-lean-pill opinion-lean-pill--${brief.opinion_lean}`}>
+                  {brief.opinion_lean === "left" ? "Progressive Lens" :
+                   brief.opinion_lean === "right" ? "Conservative Lens" :
+                   "Pragmatic Lens"}
+                </span>
+              )}
             </div>
             <p>{brief.opinion_text}</p>
           </div>
