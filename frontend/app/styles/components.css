@@ -311,6 +311,56 @@
   border-radius: var(--radius-sm);
 }
 
+/* Live update badge — memory engine indicator */
+.lead-story__live-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-3);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  border-left: 3px solid var(--accent-warm);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+.live-badge__icon {
+  color: var(--accent-warm);
+  animation: live-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+  font-size: 0.5em;
+}
+
+.live-badge__text {
+  font-weight: 700;
+  color: var(--accent-warm);
+}
+
+.live-badge__time {
+  color: var(--fg-secondary);
+  font-style: italic;
+}
+
+.live-badge__count {
+  margin-left: auto;
+  background-color: var(--accent-warm);
+  color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 .lead-story__headline {
   font-family: var(--font-editorial);
   font-size: var(--text-hero);
@@ -6415,6 +6465,147 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 @media (prefers-reduced-motion: reduce) {
   .install-prompt {
+    animation: none;
+  }
+}
+
+/* ---- Live Updates Section (Memory Engine) ------------------------------ */
+
+.live-updates-section {
+  margin: var(--space-4) 0;
+  padding: var(--space-4) var(--space-4);
+  background-color: var(--bg-secondary);
+  border-left: 3px solid var(--accent-warm);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.live-updates__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  margin: 0 0 var(--space-3) 0;
+  color: var(--fg-primary);
+}
+
+.live-updates__icon {
+  color: var(--accent-warm);
+  animation: live-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+  font-size: 0.5em;
+}
+
+.live-updates__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.live-update-card {
+  display: block;
+  padding: var(--space-3);
+  background-color: var(--bg-primary);
+  border-left: 2px solid color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+
+.live-update-card:hover {
+  background-color: var(--bg-secondary);
+  transform: translateX(4px);
+}
+
+.live-update-card:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.live-update__meta {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  font-size: var(--text-xs);
+  font-family: var(--font-meta);
+}
+
+.live-update__time {
+  color: var(--fg-secondary);
+  text-transform: uppercase;
+}
+
+.live-update__source {
+  color: var(--fg-secondary);
+  font-weight: 600;
+}
+
+.live-update__title {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-primary);
+  line-height: 1.4;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.live-update__summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.live-updates__skeleton {
+  height: 80px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-primary) 25%,
+    var(--bg-secondary) 50%,
+    var(--bg-primary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 767px) {
+  .live-updates-section {
+    padding: var(--space-3) var(--space-3);
+    margin: var(--space-3) 0;
+  }
+
+  .live-update-card {
+    padding: var(--space-2);
+  }
+
+  .lead-story__live-badge {
+    flex-wrap: wrap;
+  }
+
+  .live-badge__time,
+  .live-badge__count {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-badge__icon,
+  .live-updates__icon {
+    animation: none;
+  }
+
+  .live-updates__skeleton {
     animation: none;
   }
 }

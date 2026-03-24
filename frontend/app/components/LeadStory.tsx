@@ -44,6 +44,22 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
       }}
       className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
+      {/* Live update badge — shows when memory engine is tracking this story */}
+      {story.isTopStory && story.liveUpdateCount != null && story.liveUpdateCount > 0 && (
+        <div className="lead-story__live-badge">
+          <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
+          <span className="live-badge__text">Live</span>
+          {story.lastLiveUpdateAt && (
+            <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
+              Updated {timeAgo(story.lastLiveUpdateAt)}
+            </time>
+          )}
+          <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
+            +{story.liveUpdateCount}
+          </span>
+        </div>
+      )}
+
       {/* Category tag + time */}
       <div className="lead-story__meta">
         {rank === 0 && <span className="lead-story__badge">Top Story</span>}

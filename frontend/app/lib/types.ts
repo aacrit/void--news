@@ -203,6 +203,30 @@ export interface Story {
   coverageVelocity: number;
   deepDive?: DeepDiveData;
   articleUrl?: string;
+  /** Memory engine: true when this is the current top developing story */
+  isTopStory?: boolean;
+  /** Memory engine: count of live updates since last pipeline run */
+  liveUpdateCount?: number;
+  /** Memory engine: timestamp of the most recent live update */
+  lastLiveUpdateAt?: string;
+  /** Memory engine: UUID linking to story_memory for live update fetching */
+  storyMemoryId?: string;
+}
+
+/** Live update article discovered by the live poller between pipeline runs */
+export interface LiveUpdate {
+  id: string;
+  story_memory_id: string;
+  article_url: string;
+  title: string;
+  summary?: string;
+  source_slug: string;
+  source_name: string;
+  published_at?: string;
+  update_summary?: string;
+  discovered_at: string;
+  merged_into_cluster_id?: string;
+  created_at: string;
 }
 
 export type Category =
