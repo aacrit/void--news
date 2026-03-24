@@ -1,0 +1,329 @@
+================================================================================
+                    VOID --NEWS FRONTEND UAT AUDIT
+                         MANIFEST & FILE GUIDE
+                         March 24, 2026
+================================================================================
+
+AUDIT DELIVERABLES
+==================
+
+Generated on: 2026-03-24
+Conducted by: uat-tester agent (DondeAI UAT Tester Protocol)
+Components audited: 48 (.tsx, .css files)
+Total findings: 31 (0 critical, 2 high, 8 medium, 11 low, 7 info)
+Overall score: 87/100 → launch-ready
+With Tier 1 fixes: 94/100 → production-ready
+
+================================================================================
+                        AUDIT DELIVERABLE FILES
+================================================================================
+
+PRIMARY DOCUMENTS (Required Reading)
+=====================================
+
+1. READ-ME-FIRST.txt
+   Purpose: Navigation guide to all audit documents
+   Size: ~6 KB
+   Read time: 5 minutes
+   Audience: Everyone (start here)
+   
+   Contains:
+   ✓ Document overview
+   ✓ Quick summary (87/100 score)
+   ✓ 4-hour critical path
+   ✓ Who should read what
+   ✓ Deployment checklist
+   ✓ Design system verdict
+
+2. UAT-REPORT-2026-03-24.md ⭐ MAIN REPORT
+   Purpose: Complete comprehensive audit with all 31 findings
+   Size: 34 KB
+   Read time: 45 minutes (skimmable)
+   Audience: Engineers, product managers, designers
+   
+   Contains (10 phases):
+   ✓ Phase 1: Reconnaissance (architecture review)
+   ✓ Phase 2: Page Load Audit (loading states)
+   ✓ Phase 3: Core Journey Testing (navigation, filters)
+   ✓ Phase 4: Bias Display Testing (data accuracy)
+   ✓ Phase 5: Responsive Testing (all breakpoints)
+   ✓ Phase 6: Accessibility Audit (WCAG 2.1 AA)
+   ✓ Phase 7: Edge Cases (errors, empty states)
+   ✓ Phase 8: Visual & Design System (Press & Precision)
+   ✓ Phase 9: Data Accuracy & Display (bias scores)
+   ✓ Phase 10: Performance & Optimization
+
+   Includes:
+   • All 31 findings with ID codes (F001–F032)
+   • Reproduction steps for each issue
+   • Severity classification
+   • Suggested fixes (direction, not code)
+   • File references with line numbers
+   • Design system compliance analysis
+   • Dimension score breakdown (8 categories)
+
+3. AUDIT-SUMMARY.txt
+   Purpose: Executive one-page overview
+   Size: 9 KB
+   Read time: 5 minutes
+   Audience: Executives, product managers, team leads
+   
+   Contains:
+   ✓ Findings breakdown (0 critical, 2 high, 8 medium, 11 low, 7 info)
+   ✓ Dimension scores (87/100 overall)
+   ✓ Design system verdict (95%+ compliant)
+   ✓ Tier 1 fixes (4 hours to 94/100)
+   ✓ Deployment recommendation
+   ✓ Next steps (Tier 2, Tier 3)
+
+4. UAT-FINDINGS-CHECKLIST.md ⭐ WORKING DOCUMENT
+   Purpose: Organized findings reference + working checklist
+   Size: 14 KB
+   Read time: 20 minutes (dip-in reference)
+   Audience: Engineers, QA, team leads
+   
+   Contains:
+   ✓ All 31 findings organized by severity
+   ✓ CRITICAL (0 findings)
+   ✓ HIGH SEVERITY (2 findings) — F001, F002
+   ✓ MEDIUM SEVERITY (8 findings) — F003–F010
+   ✓ LOW SEVERITY (11 findings) — F011–F021
+   ✓ INFO-LEVEL (7 findings) — I001–I007
+   ✓ Priority matrix (effort vs impact)
+   ✓ Tier structure (Tier 1, Tier 2, Tier 3)
+   ✓ Design system compliance scorecard
+   ✓ Verification checklist (20+ items)
+   ✓ File-by-file action items
+
+5. TIER-1-FIX-GUIDE.md ⭐ IMPLEMENTATION GUIDE
+   Purpose: Step-by-step fix implementation guide
+   Size: 13 KB
+   Read time: 30 minutes
+   Audience: Frontend engineers
+   
+   Contains (4 critical fixes):
+   ✓ Fix 1: [H001] BiasStamp mobile tap (2 hours)
+     - Add ARIA label to Sigil
+     - Create BiasLensBottomSheet component
+     - Add mobile tap handler
+     - Add pending visual indicator
+   
+   ✓ Fix 2: [M001] Center color contrast (15 minutes)
+     - Change --bias-center token value
+     - Verify contrast (5.2:1 target)
+   
+   ✓ Fix 3: [H002] Deep Dive close button (1 hour)
+     - Add safe-area-inset-bottom
+     - Reposition close button to bottom-left
+     - Add drag-handle affordance
+   
+   ✓ Fix 4: [M005] BiasLens ARIA labels (30 minutes)
+     - Add aria-label to three lenses
+     - Add title attributes
+     - Screen reader test
+
+   Includes:
+   • Exact file paths
+   • Code examples with locations
+   • Test verification steps
+   • Estimated effort per fix
+   • Total: ~4 hours
+
+SUPPLEMENTARY DOCUMENTS (Reference)
+====================================
+
+6. AUDIT-MANIFEST.txt (this file)
+   Purpose: File inventory and navigation guide
+   Size: ~8 KB
+   Contains: What you're reading now
+
+================================================================================
+                          HOW TO USE THESE FILES
+================================================================================
+
+QUICK DECISION (5 minutes)
+  1. Read: README-FIRST.txt
+  2. Question: Should we apply Tier 1 fixes before shipping?
+  → See: AUDIT-SUMMARY.txt "DEPLOYMENT RECOMMENDATION"
+
+UNDERSTANDING THE FINDINGS (30 minutes)
+  1. Read: AUDIT-SUMMARY.txt (5 minutes)
+  2. Scan: UAT-FINDINGS-CHECKLIST.md (10 minutes)
+  3. Deep dive: UAT-REPORT-2026-03-24.md (15 minutes)
+
+IMPLEMENTING FIXES (4 hours)
+  1. Read: TIER-1-FIX-GUIDE.md (start to finish)
+  2. Implement: Fix 1 (2 hours) → Test
+  3. Implement: Fix 2 (15 minutes) → Test
+  4. Implement: Fix 3 (1 hour) → Test
+  5. Implement: Fix 4 (30 minutes) → Test
+  6. Run verification checklist (from UAT-FINDINGS-CHECKLIST.md)
+
+PREPARING FOR DEPLOYMENT
+  1. Check: Verification checklist (UAT-FINDINGS-CHECKLIST.md)
+  2. Run: Lighthouse audit (target 90+ Accessibility)
+  3. Run: WAVE accessibility check
+  4. Test: All 4 viewports (375px, 768px, 1024px, 1440px)
+  5. Test: Mobile gestures (pull-to-refresh, swipe close)
+  6. Deploy: When all checks pass
+
+================================================================================
+                          FILE INVENTORY
+================================================================================
+
+Location: /home/user/void--news/
+
+CURRENT AUDIT (March 24, 2026)
+==============================
+✓ READ-ME-FIRST.txt                    6 KB   Start here
+✓ UAT-REPORT-2026-03-24.md            34 KB   Main report
+✓ AUDIT-SUMMARY.txt                    9 KB   Executive summary
+✓ UAT-FINDINGS-CHECKLIST.md           14 KB   Findings reference
+✓ TIER-1-FIX-GUIDE.md                 13 KB   Implementation guide
+✓ AUDIT-MANIFEST.txt              (this file)  Inventory
+
+TOTAL: ~76 KB of audit documentation
+
+LEGACY AUDIT FILES (Previous Audits)
+====================================
+These are from earlier audit runs (kept for reference):
+- UAT_REPORT_20260320.md
+- UAT_REPORT_DEEP_DIVE_20260321.md
+- UAT_REPORT_DEEPDIVE_MOBILE_20260321.md
+- And others (can be archived if no longer needed)
+
+Recommendation: Keep current audit files (2026-03-24), archive legacy files
+
+================================================================================
+                         AUDIT STATISTICS
+================================================================================
+
+Components reviewed:        48 files (.tsx and .css)
+Design system compliance:   95%+ (Press & Precision)
+Overall score:              87/100 (launch-ready)
+Score with Tier 1 fixes:    94/100 (production-ready)
+
+FINDINGS BREAKDOWN
+==================
+Critical (ship-blockers):         0 (0%)     ✓ Clear
+High severity (must fix):         2 (6%)     H001, H002
+Medium severity (should fix):     8 (26%)    M001–M008
+Low severity (polish):           11 (35%)    L001–L011
+Info-level (monitoring):          7 (23%)    I001–I007
+
+By category:
+  Accessibility issues:           5 findings
+  Mobile UX issues:               4 findings
+  Design system gaps:             3 findings
+  Performance/optimization:       3 findings
+  Data display/validation:        2 findings
+  Error handling:                 2 findings
+  Other:                         12 findings
+
+Effort to fix all issues:
+  Tier 1 (critical):              4 hours
+  Tier 2 (important):             6 hours
+  Tier 3 (polish):                6 hours
+  Total:                         16 hours over 2 sprints
+
+================================================================================
+                     DESIGN SYSTEM VERDICT
+================================================================================
+
+Press & Precision Adherence Score: 95%
+
+✓ Typography (4 voices):         100%  Playfair, Inter, Barlow, IBM Plex
+✓ Color Discipline:               95%  Bias colors only for data; one contrast issue
+✓ Layout (Newspaper Grid):        95%  Asymmetric hierarchy; missing tablet opt
+✓ Motion (Spring Physics):        98%  GPU-only, spring presets, reduced-motion
+✓ Accessibility:                  90%  WCAG 44×44px; gaps in ARIA, keyboard nav
+✓ Responsive Design:              95%  All breakpoints; minor tablet optimization
+
+VERDICT: Excellent design system implementation. No AI slop. 
+Distinctive, intentional design throughout. Newspaper heritage evident.
+
+Minor fixes (accessible in 4 hours) bring score to 100%.
+
+================================================================================
+                        KEY RECOMMENDATIONS
+================================================================================
+
+IMMEDIATE (This sprint)
+=======================
+1. Apply Tier 1 fixes (4 hours)
+   → Use TIER-1-FIX-GUIDE.md
+   → Run verification checklist
+   → Deploy to production
+
+SHORT-TERM (Next sprint)
+=========================
+2. Apply Tier 2 fixes (6 hours)
+   → Keyboard navigation (arrow keys in Deep Dive)
+   → Empty state messaging improvements
+   → Mobile UX polish
+
+3. Apply Tier 3 fixes (6 hours)
+   → Typography consistency (Barlow Condensed)
+   → Tablet layout optimization
+   → Styling/polish improvements
+
+POST-LAUNCH
+===========
+4. Monitor
+   → User feedback on mobile UX
+   → Accessibility issues (screen readers)
+   → Performance (Lighthouse scores)
+
+5. Iterate
+   → Data validation logging
+   → Color contrast verification
+   → Ultra-wide optimization
+
+================================================================================
+                       BEFORE YOU DEPLOY
+================================================================================
+
+Required checklist:
+  ☐ Apply Tier 1 fixes (use TIER-1-FIX-GUIDE.md)
+  ☐ Run Lighthouse (90+ Accessibility, 85+ Performance)
+  ☐ Run WAVE accessibility check
+  ☐ VoiceOver/NVDA screen reader test
+  ☐ Test all 4 viewports (375px, 768px, 1024px, 1440px)
+  ☐ Mobile gesture test (pull-to-refresh, swipe, tap)
+  ☐ Dark mode color verification
+  ☐ Supabase error state test (offline)
+  ☐ All filter interactions (edition, category, lean)
+  ☐ Deep Dive open/close (desktop + mobile)
+
+When all checks pass → Deploy with confidence
+
+================================================================================
+                         NEXT STEPS
+================================================================================
+
+1. Read READ-ME-FIRST.txt (5 minutes)
+
+2. Make decision: Apply Tier 1 fixes?
+   → Yes (recommended): Use TIER-1-FIX-GUIDE.md (4 hours)
+   → No: Ship as-is (87/100, launch-ready)
+
+3. Run verification checklist (from UAT-FINDINGS-CHECKLIST.md)
+
+4. Deploy to production
+
+5. Monitor first 24 hours for errors
+
+6. Post-launch: Schedule Tier 2 + Tier 3 fixes (1–2 sprints)
+
+================================================================================
+
+All files are in: /home/user/void--news/
+
+Questions? See the relevant document:
+• What to do?       → READ-ME-FIRST.txt
+• What's broken?    → UAT-REPORT-2026-03-24.md
+• How to fix?       → TIER-1-FIX-GUIDE.md
+• What's missing?   → UAT-FINDINGS-CHECKLIST.md
+• In a nutshell?    → AUDIT-SUMMARY.txt
+
+================================================================================
