@@ -59,6 +59,18 @@ jobs:
               )
           """)
 
+          # Seed existing migrations if tracking table is empty
+          cur.execute("SELECT count(*) FROM _migrations")
+          if cur.fetchone()[0] == 0:
+              # Check if DB already has tables (i.e., migrations were applied before tracking existed)
+              cur.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'sources')")
+              if cur.fetchone()[0]:
+                  all_files = sorted(glob.glob("supabase/migrations/*.sql"))
+                  for af in all_files:
+                      n = os.path.basename(af)
+                      cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (n,))
+                  print(f"Seeded {len(all_files)} existing migrations into tracking table")
+
           migration_input = "${{ inputs.migration }}"
 
           if migration_input == "all":
