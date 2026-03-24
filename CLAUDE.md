@@ -393,7 +393,7 @@ CEO (Aacrit)
 | Build UI components, new features | `frontend-builder` |
 | Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` |
 | Desktop/mobile layout, responsive issues | `responsive-specialist` |
-| Browser testing, click-through QA | `uat-tester` |
+| UI/UX audit, user-lens testing, journey validation | `uat-tester` |
 | spaCy models, bias scoring, NER | `nlp-engineer` |
 | Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` |
 | Source vetting, RSS config, credibility | `source-curator` |
