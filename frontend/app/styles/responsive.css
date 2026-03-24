@@ -233,18 +233,6 @@
     -webkit-backdrop-filter: blur(8px) saturate(1.1);
   }
 
-  /* Bottom nav visible — glass morphism: iOS tab bar aesthetic */
-  .nav-bottom {
-    display: flex;
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    border-top: 1px solid var(--glass-border);
-    /* Pad below tabs so they clear iPhone home indicator.
-       max() ensures at least --space-2 even when safe-area-inset-bottom is 0. */
-    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom, 0px));
-  }
-
   /* [USER REQUEST] Mobile header: show full logo + edition/date.
      Desktop logo hidden; mobile logo (compact LogoFull at 22px) shown. */
   .nav-logo-desktop {
@@ -255,7 +243,7 @@
     display: block;
   }
 
-  /* Inline dateline: hidden on mobile — bottom nav carries edition context */
+  /* Inline dateline: hidden on mobile — edition pills in compact nav-filters row */
   .nav-dateline-inline {
     display: none;
   }
@@ -281,15 +269,6 @@
     min-width: 0;
   }
 
-  /* [CRITICAL-1] Bottom nav touch targets — WCAG 44×44px minimum.
-     5 editions fit in space-around layout; reduce horizontal padding to fit.
-     min-height stays 48px for thumb comfort. */
-  .nav-bottom-tab {
-    padding: var(--space-3) var(--space-2);
-    min-height: 48px;
-    min-width: 0;
-  }
-
   /* Filter toggle — full touch target on mobile */
   .filter-toggle {
     min-height: 44px;
@@ -300,11 +279,10 @@
   /* === LAYOUT === */
 
   /* page-main: shorthand overrides the base rule's padding: 0 var(--space-7)
-     on all sides. Bottom accounts for fixed bottom nav + safe area inset. */
-  /* Bottom padding accounts for: bottom nav + lean bar (48px) + safe area */
+     on all sides. No bottom nav — just safe area padding. */
   .page-main {
     padding: 0 var(--space-5);
-    padding-bottom: calc(var(--nav-bottom-height) + 48px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
@@ -585,43 +563,7 @@
 
   /* === NATIVE APP TOUCH FEEDBACK === */
 
-  /* Bottom nav — larger touch targets, iOS tab bar feel */
-  .nav-bottom {
-    min-height: 56px;
-  }
-
-  /* Bottom nav tab — snappy haptic-feel press (60ms snap, 300ms return) */
-  .nav-bottom-tab {
-    position: relative;
-    transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
-  }
-
-  .nav-bottom-tab:active {
-    transform: scale(0.9);
-    transition: transform 60ms var(--ease-out);
-  }
-
-  /* Active tab — spring scale-up + dot indicator (iOS convention) */
-  .nav-bottom-tab--active {
-    transform: scale(1.05);
-  }
-
-  .nav-bottom-tab--active::after {
-    content: "";
-    position: absolute;
-    bottom: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background-color: var(--accent-warm);
-  }
-
-  /* Inactive tabs: slightly muted */
-  .nav-bottom-tab:not(.nav-bottom-tab--active) {
-    opacity: 0.6;
-  }
+  /* Bottom nav removed — filters are in the nav-header now */
 
   /* Filter chips — pill-toggle feel with sliding indicator */
   .lean-bar__seg--active {
@@ -749,7 +691,8 @@
   /* === TOUCH TARGETS — WCAG 44×44px MINIMUM === */
 
   /* These elements already meet WCAG in most cases; this rule is the safety net */
-  .nav-bottom-tab,
+  .nav-filters__ed,
+  .nav-filters__lean,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -777,7 +720,8 @@
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
 
   /* Native apps don't allow text selection on buttons / cards */
-  .nav-bottom-tab,
+  .nav-filters__ed,
+  .nav-filters__lean,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,

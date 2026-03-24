@@ -1,26 +1,37 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import type { Edition } from "../lib/types";
+import type { Edition, Category } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import EditionIcon from "./EditionIcon";
 import { getEditionTimestamp } from "../lib/utils";
+import type { LeanChip } from "./FilterBar";
+import { hapticMicro } from "../lib/haptics";
+
+const ALL_CATEGORIES: ("All" | Category)[] = [
+  "All", "Politics", "Economy", "Science", "Health", "Culture",
+];
 
 interface NavBarProps {
   activeEdition: Edition;
+  /** Filter props — when provided, renders the compact filter row */
+  activeCategory?: "All" | Category;
+  onCategoryChange?: (category: "All" | Category) => void;
+  activeLean?: LeanChip;
+  onLeanChange?: (lean: LeanChip) => void;
 }
 
 /* ---------------------------------------------------------------------------
-   NavBar — Newspaper masthead (single compact row)
+   NavBar — Newspaper masthead with integrated compact filter row
 
-   Desktop: Logo (32px) | [flex spacer] | Dateline | Sources | Theme
-   Mobile:  Logo (22px) | [flex spacer] | Sources | Theme  +  bottom nav
+   Row 1: Logo | dateline | Sources | Theme
+   Row 2: [World US India] · [L C R] · [Topics ▾] [×badge]
 
-   Edition tabs live exclusively in FilterBar (desktop) and bottom nav (mobile).
-   The masthead stays clean: brand + orientation + utility only.
+   Everything in one sticky header. No separate filter bar, no bottom nav.
    --------------------------------------------------------------------------- */
 
 function formatDateCompact(): string {
@@ -36,60 +47,163 @@ function getEditionHref(slug: Edition): string {
   return `/${slug}`;
 }
 
-export default function NavBar({ activeEdition }: NavBarProps) {
+export default function NavBar({
+  activeEdition,
+  activeCategory = "All",
+  onCategoryChange,
+  activeLean = "All",
+  onLeanChange,
+}: NavBarProps) {
+  const [topicOpen, setTopicOpen] = useState(false);
+  const topicRef = useRef<HTMLDivElement>(null);
+
+  const handleLeanTap = (lean: LeanChip) => {
+    hapticMicro();
+    onLeanChange?.(lean === activeLean ? "All" : lean);
+  };
+
+  const handleTopicTap = (cat: "All" | Category) => {
+    hapticMicro();
+    onCategoryChange?.(cat);
+    setTopicOpen(false);
+  };
+
+  // Close topic dropdown on outside click
+  useEffect(() => {
+    if (!topicOpen) return;
+    const close = (e: MouseEvent) => {
+      if (topicRef.current && !topicRef.current.contains(e.target as Node)) {
+        setTopicOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [topicOpen]);
+
+  const hasFilters = !!onLeanChange;
+
   return (
-    <>
-      <header className="nav-header">
-        <nav className="nav-inner" aria-label="Main navigation">
-          {/* Logo — P1: brand identity, always left-anchored */}
-          <div className="nav-left">
-            <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
-              {/* Desktop: full combination mark at 32px */}
-              <span className="nav-logo-desktop">
-                <LogoFull height={32} />
-              </span>
-              {/* Mobile: same full logo at 22px */}
-              <span className="nav-logo-mobile">
-                <LogoFull height={22} />
-              </span>
-            </Link>
-          </div>
-
-          {/* Dateline — P3: temporal orientation, JetBrains Mono, muted */}
-          {/* Desktop: full date + time. Mobile: date only (compact). */}
-          <span className="nav-dateline-inline" aria-hidden="true">
-            {formatDateCompact()}
-            <span className="nav-dateline-inline__sep">&middot;</span>
-            <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
-          </span>
-          <span className="nav-dateline-mobile" aria-hidden="true">
-            {formatDateCompact()}
-          </span>
-
-          {/* Utility actions — P2: secondary nav + mode toggle */}
-          <div className="nav-right">
-            <PageToggle activePage="feed" />
-            <ThemeToggle />
-          </div>
-        </nav>
-      </header>
-
-      {/* Mobile bottom nav — edition switching, thumb-reachable */}
-      <nav className="nav-bottom" aria-label="Edition navigation">
-        {EDITIONS.map((edition) => (
-          <Link
-            key={`mobile-${edition.slug}`}
-            href={getEditionHref(edition.slug)}
-            aria-current={activeEdition === edition.slug ? "page" : undefined}
-            className={`nav-bottom-tab${activeEdition === edition.slug ? " nav-bottom-tab--active" : ""}`}
-          >
-            <span className="nav-tab__inner">
-              <EditionIcon slug={edition.slug} size={18} />
-              {edition.label}
+    <header className="nav-header">
+      {/* ── Row 1: Masthead ── */}
+      <nav className="nav-inner" aria-label="Main navigation">
+        <div className="nav-left">
+          <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
+            <span className="nav-logo-desktop">
+              <LogoFull height={32} />
+            </span>
+            <span className="nav-logo-mobile">
+              <LogoFull height={22} />
             </span>
           </Link>
-        ))}
+        </div>
+
+        <span className="nav-dateline-inline" aria-hidden="true">
+          {formatDateCompact()}
+          <span className="nav-dateline-inline__sep">&middot;</span>
+          <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
+        </span>
+        <span className="nav-dateline-mobile" aria-hidden="true">
+          {formatDateCompact()}
+        </span>
+
+        <div className="nav-right">
+          <PageToggle activePage="feed" />
+          <ThemeToggle />
+        </div>
       </nav>
-    </>
+
+      {/* ── Row 2: Compact filters (editions + lean + topic) ── */}
+      {hasFilters && (
+        <div className="nav-filters">
+          {/* Edition pills */}
+          <div className="nav-filters__group" role="tablist" aria-label="Edition">
+            {EDITIONS.map((ed) => (
+              <Link
+                key={ed.slug}
+                href={getEditionHref(ed.slug)}
+                role="tab"
+                aria-selected={activeEdition === ed.slug}
+                className={`nav-filters__ed${activeEdition === ed.slug ? " nav-filters__ed--active" : ""}`}
+              >
+                <EditionIcon slug={ed.slug} size={11} />
+                <span>{ed.label}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="nav-filters__sep" aria-hidden="true" />
+
+          {/* Lean chips */}
+          <div className="nav-filters__group" role="tablist" aria-label="Political perspective">
+            {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+              <button
+                key={lean}
+                role="tab"
+                aria-selected={activeLean === lean}
+                onClick={() => handleLeanTap(lean)}
+                className={`nav-filters__lean nav-filters__lean--${lean.toLowerCase()}${activeLean === lean ? " nav-filters__lean--active" : ""}`}
+              >
+                <span className="nav-filters__lean-dot" aria-hidden="true" />
+                {lean}
+              </button>
+            ))}
+          </div>
+
+          <div className="nav-filters__sep" aria-hidden="true" />
+
+          {/* Topic dropdown */}
+          <div
+            ref={topicRef}
+            className={`nav-filters__topics${topicOpen ? " nav-filters__topics--open" : ""}`}
+          >
+            <button
+              className="nav-filters__topic-trigger"
+              onClick={() => setTopicOpen((v) => !v)}
+              onMouseEnter={() => setTopicOpen(true)}
+              aria-expanded={topicOpen}
+              aria-label="Filter by topic"
+            >
+              {activeCategory === "All" ? "Topics" : activeCategory}
+              <span className={`nav-filters__topic-caret${topicOpen ? " nav-filters__topic-caret--open" : ""}`} aria-hidden="true">&#9662;</span>
+            </button>
+
+            {topicOpen && (
+              <div
+                className="nav-filters__topic-panel"
+                role="listbox"
+                aria-label="Topics"
+                onMouseLeave={() => setTopicOpen(false)}
+              >
+                {ALL_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    role="option"
+                    aria-selected={activeCategory === cat}
+                    onClick={() => handleTopicTap(cat)}
+                    className={`nav-filters__topic-opt${activeCategory === cat ? " nav-filters__topic-opt--active" : ""}`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Active lean badge */}
+          {activeLean !== "All" && (
+            <div className="nav-filters__badge" role="status" aria-live="polite">
+              <span>{activeLean}</span>
+              <button
+                className="nav-filters__badge-x"
+                onClick={() => { hapticMicro(); onLeanChange?.("All"); }}
+                aria-label={`Clear ${activeLean} filter`}
+              >
+                &times;
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </header>
   );
 }

@@ -7,7 +7,7 @@ import { supabase, supabaseError } from "../lib/supabase";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar from "./NavBar";
-import FilterBar, { type LeanChip, LEAN_RANGES } from "./FilterBar";
+import { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
@@ -605,6 +605,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     <div className="page-container">
       <NavBar
         activeEdition={activeEdition}
+        activeCategory={activeCategory}
+        onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+        activeLean={activeLean}
+        onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
       />
 
       <main
@@ -639,16 +643,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           </div>
         )}
 
-        {/* Filter bar row — category chips + lean chips + On Air CTA */}
-        <div className="filter-row">
-          <FilterBar
-            activeCategory={activeCategory}
-            onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
-            activeLean={activeLean}
-            onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
-            activeEdition={activeEdition}
-          />
-        </div>
+        {/* Filters now integrated into NavBar — no separate filter row */}
 
         {/* Live region, loading, error, empty states, story grids */}
         <>
@@ -846,21 +841,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Mobile lean chips — fixed above bottom nav, thumb-reachable */}
-      <div className="mobile-lean-bar" role="tablist" aria-label="Political perspective">
-        {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
-          <button
-            key={lean}
-            role="tab"
-            aria-selected={activeLean === lean}
-            onClick={() => { hapticMicro(); setActiveLean(activeLean === lean ? "All" : lean); setVisibleCount(BATCH_SIZE); }}
-            className={`mobile-lean-bar__chip mobile-lean-bar__chip--${lean.toLowerCase()}${activeLean === lean ? " mobile-lean-bar__chip--active" : ""}`}
-          >
-            <span className="mobile-lean-bar__dot" aria-hidden="true" />
-            {lean}
-          </button>
-        ))}
-      </div>
+      {/* Lean chips now integrated into NavBar — no separate mobile lean bar */}
     </div>
   );
 }
