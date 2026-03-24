@@ -64,7 +64,10 @@ def main():
             continue
 
         voices = get_voices_for_today(edition)
-        result = produce_audio(script, voices, edition)
+        result = produce_audio(
+            script, voices, edition,
+            opinion_audio_script=brief.get("opinion_audio_script"),
+        )
 
         if result:
             # Update daily_briefs table with full brief data

@@ -125,6 +125,7 @@ def main():
                 opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str)
                 if opinion_result:
                     brief["opinion_text"] = opinion_result["opinion_text"]
+                    brief["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
                     brief["opinion_lean"] = opinion_result["opinion_lean"]
                     brief["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
                     owords = len(opinion_result["opinion_text"].split())
@@ -144,7 +145,10 @@ def main():
             try:
                 from briefing.audio_producer import produce_audio
                 voices = get_voices_for_today(edition)
-                audio_result = produce_audio(brief["audio_script"], voices, edition)
+                audio_result = produce_audio(
+                    brief["audio_script"], voices, edition,
+                    opinion_audio_script=brief.get("opinion_audio_script"),
+                )
                 if audio_result:
                     print(f"  Audio: {audio_result['duration_seconds']}s, "
                           f"{audio_result['file_size'] / 1024:.0f} KB")

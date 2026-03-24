@@ -1811,6 +1811,7 @@ def main():
                         voices = get_voices_for_today(edition)
                         audio_result = produce_audio(
                             brief["audio_script"], voices, edition,
+                            opinion_audio_script=brief.get("opinion_audio_script"),
                         )
                         if audio_result:
                             brief_row["audio_url"] = audio_result["audio_url"]

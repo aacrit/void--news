@@ -264,10 +264,76 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
 # Main entry point
 # ---------------------------------------------------------------------------
 
+def _synthesize_opinion_monologue(
+    opinion_audio_script: str,
+    voice: str,
+) -> Optional[bytes]:
+    """Synthesize a single-voice opinion editorial monologue.
+
+    Uses the same Gemini TTS but with a single speaker format.
+    Returns raw PCM bytes or None.
+    """
+    if not GEMINI_TTS_AVAILABLE:
+        return None
+
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None
+
+    # Wrap as single-speaker dialogue for Gemini TTS
+    # The opinion script is flowing text, convert to One: lines
+    lines = []
+    for line in opinion_audio_script.splitlines():
+        stripped = line.strip()
+        if stripped:
+            # If already has speaker tag, normalize it
+            if re.match(r"^(One|Two|A|B):\s*", stripped):
+                stripped = re.sub(r"^(One|Two|A|B):\s*", "", stripped)
+            lines.append(f"One: {stripped}")
+
+    dialogue = "\n".join(lines)
+    if not dialogue:
+        return None
+
+    client = genai.Client(api_key=api_key)
+    try:
+        response = client.models.generate_content(
+            model=_TTS_MODEL,
+            contents=dialogue,
+            config=types.GenerateContentConfig(
+                response_modalities=["AUDIO"],
+                speech_config=types.SpeechConfig(
+                    multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
+                        speaker_voice_configs=[
+                            types.SpeakerVoiceConfig(
+                                speaker="One",
+                                voice_config=types.VoiceConfig(
+                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                        voice_name=voice,
+                                    )
+                                ),
+                            ),
+                        ]
+                    )
+                ),
+            ),
+        )
+
+        if response.candidates and response.candidates[0].content.parts:
+            part = response.candidates[0].content.parts[0]
+            if hasattr(part, "inline_data") and part.inline_data:
+                return part.inline_data.data
+    except Exception as e:
+        print(f"  [warn][audio] Opinion TTS failed: {e}")
+
+    return None
+
+
 def produce_audio(
     audio_script: str,
     voices: dict,
     edition: str,
+    opinion_audio_script: str | None = None,
 ) -> Optional[dict]:
     """
     Synthesize a two-voice news update via Gemini Flash TTS.
@@ -276,8 +342,12 @@ def produce_audio(
       1. Script → dialogue format (One:/Two:)
       2. Gemini Flash TTS → PCM output (chunked if long)
       3. PCM → WAV → AudioSegment
-      4. Assemble: ident intro + dialogue + outro
+      4. Assemble: ident + news dialogue + [transition + opinion] + outro
       5. Export MP3 → Supabase upload
+
+    The opinion segment is appended AFTER the main news, separated by the
+    transition asset (glass-bell pulse). This makes it clearly optional —
+    the main broadcast is complete, then void --opinion begins.
     """
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
@@ -308,7 +378,7 @@ def produce_audio(
     wav_data = _pcm_to_wav(pcm_data)
     dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
 
-    # 4. Assemble: ident + breath + dialogue + breath + outro
+    # 4. Assemble: ident + breath + news dialogue + breath + [transition + opinion] + outro
     combined = AudioSegment.empty()
 
     ident = _load_asset("ident.wav")
@@ -318,6 +388,30 @@ def produce_audio(
     combined += AudioSegment.silent(duration=250)
     combined += dialogue_seg
     combined += AudioSegment.silent(duration=350)
+
+    # --- Opinion segment (optional, after main news) ---
+    if opinion_audio_script:
+        # Use host_a voice for the editorial monologue
+        print(f"  [audio] Synthesizing opinion monologue ({len(opinion_audio_script.split())} words, voice {voice_a_name})")
+        opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, voice_a_name)
+        if opinion_pcm:
+            opinion_duration = len(opinion_pcm) / (24000 * 2)
+            print(f"  [audio] Opinion TTS: {opinion_duration:.1f}s")
+            opinion_wav = _pcm_to_wav(opinion_pcm)
+            opinion_seg = AudioSegment.from_wav(io.BytesIO(opinion_wav))
+
+            # Insert transition asset between news and opinion
+            transition = _load_asset("transition.wav")
+            if transition:
+                combined += transition
+            else:
+                combined += AudioSegment.silent(duration=800)
+
+            combined += AudioSegment.silent(duration=200)
+            combined += opinion_seg
+            combined += AudioSegment.silent(duration=350)
+        else:
+            print("  [audio] Opinion TTS failed — main broadcast unaffected")
 
     # Outro: the resolve
     outro = _load_asset("outro.wav")
