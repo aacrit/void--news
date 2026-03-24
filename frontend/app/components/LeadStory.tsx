@@ -13,6 +13,8 @@ interface LeadStoryProps {
   onStoryClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
+  /** Called when the live badge is clicked — expands the timeline below */
+  onLiveBadgeClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -20,7 +22,7 @@ interface LeadStoryProps {
    Larger typography, more prominent layout, bigger bias stamp.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, onLiveBadgeClick }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
   return (
@@ -44,20 +46,45 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
       }}
       className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
-      {/* Live update badge — shows when memory engine is tracking this story */}
+      {/* Live update badge — shows when memory engine is tracking this story.
+          Rendered as a <button> when onLiveBadgeClick is wired (primary lead
+          story with an active timeline below); plain <div> otherwise. */}
       {story.isTopStory && story.liveUpdateCount != null && story.liveUpdateCount > 0 && (
-        <div className="lead-story__live-badge">
-          <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
-          <span className="live-badge__text">Live</span>
-          {story.lastLiveUpdateAt && (
-            <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
-              Updated {timeAgo(story.lastLiveUpdateAt)}
-            </time>
-          )}
-          <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
-            +{story.liveUpdateCount}
-          </span>
-        </div>
+        onLiveBadgeClick ? (
+          <button
+            type="button"
+            className="lead-story__live-badge lead-story__live-badge--btn"
+            onClick={(e) => {
+              e.stopPropagation(); // prevent card click / DeepDive open
+              onLiveBadgeClick();
+            }}
+            aria-label={`View ${story.liveUpdateCount} live updates — click to expand timeline`}
+          >
+            <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
+            <span className="live-badge__text">Live</span>
+            {story.lastLiveUpdateAt && (
+              <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
+                Updated {timeAgo(story.lastLiveUpdateAt)}
+              </time>
+            )}
+            <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
+              +{story.liveUpdateCount}
+            </span>
+          </button>
+        ) : (
+          <div className="lead-story__live-badge">
+            <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
+            <span className="live-badge__text">Live</span>
+            {story.lastLiveUpdateAt && (
+              <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
+                Updated {timeAgo(story.lastLiveUpdateAt)}
+              </time>
+            )}
+            <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
+              +{story.liveUpdateCount}
+            </span>
+          </div>
+        )
       )}
 
       {/* Category tag + time */}

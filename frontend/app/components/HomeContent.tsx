@@ -90,7 +90,7 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
   );
 }
 
-import LiveUpdatesSection from "./LiveUpdatesSection";
+import LiveUpdatesSection, { type LiveUpdatesSectionHandle } from "./LiveUpdatesSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
@@ -177,6 +177,7 @@ interface HomeContentProps {
 
 function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const activeEdition: Edition = initialEdition;
+  const liveUpdatesRef = useRef<LiveUpdatesSectionHandle>(null);
 
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -742,7 +743,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
                     <div data-story-index={i}>
-                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} onLiveBadgeClick={i === 0 && story.storyMemoryId ? () => liveUpdatesRef.current?.expand() : undefined} />
                     </div>
                   </VisibleCard>
                 ))}
@@ -751,7 +752,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
             {/* 2b. Live Updates — articles discovered between pipeline runs for the top story */}
             {!isLoading && leadStories.length > 0 && leadStories[0].storyMemoryId && (
-              <LiveUpdatesSection storyMemoryId={leadStories[0].storyMemoryId} />
+              <LiveUpdatesSection ref={liveUpdatesRef} storyMemoryId={leadStories[0].storyMemoryId} />
             )}
 
             {/* Medium stories — broadsheet grid on desktop */}
