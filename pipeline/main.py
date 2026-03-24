@@ -1807,6 +1807,7 @@ def main():
                         "opinion_text": brief.get("opinion_text"),
                         "opinion_lean": brief.get("opinion_lean"),
                         "opinion_cluster_id": brief.get("opinion_cluster_id"),
+                        "opinion_audio_script": brief.get("opinion_audio_script"),
                         "audio_script": brief.get("audio_script"),
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }
