@@ -88,6 +88,15 @@ except ImportError as e:
     print(f"[warn] Briefing modules not available ({e}). Skipping daily brief.")
 
 
+# News Memory Engine — optional (tracks top story between runs)
+MEMORY_AVAILABLE = False
+try:
+    from memory.memory_orchestrator import update_memory_after_pipeline_run
+    MEMORY_AVAILABLE = True
+except ImportError:
+    pass
+
+
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
 # ---------------------------------------------------------------------------
@@ -2074,6 +2083,23 @@ def main():
                         print(f"  [warn] Enrichment failed for {cid}: {enrich_err}")
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
+
+    # Step 9a: Update memory engine with new top story
+    if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
+        print("\n[9a] Updating news memory engine...")
+        try:
+            memory_result = update_memory_after_pipeline_run(
+                pipeline_run_id=run_id,
+                clusters=clusters,
+                cluster_ids=cluster_ids_to_enrich,
+            )
+            print(f"  Memory engine: {memory_result.get('status', 'unknown')}"
+                  f" — {memory_result.get('top_story', 'n/a')}"
+                  f" ({memory_result.get('source_count', 0)} sources)")
+        except Exception as e:
+            print(f"  [warn] Memory engine update failed: {e}")
+    elif not MEMORY_AVAILABLE:
+        print("\n[9a] Skipping memory engine (not installed)")
 
     # Step 9b: Populate article_categories junction table
     if ANALYSIS_AVAILABLE and article_categories_map:

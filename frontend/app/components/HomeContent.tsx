@@ -90,6 +90,7 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
   );
 }
 
+import LiveUpdatesSection from "./LiveUpdatesSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
@@ -323,7 +324,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,is_top_story,live_update_count,last_live_update_at,story_memory_id`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         let res;
@@ -464,6 +465,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     sources: [],
                   }
                 : undefined,
+              isTopStory: cluster.is_top_story || false,
+              liveUpdateCount: cluster.live_update_count || 0,
+              lastLiveUpdateAt: cluster.last_live_update_at || undefined,
+              storyMemoryId: cluster.story_memory_id || undefined,
             };
           }
         );
@@ -742,6 +747,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   </VisibleCard>
                 ))}
               </section>
+            )}
+
+            {/* 2b. Live Updates — articles discovered between pipeline runs for the top story */}
+            {!isLoading && leadStories.length > 0 && leadStories[0].storyMemoryId && (
+              <LiveUpdatesSection storyMemoryId={leadStories[0].storyMemoryId} />
             )}
 
             {/* Medium stories — broadsheet grid on desktop */}
