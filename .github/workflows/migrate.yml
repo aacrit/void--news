@@ -19,17 +19,35 @@ jobs:
         run: pip install psycopg2-binary
       - name: Run migration
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
           python3 << 'PYEOF'
           import psycopg2, os, glob, sys
 
-          db_url = os.environ['SUPABASE_DB_URL']
-          if not db_url:
-              print("ERROR: SUPABASE_DB_URL secret not set")
-              print("Set it to the connection string from Supabase Dashboard → Settings → Database → Connection string → URI")
+          pw = os.environ['SUPABASE_DB_PASSWORD']
+          ref = 'xryzskhgfuafyotrcdvj'
+
+          # Try multiple connection methods (same as apply-migrations.yml)
+          conn = None
+          attempts = [
+              f"postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require",
+              f"postgresql://postgres:{pw}@db.{ref}.supabase.co:5432/postgres?sslmode=require",
+              f"postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=require",
+          ]
+
+          for dsn in attempts:
+              host = dsn.split("@")[1].split("/")[0]
+              try:
+                  conn = psycopg2.connect(dsn, connect_timeout=15)
+                  print(f"Connected via {host}")
+                  break
+              except Exception as e:
+                  print(f"Failed {host}: {str(e).strip().split(chr(10))[0][:100]}")
+                  conn = None
+
+          if not conn:
+              print("All connection attempts failed!")
               sys.exit(1)
-          conn = psycopg2.connect(db_url)
           conn.autocommit = True
           cur = conn.cursor()
 
