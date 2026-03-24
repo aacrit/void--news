@@ -182,54 +182,57 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
             <span className="daily-brief__timestamp">{timeAgo(brief.created_at)}</span>
           )}
 
-          <button
-            className={`void-onair${isPlaying ? " void-onair--playing" : ""}${!hasAudio ? " void-onair--disabled" : ""}`}
-            onClick={hasAudio ? handlePlayPause : undefined}
-            aria-label={!hasAudio ? "Audio broadcast — coming soon" : isPlaying ? "Pause broadcast" : "Play void onair"}
-            type="button"
-            disabled={!hasAudio}
-            title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
-          >
-            <ScaleIcon
-              size={12}
-              animation={isPlaying ? "analyzing" : "idle"}
-              aria-hidden
-            />
-            {isPlaying && <span className="void-onair__dot" />}
-            <span className="void-onair__name">
-              void --onair
-              {showSubtitles && <span className="void-onair__subtitle">Audio Broadcast</span>}
-            </span>
-            <span className="void-onair__glyph" aria-hidden="true">
-              {isPlaying ? "\u275A\u275A" : "\u25B6"}
-            </span>
-            {isPlaying && (
-              <span className="void-onair__time">
-                {formatTime(currentTime)}/{formatTime(displayDuration)}
+          <div className={`void-onair${isPlaying ? " void-onair--playing" : ""}${!hasAudio ? " void-onair--disabled" : ""}`}>
+            {/* Play/pause button */}
+            <button
+              className="void-onair__btn"
+              onClick={hasAudio ? handlePlayPause : undefined}
+              aria-label={!hasAudio ? "Audio broadcast — coming soon" : isPlaying ? "Pause broadcast" : "Play void onair"}
+              type="button"
+              disabled={!hasAudio}
+              title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
+            >
+              <span className="void-onair__glyph" aria-hidden="true">
+                {isPlaying ? "\u275A\u275A" : "\u25B6"}
+              </span>
+            </button>
+
+            {/* Label — shown when idle, hidden when playing to make room for slider */}
+            {!isPlaying && (
+              <span className="void-onair__name">
+                void --onair
+                {showSubtitles && <span className="void-onair__subtitle">Audio Broadcast</span>}
               </span>
             )}
-          </button>
-        </div>
 
-        {/* Progress bar — thin line below header, visible when playing */}
-        {hasAudio && isPlaying && (
-          <div className="void-onair__track">
-            <div
-              className="void-onair__fill"
-              style={{ width: `${progress}%` }}
-            />
-            <input
-              type="range"
-              className="void-onair__seek"
-              min={0}
-              max={displayDuration || 100}
-              value={currentTime}
-              step={0.5}
-              onChange={handleSeek}
-              aria-label="Broadcast progress"
-            />
+            {/* Inline slider + time — shown when playing */}
+            {isPlaying && hasAudio && (
+              <>
+                <div className="void-onair__track">
+                  <div
+                    className="void-onair__fill"
+                    style={{ width: `${progress}%` }}
+                  />
+                  <input
+                    type="range"
+                    className="void-onair__seek"
+                    min={0}
+                    max={displayDuration || 100}
+                    value={currentTime}
+                    step={0.5}
+                    onChange={handleSeek}
+                    aria-label="Broadcast progress"
+                  />
+                </div>
+                <span className="void-onair__time">
+                  {formatTime(currentTime)}
+                  <span className="void-onair__time-sep">/</span>
+                  {formatTime(displayDuration)}
+                </span>
+              </>
+            )}
           </div>
-        )}
+        </div>
 
         {/* TL;DR body */}
         <div

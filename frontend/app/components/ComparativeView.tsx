@@ -2,11 +2,16 @@
 
 import { useMemo, useState } from "react";
 import type { StorySource } from "../lib/types";
+import { hapticMicro } from "../lib/haptics";
 
 /* ---------------------------------------------------------------------------
    ComparativeView — "Read All Sides"
    Groups sources into Left / Center / Right buckets and shows summaries
    side-by-side with word-level diff highlighting.
+
+   Sub-tabs at top for Left / Center / Right navigation.
+   Mobile: one perspective at a time. Desktop: all three columns visible,
+   sub-tabs highlight the active column.
 
    Left:   politicalLean 0–40
    Center: politicalLean 41–60
@@ -119,6 +124,7 @@ const VISIBLE_LIMIT = 5;
 
 export default function ComparativeView({ sources, consensusPoints, divergencePoints }: ComparativeViewProps) {
   const [expandedBuckets, setExpandedBuckets] = useState<Record<string, boolean>>({});
+  const [activeSubTab, setActiveSubTab] = useState<"Left" | "Center" | "Right" | null>(null);
 
   const buckets: Record<string, BucketSource[]> = useMemo(() => {
     const result: Record<string, BucketSource[]> = { Left: [], Center: [], Right: [] };
@@ -161,6 +167,11 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
 
   const activeBuckets = BUCKETS.filter((b) => buckets[b.label].length > 0);
 
+  // Default to first available bucket if none selected
+  const effectiveTab = activeSubTab && buckets[activeSubTab]?.length > 0
+    ? activeSubTab
+    : activeBuckets[0]?.label ?? "Center";
+
   if (activeBuckets.length < 2) {
     return (
       <div className="comp-view comp-view--empty">
@@ -176,6 +187,27 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
 
   return (
     <div className="comp-view" role="region" aria-label="Read all sides: sources by perspective">
+      {/* ── Sub-tabs: Left / Center / Right ── */}
+      <nav className="comp-view__subtabs" role="tablist" aria-label="Perspective">
+        {BUCKETS.map((bucket) => {
+          const count = buckets[bucket.label].length;
+          if (count === 0) return null;
+          return (
+            <button
+              key={bucket.label}
+              role="tab"
+              aria-selected={effectiveTab === bucket.label}
+              onClick={() => { hapticMicro(); setActiveSubTab(bucket.label); }}
+              className={`comp-view__subtab comp-view__subtab--${bucket.label.toLowerCase()}${effectiveTab === bucket.label ? " comp-view__subtab--active" : ""}`}
+            >
+              <span className="comp-view__subtab-dot" aria-hidden="true" />
+              {bucket.label}
+              <span className="comp-view__subtab-count">{count}</span>
+            </button>
+          );
+        })}
+      </nav>
+
       {/* Convergence & Divergence — embedded at top of All Sides */}
       {(hasConsensus || hasDivergence) && (
         <div className="comp-view__insights">
@@ -217,8 +249,14 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
           const visibleItems = isExpanded ? items : items.slice(0, VISIBLE_LIMIT);
           const hasMore = items.length > VISIBLE_LIMIT;
 
+          // On mobile, only show the active sub-tab's column
+          const isActive = effectiveTab === bucket.label;
+
           return (
-            <div key={bucket.label} className={`comp-view__col ${bucket.cssClass}`}>
+            <div
+              key={bucket.label}
+              className={`comp-view__col ${bucket.cssClass}${isActive ? " comp-view__col--active" : ""}`}
+            >
               {/* Column header */}
               <div className="comp-view__col-header">
                 <span className="comp-view__lean-label">{bucket.label}</span>
@@ -244,7 +282,6 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                   const rigor = source.biasScores?.factualRigor ?? 50;
                   const sensationalism = source.biasScores?.sensationalism ?? 30;
                   const opinionLabel = source.lensData?.opinionLabel ?? "Reporting";
-                  const confidence = source.confidence ?? 0.5;
 
                   // Build diff-highlighted text from actual article content
                   const titleText = source.name;
@@ -281,7 +318,7 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                         </span>
                       </div>
 
-                      {/* Source credibility signals — surfaces existing unused data */}
+                      {/* Source credibility signals — subtle inline */}
                       <div className="comp-view__signals">
                         <span className={`comp-view__type-badge comp-view__type-badge--${opinionLabel.toLowerCase()}`}>
                           {opinionLabel}

@@ -3868,86 +3868,94 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-bottom: var(--space-2);
 }
 
-/* ---- void --onair — minimal broadcast pill ------------------------------ */
+/* ---- void --onair — inline audio player pill ---------------------------- */
+/* Idle: [▶ void --onair]
+   Playing: [❚❚ ═══════○══ 1:23/4:56] — slider + time inside the pill */
 
 .void-onair {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 6px;
   margin-left: auto;
-  padding: var(--space-1) var(--space-3);
+  padding: 3px 4px 3px 3px;
   border: 1px solid var(--border-strong);
   border-radius: 20px;
   background: none;
   color: var(--fg-secondary);
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  cursor: pointer;
+  letter-spacing: 0.03em;
   white-space: nowrap;
   transition: border-color var(--dur-fast) var(--ease-out),
-              color var(--dur-fast) var(--ease-out);
-}
-
-.void-onair:hover {
-  border-color: var(--accent-warm);
-  color: var(--fg-primary);
-}
-
-.void-onair:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
+              color var(--dur-fast) var(--ease-out),
+              width 300ms var(--ease-out);
 }
 
 .void-onair--disabled {
   opacity: 0.45;
-  cursor: default;
   pointer-events: none;
 }
-.void-onair--disabled .void-onair__glyph { opacity: 0.5; }
 
 .void-onair--playing {
   border-color: var(--accent-warm);
   color: var(--accent-warm);
+  /* Wider when playing to accommodate slider */
+  min-width: 180px;
 }
 
-.void-onair__dot {
-  width: 6px;
-  height: 6px;
+/* Play/pause button — circular touch target inside the pill */
+.void-onair__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background-color: var(--indicator-broadcast);
+  border: none;
+  background-color: var(--bg-secondary);
+  color: inherit;
+  cursor: pointer;
   flex-shrink: 0;
-  animation: onair-pulse 1.5s ease-in-out infinite;
+  transition: background-color 120ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
-@keyframes onair-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+.void-onair__btn:hover {
+  background-color: var(--bg-hover);
+}
+
+.void-onair__btn:active {
+  transform: scale(0.9);
+}
+
+.void-onair__btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 1px;
+}
+
+.void-onair--playing .void-onair__btn {
+  background-color: var(--accent-warm);
+  color: var(--bg-primary);
+}
+
+.void-onair__glyph {
+  font-size: 8px;
+  line-height: 1;
 }
 
 .void-onair__name {
   line-height: 1;
+  padding-right: 4px;
 }
 
-.void-onair__glyph {
-  font-size: 0.65em;
-  line-height: 1;
-}
-
-.void-onair__time {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.6;
-}
-
-/* Progress track — full-width thin bar below the header */
+/* ── Inline track — slider inside the pill ── */
 .void-onair__track {
   position: relative;
+  flex: 1;
   height: 3px;
+  min-width: 60px;
   background-color: var(--border-subtle);
   border-radius: 2px;
-  margin-top: var(--space-2);
-  margin-bottom: var(--space-1);
 }
 
 .void-onair__fill {
@@ -3960,13 +3968,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   transition: width 250ms linear;
 }
 
-/* Invisible range input overlaid on the track for seeking */
+/* Range input: visually transparent, draggable over the track */
 .void-onair__seek {
   position: absolute;
-  top: -6px;
-  left: 0;
-  width: 100%;
-  height: 16px;
+  top: -8px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: 20px;
   margin: 0;
   -webkit-appearance: none;
   appearance: none;
@@ -3977,14 +3985,50 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .void-onair__seek::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--accent-warm);
+}
+
+/* Show thumb on hover/focus for visual feedback */
+.void-onair__track:hover .void-onair__seek,
+.void-onair__seek:focus-visible {
+  opacity: 1;
+}
+
+.void-onair__track:hover .void-onair__seek::-webkit-slider-thumb {
+  background-color: var(--accent-warm);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+}
+
+/* Time display */
+.void-onair__time {
+  font-variant-numeric: tabular-nums;
+  font-size: 9px;
+  opacity: 0.7;
+  flex-shrink: 0;
+  padding-right: 4px;
+}
+
+.void-onair__time-sep {
+  opacity: 0.4;
+  margin: 0 1px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .void-onair { transition: none; }
-  .void-onair__dot { animation: none; opacity: 1; }
   .void-onair__fill { transition: none; }
+}
+
+/* Mobile: slightly wider min for thumb comfort */
+@media (max-width: 767px) {
+  .void-onair--playing {
+    min-width: 160px;
+  }
+  .void-onair__track {
+    min-width: 50px;
+  }
 }
 
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */
@@ -4092,6 +4136,87 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-size: var(--text-sm);
   color: var(--fg-tertiary);
   text-align: center;
+}
+
+/* ---- Sub-tabs: Left / Center / Right perspective switcher ---- */
+.comp-view__subtabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-2);
+}
+
+.comp-view__subtab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  min-height: 32px;
+  transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out);
+}
+
+.comp-view__subtab:hover {
+  color: var(--fg-secondary);
+}
+
+.comp-view__subtab--active {
+  color: var(--fg-primary);
+  font-weight: 700;
+  border-bottom-color: var(--fg-primary);
+}
+
+.comp-view__subtab--left.comp-view__subtab--active {
+  border-bottom-color: var(--bias-left);
+  color: var(--bias-left);
+}
+
+.comp-view__subtab--center.comp-view__subtab--active {
+  border-bottom-color: var(--bias-center);
+}
+
+.comp-view__subtab--right.comp-view__subtab--active {
+  border-bottom-color: var(--bias-right);
+  color: var(--bias-right);
+}
+
+.comp-view__subtab-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comp-view__subtab--left .comp-view__subtab-dot { background-color: var(--bias-left); }
+.comp-view__subtab--center .comp-view__subtab-dot { background-color: var(--bias-center); }
+.comp-view__subtab--right .comp-view__subtab-dot { background-color: var(--bias-right); }
+
+.comp-view__subtab-count {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 400;
+  color: var(--fg-muted);
+  opacity: 0.7;
+}
+
+/* Mobile: sub-tabs control which column is visible */
+@media (max-width: 767px) {
+  .comp-view__col {
+    display: none;
+  }
+  .comp-view__col--active {
+    display: block;
+  }
 }
 
 /* ---- Three-column grid ---- */
@@ -4271,25 +4396,24 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-bottom: var(--space-2);
 }
 
-/* Type badge: Reporting / Analysis / Opinion / Editorial */
+/* Type badge: Reporting / Analysis / Opinion / Editorial — subtle inline label */
 .comp-view__type-badge {
   font-family: var(--font-data);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 1px 5px;
-  border-radius: 2px;
+  padding: 0;
   flex-shrink: 0;
-  color: var(--fg-tertiary);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
+  color: var(--fg-muted);
+  background: none;
+  border: none;
 }
 
-.comp-view__type-badge--reporting { color: var(--sense-low); border-color: var(--sense-low); }
-.comp-view__type-badge--analysis { color: var(--fg-secondary); }
-.comp-view__type-badge--opinion { color: var(--sense-medium); border-color: var(--sense-medium); }
-.comp-view__type-badge--editorial { color: var(--sense-high); border-color: var(--sense-high); }
+.comp-view__type-badge--reporting { color: var(--fg-muted); }
+.comp-view__type-badge--analysis { color: var(--fg-muted); }
+.comp-view__type-badge--opinion { color: var(--fg-tertiary); }
+.comp-view__type-badge--editorial { color: var(--fg-tertiary); }
 
 /* Factual rigor micro-bar */
 .comp-view__rigor-bar {
