@@ -1800,6 +1800,8 @@ def main():
                         "pipeline_run_id": run_id,
                         "tldr_text": brief["tldr_text"],
                         "opinion_text": brief.get("opinion_text"),
+                        "opinion_lean": brief.get("opinion_lean"),
+                        "opinion_cluster_id": brief.get("opinion_cluster_id"),
                         "audio_script": brief.get("audio_script"),
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }

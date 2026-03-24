@@ -3,11 +3,14 @@ Daily Brief generator for void --news.
 
 Calls Gemini once per edition to produce:
   - tldr_text: editorial paragraph for homepage display
+  - opinion_text: single-story editorial (Atlantic/WSJ style)
   - audio_script: two-voice news update script
 
+Opinion rotates lean daily: left → center → right (day-of-year mod 3).
+Each opinion focuses on ONE major cluster — a focused editorial, not a summary.
+
 Uses generate_json() from the existing Gemini client with count_call=False
-so brief calls draw from a separate 3-call-per-run budget, not the
-25-call summarization budget.
+so brief calls draw from a separate budget, not the 25-call summarization budget.
 
 Falls back to rule-based TL;DR when Gemini is unavailable.
 """
@@ -89,22 +92,8 @@ be wrong." Show the shape of the day.
 - NEVER start with "Today" or "This week." Start with the thing that changed.
 
 For the opinion:
-- Write 5-8 sentences (120-180 words) as a single paragraph.
-- This is observation through evidence, not assertion through opinion. The entire \
-paragraph should SHOW a pattern by placing facts next to each other — the reader \
-draws the conclusion, not you.
-- GOOD: "Three central banks moved in the same direction this week. Two of them \
-did so despite domestic pressure to hold. The third didn't have a choice." \
-(Shows the pattern. Reader sees the significance.)
-- BAD: "It is notable that central banks are coordinating. This is significant \
-because it suggests a new monetary paradigm." (Tells. Asserts. Empty.)
-- Never use first person ("we", "our", "us"). Never use "it is worth noting," \
-"it should be noted," "significantly," "notably," or any sentence that TELLS the \
-reader something is important instead of SHOWING why.
-- The opinion assumes the reader already read the brief. It draws connections the \
-brief didn't make, surfaces what's hidden in plain sight.
-- Think: the best paragraph in a long-read Foreign Affairs piece — where the author \
-places three facts side by side and the reader suddenly sees the larger shape.
+- The opinion is generated separately. Do NOT include opinion_text in this response.
+- This JSON response has exactly TWO fields: "tldr_text" and "audio_script".
 
 For the audio script:
 - Two people talking about the news. That's it. Not newsreaders. Not hosts. \
@@ -185,12 +174,10 @@ Below are today's top {N} stories for this edition, ranked by importance.
 STORIES:
 {stories_block}
 
-Return JSON with exactly three fields:
+Return JSON with exactly two fields:
 1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
    150-220 words.
-2. "opinion_text" — 5-8 sentences. Observational editorial voice. Show, don't tell. \
-   Passive/impersonal constructions. No first person. 120-180 words.
-3. "audio_script" — two-voice conversation (A: and B: speaker tags, one per line). \
+2. "audio_script" — two-voice conversation (A: and B: speaker tags, one per line). \
    No segment markers, no formatting. Just the dialogue, 500-750 words.\
 """
 
@@ -344,6 +331,228 @@ def _rule_based_tldr(top_clusters: list[dict]) -> str:
     return "\n".join(sentences[:7])
 
 
+# ---------------------------------------------------------------------------
+# Lean rotation — cycles left → center → right daily.
+# Based on ideological principles, not party allegiance.
+# ---------------------------------------------------------------------------
+_LEAN_CYCLE = ["left", "center", "right"]
+
+
+def _get_today_lean() -> str:
+    """Return today's editorial lean based on UTC day-of-year mod 3."""
+    day = datetime.now(timezone.utc).timetuple().tm_yday
+    return _LEAN_CYCLE[day % 3]
+
+
+# ---------------------------------------------------------------------------
+# Opinion system instruction — single-story Atlantic/WSJ editorial.
+# ---------------------------------------------------------------------------
+_OPINION_SYSTEM_INSTRUCTION = """\
+You are the editorial voice of void --opinion — a single-story editorial column \
+in the tradition of The Atlantic, WSJ Opinion, and Foreign Affairs. You write one \
+focused piece per day on the most consequential story.
+
+You are NOT summarizing news. You are writing an argument. A thesis, supported by \
+evidence from the story, arriving at a conclusion the reader didn't expect.
+
+CARDINAL RULE — SHOW, DON'T TELL:
+Every sentence earns its place through evidence. Never say "this matters" — show \
+the fact that makes the reader realize it matters. Never say "tensions are rising" — \
+name the action that raised them. A 99th-percentile editorial never announces its \
+own importance.
+
+IDEOLOGICAL LENS — {LEAN_UPPER}:
+{LEAN_INSTRUCTION}
+
+CRITICAL: You argue from PRINCIPLES, not parties. You never mention Democrats, \
+Republicans, BJP, Congress, Labour, or any political party by name. You never \
+take a politician's side. You reason from the underlying values — what kind of \
+society this decision builds, what tradeoffs it accepts, what it reveals about \
+institutional design. This is philosophy applied to current events, not punditry.
+
+Structure:
+1. OPENING (1-2 sentences): The single most striking fact or juxtaposition from \
+this story. No throat-clearing. No "In recent days." Start with the concrete \
+detail that hooks.
+2. THESIS (1 sentence): What this story actually reveals — the argument no one \
+else is making. This should surprise the reader.
+3. EVIDENCE (3-5 sentences): Build the case. Specific names, numbers, dates, \
+actions. Each sentence adds a new piece of evidence. Connect dots the news \
+coverage missed.
+4. TURN (1-2 sentences): The complication. The counterargument you take seriously. \
+The reason smart people disagree. This is what separates a 99th-percentile \
+editorial from a blog post — intellectual honesty about complexity.
+5. CLOSE (1-2 sentences): Where this leads. Not a prediction, but a question \
+the reader will carry with them. End with the tension unresolved — trust the \
+reader to think.
+
+Standards:
+- 200-300 words. Single story. No meta-commentary about media or coverage.
+- Active voice. Concrete nouns. Specific numbers.
+- Prohibited: shocking, stunning, explosive, unprecedented, controversial, \
+divisive, landmark, radical, extreme, chaos, significant, notable, importantly, \
+interestingly, it should be noted, crucially, in conclusion.
+- Write as if for a reader who already knows the news. Add the insight they missed.\
+"""
+
+_LEAN_INSTRUCTIONS = {
+    "left": """\
+Today's lens: PROGRESSIVE. Argue from principles of collective welfare, institutional \
+accountability, systemic equity, and the expansion of individual rights. Ask: who bears \
+the cost? Whose voice is absent from this decision? What does the structure — not the \
+individual actor — incentivize? You believe institutions exist to level asymmetries of \
+power. When they fail to, that is the story.""",
+    "center": """\
+Today's lens: PRAGMATIC CENTER. Argue from principles of institutional stability, \
+empirical evidence, tradeoff analysis, and incremental reform. Ask: what does the data \
+actually show? What are both sides getting right — and what are they ignoring? You \
+distrust grand narratives from any direction. You believe most policy questions have \
+no clean answers, only better and worse tradeoffs. When everyone is certain, that is \
+the story.""",
+    "right": """\
+Today's lens: CONSERVATIVE. Argue from principles of individual liberty, market \
+discipline, institutional restraint, and the wisdom of inherited structures. Ask: what \
+does this cost? Who is being asked to pay — and did they consent? What second-order \
+effects will the architects of this policy never face? You believe concentrated power \
+corrupts regardless of its stated intentions. When the solution requires more authority \
+than the problem, that is the story.""",
+}
+
+_OPINION_USER_PROMPT = """\
+Write a void --opinion editorial for the {LEAN_UPPER} lens.
+Date: {DATE}
+
+STORY:
+Title: {TITLE}
+Sources: {SOURCE_COUNT}
+Category: {CATEGORY}
+
+Summary:
+{SUMMARY}
+
+Consensus facts:
+{CONSENSUS}
+
+Where coverage diverges:
+{DIVERGENCE}
+
+Return JSON with exactly one field:
+"opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
+from the {LEAN_UPPER} ideological lens. Follow the structure: \
+opening → thesis → evidence → turn → close.\
+"""
+
+
+def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
+    """Select the single best cluster for today's opinion piece.
+
+    Criteria: highest importance, 4+ sources, has summary + consensus.
+    Prefers clusters with high divergence (more editorial material).
+    """
+    edition_clusters = []
+    for c in clusters:
+        sections = c.get("sections") or [c.get("section", "world")]
+        if edition not in sections:
+            continue
+        source_count = c.get("source_count", 1)
+        summary = (c.get("summary") or "").strip()
+        consensus = c.get("consensus_points") or []
+        if source_count >= 4 and summary and len(consensus) >= 1:
+            edition_clusters.append(c)
+
+    if not edition_clusters:
+        # Relax: any cluster with 2+ sources and a summary
+        for c in clusters:
+            sections = c.get("sections") or [c.get("section", "world")]
+            if edition in sections and c.get("source_count", 1) >= 2 and (c.get("summary") or "").strip():
+                edition_clusters.append(c)
+
+    if not edition_clusters:
+        return None
+
+    # Score: headline_rank * (1 + divergence_bonus)
+    def _score(c):
+        rank = c.get("headline_rank", 0)
+        div = c.get("divergence_score", 0) or 0
+        return rank * (1.0 + min(div / 100, 0.5))
+
+    edition_clusters.sort(key=_score, reverse=True)
+    return edition_clusters[0]
+
+
+def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
+    """Generate a single-story editorial opinion via Gemini.
+
+    Returns dict with opinion_text, opinion_lean, opinion_cluster_id, or None.
+    """
+    global _brief_call_count
+
+    if not is_available() or _brief_calls_remaining() <= 0:
+        return None
+
+    title = (cluster.get("title") or "").strip()
+    summary = (cluster.get("summary") or "").strip()
+    consensus = cluster.get("consensus_points") or []
+    divergence = cluster.get("divergence_points") or []
+    source_count = cluster.get("source_count", 1)
+    category = cluster.get("category", "")
+
+    lean_upper = lean.upper()
+    lean_instruction = _LEAN_INSTRUCTIONS[lean]
+    system = _OPINION_SYSTEM_INSTRUCTION.format(
+        LEAN_UPPER=lean_upper,
+        LEAN_INSTRUCTION=lean_instruction,
+    )
+
+    prompt = _OPINION_USER_PROMPT.format(
+        LEAN_UPPER=lean_upper,
+        DATE=date_str,
+        TITLE=title,
+        SOURCE_COUNT=source_count,
+        CATEGORY=category,
+        SUMMARY=summary[:800],
+        CONSENSUS="; ".join(str(x) for x in consensus[:5]) if consensus else "None available",
+        DIVERGENCE="; ".join(str(x) for x in divergence[:4]) if divergence else "None available",
+    )
+
+    _brief_call_count += 1
+    raw = generate_json(
+        prompt,
+        system_instruction=system,
+        count_call=False,
+    )
+
+    if raw and isinstance(raw, dict):
+        opinion = raw.get("opinion_text", "")
+        if isinstance(opinion, str) and opinion.strip():
+            text = opinion.strip()
+            words = len(text.split())
+            # Quality check
+            if words < 100:
+                print(f"  [opinion] Too short ({words} words) — discarding")
+                return None
+            if words > 400:
+                print(f"  [opinion] Long ({words} words) — keeping but flagged")
+
+            # Check prohibited terms
+            lower = text.lower()
+            found = [t for t in _PROHIBITED_TERMS if t in lower]
+            if found:
+                print(f"  [opinion] Prohibited terms: {found}")
+
+            cluster_id = cluster.get("_db_id", "")
+            print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
+                  f"({words} words, {source_count} sources)")
+            return {
+                "opinion_text": text,
+                "opinion_lean": lean,
+                "opinion_cluster_id": cluster_id if cluster_id else None,
+            }
+
+    print(f"  [opinion] Gemini call failed for {lean} editorial")
+    return None
+
+
 def generate_daily_briefs(
     clusters: list[dict],
     source_map: dict,
@@ -395,7 +604,7 @@ def generate_daily_briefs(
             }
             continue
 
-        # Attempt Gemini generation within budget
+        # --- Step 1: Generate TL;DR + audio script ---
         brief_result = None
         if gemini_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
@@ -411,27 +620,25 @@ def generate_daily_briefs(
             raw = generate_json(
                 prompt,
                 system_instruction=_SYSTEM_INSTRUCTION,
-                count_call=False,  # Separate budget; does not consume summarization cap
+                count_call=False,
             )
             if raw and isinstance(raw, dict):
                 tldr = raw.get("tldr_text", "")
-                opinion = raw.get("opinion_text", "")
                 script = raw.get("audio_script")
-                # Gemini may return script as list — coerce to string
                 if isinstance(script, list):
                     script = "\n".join(str(s) for s in script)
 
-                # Validate tldr shape
                 if isinstance(tldr, str) and tldr.strip():
                     brief_result = {
                         "tldr_text": tldr.strip(),
-                        "opinion_text": opinion.strip() if isinstance(opinion, str) and opinion.strip() else None,
+                        "opinion_text": None,
+                        "opinion_lean": None,
+                        "opinion_cluster_id": None,
                         "audio_script": script if isinstance(script, str) and script.strip() else None,
                         "top_cluster_ids": top_ids,
                     }
                     _check_quality(raw, edition)
                     print(f"  [brief:{edition}] Gemini OK — TL;DR {len(tldr.split(chr(10)))} lines, "
-                          f"opinion {'yes' if brief_result['opinion_text'] else 'no'}, "
                           f"script {'yes' if brief_result['audio_script'] else 'no'}")
                 else:
                     print(f"  [brief:{edition}] Gemini returned invalid tldr_text — falling back")
@@ -442,21 +649,36 @@ def generate_daily_briefs(
         else:
             print(f"  [brief:{edition}] Brief call cap reached — using rule-based TL;DR")
 
-        # Fallback: rule-based TL;DR, no audio script, no opinion
         if brief_result is None:
             brief_result = {
                 "tldr_text": _rule_based_tldr(top_clusters),
                 "opinion_text": None,
+                "opinion_lean": None,
+                "opinion_cluster_id": None,
                 "audio_script": None,
                 "top_cluster_ids": top_ids,
             }
 
+        # --- Step 2: Generate single-story opinion (separate call) ---
+        today_lean = _get_today_lean()
+        opinion_cluster = _select_opinion_cluster(clusters, edition)
+        if opinion_cluster:
+            opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str)
+            if opinion_result:
+                brief_result["opinion_text"] = opinion_result["opinion_text"]
+                brief_result["opinion_lean"] = opinion_result["opinion_lean"]
+                brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
+        else:
+            print(f"  [opinion:{edition}] No suitable cluster for opinion")
+
         results[edition] = brief_result
 
     total_gemini = sum(1 for r in results.values() if r.get("audio_script") is not None)
+    total_opinions = sum(1 for r in results.values() if r.get("opinion_text") is not None)
     total_fallback = len(results) - total_gemini
     print(f"  Daily briefs: {len(results)} editions "
           f"({total_gemini} Gemini, {total_fallback} rule-based, "
+          f"{total_opinions} opinions [{_get_today_lean().upper()}], "
           f"{_brief_calls_remaining()} brief calls remaining)")
 
     return results
