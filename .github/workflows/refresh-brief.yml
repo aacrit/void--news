@@ -1,0 +1,105 @@
+name: Refresh Daily Brief
+on:
+  workflow_dispatch:
+    inputs:
+      editions:
+        description: 'Editions to refresh (comma-separated: world,us,india)'
+        required: false
+        default: 'world'
+      skip_audio:
+        description: 'Skip audio generation (TL;DR + opinion only)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  refresh-brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Cache spaCy model
+        id: spacy-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+      - name: Download spaCy model
+        if: steps.spacy-cache.outputs.cache-hit != 'true'
+        run: python -m spacy download en_core_web_sm
+      - name: Refresh Daily Brief
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          EDITIONS="${{ inputs.editions }}"
+          SKIP_AUDIO="${{ inputs.skip_audio }}"
+
+          if [ "$SKIP_AUDIO" = "true" ]; then
+            echo "Refreshing TL;DR + opinion only (no audio) for: $EDITIONS"
+            python3 << PYEOF
+          import sys
+          sys.path.insert(0, "pipeline")
+          from utils.supabase_client import supabase
+          from briefing.daily_brief_generator import generate_daily_briefs
+
+          editions = "$EDITIONS".split(",")
+          editions = [e.strip() for e in editions]
+          print(f"Editions: {editions}")
+
+          # Fetch clusters
+          all_clusters = []
+          for edition in editions:
+              res = supabase.table("story_clusters").select(
+                  "id,title,summary,category,section,sections,source_count,"
+                  "headline_rank,consensus_points,divergence_points"
+              ).contains("sections", [edition]).order(
+                  "headline_rank", desc=True
+              ).limit(20).execute()
+              if res.data:
+                  for c in res.data:
+                      c["_db_id"] = c["id"]
+                  all_clusters.extend(res.data)
+                  print(f"  {edition}: {len(res.data)} clusters")
+
+          if not all_clusters:
+              print("No clusters found — exiting")
+              sys.exit(0)
+
+          briefs = generate_daily_briefs(all_clusters, {}, edition_sections=editions)
+
+          for edition, brief in briefs.items():
+              # Carry forward audio fields from existing brief
+              existing = supabase.table("daily_briefs").select("*").eq("edition", edition).limit(1).execute()
+              row = {
+                  "edition": edition,
+                  "tldr_text": brief["tldr_text"],
+                  "opinion_text": brief.get("opinion_text"),
+                  "opinion_lean": brief.get("opinion_lean"),
+                  "opinion_cluster_id": brief.get("opinion_cluster_id"),
+                  "top_cluster_ids": brief.get("top_cluster_ids", []),
+              }
+              # Preserve existing audio if skipping audio generation
+              if existing.data:
+                  old = existing.data[0]
+                  for key in ["audio_script", "audio_url", "audio_duration_seconds", "audio_file_size", "audio_voice"]:
+                      if old.get(key):
+                          row[key] = old[key]
+
+              supabase.table("daily_briefs").delete().eq("edition", edition).execute()
+              supabase.table("daily_briefs").insert(row).execute()
+              print(f"  {edition}: brief updated (audio preserved from previous)")
+          PYEOF
+          else
+            echo "Refreshing TL;DR + opinion + audio for: $EDITIONS"
+            python pipeline/refresh_audio.py --editions "$EDITIONS"
+          fi

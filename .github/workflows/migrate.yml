@@ -3,8 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       migration:
-        description: 'Migration file (e.g., 007_expand_lean_spectrum.sql)'
+        description: 'Migration file (e.g., 007_expand_lean_spectrum.sql) or "all" to run all pending'
         required: true
+        default: 'all'
 
 jobs:
   migrate:
@@ -20,16 +21,53 @@ jobs:
         env:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          python3 -c "
-          import psycopg2, os
-          ref = 'xryzskhgfuafyotrcdvj'
+          python3 << 'PYEOF'
+          import psycopg2, os, glob, sys
+
+          ref = 'vwbzkgsxmgwcvmvuxnbe'
           pw = os.environ['SUPABASE_DB_PASSWORD']
-          conn = psycopg2.connect(f'postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require')
+          conn = psycopg2.connect(
+              f'postgresql://postgres.{ref}:{pw}@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require'
+          )
           conn.autocommit = True
           cur = conn.cursor()
-          sql = open(f'supabase/migrations/${{ inputs.migration }}').read()
-          cur.execute(sql)
-          print('Migration applied successfully')
+
+          # Create tracking table if not exists
+          cur.execute("""
+              CREATE TABLE IF NOT EXISTS _migrations (
+                  name TEXT PRIMARY KEY,
+                  applied_at TIMESTAMPTZ DEFAULT now()
+              )
+          """)
+
+          migration_input = "${{ inputs.migration }}"
+
+          if migration_input == "all":
+              files = sorted(glob.glob("supabase/migrations/*.sql"))
+          else:
+              files = [f"supabase/migrations/{migration_input}"]
+
+          applied = 0
+          skipped = 0
+          for f in files:
+              name = os.path.basename(f)
+              cur.execute("SELECT 1 FROM _migrations WHERE name = %s", (name,))
+              if cur.fetchone():
+                  print(f"SKIP (already applied): {name}")
+                  skipped += 1
+                  continue
+              print(f"APPLYING: {name} ... ", end="", flush=True)
+              try:
+                  sql = open(f).read()
+                  cur.execute(sql)
+                  cur.execute("INSERT INTO _migrations (name) VALUES (%s)", (name,))
+                  print("OK")
+                  applied += 1
+              except Exception as e:
+                  print(f"FAILED: {e}")
+                  sys.exit(1)
+
+          print(f"\nDone. Applied: {applied}, Skipped: {skipped}, Total: {len(files)}")
           cur.close()
           conn.close()
-          "
+          PYEOF
