@@ -445,10 +445,16 @@ Consensus facts:
 Where coverage diverges:
 {DIVERGENCE}
 
-Return JSON with exactly one field:
-"opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
+Return JSON with exactly two fields:
+1. "opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
-opening → thesis → evidence → turn → close.\
+opening → thesis → evidence → turn → close.
+2. "opinion_audio_script" — A single-voice editorial monologue (60-90 seconds, \
+150-200 words) that reads aloud the opinion. Written for ONE speaker only — \
+no A:/B: tags. Just flowing text, as if reading a column aloud on air. \
+Open with: "This is void opinion. Today's {LEAN_LABEL} lens." Then deliver \
+the editorial. End with: "void opinion." Use contractions and natural phrasing. \
+This is not a robot reading — it's a columnist delivering a take.\
 """
 
 
@@ -507,6 +513,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
     category = cluster.get("category", "")
 
     lean_upper = lean.upper()
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
     lean_instruction = _LEAN_INSTRUCTIONS[lean]
     system = _OPINION_SYSTEM_INSTRUCTION.format(
         LEAN_UPPER=lean_upper,
@@ -515,6 +522,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
 
     prompt = _OPINION_USER_PROMPT.format(
         LEAN_UPPER=lean_upper,
+        LEAN_LABEL=lean_label,
         DATE=date_str,
         TITLE=title,
         SOURCE_COUNT=source_count,
@@ -549,11 +557,21 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
             if found:
                 print(f"  [opinion] Prohibited terms: {found}")
 
+            # Extract opinion audio script
+            opinion_audio = raw.get("opinion_audio_script", "")
+            if isinstance(opinion_audio, str) and opinion_audio.strip():
+                opinion_audio = opinion_audio.strip()
+                audio_words = len(opinion_audio.split())
+                print(f"  [opinion] Audio script: {audio_words} words")
+            else:
+                opinion_audio = None
+
             cluster_id = cluster.get("_db_id", "")
             print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
                   f"({words} words, {source_count} sources)")
             return {
                 "opinion_text": text,
+                "opinion_audio_script": opinion_audio,
                 "opinion_lean": lean,
                 "opinion_cluster_id": cluster_id if cluster_id else None,
             }
@@ -675,6 +693,7 @@ def generate_daily_briefs(
             opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str)
             if opinion_result:
                 brief_result["opinion_text"] = opinion_result["opinion_text"]
+                brief_result["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
                 brief_result["opinion_lean"] = opinion_result["opinion_lean"]
                 brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
         else:
