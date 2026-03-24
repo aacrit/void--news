@@ -3847,8 +3847,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .db-pill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-3);
+  gap: 4px;
+  padding: 3px var(--space-2);
   border: 1px solid var(--border-strong);
   border-radius: 20px;
   background: none;
@@ -3911,20 +3911,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   100% { opacity: 0; }
 }
 
-/* Opinion pill — lean-tinted border */
-.db-pill--left { border-color: color-mix(in srgb, var(--lean-left, #2563eb) 40%, var(--border-strong)); }
-.db-pill--right { border-color: color-mix(in srgb, var(--lean-right, #dc2626) 40%, var(--border-strong)); }
-.db-pill--left.db-pill--active { border-color: var(--lean-left, #2563eb); color: var(--lean-left, #2563eb); background: color-mix(in srgb, var(--lean-left, #2563eb) 6%, transparent); }
-.db-pill--right.db-pill--active { border-color: var(--lean-right, #dc2626); color: var(--lean-right, #dc2626); background: color-mix(in srgb, var(--lean-right, #dc2626) 6%, transparent); }
-
-.db-pill__lean {
-  font-family: var(--font-meta);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
+/* (lean-tinted pill borders removed — lean is now a subtle inline tag inside the panel) */
 
 /* On Air pill — playing state */
 .db-pill--playing {
@@ -3980,7 +3967,37 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .db-panel--open .db-panel__inner {
-  padding-top: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+/* ---- Panel header — used inside opinion, could be reused ---- */
+.db-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: var(--space-1);
+}
+
+.db-panel__header-icon {
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
+}
+
+.db-panel__header-label {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--fg-tertiary);
+}
+
+.db-panel__header-sub {
+  font-family: var(--font-meta);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
 }
 
 /* TL;DR body */
@@ -3999,7 +4016,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .daily-brief__body p {
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   text-align-last: left;
 }
 
@@ -4012,48 +4029,25 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-family: var(--font-editorial);
   font-style: normal;
   font-size: var(--text-sm);
-  line-height: 1.75;
+  line-height: 1.55;
   color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   border-left: 2px dotted var(--border-strong);
-  padding-left: var(--space-4);
+  padding-left: var(--space-3);
 }
 
-/* ---- Opinion lean pill (inside panel) ---- */
+/* ---- Opinion lean tag — subtle inline at end of text ---- */
 
-.opinion-lean-pill {
-  display: inline-flex;
-  align-items: center;
+.opinion-lean-tag {
   font-family: var(--font-meta);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 2px;
-  margin-bottom: var(--space-2);
-  line-height: 1.4;
-}
-
-.opinion-lean-pill--left {
-  color: var(--lean-left, #2563eb);
-  border: 1px solid var(--lean-left, #2563eb);
-  background: color-mix(in srgb, var(--lean-left, #2563eb) 8%, transparent);
-}
-
-.opinion-lean-pill--center {
-  color: var(--fg-secondary);
-  border: 1px solid var(--border-strong);
-  background: color-mix(in srgb, var(--fg-secondary) 5%, transparent);
-}
-
-.opinion-lean-pill--right {
-  color: var(--lean-right, #dc2626);
-  border: 1px solid var(--lean-right, #dc2626);
-  background: color-mix(in srgb, var(--lean-right, #dc2626) 8%, transparent);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  font-style: italic;
 }
 
 /* ---- On Air panel ---- */
@@ -4071,14 +4065,14 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .db-panel__onair-status {
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: 10px;
   color: var(--accent-warm);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 .db-panel__onair-time {
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: 10px;
   font-variant-numeric: tabular-nums;
   color: var(--fg-muted);
   letter-spacing: 0.03em;

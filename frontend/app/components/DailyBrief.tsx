@@ -209,7 +209,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           {/* Opinion pill */}
           {brief.opinion_text && (
             <button
-              className={`db-pill db-pill--opinion${expanded === "opinion" ? " db-pill--active" : ""}${brief.opinion_lean ? ` db-pill--${brief.opinion_lean}` : ""}`}
+              className={`db-pill${expanded === "opinion" ? " db-pill--active" : ""}`}
               onClick={() => togglePanel("opinion")}
               type="button"
               aria-expanded={expanded === "opinion"}
@@ -219,9 +219,6 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
                 void --opinion
                 {showSubtitles && <span className="db-pill__subtitle">The Board</span>}
               </span>
-              {brief.opinion_lean && (
-                <span className="db-pill__lean">{leanLabel}</span>
-              )}
             </button>
           )}
 
@@ -282,12 +279,17 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
             className={`db-panel${expanded === "opinion" ? " db-panel--open" : ""}`}
           >
             <div className="db-panel__inner daily-brief__opinion">
-              {brief.opinion_lean && (
-                <span className={`opinion-lean-pill opinion-lean-pill--${brief.opinion_lean}`}>
-                  {leanLabel} Lens
-                </span>
-              )}
-              <p>{brief.opinion_text}</p>
+              <div className="db-panel__header">
+                <ScaleIcon size={10} animation="idle" className="db-panel__header-icon" />
+                <span className="db-panel__header-label">void --opinion</span>
+                <span className="db-panel__header-sub">The Board</span>
+              </div>
+              <p>
+                {brief.opinion_text}
+                {brief.opinion_lean && (
+                  <span className="opinion-lean-tag"> — {leanLabel} lens</span>
+                )}
+              </p>
             </div>
           </div>
         )}
