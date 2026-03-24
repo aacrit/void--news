@@ -79,17 +79,29 @@ intelligence. Synthesize — do not summarize what you received.
 
 For the TL;DR:
 - Write 8-12 sentences as a flowing editorial paragraph (separated by \\n).
-- STRUCTURE: Significance → Facts → Pattern.
-  1. Open with the CONSEQUENCE, not the event. "The world's largest chip manufacturer \
-just chose a side" is better than "TSMC announced new export restrictions." Show why \
-this reshapes the landscape before saying what happened (2-3 sentences).
-  2. Cover 3-4 more stories. For each: one concrete fact, then one sentence that \
-reveals what it means. Connect stories where genuine threads exist — don't force it.
-  3. Close with a pattern or unanswered question. Not "this is important" but "three \
-separate governments made the same bet this week — and none of them can afford to \
-be wrong." Show the shape of the day.
-- Target 150-220 words. Think: a brilliant editor's morning note to a smart audience.
-- NEVER start with "Today" or "This week." Start with the thing that changed.
+- STRUCTURE: Hook → Stakes → Sweep → Pattern.
+  1. HOOK (1-2 sentences): Open with a concrete, unexpected fact — a number, a name, \
+an action. "Germany's largest arms manufacturer just signed its first contract with a \
+country it was bombing three years ago." The reader should stop scrolling. Never open \
+with a gerund ("Facing pressure..."), never open with a dependent clause ("As tensions \
+mount..."), never open with "Today" or "This week." Start mid-action.
+  2. STAKES (1-2 sentences): WHY this hook matters. Not "this is significant" — show \
+the second-order consequence. "That contract rewrites the arms-export doctrine Berlin \
+has held since 1971." Give the reader the so-what through facts, not adjectives.
+  3. SWEEP (4-6 sentences): Cover 3-4 more stories. For each: one concrete fact, then \
+one sentence revealing what it means. Vary sentence length — a 6-word sentence after a \
+long one creates rhythm. Connect stories where genuine threads exist. Don't force it. \
+If two stories share a thread, make it the transition. If they don't, just move on.
+  4. CLOSE (1-2 sentences): The pattern the reader didn't see. A question they'll carry \
+with them. "Three governments made the same bet this week. None can afford to be wrong." \
+End on tension, not resolution. Never summarize what you just said.
+- Target 180-240 words. Think: the editor-in-chief's morning note at The Economist.
+- ANTI-SLOP: Never use "amid" (or "amidst"), "raises questions," "remains to be seen," \
+"only time will tell," "in a move that," "sends a clear signal," "in a major development." \
+These are the hallmarks of mediocre writing. Cut them ruthlessly.
+- RHYTHM: Alternate long and short sentences. One 4-word sentence per paragraph minimum. \
+"That changed Tuesday." "Nobody expected it." "The math doesn't work." Short sentences \
+are the most powerful tool in editorial writing — use them for emphasis.
 
 For the opinion:
 - The opinion is generated separately. Do NOT include opinion_text in this response.
@@ -176,7 +188,7 @@ STORIES:
 
 Return JSON with exactly two fields:
 1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
-   150-220 words.
+   180-240 words. Hook → Stakes → Sweep → Pattern structure.
 2. "audio_script" — two-voice conversation (A: and B: speaker tags, one per line). \
    No segment markers, no formatting. Just the dialogue, 500-750 words.\
 """
@@ -195,14 +207,11 @@ def _check_quality(result: dict, edition: str) -> None:
     """Log quality warnings for out-of-spec brief output."""
     tldr = result.get("tldr_text", "")
     lines = [l.strip() for l in tldr.split("\n") if l.strip()]
+    words = len(tldr.split())
     if len(lines) < 5 or len(lines) > 15:
         print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 8-12)")
-
-    opinion = result.get("opinion_text", "")
-    if opinion:
-        owords = len(opinion.split())
-        if owords < 80 or owords > 250:
-            print(f"  [quality][brief:{edition}] Opinion has {owords} words (expected 120-180)")
+    if words < 120 or words > 300:
+        print(f"  [quality][brief:{edition}] TL;DR has {words} words (expected 180-240)")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):

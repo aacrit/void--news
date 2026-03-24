@@ -72,6 +72,8 @@ def main():
                 "edition": edition,
                 "tldr_text": brief["tldr_text"],
                 "opinion_text": brief.get("opinion_text"),
+                "opinion_lean": brief.get("opinion_lean"),
+                "opinion_cluster_id": brief.get("opinion_cluster_id"),
                 "audio_script": brief.get("audio_script"),
                 "audio_url": result["audio_url"],
                 "audio_duration_seconds": result["duration_seconds"],
