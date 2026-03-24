@@ -108,50 +108,47 @@ For the opinion:
 - This JSON response has exactly TWO fields: "tldr_text" and "audio_script".
 
 For the audio script:
-- Two people talking about the news. That's it. Not newsreaders. Not hosts. \
-Two smart friends who read everything and are catching each other up.
+- Think Vox Explained meets Big Think — two sharp analysts who explain the \
+world with authority and depth. Not newsreaders. Not casual friends. Two \
+people who genuinely understand the systems behind the headlines and make \
+complexity feel navigable.
 - 3-5 minutes (500-750 words).
 - Each line starts with "A:" or "B:". No other formatting. No [MARKERS]. No \
-segment labels. Just the conversation.
-- A and B take turns naturally. Sometimes A talks for a while. Sometimes B \
-jumps in after one sentence. It flows like a real conversation — not a script \
-with assigned roles.
+segment labels. Just the dialogue.
 
-How they talk:
-- They go straight to the stories. No preamble, no "welcome to," no "let's \
-get into it." First line is already about a story.
-- They USE EACH OTHER'S WORDS. B picks up something A said and runs with it. \
-A reacts to what B just explained. They're listening to each other, not \
-delivering prepared paragraphs.
-- They think out loud. "Wait, but doesn't that mean..." / "So if they actually \
-do that..." / "The part that gets me is..."
-- Contractions everywhere. Sentence fragments are fine. "Which — honestly? \
-Kind of wild." That's how people talk.
-- They explain things with concrete details, not labels. Don't say "the economy \
-is struggling" — say "grocery prices are up 14% since January."
-- No filler reactions. BANNED: "Mm.", "Right.", "Indeed.", "Good point.", \
-"Absolutely.", "Interesting.", "That's notable.", "That's a fair point."
+STRUCTURE — Headlines > Stories > Close:
+1. HEADLINES (30s): A opens with a crisp rundown of the 3 stories coming up. \
+One sentence each, punchy, present tense. "Germany just rewrote its arms \
+export doctrine. The Fed held rates but the bond market didn't get the memo. \
+And a Supreme Court ruling quietly reshapes how American cities handle \
+homelessness." Then B picks up the first story.
+2. STORIES (3-4 min): Cover exactly 3 stories in depth. The biggest story \
+gets 90 seconds, the others 45-60 each. For each story: what happened, why \
+it matters, and the structural context most coverage misses. A and B trade \
+off — one sets up the facts, the other explains the mechanism or implication.
+3. CLOSE (15-20s): One of them distills the day into a single observation — \
+the thread connecting these stories, or the question they leave unanswered. \
+Not a summary. A thought the listener carries with them. Then: "void news." Done.
+
+The Vox/Big Think voice:
+- Authoritative but not stiff. They speak with the confidence of someone who \
+has read everything on this topic, not the tentativeness of someone hedging.
+- They EXPLAIN mechanisms. Not just "prices went up" — "prices went up because \
+the central bank is running out of tools, and the bond market knows it."
+- They contextualize with systems thinking. "This isn't just a trade deal — \
+it's the third time in two years a G7 nation has bypassed the WTO framework."
+- Contractions are fine. Natural spoken cadence. But the register is elevated — \
+think a TED talk, not a podcast hangout. No slang, no "kind of wild," no \
+"honestly?" as a sentence.
+- They build on each other's points with substance: "And that connects to \
+something structural..." / "The part that's easy to miss here is..." / \
+"To put that in perspective..."
+- BANNED filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", \
+"Interesting.", "That's a fair point.", "Great question.", "Exactly."
 - No meta-commentary about coverage or media. They talk about the world.
 - Numbers: write out small ones ("three"). Use figures for big ones ("$1.4 trillion").
-
-The conversation:
-- Start with the most important story. Jump right in. A or B says the thing \
-that happened, and they go from there.
-- Cover 3-5 stories. Spend more time on the big ones, less on the smaller \
-ones. Some stories get 30 seconds, some get 90. No formula.
-- Stories flow into each other naturally. Sometimes there's a real connection \
-("Speaking of money..." / "And that's not the only thing moving in Asia..."). \
-Sometimes one just ends and the next begins. Don't force transitions.
-- End clean. Last story wraps up, one of them says something that puts the \
-day in perspective — a thought, not a summary. Then: "void news." Done.
-
-What makes it good:
-- Specific details. Names, numbers, places, dates. Not "officials say" — \
+- Specific details always. Names, numbers, places, dates. Not "officials say" — \
 "the Treasury Secretary said Tuesday."
-- The why. Don't just say what happened. Say why it matters or what it means. \
-But show it through facts, don't announce it.
-- Surprise. The detail the listener didn't expect. The connection between \
-two stories they wouldn't have made.
 - Stories tagged [NEW] come first. [CONTINUING] stories: skip background, \
 just say what changed.\
 """
@@ -189,7 +186,8 @@ STORIES:
 Return JSON with exactly two fields:
 1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
    180-240 words. Hook → Stakes → Sweep → Pattern structure.
-2. "audio_script" — two-voice conversation (A: and B: speaker tags, one per line). \
+2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
+   Structure: Headlines (3-sentence rundown) → 3 stories in depth → Close. \
    No segment markers, no formatting. Just the dialogue, 500-750 words.\
 """
 
@@ -449,12 +447,18 @@ Return JSON with exactly two fields:
 1. "opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
 opening → thesis → evidence → turn → close.
-2. "opinion_audio_script" — A single-voice editorial monologue (60-90 seconds, \
-150-200 words) that reads aloud the opinion. Written for ONE speaker only — \
-no A:/B: tags. Just flowing text, as if reading a column aloud on air. \
+2. "opinion_audio_script" — A single-voice editorial explainer (90-120 seconds, \
+200-280 words). Think CBC Ideas meets Vox — an authoritative voice that explains \
+WHY this story matters through a specific ideological lens. Not reading an essay \
+aloud. EXPLAINING a position with the conviction of someone who has studied the \
+evidence. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
 Open with: "This is void opinion. Today's {LEAN_LABEL} lens." Then deliver \
-the editorial. End with: "void opinion." Use contractions and natural phrasing. \
-This is not a robot reading — it's a columnist delivering a take.\
+the argument. Structure it as an explainer: set up the tension, walk through \
+the evidence, deliver the insight. Use the second person sparingly for emphasis: \
+"If you're a small manufacturer in Ohio, this tariff doesn't protect you — it \
+prices out your raw materials." Contractions are fine. Spoken cadence, not written. \
+But the register is serious — a documentary narrator making a case, not a pundit \
+riffing. End with: "void opinion." No summary. End on the unresolved question.\
 """
 
 
