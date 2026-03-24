@@ -37,10 +37,7 @@
     padding-right: 0;
   }
 
-  /* Daily Brief: always show opinion on tablet/desktop — no expand needed */
-  .daily-brief__opinion--mobile-hidden {
-    display: block;
-  }
+  /* Daily Brief: no special tablet overrides needed — pills handle everything */
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
@@ -750,26 +747,15 @@
     outline-offset: 2px;
   }
 
-  /* === DAILY BRIEF — mobile layout === */
+  /* === DAILY BRIEF — mobile pill layout === */
 
-  /* Clamp long briefs on mobile — expand via toggle */
-  .daily-brief__body--mobile-clamp {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    /* Prevent last visible line from stretching when clamped */
-    text-align-last: left;
+  /* Stack pills vertically on narrow screens */
+  .daily-brief__pills {
+    gap: var(--space-1);
   }
 
-  /* Show "Read more" toggle on mobile */
-  .daily-brief__toggle {
-    display: inline-block;
-  }
-
-  /* On Air CTA: label-only on narrow screens to save space */
-  /* void --onair: hide time on mobile to save space */
-  .void-onair__time {
+  /* Hide time readout in pill on mobile to save space */
+  .db-pill__time {
     display: none;
   }
 
