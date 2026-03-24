@@ -747,6 +747,17 @@
     outline-offset: 2px;
   }
 
+  /* === FILTERBAR — hide edition pills on mobile (already in bottom nav) === */
+
+  .ubar__editions {
+    display: none;
+  }
+
+  /* Hide the separator after edition pills — no longer needed */
+  .ubar__editions + .ubar__sep {
+    display: none;
+  }
+
   /* === DAILY BRIEF — mobile pill layout === */
 
   /* Stack pills vertically on narrow screens */
@@ -756,6 +767,48 @@
 
   /* Hide time readout in pill on mobile to save space */
   .db-pill__time {
+    display: none;
+  }
+
+  /* TL;DR body: clamp to 4 lines on mobile with "Read more" affordance */
+  .daily-brief__body {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-align-last: left;
+  }
+
+  /* When TL;DR panel is expanded, remove the clamp */
+  .db-panel--open .daily-brief__body {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+
+  /* Hide subtitles on mobile to reduce pill clutter */
+  .db-pill__subtitle {
+    display: none;
+  }
+
+  /* === META TAGS — bump readability on mobile === */
+
+  .category-tag {
+    font-size: var(--text-sm);
+  }
+
+  .time-tag {
+    font-size: var(--text-sm);
+  }
+
+  /* === FOOTER — stack product links vertically on mobile === */
+
+  .footer-products {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .footer-products__sep {
     display: none;
   }
 

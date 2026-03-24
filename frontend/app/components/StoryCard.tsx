@@ -86,7 +86,7 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
 
       {/* Bias indicator — lean bar + source count + type badge */}
       <div className="story-card__footer">
-        <Sigil data={story.sigilData} />
+        <Sigil data={story.sigilData} size="lg" />
         {(() => {
           const reasons = whyThisStory({
             sourceCount: story.source.count,
@@ -96,8 +96,8 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
             headlineRank: story.headlineRank,
           });
           return reasons.length > 0 ? (
-            <span className="story-card__why" title={reasons.join(" / ")}>
-              {reasons[0]}
+            <span className="story-card__why">
+              {reasons.join(" · ")}
             </span>
           ) : null;
         })()}

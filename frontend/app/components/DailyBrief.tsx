@@ -148,7 +148,7 @@ type ExpandedPanel = "tldr" | "opinion" | "onair" | null;
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek } = state;
-  const [expanded, setExpanded] = useState<ExpandedPanel>(null);
+  const [expanded, setExpanded] = useState<ExpandedPanel>("tldr");
   const showSubtitles = useFirstEncounterSubtitles();
   if (!brief) return null;
 
