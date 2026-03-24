@@ -1790,10 +1790,6 @@ def main():
                     clusters, source_map,
                 )
 
-                # Audio runs 2x/day: 06:00 and 18:00 UTC shifts
-                utc_hour = datetime.now(timezone.utc).hour
-                should_generate_audio = utc_hour in (6, 18)
-
                 for edition, brief in brief_results.items():
                     brief_row = {
                         "edition": edition,
@@ -1806,42 +1802,94 @@ def main():
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
                     }
 
-                    # Generate two-host audio via Gemini Flash TTS
-                    if should_generate_audio and brief.get("audio_script"):
-                        voices = get_voices_for_today(edition)
-                        audio_result = produce_audio(
-                            brief["audio_script"], voices, edition,
-                            opinion_audio_script=brief.get("opinion_audio_script"),
-                        )
-                        if audio_result:
-                            brief_row["audio_url"] = audio_result["audio_url"]
-                            brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
-                            brief_row["audio_file_size"] = audio_result["file_size"]
-                            brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
-                            brief_row["audio_voice_label"] = "Two voices"
-                    else:
-                        # Non-audio run: carry forward audio fields from the most
-                        # recent brief so the frontend always has audio available.
+                    # Fallback: if this run produced an empty/placeholder brief,
+                    # carry forward the previous brief so the frontend always has
+                    # real content. "No stories available" is the placeholder text.
+                    is_empty_brief = (
+                        not brief.get("audio_script")
+                        and brief.get("tldr_text", "").startswith("No stories")
+                    )
+                    if is_empty_brief:
                         try:
                             prev = supabase.table("daily_briefs").select(
-                                "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
+                                "tldr_text,opinion_text,opinion_lean,opinion_cluster_id,"
+                                "audio_script,audio_url,audio_duration_seconds,"
+                                "audio_voice_label,audio_voice,audio_file_size,"
+                                "opinion_audio_script,top_cluster_ids"
                             ).eq("edition", edition).order(
                                 "created_at", desc=True
                             ).limit(1).execute()
-                            if prev.data and prev.data[0].get("audio_url"):
+                            if prev.data and prev.data[0].get("tldr_text"):
                                 p = prev.data[0]
-                                brief_row["audio_url"] = p["audio_url"]
+                                brief_row["tldr_text"] = p["tldr_text"]
+                                brief_row["opinion_text"] = p.get("opinion_text")
+                                brief_row["opinion_lean"] = p.get("opinion_lean")
+                                brief_row["opinion_cluster_id"] = p.get("opinion_cluster_id")
+                                brief_row["audio_script"] = p.get("audio_script")
+                                brief_row["audio_url"] = p.get("audio_url")
                                 brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
                                 brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                 brief_row["audio_voice"] = p.get("audio_voice")
                                 brief_row["audio_file_size"] = p.get("audio_file_size")
-                                # Preserve previous audio_script only if this run
-                                # didn't produce a new one (rule-based fallback).
-                                if not brief_row.get("audio_script"):
-                                    brief_row["audio_script"] = p.get("audio_script")
-                                print(f"  [brief:{edition}] Carried forward audio from previous brief")
+                                brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
+                                print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
                         except Exception as e:
-                            print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
+                            print(f"  [warn] Could not fetch previous brief for {edition}: {e}")
+                        # Skip audio generation — we're using the previous brief's audio
+                    else:
+                        # Generate two-host audio via Gemini Flash TTS — every run
+                        if brief.get("audio_script"):
+                            voices = get_voices_for_today(edition)
+                            audio_result = produce_audio(
+                                brief["audio_script"], voices, edition,
+                                opinion_audio_script=brief.get("opinion_audio_script"),
+                            )
+                            if audio_result:
+                                brief_row["audio_url"] = audio_result["audio_url"]
+                                brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
+                                brief_row["audio_file_size"] = audio_result["file_size"]
+                                brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
+                                brief_row["audio_voice_label"] = "Two voices"
+                            else:
+                                # TTS failed — carry forward previous audio so
+                                # frontend always has something to play.
+                                try:
+                                    prev = supabase.table("daily_briefs").select(
+                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size"
+                                    ).eq("edition", edition).order(
+                                        "created_at", desc=True
+                                    ).limit(1).execute()
+                                    if prev.data and prev.data[0].get("audio_url"):
+                                        p = prev.data[0]
+                                        brief_row["audio_url"] = p["audio_url"]
+                                        brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
+                                        brief_row["audio_voice_label"] = p.get("audio_voice_label")
+                                        brief_row["audio_voice"] = p.get("audio_voice")
+                                        brief_row["audio_file_size"] = p.get("audio_file_size")
+                                        print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
+                                except Exception as e:
+                                    print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
+                        else:
+                            # No audio script (rule-based fallback) — carry forward
+                            # previous audio so frontend always has audio available.
+                            try:
+                                prev = supabase.table("daily_briefs").select(
+                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
+                                ).eq("edition", edition).order(
+                                    "created_at", desc=True
+                                ).limit(1).execute()
+                                if prev.data and prev.data[0].get("audio_url"):
+                                    p = prev.data[0]
+                                    brief_row["audio_url"] = p["audio_url"]
+                                    brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
+                                    brief_row["audio_voice_label"] = p.get("audio_voice_label")
+                                    brief_row["audio_voice"] = p.get("audio_voice")
+                                    brief_row["audio_file_size"] = p.get("audio_file_size")
+                                    if not brief_row.get("audio_script"):
+                                        brief_row["audio_script"] = p.get("audio_script")
+                                    print(f"  [brief:{edition}] No audio script — carried forward previous audio")
+                            except Exception as e:
+                                print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
 
                     try:
                         supabase.table("daily_briefs").upsert(
@@ -1851,8 +1899,7 @@ def main():
                         print(f"  [warn] Failed to store brief for {edition}: {e}")
 
                 elapsed_7d = time.time() - start_7d
-                audio_status = "with audio" if should_generate_audio else "text only"
-                print(f"  Daily briefs: {len(brief_results)} editions ({audio_status}, {elapsed_7d:.1f}s)")
+                print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
             except Exception as e:
                 print(f"  [warn] Daily brief generation failed: {e}")
         else:
