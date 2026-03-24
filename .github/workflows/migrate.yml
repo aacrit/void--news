@@ -59,18 +59,6 @@ jobs:
               )
           """)
 
-          # Seed existing migrations if tracking table is empty
-          cur.execute("SELECT count(*) FROM _migrations")
-          if cur.fetchone()[0] == 0:
-              # Check if DB already has tables (i.e., migrations were applied before tracking existed)
-              cur.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'sources')")
-              if cur.fetchone()[0]:
-                  all_files = sorted(glob.glob("supabase/migrations/*.sql"))
-                  for af in all_files:
-                      n = os.path.basename(af)
-                      cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (n,))
-                  print(f"Seeded {len(all_files)} existing migrations into tracking table")
-
           migration_input = "${{ inputs.migration }}"
 
           if migration_input == "all":
@@ -80,25 +68,43 @@ jobs:
 
           applied = 0
           skipped = 0
+          already_existed = 0
+          failed = 0
           for f in files:
               name = os.path.basename(f)
               cur.execute("SELECT 1 FROM _migrations WHERE name = %s", (name,))
               if cur.fetchone():
-                  print(f"SKIP (already applied): {name}")
+                  print(f"SKIP (tracked): {name}")
                   skipped += 1
                   continue
               print(f"APPLYING: {name} ... ", end="", flush=True)
+              sql = open(f).read()
               try:
-                  sql = open(f).read()
                   cur.execute(sql)
                   cur.execute("INSERT INTO _migrations (name) VALUES (%s)", (name,))
                   print("OK")
                   applied += 1
               except Exception as e:
-                  print(f"FAILED: {e}")
-                  sys.exit(1)
+                  err = str(e).lower()
+                  # "already exists" means migration was applied before tracking existed.
+                  # Reset cursor (autocommit leaves conn usable) and record it.
+                  if "already exists" in err:
+                      cur.close()
+                      cur = conn.cursor()
+                      cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (name,))
+                      print(f"ALREADY EXISTS (now tracked)")
+                      already_existed += 1
+                  else:
+                      print(f"FAILED: {e}")
+                      cur.close()
+                      cur = conn.cursor()
+                      failed += 1
 
-          print(f"\nDone. Applied: {applied}, Skipped: {skipped}, Total: {len(files)}")
+          if failed > 0:
+              print(f"\n{failed} migration(s) failed!")
+              sys.exit(1)
+
+          print(f"\nDone. Applied: {applied}, Skipped: {skipped}, Already existed: {already_existed}, Total: {len(files)}")
           cur.close()
           conn.close()
           PYEOF
