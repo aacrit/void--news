@@ -113,8 +113,8 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, o
             headlineRank: story.headlineRank,
           });
           return reasons.length > 0 ? (
-            <span className="lead-story__why" title={reasons.join(" / ")}>
-              {reasons.join(" / ")}
+            <span className="lead-story__why">
+              {reasons.join(" · ")}
             </span>
           ) : null;
         })()}
