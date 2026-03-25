@@ -19,13 +19,14 @@ import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
 
 /* ---------------------------------------------------------------------------
-   DeepDive — Slide-in panel showing unified summary of a story cluster.
-   Desktop (1024px+): 50% width panel sliding from the right.
+   DeepDive — Centered popup overlay showing unified summary of a story cluster.
+   Desktop (1024px+): centered modal (75vw, max-width 920px–1080px, 80vh) with
+   cinematic shadow and backdrop blur.
    Mobile: full-screen modal sliding up from the bottom.
    --------------------------------------------------------------------------- */
 
 // Press Analysis arrow bounce plays once per session — after the user has seen
-// it, repeating the animation on every panel open is visual noise.
+// it, repeating the animation on every popup open is visual noise.
 let hasSeenPressHint = false;
 
 interface DeepDiveProps {

@@ -245,7 +245,7 @@ CSS variable: `--font-meta` (Barlow Condensed). IBM Plex Mono replaces JetBrains
 |--------|---------|--------|
 | Layout | Multi-column newspaper grid | Single-column feed, bottom sheet |
 | Story cards | Horizontal, inline bias indicators | Vertical stack, indicators below headline |
-| Deep Dive | 55% side panel (min 560px), backdrop blur 6px | Full-screen bottom sheet, blur 2px |
+| Deep Dive | Centered popup (75vw, max 920px–1080px, 80vh), cinematic shadow, backdrop blur 6px | Full-screen bottom sheet, blur 2px |
 | Navigation | Top nav bar | Bottom nav bar (thumb-reachable) |
 | Data density | High — more metrics at a glance | Progressive — tap to reveal |
 
@@ -267,13 +267,13 @@ Mobile rules:
 - **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. Opinion ("The Board") always visible on desktop; separated by 2px dotted editorial firewall rule; italic Playfair Display. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 3 lines with "Read more · The Board" toggle (opinion hidden). Always fetches world brief regardless of active edition.
 
 #### 2. Deep Dive Dashboard
-- Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
+- Centered popup overlay (desktop: 75vw, max-width 920px–1080px, 80vh, cinematic shadow; mobile full-screen from bottom).
 - **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" overflow detected via ResizeObserver (not character count). Gradient overlay hidden when content fits (`dd-collapsible--fits` class).
 - **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources use 3-row algorithm for dense clusters, no max-height cap, "+N more" expand button when >6 sources) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile). Zone labels smaller font on mobile.
 - **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text). Expand panel: max-height 60vh with overflow-y scroll.
 - **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
 - Action buttons: WCAG 44×44px touch targets.
-- **Panel open animation**: `var(--spring-bouncy)` 500ms with genuine overshoot. **Close**: `var(--spring-snappy)` 380ms. Asymmetric: slow open, fast close.
+- **Popup open animation**: `var(--spring-bouncy)` 500ms with genuine overshoot. **Close**: `var(--spring-snappy)` 380ms. Asymmetric: slow open, fast close.
 - Slot-machine cascade: `translateY(12px) → 0`. Desktop: content reveal 180ms delay (was 400ms). Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms. rAF snap uses `setTimeout(0)` for 90/120Hz reliability.
 - Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition; fallback 200ms opacity ramp.
 - iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator, momentum scroll, safe-area insets.
@@ -467,7 +467,7 @@ void-news/
 │   │   ├── components/
 │   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; BiasInspectorInline (Deep Dive inline), BiasInspectorTrigger + BiasInspectorPanel (legacy); each axis collapsible with Gemini reasoning
 │   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism
-│   │   │   ├── DeepDive.tsx       # Slide-in panel: FLIP morph open/close, lede, DeepDiveSpectrum, Press Analysis ▶, Source Perspectives
+│   │   │   ├── DeepDive.tsx       # Centered popup overlay: FLIP morph open/close, lede, DeepDiveSpectrum, Press Analysis ▶, Source Perspectives
 │   │   │   ├── DeepDiveSpectrum.tsx # Continuous lean spectrum: 7-zone gradient bar + logos at exact politicalLean %, nearby sources alternate rows, each logo links to source article, tooltip on hover
 │   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid; progressive batch reveal (BATCH_SIZE=8, visibleCount); desktop "Continue reading" link; mobile infinite scroll via IntersectionObserver sentinel; Supabase limit 500
 │   │   │   ├── LeadStory.tsx      # Hero story card
@@ -528,7 +528,7 @@ void-news/
 - [ ] GitHub Pages deployment — pending.
 
 ### Phase 4 — Deep Dive Dashboard -- IN PROGRESS
-- [x] Slide-in panel (desktop 55% / mobile full-screen), per-source BiasLens, tier breakdown bars, Source Perspectives (Agreement/Divergence), Press Analysis inline (BiasInspectorInline), lean spectrum above/below track.
+- [x] Centered popup overlay (desktop 75vw / mobile full-screen), per-source BiasLens, tier breakdown bars, Source Perspectives (Agreement/Divergence), Press Analysis inline (BiasInspectorInline), lean spectrum above/below track.
 - [ ] Detailed framing comparison view.
 - [ ] Source credibility context panels.
 
