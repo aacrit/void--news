@@ -758,37 +758,23 @@
     display: none;
   }
 
-  /* === DAILY BRIEF — mobile pill layout === */
-
-  /* Stack pills vertically on narrow screens */
-  .daily-brief__pills {
-    gap: var(--space-1);
-  }
-
-  /* Hide time readout in pill on mobile to save space */
-  .db-pill__time {
+  /* === NAV FILTERS — hide from top bar on mobile (moved to bottom nav) === */
+  .nav-filters {
     display: none;
   }
 
-  /* TL;DR body: clamp to 4 lines on mobile with "Read more" affordance */
-  .daily-brief__body {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-align-last: left;
-  }
-
-  /* When TL;DR panel is expanded, remove the clamp */
-  .db-panel--open .daily-brief__body {
-    display: block;
-    -webkit-line-clamp: unset;
-    overflow: visible;
-  }
-
-  /* Hide subtitles on mobile to reduce pill clutter */
-  .db-pill__subtitle {
+  /* === DAILY BRIEF — hide inline version on mobile (moved to bottom nav pills) === */
+  .daily-brief {
     display: none;
+  }
+
+  /* === PAGE MAIN — clear bottom nav === */
+  .page-main {
+    padding-bottom: calc(var(--nav-bottom-height, 68px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-footer {
+    margin-bottom: calc(var(--nav-bottom-height, 68px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   /* === META TAGS — bump readability on mobile === */
