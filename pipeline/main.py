@@ -1797,6 +1797,7 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
+                    edition_sections=["world", "us", "india"],
                 )
 
                 for edition, brief in brief_results.items():
@@ -1805,6 +1806,7 @@ def main():
                         "pipeline_run_id": run_id,
                         "tldr_text": brief["tldr_text"],
                         "opinion_text": brief.get("opinion_text"),
+                        "opinion_headline": brief.get("opinion_headline"),
                         "opinion_lean": brief.get("opinion_lean"),
                         "opinion_cluster_id": brief.get("opinion_cluster_id"),
                         "opinion_audio_script": brief.get("opinion_audio_script"),
@@ -1822,7 +1824,7 @@ def main():
                     if is_empty_brief:
                         try:
                             prev = supabase.table("daily_briefs").select(
-                                "tldr_text,opinion_text,opinion_lean,opinion_cluster_id,"
+                                "tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
                                 "audio_script,audio_url,audio_duration_seconds,"
                                 "audio_voice_label,audio_voice,audio_file_size,"
                                 "opinion_audio_script,top_cluster_ids"
@@ -1833,6 +1835,7 @@ def main():
                                 p = prev.data[0]
                                 brief_row["tldr_text"] = p["tldr_text"]
                                 brief_row["opinion_text"] = p.get("opinion_text")
+                                brief_row["opinion_headline"] = p.get("opinion_headline")
                                 brief_row["opinion_lean"] = p.get("opinion_lean")
                                 brief_row["opinion_cluster_id"] = p.get("opinion_cluster_id")
                                 brief_row["audio_script"] = p.get("audio_script")

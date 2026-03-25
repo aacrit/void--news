@@ -25,11 +25,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from summarizer.gemini_client import generate_json, is_available
 
 # ---------------------------------------------------------------------------
-# Hard cap: 3 Gemini calls per run (one per edition).
+# Hard cap: 6 Gemini calls per run (2 per edition × 3 editions).
 # These are charged against a separate budget (count_call=False) so they
 # do not consume the 25-call cluster summarization budget.
 # ---------------------------------------------------------------------------
-_MAX_BRIEF_CALLS: int = 5
+_MAX_BRIEF_CALLS: int = 6
 _brief_call_count: int = 0
 
 
@@ -427,6 +427,8 @@ than the problem, that is the story.""",
 
 _OPINION_USER_PROMPT = """\
 Write a void --opinion editorial for the {LEAN_UPPER} lens.
+Edition: {EDITION_UPPER}
+Perspective: {EDITION_FOCUS}
 Date: {DATE}
 
 STORY:
@@ -443,11 +445,15 @@ Consensus facts:
 Where coverage diverges:
 {DIVERGENCE}
 
-Return JSON with exactly two fields:
-1. "opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
+Return JSON with exactly three fields:
+1. "opinion_headline" — 6-12 word editorial headline for this opinion piece. \
+Not a news headline. A declarative statement of the editorial thesis. \
+Concrete nouns and active verbs. No "slams," "blasts," "rips." \
+Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
+2. "opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
 opening → thesis → evidence → turn → close.
-2. "opinion_audio_script" — A single-voice editorial explainer (90-120 seconds, \
+3. "opinion_audio_script" — A single-voice editorial explainer (90-120 seconds, \
 200-280 words). Think CBC Ideas meets Vox — an authoritative voice that explains \
 WHY this story matters through a specific ideological lens. Not reading an essay \
 aloud. EXPLAINING a position with the conviction of someone who has studied the \
@@ -489,20 +495,28 @@ def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
     if not edition_clusters:
         return None
 
-    # Score: headline_rank * (1 + divergence_bonus)
+    # Score: headline_rank * (1 + divergence_bonus) * locality_bonus
+    # For US/India: prefer stories primarily in that edition (not cross-listed world)
     def _score(c):
         rank = c.get("headline_rank", 0)
         div = c.get("divergence_score", 0) or 0
-        return rank * (1.0 + min(div / 100, 0.5))
+        base = rank * (1.0 + min(div / 100, 0.5))
+        # Locality: clusters in only this edition (not cross-listed to world) get 1.3x
+        if edition in ("us", "india"):
+            sections = c.get("sections") or [c.get("section", "world")]
+            is_local = "world" not in sections or sections == [edition]
+            if is_local:
+                base *= 1.3
+        return base
 
     edition_clusters.sort(key=_score, reverse=True)
     return edition_clusters[0]
 
 
-def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
+def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "world") -> dict | None:
     """Generate a single-story editorial opinion via Gemini.
 
-    Returns dict with opinion_text, opinion_lean, opinion_cluster_id, or None.
+    Returns dict with opinion_text, opinion_headline, opinion_lean, opinion_cluster_id, or None.
     """
     global _brief_call_count
 
@@ -524,9 +538,14 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
         LEAN_INSTRUCTION=lean_instruction,
     )
 
+    edition_key = edition.upper()
+    edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
+
     prompt = _OPINION_USER_PROMPT.format(
         LEAN_UPPER=lean_upper,
         LEAN_LABEL=lean_label,
+        EDITION_UPPER=edition_key,
+        EDITION_FOCUS=edition_focus,
         DATE=date_str,
         TITLE=title,
         SOURCE_COUNT=source_count,
@@ -570,11 +589,20 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str) -> dict | None:
             else:
                 opinion_audio = None
 
+            # Extract opinion headline
+            headline = raw.get("opinion_headline", "")
+            if not isinstance(headline, str) or not headline.strip():
+                headline = None
+            else:
+                headline = headline.strip()
+
             cluster_id = cluster.get("_db_id", "")
             print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
-                  f"({words} words, {source_count} sources)")
+                  f"({words} words, {source_count} sources"
+                  f"{', headline: ' + repr(headline[:50]) if headline else ''})")
             return {
                 "opinion_text": text,
+                "opinion_headline": headline,
                 "opinion_audio_script": opinion_audio,
                 "opinion_lean": lean,
                 "opinion_cluster_id": cluster_id if cluster_id else None,
@@ -630,6 +658,7 @@ def generate_daily_briefs(
             results[edition] = {
                 "tldr_text": "No stories available for this edition.",
                 "opinion_text": None,
+                "opinion_headline": None,
                 "audio_script": None,
                 "top_cluster_ids": [],
             }
@@ -663,6 +692,7 @@ def generate_daily_briefs(
                     brief_result = {
                         "tldr_text": tldr.strip(),
                         "opinion_text": None,
+                        "opinion_headline": None,
                         "opinion_lean": None,
                         "opinion_cluster_id": None,
                         "audio_script": script if isinstance(script, str) and script.strip() else None,
@@ -684,6 +714,7 @@ def generate_daily_briefs(
             brief_result = {
                 "tldr_text": _rule_based_tldr(top_clusters),
                 "opinion_text": None,
+                "opinion_headline": None,
                 "opinion_lean": None,
                 "opinion_cluster_id": None,
                 "audio_script": None,
@@ -694,9 +725,10 @@ def generate_daily_briefs(
         today_lean = _get_today_lean()
         opinion_cluster = _select_opinion_cluster(clusters, edition)
         if opinion_cluster:
-            opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str)
+            opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str, edition=edition)
             if opinion_result:
                 brief_result["opinion_text"] = opinion_result["opinion_text"]
+                brief_result["opinion_headline"] = opinion_result.get("opinion_headline")
                 brief_result["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
                 brief_result["opinion_lean"] = opinion_result["opinion_lean"]
                 brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
