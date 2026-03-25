@@ -20,38 +20,22 @@ jobs:
       - name: Run migration
         env:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          MIGRATION_INPUT: ${{ inputs.migration }}
         run: |
           python3 << 'PYEOF'
-          import psycopg2, os, glob, sys
+          import psycopg2, os, glob, re
 
-          pw = os.environ['SUPABASE_DB_PASSWORD']
           ref = 'xryzskhgfuafyotrcdvj'
+          pw = os.environ['SUPABASE_DB_PASSWORD']
+          migration_input = os.environ.get('MIGRATION_INPUT', 'all')
 
-          # Try multiple connection methods (same as apply-migrations.yml)
-          conn = None
-          attempts = [
-              f"postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require",
-              f"postgresql://postgres:{pw}@db.{ref}.supabase.co:5432/postgres?sslmode=require",
-              f"postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=require",
-          ]
-
-          for dsn in attempts:
-              host = dsn.split("@")[1].split("/")[0]
-              try:
-                  conn = psycopg2.connect(dsn, connect_timeout=15)
-                  print(f"Connected via {host}")
-                  break
-              except Exception as e:
-                  print(f"Failed {host}: {str(e).strip().split(chr(10))[0][:100]}")
-                  conn = None
-
-          if not conn:
-              print("All connection attempts failed!")
-              sys.exit(1)
+          conn = psycopg2.connect(
+              f'postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require'
+          )
           conn.autocommit = True
           cur = conn.cursor()
 
-          # Create tracking table if not exists
+          # Ensure migration tracking table exists
           cur.execute("""
               CREATE TABLE IF NOT EXISTS _migrations (
                   name TEXT PRIMARY KEY,
@@ -59,52 +43,43 @@ jobs:
               )
           """)
 
-          migration_input = "${{ inputs.migration }}"
-
-          if migration_input == "all":
-              files = sorted(glob.glob("supabase/migrations/*.sql"))
+          if migration_input == 'all':
+              # Discover all migration files, sorted by numeric prefix
+              files = sorted(glob.glob('supabase/migrations/*.sql'))
+              if not files:
+                  print('No migration files found')
+              for fpath in files:
+                  fname = os.path.basename(fpath)
+                  # Check if already applied
+                  cur.execute("SELECT 1 FROM _migrations WHERE name = %s", (fname,))
+                  if cur.fetchone():
+                      print(f'  [skip] {fname} (already applied)')
+                      continue
+                  # Run the migration
+                  sql = open(fpath).read()
+                  try:
+                      cur.execute(sql)
+                      cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (fname,))
+                      print(f'  [ok]   {fname}')
+                  except Exception as e:
+                      # IF NOT EXISTS / already-exists errors are fine
+                      err = str(e).lower()
+                      if 'already exists' in err or 'duplicate' in err:
+                          cur.execute("ROLLBACK") if not conn.autocommit else None
+                          cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (fname,))
+                          print(f'  [skip] {fname} (objects already exist)')
+                      else:
+                          print(f'  [FAIL] {fname}: {e}')
+                          raise
           else:
-              files = [f"supabase/migrations/{migration_input}"]
+              # Single migration mode (original behavior)
+              fpath = f'supabase/migrations/{migration_input}'
+              sql = open(fpath).read()
+              cur.execute(sql)
+              fname = os.path.basename(fpath)
+              cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (fname,))
+              print(f'Migration applied successfully: {fname}')
 
-          applied = 0
-          skipped = 0
-          already_existed = 0
-          failed = 0
-          for f in files:
-              name = os.path.basename(f)
-              cur.execute("SELECT 1 FROM _migrations WHERE name = %s", (name,))
-              if cur.fetchone():
-                  print(f"SKIP (tracked): {name}")
-                  skipped += 1
-                  continue
-              print(f"APPLYING: {name} ... ", end="", flush=True)
-              sql = open(f).read()
-              try:
-                  cur.execute(sql)
-                  cur.execute("INSERT INTO _migrations (name) VALUES (%s)", (name,))
-                  print("OK")
-                  applied += 1
-              except Exception as e:
-                  err = str(e).lower()
-                  # "already exists" means migration was applied before tracking existed.
-                  # Reset cursor (autocommit leaves conn usable) and record it.
-                  if "already exists" in err:
-                      cur.close()
-                      cur = conn.cursor()
-                      cur.execute("INSERT INTO _migrations (name) VALUES (%s) ON CONFLICT DO NOTHING", (name,))
-                      print(f"ALREADY EXISTS (now tracked)")
-                      already_existed += 1
-                  else:
-                      print(f"FAILED: {e}")
-                      cur.close()
-                      cur = conn.cursor()
-                      failed += 1
-
-          if failed > 0:
-              print(f"\n{failed} migration(s) failed!")
-              sys.exit(1)
-
-          print(f"\nDone. Applied: {applied}, Skipped: {skipped}, Already existed: {already_existed}, Total: {len(files)}")
           cur.close()
           conn.close()
           PYEOF
