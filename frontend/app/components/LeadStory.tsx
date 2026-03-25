@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo, whyThisStory } from "../lib/utils";
+import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 
@@ -101,23 +101,9 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, o
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
 
-      {/* Bias indicator — lean-first with source count + type badge */}
+      {/* Bias indicator */}
       <div className="lead-story__footer">
         <Sigil data={story.sigilData} size="lg" />
-        {(() => {
-          const reasons = whyThisStory({
-            sourceCount: story.source.count,
-            coverageVelocity: story.coverageVelocity,
-            divergenceScore: story.divergenceScore,
-            leanSpread: story.biasSpread?.leanSpread,
-            headlineRank: story.headlineRank,
-          });
-          return reasons.length > 0 ? (
-            <span className="lead-story__why">
-              {reasons.join(" · ")}
-            </span>
-          ) : null;
-        })()}
       </div>
     </article>
   );
