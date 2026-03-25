@@ -88,7 +88,9 @@ export function useDailyBrief(edition: string): DailyBriefState {
     const audio = audioRef.current;
     if (!audio) return;
     const onTime = () => setCurrentTime(audio.currentTime);
-    const onMeta = () => setDuration(audio.duration || 0);
+    const onMeta = () => {
+      if (audio.duration && isFinite(audio.duration)) setDuration(audio.duration);
+    };
     const onEnd = () => setIsPlaying(false);
     const onError = () => {
       setAudioError(true);
@@ -96,11 +98,15 @@ export function useDailyBrief(edition: string): DailyBriefState {
     };
     audio.addEventListener("timeupdate", onTime);
     audio.addEventListener("loadedmetadata", onMeta);
+    audio.addEventListener("durationchange", onMeta);
     audio.addEventListener("ended", onEnd);
     audio.addEventListener("error", onError);
+    // If metadata already loaded (cached), grab duration now
+    if (audio.duration && isFinite(audio.duration)) setDuration(audio.duration);
     return () => {
       audio.removeEventListener("timeupdate", onTime);
       audio.removeEventListener("loadedmetadata", onMeta);
+      audio.removeEventListener("durationchange", onMeta);
       audio.removeEventListener("ended", onEnd);
       audio.removeEventListener("error", onError);
     };
@@ -279,11 +285,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
             className={`db-panel${expanded === "opinion" ? " db-panel--open" : ""}`}
           >
             <div className="db-panel__inner daily-brief__opinion">
-              <div className="db-panel__header">
-                <ScaleIcon size={10} animation="idle" className="db-panel__header-icon" />
-                <span className="db-panel__header-label">void --opinion</span>
-                <span className="db-panel__header-sub">The Board</span>
-              </div>
+              <h3 className="daily-brief__opinion-headline">The Board</h3>
               <p>
                 {brief.opinion_text}
                 {brief.opinion_lean && (
@@ -301,29 +303,41 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
             className={`db-panel${expanded === "onair" ? " db-panel--open" : ""}`}
           >
             <div className="db-panel__inner db-panel__onair">
-              <div className="void-onair__track">
-                <div
-                  className="void-onair__fill"
-                  style={{ width: `${progress}%` }}
-                />
-                <input
-                  type="range"
-                  className="void-onair__seek"
-                  min={0}
-                  max={displayDuration || 100}
-                  value={currentTime}
-                  step={0.5}
-                  onChange={handleSeek}
-                  aria-label="Broadcast progress"
-                />
-              </div>
-              <div className="db-panel__onair-meta">
-                <span className="db-panel__onair-status">
-                  {isPlaying ? "Now playing" : "Paused"}
-                </span>
-                <span className="db-panel__onair-time">
-                  {formatTime(currentTime)} / {formatTime(displayDuration)}
-                </span>
+              <div className="db-panel__onair-controls">
+                <button
+                  type="button"
+                  className="db-onair__play-btn"
+                  onClick={handlePlayPause}
+                  aria-label={isPlaying ? "Pause" : "Play"}
+                >
+                  {isPlaying ? "\u275A\u275A" : "\u25B6"}
+                </button>
+                <div className="db-panel__onair-track-wrap">
+                  <div className="void-onair__track">
+                    <div
+                      className="void-onair__fill"
+                      style={{ width: `${progress}%` }}
+                    />
+                    <input
+                      type="range"
+                      className="void-onair__seek"
+                      min={0}
+                      max={displayDuration || 100}
+                      value={currentTime}
+                      step={0.5}
+                      onChange={handleSeek}
+                      aria-label="Broadcast progress"
+                    />
+                  </div>
+                  <div className="db-panel__onair-meta">
+                    <span className="db-panel__onair-status">
+                      {isPlaying ? "Now playing" : "Paused"}
+                    </span>
+                    <span className="db-panel__onair-time">
+                      {formatTime(currentTime)} / {formatTime(displayDuration)}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

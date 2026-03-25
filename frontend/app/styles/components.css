@@ -4001,8 +4001,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .daily-brief__body {
   font-family: var(--font-structural);
   font-style: normal;
-  font-size: var(--text-sm);
-  line-height: 1.55;
+  font-size: var(--text-base);
+  line-height: 1.65;
   color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
@@ -4024,16 +4024,27 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 /* ---- Opinion panel ---- */
 .daily-brief__opinion {
   font-family: var(--font-editorial);
-  font-style: normal;
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  color: var(--fg-secondary);
+  font-style: italic;
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--fg-primary);
   text-align: justify;
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   border-left: 2px dotted var(--border-strong);
   padding-left: var(--space-3);
+}
+
+.daily-brief__opinion-headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  font-style: normal;
+  color: var(--fg-primary);
+  margin: 0 0 var(--space-2);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 /* ---- Opinion lean tag — subtle inline at end of text ---- */
@@ -4051,6 +4062,39 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .db-panel__onair {
   padding-bottom: var(--space-1);
+}
+
+.db-panel__onair-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.db-panel__onair-track-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.db-onair__play-btn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: none;
+  color: var(--accent-warm);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
+}
+
+.db-onair__play-btn:hover {
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
 .db-panel__onair-meta {

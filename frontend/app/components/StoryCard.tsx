@@ -2,10 +2,9 @@
 
 import { useRef, useEffect, useState } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo, whyThisStory } from "../lib/utils";
+import { timeAgo } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
-import { VelocityIndicator } from "./StoryMeta";
 import { hapticLight } from "../lib/haptics";
 
 interface StoryCardProps {
@@ -63,10 +62,9 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
-      {/* Category tag + time + velocity */}
+      {/* Category tag + time */}
       <div className="story-card__meta">
         <span className="category-tag">{story.category}</span>
-        <VelocityIndicator velocity={story.coverageVelocity} />
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>
       </div>
 
@@ -84,23 +82,9 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       {/* Summary */}
       <p className="story-card__summary">{story.summary}</p>
 
-      {/* Bias indicator — lean bar + source count + type badge */}
+      {/* Bias indicator */}
       <div className="story-card__footer">
         <Sigil data={story.sigilData} size="lg" />
-        {(() => {
-          const reasons = whyThisStory({
-            sourceCount: story.source.count,
-            coverageVelocity: story.coverageVelocity,
-            divergenceScore: story.divergenceScore,
-            leanSpread: story.biasSpread?.leanSpread,
-            headlineRank: story.headlineRank,
-          });
-          return reasons.length > 0 ? (
-            <span className="story-card__why">
-              {reasons.join(" · ")}
-            </span>
-          ) : null;
-        })()}
       </div>
     </article>
   );

@@ -167,6 +167,17 @@ function DataMark({ data, size, mounted }: {
         }}
         opacity={0.9}
       />
+      {/* Source count inside ring */}
+      <text x="16" y="13.5" textAnchor="middle" dominantBaseline="central"
+        style={{
+          fontFamily: "var(--font-data)", fontSize: px > 32 ? 8 : 7, fontWeight: 700,
+          fill: "var(--fg-secondary)",
+          opacity: mounted ? 0.85 : 0,
+          transition: "opacity 400ms var(--ease-out) 300ms",
+        }}
+      >
+        {data.sourceCount}
+      </text>
 
       {/* Beam group — pivots around circle center, tilts by lean */}
       <g style={{
