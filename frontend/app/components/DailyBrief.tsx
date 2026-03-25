@@ -77,8 +77,8 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(0);
     setDuration(0);
     setAudioError(false);
-    // Per-edition brief — each edition gets its own TL;DR, opinion, and audio
-    fetchDailyBrief(edition).then((data) => {
+    // Single daily brief — always world, edition-agnostic
+    fetchDailyBrief("world").then((data) => {
       if (!cancelled) setBrief(data);
     });
     return () => { cancelled = true; };
@@ -286,7 +286,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           >
             <div className="db-panel__inner daily-brief__opinion">
               <h3 className="daily-brief__opinion-headline">
-                {brief.opinion_headline || "The Board"}
+                The Board
               </h3>
               <p>
                 {brief.opinion_text}
