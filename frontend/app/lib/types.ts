@@ -250,7 +250,6 @@ export interface DailyBriefData {
   edition: Edition;
   tldr_text: string;
   opinion_text: string | null;
-  opinion_headline: string | null;
   opinion_lean: OpinionLean | null;
   opinion_cluster_id: string | null;
   audio_url: string | null;
