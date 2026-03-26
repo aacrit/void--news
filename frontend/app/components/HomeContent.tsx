@@ -90,7 +90,6 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
   );
 }
 
-import LiveUpdatesSection, { type LiveUpdatesSectionHandle } from "./LiveUpdatesSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
@@ -178,8 +177,6 @@ interface HomeContentProps {
 
 function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const activeEdition: Edition = initialEdition;
-  const liveUpdatesRef0 = useRef<LiveUpdatesSectionHandle>(null);
-  const liveUpdatesRef1 = useRef<LiveUpdatesSectionHandle>(null);
 
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -745,18 +742,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
                     <div data-story-index={i}>
-                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} onLiveBadgeClick={story.storyMemoryId ? () => (i === 0 ? liveUpdatesRef0 : liveUpdatesRef1).current?.expand() : undefined} />
+                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
                     </div>
                   </VisibleCard>
                 ))}
               </section>
-            )}
-
-            {/* 2b. Live Updates — articles discovered between pipeline runs for lead stories */}
-            {!isLoading && leadStories.map((ls, li) =>
-              ls.storyMemoryId ? (
-                <LiveUpdatesSection key={ls.id} ref={li === 0 ? liveUpdatesRef0 : liveUpdatesRef1} storyMemoryId={ls.storyMemoryId} />
-              ) : null
             )}
 
             {/* Medium stories — broadsheet grid on desktop */}

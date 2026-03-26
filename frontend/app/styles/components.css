@@ -422,6 +422,121 @@
   gap: var(--space-5);
 }
 
+/* ---- LiveUpdatesInline — timestamped bullets inside LeadStory ---------- */
+
+.live-inline {
+  margin: var(--space-3) 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent-warm);
+}
+
+.live-inline__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--space-2);
+}
+
+.live-inline__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-warm);
+  animation: live-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.live-inline__label {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+}
+
+.live-inline__item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  /* Prevent card click when clicking article links */
+}
+
+.live-inline__time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-inline__source {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fg-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.live-inline__sep {
+  color: var(--fg-muted);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.live-inline__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.live-inline__text:hover {
+  color: var(--fg-primary);
+  text-decoration: underline;
+}
+
+.live-inline__more {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent-warm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  margin-top: 2px;
+}
+
+.live-inline__more:hover {
+  text-decoration: underline;
+}
+
+/* Mobile: stack time + source above text for narrow screens */
+@media (max-width: 767px) {
+  .live-inline__item {
+    flex-wrap: wrap;
+  }
+
+  .live-inline__text {
+    white-space: normal;
+    flex-basis: 100%;
+    padding-left: 0;
+    margin-top: 1px;
+  }
+}
+
 /* ---- Filter Bar — collapsible wrapper ---------------------------------- */
 
 /* Outer collapsible container */
