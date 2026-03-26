@@ -5,6 +5,7 @@ import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
+import LiveUpdatesInline from "./LiveUpdatesInline";
 
 interface LeadStoryProps {
   story: Story;
@@ -13,16 +14,15 @@ interface LeadStoryProps {
   onStoryClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
-  /** Called when the live badge is clicked — expands the timeline below */
-  onLiveBadgeClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
    LeadStory — Hero treatment for the most important story
    Larger typography, more prominent layout, bigger bias stamp.
+   Live updates embedded inline as timestamped bullets.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, onLiveBadgeClick }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
   return (
@@ -46,45 +46,20 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, o
       }}
       className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
-      {/* Live update badge — shows when memory engine is tracking this story.
-          Rendered as a <button> when onLiveBadgeClick is wired (primary lead
-          story with an active timeline below); plain <div> otherwise. */}
+      {/* Live badge — visual indicator when memory engine is tracking */}
       {story.isTopStory && story.liveUpdateCount != null && story.liveUpdateCount > 0 && (
-        onLiveBadgeClick ? (
-          <button
-            type="button"
-            className="lead-story__live-badge lead-story__live-badge--btn"
-            onClick={(e) => {
-              e.stopPropagation(); // prevent card click / DeepDive open
-              onLiveBadgeClick();
-            }}
-            aria-label={`View ${story.liveUpdateCount} live updates — click to expand timeline`}
-          >
-            <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
-            <span className="live-badge__text">Live</span>
-            {story.lastLiveUpdateAt && (
-              <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
-                Updated {timeAgo(story.lastLiveUpdateAt)}
-              </time>
-            )}
-            <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
-              +{story.liveUpdateCount}
-            </span>
-          </button>
-        ) : (
-          <div className="lead-story__live-badge">
-            <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
-            <span className="live-badge__text">Live</span>
-            {story.lastLiveUpdateAt && (
-              <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
-                Updated {timeAgo(story.lastLiveUpdateAt)}
-              </time>
-            )}
-            <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
-              +{story.liveUpdateCount}
-            </span>
-          </div>
-        )
+        <div className="lead-story__live-badge">
+          <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
+          <span className="live-badge__text">Live</span>
+          {story.lastLiveUpdateAt && (
+            <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
+              Updated {timeAgo(story.lastLiveUpdateAt)}
+            </time>
+          )}
+          <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
+            +{story.liveUpdateCount}
+          </span>
+        </div>
       )}
 
       {/* Category tag + time */}
@@ -100,6 +75,11 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, o
 
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
+
+      {/* Inline live updates — story-specific timestamped bullets */}
+      {story.storyMemoryId && (
+        <LiveUpdatesInline storyMemoryId={story.storyMemoryId} />
+      )}
 
       {/* Bias indicator */}
       <div className="lead-story__footer">
