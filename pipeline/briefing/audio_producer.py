@@ -17,6 +17,7 @@ import os
 import re
 import sys
 import tempfile
+import time
 import wave
 from pathlib import Path
 from typing import Optional
@@ -198,6 +199,8 @@ def _synthesize_gemini_tts(
     print(f"  [audio] Long script — synthesizing in {len(chunks)} chunks")
     all_pcm = bytearray()
     for i, chunk in enumerate(chunks):
+        if i > 0:
+            time.sleep(3)  # Rate-limit buffer between TTS chunks
         pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b)
         if pcm is None:
             print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed — aborting")
@@ -395,8 +398,25 @@ def produce_audio(
     if opinion_audio_script:
         # Use dedicated opinion voice — distinct from both news hosts
         opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
-        print(f"  [audio] Synthesizing opinion monologue ({len(opinion_audio_script.split())} words, voice {opinion_voice_name})")
-        opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, opinion_voice_name)
+        word_count = len(opinion_audio_script.split())
+        print(f"  [audio] Synthesizing opinion monologue ({word_count} words, voice {opinion_voice_name})")
+
+        # Rate-limit buffer: wait before opinion TTS to avoid 429 after news chunks
+        print("  [audio] Waiting 5s before opinion TTS (rate-limit buffer)...")
+        time.sleep(5)
+
+        # Try up to 3 times with backoff — opinion TTS often fails on first
+        # attempt due to rate limits from the preceding news TTS calls
+        opinion_pcm = None
+        for attempt in range(3):
+            opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, opinion_voice_name)
+            if opinion_pcm:
+                break
+            if attempt < 2:
+                wait = 10 * (attempt + 1)  # 10s, 20s
+                print(f"  [audio] Opinion TTS attempt {attempt + 1} failed — retrying in {wait}s...")
+                time.sleep(wait)
+
         if opinion_pcm:
             opinion_duration = len(opinion_pcm) / (24000 * 2)
             print(f"  [audio] Opinion TTS: {opinion_duration:.1f}s")
@@ -414,7 +434,7 @@ def produce_audio(
             combined += opinion_seg
             combined += AudioSegment.silent(duration=350)
         else:
-            print("  [audio] Opinion TTS failed — main broadcast unaffected")
+            print("  [audio] Opinion TTS FAILED after 3 attempts — broadcast without opinion")
 
     # Outro: the resolve
     outro = _load_asset("outro.wav")
