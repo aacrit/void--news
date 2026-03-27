@@ -98,6 +98,7 @@ import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
+import LiveUpdatesPopout from "./LiveUpdatesPopout";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -212,6 +213,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
+  // Live updates popout state
+  const [liveStory, setLiveStory] = useState<Story | null>(null);
+  const [liveOriginRect, setLiveOriginRect] = useState<DOMRect | null>(null);
+
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
@@ -288,6 +293,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const handleDeepDiveClose = useCallback(() => {
     setSelectedStory(null);
     setOriginRect(null);
+    window.scrollTo(0, scrollBeforeDeepDive.current);
+  }, []);
+
+  // Live updates popout handlers
+  const handleLiveClick = useCallback((story: Story, rect: DOMRect) => {
+    scrollBeforeDeepDive.current = window.scrollY;
+    setLiveOriginRect(rect.width > 0 ? rect : null);
+    setLiveStory(story);
+  }, []);
+
+  const handleLiveClose = useCallback(() => {
+    setLiveStory(null);
+    setLiveOriginRect(null);
     window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
@@ -550,6 +568,25 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const mediumStories = filteredStories.slice(2, 5);
   const compactStories = filteredStories.slice(5);
 
+  // Live stories eligible for popout navigation (top stories with active tracking)
+  const liveTrackedStories = useMemo(
+    () => leadStories.filter((s) => s.isTopStory && (s.liveUpdateCount ?? 0) > 0),
+    [leadStories],
+  );
+
+  const handleLiveNavigate = useCallback(
+    (dir: "prev" | "next") => {
+      if (!liveStory || liveTrackedStories.length < 2) return;
+      const idx = liveTrackedStories.findIndex((s) => s.id === liveStory.id);
+      const newIdx =
+        dir === "next"
+          ? (idx + 1) % liveTrackedStories.length
+          : (idx - 1 + liveTrackedStories.length) % liveTrackedStories.length;
+      setLiveStory(liveTrackedStories[newIdx]);
+    },
+    [liveStory, liveTrackedStories],
+  );
+
   // Progressive batch reveal — no hard cap
   const visibleCompact = compactStories.slice(0, visibleCount);
   const remainingCount = compactStories.length - visibleCount;
@@ -742,7 +779,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
                     <div data-story-index={i}>
-                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} onLiveClick={handleLiveClick} kbdFocused={kbdFocusIndex === i} />
                     </div>
                   </VisibleCard>
                 ))}
@@ -834,6 +871,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           onNavigate={handleDeepDiveNav}
           storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
           totalStories={filteredStories.length}
+        />
+      )}
+
+      {/* Live updates popout */}
+      {liveStory && (
+        <LiveUpdatesPopout
+          story={liveStory}
+          onClose={handleLiveClose}
+          originRect={liveOriginRect}
+          onNavigate={liveTrackedStories.length > 1 ? handleLiveNavigate : undefined}
+          storyIndex={liveTrackedStories.findIndex((s) => s.id === liveStory.id)}
+          totalStories={liveTrackedStories.length}
         />
       )}
 

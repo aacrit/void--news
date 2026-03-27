@@ -12,6 +12,8 @@ interface LeadStoryProps {
   /** 0 = primary (first/most important), 1+ = secondary */
   rank?: number;
   onStoryClick?: (story: Story, rect: DOMRect) => void;
+  /** Opens the live updates popout for this story */
+  onLiveClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
 }
@@ -22,8 +24,9 @@ interface LeadStoryProps {
    Live updates embedded inline as timestamped bullets.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, onLiveClick, kbdFocused }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
+  const badgeRef = useRef<HTMLButtonElement>(null);
 
   return (
     <article
@@ -46,9 +49,21 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
       }}
       className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
-      {/* Live badge — visual indicator when memory engine is tracking */}
+      {/* Live badge — opens live updates popout when clicked */}
       {story.isTopStory && story.liveUpdateCount != null && story.liveUpdateCount > 0 && (
-        <div className="lead-story__live-badge">
+        <button
+          ref={badgeRef}
+          className="lead-story__live-badge lead-story__live-badge--btn"
+          type="button"
+          aria-label={`Open live updates: ${story.liveUpdateCount} updates`}
+          onClick={(e) => {
+            e.stopPropagation();
+            hapticLight();
+            if (badgeRef.current && onLiveClick) {
+              onLiveClick(story, badgeRef.current.getBoundingClientRect());
+            }
+          }}
+        >
           <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
           <span className="live-badge__text">Live</span>
           {story.lastLiveUpdateAt && (
@@ -59,7 +74,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
           <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
             +{story.liveUpdateCount}
           </span>
-        </div>
+        </button>
       )}
 
       {/* Category tag + time */}
