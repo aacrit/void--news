@@ -390,6 +390,8 @@ def produce_audio(
     combined += AudioSegment.silent(duration=350)
 
     # --- Opinion segment (optional, after main news) ---
+    if not opinion_audio_script:
+        print("  [audio] No opinion_audio_script — broadcast ends after news")
     if opinion_audio_script:
         # Use dedicated opinion voice — distinct from both news hosts
         opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]

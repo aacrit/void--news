@@ -585,6 +585,13 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
             if found:
                 print(f"  [opinion] Prohibited terms: {found}")
 
+            # Extract opinion headline (needed before audio script fallback)
+            headline = raw.get("opinion_headline", "")
+            if not isinstance(headline, str) or not headline.strip():
+                headline = None
+            else:
+                headline = headline.strip()
+
             # Extract opinion audio script
             opinion_audio = raw.get("opinion_audio_script", "")
             if isinstance(opinion_audio, str) and opinion_audio.strip():
@@ -592,14 +599,16 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                 audio_words = len(opinion_audio.split())
                 print(f"  [opinion] Audio script: {audio_words} words")
             else:
-                opinion_audio = None
-
-            # Extract opinion headline
-            headline = raw.get("opinion_headline", "")
-            if not isinstance(headline, str) or not headline.strip():
-                headline = None
-            else:
-                headline = headline.strip()
+                # Fallback: synthesize audio script from opinion text.
+                # Gemini often omits the third JSON field. The opinion text
+                # is already written in spoken cadence — just add the preamble.
+                lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
+                preamble = "Now... void opinion."
+                if headline:
+                    preamble += f" {headline}."
+                preamble += f" Today's {lean_label} lens."
+                opinion_audio = f"{preamble}\n{text}\nvoid opinion."
+                print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
 
             cluster_id = cluster.get("_db_id", "")
             print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
