@@ -303,7 +303,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           >
             <div className="db-panel__inner daily-brief__opinion">
               <h3 className="daily-brief__opinion-headline">
-                The Board
+                {brief.opinion_headline || "The Board"}
               </h3>
               <p>
                 {brief.opinion_text}
