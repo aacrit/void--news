@@ -154,15 +154,15 @@ export function useDailyBrief(edition: string): DailyBriefState {
 }
 
 /* ---------------------------------------------------------------------------
-   DailyBriefText — three CTA pills: tl;dr, opinion, onair.
-   Each expands its panel on click. Headlines stay front and center.
+   DailyBriefText — editorial masthead with three tabs: tl;dr, opinion, onair.
+   Always visible section. Tabs switch content panels in place.
    --------------------------------------------------------------------------- */
 
 type ExpandedPanel = "tldr" | "opinion" | "onair" | null;
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioCallbackRef, handlePlayPause, handleSeek } = state;
-  const [expanded, setExpanded] = useState<ExpandedPanel>("tldr");
+  const [activeTab, setActiveTab] = useState<ExpandedPanel>("tldr");
   const showSubtitles = useFirstEncounterSubtitles();
   if (!brief) return null;
 
@@ -177,17 +177,16 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
   const togglePanel = (panel: ExpandedPanel) => {
     hapticLight();
-    setExpanded((prev) => (prev === panel ? null : panel));
+    setActiveTab((prev) => (prev === panel ? "tldr" : panel));
   };
 
   const handleOnairClick = () => {
     if (!hasAudio) return;
-    // If panel is closed, open it and start playing
-    if (expanded !== "onair") {
-      setExpanded("onair");
+    hapticLight();
+    if (activeTab !== "onair") {
+      setActiveTab("onair");
       if (!isPlaying) handlePlayPause();
     } else {
-      // If panel is open, toggle play/pause
       handlePlayPause();
     }
   };
@@ -196,6 +195,16 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
     : brief.opinion_lean === "right" ? "Conservative"
     : "Pragmatic";
 
+  const leanMod = brief.opinion_lean === "left" ? "db-lean-badge--left"
+    : brief.opinion_lean === "right" ? "db-lean-badge--right"
+    : "db-lean-badge--center";
+
+  const voiceLabel = brief.audio_url
+    ? (brief.audio_url.includes("/india/") ? "Puck & Leda"
+      : brief.audio_url.includes("/us/") ? "Enceladus & Kore"
+      : "Charon & Aoede")
+    : "Charon & Aoede";
+
   return (
     <>
       {hasAudio && (
@@ -203,90 +212,95 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
       )}
 
       <div className="daily-brief" role="complementary" aria-label="Daily Brief">
-        {/* Pill row — three CTAs */}
-        <div className="daily-brief__pills">
-          {/* TL;DR pill */}
+
+        {/* Tab bar */}
+        <div className="db-tabs" role="tablist" aria-label="Daily Brief sections">
+
+          {/* TL;DR tab */}
           <button
-            className={`db-pill${expanded === "tldr" ? " db-pill--active" : ""}`}
+            id="db-tab-tldr"
+            className={`db-tab${activeTab === "tldr" ? " db-tab--active" : ""}`}
+            role="tab"
+            aria-selected={activeTab === "tldr"}
+            aria-controls="db-panel-tldr"
             onClick={() => togglePanel("tldr")}
             type="button"
-            aria-expanded={expanded === "tldr"}
-            aria-controls="db-panel-tldr"
           >
-            <ScaleIcon size={11} animation="idle" className="db-pill__icon" />
-            <span className="db-pill__name">
-              void --tl;dr
-              {showSubtitles && <span className="db-pill__subtitle">The Daily Brief</span>}
+            <span className="db-tab__icon">
+              <ScaleIcon size={10} animation="idle" aria-hidden />
             </span>
+            <span className="db-tab__cmd">
+              <span className="db-tab__void">void </span>--tl;dr
+            </span>
+            {showSubtitles && (
+              <span className="db-tab__subtitle">The Daily Brief</span>
+            )}
           </button>
 
-          {/* Opinion pill */}
+          {/* Opinion tab */}
           {brief.opinion_text && (
             <button
-              className={`db-pill${expanded === "opinion" ? " db-pill--active" : ""}`}
+              id="db-tab-opinion"
+              className={`db-tab${activeTab === "opinion" ? " db-tab--active" : ""}`}
+              role="tab"
+              aria-selected={activeTab === "opinion"}
+              aria-controls="db-panel-opinion"
               onClick={() => togglePanel("opinion")}
               type="button"
-              aria-expanded={expanded === "opinion"}
-              aria-controls="db-panel-opinion"
             >
-              <span className="db-pill__name">
-                void --opinion
-                {showSubtitles && <span className="db-pill__subtitle">The Board</span>}
+              <span className="db-tab__cmd">
+                <span className="db-tab__void">void </span>--opinion
               </span>
+              {showSubtitles && (
+                <span className="db-tab__subtitle">The Board</span>
+              )}
             </button>
           )}
 
-          {/* On Air pill — expands inline into mini player when playing */}
+          {/* Onair tab */}
           <button
-            className={`db-pill db-pill--onair${isPlaying ? " db-pill--playing" : ""}${currentTime > 0 && !isPlaying ? " db-pill--has-progress" : ""}${expanded === "onair" ? " db-pill--active" : ""}${!hasAudio ? " db-pill--disabled" : ""}`}
+            id="db-tab-onair"
+            className={`db-tab db-tab--onair${activeTab === "onair" ? " db-tab--active" : ""}${isPlaying ? " db-tab--playing" : ""}${!hasAudio ? " db-tab--disabled" : ""}`}
+            role="tab"
+            aria-selected={activeTab === "onair"}
+            aria-controls="db-panel-onair"
             onClick={handleOnairClick}
             type="button"
             disabled={!hasAudio}
-            aria-label={!hasAudio ? "Audio broadcast unavailable" : isPlaying ? "Pause broadcast" : "Play void onair"}
+            aria-label={!hasAudio ? "Audio broadcast unavailable" : isPlaying ? "Pause broadcast" : "Play void --onair"}
             title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
           >
-            {isPlaying && <span className="db-pill__dot" />}
-            <ScaleIcon
-              size={11}
-              animation={isPlaying ? "analyzing" : "idle"}
-              className="db-pill__icon"
-              aria-hidden
-            />
-            <span className="db-pill__name">
-              void --onair
-              {showSubtitles && <span className="db-pill__subtitle">Audio Broadcast</span>}
+            {isPlaying && <span className="db-tab__dot" aria-hidden="true" />}
+            <span className="db-tab__icon">
+              <ScaleIcon size={10} animation={isPlaying ? "analyzing" : "idle"} aria-hidden />
             </span>
-            {/* Inline progress track — appears inside the pill when playing or paused mid-track */}
-            {(isPlaying || currentTime > 0) && displayDuration > 0 && (
-              <span className="db-pill__progress">
-                <span className="db-pill__progress-track">
-                  <span
-                    className="db-pill__progress-fill"
-                    style={{ transform: `scaleX(${progress / 100})` }}
-                  />
-                </span>
-                <span className="db-pill__time">
-                  {formatTime(currentTime)}/{formatTime(displayDuration)}
-                </span>
-              </span>
+            <span className="db-tab__cmd">
+              <span className="db-tab__void">void </span>--onair
+            </span>
+            {showSubtitles && (
+              <span className="db-tab__subtitle">Audio Broadcast</span>
             )}
-            <span className="db-pill__glyph" aria-hidden="true">
+            <span className="db-tab__glyph" aria-hidden="true">
               {isPlaying ? "\u275A\u275A" : "\u25B6"}
             </span>
           </button>
 
-          {/* Timestamp — right-aligned */}
+          {/* Timestamp — pushed to far right */}
           {brief.created_at && (
-            <span className="daily-brief__timestamp">{timeAgo(brief.created_at)}</span>
+            <span className="daily-brief__timestamp" aria-label={`Updated ${timeAgo(brief.created_at)}`}>
+              {timeAgo(brief.created_at)}
+            </span>
           )}
         </div>
 
-        {/* === Expandable panels === */}
+        {/* === Tab panels === */}
 
         {/* TL;DR panel */}
         <div
           id="db-panel-tldr"
-          className={`db-panel${expanded === "tldr" ? " db-panel--open" : ""}`}
+          role="tabpanel"
+          aria-labelledby="db-tab-tldr"
+          className={`db-panel${activeTab === "tldr" ? " db-panel--open" : ""}`}
         >
           <div className="db-panel__inner daily-brief__body">
             {paragraphs.map((p, i) => (
@@ -299,7 +313,9 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         {brief.opinion_text && (
           <div
             id="db-panel-opinion"
-            className={`db-panel${expanded === "opinion" ? " db-panel--open" : ""}`}
+            role="tabpanel"
+            aria-labelledby="db-tab-opinion"
+            className={`db-panel${activeTab === "opinion" ? " db-panel--open" : ""}`}
           >
             <div className="db-panel__inner daily-brief__opinion">
               <h3 className="daily-brief__opinion-headline">
@@ -307,60 +323,69 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
               </h3>
               <p>
                 {brief.opinion_text}
-                {brief.opinion_lean && (
-                  <span className="opinion-lean-tag"> — {leanLabel} lens</span>
-                )}
               </p>
+              {brief.opinion_lean && (
+                <span className={`db-lean-badge ${leanMod}`}>{leanLabel}</span>
+              )}
             </div>
           </div>
         )}
 
-        {/* On Air panel — progress bar + seek */}
-        {hasAudio && (
-          <div
-            id="db-panel-onair"
-            className={`db-panel${expanded === "onair" ? " db-panel--open" : ""}`}
-          >
-            <div className="db-panel__inner db-panel__onair">
-              <div className="db-panel__onair-controls">
-                <button
-                  type="button"
-                  className="db-onair__play-btn"
-                  onClick={handlePlayPause}
-                  aria-label={isPlaying ? "Pause" : "Play"}
-                >
-                  {isPlaying ? "\u275A\u275A" : "\u25B6"}
-                </button>
-                <div className="db-panel__onair-track-wrap">
-                  <div className="void-onair__track">
-                    <div
-                      className="void-onair__fill"
-                      style={{ width: `${progress}%` }}
-                    />
-                    <input
-                      type="range"
-                      className="void-onair__seek"
-                      min={0}
-                      max={displayDuration || 100}
-                      value={currentTime}
-                      step={0.5}
-                      onChange={handleSeek}
-                      aria-label="Broadcast progress"
-                    />
-                  </div>
-                  <div className="db-panel__onair-meta">
-                    <span className="db-panel__onair-status">
-                      {isPlaying ? "Now playing" : "Paused"}
-                    </span>
-                    <span className="db-panel__onair-time">
-                      {formatTime(currentTime)} / {formatTime(displayDuration)}
-                    </span>
-                  </div>
+        {/* Onair panel — full audio player */}
+        <div
+          id="db-panel-onair"
+          role="tabpanel"
+          aria-labelledby="db-tab-onair"
+          className={`db-panel${activeTab === "onair" ? " db-panel--open" : ""}`}
+        >
+          <div className="db-panel__inner db-audio">
+            {/* Play / pause button — 44px circle */}
+            <button
+              type="button"
+              className={`db-audio__play${isPlaying ? " db-audio__play--active" : ""}`}
+              onClick={handlePlayPause}
+              disabled={!hasAudio}
+              aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
+            >
+              <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+            </button>
+
+            {/* Track column — seek bar + meta */}
+            <div className="db-audio__track-col">
+              <div className="db-audio__seek-wrap">
+                <div className="db-audio__bar">
+                  <div
+                    className="db-audio__fill"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
+                <input
+                  type="range"
+                  className="db-audio__seek"
+                  min={0}
+                  max={displayDuration || 100}
+                  value={currentTime}
+                  step={0.5}
+                  onChange={handleSeek}
+                  disabled={!hasAudio}
+                  aria-label="Broadcast seek position"
+                  aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`}
+                />
+              </div>
+
+              <div className="db-audio__meta">
+                <span className="db-audio__status">
+                  {isPlaying && <span className="db-audio__dot" aria-hidden="true" />}
+                  {isPlaying ? `Now playing · ${voiceLabel}` : currentTime > 0 ? `Paused · ${voiceLabel}` : voiceLabel}
+                </span>
+                <span className="db-audio__time">
+                  {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+                </span>
               </div>
             </div>
           </div>
-        )}
+        </div>
+
       </div>
     </>
   );
