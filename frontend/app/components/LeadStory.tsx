@@ -5,7 +5,7 @@ import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
-import LiveUpdatesInline from "./LiveUpdatesInline";
+
 
 interface LeadStoryProps {
   story: Story;
@@ -21,7 +21,7 @@ interface LeadStoryProps {
 /* ---------------------------------------------------------------------------
    LeadStory — Hero treatment for the most important story
    Larger typography, more prominent layout, bigger bias stamp.
-   Live updates embedded inline as timestamped bullets.
+   Live badge opens the void --live popout.
    --------------------------------------------------------------------------- */
 
 export default function LeadStory({ story, rank = 0, onStoryClick, onLiveClick, kbdFocused }: LeadStoryProps) {
@@ -90,11 +90,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, onLiveClick, 
 
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
-
-      {/* Inline live updates — story-specific timestamped bullets */}
-      {story.storyMemoryId && (
-        <LiveUpdatesInline storyMemoryId={story.storyMemoryId} />
-      )}
 
       {/* Bias indicator */}
       <div className="lead-story__footer">
