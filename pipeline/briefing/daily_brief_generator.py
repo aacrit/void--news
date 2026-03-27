@@ -458,13 +458,18 @@ opening → thesis → evidence → turn → close.
 WHY this story matters through a specific ideological lens. Not reading an essay \
 aloud. EXPLAINING a position with the conviction of someone who has studied the \
 evidence. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
-Open with: "This is void opinion. Today's {LEAN_LABEL} lens." Then deliver \
-the argument. Structure it as an explainer: set up the tension, walk through \
-the evidence, deliver the insight. Use the second person sparingly for emphasis: \
-"If you're a small manufacturer in Ohio, this tariff doesn't protect you — it \
-prices out your raw materials." Contractions are fine. Spoken cadence, not written. \
-But the register is serious — a documentary narrator making a case, not a pundit \
-riffing. End with: "void opinion." No summary. End on the unresolved question.\
+This is read by a DIFFERENT voice than the news hosts — a distinct editorial \
+narrator. Open EXACTLY with this three-part structure: \
+First line: "Now... void opinion." (pause weight — this signals a new segment) \
+Second line: State the opinion_headline you wrote above as a spoken title. \
+Third line: "Today's {LEAN_LABEL} lens." \
+Then deliver the argument. Structure it as an explainer: set up the tension, \
+walk through the evidence, deliver the insight. Use the second person sparingly \
+for emphasis: "If you're a small manufacturer in Ohio, this tariff doesn't \
+protect you — it prices out your raw materials." Contractions are fine. Spoken \
+cadence, not written. But the register is serious — a documentary narrator \
+making a case, not a pundit riffing. End with: "void opinion." No summary. \
+End on the unresolved question.\
 """
 
 

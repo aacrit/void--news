@@ -180,7 +180,11 @@ def main():
             row["audio_url"] = audio_result["audio_url"]
             row["audio_duration_seconds"] = audio_result["duration_seconds"]
             row["audio_file_size"] = audio_result["file_size"]
-            row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
+            has_opinion = bool(brief.get("opinion_audio_script"))
+            row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                f"+{voices['opinion']['id']}" if has_opinion else ""
+            )
+            row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
 
         try:
             # Delete old and insert new (no pipeline_run_id for standalone)

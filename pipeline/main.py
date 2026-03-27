@@ -1861,8 +1861,11 @@ def main():
                                 brief_row["audio_url"] = audio_result["audio_url"]
                                 brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
                                 brief_row["audio_file_size"] = audio_result["file_size"]
-                                brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
-                                brief_row["audio_voice_label"] = "Two voices"
+                                has_opinion = bool(brief.get("opinion_audio_script"))
+                                brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                                    f"+{voices['opinion']['id']}" if has_opinion else ""
+                                )
+                                brief_row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
                             else:
                                 # TTS failed — carry forward previous audio so
                                 # frontend always has something to play.
