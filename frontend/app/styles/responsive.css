@@ -37,7 +37,18 @@
     padding-right: 0;
   }
 
-  /* Daily Brief: no special tablet overrides needed — pills handle everything */
+  /* Daily Brief: tablet — sections always expanded, hide chevrons */
+  .db-block__chevron { display: none; }
+
+  .db-block__collapsible {
+    grid-template-rows: 1fr !important;
+  }
+
+  /* Toggle labels become non-interactive on tablet+ */
+  .db-block__label--toggle {
+    cursor: default;
+    pointer-events: none;
+  }
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
@@ -763,35 +774,39 @@
     display: none;
   }
 
-  /* === DAILY BRIEF — visible on mobile, compact layout === */
+  /* === DAILY BRIEF — stacked sections, compact mobile layout === */
   .daily-brief {
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     margin: var(--space-3) 0;
   }
 
-  .db-tabs {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  /* Show chevrons on mobile — indicate collapsible sections */
+  .db-block__chevron {
+    display: inline;
   }
 
-  .db-tabs::-webkit-scrollbar {
-    display: none;
+  /* On mobile, collapsible blocks start closed (JS sets --open class) */
+  .db-block__collapsible {
+    grid-template-rows: 0fr;
   }
 
-  .db-tab {
-    white-space: nowrap;
-    padding: var(--space-2) var(--space-2) var(--space-2);
-    min-height: 44px;
-    font-size: 11px;
+  /* Open state — JS toggles this class */
+  .db-block__collapsible--open {
+    grid-template-rows: 1fr;
   }
 
+  /* TL;DR never collapses on mobile */
+  .db-block--tldr .db-block__collapsible {
+    grid-template-rows: 1fr;
+  }
+
+  /* Smaller body text on mobile */
   .daily-brief__body,
   .daily-brief__opinion {
-    max-width: 100%;
     font-size: var(--text-sm);
   }
 
+  /* Touch target already 44px from __label--toggle min-height */
   .db-audio__play {
     width: 44px;
     height: 44px;

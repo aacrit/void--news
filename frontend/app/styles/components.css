@@ -3735,11 +3735,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
  */
 
 /* ===================================================================
-   Daily Brief — pill-based CTA row
-   Three pills (tl;dr, opinion, onair) expand panels on click.
-   Headlines stay front and center; editorial content is opt-in.
+   Daily Brief — stacked section layout (NYT Morning / Axios Smart Brevity)
+   Three always-visible sections: tl;dr, opinion, onair.
+   Desktop: all sections always expanded. Mobile: opinion + onair collapsible.
+   No tab system — sections stack vertically, separated by thin rules.
    =================================================================== */
 
+/* Container — left border signals editorial voice; subtle warm tint */
 .daily-brief {
   border-left: 2px solid var(--accent-warm);
   padding: var(--space-3) var(--space-4);
@@ -3747,172 +3749,172 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   background: color-mix(in srgb, var(--accent-warm) 2%, var(--bg-primary));
 }
 
-/* ---- Tab bar ---- */
+/* ---- Section header: "Daily Brief" + timestamp ---- */
 
-.db-tabs {
+.db-section-header {
   display: flex;
   align-items: baseline;
-  gap: 0;
-  border-bottom: 1px solid var(--border-subtle);
+  justify-content: space-between;
+  gap: var(--space-3);
   margin-bottom: var(--space-3);
-}
-
-.daily-brief__timestamp {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  letter-spacing: 0.03em;
-  margin-left: auto;
-  align-self: center;
   padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* ---- Individual tab ---- */
-
-.db-tab {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3) var(--space-2);
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: var(--fg-muted);
-  font-family: var(--font-data);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  white-space: nowrap;
-  line-height: 1.3;
-  min-height: 44px;
-  margin-bottom: -1px;
-  transition: color var(--dur-fast) var(--ease-out),
-              border-color var(--dur-fast) var(--ease-out);
-}
-
-.db-tab:hover {
+.db-section-title {
+  font-family: var(--font-meta);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--fg-secondary);
-  background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+  line-height: 1;
 }
 
-.db-tab:focus-visible {
+.db-section-time {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* ---- Block — each section (tl;dr, opinion, onair) ---- */
+
+.db-block {
+  /* No padding here — body padding handled inside __body */
+}
+
+/* Thin rule between consecutive blocks */
+.db-block + .db-block {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+}
+
+/* ---- Block label row ---- */
+
+/* Static label (tl;dr — not interactive) */
+.db-block__label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Toggle button variant (opinion, onair — interactive on mobile) */
+.db-block__label--toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  min-height: 44px;
+  flex-wrap: wrap;
+  color: inherit;
+  font: inherit;
+}
+
+.db-block__label--toggle:focus-visible {
   outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
+  outline-offset: 3px;
   border-radius: 2px;
 }
 
-.db-tab--active {
-  color: var(--accent-warm);
-  border-bottom-color: var(--accent-warm);
-}
-
-.db-tab--disabled {
+.db-block__label--disabled {
   opacity: 0.45;
   cursor: default;
   pointer-events: none;
 }
 
-/* Tab inner elements */
-
-.db-tab__cmd {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  line-height: 1;
-}
-
-.db-tab__icon {
-  color: currentColor;
-  flex-shrink: 0;
-  margin-right: 2px;
-}
-
-.db-tab__void {
+/* CLI command name — IBM Plex Mono, fg-muted */
+.db-block__cmd {
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   color: var(--fg-muted);
-  font-weight: 400;
-}
-
-.db-tab--active .db-tab__void {
-  color: color-mix(in srgb, var(--accent-warm) 65%, var(--fg-muted));
-}
-
-.db-tab__glyph {
-  font-size: 0.65em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   line-height: 1;
-  flex-shrink: 0;
-  margin-left: var(--space-1);
 }
 
-/* Breathing red dot on onair tab when playing */
-.db-tab__dot {
-  width: 5px;
-  height: 5px;
+/* English subtitle — Barlow Condensed, fg-muted */
+.db-block__subtitle {
+  font-family: var(--font-meta);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Chevron indicator — only shown on mobile (hidden on desktop via media query) */
+.db-block__chevron {
+  display: none;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+/* Pulsing red live dot — inline in label row when playing */
+.db-block__live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: var(--indicator-broadcast, #c0392b);
   flex-shrink: 0;
+  align-self: center;
   margin-right: 2px;
   animation: onair-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes onair-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
+/* ---- Collapsible content wrapper (grid 0fr / 1fr trick) ---- */
 
-/* First-encounter subtitle — fades in then out after 4s */
-.db-tab__subtitle {
-  display: block;
-  font-family: var(--font-meta);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  opacity: 0;
-  animation: subtitleReveal 4s var(--ease-out) 1s both;
-}
-
-@keyframes subtitleReveal {
-  0% { opacity: 0; transform: translateX(-4px); }
-  15% { opacity: 1; transform: translateX(0); }
-  75% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* ---- Expandable tab panels ---- */
-
-.db-panel {
+.db-block__collapsible {
   display: grid;
-  grid-template-rows: 0fr;
+  grid-template-rows: 1fr; /* Desktop default: always open */
   transition: grid-template-rows var(--dur-normal) var(--ease-out);
-}
-
-.db-panel--open {
-  grid-template-rows: 1fr;
-}
-
-.db-panel__inner {
   overflow: hidden;
 }
 
-.db-panel--open .db-panel__inner {
-  padding-top: var(--space-2);
+/* Inner wrapper prevents content clip from affecting layout */
+.db-block__inner {
+  overflow: hidden;
+  min-height: 0;
 }
 
-/* TL;DR body — Inter, justified, reading-optimized */
+/* ---- TL;DR body — Inter, justified, editorial aside style ---- */
+
 .daily-brief__body {
   font-family: var(--font-structural);
   font-style: normal;
   font-size: var(--text-base);
-  line-height: 1.65;
+  line-height: 1.7;
   color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
-  max-width: 65ch;
+  border-left: 2px solid var(--accent-warm);
+  padding-left: var(--space-3);
+  /* No max-width — fills container, page grid constrains width */
 }
 
 .daily-brief__body p {
@@ -3924,22 +3926,25 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-bottom: 0;
 }
 
-/* ---- Opinion panel — Playfair italic, editorial firewall dotted border ---- */
+/* ---- Opinion body — Inter regular with dotted editorial firewall ---- */
+
 .daily-brief__opinion {
-  font-family: var(--font-editorial);
-  font-style: italic;
+  font-family: var(--font-structural);
+  font-style: normal;
+  font-weight: 400;
   font-size: var(--text-base);
-  line-height: 1.65;
-  color: var(--fg-primary);
+  line-height: 1.7;
+  color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   border-left: 2px dotted var(--border-strong);
   padding-left: var(--space-3);
-  max-width: 65ch;
+  /* No max-width — fills container */
 }
 
+/* Opinion headline — Playfair bold, NOT italic (editorial gravitas without ornament) */
 .daily-brief__opinion-headline {
   font-family: var(--font-editorial);
   font-size: var(--text-lg);
@@ -3953,8 +3958,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 /* Opinion lean badge — pill with colored tint */
 .db-lean-badge {
-  display: inline-block;
-  margin-top: var(--space-2);
+  display: inline-flex;
+  align-items: center;
   padding: 2px var(--space-2);
   border-radius: 3px;
   font-family: var(--font-meta);
@@ -3964,6 +3969,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--fg-secondary);
+  align-self: center;
+  flex-shrink: 0;
 }
 
 .db-lean-badge--left {
@@ -3981,7 +3988,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-tertiary);
 }
 
-/* ---- On Air panel — redesigned audio player ---- */
+/* ---- On Air audio player ---- */
 
 .db-audio {
   display: flex;
@@ -4030,7 +4037,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   pointer-events: none;
 }
 
-/* Track column — seek bar + meta row */
+/* Track column — seek bar + meta row, fills remaining width */
 .db-audio__track-col {
   flex: 1;
   min-width: 0;
@@ -4129,11 +4136,14 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   animation: onair-pulse 1.5s ease-in-out infinite;
 }
 
+@keyframes onair-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .db-tab { transition: none; }
-  .db-tab__dot { animation: none; opacity: 1; }
-  .db-tab__subtitle { animation: none; opacity: 1; }
-  .db-panel { transition: none; }
+  .db-block__collapsible { transition: none; }
+  .db-block__live-dot { animation: none; opacity: 1; }
   .db-audio__fill { transition: none; }
   .db-audio__play { transition: none; }
   .db-audio__dot { animation: none; opacity: 1; }
