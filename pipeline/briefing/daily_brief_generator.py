@@ -148,7 +148,8 @@ most coverage misses. A and B trade off — one sets up the facts, the other \
 explains the mechanism or implication. Let them build on each other.
 3. CLOSE: One of them distills the day into a single observation — \
 the thread connecting these stories, or the question they leave unanswered. \
-Not a summary. A thought the listener carries with them. Then: "void news." Done.
+Not a summary. A thought the listener carries with them. Then the last \
+speaker says: "This was Void news." — with finality, like a sign-off. Done.
 
 The Vox/Big Think voice:
 - Authoritative but not stiff. They speak with the confidence of someone who \
@@ -499,6 +500,37 @@ End with: "void opinion." No summary. End on the unresolved question.\
 """
 
 
+def _rule_based_opinion(cluster: dict, lean: str) -> dict:
+    """Build a rule-based opinion when Gemini is unavailable.
+
+    Uses the cluster summary directly as opinion text and builds an audio
+    script with the proper preamble. Not as good as Gemini-generated
+    opinion, but guarantees the opinion segment is always present.
+    """
+    title = (cluster.get("title") or "Untitled").strip()
+    summary = (cluster.get("summary") or title).strip()
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
+    cluster_id = cluster.get("_db_id", cluster.get("id", ""))
+
+    # Build audio script from summary
+    audio_script = (
+        f"Now... void opinion.\n"
+        f"{title}.\n"
+        f"Today's {lean_label} lens.\n"
+        f"{summary}\n"
+        f"void opinion."
+    )
+
+    print(f"  [opinion] Rule-based fallback: \"{title[:60]}\" ({len(summary.split())} words)")
+    return {
+        "opinion_text": summary,
+        "opinion_headline": title,
+        "opinion_audio_script": audio_script,
+        "opinion_lean": lean,
+        "opinion_cluster_id": cluster_id if cluster_id else None,
+    }
+
+
 def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
     """Select the single best cluster for today's opinion piece.
 
@@ -522,6 +554,15 @@ def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
             sections = c.get("sections") or [c.get("section", "world")]
             if edition in sections and c.get("source_count", 1) >= 2 and (c.get("summary") or "").strip():
                 edition_clusters.append(c)
+
+    if not edition_clusters:
+        # Last resort: any cluster with a summary or title, regardless of source count
+        for c in clusters:
+            sections = c.get("sections") or [c.get("section", "world")]
+            if edition in sections and ((c.get("summary") or "").strip() or (c.get("title") or "").strip()):
+                edition_clusters.append(c)
+        if edition_clusters:
+            print(f"  [opinion] Using last-resort cluster selection (no multi-source clusters found)")
 
     if not edition_clusters:
         return None
@@ -551,7 +592,11 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
     """
     global _brief_call_count
 
-    if not is_available() or _brief_calls_remaining() <= 0:
+    if not is_available():
+        print(f"  [opinion] Gemini not available — skipping Gemini opinion")
+        return None
+    if _brief_calls_remaining() <= 0:
+        print(f"  [opinion] Brief call budget exhausted ({_brief_call_count} used) — skipping Gemini opinion")
         return None
 
     title = (cluster.get("title") or "").strip()
@@ -772,8 +817,20 @@ def generate_daily_briefs(
                 brief_result["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
                 brief_result["opinion_lean"] = opinion_result["opinion_lean"]
                 brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
+                print(f"  [opinion:{edition}] Opinion generated — audio_script: "
+                      f"{'yes' if brief_result.get('opinion_audio_script') else 'NO'}")
+            else:
+                # Gemini opinion call failed — build rule-based opinion from cluster
+                print(f"  [opinion:{edition}] Gemini failed — building rule-based opinion")
+                brief_result.update(_rule_based_opinion(opinion_cluster, today_lean))
         else:
-            print(f"  [opinion:{edition}] No suitable cluster for opinion")
+            # No suitable cluster — use top cluster from this edition as last resort
+            edition_top = [c for c in top_clusters if c.get("summary", "").strip()]
+            if edition_top:
+                print(f"  [opinion:{edition}] No ideal cluster — using top-ranked cluster")
+                brief_result.update(_rule_based_opinion(edition_top[0], today_lean))
+            else:
+                print(f"  [opinion:{edition}] No clusters with summaries — skipping opinion")
 
         results[edition] = brief_result
 
