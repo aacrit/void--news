@@ -81,7 +81,10 @@ def main():
                 "audio_url": result["audio_url"],
                 "audio_duration_seconds": result["duration_seconds"],
                 "audio_file_size": result["file_size"],
-                "audio_voice": f"{voices['host_a']['id']}+{voices['host_b']['id']}",
+                "audio_voice": f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                    f"+{voices['opinion']['id']}" if brief.get("opinion_audio_script") else ""
+                ),
+                "audio_voice_label": "Three voices" if brief.get("opinion_audio_script") else "Two voices",
                 "top_cluster_ids": brief.get("top_cluster_ids", []),
             }
             try:

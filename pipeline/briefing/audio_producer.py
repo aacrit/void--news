@@ -391,9 +391,10 @@ def produce_audio(
 
     # --- Opinion segment (optional, after main news) ---
     if opinion_audio_script:
-        # Use host_a voice for the editorial monologue
-        print(f"  [audio] Synthesizing opinion monologue ({len(opinion_audio_script.split())} words, voice {voice_a_name})")
-        opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, voice_a_name)
+        # Use dedicated opinion voice — distinct from both news hosts
+        opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
+        print(f"  [audio] Synthesizing opinion monologue ({len(opinion_audio_script.split())} words, voice {opinion_voice_name})")
+        opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, opinion_voice_name)
         if opinion_pcm:
             opinion_duration = len(opinion_pcm) / (24000 * 2)
             print(f"  [audio] Opinion TTS: {opinion_duration:.1f}s")

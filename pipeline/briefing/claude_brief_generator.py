@@ -195,13 +195,19 @@ def generate_claude_brief(
     if synthesize and script:
         print(f"\n[3/4] Synthesizing audio...")
         voices = get_voices_for_today(edition)
-        audio_result = produce_audio(script, voices, edition)
+        audio_result = produce_audio(
+            script, voices, edition,
+            opinion_audio_script=brief.get("opinion_audio_script"),
+        )
 
         if audio_result:
             brief["audio_url"] = audio_result["audio_url"]
             brief["audio_duration_seconds"] = audio_result["duration_seconds"]
             brief["audio_file_size"] = audio_result["file_size"]
-            brief["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
+            has_opinion = bool(brief.get("opinion_audio_script"))
+            brief["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                f"+{voices['opinion']['id']}" if has_opinion else ""
+            )
         else:
             print("  Audio synthesis failed — brief will be text-only")
     else:
@@ -221,7 +227,7 @@ def generate_claude_brief(
         brief_row["audio_duration_seconds"] = brief.get("audio_duration_seconds")
         brief_row["audio_file_size"] = brief.get("audio_file_size")
         brief_row["audio_voice"] = brief.get("audio_voice")
-        brief_row["audio_voice_label"] = "Two hosts"
+        brief_row["audio_voice_label"] = "Three voices" if brief.get("opinion_audio_script") else "Two hosts"
 
     try:
         # Delete existing briefs for this edition, insert new
