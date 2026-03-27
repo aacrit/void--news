@@ -763,9 +763,38 @@
     display: none;
   }
 
-  /* === DAILY BRIEF — hide inline version on mobile (moved to bottom nav pills) === */
+  /* === DAILY BRIEF — visible on mobile, compact layout === */
   .daily-brief {
+    padding: var(--space-3);
+    margin: var(--space-3) 0;
+  }
+
+  .db-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .db-tabs::-webkit-scrollbar {
     display: none;
+  }
+
+  .db-tab {
+    white-space: nowrap;
+    padding: var(--space-2) var(--space-2) var(--space-2);
+    min-height: 44px;
+    font-size: 11px;
+  }
+
+  .daily-brief__body,
+  .daily-brief__opinion {
+    max-width: 100%;
+    font-size: var(--text-sm);
+  }
+
+  .db-audio__play {
+    width: 44px;
+    height: 44px;
   }
 
   /* === PAGE MAIN — clear bottom nav === */
