@@ -64,13 +64,6 @@ jobs:
             # All editions run on every scheduled trigger (4x daily)
             echo "filter=" >> $GITHUB_OUTPUT
           fi
-      - name: Setup Google Cloud TTS credentials
-        if: env.GOOGLE_CLOUD_TTS_KEY != ''
-        env:
-          GOOGLE_CLOUD_TTS_KEY: ${{ secrets.GOOGLE_CLOUD_TTS_KEY }}
-        run: |
-          echo "$GOOGLE_CLOUD_TTS_KEY" > /tmp/gcloud-tts-sa.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-tts-sa.json" >> $GITHUB_ENV
       - name: Regenerate daily brief only
         if: ${{ inputs.brief_only }}
         env:
