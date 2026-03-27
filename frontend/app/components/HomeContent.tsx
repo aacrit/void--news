@@ -98,7 +98,6 @@ import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
-import LiveUpdatesPopout from "./LiveUpdatesPopout";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -213,10 +212,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
-  // Live updates popout state
-  const [liveStory, setLiveStory] = useState<Story | null>(null);
-  const [liveOriginRect, setLiveOriginRect] = useState<DOMRect | null>(null);
-
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
@@ -296,19 +291,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
-  // Live updates popout handlers
-  const handleLiveClick = useCallback((story: Story, rect: DOMRect) => {
-    scrollBeforeDeepDive.current = window.scrollY;
-    setLiveOriginRect(rect.width > 0 ? rect : null);
-    setLiveStory(story);
-  }, []);
-
-  const handleLiveClose = useCallback(() => {
-    setLiveStory(null);
-    setLiveOriginRect(null);
-    window.scrollTo(0, scrollBeforeDeepDive.current);
-  }, []);
-
   // Detect mobile for infinite scroll vs editorial link
   useEffect(() => {
     setIsMobile(window.matchMedia("(max-width: 767px)").matches);
@@ -342,7 +324,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,is_top_story,live_update_count,last_live_update_at,story_memory_id`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         let res;
@@ -379,7 +361,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         if (controller.signal.aborted) return;
 
         /* eslint-disable @typescript-eslint/no-explicit-any */
-        const liveStories: Story[] = clusters.map(
+        const mappedStories: Story[] = clusters.map(
           (cluster: any) => {
             // M002: Runtime-validate bias_diversity JSONB before any property access.
             // parseBiasDiversity returns null for strings, arrays, or non-plain-objects.
@@ -483,23 +465,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     sources: [],
                   }
                 : undefined,
-              isTopStory: cluster.is_top_story || false,
-              liveUpdateCount: cluster.live_update_count || 0,
-              lastLiveUpdateAt: cluster.last_live_update_at || undefined,
-              storyMemoryId: cluster.story_memory_id || undefined,
             };
           }
         );
 
         // Compute divergence percentiles (p10/p90) and flag top/bottom 10%
-        const divScores = liveStories
+        const divScores = mappedStories
           .map((s) => s.divergenceScore)
           .filter((d) => d > 0)
           .sort((a, b) => a - b);
         if (divScores.length >= 5) {
           const p10 = divScores[Math.floor(divScores.length * 0.1)];
           const p90 = divScores[Math.floor(divScores.length * 0.9)];
-          for (const s of liveStories) {
+          for (const s of mappedStories) {
             if (s.divergenceScore > 0) {
               if (s.divergenceScore >= p90) {
                 s.sigilData.divergenceFlag = "divergent";
@@ -510,7 +488,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           }
         }
 
-        setStories(liveStories);
+        setStories(mappedStories);
         setIsLoading(false);
 
         const { data: run } = await supabase
@@ -567,25 +545,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const leadStories = filteredStories.slice(0, 2);
   const mediumStories = filteredStories.slice(2, 5);
   const compactStories = filteredStories.slice(5);
-
-  // Live stories eligible for popout navigation (top stories with active tracking)
-  const liveTrackedStories = useMemo(
-    () => leadStories.filter((s) => s.isTopStory && (s.liveUpdateCount ?? 0) > 0),
-    [leadStories],
-  );
-
-  const handleLiveNavigate = useCallback(
-    (dir: "prev" | "next") => {
-      if (!liveStory || liveTrackedStories.length < 2) return;
-      const idx = liveTrackedStories.findIndex((s) => s.id === liveStory.id);
-      const newIdx =
-        dir === "next"
-          ? (idx + 1) % liveTrackedStories.length
-          : (idx - 1 + liveTrackedStories.length) % liveTrackedStories.length;
-      setLiveStory(liveTrackedStories[newIdx]);
-    },
-    [liveStory, liveTrackedStories],
-  );
 
   // Progressive batch reveal — no hard cap
   const visibleCompact = compactStories.slice(0, visibleCount);
@@ -779,7 +738,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
                     <div data-story-index={i}>
-                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} onLiveClick={handleLiveClick} kbdFocused={kbdFocusIndex === i} />
+                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
                     </div>
                   </VisibleCard>
                 ))}
@@ -871,18 +830,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           onNavigate={handleDeepDiveNav}
           storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
           totalStories={filteredStories.length}
-        />
-      )}
-
-      {/* Live updates popout */}
-      {liveStory && (
-        <LiveUpdatesPopout
-          story={liveStory}
-          onClose={handleLiveClose}
-          originRect={liveOriginRect}
-          onNavigate={liveTrackedStories.length > 1 ? handleLiveNavigate : undefined}
-          storyIndex={liveTrackedStories.findIndex((s) => s.id === liveStory.id)}
-          totalStories={liveTrackedStories.length}
         />
       )}
 
