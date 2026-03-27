@@ -48,6 +48,7 @@ export interface DailyBriefState {
   duration: number;
   audioError: boolean;
   audioRef: React.RefObject<HTMLAudioElement | null>;
+  audioCallbackRef: (el: HTMLAudioElement | null) => void;
   handlePlayPause: () => void;
   handleSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -84,33 +85,40 @@ export function useDailyBrief(edition: string): DailyBriefState {
     return () => { cancelled = true; };
   }, [edition]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const onTime = () => setCurrentTime(audio.currentTime);
+  // Callback ref — attaches listeners the instant <audio> mounts in the DOM,
+  // regardless of whether brief loaded before or after DailyBriefText renders.
+  const listenerCleanupRef = useRef<(() => void) | null>(null);
+
+  const audioCallbackRef = useCallback((el: HTMLAudioElement | null) => {
+    if (listenerCleanupRef.current) {
+      listenerCleanupRef.current();
+      listenerCleanupRef.current = null;
+    }
+    audioRef.current = el;
+    if (!el) return;
+
+    const onTime = () => setCurrentTime(el.currentTime);
     const onMeta = () => {
-      if (audio.duration && isFinite(audio.duration)) setDuration(audio.duration);
+      if (el.duration && isFinite(el.duration)) setDuration(el.duration);
     };
     const onEnd = () => setIsPlaying(false);
-    const onError = () => {
-      setAudioError(true);
-      setIsPlaying(false);
+    const onError = () => { setAudioError(true); setIsPlaying(false); };
+
+    el.addEventListener("timeupdate", onTime);
+    el.addEventListener("loadedmetadata", onMeta);
+    el.addEventListener("durationchange", onMeta);
+    el.addEventListener("ended", onEnd);
+    el.addEventListener("error", onError);
+    if (el.duration && isFinite(el.duration)) setDuration(el.duration);
+
+    listenerCleanupRef.current = () => {
+      el.removeEventListener("timeupdate", onTime);
+      el.removeEventListener("loadedmetadata", onMeta);
+      el.removeEventListener("durationchange", onMeta);
+      el.removeEventListener("ended", onEnd);
+      el.removeEventListener("error", onError);
     };
-    audio.addEventListener("timeupdate", onTime);
-    audio.addEventListener("loadedmetadata", onMeta);
-    audio.addEventListener("durationchange", onMeta);
-    audio.addEventListener("ended", onEnd);
-    audio.addEventListener("error", onError);
-    // If metadata already loaded (cached), grab duration now
-    if (audio.duration && isFinite(audio.duration)) setDuration(audio.duration);
-    return () => {
-      audio.removeEventListener("timeupdate", onTime);
-      audio.removeEventListener("loadedmetadata", onMeta);
-      audio.removeEventListener("durationchange", onMeta);
-      audio.removeEventListener("ended", onEnd);
-      audio.removeEventListener("error", onError);
-    };
-  }, [brief]);
+  }, []);
 
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
@@ -142,7 +150,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(t);
   }, []);
 
-  return { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek };
+  return { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek };
 }
 
 /* ---------------------------------------------------------------------------
@@ -153,7 +161,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
 type ExpandedPanel = "tldr" | "opinion" | "onair" | null;
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek } = state;
+  const { brief, isPlaying, currentTime, duration, audioError, audioCallbackRef, handlePlayPause, handleSeek } = state;
   const [expanded, setExpanded] = useState<ExpandedPanel>("tldr");
   const showSubtitles = useFirstEncounterSubtitles();
   if (!brief) return null;
@@ -191,7 +199,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
   return (
     <>
       {hasAudio && (
-        <audio ref={audioRef} src={brief.audio_url!} preload="metadata" />
+        <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
       )}
 
       <div className="daily-brief" role="complementary" aria-label="Daily Brief">
@@ -228,9 +236,9 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
             </button>
           )}
 
-          {/* On Air pill */}
+          {/* On Air pill — expands inline into mini player when playing */}
           <button
-            className={`db-pill db-pill--onair${isPlaying ? " db-pill--playing" : ""}${expanded === "onair" ? " db-pill--active" : ""}${!hasAudio ? " db-pill--disabled" : ""}`}
+            className={`db-pill db-pill--onair${isPlaying ? " db-pill--playing" : ""}${currentTime > 0 && !isPlaying ? " db-pill--has-progress" : ""}${expanded === "onair" ? " db-pill--active" : ""}${!hasAudio ? " db-pill--disabled" : ""}`}
             onClick={handleOnairClick}
             type="button"
             disabled={!hasAudio}
@@ -248,14 +256,23 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
               void --onair
               {showSubtitles && <span className="db-pill__subtitle">Audio Broadcast</span>}
             </span>
+            {/* Inline progress track — appears inside the pill when playing or paused mid-track */}
+            {(isPlaying || currentTime > 0) && displayDuration > 0 && (
+              <span className="db-pill__progress">
+                <span className="db-pill__progress-track">
+                  <span
+                    className="db-pill__progress-fill"
+                    style={{ transform: `scaleX(${progress / 100})` }}
+                  />
+                </span>
+                <span className="db-pill__time">
+                  {formatTime(currentTime)}/{formatTime(displayDuration)}
+                </span>
+              </span>
+            )}
             <span className="db-pill__glyph" aria-hidden="true">
               {isPlaying ? "\u275A\u275A" : "\u25B6"}
             </span>
-            {isPlaying && displayDuration > 0 && (
-              <span className="db-pill__time">
-                {formatTime(currentTime)}/{formatTime(displayDuration)}
-              </span>
-            )}
           </button>
 
           {/* Timestamp — right-aligned */}
