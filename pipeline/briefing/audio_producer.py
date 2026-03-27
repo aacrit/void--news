@@ -93,11 +93,11 @@ def _script_to_dialogue(audio_script: str) -> str:
 # Gemini TTS synthesis
 # ---------------------------------------------------------------------------
 
-def _chunk_dialogue(dialogue: str, max_words: int = 350) -> list[str]:
+def _chunk_dialogue(dialogue: str, max_words: int = 400) -> list[str]:
     """Split dialogue into chunks at natural speaker-turn boundaries.
 
-    Gemini TTS can truncate long inputs. Splitting at ~350 words per chunk
-    keeps each call well within limits. Chunks split between speaker turns
+    Gemini TTS can truncate long inputs. Splitting at ~400 words per chunk
+    keeps each call within limits. Chunks split between speaker turns
     so no line is cut mid-sentence.
     """
     lines = dialogue.strip().splitlines()

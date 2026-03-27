@@ -163,6 +163,8 @@ def main():
             "edition": edition,
             "tldr_text": brief.get("tldr_text", current.get("tldr_text", "") if current else ""),
             "opinion_text": brief.get("opinion_text"),
+            "opinion_headline": brief.get("opinion_headline"),
+            "opinion_audio_script": brief.get("opinion_audio_script"),
             "opinion_lean": brief.get("opinion_lean"),
             "opinion_cluster_id": brief.get("opinion_cluster_id"),
             "audio_script": brief.get("audio_script", current.get("audio_script") if current else None),

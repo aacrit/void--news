@@ -112,21 +112,41 @@ For the audio script:
 world with authority and depth. Not newsreaders. Not casual friends. Two \
 people who genuinely understand the systems behind the headlines and make \
 complexity feel navigable.
-- 3-5 minutes (500-750 words).
+- NO duration limit. Let the content breathe. Cover what needs covering at \
+the depth it deserves. Typically 600-1200 words, but never artificially truncated.
 - Each line starts with "A:" or "B:". No other formatting. No [MARKERS]. No \
 segment labels. Just the dialogue.
 
+PACING AND DELIVERY — Write for the ear, not the page:
+- Use SHORT SENTENCES for emphasis. Then follow with a longer one that \
+unpacks. This rhythm creates natural breathing room.
+- Use ellipses (...) for deliberate pauses where a host would think before \
+speaking: "And that's the part that gets interesting... because nobody in \
+Brussels expected this."
+- Use em dashes for mid-thought pivots — the way real analysts interrupt \
+their own train of thought when a sharper point arrives.
+- Write TRANSITIONS between stories that feel human. Not "Moving on to..." \
+Instead: "A: So that's the trade picture. But there's a domestic story today \
+that connects to this in a way I didn't expect." / "B: Go on."
+- Let hosts REACT naturally. Not with filler ("Right.") but with substantive \
+reactions: "That's a 40% jump in two quarters." / "And the timing matters \
+because..."
+- Vary sentence length dramatically. A 3-word sentence after a complex one \
+creates emphasis: "The bond market noticed." / "Nobody in Delhi expected \
+that." / "That changes everything."
+
 STRUCTURE — Headlines > Stories > Close:
-1. HEADLINES (30s): A opens with a crisp rundown of the 3 stories coming up. \
+1. HEADLINES: A opens with a crisp rundown of the 3 stories coming up. \
 One sentence each, punchy, present tense. "Germany just rewrote its arms \
 export doctrine. The Fed held rates but the bond market didn't get the memo. \
 And a Supreme Court ruling quietly reshapes how American cities handle \
 homelessness." Then B picks up the first story.
-2. STORIES (3-4 min): Cover exactly 3 stories in depth. The biggest story \
-gets 90 seconds, the others 45-60 each. For each story: what happened, why \
-it matters, and the structural context most coverage misses. A and B trade \
-off — one sets up the facts, the other explains the mechanism or implication.
-3. CLOSE (15-20s): One of them distills the day into a single observation — \
+2. STORIES: Cover exactly 3 stories in depth. Give each story the time \
+it needs — the biggest story might take twice as long as the others. \
+For each story: what happened, why it matters, and the structural context \
+most coverage misses. A and B trade off — one sets up the facts, the other \
+explains the mechanism or implication. Let them build on each other.
+3. CLOSE: One of them distills the day into a single observation — \
 the thread connecting these stories, or the question they leave unanswered. \
 Not a summary. A thought the listener carries with them. Then: "void news." Done.
 
@@ -188,7 +208,9 @@ Return JSON with exactly two fields:
    180-240 words. Hook → Stakes → Sweep → Pattern structure.
 2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
    Structure: Headlines (3-sentence rundown) → 3 stories in depth → Close. \
-   No segment markers, no formatting. Just the dialogue, 500-750 words.\
+   No segment markers, no formatting. Just the dialogue. Let it breathe — \
+   use ellipses for pauses, vary sentence length, write natural transitions. \
+   No word limit — cover the stories at the depth they deserve.\
 """
 
 # ---------------------------------------------------------------------------
@@ -453,23 +475,27 @@ Example: "Europe's energy bet just got called" or "The court ruling nobody wante
 2. "opinion_text" — 200-300 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
 opening → thesis → evidence → turn → close.
-3. "opinion_audio_script" — A single-voice editorial explainer (90-120 seconds, \
-200-280 words). Think CBC Ideas meets Vox — an authoritative voice that explains \
-WHY this story matters through a specific ideological lens. Not reading an essay \
-aloud. EXPLAINING a position with the conviction of someone who has studied the \
-evidence. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
+3. "opinion_audio_script" — A single-voice editorial monologue. Think CBC Ideas \
+meets Vox — an authoritative voice that explains WHY this story matters through \
+a specific ideological lens. Not reading an essay aloud. EXPLAINING a position \
+with the conviction of someone who has studied the evidence. \
+Written for ONE speaker only — no A:/B: tags. Just flowing text. No word limit — \
+let the argument develop naturally. \
 This is read by a DIFFERENT voice than the news hosts — a distinct editorial \
 narrator. Open EXACTLY with this three-part structure: \
 First line: "Now... void opinion." (pause weight — this signals a new segment) \
 Second line: State the opinion_headline you wrote above as a spoken title. \
 Third line: "Today's {LEAN_LABEL} lens." \
-Then deliver the argument. Structure it as an explainer: set up the tension, \
-walk through the evidence, deliver the insight. Use the second person sparingly \
-for emphasis: "If you're a small manufacturer in Ohio, this tariff doesn't \
-protect you — it prices out your raw materials." Contractions are fine. Spoken \
-cadence, not written. But the register is serious — a documentary narrator \
-making a case, not a pundit riffing. End with: "void opinion." No summary. \
-End on the unresolved question.\
+Then deliver the argument. Use ellipses (...) for thinking pauses. Use em \
+dashes for mid-thought pivots. Vary sentence rhythm — short punchy sentences \
+for emphasis, longer ones for context. "That's a 20-year low. And nobody in \
+the room saw it coming... because the model they were using assumed stable \
+input costs." \
+Use the second person sparingly for emphasis: "If you're a small manufacturer \
+in Ohio, this tariff doesn't protect you — it prices out your raw materials." \
+Contractions are fine. Spoken cadence, not written. But the register is \
+serious — a documentary narrator making a case, not a pundit riffing. \
+End with: "void opinion." No summary. End on the unresolved question.\
 """
 
 
