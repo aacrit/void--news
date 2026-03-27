@@ -247,7 +247,7 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
 # ---------------------------------------------------------------------------
 
 def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
-    """Upload MP3 to Supabase Storage. Returns public URL or None."""
+    """Upload MP3 to Supabase Storage. Returns public URL with cache-bust param."""
     try:
         from utils.supabase_client import supabase
 
@@ -257,7 +257,11 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
             audio_bytes,
             {"content-type": "audio/mpeg", "upsert": "true"},
         )
-        return supabase.storage.from_("audio-briefs").get_public_url(path)
+        base_url = supabase.storage.from_("audio-briefs").get_public_url(path)
+        # Cache-bust: append timestamp so browsers/CDNs don't serve stale audio
+        import hashlib
+        fingerprint = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        return f"{base_url}?v={fingerprint}"
     except Exception as e:
         print(f"  [warn][audio] Supabase upload failed for {edition}: {e}")
         return None
@@ -441,6 +445,9 @@ def produce_audio(
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")
         return None
+
+    has_opinion = opinion_seg is not None
+    print(f"  [audio] OPINION IN FINAL AUDIO: {'YES' if has_opinion else 'NO'}")
 
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
