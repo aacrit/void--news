@@ -11,6 +11,7 @@
 @import url("./styles/animations.css");
 @import url("./styles/spectrum.css");
 @import url("./styles/responsive.css");
+@import url("./styles/command-center.css");
 
 /* --------------------------------------------------------------------------
    CSS Reset — Minimal, opinionated
