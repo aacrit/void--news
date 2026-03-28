@@ -277,8 +277,8 @@ def generate_section_break():
     # Shape: fast in, natural out
     canvas = canvas.fade_in(15).fade_out(350)
 
-    # Master gain: this is meant to be quiet — sits under speech
-    canvas = canvas.apply_gain(-4)
+    # Master gain: barely audible — a sonic comma, not a musical event
+    canvas = canvas.apply_gain(-10)
 
     canvas.export(ASSETS_DIR / "section_break.wav", format="wav")
     print(f"  section_break.wav ({len(canvas)}ms) — glass bell between stories")
