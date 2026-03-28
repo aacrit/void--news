@@ -201,7 +201,9 @@ function LensPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, ti
 
 function useLensInteraction() {
   const [open, setOpen] = useState(false);
+  const [pressed, setPressed] = useState(false);
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tapDebounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = useCallback(() => {
     if (leaveTimer.current) clearTimeout(leaveTimer.current);
@@ -226,9 +228,28 @@ function useLensInteraction() {
     if (leaveTimer.current) clearTimeout(leaveTimer.current);
   }, []);
 
-  useEffect(() => () => { if (leaveTimer.current) clearTimeout(leaveTimer.current); }, []);
+  /* Touch tap handler — debounced to prevent popup flicker on repeated taps.
+     Spring press feedback (scale 0.95→1.0) plays via the `pressed` state.
+     Only fires on touch devices (@media (hover: none)). */
+  const onTouchTap = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
+    // Trigger spring press visual
+    setPressed(true);
+    setTimeout(() => setPressed(false), 300);
+    // Debounce toggle — ignore taps within 300ms of previous tap
+    if (tapDebounceTimer.current) return;
+    tapDebounceTimer.current = setTimeout(() => {
+      tapDebounceTimer.current = null;
+    }, 300);
+    setOpen((v) => !v);
+  }, []);
 
-  return { open, show, hide, toggle, onKey, keepOpen };
+  useEffect(() => () => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    if (tapDebounceTimer.current) clearTimeout(tapDebounceTimer.current);
+  }, []);
+
+  return { open, pressed, show, hide, toggle, onKey, keepOpen, onTouchTap };
 }
 
 /* ── Lens 1: The Needle (Political Lean) ───────────────────────────────── */
@@ -237,7 +258,7 @@ function LeanNeedle({ value, rationale, size }: {
   value: number; rationale?: LeanRationale; size: "sm" | "lg";
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const { open, show, hide, toggle, onKey, keepOpen } = useLensInteraction();
+  const { open, pressed, show, hide, toggle, onKey, keepOpen, onTouchTap } = useLensInteraction();
   const [animated, setAnimated] = useState(false);
   const tooltipId = `lean-${useId()}`;
 
@@ -262,13 +283,20 @@ function LeanNeedle({ value, rationale, size }: {
       onMouseLeave={hide}
       onBlur={hide}
       onClick={toggle}
+      onTouchEnd={onTouchTap}
       onKeyDown={onKey}
       tabIndex={0}
       role="button"
       aria-expanded={open}
       aria-label={`Political lean: ${label}, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
       aria-controls={open ? tooltipId : undefined}
-      style={{ width: h, height: h + pivotR, cursor: "pointer" }}
+      style={{
+        width: h,
+        height: h + pivotR,
+        cursor: "pointer",
+        transform: pressed ? "scale(0.95)" : "scale(1)",
+        transition: pressed ? "transform 150ms var(--spring)" : "transform 300ms var(--spring)",
+      }}
     >
       <div style={{
         position: "relative",
@@ -382,7 +410,7 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
   rationale?: CoverageRationale; size: "sm" | "lg";
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const { open, show, hide, toggle, onKey, keepOpen } = useLensInteraction();
+  const { open, pressed, show, hide, toggle, onKey, keepOpen, onTouchTap } = useLensInteraction();
   const [animated, setAnimated] = useState(false);
   const tooltipId = `coverage-${useId()}`;
 
@@ -416,13 +444,21 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
       onMouseLeave={hide}
       onBlur={hide}
       onClick={toggle}
+      onTouchEnd={onTouchTap}
       onKeyDown={onKey}
       tabIndex={0}
       role="button"
       aria-expanded={open}
       aria-label={`Coverage: ${label}, ${sourceCount} sources, score ${value}. Press Enter or Space to ${open ? "close" : "open"} details.`}
       aria-controls={open ? tooltipId : undefined}
-      style={{ width: diameter, height: diameter, cursor: "pointer", position: "relative" }}
+      style={{
+        width: diameter,
+        height: diameter,
+        cursor: "pointer",
+        position: "relative",
+        transform: pressed ? "scale(0.95)" : "scale(1)",
+        transition: pressed ? "transform 150ms var(--spring)" : "transform 300ms var(--spring)",
+      }}
     >
       <svg
         width={diameter}

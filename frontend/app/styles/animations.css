@@ -66,7 +66,7 @@
   }
 }
 
-/* RefreshButton spring press */
+/* Generic spring press — reusable for any interactive element */
 @keyframes springBtnPress {
   0%   { transform: scale(1); }
   35%  { transform: scale(0.97); }
@@ -198,15 +198,16 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — cinematic cascade reveal.
-   Opacity leads (instant presence), transform follows with spring (physical pop).
-   Slightly larger travel (14px) + longer spring (360ms) feels more deliberate. */
+/* Deep Dive content section stagger — cascade reveal on panel open.
+   Sections fade in + slide up (translateY 12px→0, opacity 0→1).
+   Stagger applied via inline transitionDelay: section 1 = 150ms, 2 = 250ms, 3 = 350ms.
+   Duration 400ms, ease-out easing for a smooth system reveal. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(12px);
   transition:
-    opacity 120ms var(--ease-out),
-    transform 360ms var(--spring-bouncy);
+    opacity var(--dur-morph) var(--ease-out),
+    transform var(--dur-morph) var(--ease-out);
 }
 
 .anim-dd-section--visible {
@@ -225,10 +226,6 @@
    with the JS-controlled state. The springSlideInRight / springSlideInUp
    keyframes are kept above for potential future use. */
 
-/* RefreshButton spring press — activated by .refresh-btn:active */
-.refresh-btn:active:not([disabled]) {
-  animation: springBtnPress var(--dur-normal) var(--spring);
-}
 
 /* Theme toggle spring entrance on icon swap */
 .theme-toggle__icon:not(.theme-toggle__icon--hidden) {
