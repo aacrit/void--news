@@ -544,17 +544,28 @@ def produce_audio(
 
     ident = _load_asset("ident.wav")
     if ident:
-        combined += ident
+        # Overlap last 200ms of ident with first speech for smooth handoff
+        # (inspired by The Daily's theme-to-voice overlap)
+        ident_body = ident[:-200]
+        ident_tail = ident[-200:]
+        combined += ident_body
+        # Create a crossfade zone: ident tail + silence, overlaid with news start
+        crossfade = ident_tail + AudioSegment.silent(duration=50)
+        news_start = news_seg[:250]
+        news_rest = news_seg[250:]
+        blended = crossfade.overlay(news_start)
+        combined += blended
+        combined += news_rest
+    else:
+        combined += AudioSegment.silent(duration=250)
+        combined += news_seg
 
-    combined += AudioSegment.silent(duration=250)
-    combined += news_seg
     combined += AudioSegment.silent(duration=350)
 
     # Opinion section (after editorial page-turn transition)
     if opinion_seg:
         transition = _load_asset("news_to_opinion.wav")
         if transition is None:
-            # Fall back to legacy transition if new asset missing
             transition = _load_asset("transition.wav")
         if transition:
             combined += transition
@@ -568,6 +579,22 @@ def produce_audio(
     outro = _load_asset("outro.wav")
     if outro:
         combined += outro
+
+    # --- Step 5: Overlay background bed across entire broadcast ---
+    bed_seg = _load_asset("background_bed.wav")
+    if bed_seg and len(combined) > 0:
+        # Tile the 10s bed segment to cover full broadcast length + margin
+        total_len = len(combined)
+        tiled_bed = AudioSegment.empty()
+        while len(tiled_bed) < total_len:
+            tiled_bed += bed_seg
+        tiled_bed = tiled_bed[:total_len]
+        # Fade bed in after ident, fade out before outro ends
+        bed_fade_in = 1500   # 1.5s gentle entrance
+        bed_fade_out = 2000  # 2s fade for smooth exit
+        tiled_bed = tiled_bed.fade_in(bed_fade_in).fade_out(bed_fade_out)
+        combined = combined.overlay(tiled_bed)
+        print(f"  [audio] Background bed overlaid ({total_len}ms)")
 
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")
