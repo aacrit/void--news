@@ -3,11 +3,14 @@ Daily Brief generator for void --news.
 
 Calls Gemini once per edition to produce:
   - tldr_text: editorial paragraph for homepage display
+  - opinion_text: single-story editorial (Atlantic/WSJ style)
   - audio_script: two-voice news update script
 
+Opinion rotates lean daily: left → center → right (day-of-year mod 3).
+Each opinion focuses on ONE major cluster — a focused editorial, not a summary.
+
 Uses generate_json() from the existing Gemini client with count_call=False
-so brief calls draw from a separate 3-call-per-run budget, not the
-25-call summarization budget.
+so brief calls draw from a separate budget, not the 25-call summarization budget.
 
 Falls back to rule-based TL;DR when Gemini is unavailable.
 """
@@ -22,11 +25,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from summarizer.gemini_client import generate_json, is_available
 
 # ---------------------------------------------------------------------------
-# Hard cap: 3 Gemini calls per run (one per edition).
+# Hard cap: 6 Gemini calls per run (2 per edition × 3 editions).
 # These are charged against a separate budget (count_call=False) so they
 # do not consume the 25-call cluster summarization budget.
 # ---------------------------------------------------------------------------
-_MAX_BRIEF_CALLS: int = 5
+_MAX_BRIEF_CALLS: int = 6
 _brief_call_count: int = 0
 
 
@@ -48,16 +51,35 @@ Give them the real complexity but make it navigable. You tell people what happen
 WHY it happened, and what it actually means for the world. Not what outlets said — \
 what IS.
 
+SHOW, DON'T TELL — the quality bar:
+Show through evidence, not assertion. Prefer placing two facts next to each other \
+over telling the listener what to conclude. "Both countries recalled their \
+ambassadors within 48 hours. Neither has done that since 1979." — the listener \
+feels the weight without you saying "tensions are rising."
+
+When you DO explain significance, do it through mechanism and context — not \
+adjectives. Not "this is a big deal" but "the last time a central bank moved \
+this fast, three European lenders collapsed within six months." The difference: \
+one tells, the other shows through historical parallel.
+
+AVOID these telling crutches:
+- "This is significant/important/unprecedented" — show WHY through facts
+- "Experts warn/critics argue" — name the person instead
+- "Interestingly/notably/it's worth pointing out" — just point it out
+But DO explain mechanisms, context, and second-order consequences. The audience \
+is smart — give them the complexity, show the evidence, let them connect dots.
+
 Core standards:
-- Opinionated about significance, neutral on partisanship. "This matters because" — \
-never "this is good/bad for [party]."
+- Opinionated about significance, neutral on partisanship. "This matters because" \
+is fine when followed by a concrete mechanism — never "this is good/bad for [party]."
 - Active voice. Present tense.
 - Attribution only when the source itself is the story ("The Pentagon confirmed"). \
 Never "12 outlets covered this."
 - No sensationalist language. Confidence, not hype.
 - Prohibited: shocking, stunning, explosive, unprecedented, controversial, divisive, \
 landmark, radical, extreme, chaos, firestorm, comprehensive, amidst, landscape, \
-breaking, bombshell, slams, blasts, rips.
+breaking, bombshell, slams, blasts, rips, significant, notable, importantly, \
+interestingly, it should be noted, it is worth mentioning, crucially.
 - No bracketed citations. No reference numbers.
 - Never reference "coverage," "outlets," "sources," or "reporting patterns." \
 Talk about the world, not about media.
@@ -66,131 +88,115 @@ intelligence. Synthesize — do not summarize what you received.
 
 For the TL;DR:
 - Write 8-12 sentences as a flowing editorial paragraph (separated by \\n).
-- Open with the most consequential development and why it matters (2-3 sentences). \
-Give it room — this is the lead, explain the significance.
-- Cover 3-4 more stories, connecting them where genuine connections exist. \
-Interpret significance, don't just list events (1-2 sentences each).
-- Close with editorial judgment: what deserves more attention, what today reveals \
-about larger forces, or what question remains. Direct opinion, not meta-commentary \
-about media (1-2 sentences).
-- Target 150-220 words. Think: a brilliant editor's morning note to a smart audience.
+- STRUCTURE: Hook → Stakes → Sweep → Pattern.
+  1. HOOK (1-2 sentences): Open with a concrete, unexpected fact — a number, a name, \
+an action. The reader should stop scrolling. Never open with a gerund, a dependent \
+clause, "Today" or "This week." Start mid-action.
+  2. STAKES (1-2 sentences): The second-order consequence. Show what changed.
+  3. SWEEP (4-6 sentences): Cover 3-4 more stories. One concrete fact each, then \
+one sentence showing what shifted. Vary sentence length for rhythm.
+  4. CLOSE (1-2 sentences): The pattern the reader didn't see. End on tension.
+- Target 180-240 words.
+- ANTI-SLOP: Never use "amid," "raises questions," "remains to be seen," \
+"only time will tell," "in a move that," "sends a clear signal."
+- RHYTHM: Alternate long and short sentences. "That changed Tuesday." Short \
+sentences are the most powerful tool in editorial writing.
 
 For the opinion:
-- Write 3-5 sentences (80-120 words) as a single paragraph.
-- This is the editorial board's genuine take. Where the TL;DR says what happened \
-and why it matters, the opinion says what you THINK about it.
-- Be genuinely opinionated — not partisan, but intellectually bold. Take a position \
-on what's being underreported, what's dangerous, what's hopeful, what the real story \
-is behind the headlines.
-- Write in first person plural ("we"). This is a collective editorial judgment.
-- The opinion should NOT repeat facts from the TL;DR. It assumes the reader already \
-read the brief. It's a deeper cut — the thing you'd say after the broadcast is over.
-- Think: the last paragraph of a great editorial in The Economist or the FT.
+- The opinion is generated separately. Do NOT include opinion_text in this response.
+- This JSON response has exactly TWO fields: "tldr_text" and "audio_script".
 
 For the audio script:
-- TWO VOICES. Think Vox's "Today Explained" energy — curious, substantive, human.
-- Total spoken duration: 3-5 minutes (500-750 words).
-- These are two journalists who genuinely find this material interesting. They \
-think out loud together. They're not reading — they're explaining.
-- No names, no titles, no introductions. Don't say "I'm your host." Just start.
-- Voice A drives most of the narrative. Voice B adds the "wait, here's why that \
-matters" angles, asks the questions the listener is forming, provides context \
-that reframes what A just said.
-- This is NOT two newsreaders alternating. It's two people who are curious about \
-the same thing and bring different angles to it.
+- Think Vox Explained meets Big Think — two sharp analysts who explain the \
+world with authority and depth. Not newsreaders. Not casual friends. Two \
+people who genuinely understand the systems behind the headlines and make \
+complexity feel navigable.
+- TARGET: 4-5 minutes (800-1000 words). Give stories room to breathe.
+- Each line starts with "A:" or "B:". No other formatting. No [MARKERS]. No \
+segment labels. Just the dialogue.
 
-Dialogue rules (CRITICAL):
-- Each line MUST start with "A:" or "B:" (the speaker tag).
-- NATURAL PACING. Do not rush. Let sentences breathe. Pause between ideas.
-- A talks for 2-4 sentences, then B comes in — not to react, but to ADD. \
-B might reframe, challenge, contextualize, or explain the "so what."
-- Substantive reactions are allowed and encouraged. B can say: \
-"But that contradicts what they said last month." \
-"So basically this means..." \
-"Here's what's actually going on." \
-"That's a bigger deal than it sounds." \
-These are EARNED reactions — they advance understanding. They are not filler.
-- STILL BANNED (hollow filler): "Mm.", "Right.", "That's notable.", "Indeed.", \
-"That's a fair point.", "Good point.", "Absolutely.", "Interesting."
-- Contractions everywhere. "It's", "that's", "here's the thing", "doesn't."
-- Direct address to listener is fine: "So here's what you need to know." \
-"Think about it this way."
-- Vary sentence length dramatically. Short punchy sentences next to longer ones.
+PACING AND DELIVERY — Write for the ear, not the page:
+- Use SHORT SENTENCES for emphasis. Then follow with a longer one that unpacks.
+- Use ellipses (...) for deliberate pauses: "Both ambassadors recalled within \
+forty-eight hours... neither country has done that since 1979."
+- Use em dashes for mid-thought pivots — the way real analysts interrupt their \
+own train of thought when a sharper point arrives.
+- Write TRANSITIONS between stories that feel human. Not "Moving on to..." \
+Instead: "A: So that's the trade picture. But there's a domestic story today \
+that connects to this in a way I didn't expect."
+- Let hosts build on each other with substance: "And that connects to something \
+structural..." / "The part that's easy to miss here is..." / "To put that in \
+perspective..."
+- Vary sentence length dramatically. A 3-word sentence after a complex one \
+creates emphasis: "The bond market noticed." / "Eighteen months."
 
-Explanatory style (the Vox signature):
-- Don't just say WHAT happened. Explain WHY. "Here's what's actually going on" \
-is better than delivering three facts and moving on.
-- Use concrete analogies. "That's like if your bank suddenly started buying \
-houses on your behalf" beats "The central bank expanded its balance sheet."
-- Anticipate confusion. If something is counterintuitive, say so: "Now this \
-sounds backwards, but..." or "You'd think that would mean X. It doesn't."
-- The cold open hook: start [OPEN] with a surprising fact or provocative framing \
-that makes the listener lean in. THEN explain.
+STRUCTURE — Headlines > Stories > Close:
+1. HEADLINES: A opens with a crisp rundown of the 3 stories coming up. \
+One sentence each, punchy, present tense. Then B picks up the first story.
+2. STORIES: Cover exactly 3 stories in depth. The biggest story gets the most \
+time. For each: what happened, why it matters, and the structural context most \
+coverage misses. A and B trade off — one sets up the facts, the other explains \
+the mechanism or implication. Let them build on each other.
+3. CLOSE: One of them distills the day into a single observation — the thread \
+connecting these stories, or the question they leave unanswered. Not a summary. \
+A thought the listener carries with them. Then the last speaker says: \
+"This was Void news." — with finality, like a sign-off. Done.
 
-Tone (through craft):
-- Conflict or loss: slow down. Shorter sentences. Let facts carry weight.
-- Economic or policy: engaged energy. You're interested in this. Show it.
-- Human interest: warmth. The one place for a genuine aside.
-- Close: direct editorial voice. What does today actually mean?
-- NEVER tell the listener how to feel. The facts and your delivery do that.
-
-Structure using exact markers on their own lines:
-  [OPEN]
-  A: Hook — a surprising fact, a provocative framing, or the single most important \
-thing that happened. Then: "This is void news. Here's what you need to know."
-
-  [STORY_1]
-  The lead — give it room. ~90 seconds total.
-  A: Sets up the story — what happened, framed with a hook.
-  B: The "so what" — why this matters, what it actually means, context that \
-reframes the headline. This is the Vox move: explain, don't just report.
-  A: The detail that makes it real — a specific number, a concrete consequence.
-
-  [STORY_2]
-  ~60 seconds total. Either voice leads.
-  Tighter coverage but still explain WHY, not just WHAT.
-
-  [STORY_3]
-  ~30-40 seconds. Quick hit. The fact, one line of context, move on.
-
-  [CLOSE]
-  B: Direct editorial take — what today means, what question hangs unanswered, \
-or what nobody is paying attention to. Say it plainly. (~15 seconds)
-  A: "void news." Clean stop.
-
-- PACE: Do not rush between stories. Insert a deliberate pause. Let each story land \
-before starting the next. The listener needs a breath.
-- Numbers: write out small numbers ("three"). Figures for large ("$1.4 trillion").
-- Rhetorical questions are allowed when they serve explanation: "So why would Iran \
-agree to that?" Then answer it.
-
-Recency and freshness:
-- Stories tagged [NEW] or [CONTINUING]. Lead with [NEW] stories.
-- For [CONTINUING]: don't repeat background. Focus only on what changed. \
-"Here's what's new on the Iran talks." One or two sentences max.
-- If everything is [CONTINUING]: "The big stories are still moving. Here's what changed."\
+The Vox/Big Think voice:
+- Authoritative but not stiff. Confident, not tentative.
+- They EXPLAIN mechanisms. Not just "prices went up" — "prices went up because \
+the central bank is running out of tools, and the bond market knows it."
+- They contextualize with systems thinking. "This isn't just a trade deal — \
+it's the third time in two years a G7 nation has bypassed the WTO framework."
+- Contractions fine. Natural spoken cadence. Register is elevated — think a \
+TED talk, not a podcast hangout.
+- BANNED filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", \
+"Interesting.", "That's a fair point.", "Great question.", "Exactly."
+- No meta-commentary about coverage or media.
+- Numbers: write out small ones ("three"). Figures for big ones ("$1.4 trillion").
+- Specific details always. Names, numbers, places, dates. Not "officials say" — \
+"the Treasury Secretary said Tuesday."
+- Stories tagged [NEW] come first. [CONTINUING] stories: skip background, \
+just say what changed.\
 """
 
 # ---------------------------------------------------------------------------
 # User prompt template — injected per edition call.
 # ---------------------------------------------------------------------------
+_EDITION_FOCUS = {
+    "WORLD": "Global perspective. Lead with the story that reshapes the most borders, "
+             "markets, or alliances. Emphasize international dynamics — how events in "
+             "one region ripple elsewhere.",
+    "US": "American lens. Lead with what matters most to someone living in the US. "
+          "Domestic policy, economy, courts, elections come first. International stories "
+          "only when they directly affect Americans.",
+    "INDIA": "Indian lens. Lead with what matters most to someone living in India. "
+             "Domestic politics, economy, regional security, tech sector come first. "
+             "Global stories only when they directly affect India.",
+    "UK": "British lens. Lead with what matters most to someone in the UK. "
+          "Domestic politics, economy, NHS, Brexit aftereffects come first.",
+    "CANADA": "Canadian lens. Lead with what matters most to someone in Canada. "
+              "Domestic politics, economy, US-Canada relations come first.",
+}
+
 _USER_PROMPT_TEMPLATE = """\
 Generate the daily brief for the {EDITION} edition of void --news.
 Date: {DATE}
+
+EDITION FOCUS: {EDITION_FOCUS}
 
 Below are today's top {N} stories for this edition, ranked by importance.
 
 STORIES:
 {stories_block}
 
-Return JSON with exactly three fields:
+Return JSON with exactly two fields:
 1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
-   150-220 words.
-2. "opinion_text" — 3-5 sentences. The editorial board's genuine take. Bold, \
-   non-partisan, intellectually honest. First person plural ("we"). 80-120 words.
-3. "audio_script" — full two-voice script with segment markers ([OPEN],
-   [STORY_1], [STORY_2], [STORY_3], [CLOSE]). Each marker on its own line,
-   followed by the spoken text. Markers are structural delimiters — never read aloud.\
+   180-240 words. Hook → Stakes → Sweep → Pattern structure.
+2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
+   4-5 minutes (800-1000 words). Structure: Headlines (3-sentence rundown) → \
+   3 stories in depth → Close with "This was Void news." \
+   No segment markers, no formatting. Just the dialogue.\
 """
 
 # ---------------------------------------------------------------------------
@@ -207,14 +213,11 @@ def _check_quality(result: dict, edition: str) -> None:
     """Log quality warnings for out-of-spec brief output."""
     tldr = result.get("tldr_text", "")
     lines = [l.strip() for l in tldr.split("\n") if l.strip()]
+    words = len(tldr.split())
     if len(lines) < 5 or len(lines) > 15:
         print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 8-12)")
-
-    opinion = result.get("opinion_text", "")
-    if opinion:
-        owords = len(opinion.split())
-        if owords < 40 or owords > 180:
-            print(f"  [quality][brief:{edition}] Opinion has {owords} words (expected 80-120)")
+    if words < 120 or words > 300:
+        print(f"  [quality][brief:{edition}] TL;DR has {words} words (expected 180-240)")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):
@@ -226,14 +229,10 @@ def _check_quality(result: dict, edition: str) -> None:
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
     if found:
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
-    required_markers = [
-        "[OPEN]",
-        "[STORY_1]", "[STORY_2]", "[STORY_3]",
-        "[CLOSE]",
-    ]
-    missing = [m for m in required_markers if m not in script]
-    if missing:
-        print(f"  [quality][brief:{edition}] Missing script markers: {missing}")
+    # Validate script has actual dialogue (A:/B: speaker tags)
+    speaker_lines = [l for l in script.splitlines() if l.strip().startswith(("A:", "B:"))]
+    if len(speaker_lines) < 10:
+        print(f"  [quality][brief:{edition}] Script has only {len(speaker_lines)} speaker lines (expected 10+)")
 
 
 def _get_previous_cluster_ids(edition: str) -> set[str]:
@@ -347,6 +346,343 @@ def _rule_based_tldr(top_clusters: list[dict]) -> str:
     return "\n".join(sentences[:7])
 
 
+# ---------------------------------------------------------------------------
+# Lean rotation — cycles left → center → right daily.
+# Based on ideological principles, not party allegiance.
+# ---------------------------------------------------------------------------
+_LEAN_CYCLE = ["left", "center", "right"]
+
+
+def _get_today_lean() -> str:
+    """Return today's editorial lean based on UTC day-of-year mod 3."""
+    day = datetime.now(timezone.utc).timetuple().tm_yday
+    return _LEAN_CYCLE[day % 3]
+
+
+# ---------------------------------------------------------------------------
+# Opinion system instruction — single-story Atlantic/WSJ editorial.
+# ---------------------------------------------------------------------------
+_OPINION_SYSTEM_INSTRUCTION = """\
+You are the editorial voice of void --opinion — a single-story editorial column \
+in the tradition of The Atlantic, WSJ Opinion, and Foreign Affairs. You write one \
+focused piece per day on the most consequential story.
+
+You are NOT summarizing news. You are writing an argument. A thesis, supported by \
+evidence from the story, arriving at a conclusion the reader didn't expect.
+
+CARDINAL RULE — SHOW, DON'T TELL:
+Every sentence earns its place through evidence. Never say "this matters" — show \
+the fact that makes the reader realize it matters. Never say "tensions are rising" — \
+name the action that raised them. A 99th-percentile editorial never announces its \
+own importance.
+
+IDEOLOGICAL LENS — {LEAN_UPPER}:
+{LEAN_INSTRUCTION}
+
+CRITICAL: You argue from PRINCIPLES, not parties. You never mention Democrats, \
+Republicans, BJP, Congress, Labour, or any political party by name. You never \
+take a politician's side. You reason from the underlying values — what kind of \
+society this decision builds, what tradeoffs it accepts, what it reveals about \
+institutional design. This is philosophy applied to current events, not punditry.
+
+Structure:
+1. OPENING (1-2 sentences): The single most striking fact or juxtaposition from \
+this story. No throat-clearing. No "In recent days." Start with the concrete \
+detail that hooks.
+2. THESIS (1 sentence): What this story actually reveals — the argument no one \
+else is making. This should surprise the reader.
+3. EVIDENCE (3-5 sentences): Build the case. Specific names, numbers, dates, \
+actions. Each sentence adds a new piece of evidence. Connect dots the news \
+coverage missed.
+4. TURN (1-2 sentences): The complication. The counterargument you take seriously. \
+The reason smart people disagree. This is what separates a 99th-percentile \
+editorial from a blog post — intellectual honesty about complexity.
+5. CLOSE (1-2 sentences): Where this leads. Not a prediction, but a question \
+the reader will carry with them. End with the tension unresolved — trust the \
+reader to think.
+
+Standards:
+- 300-500 words. Single story. No meta-commentary about media or coverage.
+- Active voice. Concrete nouns. Specific numbers.
+- Prohibited: shocking, stunning, explosive, unprecedented, controversial, \
+divisive, landmark, radical, extreme, chaos, significant, notable, importantly, \
+interestingly, it should be noted, crucially, in conclusion.
+- Write as if for a reader who already knows the news. Add the insight they missed.\
+"""
+
+_LEAN_INSTRUCTIONS = {
+    "left": """\
+Today's lens: PROGRESSIVE. Argue from principles of collective welfare, institutional \
+accountability, systemic equity, and the expansion of individual rights. Ask: who bears \
+the cost? Whose voice is absent from this decision? What does the structure — not the \
+individual actor — incentivize? You believe institutions exist to level asymmetries of \
+power. When they fail to, that is the story.""",
+    "center": """\
+Today's lens: PRAGMATIC CENTER. Argue from principles of institutional stability, \
+empirical evidence, tradeoff analysis, and incremental reform. Ask: what does the data \
+actually show? What are both sides getting right — and what are they ignoring? You \
+distrust grand narratives from any direction. You believe most policy questions have \
+no clean answers, only better and worse tradeoffs. When everyone is certain, that is \
+the story.""",
+    "right": """\
+Today's lens: CONSERVATIVE. Argue from principles of individual liberty, market \
+discipline, institutional restraint, and the wisdom of inherited structures. Ask: what \
+does this cost? Who is being asked to pay — and did they consent? What second-order \
+effects will the architects of this policy never face? You believe concentrated power \
+corrupts regardless of its stated intentions. When the solution requires more authority \
+than the problem, that is the story.""",
+}
+
+_OPINION_USER_PROMPT = """\
+Write a void --opinion editorial for the {LEAN_UPPER} lens.
+Edition: {EDITION_UPPER}
+Perspective: {EDITION_FOCUS}
+Date: {DATE}
+
+STORY:
+Title: {TITLE}
+Sources: {SOURCE_COUNT}
+Category: {CATEGORY}
+
+Summary:
+{SUMMARY}
+
+Consensus facts:
+{CONSENSUS}
+
+Where coverage diverges:
+{DIVERGENCE}
+
+Return JSON with exactly three fields:
+1. "opinion_headline" — 6-12 word editorial headline for this opinion piece. \
+Not a news headline. A declarative statement of the editorial thesis. \
+Concrete nouns and active verbs. No "slams," "blasts," "rips." \
+Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
+2. "opinion_text" — 300-500 words. A focused editorial argument on THIS story, \
+from the {LEAN_UPPER} ideological lens. Follow the structure: \
+opening → thesis → evidence → turn → close.
+3. "opinion_audio_script" — A single-voice editorial monologue. 3-4 minutes \
+(500-700 words). Think CBC Ideas meets Vox — an authoritative voice that \
+explains WHY this story matters through a specific ideological lens. Not reading \
+an essay aloud. EXPLAINING a position with the conviction of someone who has \
+studied the evidence. Written for ONE speaker only — no A:/B: tags. Just flowing \
+text. Give the argument room to develop — set up the tension, walk through the \
+evidence, deliver the insight. \
+This is read by a DIFFERENT voice than the news hosts — a distinct editorial \
+narrator. Open EXACTLY with this three-part structure: \
+First line: "Now... void opinion." (pause weight — this signals a new segment) \
+Second line: State the opinion_headline you wrote above as a spoken title. \
+Third line: "Today's {LEAN_LABEL} lens." \
+Then deliver the argument. Use ellipses (...) for thinking pauses. Use em \
+dashes for mid-thought pivots. Vary sentence rhythm — short punchy sentences \
+for emphasis, longer ones for context. "That's a 20-year low. And nobody in \
+the room saw it coming... because the model they were using assumed stable \
+input costs." \
+Use the second person sparingly for emphasis: "If you're a small manufacturer \
+in Ohio, this tariff doesn't protect you — it prices out your raw materials." \
+Contractions are fine. Spoken cadence, not written. But the register is \
+serious — a documentary narrator making a case, not a pundit riffing. \
+End with: "void opinion." No summary. End on the unresolved question.\
+"""
+
+
+def _rule_based_opinion(cluster: dict, lean: str) -> dict:
+    """Build a rule-based opinion when Gemini is unavailable.
+
+    Uses the cluster summary directly as opinion text and builds an audio
+    script with the proper preamble. Not as good as Gemini-generated
+    opinion, but guarantees the opinion segment is always present.
+    """
+    title = (cluster.get("title") or "Untitled").strip()
+    summary = (cluster.get("summary") or title).strip()
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
+    cluster_id = cluster.get("_db_id", cluster.get("id", ""))
+
+    # Build audio script from summary
+    audio_script = (
+        f"Now... void opinion.\n"
+        f"{title}.\n"
+        f"Today's {lean_label} lens.\n"
+        f"{summary}\n"
+        f"void opinion."
+    )
+
+    print(f"  [opinion] Rule-based fallback: \"{title[:60]}\" ({len(summary.split())} words)")
+    return {
+        "opinion_text": summary,
+        "opinion_headline": title,
+        "opinion_audio_script": audio_script,
+        "opinion_lean": lean,
+        "opinion_cluster_id": cluster_id if cluster_id else None,
+    }
+
+
+def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
+    """Select the single best cluster for today's opinion piece.
+
+    Criteria: highest importance, 4+ sources, has summary + consensus.
+    Prefers clusters with high divergence (more editorial material).
+    """
+    edition_clusters = []
+    for c in clusters:
+        sections = c.get("sections") or [c.get("section", "world")]
+        if edition not in sections:
+            continue
+        source_count = c.get("source_count", 1)
+        summary = (c.get("summary") or "").strip()
+        consensus = c.get("consensus_points") or []
+        if source_count >= 4 and summary and len(consensus) >= 1:
+            edition_clusters.append(c)
+
+    if not edition_clusters:
+        # Relax: any cluster with 2+ sources and a summary
+        for c in clusters:
+            sections = c.get("sections") or [c.get("section", "world")]
+            if edition in sections and c.get("source_count", 1) >= 2 and (c.get("summary") or "").strip():
+                edition_clusters.append(c)
+
+    if not edition_clusters:
+        # Last resort: any cluster with a summary or title, regardless of source count
+        for c in clusters:
+            sections = c.get("sections") or [c.get("section", "world")]
+            if edition in sections and ((c.get("summary") or "").strip() or (c.get("title") or "").strip()):
+                edition_clusters.append(c)
+        if edition_clusters:
+            print(f"  [opinion] Using last-resort cluster selection (no multi-source clusters found)")
+
+    if not edition_clusters:
+        return None
+
+    # Score: headline_rank * (1 + divergence_bonus) * locality_bonus
+    # For US/India: prefer stories primarily in that edition (not cross-listed world)
+    def _score(c):
+        rank = c.get("headline_rank", 0)
+        div = c.get("divergence_score", 0) or 0
+        base = rank * (1.0 + min(div / 100, 0.5))
+        # Locality: clusters in only this edition (not cross-listed to world) get 1.3x
+        if edition in ("us", "india"):
+            sections = c.get("sections") or [c.get("section", "world")]
+            is_local = "world" not in sections or sections == [edition]
+            if is_local:
+                base *= 1.3
+        return base
+
+    edition_clusters.sort(key=_score, reverse=True)
+    return edition_clusters[0]
+
+
+def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "world") -> dict | None:
+    """Generate a single-story editorial opinion via Gemini.
+
+    Returns dict with opinion_text, opinion_headline, opinion_lean, opinion_cluster_id, or None.
+    """
+    global _brief_call_count
+
+    if not is_available():
+        print(f"  [opinion] Gemini not available — skipping Gemini opinion")
+        return None
+    if _brief_calls_remaining() <= 0:
+        print(f"  [opinion] Brief call budget exhausted ({_brief_call_count} used) — skipping Gemini opinion")
+        return None
+
+    title = (cluster.get("title") or "").strip()
+    summary = (cluster.get("summary") or "").strip()
+    consensus = cluster.get("consensus_points") or []
+    divergence = cluster.get("divergence_points") or []
+    source_count = cluster.get("source_count", 1)
+    category = cluster.get("category", "")
+
+    lean_upper = lean.upper()
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
+    lean_instruction = _LEAN_INSTRUCTIONS[lean]
+    system = _OPINION_SYSTEM_INSTRUCTION.format(
+        LEAN_UPPER=lean_upper,
+        LEAN_INSTRUCTION=lean_instruction,
+    )
+
+    edition_key = edition.upper()
+    edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
+
+    prompt = _OPINION_USER_PROMPT.format(
+        LEAN_UPPER=lean_upper,
+        LEAN_LABEL=lean_label,
+        EDITION_UPPER=edition_key,
+        EDITION_FOCUS=edition_focus,
+        DATE=date_str,
+        TITLE=title,
+        SOURCE_COUNT=source_count,
+        CATEGORY=category,
+        SUMMARY=summary[:800],
+        CONSENSUS="; ".join(str(x) for x in consensus[:5]) if consensus else "None available",
+        DIVERGENCE="; ".join(str(x) for x in divergence[:4]) if divergence else "None available",
+    )
+
+    _brief_call_count += 1
+    raw = generate_json(
+        prompt,
+        system_instruction=system,
+        count_call=False,
+    )
+
+    if raw and isinstance(raw, dict):
+        opinion = raw.get("opinion_text", "")
+        if isinstance(opinion, str) and opinion.strip():
+            text = opinion.strip()
+            words = len(text.split())
+            # Quality check
+            if words < 100:
+                print(f"  [opinion] Too short ({words} words) — discarding")
+                return None
+            if words > 700:
+                print(f"  [opinion] Long ({words} words) — keeping but flagged")
+
+            # Check prohibited terms
+            lower = text.lower()
+            found = [t for t in _PROHIBITED_TERMS if t in lower]
+            if found:
+                print(f"  [opinion] Prohibited terms: {found}")
+
+            # Extract opinion headline (needed before audio script fallback)
+            headline = raw.get("opinion_headline", "")
+            if not isinstance(headline, str) or not headline.strip():
+                headline = None
+            else:
+                headline = headline.strip()
+
+            # Extract opinion audio script
+            opinion_audio = raw.get("opinion_audio_script", "")
+            if isinstance(opinion_audio, str) and opinion_audio.strip():
+                opinion_audio = opinion_audio.strip()
+                audio_words = len(opinion_audio.split())
+                print(f"  [opinion] Audio script: {audio_words} words")
+            else:
+                # Fallback: synthesize audio script from opinion text.
+                # Gemini often omits the third JSON field. The opinion text
+                # is already written in spoken cadence — just add the preamble.
+                lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
+                preamble = "Now... void opinion."
+                if headline:
+                    preamble += f" {headline}."
+                preamble += f" Today's {lean_label} lens."
+                opinion_audio = f"{preamble}\n{text}\nvoid opinion."
+                print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
+
+            cluster_id = cluster.get("_db_id", "")
+            print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
+                  f"({words} words, {source_count} sources"
+                  f"{', headline: ' + repr(headline[:50]) if headline else ''})")
+            return {
+                "opinion_text": text,
+                "opinion_headline": headline,
+                "opinion_audio_script": opinion_audio,
+                "opinion_lean": lean,
+                "opinion_cluster_id": cluster_id if cluster_id else None,
+            }
+
+    print(f"  [opinion] Gemini call failed for {lean} editorial")
+    return None
+
+
 def generate_daily_briefs(
     clusters: list[dict],
     source_map: dict,
@@ -393,16 +729,20 @@ def generate_daily_briefs(
             results[edition] = {
                 "tldr_text": "No stories available for this edition.",
                 "opinion_text": None,
+                "opinion_headline": None,
                 "audio_script": None,
                 "top_cluster_ids": [],
             }
             continue
 
-        # Attempt Gemini generation within budget
+        # --- Step 1: Generate TL;DR + audio script ---
         brief_result = None
         if gemini_ok and _brief_calls_remaining() > 0:
+            edition_key = edition.upper()
+            edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
             prompt = _USER_PROMPT_TEMPLATE.format(
-                EDITION=edition.upper(),
+                EDITION=edition_key,
+                EDITION_FOCUS=edition_focus,
                 DATE=date_str,
                 N=len(top_clusters),
                 stories_block=stories_block,
@@ -411,27 +751,26 @@ def generate_daily_briefs(
             raw = generate_json(
                 prompt,
                 system_instruction=_SYSTEM_INSTRUCTION,
-                count_call=False,  # Separate budget; does not consume summarization cap
+                count_call=False,
             )
             if raw and isinstance(raw, dict):
                 tldr = raw.get("tldr_text", "")
-                opinion = raw.get("opinion_text", "")
                 script = raw.get("audio_script")
-                # Gemini may return script as list — coerce to string
                 if isinstance(script, list):
                     script = "\n".join(str(s) for s in script)
 
-                # Validate tldr shape
                 if isinstance(tldr, str) and tldr.strip():
                     brief_result = {
                         "tldr_text": tldr.strip(),
-                        "opinion_text": opinion.strip() if isinstance(opinion, str) and opinion.strip() else None,
+                        "opinion_text": None,
+                        "opinion_headline": None,
+                        "opinion_lean": None,
+                        "opinion_cluster_id": None,
                         "audio_script": script if isinstance(script, str) and script.strip() else None,
                         "top_cluster_ids": top_ids,
                     }
                     _check_quality(raw, edition)
                     print(f"  [brief:{edition}] Gemini OK — TL;DR {len(tldr.split(chr(10)))} lines, "
-                          f"opinion {'yes' if brief_result['opinion_text'] else 'no'}, "
                           f"script {'yes' if brief_result['audio_script'] else 'no'}")
                 else:
                     print(f"  [brief:{edition}] Gemini returned invalid tldr_text — falling back")
@@ -442,21 +781,51 @@ def generate_daily_briefs(
         else:
             print(f"  [brief:{edition}] Brief call cap reached — using rule-based TL;DR")
 
-        # Fallback: rule-based TL;DR, no audio script, no opinion
         if brief_result is None:
             brief_result = {
                 "tldr_text": _rule_based_tldr(top_clusters),
                 "opinion_text": None,
+                "opinion_headline": None,
+                "opinion_lean": None,
+                "opinion_cluster_id": None,
                 "audio_script": None,
                 "top_cluster_ids": top_ids,
             }
 
+        # --- Step 2: Generate single-story opinion (separate call) ---
+        today_lean = _get_today_lean()
+        opinion_cluster = _select_opinion_cluster(clusters, edition)
+        if opinion_cluster:
+            opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str, edition=edition)
+            if opinion_result:
+                brief_result["opinion_text"] = opinion_result["opinion_text"]
+                brief_result["opinion_headline"] = opinion_result.get("opinion_headline")
+                brief_result["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
+                brief_result["opinion_lean"] = opinion_result["opinion_lean"]
+                brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
+                print(f"  [opinion:{edition}] Opinion generated — audio_script: "
+                      f"{'yes' if brief_result.get('opinion_audio_script') else 'NO'}")
+            else:
+                # Gemini opinion call failed — build rule-based opinion from cluster
+                print(f"  [opinion:{edition}] Gemini failed — building rule-based opinion")
+                brief_result.update(_rule_based_opinion(opinion_cluster, today_lean))
+        else:
+            # No suitable cluster — use top cluster from this edition as last resort
+            edition_top = [c for c in top_clusters if c.get("summary", "").strip()]
+            if edition_top:
+                print(f"  [opinion:{edition}] No ideal cluster — using top-ranked cluster")
+                brief_result.update(_rule_based_opinion(edition_top[0], today_lean))
+            else:
+                print(f"  [opinion:{edition}] No clusters with summaries — skipping opinion")
+
         results[edition] = brief_result
 
     total_gemini = sum(1 for r in results.values() if r.get("audio_script") is not None)
+    total_opinions = sum(1 for r in results.values() if r.get("opinion_text") is not None)
     total_fallback = len(results) - total_gemini
     print(f"  Daily briefs: {len(results)} editions "
           f"({total_gemini} Gemini, {total_fallback} rule-based, "
+          f"{total_opinions} opinions [{_get_today_lean().upper()}], "
           f"{_brief_calls_remaining()} brief calls remaining)")
 
     return results

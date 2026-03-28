@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
+  CaretLeft,
+  CaretRight,
   X,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
@@ -17,13 +19,14 @@ import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
 
 /* ---------------------------------------------------------------------------
-   DeepDive — Slide-in panel showing unified summary of a story cluster.
-   Desktop (1024px+): 50% width panel sliding from the right.
+   DeepDive — Centered popup overlay showing unified summary of a story cluster.
+   Desktop (1024px+): centered modal (75vw, max-width 920px–1080px, 80vh) with
+   cinematic shadow and backdrop blur.
    Mobile: full-screen modal sliding up from the bottom.
    --------------------------------------------------------------------------- */
 
 // Press Analysis arrow bounce plays once per session — after the user has seen
-// it, repeating the animation on every panel open is visual noise.
+// it, repeating the animation on every popup open is visual noise.
 let hasSeenPressHint = false;
 
 interface DeepDiveProps {
@@ -31,23 +34,53 @@ interface DeepDiveProps {
   onClose: () => void;
   /** Card's DOMRect at click time — drives FLIP morph. Null = slide-in fallback. */
   originRect?: DOMRect | null;
+  /** Navigate to previous/next story in the feed */
+  onNavigate?: (direction: "prev" | "next") => void;
+  /** Current story index in filtered list (for counter display) */
+  storyIndex?: number;
+  /** Total stories in filtered list */
+  totalStories?: number;
 }
 
 /* --- Main DeepDive component --------------------------------------------- */
 
-export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) {
+export default function DeepDive({ story, onClose, originRect, onNavigate, storyIndex = -1, totalStories = 0 }: DeepDiveProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [summaryOverflows, setSummaryOverflows] = useState(false);
+  const summaryInnerRef = useRef<HTMLDivElement>(null);
   const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
   const [comparativeOpen, setComparativeOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"summary" | "allsides" | "scoring">("summary");
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  // Stable ref for onNavigate — avoids stale closure in keyboard handler
+  // without adding it to the useEffect deps (which would re-focus the panel).
+  const onNavigateRef = useRef(onNavigate);
+  onNavigateRef.current = onNavigate;
+
+  /* ---- Swipe gesture state (mobile only) -------------------------------- */
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDismissing, setIsDismissing] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal" } | null>(null);
+
+  /* Reset swipe gesture state when the parent navigates to a different story
+     without unmounting this component (handleDeepDiveNav changes story prop). */
+  useEffect(() => {
+    setIsDismissing(false);
+    setIsDragging(false);
+    setDragOffset(0);
+    touchStartRef.current = null;
+  }, [story.id]);
+  /** Cross-fade opacity for horizontal story swipe navigation */
+  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
@@ -342,61 +375,71 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         const panel = panelRef.current;
         if (!panel) return;
 
-        // Temporarily make panel visible at final position to measure
+        // On desktop the panel is centered via left:50%;top:50% + translate(-50%,-50%).
+        // We must measure with that centering transform applied to get the true final rect.
+        const centeringTransform = isDesktopNow ? "translate(-50%, -50%)" : "none";
         panel.style.opacity = "1";
-        panel.style.transform = "none";
+        panel.style.transform = centeringTransform;
         const finalRect = panel.getBoundingClientRect();
 
         if (finalRect.width === 0) {
-          // Can't measure — fall through to slide
           const delay = isDesktopNow ? 120 : 30;
           setTimeout(() => setContentVisible(true), delay);
           return;
         }
 
         // Compute inverse transform: final → card origin
+        // On desktop, offsets are relative to the centered position (translate(-50%,-50%))
         const scaleX = originRect.width / finalRect.width;
         const scaleY = originRect.height / finalRect.height;
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
+        // Desktop: offsets are additive to the centering transform
+        const snapTransform = isDesktopNow
+          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
+          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+        const finalTransform = isDesktopNow
+          ? "translate(-50%, -50%) scale(1, 1)"
+          : "translate(0, 0) scale(1, 1)";
+
         // Step 3: Snap panel to card position (no transition)
         setMorphStyle({
-          transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+          transform: snapTransform,
           borderRadius: "8px",
           opacity: 1,
           boxShadow: "var(--shadow-e0)",
           transition: "none",
         });
 
-        // Step 4: On next paint, animate from card → final (CINEMATIC + SMOOTH)
-        // Slow spring — panel expands with weight and settles gracefully.
-        // Shadow trails behind (cinematic shadow lag: 80ms delay).
-        requestAnimationFrame(() => {
+        // Step 4: Animate from card → final with spring physics.
+        // setTimeout(0) guarantees the snap frame paints before the
+        // transition begins — more reliable than nested rAF on 90/120Hz.
+        setTimeout(() => {
           setMorphStyle({
-            transform: "translate(0, 0) scale(1, 1)",
+            transform: finalTransform,
             borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
             opacity: 1,
             boxShadow: "var(--shadow-e3)",
             transition: [
-              "transform 650ms cubic-bezier(0.16, 1, 0.3, 1)",
-              "border-radius 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-              "box-shadow 550ms cubic-bezier(0.16, 1, 0.3, 1) 80ms",
+              "transform 500ms var(--spring-bouncy)",
+              "border-radius 350ms var(--spring-bouncy)",
+              "box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 60ms",
             ].join(", "),
           });
 
-          // Step 5: Content starts cascading AFTER morph mostly settles (~70%)
-          setTimeout(() => setContentVisible(true), isDesktopNow ? 400 : 250);
+          // Content layers in as the panel settles (~50% through spring)
+          setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
 
           // Clear morph style after spring fully settles
-          setTimeout(() => setMorphStyle(null), 700);
-        });
+          setTimeout(() => setMorphStyle(null), 550);
+        }, 0);
       });
     } else {
       /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
       requestAnimationFrame(() => {
         setIsVisible(true);
-        const delay = window.innerWidth >= 768 ? 350 : 200;
+        const delay = window.innerWidth >= 768 ? 200 : 120;
         setTimeout(() => setContentVisible(true), delay);
       });
     }
@@ -424,6 +467,13 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         return;
       }
 
+      // Arrow keys for inter-story navigation (read from ref to avoid stale closure)
+      if (onNavigateRef.current && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        e.preventDefault();
+        onNavigateRef.current(e.key === "ArrowLeft" ? "prev" : "next");
+        return;
+      }
+
       if (e.key === "Tab" && panelRef.current) {
         const focusable = panelRef.current.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -447,6 +497,21 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
     return () => document.removeEventListener("keydown", handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
+
+  /* ---- Detect summary overflow — show "Read more" only when text is clipped ---- */
+  useEffect(() => {
+    const el = summaryInnerRef.current;
+    if (!el || summaryExpanded) return;
+
+    const check = () => {
+      setSummaryOverflows(el.scrollHeight > el.clientHeight + 2);
+    };
+
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [summaryExpanded, story.summary, contentVisible]);
 
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
@@ -472,40 +537,152 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
-        // Phase 2: Panel morphs back to card rect (cinematic reverse)
+        // Desktop: offsets are relative to the centering transform
+        const isDesktopNow = window.innerWidth >= 768;
+        const closeTransform = isDesktopNow
+          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
+          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+
+        // Phase 2: Panel morphs back to card rect — fast, decisive close
         setMorphStyle({
-          transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+          transform: closeTransform,
           borderRadius: "8px",
           opacity: 0,
           boxShadow: "none",
           transition: [
-            "transform 550ms cubic-bezier(0.16, 1, 0.3, 1)",
-            "border-radius 300ms cubic-bezier(0.16, 1, 0.3, 1)",
-            "opacity 250ms cubic-bezier(0.16, 1, 0.3, 1) 250ms",
-            "box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+            "transform 380ms var(--spring-snappy)",
+            "border-radius 250ms var(--spring-snappy)",
+            "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1) 150ms",
+            "box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
           ].join(", "),
         });
 
-        // Phase 3: Backdrop fades as panel shrinks (delayed for cinematic overlap)
-        setTimeout(() => setIsVisible(false), 220);
+        // Phase 3: Backdrop fades as panel shrinks
+        setTimeout(() => setIsVisible(false), 150);
 
-        // Phase 4: Cleanup
+        // Phase 4: Cleanup — fast dismissal
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 550);
-      }, 180); // Content fades 150ms, pause, then morph begins
+        }, 400);
+      }, 100); // Content fades 100ms, then morph begins immediately
     } else {
-      /* ═══ FALLBACK: cinematic slide-out ═══ */
+      /* ═══ FALLBACK: fast slide-out ═══ */
       setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
-        }, 550);
-      }, 180);
+        }, 400);
+      }, 100);
     }
   }, [onClose, originRect]);
+
+  /* ---- Swipe-to-dismiss touch handlers (mobile only) -------------------- */
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isDesktop) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const touch = e.touches[0];
+    const scrollTop = panel.scrollTop;
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+      scrollTop,
+      direction: "none",
+    };
+  }, [isDesktop]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (isDesktop || !touchStartRef.current) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    // Determine direction on first significant movement
+    if (touchStartRef.current.direction === "none" && (absX > 10 || absY > 10)) {
+      touchStartRef.current.direction = absX > absY * 1.2 ? "horizontal" : "vertical";
+    }
+
+    // --- Horizontal swipe (story navigation) ---
+    if (touchStartRef.current.direction === "horizontal" && onNavigateRef.current) {
+      // Don't interfere with vertical scroll
+      return;
+    }
+
+    // --- Vertical swipe (dismiss) ---
+    if (touchStartRef.current.direction !== "vertical") return;
+    if (deltaY <= 0) return;
+
+    // Guard: if user started scrolling from mid-content, don't intercept
+    const target = e.target as Node;
+    const dragIndicator = panelRef.current?.querySelector(".dd-drag-indicator");
+    const isOnDragIndicator = dragIndicator?.contains(target) ?? false;
+    if (touchStartRef.current.scrollTop > 5 && !isOnDragIndicator) return;
+
+    // Prevent page scroll while we're handling the drag
+    e.preventDefault();
+
+    // Rubber-band resistance — dampened feel
+    const offset = deltaY * 0.6;
+    setDragOffset(offset);
+    setIsDragging(true);
+  }, [isDesktop]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (isDesktop || !touchStartRef.current) return;
+
+    const start = touchStartRef.current;
+    const touch = e.changedTouches[0];
+    touchStartRef.current = null;
+
+    // --- Horizontal swipe end → navigate stories ---
+    if (start.direction === "horizontal" && onNavigateRef.current) {
+      const deltaX = touch.clientX - start.x;
+      const elapsed = Date.now() - start.time;
+      const velocity = elapsed > 0 ? Math.abs(deltaX) / elapsed : 0;
+
+      if (Math.abs(deltaX) > 60 || velocity > 0.3) {
+        const dir = deltaX < 0 ? "next" : "prev";
+        hapticLight();
+        // Cross-fade content
+        setSwipeNavOpacity(0);
+        setTimeout(() => {
+          onNavigateRef.current?.(dir);
+          setSwipeNavOpacity(1);
+        }, 150);
+        return;
+      }
+    }
+
+    // --- Vertical swipe end → dismiss ---
+    if (!isDragging) return;
+
+    const elapsed = Date.now() - start.time;
+    const velocity = elapsed > 0 ? dragOffset / elapsed : 0;
+    const shouldDismiss = dragOffset > 120 || velocity > 0.5;
+
+    if (shouldDismiss) {
+      hapticMedium();
+      setIsDismissing(true);
+      setIsDragging(false);
+      setDragOffset(window.innerHeight);
+      setTimeout(() => {
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 300);
+    } else {
+      setIsDragging(false);
+      setDragOffset(0);
+    }
+  }, [isDesktop, isDragging, dragOffset, onClose]);
 
   return (
     <>
@@ -515,8 +692,12 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         onClick={handleClose}
         className="deep-dive-backdrop"
         style={{
-          opacity: isVisible ? 1 : 0,
-          transition: "opacity 450ms cubic-bezier(0.16, 1, 0.3, 1)",
+          opacity: isVisible ? Math.max(0, 1 - dragOffset / 400) : 0,
+          transition: isDragging
+            ? "none"
+            : isVisible
+              ? "opacity 300ms cubic-bezier(0.16, 1, 0.3, 1)"
+              : "opacity 250ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       />
 
@@ -527,24 +708,34 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         aria-modal="true"
         aria-label={`Deep dive: ${story.title}`}
         tabIndex={-1}
-        className="deep-dive-panel"
+        className={`deep-dive-panel${isDragging ? " deep-dive-panel--dragging" : ""}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={morphStyle ?? {
           /* Default open/close when no FLIP morph is active.
-             Desktop: cinematic scale + translateY from center.
-             Mobile: slide from bottom — bottom sheet.
-             Slow, weighted spring — the panel has physical mass. */
+             Desktop: spring scale + translateY from center.
+             Mobile: spring slide from bottom — bottom sheet. */
           transform: isVisible
-            ? isDesktop ? "translate(-50%, -50%) scale(1)" : "translateY(0)"
-            : isDesktop ? "translate(-50%, -50%) scale(0.88) translateY(30px)" : "translateY(100%)",
+            ? isDesktop
+              ? "translate(-50%, -50%) scale(1)"
+              : `translateY(${dragOffset}px)`
+            : isDesktop
+              ? "translate(-50%, -50%) scale(0.95) translateY(12px)"
+              : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-e3)" : "none",
-          transition: isVisible
-            ? "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), opacity 0ms, box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1) 120ms"
-            : "transform 550ms cubic-bezier(0.16, 1, 0.3, 1), opacity 0ms 550ms, box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+          transition: isDragging
+            ? "none"
+            : isDismissing
+              ? "transform 280ms cubic-bezier(0.2, 1, 0.3, 1)"
+              : isVisible
+                ? "transform 520ms var(--spring-bouncy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1) 60ms"
+                : "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
-        <div className="dd-drag-indicator" aria-hidden="true" />
+        <div className={`dd-drag-indicator${isDragging ? " dd-drag-indicator--grabbed" : ""}`} aria-hidden="true" />
 
         {/* ---- Header --------------------------------------------------- */}
         <header className="deep-dive-panel__header">
@@ -553,24 +744,67 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
               <ArrowLeft size={18} weight="regular" aria-hidden="true" />
               <span className="deep-dive-back-label">Back to feed</span>
             </button>
+            <span className="dd-brand-label" aria-hidden="true">void --deep-dive</span>
+
+            {/* Inter-story navigation */}
+            {onNavigate && totalStories > 1 && (
+              <div className="dd-story-nav">
+                <button
+                  className="dd-story-nav__btn"
+                  onClick={() => { hapticLight(); onNavigate("prev"); }}
+                  disabled={storyIndex <= 0}
+                  aria-label="Previous story"
+                >
+                  <CaretLeft size={14} weight="bold" />
+                </button>
+                <span className="dd-story-nav__counter">
+                  {storyIndex + 1}/{totalStories}
+                </span>
+                <button
+                  className="dd-story-nav__btn"
+                  onClick={() => { hapticLight(); onNavigate("next"); }}
+                  disabled={storyIndex >= totalStories - 1}
+                  aria-label="Next story"
+                >
+                  <CaretRight size={14} weight="bold" />
+                </button>
+              </div>
+            )}
 
             <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
               <X size={20} weight="regular" aria-hidden="true" />
             </button>
           </div>
 
-          <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginTop: "var(--space-3)" }}>
+          <h2 className="dd-headline">
             {story.title}
           </h2>
 
           <div className="deep-dive-meta">
             <span className="category-tag">{story.category}</span>
             <span className="dot-separator" aria-hidden="true" />
-            <span className="time-tag" style={{ color: "var(--fg-tertiary)" }}>
+            <span className="dd-meta-sources text-data">
               {sources.length > 0 ? sources.length : story.source.count} sources
             </span>
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+
+            {/* Analysis depth — subtle dots showing exploration progress.
+                Fills as user opens analysis layers: spectrum (auto), all sides, scoring.
+                Rewards curiosity without demanding attention. */}
+            {spectrumSources.length > 0 && (
+              <>
+                <span className="dot-separator" aria-hidden="true" />
+                <span
+                  className="dd-depth"
+                  aria-label={`${[spectrumSources.length > 0, comparativeOpen, pressAnalysisOpen].filter(Boolean).length} of 3 analysis layers explored`}
+                >
+                  <span className={`dd-depth__dot${spectrumSources.length > 0 ? " dd-depth__dot--filled" : ""}`} />
+                  <span className={`dd-depth__dot${comparativeOpen ? " dd-depth__dot--filled" : ""}`} />
+                  <span className={`dd-depth__dot${pressAnalysisOpen ? " dd-depth__dot--filled" : ""}`} />
+                </span>
+              </>
+            )}
           </div>
         </header>
 
@@ -578,8 +812,8 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
         <div
           className="deep-dive-panel__content"
           style={{
-            opacity: contentVisible ? 1 : 0,
-            transition: `opacity ${contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+            opacity: contentVisible ? swipeNavOpacity : 0,
+            transition: `opacity ${swipeNavOpacity < 1 ? 120 : contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
           {/* Loading indicator — analyzing animation while fetching deep dive data */}
@@ -603,105 +837,93 @@ export default function DeepDive({ story, onClose, originRect }: DeepDiveProps) 
             </div>
           )}
 
-          {/* ---- Compact action bar: [Sigil | Spectrum | All Sides ▸ | Scoring ▸] -- */}
+          {/* ---- Sigil (stacked: icon above, lean+underline below) + full-width Spectrum ---- */}
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
-              className={`dd-action-bar anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "0ms" }}
+              className={`dd-analysis-block anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}
             >
-              {/* Sigil — xl, left anchor */}
               {story.sigilData && (
-                <div className="dd-action-bar__sigil">
+                <div className="dd-analysis-block__sigil">
                   <Sigil data={story.sigilData} size="xl" />
                 </div>
               )}
-
-              {/* Spectrum — fills remaining space */}
               {spectrumSources.length > 0 && (
-                <div className="dd-action-bar__spectrum">
+                <div className="dd-analysis-block__spectrum">
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
-
-              {/* Action buttons */}
-              <div className="dd-action-bar__buttons">
-                {hasCrossLeanSources && (
-                  <button
-                    className={`dd-action-btn${comparativeOpen ? " dd-action-btn--active" : ""}`}
-                    onClick={() => { hapticLight(); setComparativeOpen(v => !v); }}
-                    aria-expanded={comparativeOpen}
-                    aria-controls="dd-comparative-panel"
-                    aria-label={comparativeOpen ? "Close All Sides view" : "Open All Sides view"}
-                  >
-                    <span>All Sides</span>
-                    <span
-                      className={`dd-press-trigger__arrow${comparativeOpen ? " dd-press-trigger__arrow--open" : ""}`}
-                      aria-hidden="true"
-                    >
-                      &#9658;
-                    </span>
-                  </button>
-                )}
-
-                {spectrumSources.length > 0 && (
-                  <button
-                    className={`dd-action-btn${pressAnalysisOpen ? " dd-action-btn--active" : ""}`}
-                    onClick={() => { hapticLight(); setPressAnalysisOpen(v => !v); hasSeenPressHint = true; }}
-                    aria-label={pressAnalysisOpen ? "Close scoring breakdown" : "Open scoring breakdown"}
-                    aria-expanded={pressAnalysisOpen}
-                    aria-controls="dd-press-expand-panel"
-                  >
-                    <span>Scoring</span>
-                    <span
-                      className={`dd-press-trigger__arrow${pressAnalysisOpen ? " dd-press-trigger__arrow--open" : ""}${hasSeenPressHint ? " dd-press-trigger__arrow--no-bounce" : ""}`}
-                      aria-hidden="true"
-                    >
-                      &#9658;
-                    </span>
-                  </button>
-                )}
-              </div>
             </div>
           )}
 
-          {/* ---- Expand panels: All Sides + Scoring (below action bar) --------- */}
-          {hasCrossLeanSources && (
-            <div
-              id="dd-comparative-panel"
-              className={`dd-press-expand${comparativeOpen ? " dd-press-expand--open" : ""}`}
-              style={{ width: "100%", marginBottom: comparativeOpen ? "var(--space-4)" : 0 }}
+          {/* ---- Tab bar ---- */}
+          <nav
+            className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+            role="tablist"
+            aria-label="Deep dive sections"
+            style={{ transitionDelay: "20ms" }}
+          >
+            <button
+              role="tab"
+              aria-selected={activeTab === "summary"}
+              className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
+              onClick={() => { hapticLight(); setActiveTab("summary"); }}
             >
-              <div className="dd-press-expand__inner">
-                <ComparativeView sources={sources} />
-              </div>
-            </div>
-          )}
-
-          {spectrumSources.length > 0 && (
-            <div
-              id="dd-press-expand-panel"
-              className={`dd-press-expand${pressAnalysisOpen ? " dd-press-expand--open" : ""}`}
-              style={{ width: "100%", marginBottom: pressAnalysisOpen ? "var(--space-4)" : 0 }}
-            >
-              <div className="dd-press-expand__inner">
-                <BiasInspectorInline sources={sources} />
-              </div>
-            </div>
-          )}
-
-          {/* ---- Summary — flows as article lede, after action bar -------------- */}
-          <section aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
-            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}`}>
-              <div className="dd-collapsible__inner">
-                <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                  {story.summary}
-                </p>
-              </div>
-            </div>
-            {story.summary && story.summary.length > 600 && !summaryExpanded && (
-              <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              Summary
+            </button>
+            {hasCrossLeanSources && (
+              <button
+                role="tab"
+                aria-selected={activeTab === "allsides"}
+                className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
+                onClick={() => { hapticLight(); setActiveTab("allsides"); }}
+              >
+                All Sides
+              </button>
             )}
-          </section>
+            {spectrumSources.length > 0 && (
+              <button
+                role="tab"
+                aria-selected={activeTab === "scoring"}
+                className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
+                onClick={() => { hapticLight(); setActiveTab("scoring"); }}
+              >
+                Scoring
+              </button>
+            )}
+          </nav>
+
+          {/* ---- Tab panels ---- */}
+          {activeTab === "summary" && (
+            <section role="tabpanel" aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
+                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                    {story.summary}
+                  </p>
+                </div>
+              </div>
+              {summaryOverflows && !summaryExpanded && (
+                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              )}
+            </section>
+          )}
+
+          {activeTab === "allsides" && hasCrossLeanSources && (
+            <section role="tabpanel" aria-label="All Sides comparison" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+              <ComparativeView
+                sources={sources}
+                consensusPoints={deepDive?.consensus}
+                divergencePoints={deepDive?.divergence}
+              />
+            </section>
+          )}
+
+          {activeTab === "scoring" && spectrumSources.length > 0 && (
+            <section role="tabpanel" aria-label="Scoring breakdown" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+              <BiasInspectorInline sources={sources} />
+            </section>
+          )}
 
           {/* No deep dive data at all */}
           {!deepDive && !isLoadingData && (

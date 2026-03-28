@@ -64,15 +64,30 @@ def main():
             continue
 
         voices = get_voices_for_today(edition)
-        result = produce_audio(script, voices, edition)
+        result = produce_audio(
+            script, voices, edition,
+            opinion_audio_script=brief.get("opinion_audio_script"),
+        )
 
         if result:
-            # Update daily_briefs table
+            # Update daily_briefs table with full brief data
             row = {
                 "edition": edition,
                 "tldr_text": brief["tldr_text"],
+                "opinion_text": brief.get("opinion_text"),
+                "opinion_headline": brief.get("opinion_headline"),
+                "opinion_audio_script": brief.get("opinion_audio_script"),
+                "opinion_lean": brief.get("opinion_lean"),
+                "opinion_cluster_id": brief.get("opinion_cluster_id"),
+                "audio_script": brief.get("audio_script"),
                 "audio_url": result["audio_url"],
                 "audio_duration_seconds": result["duration_seconds"],
+                "audio_file_size": result["file_size"],
+                "audio_voice": f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                    f"+{voices['opinion']['id']}" if brief.get("opinion_audio_script") else ""
+                ),
+                "audio_voice_label": "Three voices" if brief.get("opinion_audio_script") else "Two voices",
+                "top_cluster_ids": brief.get("top_cluster_ids", []),
             }
             try:
                 supabase.table("daily_briefs").delete().eq("edition", edition).execute()

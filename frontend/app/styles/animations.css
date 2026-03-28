@@ -99,6 +99,41 @@
   border-radius: var(--radius-md);
 }
 
+/* shimmer-line — pseudo-element sweep variant for structured skeleton rows.
+   Complements .skeleton (background-position approach) with a ::after overlay
+   that sweeps a translucent highlight across any placeholder element. */
+
+@keyframes shimmerSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-line {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.shimmer-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  animation: shimmerSweep 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-line::after {
+    animation: none;
+  }
+}
+
 /* ---- Animation Utilities ----------------------------------------------- */
 
 .anim-fade-in {
@@ -163,15 +198,15 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — snappy cascade reveal.
-   Short opacity (instant feel) + bouncy spring transform (physical pop).
-   Content appears to already be there — animation just adds life. */
+/* Deep Dive content section stagger — cinematic cascade reveal.
+   Opacity leads (instant presence), transform follows with spring (physical pop).
+   Slightly larger travel (14px) + longer spring (360ms) feels more deliberate. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(14px);
   transition:
-    opacity 100ms var(--ease-out),
-    transform 280ms var(--spring-bouncy);
+    opacity 120ms var(--ease-out),
+    transform 360ms var(--spring-bouncy);
 }
 
 .anim-dd-section--visible {
@@ -210,33 +245,36 @@
    These use inline SVG in the Sigil component for realistic pen strokes.
    The CSS classes below handle positioning + the draw-in animation. */
 
-/* Circle wraps just the lean label word, not the whole sigil */
-.sigil__ink-circle {
+/* Underline sits below the lean label — organic pen stroke */
+.sigil__ink-underline {
   position: absolute;
-  inset: -5px -4px;
+  left: -2px;
+  right: -2px;
+  bottom: -4px;
+  height: 6px;
   pointer-events: none;
   z-index: 1;
 }
 
-.sigil__ink-circle svg {
+.sigil__ink-underline svg {
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-/* Draw-in animation — the circle appears as if being drawn */
-.sigil__ink-circle path {
-  stroke-dasharray: var(--ink-len, 200);
-  stroke-dashoffset: var(--ink-len, 200);
-  animation: inkCircleDraw 600ms cubic-bezier(0.4, 0, 0.2, 1) 400ms forwards;
+/* Draw-in animation — the underline appears as if being drawn left-to-right */
+.sigil__ink-underline path {
+  stroke-dasharray: var(--ink-len, 100);
+  stroke-dashoffset: var(--ink-len, 100);
+  animation: inkUnderlineDraw 500ms cubic-bezier(0.25, 0.1, 0.25, 1) 350ms forwards;
 }
 
-@keyframes inkCircleDraw {
+@keyframes inkUnderlineDraw {
   to { stroke-dashoffset: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sigil__ink-circle path {
+  .sigil__ink-underline path {
     animation: none !important;
     stroke-dashoffset: 0 !important;
   }
@@ -273,9 +311,10 @@
 /* ---- Deep Dive: Press Analysis arrow attention bounce ------------------ */
 /* Single subtle lateral bounce — draws attention to the trigger on first render. */
 @keyframes arrowBounce {
-  0%, 100% { transform: translateX(0); }
-  30%       { transform: translateX(3px); }
-  60%       { transform: translateX(-1px); }
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25%       { transform: translateX(5px) rotate(2deg); }
+  55%       { transform: translateX(-2px) rotate(-1deg); }
+  80%       { transform: translateX(1px) rotate(0deg); }
 }
 
 /* ---- Feature 3: Divergence Alert entrance ----------------------------- */
@@ -407,5 +446,46 @@
     opacity: 1;
     transform: none;
     transition: opacity 0ms !important;
+  }
+}
+
+/* ==========================================================================
+   Pull-to-Refresh — native app gesture indicator
+   ========================================================================== */
+
+.pull-to-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  overflow: hidden;
+  color: var(--fg-tertiary);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+}
+
+.pull-to-refresh__spinner {
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+
+.pull-to-refresh__spinner--active {
+  animation: pullSpin 800ms linear infinite;
+}
+
+@keyframes pullSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pull-to-refresh__text {
+  font-weight: 500;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .pull-to-refresh__spinner--active {
+    animation: none;
   }
 }

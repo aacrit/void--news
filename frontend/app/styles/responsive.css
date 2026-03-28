@@ -36,6 +36,19 @@
     border-right: none;
     padding-right: 0;
   }
+
+  /* Daily Brief: tablet — sections always expanded, hide chevrons */
+  .db-block__chevron { display: none; }
+
+  .db-block__collapsible {
+    grid-template-rows: 1fr !important;
+  }
+
+  /* Toggle labels become non-interactive on tablet+ */
+  .db-block__label--toggle {
+    cursor: default;
+    pointer-events: none;
+  }
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
@@ -140,17 +153,21 @@
     /* Solid opaque — content demands full attention, not transparency */
     background-color: var(--bg-primary);
 
-    /* Cinematic depth: heavy outer shadow + subtle inner edge highlights */
+    /* Cinematic depth: layered shadows create floating-card illusion.
+       Four rings: ambient → mid → close → inner edge highlight */
     box-shadow:
-      0 40px 120px rgba(0, 0, 0, 0.45),
-      0 16px 48px rgba(0, 0, 0, 0.25),
-      0 4px 12px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      0 50px 140px rgba(0, 0, 0, 0.5),
+      0 20px 60px rgba(0, 0, 0, 0.28),
+      0 6px 16px rgba(0, 0, 0, 0.18),
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  /* Studio light — subtle top-edge catch on the opaque surface */
+  /* Studio light — refined top-edge catch. Higher opacity + wider gradient
+     mimics a single overhead light source catching the panel's lip. */
   .deep-dive-panel::before {
-    opacity: 0.6;
+    opacity: 0.8;
+    height: 2px;
   }
 
   /* Close button visible on desktop modal — no back arrow needed */
@@ -224,18 +241,6 @@
     -webkit-backdrop-filter: blur(8px) saturate(1.1);
   }
 
-  /* Bottom nav visible — glass morphism: iOS tab bar aesthetic */
-  .nav-bottom {
-    display: flex;
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    border-top: 1px solid var(--glass-border);
-    /* Pad below tabs so they clear iPhone home indicator.
-       max() ensures at least --space-2 even when safe-area-inset-bottom is 0. */
-    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom, 0px));
-  }
-
   /* [USER REQUEST] Mobile header: show full logo + edition/date.
      Desktop logo hidden; mobile logo (compact LogoFull at 22px) shown. */
   .nav-logo-desktop {
@@ -246,9 +251,17 @@
     display: block;
   }
 
-  /* Inline dateline: hidden on mobile — bottom nav carries edition context */
+  /* Inline dateline: hidden on mobile — edition pills in compact nav-filters row */
   .nav-dateline-inline {
     display: none;
+  }
+
+  /* Mobile dateline: compact date only */
+  .nav-dateline-mobile {
+    display: block;
+    flex: 1;
+    text-align: right;
+    padding: 0 var(--space-2);
   }
 
   /* Tighter vertical padding + explicit gap — horizontal is already --space-5
@@ -264,15 +277,6 @@
     min-width: 0;
   }
 
-  /* [CRITICAL-1] Bottom nav touch targets — WCAG 44×44px minimum.
-     5 editions fit in space-around layout; reduce horizontal padding to fit.
-     min-height stays 48px for thumb comfort. */
-  .nav-bottom-tab {
-    padding: var(--space-3) var(--space-2);
-    min-height: 48px;
-    min-width: 0;
-  }
-
   /* Filter toggle — full touch target on mobile */
   .filter-toggle {
     min-height: 44px;
@@ -283,10 +287,10 @@
   /* === LAYOUT === */
 
   /* page-main: shorthand overrides the base rule's padding: 0 var(--space-7)
-     on all sides. Bottom accounts for fixed bottom nav + safe area inset. */
+     on all sides. No bottom nav — just safe area padding. */
   .page-main {
     padding: 0 var(--space-5);
-    padding-bottom: calc(var(--nav-bottom-height) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
@@ -328,9 +332,16 @@
 
   /* === STORY CARDS === */
 
-  /* Vertical tightening — more stories above the fold */
+  /* Native feed density — iOS News app style:
+     - Hairline separator via --separator-mobile token (0.5px, set in .story-card base rule)
+     - Subtle background tint using --bg-card for visual grouping against page-main
+     - Vertical padding tightened for more stories above the fold
+     The negative margin + matching padding pulls the tint flush to the page edge
+     (page-main has --space-5 padding), creating a full-bleed card band on the
+     warm paper surface without requiring edge-to-edge markup changes. */
   .story-card {
     padding: var(--space-3) 0;
+    border-bottom: var(--separator-mobile);
   }
 
   .story-card__meta {
@@ -342,21 +353,39 @@
     margin-bottom: var(--space-1);
   }
 
+  /* Apple News density — tighter line-height reads as native feed, not web article box */
   .story-card__summary {
     margin-bottom: var(--space-2);
     -webkit-line-clamp: 3;
+    line-height: 1.45;
   }
 
   /* [CRITICAL-5] Reserve space for Sigil to prevent layout shift */
   .story-card__footer {
     min-height: 32px;
-    margin-top: var(--space-2);
+    margin-top: var(--space-1);
   }
 
   /* === SECTION HEADERS === */
 
-  /* Mobile wayfinding: tighter section headers with visible 2px top rule */
+  /* Native iOS section header pattern: sticky, frosted, edge-to-edge.
+     Negative horizontal margin + matching padding pulls the header flush
+     to the viewport edge — mirrors UITableView section header behaviour.
+     backdrop-filter adds the frosted-glass frost as the feed scrolls beneath.
+     z-index: var(--z-sticky) keeps it above cards but below nav (--z-nav).
+     top calc accounts for the fixed nav-header height AND the sticky lean-bar
+     (--lean-bar-height) so the section header docks below both without overlap. */
   .section-header {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--lean-bar-height));
+    z-index: var(--z-sticky);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background-color: var(--bg-primary);
+    margin-left: calc(-1 * var(--space-5));
+    margin-right: calc(-1 * var(--space-5));
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
     padding-top: var(--space-3);
     padding-bottom: var(--space-1);
     margin-bottom: var(--space-1);
@@ -368,7 +397,10 @@
 
   /* === LEAD STORY === */
 
-  /* [ENHANCEMENT-3] Tighter lead story — show lead + secondary together */
+  /* Lead story V2: bolder hierarchy separates the hero from the supporting feed.
+     Headline bumped to clamp(1.5rem, 5vw, 2rem) — 1vw wider fluid range gives
+     the lead story more authority relative to .story-card at var(--text-lg).
+     Padding tightened to match story-card rhythm: both use var(--space-3) 0. */
   .lead-story {
     padding: var(--space-3) 0;
     border-bottom: var(--rule-thin);
@@ -379,7 +411,7 @@
   }
 
   .lead-story__headline {
-    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-size: clamp(1.5rem, 5vw, 2rem);
     margin-bottom: var(--space-2);
     line-height: 1.15;
   }
@@ -412,7 +444,10 @@
     background: var(--bg-primary);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+    /* Layered upward shadow — bottom sheet lifts off the feed */
+    box-shadow:
+      0 -8px 40px rgba(0, 0, 0, 0.25),
+      0 -2px 12px rgba(0, 0, 0, 0.12);
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
@@ -447,8 +482,24 @@
     background-color: var(--border-subtle);
     margin: var(--space-2) auto var(--space-1);
     opacity: 0.6;
+    transition: width 150ms var(--ease-out), opacity 150ms var(--ease-out);
     /* Brief width-expansion entrance that draws attention to the handle */
     animation: dragIndicatorReveal 500ms var(--ease-out) 300ms both;
+  }
+
+  /* Grabbed state: wider pill + full opacity — confirms the handle is active */
+  .dd-drag-indicator--grabbed {
+    width: 48px;
+    opacity: 1;
+  }
+
+  /* Dragging state: promote to compositor layer for jank-free 60fps dragging.
+     Suppress transitions so the panel tracks the finger with zero latency —
+     the inline style already sets transition:none while isDragging is true,
+     but will-change must be set before the gesture begins to avoid a layer
+     promotion stutter on the first move event. */
+  .deep-dive-panel--dragging {
+    will-change: transform;
   }
 
   /* Hide "Back to feed" text, keep arrow */
@@ -462,24 +513,12 @@
     gap: var(--space-2);
   }
 
-  /* Action bar: two rows on mobile — [Sigil | Spectrum] / [Buttons] */
-  .dd-action-bar {
+  /* Analysis block: stacked vertically on mobile */
+  .dd-analysis-block {
     gap: var(--space-2);
   }
 
-  .dd-action-bar__sigil {
-    /* First row: sigil + spectrum fill full width */
-    order: 1;
-  }
-
-  .dd-action-bar__spectrum {
-    order: 2;
-    flex: 1;
-  }
-
-  .dd-action-bar__buttons {
-    order: 3;
-    width: 100%;
+  .dd-analysis-block__sigil {
     justify-content: flex-start;
   }
 
@@ -532,27 +571,16 @@
 
   /* === NATIVE APP TOUCH FEEDBACK === */
 
-  /* Bottom nav tab — snappy haptic-feel press (60ms snap, 300ms return) */
-  .nav-bottom-tab {
-    position: relative;
+  /* Bottom nav removed — filters are in the nav-header now */
+
+  /* Filter chips — pill-toggle feel with sliding indicator */
+  .lean-bar__seg--active {
+    transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), transform 200ms var(--ease-out);
   }
 
-  .nav-bottom-tab:active {
-    transform: scale(0.9);
-    transition: transform 60ms var(--ease-out);
-  }
-
-  /* Active tab — dot indicator below icon (iOS convention) */
-  .nav-bottom-tab--active::after {
-    content: "";
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: var(--fg-primary);
+  /* Topic chips — tighter, more native pill feel */
+  .topic-bar__chip--active {
+    font-weight: 600;
   }
 
   /* Story card — no hover lift on mobile (no pointer hover), use active press */
@@ -671,7 +699,8 @@
   /* === TOUCH TARGETS — WCAG 44×44px MINIMUM === */
 
   /* These elements already meet WCAG in most cases; this rule is the safety net */
-  .nav-bottom-tab,
+  .nav-filters__ed,
+  .nav-filters__lean,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -688,16 +717,19 @@
     min-height: 44px;
   }
 
-  /* Deep Dive: press trigger and read-more targets */
+  /* Deep Dive: interactive targets — WCAG 44×44px minimum */
   .dd-press-trigger,
-  .dd-read-more {
+  .dd-read-more,
+  .dd-action-btn {
     min-height: 44px;
+    min-width: 44px;
   }
 
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
 
   /* Native apps don't allow text selection on buttons / cards */
-  .nav-bottom-tab,
+  .nav-filters__ed,
+  .nav-filters__lean,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -726,27 +758,94 @@
     outline-offset: 2px;
   }
 
-  /* === DAILY BRIEF — mobile layout === */
+  /* === FILTERBAR — hide edition pills on mobile (already in bottom nav) === */
 
-  /* Clamp long briefs on mobile — expand via toggle */
-  .daily-brief__body--mobile-clamp {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    /* Prevent last visible line from stretching when clamped */
-    text-align-last: left;
-  }
-
-  /* Show "Read more" toggle on mobile */
-  .daily-brief__toggle {
-    display: inline-block;
-  }
-
-  /* On Air CTA: label-only on narrow screens to save space */
-  /* void --onair: hide time on mobile to save space */
-  .void-onair__time {
+  .ubar__editions {
     display: none;
+  }
+
+  /* Hide the separator after edition pills — no longer needed */
+  .ubar__editions + .ubar__sep {
+    display: none;
+  }
+
+  /* === NAV FILTERS — hide from top bar on mobile (moved to bottom nav) === */
+  .nav-filters {
+    display: none;
+  }
+
+  /* === DAILY BRIEF — stacked sections, compact mobile layout === */
+  .daily-brief {
+    padding: var(--space-2) var(--space-3);
+    margin: var(--space-3) 0;
+  }
+
+  /* Show chevrons on mobile — indicate collapsible sections */
+  .db-block__chevron {
+    display: inline;
+  }
+
+  /* On mobile, collapsible blocks start closed (JS sets --open class) */
+  .db-block__collapsible {
+    grid-template-rows: 0fr;
+  }
+
+  /* Open state — JS toggles this class */
+  .db-block__collapsible--open {
+    grid-template-rows: 1fr;
+  }
+
+  /* TL;DR never collapses on mobile */
+  .db-block--tldr .db-block__collapsible {
+    grid-template-rows: 1fr;
+  }
+
+  /* Smaller body text on mobile */
+  .daily-brief__body,
+  .daily-brief__opinion {
+    font-size: var(--text-sm);
+  }
+
+  /* Touch target already 44px from __label--toggle min-height */
+  .db-audio__play {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* === PAGE MAIN — clear bottom nav === */
+  .page-main {
+    padding-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-footer {
+    margin-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* === META TAGS — bump readability on mobile === */
+
+  .category-tag {
+    font-size: var(--text-sm);
+  }
+
+  .time-tag {
+    font-size: var(--text-sm);
+  }
+
+  /* === FOOTER — stack product links vertically on mobile === */
+
+  .footer-products {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .footer-products__sep {
+    display: none;
+  }
+
+  /* Spectrum: tighter zone labels on mobile */
+  .dd-spectrum__zone-label {
+    font-size: 6px;
+    letter-spacing: 0;
   }
 }
 

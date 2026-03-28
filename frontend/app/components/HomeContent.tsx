@@ -7,7 +7,7 @@ import { supabase, supabaseError } from "../lib/supabase";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar from "./NavBar";
-import FilterBar, { type LeanChip, LEAN_RANGES } from "./FilterBar";
+import { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
@@ -16,15 +16,35 @@ import ErrorBoundary from "./ErrorBoundary";
 /* ---------------------------------------------------------------------------
    VisibleCard — defers anim-filter-card until the element enters the viewport.
 
-   On initial page load, story cards below the fold are in the DOM (batch
-   rendering limits them to visibleCount) but not visible. Without this guard,
-   the CSS animation fires immediately for all rendered cards, including those
-   off-screen — wasting GPU work and producing jank on low-end devices.
-
-   On filter changes (React key re-mount), cards are already in the viewport
-   at the moment of mount, so IntersectionObserver fires immediately and the
-   animation plays as intended — no change to the filter-change UX.
+   Uses a pooled IntersectionObserver (shared across all VisibleCards) to avoid
+   creating 100+ observers on long feeds. The observer is created once and
+   elements register/unregister via a WeakMap callback.
    --------------------------------------------------------------------------- */
+
+// Pooled observer — single instance shared by all VisibleCard components
+const observerCallbacks = new WeakMap<Element, () => void>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function getSharedObserver(): IntersectionObserver {
+  if (sharedObserver) return sharedObserver;
+  sharedObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const cb = observerCallbacks.get(entry.target);
+          if (cb) {
+            cb();
+            observerCallbacks.delete(entry.target);
+            sharedObserver?.unobserve(entry.target);
+          }
+        }
+      }
+    },
+    { rootMargin: "100px" },
+  );
+  return sharedObserver;
+}
+
 interface VisibleCardProps {
   className?: string;
   style?: React.CSSProperties;
@@ -45,12 +65,18 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
       setInView(true);
       return;
     }
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
-      { rootMargin: "100px" },
-    );
+    // Guard against state updates after unmount — the shared observer's
+    // callback may fire between cleanup starting and the observer removing
+    // the element from its observation list.
+    let unmounted = false;
+    const observer = getSharedObserver();
+    observerCallbacks.set(el, () => { if (!unmounted) setInView(true); });
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      unmounted = true;
+      observerCallbacks.delete(el);
+      observer.unobserve(el);
+    };
   }, []);
 
   return (
@@ -67,8 +93,11 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText } from "./DailyBrief";
-import { hapticConfirm, hapticScrollEdge } from "../lib/haptics";
+import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import BiasLensOnboarding from "./BiasLensOnboarding";
+import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
+import InstallPrompt from "./InstallPrompt";
+import MobileBottomNav from "./MobileBottomNav";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -156,10 +185,23 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // retryKey: incrementing triggers the data-fetch useEffect without a full
   // page reload — gives users a clean retry path from the error state.
   const [retryKey, setRetryKey] = useState(0);
-  const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
+  // Read initial filter state from URL params (bookmarkable/shareable)
+  const [activeCategory, setActiveCategory] = useState<"All" | Category>(() => {
+    if (typeof window === "undefined") return "All";
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get("cat");
+    if (cat && ["Politics", "Economy", "Science", "Health", "Culture"].includes(cat)) return cat as Category;
+    return "All";
+  });
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
-  const [activeLean, setActiveLean] = useState<LeanChip>("All");
+  const [activeLean, setActiveLean] = useState<LeanChip>(() => {
+    if (typeof window === "undefined") return "All";
+    const params = new URLSearchParams(window.location.search);
+    const lean = params.get("lean");
+    if (lean && ["Left", "Center", "Right"].includes(lean)) return lean as LeanChip;
+    return "All";
+  });
 
   // Batch reveal for compact stories — no hard cap, progressive loading
   const BATCH_SIZE = 8;
@@ -169,6 +211,67 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
+
+  // --- Pull-to-Refresh (mobile only) ---
+  const [pullOffset, setPullOffset] = useState(0);
+  const [isPulling, setIsPulling] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const pullStartRef = useRef<{ y: number; scrollY: number } | null>(null);
+  const pullResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const PULL_THRESHOLD = 60; // px of visual displacement to trigger refresh
+
+  const handlePullStart = useCallback((e: React.TouchEvent) => {
+    if (!isMobile || isRefreshing || selectedStory) return;
+    pullStartRef.current = {
+      y: e.touches[0].clientY,
+      scrollY: window.scrollY,
+    };
+  }, [isMobile, isRefreshing, selectedStory]);
+
+  const handlePullMove = useCallback((e: React.TouchEvent) => {
+    if (!pullStartRef.current || isRefreshing) return;
+    // Only pull-to-refresh when at scroll top
+    if (pullStartRef.current.scrollY > 5 && window.scrollY > 5) return;
+    const deltaY = e.touches[0].clientY - pullStartRef.current.y;
+    if (deltaY <= 0) { setPullOffset(0); return; }
+    // Rubber-band resistance
+    const offset = Math.min(deltaY * 0.4, 100);
+    setPullOffset(offset);
+    if (!isPulling && offset > 10) setIsPulling(true);
+  }, [isRefreshing, isPulling]);
+
+  const handlePullEnd = useCallback(() => {
+    if (!isPulling) { pullStartRef.current = null; return; }
+    if (pullOffset >= PULL_THRESHOLD) {
+      // Trigger refresh
+      hapticConfirm();
+      setIsRefreshing(true);
+      setPullOffset(40); // Hold at indicator position
+      setRetryKey(k => k + 1);
+      // Reset after data loads — clear any prior timer before scheduling a new one
+      if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
+      pullResetTimerRef.current = setTimeout(() => {
+        pullResetTimerRef.current = null;
+        setIsRefreshing(false);
+        setPullOffset(0);
+        setIsPulling(false);
+      }, 1500);
+    } else {
+      // Cancel — spring back
+      hapticLight();
+      setPullOffset(0);
+      setIsPulling(false);
+    }
+    pullStartRef.current = null;
+  }, [isPulling, pullOffset]);
+
+  // Cleanup pull-to-refresh reset timer on unmount to prevent state updates
+  // on an unmounted component if the user navigates away mid-refresh.
+  useEffect(() => {
+    return () => {
+      if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
+    };
+  }, []);
 
   // Daily Brief state — shared between text + onair player
   // while DailyBriefText renders in the content area
@@ -258,7 +361,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         if (controller.signal.aborted) return;
 
         /* eslint-disable @typescript-eslint/no-explicit-any */
-        const liveStories: Story[] = clusters.map(
+        const mappedStories: Story[] = clusters.map(
           (cluster: any) => {
             // M002: Runtime-validate bias_diversity JSONB before any property access.
             // parseBiasDiversity returns null for strings, arrays, or non-plain-objects.
@@ -367,14 +470,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         );
 
         // Compute divergence percentiles (p10/p90) and flag top/bottom 10%
-        const divScores = liveStories
+        const divScores = mappedStories
           .map((s) => s.divergenceScore)
           .filter((d) => d > 0)
           .sort((a, b) => a - b);
         if (divScores.length >= 5) {
           const p10 = divScores[Math.floor(divScores.length * 0.1)];
           const p90 = divScores[Math.floor(divScores.length * 0.9)];
-          for (const s of liveStories) {
+          for (const s of mappedStories) {
             if (s.divergenceScore > 0) {
               if (s.divergenceScore >= p90) {
                 s.sigilData.divergenceFlag = "divergent";
@@ -385,7 +488,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           }
         }
 
-        setStories(liveStories);
+        setStories(mappedStories);
         setIsLoading(false);
 
         const { data: run } = await supabase
@@ -410,6 +513,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     loadFromSupabase();
     return () => controller.abort();
   }, [activeEdition, retryKey]);
+
+  // Sync filter state to URL params for bookmarkability
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (activeLean !== "All") params.set("lean", activeLean);
+    else params.delete("lean");
+    if (activeCategory !== "All") params.set("cat", activeCategory);
+    else params.delete("cat");
+    const qs = params.toString();
+    const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState(null, "", url);
+  }, [activeLean, activeCategory]);
 
   const filteredStories = useMemo(() => {
     let filtered = stories;
@@ -460,34 +576,84 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // change — giving a "reshuffling" feel with no JS animation library.
   const filterKey = `${activeLean}-${activeCategory}`;
 
+  // Keyboard navigation — J/K to move through stories, Enter to open Deep Dive
+  const kbdSelectStory = useCallback((index: number) => {
+    if (index >= 0 && index < filteredStories.length) {
+      handleStoryClick(filteredStories[index], new DOMRect());
+    }
+  }, [filteredStories, handleStoryClick]);
+
+  const kbdFocusIndex = useStoryKeyboardNav(
+    filteredStories,
+    kbdSelectStory,
+    !!selectedStory,
+  );
+
+  // Inter-story navigation within Deep Dive
+  const handleDeepDiveNav = useCallback((direction: "prev" | "next") => {
+    if (!selectedStory) return;
+    const idx = filteredStories.findIndex((s) => s.id === selectedStory.id);
+    if (idx < 0) return;
+    const newIdx = direction === "prev" ? idx - 1 : idx + 1;
+    if (newIdx >= 0 && newIdx < filteredStories.length) {
+      setSelectedStory(filteredStories[newIdx]);
+    }
+  }, [selectedStory, filteredStories]);
+
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
     <div className="page-container">
       <NavBar
         activeEdition={activeEdition}
+        activeCategory={activeCategory}
+        onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+        activeLean={activeLean}
+        onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
       />
 
-      <main id="main-content" className="page-main">
-        {/* Filter bar row — category chips + lean chips + On Air CTA */}
-        <div className="filter-row">
-          <FilterBar
-            activeCategory={activeCategory}
-            onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
-            activeLean={activeLean}
-            onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
-            activeEdition={activeEdition}
-          />
-        </div>
+      <main
+        id="main-content"
+        className="page-main"
+        onTouchStart={handlePullStart}
+        onTouchMove={handlePullMove}
+        onTouchEnd={handlePullEnd}
+      >
+        {/* Pull-to-refresh indicator (mobile) */}
+        {(isPulling || isRefreshing) && (
+          <div
+            className="pull-to-refresh"
+            style={{
+              height: `${pullOffset}px`,
+              opacity: Math.min(1, pullOffset / PULL_THRESHOLD),
+              transition: isPulling ? "none" : "height 300ms cubic-bezier(0.2, 1, 0.3, 1), opacity 300ms ease-out",
+            }}
+          >
+            <div
+              className={`pull-to-refresh__spinner ${isRefreshing ? "pull-to-refresh__spinner--active" : ""}`}
+              style={{
+                transform: `rotate(${pullOffset * 3}deg)`,
+                transition: isPulling ? "none" : "transform 300ms ease-out",
+              }}
+            >
+              {isRefreshing ? "↻" : "↓"}
+            </div>
+            <span className="pull-to-refresh__text">
+              {isRefreshing ? "Updating…" : pullOffset >= PULL_THRESHOLD ? "Release to refresh" : "Pull to refresh"}
+            </span>
+          </div>
+        )}
+
+        {/* Filters now integrated into NavBar — no separate filter row */}
 
         {/* Live region, loading, error, empty states, story grids */}
         <>
-            {/* Live region for screen readers */}
+            {/* Live region for screen readers — announces filter changes and story count */}
             <div aria-live="polite" className="sr-only">
               {!isLoading && filteredStories.length > 0 &&
-                `${filteredStories.length} stories loaded`}
+                `${filteredStories.length} stories loaded for ${activeEdition} edition${activeCategory !== "All" ? `, filtered by ${activeCategory}` : ""}${activeLean !== "All" ? `, ${activeLean} perspective` : ""}. Press ? for keyboard shortcuts.`}
               {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
-                "No stories match the current filter"}
+                "No stories match the current filter. Try clearing your filters."}
             </div>
 
             {/* Loading skeleton */}
@@ -556,7 +722,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* 1. Lead section — two primary headlines side by side on desktop */}
+            {/* 1. Daily Brief — editorial anchor, above lead headlines.
+                The board's voice sets context before readers dive into stories. */}
+            {!isLoading && stories.length > 0 && (
+              <DailyBriefText state={dailyBriefState} />
+            )}
+
+            {/* 2. Lead section — two primary headlines side by side on desktop */}
             {!isLoading && leadStories.length > 0 && (
               <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
                 {leadStories.map((story, i) => (
@@ -565,29 +737,29 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     className="lead-section__col"
                     style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                   >
-                    <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} />
+                    <div data-story-index={i}>
+                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                    </div>
                   </VisibleCard>
                 ))}
               </section>
             )}
 
-            {/* 2. Daily Brief — TL;DR editorial box, below lead headlines */}
-            {!isLoading && stories.length > 0 && (
-              <DailyBriefText state={dailyBriefState} />
-            )}
-
             {/* Medium stories — broadsheet grid on desktop */}
             {!isLoading && mediumStories.length > 0 && (
               <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                {mediumStories.map((story, idx) => (
-                  <VisibleCard
-                    key={story.id}
-                    className="grid-medium__item"
-                    style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
-                  >
-                    <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} />
-                  </VisibleCard>
-                ))}
+                {mediumStories.map((story, idx) => {
+                  const gi = leadStories.length + idx;
+                  return (
+                    <VisibleCard
+                      key={story.id}
+                      className="grid-medium__item"
+                      style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
+                    >
+                      <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                    </VisibleCard>
+                  );
+                })}
               </section>
             )}
 
@@ -595,19 +767,24 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {!isLoading && compactStories.length > 0 && (
               <>
                 <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                  {visibleCompact.map((story, idx) => (
-                    <VisibleCard
-                      key={story.id}
-                      className="grid-compact__item"
-                      style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
-                    >
-                      <StoryCard
-                        story={story}
-                        index={idx + mediumStories.length + 1}
-                        onStoryClick={handleStoryClick}
-                      />
-                    </VisibleCard>
-                  ))}
+                  {visibleCompact.map((story, idx) => {
+                    const gi = leadStories.length + mediumStories.length + idx;
+                    return (
+                      <VisibleCard
+                        key={story.id}
+                        className="grid-compact__item"
+                        style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
+                      >
+                        <StoryCard
+                          story={story}
+                          index={idx + mediumStories.length + 1}
+                          onStoryClick={handleStoryClick}
+                          globalIndex={gi}
+                          kbdFocused={kbdFocusIndex === gi}
+                        />
+                      </VisibleCard>
+                    );
+                  })}
                 </section>
 
                 {/* Feed continuation — gradient fade + editorial link (desktop) / sentinel (mobile) */}
@@ -646,11 +823,35 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* Deep Dive panel */}
       {selectedStory && (
-        <DeepDive story={selectedStory} onClose={handleDeepDiveClose} originRect={originRect} />
+        <DeepDive
+          story={selectedStory}
+          onClose={handleDeepDiveClose}
+          originRect={originRect}
+          onNavigate={handleDeepDiveNav}
+          storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
+          totalStories={filteredStories.length}
+        />
       )}
 
       {/* BiasLens onboarding — first-visit 3-slide carousel */}
       <BiasLensOnboarding />
+
+      {/* Keyboard shortcuts overlay — press ? to toggle */}
+      <KeyboardShortcutsOverlay />
+
+      {/* PWA install prompt — 2nd+ visit, above bottom nav */}
+      <InstallPrompt />
+
+      {/* Mobile bottom nav — single-row filters (thumb-reachable) */}
+      {isMobile && (
+        <MobileBottomNav
+          activeEdition={activeEdition}
+          activeLean={activeLean}
+          onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+          activeCategory={activeCategory}
+          onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+        />
+      )}
     </div>
   );
 }

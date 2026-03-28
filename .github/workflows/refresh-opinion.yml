@@ -1,0 +1,30 @@
+name: "Refresh: Opinion"
+on:
+  workflow_dispatch:
+    inputs:
+      editions:
+        description: 'Editions (comma-separated: world,us,india,uk,canada)'
+        required: false
+        default: 'world'
+
+jobs:
+  refresh-opinion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Regenerate Opinion
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "Regenerating opinion for: ${{ inputs.editions }}"
+          python pipeline/refresh_brief.py --editions "${{ inputs.editions }}" --opinion-only

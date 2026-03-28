@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo, whyThisStory } from "../lib/utils";
+import { timeAgo } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
@@ -11,6 +11,10 @@ interface StoryCardProps {
   story: Story;
   index: number;
   onStoryClick?: (story: Story, rect: DOMRect) => void;
+  /** Global story index for keyboard navigation — sets data-story-index attribute */
+  globalIndex?: number;
+  /** True when this card is focused via keyboard (J/K) navigation */
+  kbdFocused?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -20,7 +24,7 @@ interface StoryCardProps {
    the card enters the viewport — below-fold cards don't waste their entrance.
    --------------------------------------------------------------------------- */
 
-export default function StoryCard({ story, index, onStoryClick }: StoryCardProps) {
+export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused }: StoryCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -54,7 +58,8 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
           onStoryClick?.(story, new DOMRect());
         }
       }}
-      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}`}
+      data-story-index={globalIndex}
+      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
       {/* Category tag + time */}
@@ -77,23 +82,9 @@ export default function StoryCard({ story, index, onStoryClick }: StoryCardProps
       {/* Summary */}
       <p className="story-card__summary">{story.summary}</p>
 
-      {/* Bias indicator — lean bar + source count + type badge */}
+      {/* Bias indicator */}
       <div className="story-card__footer">
-        <Sigil data={story.sigilData} />
-        {(() => {
-          const reasons = whyThisStory({
-            sourceCount: story.source.count,
-            coverageVelocity: story.coverageVelocity,
-            divergenceScore: story.divergenceScore,
-            leanSpread: story.biasSpread?.leanSpread,
-            headlineRank: story.headlineRank,
-          });
-          return reasons.length > 0 ? (
-            <span className="story-card__why" title={reasons.join(" / ")}>
-              {reasons[0]}
-            </span>
-          ) : null;
-        })()}
+        <Sigil data={story.sigilData} size="lg" />
       </div>
     </article>
   );

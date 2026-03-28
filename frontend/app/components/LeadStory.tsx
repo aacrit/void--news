@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo, whyThisStory } from "../lib/utils";
+import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 
@@ -11,6 +11,8 @@ interface LeadStoryProps {
   /** 0 = primary (first/most important), 1+ = secondary */
   rank?: number;
   onStoryClick?: (story: Story, rect: DOMRect) => void;
+  /** True when this card is focused via keyboard (J/K) navigation */
+  kbdFocused?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -18,7 +20,7 @@ interface LeadStoryProps {
    Larger typography, more prominent layout, bigger bias stamp.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
   return (
@@ -40,10 +42,11 @@ export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryPr
           onStoryClick?.(story, new DOMRect());
         }
       }}
-      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}`}
+      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Category tag + time */}
       <div className="lead-story__meta">
+        {rank === 0 && <span className="lead-story__badge">Top Story</span>}
         <span className="category-tag category-tag--lead">{story.category}</span>
         <span className="dot-separator" aria-hidden="true" />
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>
@@ -55,23 +58,9 @@ export default function LeadStory({ story, rank = 0, onStoryClick }: LeadStoryPr
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
 
-      {/* Bias indicator — lean-first with source count + type badge */}
+      {/* Bias indicator */}
       <div className="lead-story__footer">
         <Sigil data={story.sigilData} size="lg" />
-        {(() => {
-          const reasons = whyThisStory({
-            sourceCount: story.source.count,
-            coverageVelocity: story.coverageVelocity,
-            divergenceScore: story.divergenceScore,
-            leanSpread: story.biasSpread?.leanSpread,
-            headlineRank: story.headlineRank,
-          });
-          return reasons.length > 0 ? (
-            <span className="lead-story__why" title={reasons.join(" / ")}>
-              {reasons.join(" / ")}
-            </span>
-          ) : null;
-        })()}
       </div>
     </article>
   );

@@ -28,25 +28,31 @@
     background-color 120ms var(--ease-out),
     box-shadow      300ms 30ms var(--ease-out),
     transform       320ms var(--spring-snappy);
+  /* Mobile separator token — hairline iOS-convention border.
+     Referenced by the max-width: 767px block. Toggling --separator-mobile
+     here is the single-point change for the mobile card border weight. */
+  --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
-/* Radial glow pseudo-element — graceful edge fade instead of hard bg swap.
-   Strongest at center, fades to transparent at edges. Appears on hover,
-   sits below content (z-index -1) so it never obscures text. */
+/* Organic glow — irregular radial gradient that softly diffuses at edges.
+   Multiple layered gradients create natural, non-uniform light diffusion.
+   No hard rectangle boundary — warmth bleeds outward organically. */
 .story-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    ellipse 80% 70% at 50% 40%,
-    var(--bg-secondary) 0%,
-    transparent 100%
-  );
+  /* Extend beyond card bounds for soft bleed — organic, not clipped */
+  inset: -8px -12px;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse 70% 55% at 45% 35%, var(--bg-secondary) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 60% 55%, color-mix(in srgb, var(--bg-secondary) 60%, transparent) 0%, transparent 65%);
   opacity: 0;
-  transition: opacity 160ms var(--ease-out);
+  transition: opacity 200ms var(--ease-out);
   pointer-events: none;
   z-index: 0;
+  /* Soft mask to feather the very edge — dissolve, not cut */
+  mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 100%);
 }
 
 /* Ensure card content sits above the glow layer */
@@ -60,7 +66,7 @@
 }
 
 .story-card:hover {
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
@@ -121,7 +127,7 @@
 
 .story-card__headline {
   font-family: var(--font-editorial);
-  font-size: var(--text-xl);
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.005em;
@@ -174,22 +180,16 @@
 .story-card__why,
 .lead-story__why {
   font-family: var(--font-data);
-  font-size: var(--text-xs);
-  /* --fg-secondary for WCAG 4.5:1 contrast in dark mode; --fg-tertiary
-     was too dim against --bg-primary (#1C1A17) in Evening Edition. */
-  color: var(--fg-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fg-muted);
   letter-spacing: 0.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: help;
-  /* min-width: 0 + flex: 1 allow ellipsis to work inside flex containers */
   min-width: 0;
   flex: 1;
 }
 
 .lead-story__why {
-  font-size: var(--text-sm);
+  font-size: 11px;
 }
 
 /* ---- Lead Story -------------------------------------------------------- */
@@ -293,6 +293,19 @@
   align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-3);
+}
+
+/* "Top Story" badge — small data-voice label, subtle emphasis */
+.lead-story__badge {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  padding: 2px var(--space-2);
+  border: 1px solid var(--accent-warm);
+  border-radius: var(--radius-sm);
 }
 
 .lead-story__headline {
@@ -1507,6 +1520,17 @@
   opacity: 0.7;
 }
 
+/* Mobile dateline — compact date only, hidden on desktop */
+.nav-dateline-mobile {
+  display: none;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.03em;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+}
+
 /* Legacy aliases — no longer used in JSX but kept to avoid stray-ref crashes */
 .nav-dateline {
   display: none;
@@ -1523,59 +1547,235 @@
   gap: var(--space-1);
 }
 
-/* Mobile bottom nav — 5 editions spread evenly */
-.nav-bottom {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-nav);
-  background-color: var(--glass-bg);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  border-top: 1px solid var(--glass-border);
-  display: none;
-  padding: var(--space-2) 0;
-  justify-content: space-around;
-  gap: 0;
-  transition: background-color var(--dur-morph) var(--ease-out);
+/* ==========================================================================
+   Nav Filters — Compact second row inside nav-header
+   Editions + Lean + Topic all in one tight row.
+   ========================================================================== */
+
+.nav-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-5) var(--space-2);
 }
 
-.nav-bottom-tab {
+@media (min-width: 768px) {
+  .nav-filters {
+    padding: 0 var(--space-7) var(--space-2);
+  }
+}
+
+.nav-filters__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nav-filters__sep {
+  width: 1px;
+  height: 14px;
+  background-color: var(--border-subtle);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* ── Edition pills ── */
+.nav-filters__ed {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 400;
+  font-size: 10px;
+  font-weight: 500;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
   color: var(--fg-tertiary);
-  padding: var(--space-2) var(--space-3);
-  border-top: 2px solid transparent;
-  min-height: 44px;
-  min-width: 44px;
-  flex: 1;
+  text-decoration: none;
+  padding: 2px var(--space-2);
+  border-radius: 100px;
+  min-height: 26px;
+  transition: color 150ms var(--ease-out), background-color 150ms var(--ease-out);
+}
+
+.nav-filters__ed:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+.nav-filters__ed--active {
+  color: var(--fg-primary);
+  font-weight: 700;
+  background-color: var(--bg-secondary);
+}
+
+/* ── Lean chips ── */
+.nav-filters__lean {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--fg-tertiary);
+  background: none;
+  border: 1px solid transparent;
+  padding: 2px var(--space-2);
+  border-radius: 100px;
+  min-height: 26px;
+  cursor: pointer;
+  transition: all 120ms var(--ease-out);
+}
+
+.nav-filters__lean:hover {
+  color: var(--fg-secondary);
+  background-color: var(--bg-secondary);
+}
+
+.nav-filters__lean--active {
+  color: var(--fg-primary);
+  font-weight: 700;
+  border-color: var(--border-strong);
+  background-color: var(--bg-secondary);
+}
+
+.nav-filters__lean-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nav-filters__lean--left .nav-filters__lean-dot { background-color: var(--bias-left); }
+.nav-filters__lean--center .nav-filters__lean-dot { background-color: var(--bias-center); }
+.nav-filters__lean--right .nav-filters__lean-dot { background-color: var(--bias-right); }
+
+/* ── Topic dropdown ── */
+.nav-filters__topics {
+  position: relative;
+}
+
+.nav-filters__topic-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-structural);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  background: none;
+  border: none;
+  padding: 2px var(--space-2);
+  min-height: 26px;
+  cursor: pointer;
+  transition: color 120ms var(--ease-out);
+}
+
+.nav-filters__topic-trigger:hover { color: var(--fg-secondary); }
+
+.nav-filters__topic-caret {
+  font-size: 7px;
+  transition: transform 150ms var(--ease-out);
+}
+
+.nav-filters__topic-caret--open {
+  transform: rotate(180deg);
+}
+
+.nav-filters__topic-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-e2);
+  padding: var(--space-1);
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  animation: fadeIn 120ms var(--ease-out);
+}
+
+.nav-filters__topic-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-structural);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--fg-secondary);
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  transition: background-color 80ms var(--ease-out);
+}
+
+.nav-filters__topic-opt:hover { background-color: var(--bg-secondary); }
+.nav-filters__topic-opt--active { font-weight: 600; color: var(--fg-primary); }
+
+/* ── Active lean badge ── */
+.nav-filters__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--fg-tertiary);
+  padding: 1px 5px 1px 7px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+}
+
+.nav-filters__badge-x {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--spring);
+  width: 14px;
+  height: 14px;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 9px;
+  border-radius: 50%;
+  transition: color 80ms var(--ease-out), background-color 80ms var(--ease-out);
 }
 
-.nav-bottom-tab:active {
-  transform: scale(0.95);
-}
-
-.nav-bottom-tab:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.nav-bottom-tab--active {
-  font-weight: 600;
+.nav-filters__badge-x:hover {
   color: var(--fg-primary);
-  border-top-color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+/* ── Mobile: tighter spacing ── */
+@media (max-width: 767px) {
+  .nav-filters {
+    gap: var(--space-1);
+    padding: 0 var(--space-4) var(--space-1);
+  }
+
+  .nav-filters__sep {
+    height: 12px;
+  }
+
+  .nav-filters__ed,
+  .nav-filters__lean,
+  .nav-filters__topic-trigger {
+    font-size: 9px;
+    min-height: 28px;
+    padding: 2px 6px;
+  }
+
+  .nav-filters__lean-dot {
+    width: 4px;
+    height: 4px;
+  }
 }
 
 /* ---- Theme Toggle ------------------------------------------------------ */
@@ -1939,6 +2139,19 @@
   outline-offset: 2px;
 }
 
+/* Brand label — subtle monospace tag in header bar */
+.dd-brand-label {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  opacity: 0.6;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: var(--space-2);
+}
+
 .deep-dive-close {
   display: inline-flex;
   align-items: center;
@@ -1974,6 +2187,18 @@
   gap: var(--space-3);
 }
 
+/* ---- Deep Dive Headline — editorial Playfair, generous leading ---------- */
+.dd-headline {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+  margin-top: var(--space-3);
+  overflow-wrap: break-word;
+}
+
 /* ---- Deep Dive Meta ---------------------------------------------------- */
 .deep-dive-meta {
   display: flex;
@@ -1981,6 +2206,35 @@
   gap: var(--space-3);
   margin-top: var(--space-2);
   flex-wrap: wrap;
+}
+
+/* Source count in data font — monospace precision for quantitative signals */
+.dd-meta-sources {
+  color: var(--fg-tertiary);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+/* Analysis depth dots — 3 dots showing exploration progress.
+   First dot auto-fills (spectrum), second fills on All Sides open,
+   third fills on Scoring open. Subtle reward for curiosity. */
+.dd-depth {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dd-depth__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--border-subtle);
+  transition: background-color 300ms var(--ease-out), transform 300ms var(--spring-bouncy);
+}
+
+.dd-depth__dot--filled {
+  background-color: var(--accent-warm);
+  transform: scale(1.2);
 }
 
 /* ---- Deep Dive Source Icons --------------------------------------------- */
@@ -2029,6 +2283,14 @@
 
 .dd-collapsible--expanded::after {
   opacity: 0;
+}
+
+/* Content fits within container — no clamp, no gradient */
+.dd-collapsible--fits .dd-collapsible__inner {
+  max-height: none;
+}
+.dd-collapsible--fits::after {
+  display: none;
 }
 
 .dd-read-more {
@@ -2105,6 +2367,31 @@
   color: var(--fg-tertiary);
   font-feature-settings: "tnum" 1;
   font-variant-numeric: tabular-nums;
+}
+
+/* Product family row in footer */
+.footer-products {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.footer-products__item {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color 150ms var(--ease-out);
+}
+a.footer-products__item:hover { color: var(--accent-warm); }
+.footer-products__sep {
+  font-size: 8px;
+  color: var(--border-strong);
+  line-height: 1;
 }
 
 .footer-github {
@@ -2538,14 +2825,65 @@
   white-space: nowrap;
 }
 
-.bi-subfactors__value {
+/* .bi-subfactors__value removed — redundant number dropped in favor of dots-only */
+
+/* ---- Progressive disclosure: summary first, details on demand ---------- */
+
+/* Auto-generated 1-line summary when Gemini reasoning isn't available */
+.bi-axis-summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+/* "Show details" toggle for subfactor grid */
+.bi-axis-details {
+  margin-top: var(--space-2);
+}
+
+.bi-axis-details__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--font-data);
   font-size: 9px;
-  font-weight: 600;
-  font-feature-settings: "tnum" 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg-tertiary);
-  flex-shrink: 0;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.bi-axis-details__toggle:hover {
+  color: var(--fg-secondary);
+}
+
+.bi-axis-details__caret {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.bi-axis-details__caret--open {
+  transform: rotate(180deg);
+}
+
+/* Collapsible content — CSS grid 0fr → 1fr for smooth height animation */
+.bi-axis-details__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-morph) var(--ease-out);
+}
+
+.bi-axis-details__content--open {
+  grid-template-rows: 1fr;
+}
+
+.bi-axis-details__content > * {
+  overflow: hidden;
 }
 
 /* ---- Keyword signals — plain-text left/right keyword rows (Lean axis) -- */
@@ -2573,59 +2911,137 @@
   text-transform: uppercase;
 }
 
-/* ---- Confidence meter -------------------------------------------------- */
+/* ---- Entity sentiments — bidirectional bar chart for key figures ------- */
+/* Shows how sources collectively feel about political figures.
+   Positive sentiment extends right from center, negative extends left.
+   Data was already computed via mergeEntitySentiments but never rendered. */
+
+.bi-entity-sentiments {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.bi-entity-sentiments__title {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+}
+
+.bi-entity-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 3px;
+}
+
+.bi-entity-row__name {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  min-width: 80px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bi-entity-row__bar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--bg-secondary);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.bi-entity-row__center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--border-strong);
+}
+
+.bi-entity-row__fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 400ms var(--ease-out);
+}
+
+.bi-entity-row__fill--pos {
+  background-color: var(--sense-low);
+}
+
+.bi-entity-row__fill--neg {
+  background-color: var(--sense-medium);
+}
+
+/* Tone label — plain language instead of opaque ±float */
+.bi-entity-row__tone {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  min-width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+  color: var(--fg-muted);
+}
+
+.bi-entity-row__tone--pos { color: var(--sense-low); }
+.bi-entity-row__tone--neg { color: var(--sense-medium); }
+
+/* ---- Confidence badge — 3-state: strong / moderate / pending ----------- */
 .bi-confidence {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
   border-top: var(--rule-thin);
 }
 
-.bi-confidence__header {
+.bi-confidence__badge-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
 }
 
-.bi-confidence__label {
+.bi-confidence__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--font-data);
   font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-}
-
-.bi-confidence__value {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  font-feature-settings: "tnum" 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.bi-confidence__track {
-  height: 6px;
-  background-color: var(--border-subtle);
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
   border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: var(--space-2);
+  border: 1px solid var(--border-subtle);
 }
 
-.bi-confidence__fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width var(--dur-slow) var(--ease-out);
+.bi-confidence__badge--strong {
+  color: var(--sense-low);
+  border-color: var(--sense-low);
 }
 
-.bi-confidence__note {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
+.bi-confidence__badge--moderate {
+  color: var(--sense-medium);
+  border-color: var(--sense-medium);
+}
+
+.bi-confidence__badge--pending {
   color: var(--fg-muted);
-  line-height: 1.5;
-  font-style: italic;
-  margin: 0;
+}
+
+.bi-confidence__badge-label {
+  line-height: 1;
 }
 
 /* ---- Gemini reasoning — per-axis AI analysis text --------------------- */
@@ -2931,7 +3347,6 @@
 
 /* ---- Reduced motion overrides ----------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .bi-confidence__fill,
   .bi-axis__content {
     transition: none;
   }
@@ -2963,6 +3378,21 @@
 .dd-summary-text {
   color: var(--fg-secondary);
   font-family: var(--font-structural);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Drop cap — newspaper premium. First letter of the lede spans 3 lines.
+   Only applies when summary is the first visible text (after action bar). */
+.dd-summary-text::first-letter {
+  float: left;
+  font-family: var(--font-editorial);
+  font-size: 3.2em;
+  line-height: 0.8;
+  font-weight: 700;
+  color: var(--fg-primary);
+  padding-right: 0.08em;
+  padding-top: 0.06em;
 }
 
 /* ---- Deep Dive: Analysis Section — vertical stack ---------------------- */
@@ -2980,49 +3410,34 @@
   justify-content: center;
 }
 
-/* ---- Deep Dive: Compact action bar ------------------------------------ */
-/* Desktop: [Sigil] [——Spectrum——] [All Sides ▸] [Scoring ▸] in one flex row
-   Mobile: two rows — [Sigil | Spectrum] then [All Sides | Scoring] */
-.dd-action-bar {
+/* ---- Deep Dive: Analysis block — Sigil stacked above full-width Spectrum --- */
+/* Sigil centered with lean label + ink underline below the icon.
+   Spectrum takes full width below, sources in 7-zone columns. */
+.dd-analysis-block {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-3) 0;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
-  flex-wrap: wrap;
 }
 
-.dd-action-bar__sigil {
-  flex-shrink: 0;
+.dd-analysis-block__sigil {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-.dd-action-bar__spectrum {
-  flex: 1;
-  min-width: 120px;
-  /* Constrain spectrum height within the bar */
-  max-height: 52px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
+/* Make the sigil layout vertical in Deep Dive context:
+   icon on top, lean label + underline below */
+.dd-analysis-block__sigil .sigil {
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* Spectrum fills bar width, reduced track height */
-.dd-action-bar__spectrum .dd-spectrum__track {
-  height: 6px;
-}
-
-.dd-action-bar__spectrum .dd-spectrum__sources {
-  display: none;
-}
-
-.dd-action-bar__buttons {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
+.dd-analysis-block__spectrum {
+  width: 100%;
+  overflow: visible;
 }
 
 /* Action buttons — pill style, compact */
@@ -3050,12 +3465,15 @@
 .dd-action-btn:hover {
   color: var(--fg-primary);
   background-color: var(--bg-elevated);
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .dd-action-btn--active {
   color: var(--fg-primary);
   background-color: var(--bg-elevated);
   border-color: var(--border-strong);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .dd-action-btn:focus-visible {
@@ -3064,8 +3482,47 @@
 }
 
 .dd-action-btn:active {
-  transform: scale(0.96);
-  transition: transform 100ms var(--spring);
+  transform: scale(0.94);
+  transition: transform 80ms var(--spring);
+}
+
+/* ---- Deep Dive: Tab bar ---- */
+.dd-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
+}
+
+.dd-tab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--fg-tertiary);
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+  min-height: 44px;
+}
+
+.dd-tab:hover {
+  color: var(--fg-secondary);
+}
+
+.dd-tab--active {
+  color: var(--fg-primary);
+  border-bottom-color: var(--fg-primary);
+}
+
+.dd-tab:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
 }
 
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
@@ -3136,6 +3593,10 @@
 
 .dd-press-expand__inner {
   overflow: hidden;
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 /* ---- Deep Dive: Drag indicator (mobile bottom-sheet handle) ------------ */
@@ -3234,11 +3695,11 @@
 }
 
 .dd-perspectives-item--agree {
-  border-left-color: var(--border-subtle);
+  border-left-color: var(--sense-low);
 }
 
 .dd-perspectives-item--diverge {
-  border-left-color: var(--border-subtle);
+  border-left-color: var(--sense-medium);
 }
 
 .dd-perspectives-item__icon {
@@ -3273,75 +3734,187 @@
  * Playfair italic body is the "editorial voice" — not structural, not data.
  */
 
+/* ===================================================================
+   Daily Brief — stacked section layout (NYT Morning / Axios Smart Brevity)
+   Three always-visible sections: tl;dr, opinion, onair.
+   Desktop: all sections always expanded. Mobile: opinion + onair collapsible.
+   No tab system — sections stack vertically, separated by thin rules.
+   =================================================================== */
+
+/* Container — left border signals editorial voice; subtle warm tint */
 .daily-brief {
-  /* Top + bottom rules — newspaper section divider treatment */
-  border-top: var(--rule-thin);
-  border-bottom: var(--rule-thin);
-  padding: var(--space-4) 0;
-  margin: var(--space-4) 0 var(--space-2);
+  border-left: 2px solid var(--accent-warm);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+  background: color-mix(in srgb, var(--accent-warm) 2%, var(--bg-primary));
 }
 
-/* Header row: ScaleIcon + "DAILY BRIEF" label + On Air pill */
-.daily-brief__header {
+/* ---- Section header: "Daily Brief" + timestamp ---- */
+
+.db-section-header {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
   margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* ScaleIcon in the label row — inherits currentColor, auto light/dark */
-.daily-brief__sigil {
-  color: var(--accent-warm);
-  flex-shrink: 0;
-}
-
-.daily-brief__label {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 500;
+.db-section-title {
+  font-family: var(--font-meta);
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent-warm);
+  color: var(--fg-secondary);
   line-height: 1;
 }
 
+.db-section-time {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* ---- Block — each section (tl;dr, opinion, onair) ---- */
+
+.db-block {
+  /* No padding here — body padding handled inside __body */
+}
+
+/* Thin rule between consecutive blocks */
+.db-block + .db-block {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+}
+
+/* ---- Block label row ---- */
+
+/* Static label (tl;dr — not interactive) */
+.db-block__label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Toggle button variant (opinion, onair — interactive on mobile) */
+.db-block__label--toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  min-height: 44px;
+  flex-wrap: wrap;
+  color: inherit;
+  font: inherit;
+}
+
+.db-block__label--toggle:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.db-block__label--disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* CLI command name — IBM Plex Mono, fg-muted */
+.db-block__cmd {
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+
+/* English subtitle — Barlow Condensed, fg-muted */
+.db-block__subtitle {
+  font-family: var(--font-meta);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Chevron indicator — only shown on mobile (hidden on desktop via media query) */
+.db-block__chevron {
+  display: none;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+/* Pulsing red live dot — inline in label row when playing */
+.db-block__live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--indicator-broadcast, #c0392b);
+  flex-shrink: 0;
+  align-self: center;
+  margin-right: 2px;
+  animation: onair-pulse 1.5s ease-in-out infinite;
+}
+
+/* ---- Collapsible content wrapper (grid 0fr / 1fr trick) ---- */
+
+.db-block__collapsible {
+  display: grid;
+  grid-template-rows: 1fr; /* Desktop default: always open */
+  transition: grid-template-rows var(--dur-normal) var(--ease-out);
+  overflow: hidden;
+}
+
+/* Inner wrapper prevents content clip from affecting layout */
+.db-block__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ---- TL;DR body — Inter, justified, editorial aside style ---- */
+
 .daily-brief__body {
-  /* Structural font (Inter) for body text — italic serif at body size hurts
-     readability. Blockquote left-border is the newspaper tradition for
-     editorial asides; editorial voice (Playfair) reserved for headlines. */
   font-family: var(--font-structural);
   font-style: normal;
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--fg-secondary);
-  /* Newspaper norm: justified body copy with automatic hyphenation.
-     text-align-last:left prevents the final line from stretching on clamp. */
   text-align: justify;
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
-  /* Blockquote left-border rule — newspaper editorial aside tradition */
   border-left: 2px solid var(--accent-warm);
-  padding-left: var(--space-4);
-}
-
-/* Clamp class — only takes effect on mobile via media query below */
-.daily-brief__body--mobile-clamp {
-  /* No clamp on desktop — full text always visible */
-}
-
-.daily-brief__toggle {
-  display: none;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--accent-warm);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-1) 0;
-  margin-top: var(--space-2);
-  letter-spacing: 0.04em;
+  padding-left: var(--space-3);
+  /* No max-width — fills container, page grid constrains width */
 }
 
 .daily-brief__body p {
@@ -3353,10 +3926,12 @@
   margin-bottom: 0;
 }
 
-/* ---- Opinion section — editorial board's take ----------------------------- */
+/* ---- Opinion body — Inter regular with dotted editorial firewall ---- */
+
 .daily-brief__opinion {
-  font-family: var(--font-editorial);
-  font-style: italic;
+  font-family: var(--font-structural);
+  font-style: normal;
+  font-weight: 400;
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--fg-secondary);
@@ -3364,64 +3939,199 @@
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-subtle);
+  border-left: 2px dotted var(--border-strong);
+  padding-left: var(--space-3);
+  /* No max-width — fills container */
 }
 
-.daily-brief__opinion-label {
-  font-family: var(--font-data);
+/* Opinion headline — Playfair bold, NOT italic (editorial gravitas without ornament) */
+.daily-brief__opinion-headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
   font-style: normal;
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-2);
+  color: var(--fg-primary);
+  margin: 0 0 var(--space-2);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
-/* ---- void --onair — minimal broadcast pill ------------------------------ */
-
-.void-onair {
+/* Opinion lean badge — pill with colored tint */
+.db-lean-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  margin-left: auto;
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--border-strong);
-  border-radius: 20px;
-  background: none;
+  padding: 2px var(--space-2);
+  border-radius: 3px;
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--fg-secondary);
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.db-lean-badge--left {
+  background: color-mix(in srgb, var(--bias-left, #4A90D9) 14%, transparent);
+  color: color-mix(in srgb, var(--bias-left, #4A90D9) 90%, var(--fg-primary));
+}
+
+.db-lean-badge--right {
+  background: color-mix(in srgb, var(--bias-right, #D94A4A) 14%, transparent);
+  color: color-mix(in srgb, var(--bias-right, #D94A4A) 90%, var(--fg-primary));
+}
+
+.db-lean-badge--center {
+  background: color-mix(in srgb, var(--fg-muted) 14%, transparent);
+  color: var(--fg-tertiary);
+}
+
+/* ---- On Air audio player ---- */
+
+.db-audio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-1);
+}
+
+/* 44px circle play button */
+.db-audio__play {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 50%;
+  background: none;
+  color: var(--accent-warm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+
+.db-audio__play:hover {
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  transform: scale(1.05);
+}
+
+.db-audio__play:active {
+  transform: scale(0.96);
+}
+
+.db-audio__play--active {
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+}
+
+.db-audio__play:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Track column — seek bar + meta row, fills remaining width */
+.db-audio__track-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Seek bar wrapper — visual bar + range input stacked */
+.db-audio__seek-wrap {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.db-audio__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--border-strong) 60%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.db-audio__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent-warm);
+  border-radius: 2px;
+  transition: width 250ms linear;
+}
+
+/* Range input overlays visual track — transparent, controls interaction */
+.db-audio__seek {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  z-index: 1;
+}
+
+.db-audio__seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+}
+
+/* Meta row — status label + time display */
+.db-audio__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.db-audio__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-meta);
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
-  cursor: pointer;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.db-audio__time {
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: var(--fg-muted);
   white-space: nowrap;
-  transition: border-color var(--dur-fast) var(--ease-out),
-              color var(--dur-fast) var(--ease-out);
 }
 
-.void-onair:hover {
-  border-color: var(--accent-warm);
-  color: var(--fg-primary);
-}
-
-.void-onair:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.void-onair--playing {
-  border-color: var(--accent-warm);
-  color: var(--accent-warm);
-}
-
-.void-onair__dot {
+/* Breathing red dot — live indicator when playing */
+.db-audio__dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--indicator-broadcast);
+  background-color: var(--indicator-broadcast, #c0392b);
   flex-shrink: 0;
   animation: onair-pulse 1.5s ease-in-out infinite;
 }
@@ -3431,65 +4141,12 @@
   50% { opacity: 0.35; }
 }
 
-.void-onair__name {
-  line-height: 1;
-}
-
-.void-onair__glyph {
-  font-size: 0.65em;
-  line-height: 1;
-}
-
-.void-onair__time {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.6;
-}
-
-/* Progress track — full-width thin bar below the header */
-.void-onair__track {
-  position: relative;
-  height: 3px;
-  background-color: var(--border-subtle);
-  border-radius: 2px;
-  margin-top: var(--space-2);
-  margin-bottom: var(--space-1);
-}
-
-.void-onair__fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background-color: var(--accent-warm);
-  border-radius: 2px;
-  transition: width 250ms linear;
-}
-
-/* Invisible range input overlaid on the track for seeking */
-.void-onair__seek {
-  position: absolute;
-  top: -6px;
-  left: 0;
-  width: 100%;
-  height: 16px;
-  margin: 0;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0;
-}
-
-.void-onair__seek::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .void-onair { transition: none; }
-  .void-onair__dot { animation: none; opacity: 1; }
-  .void-onair__fill { transition: none; }
+  .db-block__collapsible { transition: none; }
+  .db-block__live-dot { animation: none; opacity: 1; }
+  .db-audio__fill { transition: none; }
+  .db-audio__play { transition: none; }
+  .db-audio__dot { animation: none; opacity: 1; }
 }
 
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */
@@ -3686,6 +4343,35 @@
   font-feature-settings: "tnum" 1;
 }
 
+/* Key framing terms — shows vocabulary each lean side emphasizes.
+   Compact inline pills below column header. Subtle, not dominant. */
+.comp-view__key-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: var(--space-2);
+}
+
+.comp-view__term {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  background-color: var(--bg-secondary);
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid var(--border-subtle);
+}
+
+.comp-view__col--left .comp-view__term {
+  border-color: color-mix(in srgb, var(--bias-left) 30%, transparent);
+}
+
+.comp-view__col--right .comp-view__term {
+  border-color: color-mix(in srgb, var(--bias-right) 30%, transparent);
+}
+
 /* ---- Article items inside a column ---- */
 .comp-view__items {
   display: flex;
@@ -3736,6 +4422,68 @@
   font-size: var(--text-xs);
   color: var(--fg-muted);
   font-feature-settings: "tnum" 1;
+  flex-shrink: 0;
+}
+
+/* ---- Source credibility signals row ---- */
+.comp-view__signals {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+/* Type badge: Reporting / Analysis / Opinion / Editorial */
+.comp-view__type-badge {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  color: var(--fg-tertiary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.comp-view__type-badge--reporting { color: var(--sense-low); border-color: var(--sense-low); }
+.comp-view__type-badge--analysis { color: var(--fg-secondary); }
+.comp-view__type-badge--opinion { color: var(--sense-medium); border-color: var(--sense-medium); }
+.comp-view__type-badge--editorial { color: var(--sense-high); border-color: var(--sense-high); }
+
+/* Factual rigor micro-bar */
+.comp-view__rigor-bar {
+  flex: 1;
+  min-width: 30px;
+  max-width: 60px;
+  height: 3px;
+  background-color: var(--border-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.comp-view__rigor-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--sense-low);
+  transition: width 400ms var(--ease-out);
+}
+
+.comp-view__rigor-val {
+  font-size: 8px;
+  color: var(--fg-muted);
+  font-feature-settings: "tnum" 1;
+  flex-shrink: 0;
+  min-width: 14px;
+}
+
+/* Sensationalism warning icon */
+.comp-view__warn {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -3802,6 +4550,123 @@
 
 .comp-view__key-item {
   font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+.comp-view__expand-btn {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) 0;
+  margin-top: var(--space-2);
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  text-align: center;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.comp-view__expand-btn:hover {
+  color: var(--fg-primary);
+}
+
+/* ---- Convergence/Divergence insights embedded in All Sides ---- */
+
+.comp-view__insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: var(--rule-thin);
+}
+
+@media (max-width: 767px) {
+  .comp-view__insights {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comp-view__insight-col {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-secondary);
+}
+
+.comp-view__insight-col--agree {
+  border-left: 2px solid var(--sense-low);
+}
+
+.comp-view__insight-col--diverge {
+  border-left: 2px solid var(--sense-high);
+}
+
+.comp-view__insight-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.comp-view__insight-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.comp-view__insight-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.comp-view__insight-list li {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  padding-left: var(--space-3);
+  position: relative;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.comp-view__insight-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--fg-muted);
+}
+
+/* ---- Story Meta — SVG micro-indicators ---- */
+
+.story-meta__velocity {
+  display: inline-flex;
+  align-items: center;
+  color: var(--sense-low);
+  flex-shrink: 0;
+}
+
+.story-meta__sources {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-muted);
 }
@@ -4584,12 +5449,146 @@
 }
 .intro-verdict__sub { font-size: 9px; color: var(--fg-muted); letter-spacing: 0.02em; }
 
+/* ---- Subtitle (product labels under headlines) ---- */
+.intro__subtitle {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  margin-bottom: var(--space-1);
+}
+
+/* ---- Phase: Story Visual (five-tabs illustration) ---- */
+.intro-story-visual {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 500ms var(--ease-out), transform 600ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-story-visual--active { opacity: 1; transform: translateY(0); }
+
+.intro-story-visual__tabs {
+  display: flex; gap: 6px; justify-content: center;
+}
+.intro-story-visual__tab {
+  width: 48px; height: 56px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--fg-muted);
+  border-radius: 4px 4px 2px 2px;
+  background: rgba(255, 255, 255, 0.04);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 300ms var(--ease-out), transform 400ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-story-visual--active .intro-story-visual__tab { opacity: 1; transform: translateY(0); }
+
+.intro-story-visual__void-line {
+  width: 60px; height: 2px;
+  background: var(--accent-warm);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out) 800ms;
+}
+.intro-story-visual--active .intro-story-visual__void-line { opacity: 1; }
+
+/* ---- Phase: Product Family Visual ---- */
+.intro-products {
+  display: flex; flex-direction: column; gap: 8px;
+  width: 100%; max-width: 320px; margin: 0 auto;
+}
+.intro-products__item {
+  display: grid; grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 var(--space-3);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0; transform: translateX(-12px);
+  transition: opacity 300ms var(--ease-out), transform 400ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-products--active .intro-products__item { opacity: 1; transform: translateX(0); }
+
+.intro-products__cmd {
+  grid-row: 1 / 3;
+  align-self: center;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent-warm);
+  white-space: nowrap;
+  min-width: 110px;
+}
+.intro-products__label {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm); font-weight: 600;
+  color: var(--fg-primary);
+  line-height: 1.3;
+}
+.intro-products__desc {
+  font-family: var(--font-structural);
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1.3;
+}
+
+/* ---- Phase: Audio Product Visual ---- */
+.intro-audio {
+  display: flex; justify-content: center;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 500ms var(--ease-out), transform 600ms
+    linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
+}
+.intro-audio--active { opacity: 1; transform: translateY(0); }
+
+.intro-audio__card {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  min-width: 240px;
+}
+.intro-audio__cmd {
+  font-size: 12px; font-weight: 600; color: var(--accent-warm);
+  letter-spacing: -0.02em;
+}
+.intro-audio__label {
+  font-family: var(--font-meta);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.intro-audio__waveform {
+  display: flex; align-items: center; gap: 2px;
+  height: 40px; padding: var(--space-2) 0;
+}
+.intro-audio__bar {
+  width: 3px; border-radius: 2px;
+  background: var(--accent-warm);
+  opacity: 0.5;
+  animation: introWaveBar 1.2s ease-in-out infinite alternate;
+}
+@keyframes introWaveBar {
+  from { transform: scaleY(0.3); opacity: 0.3; }
+  to { transform: scaleY(1); opacity: 0.7; }
+}
+.intro-audio__voices {
+  display: flex; gap: var(--space-4);
+  font-family: var(--font-structural);
+  font-size: 11px; color: var(--fg-tertiary);
+}
+
 /* ---- Cinematic Intro: Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   .intro, .intro__stage, .intro__text,
   .intro-scale, .intro-needle, .intro-needle__spectrum-fill,
   .intro-ring, .intro-verdict, .intro-verdict__card,
   .intro-ring__tier,
+  .intro-story-visual, .intro-story-visual__tab, .intro-story-visual__void-line,
+  .intro-products__item, .intro-audio, .intro-audio__bar,
   .intro-scale--active .intro-scale__void,
   .intro-scale--active .intro-scale__line--beam,
   .intro-scale--active .intro-scale__line--tick-l,
@@ -5142,9 +6141,15 @@
   }
   /* Hide separators on mobile — groups wrap naturally */
   .ubar__sep { display: none; }
+  /* Hide edition pills on mobile — bottom nav handles edition switching */
+  .ubar__editions { display: none; }
+  /* Hide lean chips on mobile — mobile-lean-bar handles perspective filter */
+  .ubar__leans { display: none; }
   /* Touch targets */
-  .ubar__edition, .ubar__lean { min-height: 36px; }
+  .ubar__lean { min-height: 36px; }
 }
+
+/* Mobile lean bar removed — lean chips now live in nav-filters row */
 
 /* ==========================================================================
    LEGACY: Feature 4 (CSS): FilterBar — Lean Active Badge + Lean Bar Pulse
@@ -5253,4 +6258,452 @@
   text-align: center;
   margin-top: var(--space-2);
   letter-spacing: 0.04em;
+}
+
+/* ---- Keyboard Shortcuts Overlay ---------------------------------------- */
+
+.kbd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--overlay-backdrop);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn var(--dur-fast) var(--ease-out);
+}
+
+.kbd-overlay__panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-5) var(--space-6);
+  box-shadow: var(--shadow-e3);
+  min-width: 280px;
+  max-width: 360px;
+}
+
+.kbd-overlay__title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--rule-thin);
+}
+
+.kbd-overlay__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.kbd-overlay__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.kbd-overlay__keys {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.kbd-overlay__key {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 2px 8px;
+  min-width: 28px;
+  text-align: center;
+  box-shadow: 0 1px 0 var(--border-strong);
+}
+
+.kbd-overlay__action {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+/* ---- Keyboard-focused story card highlight ---- */
+
+.story-card--kbd-focus {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.story-card--kbd-focus::before {
+  opacity: 1;
+}
+
+/* ---- Deep Dive inter-story navigation ---- */
+
+.dd-story-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dd-story-nav__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background-color: transparent;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.dd-story-nav__btn:hover {
+  background-color: var(--bg-secondary);
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}
+
+.dd-story-nav__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.dd-story-nav__btn:disabled:hover {
+  background-color: transparent;
+  color: var(--fg-secondary);
+  border-color: var(--border-subtle);
+}
+
+.dd-story-nav__counter {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.03em;
+}
+
+/* (daily-brief__timestamp and opinion--mobile-hidden moved to pill-based layout above) */
+
+/* ---- InstallPrompt — PWA install banner -------------------------------- */
+/* Compact glass banner, fixed above bottom nav on mobile.
+   Only appears on 2nd+ visit when beforeinstallprompt fires.
+   Matches the nav's glass morphism treatment for visual continuity. */
+
+.install-prompt {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  left: var(--space-5);
+  right: var(--space-5);
+  z-index: calc(var(--z-nav) + 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  animation: fadeInUp var(--dur-normal) var(--ease-out) both;
+}
+
+.install-prompt__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--fg-primary);
+  letter-spacing: 0.01em;
+  flex: 1;
+  min-width: 0;
+}
+
+.install-prompt__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.install-prompt__btn {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  /* Minimum 44x44px touch target */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 120ms var(--ease-out),
+    color 120ms var(--ease-out),
+    transform 200ms var(--spring-snappy);
+}
+
+.install-prompt__btn:active {
+  transform: scale(0.96);
+}
+
+.install-prompt__btn--install {
+  background: var(--accent);
+  color: var(--bg-primary);
+  padding: var(--space-2) var(--space-4);
+  letter-spacing: 0.02em;
+}
+
+.install-prompt__btn--install:hover {
+  background: var(--accent-hover);
+}
+
+.install-prompt__btn--dismiss {
+  background: transparent;
+  color: var(--fg-tertiary);
+  font-size: var(--text-base);
+  padding: var(--space-2);
+}
+
+.install-prompt__btn--dismiss:hover {
+  color: var(--fg-primary);
+  background: var(--bg-secondary);
+}
+
+/* Desktop: install prompt sits in lower-right corner, not full-width */
+@media (min-width: 768px) {
+  .install-prompt {
+    left: auto;
+    right: var(--space-7);
+    bottom: var(--space-7);
+    width: auto;
+    max-width: 320px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .install-prompt {
+    animation: none;
+  }
+}
+
+
+/* ===================================================================
+   MobileBottomNav — thumb-reachable bottom bar (mobile only)
+
+   Fixed to viewport bottom. Single row:
+   Edition pills + Lean chips + Topic dropdown
+
+   Daily Brief content renders in the page body via DailyBriefText.
+   Hidden on desktop via display: none.
+   =================================================================== */
+
+.mob-nav {
+  display: none; /* Desktop: hidden */
+}
+
+@media (max-width: 767px) {
+  /* Single-row navigation bar — editions, lean, topics */
+  .mob-nav {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    background: var(--bg-primary);
+    border-top: var(--rule-thin);
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    /* Glass morphism */
+    backdrop-filter: blur(16px) saturate(1.3);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  }
+
+  /* Filter row fills the full bar */
+  .mob-nav__filters {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .mob-nav__filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mob-nav__group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Edition pills */
+  .mob-nav__ed {
+    font-family: var(--font-meta);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--fg-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    min-height: 44px;
+    transition: color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+  }
+
+  .mob-nav__ed--active {
+    color: var(--fg-primary);
+    background-color: var(--bg-secondary);
+  }
+
+  .mob-nav__sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border-subtle);
+    flex-shrink: 0;
+  }
+
+  /* Lean chips — single letter for compact mobile */
+  .mob-nav__lean {
+    font-family: var(--font-meta);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--fg-muted);
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    min-height: 44px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 120ms var(--ease-out);
+  }
+
+  .mob-nav__lean--active {
+    border-color: var(--fg-tertiary);
+    color: var(--fg-primary);
+    background-color: var(--bg-secondary);
+  }
+
+  .mob-nav__lean--left.mob-nav__lean--active {
+    border-color: var(--bias-left);
+    color: var(--bias-left);
+  }
+  .mob-nav__lean--center.mob-nav__lean--active {
+    border-color: var(--bias-center);
+    color: var(--bias-center);
+  }
+  .mob-nav__lean--right.mob-nav__lean--active {
+    border-color: var(--bias-right);
+    color: var(--bias-right);
+  }
+
+  /* Topic dropdown (opens upward) */
+  .mob-nav__topics {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .mob-nav__topic-trigger {
+    font-family: var(--font-meta);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 10px;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+  }
+
+  .mob-nav__topic-caret {
+    font-size: 8px;
+    transition: transform 150ms var(--ease-out);
+  }
+
+  .mob-nav__topics--open .mob-nav__topic-caret {
+    transform: rotate(180deg);
+  }
+
+  .mob-nav__topic-panel {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: var(--space-2);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+    padding: var(--space-1);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 100px;
+    z-index: 1;
+    animation: mob-nav-up 150ms var(--ease-out) both;
+  }
+
+  .mob-nav__topic-opt {
+    font-family: var(--font-structural);
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    border-radius: var(--radius-sm);
+    min-height: 44px;
+  }
+
+  .mob-nav__topic-opt--active {
+    color: var(--fg-primary);
+    font-weight: 600;
+    background-color: var(--bg-secondary);
+  }
+
+  /* Upward slide animation (topic panel) */
+  @keyframes mob-nav-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

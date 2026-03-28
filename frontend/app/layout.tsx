@@ -2,15 +2,20 @@ import type { Metadata, Viewport } from "next";
 import {
   Playfair_Display,
   Inter,
-  JetBrains_Mono,
+  IBM_Plex_Mono,
+  Barlow_Condensed,
 } from "next/font/google";
 import "./globals.css";
 
 /* ---------------------------------------------------------------------------
-   Three Voices of Type
-   Editorial: Playfair Display — headlines, story titles, section headers
+   Four Voices of Type
+   Editorial:  Playfair Display — headlines, story titles, section headers
    Structural: Inter — body text, navigation, labels, buttons
-   Data: JetBrains Mono — bias scores, source counts, timestamps
+   Meta:       Barlow Condensed — editorial metadata (source counts, categories,
+               timestamps, velocity) — condensed grotesque in the Franklin Gothic
+               / News Gothic newspaper tradition
+   Data:       IBM Plex Mono — bias scores, numeric data, tabular figures —
+               humanist mono with institutional warmth (not a coding font)
    --------------------------------------------------------------------------- */
 
 const playfair = Playfair_Display({
@@ -27,10 +32,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-barlow",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-jetbrains",
+  variable: "--font-ibm-mono",
   display: "swap",
 });
 
@@ -87,6 +99,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1A17" },
@@ -102,7 +115,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-mode="dark"
-      className={`${playfair.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={`${playfair.variable} ${inter.variable} ${barlowCondensed.variable} ${ibmPlexMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -113,6 +126,10 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
+        {/* PWA: iOS standalone mode + Android install support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="mobile-web-app-capable" content="yes" />
         {/* Inline script to set theme before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
@@ -125,6 +142,9 @@ export default function RootLayout({
                   }
                 } catch(e) {}
               })();
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/void--news/sw.js').catch(function() {});
+              }
             `,
           }}
         />

@@ -1,0 +1,26 @@
+name: Live Story Polling
+on:
+  schedule:
+    # Every 30 minutes — lightweight poll of 5-20 sources for the top story
+    - cron: '0,30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  live-poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Run live poller
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python pipeline/memory/live_poller.py --json

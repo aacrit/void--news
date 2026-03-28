@@ -35,6 +35,10 @@
   --border-strong: #C8C0B5;
   --divider:       #D4CCC2;
 
+  /* Scrollbar */
+  --scrollbar-thumb: #C8C0B5;
+  --scrollbar-thumb-hover: #B8B0A5;
+
   /* Shadows — warm, barely there */
   --shadow-e0: none;
   --shadow-e1: 0 1px 3px rgba(28, 26, 23, 0.04);
@@ -102,6 +106,10 @@
   --border-subtle: #3A3530;
   --border-strong: #4A4540;
   --divider:       #403B35;
+
+  /* Scrollbar — brighter thumb for dark backgrounds */
+  --scrollbar-thumb: #6A6560;
+  --scrollbar-thumb-hover: #7A756E;
 
   /* Shadows — cooler in dark mode */
   --shadow-e0: none;
@@ -174,7 +182,8 @@
   /* Font families — set by next/font, fallbacks here */
   --font-editorial:  var(--font-playfair), "Playfair Display", "Georgia", "Times New Roman", serif;
   --font-structural: var(--font-inter), "Inter", "Helvetica Neue", "Arial", sans-serif;
-  --font-data:       var(--font-jetbrains), "JetBrains Mono", "Menlo", "Consolas", monospace;
+  --font-meta:       var(--font-barlow), "Barlow Condensed", "Franklin Gothic Medium", "Arial Narrow", sans-serif;
+  --font-data:       var(--font-ibm-mono), "IBM Plex Mono", "Menlo", "Consolas", monospace;
 }
 
 /* --------------------------------------------------------------------------
@@ -259,9 +268,15 @@
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
   --nav-height: 53px;
 
-  /* Height of the mobile bottom navigation bar.
+  /* Height of the mobile bottom navigation bar (single row).
+     44px touch targets + 8px top padding + safe area = ~52px base.
      Used for padding-bottom on .page-main so content clears the fixed nav. */
-  --nav-bottom-height: 68px;
+  --nav-bottom-height: 52px;
+
+  /* Height of the sticky lean-bar on mobile (44px min-height + 2px border).
+     Used by .section-header sticky top so it docks below the lean-bar and
+     does not overlap it when both are simultaneously stuck. */
+  --lean-bar-height: 46px;
 }
 
 /* --------------------------------------------------------------------------

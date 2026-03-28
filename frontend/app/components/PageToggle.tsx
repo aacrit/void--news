@@ -18,10 +18,11 @@ export default function PageToggle({ activePage }: PageToggleProps) {
   const isFeed = activePage === "feed";
   const href = isFeed ? "/sources" : "/";
   const label = isFeed ? "Sources" : "News Feed";
+  const brandLabel = isFeed ? "void --sources" : "void --news";
   const Icon = isFeed ? ListBullets : Newspaper;
 
   return (
-    <Link href={href} className="page-toggle" aria-label={`Go to ${label}`}>
+    <Link href={href} className="page-toggle" aria-label={`Go to ${label}`} title={brandLabel}>
       <Icon size={14} weight="regular" aria-hidden="true" />
       <span className="page-toggle__label">{label}</span>
     </Link>

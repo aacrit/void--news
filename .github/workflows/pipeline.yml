@@ -13,6 +13,16 @@ on:
         description: 'Edition filter (comma-separated: us,india,world). Empty = all.'
         required: false
         default: ''
+      brief_only:
+        description: 'Regenerate daily brief only (skip full pipeline)'
+        type: boolean
+        required: false
+        default: false
+      no_audio:
+        description: 'Skip audio synthesis (brief_only mode)'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   run-pipeline:
@@ -25,19 +35,25 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
+        if: ${{ !inputs.brief_only }}
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install system dependencies (brief only)
+        if: ${{ inputs.brief_only }}
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
       - name: Install Playwright browser
+        if: ${{ !inputs.brief_only }}
         run: playwright install chromium --with-deps
       - name: Cache spaCy model
+        if: ${{ !inputs.brief_only }}
         id: spacy-cache
         uses: actions/cache@v4
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
       - name: Download spaCy model
-        if: steps.spacy-cache.outputs.cache-hit != 'true'
+        if: ${{ !inputs.brief_only && steps.spacy-cache.outputs.cache-hit != 'true' }}
         run: python -m spacy download en_core_web_sm
       - name: Determine editions from schedule
         id: editions
@@ -48,14 +64,25 @@ jobs:
             # All editions run on every scheduled trigger (4x daily)
             echo "filter=" >> $GITHUB_OUTPUT
           fi
-      - name: Setup Google Cloud TTS credentials
-        if: env.GOOGLE_CLOUD_TTS_KEY != ''
+      - name: Regenerate daily brief only
+        if: ${{ inputs.brief_only }}
         env:
-          GOOGLE_CLOUD_TTS_KEY: ${{ secrets.GOOGLE_CLOUD_TTS_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "$GOOGLE_CLOUD_TTS_KEY" > /tmp/gcloud-tts-sa.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-tts-sa.json" >> $GITHUB_ENV
+          EDITIONS="${{ steps.editions.outputs.filter }}"
+          ARGS=""
+          if [ -n "$EDITIONS" ]; then
+            ARGS="--editions $EDITIONS"
+          fi
+          if [ "${{ inputs.no_audio }}" = "true" ]; then
+            ARGS="$ARGS --no-audio"
+          fi
+          echo "Regenerating daily brief: $ARGS"
+          python pipeline/refresh_brief.py $ARGS
       - name: Run pipeline
+        if: ${{ !inputs.brief_only }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
