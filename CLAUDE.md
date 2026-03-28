@@ -320,12 +320,13 @@ Migrations: `supabase/migrations/` (001-017).
 |-------|---------|---------|
 | `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
 
-## Agent Team (19 Agents, 8 Divisions)
+## Agent Team (20 Agents, 9 Divisions)
 
 > Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
 
 ```
 CEO (Aacrit)
+  ├── Agent Engineering — agent-architect
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
@@ -361,6 +362,7 @@ CEO (Aacrit)
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` |
 | Strategic advice, roadmap, priorities | `ceo-advisor` |
 | Logo, favicon, brand identity | `logo-designer` |
+| Agent audit, optimization, new agent design, prompt engineering, technology radar | `agent-architect` |
 
 ### Sequential Cycles
 ```

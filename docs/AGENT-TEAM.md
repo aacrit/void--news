@@ -35,16 +35,18 @@ Agent work:        Claude Code CLI (Max subscription) — $0
 
 ```
 CEO (Aacrit)
+  ├── Agent Engineering — agent-architect
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
+  ├── Audio ———————————— audio-engineer
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
 ```
 
-**Total: 18 agents across 7 divisions**
+**Total: 20 agents across 9 divisions**
 
 ---
 
@@ -84,6 +86,12 @@ CEO (Aacrit)
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
 | `source-curator` | Source credibility vetting, RSS/scrape config, 370-source list | Yes | Source list changes |
+
+### Agent Engineering Division
+
+| Agent | Purpose | Write Access | Trigger |
+|-------|---------|-------------|---------|
+| `agent-architect` | Audits, optimizes, and designs all agents. Reviews definitions for best-in-class tooling, cost efficiency, prompt engineering. Builds new agents on CEO demand. | Yes (agent definitions only) | CEO request, post-major-change review, periodic fleet audit |
 
 ### Security Division
 
