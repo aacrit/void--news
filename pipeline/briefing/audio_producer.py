@@ -6,7 +6,9 @@ Both speakers generated in a single API call — no per-turn stitching.
 
 Post-processing via pydub:
   - Intro: ~2s D major 9th bloom chord (Glass & Gravity sonic identity)
-  - Transition: glass-bell pulse between news and opinion segments
+  - Section breaks: glass-bell chimes overlaid at detected silence gaps
+    between stories (gaps >= 600ms at <= -35dB)
+  - News-to-opinion: deliberate editorial page-turn transition
   - Outro: ~1.8s resolving chord — intro bloom returning to root
   - No background bed — the voices carry the broadcast
   - MP3 192k mono export → Supabase Storage
@@ -243,6 +245,101 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
 
 
 # ---------------------------------------------------------------------------
+# Silence detection & section break overlay
+# ---------------------------------------------------------------------------
+
+def _detect_silence_gaps(
+    audio: "AudioSegment",
+    min_gap_ms: int = 600,
+    silence_thresh_db: float = -35.0,
+    chunk_ms: int = 50,
+) -> list[int]:
+    """Find silence gaps in audio suitable for section break insertion.
+
+    Scans the audio in fixed-size chunks and identifies contiguous silent
+    regions that last at least `min_gap_ms`. Returns the midpoint (in ms)
+    of each detected gap.
+
+    Parameters:
+        audio: The AudioSegment to scan.
+        min_gap_ms: Minimum gap duration to qualify as a section boundary.
+        silence_thresh_db: dBFS threshold below which audio is "silent."
+        chunk_ms: Scanning granularity. Smaller = more precise, slower.
+
+    Returns:
+        List of midpoint positions (ms) for each detected gap, sorted ascending.
+    """
+    gap_starts: list[int] = []
+    gap_midpoints: list[int] = []
+    in_silence = False
+    silence_start = 0
+
+    total_ms = len(audio)
+    pos = 0
+
+    while pos + chunk_ms <= total_ms:
+        chunk = audio[pos : pos + chunk_ms]
+        if chunk.dBFS < silence_thresh_db or chunk.dBFS == float("-inf"):
+            if not in_silence:
+                in_silence = True
+                silence_start = pos
+        else:
+            if in_silence:
+                gap_duration = pos - silence_start
+                if gap_duration >= min_gap_ms:
+                    midpoint = silence_start + gap_duration // 2
+                    gap_midpoints.append(midpoint)
+                in_silence = False
+        pos += chunk_ms
+
+    # Handle trailing silence (unlikely to be a story break, but check anyway)
+    if in_silence:
+        gap_duration = total_ms - silence_start
+        if gap_duration >= min_gap_ms:
+            midpoint = silence_start + gap_duration // 2
+            gap_midpoints.append(midpoint)
+
+    return gap_midpoints
+
+
+def _overlay_section_breaks(
+    audio: "AudioSegment",
+    section_break: "AudioSegment",
+) -> "AudioSegment":
+    """Detect silence gaps in speech audio and overlay section break chimes.
+
+    The section break asset is centered at the midpoint of each detected
+    silence gap. This creates natural "next topic" markers without
+    interrupting the speech flow.
+
+    Returns the audio with section breaks overlaid. If no gaps are found
+    or the section break asset is None, returns the original audio unchanged.
+    """
+    if section_break is None:
+        return audio
+
+    gaps = _detect_silence_gaps(audio)
+    if not gaps:
+        print("  [audio] No silence gaps detected for section breaks")
+        return audio
+
+    print(f"  [audio] Detected {len(gaps)} silence gap(s) — overlaying section breaks")
+
+    break_half_len = len(section_break) // 2
+    result = audio
+
+    for midpoint in gaps:
+        # Center the break asset at the gap midpoint
+        overlay_start = max(0, midpoint - break_half_len)
+        # Don't overlay past the end of the audio
+        if overlay_start + len(section_break) > len(result):
+            continue
+        result = result.overlay(section_break, position=overlay_start)
+
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Upload
 # ---------------------------------------------------------------------------
 
@@ -427,7 +524,11 @@ def produce_audio(
     else:
         print("  [audio] No opinion_audio_script — broadcast ends after news")
 
-    # --- Step 3: Assemble final audio ---
+    # --- Step 3: Overlay section breaks within news audio ---
+    section_break = _load_asset("section_break.wav")
+    news_seg = _overlay_section_breaks(news_seg, section_break)
+
+    # --- Step 4: Assemble final audio ---
     combined = AudioSegment.empty()
 
     ident = _load_asset("ident.wav")
@@ -438,9 +539,12 @@ def produce_audio(
     combined += news_seg
     combined += AudioSegment.silent(duration=350)
 
-    # Opinion section (after transition)
+    # Opinion section (after editorial page-turn transition)
     if opinion_seg:
-        transition = _load_asset("transition.wav")
+        transition = _load_asset("news_to_opinion.wav")
+        if transition is None:
+            # Fall back to legacy transition if new asset missing
+            transition = _load_asset("transition.wav")
         if transition:
             combined += transition
         else:

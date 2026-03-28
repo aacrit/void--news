@@ -13,12 +13,16 @@ slightly nostalgic. Intervals are chosen for their natural beating patterns
 when detuned by 1-2 Hz, creating organic shimmer without effects processing.
 
 Assets:
-  - ident.wav:      ~2.0s — harmonic bloom, D major 9th chord building
-                     from a single root. Feels like tuning in.
-  - transition.wav:  0.6s — soft breath: a glass-bell dyad that swells
-                     and vanishes. Marks a page turn.
-  - outro.wav:      ~1.8s — the bloom chord returns and resolves downward
-                     to a low D with decaying harmonics. The lens closing.
+  - ident.wav:           ~2.0s — harmonic bloom, D major 9th chord building
+                          from a single root. Feels like tuning in.
+  - transition.wav:       1.5s — rhythmic pulse phrase (legacy, kept for compat).
+  - section_break.wav:    0.9s — glass-bell chime between stories. Light,
+                          unobtrusive. Overlaid at silence gaps in speech.
+  - news_to_opinion.wav:  1.3s — editorial page-turn. Weighted, deliberate.
+                          Replaces transition.wav at the news→opinion boundary.
+  - headline_sting.wav:   0.4s — full chord stab. Punctuation after headlines.
+  - outro.wav:           ~1.8s — the bloom chord returns and resolves downward
+                          to a low D with decaying harmonics. The lens closing.
 """
 
 from pathlib import Path
@@ -193,6 +197,9 @@ def generate_transition():
 
     This plays between stories. It gives the listener a breath, signals
     "next topic," and keeps the energy moving without rushing.
+
+    LEGACY: kept for backward compatibility. New assemblies use
+    section_break.wav (intra-story) and news_to_opinion.wav (editorial shift).
     """
     canvas = AudioSegment.silent(duration=1500)
 
@@ -222,7 +229,172 @@ def generate_transition():
     canvas = canvas.apply_gain(-4)
 
     canvas.export(ASSETS_DIR / "transition.wav", format="wav")
-    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase")
+    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase [legacy]")
+
+
+# ---------------------------------------------------------------------------
+# Section Break: "The Bell" — between stories within the news dialogue
+# ---------------------------------------------------------------------------
+
+def generate_section_break():
+    """Section break: a single glass-bell chord fragment. ~0.9s.
+
+    This is the lightest of the sonic markers — a brief chime that says
+    "next topic" without interrupting the dialogue flow. Think: the sound
+    of turning a page in a quiet room.
+
+    Built from the upper register of the D major 9th chord:
+    - A single F#4 bell strike (the warmth note)
+    - A ghost A4 shimmer underneath (the "air")
+    - The ninth (E4) trails off at the edge of perception
+
+    The key constraint: this must sit under the speech, not compete with it.
+    Gain levels are deliberately low (-16 to -24 dB). The listener should
+    register a sonic "comma" without consciously hearing music.
+    """
+    canvas = AudioSegment.silent(duration=900)
+
+    # Primary bell: F#4 — warm, clear, glass-like
+    # Short duration (400ms) with fast decay — struck, not held
+    bell_main = _bell(_CHORD["third"], 400, -16)
+    canvas = canvas.overlay(bell_main, position=100)
+
+    # Harmonic ghost: A4 shimmer pair — air and space
+    # Very quiet, creates depth without bulk
+    ghost = _shimmer_pair(_CHORD["hi_fifth"], 1.2, 500, -24)
+    canvas = canvas.overlay(ghost, position=150)
+
+    # Trailing ninth: E4 — the questioning tone, barely there
+    # Gives the bell its "news" character (distinguishes from a generic chime)
+    trail = _pad(_CHORD["ninth"], 350, -26)
+    canvas = canvas.overlay(trail, position=200)
+
+    # Subtle root anchor: D3 at the bottom, felt not heard
+    # Connects this moment to the full chord palette
+    anchor = _pad(_CHORD["root"], 300, -28)
+    canvas = canvas.overlay(anchor, position=50)
+
+    # Shape: fast in, natural out
+    canvas = canvas.fade_in(15).fade_out(350)
+
+    # Master gain: this is meant to be quiet — sits under speech
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "section_break.wav", format="wav")
+    print(f"  section_break.wav ({len(canvas)}ms) — glass bell between stories")
+
+
+# ---------------------------------------------------------------------------
+# News-to-Opinion: "The Page Turn" — editorial shift marker
+# ---------------------------------------------------------------------------
+
+def generate_news_to_opinion():
+    """News-to-opinion transition: a deliberate 1.3s breath. The editorial shift.
+
+    This is the moment the broadcast pivots from reporting to analysis.
+    It needs weight — more than a section break, less than the intro.
+    The listener should feel a gear change: "the facts are done, now
+    here is what we think."
+
+    Design:
+    - Opens with a low D3 pulse (gravity, authority)
+    - The fifth (A3) and ninth (E4) bloom briefly — the chord
+      emerging in miniature, a compressed echo of the intro
+    - A sustained shimmer pair on F#4 creates a "held breath" quality
+    - The whole thing resolves downward to the root — settling before
+      the opinion voice arrives
+
+    This replaces the old transition.wav for the news→opinion boundary.
+    """
+    canvas = AudioSegment.silent(duration=1300)
+
+    # Opening gravity: D3 pad — deliberate, weighty
+    root_open = _pad(_CHORD["root"], 900, -10)
+    canvas = canvas.overlay(root_open, position=50)
+
+    # Sub-bass presence: D2 — felt in the chest
+    sub = _pad(73.4, 600, -22)
+    canvas = canvas.overlay(sub, position=100)
+
+    # The bloom fragment: fifth + ninth arrive together
+    # Compressed version of the intro's layered build
+    fifth = _bell(_CHORD["fifth"], 600, -14)
+    canvas = canvas.overlay(fifth, position=200)
+
+    ninth = _pad(_CHORD["ninth"], 500, -16)
+    canvas = canvas.overlay(ninth, position=250)
+
+    # Held breath: F#4 shimmer pair — the pause before opinion
+    # Longer sustain than the section break, more deliberate
+    breath = _shimmer_pair(_CHORD["third"], 1.5, 700, -18)
+    canvas = canvas.overlay(breath, position=300)
+
+    # High fifth accent: brief A4 bell to mark the pivot point
+    accent = _bell(_CHORD["hi_fifth"], 250, -20)
+    canvas = canvas.overlay(accent, position=450)
+
+    # Shape: gentle swell in, slow resolve out
+    canvas = canvas.fade_in(60).fade_out(500)
+
+    # Master gain: more present than section break, less than ident
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "news_to_opinion.wav", format="wav")
+    print(f"  news_to_opinion.wav ({len(canvas)}ms) — editorial page turn")
+
+
+# ---------------------------------------------------------------------------
+# Headline Sting: "The Stamp" — quick punctuation after headlines
+# ---------------------------------------------------------------------------
+
+def generate_headline_sting():
+    """Headline sting: a 0.4s chord stab. Punctuation, not melody.
+
+    Used after the opening headlines rundown — a quick "full stop" that
+    marks the end of the summary and the beginning of the deep coverage.
+
+    The sound is a compressed version of the full D major 9th chord,
+    all tones arriving simultaneously and decaying fast. Think: a gavel
+    tap, but musical. Or a newspaper being snapped open to the front page.
+
+    Design choices:
+    - All chord tones at once (no staggered bloom — that is the intro's job)
+    - Very fast decay (300ms bell envelopes)
+    - The ninth (E4) and third (F#4) are slightly louder — they carry
+      the "identity" of the chord in this compressed form
+    - Root D3 provides just enough weight to feel authoritative
+    """
+    canvas = AudioSegment.silent(duration=400)
+
+    # All tones arrive together — simultaneous, not layered
+    root = _bell(_CHORD["root"], 300, -14)
+    canvas = canvas.overlay(root, position=10)
+
+    fifth = _bell(_CHORD["fifth"], 280, -16)
+    canvas = canvas.overlay(fifth, position=10)
+
+    octave = _bell(_CHORD["octave"], 260, -18)
+    canvas = canvas.overlay(octave, position=10)
+
+    # Identity tones — slightly more present
+    ninth = _bell(_CHORD["ninth"], 300, -12)
+    canvas = canvas.overlay(ninth, position=10)
+
+    third = _bell(_CHORD["third"], 300, -12)
+    canvas = canvas.overlay(third, position=10)
+
+    # High fifth — crystalline top
+    hi = _bell(_CHORD["hi_fifth"], 250, -16)
+    canvas = canvas.overlay(hi, position=10)
+
+    # Shape: instant attack, fast out
+    canvas = canvas.fade_in(5).fade_out(200)
+
+    # Master gain: crisp but not aggressive
+    canvas = canvas.apply_gain(-6)
+
+    canvas.export(ASSETS_DIR / "headline_sting.wav", format="wav")
+    print(f"  headline_sting.wav ({len(canvas)}ms) — chord stab punctuation")
 
 
 # ---------------------------------------------------------------------------
@@ -291,5 +463,8 @@ if __name__ == "__main__":
     print("Generating void --news sonic identity (Glass & Gravity):")
     generate_ident()
     generate_transition()
+    generate_section_break()
+    generate_news_to_opinion()
+    generate_headline_sting()
     generate_outro()
     print("Done.")
