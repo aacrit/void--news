@@ -634,6 +634,23 @@ def cluster_stories(
             "articles": cluster_articles,
         })
 
+    # Split oversized clusters: re-cluster with a tighter threshold.
+    # Prevents 100+ article mega-clusters from TF-IDF over-merging on
+    # shared political vocabulary (e.g., "Trump", "war", "Iran").
+    MAX_CLUSTER_SIZE = 50
+    split_clusters: list[dict] = []
+    for c in clusters:
+        if len(c.get("articles", [])) > MAX_CLUSTER_SIZE:
+            sub = cluster_stories(
+                c["articles"],
+                similarity_threshold=similarity_threshold * 0.6,
+                run_merge_pass=False,
+            )
+            split_clusters.extend(sub)
+        else:
+            split_clusters.append(c)
+    clusters = split_clusters
+
     # Phase 2: entity-overlap merge pass
     # Consolidates micro-clusters that represent sub-events of the same
     # ongoing story (e.g., 20 Iran-war fragments → 3-5 mega-clusters).
