@@ -320,6 +320,16 @@ def _synthesize_opinion_monologue(
                                     )
                                 ),
                             ),
+                            # Gemini requires exactly 2 speakers in multi_speaker config.
+                            # "Two" is never referenced in the dialogue — silent placeholder.
+                            types.SpeakerVoiceConfig(
+                                speaker="Two",
+                                voice_config=types.VoiceConfig(
+                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                        voice_name=voice,
+                                    )
+                                ),
+                            ),
                         ]
                     )
                 ),
