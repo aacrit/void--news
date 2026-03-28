@@ -42,11 +42,15 @@ jobs:
       - name: Run bias validation suite
         run: python pipeline/validation/runner.py --json
 
-      - name: Check for catastrophic failures
+      - name: Check for failures
         run: |
           result=$(python pipeline/validation/runner.py 2>&1)
           echo "$result"
-          if echo "$result" | grep -q "CATASTROPHIC"; then
+          if echo "$result" | grep -qE "CATASTROPHIC:[[:space:]]+[1-9]"; then
             echo "::error::Bias validation found CATASTROPHIC failures"
+            exit 1
+          fi
+          if echo "$result" | grep -qE "WRONG:[[:space:]]+[1-9]"; then
+            echo "::error::Bias validation found WRONG scores"
             exit 1
           fi
