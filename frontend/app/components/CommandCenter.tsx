@@ -141,7 +141,35 @@ function getGreeting(): string {
 
 // ---- Component ----
 
+const CC_PASS_HASH = '5a2a82'; // derived from password — client-side gate only
+function hashPass(p: string): string {
+  let h = 0;
+  for (let i = 0; i < p.length; i++) h = ((h << 5) - h + p.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(16).slice(0, 6);
+}
+
 export default function CommandCenter() {
+  // Auth gate
+  const [authed, setAuthed] = useState(false);
+  const [passInput, setPassInput] = useState('');
+  const [passError, setPassError] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('cc-auth') === CC_PASS_HASH) setAuthed(true);
+    } catch {}
+  }, []);
+
+  function handleLogin() {
+    if (hashPass(passInput) === CC_PASS_HASH) {
+      localStorage.setItem('cc-auth', CC_PASS_HASH);
+      setAuthed(true);
+      setPassError(false);
+    } else {
+      setPassError(true);
+    }
+  }
+
   // State
   const [loading, setLoading] = useState(true);
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([]);
@@ -430,6 +458,64 @@ export default function CommandCenter() {
   const maxEditionArticles = Math.max(...editionStats.map(e => e.articles), 1);
 
   // ---- Render ----
+
+  if (!authed) {
+    return (
+      <div className="cc-root">
+        <div className="cc-auth-gate">
+          <div className="cc-auth-card">
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" style={{ margin: '0 auto 16px' }}>
+              <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5" fill="none" />
+              <line x1="10" y1="24" x2="30" y2="24" stroke="currentColor" strokeWidth="2" />
+              <line x1="12" y1="16" x2="12" y2="24" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="28" y1="18" x2="28" y2="24" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="12" cy="15" r="2" fill="currentColor" />
+              <circle cx="28" cy="17" r="2" fill="currentColor" />
+            </svg>
+            <h2 style={{ fontFamily: 'var(--cc-font-editorial)', fontSize: 'var(--cc-text-lg)', marginBottom: '4px' }}>Command Center</h2>
+            <p style={{ color: 'var(--cc-text3)', fontSize: 'var(--cc-text-sm)', marginBottom: '20px' }}>void --news</p>
+            <input
+              type="password"
+              value={passInput}
+              onChange={e => { setPassInput(e.target.value); setPassError(false); }}
+              onKeyDown={e => { if (e.key === 'Enter') handleLogin(); }}
+              placeholder="Password"
+              autoFocus
+              style={{
+                width: '100%',
+                padding: '10px 14px',
+                background: 'var(--cc-bg)',
+                border: `1px solid ${passError ? 'var(--cc-red)' : 'var(--cc-border)'}`,
+                borderRadius: 'var(--cc-radius-sm)',
+                color: 'var(--cc-text)',
+                fontFamily: 'var(--cc-font-mono)',
+                fontSize: 'var(--cc-text-sm)',
+                outline: 'none',
+                marginBottom: '12px',
+              }}
+            />
+            <button
+              onClick={handleLogin}
+              style={{
+                width: '100%',
+                padding: '10px',
+                background: 'var(--cc-accent)',
+                color: 'var(--cc-bg)',
+                border: 'none',
+                borderRadius: 'var(--cc-radius-sm)',
+                fontWeight: 600,
+                fontSize: 'var(--cc-text-sm)',
+                cursor: 'pointer',
+              }}
+            >
+              Enter
+            </button>
+            {passError && <p style={{ color: 'var(--cc-red)', fontSize: 'var(--cc-text-xs)', marginTop: '8px' }}>Incorrect password</p>}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!supabase) {
     return (

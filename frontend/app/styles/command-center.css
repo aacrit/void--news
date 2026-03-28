@@ -73,6 +73,27 @@
   overflow-wrap: break-word;
 }
 
+/* ---- Auth Gate ---- */
+.cc-auth-gate {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cc-bg);
+  z-index: 100;
+}
+
+.cc-auth-card {
+  text-align: center;
+  padding: var(--cc-space-2xl);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-lg);
+  max-width: 340px;
+  width: 90%;
+}
+
 .cc-root *,
 .cc-root *::before,
 .cc-root *::after {
