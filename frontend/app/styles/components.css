@@ -3782,12 +3782,83 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    No tab system — sections stack vertically, separated by thin rules.
    =================================================================== */
 
-/* Container — left border signals editorial voice; subtle warm tint */
+/* Container — left border signals editorial voice; subtle warm tint.
+   Desktop 1024px+: 3-column grid (tl;dr | opinion | onair) for density.
+   Desktop 1440px+: full-bleed skybox breaking out of content max-width. */
 .daily-brief {
   border-left: 2px solid var(--accent-warm);
   padding: var(--space-3) var(--space-4);
   margin: var(--space-4) 0;
   background: color-mix(in srgb, var(--accent-warm) 2%, var(--bg-primary));
+}
+
+/* Desktop: 3-column horizontal layout — massive vertical space savings.
+   When opinion is absent, TL;DR + OnAir fill columns 1-2 naturally. */
+@media (min-width: 1024px) {
+  .daily-brief {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 0.8fr;
+    grid-template-rows: auto 1fr;
+    gap: 0 var(--space-5);
+    border-left: none;
+    border-top: 2px solid var(--accent-warm);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: var(--space-3) var(--space-5);
+  }
+
+  /* Header spans all columns */
+  .daily-brief .db-section-header {
+    grid-column: 1 / -1;
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+
+  /* Each block takes one column */
+  .daily-brief .db-block {
+    min-width: 0;
+  }
+
+  /* No stacked separators — vertical column rules instead */
+  .daily-brief .db-block + .db-block {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+    border-left: 1px solid var(--border-subtle);
+    padding-left: var(--space-5);
+  }
+
+  /* TL;DR body: remove left border on desktop grid (container border handles it) */
+  .daily-brief .daily-brief__body {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* Opinion body: keep dotted left border as editorial firewall */
+  .daily-brief .daily-brief__opinion {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* Audio player: stack vertically in its narrow column */
+  .daily-brief .db-audio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .daily-brief .db-audio__track-col {
+    width: 100%;
+  }
+}
+
+/* Ultra-wide: full-bleed skybox — breaks out of content max-width */
+@media (min-width: 1440px) {
+  .daily-brief {
+    margin-left: calc(-1 * var(--space-7));
+    margin-right: calc(-1 * var(--space-7));
+    padding-left: var(--space-7);
+    padding-right: var(--space-7);
+  }
 }
 
 /* ---- Section header: "Daily Brief" + timestamp ---- */
@@ -3831,8 +3902,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 /* Thin rule between consecutive blocks */
 .db-block + .db-block {
   border-top: 1px solid var(--border-subtle);
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
 }
 
 /* ---- Block label row ---- */
@@ -3842,7 +3913,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   flex-wrap: wrap;
 }
 
@@ -3857,7 +3928,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   min-height: 44px;
   flex-wrap: wrap;
   color: inherit;
@@ -3946,8 +4017,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .daily-brief__body {
   font-family: var(--font-structural);
   font-style: normal;
-  font-size: var(--text-base);
-  line-height: 1.7;
+  font-size: var(--text-sm);
+  line-height: 1.55;
   color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
@@ -3955,11 +4026,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   -webkit-hyphens: auto;
   border-left: 2px solid var(--accent-warm);
   padding-left: var(--space-3);
-  /* No max-width — fills container, page grid constrains width */
 }
 
 .daily-brief__body p {
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   text-align-last: left;
 }
 
@@ -3973,8 +4043,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-family: var(--font-structural);
   font-style: normal;
   font-weight: 400;
-  font-size: var(--text-base);
-  line-height: 1.7;
+  font-size: var(--text-sm);
+  line-height: 1.55;
   color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
@@ -3982,17 +4052,16 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   -webkit-hyphens: auto;
   border-left: 2px dotted var(--border-strong);
   padding-left: var(--space-3);
-  /* No max-width — fills container */
 }
 
 /* Opinion headline — Playfair bold, NOT italic (editorial gravitas without ornament) */
 .daily-brief__opinion-headline {
   font-family: var(--font-editorial);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 700;
   font-style: normal;
   color: var(--fg-primary);
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-1);
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
