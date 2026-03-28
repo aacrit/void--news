@@ -389,6 +389,7 @@
   align-items: center;
   gap: var(--cc-space-xs);
   padding: var(--cc-space-md) var(--cc-space-sm);
+  min-height: 44px;
   background: var(--cc-surface);
   border: 1px solid var(--cc-border);
   border-radius: var(--cc-radius);
@@ -788,6 +789,7 @@
   border: 1px solid var(--cc-border);
   border-radius: var(--cc-radius-sm);
   padding: var(--cc-space-sm) var(--cc-space-md);
+  min-height: 44px;
 }
 
 .cc-terminal__prompt {
@@ -1024,7 +1026,9 @@
 }
 
 /* ---- Responsive ---- */
-@media (max-width: 1024px) {
+
+/* Tablet: 768-1023 — 3-col pulse, 3-col actions */
+@media (max-width: 1023px) {
   .cc-pulse {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1033,7 +1037,8 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Mobile: <768 — 2-col pulse, compact layout, hide header subtitle */
+@media (max-width: 767px) {
   .cc-header {
     padding: 0 var(--cc-space-lg);
   }
@@ -1094,6 +1099,7 @@
   }
 }
 
+/* Ultra-narrow: <=480px — tighter pulse, wrap action labels */
 @media (max-width: 480px) {
   .cc-pulse {
     grid-template-columns: 1fr 1fr;
@@ -1112,6 +1118,28 @@
   .cc-action-btn__meta {
     white-space: normal;
     line-height: 1.2;
+  }
+  /* Brief banner: tighter padding at narrow widths */
+  .cc-brief {
+    padding: var(--cc-space-md);
+  }
+  /* Drawer: narrower on very small screens to avoid covering full viewport */
+  .cc-drawer {
+    width: 260px;
+  }
+}
+
+/* Extreme narrow: <=375px — single-col actions to prevent touch crowding */
+@media (max-width: 375px) {
+  .cc-actions {
+    grid-template-columns: 1fr;
+  }
+  .cc-dashboard {
+    padding: var(--cc-space-md);
+    padding-bottom: calc(var(--cc-footer-h) + var(--cc-space-xl));
+  }
+  .cc-header {
+    padding: 0 var(--cc-space-md);
   }
 }
 
