@@ -568,7 +568,7 @@ def produce_audio(
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
-    # 6. Export to MP3 192kbps mono
+    # 6. Export to MP3 128kbps mono (voice-optimized; 192k unnecessary for speech)
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
         tmp_path = tmp.name
 
@@ -576,7 +576,7 @@ def produce_audio(
         combined.export(
             tmp_path,
             format="mp3",
-            bitrate="192k",
+            bitrate="128k",
             parameters=["-ac", "1"],
         )
         with open(tmp_path, "rb") as f:
