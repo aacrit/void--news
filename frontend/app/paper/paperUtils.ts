@@ -209,14 +209,14 @@ export function capitalize(s: string): string {
   if (!s) return s;
   const map: Record<string, string> = {
     politics: "Politics",
+    conflict: "Conflict",
     economy: "Economy",
     science: "Science",
     health: "Health",
+    environment: "Environment",
     culture: "Culture",
-    conflict: "Politics",
     tech: "Science",
     technology: "Science",
-    environment: "Health",
     sports: "Culture",
   };
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);

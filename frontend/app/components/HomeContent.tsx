@@ -105,11 +105,11 @@ function capitalize(s: string): string {
   if (!s) return s;
   const map: Record<string, string> = {
     // Desk slugs (current pipeline output)
-    politics: "Politics", economy: "Economy", science: "Science",
-    health: "Health", culture: "Culture",
-    // Legacy fine-grained slugs (old data in DB) → merged desk names
-    conflict: "Politics", tech: "Science", technology: "Science",
-    environment: "Health", sports: "Culture",
+    politics: "Politics", conflict: "Conflict", economy: "Economy",
+    science: "Science", health: "Health", environment: "Environment",
+    culture: "Culture",
+    // Legacy fine-grained slugs (old data in DB) → desk names
+    tech: "Science", technology: "Science", sports: "Culture",
   };
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
 }

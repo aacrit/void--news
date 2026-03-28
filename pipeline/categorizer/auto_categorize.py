@@ -203,13 +203,13 @@ NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
 # cluster-level category stored in the DB uses these merged desk slugs.
 # ---------------------------------------------------------------------------
 DESK_MAP: dict[str, str] = {
-    "politics": "politics",       # Politics + Conflict → "Politics"
-    "conflict": "politics",
+    "politics": "politics",       # Politics (domestic governance, elections, policy)
+    "conflict": "conflict",       # Conflict (war, military, terrorism, security)
     "economy": "economy",         # Economy (unchanged)
     "technology": "science",      # Science + Tech → "Science"
     "science": "science",
-    "health": "health",           # Health + Environment → "Health"
-    "environment": "health",
+    "health": "health",           # Health (unchanged)
+    "environment": "environment", # Environment (climate, disasters, conservation)
     "culture": "culture",         # Culture + Sports → "Culture"
     "sports": "culture",
     "general": "general",

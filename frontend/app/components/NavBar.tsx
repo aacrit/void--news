@@ -13,7 +13,7 @@ import type { LeanChip } from "./FilterBar";
 import { hapticMicro } from "../lib/haptics";
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
-  "All", "Politics", "Economy", "Science", "Health", "Culture",
+  "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
 
 interface NavBarProps {

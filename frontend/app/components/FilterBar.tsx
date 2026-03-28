@@ -18,7 +18,7 @@ export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> 
 };
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
-  "All", "Politics", "Economy", "Science", "Health", "Culture",
+  "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
 
 interface FilterBarProps {

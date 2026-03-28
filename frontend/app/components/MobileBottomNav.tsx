@@ -17,7 +17,7 @@ interface MobileBottomNavProps {
 }
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
-  "All", "Politics", "Economy", "Science", "Health", "Culture",
+  "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
 
 function getEditionHref(slug: Edition): string {

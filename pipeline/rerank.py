@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from utils.supabase_client import supabase
 from ranker.importance_ranker import rank_importance
-from categorizer.auto_categorize import categorize_article
+from categorizer.auto_categorize import categorize_article, map_to_desk
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 DRY_RUN = "--dry-run" in sys.argv
@@ -214,7 +214,8 @@ def main():
             for art in articles[:3]:
                 for cat in categorize_article(art):
                     cat_votes[cat] = cat_votes.get(cat, 0) + 1
-            category = max(cat_votes, key=cat_votes.get) if cat_votes else "politics"
+            best_cat = max(cat_votes, key=cat_votes.get) if cat_votes else "politics"
+            category = map_to_desk(best_cat)
         except Exception:
             category = cluster.get("category", "politics")
 
