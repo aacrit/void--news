@@ -314,11 +314,32 @@ Frontend filters by edition: `.contains("sections", [edition])` (PostgREST array
 
 Migrations: `supabase/migrations/` (001-017).
 
-## Skills (`.claude/skills/`)
+## Skills & Workflows (`.claude/skills/`)
+
+### Design Skill
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
 | `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
+
+### Agent Team Workflows (10 Orchestrated Pipelines)
+
+Multi-agent workflows invoked via `/command`. Each orchestrates agents in parallel (||) and sequential (→) stages with automatic gating.
+
+| Command | Agents | Pattern | When to Use |
+|---------|--------|---------|-------------|
+| `/pipeline-qa` | pipeline-tester \|\| bias-calibrator → bug-fixer → pipeline-tester \|\| bias-calibrator | Validate → Fix → Re-validate | After any `pipeline/` code change |
+| `/bias-audit` | analytics-expert \|\| bias-auditor → nlp-engineer → pipeline-tester \|\| bias-calibrator | Benchmark → Fix → Confirm | Gold standard for bias engine changes |
+| `/bias-calibrate` | nlp-engineer → bias-calibrator \|\| analytics-expert → bias-auditor → pipeline-tester | Tune → Check → Verify | Precision tuning of scoring params |
+| `/frontend-ship` | frontend-builder → responsive-specialist \|\| perf-optimizer → uat-tester → frontend-fixer | Build → Test → Fix | Any UI change or feature |
+| `/audio-qa` | audio-engineer → pipeline-tester \|\| db-reviewer → bug-fixer | Review → Validate → Fix | Daily brief audio changes |
+| `/full-audit` | void-ciso \|\| db-reviewer \|\| perf-optimizer \|\| update-docs \|\| bias-calibrator → bug-fixer \|\| frontend-fixer | 5-way audit → Triage → Fix | Comprehensive system health check |
+| `/launch-check` | 8 agents parallel → ceo-advisor → deploy | 8-way validate → Go/No-go | Pre-launch final gate |
+| `/daily-ops` | feed-intelligence \|\| db-reviewer \|\| pipeline-tester → triage | 3-way health check | Morning check / post-pipeline |
+| `/source-review` | source-curator → feed-intelligence \|\| analytics-expert → pipeline-tester | Vet → Health check → Validate | Adding/removing/auditing sources |
+| `/security-sweep` | void-ciso \|\| perf-optimizer → bug-fixer → void-ciso \|\| pipeline-tester | Audit → Fix → Re-verify | Fast security + perf hardening |
+
+**Workflow conventions**: `||` = parallel, `→` = sequential, gate between stages (pass = skip remaining). All workflows produce structured CEO reports.
 
 ## Agent Team (20 Agents, 9 Divisions)
 
@@ -364,13 +385,18 @@ CEO (Aacrit)
 | Logo, favicon, brand identity | `logo-designer` |
 | Agent audit, optimization, new agent design, prompt engineering, technology radar | `agent-architect` |
 
-### Sequential Cycles
+### Sequential Cycles (now invocable as `/commands`)
 ```
-Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
-Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
-Bias Calibration:  nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
-Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
-Audio Quality:     audio-engineer → pipeline-tester → bug-fixer
+Pipeline Quality:  /pipeline-qa   — pipeline-tester → bug-fixer → pipeline-tester
+Bias Audit:        /bias-audit    — analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
+Bias Calibration:  /bias-calibrate — nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
+Frontend Build:    /frontend-ship — frontend-builder → responsive-specialist → uat-tester → frontend-fixer
+Audio Quality:     /audio-qa      — audio-engineer → pipeline-tester → bug-fixer
+Full Audit:        /full-audit    — 5-way parallel audit → triage → critical fixes
+Launch Gate:       /launch-check  — 8-way parallel validation → ceo-advisor go/no-go
+Daily Ops:         /daily-ops     — 3-way parallel health check → traffic-light dashboard
+Source Review:     /source-review — source-curator → feed-intelligence → pipeline-tester
+Security Sweep:    /security-sweep — void-ciso || perf-optimizer → fix → re-verify
 ```
 
 ### Locked Decisions (Require CEO Approval)
@@ -466,8 +492,8 @@ void-news/
 │   ├── package.json               # Next.js 16.1.7, React 19.2.3
 │   └── next.config.ts
 ├── .claude/
-│   ├── agents/                    # 18 agent definitions
-│   └── skills/                    # pressdesign skill
+│   ├── agents/                    # 20 agent definitions
+│   └── skills/                    # 11 skills: pressdesign + 10 agent team workflows (/pipeline-qa, /bias-audit, /bias-calibrate, /frontend-ship, /audio-qa, /full-audit, /launch-check, /daily-ops, /source-review, /security-sweep)
 ├── .github/workflows/
 │   ├── pipeline.yml               # 4x daily cron
 │   ├── deploy.yml                 # Build + deploy to GitHub Pages
