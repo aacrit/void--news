@@ -224,7 +224,7 @@ export default function CommandCenter() {
 
   return (
     <div className="cc-root">
-      <a href="#main-content" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>Skip to content</a>
+      <a href="#main-content" className="skip-to-content">Skip to content</a>
       <header className="cc-header">
         <div className="cc-header__left"><span className="cc-header__title">Command Center</span><span className="cc-header__sub">void --news</span></div>
         <div className="cc-header__right">
@@ -253,7 +253,7 @@ export default function CommandCenter() {
             value={data.articles24h.toLocaleString()} valueClass={ragC(data.articles24h, 800, 400)} sub={`across ${data.tiers.total} sources`}><Sparkline data={ah} /></KpiCard>
           <KpiCard id="B1" label="Active Sources" domain="coverage" expanded={expanded==='B1'} onToggle={() => toggle('B1')}
             value={String(data.tiers.total)} valueClass={ragC(data.tiers.total, 370, 350)} sub={`${data.tiers.us_major} / ${data.tiers.international} / ${data.tiers.independent}`}>
-            <div className="cc-tier-bar"><div className="cc-tier-bar__seg" style={{ width: `${(data.tiers.us_major/data.tiers.total)*100}%`, background: 'var(--cc-blue)' }} /><div className="cc-tier-bar__seg" style={{ width: `${(data.tiers.international/data.tiers.total)*100}%`, background: 'var(--cc-accent)' }} /><div className="cc-tier-bar__seg" style={{ width: `${(data.tiers.independent/data.tiers.total)*100}%`, background: 'var(--cc-green)' }} /></div>
+            {data.tiers.total > 0 && <div className="cc-tier-bar"><div className="cc-tier-bar__seg" style={{ width: `${(data.tiers.us_major/data.tiers.total)*100}%`, background: 'var(--cc-blue)' }} /><div className="cc-tier-bar__seg" style={{ width: `${(data.tiers.international/data.tiers.total)*100}%`, background: 'var(--cc-accent)' }} /><div className="cc-tier-bar__seg" style={{ width: `${(data.tiers.independent/data.tiers.total)*100}%`, background: 'var(--cc-green)' }} /></div>}
           </KpiCard>
           <KpiCard id="B3" label="Multi-Source" domain="coverage" expanded={expanded==='B3'} onToggle={() => toggle('B3')}
             value={`${cq}%`} valueClass={ragC(cq, 25, 15)} sub={`${data.clustersMulti} of ${data.clustersTotal} clusters`}>
