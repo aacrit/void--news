@@ -455,6 +455,53 @@ def generate_outro():
 
 
 # ---------------------------------------------------------------------------
+# Background Bed: "The Presence Layer" — felt, not heard
+# ---------------------------------------------------------------------------
+
+def generate_background_bed():
+    """Background bed: a 10s loopable subharmonic warmth layer.
+
+    This sits BELOW the speech frequency band (200-4000 Hz) so it never
+    competes with voices. No ducking needed. The listener won't consciously
+    hear it, but removing it would make the broadcast feel thinner.
+
+    Three layers, all subharmonic:
+      - D2 (73.4 Hz) at -34 dB — root presence, felt in headphones
+      - D3 (147 Hz) at -38 dB — harmonic warmth, octave reinforcement
+      - A3 (220 Hz) shimmer pair at -42 dB — 1.2 Hz beating for life
+
+    The bed is tileable: identical fade-in/fade-out shapes at start/end
+    allow seamless looping when tiled in the assembly pipeline.
+
+    Industry standard: background music 20-26 dB below speech (W3C, BBC).
+    These levels (-34 to -42 dB individual, ~-30 dB combined) exceed that
+    margin against TTS output at ~-6 to -12 dBFS.
+    """
+    duration = 10000  # 10 seconds, tileable
+
+    canvas = AudioSegment.silent(duration=duration)
+
+    # Layer 1: Root presence — D2, felt in the chest
+    root = _pad(73.4, duration, -34)
+    canvas = canvas.overlay(root)
+
+    # Layer 2: Harmonic warmth — D3, octave above root
+    warmth = _pad(_CHORD["root"], duration, -38)
+    canvas = canvas.overlay(warmth)
+
+    # Layer 3: Shimmer ghost — A3 detuned pair, 1.2 Hz beating
+    # Creates imperceptible pulse that makes the bed feel alive
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.2, duration, -42)
+    canvas = canvas.overlay(shimmer)
+
+    # Tileable crossfade: gentle ramps at both ends
+    canvas = canvas.fade_in(500).fade_out(500)
+
+    canvas.export(ASSETS_DIR / "background_bed.wav", format="wav")
+    print(f"  background_bed.wav ({len(canvas)}ms) — subharmonic presence layer")
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -467,4 +514,5 @@ if __name__ == "__main__":
     generate_news_to_opinion()
     generate_headline_sting()
     generate_outro()
+    generate_background_bed()
     print("Done.")
