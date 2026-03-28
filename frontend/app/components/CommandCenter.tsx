@@ -138,29 +138,37 @@ export default function CommandCenter() {
 
   const loadData = useCallback(async () => {
     if (!supabase) return;
-    const t = new Date(Date.now() - 86400000).toISOString();
-    const [a,b,c,d,e,f,g,h,i,j,k] = await Promise.all([
-      supabase.from('pipeline_runs').select('status, started_at, completed_at, articles_fetched, clusters_created, created_at').order('created_at', { ascending: false }).limit(10),
-      supabase.from('sources').select('tier'),
-      supabase.from('articles').select('id', { count: 'exact', head: true }).gte('created_at', t),
-      supabase.from('story_clusters').select('id', { count: 'exact', head: true }).gte('created_at', t),
-      supabase.from('story_clusters').select('id', { count: 'exact', head: true }).gte('created_at', t).gte('source_count', 3),
-      supabase.from('bias_scores').select('political_lean, sensationalism, opinion_fact, factual_rigor, framing, confidence').limit(500),
-      supabase.from('daily_briefs').select('edition, created_at, audio_url, opinion_text').order('created_at', { ascending: false }).limit(10),
-      supabase.from('story_clusters').select('updated_at').order('updated_at', { ascending: false }).limit(1),
-      supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['world']).gte('created_at', t),
-      supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['us']).gte('created_at', t),
-      supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['india']).gte('created_at', t),
-    ]);
-    const src = b.data ?? [];
-    setData({
-      runs: a.data ?? [], articles24h: c.count ?? 0, clustersTotal: d.count ?? 0, clustersMulti: e.count ?? 0,
+    try {
+      const t = new Date(Date.now() - 86400000).toISOString();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      biasScores: (f.data as any[]) ?? [], briefs: (g.data as any[]) ?? [],
-      feedFreshness: h.data?.[0]?.updated_at ?? null,
-      tiers: { us_major: src.filter((s: {tier:string}) => s.tier === 'us_major').length, international: src.filter((s: {tier:string}) => s.tier === 'international').length, independent: src.filter((s: {tier:string}) => s.tier === 'independent').length, total: src.length },
-      editionClusters: { world: i.count ?? 0, us: j.count ?? 0, india: k.count ?? 0 },
-    });
+      const safe = (p: PromiseLike<any>) => Promise.resolve(p).catch(() => ({ data: null, count: 0 }));
+      const [a,b,c,d,e,f,g,h,i,j,k] = await Promise.all([
+        safe(supabase.from('pipeline_runs').select('status, started_at, completed_at, articles_fetched, clusters_created, created_at').order('created_at', { ascending: false }).limit(10)),
+        safe(supabase.from('sources').select('tier')),
+        safe(supabase.from('articles').select('id', { count: 'exact', head: true }).gte('created_at', t)),
+        safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).gte('created_at', t)),
+        safe(supabase.from('story_clusters').select('id, source_count').gte('created_at', t).gte('source_count', 3)),
+        safe(supabase.from('bias_scores').select('political_lean, sensationalism, opinion_fact, factual_rigor, framing, confidence').limit(500)),
+        safe(supabase.from('daily_briefs').select('edition, created_at, audio_url, opinion_text').order('created_at', { ascending: false }).limit(10)),
+        safe(supabase.from('story_clusters').select('updated_at').order('updated_at', { ascending: false }).limit(1)),
+        safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['world']).gte('created_at', t)),
+        safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['us']).gte('created_at', t)),
+        safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['india']).gte('created_at', t)),
+      ]);
+      const src = b.data ?? [];
+      const multiCount = e.data ? e.data.length : (e.count ?? 0);
+      setData({
+        runs: a.data ?? [], articles24h: c.count ?? 0, clustersTotal: d.count ?? 0, clustersMulti: multiCount,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        biasScores: (f.data as any[]) ?? [], briefs: (g.data as any[]) ?? [],
+        feedFreshness: h.data?.[0]?.updated_at ?? null,
+        tiers: { us_major: src.filter((s: {tier:string}) => s.tier === 'us_major').length, international: src.filter((s: {tier:string}) => s.tier === 'international').length, independent: src.filter((s: {tier:string}) => s.tier === 'independent').length, total: src.length },
+        editionClusters: { world: i.count ?? 0, us: j.count ?? 0, india: k.count ?? 0 },
+      });
+    } catch (err) {
+      console.error('CC load failed:', err);
+      setData({ runs: [], tiers: { us_major: 0, international: 0, independent: 0, total: 0 }, articles24h: 0, clustersTotal: 0, clustersMulti: 0, biasScores: [], briefs: [], feedFreshness: null, editionClusters: { world: 0, us: 0, india: 0 } });
+    }
   }, []);
 
   useEffect(() => { if (authed) loadData(); }, [authed, loadData]);
