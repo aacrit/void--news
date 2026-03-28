@@ -6,7 +6,7 @@ Both speakers generated in a single API call — no per-turn stitching.
 
 Post-processing via pydub:
   - Intro: ~2s D major 9th bloom chord (Glass & Gravity sonic identity)
-  - Story transitions: glass-bell dyad at detected silence gaps
+  - Transition: glass-bell pulse between news and opinion segments
   - Outro: ~1.8s resolving chord — intro bloom returning to root
   - No background bed — the voices carry the broadcast
   - MP3 192k mono export → Supabase Storage
@@ -200,7 +200,7 @@ def _synthesize_gemini_tts(
     all_pcm = bytearray()
     for i, chunk in enumerate(chunks):
         if i > 0:
-            time.sleep(3)  # Rate-limit buffer between TTS chunks
+            time.sleep(5)  # Rate-limit buffer between TTS chunks
         pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b)
         if pcm is None:
             print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed — aborting")
@@ -389,9 +389,11 @@ def produce_audio(
         opinion_words = len(opinion_audio_script.split())
         print(f"  [audio] Opinion TTS: {opinion_words} words, voice {opinion_voice_name}")
 
-        # Wait 10s between news and opinion TTS to avoid rate limits
-        print("  [audio] Rate-limit pause (10s) before opinion TTS...")
-        time.sleep(10)
+        # Wait 20s between news and opinion TTS to avoid rate limits.
+        # Free tier is aggressive — 10s was insufficient; most opinion
+        # failures were 429 rate-limit errors on the first attempt.
+        print("  [audio] Rate-limit pause (20s) before opinion TTS...")
+        time.sleep(20)
 
         # Retry up to 3 times with increasing backoff
         opinion_pcm = None
@@ -401,7 +403,7 @@ def produce_audio(
                 opinion_dur = len(opinion_pcm) / (24000 * 2)
                 print(f"  [audio] Opinion TTS: {opinion_dur:.1f}s (attempt {attempt + 1})")
                 break
-            wait = 15 * (attempt + 1)  # 15s, 30s, 45s
+            wait = 20 * (attempt + 1)  # 20s, 40s, 60s
             print(f"  [warn][audio] Opinion TTS attempt {attempt + 1}/3 failed — "
                   f"{'retrying in ' + str(wait) + 's' if attempt < 2 else 'giving up'}")
             if attempt < 2:

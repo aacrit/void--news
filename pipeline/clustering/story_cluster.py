@@ -336,6 +336,7 @@ def merge_related_clusters(
     clusters: list[dict],
     min_shared_entities: int = 3,
     max_age_spread_hours: float = 48.0,
+    max_cluster_articles: int = 50,
 ) -> list[dict]:
     """
     Post-clustering merge pass: consolidate micro-clusters that belong to the
@@ -365,6 +366,9 @@ def merge_related_clusters(
             cross-month merges (e.g., "Iran nuclear deal 2015" with
             "Iran-Israel war 2026"). Default 72h covers evolving stories
             that span 2-3 pipeline runs.
+        max_cluster_articles: Maximum articles in a merged cluster. Prevents
+            runaway transitive merges where Union-Find chains unrelated
+            sub-events (e.g., 224-article Iran mega-cluster). Default 50.
 
     Returns:
         Reduced list of cluster dicts with merged source counts and article
@@ -390,9 +394,10 @@ def merge_related_clusters(
         _extract_cluster_entities(c.get("articles", [])) for c in clusters
     ]
 
-    # Union-Find for transitive merge closure
+    # Union-Find for transitive merge closure with size tracking
     n = len(clusters)
     parent = list(range(n))
+    group_size = [len(c.get("articles", [])) for c in clusters]
 
     def find(x: int) -> int:
         while parent[x] != x:
@@ -404,6 +409,7 @@ def merge_related_clusters(
         ra, rb = find(a), find(b)
         if ra != rb:
             parent[ra] = rb
+            group_size[rb] += group_size[ra]
 
     timestamps = [_parse_first_pub(c) for c in clusters]
 
@@ -422,6 +428,10 @@ def merge_related_clusters(
                 spread_hours = abs((ti - tj).total_seconds()) / 3600.0
                 if spread_hours > max_age_spread_hours:
                     continue
+
+            # Size gate: prevent runaway mega-clusters from transitive merges
+            if group_size[find(i)] + group_size[find(j)] > max_cluster_articles:
+                continue
 
             union(i, j)
 

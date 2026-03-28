@@ -27,6 +27,10 @@ from pydub.generators import Sine
 
 ASSETS_DIR = Path(__file__).parent / "assets"
 
+# Match Gemini TTS native output rate (24kHz 16-bit mono).
+# Assets at the same sample rate avoid implicit resampling during assembly.
+SAMPLE_RATE = 24000
+
 
 # ---------------------------------------------------------------------------
 # Tone-shaping primitives
@@ -40,7 +44,7 @@ def _bell(freq_hz: float, duration_ms: int, gain_db: float = -6) -> AudioSegment
     electronic beep.
     """
     seg = (
-        Sine(freq_hz)
+        Sine(freq_hz, sample_rate=SAMPLE_RATE)
         .to_audio_segment(duration=duration_ms)
         .apply_gain(gain_db)
         .fade_in(5)
@@ -59,7 +63,7 @@ def _pad(freq_hz: float, duration_ms: int, gain_db: float = -10) -> AudioSegment
     attack = int(duration_ms * 0.4)
     release = int(duration_ms * 0.5)
     seg = (
-        Sine(freq_hz)
+        Sine(freq_hz, sample_rate=SAMPLE_RATE)
         .to_audio_segment(duration=duration_ms)
         .apply_gain(gain_db)
         .fade_in(attack)
