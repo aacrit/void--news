@@ -57,12 +57,8 @@ _DEFAULT_BASELINE = 45.0     # Fallback for unknown/missing tier
 # touching sources.json and keeps the credibility split local to this scorer.
 # ---------------------------------------------------------------------------
 LOW_CREDIBILITY_US_MAJOR: frozenset[str] = frozenset({
-    'breitbart', 'breitbart-news', 'newsmax', 'daily-wire', 'the-daily-wire',
-    'daily-caller', 'the-daily-caller', 'gateway-pundit', 'the-gateway-pundit',
-    'infowars', 'oann', 'one-america-news', 'new-york-post',
-    'daily-mail', 'the-daily-mail', 'national-enquirer',
-    'occupy-democrats', 'palmer-report', 'bipartisan-report',
-    'daily-kos', 'rawstory', 'raw-story',
+    # Verified against data/sources.json (2026-03-28)
+    'breitbart', 'newsmax', 'daily-wire', 'the-daily-caller', 'new-york-post',
 })
 
 # ---------------------------------------------------------------------------

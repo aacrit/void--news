@@ -84,7 +84,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-right",
     "credibility_notes": "Major Midwestern broadsheet, founded 1847. Historically center-right editorial page. Part of Tribune Publishing. RSS via Google News filter (Arc CMS feeds disabled)"
   },
   {
@@ -122,14 +122,14 @@
   },
   {
     "id": "msnbc",
-    "name": "MS NOW",
-    "url": "https://www.ms.now",
-    "rss_url": "https://www.ms.now/feed",
+    "name": "MSNBC",
+    "url": "https://www.msnbc.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:msnbc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
     "political_lean_baseline": "left",
-    "credibility_notes": "Progressive-leaning cable news. Shares newsgathering with NBC News. Primarily opinion and analysis programming. Rebranded from MSNBC in Nov 2025 (Comcast/Versant spinoff)"
+    "credibility_notes": "Progressive-leaning cable news. Shares newsgathering with NBC News. Primarily opinion and analysis programming. Comcast/Versant spinoff in Nov 2025."
   },
   {
     "id": "nbc-news",
@@ -150,7 +150,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-left",
     "credibility_notes": "Storied broadcast news division (Murrow, Cronkite legacy). Includes 60 Minutes. Generally centrist, factual reporting."
   },
   {
@@ -161,7 +161,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-left",
     "credibility_notes": "Major broadcast news division under Disney. World News Tonight consistently top-rated. Generally centrist reporting."
   },
   {
@@ -194,7 +194,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-left",
     "credibility_notes": "Leading digital political news outlet. Strong on Beltway coverage and policy reporting. Owned by Axel Springer."
   },
   {
@@ -216,7 +216,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-left",
     "credibility_notes": "Known for concise 'Smart Brevity' format. Strong on politics and tech. Founded by Politico co-founder Jim VandeHei."
   },
   {
@@ -271,7 +271,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-left",
     "credibility_notes": "Large digital business and news outlet. Increasingly strong on investigative and political coverage. Owned by Axel Springer."
   },
   {
@@ -381,7 +381,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-left",
     "credibility_notes": "National daily with one of the largest US circulations. Gannett-owned. Known for accessible, broadly centrist coverage. Strong sports, weather, and national reporting."
   },
   {
@@ -4184,5 +4184,104 @@
     "type": "digital",
     "political_lean_baseline": "right",
     "credibility_notes": "Right-leaning Canadian digital media. Provides conservative voice in Canadian landscape."
+  },
+  {
+    "id": "opindia",
+    "name": "OpIndia",
+    "url": "https://www.opindia.com",
+    "rss_url": "https://www.opindia.com/feed/",
+    "tier": "independent",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Pro-BJP digital media. Strong right-wing/Hindu nationalist editorial line. Frequently fact-checked for misleading claims. Included for far-right spectrum coverage in India edition."
+  },
+  {
+    "id": "organiser-india",
+    "name": "Organiser",
+    "url": "https://organiser.org",
+    "rss_url": "https://organiser.org/feed/",
+    "tier": "independent",
+    "country": "IN",
+    "type": "magazine",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Weekly magazine affiliated with RSS (Rashtriya Swayamsevak Sangh). Oldest running publication of Hindu nationalist movement, founded 1947. Included for far-right spectrum coverage."
+  },
+  {
+    "id": "peoples-democracy",
+    "name": "People's Democracy",
+    "url": "https://peoplesdemocracy.in",
+    "rss_url": "https://peoplesdemocracy.in/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "magazine",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Official organ of the Communist Party of India (Marxist). Marxist-Leninist perspective on Indian politics. Included for far-left spectrum coverage."
+  },
+  {
+    "id": "wion",
+    "name": "WION",
+    "url": "https://www.wionews.com",
+    "rss_url": "https://www.wionews.com/feeds",
+    "tier": "independent",
+    "country": "IN",
+    "type": "broadcast",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Zee Media international news channel. India-first editorial perspective. Nationalist framing on geopolitical issues. Part of Essel Group."
+  },
+  {
+    "id": "la-jornada-english",
+    "name": "La Jornada",
+    "url": "https://www.jornada.com.mx",
+    "rss_url": "https://news.google.com/rss/search?q=site:jornada.com.mx+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "MX",
+    "type": "broadsheet",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "Major Mexican daily with left-wing editorial stance. Founded 1984. Supports labor and indigenous rights causes. Spanish-language (RSS via Google News)."
+  },
+  {
+    "id": "morning-star",
+    "name": "Morning Star",
+    "url": "https://morningstaronline.co.uk",
+    "rss_url": "https://morningstaronline.co.uk/feed",
+    "tier": "independent",
+    "country": "GB",
+    "type": "broadsheet",
+    "political_lean_baseline": "far-left",
+    "credibility_notes": "British socialist daily newspaper. Cooperative-owned. Supports trade union and labour movement. Founded 1930. Only English-language socialist daily."
+  },
+  {
+    "id": "al-arabiya-english",
+    "name": "Al Arabiya English",
+    "url": "https://english.alarabiya.net",
+    "rss_url": "https://english.alarabiya.net/tools/rss",
+    "tier": "international",
+    "country": "SA",
+    "type": "broadcast",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Saudi-owned pan-Arab news channel. Counterpart to Al Jazeera from Gulf perspective. Pro-Saudi editorial line on regional issues."
+  },
+  {
+    "id": "i24-news",
+    "name": "i24NEWS",
+    "url": "https://www.i24news.tv/en",
+    "rss_url": "https://news.google.com/rss/search?q=site:i24news.tv+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "IL",
+    "type": "broadcast",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Israeli international news channel. Broadcasts in English, French, Arabic. Center-right on Israeli/regional issues."
+  },
+  {
+    "id": "la-nacion-argentina",
+    "name": "La Nacion",
+    "url": "https://www.lanacion.com.ar",
+    "rss_url": "https://news.google.com/rss/search?q=site:lanacion.com.ar+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "AR",
+    "type": "broadsheet",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Major Argentine daily, founded 1870. Conservative/liberal editorial stance. One of Latin America's most influential newspapers."
   }
 ]
