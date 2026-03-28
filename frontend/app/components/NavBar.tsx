@@ -116,30 +116,28 @@ export default function NavBar({
       {hasFilters && (
         <div className="nav-filters">
           {/* Edition pills */}
-          <div className="nav-filters__group" role="tablist" aria-label="Edition">
+          <nav className="nav-filters__group" aria-label="Edition">
             {EDITIONS.map((ed) => (
               <Link
                 key={ed.slug}
                 href={getEditionHref(ed.slug)}
-                role="tab"
-                aria-selected={activeEdition === ed.slug}
+                aria-current={activeEdition === ed.slug ? "page" : undefined}
                 className={`nav-filters__ed${activeEdition === ed.slug ? " nav-filters__ed--active" : ""}`}
               >
                 <EditionIcon slug={ed.slug} size={11} />
                 <span>{ed.label}</span>
               </Link>
             ))}
-          </div>
+          </nav>
 
           <div className="nav-filters__sep" aria-hidden="true" />
 
           {/* Lean chips */}
-          <div className="nav-filters__group" role="tablist" aria-label="Political perspective">
+          <div className="nav-filters__group" role="toolbar" aria-label="Political perspective">
             {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
               <button
                 key={lean}
-                role="tab"
-                aria-selected={activeLean === lean}
+                aria-pressed={activeLean === lean}
                 onClick={() => handleLeanTap(lean)}
                 className={`nav-filters__lean nav-filters__lean--${lean.toLowerCase()}${activeLean === lean ? " nav-filters__lean--active" : ""}`}
               >

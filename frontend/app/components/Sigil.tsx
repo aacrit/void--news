@@ -3,6 +3,12 @@
 import { useState, useRef, useEffect, useCallback, useId } from "react";
 import { createPortal } from "react-dom";
 import type { SigilData } from "../lib/types";
+import {
+  getColors as gc,
+  getLeanColor as leanColor,
+  leanLabel,
+  lerpColor as lerp,
+} from "../lib/biasColors";
 
 /* ==========================================================================
    Sigil — The Brand Mark AS the Bias Indicator
@@ -23,66 +29,6 @@ interface SigilProps {
   size?: "sm" | "lg" | "xl";
   /** "facts" = standard cluster mode (coverage ring + source count) */
   mode?: "facts";
-}
-
-/* ── CSS variable cache ────────────────────────────────────────────────── */
-
-let cssVarCache: Record<string, string> | null = null;
-const SSR: Record<string, string> = {
-  "--bias-far-left": "#1D4ED8", "--bias-left": "#3B82F6", "--bias-center-left": "#93C5FD",
-  "--bias-center": "#9CA3AF", "--bias-center-right": "#FCA5A5",
-  "--bias-right": "#EF4444", "--bias-far-right": "#B91C1C", "--sense-low": "#22C55E",
-  "--sense-medium": "#EAB308", "--sense-high": "#EF4444",
-  "--type-reporting": "#3B82F6", "--type-opinion": "#F97316",
-  "--rigor-high": "#22C55E", "--rigor-medium": "#EAB308", "--rigor-low": "#EF4444",
-};
-
-function gc(): Record<string, string> {
-  if (cssVarCache) return cssVarCache;
-  if (typeof document === "undefined") return SSR;
-  const s = getComputedStyle(document.documentElement);
-  cssVarCache = {};
-  for (const v of Object.keys(SSR)) cssVarCache[v] = s.getPropertyValue(v).trim() || SSR[v];
-  return cssVarCache;
-}
-
-if (typeof window !== "undefined") {
-  new MutationObserver((ms) => {
-    for (const m of ms) if (m.type === "attributes" && m.attributeName === "data-mode") cssVarCache = null;
-  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
-}
-
-/* ── Color math ────────────────────────────────────────────────────────── */
-
-function lerp(a: string, b: string, t: number): string {
-  const ah = parseInt(a.slice(1), 16), bh = parseInt(b.slice(1), 16);
-  const r = Math.round(((ah >> 16) & 0xff) + (((bh >> 16) & 0xff) - ((ah >> 16) & 0xff)) * t);
-  const g = Math.round(((ah >> 8) & 0xff) + (((bh >> 8) & 0xff) - ((ah >> 8) & 0xff)) * t);
-  const bl = Math.round((ah & 0xff) + ((bh & 0xff) - (ah & 0xff)) * t);
-  return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
-}
-
-function leanColor(v: number): string {
-  const c = gc();
-  if (v <= 14) return c["--bias-far-left"];
-  if (v <= 20) return lerp(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
-  if (v <= 35) return lerp(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return c["--bias-center-left"];
-  if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return c["--bias-center-right"];
-  if (v <= 80) return lerp(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 86) return lerp(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
-  return c["--bias-far-right"];
-}
-
-function leanLabel(v: number): string {
-  if (v <= 20) return "Far Left";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Center-Left";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Center-Right";
-  if (v <= 80) return "Right";
-  return "Far Right";
 }
 
 

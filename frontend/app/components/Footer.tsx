@@ -23,7 +23,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
-        <p className="footer-tagline">370 sources. Six axes. Zero mystery.</p>
+        <p className="footer-tagline">380 sources. Six axes. Zero mystery.</p>
 
         {/* Product family */}
         <div className="footer-products">
@@ -35,7 +35,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-products__item" title="Source Spectrum">void --sources</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/void--news/paper" className="footer-products__item" title="Broadsheet Edition">void --paper</Link>
+          <Link href="/paper" className="footer-products__item" title="Broadsheet Edition">void --paper</Link>
         </div>
 
         <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>

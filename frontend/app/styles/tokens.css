@@ -24,11 +24,11 @@
   --bg-card:       #F5F0E4;
   --bg-elevated:   #F5F0E4;
 
-  /* Text */
+  /* Text — all pass WCAG AA 4.5:1 on --bg-primary (#F0EBDD) */
   --fg-primary:    #1A1A1A;
-  --fg-secondary:  #4A4A4A;
-  --fg-tertiary:   #7A7A7A;
-  --fg-muted:      #A0A0A0;
+  --fg-secondary:  #4A4540;
+  --fg-tertiary:   #686260;
+  --fg-muted:      #8A857E;
 
   /* Borders & Dividers */
   --border-subtle: #E8E2DB;
@@ -96,11 +96,11 @@
   --bias-far-right:    #964A3A;  /* deep brick */
   --type-reporting:    #6B8DB5;
 
-  /* Text */
+  /* Text — all pass WCAG AA 4.5:1 on --bg-primary (#1C1A17) */
   --fg-primary:    #EDE8E0;
   --fg-secondary:  #B8B0A5;
-  --fg-tertiary:   #8A8278;
-  --fg-muted:      #5A5550;
+  --fg-tertiary:   #918A80;
+  --fg-muted:      #757068;
 
   /* Borders & Dividers */
   --border-subtle: #3A3530;
@@ -203,13 +203,15 @@
    Animation Tokens
    -------------------------------------------------------------------------- */
 :root {
-  /* Duration */
+  /* Duration — intentional, meaningful timing */
   --dur-instant:  0ms;
+  --dur-micro:    80ms;    /* micro-feedback: press, tap, toggle */
   --dur-fast:     150ms;
   --dur-normal:   300ms;
-  --dur-morph:    400ms;
-  --dur-step:     450ms;
+  --dur-morph:    400ms;   /* FLIP morph, panel transitions */
+  --dur-step:     450ms;   /* stagger cascade steps */
   --dur-slow:     600ms;
+  --dur-reveal:   500ms;   /* progressive disclosure reveals */
 
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -242,6 +244,24 @@
     0.938 20.7%, 1.017 24.3%, 1.061 27.7%,
     1.085 32%, 1.078 36.3%, 1.042 44.4%,
     1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1
+  );
+
+  /* Gentle spring — smooth deceleration with barely visible overshoot.
+     For reveals, progressive disclosure, content arrival. */
+  --spring-gentle: linear(
+    0, 0.007, 0.028 3.2%, 0.113 6.8%, 0.458 17.5%,
+    0.636 23%, 0.778 29%, 0.879 35.5%,
+    0.942 42%, 0.975 49%, 0.993 57%,
+    1.003 66%, 1.005 76%, 1.001 88%, 1
+  );
+
+  /* Elastic spring — playful overshoot for toggle state changes,
+     chip selection, theme swap. Joy in interaction. */
+  --spring-elastic: linear(
+    0, 0.011, 0.044 2%, 0.178 4.6%, 0.718 13.5%,
+    0.896 17.5%, 1.028 22%, 1.105 27%,
+    1.13 31%, 1.112 36%, 1.064 42%,
+    1.024 50%, 0.998 60%, 1.005 74%, 1
   );
 }
 

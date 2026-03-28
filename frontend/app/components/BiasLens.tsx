@@ -3,6 +3,14 @@
 import { useState, useRef, useEffect, useCallback, useId } from "react";
 import { createPortal } from "react-dom";
 import type { ThreeLensData, LeanRationale, CoverageRationale } from "../lib/types";
+import {
+  getColors,
+  getLeanColor,
+  getCoverageColor,
+  lerpColor,
+  leanLabel as getLeanLabel,
+  coverageLabel as getCoverageLabel,
+} from "../lib/biasColors";
 
 interface BiasLensProps {
   lensData: ThreeLensData;
@@ -19,101 +27,6 @@ interface BiasLensProps {
 
    Each lens has its own independent hover popup with rationale.
    --------------------------------------------------------------------------- */
-
-/* ── Cached CSS variable reader ──────────────────────────────────────────── */
-
-let cssVarCache: Record<string, string> | null = null;
-
-const SSR_FALLBACK: Record<string, string> = {
-  "--bias-far-left": "#1D4ED8",
-  "--bias-left": "#3B82F6",
-  "--bias-center-left": "#93C5FD",
-  "--bias-center": "#9CA3AF",
-  "--bias-center-right": "#FCA5A5",
-  "--bias-right": "#EF4444",
-  "--bias-far-right": "#B91C1C",
-  "--sense-low": "#22C55E",
-  "--sense-medium": "#EAB308",
-  "--sense-high": "#EF4444",
-  "--type-reporting": "#3B82F6",
-  "--type-analysis": "#8B5CF6",
-  "--type-opinion": "#F97316",
-};
-
-function getColors(): Record<string, string> {
-  if (cssVarCache) return cssVarCache;
-  if (typeof document === "undefined") return SSR_FALLBACK;
-  const style = getComputedStyle(document.documentElement);
-  cssVarCache = {};
-  for (const v of Object.keys(SSR_FALLBACK)) {
-    cssVarCache[v] = style.getPropertyValue(v).trim() || SSR_FALLBACK[v];
-  }
-  return cssVarCache;
-}
-
-if (typeof window !== "undefined") {
-  const observer = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      if (m.type === "attributes" && m.attributeName === "data-mode") {
-        cssVarCache = null;
-      }
-    }
-  });
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
-}
-
-/* ── Color helpers ──────────────────────────────────────────────────────── */
-
-function lerpColor(a: string, b: string, t: number): string {
-  const ah = parseInt(a.slice(1), 16);
-  const bh = parseInt(b.slice(1), 16);
-  const ar = (ah >> 16) & 0xff, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
-  const br = (bh >> 16) & 0xff, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
-  const rr = Math.round(ar + (br - ar) * t);
-  const rg = Math.round(ag + (bg - ag) * t);
-  const rb = Math.round(ab + (bb - ab) * t);
-  return `#${((rr << 16) | (rg << 8) | rb).toString(16).padStart(6, "0")}`;
-}
-
-function getLeanColor(v: number): string {
-  const c = getColors();
-  if (v <= 14) return c["--bias-far-left"];
-  if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
-  if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return c["--bias-center-left"];
-  if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return c["--bias-center-right"];
-  if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 86) return lerpColor(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
-  return c["--bias-far-right"];
-}
-
-function getCoverageColor(v: number): string {
-  const c = getColors();
-  if (v >= 60) return c["--sense-low"];
-  if (v >= 30) return c["--sense-medium"];
-  return c["--sense-high"];
-}
-
-
-/* ── Label helpers ──────────────────────────────────────────────────────── */
-
-function getLeanLabel(v: number): string {
-  if (v <= 20) return "Far Left";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Center-Left";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Center-Right";
-  if (v <= 80) return "Right";
-  return "Far Right";
-}
-
-function getCoverageLabel(v: number): string {
-  if (v >= 75) return "Strongly sourced";
-  if (v >= 50) return "Well sourced";
-  if (v >= 25) return "Moderately sourced";
-  return "Lightly sourced";
-}
 
 /* ── Shared popup component ────────────────────────────────────────────── */
 

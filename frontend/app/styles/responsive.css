@@ -207,7 +207,31 @@
 
 /* ---- Very Wide (1440px+) ----------------------------------------------- */
 
-/* Deep dive panel width is capped at 680px regardless of viewport width */
+@media (min-width: 1440px) {
+  /* Ultra-wide: 5-column compact grid for maximum information density */
+  .grid-compact {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .grid-compact__item:nth-child(4n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(5n) {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .grid-compact__item:last-child {
+    border-right: none;
+  }
+
+  /* Deep Dive: wider on ultra-wide for more reading comfort */
+  .deep-dive-panel {
+    max-width: 1120px;
+  }
+}
 
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
 
@@ -893,11 +917,11 @@
     height: 6px;
   }
 
-  /* Topic chips — compact on ultra-narrow */
+  /* Topic chips — compact but WCAG 44px touch target */
   .topic-bar__chip {
     padding: 3px 6px;
     font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
-    min-height: 32px;
+    min-height: 44px;
   }
 
   /* Legacy filter-chip — tighter on ultra-narrow */

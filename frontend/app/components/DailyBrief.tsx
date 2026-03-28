@@ -154,7 +154,8 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
       setIsMobile(e.matches);
       if (e.matches) {
         setOpinionOpen(false);
-        setOnairOpen(false);
+        // Auto-expand onair when audio is available on mobile
+        setOnairOpen(!!brief?.audio_url);
       } else {
         setOpinionOpen(true);
         setOnairOpen(true);
@@ -165,10 +166,10 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Auto-expand onair section when playback starts
+  // Auto-expand onair section when playback starts or audio becomes available on mobile
   useEffect(() => {
-    if (isPlaying && isMobile) setOnairOpen(true);
-  }, [isPlaying, isMobile]);
+    if (isMobile && (isPlaying || brief?.audio_url)) setOnairOpen(true);
+  }, [isPlaying, isMobile, brief?.audio_url]);
 
   if (!brief) return null;
 

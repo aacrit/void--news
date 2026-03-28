@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { leanToBucket, leanLabel, type LeanCategory } from "../lib/biasColors";
 
 /* ---------------------------------------------------------------------------
    DeepDiveSpectrum — Full-width bias spectrum with categorized sources.
@@ -20,15 +21,6 @@ export interface DeepDiveSpectrumSource {
   confidence?: number;
 }
 
-type LeanCategory =
-  | "far-left"
-  | "left"
-  | "center-left"
-  | "center"
-  | "center-right"
-  | "right"
-  | "far-right";
-
 const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
   { key: "far-left", label: "Far Left", shortLabel: "Far L" },
   { key: "left", label: "Left", shortLabel: "Left" },
@@ -38,26 +30,6 @@ const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
   { key: "right", label: "Right", shortLabel: "Right" },
   { key: "far-right", label: "Far Right", shortLabel: "Far R" },
 ];
-
-function leanToBucket(lean: number): LeanCategory {
-  if (lean <= 14) return "far-left";
-  if (lean <= 28) return "left";
-  if (lean <= 42) return "center-left";
-  if (lean <= 57) return "center";
-  if (lean <= 71) return "center-right";
-  if (lean <= 85) return "right";
-  return "far-right";
-}
-
-function leanLabel(lean: number): string {
-  if (lean <= 20) return "Far Left";
-  if (lean <= 35) return "Left";
-  if (lean <= 45) return "Center Left";
-  if (lean <= 55) return "Center";
-  if (lean <= 65) return "Center Right";
-  if (lean <= 80) return "Right";
-  return "Far Right";
-}
 
 function tierLabel(tier: string): string {
   if (tier === "us_major") return "US Major";

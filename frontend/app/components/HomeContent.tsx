@@ -98,6 +98,7 @@ import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
+import DivergenceAlerts from "./DivergenceAlerts";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -726,6 +727,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 The board's voice sets context before readers dive into stories. */}
             {!isLoading && stories.length > 0 && (
               <DailyBriefText state={dailyBriefState} />
+            )}
+
+            {/* 1b. Divergence Alerts — editorial section for high-disagreement stories */}
+            {!isLoading && filteredStories.length > 0 && (
+              <DivergenceAlerts
+                stories={filteredStories}
+                activeLean={activeLean}
+                onStoryClick={handleStoryClick}
+              />
             )}
 
             {/* 2. Lead section — two primary headlines side by side on desktop */}

@@ -66,8 +66,8 @@
 }
 
 .story-card:hover {
-  box-shadow: none;
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 /* Desktop press — instant compression, spring bounce-back on release.
@@ -81,17 +81,46 @@
     box-shadow 60ms var(--ease-out);
 }
 
-/* Focus-visible: warm outline + same spatial lift as hover.
-   Keyboard users get identical spatial feedback to pointer users. */
-.story-card:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 3px;
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
+/* Stretched link — invisible button that covers the entire article.
+   Preserves <article> semantics while providing an interactive target.
+   Focus ring appears on the stretched button, not the article. */
+.story-card__stretch-link {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  color: transparent;
+  font-size: 0;
 }
 
-.story-card:focus-visible::before {
+.story-card__stretch-link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Focus-visible: stretched link gets the outline, card gets the lift.
+   :has() delegates visual focus from the button to the card. */
+.story-card:has(.story-card__stretch-link:focus-visible) {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.story-card:has(.story-card__stretch-link:focus-visible)::before {
   opacity: 1;
+}
+
+/* Fallback for browsers without :has() */
+.story-card:focus-within {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 /* Touch devices — no hover lift (prevents sticky hover after tap).
@@ -255,15 +284,18 @@
   font-size: clamp(1.75rem, 1.5rem + 1.5vw, 3.25rem);
 }
 
-.lead-story:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 3px;
+.lead-story:has(.story-card__stretch-link:focus-visible) {
   box-shadow: var(--shadow-card-lead-hover);
   transform: translateY(-2px);
 }
 
-.lead-story:focus-visible::before {
+.lead-story:has(.story-card__stretch-link:focus-visible)::before {
   opacity: 1;
+}
+
+.lead-story:focus-within {
+  box-shadow: var(--shadow-card-lead-hover);
+  transform: translateY(-2px);
 }
 
 /* Touch-specific active state */

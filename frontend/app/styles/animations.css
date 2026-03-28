@@ -157,8 +157,8 @@
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 120ms var(--ease-out),
-    transform 300ms var(--spring-bouncy);
+    opacity 180ms var(--ease-out),
+    transform 400ms var(--spring-gentle);
 }
 
 /* Filter-change card entrance — fires immediately (not paused).
@@ -199,15 +199,15 @@
 }
 
 /* Deep Dive content section stagger — cascade reveal on panel open.
-   Sections fade in + slide up (translateY 12px→0, opacity 0→1).
-   Stagger applied via inline transitionDelay: section 1 = 150ms, 2 = 250ms, 3 = 350ms.
-   Duration 400ms, ease-out easing for a smooth system reveal. */
+   Sections fade in + slide up (translateY 16px→0, opacity 0→1).
+   Stagger applied via inline transitionDelay: section 1 = 120ms, 2 = 220ms, 3 = 320ms.
+   Uses gentle spring for smooth, weighted deceleration. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px);
   transition:
-    opacity var(--dur-morph) var(--ease-out),
-    transform var(--dur-morph) var(--ease-out);
+    opacity var(--dur-reveal, 500ms) var(--ease-out),
+    transform var(--dur-reveal, 500ms) var(--spring-gentle, var(--ease-out));
 }
 
 .anim-dd-section--visible {
@@ -215,9 +215,9 @@
   transform: translateY(0);
 }
 
-/* Filter chip active spring press feedback */
+/* Filter chip active spring press feedback — elastic for snappy toggle feel */
 .filter-chip--active {
-  animation: springChipPress var(--dur-normal) var(--spring);
+  animation: springChipPress var(--dur-normal) var(--spring-elastic, var(--spring));
 }
 
 /* DeepDive panel entrance/exit is driven by JS inline transform + transition
@@ -227,9 +227,9 @@
    keyframes are kept above for potential future use. */
 
 
-/* Theme toggle spring entrance on icon swap */
+/* Theme toggle spring entrance on icon swap — elastic for joy */
 .theme-toggle__icon:not(.theme-toggle__icon--hidden) {
-  animation: springToggleSpin var(--dur-normal) var(--spring) both;
+  animation: springToggleSpin var(--dur-morph) var(--spring-elastic, var(--spring)) both;
 }
 
 /* ---- Lean Filter -------------------------------------------------------- */

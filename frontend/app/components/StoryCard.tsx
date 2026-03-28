@@ -42,26 +42,31 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
   return (
     <article
       ref={cardRef}
-      role="button"
-      tabIndex={0}
-      aria-label={`Open deep dive for: ${story.title}`}
-      onClick={() => {
-        if (cardRef.current && onStoryClick) {
-          hapticLight();
-          onStoryClick(story, cardRef.current.getBoundingClientRect());
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          hapticLight();
-          onStoryClick?.(story, new DOMRect());
-        }
-      }}
       data-story-index={globalIndex}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
+      {/* Stretched link — invisible button covers the entire article
+          while preserving <article> semantics for screen readers */}
+      <button
+        type="button"
+        className="story-card__stretch-link"
+        tabIndex={0}
+        aria-label={`Open deep dive for: ${story.title}`}
+        onClick={() => {
+          if (cardRef.current && onStoryClick) {
+            hapticLight();
+            onStoryClick(story, cardRef.current.getBoundingClientRect());
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            hapticLight();
+            onStoryClick?.(story, new DOMRect());
+          }
+        }}
+      />
       {/* Category tag + time */}
       <div className="story-card__meta">
         <span className="category-tag">{story.category}</span>

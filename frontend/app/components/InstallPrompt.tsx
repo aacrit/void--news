@@ -86,7 +86,7 @@ export default function InstallPrompt() {
       aria-label="Install void --news as an app"
     >
       <span className="install-prompt__text">
-        Install <span style={{ fontFamily: "var(--font-mono)", letterSpacing: "-0.02em" }}>void --news</span>
+        Install <span style={{ fontFamily: "var(--font-data)", letterSpacing: "-0.02em" }}>void --news</span>
       </span>
       <div className="install-prompt__actions">
         <button

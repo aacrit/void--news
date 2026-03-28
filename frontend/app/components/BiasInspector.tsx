@@ -10,6 +10,15 @@ import type {
   FramingRationale,
   GeminiReasoning,
 } from "../lib/types";
+import {
+  getLeanColor,
+  getSenseColor,
+  getRigorColor,
+  getFramingColor,
+  leanLabel,
+  senseLabel,
+  rigorLabel,
+} from "../lib/biasColors";
 
 /* ---------------------------------------------------------------------------
    BiasInspector — "Press Analysis" pop-out panel
@@ -25,118 +34,6 @@ import type {
      BiasInspectorTrigger — the trigger button rendered inside Deep Dive
      BiasInspectorPanel   — the pop-out drawer (conditionally rendered)
    --------------------------------------------------------------------------- */
-
-/* ── Color helpers — reads CSS variables for dark mode awareness ────────── */
-
-let biColorCache: Record<string, string> | null = null;
-const BI_SSR: Record<string, string> = {
-  "--bias-far-left": "#1D4ED8",
-  "--bias-left": "#3B82F6",
-  "--bias-center-left": "#93C5FD",
-  "--bias-center": "#9CA3AF",
-  "--bias-center-right": "#FCA5A5",
-  "--bias-right": "#EF4444",
-  "--bias-far-right": "#B91C1C",
-  "--sense-low": "#22C55E",
-  "--sense-medium": "#EAB308",
-  "--sense-high": "#EF4444",
-  "--rigor-high": "#22C55E",
-  "--rigor-medium": "#EAB308",
-  "--rigor-low": "#EF4444",
-};
-
-function biVars(): Record<string, string> {
-  if (biColorCache) return biColorCache;
-  if (typeof document === "undefined") return BI_SSR;
-  const s = getComputedStyle(document.documentElement);
-  biColorCache = {};
-  for (const v of Object.keys(BI_SSR))
-    biColorCache[v] = s.getPropertyValue(v).trim() || BI_SSR[v];
-  return biColorCache;
-}
-
-if (typeof window !== "undefined") {
-  new MutationObserver((ms) => {
-    for (const m of ms)
-      if (m.type === "attributes" && m.attributeName === "data-mode")
-        biColorCache = null;
-  }).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-mode"],
-  });
-}
-
-function lerpHex(a: string, b: string, t: number): string {
-  const ah = parseInt(a.replace("#", ""), 16);
-  const bh = parseInt(b.replace("#", ""), 16);
-  const ar = (ah >> 16) & 0xff,
-    ag = (ah >> 8) & 0xff,
-    ab = ah & 0xff;
-  const br = (bh >> 16) & 0xff,
-    bg = (bh >> 8) & 0xff,
-    bb = bh & 0xff;
-  const r = Math.round(ar + (br - ar) * t);
-  const g = Math.round(ag + (bg - ag) * t);
-  const bl = Math.round(ab + (bb - ab) * t);
-  return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
-}
-
-function getLeanColor(v: number): string {
-  const c = biVars();
-  if (v <= 14) return c["--bias-far-left"];
-  if (v <= 20) return lerpHex(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
-  if (v <= 35) return lerpHex(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return c["--bias-center-left"];
-  if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return c["--bias-center-right"];
-  if (v <= 80) return lerpHex(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 86) return lerpHex(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
-  return c["--bias-far-right"];
-}
-
-function getSenseColor(v: number): string {
-  const c = biVars();
-  if (v <= 50) return lerpHex(c["--sense-low"], c["--sense-medium"], v / 50);
-  return lerpHex(c["--sense-medium"], c["--sense-high"], (v - 50) / 50);
-}
-
-function getRigorColor(v: number): string {
-  const c = biVars();
-  if (v <= 50) return lerpHex(c["--rigor-low"], c["--rigor-medium"], v / 50);
-  return lerpHex(c["--rigor-medium"], c["--rigor-high"], (v - 50) / 50);
-}
-
-function getFramingColor(v: number): string {
-  return getSenseColor(v);
-}
-
-
-
-/* ── Label helpers ──────────────────────────────────────────────────────── */
-
-function leanLabel(v: number): string {
-  if (v <= 20) return "Far Left";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Center-Left";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Center-Right";
-  if (v <= 80) return "Right";
-  return "Far Right";
-}
-
-function senseLabel(v: number): string {
-  if (v <= 25) return "Measured";
-  if (v <= 50) return "Moderate";
-  if (v <= 75) return "Elevated";
-  return "Inflammatory";
-}
-
-function rigorLabel(v: number): string {
-  if (v >= 75) return "High rigor";
-  if (v >= 50) return "Good rigor";
-  if (v >= 25) return "Moderate rigor";
-  return "Low rigor";
-}
 
 function framingLabel(v: number): string {
   if (v <= 25) return "Neutral";
