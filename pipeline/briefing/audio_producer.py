@@ -250,9 +250,11 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
 
 def _detect_silence_gaps(
     audio: "AudioSegment",
-    min_gap_ms: int = 600,
-    silence_thresh_db: float = -35.0,
+    min_gap_ms: int = 800,
+    silence_thresh_db: float = -45.0,
     chunk_ms: int = 50,
+    min_spacing_ms: int = 45000,
+    max_breaks: int = 4,
 ) -> list[int]:
     """Find silence gaps in audio suitable for section break insertion.
 
@@ -264,13 +266,15 @@ def _detect_silence_gaps(
         audio: The AudioSegment to scan.
         min_gap_ms: Minimum gap duration to qualify as a section boundary.
         silence_thresh_db: dBFS threshold below which audio is "silent."
+            -45dB is strict — only true silence, not low-level speech.
         chunk_ms: Scanning granularity. Smaller = more precise, slower.
+        min_spacing_ms: Minimum distance between section breaks (default 45s).
+        max_breaks: Maximum number of breaks to return.
 
     Returns:
         List of midpoint positions (ms) for each detected gap, sorted ascending.
     """
-    gap_starts: list[int] = []
-    gap_midpoints: list[int] = []
+    raw_midpoints: list[int] = []
     in_silence = False
     silence_start = 0
 
@@ -288,18 +292,25 @@ def _detect_silence_gaps(
                 gap_duration = pos - silence_start
                 if gap_duration >= min_gap_ms:
                     midpoint = silence_start + gap_duration // 2
-                    gap_midpoints.append(midpoint)
+                    raw_midpoints.append(midpoint)
                 in_silence = False
         pos += chunk_ms
 
-    # Handle trailing silence (unlikely to be a story break, but check anyway)
+    # Handle trailing silence
     if in_silence:
         gap_duration = total_ms - silence_start
         if gap_duration >= min_gap_ms:
             midpoint = silence_start + gap_duration // 2
-            gap_midpoints.append(midpoint)
+            raw_midpoints.append(midpoint)
 
-    return gap_midpoints
+    # Enforce minimum spacing between breaks
+    spaced: list[int] = []
+    for mp in raw_midpoints:
+        if not spaced or (mp - spaced[-1]) >= min_spacing_ms:
+            spaced.append(mp)
+
+    # Cap total count
+    return spaced[:max_breaks]
 
 
 def _overlay_section_breaks(
