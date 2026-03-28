@@ -1,7 +1,7 @@
 ---
 name: frontend-builder
 description: "MUST BE USED for building UI components and features. Follows Press & Precision design system, Next.js/TypeScript, newspaper grid, progressive disclosure. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

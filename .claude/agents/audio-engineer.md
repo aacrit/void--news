@@ -1,7 +1,7 @@
 ---
 name: audio-engineer
 description: "MUST BE USED for broadcast audio design — sonic branding, TTS voice selection, audio post-processing, background beds, section transitions, ident tones, MP3 export quality. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write, WebSearch, WebFetch
 ---
 

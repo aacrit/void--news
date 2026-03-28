@@ -1,7 +1,7 @@
 ---
 name: uat-tester
 description: "MUST BE USED for browser-based UAT. Clicks every button, resizes viewports, screenshots anomalies. Validates homepage and Deep Dive views. Read-only."
-model: haiku
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

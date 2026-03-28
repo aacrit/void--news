@@ -1,7 +1,7 @@
 ---
 name: responsive-specialist
 description: "MUST BE USED for desktop/mobile layout issues — dual-layout system, light/dark modes, fluid scaling with clamp(), touch targets, breakpoints. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

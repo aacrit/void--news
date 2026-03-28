@@ -1,7 +1,7 @@
 ---
 name: bias-calibrator
 description: "Runs the bias engine validation suite, detects score regressions, tunes axis weights, and maintains the ground-truth test corpus. Quantitative counterpart to bias-auditor (qualitative)."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

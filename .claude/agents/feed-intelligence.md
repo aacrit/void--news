@@ -1,7 +1,7 @@
 ---
 name: feed-intelligence
 description: "MUST BE USED for RSS feed health, article collection strategy, deduplication, cluster summarization, frontend content generation, and pipeline output quality. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

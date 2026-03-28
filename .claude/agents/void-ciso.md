@@ -1,7 +1,7 @@
 ---
 name: void-ciso
 description: "MUST BE USED for security audits — secrets scanning, Supabase RLS review, CORS, injection prevention, OWASP top 10, dependency vulnerabilities. Read-only."
-model: haiku
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

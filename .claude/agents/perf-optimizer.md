@@ -1,7 +1,7 @@
 ---
 name: perf-optimizer
 description: "MUST BE USED for performance optimization — pipeline runtime (6min budget), frontend Lighthouse (90+ target), Supabase query tuning. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

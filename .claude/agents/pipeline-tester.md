@@ -1,7 +1,7 @@
 ---
 name: pipeline-tester
 description: "MUST BE USED after every pipeline change. Validates article parsing, clustering quality, bias score distributions, and ranking output. Read-only."
-model: haiku
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

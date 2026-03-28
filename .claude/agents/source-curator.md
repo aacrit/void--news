@@ -1,7 +1,7 @@
 ---
 name: source-curator
 description: "MUST BE USED for source list management — credibility vetting, RSS URL maintenance, 90-source list across 3 tiers, tier balance. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

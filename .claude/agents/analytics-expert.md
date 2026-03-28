@@ -1,7 +1,7 @@
 ---
 name: analytics-expert
 description: "MUST BE USED for bias engine benchmarking, ranking calibration, score distribution analysis, and competitive gap audits vs AllSides/NewsGuard. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

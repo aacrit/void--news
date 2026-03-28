@@ -1,7 +1,7 @@
 ---
 name: frontend-fixer
 description: "MUST BE USED for fixing UI bugs — bias display errors, layout breaks, animation jank, accessibility gaps, responsive breakage. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

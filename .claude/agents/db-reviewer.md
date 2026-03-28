@@ -1,7 +1,7 @@
 ---
 name: db-reviewer
 description: "MUST BE USED for Supabase data quality audits — article completeness, bias score distributions, cluster integrity, source coverage, orphaned records. Read-only."
-model: haiku
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: bug-fixer
 description: "MUST BE USED for post-test bug fixing. Ingests pipeline-tester/bias-auditor failures, root-cause groups, implements surgical fixes in analyzers/ranker/frontend. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

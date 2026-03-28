@@ -1,7 +1,7 @@
 ---
 name: ceo-advisor
 description: "Use for strategic product advice — roadmap priorities, competitive positioning vs AllSides/Ground News, launch readiness, differentiation. Read-only."
-model: haiku
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: update-docs
 description: "MUST BE USED after significant code changes. Syncs CLAUDE.md, docs/*.md, and AGENT-TEAM.md with current codebase state. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

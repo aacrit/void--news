@@ -1,7 +1,7 @@
 ---
 name: bias-auditor
 description: "MUST BE USED for ground-truth bias validation. Runs articles through analyzers and compares against known outlet profiles and expert consensus. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

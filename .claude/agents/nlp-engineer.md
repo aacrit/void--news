@@ -1,7 +1,7 @@
 ---
 name: nlp-engineer
 description: "MUST BE USED for bias scoring algorithm development — spaCy/NLTK heuristics, keyword lexicons, NER, sentiment, framing detection. Rule-based only, $0. Read+write."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
