@@ -1699,13 +1699,34 @@ def main():
                     if event:
                         event_counts[event] = event_counts.get(event, 0) + 1
             if event_deferred:
-                # Replace pool in-place for this section
+                # Build per-event floors from the lowest-ranked promoted cluster
+                # of each event. Deferred clusters rank at 75% of their event's
+                # last promoted cluster — not at the absolute pool bottom (old bug
+                # crushed 15-source clusters from ~50 to ~8 points).
+                event_last_promoted: dict[str, float] = {}
+                for c in event_promoted:
+                    t = (c.get("title", "") or "").lower()
+                    for ek, kws in _EVENT_KEYWORDS.items():
+                        if any(kw in t for kw in kws):
+                            # Overwritten per cluster; last = lowest-ranked
+                            event_last_promoted[ek] = c.get("headline_rank", 0)
+                            break
+
                 for c in event_deferred:
                     idx = clusters.index(c)
-                    # Nudge headline_rank down so it sorts below promoted
-                    if event_promoted:
-                        floor = event_promoted[-1].get("headline_rank", 0) - 0.1
-                        clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
+                    t = (c.get("title", "") or "").lower()
+                    event = None
+                    for ek, kws in _EVENT_KEYWORDS.items():
+                        if any(kw in t for kw in kws):
+                            event = ek
+                            break
+                    if event and event in event_last_promoted:
+                        floor = event_last_promoted[event] * 0.75
+                    elif event_promoted:
+                        floor = event_promoted[-1].get("headline_rank", 0) * 0.75
+                    else:
+                        continue
+                    clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
 
             clusters.sort(
                 key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),

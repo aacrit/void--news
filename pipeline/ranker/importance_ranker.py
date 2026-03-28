@@ -165,6 +165,17 @@ _CONSEQUENTIALITY_TERMS: list[str] = [
     "struck", "strikes", "devastated", "devastates",
     "erupted", "erupts", "declared emergency", "declares emergency",
     "state of emergency",
+    # Protests/civil unrest — missing from original lexicon; a 24-source
+    # nationwide protest cluster scored 0 consequentiality without these.
+    # Carefully scoped to action verbs — excludes "protest" as noun-only
+    # (the verb forms and past tenses cover actual events).
+    "protests", "protested", "protest",
+    "rally", "rallied", "rallies",
+    "marched", "march",
+    "demonstration", "demonstrations",
+    "shutdown", "shut down",
+    "riot", "rioted", "riots",
+    "uprising", "uprisings",
     # Agreements/diplomacy
     "ceasefire", "peace deal", "trade deal", "agreement reached",
     "treaty signed", "broke off", "severed ties", "severs ties",
@@ -886,32 +897,45 @@ def compute_coverage_velocity(
 
 def _longevity_penalty(timestamps: list[datetime]) -> float:
     """
-    v5.3: Time-decay penalty for old stories.
+    v5.4: Steepened time-decay penalty for old stories.
 
-    After 72 hours, reduce score. After 7 days, 0.70x.
-    Prevents "consensus noise" from drowning out breaking news —
-    a 7-day-old story with 50 sources shouldn't dominate a 4-hour-old
-    story with 8 sources just because it has more sources.
+    With 4x daily pipeline runs, stories >24h old were dominating the
+    top 10 (8/10 top stories were >24h in analytics benchmark). The old
+    curve only applied ~2.5% penalty at 36h, which was far too gentle.
 
-    Returns multiplier 0.70-1.0.
+    New curve (v5.4):
+        0-6h:   no penalty (1.0) — breaking news window
+        6-12h:  mild decay (1.0 → 0.95) — still developing
+        12-24h: moderate decay (0.95 → 0.85) — maturing story
+        24-36h: significant decay (0.85 → 0.70) — aging out
+        36-48h: heavy decay (0.70 → 0.55) — stale unless major
+        48h+:   floor at 0.50 — old news, hard cap
+
+    Returns multiplier 0.50-1.0.
     """
     if not timestamps:
-        return 0.85  # no timestamps = probably stale
+        return 0.70  # no timestamps = probably stale (lowered from 0.85)
 
     now = datetime.now(timezone.utc)
     most_recent = max(timestamps)
     hours_old = max(0, (now - most_recent).total_seconds() / 3600.0)
 
-    if hours_old < 24:
+    if hours_old < 6:
         return 1.0
-    elif hours_old < 72:
-        # Gentle decay: 1.0 → 0.90 over 24-72h
-        return 1.0 - 0.10 * ((hours_old - 24) / 48)
-    elif hours_old < 168:  # 7 days
-        # Steeper decay: 0.90 → 0.70 over 72h-168h
-        return 0.90 - 0.20 * ((hours_old - 72) / 96)
+    elif hours_old < 12:
+        # Mild decay: 1.0 → 0.95 over 6-12h
+        return 1.0 - 0.05 * ((hours_old - 6) / 6)
+    elif hours_old < 24:
+        # Moderate decay: 0.95 → 0.85 over 12-24h
+        return 0.95 - 0.10 * ((hours_old - 12) / 12)
+    elif hours_old < 36:
+        # Significant decay: 0.85 → 0.70 over 24-36h
+        return 0.85 - 0.15 * ((hours_old - 24) / 12)
+    elif hours_old < 48:
+        # Heavy decay: 0.70 → 0.55 over 36-48h
+        return 0.70 - 0.15 * ((hours_old - 36) / 12)
     else:
-        return 0.70
+        return 0.50
 
 
 def _lean_diversity_score(
@@ -973,9 +997,10 @@ def rank_importance(
         - NEW: Cross-spectrum interest bonus — when per-article bias scores
           show genuine left-right split (min lean < 35 AND max lean > 65),
           the story is contested across the spectrum. AllSides surfaces
-          these explicitly; we add a small bonus (+2.5 pts max) to reflect
-          that contested stories have multi-audience importance. Bonus only
-          applies when the cluster has 3+ articles with scored lean.
+          these explicitly; we add a bonus (+4.0 pts max, raised from 2.5
+          in v5.4) to reflect that contested stories have multi-audience
+          importance. Bonus only applies when the cluster has 3+ articles
+          with scored lean.
 
     v5.0 formula: 10 deterministic signals + optional Gemini editorial
     importance. When editorial_importance is available, it gets 12% weight
@@ -1077,12 +1102,13 @@ def rank_importance(
         + lean_diversity * 0.03
     )
 
-    # v5.1: Cross-spectrum interest bonus.
+    # v5.4: Cross-spectrum interest bonus (raised from +2.5 to +4.0).
     # When per-article bias scores show genuine left-right split (at least
     # one article lean < 35 AND at least one > 65), the story is actively
     # contested across the political spectrum. AllSides surfaces these
-    # explicitly as their core value proposition. We add a small bonus
-    # (max +2.5 pts) to reflect cross-spectrum newsworthiness.
+    # explicitly as their core value proposition. The original +2.5 cap
+    # was too modest to meaningfully lift multi-perspective stories;
+    # raised to +4.0 so genuinely contested stories compete better.
     # Guard: requires 3+ articles with lean scores to avoid noise from
     # 2-article clusters. Does not apply to US-only domestic stories
     # (where left-right split is more about partisan reaction than genuine
@@ -1097,9 +1123,9 @@ def rank_importance(
             has_left = any(v < 35.0 for v in lean_vals)
             has_right = any(v > 65.0 for v in lean_vals)
             if has_left and has_right:
-                # Scale bonus by how far apart the extremes are (0–2.5 pts)
+                # Scale bonus by how far apart the extremes are (0-4.0 pts)
                 lean_spread = max(lean_vals) - min(lean_vals)
-                headline_rank += min(2.5, lean_spread * 0.025)
+                headline_rank += min(4.0, lean_spread * 0.04)
 
     # v5.0: Gemini editorial adjustment (additive, not scaling)
     # When editorial_importance is available, apply a ±10% adjustment

@@ -239,21 +239,21 @@ Gemini Flash TTS:
 
 ### Script Format Conversion
 
-The pipeline generates scripts with `[MARKER]` + `A:`/`B:` format. The audio producer
-converts to Gemini's `SpeakerName: text` format before synthesis.
+The pipeline generates scripts with `A:`/`B:` speaker tags only (no `[MARKER]` segment
+labels — the prompt explicitly bans them). The audio producer converts to Gemini's
+`SpeakerName: text` format before synthesis, and defensively strips any `[MARKER]`
+tags if present in legacy or malformed output.
 
 ```
 INPUT (from daily_brief_generator.py):        OUTPUT (to Gemini Flash TTS):
 
-[GREETING]                                    Anchor: Good evening. This is void
-A: Good evening. This is void                 news, world edition.
-news, world edition.                          Analyst: Good evening. Quite a day.
-B: Good evening. Quite a day.                 Anchor: Here are the headlines...
-[HEADLINES]                            →      Analyst: Meanwhile, the ECB holds
-A: Here are the headlines...                  rates.
-B: Meanwhile, the ECB holds                   ...
-rates.
-...
+A: Good evening. This is void                 Anchor: Good evening. This is void
+news, world edition.                          news, world edition.
+B: Good evening. Quite a day.                 Analyst: Good evening. Quite a day.
+A: Here are the headlines...           →      Anchor: Here are the headlines...
+B: Meanwhile, the ECB holds                   Analyst: Meanwhile, the ECB holds
+rates.                                        rates.
+...                                           ...
 ```
 
 ### Voice Configuration

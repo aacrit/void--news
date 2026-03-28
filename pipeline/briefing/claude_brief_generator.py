@@ -25,9 +25,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from utils.supabase_client import supabase
 from briefing.daily_brief_generator import (
     _SYSTEM_INSTRUCTION,
-    _USER_PROMPT_TEMPLATE,
+    _EDITION_FOCUS,
     _build_stories_block,
     _check_quality,
+    _get_today_lean,
 )
 from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
@@ -46,6 +47,47 @@ ADDITIONAL CRAFT RULES (Claude-generated scripts):
 - Substantive reactions encouraged: "But that contradicts..." "So basically..."
 - Direct address: "Here's what you need to know." "Think about it this way."
 - The close: direct editorial take. What does today actually mean?
+"""
+
+# Claude-specific prompt — generates TL;DR, audio script, AND opinion in one call.
+# The daily_brief_generator.py _USER_PROMPT_TEMPLATE explicitly excludes opinion
+# (it generates opinion in a separate Gemini call). For Claude CLI, we combine
+# everything into a single call to avoid spawning a second Claude process.
+_CLAUDE_PROMPT_TEMPLATE = """\
+Generate the daily brief for the {EDITION} edition of void --news.
+Date: {DATE}
+
+EDITION FOCUS: {EDITION_FOCUS}
+
+OPINION LEAN: Today's editorial lens is {LEAN_UPPER} ({LEAN_LABEL}).
+
+Below are today's top {N} stories for this edition, ranked by importance.
+
+STORIES:
+{stories_block}
+
+Return JSON with exactly five fields:
+1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
+   180-240 words. Hook → Stakes → Sweep → Pattern structure.
+2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
+   4-5 minutes (800-1000 words). Structure: Headlines (3-sentence rundown) → \
+   3 stories in depth → Close with "This was Void news." \
+   No segment markers, no formatting. Just the dialogue.
+3. "opinion_headline" — 6-12 word editorial headline. Not a news headline. \
+   A declarative statement of the editorial thesis. Concrete nouns and active verbs. \
+   Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
+4. "opinion_text" — 80-120 words. 3-5 sentences. First-person plural editorial judgment \
+   from "The Board." Genuinely opinionated. Where the TL;DR says what happened, this \
+   says what we think about it. Use "we" voice. Pick the single most opinion-worthy \
+   story from today's clusters. From the {LEAN_UPPER} lens.
+5. "opinion_audio_script" — A single-voice editorial monologue for TTS. 500-700 words. \
+   One speaker only — no A:/B: tags. Just flowing text. \
+   Open EXACTLY with: \
+   First line: "Now... void opinion." \
+   Second line: State the opinion_headline as a spoken title. \
+   Third line: "Today's {LEAN_LABEL} lens." \
+   Then deliver the argument. Use ellipses (...) for thinking pauses. Use em dashes \
+   for mid-thought pivots. End with: "void opinion." No summary.\
 """
 
 
@@ -161,9 +203,16 @@ def generate_claude_brief(
     # 2. Generate script via Claude CLI
     print(f"\n[2/4] Generating script via Claude {model}...")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
-    prompt = _USER_PROMPT_TEMPLATE.format(
-        EDITION=edition.upper(),
+    today_lean = _get_today_lean()
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[today_lean]
+    edition_key = edition.upper()
+    edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
+    prompt = _CLAUDE_PROMPT_TEMPLATE.format(
+        EDITION=edition_key,
+        EDITION_FOCUS=edition_focus,
         DATE=date_str,
+        LEAN_UPPER=today_lean.upper(),
+        LEAN_LABEL=lean_label,
         N=len(top_clusters),
         stories_block=stories_block,
     )
@@ -183,9 +232,15 @@ def generate_claude_brief(
     print(f"  Opinion: {'yes' if opinion else 'no'}")
     print(f"  Script: {'yes' if script else 'no'} ({len(script or '')} chars)")
 
+    opinion_headline = result.get("opinion_headline", "")
+    opinion_audio = result.get("opinion_audio_script", "")
+
     brief = {
         "tldr_text": tldr,
         "opinion_text": opinion if opinion else None,
+        "opinion_headline": opinion_headline if opinion_headline else None,
+        "opinion_audio_script": opinion_audio if opinion_audio else None,
+        "opinion_lean": today_lean,
         "audio_script": script,
         "top_cluster_ids": [c.get("_db_id", "") for c in top_clusters if c.get("_db_id")],
         "generator": f"claude-{model}",
@@ -219,6 +274,8 @@ def generate_claude_brief(
         "edition": edition,
         "tldr_text": brief["tldr_text"],
         "opinion_text": brief.get("opinion_text"),
+        "opinion_headline": brief.get("opinion_headline"),
+        "opinion_lean": brief.get("opinion_lean"),
         "audio_script": brief.get("audio_script"),
         "top_cluster_ids": brief.get("top_cluster_ids", []),
     }
@@ -230,9 +287,18 @@ def generate_claude_brief(
         brief_row["audio_voice_label"] = "Three voices" if brief.get("opinion_audio_script") else "Two hosts"
 
     try:
-        # Delete existing briefs for this edition, insert new
-        supabase.table("daily_briefs").delete().eq("edition", edition).execute()
+        # Upsert: insert new brief, then delete older ones for this edition.
+        # Order matters — insert first so the frontend always has a record.
         supabase.table("daily_briefs").insert(brief_row).execute()
+        # Clean up older briefs for this edition (keep only the latest)
+        latest = supabase.table("daily_briefs").select("id").eq(
+            "edition", edition
+        ).order("created_at", desc=True).limit(1).execute()
+        if latest.data:
+            keep_id = latest.data[0]["id"]
+            supabase.table("daily_briefs").delete().eq(
+                "edition", edition
+            ).neq("id", keep_id).execute()
         print(f"  Stored successfully")
     except Exception as e:
         print(f"  DB update failed: {e}")
