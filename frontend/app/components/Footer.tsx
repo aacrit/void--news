@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 
@@ -50,6 +51,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
         </div>
         <p className="footer-tagline">Free, transparent news bias analysis</p>
         <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
+        <Link href="/command-center" className="footer-cc-link" aria-label="Command Center">CC</Link>
       </div>
     </footer>
   );
