@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-23 (rev 13)
+Last updated: 2026-03-28 (rev 13)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -69,7 +69,7 @@ English subtitles appear on first encounter (sessionStorage) then fade. The CLI 
 
 ### Zero Operational Cost
 - No paid APIs. All bias analysis is rule-based NLP running locally.
-- Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 3 brief calls per run.
+- Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 5 brief calls per run.
 - Gemini 2.5 Flash TTS: free tier ($0), same GEMINI_API_KEY as summarization. LLM-native multi-speaker dialogue synthesis in a single API call. No per-turn stitching needed.
 - GitHub Actions, Supabase, GitHub Pages — all free tier.
 - Motion One via CDN importmap (no npm install needed).
@@ -111,11 +111,11 @@ python pipeline/validation/runner.py --category wire    # Single category
 
 Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on regression); CI gate via `.github/workflows/validate-bias.yml`. Run after any bias engine change.
 
-### Importance Ranking — v5.1
+### Importance Ranking — v5.3
 
 **Ranking is BIAS-BLIND.** Bias analysis belongs in the display layer, not story selection.
 
-10-signal formula in `pipeline/ranker/importance_ranker.py`. Deterministic weights sum to 1.0 (0.88 when Gemini editorial importance available):
+11-signal formula in `pipeline/ranker/importance_ranker.py`. Deterministic weights sum to 1.0:
 
 | Signal | Weight | Notes |
 |--------|--------|-------|
@@ -128,11 +128,14 @@ Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on 
 | Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean); US-only → 0.85x damper |
 | Perspective diversity | 6% | Editorial viewpoint spread; bias-blind |
 | Geographic impact | 6% | G20/P5 nations score 3x |
-| Coverage velocity | 6% | Sources added in last 6h; diminishing returns |
+| Coverage velocity | 3% | Sources added in last 6h; diminishing returns |
+| Lean diversity | 3% | Whether left+right BOTH cover the story |
 
-**Gemini editorial importance** (v5.0): When available, 1-10 editorial score adds 12% weight; deterministic signals scale to 88%.
+**Gemini editorial importance** (v5.0): When available, 1-10 editorial score applies additive adjustment (+/-6.7 pts max). ei=10 -> up to +10 pts; ei=1 -> up to -5 pts; ei~5 -> neutral. Deterministic base is never scaled down.
 
 **v5.1 additions**: US-only divergence damper (0.85x); cross-spectrum interest bonus (+2.5 pts max when genuine left-right split across 3+ articles, non-US clusters only).
+
+**v5.3 additions**: Lean diversity signal (3%, from velocity 6%->3%); longevity penalty for old stories.
 
 Tier diversity scoring:
 
@@ -178,40 +181,40 @@ One world-focused brief generated per run, drawing from the top 20 clusters glob
 
 **Voice pairs** (`pipeline/briefing/voice_rotation.py`): Gemini prebuilt voices. world=Charon/Aoede, us=Enceladus/Kore, india=Puck/Leda. Roles swap on alternate days (UTC day-of-year parity). 30 voices available.
 
-**Gemini budget**: 3 calls/run (one per edition requested, currently world-only). Uses `count_call=False` — does not consume 25-call cluster summarization cap. Falls back to rule-based TL;DR (top 5 cluster titles) when Gemini unavailable. No audio without Gemini script.
+**Gemini budget**: 5 calls/run (one per edition, supports all 5 editions). Uses `count_call=False` — does not consume 25-call cluster summarization cap. Falls back to rule-based TL;DR (top 5 cluster titles) when Gemini unavailable. No audio without Gemini script.
 
 **Claude CLI premium scripts** (`pipeline/briefing/claude_brief_generator.py`): Optional manual 1x/day generation via `python -m pipeline.briefing.claude_brief_generator --edition world --model sonnet`. Uses Claude Max (Sonnet/Opus) for higher-quality conversational dialogue. Enhanced disfluency prompt addendum for natural speech patterns. Stores to Supabase, overwrites current brief for edition.
 
 **Audio cadence**: currently always-on (testing mode). Production target: 2x/day (morning + evening UTC).
 
 ### Source Curation
-370 vetted sources in three tiers:
+380 vetted sources in three tiers:
 - **Major US (49)** — AP, Reuters, NYT, WSJ, WaPo, Fox, CNN, NPR, PBS, Bloomberg, Breitbart, Newsmax, Daily Wire, etc.
-- **International (154)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
-- **Independent/Nonprofit (167)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
+- **International (158)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
+- **Independent/Nonprofit (173)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
 
-7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.91:1 (113 left : 59 right : 198 center).
+7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.93:1 (116 left : 60 right : 204 center).
 
-**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=150, World=200, India=20.
+**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=150, World=210, India=20.
 
 ## Pipeline Flow (4x Daily)
 
 ```
- 1.  LOAD SOURCES  — 370 sources from data/sources.json, sync to Supabase
+ 1.  LOAD SOURCES  — 380 sources from data/sources.json, sync to Supabase
  2.  PIPELINE RUN  — Create pipeline_runs record
- 3.  FETCH         — RSS feeds from 370 sources (parallel)
- 4.  SCRAPE        — Full text via web scraper (15 workers), RSS summary fallback
+ 3.  FETCH         — RSS feeds from 380 sources (parallel)
+ 4.  SCRAPE        — Full text via web scraper (30 workers), RSS summary fallback
  4b. DEDUPLICATE   — TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
  5.  ANALYZE       — 5-axis bias scoring (all return score + rationale)
  6.  CLUSTER       — Phase 1: TF-IDF agglomerative (threshold 0.2, doc length 500 words)
-                     Phase 2: entity-overlap merge pass (2+ shared entities, 72h window)
+                     Phase 2: entity-overlap merge pass (3+ shared entities, 48h window)
  6b. RE-FRAME      — Framing re-run with cluster context (omission detection)
      ORPHANS       — Unclustered articles wrapped as single-article clusters
  6c. GEMINI REASON — Contextual score adjustments on low-confidence/high-divergence clusters (25-call budget); mutates article_bias_map
  7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
- 7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
- 7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table. Non-audio runs (00:00, 12:00 UTC) carry forward audio fields (audio_url, audio_script, audio_duration) from the previous brief so audio is never buried by text-only updates.
+ 7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.3 ranking (11 signals + optional Gemini importance); topic diversity re-rank
+ 7c. EDITORIAL TRIAGE  — Gemini reorders top 30 per section using editorial_importance when available
+ 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (5-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table. Non-audio runs (00:00, 12:00 UTC) carry forward audio fields (audio_url, audio_script, audio_duration) from the previous brief so audio is never buried by text-only updates.
  8.  STORE         — Write clusters; sections[] array from all editions covered
  8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
  9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
@@ -351,20 +354,42 @@ Frontend filters by edition: `.contains("sections", [edition])` (PostgREST array
 - `update_updated_at_column()` — auto-trigger on articles + story_clusters
 - `cleanup_stale_clusters()` + `cleanup_stuck_pipeline_runs()` — maintenance RPCs
 
-Migrations: `supabase/migrations/` (001-017).
+Migrations: `supabase/migrations/` (001-019).
 
-## Skills (`.claude/skills/`)
+## Skills & Workflows (`.claude/skills/`)
+
+### Design Skill
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
 | `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
 
-## Agent Team (19 Agents, 8 Divisions)
+### Agent Team Workflows (10 Orchestrated Pipelines)
+
+Multi-agent workflows invoked via `/command`. Each orchestrates agents in parallel (||) and sequential (→) stages with automatic gating.
+
+| Command | Agents | Pattern | When to Use |
+|---------|--------|---------|-------------|
+| `/pipeline-qa` | pipeline-tester \|\| bias-calibrator → bug-fixer → pipeline-tester \|\| bias-calibrator | Validate → Fix → Re-validate | After any `pipeline/` code change |
+| `/bias-audit` | analytics-expert \|\| bias-auditor → nlp-engineer → pipeline-tester \|\| bias-calibrator | Benchmark → Fix → Confirm | Gold standard for bias engine changes |
+| `/bias-calibrate` | nlp-engineer → bias-calibrator \|\| analytics-expert → bias-auditor → pipeline-tester | Tune → Check → Verify | Precision tuning of scoring params |
+| `/frontend-ship` | frontend-builder → responsive-specialist \|\| perf-optimizer → uat-tester → frontend-fixer | Build → Test → Fix | Any UI change or feature |
+| `/audio-qa` | audio-engineer → pipeline-tester \|\| db-reviewer → bug-fixer | Review → Validate → Fix | Daily brief audio changes |
+| `/full-audit` | void-ciso \|\| db-reviewer \|\| perf-optimizer \|\| update-docs \|\| bias-calibrator → bug-fixer \|\| frontend-fixer | 5-way audit → Triage → Fix | Comprehensive system health check |
+| `/launch-check` | 8 agents parallel → ceo-advisor → deploy | 8-way validate → Go/No-go | Pre-launch final gate |
+| `/daily-ops` | feed-intelligence \|\| db-reviewer \|\| pipeline-tester → triage | 3-way health check | Morning check / post-pipeline |
+| `/source-review` | source-curator → feed-intelligence \|\| analytics-expert → pipeline-tester | Vet → Health check → Validate | Adding/removing/auditing sources |
+| `/security-sweep` | void-ciso \|\| perf-optimizer → bug-fixer → void-ciso \|\| pipeline-tester | Audit → Fix → Re-verify | Fast security + perf hardening |
+
+**Workflow conventions**: `||` = parallel, `→` = sequential, gate between stages (pass = skip remaining). All workflows produce structured CEO reports.
+
+## Agent Team (20 Agents, 9 Divisions)
 
 > Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
 
 ```
 CEO (Aacrit)
+  ├── Agent Engineering — agent-architect
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
@@ -400,14 +425,20 @@ CEO (Aacrit)
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` |
 | Strategic advice, roadmap, priorities | `ceo-advisor` |
 | Logo, favicon, brand identity | `logo-designer` |
+| Agent audit, optimization, new agent design, prompt engineering, technology radar | `agent-architect` |
 
-### Sequential Cycles
+### Sequential Cycles (now invocable as `/commands`)
 ```
-Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
-Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
-Bias Calibration:  nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
-Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
-Audio Quality:     audio-engineer → pipeline-tester → bug-fixer
+Pipeline Quality:  /pipeline-qa   — pipeline-tester → bug-fixer → pipeline-tester
+Bias Audit:        /bias-audit    — analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
+Bias Calibration:  /bias-calibrate — nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
+Frontend Build:    /frontend-ship — frontend-builder → responsive-specialist → uat-tester → frontend-fixer
+Audio Quality:     /audio-qa      — audio-engineer → pipeline-tester → bug-fixer
+Full Audit:        /full-audit    — 5-way parallel audit → triage → critical fixes
+Launch Gate:       /launch-check  — 8-way parallel validation → ceo-advisor go/no-go
+Daily Ops:         /daily-ops     — 3-way parallel health check → traffic-light dashboard
+Source Review:     /source-review — source-curator → feed-intelligence → pipeline-tester
+Security Sweep:    /security-sweep — void-ciso || perf-optimizer → fix → re-verify
 ```
 
 ### Locked Decisions (Require CEO Approval)
@@ -415,7 +446,7 @@ Audio Quality:     audio-engineer → pipeline-tester → bug-fixer
 - 6-axis bias scoring model + confidence
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 370-source curated list (3 tiers); 7-point political lean spectrum
+- 380-source curated list (3 tiers); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all AI work
 
@@ -449,14 +480,14 @@ void-news/
 │   │   ├── gemini_client.py       # Rate limiting, call caps, optional system_instruction
 │   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence + editorial_importance
 │   ├── briefing/
-│   │   ├── daily_brief_generator.py # Gemini: TL;DR (5-7 sentences) + two-host audio script; 3-call budget; rule-based fallback
+│   │   ├── daily_brief_generator.py # Gemini: TL;DR (5-7 sentences) + two-host audio script; 5-call budget; rule-based fallback
 │   │   ├── audio_producer.py      # Gemini 2.5 Flash TTS: native multi-speaker dialogue synthesis, PCM→MP3 via pydub, Supabase Storage upload
 │   │   ├── claude_brief_generator.py # Claude CLI premium script generator (manual 1x/day, Claude Max)
 │   │   ├── voice_rotation.py      # Neural voice pairs per edition; roles swap daily
 │   │   ├── generate_assets.py     # Glass & Gravity sonic identity: bloom intro, glass-bell transition, resolving outro
 │   │   └── assets/                # ident.wav, transition.wav, outro.wav (generated)
 │   ├── categorizer/
-│   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
+│   ├── ranker/                    # v5.3: 11 signals + confidence curve + Gemini editorial importance
 │   ├── validation/                # Bias engine test suite: 26 ground-truth articles, signal_tracker, AllSides cross-ref, runner (96.9% accuracy), snapshot
 │   ├── utils/                     # Supabase client, nlp_shared
 │   ├── main.py                    # Orchestrator (12 steps + cleanup)
@@ -503,24 +534,24 @@ void-news/
 │   ├── package.json               # Next.js 16.1.7, React 19.2.3
 │   └── next.config.ts
 ├── .claude/
-│   ├── agents/                    # 18 agent definitions
-│   └── skills/                    # pressdesign skill
+│   ├── agents/                    # 20 agent definitions
+│   └── skills/                    # 11 skills: pressdesign + 10 agent team workflows (/pipeline-qa, /bias-audit, /bias-calibrate, /frontend-ship, /audio-qa, /full-audit, /launch-check, /daily-ops, /source-review, /security-sweep)
 ├── .github/workflows/
 │   ├── pipeline.yml               # 4x daily cron
 │   ├── deploy.yml                 # Build + deploy to GitHub Pages
 │   ├── migrate.yml                # Supabase migration runner
 │   └── validate-bias.yml          # CI gate: bias engine regression on every push
-├── data/sources.json              # 370 curated sources (7-point lean spectrum)
-└── supabase/migrations/           # 001-017
+├── data/sources.json              # 380 curated sources (7-point lean spectrum)
+└── supabase/migrations/           # 001-019
 ```
 
 ## MVP Scope
 
 ### Phase 1 — Foundation -- COMPLETE
-- [x] Project scaffolding, 370 sources (expanded from 222), Supabase schema (migrations 001-017), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
+- [x] Project scaffolding, 380 sources (expanded from 222), Supabase schema (migrations 001-019), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
 
 ### Phase 2 — Analysis Engine -- COMPLETE
-- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Gemini 2.5 Flash TTS), cluster dedup (step 8b), RSS fetch global timeout handling.
+- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.3 (11 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Gemini 2.5 Flash TTS), cluster dedup (step 8b), RSS fetch global timeout handling.
 
 ### Phase 3 — Frontend MVP -- COMPLETE
 - [x] Next.js 16 App Router, design token system, desktop + mobile layouts, StoryCard + LeadStory, news feed (headline_rank), "Why This Story" tooltip, category filtering, BiasLens Three Lenses, RefreshButton, light/dark mode, DailyBrief ("void --onair" TL;DR + audio player).

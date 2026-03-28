@@ -1,7 +1,7 @@
 ---
 name: uat-tester
 description: "MUST BE USED for UI/UX auditing. World-class auditor that evaluates every element through the user's eyes — information architecture, interaction design, visual hierarchy, cognitive load, accessibility, emotional resonance, and design system compliance. Read-only."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

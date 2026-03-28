@@ -35,16 +35,18 @@ Agent work:        Claude Code CLI (Max subscription) — $0
 
 ```
 CEO (Aacrit)
+  ├── Agent Engineering — agent-architect
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
+  ├── Audio ———————————— audio-engineer
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
 ```
 
-**Total: 18 agents across 7 divisions**
+**Total: 20 agents across 9 divisions**
 
 ---
 
@@ -83,7 +85,13 @@ CEO (Aacrit)
 |-------|---------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 370-source list | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 380-source list | Yes | Source list changes |
+
+### Agent Engineering Division
+
+| Agent | Purpose | Write Access | Trigger |
+|-------|---------|-------------|---------|
+| `agent-architect` | Audits, optimizes, and designs all agents. Reviews definitions for best-in-class tooling, cost efficiency, prompt engineering. Builds new agents on CEO demand. | Yes (agent definitions only) | CEO request, post-major-change review, periodic fleet audit |
 
 ### Security Division
 
@@ -127,6 +135,11 @@ nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
 frontend-builder → responsive-specialist → uat-tester → frontend-fixer
 ```
 
+**Audio Quality Cycle:**
+```
+audio-engineer → pipeline-tester → bug-fixer
+```
+
 **Full Pipeline Dev Cycle:**
 ```
 feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipeline-tester
@@ -153,9 +166,11 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 | Browser testing, click-through QA | `uat-tester` | Frontend |
 | spaCy models, bias scoring algorithms, NER | `nlp-engineer` | Pipeline |
 | Source vetting, RSS config, credibility | `source-curator` | Pipeline |
+| Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` | Audio |
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` | Security |
 | Strategic advice, roadmap, priorities | `ceo-advisor` | Product |
 | Logo, favicon, brand identity | `logo-designer` | Branding |
+| Agent audit, optimization, new agent design, prompt engineering | `agent-architect` | Agent Engineering |
 
 ---
 
@@ -173,7 +188,7 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 370-source curated list (3 tiers); 7-point political lean spectrum
+- 380-source curated list (3 tiers: 49 us_major, 158 international, 173 independent); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline summarization
 
