@@ -40,6 +40,14 @@ try:
 except ImportError:
     pass
 
+try:
+    from briefing.generate_assets import generate_headline_underscore
+except ImportError:
+    try:
+        from pipeline.briefing.generate_assets import generate_headline_underscore
+    except ImportError:
+        generate_headline_underscore = None
+
 # Allow running from pipeline root
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -351,6 +359,115 @@ def _overlay_section_breaks(
 
 
 # ---------------------------------------------------------------------------
+# Word-count proportional placement (replaces silence detection)
+# ---------------------------------------------------------------------------
+
+def _snap_to_quiet(
+    audio: "AudioSegment",
+    target_ms: int,
+    window_ms: int = 3000,
+    grain_ms: int = 200,
+) -> int:
+    """Find the quietest grain_ms chunk within +/- window_ms of target_ms.
+
+    Instead of scanning the entire audio for silence (which fails on
+    continuous Gemini TTS), this searches a narrow window around a known
+    approximate boundary position to find the best placement point.
+
+    Returns the midpoint (ms) of the quietest chunk in the window.
+    """
+    start = max(0, target_ms - window_ms)
+    end = min(len(audio), target_ms + window_ms)
+
+    best_pos = target_ms
+    best_rms = float('inf')
+
+    pos = start
+    while pos + grain_ms <= end:
+        chunk = audio[pos : pos + grain_ms]
+        if chunk.rms < best_rms:
+            best_rms = chunk.rms
+            best_pos = pos + grain_ms // 2
+        pos += grain_ms // 2  # 50% overlap for precision
+
+    return best_pos
+
+
+def _place_proportional_elements(
+    news_seg: "AudioSegment",
+    dialogue: str,
+) -> "AudioSegment":
+    """Place section breaks and headline sting using word-count proportional positions.
+
+    Uses the known script structure (deterministic percentages from the system
+    prompt) to estimate boundary positions in the TTS audio, then snaps each
+    estimate to the nearest quiet point for clean placement.
+
+    Falls back to silence-based _overlay_section_breaks if the dialogue is
+    too short (<200 words) or audio too brief (<60s) to estimate reliably.
+
+    Returns the news audio with musical elements overlaid.
+    """
+    total_words = len(dialogue.split())
+    total_ms = len(news_seg)
+
+    # Fallback guard: if script is too short, use silence detection
+    if total_words < 200 or total_ms < 60000:
+        print(f"  [audio] Short script ({total_words}w, {total_ms}ms) — falling back to silence detection")
+        section_break = _load_asset("section_break.wav")
+        return _overlay_section_breaks(news_seg, section_break)
+
+    # Cumulative proportional positions from script structure
+    headlines_end_pct = 0.08
+    story1_end_pct = 0.38
+    story2_end_pct = 0.63
+
+    # Compute raw ms positions
+    raw_headlines_end = int(total_ms * headlines_end_pct)
+    raw_story1_end = int(total_ms * story1_end_pct)
+    raw_story2_end = int(total_ms * story2_end_pct)
+
+    # Snap to quiet points
+    headlines_end = _snap_to_quiet(news_seg, raw_headlines_end)
+    story1_end = _snap_to_quiet(news_seg, raw_story1_end)
+    story2_end = _snap_to_quiet(news_seg, raw_story2_end)
+
+    # Enforce 30s minimum spacing between adjacent placements
+    placements = [("headline_sting", headlines_end)]
+
+    if story1_end - headlines_end >= 30000:
+        placements.append(("section_break_1", story1_end))
+
+    if len(placements) >= 2:
+        last_pos = placements[-1][1]
+    else:
+        last_pos = headlines_end
+
+    if story2_end - last_pos >= 30000:
+        placements.append(("section_break_2", story2_end))
+
+    # Load assets
+    headline_sting = _load_asset("headline_sting.wav")
+    section_break = _load_asset("section_break.wav")
+
+    result = news_seg
+    for label, pos_ms in placements:
+        if label == "headline_sting" and headline_sting:
+            overlay_start = max(0, pos_ms - len(headline_sting) // 2)
+            if overlay_start + len(headline_sting) <= len(result):
+                result = result.overlay(headline_sting, position=overlay_start)
+                print(f"  [audio] Headline sting at {pos_ms}ms (raw {raw_headlines_end}ms)")
+        elif label.startswith("section_break") and section_break:
+            overlay_start = max(0, pos_ms - len(section_break) // 2)
+            if overlay_start + len(section_break) <= len(result):
+                result = result.overlay(section_break, position=overlay_start)
+                print(f"  [audio] Section break at {pos_ms}ms (raw {raw_story1_end if '1' in label else raw_story2_end}ms)")
+
+    print(f"  [audio] Placed {len(placements)} musical element(s) via proportional positioning")
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Upload
 # ---------------------------------------------------------------------------
 
@@ -535,9 +652,19 @@ def produce_audio(
     else:
         print("  [audio] No opinion_audio_script — broadcast ends after news")
 
-    # --- Step 3: Overlay section breaks within news audio ---
-    section_break = _load_asset("section_break.wav")
-    news_seg = _overlay_section_breaks(news_seg, section_break)
+    # --- Step 3: Place section breaks + headline sting via proportional positioning ---
+    news_seg = _place_proportional_elements(news_seg, dialogue)
+
+    # --- Step 3b: Overlay headline underscore on news audio ---
+    if generate_headline_underscore is not None:
+        total_news_ms = len(news_seg)
+        headlines_end_ms = int(total_news_ms * 0.08)
+        headlines_end_ms = max(10000, min(25000, headlines_end_ms))
+        underscore = generate_headline_underscore(headlines_end_ms)
+        news_seg = news_seg.overlay(underscore, position=0)
+        print(f"  [audio] Headline underscore overlaid ({headlines_end_ms}ms)")
+    else:
+        print("  [audio] generate_headline_underscore not available — skipping")
 
     # --- Step 4: Assemble final audio ---
     combined = AudioSegment.empty()
@@ -560,7 +687,8 @@ def produce_audio(
         combined += AudioSegment.silent(duration=250)
         combined += news_seg
 
-    combined += AudioSegment.silent(duration=350)
+    # Brief breath before editorial transition (was 350ms)
+    combined += AudioSegment.silent(duration=200)
 
     # Opinion section (after editorial page-turn transition)
     if opinion_seg:
@@ -571,9 +699,18 @@ def produce_audio(
             combined += transition
         else:
             combined += AudioSegment.silent(duration=800)
-        combined += AudioSegment.silent(duration=200)
+        # Minimal gap after transition — Phase 3 handles the arrival (was 200ms)
+        combined += AudioSegment.silent(duration=100)
         combined += opinion_seg
-        combined += AudioSegment.silent(duration=350)
+
+        # Opinion kicker: chord stab after editorial
+        opinion_kicker = _load_asset("opinion_kicker.wav")
+        if opinion_kicker:
+            combined += AudioSegment.silent(duration=100)
+            combined += opinion_kicker
+            combined += AudioSegment.silent(duration=200)
+        else:
+            combined += AudioSegment.silent(duration=350)
 
     # Outro: the resolve
     outro = _load_asset("outro.wav")

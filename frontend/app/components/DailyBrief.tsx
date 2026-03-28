@@ -59,8 +59,8 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(0);
     setDuration(0);
     setAudioError(false);
-    // Single daily brief — always world, edition-agnostic
-    fetchDailyBrief("world").then((data) => {
+    // Fetch edition-specific brief (pipeline generates distinct content per edition)
+    fetchDailyBrief(edition).then((data) => {
       if (!cancelled) setBrief(data);
     });
     return () => { cancelled = true; };
@@ -190,11 +190,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
     : brief.opinion_lean === "right" ? "db-lean-badge--right"
     : "db-lean-badge--center";
 
-  const voiceLabel = brief.audio_url
-    ? (brief.audio_url.includes("/india/") ? "Puck & Leda"
-      : brief.audio_url.includes("/us/") ? "Enceladus & Kore"
-      : "Charon & Aoede")
-    : "Charon & Aoede";
+  const voiceLabel = brief.audio_voice_label || "Two voices";
 
   const handleOpinionToggle = () => {
     if (!isMobile) return;

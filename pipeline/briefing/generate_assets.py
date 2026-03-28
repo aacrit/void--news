@@ -289,58 +289,119 @@ def generate_section_break():
 # ---------------------------------------------------------------------------
 
 def generate_news_to_opinion():
-    """News-to-opinion transition: a deliberate 1.3s breath. The editorial shift.
+    """News-to-opinion transition: a 2.5s three-phase editorial page turn.
 
-    This is the moment the broadcast pivots from reporting to analysis.
-    It needs weight — more than a section break, less than the intro.
-    The listener should feel a gear change: "the facts are done, now
-    here is what we think."
+    The most important structural moment in the broadcast — the shift from
+    two-voice reporting to single-voice editorial.
 
-    Design:
-    - Opens with a low D3 pulse (gravity, authority)
-    - The fifth (A3) and ninth (E4) bloom briefly — the chord
-      emerging in miniature, a compressed echo of the intro
-    - A sustained shimmer pair on F#4 creates a "held breath" quality
-    - The whole thing resolves downward to the root — settling before
-      the opinion voice arrives
+    Phase 1 — The Resolve (0-800ms):
+      The news section closes. Low D3 pad swells, the fifth (A3) arrives
+      as a bell. The feeling is "settling."
 
-    This replaces the old transition.wav for the news→opinion boundary.
+    Phase 2 — The Breath (800-1600ms):
+      Literal silence. 800ms of nothing. The ear resets. The contrast
+      between Phase 1's harmonics and Phase 2's silence creates the
+      "page turn" — the brain registers a structural shift.
+
+    Phase 3 — The Arrival (1600-2500ms):
+      The opinion voice's territory. F#4 bell rings alone, then E4 ghosts
+      in underneath with A4 shimmer. A compressed intro bloom starting
+      from the chord's middle, not the root.
     """
-    canvas = AudioSegment.silent(duration=1300)
+    canvas = AudioSegment.silent(duration=2500)
 
-    # Opening gravity: D3 pad — deliberate, weighty
-    root_open = _pad(_CHORD["root"], 900, -10)
-    canvas = canvas.overlay(root_open, position=50)
+    # --- Phase 1: The Resolve (0-800ms) ---
+    # Root D3 pad — gravity, authority
+    root_open = _pad(_CHORD["root"], 800, -8)
+    canvas = canvas.overlay(root_open, position=0)
 
-    # Sub-bass presence: D2 — felt in the chest
-    sub = _pad(73.4, 600, -22)
-    canvas = canvas.overlay(sub, position=100)
+    # Root detune — warmth, beating
+    root_detune = _pad(_CHORD["root"] + 0.8, 700, -16)
+    canvas = canvas.overlay(root_detune, position=50)
 
-    # The bloom fragment: fifth + ninth arrive together
-    # Compressed version of the intro's layered build
-    fifth = _bell(_CHORD["fifth"], 600, -14)
+    # Fifth A3 bell — short, settling
+    fifth = _bell(_CHORD["fifth"], 400, -14)
     canvas = canvas.overlay(fifth, position=200)
 
-    ninth = _pad(_CHORD["ninth"], 500, -16)
-    canvas = canvas.overlay(ninth, position=250)
+    # Sub-bass D2 — felt in the chest
+    sub = _pad(73.4, 600, -20)
+    canvas = canvas.overlay(sub, position=100)
 
-    # Held breath: F#4 shimmer pair — the pause before opinion
-    # Longer sustain than the section break, more deliberate
-    breath = _shimmer_pair(_CHORD["third"], 1.5, 700, -18)
-    canvas = canvas.overlay(breath, position=300)
+    # --- Phase 2: The Breath (800-1600ms) ---
+    # Silence. The canvas is already silent here. Nothing to add.
 
-    # High fifth accent: brief A4 bell to mark the pivot point
-    accent = _bell(_CHORD["hi_fifth"], 250, -20)
-    canvas = canvas.overlay(accent, position=450)
+    # --- Phase 3: The Arrival (1600-2500ms) ---
+    # F#4 bell — the warmth note, alone first
+    third_bell = _bell(_CHORD["third"], 500, -12)
+    canvas = canvas.overlay(third_bell, position=1600)
 
-    # Shape: gentle swell in, slow resolve out
-    canvas = canvas.fade_in(60).fade_out(500)
+    # E4 pad — the ninth ghosts in underneath
+    ninth_pad = _pad(_CHORD["ninth"], 400, -18)
+    canvas = canvas.overlay(ninth_pad, position=1700)
+
+    # A4 + 441.5 Hz shimmer pair — high crystalline shimmer
+    hi_shimmer = _shimmer_pair(_CHORD["hi_fifth"], 1.5, 350, -22)
+    canvas = canvas.overlay(hi_shimmer, position=1750)
+
+    # Shape: Phase 1 attack, Phase 3 decay
+    canvas = canvas.fade_in(60).fade_out(400)
 
     # Master gain: more present than section break, less than ident
     canvas = canvas.apply_gain(-4)
 
     canvas.export(ASSETS_DIR / "news_to_opinion.wav", format="wav")
-    print(f"  news_to_opinion.wav ({len(canvas)}ms) — editorial page turn")
+    print(f"  news_to_opinion.wav ({len(canvas)}ms) — three-phase editorial page turn")
+
+
+# ---------------------------------------------------------------------------
+# Headline Underscore: "The Arrival" — rhythmic bed under opening headlines
+# ---------------------------------------------------------------------------
+
+def generate_headline_underscore(duration_ms: int) -> "AudioSegment":
+    """Generate a rhythmic underscore bed for the headlines section.
+
+    Dynamically generated at assembly time (not saved to disk) because its
+    duration must match the estimated headlines length.
+
+    Three layers from the D major 9th palette:
+      - D3 bell pulses every 800ms (75 BPM) — forward momentum
+      - A3 shimmer pair (1.5 Hz detune) — harmonic warmth that breathes
+      - Single E4 bell accent at 60% mark — the ninth waking up
+
+    Args:
+        duration_ms: Target duration, typically 12-20 seconds.
+
+    Returns:
+        AudioSegment at SAMPLE_RATE (24000 Hz), with fade-in and fade-out applied.
+    """
+    canvas = AudioSegment.silent(duration=duration_ms)
+
+    # Layer 1: Rhythmic root pulse — D3 bell every 800ms (75 BPM)
+    pulse_interval = 800
+    pulse_pos = 0
+    while pulse_pos + 200 <= duration_ms:
+        pulse = _bell(_CHORD["root"], 200, -20)
+        canvas = canvas.overlay(pulse, position=pulse_pos)
+        pulse_pos += pulse_interval
+
+    # Layer 2: Shimmer swell — A3 + A3+1.5 Hz pad pair
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.5, duration_ms, -22)
+    canvas = canvas.overlay(shimmer, position=0)
+
+    # Layer 3: Color accent — single E4 bell at 60% mark
+    accent_pos = int(duration_ms * 0.6)
+    accent = _bell(_CHORD["ninth"], 300, -26)
+    canvas = canvas.overlay(accent, position=accent_pos)
+
+    # Gain curve: 800ms fade-in, 2000ms fade-out
+    fade_in_ms = min(800, duration_ms // 3)
+    fade_out_ms = min(2000, duration_ms // 2)
+    canvas = canvas.fade_in(fade_in_ms).fade_out(fade_out_ms)
+
+    # Master gain: louder than background bed (-30 dB) but well under speech
+    canvas = canvas.apply_gain(-16)
+
+    return canvas
 
 
 # ---------------------------------------------------------------------------
@@ -395,6 +456,54 @@ def generate_headline_sting():
 
     canvas.export(ASSETS_DIR / "headline_sting.wav", format="wav")
     print(f"  headline_sting.wav ({len(canvas)}ms) — chord stab punctuation")
+
+
+# ---------------------------------------------------------------------------
+# Opinion Kicker: "The Landing" — chord stab after editorial
+# ---------------------------------------------------------------------------
+
+def generate_opinion_kicker():
+    """Opinion kicker: a 0.6s chord stab. The period at the end of the editorial.
+
+    A compressed version of the outro's resolving motion, but faster and
+    heavier. Where the outro breathes over 1.8s, the kicker drops and lands
+    in 0.6s. Think: the last chord of a piano piece, played forte then
+    allowed to ring.
+
+    All tones arrive nearly simultaneously (within 20ms) — a chord stab,
+    not a bloom. The root is louder than in the headline sting (-6 vs. -14 dB),
+    giving it more gravity. The sub-bass provides physical weight.
+    """
+    canvas = AudioSegment.silent(duration=600)
+
+    # Root D3 bell — heavy, authoritative
+    root = _bell(_CHORD["root"], 500, -6)
+    canvas = canvas.overlay(root, position=0)
+
+    # Fifth A3 bell — arrives 10ms later
+    fifth = _bell(_CHORD["fifth"], 450, -10)
+    canvas = canvas.overlay(fifth, position=10)
+
+    # Third F#4 bell — warmth, same time as fifth
+    third = _bell(_CHORD["third"], 400, -10)
+    canvas = canvas.overlay(third, position=10)
+
+    # Ninth E4 bell — arrives 20ms later
+    ninth = _bell(_CHORD["ninth"], 350, -14)
+    canvas = canvas.overlay(ninth, position=20)
+
+    # Sub-bass D2 pad — physical weight, starts with root
+    sub = _pad(73.4, 400, -18)
+    canvas = canvas.overlay(sub, position=0)
+
+    # Shape: instant attack (5ms), ring and decay (350ms)
+    canvas = canvas.fade_in(5).fade_out(350)
+
+    # Master gain: present, comparable to the ident
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "opinion_kicker.wav", format="wav")
+    print(f"  opinion_kicker.wav ({len(canvas)}ms) — chord stab after editorial")
 
 
 # ---------------------------------------------------------------------------
@@ -513,6 +622,7 @@ if __name__ == "__main__":
     generate_section_break()
     generate_news_to_opinion()
     generate_headline_sting()
+    generate_opinion_kicker()
     generate_outro()
     generate_background_bed()
     print("Done.")
