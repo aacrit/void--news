@@ -814,11 +814,11 @@
 
   /* === PAGE MAIN — clear bottom nav === */
   .page-main {
-    padding-bottom: calc(var(--nav-bottom-height, 68px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
-    margin-bottom: calc(var(--nav-bottom-height, 68px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   /* === META TAGS — bump readability on mobile === */

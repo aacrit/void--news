@@ -6505,11 +6505,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 /* ===================================================================
    MobileBottomNav — thumb-reachable bottom bar (mobile only)
 
-   Fixed to viewport bottom. Two rows:
-   1. Edition pills + Lean chips + Topic dropdown
-   2. Daily Brief pills (tl;dr, opinion, onair)
+   Fixed to viewport bottom. Single row:
+   Edition pills + Lean chips + Topic dropdown
 
-   Panels expand upward as bottom sheets (mob-nav-sheet).
+   Daily Brief content renders in the page body via DailyBriefText.
    Hidden on desktop via display: none.
    =================================================================== */
 
