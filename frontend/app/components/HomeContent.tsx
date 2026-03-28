@@ -842,7 +842,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Mobile bottom nav — filters + daily brief pills (thumb-reachable) */}
+      {/* Mobile bottom nav — single-row filters (thumb-reachable) */}
       {isMobile && (
         <MobileBottomNav
           activeEdition={activeEdition}
@@ -850,7 +850,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
           activeCategory={activeCategory}
           onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
-          dailyBriefState={dailyBriefState}
         />
       )}
     </div>

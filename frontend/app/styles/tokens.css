@@ -268,9 +268,10 @@
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
   --nav-height: 53px;
 
-  /* Height of the mobile bottom navigation bar.
+  /* Height of the mobile bottom navigation bar (single row).
+     44px touch targets + 8px top padding + safe area = ~52px base.
      Used for padding-bottom on .page-main so content clears the fixed nav. */
-  --nav-bottom-height: 68px;
+  --nav-bottom-height: 52px;
 
   /* Height of the sticky lean-bar on mobile (44px min-height + 2px border).
      Used by .section-header sticky top so it docks below the lean-bar and
