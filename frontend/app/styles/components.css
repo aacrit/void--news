@@ -2423,6 +2423,20 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-top: var(--space-2);
 }
 
+.footer-cc-link {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-5);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  opacity: 0.3;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.footer-cc-link:hover { opacity: 0.8; }
+
 /* ---- Loading Skeleton -------------------------------------------------- */
 .loading-indicator {
   display: flex;

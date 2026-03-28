@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { supabase, supabaseError } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 /* ==========================================================================
    void --news CEO Command Center
@@ -431,12 +431,12 @@ export default function CommandCenter() {
 
   // ---- Render ----
 
-  if (supabaseError) {
+  if (!supabase) {
     return (
       <div className="cc-root">
         <div className="cc-empty" style={{ marginTop: '20vh' }}>
           <p style={{ fontSize: '1.125rem', marginBottom: '8px' }}>Unable to connect to data source</p>
-          <p style={{ color: 'var(--cc-text3)' }}>{supabaseError}</p>
+          <p style={{ color: 'var(--cc-text3)' }}>Supabase configuration is missing.</p>
         </div>
       </div>
     );
