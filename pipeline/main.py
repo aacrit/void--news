@@ -1783,14 +1783,14 @@ def main():
                 promoted.append(deferred.pop(0))
 
             # Write back headline_rank to reflect diversity-adjusted order.
-            # Preserve raw scores but ensure monotonic ordering so DB sort
-            # matches our diversity-adjusted order.
+            # Use 0.1pt spacing: enough to avoid false ties without
+            # distorting ranks (0.01 tied 4 stories, 0.5 was too aggressive).
             final_order = promoted + deferred
             if final_order and len(promoted) >= 2:
                 for j in range(1, len(promoted)):
                     if promoted[j].get("headline_rank", 0) >= promoted[j-1].get("headline_rank", 0):
                         promoted[j]["headline_rank"] = round(
-                            promoted[j-1].get("headline_rank", 0) - 0.01, 2
+                            promoted[j-1].get("headline_rank", 0) - 0.1, 2
                         )
 
         # Recency gate for top-10: ensure the front page shows today's news.
@@ -2335,10 +2335,9 @@ def main():
     except Exception as e:
         print(f"  [warn] Daily brief cleanup failed: {e}")
 
-    # Retention: archive then delete clusters older than 2 days.
-    # Articles >36h are rejected at ingestion, so clusters >2d are frozen.
-    # Articles + bias_scores persist (not deleted) for historical analysis.
-    # Only cluster shells + links are pruned to keep the DB lean.
+    # Retention: archive then delete clusters older than 2 days,
+    # delete orphaned articles older than 7 days (CASCADE cleans
+    # bias_scores + article_categories), prune archive after 30 days.
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
         # Paginate to get all old cluster IDs
@@ -2384,8 +2383,58 @@ def main():
             print(f"  Retention: archived + removed {len(old_ids)} clusters older than 2 days")
         else:
             print(f"  Retention: no clusters older than 2 days")
+
+        # Delete empty clusters (no articles linked)
+        empty = supabase.rpc("cleanup_stale_clusters").execute()
+
+        # Fix NULL first_published clusters (never caught by retention)
+        supabase.table("story_clusters").update(
+            {"first_published": datetime.now(timezone.utc).isoformat()}
+        ).is_("first_published", "null").execute()
+
     except Exception as e:
-        print(f"  [warn] retention cleanup failed: {e}")
+        print(f"  [warn] cluster retention failed: {e}")
+
+    # Article retention: delete articles older than 7 days.
+    # ON DELETE CASCADE automatically removes related bias_scores,
+    # cluster_articles, and article_categories rows.
+    try:
+        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+        old_article_ids: list[str] = []
+        offset = 0
+        while True:
+            page = supabase.table("articles").select("id").lt(
+                "published_at", article_cutoff
+            ).range(offset, offset + 999).execute()
+            if not page.data:
+                break
+            old_article_ids.extend(a["id"] for a in page.data)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if old_article_ids:
+            for i in range(0, len(old_article_ids), 100):
+                batch = old_article_ids[i:i + 100]
+                supabase.table("articles").delete().in_("id", batch).execute()
+            print(f"  Retention: removed {len(old_article_ids)} articles older than 7 days"
+                  f" (+ cascaded bias_scores, article_categories)")
+        else:
+            print(f"  Retention: no articles older than 7 days")
+    except Exception as e:
+        print(f"  [warn] article retention failed: {e}")
+
+    # Archive retention: prune archive entries older than 30 days
+    try:
+        archive_cutoff = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+        result = supabase.table("cluster_archive").delete().lt(
+            "first_published", archive_cutoff
+        ).execute()
+        pruned = len(result.data) if result.data else 0
+        if pruned:
+            print(f"  Retention: pruned {pruned} archive entries older than 30 days")
+    except Exception as e:
+        print(f"  [warn] archive retention failed: {e}")
 
     # Finalize
     duration = time.time() - start_time

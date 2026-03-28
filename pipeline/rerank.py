@@ -390,9 +390,12 @@ def main():
 
             final_order = promoted + deferred
             if final_order and len(promoted) >= 2:
+                # Use 0.1pt spacing: enough to avoid false ties (0.01 made
+                # 22src Paris bomb = 6src strike) without distorting ranks
+                # (0.5 pushed a 57pt airstrike down to 48.5).
                 for j in range(1, len(promoted)):
                     if promoted[j]["headline_rank"] >= promoted[j-1]["headline_rank"]:
-                        promoted[j]["headline_rank"] = round(promoted[j-1]["headline_rank"] - 0.01, 2)
+                        promoted[j]["headline_rank"] = round(promoted[j-1]["headline_rank"] - 0.1, 2)
 
             demoted_count = sum(1 for d in deferred if d not in pool[TOP_N:])
             if demoted_count:
@@ -400,43 +403,21 @@ def main():
 
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    # Cross-edition demotion (v4.0): if a story is top-5 in one edition,
-    # demote it below position 5 in other editions it appears in.
-    # This prevents the same story being #1 in both World and US.
-    # Each cluster's primary edition = its `section` field (majority vote).
-    # Secondary editions = other entries in `sections[]` array.
+    # Cross-edition overlap report (informational only).
+    # headline_rank is a single DB column so per-edition demotion
+    # would corrupt scores for all editions. The natural lead
+    # differentiation comes from US-only / India-only stories having
+    # section-specific source compositions that push them to the top.
     CROSS_EDITION_TOP = 5
-    cluster_sections_map = {c["id"]: (c.get("section", "world"), c.get("sections") or [c.get("section", "world")]) for c in clusters}
-
-    # Build per-section ranked lists
-    section_pools: dict[str, list[dict]] = {}
+    section_top5: dict[str, list[str]] = {}
     for section_val in ("world", "us", "india"):
-        section_pools[section_val] = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
+        pool.sort(key=lambda u: u["headline_rank"], reverse=True)
+        section_top5[section_val] = [u["id"] for u in pool[:CROSS_EDITION_TOP]]
 
-    # Identify cross-listed clusters in top-5 of any section
-    top5_ids_by_section: dict[str, set[str]] = {}
-    for section_val, pool in section_pools.items():
-        top5_ids_by_section[section_val] = {u["id"] for u in pool[:CROSS_EDITION_TOP]}
-
-    # For each cluster in top-5 of one section, check if it also appears
-    # in another section's top-5. If so, keep it in its primary section
-    # and demote in secondary sections.
-    cross_demoted = 0
-    for section_val, pool in section_pools.items():
-        for i, u in enumerate(pool[:CROSS_EDITION_TOP]):
-            cid = u["id"]
-            primary, all_sections = cluster_sections_map.get(cid, ("world", ["world"]))
-            # If this cluster's primary section is NOT this section,
-            # and it's already top-5 in its primary section, demote it here
-            if primary != section_val and cid in top5_ids_by_section.get(primary, set()):
-                # Push it to position 6+ by setting rank just below position 5
-                if len(pool) > CROSS_EDITION_TOP:
-                    target_rank = pool[CROSS_EDITION_TOP]["headline_rank"] - 0.01
-                    u["headline_rank"] = round(target_rank, 2)
-                    cross_demoted += 1
-
-    if cross_demoted:
-        print(f"  Cross-edition: demoted {cross_demoted} stories already leading in their primary section")
+    world_us_overlap = len(set(section_top5.get("world", [])) & set(section_top5.get("us", [])))
+    world_india_overlap = len(set(section_top5.get("world", [])) & set(section_top5.get("india", [])))
+    print(f"  Cross-edition overlap: world/us={world_us_overlap}/5, world/india={world_india_overlap}/5")
 
     # Final re-sort
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
