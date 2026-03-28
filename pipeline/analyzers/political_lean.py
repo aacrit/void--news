@@ -493,13 +493,14 @@ def _framing_score(text: str) -> tuple[float, list[str]]:
     return max(-15.0, min(15.0, shift * 1.5)), phrases_found
 
 
-def _entity_sentiment_score(text: str) -> tuple[float, dict[str, float]]:
+def _entity_sentiment_score(text: str, doc=None) -> tuple[float, dict[str, float]]:
     """
     Use spaCy NER + TextBlob to gauge sentiment toward politically coded entities.
     Returns (lean_shift, entity_sentiments_dict).
     """
-    nlp = get_nlp()
-    doc = nlp(text[:15000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
 
     left_sentiment = 0.0
     right_sentiment = 0.0
@@ -563,7 +564,7 @@ def _get_source_baseline(source: dict) -> int:
     return BASELINE_MAP.get(str(baseline_str).lower().strip(), 50)
 
 
-def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) -> dict:
+def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, doc=None) -> dict:
     """
     Score the political lean of an article.
 
@@ -648,7 +649,7 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) ->
     framing_shift, framing_phrases = _framing_score(combined)
 
     # 3. Entity sentiment shift (-15 to +15) + sentiments
-    entity_shift, entity_sentiments = _entity_sentiment_score(combined)
+    entity_shift, entity_sentiments = _entity_sentiment_score(combined, doc=doc)
 
     # Combine text-based score
     text_score = kw_score + framing_shift + entity_shift

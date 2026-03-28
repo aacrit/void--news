@@ -276,8 +276,22 @@ def run_bias_analysis(
     }
     rationale = {}
 
+    # Pre-parse spaCy doc once and share across analyzers that need NER.
+    # Saves 2 redundant parses per article (~200-400ms each).
+    full_text = article.get("full_text", "") or ""
+    title = article.get("title", "") or ""
+    combined = f"{title} {full_text}"
+    doc = None
+    if combined.strip():
+        try:
+            from utils.nlp_shared import get_nlp
+            nlp = get_nlp()
+            doc = nlp(combined[:15000])
+        except Exception:
+            pass  # analyzers fall back to their own parsing
+
     try:
-        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data)
+        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data, doc=doc)
         if isinstance(result, dict):
             scores["political_lean"] = result["score"]
             rationale["lean"] = result["rationale"]
@@ -307,7 +321,7 @@ def run_bias_analysis(
         print(f"    [warn] Opinion detection failed: {e}")
 
     try:
-        result = analyze_factual_rigor(article, source)
+        result = analyze_factual_rigor(article, source, doc=doc)
         if isinstance(result, dict):
             scores["factual_rigor"] = result["score"]
             rationale["coverage"] = result["rationale"]
@@ -317,7 +331,7 @@ def run_bias_analysis(
         print(f"    [warn] Factual rigor failed: {e}")
 
     try:
-        result = analyze_framing(article, cluster_articles=cluster_articles)
+        result = analyze_framing(article, cluster_articles=cluster_articles, doc=doc)
         if isinstance(result, dict):
             scores["framing"] = result["score"]
             rationale["framing"] = result["rationale"]

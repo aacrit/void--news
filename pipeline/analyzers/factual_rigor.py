@@ -342,7 +342,7 @@ def _attribution_specificity_score(text: str) -> float:
     return specific_ratio * 100.0
 
 
-def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
+def analyze_factual_rigor(article: dict, source: dict | None = None, doc=None) -> dict:
     """
     Score the factual rigor of an article.
 
@@ -393,8 +393,9 @@ def analyze_factual_rigor(article: dict, source: dict | None = None) -> dict:
         }
 
     # Parse once with spaCy and share the doc for NER-based sub-scores
-    nlp = get_nlp()
-    doc = nlp(combined[:15000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(combined[:15000])
 
     # Sub-scores — each returns (score, raw_count) tuple (Fix 5)
     named_src, named_raw = _named_source_score(combined, doc=doc)
