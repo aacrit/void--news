@@ -312,22 +312,11 @@
     will-change: auto;
   }
 
-  /* Section header — allow RefreshButton timestamp to wrap */
+  /* Section header — allow items to wrap on narrow screens */
   .section-header {
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: flex-start;
-  }
-
-  /* [ENHANCEMENT-4] RefreshButton — hide timestamp text on mobile,
-     keep icons only. Timestamp is in aria-label for accessibility. */
-  .refresh-btn__text {
-    display: none;
-  }
-
-  .refresh-btn {
-    min-width: auto;
-    padding: var(--space-2);
   }
 
   /* === STORY CARDS === */
@@ -723,6 +712,15 @@
   .dd-action-btn {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* Story nav prev/next — base rule is 32×32px; bump to WCAG minimum.
+     Padding expands the tap area to 44px while the border-box keeps the
+     visual circle at 32px. The ::before pseudo-element approach is avoided
+     here since these are interactive buttons that already render an icon. */
+  .dd-story-nav__btn {
+    min-width: 44px;
+    min-height: 44px;
   }
 
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */

@@ -1371,10 +1371,6 @@
   }
 }
 
-/* RefreshButton text — hidden on mobile via responsive.css */
-.refresh-btn__text {
-  white-space: nowrap;
-}
 
 /* ---- NavBar ------------------------------------------------------------ */
 .nav-header {
@@ -1835,7 +1831,6 @@
   transform: rotate(-45deg) scale(0.5);
 }
 
-/* (RefreshButton removed — pipeline runs on cron, browser refresh suffices) */
 
 /* ---- Feed Continuation — newspaper section continuation --------------- */
 /* Editorial "Continue reading" link with gradient fade hint above.
@@ -6023,6 +6018,11 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .ubar__lean:hover {
   color: var(--fg-secondary);
   background-color: var(--bg-secondary);
+}
+
+/* Spring press feedback on click — 300ms snappy scale pulse */
+.ubar__lean:active {
+  animation: springBtnPress var(--dur-normal) var(--spring);
 }
 
 .ubar__lean--active {

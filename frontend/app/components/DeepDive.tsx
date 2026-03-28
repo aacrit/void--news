@@ -841,7 +841,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
               className={`dd-analysis-block anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}
+              style={{ marginBottom: "var(--space-4)", transitionDelay: "150ms" }}
             >
               {story.sigilData && (
                 <div className="dd-analysis-block__sigil">
@@ -861,7 +861,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
             role="tablist"
             aria-label="Deep dive sections"
-            style={{ transitionDelay: "20ms" }}
+            style={{ transitionDelay: "250ms" }}
           >
             <button
               role="tab"
@@ -895,7 +895,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
           {/* ---- Tab panels ---- */}
           {activeTab === "summary" && (
-            <section role="tabpanel" aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+            <section role="tabpanel" aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
                 <div className="dd-collapsible__inner" ref={summaryInnerRef}>
                   <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
@@ -910,7 +910,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {activeTab === "allsides" && hasCrossLeanSources && (
-            <section role="tabpanel" aria-label="All Sides comparison" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+            <section role="tabpanel" aria-label="All Sides comparison" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <ComparativeView
                 sources={sources}
                 consensusPoints={deepDive?.consensus}
@@ -920,7 +920,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {activeTab === "scoring" && spectrumSources.length > 0 && (
-            <section role="tabpanel" aria-label="Scoring breakdown" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+            <section role="tabpanel" aria-label="Scoring breakdown" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <BiasInspectorInline sources={sources} />
             </section>
           )}
