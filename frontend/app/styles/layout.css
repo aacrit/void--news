@@ -31,98 +31,49 @@
   }
 }
 
-@media (min-width: 1440px) {
-  .page-main {
-    max-width: 1600px;
-  }
-}
-
-/* ---- Moat Layout — left panel + canvas (desktop) ---------------------- */
+/* ---- Skybox — editorial brief zone above the news canvas -------------- */
 /*
- * Single left panel: TL;DR, Opinion, On Air stacked vertically.
- * Center canvas: top stories. Panel is sticky with independent scroll.
- * Mobile: normal column flow, no panel.
+ * Full-bleed band: TL;DR | Opinion | On Air side by side on desktop.
+ * Visually distinct from the story canvas — warm accent tint extending
+ * to viewport edges creates "outside the newspaper" separation.
+ * Stories below get 100% of original canvas width.
  */
 
-.moat-layout {
-  display: flex;
-  flex-direction: column;
+.skybox {
+  margin: var(--space-3) 0;
 }
 
-/* Mobile stacking: Brief → OnAir → Stories */
-.moat-panel  { order: 1; }
-.moat-canvas { order: 2; }
-
-/* Panel sticky wrapper — no-op on mobile */
-.moat-panel__sticky {
-  /* Intentionally empty on mobile */
-}
-
-/* Desktop: 2-column grid (panel + canvas) */
+/* Desktop: full-bleed warm tint — breaks out of page-main to viewport edges */
 @media (min-width: 1024px) {
-  .moat-layout {
-    display: grid;
-    grid-template-columns: var(--moat-panel-width) 1fr;
-    gap: 0;
-    align-items: start;
-  }
-
-  .moat-panel  { order: unset; grid-column: 1; }
-  .moat-canvas { order: unset; grid-column: 2; }
-
-  /* Sticky panel — independent scroll, docked below nav */
-  .moat-panel__sticky {
-    position: sticky;
-    top: calc(var(--nav-height) + 8px);
-    max-height: calc(100vh - var(--nav-height) - 16px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--fg-muted) 25%, transparent) transparent;
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0px,
-      black 4px,
-      black calc(100% - 16px),
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0px,
-      black 4px,
-      black calc(100% - 16px),
-      transparent 100%
-    );
-  }
-
-  .moat-panel__sticky::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  .moat-panel__sticky::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--fg-muted) 25%, transparent);
-    border-radius: 2px;
-  }
-
-  .moat-panel__sticky::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  /* Center canvas — container query context */
-  .moat-canvas {
-    container-type: inline-size;
-    container-name: canvas;
-    min-width: 0;
+  .skybox {
+    margin-left: calc(-1 * var(--space-7));
+    margin-right: calc(-1 * var(--space-7));
+    padding: var(--space-4) var(--space-7);
+    background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
+    border-top: 2px solid var(--accent-warm);
+    border-bottom: 1px solid var(--border-subtle);
+    /* Staggered entrance */
+    animation: skyboxReveal var(--dur-slow) var(--ease-out) both;
   }
 }
 
-/* Panel width scales with viewport */
-@media (min-width: 1280px) {
-  :root { --moat-panel-width: 320px; }
-}
-
+/* Ultra-wide: extend bleed further */
 @media (min-width: 1440px) {
-  :root { --moat-panel-width: 340px; }
+  .skybox {
+    margin-left: calc(-1 * var(--space-7) - 40px);
+    margin-right: calc(-1 * var(--space-7) - 40px);
+    padding-left: calc(var(--space-7) + 40px);
+    padding-right: calc(var(--space-7) + 40px);
+  }
+}
+
+@keyframes skyboxReveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skybox { animation: none !important; }
 }
 
 /* ---- Section Header — Newspaper tradition ------------------------------ */
@@ -322,11 +273,6 @@
   }
 }
 
-@media (min-width: 1440px) {
-  .site-footer {
-    max-width: 1600px;
-  }
-}
 
 .site-footer__inner {
   max-width: 100%;
