@@ -4502,6 +4502,94 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .db-col__cta:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); }
 }
 
+/* ---- Moat Panel — side column chrome (desktop only) -------------------- */
+
+@media (min-width: 1024px) {
+  .moat-panel {
+    padding-top: var(--space-3);
+    animation: moatPanelReveal var(--dur-slow) var(--ease-out) both;
+  }
+
+  .moat-panel--left {
+    border-right: 1px solid var(--border-subtle);
+    padding-right: var(--space-3);
+  }
+
+  .moat-panel--right {
+    border-left: 1px solid var(--border-subtle);
+    padding-left: var(--space-3);
+    animation-delay: 120ms;
+  }
+
+  /* Daily Brief inside left panel: narrow single-column mode */
+  .moat-panel .daily-brief-banner {
+    margin: 0;
+    padding: 0;
+    border-top: none;
+    border-bottom: none;
+    background: none;
+  }
+
+  .moat-panel .db-banner-columns {
+    display: block;
+  }
+
+  .moat-panel .db-col + .db-col {
+    border-top: 1px solid var(--border-subtle);
+    border-left: none;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    padding-left: 0;
+  }
+
+  .moat-panel .db-col--tldr {
+    border-left: none;
+    background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+    padding: var(--space-3);
+    border-radius: 2px;
+  }
+
+  .moat-panel .db-col--opinion {
+    border-left: 2px dotted var(--border-strong);
+    padding-left: var(--space-3);
+  }
+
+  .moat-panel .db-banner-header {
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-1);
+  }
+
+  /* On Air inside right panel: narrow vertical layout */
+  .moat-panel .onair {
+    border-left: none;
+    margin: 0;
+    padding: var(--space-3) 0;
+    background: none;
+  }
+
+  .moat-panel .onair__controls {
+    flex-wrap: wrap;
+  }
+
+  .moat-panel .onair__track {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .moat-panel .onair__eq {
+    height: 20px;
+  }
+}
+
+@keyframes moatPanelReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moat-panel { animation: none !important; }
+}
+
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */
 /* Prevents sticky hover states after tap on iOS/Android (no mouse, no hover).
    Redundant safety net — the (hover: none) blocks on each component already
