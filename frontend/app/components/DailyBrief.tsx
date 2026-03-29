@@ -193,24 +193,16 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
       <div className="daily-brief-banner" role="complementary" aria-label="Daily Brief">
 
-        {/* Banner header */}
-        <div className="db-banner-header">
-          <span className="db-banner-title">Daily Brief</span>
-          {brief.created_at && (
-            <span className="db-banner-time" aria-label={`Updated ${timeAgo(brief.created_at)}`}>
-              {timeAgo(brief.created_at)}
-            </span>
-          )}
-        </div>
-
         <div className="db-banner-columns">
 
           {/* TL;DR Column */}
-          <section className="db-col db-col--tldr" aria-label="void --tl;dr The Daily Brief">
-            <div className="db-col__label__label">
+          <section className="db-col db-col--tldr" aria-label="void --tl;dr">
+            <div className="db-col__label">
               <ScaleIcon size={12} animation="idle" />
-              <span className="db-col__cmd__cmd">void --tl;dr</span>
-              <span className="db-col__subtitle__subtitle">The Daily Brief</span>
+              <span className="db-col__cmd">void --tl;dr</span>
+              {brief.created_at && (
+                <span className="db-col__time">{timeAgo(brief.created_at)}</span>
+              )}
             </div>
 
             {brief.tldr_headline && (
@@ -233,13 +225,12 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
                   </div>
                 </div>
                 <button
-                  className="db-col__cta"
+                  className="db-col__more"
                   onClick={handleTldrToggle}
                   type="button"
                   aria-expanded={tldrExpanded}
-                  aria-label={tldrExpanded ? "Collapse brief" : "Read full brief"}
                 >
-                  {tldrExpanded ? "Collapse" : "Read full brief"}
+                  {tldrExpanded ? "Less" : "Read more"}
                 </button>
               </>
             )}
@@ -247,11 +238,10 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
           {/* Opinion Column */}
           {brief.opinion_text && (
-            <section className="db-col db-col--opinion" aria-label="void --opinion The Board">
-              <div className="db-col__label__label">
+            <section className="db-col db-col--opinion" aria-label="void --opinion">
+              <div className="db-col__label">
                 <ScaleIcon size={12} animation="idle" />
-                <span className="db-col__cmd__cmd">void --opinion</span>
-                <span className="db-col__subtitle__subtitle">The Board</span>
+                <span className="db-col__cmd">void --opinion</span>
                 {brief.opinion_lean && (
                   <span className={`db-lean-badge ${leanMod}`}>{leanLabel}</span>
                 )}
@@ -270,13 +260,12 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
               </div>
 
               <button
-                className="db-col__cta"
+                className="db-col__more"
                 onClick={handleOpinionToggle}
                 type="button"
                 aria-expanded={opinionExpanded}
-                aria-label={opinionExpanded ? "Collapse opinion" : "Read full opinion"}
               >
-                {opinionExpanded ? "Collapse" : "Read full opinion"}
+                {opinionExpanded ? "Less" : "Read more"}
               </button>
             </section>
           )}
@@ -321,11 +310,10 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
   return (
     <div className={`onair${isPlaying ? " onair--playing" : ""}`} role="region" aria-label="Audio Broadcast">
       {/* Header row */}
-      <div className="onair__header__label">
+      <div className="onair__header">
         <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
         {isPlaying && <span className="onair__live-dot" aria-hidden="true" />}
-        <span className="onair__cmd__cmd">void --onair</span>
-        <span className="onair__tagline__subtitle">Audio Broadcast</span>
+        <span className="onair__cmd">void --onair</span>
         {durationMin && !isPlaying && (
           <span className="onair__duration">{durationMin} min</span>
         )}
