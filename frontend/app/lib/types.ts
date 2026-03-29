@@ -214,7 +214,7 @@ export type Category =
   | "Environment"
   | "Culture";
 
-export type Edition = "world" | "us" | "india" | "uk" | "canada";
+export type Edition = "world" | "us" | "india";
 
 // Keep Section as alias for backward compat
 export type Section = Edition;
@@ -250,7 +250,5 @@ export interface EditionMeta {
 export const EDITIONS: EditionMeta[] = [
   { slug: "world", label: "World", country: "Global", sourceCount: "130+ sources", description: "International coverage" },
   { slug: "us", label: "US", country: "United States", sourceCount: "130+ sources", description: "United States coverage" },
-  { slug: "uk", label: "UK", country: "United Kingdom", sourceCount: "40 sources", description: "British news and analysis" },
   { slug: "india", label: "India", country: "India", sourceCount: "19 sources", description: "Indian news in English" },
-  { slug: "canada", label: "Canada", country: "Canada", sourceCount: "16 sources", description: "Canadian news in English" },
 ];
