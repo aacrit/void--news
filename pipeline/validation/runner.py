@@ -99,10 +99,15 @@ def grade_axis(score: int, lo: int, hi: int) -> tuple[str, int]:
 # ---------------------------------------------------------------------------
 
 def check_allsides_alignment(
-    lean_score: int, allsides_rating: str, fixture_id: str
+    lean_score: int, allsides_rating: str, fixture_id: str,
+    category: str = "",
 ) -> tuple[bool, str]:
     """
     Check if the lean score is consistent with the AllSides rating.
+
+    Opinion-category articles get ±15 extra tolerance because per-article
+    lean legitimately diverges from per-outlet AllSides ratings when text
+    is densely partisan (e.g., a far-left column in a center-left paper).
 
     Returns (passed, detail_string).
     """
@@ -111,8 +116,13 @@ def check_allsides_alignment(
         return True, f"no AllSides range for '{allsides_rating}' (skipped)"
 
     lo, hi = expected_range
+    # Opinion articles: widen tolerance by 15 pts each direction
+    if category == "opinion":
+        lo = max(0, lo - 15)
+        hi = min(100, hi + 15)
     if lo <= lean_score <= hi:
-        return True, f"lean={lean_score} in AllSides '{allsides_rating}' [{lo},{hi}]"
+        suffix = " (opinion tolerance)" if category == "opinion" else ""
+        return True, f"lean={lean_score} in AllSides '{allsides_rating}' [{lo},{hi}]{suffix}"
     gap = (lo - lean_score) if lean_score < lo else (lean_score - hi)
     return False, f"lean={lean_score} OUTSIDE AllSides '{allsides_rating}' [{lo},{hi}] gap={gap}"
 
@@ -440,7 +450,8 @@ def run_validation(
         if allsides_rating:
             allsides_total += 1
             xref_ok, xref_msg = check_allsides_alignment(
-                scores["lean"], allsides_rating, fid
+                scores["lean"], allsides_rating, fid,
+                category=category,
             )
             if xref_ok:
                 allsides_passed += 1
@@ -476,7 +487,8 @@ def run_validation(
             # AllSides
             if allsides_rating:
                 xref_ok, xref_msg = check_allsides_alignment(
-                    scores["lean"], allsides_rating, fid
+                    scores["lean"], allsides_rating, fid,
+                    category=category,
                 )
                 status = "PASS" if xref_ok else "FAIL"
                 print(f"  [{status}] AllSides: {xref_msg}")

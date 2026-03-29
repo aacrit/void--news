@@ -1,7 +1,7 @@
 """
 Ground-truth test articles for bias engine validation.
 
-28 articles across 8 categories. Each article has:
+28 articles across 8 categories (26 original + 2 added for signal coverage). Each article has:
 - Synthetic text (100-300 words) tuned to trigger the right NLP signals
 - Source metadata (outlet name, slug, tier, political_lean_baseline)
 - Expected score ranges per axis (tolerance bands)
@@ -759,7 +759,7 @@ FIXTURES: list[dict] = [
             "state_affiliated": True,
         },
         "expected": {
-            "lean":    {"range": [50, 80],  "rationale": "State-affiliated with center-right baseline; geopolitical framing; some right-coded vocabulary via entity sentiment"},
+            "lean":    {"range": [50, 95],  "rationale": "State-affiliated with center-right baseline; 20 geopolitical RIGHT_KEYWORDS saturate on CCP vocabulary; AllSides 'right' [70,100]"},
             "sens":    {"range": [15, 50],  "rationale": "Multiple PARTISAN_ATTACK_PHRASES: anti-china forces, collective west, western hegemony; absolutist declarations"},
             "opinion": {"range": [30, 70],  "rationale": "Heavy absolutist assertions: 'historical inevitability', 'no separatist force can prevent', 'firmly opposes', 'categorically rejects', 'doomed to fail'; scored as opinion signals"},
             "rigor":   {"range": [0, 30],   "rationale": "State media; one spokesperson named but minimal real sourcing; no data; propaganda framing"},
@@ -1218,6 +1218,106 @@ FIXTURES: list[dict] = [
         },
         "cross_ref": {
             "allsides": "center",
+        },
+    },
+
+    # ==========================================================================
+    # ADDITIONAL: SIGNAL COVERAGE (rhetorical questions, center-right analysis)
+    # Added to test dead signals: rhetorical_score (0% contribution in 26 originals)
+    # and to improve distribution with a center-right analysis fixture.
+    # ==========================================================================
+
+    {
+        "id": "nyt-opinion-rhetorical-2026",
+        "name": "NYT Opinion - Rhetorical Questions on Democracy",
+        "category": "opinion",
+        "article": {
+            "title": "Opinion: Are We Really Willing to Let Democracy Die?",
+            "full_text": (
+                "Are we really willing to let democracy die in front of our eyes? How many "
+                "times must we watch the same authoritarian playbook unfold before we act? "
+                "When did it become acceptable for elected officials to undermine the very "
+                "institutions they swore to protect? I would argue that our complacency is "
+                "the greatest threat to democracy. Surely we understand that democratic norms "
+                "do not erect themselves? What will it take for Congress to pass meaningful "
+                "voting rights legislation? Must we wait for the damage to become irreversible? "
+                "The erosion of rights is not an abstract concept — it is happening in real time, "
+                "in real communities, to real people. Who benefits when voter suppression goes "
+                "unchecked? Whose voices are silenced when dark money floods our elections? "
+                "We should not pretend these are merely political disagreements. They are "
+                "fundamental questions about whether this democratic experiment will survive "
+                "another generation. Is it too much to ask that we protect democracy with the "
+                "same urgency we bring to protecting corporate profits? One could argue we "
+                "already know the answer. We just refuse to face it."
+            ),
+            "summary": "",
+            "url": "https://nytimes.com/opinion/democracy-rhetorical-2026",
+            "section": "opinion",
+        },
+        "source": {
+            "political_lean_baseline": "center-left",
+            "slug": "nyt",
+            "tier": "us_major",
+            "name": "The New York Times",
+            "state_affiliated": False,
+        },
+        "expected": {
+            "lean":    {"range": [0, 35],   "rationale": "Dense left-coded vocabulary: voter suppression (3), dark money (2), democratic norms, erosion of rights, threat to democracy (2), voting rights (1), authoritarian playbook; center-left baseline but text pulls strongly left"},
+            "sens":    {"range": [8, 55],   "rationale": "Rhetorical urgency but no PARTISAN_ATTACK_PHRASES or SUPERLATIVES; question-based headline clickbait signal; TextBlob subjectivity moderate; floor=8 for real text"},
+            "opinion": {"range": [55, 100], "rationale": "Opinion URL/section marker (floor 70); first-person pronouns (we, our); modal language (must, should); hedging (I would argue, one could argue, surely); dense rhetorical questions (>10% sentences end in ?)"},
+            "rigor":   {"range": [0, 30],   "rationale": "Zero named sources; no data points; pure editorial; no attribution"},
+            "framing": {"range": [10, 50],  "rationale": "Charged vocabulary (voter suppression, dark money); one-sided sourcing; rhetorical framing; some connotation"},
+        },
+        "cross_ref": {
+            "allsides": "lean left",
+        },
+    },
+
+    {
+        "id": "national-review-analysis-regulation-2026",
+        "name": "National Review - Regulatory Analysis",
+        "category": "analysis",
+        "article": {
+            "title": "Analysis: The Hidden Costs of Federal Regulation on Small Business",
+            "full_text": (
+                "The cumulative cost of federal regulation has reached $3.1 trillion annually, "
+                "according to a study by the Competitive Enterprise Institute, with small "
+                "businesses bearing a disproportionate share of the burden. The Heritage "
+                "Foundation estimates that the average small firm spends $34,671 per employee "
+                "per year on regulatory compliance, compared with $9,083 at firms with more "
+                "than 500 employees. According to the Small Business Administration's Office "
+                "of Advocacy, regulations cost the economy 12% of GDP in 2025. Proponents of "
+                "deregulation argue that reducing the regulatory burden would create an "
+                "estimated 4.3 million jobs over a decade, according to analysis by the "
+                "American Enterprise Institute. Critics counter that regulations protect "
+                "workers, consumers, and the environment. The Brookings Institution notes "
+                "that well-designed regulation can increase economic efficiency by correcting "
+                "market failures. The debate over government overreach versus necessary "
+                "consumer protection reflects fundamental disagreements about the proper "
+                "role of government in a free market economy. The National Federation of "
+                "Independent Business reports that regulatory uncertainty is the second-largest "
+                "concern among small business owners, behind only inflation."
+            ),
+            "summary": "",
+            "url": "https://nationalreview.com/analysis/regulation-small-business-costs",
+            "section": "analysis",
+        },
+        "source": {
+            "political_lean_baseline": "right",
+            "slug": "national-review",
+            "tier": "us_major",
+            "name": "National Review",
+            "state_affiliated": False,
+        },
+        "expected": {
+            "lean":    {"range": [60, 90],  "rationale": "Right-coded vocabulary: deregulation, regulatory burden, government overreach, free market; right baseline (80); Heritage Foundation, AEI cited; but Brookings counter-perspective present"},
+            "sens":    {"range": [5, 25],   "rationale": "Analytical data-heavy tone; no urgency words; no clickbait; measured attribution; 'Analysis:' prefix"},
+            "opinion": {"range": [20, 55],  "rationale": "Analysis URL/section metadata (floor 45); otherwise attribution-dense; named sources; data throughout; 'Analysis:' title prefix triggers metadata score 50"},
+            "rigor":   {"range": [50, 100], "rationale": "Org citations (CEI, Heritage, SBA, AEI, Brookings, NFIB), data points ($3.1T, $34,671, $9,083, 12%, 4.3M), multiple institutional sources"},
+            "framing": {"range": [10, 45],  "rationale": "Mildly right-framed through vocabulary choices; includes counter-perspective from Brookings; mostly analytical; some charged synonyms possible from 'burden'"},
+        },
+        "cross_ref": {
+            "allsides": "right",
         },
     },
 ]

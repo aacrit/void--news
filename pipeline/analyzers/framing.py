@@ -46,7 +46,7 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("dictator", "leader", 3),
     ("puppet", "ally", 3),
     ("thug", "suspect", 3),
-    ("mob", "crowd", 2),
+    ("mob", "crowd", 1),  # reduced 2→1: compound forms ("democrat mob") in PARTISAN_ATTACK_PHRASES
     ("riot", "protest", 2),
     ("looting", "property damage", 2),
     # NOTE: intensity reduced 3→1. "Invasion" is the factually correct AP/Reuters/UN
@@ -92,7 +92,7 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("death tax", "estate tax", 3),                    # added: charged vs neutral
     ("job creators", "wealthy", 2),                    # added: right economic framing
     # Social
-    ("radical", "progressive", 2),
+    ("radical", "progressive", 1),  # reduced 2→1: compound forms ("radical left") in PARTISAN_ATTACK_PHRASES
     ("extremist", "activist", 3),
     ("woke", "socially conscious", 3),
     ("cancel culture", "public accountability", 3),
@@ -127,12 +127,12 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("russophobia", "anti-russia sentiment", 2),
     ("western hegemony", "western influence", 2),
     ("proxy war", "conflict", 2),                      # used by RT/Sputnik for Ukraine
-    ("puppet regime", "government", 3),                # state-media delegitimization
+    ("puppet regime", "government", 2),                # reduced 3→2: compound form in PARTISAN_ATTACK_PHRASES
     ("neo-nazis", "ukrainian forces", 3),              # Kremlin framing of Ukraine
     ("denazification", "military campaign", 3),        # Kremlin justification phrase
     ("bioweapons labs", "research facilities", 3),     # RT/Sputnik disinformation frame
     ("nato expansion", "nato enlargement", 2),         # charged vs neutral formulation
-    ("collective west", "western countries", 2),       # RT/Sputnik us-vs-them framing
+    ("collective west", "western countries", 1),       # reduced 2→1: compound forms in PARTISAN_ATTACK_PHRASES
     ("reunification", "annexation", 3),                # CCP framing of Taiwan/territories
     ("separatists", "independence movement", 2),       # state framing of dissent
     ("anti-china forces", "critics of china", 3),      # CGTN/Global Times frame
@@ -182,6 +182,18 @@ EVASIVE_PASSIVE: list[str] = [
     "concerns were raised", "questions were raised",
     "steps were taken", "actions were taken",
     "measures were implemented",
+    # Agency-erasing constructions common in political/diplomatic framing
+    "it has been noted", "it was noted",
+    "it was reported", "it has been reported",
+    "it was announced", "it has been announced",
+    "it is believed", "it was believed",
+    "it is understood", "it was understood",
+    "it is expected", "it was expected",
+    "sanctions were imposed", "charges were filed",
+    "arrests were made", "warnings were issued",
+    "promises were broken", "commitments were made",
+    "allegations were made", "claims were made",
+    "reforms were introduced", "changes were made",
 ]
 
 
@@ -458,19 +470,24 @@ def analyze_framing(
     # sub-score that makes up the other 25%.  In these cases we shift 10 pts
     # of weight from connotation to kw_emphasis to reflect that keyword
     # detection is the more reliable signal for state-media geopolitical framing.
+    #
+    # Weight redistribution (nlp-engineer P1 fix): passive_voice contributes
+    # <1% mean signal (92% of articles at zero). Shifted 5% from passive (0.15
+    # -> 0.10) to keyword_emphasis (0.25->0.30 / 0.35->0.40) to widen the
+    # dynamic range for articles with charged synonyms. Weights still sum to 1.0.
     if keyword_emp > 60:
         w_connotation = 0.15
-        w_keyword_emp = 0.35
+        w_keyword_emp = 0.40
     else:
         w_connotation = 0.25
-        w_keyword_emp = 0.25
+        w_keyword_emp = 0.30
 
     weighted = (
         connotation * w_connotation
         + keyword_emp * w_keyword_emp
         + omission * 0.20
         + headline_div * 0.15
-        + passive * 0.15
+        + passive * 0.10
     )
 
     score = max(0, min(100, int(round(weighted))))

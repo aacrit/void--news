@@ -200,7 +200,19 @@ HYPERBOLIC_MODIFIERS: list[str] = [
     "insanely", "wildly", "breathtakingly", "overwhelmingly",
     "horrifically", "frighteningly", "alarmingly", "disturbingly",
     "shockingly", "stunningly", "astoundingly", "unimaginably",
+    # Additional hyperbolic modifiers (revive dead signal — 0.95% contribution)
+    "jaw-dropping", "mind-blowing", "earth-shattering", "ground-breaking",
+    "monumental", "colossal", "explosive", "seismic",
 ]
+
+# Compiled word-boundary pattern for HYPERBOLIC_MODIFIERS.
+# Using regex prevents substring false positives: "radically" in
+# "radicalization", "massive" in "massively" (both forms are listed so
+# this prevents double-count rather than missed detection).
+_HYPERBOLIC_PATTERN: re.Pattern = re.compile(
+    r'\b(' + '|'.join(re.escape(m) for m in HYPERBOLIC_MODIFIERS) + r')\b',
+    re.IGNORECASE,
+)
 
 # ---------------------------------------------------------------------------
 # Partisan attack / demonization language
@@ -414,9 +426,9 @@ def _body_score(text: str) -> float:
     score += min(sup_density * 5.0, 20.0)
 
     # --- Hyperbolic modifier density ---
-    hyp_count = 0
-    for mod in HYPERBOLIC_MODIFIERS:
-        hyp_count += text_lower.count(mod)
+    # Use word-boundary regex (like SUPERLATIVES) to prevent substring false
+    # positives and double-counting between base/adverb forms.
+    hyp_count = len(_HYPERBOLIC_PATTERN.findall(text_lower))
     hyp_density = hyp_count / max(word_count / 100, 1)
     score += min(hyp_density * 5.0, 15.0)
 
@@ -528,7 +540,7 @@ def analyze_sensationalism(article: dict) -> dict:
     clickbait_signals = sum(1 for p, _ in CLICKBAIT_PATTERNS if p.search(title))
     sup_count = len(_SUPERLATIVE_PATTERN.findall(text_lower))
     urg_count = sum(text_lower.count(p) for p in URGENCY_WORDS)
-    hyp_count = sum(text_lower.count(m) for m in HYPERBOLIC_MODIFIERS)
+    hyp_count = len(_HYPERBOLIC_PATTERN.findall(text_lower))
     meas_count = sum(text_lower.count(p) for p in MEASURED_PHRASES)
     partisan_attack_count = sum(text_lower.count(p) for p in PARTISAN_ATTACK_PHRASES)
 
