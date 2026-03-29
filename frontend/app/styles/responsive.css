@@ -913,3 +913,96 @@
     padding: var(--space-2);
   }
 }
+
+/* ---- Container Queries — story grids inside moat canvas --------------- */
+/*
+ * When the center canvas is narrowed by side panels, the grids must
+ * adapt to *container* width, not viewport width.
+ */
+
+@container canvas (max-width: 600px) {
+  .lead-section {
+    grid-template-columns: 1fr;
+  }
+  .lead-section__col:not(:last-child) {
+    border-right: none;
+    border-bottom: var(--rule-thin);
+    padding-right: 0;
+  }
+  .lead-section__col:last-child {
+    padding-left: 0;
+  }
+}
+
+@container canvas (max-width: 700px) {
+  .grid-medium {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-medium__item:nth-child(3n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+  .grid-medium__item:nth-child(2n) {
+    border-right: none;
+    padding-right: 0;
+  }
+  .grid-medium__item:last-child {
+    border-right: none;
+  }
+
+  .grid-compact {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-compact__item:nth-child(3n),
+  .grid-compact__item:nth-child(4n),
+  .grid-compact__item:nth-child(5n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+  .grid-compact__item:nth-child(2n) {
+    border-right: none;
+    padding-right: 0;
+  }
+  .grid-compact__item:last-child {
+    border-right: none;
+  }
+}
+
+@container canvas (min-width: 700px) and (max-width: 900px) {
+  .grid-medium {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-compact {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-compact__item:nth-child(4n),
+  .grid-compact__item:nth-child(5n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+  .grid-compact__item:nth-child(3n) {
+    border-right: none;
+    padding-right: 0;
+  }
+  .grid-compact__item:last-child {
+    border-right: none;
+  }
+}
+
+@container canvas (min-width: 900px) {
+  .grid-compact {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .grid-compact__item:nth-child(3n),
+  .grid-compact__item:nth-child(5n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+  .grid-compact__item:nth-child(4n) {
+    border-right: none;
+    padding-right: 0;
+  }
+  .grid-compact__item:last-child {
+    border-right: none;
+  }
+}

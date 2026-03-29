@@ -725,99 +725,116 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* 1. Daily Brief banner (TL;DR + Opinion) + standalone On Air pill */}
+            {/* Moat layout: side panels (brief + onair) flanking the story canvas */}
             {!isLoading && stories.length > 0 && (
-              <>
-                <DailyBriefText state={dailyBriefState} />
-                <OnAirButton state={dailyBriefState} />
-              </>
-            )}
-
-            {/* 2. Lead section — two primary headlines side by side on desktop */}
-            {!isLoading && leadStories.length > 0 && (
-              <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
-                {leadStories.map((story, i) => (
-                  <VisibleCard
-                    key={story.id}
-                    className="lead-section__col"
-                    style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
-                  >
-                    <div data-story-index={i}>
-                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
-                    </div>
-                  </VisibleCard>
-                ))}
-              </section>
-            )}
-
-            {/* Medium stories — broadsheet grid on desktop */}
-            {!isLoading && mediumStories.length > 0 && (
-              <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                {mediumStories.map((story, idx) => {
-                  const gi = leadStories.length + idx;
-                  return (
-                    <VisibleCard
-                      key={story.id}
-                      className="grid-medium__item"
-                      style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
-                    >
-                      <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
-                    </VisibleCard>
-                  );
-                })}
-              </section>
-            )}
-
-            {/* Compact stories — progressive batch reveal, no hard cap */}
-            {!isLoading && compactStories.length > 0 && (
-              <>
-                <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                  {visibleCompact.map((story, idx) => {
-                    const gi = leadStories.length + mediumStories.length + idx;
-                    return (
-                      <VisibleCard
-                        key={story.id}
-                        className="grid-compact__item"
-                        style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
-                      >
-                        <StoryCard
-                          story={story}
-                          index={idx + mediumStories.length + 1}
-                          onStoryClick={handleStoryClick}
-                          globalIndex={gi}
-                          kbdFocused={kbdFocusIndex === gi}
-                        />
-                      </VisibleCard>
-                    );
-                  })}
-                </section>
-
-                {/* Feed continuation — gradient fade + editorial link (desktop) / sentinel (mobile) */}
-                {hasMore && (
-                  <div className="feed-continuation" ref={sentinelRef}>
-                    <div className="feed-continuation__fade" aria-hidden="true" />
-                    {!isMobile && (
-                      <button
-                        className="feed-continuation__link"
-                        onClick={loadMoreStories}
-                        aria-label="Show more stories"
-                      >
-                        Continue reading
-                      </button>
-                    )}
+              <div className="moat-layout">
+                {/* Left panel: Daily Brief (TL;DR + Opinion) */}
+                <aside className="moat-panel moat-panel--left" aria-label="Daily Brief">
+                  <div className="moat-panel__label">
+                    <span className="moat-panel__label-title">Daily Brief</span>
+                    <span className="moat-panel__label-sub">void --tl;dr</span>
                   </div>
-                )}
-              </>
-            )}
+                  <div className="moat-panel__sticky">
+                    <DailyBriefText state={dailyBriefState} />
+                  </div>
+                </aside>
 
-            {/* Edition line — newspaper tradition */}
-            {!isLoading && filteredStories.length > 0 && (
-              <div className="edition-line">
-                <span className="edition-meta">
-                  {editionMeta.label} Edition /{" "}
-                  {filteredStories.length} stories
-                </span>
-                <LogoWordmark height={14} />
+                {/* Center canvas: all story grids */}
+                <div className="moat-canvas">
+                  {leadStories.length > 0 && (
+                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
+                      {leadStories.map((story, i) => (
+                        <VisibleCard
+                          key={story.id}
+                          className="lead-section__col"
+                          style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
+                        >
+                          <div data-story-index={i}>
+                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                          </div>
+                        </VisibleCard>
+                      ))}
+                    </section>
+                  )}
+
+                  {mediumStories.length > 0 && (
+                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
+                      {mediumStories.map((story, idx) => {
+                        const gi = leadStories.length + idx;
+                        return (
+                          <VisibleCard
+                            key={story.id}
+                            className="grid-medium__item"
+                            style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
+                          >
+                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                          </VisibleCard>
+                        );
+                      })}
+                    </section>
+                  )}
+
+                  {compactStories.length > 0 && (
+                    <>
+                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
+                        {visibleCompact.map((story, idx) => {
+                          const gi = leadStories.length + mediumStories.length + idx;
+                          return (
+                            <VisibleCard
+                              key={story.id}
+                              className="grid-compact__item"
+                              style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
+                            >
+                              <StoryCard
+                                story={story}
+                                index={idx + mediumStories.length + 1}
+                                onStoryClick={handleStoryClick}
+                                globalIndex={gi}
+                                kbdFocused={kbdFocusIndex === gi}
+                              />
+                            </VisibleCard>
+                          );
+                        })}
+                      </section>
+
+                      {hasMore && (
+                        <div className="feed-continuation" ref={sentinelRef}>
+                          <div className="feed-continuation__fade" aria-hidden="true" />
+                          {!isMobile && (
+                            <button
+                              className="feed-continuation__link"
+                              onClick={loadMoreStories}
+                              aria-label="Show more stories"
+                            >
+                              Continue reading
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {filteredStories.length > 0 && (
+                    <div className="edition-line">
+                      <span className="edition-meta">
+                        {editionMeta.label} Edition /{" "}
+                        {filteredStories.length} stories
+                      </span>
+                      <LogoWordmark height={14} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Right panel: On Air audio broadcast */}
+                <aside className="moat-panel moat-panel--right" aria-label="Audio Broadcast">
+                  <div className="moat-panel__label">
+                    <span className="moat-panel__label-title">On Air</span>
+                    <span className="moat-panel__label-sub">void --onair</span>
+                  </div>
+                  <div className="moat-panel__sticky">
+                    <OnAirButton state={dailyBriefState} />
+                  </div>
+                </aside>
               </div>
             )}
         </>
