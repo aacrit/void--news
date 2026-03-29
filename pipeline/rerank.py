@@ -403,34 +403,90 @@ def main():
 
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    # Cross-edition overlap report (informational only).
-    # headline_rank is a single DB column so per-edition demotion
-    # would corrupt scores for all editions. The natural lead
-    # differentiation comes from US-only / India-only stories having
-    # section-specific source compositions that push them to the top.
+    # --- Per-edition rank computation (v5.4) ---
+    # The per-section gates above modified headline_rank in-place, which
+    # causes cross-contamination between editions. Now compute independent
+    # per-edition ranks using the base importance score, and apply
+    # cross-edition demotion (0.92x for stories already top-5 elsewhere).
     CROSS_EDITION_TOP = 5
+    CROSS_DEMOTION = 0.92
+    EDITIONS = ["world", "us", "india"]
+
+    # Store base importance (pre-gate) for each update
+    for u in updates:
+        if "base_rank" not in u:
+            u["base_rank"] = u["importance_score"]
+
+    claimed_ids: set[str] = set()
+    for edition in EDITIONS:
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, edition)]
+        # Start from base_rank for each edition (independent of other editions)
+        for u in pool:
+            u[f"rank_{edition}"] = u["base_rank"]
+
+        # Apply cross-edition demotion: stories already top-5 elsewhere
+        for u in pool:
+            if u["id"] in claimed_ids:
+                u[f"rank_{edition}"] = round(u[f"rank_{edition}"] * CROSS_DEMOTION, 2)
+
+        # Re-sort by this edition's rank
+        pool.sort(key=lambda u: u[f"rank_{edition}"], reverse=True)
+
+        # Apply per-edition topic diversity (same logic but on edition rank)
+        if len(pool) > TOP_N:
+            promoted_e: list[dict] = []
+            deferred_e: list[dict] = []
+            cat_counts_e: dict[str, int] = {}
+            for u in pool:
+                if len(promoted_e) >= TOP_N:
+                    deferred_e.append(u)
+                    continue
+                cat = u.get("category", "general")
+                cat_limit = MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
+                if cat_counts_e.get(cat, 0) < cat_limit:
+                    promoted_e.append(u)
+                    cat_counts_e[cat] = cat_counts_e.get(cat, 0) + 1
+                else:
+                    deferred_e.append(u)
+            while len(promoted_e) < TOP_N and deferred_e:
+                promoted_e.append(deferred_e.pop(0))
+            for j in range(1, len(promoted_e)):
+                if promoted_e[j][f"rank_{edition}"] >= promoted_e[j - 1][f"rank_{edition}"]:
+                    promoted_e[j][f"rank_{edition}"] = round(
+                        promoted_e[j - 1][f"rank_{edition}"] - 0.1, 2
+                    )
+            pool_final = promoted_e + deferred_e
+        else:
+            pool_final = pool
+
+        # Claim this edition's top 5
+        for u in pool_final[:CROSS_EDITION_TOP]:
+            claimed_ids.add(u["id"])
+
+    # Report overlap
     section_top5: dict[str, list[str]] = {}
-    for section_val in ("world", "us", "india"):
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
-        pool.sort(key=lambda u: u["headline_rank"], reverse=True)
-        section_top5[section_val] = [u["id"] for u in pool[:CROSS_EDITION_TOP]]
+    for edition in EDITIONS:
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, edition)]
+        pool.sort(key=lambda u: u.get(f"rank_{edition}", 0), reverse=True)
+        section_top5[edition] = [u["id"] for u in pool[:CROSS_EDITION_TOP]]
 
-    world_us_overlap = len(set(section_top5.get("world", [])) & set(section_top5.get("us", [])))
-    world_india_overlap = len(set(section_top5.get("world", [])) & set(section_top5.get("india", [])))
-    print(f"  Cross-edition overlap: world/us={world_us_overlap}/5, world/india={world_india_overlap}/5")
+    world_us = len(set(section_top5.get("world", [])) & set(section_top5.get("us", [])))
+    world_india = len(set(section_top5.get("world", [])) & set(section_top5.get("india", [])))
+    print(f"  Cross-edition overlap: world/us={world_us}/5, world/india={world_india}/5")
 
-    # Final re-sort
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    # Print top 15 per section
+    # Print top 15 per section using per-edition ranks
     for section_val in ("world", "us", "india"):
+        rank_col = f"rank_{section_val}"
         section_updates = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
-        print(f"\n  --- Top 15 {section_val.upper()} by v4.0 headline_rank ---")
+        section_updates.sort(key=lambda u: u.get(rank_col, 0), reverse=True)
+        print(f"\n  --- Top 15 {section_val.upper()} by rank_{section_val} ---")
         for j, u in enumerate(section_updates[:15]):
             title = next(
                 (c["title"] for c in clusters if c["id"] == u["id"]), "?"
             )[:60]
-            print(f"  {j+1:2}. [{u['headline_rank']:5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
+            print(f"  {j+1:2}. [{u.get(rank_col, 0):5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
 
     if DRY_RUN:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")
@@ -451,6 +507,9 @@ def main():
             "content_type": u["content_type"],
             "category": u["category"],
             "source_count": u["source_count"],
+            "rank_world": u.get("rank_world", u["headline_rank"]),
+            "rank_us": u.get("rank_us", u["headline_rank"]),
+            "rank_india": u.get("rank_india", u["headline_rank"]),
         }
         for u in updates
     ]
