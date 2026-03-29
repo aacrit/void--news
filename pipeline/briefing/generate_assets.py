@@ -237,48 +237,48 @@ def generate_transition():
 # ---------------------------------------------------------------------------
 
 def generate_section_break():
-    """Section break: a single glass-bell chord fragment. ~0.9s.
+    """Section break: a crisp two-note stinger. ~1.2s.
 
-    This is the lightest of the sonic markers — a brief chime that says
-    "next topic" without interrupting the dialogue flow. Think: the sound
-    of turning a page in a quiet room.
+    Inspired by The Economist's Intelligence podcast: their section
+    breaks are short, bright, unmistakable. They ANNOUNCE "next story"
+    rather than whispering it. The listener should think "oh, new topic"
+    without effort.
 
-    Built from the upper register of the D major 9th chord:
-    - A single F#4 bell strike (the warmth note)
-    - A ghost A4 shimmer underneath (the "air")
-    - The ninth (E4) trails off at the edge of perception
+    Design: a rising two-note motif (fifth → octave) with a shimmer tail.
+    The rising interval creates forward momentum — "we're moving on."
+    Louder than background, quieter than ident. This is a proper stinger,
+    not ambient texture.
 
-    The key constraint: this must sit under the speech, not compete with it.
-    Gain levels are deliberately low (-16 to -24 dB). The listener should
-    register a sonic "comma" without consciously hearing music.
+    Comparable to: Economist section break (~1-2s synth phrase),
+    NPR Up First story divider (~1s bright sting).
     """
-    canvas = AudioSegment.silent(duration=900)
+    canvas = AudioSegment.silent(duration=1200)
 
-    # Primary bell: F#4 — warm, clear, glass-like
-    # Short duration (400ms) with fast decay — struck, not held
-    bell_main = _bell(_CHORD["third"], 400, -16)
-    canvas = canvas.overlay(bell_main, position=100)
+    # Beat 1: Fifth (A3) — the launch note, crisp bell
+    note1 = _bell(_CHORD["fifth"], 350, -8)
+    canvas = canvas.overlay(note1, position=50)
 
-    # Harmonic ghost: A4 shimmer pair — air and space
-    # Very quiet, creates depth without bulk
-    ghost = _shimmer_pair(_CHORD["hi_fifth"], 1.2, 500, -24)
-    canvas = canvas.overlay(ghost, position=150)
+    # Beat 2: Octave (D4) — arrives 300ms later, rising interval
+    note2 = _bell(_CHORD["octave"], 400, -8)
+    canvas = canvas.overlay(note2, position=350)
 
-    # Trailing ninth: E4 — the questioning tone, barely there
-    # Gives the bell its "news" character (distinguishes from a generic chime)
-    trail = _pad(_CHORD["ninth"], 350, -26)
-    canvas = canvas.overlay(trail, position=200)
+    # Shimmer tail: A4 + detuned pair — sparkle after the notes land
+    tail = _shimmer_pair(_CHORD["hi_fifth"], 1.5, 500, -16)
+    canvas = canvas.overlay(tail, position=500)
 
-    # Subtle root anchor: D3 at the bottom, felt not heard
-    # Connects this moment to the full chord palette
-    anchor = _pad(_CHORD["root"], 300, -28)
-    canvas = canvas.overlay(anchor, position=50)
+    # Root anchor: D3 pad underneath — connects to the chord palette
+    anchor = _pad(_CHORD["root"], 600, -18)
+    canvas = canvas.overlay(anchor, position=100)
 
-    # Shape: fast in, natural out
-    canvas = canvas.fade_in(15).fade_out(350)
+    # Ninth color: E4 ghost at the end — the "news" interval
+    color = _pad(_CHORD["ninth"], 300, -20)
+    canvas = canvas.overlay(color, position=600)
 
-    # Master gain: barely audible — a sonic comma, not a musical event
-    canvas = canvas.apply_gain(-10)
+    # Shape: instant attack, natural ring-out
+    canvas = canvas.fade_in(5).fade_out(400)
+
+    # Master gain: audible and crisp — a proper stinger, not ambient
+    canvas = canvas.apply_gain(-4)
 
     canvas.export(ASSETS_DIR / "section_break.wav", format="wav")
     print(f"  section_break.wav ({len(canvas)}ms) — glass bell between stories")
@@ -377,29 +377,38 @@ def generate_headline_underscore(duration_ms: int) -> "AudioSegment":
     canvas = AudioSegment.silent(duration=duration_ms)
 
     # Layer 1: Rhythmic root pulse — D3 bell every 800ms (75 BPM)
+    # Louder than before: these pulses should be felt as momentum
     pulse_interval = 800
     pulse_pos = 0
     while pulse_pos + 200 <= duration_ms:
-        pulse = _bell(_CHORD["root"], 200, -20)
+        pulse = _bell(_CHORD["root"], 200, -14)
         canvas = canvas.overlay(pulse, position=pulse_pos)
         pulse_pos += pulse_interval
 
     # Layer 2: Shimmer swell — A3 + A3+1.5 Hz pad pair
-    shimmer = _shimmer_pair(_CHORD["fifth"], 1.5, duration_ms, -22)
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.5, duration_ms, -18)
     canvas = canvas.overlay(shimmer, position=0)
 
-    # Layer 3: Color accent — single E4 bell at 60% mark
-    accent_pos = int(duration_ms * 0.6)
-    accent = _bell(_CHORD["ninth"], 300, -26)
-    canvas = canvas.overlay(accent, position=accent_pos)
+    # Layer 3: Color accents — E4 bell at 40% and 80% marks
+    for pct in (0.4, 0.8):
+        accent_pos = int(duration_ms * pct)
+        if accent_pos + 300 <= duration_ms:
+            accent = _bell(_CHORD["ninth"], 300, -20)
+            canvas = canvas.overlay(accent, position=accent_pos)
 
-    # Gain curve: 800ms fade-in, 2000ms fade-out
-    fade_in_ms = min(800, duration_ms // 3)
-    fade_out_ms = min(2000, duration_ms // 2)
+    # Layer 4: F#4 bell at 60% — the warmth note, once
+    warmth_pos = int(duration_ms * 0.6)
+    if warmth_pos + 250 <= duration_ms:
+        warmth = _bell(_CHORD["third"], 250, -22)
+        canvas = canvas.overlay(warmth, position=warmth_pos)
+
+    # Gain curve: 600ms fade-in, 2500ms fade-out (longer dissolve)
+    fade_in_ms = min(600, duration_ms // 3)
+    fade_out_ms = min(2500, duration_ms // 2)
     canvas = canvas.fade_in(fade_in_ms).fade_out(fade_out_ms)
 
-    # Master gain: louder than background bed (-30 dB) but well under speech
-    canvas = canvas.apply_gain(-16)
+    # Master gain: present — the headlines should feel energized
+    canvas = canvas.apply_gain(-10)
 
     return canvas
 
