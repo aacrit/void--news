@@ -725,104 +725,97 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* Moat layout: left panel (brief + opinion + onair) + story canvas */}
+            {/* Skybox: editorial brief + audio broadcast — above the news canvas */}
             {!isLoading && stories.length > 0 && (
-              <div className="moat-layout">
-                {/* Left panel: TL;DR + Opinion + On Air */}
-                <aside className="moat-panel" aria-label="void originals">
-                  <div className="moat-panel__sticky">
-                    <DailyBriefText state={dailyBriefState} />
-                    <OnAirButton state={dailyBriefState} />
-                  </div>
-                </aside>
+              <>
+                <div className="skybox" role="complementary" aria-label="void originals">
+                  <DailyBriefText state={dailyBriefState} />
+                  <OnAirButton state={dailyBriefState} />
+                </div>
 
-                {/* Center canvas: all story grids */}
-                <div className="moat-canvas">
-                  {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
-                      {leadStories.map((story, i) => (
+                {leadStories.length > 0 && (
+                  <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
+                    {leadStories.map((story, i) => (
+                      <VisibleCard
+                        key={story.id}
+                        className="lead-section__col"
+                        style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
+                      >
+                        <div data-story-index={i}>
+                          <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                        </div>
+                      </VisibleCard>
+                    ))}
+                  </section>
+                )}
+
+                {mediumStories.length > 0 && (
+                  <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
+                    {mediumStories.map((story, idx) => {
+                      const gi = leadStories.length + idx;
+                      return (
                         <VisibleCard
                           key={story.id}
-                          className="lead-section__col"
-                          style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
+                          className="grid-medium__item"
+                          style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
                         >
-                          <div data-story-index={i}>
-                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
-                          </div>
+                          <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
                         </VisibleCard>
-                      ))}
-                    </section>
-                  )}
+                      );
+                    })}
+                  </section>
+                )}
 
-                  {mediumStories.length > 0 && (
-                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                      {mediumStories.map((story, idx) => {
-                        const gi = leadStories.length + idx;
+                {compactStories.length > 0 && (
+                  <>
+                    <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
+                      {visibleCompact.map((story, idx) => {
+                        const gi = leadStories.length + mediumStories.length + idx;
                         return (
                           <VisibleCard
                             key={story.id}
-                            className="grid-medium__item"
-                            style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
+                            className="grid-compact__item"
+                            style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
                           >
-                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                            <StoryCard
+                              story={story}
+                              index={idx + mediumStories.length + 1}
+                              onStoryClick={handleStoryClick}
+                              globalIndex={gi}
+                              kbdFocused={kbdFocusIndex === gi}
+                            />
                           </VisibleCard>
                         );
                       })}
                     </section>
-                  )}
 
-                  {compactStories.length > 0 && (
-                    <>
-                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                        {visibleCompact.map((story, idx) => {
-                          const gi = leadStories.length + mediumStories.length + idx;
-                          return (
-                            <VisibleCard
-                              key={story.id}
-                              className="grid-compact__item"
-                              style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
-                            >
-                              <StoryCard
-                                story={story}
-                                index={idx + mediumStories.length + 1}
-                                onStoryClick={handleStoryClick}
-                                globalIndex={gi}
-                                kbdFocused={kbdFocusIndex === gi}
-                              />
-                            </VisibleCard>
-                          );
-                        })}
-                      </section>
+                    {hasMore && (
+                      <div className="feed-continuation" ref={sentinelRef}>
+                        <div className="feed-continuation__fade" aria-hidden="true" />
+                        {!isMobile && (
+                          <button
+                            className="feed-continuation__link"
+                            onClick={loadMoreStories}
+                            aria-label="Show more stories"
+                          >
+                            Continue reading
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
 
-                      {hasMore && (
-                        <div className="feed-continuation" ref={sentinelRef}>
-                          <div className="feed-continuation__fade" aria-hidden="true" />
-                          {!isMobile && (
-                            <button
-                              className="feed-continuation__link"
-                              onClick={loadMoreStories}
-                              aria-label="Show more stories"
-                            >
-                              Continue reading
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {filteredStories.length > 0 && (
-                    <div className="edition-line">
-                      <span className="edition-meta">
-                        {editionMeta.label} Edition /{" "}
-                        {filteredStories.length} stories
-                      </span>
-                      <LogoWordmark height={14} />
-                    </div>
-                  )}
-                </div>
-
-              </div>
+                {filteredStories.length > 0 && (
+                  <div className="edition-line">
+                    <span className="edition-meta">
+                      {editionMeta.label} Edition /{" "}
+                      {filteredStories.length} stories
+                    </span>
+                    <LogoWordmark height={14} />
+                  </div>
+                )}
+              </>
             )}
         </>
       </main>
