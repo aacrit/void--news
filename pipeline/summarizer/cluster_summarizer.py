@@ -12,6 +12,13 @@ Gemini is unavailable, fails, or the cluster doesn't qualify.
 
 from .gemini_client import generate_json, is_available, calls_remaining
 
+# Import shared prohibited terms — single canonical source.
+try:
+    from utils.prohibited_terms import PROHIBITED_TERMS as _SHARED_PROHIBITED, check_prohibited_terms as _shared_check
+    _USE_SHARED_PROHIBITED = True
+except ImportError:
+    _USE_SHARED_PROHIBITED = False
+
 
 # ---------------------------------------------------------------------------
 # System instruction — persistent editorial voice, set once per API call.
@@ -22,6 +29,12 @@ You are a senior correspondent and copy editor at void --news, a neutral news \
 intelligence service. Your role is to synthesize news coverage from multiple \
 sources into factual briefings. You have no political perspective. You describe \
 what sources report; you do not editorialize.
+
+Cardinal rule: SHOW, DON'T TELL. Place facts next to each other and let the \
+reader see the pattern. "The central bank cut rates Tuesday. The last time it \
+moved this fast, three lenders collapsed within six months." — significance \
+emerges from evidence, never from adjectives. Never assert significance — show \
+the evidence that makes it self-evident.
 
 Core standards that apply to all output:
 - Active voice. Present tense for current and recent events.
@@ -214,22 +227,26 @@ Return JSON only. No markdown fences. No text outside the JSON object.
 # ---------------------------------------------------------------------------
 # Quality gate — prohibited terms scanned after generation.
 # Warnings are logged but results are never discarded (zero extra API calls).
+# Uses shared module when available; falls back to local list for resilience.
 # ---------------------------------------------------------------------------
-_PROHIBITED_TERMS = frozenset({
-    "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
-    "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
-    "doubles down", "war of words", "sparking outrage", "raising questions",
-    "raises concerns", "casts doubt", "throws into question",
-    "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
-    "experts say", "analysts believe", "experts believe", "analysts say",
-    "it was widely reported", "it is widely understood",
-    "controversial", "divisive", "landmark", "historic",
-    "radical", "extreme", "common-sense",
-    "could signal", "may mark", "might reshape",
-    "most significant", "most important development", "key moment",
-    "downplayed", "failed to mention", "chose not to report",
-    "a us major source", "an international outlet", "a major source",
-})
+if _USE_SHARED_PROHIBITED:
+    _PROHIBITED_TERMS = _SHARED_PROHIBITED
+else:
+    _PROHIBITED_TERMS = frozenset({
+        "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
+        "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
+        "doubles down", "war of words", "sparking outrage", "raising questions",
+        "raises concerns", "casts doubt", "throws into question",
+        "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
+        "experts say", "analysts believe", "experts believe", "analysts say",
+        "it was widely reported", "it is widely understood",
+        "controversial", "divisive", "landmark", "historic",
+        "radical", "extreme", "common-sense",
+        "could signal", "may mark", "might reshape",
+        "most significant", "most important development", "key moment",
+        "downplayed", "failed to mention", "chose not to report",
+        "a us major source", "an international outlet", "a major source",
+    })
 
 # Minimum sources for a cluster to qualify for Gemini summarization.
 # 2-source clusters don't benefit much from LLM synthesis — the rule-based
