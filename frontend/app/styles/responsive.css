@@ -37,17 +37,9 @@
     padding-right: 0;
   }
 
-  /* Daily Brief: tablet — sections always expanded, hide chevrons */
-  .db-block__chevron { display: none; }
-
-  .db-block__collapsible {
-    grid-template-rows: 1fr !important;
-  }
-
-  /* Toggle labels become non-interactive on tablet+ */
-  .db-block__label--toggle {
-    cursor: default;
-    pointer-events: none;
+  /* Daily Brief Banner: tablet+ — wider padding */
+  .daily-brief-banner {
+    padding: var(--space-3) var(--space-5);
   }
 }
 
@@ -796,54 +788,35 @@
     display: none;
   }
 
-  /* === DAILY BRIEF — compact stacked mobile layout === */
-  .daily-brief {
+  /* === DAILY BRIEF BANNER — compact stacked mobile layout === */
+  .daily-brief-banner {
     padding: var(--space-2) var(--space-3);
-    margin: var(--space-2) 0;
+    margin: var(--space-2) 0 var(--space-1);
   }
 
-  /* Tighter section header on mobile */
-  .db-section-header {
+  /* Tighter banner header on mobile */
+  .db-banner-header {
     margin-bottom: var(--space-2);
     padding-bottom: var(--space-1);
   }
 
-  /* Tighter block separators on mobile */
-  .db-block + .db-block {
-    margin-top: var(--space-1);
-    padding-top: var(--space-1);
+  /* On Air pill: full width on mobile */
+  .onair-pill {
+    flex-wrap: wrap;
   }
 
-  /* Show chevrons on mobile — indicate collapsible sections */
-  .db-block__chevron {
-    display: inline;
+  .onair-pill__btn {
+    flex: 1;
+    justify-content: center;
   }
 
-  /* On mobile, collapsible blocks start closed (JS sets --open class) */
-  .db-block__collapsible {
-    grid-template-rows: 0fr;
+  .onair-pill__player {
+    width: 100%;
+    padding-left: var(--space-2);
   }
 
-  /* Open state — JS toggles this class */
-  .db-block__collapsible--open {
-    grid-template-rows: 1fr;
-  }
-
-  /* TL;DR never collapses on mobile */
-  .db-block--tldr .db-block__collapsible {
-    grid-template-rows: 1fr;
-  }
-
-  /* Smaller body text on mobile */
-  .daily-brief__body,
-  .daily-brief__opinion {
-    font-size: var(--text-sm);
-  }
-
-  /* Touch target already 44px from __label--toggle min-height */
-  .db-audio__play {
-    width: 44px;
-    height: 44px;
+  .onair-pill__seek-wrap {
+    flex: 1;
   }
 
   /* === PAGE MAIN — clear bottom nav === */
@@ -898,15 +871,7 @@
     -webkit-backdrop-filter: blur(8px) saturate(1.1);
   }
 
-  /* DivergenceAlerts: tighter vertical spacing on mobile */
-  .div-alerts {
-    margin: var(--space-3) 0;
-  }
-
-  /* Blind spot banner: full-width stack on narrow screens */
-  .div-alerts__blind-spot {
-    padding: var(--space-3);
-  }
+  /* DivergenceAlerts removed from homepage — CSS kept for reference */
 }
 
 /* ---- Ultra-narrow (max-width: 375px) ----------------------------------- */

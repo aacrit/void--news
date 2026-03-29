@@ -117,6 +117,11 @@ STORIES:
 
 ---
 
+TL;DR HEADLINE (return as "tldr_headline"):
+5-6 words. Declarative, present tense, concrete nouns. Not a question. Not a teaser. \
+A newsdesk summary — the single most important thing today.
+Example: "Trade Talks Collapse as Tariffs Bite"
+
 TL;DR INSTRUCTIONS (return as "tldr_text"):
 Write 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
 Target 180-240 words.
@@ -171,8 +176,8 @@ BANNED FILLER: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", \
 
 ---
 
-Return JSON with exactly two fields:
-{{"tldr_text": "...", "audio_script": "..."}}\
+Return JSON with exactly three fields:
+{{"tldr_headline": "...", "tldr_text": "...", "audio_script": "..."}}\
 """
 
 # ---------------------------------------------------------------------------
@@ -197,6 +202,12 @@ def _check_quality(result: dict, edition: str) -> None:
         print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 8-12)")
     if words < 120 or words > 300:
         print(f"  [quality][brief:{edition}] TL;DR has {words} words (expected 180-240)")
+
+    headline = result.get("tldr_headline", "")
+    if not headline or not isinstance(headline, str) or not headline.strip():
+        print(f"  [quality][brief:{edition}] TL;DR headline missing")
+    elif len(headline.split()) > 8:
+        print(f"  [quality][brief:{edition}] TL;DR headline too long: {len(headline.split())} words (expected 5-6)")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):
@@ -837,6 +848,7 @@ def generate_daily_briefs(
 
                 if isinstance(tldr, str) and tldr.strip():
                     brief_result = {
+                        "tldr_headline": raw.get("tldr_headline") or None,
                         "tldr_text": tldr.strip(),
                         "opinion_text": None,
                         "opinion_headline": None,
@@ -859,6 +871,7 @@ def generate_daily_briefs(
 
         if brief_result is None:
             brief_result = {
+                "tldr_headline": None,
                 "tldr_text": _rule_based_tldr(top_clusters),
                 "opinion_text": None,
                 "opinion_headline": None,

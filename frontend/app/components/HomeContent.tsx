@@ -92,13 +92,12 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import { useDailyBrief, DailyBriefText } from "./DailyBrief";
+import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
-import DivergenceAlerts from "./DivergenceAlerts";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -726,19 +725,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* 1. Daily Brief — editorial anchor, above lead headlines.
-                The board's voice sets context before readers dive into stories. */}
+            {/* 1. Daily Brief banner (TL;DR + Opinion) + standalone On Air pill */}
             {!isLoading && stories.length > 0 && (
-              <DailyBriefText state={dailyBriefState} />
-            )}
-
-            {/* 1b. Divergence Alerts — editorial section for high-disagreement stories */}
-            {!isLoading && filteredStories.length > 0 && (
-              <DivergenceAlerts
-                stories={filteredStories}
-                activeLean={activeLean}
-                onStoryClick={handleStoryClick}
-              />
+              <>
+                <DailyBriefText state={dailyBriefState} />
+                <OnAirButton state={dailyBriefState} />
+              </>
             )}
 
             {/* 2. Lead section — two primary headlines side by side on desktop */}
