@@ -4504,63 +4504,56 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 /* ---- Skybox — component overrides inside the editorial band ----------- */
 /*
- * Inside the skybox, the daily-brief-banner loses its own background/border
- * (the skybox provides those) and gains a 3-column layout with On Air.
+ * Desktop layout: TL;DR fills the left column. Opinion + On Air
+ * stack vertically in the right column. Zero wasted vertical space.
  */
 
 @media (min-width: 1024px) {
-  /* Daily Brief: remove own chrome, skybox handles it */
+  /* Skybox becomes a 2-column grid: TL;DR left, Opinion+OnAir right */
+  .skybox {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-5);
+    align-items: start;
+  }
+
+  /* Daily Brief fills left column; Opinion wraps into right */
   .skybox .daily-brief-banner {
+    grid-column: 1 / -1;
     margin: 0;
     padding: 0;
     border-top: none;
     border-bottom: none;
     background: none;
-    /* Remove full-bleed overrides */
     margin-left: 0;
     margin-right: 0;
     padding-left: 0;
     padding-right: 0;
   }
 
-  /* 3-column skybox grid: TL;DR | Opinion | On Air */
+  /* The inner columns grid matches the skybox grid */
   .skybox .db-banner-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0 var(--space-5);
   }
 
-  /* On Air: inline inside the skybox flow, no own background */
-  .skybox .onair {
-    margin: 0;
-    padding: var(--space-3) 0 0;
-    border-left: none;
-    background: none;
-    border-top: 1px solid var(--border-subtle);
-  }
-}
-
-/* Wide desktop: 3 columns (TL;DR | Opinion | On Air side by side) */
-@media (min-width: 1280px) {
-  .skybox {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 0 var(--space-5);
-    align-items: start;
-  }
-
-  /* Brief banner fills first 2 columns */
-  .skybox .daily-brief-banner {
-    grid-column: 1 / 3;
-  }
-
-  /* On Air gets its own column */
-  .skybox .onair {
-    grid-column: 3;
-    border-top: none;
+  /* Opinion column: vertical rule separator */
+  .skybox .db-col--opinion {
     border-left: 1px solid var(--border-subtle);
-    padding: 0 0 0 var(--space-5);
-    min-width: 260px;
+    padding-left: var(--space-5);
+  }
+
+  /* On Air: sits in the right column below Opinion */
+  .skybox .onair {
+    grid-column: 2;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--border-subtle);
+    padding-left: var(--space-5);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-subtle);
+    background: none;
   }
 }
 
