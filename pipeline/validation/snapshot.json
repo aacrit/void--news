@@ -56,7 +56,7 @@
     "grade": "ACCEPTABLE"
   },
   "ap-ukraine-diplomacy-2026.framing": {
-    "score": 14,
+    "score": 15,
     "grade": "CORRECT"
   },
   "nyt-opinion-gun-2026.lean": {
@@ -76,7 +76,7 @@
     "grade": "CORRECT"
   },
   "nyt-opinion-gun-2026.framing": {
-    "score": 18,
+    "score": 19,
     "grade": "ACCEPTABLE"
   },
   "fox-opinion-immigration-2026.lean": {
@@ -96,7 +96,7 @@
     "grade": "CORRECT"
   },
   "fox-opinion-immigration-2026.framing": {
-    "score": 46,
+    "score": 51,
     "grade": "CORRECT"
   },
   "jacobin-opinion-labor-2026.lean": {
@@ -116,7 +116,7 @@
     "grade": "CORRECT"
   },
   "jacobin-opinion-labor-2026.framing": {
-    "score": 16,
+    "score": 14,
     "grade": "CORRECT"
   },
   "propublica-medicare-2026.lean": {
@@ -156,7 +156,7 @@
     "grade": "ACCEPTABLE"
   },
   "bellingcat-disinfo-2026.framing": {
-    "score": 14,
+    "score": 15,
     "grade": "CORRECT"
   },
   "intercept-military-2026.lean": {
@@ -196,7 +196,7 @@
     "grade": "CORRECT"
   },
   "intercept-climate-left-2026.framing": {
-    "score": 9,
+    "score": 10,
     "grade": "CORRECT"
   },
   "motherjones-wealth-left-2026.lean": {
@@ -216,7 +216,7 @@
     "grade": "CORRECT"
   },
   "motherjones-wealth-left-2026.framing": {
-    "score": 15,
+    "score": 16,
     "grade": "CORRECT"
   },
   "breitbart-border-2026.lean": {
@@ -236,7 +236,7 @@
     "grade": "CORRECT"
   },
   "breitbart-border-2026.framing": {
-    "score": 43,
+    "score": 48,
     "grade": "CORRECT"
   },
   "dailywire-gender-2026.lean": {
@@ -256,7 +256,7 @@
     "grade": "CORRECT"
   },
   "dailywire-gender-2026.framing": {
-    "score": 40,
+    "score": 45,
     "grade": "CORRECT"
   },
   "newsmax-election-2026.lean": {
@@ -264,7 +264,7 @@
     "grade": "CORRECT"
   },
   "newsmax-election-2026.sens": {
-    "score": 37,
+    "score": 40,
     "grade": "CORRECT"
   },
   "newsmax-election-2026.opinion": {
@@ -276,11 +276,11 @@
     "grade": "CORRECT"
   },
   "newsmax-election-2026.framing": {
-    "score": 22,
+    "score": 18,
     "grade": "CORRECT"
   },
   "rt-ukraine-2026.lean": {
-    "score": 84,
+    "score": 96,
     "grade": "CORRECT"
   },
   "rt-ukraine-2026.sens": {
@@ -296,11 +296,11 @@
     "grade": "ACCEPTABLE"
   },
   "rt-ukraine-2026.framing": {
-    "score": 43,
+    "score": 48,
     "grade": "CORRECT"
   },
   "cgtn-taiwan-2026.lean": {
-    "score": 63,
+    "score": 89,
     "grade": "CORRECT"
   },
   "cgtn-taiwan-2026.sens": {
@@ -316,11 +316,11 @@
     "grade": "CORRECT"
   },
   "cgtn-taiwan-2026.framing": {
-    "score": 40,
+    "score": 45,
     "grade": "ACCEPTABLE"
   },
   "sputnik-nato-2026.lean": {
-    "score": 84,
+    "score": 97,
     "grade": "CORRECT"
   },
   "sputnik-nato-2026.sens": {
@@ -336,7 +336,7 @@
     "grade": "CORRECT"
   },
   "sputnik-nato-2026.framing": {
-    "score": 41,
+    "score": 46,
     "grade": "CORRECT"
   },
   "ap-breaking-earthquake-2026.lean": {
@@ -356,7 +356,7 @@
     "grade": "CORRECT"
   },
   "ap-breaking-earthquake-2026.framing": {
-    "score": 12,
+    "score": 11,
     "grade": "CORRECT"
   },
   "reuters-breaking-market-2026.lean": {
@@ -416,7 +416,7 @@
     "grade": "CORRECT"
   },
   "economist-analysis-china-2026.framing": {
-    "score": 10,
+    "score": 11,
     "grade": "CORRECT"
   },
   "atlantic-analysis-democracy-2026.lean": {
@@ -480,8 +480,8 @@
     "grade": "CORRECT"
   },
   "wsj-analysis-trade-2026.lean": {
-    "score": 82,
-    "grade": "ACCEPTABLE"
+    "score": 72,
+    "grade": "CORRECT"
   },
   "wsj-analysis-trade-2026.sens": {
     "score": 8,
@@ -516,6 +516,46 @@
     "grade": "CORRECT"
   },
   "bbc-analysis-climate-2026.framing": {
+    "score": 14,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-rhetorical-2026.lean": {
+    "score": 5,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-rhetorical-2026.sens": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-rhetorical-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-rhetorical-2026.rigor": {
+    "score": 19,
+    "grade": "CORRECT"
+  },
+  "nyt-opinion-rhetorical-2026.framing": {
+    "score": 31,
+    "grade": "CORRECT"
+  },
+  "national-review-analysis-regulation-2026.lean": {
+    "score": 77,
+    "grade": "CORRECT"
+  },
+  "national-review-analysis-regulation-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "national-review-analysis-regulation-2026.opinion": {
+    "score": 45,
+    "grade": "CORRECT"
+  },
+  "national-review-analysis-regulation-2026.rigor": {
+    "score": 59,
+    "grade": "CORRECT"
+  },
+  "national-review-analysis-regulation-2026.framing": {
     "score": 13,
     "grade": "CORRECT"
   }

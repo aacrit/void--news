@@ -158,18 +158,35 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "open borders": 3, "migrant crime": 3, "criminal aliens": 3,
     "chain migration": 3, "anchor baby": 3, "catch and release": 2,
     # Economic
-    "free market": 2, "tax cuts": 2, "trickle down": 2,
-    "job creators": 3, "deregulation": 2,
+    # NOTE: "free market" and "deregulation" reduced from 2->1. Both appear
+    # routinely in neutral WSJ/Bloomberg/Economist economic analysis pieces.
+    # At weight=2 with 4 distinct types the sigmoid saturates, pushing WSJ
+    # analysis to lean=85 (AllSides "lean right" expects [55,75]). At weight=1
+    # the same article scores ~72-75, correctly reflecting mild right framing
+    # without overshoot. Genuine partisan economic terms ("government overreach",
+    # "nanny state", "job creators") retain weight 2-3.
+    # (nlp-engineer P2 fix — WSJ lean=82 vs AllSides [55,75])
+    "free market": 1, "tax cuts": 2, "trickle down": 2,
+    "job creators": 3, "deregulation": 1,
     # NOTE: "small business": 1 removed — standard institutional vocabulary
     # that causes AP/Reuters to drift rightward. (nlp-engineer fix)
-    "energy independence": 2, "war on coal": 3,
+    # NOTE: "energy independence" reduced from 2->1. Used neutrally in energy
+    # policy reporting across the spectrum. "war on coal" (3) remains as the
+    # genuinely partisan formulation. (nlp-engineer P2 fix)
+    "energy independence": 1, "war on coal": 3,
     "fiscal responsibility": 2, "welfare state": 3, "entitlements": 2,
     # NOTE: "government spending": 1 removed — standard policy/reporting term
     # used across the full spectrum. (nlp-engineer fix)
     # NOTE: "balanced budget": 1 removed — standard policy/reporting term
     # used across the full spectrum. (nlp-engineer fix)
     "government overreach": 3, "nanny state": 3, "tax burden": 2,
-    "free enterprise": 2, "economic freedom": 1,
+    "free enterprise": 2,
+    # NOTE: "economic freedom" removed — generic term used in mainstream
+    # economic discourse (World Bank "Economic Freedom Index", Heritage
+    # Foundation rankings, academic papers). Not reliably partisan.
+    # At weight=1 it still saturated WSJ analysis pieces to lean=85 because
+    # it added a 4th distinct right keyword with zero left keywords to
+    # balance. (nlp-engineer P2 fix)
     "esg agenda": 3, "esg": 2, "woke capitalism": 3,
     # Social / culture
     "traditional values": 2, "traditional family": 3, "family values": 2,
@@ -260,6 +277,37 @@ RIGHT_KEYWORDS: dict[str, int] = {
     # NOTE: "parental rights": 2 removed here — duplicate of line ~164 (Social/culture
     # section). Keeping only the first occurrence. (Cycle 3 fix)
     "america first": 2,
+    # Geopolitical / state-media right-coded vocabulary
+    # Chinese and Russian state media deploy these terms as pro-government
+    # alignment signals that map to the authoritarian-right end of the
+    # political spectrum (AllSides "right"). They are absent from Western
+    # L/R vocabulary but carry the same directional meaning as "radical
+    # left" or "deep state" in domestic partisan content.  Without these,
+    # CGTN/RT articles with zero Western keywords score 50 (center) from
+    # text alone, dragging the blended score below their calibrated baseline.
+    # (nlp-engineer P1 fix — CGTN lean=63 vs AllSides "right" [70,100])
+    "reunification": 2,           # CCP framing of Taiwan/territories
+    "separatist forces": 3,       # CCP term for independence movements
+    "splittist": 3,               # CCP term for Tibet/Taiwan activists
+    "splittists": 3,              # plural form
+    "territorial integrity": 1,   # neutral in isolation but state-media anchor term
+    "interference in internal affairs": 3,  # CCP/Russia dismissal of human rights critique
+    "hostile forces": 2,          # CCP catch-all for opposition
+    "anti-china forces": 3,       # CGTN/Global Times adversarial frame
+    "century of humiliation": 2,  # CCP nationalist historical framing
+    "western hegemony": 3,        # RT/Sputnik/CGTN anti-Western frame
+    "cold war mentality": 3,      # CCP/Russia delegitimization of Western policy
+    "so-called human rights": 3,  # state-media dismissal of human rights
+    "historical inevitability": 2, # CCP deterministic framing of reunification
+    "denazification": 3,          # Kremlin justification for Ukraine war
+    "special military operation": 3, # Kremlin euphemism for Ukraine invasion
+    "collective west": 2,         # RT/Sputnik us-vs-them framing
+    "western aggression": 3,      # state-media adversarial frame
+    "proxy war": 2,               # RT/Sputnik framing of Ukraine conflict
+    "puppet regime": 3,           # state-media delegitimization
+    "russophobia": 3,             # RT anti-Western framing
+    "nato aggression": 3,         # state-media adversarial frame
+    "western smear": 3,           # CGTN dismissive framing
 }
 
 # ---------------------------------------------------------------------------

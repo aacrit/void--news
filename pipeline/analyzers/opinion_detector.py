@@ -530,10 +530,10 @@ def analyze_opinion(article: dict) -> dict:
         pronoun * 0.12
         + subjectivity * 0.18
         + modal * 0.12
-        + hedging * 0.08
+        + hedging * 0.06    # reduced 0.08→0.06: freed weight to rhetorical questions
         + attribution * 0.15
         + metadata * 0.12
-        + rhetorical * 0.04
+        + rhetorical * 0.06  # increased 0.04→0.06: was dead signal at 0% contribution
         + value_judg * 0.06
         + absolutist * 0.13
     )
@@ -573,9 +573,9 @@ def analyze_opinion(article: dict) -> dict:
         ("pronouns", pronoun * 0.12),
         ("modal_language", modal * 0.12),
         ("metadata", metadata * 0.12),
-        ("hedging", hedging * 0.08),
+        ("hedging", hedging * 0.06),
         ("value_judgments", value_judg * 0.06),
-        ("rhetorical_questions", rhetorical * 0.04),
+        ("rhetorical_questions", rhetorical * 0.06),
     ]
     signal_contributions.sort(key=lambda x: x[1], reverse=True)
     dominant = [s[0] for s in signal_contributions[:3] if s[1] > 0]
