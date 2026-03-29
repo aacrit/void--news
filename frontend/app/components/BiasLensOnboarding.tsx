@@ -35,7 +35,7 @@ interface Phase {
 const PHASES: Phase[] = [
   {
     id: "origin",
-    duration: 4000,
+    duration: 7000,
     headline: "void --news",
     subtitle: "See every side of the story",
     body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. The truth isn't in any single tab — it's in the space between them.",
@@ -43,14 +43,14 @@ const PHASES: Phase[] = [
   },
   {
     id: "why",
-    duration: 4000,
+    duration: 7000,
     headline: "The space between",
     body: "We built void to live in that space. No editorial staff picking winners. No algorithm optimizing for outrage. Just 370 sources, scored on six axes, so you can see what every outlet chose to show you — and what they left out.",
     visual: "story",
   },
   {
     id: "lean",
-    duration: 3600,
+    duration: 6000,
     headline: "The Needle",
     subtitle: "Political lean at a glance",
     body: "Each source lands somewhere on the spectrum. The needle shows you where — not to judge, but so you know which direction the wind is blowing.",
@@ -58,7 +58,7 @@ const PHASES: Phase[] = [
   },
   {
     id: "depth",
-    duration: 3200,
+    duration: 6000,
     headline: "The Ring",
     subtitle: "Coverage depth and breadth",
     body: "A thin ring means one outlet is talking. A full ring means the world noticed. The fuller it gets, the more you can trust that the story has been pressure-tested by competing newsrooms.",
@@ -66,21 +66,21 @@ const PHASES: Phase[] = [
   },
   {
     id: "products",
-    duration: 4000,
+    duration: 7000,
     headline: "Your daily toolkit",
     body: "Everything in void is a command you run — transparent, no mystery behind the curtain.",
     visual: "product",
   },
   {
     id: "audio",
-    duration: 3600,
+    duration: 6000,
     headline: "Listen, don\u2019t scroll",
     body: "Two voices. One delivers the facts, the other asks the questions you\u2019d ask. Three minutes, no filler, no \u201Cthat\u2019s interesting.\u201D Just the story and why it matters.",
     visual: "product-audio",
   },
   {
     id: "verdict",
-    duration: 4000,
+    duration: 7000,
     headline: "Read with clarity",
     body: "Lean and depth together. A story reported broadly across the spectrum, from many credible sources — that\u2019s where confidence lives.",
     visual: "verdict",
