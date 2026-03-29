@@ -297,57 +297,86 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
   const hasAudio = !!brief.audio_url && !audioError;
   const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
+  const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
   return (
-    <div className="onair-pill">
-      <button
-        className={`onair-pill__btn${isPlaying ? " onair-pill__btn--playing" : ""}`}
-        onClick={handlePlayPause}
-        disabled={!hasAudio}
-        type="button"
-        aria-label={
-          !hasAudio ? "Audio broadcast unavailable"
-            : isPlaying ? "Pause void --onair" : "Play void --onair"
-        }
-        title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
-      >
-        <ScaleIcon size={10} animation={isPlaying ? "analyzing" : "idle"} aria-hidden />
-        <span className="onair-pill__label">
-          {isPlaying ? "Now Playing" : "void --onair"}
-        </span>
-        <span className="onair-pill__icon" aria-hidden="true">
-          {isPlaying ? "\u275A\u275A" : "\u25B6"}
-        </span>
-        {isPlaying && <span className="onair-pill__live-dot" aria-hidden="true" />}
-      </button>
+    <div className={`onair${isPlaying ? " onair--playing" : ""}`} role="region" aria-label="Audio Broadcast">
+      {/* Broadcast header row */}
+      <div className="onair__header">
+        {isPlaying && <span className="onair__live-dot" aria-hidden="true" />}
+        <span className="onair__cmd">void --onair</span>
+        <span className="onair__tagline">Audio Broadcast</span>
+        {durationMin && !isPlaying && (
+          <span className="onair__duration">{durationMin} min</span>
+        )}
+        {isPlaying && (
+          <span className="onair__now-playing">Now Playing</span>
+        )}
+      </div>
 
-      {/* Mini player — visible when playing */}
-      {isPlaying && (
-        <div className="onair-pill__player">
-          <div className="onair-pill__seek-wrap">
-            <div className="onair-pill__bar">
-              <div
-                className="onair-pill__fill"
-                style={{ width: `${progress}%` }}
+      {/* Main control area */}
+      <div className="onair__controls">
+        {/* Play/pause button */}
+        <button
+          className={`onair__play${isPlaying ? " onair__play--active" : ""}`}
+          onClick={handlePlayPause}
+          disabled={!hasAudio}
+          type="button"
+          aria-label={
+            !hasAudio ? "Audio broadcast unavailable"
+              : isPlaying ? "Pause broadcast" : "Play broadcast"
+          }
+          title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
+        >
+          <span className="onair__play-icon" aria-hidden="true">
+            {isPlaying ? "\u275A\u275A" : "\u25B6"}
+          </span>
+        </button>
+
+        {/* Equalizer bars — always visible, animate when playing */}
+        <div className={`onair__eq${isPlaying ? " onair__eq--active" : ""}`} aria-hidden="true">
+          <span className="onair__eq-bar" style={{ animationDelay: "0ms" }} />
+          <span className="onair__eq-bar" style={{ animationDelay: "150ms" }} />
+          <span className="onair__eq-bar" style={{ animationDelay: "75ms" }} />
+          <span className="onair__eq-bar" style={{ animationDelay: "200ms" }} />
+          <span className="onair__eq-bar" style={{ animationDelay: "50ms" }} />
+        </div>
+
+        {/* CTA or seek bar */}
+        {isPlaying ? (
+          <div className="onair__track">
+            <div className="onair__seek-wrap">
+              <div className="onair__bar">
+                <div className="onair__fill" style={{ width: `${progress}%` }} />
+              </div>
+              <input
+                type="range"
+                className="onair__seek"
+                min={0}
+                max={displayDuration || 100}
+                value={currentTime}
+                step={0.5}
+                onChange={handleSeek}
+                aria-label="Broadcast seek position"
+                aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`}
               />
             </div>
-            <input
-              type="range"
-              className="onair-pill__seek"
-              min={0}
-              max={displayDuration || 100}
-              value={currentTime}
-              step={0.5}
-              onChange={handleSeek}
-              aria-label="Broadcast seek position"
-              aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`}
-            />
+            <span className="onair__time">
+              {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+            </span>
           </div>
-          <span className="onair-pill__time">
-            {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
-          </span>
-        </div>
-      )}
+        ) : hasAudio ? (
+          <button
+            className="onair__cta"
+            onClick={handlePlayPause}
+            type="button"
+          >
+            Listen to today&rsquo;s broadcast
+          </button>
+        ) : (
+          <span className="onair__unavailable">Broadcast generates twice daily</span>
+        )}
+      </div>
     </div>
   );
 }

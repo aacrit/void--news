@@ -4068,113 +4068,277 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-tertiary);
 }
 
-/* ---- On Air Pill — standalone audio control ---- */
+/* ---- On Air — broadcast-style standalone audio section ---- */
+/*
+ * Radio-show aesthetic: broadcast red accent, equalizer bars,
+ * prominent play button, strong CTA. Distinct from the brief banner.
+ */
 
-.onair-pill {
+.onair {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--indicator-broadcast, #c0392b);
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 3%, var(--bg-primary));
+  transition: background-color var(--dur-normal) var(--ease-out),
+              border-color var(--dur-normal) var(--ease-out);
+}
+
+.onair--playing {
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 5%, var(--bg-primary));
+  border-left-color: var(--indicator-broadcast, #c0392b);
+}
+
+/* ---- Header row: command name + tagline + duration ---- */
+
+.onair__header {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  margin: 0 0 var(--space-3);
-}
-
-.onair-pill__btn {
-  display: inline-flex;
-  align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-
-  font-family: var(--font-data);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-
-  color: var(--fg-secondary);
-  background: color-mix(in srgb, var(--accent-warm) 6%, var(--bg-secondary));
-  border: 1px solid var(--border-strong);
-  border-radius: 100px;
-  cursor: pointer;
-
-  min-height: 44px;
-
-  transition: background-color var(--dur-fast) var(--ease-out),
-              border-color var(--dur-fast) var(--ease-out),
-              transform var(--dur-fast) var(--ease-out);
+  flex-wrap: wrap;
 }
 
-.onair-pill__btn:hover {
-  background: color-mix(in srgb, var(--accent-warm) 12%, var(--bg-secondary));
-  border-color: var(--accent-warm);
-}
-
-.onair-pill__btn:active {
-  transform: scale(0.97);
-}
-
-.onair-pill__btn--playing {
-  border-color: var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 10%, var(--bg-secondary));
-}
-
-.onair-pill__btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-  pointer-events: none;
-}
-
-.onair-pill__label {
-  white-space: nowrap;
-}
-
-.onair-pill__icon {
-  font-size: 10px;
-  line-height: 1;
-}
-
-.onair-pill__live-dot {
-  width: 6px;
-  height: 6px;
+.onair__live-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: var(--indicator-broadcast, #c0392b);
   flex-shrink: 0;
   animation: onair-pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 50%, transparent);
 }
 
-/* Mini player — seek bar + time, visible when playing */
-.onair-pill__player {
+.onair__cmd {
+  font-family: var(--font-data);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--indicator-broadcast, #c0392b);
+  white-space: nowrap;
+}
+
+.onair__tagline {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+.onair__duration {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--fg-muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.onair__now-playing {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--indicator-broadcast, #c0392b);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ---- Controls row: play button + eq + CTA/track ---- */
+
+.onair__controls {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
-.onair-pill__seek-wrap {
+/* Play button — broadcast red circle */
+.onair__play {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--indicator-broadcast, #c0392b);
+  border-radius: 50%;
+  background: none;
+  color: var(--indicator-broadcast, #c0392b);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.onair__play:hover {
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 10%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 20%, transparent);
+  transform: scale(1.06);
+}
+
+.onair__play:active {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+.onair__play--active {
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 12%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 25%, transparent);
+}
+
+.onair__play:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+  border-color: var(--border-strong);
+  color: var(--fg-muted);
+}
+
+.onair__play-icon {
+  font-size: 14px;
+  line-height: 1;
+  /* Optical centering — play triangle needs nudge right */
+  margin-left: 2px;
+}
+
+.onair__play--active .onair__play-icon {
+  margin-left: 0;
+}
+
+/* ---- Equalizer bars — radio-show visual signature ---- */
+
+.onair__eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.onair__eq-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--border-strong);
+  height: 4px;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+/* Static idle heights — staggered for visual interest */
+.onair__eq-bar:nth-child(1) { height: 6px; }
+.onair__eq-bar:nth-child(2) { height: 10px; }
+.onair__eq-bar:nth-child(3) { height: 16px; }
+.onair__eq-bar:nth-child(4) { height: 8px; }
+.onair__eq-bar:nth-child(5) { height: 12px; }
+
+/* Active: broadcast red + bouncing animation */
+.onair__eq--active .onair__eq-bar {
+  background: var(--indicator-broadcast, #c0392b);
+  animation: eq-bounce 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes eq-bounce {
+  0%   { height: 4px; }
+  100% { height: 24px; }
+}
+
+/* ---- CTA button — strong, broadcast-red accent ---- */
+
+.onair__cta {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+
+  font-family: var(--font-meta);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: var(--indicator-broadcast, #c0392b);
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 8%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--indicator-broadcast, #c0392b) 30%, transparent);
+  border-radius: 4px;
+  cursor: pointer;
+
+  min-height: 44px;
+  white-space: nowrap;
+
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.onair__cta:hover {
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 14%, transparent);
+  border-color: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 50%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 15%, transparent);
+}
+
+.onair__cta:active {
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
+.onair__cta:focus-visible {
+  outline: 2px solid var(--indicator-broadcast, #c0392b);
+  outline-offset: 2px;
+}
+
+/* Unavailable state text */
+.onair__unavailable {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+/* ---- Track (seek bar + time) — visible when playing ---- */
+
+.onair__track {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.onair__seek-wrap {
   position: relative;
-  width: 100px;
+  flex: 1;
   height: 20px;
   display: flex;
   align-items: center;
 }
 
-.onair-pill__bar {
+.onair__bar {
   position: absolute;
   left: 0;
   right: 0;
-  height: 3px;
-  background: color-mix(in srgb, var(--border-strong) 60%, transparent);
+  height: 4px;
+  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 15%, var(--border-strong));
   border-radius: 2px;
   overflow: hidden;
 }
 
-.onair-pill__fill {
+.onair__fill {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--accent-warm);
+  background: var(--indicator-broadcast, #c0392b);
   border-radius: 2px;
   transition: width 250ms linear;
+  box-shadow: 0 0 4px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 30%, transparent);
 }
 
-.onair-pill__seek {
+.onair__seek {
   position: absolute;
   left: 0;
   top: 50%;
@@ -4190,37 +4354,46 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   z-index: 1;
 }
 
-.onair-pill__seek::-webkit-slider-thumb {
+.onair__seek::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
 }
 
-.onair-pill__time {
+.onair__time {
   font-family: var(--font-data);
-  font-size: 11px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.03em;
   color: var(--fg-muted);
   white-space: nowrap;
 }
 
+/* ---- On Air pulse animation ---- */
+
 @keyframes onair-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  50% { opacity: 0.3; }
 }
+
+/* ---- Reduced motion + touch guards ---- */
 
 @media (prefers-reduced-motion: reduce) {
   .db-col__expand { transition: none; }
   .db-col__cta { transition: none; }
-  .onair-pill__btn { transition: none; }
-  .onair-pill__fill { transition: none; }
-  .onair-pill__live-dot { animation: none; opacity: 1; }
+  .onair { transition: none; }
+  .onair__play { transition: none; }
+  .onair__cta { transition: none; }
+  .onair__fill { transition: none; }
+  .onair__live-dot { animation: none; opacity: 1; }
+  .onair__eq--active .onair__eq-bar { animation: none; height: 12px; }
 }
 
 @media (hover: none) {
-  .onair-pill__btn:hover { background: color-mix(in srgb, var(--accent-warm) 6%, var(--bg-secondary)); border-color: var(--border-strong); transform: none; }
-  .onair-pill__btn:active { transform: scale(0.96); opacity: 0.9; }
+  .onair__play:hover { background: none; box-shadow: none; transform: none; }
+  .onair__play:active { transform: scale(0.94); }
+  .onair__cta:hover { background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 8%, transparent); border-color: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 30%, transparent); box-shadow: none; }
+  .onair__cta:active { transform: scale(0.96); }
   .db-col__cta:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); }
 }
 
