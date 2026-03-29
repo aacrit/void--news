@@ -793,7 +793,7 @@ def generate_daily_briefs(
     global _brief_call_count
 
     if edition_sections is None:
-        edition_sections = ["world", "us", "uk", "india", "canada"]
+        edition_sections = ["world", "us", "india"]
 
     gemini_ok = is_available()
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")

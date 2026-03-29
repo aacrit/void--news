@@ -30,17 +30,13 @@ type LeanFilter = "All" | "Left" | "Center" | "Right";
 const EDITIONS: { slug: Edition; label: string }[] = [
   { slug: "world", label: "World" },
   { slug: "us", label: "US" },
-  { slug: "uk", label: "UK" },
   { slug: "india", label: "India" },
-  { slug: "canada", label: "Canada" },
 ];
 
 const EDITION_COUNTRIES: Record<Edition, string[] | null> = {
   world: null,
   us: ["US"],
-  uk: ["GB", "UK"],
   india: ["IN"],
-  canada: ["CA"],
 };
 
 const LEAN_FILTERS: LeanFilter[] = ["Left", "Center", "Right"];

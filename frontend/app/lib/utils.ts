@@ -9,8 +9,6 @@ export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
   const editionTimezones: Record<string, string> = {
     us: "America/New_York",
     india: "Asia/Kolkata",
-    uk: "Europe/London",
-    canada: "America/Toronto",
   };
 
   const tz = editionTimezones[edition];
@@ -41,8 +39,6 @@ export function getEditionTimestamp(edition: string): string {
   const editionFormats: Record<string, { tz: string; label: string; h12: boolean }> = {
     us: { tz: "America/New_York", label: "ET", h12: true },
     india: { tz: "Asia/Kolkata", label: "IST", h12: false },
-    uk: { tz: "Europe/London", label: "GMT", h12: false },
-    canada: { tz: "America/Toronto", label: "ET", h12: true },
   };
 
   const fmt = editionFormats[edition];
