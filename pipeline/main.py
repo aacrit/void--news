@@ -1898,6 +1898,7 @@ def main():
                                 brief_row["audio_url"] = audio_result["audio_url"]
                                 brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
                                 brief_row["audio_file_size"] = audio_result["file_size"]
+                                brief_row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
                                 has_opinion = bool(brief.get("opinion_audio_script"))
                                 brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
                                     f"+{voices['opinion']['id']}" if has_opinion else ""
@@ -1908,7 +1909,7 @@ def main():
                                 # frontend always has something to play.
                                 try:
                                     prev = supabase.table("daily_briefs").select(
-                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size"
+                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size,opinion_start_seconds"
                                     ).eq("edition", edition).order(
                                         "created_at", desc=True
                                     ).limit(1).execute()
@@ -1919,6 +1920,7 @@ def main():
                                         brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                         brief_row["audio_voice"] = p.get("audio_voice")
                                         brief_row["audio_file_size"] = p.get("audio_file_size")
+                                        brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                         print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
                                 except Exception as e:
                                     print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
@@ -1927,7 +1929,7 @@ def main():
                             # previous audio so frontend always has audio available.
                             try:
                                 prev = supabase.table("daily_briefs").select(
-                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
+                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
                                 ).eq("edition", edition).order(
                                     "created_at", desc=True
                                 ).limit(1).execute()
@@ -1938,6 +1940,7 @@ def main():
                                     brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                     brief_row["audio_voice"] = p.get("audio_voice")
                                     brief_row["audio_file_size"] = p.get("audio_file_size")
+                                    brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                     if not brief_row.get("audio_script"):
                                         brief_row["audio_script"] = p.get("audio_script")
                                     print(f"  [brief:{edition}] No audio script — carried forward previous audio")

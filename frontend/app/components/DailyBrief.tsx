@@ -290,7 +290,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
    --------------------------------------------------------------------------- */
 
 export function OnAirButton({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioError, handlePlayPause, handleSeek } = state;
+  const { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek } = state;
 
   if (!brief) return null;
 
@@ -299,9 +299,26 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
+  // Section markers — opinion start position as percentage
+  const opinionStart = brief.opinion_start_seconds ?? null;
+  const hasOpinion = opinionStart !== null && displayDuration > 0;
+  const opinionPct = hasOpinion ? (opinionStart / displayDuration) * 100 : 100;
+
+  // Which section is the playhead in?
+  const inOpinion = hasOpinion && currentTime >= opinionStart;
+
+  // Snap-to-section handlers
+  const seekTo = (seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    hapticLight();
+    audio.currentTime = seconds;
+    if (!isPlaying) handlePlayPause();
+  };
+
   return (
     <div className={`onair${isPlaying ? " onair--playing" : ""}`} role="region" aria-label="Audio Broadcast">
-      {/* Broadcast header row */}
+      {/* Header row */}
       <div className="onair__header">
         {isPlaying && <span className="onair__live-dot" aria-hidden="true" />}
         <span className="onair__cmd">void --onair</span>
@@ -314,9 +331,8 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
         )}
       </div>
 
-      {/* Main control area */}
+      {/* Controls */}
       <div className="onair__controls">
-        {/* Play/pause button */}
         <button
           className={`onair__play${isPlaying ? " onair__play--active" : ""}`}
           onClick={handlePlayPause}
@@ -333,7 +349,7 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
           </span>
         </button>
 
-        {/* Equalizer bars — always visible, animate when playing */}
+        {/* Equalizer bars */}
         <div className={`onair__eq${isPlaying ? " onair__eq--active" : ""}`} aria-hidden="true">
           <span className="onair__eq-bar" style={{ animationDelay: "0ms" }} />
           <span className="onair__eq-bar" style={{ animationDelay: "150ms" }} />
@@ -342,12 +358,42 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
           <span className="onair__eq-bar" style={{ animationDelay: "50ms" }} />
         </div>
 
-        {/* CTA or seek bar */}
-        {isPlaying ? (
+        {/* CTA when idle, track when playing */}
+        {isPlaying || currentTime > 0 ? (
           <div className="onair__track">
+            {/* Section labels — clickable to snap */}
+            <div className="onair__sections">
+              <button
+                className={`onair__section${!inOpinion ? " onair__section--active" : ""}`}
+                onClick={() => seekTo(0)}
+                type="button"
+                style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}
+              >
+                News
+              </button>
+              {hasOpinion && (
+                <button
+                  className={`onair__section${inOpinion ? " onair__section--active" : ""}`}
+                  onClick={() => seekTo(opinionStart)}
+                  type="button"
+                  style={{ width: `${100 - opinionPct}%` }}
+                >
+                  Opinion
+                </button>
+              )}
+            </div>
+
+            {/* Seek bar with section divider */}
             <div className="onair__seek-wrap">
               <div className="onair__bar">
                 <div className="onair__fill" style={{ width: `${progress}%` }} />
+                {hasOpinion && (
+                  <span
+                    className="onair__section-mark"
+                    style={{ left: `${opinionPct}%` }}
+                    aria-hidden="true"
+                  />
+                )}
               </div>
               <input
                 type="range"
@@ -361,6 +407,7 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
                 aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`}
               />
             </div>
+
             <span className="onair__time">
               {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
             </span>

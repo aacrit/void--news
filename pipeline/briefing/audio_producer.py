@@ -691,6 +691,7 @@ def produce_audio(
     combined += AudioSegment.silent(duration=200)
 
     # Opinion section (after editorial page-turn transition)
+    opinion_start_ms = None
     if opinion_seg:
         transition = _load_asset("news_to_opinion.wav")
         if transition is None:
@@ -701,6 +702,7 @@ def produce_audio(
             combined += AudioSegment.silent(duration=800)
         # Minimal gap after transition — Phase 3 handles the arrival (was 200ms)
         combined += AudioSegment.silent(duration=100)
+        opinion_start_ms = len(combined)
         combined += opinion_seg
 
         # Opinion kicker: chord stab after editorial
@@ -773,8 +775,10 @@ def produce_audio(
         return None
 
     print(f"  [audio] Uploaded: {public_url}")
+    opinion_start_seconds = round(opinion_start_ms / 1000.0, 1) if opinion_start_ms else None
     return {
         "audio_url": public_url,
         "duration_seconds": duration_seconds,
         "file_size": file_size,
+        "opinion_start_seconds": opinion_start_seconds,
     }
