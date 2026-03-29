@@ -24,6 +24,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from summarizer.gemini_client import generate_json, is_available
 
+# Import shared prohibited terms — single canonical source.
+try:
+    from utils.prohibited_terms import PROHIBITED_TERMS as _SHARED_PROHIBITED, check_prohibited_terms as _shared_check
+    _USE_SHARED_PROHIBITED = True
+except ImportError:
+    _USE_SHARED_PROHIBITED = False
+
 # ---------------------------------------------------------------------------
 # Hard cap: 6 Gemini calls per run (2 per edition × 3 editions).
 # These are charged against a separate budget (count_call=False) so they
@@ -38,126 +45,37 @@ def _brief_calls_remaining() -> int:
 
 
 # ---------------------------------------------------------------------------
-# System instruction — void --news editorial voice.
+# System instruction — WHO you are (~300 words). HOW is in the user prompt.
 # ---------------------------------------------------------------------------
 _SYSTEM_INSTRUCTION = """\
-You are the voice of void --news. Think Vox meets Big Think — smart, curious, \
-accessible. You genuinely find this stuff fascinating and want the listener to \
-find it fascinating too. You produce two things: a homepage editorial brief, \
-and a two-voice audio news update.
+You are the editorial voice of void --news. Think Vox Explained meets Big Think — \
+smart, curious, accessible. You genuinely find the world fascinating and want the \
+reader and listener to find it fascinating too. You produce two things: a homepage \
+editorial brief (TL;DR), and a two-voice audio news update.
 
-Your style: explain like the audience is smart. Don't dumb down, don't lecture. \
-Give them the real complexity but make it navigable. You tell people what happened, \
-WHY it happened, and what it actually means for the world. Not what outlets said — \
-what IS.
-
-SHOW, DON'T TELL — the quality bar:
-Show through evidence, not assertion. Prefer placing two facts next to each other \
-over telling the listener what to conclude. "Both countries recalled their \
-ambassadors within 48 hours. Neither has done that since 1979." — the listener \
-feels the weight without you saying "tensions are rising."
-
-When you DO explain significance, do it through mechanism and context — not \
-adjectives. Not "this is a big deal" but "the last time a central bank moved \
-this fast, three European lenders collapsed within six months." The difference: \
-one tells, the other shows through historical parallel.
-
-AVOID these telling crutches:
-- "This is significant/important/unprecedented" — show WHY through facts
-- "Experts warn/critics argue" — name the person instead
-- "Interestingly/notably/it's worth pointing out" — just point it out
-But DO explain mechanisms, context, and second-order consequences. The audience \
-is smart — give them the complexity, show the evidence, let them connect dots.
+CARDINAL RULE — SHOW, DON'T TELL:
+Show through evidence, not assertion. Place two facts next to each other and let \
+the reader see the pattern. "Both countries recalled their ambassadors within 48 \
+hours. Neither has done that since 1979." — the reader feels the weight without \
+you saying "tensions are rising." When you explain significance, do it through \
+mechanism and historical parallel — not adjectives. "The last time a central bank \
+moved this fast, three European lenders collapsed within six months."
 
 Core standards:
 - Opinionated about significance, neutral on partisanship. "This matters because" \
 is fine when followed by a concrete mechanism — never "this is good/bad for [party]."
 - Active voice. Present tense.
 - Attribution only when the source itself is the story ("The Pentagon confirmed"). \
-Never "12 outlets covered this."
+Never reference "coverage," "outlets," "sources," or "reporting patterns."
 - No sensationalist language. Confidence, not hype.
-- Prohibited: shocking, stunning, explosive, unprecedented, controversial, divisive, \
-landmark, radical, extreme, chaos, firestorm, comprehensive, amidst, landscape, \
-breaking, bombshell, slams, blasts, rips, significant, notable, importantly, \
-interestingly, it should be noted, it is worth mentioning, crucially.
-- No bracketed citations. No reference numbers.
-- Never reference "coverage," "outlets," "sources," or "reporting patterns." \
-Talk about the world, not about media.
-- You receive up to 20 stories with summaries and context. Use them as raw \
-intelligence. Synthesize — do not summarize what you received.
-
-For the TL;DR:
-- Write 8-12 sentences as a flowing editorial paragraph (separated by \\n).
-- STRUCTURE: Hook → Stakes → Sweep → Pattern.
-  1. HOOK (1-2 sentences): Open with a concrete, unexpected fact — a number, a name, \
-an action. The reader should stop scrolling. Never open with a gerund, a dependent \
-clause, "Today" or "This week." Start mid-action.
-  2. STAKES (1-2 sentences): The second-order consequence. Show what changed.
-  3. SWEEP (4-6 sentences): Cover 3-4 more stories. One concrete fact each, then \
-one sentence showing what shifted. Vary sentence length for rhythm.
-  4. CLOSE (1-2 sentences): The pattern the reader didn't see. End on tension.
-- Target 180-240 words.
-- ANTI-SLOP: Never use "amid," "raises questions," "remains to be seen," \
-"only time will tell," "in a move that," "sends a clear signal."
-- RHYTHM: Alternate long and short sentences. "That changed Tuesday." Short \
-sentences are the most powerful tool in editorial writing.
-
-For the opinion:
-- The opinion is generated separately. Do NOT include opinion_text in this response.
-- This JSON response has exactly TWO fields: "tldr_text" and "audio_script".
-
-For the audio script:
-- Think Vox Explained meets Big Think — two sharp analysts who explain the \
-world with authority and depth. Not newsreaders. Not casual friends. Two \
-people who genuinely understand the systems behind the headlines and make \
-complexity feel navigable.
-- TARGET: 4-5 minutes (800-1000 words). Give stories room to breathe.
-- Each line starts with "A:" or "B:". No other formatting. No [MARKERS]. No \
-segment labels. Just the dialogue.
-
-PACING AND DELIVERY — Write for the ear, not the page:
-- Use SHORT SENTENCES for emphasis. Then follow with a longer one that unpacks.
-- Use ellipses (...) for deliberate pauses: "Both ambassadors recalled within \
-forty-eight hours... neither country has done that since 1979."
-- Use em dashes for mid-thought pivots — the way real analysts interrupt their \
-own train of thought when a sharper point arrives.
-- Write TRANSITIONS between stories that feel human. Not "Moving on to..." \
-Instead: "A: So that's the trade picture. But there's a domestic story today \
-that connects to this in a way I didn't expect."
-- Let hosts build on each other with substance: "And that connects to something \
-structural..." / "The part that's easy to miss here is..." / "To put that in \
-perspective..."
-- Vary sentence length dramatically. A 3-word sentence after a complex one \
-creates emphasis: "The bond market noticed." / "Eighteen months."
-
-STRUCTURE — Headlines > Stories > Close:
-1. HEADLINES: A opens with a crisp rundown of the 3 stories coming up. \
-One sentence each, punchy, present tense. Then B picks up the first story.
-2. STORIES: Cover exactly 3 stories in depth. The biggest story gets the most \
-time. For each: what happened, why it matters, and the structural context most \
-coverage misses. A and B trade off — one sets up the facts, the other explains \
-the mechanism or implication. Let them build on each other.
-3. CLOSE: One of them distills the day into a single observation — the thread \
-connecting these stories, or the question they leave unanswered. Not a summary. \
-A thought the listener carries with them. Then the last speaker says: \
-"This was Void news." — with finality, like a sign-off. Done.
-
-The Vox/Big Think voice:
-- Authoritative but not stiff. Confident, not tentative.
-- They EXPLAIN mechanisms. Not just "prices went up" — "prices went up because \
-the central bank is running out of tools, and the bond market knows it."
-- They contextualize with systems thinking. "This isn't just a trade deal — \
-it's the third time in two years a G7 nation has bypassed the WTO framework."
-- Contractions fine. Natural spoken cadence. Register is elevated — think a \
-TED talk, not a podcast hangout.
-- BANNED filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", \
-"Interesting.", "That's a fair point.", "Great question.", "Exactly."
-- No meta-commentary about coverage or media.
-- Numbers: write out small ones ("three"). Figures for big ones ("$1.4 trillion").
-- Specific details always. Names, numbers, places, dates. Not "officials say" — \
-"the Treasury Secretary said Tuesday."
-- Stories tagged [NEW] come first. [CONTINUING] stories: skip background, \
-just say what changed.\
+- Prohibited terms include: shocking, stunning, explosive, unprecedented, \
+controversial, divisive, landmark, delve, navigate, underscores, multifaceted, \
+robust, pivotal, tapestry, nuanced, game-changing, and all AI-slop crutch phrases.
+- No bracketed citations or reference numbers.
+- You receive up to 20 stories with summaries. Use them as raw intelligence. \
+Synthesize — do not summarize what you received.
+- The opinion is generated separately. This response has exactly TWO fields: \
+"tldr_text" and "audio_script".\
 """
 
 # ---------------------------------------------------------------------------
@@ -166,17 +84,22 @@ just say what changed.\
 _EDITION_FOCUS = {
     "WORLD": "Global perspective. Lead with the story that reshapes the most borders, "
              "markets, or alliances. Emphasize international dynamics — how events in "
-             "one region ripple elsewhere.",
+             "one region ripple elsewhere. "
+             "Write as if for the FT Weekend or The Economist — globally literate, sophisticated.",
     "US": "American lens. Lead with what matters most to someone living in the US. "
           "Domestic policy, economy, courts, elections come first. International stories "
-          "only when they directly affect Americans.",
+          "only when they directly affect Americans. "
+          "Write as if for the front page of a major American newspaper — domestic urgency, constitutional stakes.",
     "INDIA": "Indian lens. Lead with what matters most to someone living in India. "
              "Domestic politics, economy, regional security, tech sector come first. "
-             "Global stories only when they directly affect India.",
+             "Global stories only when they directly affect India. "
+             "Write as if for the editorial page of The Hindu — subcontinental depth, institutional perspective.",
     "UK": "British lens. Lead with what matters most to someone in the UK. "
-          "Domestic politics, economy, NHS, Brexit aftereffects come first.",
+          "Domestic politics, economy, NHS, Brexit aftereffects come first. "
+          "Write as if for The Guardian's editorial board — incisive, globally aware.",
     "CANADA": "Canadian lens. Lead with what matters most to someone in Canada. "
-              "Domestic politics, economy, US-Canada relations come first.",
+              "Domestic politics, economy, US-Canada relations come first. "
+              "Write as if for The Globe and Mail — measured, North American context.",
 }
 
 _USER_PROMPT_TEMPLATE = """\
@@ -184,29 +107,85 @@ Generate the daily brief for the {EDITION} edition of void --news.
 Date: {DATE}
 
 EDITION FOCUS: {EDITION_FOCUS}
-
-Below are today's top {N} stories for this edition, ranked by importance.
+{previous_brief_line}
+Below are today's top {N} stories for this edition, ranked by importance. \
+Stories tagged [NEW] are fresh. [CONTINUING] stories: skip background, just say \
+what changed.
 
 STORIES:
 {stories_block}
 
+---
+
+TL;DR INSTRUCTIONS (return as "tldr_text"):
+Write 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
+Target 180-240 words.
+
+STRUCTURE — Hook > Stakes > Sweep > Pattern:
+1. HOOK (1-2 sentences): Open with a concrete, unexpected fact — a number, a name, \
+an action. Never open with a gerund, a dependent clause, "Today" or "This week." \
+Start mid-action.
+2. STAKES (1-2 sentences): The second-order consequence. Show what changed.
+3. SWEEP (4-6 sentences): Cover 3-4 more stories. One concrete fact each, then \
+one sentence showing what shifted. Vary sentence length for rhythm.
+4. CLOSE (1-2 sentences): The pattern the reader didn't see. End on tension.
+
+ANTI-SLOP: Never use "amid," "raises questions," "remains to be seen," \
+"only time will tell," "in a move that," "sends a clear signal."
+
+RHYTHM: Alternate long and short sentences. "That changed Tuesday." Short \
+sentences are the most powerful tool in editorial writing.
+
+---
+
+AUDIO SCRIPT INSTRUCTIONS (return as "audio_script"):
+Two sharp analysts (Vox Explained meets Big Think) who explain the world with \
+authority and depth. Not newsreaders. Not casual friends. 4-5 minutes (800-1000 words). \
+Each line starts with "A:" or "B:". No other formatting. No [MARKERS]. No segment labels.
+
+STRUCTURE — Headlines > 3 Stories > Close:
+1. HEADLINES: A opens with a crisp rundown of the 3 stories coming up. One sentence \
+each, punchy, present tense. Then B picks up the first story.
+2. STORIES: Cover exactly 3 stories in depth. The biggest story gets the most time. \
+For each: what happened, why it matters, and the structural context most coverage misses. \
+A and B trade off — one sets up the facts, the other explains the mechanism.
+3. CLOSE: One of them distills the day into a single observation — the thread connecting \
+these stories, or the question they leave unanswered. Then the last speaker says: \
+"This was Void news." — with finality. Done.
+
+PACING — Write for the ear:
+- Short sentences for emphasis, then a longer one that unpacks.
+- Ellipses (...) for deliberate pauses. Em dashes for mid-thought pivots.
+- Human transitions: "So that's the trade picture. But there's a domestic story \
+that connects to this in a way I didn't expect."
+- Hosts build on each other: "And that connects to something structural..." / \
+"The part that's easy to miss here is..."
+- Vary sentence length dramatically. "The bond market noticed." / "Eighteen months."
+- Contractions fine. Elevated register — TED talk, not podcast hangout.
+- Numbers: write out small ones ("three"). Figures for big ones ("$1.4 trillion").
+- Names, numbers, places, dates always. Not "officials say" — "the Treasury Secretary \
+said Tuesday."
+
+BANNED FILLER: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", \
+"Interesting.", "Exactly.", "That's a fair point.", "Great question."
+
+---
+
 Return JSON with exactly two fields:
-1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
-   180-240 words. Hook → Stakes → Sweep → Pattern structure.
-2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
-   4-5 minutes (800-1000 words). Structure: Headlines (3-sentence rundown) → \
-   3 stories in depth → Close with "This was Void news." \
-   No segment markers, no formatting. Just the dialogue.\
+{{"tldr_text": "...", "audio_script": "..."}}\
 """
 
 # ---------------------------------------------------------------------------
-# Prohibited terms — same policy as cluster summarizer.
+# Prohibited terms — uses shared module when available, local fallback.
 # ---------------------------------------------------------------------------
-_PROHIBITED_TERMS = frozenset({
-    "shocking", "stunning", "explosive", "unprecedented", "controversial",
-    "divisive", "landmark", "radical", "extreme", "chaos", "firestorm",
-    "comprehensive", "amidst", "landscape",
-})
+if _USE_SHARED_PROHIBITED:
+    _PROHIBITED_TERMS = _SHARED_PROHIBITED
+else:
+    _PROHIBITED_TERMS = frozenset({
+        "shocking", "stunning", "explosive", "unprecedented", "controversial",
+        "divisive", "landmark", "radical", "extreme", "chaos", "firestorm",
+        "comprehensive", "amidst", "landscape",
+    })
 
 
 def _check_quality(result: dict, edition: str) -> None:
@@ -229,10 +208,53 @@ def _check_quality(result: dict, edition: str) -> None:
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
     if found:
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
+
     # Validate script has actual dialogue (A:/B: speaker tags)
     speaker_lines = [l for l in script.splitlines() if l.strip().startswith(("A:", "B:"))]
     if len(speaker_lines) < 10:
         print(f"  [quality][brief:{edition}] Script has only {len(speaker_lines)} speaker lines (expected 10+)")
+
+    # --- Enhanced quality gates (Recommendation 4) ---
+
+    # 4a. Audio script word count (warn if outside 600-1200)
+    if script.strip():
+        script_words = len(script.split())
+        if script_words < 600:
+            print(f"  [quality][brief:{edition}] Audio script too short: {script_words} words (expected 600-1200)")
+        elif script_words > 1200:
+            print(f"  [quality][brief:{edition}] Audio script too long: {script_words} words (expected 600-1200)")
+
+    # 4b. "This was Void news" close check
+    if script.strip():
+        last_200 = script[-200:].lower()
+        if "this was void news" not in last_200:
+            print(f"  [quality][brief:{edition}] Audio script missing 'This was Void news' sign-off in final 200 chars")
+
+    # 4c. Monologue detection (warn if >5 consecutive same-speaker lines)
+    if speaker_lines:
+        max_consecutive = 1
+        current_consecutive = 1
+        current_speaker = None
+        for line in speaker_lines:
+            speaker = line.strip()[:2]  # "A:" or "B:"
+            if speaker == current_speaker:
+                current_consecutive += 1
+                max_consecutive = max(max_consecutive, current_consecutive)
+            else:
+                current_speaker = speaker
+                current_consecutive = 1
+        if max_consecutive > 5:
+            print(f"  [quality][brief:{edition}] Monologue detected: {max_consecutive} consecutive lines by same speaker (max 5)")
+
+    # 4d. Banned filler scan in audio script
+    _BANNED_FILLER = [
+        "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.",
+        "Interesting.", "Exactly.", "That's a fair point.", "Great question.",
+    ]
+    if script.strip():
+        found_filler = [f for f in _BANNED_FILLER if f.lower() in script.lower()]
+        if found_filler:
+            print(f"  [quality][brief:{edition}] Banned filler in audio script: {found_filler}")
 
 
 def _get_previous_cluster_ids(edition: str) -> set[str]:
@@ -254,6 +276,37 @@ def _get_previous_cluster_ids(edition: str) -> set[str]:
     except Exception:
         pass
     return set()
+
+
+def _get_previous_brief_opening(edition: str) -> str:
+    """Fetch the first 2 sentences of the previous brief for cross-run dedup.
+
+    Returns an empty string if no previous brief exists or on any error.
+    Used to instruct Gemini to avoid repeating the same opening angle.
+    """
+    try:
+        from utils.supabase_client import supabase
+        res = supabase.table("daily_briefs").select(
+            "tldr_text"
+        ).eq("edition", edition).order(
+            "created_at", desc=True
+        ).limit(1).execute()
+
+        if res.data and res.data[0].get("tldr_text"):
+            tldr = res.data[0]["tldr_text"].strip()
+            # Extract first 2 sentences (split on period + space or newline)
+            sentences = []
+            for part in tldr.replace("\n", " ").split(". "):
+                part = part.strip()
+                if part:
+                    sentences.append(part if part.endswith(".") else part + ".")
+                if len(sentences) >= 2:
+                    break
+            if sentences:
+                return " ".join(sentences)
+    except Exception:
+        pass
+    return ""
 
 
 def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 20) -> tuple[list[dict], str]:
@@ -671,6 +724,17 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
             print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
                   f"({words} words, {source_count} sources"
                   f"{', headline: ' + repr(headline[:50]) if headline else ''})")
+
+            # 4e. Check for first-person plural in opinion
+            if "we " not in lower and "we'" not in lower and " we " not in lower:
+                print(f"  [quality][opinion] Missing first-person plural ('we') — opinion should use editorial 'we'")
+
+            # 4f. Check opinion headline word count (4-15 words)
+            if headline:
+                hl_words = len(headline.split())
+                if hl_words < 4 or hl_words > 15:
+                    print(f"  [quality][opinion] Headline word count {hl_words} (expected 4-15): {headline!r}")
+
             return {
                 "opinion_text": text,
                 "opinion_headline": headline,
@@ -740,12 +804,24 @@ def generate_daily_briefs(
         if gemini_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
+
+            # 5a. Cross-run dedup: fetch previous brief opening
+            prev_opening = _get_previous_brief_opening(edition)
+            if prev_opening:
+                previous_brief_line = (
+                    f"\nPREVIOUS BRIEF OPENING (do not repeat this angle or phrasing): "
+                    f"{prev_opening}\n"
+                )
+            else:
+                previous_brief_line = ""
+
             prompt = _USER_PROMPT_TEMPLATE.format(
                 EDITION=edition_key,
                 EDITION_FOCUS=edition_focus,
                 DATE=date_str,
                 N=len(top_clusters),
                 stories_block=stories_block,
+                previous_brief_line=previous_brief_line,
             )
             _brief_call_count += 1
             raw = generate_json(
