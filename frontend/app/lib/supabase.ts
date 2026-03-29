@@ -122,7 +122,7 @@ export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (!_client) return null;
   const { data, error } = await _client
     .from('daily_briefs')
-    .select('id, edition, tldr_text, opinion_text, opinion_headline, opinion_lean, opinion_cluster_id, audio_url, audio_duration_seconds, audio_voice_label, created_at')
+    .select('id, edition, tldr_text, tldr_headline, opinion_text, opinion_headline, opinion_lean, opinion_cluster_id, audio_url, audio_duration_seconds, audio_voice_label, created_at')
     .eq('edition', edition)
     .order('created_at', { ascending: false })
     .limit(1)

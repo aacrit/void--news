@@ -227,6 +227,7 @@ export interface DailyBriefData {
   id: string;
   edition: Edition;
   tldr_text: string;
+  tldr_headline: string | null;
   opinion_text: string | null;
   opinion_headline: string | null;
   opinion_lean: OpinionLean | null;

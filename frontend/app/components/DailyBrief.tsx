@@ -19,7 +19,7 @@ function formatTime(seconds: number): string {
 }
 
 /* ---------------------------------------------------------------------------
-   Shared state — call once in HomeContent, pass to DailyBriefText.
+   Shared state — call once in HomeContent, pass to DailyBriefText + OnAirButton.
    --------------------------------------------------------------------------- */
 
 export interface DailyBriefState {
@@ -135,52 +135,37 @@ export function useDailyBrief(edition: string): DailyBriefState {
 }
 
 /* ---------------------------------------------------------------------------
-   DailyBriefText — stacked sections: tl;dr (always visible), opinion
-   (collapsible on mobile), onair (collapsible on mobile, auto-expands
-   when playing). No tab system — sections always visible on desktop.
+   DailyBriefText — Banner with TL;DR + Opinion side by side.
+   Both start collapsed (headline + preview + CTA). No audio here — that's
+   handled by the standalone OnAirButton.
    --------------------------------------------------------------------------- */
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioError, audioCallbackRef, handlePlayPause, handleSeek } = state;
+  const { brief, audioError, audioCallbackRef } = state;
 
-  // Mobile collapse state — opinion and onair start closed on mobile
-  const [opinionOpen, setOpinionOpen] = useState(true);
-  const [onairOpen, setOnairOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = (e: MediaQueryListEvent | MediaQueryList) => {
-      setIsMobile(e.matches);
-      if (e.matches) {
-        setOpinionOpen(false);
-        // Auto-expand onair when audio is available on mobile
-        setOnairOpen(!!brief?.audio_url);
-      } else {
-        setOpinionOpen(true);
-        setOnairOpen(true);
-      }
-    };
-    update(mq);
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  // Auto-expand onair section when playback starts or audio becomes available on mobile
-  useEffect(() => {
-    if (isMobile && (isPlaying || brief?.audio_url)) setOnairOpen(true);
-  }, [isPlaying, isMobile, brief?.audio_url]);
+  const [tldrExpanded, setTldrExpanded] = useState(false);
+  const [opinionExpanded, setOpinionExpanded] = useState(false);
 
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url && !audioError;
-  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
-  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
 
   const paragraphs = brief.tldr_text
     .split("\n")
     .map((p) => p.trim())
     .filter(Boolean);
+
+  // Preview: first 2 lines, rest hidden behind expand
+  const previewLines = paragraphs.slice(0, 2);
+  const expandedLines = paragraphs.slice(2);
+
+  const opinionPreview = brief.opinion_text
+    ? brief.opinion_text.split(/[.!?]\s/).slice(0, 2).join(". ").trim()
+    : "";
+  // Ensure preview ends with punctuation
+  const opinionPreviewText = opinionPreview && !opinionPreview.match(/[.!?]$/)
+    ? opinionPreview + "."
+    : opinionPreview;
 
   const leanLabel = brief.opinion_lean === "left" ? "Progressive"
     : brief.opinion_lean === "right" ? "Conservative"
@@ -190,46 +175,15 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
     : brief.opinion_lean === "right" ? "db-lean-badge--right"
     : "db-lean-badge--center";
 
-  const voiceLabel = brief.audio_voice_label || "Two voices";
+  const handleTldrToggle = () => {
+    hapticLight();
+    setTldrExpanded((prev) => !prev);
+  };
 
   const handleOpinionToggle = () => {
-    if (!isMobile) return;
     hapticLight();
-    setOpinionOpen((prev) => !prev);
+    setOpinionExpanded((prev) => !prev);
   };
-
-  const handleOnairToggle = () => {
-    if (!isMobile) return;
-    hapticLight();
-    if (!hasAudio) return;
-    if (!onairOpen) {
-      setOnairOpen(true);
-      if (!isPlaying) handlePlayPause();
-    } else {
-      setOnairOpen(false);
-    }
-  };
-
-  // On desktop the onair label triggers play/pause directly
-  const handleOnairLabelClick = () => {
-    if (isMobile) {
-      handleOnairToggle();
-    } else {
-      if (!hasAudio) return;
-      hapticLight();
-      handlePlayPause();
-    }
-  };
-
-  // Collapsible is always "open" on desktop (CSS enforces 1fr via media query)
-  // On mobile, the JS state controls the open class
-  const opinionCollapsible = isMobile
-    ? `db-block__collapsible${opinionOpen ? " db-block__collapsible--open" : ""}`
-    : "db-block__collapsible db-block__collapsible--open";
-
-  const onairCollapsible = isMobile
-    ? `db-block__collapsible${(onairOpen || isPlaying) ? " db-block__collapsible--open" : ""}`
-    : "db-block__collapsible db-block__collapsible--open";
 
   return (
     <>
@@ -237,151 +191,164 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
       )}
 
-      <div className="daily-brief" role="complementary" aria-label="Daily Brief">
+      <div className="daily-brief-banner" role="complementary" aria-label="Daily Brief">
 
-        {/* Section header */}
-        <div className="db-section-header">
-          <span className="db-section-title">Daily Brief</span>
+        {/* Banner header */}
+        <div className="db-banner-header">
+          <span className="db-banner-title">Daily Brief</span>
           {brief.created_at && (
-            <span className="db-section-time" aria-label={`Updated ${timeAgo(brief.created_at)}`}>
+            <span className="db-banner-time" aria-label={`Updated ${timeAgo(brief.created_at)}`}>
               {timeAgo(brief.created_at)}
             </span>
           )}
         </div>
 
-        {/* TL;DR — always visible, no collapse */}
-        <section className="db-block db-block--tldr" aria-label="void --tl;dr The Daily Brief">
-          <div className="db-block__label">
-            <span className="db-block__cmd">void --tl;dr</span>
-            <span className="db-block__subtitle">The Daily Brief</span>
-          </div>
-          <div className="db-block__collapsible db-block__collapsible--open">
-            <div className="db-block__inner">
-              <div className="db-block__body daily-brief__body">
-                {paragraphs.map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <div className="db-banner-columns">
 
-        {/* Opinion — always visible on desktop, collapsible on mobile */}
-        {brief.opinion_text && (
-          <section className="db-block db-block--opinion" aria-label="void --opinion The Board">
-            <button
-              className={`db-block__label db-block__label--toggle${opinionOpen ? " db-block__label--open" : ""}`}
-              onClick={handleOpinionToggle}
-              type="button"
-              aria-expanded={opinionOpen}
-              aria-label={opinionOpen ? "Collapse opinion section" : "Expand opinion section"}
-            >
-              <span className="db-block__cmd">void --opinion</span>
-              <span className="db-block__subtitle">The Board</span>
-              {brief.opinion_lean && (
-                <span className={`db-lean-badge ${leanMod}`}>{leanLabel}</span>
+          {/* TL;DR Column */}
+          <section className="db-col db-col--tldr" aria-label="void --tl;dr The Daily Brief">
+            <div className="db-col__label">
+              <span className="db-col__cmd">void --tl;dr</span>
+              <span className="db-col__subtitle">The Daily Brief</span>
+            </div>
+
+            {brief.tldr_headline && (
+              <h3 className="db-col__headline db-col__headline--accent">{brief.tldr_headline}</h3>
+            )}
+
+            <div className="db-col__preview">
+              {previewLines.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+
+            {expandedLines.length > 0 && (
+              <>
+                <div className={`db-col__expand${tldrExpanded ? " db-col__expand--open" : ""}`}>
+                  <div className="db-col__expand-inner">
+                    {expandedLines.map((p, i) => (
+                      <p key={i}>{p}</p>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  className="db-col__cta"
+                  onClick={handleTldrToggle}
+                  type="button"
+                  aria-expanded={tldrExpanded}
+                  aria-label={tldrExpanded ? "Collapse brief" : "Read full brief"}
+                >
+                  {tldrExpanded ? "Collapse" : "Read full brief"}
+                </button>
+              </>
+            )}
+          </section>
+
+          {/* Opinion Column */}
+          {brief.opinion_text && (
+            <section className="db-col db-col--opinion" aria-label="void --opinion The Board">
+              <div className="db-col__label">
+                <span className="db-col__cmd">void --opinion</span>
+                <span className="db-col__subtitle">The Board</span>
+                {brief.opinion_lean && (
+                  <span className={`db-lean-badge ${leanMod}`}>{leanLabel}</span>
+                )}
+              </div>
+
+              {brief.opinion_headline && (
+                <h3 className="db-col__headline">{brief.opinion_headline}</h3>
               )}
-              <span className="db-block__chevron" aria-hidden="true">
-                {opinionOpen ? "▴" : "▾"}
-              </span>
-            </button>
-            <div className={opinionCollapsible}>
-              <div className="db-block__inner">
-                <div className="db-block__body daily-brief__opinion">
-                  {brief.opinion_headline && (
-                    <h3 className="daily-brief__opinion-headline">{brief.opinion_headline}</h3>
-                  )}
+
+              <p className="db-col__preview">{opinionPreviewText}</p>
+
+              <div className={`db-col__expand${opinionExpanded ? " db-col__expand--open" : ""}`}>
+                <div className="db-col__expand-inner">
                   <p>{brief.opinion_text}</p>
                 </div>
               </div>
-            </div>
-          </section>
-        )}
 
-        {/* On Air — always visible on desktop, collapsible on mobile */}
-        <section className="db-block db-block--onair" aria-label="void --onair Audio Broadcast">
-          <button
-            className={`db-block__label db-block__label--toggle${(onairOpen || isPlaying) ? " db-block__label--open" : ""}${!hasAudio ? " db-block__label--disabled" : ""}`}
-            onClick={handleOnairLabelClick}
-            type="button"
-            disabled={!hasAudio}
-            aria-expanded={onairOpen || isPlaying}
-            aria-label={
-              !hasAudio ? "Audio broadcast unavailable"
-                : isMobile
-                  ? (onairOpen ? "Collapse audio player" : "Expand audio player")
-                  : isPlaying ? "Pause broadcast" : "Play void --onair"
-            }
-            title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
-          >
-            {isPlaying && <span className="db-block__live-dot" aria-hidden="true" />}
-            <span className="db-block__cmd">
-              <ScaleIcon size={10} animation={isPlaying ? "analyzing" : "idle"} aria-hidden />
-              {" "}void --onair
-            </span>
-            <span className="db-block__subtitle">Audio Broadcast</span>
-            <span className="db-block__chevron" aria-hidden="true">
-              {isPlaying ? "\u275A\u275A" : "\u25B6"}
-            </span>
-          </button>
-          <div className={onairCollapsible}>
-            <div className="db-block__inner">
-              <div className="db-block__body db-audio">
-                {/* Play / pause button — 44px circle */}
-                <button
-                  type="button"
-                  className={`db-audio__play${isPlaying ? " db-audio__play--active" : ""}`}
-                  onClick={handlePlayPause}
-                  disabled={!hasAudio}
-                  aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
-                >
-                  <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
-                </button>
+              <button
+                className="db-col__cta"
+                onClick={handleOpinionToggle}
+                type="button"
+                aria-expanded={opinionExpanded}
+                aria-label={opinionExpanded ? "Collapse opinion" : "Read full opinion"}
+              >
+                {opinionExpanded ? "Collapse" : "Read full opinion"}
+              </button>
+            </section>
+          )}
 
-                {/* Track column — seek bar + meta */}
-                <div className="db-audio__track-col">
-                  <div className="db-audio__seek-wrap">
-                    <div className="db-audio__bar">
-                      <div
-                        className="db-audio__fill"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                    <input
-                      type="range"
-                      className="db-audio__seek"
-                      min={0}
-                      max={displayDuration || 100}
-                      value={currentTime}
-                      step={0.5}
-                      onChange={handleSeek}
-                      disabled={!hasAudio}
-                      aria-label="Broadcast seek position"
-                      aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`}
-                    />
-                  </div>
-
-                  <div className="db-audio__meta">
-                    <span className="db-audio__status">
-                      {isPlaying && <span className="db-audio__dot" aria-hidden="true" />}
-                      {isPlaying
-                        ? `Now playing · ${voiceLabel}`
-                        : currentTime > 0
-                          ? `Paused · ${voiceLabel}`
-                          : voiceLabel}
-                    </span>
-                    <span className="db-audio__time">
-                      {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
+        </div>
       </div>
     </>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   OnAirButton — standalone audio pill, rendered separately from the banner.
+   --------------------------------------------------------------------------- */
+
+export function OnAirButton({ state }: { state: DailyBriefState }) {
+  const { brief, isPlaying, currentTime, duration, audioError, handlePlayPause, handleSeek } = state;
+
+  if (!brief) return null;
+
+  const hasAudio = !!brief.audio_url && !audioError;
+  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
+  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
+
+  return (
+    <div className="onair-pill">
+      <button
+        className={`onair-pill__btn${isPlaying ? " onair-pill__btn--playing" : ""}`}
+        onClick={handlePlayPause}
+        disabled={!hasAudio}
+        type="button"
+        aria-label={
+          !hasAudio ? "Audio broadcast unavailable"
+            : isPlaying ? "Pause void --onair" : "Play void --onair"
+        }
+        title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
+      >
+        <ScaleIcon size={10} animation={isPlaying ? "analyzing" : "idle"} aria-hidden />
+        <span className="onair-pill__label">
+          {isPlaying ? "Now Playing" : "void --onair"}
+        </span>
+        <span className="onair-pill__icon" aria-hidden="true">
+          {isPlaying ? "\u275A\u275A" : "\u25B6"}
+        </span>
+        {isPlaying && <span className="onair-pill__live-dot" aria-hidden="true" />}
+      </button>
+
+      {/* Mini player — visible when playing */}
+      {isPlaying && (
+        <div className="onair-pill__player">
+          <div className="onair-pill__seek-wrap">
+            <div className="onair-pill__bar">
+              <div
+                className="onair-pill__fill"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <input
+              type="range"
+              className="onair-pill__seek"
+              min={0}
+              max={displayDuration || 100}
+              value={currentTime}
+              step={0.5}
+              onChange={handleSeek}
+              aria-label="Broadcast seek position"
+              aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`}
+            />
+          </div>
+          <span className="onair-pill__time">
+            {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+          </span>
+        </div>
+      )}
+    </div>
   );
 }
 

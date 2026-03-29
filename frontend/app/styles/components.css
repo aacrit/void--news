@@ -3764,96 +3764,39 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-tertiary);
 }
 
-/* ---- Daily Brief — newspaper editorial TL;DR box ----------------------- */
+/* ---- Daily Brief Banner — TL;DR + Opinion side by side ---------------- */
 /*
- * "On canvas" treatment — part of the page flow, not a floating element.
- * Top and bottom hairline rules are the vocabulary of newspaper section
- * dividers (like NYT's "§" rule). No background card — it sits in the
- * page field, separated by rules only.
- *
- * ScaleIcon (16px, idle) in the label row signals brand authorship.
- * Playfair italic body is the "editorial voice" — not structural, not data.
+ * Redesigned as a prominent fixed-space banner at the top of the feed.
+ * Two-column layout on desktop (TL;DR | Opinion), single column mobile.
+ * Both sections start collapsed with headline + preview + expand CTA.
+ * Audio (On Air) is a separate standalone pill rendered below.
  */
 
-/* ===================================================================
-   Daily Brief — stacked section layout (NYT Morning / Axios Smart Brevity)
-   Three always-visible sections: tl;dr, opinion, onair.
-   Desktop: all sections always expanded. Mobile: opinion + onair collapsible.
-   No tab system — sections stack vertically, separated by thin rules.
-   =================================================================== */
-
-/* Container — left border signals editorial voice; subtle warm tint.
-   Desktop 1024px+: 3-column grid (tl;dr | opinion | onair) for density.
-   Desktop 1440px+: full-bleed skybox breaking out of content max-width. */
-.daily-brief {
-  border-left: 2px solid var(--accent-warm);
+/* Container — warm accent top border, subtle tint for distinction */
+.daily-brief-banner {
+  border-top: 3px solid var(--accent-warm);
   padding: var(--space-3) var(--space-4);
-  margin: var(--space-4) 0;
-  background: color-mix(in srgb, var(--accent-warm) 2%, var(--bg-primary));
+  margin: var(--space-3) 0 var(--space-2);
+  background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
 }
 
-/* Desktop: 3-column horizontal layout — massive vertical space savings.
-   When opinion is absent, TL;DR + OnAir fill columns 1-2 naturally. */
+/* Desktop: two equal columns */
 @media (min-width: 1024px) {
-  .daily-brief {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 0.8fr;
-    grid-template-rows: auto 1fr;
-    gap: 0 var(--space-5);
-    border-left: none;
-    border-top: 2px solid var(--accent-warm);
+  .daily-brief-banner {
     border-bottom: 1px solid var(--border-subtle);
     padding: var(--space-3) var(--space-5);
   }
 
-  /* Header spans all columns */
-  .daily-brief .db-section-header {
-    grid-column: 1 / -1;
-    margin-bottom: var(--space-2);
-    padding-bottom: var(--space-2);
-  }
-
-  /* Each block takes one column */
-  .daily-brief .db-block {
-    min-width: 0;
-  }
-
-  /* No stacked separators — vertical column rules instead */
-  .daily-brief .db-block + .db-block {
-    border-top: none;
-    margin-top: 0;
-    padding-top: 0;
-    border-left: 1px solid var(--border-subtle);
-    padding-left: var(--space-5);
-  }
-
-  /* TL;DR body: remove left border on desktop grid (container border handles it) */
-  .daily-brief .daily-brief__body {
-    border-left: none;
-    padding-left: 0;
-  }
-
-  /* Opinion body: keep dotted left border as editorial firewall */
-  .daily-brief .daily-brief__opinion {
-    border-left: none;
-    padding-left: 0;
-  }
-
-  /* Audio player: stack vertically in its narrow column */
-  .daily-brief .db-audio {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-
-  .daily-brief .db-audio__track-col {
-    width: 100%;
+  .db-banner-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-5);
   }
 }
 
-/* Ultra-wide: full-bleed skybox — breaks out of content max-width */
+/* Ultra-wide: full-bleed skybox */
 @media (min-width: 1440px) {
-  .daily-brief {
+  .daily-brief-banner {
     margin-left: calc(-1 * var(--space-7));
     margin-right: calc(-1 * var(--space-7));
     padding-left: var(--space-7);
@@ -3861,9 +3804,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 }
 
-/* ---- Section header: "Daily Brief" + timestamp ---- */
+/* ---- Banner header: "Daily Brief" + timestamp ---- */
 
-.db-section-header {
+.db-banner-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -3873,7 +3816,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.db-section-title {
+.db-banner-title {
   font-family: var(--font-meta);
   font-size: 13px;
   font-weight: 600;
@@ -3883,7 +3826,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   line-height: 1;
 }
 
-.db-section-time {
+.db-banner-time {
   font-family: var(--font-meta);
   font-size: 11px;
   font-weight: 400;
@@ -3893,23 +3836,28 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   line-height: 1;
 }
 
-/* ---- Block — each section (tl;dr, opinion, onair) ---- */
+/* ---- Column — shared styles for TL;DR and Opinion ---- */
 
-.db-block {
-  /* No padding here — body padding handled inside __body */
+.db-col {
+  padding-bottom: var(--space-2);
 }
 
-/* Thin rule between consecutive blocks */
-.db-block + .db-block {
+.db-col + .db-col {
   border-top: 1px solid var(--border-subtle);
   margin-top: var(--space-2);
   padding-top: var(--space-2);
 }
 
-/* ---- Block label row ---- */
+@media (min-width: 1024px) {
+  .db-col + .db-col {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+  }
+}
 
-/* Static label (tl;dr — not interactive) */
-.db-block__label {
+/* Label row — CLI command + subtitle */
+.db-col__label {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
@@ -3917,52 +3865,17 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   flex-wrap: wrap;
 }
 
-/* Toggle button variant (opinion, onair — interactive on mobile) */
-.db-block__label--toggle {
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin-bottom: var(--space-1);
-  min-height: 44px;
-  flex-wrap: wrap;
-  color: inherit;
-  font: inherit;
-}
-
-.db-block__label--toggle:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-.db-block__label--disabled {
-  opacity: 0.45;
-  cursor: default;
-  pointer-events: none;
-}
-
-/* CLI command name — IBM Plex Mono, fg-muted */
-.db-block__cmd {
+.db-col__cmd {
   font-family: var(--font-data);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.03em;
   color: var(--fg-muted);
   white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   line-height: 1;
 }
 
-/* English subtitle — Barlow Condensed, fg-muted */
-.db-block__subtitle {
+.db-col__subtitle {
   font-family: var(--font-meta);
   font-size: 12px;
   font-weight: 500;
@@ -3973,89 +3886,49 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   line-height: 1;
 }
 
-/* Chevron indicator — only shown on mobile (hidden on desktop via media query) */
-.db-block__chevron {
-  display: none;
-  margin-left: auto;
-  font-size: 11px;
-  color: var(--fg-muted);
-  line-height: 1;
-  align-self: center;
-  flex-shrink: 0;
-}
+/* ---- TL;DR column accent treatment ---- */
 
-/* Pulsing red live dot — inline in label row when playing */
-.db-block__live-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--indicator-broadcast, #c0392b);
-  flex-shrink: 0;
-  align-self: center;
-  margin-right: 2px;
-  animation: onair-pulse 1.5s ease-in-out infinite;
-}
-
-/* ---- Collapsible content wrapper (grid 0fr / 1fr trick) ---- */
-
-.db-block__collapsible {
-  display: grid;
-  grid-template-rows: 1fr; /* Desktop default: always open */
-  transition: grid-template-rows var(--dur-normal) var(--ease-out);
-  overflow: hidden;
-}
-
-/* Inner wrapper prevents content clip from affecting layout */
-.db-block__inner {
-  overflow: hidden;
-  min-height: 0;
-}
-
-/* ---- TL;DR body — Inter, justified, editorial aside style ---- */
-
-.daily-brief__body {
-  font-family: var(--font-structural);
-  font-style: normal;
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  color: var(--fg-secondary);
-  text-align: justify;
-  text-align-last: left;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-  border-left: 2px solid var(--accent-warm);
+.db-col--tldr {
+  border-left: 3px solid var(--accent-warm);
   padding-left: var(--space-3);
 }
 
-.daily-brief__body p {
-  margin-bottom: var(--space-1);
-  text-align-last: left;
+@media (min-width: 1024px) {
+  .db-col--tldr {
+    border-left: none;
+    background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+    padding: var(--space-3);
+    border-radius: 2px;
+  }
 }
 
-.daily-brief__body p:last-child {
-  margin-bottom: 0;
+/* TL;DR headline — accent colored, Playfair, prominent */
+.db-col__headline--accent {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--accent-warm);
+  margin: 0 0 var(--space-1);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-/* ---- Opinion body — Inter regular with dotted editorial firewall ---- */
+/* ---- Opinion column ---- */
 
-.daily-brief__opinion {
-  font-family: var(--font-structural);
-  font-style: normal;
-  font-weight: 400;
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  color: var(--fg-secondary);
-  text-align: justify;
-  text-align-last: left;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+.db-col--opinion {
   border-left: 2px dotted var(--border-strong);
   padding-left: var(--space-3);
 }
 
-/* Opinion headline — Playfair bold, NOT italic (editorial gravitas without ornament) */
-.daily-brief__opinion-headline {
+@media (min-width: 1024px) {
+  .db-col--opinion {
+    border-left: 1px solid var(--border-subtle);
+    padding-left: var(--space-5);
+  }
+}
+
+/* Opinion headline — Playfair bold */
+.db-col__headline {
   font-family: var(--font-editorial);
   font-size: var(--text-base);
   font-weight: 700;
@@ -4064,6 +3937,103 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin: 0 0 var(--space-1);
   letter-spacing: -0.01em;
   line-height: 1.2;
+}
+
+/* ---- Preview text — always visible, 2-line clamp ---- */
+
+.db-col__preview {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  margin: 0;
+}
+
+.db-col__preview p {
+  margin: 0 0 var(--space-1);
+}
+
+.db-col__preview p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Expand / collapse CTA button ---- */
+
+.db-col__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  border-radius: 3px;
+  cursor: pointer;
+
+  min-height: 44px;
+
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+
+.db-col__cta:hover {
+  background: color-mix(in srgb, var(--accent-warm) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+}
+
+.db-col__cta:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Expandable body (grid 0fr / 1fr trick) ---- */
+
+.db-col__expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-normal) var(--ease-out);
+  overflow: hidden;
+}
+
+.db-col__expand--open {
+  grid-template-rows: 1fr;
+}
+
+.db-col__expand-inner {
+  overflow: hidden;
+  min-height: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.db-col__expand-inner p {
+  margin: var(--space-1) 0;
+}
+
+.db-col__expand-inner p:first-child {
+  margin-top: var(--space-2);
+}
+
+.db-col__expand-inner p:last-child {
+  margin-bottom: 0;
 }
 
 /* Opinion lean badge — pill with colored tint */
@@ -4098,73 +4068,93 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-tertiary);
 }
 
-/* ---- On Air audio player ---- */
+/* ---- On Air Pill — standalone audio control ---- */
 
-.db-audio {
+.onair-pill {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding-bottom: var(--space-1);
+  margin: 0 0 var(--space-3);
 }
 
-/* 44px circle play button */
-.db-audio__play {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
+.onair-pill__btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--border-strong);
-  border-radius: 50%;
-  background: none;
-  color: var(--accent-warm);
-  font-size: 13px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+
+  color: var(--fg-secondary);
+  background: color-mix(in srgb, var(--accent-warm) 6%, var(--bg-secondary));
+  border: 1px solid var(--border-strong);
+  border-radius: 100px;
   cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-out),
-              background-color var(--dur-fast) var(--ease-out),
+
+  min-height: 44px;
+
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
               transform var(--dur-fast) var(--ease-out);
 }
 
-.db-audio__play:hover {
+.onair-pill__btn:hover {
+  background: color-mix(in srgb, var(--accent-warm) 12%, var(--bg-secondary));
   border-color: var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
-  transform: scale(1.05);
 }
 
-.db-audio__play:active {
-  transform: scale(0.96);
+.onair-pill__btn:active {
+  transform: scale(0.97);
 }
 
-.db-audio__play--active {
+.onair-pill__btn--playing {
   border-color: var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 10%, var(--bg-secondary));
 }
 
-.db-audio__play:disabled {
-  opacity: 0.45;
+.onair-pill__btn:disabled {
+  opacity: 0.4;
   cursor: default;
   pointer-events: none;
 }
 
-/* Track column — seek bar + meta row, fills remaining width */
-.db-audio__track-col {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+.onair-pill__label {
+  white-space: nowrap;
 }
 
-/* Seek bar wrapper — visual bar + range input stacked */
-.db-audio__seek-wrap {
+.onair-pill__icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.onair-pill__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--indicator-broadcast, #c0392b);
+  flex-shrink: 0;
+  animation: onair-pulse 1.5s ease-in-out infinite;
+}
+
+/* Mini player — seek bar + time, visible when playing */
+.onair-pill__player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.onair-pill__seek-wrap {
   position: relative;
+  width: 100px;
   height: 20px;
   display: flex;
   align-items: center;
 }
 
-.db-audio__bar {
+.onair-pill__bar {
   position: absolute;
   left: 0;
   right: 0;
@@ -4174,7 +4164,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   overflow: hidden;
 }
 
-.db-audio__fill {
+.onair-pill__fill {
   position: absolute;
   top: 0;
   left: 0;
@@ -4184,8 +4174,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   transition: width 250ms linear;
 }
 
-/* Range input overlays visual track — transparent, controls interaction */
-.db-audio__seek {
+.onair-pill__seek {
   position: absolute;
   left: 0;
   top: 50%;
@@ -4201,49 +4190,19 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   z-index: 1;
 }
 
-.db-audio__seek::-webkit-slider-thumb {
+.onair-pill__seek::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
 }
 
-/* Meta row — status label + time display */
-.db-audio__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.db-audio__status {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-meta);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-}
-
-.db-audio__time {
+.onair-pill__time {
   font-family: var(--font-data);
-  font-size: 12px;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.03em;
   color: var(--fg-muted);
   white-space: nowrap;
-}
-
-/* Breathing red dot — live indicator when playing */
-.db-audio__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--indicator-broadcast, #c0392b);
-  flex-shrink: 0;
-  animation: onair-pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes onair-pulse {
@@ -4252,11 +4211,17 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .db-block__collapsible { transition: none; }
-  .db-block__live-dot { animation: none; opacity: 1; }
-  .db-audio__fill { transition: none; }
-  .db-audio__play { transition: none; }
-  .db-audio__dot { animation: none; opacity: 1; }
+  .db-col__expand { transition: none; }
+  .db-col__cta { transition: none; }
+  .onair-pill__btn { transition: none; }
+  .onair-pill__fill { transition: none; }
+  .onair-pill__live-dot { animation: none; opacity: 1; }
+}
+
+@media (hover: none) {
+  .onair-pill__btn:hover { background: color-mix(in srgb, var(--accent-warm) 6%, var(--bg-secondary)); border-color: var(--border-strong); transform: none; }
+  .onair-pill__btn:active { transform: scale(0.96); opacity: 0.9; }
+  .db-col__cta:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); }
 }
 
 /* ---- Disable hover-induced lift/shadow on touch devices ---------------- */
@@ -4901,6 +4866,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 /* ==========================================================================
+   DivergenceAlerts — REMOVED from homepage (redundant with deep dive).
+   CSS kept commented out for reference.
    DivergenceAlerts — Editorial, understated. No accent colors.
    Newspaper-style: thin rule, structural font, clean cards.
    ========================================================================== */
