@@ -71,6 +71,11 @@ Never reference "coverage," "outlets," "sources," or "reporting patterns."
 - Prohibited terms include: shocking, stunning, explosive, unprecedented, \
 controversial, divisive, landmark, delve, navigate, underscores, multifaceted, \
 robust, pivotal, tapestry, nuanced, game-changing, and all AI-slop crutch phrases.
+- KILL SCAFFOLDING: Never use templatic transitions that announce what you're about \
+to say. "This isn't just...", "Here's the thing...", "The bigger picture...", \
+"What makes this...", "The reality is...", "The question now is..." — these are \
+filler. Cut them. Start the sentence with the fact itself. If a sentence works \
+without its first clause, delete the first clause.
 - No bracketed citations or reference numbers.
 - You receive up to 20 stories with summaries. Use them as raw intelligence. \
 Synthesize — do not summarize what you received.
@@ -471,6 +476,11 @@ Standards:
 - Prohibited: shocking, stunning, explosive, unprecedented, controversial, \
 divisive, landmark, radical, extreme, chaos, significant, notable, importantly, \
 interestingly, it should be noted, crucially, in conclusion.
+- KILL SCAFFOLDING: "This isn't just...", "Here's the thing...", "The bigger \
+picture...", "What makes this...", "The reality is...", "The question now is...", \
+"This matters because..." — cut them all. Lead with the fact or the argument, \
+not the announcement of the fact or the argument. Every sentence should survive \
+deletion of its first clause.
 - Write as if for a reader who already knows the news. Add the insight they missed.\
 """
 

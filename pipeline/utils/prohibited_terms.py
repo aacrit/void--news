@@ -78,6 +78,35 @@ PROHIBITED_TERMS = frozenset({
     "significant", "notable", "importantly",
     "interestingly", "it should be noted", "it is worth mentioning",
     "crucially",
+
+    # --- 7. Templatic transitions / filler scaffolding ---
+    # These are structuring phrases that add zero information and sound
+    # AI-generated. The sentence works better without them every time.
+    "this isn't just", "this is not just",
+    "it's not just", "it is not just",
+    "what makes this", "what's interesting is",
+    "here's the thing", "here is the thing",
+    "here's why", "here is why",
+    "the bigger picture",
+    "the bottom line",
+    "the takeaway",
+    "let's be clear", "let us be clear",
+    "to be sure",
+    "to put it simply", "simply put",
+    "make no mistake",
+    "the reality is", "the truth is",
+    "it's worth noting", "it is worth noting",
+    "it bears mentioning",
+    "what we're seeing", "what we are seeing",
+    "broadly speaking",
+    "the implications are",
+    "the stakes are high", "the stakes are clear",
+    "in other words",
+    "needless to say",
+    "this is a story about",
+    "this is about more than",
+    "the question now is",
+    "this matters because",
 })
 
 
