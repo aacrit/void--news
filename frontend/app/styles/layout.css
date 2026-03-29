@@ -37,12 +37,11 @@
   }
 }
 
-/* ---- Moat Layout — 3-column desktop, stacked mobile ------------------- */
+/* ---- Moat Layout — left panel + canvas (desktop) ---------------------- */
 /*
- * The "Content Moat": Daily Brief flanks left, On Air flanks right,
- * stories fill the center canvas. Original void content surrounds
- * the news feed — the product's unique value is always visible.
- * Mobile: normal column flow. Desktop 1024px+: CSS Grid.
+ * Single left panel: TL;DR, Opinion, On Air stacked vertically.
+ * Center canvas: top stories. Panel is sticky with independent scroll.
+ * Mobile: normal column flow, no panel.
  */
 
 .moat-layout {
@@ -51,66 +50,57 @@
 }
 
 /* Mobile stacking: Brief → OnAir → Stories */
-.moat-panel--left  { order: 1; }
-.moat-panel--right { order: 2; }
-.moat-canvas       { order: 3; }
+.moat-panel  { order: 1; }
+.moat-canvas { order: 2; }
 
 /* Panel sticky wrapper — no-op on mobile */
 .moat-panel__sticky {
   /* Intentionally empty on mobile */
 }
 
-/* Panel labels — hidden on mobile */
-.moat-panel__label {
-  display: none;
-}
-
-/* Desktop: 3-column grid */
+/* Desktop: 2-column grid (panel + canvas) */
 @media (min-width: 1024px) {
   .moat-layout {
     display: grid;
-    grid-template-columns: var(--moat-panel-width) 1fr var(--moat-panel-width);
+    grid-template-columns: var(--moat-panel-width) 1fr;
     gap: 0;
     align-items: start;
   }
 
-  /* Grid column placement overrides mobile order */
-  .moat-panel--left  { order: unset; grid-column: 1; }
-  .moat-canvas       { order: unset; grid-column: 2; }
-  .moat-panel--right { order: unset; grid-column: 3; }
+  .moat-panel  { order: unset; grid-column: 1; }
+  .moat-canvas { order: unset; grid-column: 2; }
 
-  /* Sticky panel internals — docked below nav, scrollable if tall */
+  /* Sticky panel — independent scroll, docked below nav */
   .moat-panel__sticky {
     position: sticky;
-    top: calc(var(--nav-height) + 12px);
-    max-height: calc(100vh - var(--nav-height) - 24px);
+    top: calc(var(--nav-height) + 8px);
+    max-height: calc(100vh - var(--nav-height) - 16px);
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--fg-muted) 30%, transparent) transparent;
-    /* Scroll shadow hints at overflow */
+    scrollbar-color: color-mix(in srgb, var(--fg-muted) 25%, transparent) transparent;
     mask-image: linear-gradient(
       to bottom,
       transparent 0px,
-      black 6px,
-      black calc(100% - 20px),
+      black 4px,
+      black calc(100% - 16px),
       transparent 100%
     );
     -webkit-mask-image: linear-gradient(
       to bottom,
       transparent 0px,
-      black 6px,
-      black calc(100% - 20px),
+      black 4px,
+      black calc(100% - 16px),
       transparent 100%
     );
   }
 
   .moat-panel__sticky::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
   }
 
   .moat-panel__sticky::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--fg-muted) 30%, transparent);
+    background-color: color-mix(in srgb, var(--fg-muted) 25%, transparent);
     border-radius: 2px;
   }
 
@@ -118,48 +108,21 @@
     background: transparent;
   }
 
-  /* Center canvas gets container query context */
+  /* Center canvas — container query context */
   .moat-canvas {
     container-type: inline-size;
     container-name: canvas;
     min-width: 0;
   }
-
-  /* Panel labels — newspaper-style section headers */
-  .moat-panel__label {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
-    border-bottom: 2px solid var(--fg-primary);
-    padding-bottom: var(--space-1);
-    margin-bottom: var(--space-3);
-  }
-
-  .moat-panel__label-title {
-    font-family: var(--font-meta);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--fg-secondary);
-    line-height: 1;
-  }
-
-  .moat-panel__label-sub {
-    font-family: var(--font-data);
-    font-size: 10px;
-    color: var(--fg-muted);
-    line-height: 1;
-  }
 }
 
-/* Wider panels at larger breakpoints */
+/* Panel width scales with viewport */
 @media (min-width: 1280px) {
-  :root { --moat-panel-width: 280px; }
+  :root { --moat-panel-width: 320px; }
 }
 
 @media (min-width: 1440px) {
-  :root { --moat-panel-width: 300px; }
+  :root { --moat-panel-width: 340px; }
 }
 
 /* ---- Section Header — Newspaper tradition ------------------------------ */
