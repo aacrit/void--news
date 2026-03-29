@@ -206,10 +206,11 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
         <div className="db-banner-columns">
 
           {/* TL;DR Column */}
-          <section className="db-col db-col--tldr" aria-label="void --tl;dr The Daily Brief">
-            <div className="db-col__label">
-              <span className="db-col__cmd">void --tl;dr</span>
-              <span className="db-col__subtitle">The Daily Brief</span>
+          <section className="db-col db-col--tldr moat-section" aria-label="void --tl;dr The Daily Brief">
+            <div className="db-col__label moat-section__label">
+              <ScaleIcon size={12} animation="idle" />
+              <span className="db-col__cmd moat-section__cmd">void --tl;dr</span>
+              <span className="db-col__subtitle moat-section__subtitle">The Daily Brief</span>
             </div>
 
             {brief.tldr_headline && (
@@ -246,10 +247,11 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
           {/* Opinion Column */}
           {brief.opinion_text && (
-            <section className="db-col db-col--opinion" aria-label="void --opinion The Board">
-              <div className="db-col__label">
-                <span className="db-col__cmd">void --opinion</span>
-                <span className="db-col__subtitle">The Board</span>
+            <section className="db-col db-col--opinion moat-section" aria-label="void --opinion The Board">
+              <div className="db-col__label moat-section__label">
+                <ScaleIcon size={12} animation="idle" />
+                <span className="db-col__cmd moat-section__cmd">void --opinion</span>
+                <span className="db-col__subtitle moat-section__subtitle">The Board</span>
                 {brief.opinion_lean && (
                   <span className={`db-lean-badge ${leanMod}`}>{leanLabel}</span>
                 )}
@@ -317,12 +319,13 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
   };
 
   return (
-    <div className={`onair${isPlaying ? " onair--playing" : ""}`} role="region" aria-label="Audio Broadcast">
+    <div className={`onair moat-section${isPlaying ? " onair--playing" : ""}`} role="region" aria-label="Audio Broadcast">
       {/* Header row */}
-      <div className="onair__header">
+      <div className="onair__header moat-section__label">
+        <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
         {isPlaying && <span className="onair__live-dot" aria-hidden="true" />}
-        <span className="onair__cmd">void --onair</span>
-        <span className="onair__tagline">Audio Broadcast</span>
+        <span className="onair__cmd moat-section__cmd">void --onair</span>
+        <span className="onair__tagline moat-section__subtitle">Audio Broadcast</span>
         {durationMin && !isPlaying && (
           <span className="onair__duration">{durationMin} min</span>
         )}

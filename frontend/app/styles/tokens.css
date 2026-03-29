@@ -288,9 +288,9 @@
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
   --nav-height: 53px;
 
-  /* Moat panel widths — side columns for Daily Brief and On Air on desktop.
+  /* Moat panel width — left panel for Brief + Opinion + On Air on desktop.
      Increases at wider breakpoints for breathing room. */
-  --moat-panel-width: 260px;
+  --moat-panel-width: 290px;
 
   /* Height of the mobile bottom navigation bar (single row).
      44px touch targets + 8px top padding + safe area = ~52px base.

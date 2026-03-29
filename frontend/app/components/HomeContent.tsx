@@ -725,17 +725,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* Moat layout: side panels (brief + onair) flanking the story canvas */}
+            {/* Moat layout: left panel (brief + opinion + onair) + story canvas */}
             {!isLoading && stories.length > 0 && (
               <div className="moat-layout">
-                {/* Left panel: Daily Brief (TL;DR + Opinion) */}
-                <aside className="moat-panel moat-panel--left" aria-label="Daily Brief">
-                  <div className="moat-panel__label">
-                    <span className="moat-panel__label-title">Daily Brief</span>
-                    <span className="moat-panel__label-sub">void --tl;dr</span>
-                  </div>
+                {/* Left panel: TL;DR + Opinion + On Air */}
+                <aside className="moat-panel" aria-label="void originals">
                   <div className="moat-panel__sticky">
                     <DailyBriefText state={dailyBriefState} />
+                    <OnAirButton state={dailyBriefState} />
                   </div>
                 </aside>
 
@@ -825,16 +822,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   )}
                 </div>
 
-                {/* Right panel: On Air audio broadcast */}
-                <aside className="moat-panel moat-panel--right" aria-label="Audio Broadcast">
-                  <div className="moat-panel__label">
-                    <span className="moat-panel__label-title">On Air</span>
-                    <span className="moat-panel__label-sub">void --onair</span>
-                  </div>
-                  <div className="moat-panel__sticky">
-                    <OnAirButton state={dailyBriefState} />
-                  </div>
-                </aside>
               </div>
             )}
         </>
