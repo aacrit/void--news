@@ -325,8 +325,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_india`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
+
+        // Use per-edition rank column for ordering (cross-edition differentiation)
+        const rankColumn = `rank_${activeEdition}` as "rank_world" | "rank_us" | "rank_india";
 
         let res;
         let usingEnriched = true;
@@ -335,7 +338,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", [activeEdition])
-          .order("headline_rank", { ascending: false })
+          .order(rankColumn, { ascending: false })
           .limit(500);
 
         // If enriched query failed (columns don't exist), fall back to base schema
@@ -455,9 +458,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               sigilData,
               section: (cluster.section || "world") as Edition,
               sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-              importance: cluster.headline_rank || cluster.importance_score || 50,
+              importance: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
               divergenceScore: cluster.divergence_score || 0,
-              headlineRank: cluster.headline_rank || cluster.importance_score || 50,
+              headlineRank: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
               coverageVelocity: cluster.coverage_velocity || 0,
               deepDive: consensusPoints.length > 0 || divergencePoints.length > 0
                 ? {

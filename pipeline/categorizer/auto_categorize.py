@@ -33,6 +33,10 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "white house": 3, "capitol": 3, "supreme court": 3,
         "judicial": 2, "justice": 1, "constitution": 2, "constitutional": 2,
         "lobby": 2, "lobbyist": 3, "donor": 2, "fundraising": 2,
+        # Law enforcement / political-judicial actions
+        "arrested": 2, "arrest": 2, "detained": 2, "indicted": 3,
+        "charged": 2, "convicted": 2, "sentenced": 2, "extradited": 3,
+        "prime minister": 3, "minister": 2, "sworn in": 3,
     },
     "economy": {
         "gdp": 3, "inflation": 3, "market": 2, "stock": 2,
@@ -113,8 +117,8 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "plastic": 1, "microplastic": 3, "ocean acidification": 3,
     },
     "conflict": {
-        "war": 3, "military": 2, "attack": 2, "troops": 3,
-        "defense": 2, "weapons": 2, "conflict": 2, "ceasefire": 3,
+        "war": 3, "military": 3, "attack": 2, "troops": 3,
+        "defense": 2, "weapons": 3, "conflict": 2, "ceasefire": 3,
         "nato": 3, "terrorism": 3, "terrorist": 3,
         "airstrike": 3, "bombing": 3, "missile": 3, "drone strike": 3,
         "invasion": 3, "occupation": 2, "siege": 3,
@@ -128,6 +132,10 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "coup": 3, "revolution": 2, "civil war": 3,
         "hostage": 3, "kidnapping": 2, "assassination": 3,
         "espionage": 3, "intelligence": 1, "cia": 2,
+        # Military-specific terms to outweigh politics NER boosts
+        "strike": 2, "strikes": 2, "shelling": 3, "artillery": 3,
+        "airforce": 3, "warship": 3, "submarine": 3,
+        "killed": 2, "wounded": 2, "fighters": 2,
     },
     "science": {
         "research": 2, "study": 1, "discovery": 2, "nasa": 3,
@@ -183,13 +191,13 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
 # NER entity label to category boost mapping
 # ---------------------------------------------------------------------------
 NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
-    "GPE": {"politics": 0.5, "conflict": 0.3},
+    "GPE": {"politics": 0.3, "conflict": 0.3},  # balanced (was 0.5/0.3)
     "ORG": {"economy": 0.3},
     "PERSON": {"politics": 0.2, "culture": 0.2},
     "MONEY": {"economy": 0.5},
     "PERCENT": {"economy": 0.3},
     "DATE": {},  # generic, no boost
-    "NORP": {"politics": 0.3, "conflict": 0.2},
+    "NORP": {"politics": 0.2, "conflict": 0.2},  # balanced (was 0.3/0.2)
     "FAC": {"culture": 0.2},
     "EVENT": {"sports": 0.3, "culture": 0.3, "conflict": 0.2},
     "PRODUCT": {"technology": 0.1},
@@ -246,7 +254,8 @@ def categorize_article(article: dict) -> list[str]:
     if word_count == 0:
         return ["general"]  # safe default for empty articles
 
-    # 1. Keyword matching scores
+    # 1. Keyword matching scores (title keywords get 2x weight)
+    title_lower = title.lower()
     category_scores: dict[str, float] = {}
     for category, keywords in CATEGORY_KEYWORDS.items():
         score = 0.0
@@ -256,6 +265,9 @@ def categorize_article(article: dict) -> list[str]:
                 # Normalize by word count to avoid length bias
                 density = count / max(word_count / 100, 1)
                 score += density * weight
+            # Title bonus: keywords in the title are the strongest signal
+            if keyword in title_lower:
+                score += weight * 2.0
         category_scores[category] = score
 
     # 2. NER entity type boosting

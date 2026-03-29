@@ -1163,6 +1163,24 @@ def rank_importance(
     if category and category.lower() in _SOFT_NEWS_CATEGORIES:
         headline_rank *= 0.78
 
+    # Gate 2b: Tabloid gate (v5.4) — tabloid-grade political stories
+    # (e.g., "JD Vance says aliens are demons") leak through the soft-news
+    # gate because they're categorized as "politics". Detect via title keywords.
+    _TABLOID_KEYWORDS = {
+        "ufo", "ufos", "alien", "aliens", "ghost", "ghosts", "bigfoot",
+        "conspiracy", "psychic", "astrology", "horoscope", "zodiac",
+        "demon", "demons", "exorcism", "paranormal", "supernatural",
+        "reality tv", "love island", "bachelor", "bachelorette",
+        "scandal", "affair", "cheating", "divorce", "pregnant",
+        "wardrobe malfunction", "bikini", "shirtless",
+    }
+    cluster_titles = " ".join(
+        (a.get("title", "") or "") for a in cluster_articles
+    ).lower()
+    tabloid_hits = sum(1 for kw in _TABLOID_KEYWORDS if kw in cluster_titles)
+    if tabloid_hits >= 1:
+        headline_rank *= 0.75
+
     # Gate 3: Low factual rigor gate (v4.0) — clusters with poor sourcing
     # and attribution get penalized. Rewards AP/Reuters/ProPublica-style
     # reporting over speculative/unattributed coverage.

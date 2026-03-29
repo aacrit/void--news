@@ -275,11 +275,11 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
         if edition in sections:
             edition_clusters.append(c)
 
-    # Sort by headline_rank DESC, but deprioritize previously-covered clusters.
-    # A covered cluster's effective rank is reduced by 15% — enough to let fresh
-    # stories of similar importance surface, but not enough to bury a top story.
+    # Sort by per-edition rank (falls back to headline_rank for pre-migration data).
+    # Deprioritize previously-covered clusters by 15%.
+    rank_col = f"rank_{edition}"
     def _sort_key(c):
-        rank = c.get("headline_rank", 0)
+        rank = c.get(rank_col, 0) or c.get("headline_rank", 0)
         db_id = c.get("_db_id", "")
         if db_id and db_id in previous_ids:
             rank *= 0.85  # deprioritize repeat

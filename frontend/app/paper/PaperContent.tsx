@@ -175,9 +175,9 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
     sigilData,
     section: (cluster.section || "world") as Edition,
     sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-    importance: cluster.headline_rank || cluster.importance_score || 50,
+    importance: cluster.rank_world || cluster.rank_us || cluster.rank_india || cluster.headline_rank || cluster.importance_score || 50,
     divergenceScore: cluster.divergence_score || 0,
-    headlineRank: cluster.headline_rank || cluster.importance_score || 50,
+    headlineRank: cluster.rank_world || cluster.rank_us || cluster.rank_india || cluster.headline_rank || cluster.importance_score || 50,
     coverageVelocity: cluster.coverage_velocity || 0,
     deepDive:
       (Array.isArray(rawConsensus) && rawConsensus.length > 0) ||
@@ -514,13 +514,14 @@ export default function PaperContent({ edition }: { edition: Edition }) {
   useEffect(() => {
     async function load() {
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_india`;
 
+        const rankCol = `rank_${edition}` as "rank_world" | "rank_us" | "rank_india";
         const { data: clusters } = await supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", [edition])
-          .order("headline_rank", { ascending: false })
+          .order(rankCol, { ascending: false })
           .limit(150);
 
         const stories = (clusters || []).map((c) => buildStory(c, true));

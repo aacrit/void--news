@@ -2083,6 +2083,149 @@
     "credibility_notes": "South India-based English broadsheet (Bengaluru), founded 1948. Covers Karnataka and South Indian politics. Independent ownership by The Printers (Mysore) Group."
   },
   {
+    "id": "livemint",
+    "name": "LiveMint",
+    "url": "https://www.livemint.com",
+    "rss_url": "https://www.livemint.com/rss/news",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "English-language business newspaper by HT Media, launched 2007 in association with Wall Street Journal. Strong on economic policy, markets, and corporate news. Centrist editorial line."
+  },
+  {
+    "id": "financial-express-india",
+    "name": "Financial Express",
+    "url": "https://www.financialexpress.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:financialexpress.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Indian Express Group's financial daily, founded 1961. Covers economy, markets, industry, and government policy. Pro-reform editorial stance. RSS via Google News (native feeds block scraping)."
+  },
+  {
+    "id": "telegraph-india",
+    "name": "The Telegraph India",
+    "url": "https://www.telegraphindia.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:telegraphindia.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Kolkata-based English broadsheet, founded 1982 by ABP Group. Strong on eastern India and national politics. Known for editorial independence and critical coverage of government. RSS via Google News."
+  },
+  {
+    "id": "the-statesman",
+    "name": "The Statesman",
+    "url": "https://www.thestatesman.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:thestatesman.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Historic Kolkata/Delhi broadsheet, founded 1875. Once India's newspaper of record. Conservative-liberal editorial tradition. Independent ownership. RSS via Google News."
+  },
+  {
+    "id": "tribune-india",
+    "name": "Tribune India",
+    "url": "https://www.tribuneindia.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:tribuneindia.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Chandigarh-based English daily, founded 1881 in Lahore. Trust-owned (no corporate proprietor). Strong on northern India, Punjab, Haryana politics. Centrist editorial line. RSS via Google News."
+  },
+  {
+    "id": "the-pioneer",
+    "name": "The Pioneer",
+    "url": "https://www.dailypioneer.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:dailypioneer.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Delhi-based English daily, founded 1865. One of India's oldest newspapers. Editorially leans center-right, sympathetic to BJP/NDA positions. RSS via Google News."
+  },
+  {
+    "id": "news18",
+    "name": "News18",
+    "url": "https://www.news18.com",
+    "rss_url": "https://www.news18.com/commonfeeds/v1/eng/rss/india.xml",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadcast",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Network18/Reliance-owned TV news and digital platform. Broad reach across India. Soft-nationalist editorial drift post-Reliance acquisition. Center-right framing on national issues."
+  },
+  {
+    "id": "outlook-india",
+    "name": "Outlook India",
+    "url": "https://www.outlookindia.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:outlookindia.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "magazine",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Indian news magazine, founded 1995. Long-form journalism and political analysis. Changed ownership in 2023 (Indigo Brands), editorial direction under observation. Historically center-left. RSS via Google News."
+  },
+  {
+    "id": "the-news-minute",
+    "name": "The News Minute",
+    "url": "https://www.thenewsminute.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:thenewsminute.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "South India-focused digital outlet, founded 2014. Covers Karnataka, Tamil Nadu, Kerala, Telangana, and Andhra Pradesh. Strong on regional politics, gender issues, and accountability reporting."
+  },
+  {
+    "id": "deccan-chronicle",
+    "name": "Deccan Chronicle",
+    "url": "https://www.deccanchronicle.com",
+    "rss_url": "https://www.deccanchronicle.com/rss_feed/",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Hyderabad-based English daily, founded 1938. Covers Telangana and Andhra Pradesh. Deccan Chronicle Holdings. Centrist editorial line. Native RSS feed available."
+  },
+  {
+    "id": "zee-news",
+    "name": "Zee News",
+    "url": "https://zeenews.india.com",
+    "rss_url": "https://zeenews.india.com/rss/india-national-news.xml",
+    "tier": "international",
+    "country": "IN",
+    "type": "broadcast",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Zee Media Corporation TV channel, founded 1992. Hindi-first but English digital presence. Nationalist editorial framing, pro-government lean. Provides right-wing voice in India's TV news landscape."
+  },
+  {
+    "id": "pti-india",
+    "name": "Press Trust of India",
+    "url": "https://www.ptinews.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:ptinews.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "India's largest news agency, founded 1947. Cooperative owned by Indian newspapers. Factual wire service providing baseline news coverage across India. RSS via Google News."
+  },
+  {
+    "id": "ani-india",
+    "name": "Asian News International",
+    "url": "https://aninews.in",
+    "rss_url": "https://news.google.com/rss/search?q=site:aninews.in+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "IN",
+    "type": "wire",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "India's largest private news agency, founded 1971. Major video wire service. Criticized for uncritical relay of government press releases. Center-right lean reflects source access patterns. RSS via Google News."
+  },
+  {
     "id": "scroll-in",
     "name": "Scroll.in",
     "url": "https://scroll.in",
@@ -2160,6 +2303,50 @@
     "credibility_notes": "Founded by Arnab Goswami. Aggressively pro-BJP, high ratings. Represents a genuine right-of-center viewpoint in Indian media. Contested editorial standards — credibility caution noted."
   },
   {
+    "id": "boom-factcheck",
+    "name": "BOOM",
+    "url": "https://www.boomlive.in",
+    "rss_url": "https://news.google.com/rss/search?q=site:boomlive.in+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "independent",
+    "country": "IN",
+    "type": "fact_check",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Independent fact-checking organization, founded 2014. IFCN signatory. Fact-checks claims across the Indian political spectrum. Transparent methodology, reader-funded. Native RSS stale since 2022; Google News fallback."
+  },
+  {
+    "id": "greater-kashmir",
+    "name": "Greater Kashmir",
+    "url": "https://www.greaterkashmir.com",
+    "rss_url": "https://www.greaterkashmir.com/feed",
+    "tier": "independent",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Kashmir's largest English daily, founded 1989. Covers Jammu & Kashmir and Ladakh. Essential regional voice on India's most sensitive conflict zone. Native RSS feed. Center-left on civil liberties and autonomy issues."
+  },
+  {
+    "id": "cnbctv18",
+    "name": "CNBC-TV18",
+    "url": "https://www.cnbctv18.com",
+    "rss_url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/latest.xml",
+    "tier": "independent",
+    "country": "IN",
+    "type": "broadcast",
+    "political_lean_baseline": "center",
+    "credibility_notes": "India's leading business news channel, Network18/Reliance-owned. CNBC franchise. Covers markets, economy, corporate India. Centrist on business and economic policy. Native RSS feed."
+  },
+  {
+    "id": "moneycontrol",
+    "name": "Moneycontrol",
+    "url": "https://www.moneycontrol.com",
+    "rss_url": "https://www.moneycontrol.com/rss/latestnews.xml",
+    "tier": "independent",
+    "country": "IN",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "India's largest financial news platform, Network18/Reliance-owned. Covers stock markets, personal finance, economy. Business-focused, centrist. Native RSS feed."
+  },
+  {
     "id": "kathmandu-post",
     "name": "The Kathmandu Post",
     "url": "https://kathmandupost.com",
@@ -2180,6 +2367,39 @@
     "type": "magazine",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Nepal's leading English-language weekly magazine, founded 2000. Published by Himalmedia. Known for in-depth analysis of South Asian politics, environment, and culture."
+  },
+  {
+    "id": "dhaka-tribune",
+    "name": "Dhaka Tribune",
+    "url": "https://www.dhakatribune.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:dhakatribune.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+    "tier": "international",
+    "country": "BD",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Bangladesh's prominent English-language daily, founded 2013. Independent editorial stance. Covers Bangladeshi politics, economy, and South Asian affairs. RSS via Google News."
+  },
+  {
+    "id": "daily-mirror-sri-lanka",
+    "name": "Daily Mirror Sri Lanka",
+    "url": "https://www.dailymirror.lk",
+    "rss_url": "https://news.google.com/rss/search?q=site:dailymirror.lk+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "LK",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Sri Lanka's leading English-language daily, published by Wijeya Newspapers. Covers Sri Lankan politics, economy, and South Asian affairs. Centrist editorial line. RSS via Google News."
+  },
+  {
+    "id": "colombo-gazette",
+    "name": "Colombo Gazette",
+    "url": "https://colombogazette.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:colombogazette.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "LK",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Sri Lankan English-language digital news outlet. Covers Sri Lankan politics, economy, and regional affairs. Centrist editorial stance. RSS via Google News (native feed returns HTML)."
   },
   {
     "id": "national-post-canada",
