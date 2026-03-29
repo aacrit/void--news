@@ -1825,6 +1825,73 @@ def main():
                     c["headline_rank"] = round(min(c.get("headline_rank", 0), floor_rank - 0.01), 2)
                 print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
 
+        # ── Per-edition rank computation (v5.4) ──
+        # Compute independent rank_world, rank_us, rank_india so that:
+        #   1) Daily briefs use edition-specific top stories
+        #   2) Frontend orders by the correct per-edition column
+        # Cross-edition demotion: stories in one edition's top-5 get 0.92x
+        # in other editions, ensuring each edition surfaces unique stories.
+        CROSS_EDITION_TOP = 5
+        CROSS_DEMOTION = 0.92
+        _RANK_EDITIONS = ["world", "us", "india"]
+
+        # Each cluster starts with its headline_rank as the base for all editions
+        for c in clusters:
+            for ed in _RANK_EDITIONS:
+                c[f"rank_{ed}"] = c.get("headline_rank", 0)
+
+        # Local-priority boost: US-only or India-only clusters get 1.20x
+        # in their home edition. This ensures domestic stories rise to the
+        # top of the local feed without inflating global rankings.
+        # 1.20x chosen so that a local 44-pt story (52.8) outranks a
+        # globally demoted 55-pt story (50.6) in the home edition.
+        LOCAL_BOOST = 1.20
+        for c in clusters:
+            sections = c.get("sections") or [c.get("section", "world")]
+            for ed in ("us", "india"):
+                if ed in sections and "world" not in sections:
+                    c[f"rank_{ed}"] = round(c.get(f"rank_{ed}", 0) * LOCAL_BOOST, 2)
+
+        # Cross-edition demotion: iterate editions in order, demoting stories
+        # already claimed as top-5 by a previous edition.
+        claimed_ids: set[str] = set()
+        for ed in _RANK_EDITIONS:
+            pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
+
+            # Apply demotion for already-claimed stories
+            for c in pool:
+                cid = c.get("_db_id", "") or str(id(c))
+                if cid in claimed_ids:
+                    c[f"rank_{ed}"] = round(c.get(f"rank_{ed}", 0) * CROSS_DEMOTION, 2)
+
+            # Sort by this edition's rank
+            pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
+
+            # Claim this edition's top-5
+            for c in pool[:CROSS_EDITION_TOP]:
+                cid = c.get("_db_id", "") or str(id(c))
+                claimed_ids.add(cid)
+
+        # Report cross-edition overlap
+        _section_top5: dict[str, list[str]] = {}
+        for ed in _RANK_EDITIONS:
+            pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
+            pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
+            _section_top5[ed] = [c.get("_db_id", str(id(c))) for c in pool[:CROSS_EDITION_TOP]]
+
+        _wu = len(set(_section_top5.get("world", [])) & set(_section_top5.get("us", [])))
+        _wi = len(set(_section_top5.get("world", [])) & set(_section_top5.get("india", [])))
+        print(f"\n  Per-edition ranks computed. Cross-edition overlap: world/us={_wu}/5, world/india={_wi}/5")
+
+        # Print top 10 per edition for diagnostics
+        for ed in _RANK_EDITIONS:
+            pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
+            pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
+            print(f"\n  --- Top 10 {ed.upper()} by rank_{ed} ---")
+            for j, c in enumerate(pool[:10]):
+                title = (c.get("title", "") or "")[:55]
+                print(f"  {j+1:2}. [{c.get(f'rank_{ed}', 0):5.1f}] {c.get('source_count', 0):2}src {title}")
+
         # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
         if BRIEFING_AVAILABLE:
             print("\n[7d] Generating Daily Briefs...")
@@ -2005,6 +2072,9 @@ def main():
                 "divergence_score": round(cluster.get("divergence_score", 0.0), 2),
                 "headline_rank": round(cluster.get("headline_rank", 0.0), 2),
                 "coverage_velocity": cluster.get("coverage_velocity", 0),
+                "rank_world": round(cluster.get("rank_world", cluster.get("headline_rank", 0.0)), 2),
+                "rank_us": round(cluster.get("rank_us", cluster.get("headline_rank", 0.0)), 2),
+                "rank_india": round(cluster.get("rank_india", cluster.get("headline_rank", 0.0)), 2),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)

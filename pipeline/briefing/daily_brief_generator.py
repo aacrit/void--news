@@ -627,10 +627,11 @@ def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
     if not edition_clusters:
         return None
 
-    # Score: headline_rank * (1 + divergence_bonus) * locality_bonus
+    # Score: per-edition rank * (1 + divergence_bonus) * locality_bonus
     # For US/India: prefer stories primarily in that edition (not cross-listed world)
+    rank_col = f"rank_{edition}"
     def _score(c):
-        rank = c.get("headline_rank", 0)
+        rank = c.get(rank_col, 0) or c.get("headline_rank", 0)
         div = c.get("divergence_score", 0) or 0
         base = rank * (1.0 + min(div / 100, 0.5))
         # Locality: clusters in only this edition (not cross-listed to world) get 1.3x
