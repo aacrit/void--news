@@ -234,6 +234,7 @@ export interface DailyBriefData {
   opinion_cluster_id: string | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
+  opinion_start_seconds: number | null;
   audio_voice_label: string | null;
   created_at: string;
 }

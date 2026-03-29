@@ -4070,8 +4070,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 /* ---- On Air — broadcast-style standalone audio section ---- */
 /*
- * Radio-show aesthetic: broadcast red accent, equalizer bars,
- * prominent play button, strong CTA. Distinct from the brief banner.
+ * Warm accent color palette (not red). Equalizer bars, prominent play,
+ * strong CTA, section markers (News/Opinion) on the seek bar.
  */
 
 .onair {
@@ -4080,18 +4080,16 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   gap: var(--space-2);
   margin: 0 0 var(--space-4);
   padding: var(--space-3) var(--space-4);
-  border-left: 3px solid var(--indicator-broadcast, #c0392b);
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 3%, var(--bg-primary));
-  transition: background-color var(--dur-normal) var(--ease-out),
-              border-color var(--dur-normal) var(--ease-out);
+  border-left: 3px solid var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
+  transition: background-color var(--dur-normal) var(--ease-out);
 }
 
 .onair--playing {
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 5%, var(--bg-primary));
-  border-left-color: var(--indicator-broadcast, #c0392b);
+  background: color-mix(in srgb, var(--accent-warm) 5%, var(--bg-primary));
 }
 
-/* ---- Header row: command name + tagline + duration ---- */
+/* ---- Header ---- */
 
 .onair__header {
   display: flex;
@@ -4104,10 +4102,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--indicator-broadcast, #c0392b);
+  background-color: var(--accent-warm);
   flex-shrink: 0;
   animation: onair-pulse 1.5s ease-in-out infinite;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 50%, transparent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent-warm) 40%, transparent);
 }
 
 .onair__cmd {
@@ -4115,7 +4113,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--indicator-broadcast, #c0392b);
+  color: var(--accent-warm);
   white-space: nowrap;
 }
 
@@ -4143,12 +4141,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--indicator-broadcast, #c0392b);
+  color: var(--accent-warm);
   margin-left: auto;
   white-space: nowrap;
 }
 
-/* ---- Controls row: play button + eq + CTA/track ---- */
+/* ---- Controls row ---- */
 
 .onair__controls {
   display: flex;
@@ -4156,7 +4154,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   gap: var(--space-3);
 }
 
-/* Play button — broadcast red circle */
+/* Play button — warm accent circle */
 .onair__play {
   width: 48px;
   height: 48px;
@@ -4164,20 +4162,19 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--indicator-broadcast, #c0392b);
+  border: 2px solid var(--accent-warm);
   border-radius: 50%;
   background: none;
-  color: var(--indicator-broadcast, #c0392b);
+  color: var(--accent-warm);
   cursor: pointer;
   transition: background-color var(--dur-fast) var(--ease-out),
-              border-color var(--dur-fast) var(--ease-out),
               transform var(--dur-fast) var(--ease-out),
               box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .onair__play:hover {
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 10%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 20%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-warm) 18%, transparent);
   transform: scale(1.06);
 }
 
@@ -4187,8 +4184,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .onair__play--active {
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 12%, transparent);
-  box-shadow: 0 0 16px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 25%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-warm) 20%, transparent);
 }
 
 .onair__play:disabled {
@@ -4202,7 +4199,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .onair__play-icon {
   font-size: 14px;
   line-height: 1;
-  /* Optical centering — play triangle needs nudge right */
   margin-left: 2px;
 }
 
@@ -4210,7 +4206,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-left: 0;
 }
 
-/* ---- Equalizer bars — radio-show visual signature ---- */
+/* ---- Equalizer bars ---- */
 
 .onair__eq {
   display: flex;
@@ -4228,16 +4224,14 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   transition: background-color var(--dur-fast) var(--ease-out);
 }
 
-/* Static idle heights — staggered for visual interest */
 .onair__eq-bar:nth-child(1) { height: 6px; }
 .onair__eq-bar:nth-child(2) { height: 10px; }
 .onair__eq-bar:nth-child(3) { height: 16px; }
 .onair__eq-bar:nth-child(4) { height: 8px; }
 .onair__eq-bar:nth-child(5) { height: 12px; }
 
-/* Active: broadcast red + bouncing animation */
 .onair__eq--active .onair__eq-bar {
-  background: var(--indicator-broadcast, #c0392b);
+  background: var(--accent-warm);
   animation: eq-bounce 0.8s ease-in-out infinite alternate;
 }
 
@@ -4246,7 +4240,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   100% { height: 24px; }
 }
 
-/* ---- CTA button — strong, broadcast-red accent ---- */
+/* ---- CTA button ---- */
 
 .onair__cta {
   display: inline-flex;
@@ -4259,9 +4253,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   letter-spacing: 0.06em;
   text-transform: uppercase;
 
-  color: var(--indicator-broadcast, #c0392b);
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 8%, transparent);
-  border: 1.5px solid color-mix(in srgb, var(--indicator-broadcast, #c0392b) 30%, transparent);
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 30%, transparent);
   border-radius: 4px;
   cursor: pointer;
 
@@ -4270,27 +4264,23 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
   transition: background-color var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out),
-              transform var(--dur-fast) var(--ease-out),
-              box-shadow var(--dur-fast) var(--ease-out);
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .onair__cta:hover {
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 14%, transparent);
-  border-color: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 50%, transparent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 15%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
 }
 
 .onair__cta:active {
   transform: scale(0.97);
-  box-shadow: none;
 }
 
 .onair__cta:focus-visible {
-  outline: 2px solid var(--indicator-broadcast, #c0392b);
+  outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
 }
 
-/* Unavailable state text */
 .onair__unavailable {
   font-family: var(--font-meta);
   font-size: 11px;
@@ -4299,19 +4289,68 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-style: italic;
 }
 
-/* ---- Track (seek bar + time) — visible when playing ---- */
+/* ---- Track with section markers ---- */
 
 .onair__track {
   flex: 1;
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  flex-direction: column;
+  gap: var(--space-1);
   min-width: 0;
 }
 
+/* Section labels row — clickable to snap playhead */
+.onair__sections {
+  display: flex;
+  width: 100%;
+  gap: 0;
+}
+
+.onair__section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 var(--space-1);
+
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 20px;
+
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.onair__section:first-child {
+  padding-left: 0;
+}
+
+.onair__section:hover {
+  color: var(--fg-secondary);
+}
+
+.onair__section--active {
+  color: var(--accent-warm);
+  font-weight: 600;
+}
+
+.onair__section:focus-visible {
+  outline: 1px solid var(--accent-warm);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* Seek bar */
 .onair__seek-wrap {
   position: relative;
-  flex: 1;
+  width: 100%;
   height: 20px;
   display: flex;
   align-items: center;
@@ -4322,9 +4361,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   left: 0;
   right: 0;
   height: 4px;
-  background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 15%, var(--border-strong));
+  background: color-mix(in srgb, var(--border-strong) 60%, transparent);
   border-radius: 2px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .onair__fill {
@@ -4332,10 +4371,20 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--indicator-broadcast, #c0392b);
+  background: var(--accent-warm);
   border-radius: 2px;
   transition: width 250ms linear;
-  box-shadow: 0 0 4px color-mix(in srgb, var(--indicator-broadcast, #c0392b) 30%, transparent);
+}
+
+/* Section divider mark on the seek bar */
+.onair__section-mark {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 10px;
+  background: var(--fg-muted);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .onair__seek {
@@ -4362,14 +4411,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .onair__time {
   font-family: var(--font-data);
-  font-size: 12px;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.03em;
   color: var(--fg-muted);
   white-space: nowrap;
+  align-self: flex-end;
 }
 
-/* ---- On Air pulse animation ---- */
+/* ---- Animations ---- */
 
 @keyframes onair-pulse {
   0%, 100% { opacity: 1; }
@@ -4387,13 +4437,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .onair__fill { transition: none; }
   .onair__live-dot { animation: none; opacity: 1; }
   .onair__eq--active .onair__eq-bar { animation: none; height: 12px; }
+  .onair__section { transition: none; }
 }
 
 @media (hover: none) {
   .onair__play:hover { background: none; box-shadow: none; transform: none; }
   .onair__play:active { transform: scale(0.94); }
-  .onair__cta:hover { background: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 8%, transparent); border-color: color-mix(in srgb, var(--indicator-broadcast, #c0392b) 30%, transparent); box-shadow: none; }
+  .onair__cta:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); border-color: color-mix(in srgb, var(--accent-warm) 30%, transparent); }
   .onair__cta:active { transform: scale(0.96); }
+  .onair__section:hover { color: var(--fg-muted); }
   .db-col__cta:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); }
 }
 
