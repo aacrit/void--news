@@ -19,19 +19,37 @@
   background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
 }
 
-.skb--expanded {
-  border-bottom-color: var(--accent-warm);
-}
-
 .skb__columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 var(--space-5);
 }
 
+/* When a side is expanded: single full-width column */
+.skb--expand-tldr .skb__columns,
+.skb--expand-opinion .skb__columns {
+  grid-template-columns: 1fr;
+}
+
 .skb__col--tldr {
   border-right: 1px solid var(--border-subtle);
   padding-right: var(--space-5);
+}
+
+/* Full-width column: no border divider needed */
+.skb__col--full.skb__col--tldr {
+  border-right: none;
+  padding-right: 0;
+}
+
+/* Crossfade transition for column swap */
+.skb__col {
+  animation: skbColFadeIn 150ms var(--ease-out) both;
+}
+
+@keyframes skbColFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .skb__label {
@@ -103,13 +121,6 @@
   overflow: hidden;
 }
 
-/* Expanded: remove line-clamp, show full text seamlessly */
-.skb__preview--open {
-  -webkit-line-clamp: unset;
-  display: block;
-  overflow: visible;
-}
-
 /* Lean badge */
 .skb__lean-badge {
   font-family: var(--font-meta);
@@ -154,8 +165,6 @@
 .skb__more:hover {
   color: var(--fg-secondary);
 }
-
-/* Side expand no longer needed — using line-clamp toggle instead */
 
 /* OnAir unit — pill + inline seek + radio player as one block */
 .skb__onair-unit {
@@ -253,14 +262,7 @@
   z-index: 2;
 }
 
-/* OnAir shifted into a column when the other side is expanded */
-.skb__onair-shifted {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px dotted color-mix(in srgb, var(--fg-muted) 15%, transparent);
-}
-
-/* OnAir centered below columns when nothing is expanded */
+/* OnAir — always centered below columns */
 .skb__onair-center {
   display: flex;
   justify-content: center;
@@ -849,12 +851,19 @@
   text-align-last: left;
 }
 
+.skb__expand-text--opinion p + p {
+  margin-top: var(--space-2);
+}
+
 /* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .skb__side-expand,
+  .skb__col {
+    animation: none;
+  }
+
   .skb__radio {
     transition: none !important;
   }

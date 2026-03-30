@@ -14,11 +14,11 @@ function formatTime(seconds: number): string {
 }
 
 /* ---------------------------------------------------------------------------
-   SkyboxBanner — Two-column brief with per-section expand
+   SkyboxBanner — Two-column brief with full-width expand
 
-   Each column has its own subtle "read more". Expanding one side pushes
-   the void --onair pill to the other side. Only one side expands at a time.
-   OnAir pill is centered and prominent when nothing is expanded.
+   Default: two columns (TL;DR | Opinion) with 2-line previews.
+   Expanding either side: full canvas width, other column hides.
+   OnAir pill always centered below the content area.
    --------------------------------------------------------------------------- */
 
 type ExpandedSide = null | "tldr" | "opinion";
@@ -209,42 +209,50 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
       )}
 
       <div className={`skb${expandedSide ? ` skb--expand-${expandedSide}` : ""}`} role="complementary" aria-label="Daily Brief">
-        {/* Two columns */}
+        {/* Columns — two-col preview or single-col expanded */}
         <div className="skb__columns">
-          {/* ── TL;DR column ── */}
-          <div className="skb__col skb__col--tldr">
-            <div className="skb__label">
-              <ScaleIcon size={12} animation="idle" />
-              <span className="skb__cmd">void --tl;dr</span>
-              {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
+          {/* ── TL;DR column (visible when collapsed OR when TL;DR is expanded) ── */}
+          {expandedSide !== "opinion" && (
+            <div className={`skb__col skb__col--tldr${expandedSide === "tldr" ? " skb__col--full" : ""}`}>
+              <div className="skb__label">
+                <ScaleIcon size={12} animation="idle" />
+                <span className="skb__cmd">void --tl;dr</span>
+                {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
+              </div>
+              {brief.tldr_headline && (
+                <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
+              )}
+
+              {expandedSide === "tldr" ? (
+                /* Full text — no line-clamp, full canvas width */
+                <div className="skb__expand-text--tldr">
+                  {tldrFull.split(/\n\n+/).map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                </div>
+              ) : (
+                /* Preview — 2-line clamp */
+                <p className="skb__preview skb__preview--tldr">
+                  {tldrFull}
+                </p>
+              )}
+
+              {tldrHasMore && (
+                <button
+                  className="skb__more"
+                  onClick={() => toggleSide("tldr")}
+                  type="button"
+                  aria-expanded={expandedSide === "tldr"}
+                >
+                  {expandedSide === "tldr" ? "less" : "read more"}
+                </button>
+              )}
             </div>
-            {brief.tldr_headline && (
-              <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
-            )}
-            <p className={`skb__preview skb__preview--tldr${expandedSide === "tldr" ? " skb__preview--open" : ""}`}>
-              {tldrFull}
-            </p>
+          )}
 
-            {tldrHasMore && (
-              <button
-                className="skb__more"
-                onClick={() => toggleSide("tldr")}
-                type="button"
-                aria-expanded={expandedSide === "tldr"}
-              >
-                {expandedSide === "tldr" ? "less" : "read more"}
-              </button>
-            )}
-
-            {/* OnAir lands here when opinion is expanded */}
-            {expandedSide === "opinion" && onairUnit && (
-              <div className="skb__onair-shifted">{onairUnit}</div>
-            )}
-          </div>
-
-          {/* ── Opinion column ── */}
-          {brief.opinion_text && (
-            <div className="skb__col skb__col--opinion">
+          {/* ── Opinion column (visible when collapsed OR when opinion is expanded) ── */}
+          {brief.opinion_text && expandedSide !== "tldr" && (
+            <div className={`skb__col skb__col--opinion${expandedSide === "opinion" ? " skb__col--full" : ""}`}>
               <div className="skb__label">
                 <ScaleIcon size={12} animation="idle" />
                 <span className="skb__cmd">void --opinion</span>
@@ -255,9 +263,20 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               {brief.opinion_headline && (
                 <h3 className="skb__hl skb__hl--opinion">{brief.opinion_headline}</h3>
               )}
-              <p className={`skb__preview skb__preview--opinion${expandedSide === "opinion" ? " skb__preview--open" : ""}`}>
-                {opinionFull}
-              </p>
+
+              {expandedSide === "opinion" ? (
+                /* Full text — no line-clamp, full canvas width */
+                <div className="skb__expand-text--opinion">
+                  {opinionFull.split(/\n\n+/).map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                </div>
+              ) : (
+                /* Preview — 2-line clamp */
+                <p className="skb__preview skb__preview--opinion">
+                  {opinionFull}
+                </p>
+              )}
 
               {opinionHasMore && (
                 <button
@@ -269,21 +288,14 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   {expandedSide === "opinion" ? "less" : "read more"}
                 </button>
               )}
-
-              {/* OnAir lands here when tldr is expanded */}
-              {expandedSide === "tldr" && onairUnit && (
-                <div className="skb__onair-shifted">{onairUnit}</div>
-              )}
             </div>
           )}
         </div>
 
-        {/* Centered OnAir when nothing is expanded */}
-        {!expandedSide && onairUnit && (
+        {/* OnAir — always centered below content */}
+        {onairUnit && (
           <div className="skb__onair-center">{onairUnit}</div>
         )}
-
-        {/* Radio player now lives inside onairUnit — no standalone section needed */}
       </div>
     </>
   );
