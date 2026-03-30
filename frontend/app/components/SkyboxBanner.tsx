@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
-import { hapticLight, hapticMedium } from "../lib/haptics";
+import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 
 function formatTime(seconds: number): string {
@@ -18,15 +18,46 @@ function formatTime(seconds: number): string {
 
    Left:  void --tl;dr (Structural voice — Inter, factual, reporting)
    Right: void --opinion (Editorial voice — Playfair, italic, editorial)
-   Footer: [Read full brief] + [▶ void --onair] prominent player
+   Footer: [Read full brief] + [▶ void --onair] retro radio player
 
-   Canvas-width (no full-bleed). Overlay is void-branded dark space.
+   Canvas-width (no full-bleed). Inline expand — no overlay.
    --------------------------------------------------------------------------- */
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
   const [expanded, setExpanded] = useState(false);
+  const [radioOpen, setRadioOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const radioRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [radioHeight, setRadioHeight] = useState(0);
 
+  // Measure expanded content height for smooth spring animation
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setContentHeight(entry.contentRect.height);
+    });
+    ro.observe(contentRef.current);
+    return () => ro.disconnect();
+  }, [expanded]);
+
+  // Measure radio panel height
+  useEffect(() => {
+    if (!radioRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setRadioHeight(entry.contentRect.height);
+    });
+    ro.observe(radioRef.current);
+    return () => ro.disconnect();
+  }, [radioOpen]);
+
+  // Generate stable waveform bar heights (24 bars, sin wave pattern)
+  const waveformBars = useMemo(() =>
+    Array.from({ length: 32 }, (_, i) => 10 + Math.sin(i * 0.55) * 16 + (Math.sin(i * 1.3) * 6)),
+  []);
+
+  // Escape key to collapse
   useEffect(() => {
     if (!expanded) return;
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setExpanded(false); };
@@ -84,7 +115,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
       )}
 
-      <div className="skb" role="complementary" aria-label="Daily Brief">
+      <div className={`skb${expanded ? " skb--expanded" : ""}`} role="complementary" aria-label="Daily Brief">
         {/* Two preview columns — different type voices */}
         <div className="skb__columns">
           {/* TL;DR — Structural voice (Inter, factual) */}
@@ -120,145 +151,166 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
         {/* Action row: Read + OnAir */}
         <div className="skb__actions">
-          <button className="skb__read-btn" onClick={handleToggle} type="button">
-            {expanded ? "Close" : "Read full brief"}
+          <button
+            className="skb__read-btn"
+            onClick={handleToggle}
+            type="button"
+            aria-expanded={expanded}
+          >
+            {expanded ? "Close brief" : "Read full brief"}
           </button>
 
           {hasAudio && (
-            <div className={`skb__onair${isPlaying ? " skb__onair--playing" : ""}`}>
-              <button
-                className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}`}
-                onClick={() => { hapticMedium(); handlePlayPause(); }}
-                type="button"
-                aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
-              >
-                <ScaleIcon size={14} animation={isPlaying ? "analyzing" : "idle"} />
-                <span className="skb__onair-icon" aria-hidden="true">
-                  {isPlaying ? "\u275A\u275A" : "\u25B6"}
-                </span>
-                <span className="skb__onair-label">void --onair</span>
-                {durationMin && !isPlaying && (
-                  <span className="skb__onair-dur">{durationMin} min</span>
-                )}
-                {isPlaying && (
-                  <span className="skb__onair-dur">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>
-                )}
-              </button>
-
-              {/* Seek bar when playing */}
-              {(isPlaying || currentTime > 0) && (
-                <div className="skb__onair-track">
-                  <div className="skb__onair-sections">
-                    <button className={`skb__onair-sec${!inOpinion ? " skb__onair-sec--active" : ""}`}
-                      onClick={() => seekTo(0)} type="button"
-                      style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}>News</button>
-                    {hasOpinion && (
-                      <button className={`skb__onair-sec${inOpinion ? " skb__onair-sec--active" : ""}`}
-                        onClick={() => seekTo(opinionStart)} type="button"
-                        style={{ width: `${100 - opinionPct}%` }}>Opinion</button>
-                    )}
-                  </div>
-                  <div className="skb__onair-bar-wrap">
-                    <div className="skb__onair-bar">
-                      <div className="skb__onair-fill" style={{ width: `${progress}%` }} />
-                      {hasOpinion && <span className="skb__onair-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
-                    </div>
-                    <input type="range" className="skb__onair-seek" min={0} max={displayDuration || 100}
-                      value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
-                  </div>
-                </div>
+            <button
+              className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
+              onClick={() => { hapticConfirm(); setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
+              type="button"
+              aria-label={radioOpen ? "Close radio player" : "Open radio player"}
+              aria-expanded={radioOpen}
+            >
+              <span className="skb__radio-waves" aria-hidden="true">
+                <span className="skb__radio-wave" />
+                <span className="skb__radio-wave" />
+                <span className="skb__radio-wave" />
+              </span>
+              <span className="skb__onair-label">void --onair</span>
+              {durationMin && !isPlaying && !radioOpen && (
+                <span className="skb__onair-dur">{durationMin} min</span>
               )}
-
-              {isPlaying && (
-                <div className="skb__onair-eq" aria-hidden="true">
-                  <span className="skb__eq-bar" style={{ animationDelay: "0ms" }} />
-                  <span className="skb__eq-bar" style={{ animationDelay: "150ms" }} />
-                  <span className="skb__eq-bar" style={{ animationDelay: "75ms" }} />
-                  <span className="skb__eq-bar" style={{ animationDelay: "200ms" }} />
-                </div>
+              {isPlaying && !radioOpen && (
+                <span className="skb__onair-dur">{formatTime(currentTime)}</span>
               )}
-            </div>
+              {radioOpen && (
+                <span className="skb__onair-dur">{isPlaying ? "ON AIR" : "STANDBY"}</span>
+              )}
+            </button>
           )}
         </div>
-      </div>
 
-      {/* ═══ Expanded Overlay — void space ═══ */}
-      {expanded && (
-        <div className="void-overlay">
-          <div className="void-overlay__backdrop" onClick={handleToggle} aria-hidden="true" />
-          <div className="void-overlay__panel">
-            {/* Void header */}
-            <div className="void-overlay__header">
-              <ScaleIcon size={18} animation="idle" />
-              <span className="void-overlay__brand">void --editorial</span>
-              <button className="void-overlay__close" onClick={handleToggle} type="button" aria-label="Close">
-                &times;
-              </button>
+        {/* ═══ Radio Player — expands in place with waveform visualization ═══ */}
+        {hasAudio && (
+          <div
+            className="skb__radio"
+            style={{
+              height: radioOpen ? radioHeight : 0,
+              transition: radioOpen
+                ? "height 400ms var(--spring-bouncy)"
+                : "height 250ms var(--ease-out)",
+            }}
+          >
+            <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
+              {/* Waveform visualization — 32 bars, animated when playing */}
+              <div className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`} aria-hidden="true">
+                {waveformBars.map((h, i) => (
+                  <div
+                    key={i}
+                    className="skb__waveform-bar"
+                    style={{
+                      height: `${h}px`,
+                      animationDelay: `${i * 55}ms`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Transport controls */}
+              <div className="skb__transport">
+                <button
+                  className={`skb__transport-play${isPlaying ? " skb__transport-play--active" : ""}`}
+                  onClick={() => { hapticMedium(); handlePlayPause(); }}
+                  type="button"
+                  aria-label={isPlaying ? "Pause" : "Play"}
+                >
+                  <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+                </button>
+
+                <div className="skb__transport-info">
+                  <div className="skb__transport-label">
+                    <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
+                    <span className="skb__transport-cmd">void --onair</span>
+                    {isPlaying && <span className="skb__transport-live">LIVE</span>}
+                  </div>
+                  <div className="skb__transport-voices">
+                    <span>Voice A: the facts</span>
+                    <span className="skb__transport-dot" aria-hidden="true" />
+                    <span>Voice B: the questions</span>
+                  </div>
+                </div>
+
+                <span className="skb__transport-time">
+                  {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+                </span>
+              </div>
+
+              {/* Seek bar with section markers */}
+              <div className="skb__radio-seek">
+                <div className="skb__radio-sections">
+                  <button className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
+                    onClick={() => seekTo(0)} type="button"
+                    style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}>News</button>
+                  {hasOpinion && (
+                    <button className={`skb__radio-sec${inOpinion ? " skb__radio-sec--active" : ""}`}
+                      onClick={() => seekTo(opinionStart)} type="button"
+                      style={{ width: `${100 - opinionPct}%` }}>Opinion</button>
+                  )}
+                </div>
+                <div className="skb__radio-bar-wrap">
+                  <div className="skb__radio-bar">
+                    <div className="skb__radio-fill" style={{ width: `${progress}%` }} />
+                    {hasOpinion && <span className="skb__radio-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+                  </div>
+                  <input type="range" className="skb__radio-input" min={0} max={displayDuration || 100}
+                    value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek position" />
+                </div>
+              </div>
             </div>
+          </div>
+        )}
 
-            <div className="void-overlay__body">
-              {/* TL;DR section — Structural voice */}
-              <section className="void-overlay__section void-overlay__section--tldr">
-                <span className="void-overlay__tag">void --tl;dr</span>
+        {/* ═══ Inline expanded content — spring snap-expand ═══ */}
+        <div
+          className="skb__expand"
+          style={{
+            height: expanded ? contentHeight : 0,
+            transition: expanded
+              ? "height 400ms var(--spring-bouncy)"
+              : "height 250ms var(--ease-out)",
+          }}
+        >
+          <div ref={contentRef} className="skb__expand-inner">
+            <div className="skb__expand-columns">
+              {/* TL;DR full — Structural voice, warm accent headline */}
+              <section className="skb__expand-col skb__expand-col--tldr" aria-label="Full TL;DR">
+                <span className="skb__expand-tag">void --tl;dr</span>
                 {brief.tldr_headline && (
-                  <h3 className="void-overlay__hl void-overlay__hl--tldr">{brief.tldr_headline}</h3>
+                  <h3 className="skb__expand-hl skb__expand-hl--tldr">{brief.tldr_headline}</h3>
                 )}
-                <div className="void-overlay__text void-overlay__text--tldr">
+                <div className="skb__expand-text skb__expand-text--tldr">
                   {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
                 </div>
               </section>
 
-              {/* Void rule */}
-              {brief.opinion_text && <div className="void-overlay__divider" aria-hidden="true" />}
-
-              {/* Opinion section — Editorial voice */}
+              {/* Opinion full — Editorial voice, Playfair italic */}
               {brief.opinion_text && (
-                <section className="void-overlay__section void-overlay__section--opinion">
-                  <div className="void-overlay__opinion-meta">
-                    <span className="void-overlay__tag">void --opinion</span>
+                <section className="skb__expand-col skb__expand-col--opinion" aria-label="Editorial Opinion">
+                  <div className="skb__expand-opinion-meta">
+                    <span className="skb__expand-tag">void --opinion</span>
                     {brief.opinion_lean && (
                       <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
                     )}
                   </div>
                   {brief.opinion_headline && (
-                    <h3 className="void-overlay__hl void-overlay__hl--opinion">{brief.opinion_headline}</h3>
+                    <h3 className="skb__expand-hl skb__expand-hl--opinion">{brief.opinion_headline}</h3>
                   )}
-                  <div className="void-overlay__text void-overlay__text--opinion">
+                  <div className="skb__expand-text skb__expand-text--opinion">
                     <p>{brief.opinion_text}</p>
                   </div>
                 </section>
               )}
-
-              {/* Audio player */}
-              {hasAudio && (
-                <div className="void-overlay__audio">
-                  <div className="void-overlay__audio-row">
-                    <button
-                      className={`void-overlay__play${isPlaying ? " void-overlay__play--active" : ""}`}
-                      onClick={() => { hapticMedium(); handlePlayPause(); }}
-                      type="button" aria-label={isPlaying ? "Pause" : "Play"}
-                    >
-                      <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
-                    </button>
-                    <span className="void-overlay__audio-label">void --onair</span>
-                    <span className="void-overlay__audio-time">
-                      {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
-                    </span>
-                  </div>
-                  <div className="void-overlay__seek-wrap">
-                    <div className="void-overlay__seek-bar">
-                      <div className="void-overlay__seek-fill" style={{ width: `${progress}%` }} />
-                      {hasOpinion && <span className="void-overlay__seek-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
-                    </div>
-                    <input type="range" className="void-overlay__seek-input" min={0} max={displayDuration || 100}
-                      value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
