@@ -233,7 +233,7 @@
   border: 1.5px solid color-mix(in srgb, var(--accent-warm) 35%, transparent);
   border-radius: 100px;
   padding: var(--space-2) var(--space-5) var(--space-2) var(--space-4);
-  min-height: 40px;
+  min-height: 44px;
   cursor: pointer;
   flex-shrink: 0;
   /* Idle glow — warm amber halo, inviting */
@@ -245,25 +245,45 @@
     color 200ms var(--ease-out),
     background-color 200ms var(--ease-out),
     box-shadow 300ms var(--ease-out),
-    transform 200ms var(--spring-bouncy);
+    transform 300ms var(--spring-bouncy),
+    padding 300ms var(--spring-snappy),
+    min-height 300ms var(--spring-snappy),
+    border-radius 300ms var(--ease-out);
 }
 
 .skb__onair-btn:hover {
   border-color: var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
-  transform: translateY(-1px);
+  transform: scale(1.03) translateY(-1px);
   box-shadow:
-    0 0 12px color-mix(in srgb, var(--accent-warm) 20%, transparent),
-    0 0 28px color-mix(in srgb, var(--accent-warm) 10%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent-warm) 24%, transparent),
+    0 0 36px color-mix(in srgb, var(--accent-warm) 12%, transparent),
     0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.skb__onair-btn:active {
+  transform: scale(0.97);
+  transition-duration: 60ms;
 }
 
 .skb__onair-btn--active {
   border-color: var(--accent-warm);
   color: var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
-  /* Pulsing glow when playing */
   animation: onair-glow 2s ease-in-out infinite alternate;
+}
+
+/* When radio player is open — pill morphs into a wider header-like shape */
+.skb__onair-btn--open {
+  border-radius: 12px 12px 0 0;
+  padding: var(--space-2) var(--space-5);
+  background: color-mix(in srgb, var(--accent-warm) 8%, #1A1816);
+  border-color: rgba(200, 149, 108, 0.3);
+  color: #C8956C;
+  box-shadow:
+    0 0 20px rgba(200, 149, 108, 0.15),
+    0 0 40px rgba(200, 149, 108, 0.06);
+  animation: none;
 }
 
 @keyframes onair-glow {
@@ -444,10 +464,10 @@
 
 .skb__radio-inner {
   background: #1A1816;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
   padding: var(--space-4) var(--space-5);
-  margin-top: var(--space-2);
   border: 1px solid rgba(200, 149, 108, 0.15);
+  border-top: none;
   box-shadow:
     0 0 20px rgba(200, 149, 108, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
