@@ -24,7 +24,7 @@ function formatTime(seconds: number): string {
 type ExpandedSide = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
+  const { brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
   const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
   const [radioOpen, setRadioOpen] = useState(false);
   const radioRef = useRef<HTMLDivElement>(null);
@@ -135,6 +135,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
           </div>
           <div className="skb__inline-bar-wrap">
             <div className="skb__inline-bar">
+              <div className="skb__inline-buffer" style={{ width: `${buffered}%` }} />
               <div className="skb__inline-fill" style={{ width: `${progress}%` }} />
               {hasOpinionSection && <span className="skb__inline-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
             </div>
@@ -204,6 +205,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             </div>
             <div className="skb__radio-bar-wrap">
               <div className="skb__radio-bar">
+                <div className="skb__radio-buffer" style={{ width: `${buffered}%` }} />
                 <div className="skb__radio-fill" style={{ width: `${progress}%` }} />
                 {hasOpinionSection && <span className="skb__radio-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
               </div>

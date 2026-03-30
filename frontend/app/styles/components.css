@@ -85,6 +85,7 @@
    Preserves <article> semantics while providing an interactive target.
    Focus ring appears on the stretched button, not the article. */
 .story-card__stretch-link {
+  display: block;
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -98,6 +99,7 @@
   height: 100%;
   color: transparent;
   font-size: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Sigil sits above the stretch-link so hover/tap targets the Sigil popup,
@@ -4693,6 +4695,17 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   overflow: visible;
 }
 
+.onair__buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--fg-muted) 25%, transparent);
+  border-radius: 2px;
+  transition: width 300ms linear;
+  z-index: 0;
+}
+
 .onair__fill {
   position: absolute;
   top: 0;
@@ -4701,6 +4714,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   background: var(--accent-warm);
   border-radius: 2px;
   transition: width 250ms linear;
+  z-index: 1;
 }
 
 /* Section divider mark on the seek bar */
@@ -4786,6 +4800,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .onair { transition: none; }
   .onair__play { transition: none; }
   .onair__cta { transition: none; }
+  .onair__buffer,
   .onair__fill { transition: none; }
   .onair__live-dot { animation: none; opacity: 1; }
   .onair__eq--active .onair__eq-bar { animation: none; height: 12px; }
@@ -5095,7 +5110,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   border-bottom: none;
 }
 
-/* Source meta: favicon + name + lean score */
+/* Source row: favicon + name */
+.comp-view__item-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+/* Legacy alias */
 .comp-view__item-meta {
   display: flex;
   align-items: center;
@@ -5130,6 +5153,19 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-muted);
   font-feature-settings: "tnum" 1;
   flex-shrink: 0;
+}
+
+/* Source headline — single line, clean */
+.comp-view__headline {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--fg-tertiary);
+  margin: 0 0 var(--space-1) 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ---- Source credibility signals row ---- */
