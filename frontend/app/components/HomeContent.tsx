@@ -378,6 +378,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         const clusters = res.data || [];
 
         if (clusters.length === 0) {
+          // Try to restore cached stories so the user never sees an empty feed
+          // (pipeline mid-run, transient DB gap, or retention cleanup).
+          try {
+            const cached = localStorage.getItem(`void-stories-${activeEdition}`);
+            if (cached) {
+              const parsed = JSON.parse(cached) as Story[];
+              if (parsed.length > 0) {
+                setStories(parsed);
+                setIsLoading(false);
+                return;
+              }
+            }
+          } catch { /* localStorage unavailable */ }
           setStories([]);
           setIsLoading(false);
           return;
@@ -515,6 +528,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
         setStories(mappedStories);
         setIsLoading(false);
+
+        // Cache stories so the feed is never empty during pipeline gaps
+        try {
+          localStorage.setItem(
+            `void-stories-${activeEdition}`,
+            JSON.stringify(mappedStories.slice(0, 50)),
+          );
+        } catch { /* quota exceeded or unavailable — no-op */ }
 
         const { data: run } = await supabase
           .from("pipeline_runs")
