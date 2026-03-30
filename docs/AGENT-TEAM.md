@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-22 (rev 11)
+Last updated: 2026-03-29 (rev 12)
 
 ## Philosophy
 
@@ -39,6 +39,7 @@ CEO (Aacrit)
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
+  ├── Cinematic ————————— cinematographer, vfx-artist, motion-director
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
   ├── Audio ———————————— audio-engineer
   ├── Security ————————— void-ciso
@@ -46,7 +47,7 @@ CEO (Aacrit)
   └── Branding ————————— logo-designer
 ```
 
-**Total: 20 agents across 9 divisions**
+**Total: 23 agents across 10 divisions**
 
 ---
 
@@ -87,6 +88,14 @@ CEO (Aacrit)
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
 | `source-curator` | Source credibility vetting, RSS/scrape config, 380-source list | Yes | Source list changes |
 
+### Cinematic Division
+
+| Agent | Purpose | Write Access | Trigger |
+|-------|---------|-------------|---------|
+| `cinematographer` | Camera language design — depth of field, rack focus, parallax, camera movements, scene compositions, cinematic design tokens | Yes | Cinematic overhaul, motion design tasks |
+| `vfx-artist` | Post-processing — film grain, color grading, vignettes, lens effects, atmospheric lighting, texture via CSS filters and SVG | Yes | After cinematographer, cinematic polish |
+| `motion-director` | Scroll-driven choreography — scene timelines, gesture physics, transition sequencing, L-cut/match-cut timing, scroll-timeline API | Yes | After cinematographer, interaction choreography |
+
 ### Agent Engineering Division
 
 | Agent | Purpose | Write Access | Trigger |
@@ -109,7 +118,7 @@ CEO (Aacrit)
 
 | Agent | Purpose | Write Access |
 |-------|---------|-------------|
-| `logo-designer` | Brand identity — logo, favicon, SVG assets | Yes |
+| `logo-designer` | Brand identity — logo, favicon, SVG assets, cinematic palette, texture system | Yes |
 
 ---
 
@@ -138,6 +147,11 @@ frontend-builder → responsive-specialist → uat-tester → frontend-fixer
 **Audio Quality Cycle:**
 ```
 audio-engineer → pipeline-tester → bug-fixer
+```
+
+**Cinematic Overhaul Cycle:**
+```
+[logo-designer + cinematographer] (parallel) → motion-director → vfx-artist → frontend-builder → [responsive-specialist + perf-optimizer] (parallel) → uat-tester → frontend-fixer
 ```
 
 **Full Pipeline Dev Cycle:**
@@ -169,7 +183,10 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 | Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` | Audio |
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` | Security |
 | Strategic advice, roadmap, priorities | `ceo-advisor` | Product |
-| Logo, favicon, brand identity | `logo-designer` | Branding |
+| Logo, favicon, brand identity, cinematic palette, texture system | `logo-designer` | Branding |
+| Camera movement, depth of field, parallax, cinematic scene composition | `cinematographer` | Cinematic |
+| Film grain, color grading, vignette, lens effects, atmospheric post-processing | `vfx-artist` | Cinematic |
+| Scroll-driven choreography, scene timelines, gesture physics, transition sequencing | `motion-director` | Cinematic |
 | Agent audit, optimization, new agent design, prompt engineering | `agent-architect` | Agent Engineering |
 
 ---
@@ -200,10 +217,11 @@ R&I advisory agents (read-only, propose but don't implement):
 
 | Agent | Purpose |
 |-------|---------|
-| `motion-physics-designer` | Spring physics, gesture interactions |
 | `data-storytelling-designer` | Bias visualization, chart design |
 | `micro-interaction-designer` | Progressive disclosure, delight |
 | `accessibility-inclusivity-lead` | WCAG 2.1 AA compliance |
+
+Note: `motion-physics-designer` was promoted to three active agents: `cinematographer`, `motion-director`, `vfx-artist` (Cinematic Division, rev 12).
 
 ---
 

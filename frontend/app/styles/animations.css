@@ -364,6 +364,46 @@
   100% { box-shadow: none; }
 }
 
+/* ---- Cinematic Keyframes ----------------------------------------------- */
+
+/* ── Cold Open ── */
+@keyframes coldOpenSettle {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes coldOpenDollyIn {
+  from { opacity: 0; transform: scale(0.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Film Grain Drift ── */
+@keyframes cin-grain-drift {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(0.5px, -0.3px); }
+  66% { transform: translate(-0.3px, 0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Anamorphic Flare ── */
+@keyframes cin-flare-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Whip Pan (Edition Switch) ── */
+@keyframes whipPanOut {
+  from { transform: translateX(0); filter: blur(0); opacity: 1; }
+  40% { filter: blur(2px); }
+  to { transform: translateX(-8%); filter: blur(0); opacity: 0; }
+}
+
+@keyframes whipPanIn {
+  from { transform: translateX(8%); filter: blur(2px); opacity: 0; }
+  60% { filter: blur(1px); }
+  to { transform: translateX(0); filter: blur(0); opacity: 1; }
+}
+
 /* ---- Reduced Motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -484,5 +524,20 @@
 @media (prefers-reduced-motion: reduce) {
   .pull-to-refresh__spinner--active {
     animation: none;
+  }
+}
+
+/* ---- Cinematic Reduced Motion Overrides -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .page-container::after {
+    animation: none;
+  }
+  .page-container {
+    transition: filter 0ms;
+  }
+  .skb__onair-btn--active::before {
+    animation: none;
+    opacity: 1;
   }
 }
