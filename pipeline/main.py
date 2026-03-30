@@ -2113,68 +2113,6 @@ def main():
                 on_conflict="cluster_id,article_id",
             )
 
-        # Step 8b: Deduplicate clusters — delete old clusters superseded by this run.
-        # Each pipeline run re-clusters the last 48h of articles from scratch, so
-        # previous runs' clusters covering the same articles are stale duplicates.
-        # Strategy: for each new cluster, find older clusters sharing >50% of
-        # their articles (Jaccard overlap). Delete the old ones — the new run has
-        # fresher summaries, updated bias scores, and any new articles.
-        new_cluster_ids = set(cluster_ids_to_enrich)
-        if new_cluster_ids:
-            print(f"\n[8b] Deduplicating clusters (removing old duplicates)...")
-            # Build article→new_cluster map from the links we just inserted
-            new_cluster_articles: dict[str, set[str]] = {}
-            for link in all_cluster_article_links:
-                cid = link["cluster_id"]
-                aid = link["article_id"]
-                new_cluster_articles.setdefault(cid, set()).add(aid)
-
-            # Collect all article IDs from this run's clusters
-            all_new_article_ids = set()
-            for aids in new_cluster_articles.values():
-                all_new_article_ids.update(aids)
-
-            # Find old clusters that share articles with our new clusters.
-            # Query cluster_articles for our article IDs, excluding new cluster IDs.
-            old_cluster_articles: dict[str, set[str]] = {}
-            all_new_article_list = list(all_new_article_ids)
-            for i in range(0, len(all_new_article_list), 500):
-                batch = all_new_article_list[i:i + 500]
-                try:
-                    res = supabase.table("cluster_articles").select(
-                        "cluster_id,article_id"
-                    ).in_("article_id", batch).execute()
-                    if res.data:
-                        for row in res.data:
-                            cid = row["cluster_id"]
-                            if cid not in new_cluster_ids:
-                                old_cluster_articles.setdefault(cid, set()).add(
-                                    row["article_id"]
-                                )
-                except Exception as e:
-                    print(f"  [warn] dedup query failed: {e}")
-
-            # Any article overlap means the old cluster is superseded by the
-            # new run (which re-clusters the same 48h article window with
-            # fresher summaries and scores). Delete the old one.
-            stale_ids: list[str] = list(old_cluster_articles.keys())
-
-            if stale_ids:
-                for i in range(0, len(stale_ids), 100):
-                    batch = stale_ids[i:i + 100]
-                    try:
-                        supabase.table("cluster_articles").delete().in_(
-                            "cluster_id", batch
-                        ).execute()
-                        supabase.table("story_clusters").delete().in_(
-                            "id", batch
-                        ).execute()
-                    except Exception as e:
-                        print(f"  [warn] dedup delete failed: {e}")
-                print(f"  Deduplicated: removed {len(stale_ids)} old clusters superseded by this run")
-            else:
-                print(f"  No duplicate clusters found")
-
         # Enrich clusters with aggregated bias data (Step 9)
         # For Gemini-enriched clusters, only run numeric aggregation (RPC),
         # skip rule-based consensus/divergence text generation.
@@ -2200,6 +2138,67 @@ def main():
                         print(f"  [warn] Enrichment failed for {cid}: {enrich_err}")
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
+
+    # Step 8b (deferred): Deduplicate clusters — runs AFTER enrichment so old
+    # clusters remain visible to the frontend until new ones are fully ready.
+    # This prevents the "Presses Are Warming Up" empty state during pipeline runs.
+    new_cluster_ids = set(cluster_ids_to_enrich)
+    if new_cluster_ids:
+        print(f"\n[8b] Deduplicating clusters (deferred — new clusters already enriched)...")
+        new_cluster_articles: dict[str, set[str]] = {}
+        for link in all_cluster_article_links:
+            cid = link["cluster_id"]
+            aid = link["article_id"]
+            new_cluster_articles.setdefault(cid, set()).add(aid)
+
+        all_new_article_ids = set()
+        for aids in new_cluster_articles.values():
+            all_new_article_ids.update(aids)
+
+        old_cluster_articles: dict[str, set[str]] = {}
+        all_new_article_list = list(all_new_article_ids)
+        for i in range(0, len(all_new_article_list), 500):
+            batch = all_new_article_list[i:i + 500]
+            try:
+                res = supabase.table("cluster_articles").select(
+                    "cluster_id,article_id"
+                ).in_("article_id", batch).execute()
+                if res.data:
+                    for row in res.data:
+                        cid = row["cluster_id"]
+                        if cid not in new_cluster_ids:
+                            old_cluster_articles.setdefault(cid, set()).add(
+                                row["article_id"]
+                            )
+            except Exception as e:
+                print(f"  [warn] dedup query failed: {e}")
+
+        # Only delete old clusters with >30% article overlap with a new cluster.
+        # This prevents aggressive deletion of clusters that share only 1-2 articles.
+        stale_ids: list[str] = []
+        for old_cid, old_aids in old_cluster_articles.items():
+            # Check overlap with ANY new cluster
+            for new_cid, new_aids in new_cluster_articles.items():
+                overlap = len(old_aids & new_aids)
+                if len(old_aids) > 0 and overlap / len(old_aids) > 0.3:
+                    stale_ids.append(old_cid)
+                    break
+
+        if stale_ids:
+            for i in range(0, len(stale_ids), 100):
+                batch = stale_ids[i:i + 100]
+                try:
+                    supabase.table("cluster_articles").delete().in_(
+                        "cluster_id", batch
+                    ).execute()
+                    supabase.table("story_clusters").delete().in_(
+                        "id", batch
+                    ).execute()
+                except Exception as e:
+                    print(f"  [warn] dedup delete failed: {e}")
+            print(f"  Deduplicated: removed {len(stale_ids)} old clusters (>30% article overlap)")
+        else:
+            print(f"  No duplicate clusters found")
 
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
