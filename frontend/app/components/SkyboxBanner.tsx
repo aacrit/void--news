@@ -30,7 +30,19 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   } = state;
   const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
 
-  if (!brief) return null;
+  if (!brief) return (
+    <div className="skb" role="complementary" aria-label="Daily Brief">
+      <div className="skb__columns">
+        <div className="skb__col skb__col--tldr">
+          <div className="skb__label">
+            <ScaleIcon size={12} animation="analyzing" />
+            <span className="skb__cmd">void --tl;dr</span>
+          </div>
+          <p className="skb__preview skb__preview--tldr" style={{ opacity: 0.4 }}>Loading today&rsquo;s brief&hellip;</p>
+        </div>
+      </div>
+    </div>
+  );
 
   const hasAudio = !!brief.audio_url;
   const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
