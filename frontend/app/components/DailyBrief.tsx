@@ -158,7 +158,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
   if (!brief) return null;
 
-  const hasAudio = !!brief.audio_url && !audioError;
+  const hasAudio = !!brief.audio_url;
 
   const paragraphs = brief.tldr_text
     .split("\n")
@@ -295,7 +295,7 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
 
   if (!brief) return null;
 
-  const hasAudio = !!brief.audio_url && !audioError;
+  const hasAudio = !!brief.audio_url;
   const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;

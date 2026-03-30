@@ -51,7 +51,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   if (!brief) return null;
 
-  const hasAudio = !!brief.audio_url && !audioError;
+  const hasAudio = !!brief.audio_url;
   const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
@@ -100,7 +100,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     <div className="skb__onair-unit">
       <button
         className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
-        onClick={() => { hapticConfirm(); setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
+        onClick={() => { hapticConfirm(); if (audioError) return; setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
         type="button"
         aria-label={radioOpen ? "Close radio player" : "Open radio player"}
         aria-expanded={radioOpen}
