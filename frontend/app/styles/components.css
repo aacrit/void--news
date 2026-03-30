@@ -4800,6 +4800,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .onair { transition: none; }
   .onair__play { transition: none; }
   .onair__cta { transition: none; }
+  .onair__buffer,
   .onair__fill { transition: none; }
   .onair__live-dot { animation: none; opacity: 1; }
   .onair__eq--active .onair__eq-bar { animation: none; height: 12px; }
