@@ -106,7 +106,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 
 ## Agent Team & Workflows
 
-20 agents, 9 divisions. Full details: `docs/AGENT-TEAM.md`. Agent definitions: `.claude/agents/`.
+23 agents, 10 divisions. Full details: `docs/AGENT-TEAM.md`. Agent definitions: `.claude/agents/`.
 
 | Command | Pattern | When |
 |---------|---------|------|
@@ -120,6 +120,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/daily-ops` | 3-way health check | Morning / post-pipeline |
 | `/source-review` | vet → health check → validate | Source changes |
 | `/security-sweep` | audit → fix → re-verify | Security + perf |
+| `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
 
 ### Locked Decisions (CEO Approval Required)
 Press & Precision design, 6-axis bias model, Supabase data layer, static export, 380-source list (3 tiers, 7-point lean), $0 cost, Claude Max CLI only.

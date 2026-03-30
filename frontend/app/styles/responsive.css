@@ -871,6 +871,32 @@
   /* DivergenceAlerts removed from homepage — CSS kept for reference */
 }
 
+/* ---- Cinematic Mobile Degradation -------------------------------------- */
+
+@media (max-width: 767px) {
+  .page-container {
+    filter: none;
+  }
+  .page-container::after {
+    animation: none;
+    opacity: 0.02;
+    will-change: auto;
+  }
+  .page-container::before {
+    opacity: 0.5;
+  }
+  .story-card:not(.anim-stagger--visible) {
+    filter: none;
+  }
+  .lead-story__headline {
+    text-shadow: none;
+  }
+  .skb__onair-btn--active::before {
+    left: -50%;
+    right: -50%;
+  }
+}
+
 /* ---- Ultra-narrow (max-width: 375px) ----------------------------------- */
 
 @media (max-width: 375px) {

@@ -62,6 +62,58 @@
 
   /* Paper texture — grain overlay (light mode: warm sepia, opacity 0.08) */
   --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+
+  /* ── Cinematic Palette ── */
+  --cin-amber: #C8956C;
+  --cin-amber-bright: #D4A574;
+  --cin-amber-dim: #A07A56;
+  --cin-amber-ghost: rgba(200, 149, 108, 0.08);
+  --cin-amber-glow: rgba(200, 149, 108, 0.15);
+  --cin-ash: #6B7280;
+  --cin-ash-warm: #78716C;
+  --cin-ash-cool: #64748B;
+  --cin-paper-highlight: #F5EFE0;
+  --cin-paper-shadow: #E4DDD0;
+
+  /* ── Cinematic Palette Bridge ── */
+  --cinematic-accent: var(--cin-amber);
+  --cinematic-shadow-tint: rgba(28, 26, 23, 0.85);
+  --cinematic-rim-light: var(--cin-amber-glow);
+
+  /* ── Cinematic Easings ── */
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-whip: cubic-bezier(0.25, 0, 0, 1);
+  --ease-rack: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Rack Focus ── */
+  --rack-focus-dur: 600ms;
+  --rack-focus-ease: var(--ease-rack);
+
+  /* ── Parallax ── */
+  --parallax-bg: 0.3;
+
+  /* ── Cinematic Shadows ── */
+  --shadow-cinematic-contact:
+    -1px 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 6%, transparent),
+    0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
+  --shadow-cinematic-ambient:
+    -2px 4px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 8%, transparent),
+    0 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 5%, transparent);
+  --shadow-cinematic-dramatic:
+    -4px 8px 24px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent),
+    -1px 2px 6px color-mix(in srgb, var(--cinematic-shadow-tint) 6%, transparent);
+
+  /* ── Vignette ── */
+  --cin-vignette-color: rgba(28, 26, 23, 0.03);
+
+  /* ── Film Grain ── */
+  --cin-grain-opacity: 0.035;
+
+  /* ── Color Grade ── */
+  --cin-grade: contrast(1.02) saturate(0.95) sepia(0.03);
+
+  /* ── Atmospheric Haze ── */
+  --cin-haze-far: saturate(0.92) brightness(0.98);
 }
 
 /* --------------------------------------------------------------------------
@@ -134,6 +186,22 @@
 
   /* Paper texture — grain overlay (dark mode: warm brown, opacity 0.06) */
   --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+
+  /* ── Cinematic Palette (Dark) ── */
+  --cin-amber: #D4A574;
+  --cin-amber-bright: #E0B88A;
+  --cin-amber-dim: #B08A60;
+  --cin-amber-ghost: rgba(212, 165, 116, 0.06);
+  --cin-amber-glow: rgba(212, 165, 116, 0.12);
+  --cin-ash: #9CA3AF;
+  --cin-ash-warm: #A8A29E;
+  --cin-ash-cool: #94A3B8;
+  --cin-shadow-color: rgba(20, 16, 10, 1);
+  --cinematic-shadow-tint: rgba(0, 0, 0, 0.9);
+  --cinematic-rim-light: var(--cin-amber-glow);
+  --cin-vignette-color: rgba(20, 16, 10, 0.08);
+  --cin-grain-opacity: 0.025;
+  --cin-grade: contrast(1.04) saturate(0.88) brightness(0.97);
 }
 
 /* --------------------------------------------------------------------------
@@ -349,6 +417,7 @@
   --z-nav:      20;
   --z-dropdown: 30;
   --z-tooltip:  40;
+  --z-cinematic: 45;  /* Vignette + film grain layers */
   --z-overlay:  50;
   --z-modal:    100;
 }
