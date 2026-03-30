@@ -9,12 +9,12 @@
 
 ## Executive Summary
 
-The News Memory Engine enables void --news to track **developing stories across pipeline runs** (4x daily) and surface a **single "#1 Top Story" pinned section** with live updates. Instead of refreshing all 370 sources every 6 hours, the system intelligently re-fetches RSS feeds only for sources covering the top story, keeping costs at $0.
+The News Memory Engine enables void --news to track **developing stories across pipeline runs** (4x daily) and surface a **single "#1 Top Story" pinned section** with live updates. Instead of refreshing all 409 sources every 6 hours, the system intelligently re-fetches RSS feeds only for sources covering the top story, keeping costs at $0.
 
 **Key outcomes:**
 - Users see evolving stories (e.g., Iran War, Gaza, Taiwan tensions) updating continuously
 - Pinned top story displays on homepage with live badge and "Updated X minutes ago" timestamp
-- Economical: targeted RSS polling for ~5-10 relevant sources instead of all 370
+- Economical: targeted RSS polling for ~5-10 relevant sources instead of all 409
 - No new API costs: uses existing Gemini free tier for brief updates
 - Backward compatible: existing pipeline runs unchanged; memory engine is an optional supplement
 
@@ -22,7 +22,7 @@ The News Memory Engine enables void --news to track **developing stories across 
 
 ## Problem Statement
 
-**Current behavior:** void --news refreshes all 370 sources on a 6-hour cron cycle (4x daily). Each run produces a completely fresh story list, ranked by importance. A developing story (e.g., Iran War) appears, disappears, and reappears based on clustering + ranking logic, not because the situation changed—but because our fixed-window sampling shifted.
+**Current behavior:** void --news refreshes all 409 sources on a 6-hour cron cycle (4x daily). Each run produces a completely fresh story list, ranked by importance. A developing story (e.g., Iran War) appears, disappears, and reappears based on clustering + ranking logic, not because the situation changed—but because our fixed-window sampling shifted.
 
 **User experience gap:**
 - "Did the Iran situation resolve, or did coverage just drop out of the top 10?"
@@ -56,7 +56,7 @@ The News Memory Engine enables void --news to track **developing stories across 
 ┌─────────────────────────────────────────────────────────────────┐
 │  Lightweight Live Refresh (optional, independent of main run)   │
 │  - Cron: every 2 hours (or manually triggered)                  │
-│  - Fetch only ~5-10 relevant sources (not all 370)              │
+│  - Fetch only ~5-10 relevant sources (not all 409)              │
 │  - Scrape + analyze only new articles                          │
 │  - Upsert into DB (may create new articles or update summary)   │
 └─────────────────────────────────────────────────────────────────┘
@@ -600,7 +600,7 @@ export default function HomeContent() {
 |---------|------------|-------------|-----------|------------|
 | Develops story tracking | NEW | Manual collections | Editorial curation | Implicit (via ranking) |
 | Live updates within 6h window | NEW | Manual (16 sources) | Manual | Implicit |
-| Economical live polling (not all 370) | NEW | N/A | N/A | Proprietary |
+| Economical live polling (not all 409) | NEW | N/A | N/A | Proprietary |
 | Per-article bias transparency | Yes | No (source-level) | No | No |
 | Pinned top story | NEW | No | Limited | No |
 

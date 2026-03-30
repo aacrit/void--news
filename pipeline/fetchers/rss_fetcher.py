@@ -102,8 +102,8 @@ def _clean_summary(summary: str) -> str:
 
 
 # Maximum number of parallel feed fetches
-# RSS fetching is pure I/O — 20 workers for 97 sources keeps throughput high
-MAX_WORKERS = 20
+# RSS fetching is pure I/O — 50 workers for 409 sources keeps throughput high
+MAX_WORKERS = 50
 
 # Timeout per feed in seconds
 # Most healthy feeds respond in <5s; 15s catches slow CDNs without blocking

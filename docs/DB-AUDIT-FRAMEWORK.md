@@ -42,7 +42,7 @@ The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingest
 | Baseline distribution: far-right | 8 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='far-right' AND is_active=true` |
 
 #### Severity
-- **Critical:** < 370 active sources (> 2.5% missing)
+- **Critical:** < 399 active sources (> 2.5% missing)
 - **Must Have:** Any us_major source missing
 - **Nice to Have:** Distribution skewed > 5% in any direction
 

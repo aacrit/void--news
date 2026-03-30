@@ -219,7 +219,7 @@ NICE TO HAVE FINDINGS
   2. Low headline_rank variance: stdev=4.2 (goal >10)
 
 KEY STATISTICS
-  sources_total: 370
+  sources_total: 409
   sources_active: 368
   articles_total: 45280
   articles_null_full_text: 5620

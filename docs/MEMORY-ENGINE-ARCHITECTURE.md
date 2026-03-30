@@ -11,7 +11,7 @@
 │  │  Main Pipeline       │         │  Live Poller         │          │
 │  │  (4x daily)          │         │  (every 30 min)      │          │
 │  │                      │         │                      │          │
-│  │  • RSS fetch (370)   │         │  • RSS fetch (15-20) │          │
+│  │  • RSS fetch (409)   │         │  • RSS fetch (15-20) │          │
 │  │  • Cluster           │         │  • Scrape full text  │          │
 │  │  • Bias analyze      │         │  • Gemini summary    │          │
 │  │  • Rank              │         │  • Insert to DB      │          │
