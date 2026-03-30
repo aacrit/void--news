@@ -103,6 +103,13 @@
   overflow: hidden;
 }
 
+/* Expanded: remove line-clamp, show full text seamlessly */
+.skb__preview--open {
+  -webkit-line-clamp: unset;
+  display: block;
+  overflow: visible;
+}
+
 /* Lean badge */
 .skb__lean-badge {
   font-family: var(--font-meta);
@@ -148,14 +155,7 @@
   color: var(--fg-secondary);
 }
 
-/* Per-side inline expand */
-.skb__side-expand {
-  overflow: hidden;
-}
-
-.skb__side-expand-inner {
-  padding-top: var(--space-2);
-}
+/* Side expand no longer needed — using line-clamp toggle instead */
 
 /* OnAir unit — pill + radio player as one block */
 .skb__onair-unit {

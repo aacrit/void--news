@@ -27,28 +27,10 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
   const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
   const [radioOpen, setRadioOpen] = useState(false);
-  const tldrRef = useRef<HTMLDivElement>(null);
-  const opinionRef = useRef<HTMLDivElement>(null);
   const radioRef = useRef<HTMLDivElement>(null);
-  const [tldrHeight, setTldrHeight] = useState(0);
-  const [opinionHeight, setOpinionHeight] = useState(0);
   const [radioHeight, setRadioHeight] = useState(0);
 
-  // Measure expand heights
-  useEffect(() => {
-    if (!tldrRef.current) return;
-    const ro = new ResizeObserver(([e]) => setTldrHeight(e.contentRect.height));
-    ro.observe(tldrRef.current);
-    return () => ro.disconnect();
-  }, [expandedSide]);
-
-  useEffect(() => {
-    if (!opinionRef.current) return;
-    const ro = new ResizeObserver(([e]) => setOpinionHeight(e.contentRect.height));
-    ro.observe(opinionRef.current);
-    return () => ro.disconnect();
-  }, [expandedSide]);
-
+  // Measure radio panel height
   useEffect(() => {
     if (!radioRef.current) return;
     const ro = new ResizeObserver(([e]) => setRadioHeight(e.contentRect.height));
@@ -81,18 +63,14 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     if (!isPlaying) handlePlayPause();
   };
 
-  // Previews — split by sentences, show first 2 as preview, rest as expanded
-  const tldrSentences = brief.tldr_text.split(/(?<=[.!?])\s+/).filter(Boolean);
-  const tldrPreview = tldrSentences.slice(0, 2).join(" ");
-  const tldrRest = tldrSentences.slice(2).join(" ");
-  const tldrHasMore = tldrRest.length > 0;
+  // Full text — line-clamp truncates when collapsed, full when expanded
+  const tldrFull = brief.tldr_text;
+  const tldrSentences = tldrFull.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const tldrHasMore = tldrSentences.length > 2;
 
-  const opinionSentences = brief.opinion_text
-    ? brief.opinion_text.split(/(?<=[.!?])\s+/).filter(Boolean)
-    : [];
-  const opinionPreview = opinionSentences.slice(0, 2).join(" ");
-  const opinionRest = opinionSentences.slice(2).join(" ");
-  const opinionHasMore = opinionRest.length > 0;
+  const opinionFull = brief.opinion_text || "";
+  const opinionSentences = opinionFull.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const opinionHasMore = opinionSentences.length > 2;
 
   const leanLabel = brief.opinion_lean === "left" ? "Progressive"
     : brief.opinion_lean === "right" ? "Conservative"
@@ -221,24 +199,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             {brief.tldr_headline && (
               <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
             )}
-            <p className="skb__preview skb__preview--tldr">{tldrPreview}</p>
-
-            {/* Inline expand for TL;DR */}
-            <div
-              className="skb__side-expand"
-              style={{
-                height: expandedSide === "tldr" ? tldrHeight : 0,
-                transition: expandedSide === "tldr"
-                  ? "height 350ms var(--spring-snappy)"
-                  : "height 200ms var(--ease-out)",
-              }}
-            >
-              <div ref={tldrRef} className="skb__side-expand-inner">
-                <div className="skb__expand-text skb__expand-text--tldr">
-                  <p>{tldrRest}</p>
-                </div>
-              </div>
-            </div>
+            <p className={`skb__preview skb__preview--tldr${expandedSide === "tldr" ? " skb__preview--open" : ""}`}>
+              {tldrFull}
+            </p>
 
             {tldrHasMore && (
               <button
@@ -270,24 +233,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               {brief.opinion_headline && (
                 <h3 className="skb__hl skb__hl--opinion">{brief.opinion_headline}</h3>
               )}
-              <p className="skb__preview skb__preview--opinion">{opinionPreview}</p>
-
-              {/* Inline expand for Opinion */}
-              <div
-                className="skb__side-expand"
-                style={{
-                  height: expandedSide === "opinion" ? opinionHeight : 0,
-                  transition: expandedSide === "opinion"
-                    ? "height 350ms var(--spring-snappy)"
-                    : "height 200ms var(--ease-out)",
-                }}
-              >
-                <div ref={opinionRef} className="skb__side-expand-inner">
-                  <div className="skb__expand-text skb__expand-text--opinion">
-                    <p>{opinionRest}</p>
-                  </div>
-                </div>
-              </div>
+              <p className={`skb__preview skb__preview--opinion${expandedSide === "opinion" ? " skb__preview--open" : ""}`}>
+                {opinionFull}
+              </p>
 
               {opinionHasMore && (
                 <button
