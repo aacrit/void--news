@@ -81,16 +81,18 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     if (!isPlaying) handlePlayPause();
   };
 
-  // Previews
+  // Previews — split by sentences, show first 2 as preview, rest as expanded
   const tldrSentences = brief.tldr_text.split(/(?<=[.!?])\s+/).filter(Boolean);
   const tldrPreview = tldrSentences.slice(0, 2).join(" ");
-  const tldrFull = brief.tldr_text.split("\n").map((p) => p.trim()).filter(Boolean);
-  const tldrHasMore = tldrSentences.length > 2 || tldrFull.length > 1;
+  const tldrRest = tldrSentences.slice(2).join(" ");
+  const tldrHasMore = tldrRest.length > 0;
 
-  const opinionPreview = brief.opinion_text
-    ? brief.opinion_text.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")
-    : "";
-  const opinionHasMore = brief.opinion_text ? brief.opinion_text.split(/(?<=[.!?])\s+/).length > 2 : false;
+  const opinionSentences = brief.opinion_text
+    ? brief.opinion_text.split(/(?<=[.!?])\s+/).filter(Boolean)
+    : [];
+  const opinionPreview = opinionSentences.slice(0, 2).join(" ");
+  const opinionRest = opinionSentences.slice(2).join(" ");
+  const opinionHasMore = opinionRest.length > 0;
 
   const leanLabel = brief.opinion_lean === "left" ? "Progressive"
     : brief.opinion_lean === "right" ? "Conservative"
@@ -165,7 +167,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             >
               <div ref={tldrRef} className="skb__side-expand-inner">
                 <div className="skb__expand-text skb__expand-text--tldr">
-                  {tldrFull.slice(1).map((p, i) => <p key={i}>{p}</p>)}
+                  <p>{tldrRest}</p>
                 </div>
               </div>
             </div>
@@ -214,7 +216,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               >
                 <div ref={opinionRef} className="skb__side-expand-inner">
                   <div className="skb__expand-text skb__expand-text--opinion">
-                    <p>{brief.opinion_text.split(/(?<=[.!?])\s+/).slice(2).join(" ")}</p>
+                    <p>{opinionRest}</p>
                   </div>
                 </div>
               </div>
