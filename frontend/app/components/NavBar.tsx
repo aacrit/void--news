@@ -130,7 +130,7 @@ export default function NavBar({
   const hasFilters = !!onLeanChange;
 
   return (
-    <header className="nav-header">
+    <header className="nav-header anim-cold-open-nav">
       {/* ── Row 1: Masthead ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">

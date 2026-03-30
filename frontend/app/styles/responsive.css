@@ -519,9 +519,17 @@ body {
     will-change: transform;
   }
 
-  /* Hide "Back to feed" text, keep arrow */
+  /* Hide "Back to feed" text, keep arrow visible with adequate touch target */
   .deep-dive-back-label {
     display: none;
+  }
+
+  /* Ensure back button arrow is always visible and tappable on mobile.
+     The drag indicator remains as secondary close affordance. */
+  .deep-dive-back {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   /* Analysis section: tighter padding and gap on mobile */
@@ -860,6 +868,11 @@ body {
 
   /* Spectrum: zone labels unreadable at mobile sizes — hide them */
   .dd-spectrum__zone-label {
+    display: none;
+  }
+
+  /* Footer keyboard shortcut hint — not useful on mobile (no physical keyboard) */
+  .footer-kbd-hint {
     display: none;
   }
 }

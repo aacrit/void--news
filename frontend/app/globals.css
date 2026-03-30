@@ -202,6 +202,15 @@ h1, h2, h3 {
 }
 
 /* --------------------------------------------------------------------------
+   Reduced Motion — Strip theme transition for users who prefer less motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
    System Dark Mode Preference — Auto-detect on first visit
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
