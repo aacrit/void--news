@@ -231,12 +231,24 @@
   overflow: hidden;
 }
 
+.skb__inline-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--fg-muted) 25%, transparent);
+  border-radius: 2px;
+  transition: width 300ms linear;
+}
+
 .skb__inline-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   background: var(--accent-warm);
   border-radius: 2px;
   transition: width 150ms linear;
-  position: relative;
 }
 
 .skb__inline-fill::after {
@@ -823,14 +835,25 @@
   overflow: hidden;
 }
 
-/* Buffer/progress track */
+.skb__radio-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  transition: width 300ms linear;
+}
+
 .skb__radio-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   background: linear-gradient(90deg, #C8956C, #D4A574);
   border-radius: 3px;
   transition: width 150ms linear;
   box-shadow: 0 0 10px rgba(200, 149, 108, 0.35);
-  position: relative;
 }
 
 /* Playhead dot — visible scrub indicator */
