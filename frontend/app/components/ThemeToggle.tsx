@@ -35,12 +35,15 @@ export default function ThemeToggle() {
     document.documentElement.setAttribute("data-mode", next);
     localStorage.setItem("void-news-theme", next);
 
-    // Golden hour pulse — cinematic color grade flash on theme switch
+    // Golden hour pulse — cinematic color grade flash on theme switch.
+    // Targets .page-main (not .page-container) because the color grade filter
+    // lives on .page-main. Applying filter to .page-container would create a
+    // containing block that breaks position:fixed children (AudioPlayer, DeepDive).
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const container = document.querySelector('.page-container');
-    if (!prefersReducedMotion && container) {
-      container.classList.add('cin-golden-hour');
-      setTimeout(() => container.classList.remove('cin-golden-hour'), 700);
+    const main = document.querySelector('.page-main');
+    if (!prefersReducedMotion && main) {
+      main.classList.add('cin-golden-hour');
+      setTimeout(() => main.classList.remove('cin-golden-hour'), 700);
     }
   };
 

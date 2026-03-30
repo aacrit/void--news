@@ -573,7 +573,9 @@
   .page-container::after {
     animation: none;
   }
-  .page-container {
+  /* Color grade filter lives on .page-main and .nav-header — instant swap */
+  .page-main,
+  .nav-header {
     transition: filter 0ms;
   }
   .skb__onair-btn--active::before {

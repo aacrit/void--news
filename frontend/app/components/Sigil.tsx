@@ -33,6 +33,12 @@ interface SigilProps {
   instant?: boolean;
 }
 
+/** Feed-level sizes (sm) get simplified popup + no InkUnderline.
+ *  Deep Dive sizes (lg, xl) get the full analysis view. */
+function isFullDetail(size: "sm" | "lg" | "xl"): boolean {
+  return size === "lg" || size === "xl";
+}
+
 
 /* ── Hover hook ────────────────────────────────────────────────────────── */
 
@@ -172,11 +178,11 @@ function DataMark({ data, size, mounted }: {
 
 /* ── Popup: the mark unfolds ──────────────────────────────────────────── */
 
-function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data, instant = false }: {
+function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data, instant = false, size = "sm" }: {
   triggerRef: React.RefObject<HTMLElement | null>;
   isOpen: boolean; onClose: () => void;
   onMouseEnter: () => void; onMouseLeave: () => void;
-  id: string; data: SigilData; instant?: boolean;
+  id: string; data: SigilData; instant?: boolean; size?: "sm" | "lg" | "xl";
 }) {
   const [pos, setPos] = useState<{ x: number; y: number; mobile: boolean } | null>(null);
   const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=details
@@ -184,6 +190,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   const lean = data.politicalLean;
   const lc = leanColor(lean);
   const ll = leanLabel(lean);
+  const full = isFullDetail(size);
 
   useEffect(() => {
     if (!isOpen || !triggerRef.current) { setStage(0); return; }
@@ -193,7 +200,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       setPos({ x: 0, y: 0, mobile: true });
     } else {
       const r = triggerRef.current.getBoundingClientRect();
-      const W = 280, H = 320;
+      const W = 280, H = full ? 320 : 200;
       const spR = window.innerWidth - r.right;
       const x = spR > W + 16 ? r.right + 10 : r.left > W + 16 ? r.left - W - 10 : Math.max(8, (window.innerWidth - W) / 2);
       const y = Math.max(8, Math.min(r.top - 60, window.innerHeight - H - 16));
@@ -210,7 +217,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
     const t3 = setTimeout(() => setStage(3), 320);
     const t4 = setTimeout(() => setStage(4), 480);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
-  }, [isOpen, triggerRef]);
+  }, [isOpen, triggerRef, full, instant]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -256,121 +263,121 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         transition: "opacity 300ms var(--ease-out), transform 350ms var(--spring)",
       }}>
         {/* Label row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
-          <span style={{
-            fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", fontWeight: 600, color: lc,
-          }}>{ll}</span>
+        <div className="sigil-popup__header">
+          <span className="sigil-popup__label" style={{ color: lc }}>{ll}</span>
           <CountScore target={lean} color={lc} active={stage >= 2} />
         </div>
         {/* Spectrum bar — echoes the beam */}
-        <div style={{ position: "relative", height: 18, marginBottom: 4 }}>
+        <div className="sigil-popup__spectrum">
           {/* Ticks at ends (echoing beam weight ticks) */}
-          <div style={{ position: "absolute", left: 0, top: 3, width: 2, height: 12, borderRadius: 1, backgroundColor: "var(--bias-left)", opacity: 0.4 }} />
-          <div style={{ position: "absolute", right: 0, top: 3, width: 2, height: 12, borderRadius: 1, backgroundColor: "var(--bias-right)", opacity: 0.4 }} />
+          <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--left" />
+          <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--right" />
           {/* Track */}
-          <div style={{
-            position: "absolute", left: 6, right: 6, top: 7, height: 4, borderRadius: 2,
-            background: "linear-gradient(to right, var(--bias-left), var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right))",
-            opacity: 0.3,
-          }} />
+          <div className="sigil-popup__spectrum-track" />
           {/* Marker dot — positioned within the track (6px inset each side) */}
-          <div style={{
-            position: "absolute", top: "50%", left: 6, right: 6,
-            height: 0, pointerEvents: "none" as const,
-          }}>
-            <div style={{
-              position: "absolute", top: 0,
+          <div className="sigil-popup__spectrum-marker-area">
+            <div className="sigil-popup__spectrum-dot" style={{
               left: `${lean}%`,
-              width: 11, height: 11, borderRadius: "50%", backgroundColor: lc,
+              backgroundColor: lc,
               transform: stage >= 2 ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
-              transition: "transform 450ms var(--spring) 100ms, left 450ms var(--spring) 100ms, background-color 300ms var(--ease-out)",
               boxShadow: `0 0 0 2.5px var(--bg-card)`,
             }} />
           </div>
         </div>
         {/* Tick labels */}
-        <div style={{
-          display: "flex", justifyContent: "space-between", padding: "0 2px",
-          fontFamily: "var(--font-data)", fontSize: "var(--text-xxs)", letterSpacing: "0.05em",
-          textTransform: "uppercase" as const, color: "var(--fg-muted)",
-        }}>
+        <div className="sigil-popup__spectrum-labels">
           <span>Left</span><span>Center</span><span>Right</span>
         </div>
       </div>
 
-      {/* ═══ SECTION 2: Circle → Source Coverage ═══ */}
-      <div className="sigil-popup__section sigil-popup__scores" style={{
-        alignItems: "center",
-        opacity: stage >= 3 ? 1 : 0, transform: stage >= 3 ? "translateY(0)" : "translateY(-6px)",
-        transition: "opacity 280ms var(--ease-out), transform 320ms var(--spring)",
-      }}>
-        {/* Mini coverage ring (echoing the void circle) */}
-        <svg viewBox="0 0 40 40" width="40" height="40" fill="none" style={{ flexShrink: 0 }}>
-          <circle cx="20" cy="20" r="16" stroke="var(--border-subtle)" strokeWidth="2.5" opacity={0.25} />
-          <circle cx="20" cy="20" r="16"
-            stroke={lc} strokeWidth="2.5" strokeLinecap="round"
-            strokeDasharray={`${stage >= 3 ? Math.min(data.sourceCount / 10, 1) * (2 * Math.PI * 16) : 0} ${2 * Math.PI * 16}`}
-            style={{ transform: "rotate(-90deg)", transformOrigin: "20px 20px", transition: "stroke-dasharray 600ms var(--spring)" }}
-            opacity={0.6}
-          />
-          <text x="20" y="20" textAnchor="middle" dominantBaseline="central"
-            className="sigil__popup-lean"
-          >
-            <CountText target={data.sourceCount} active={stage >= 3} />
-          </text>
-        </svg>
-        {/* Source details */}
-        <div>
-          <div style={{
-            fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", fontWeight: 500, color: "var(--fg-secondary)", marginBottom: 4,
+      {full ? (
+        <>
+          {/* ═══ SECTION 2: Circle → Source Coverage (full detail) ═══ */}
+          <div className="sigil-popup__section sigil-popup__scores" style={{
+            alignItems: "center",
+            opacity: stage >= 3 ? 1 : 0, transform: stage >= 3 ? "translateY(0)" : "translateY(-6px)",
+            transition: "opacity 280ms var(--ease-out), transform 320ms var(--spring)",
           }}>
-            {data.sourceCount} source{data.sourceCount !== 1 ? "s" : ""}
-          </div>
-          {data.tierBreakdown && (
-            <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-              {Object.entries(data.tierBreakdown).map(([tier, count]) =>
-                (count as number) > 0 ? (
-                  <span key={tier} style={{
-                    fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", padding: "1px 5px",
-                    border: "1px solid var(--border-subtle)", borderRadius: 2, color: "var(--fg-tertiary)",
-                  }}>{TM[tier] || tier}: {count as number}</span>
-                ) : null
+            {/* Mini coverage ring (echoing the void circle) */}
+            <svg viewBox="0 0 40 40" width="40" height="40" fill="none" className="sigil-popup__ring-svg">
+              <circle cx="20" cy="20" r="16" stroke="var(--border-subtle)" strokeWidth="2.5" opacity={0.25} />
+              <circle cx="20" cy="20" r="16"
+                stroke={lc} strokeWidth="2.5" strokeLinecap="round"
+                strokeDasharray={`${stage >= 3 ? Math.min(data.sourceCount / 10, 1) * (2 * Math.PI * 16) : 0} ${2 * Math.PI * 16}`}
+                style={{ transform: "rotate(-90deg)", transformOrigin: "20px 20px", transition: "stroke-dasharray 600ms var(--spring)" }}
+                opacity={0.6}
+              />
+              <text x="20" y="20" textAnchor="middle" dominantBaseline="central"
+                className="sigil__popup-lean"
+              >
+                <CountText target={data.sourceCount} active={stage >= 3} />
+              </text>
+            </svg>
+            {/* Source details */}
+            <div>
+              <div className="sigil-popup__source-label">
+                {data.sourceCount} source{data.sourceCount !== 1 ? "s" : ""}
+              </div>
+              {data.tierBreakdown && (
+                <div className="sigil-popup__tier-list">
+                  {Object.entries(data.tierBreakdown).map(([tier, count]) =>
+                    (count as number) > 0 ? (
+                      <span key={tier} className="sigil-popup__tier-tag">
+                        {TM[tier] || tier}: {count as number}
+                      </span>
+                    ) : null
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* ═══ SECTION 3: Secondary Scores — dot scale (matches BiasInspector) ═══ */}
-      <div className="sigil-popup__section">
-        {secondary.map((ax, i) => (
-          <div key={ax.label} style={{
-            display: "flex", alignItems: "center", gap: 8, marginBottom: 5,
-            opacity: stage >= 4 ? 1 : 0,
-            transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
-          }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", width: 74, flexShrink: 0 }}>
-              {ax.label}
-            </span>
-            {/* 5-dot scale — consistent with BiasInspector subfactors */}
-            <span style={{ display: "inline-flex", gap: 3 }}>
-              {Array.from({ length: 5 }, (_, di) => {
-                const filled = Math.max(0, Math.min(5, Math.round((ax.v / 100) * 5)));
-                return (
-                  <span key={di} style={{
-                    width: 6, height: 6, borderRadius: "50%",
-                    backgroundColor: di < filled ? "var(--fg-secondary)" : "var(--border-subtle)",
-                    transition: `background-color 250ms var(--ease-out) ${(150 + i * 55 + di * 30)}ms`,
-                  }} />
-                );
-              })}
-            </span>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", fontWeight: 500, color: "var(--fg-tertiary)", flexShrink: 0 }}>
-              {ax.d}
+          {/* ═══ SECTION 3: Secondary Scores — dot scale (matches BiasInspector) ═══ */}
+          <div className="sigil-popup__section">
+            {secondary.map((ax, i) => (
+              <div key={ax.label} className="sigil-popup__axis-row" style={{
+                opacity: stage >= 4 ? 1 : 0,
+                transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
+              }}>
+                <span className="sigil-popup__axis-label">
+                  {ax.label}
+                </span>
+                {/* 5-dot scale — consistent with BiasInspector subfactors */}
+                <span className="sigil-popup__dots">
+                  {Array.from({ length: 5 }, (_, di) => {
+                    const filled = Math.max(0, Math.min(5, Math.round((ax.v / 100) * 5)));
+                    return (
+                      <span key={di} className="sigil-popup__dot" style={{
+                        backgroundColor: di < filled ? "var(--fg-secondary)" : "var(--border-subtle)",
+                        transition: `background-color 250ms var(--ease-out) ${(150 + i * 55 + di * 30)}ms`,
+                      }} />
+                    );
+                  })}
+                </span>
+                <span className="sigil-popup__axis-desc">
+                  {ax.d}
+                </span>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        /* ═══ SIMPLIFIED: Compact summary for feed-level Sigil (sm) ═══ */
+        <div className="sigil-popup__section sigil-popup__compact" style={{
+          opacity: stage >= 3 ? 1 : 0,
+          transition: "opacity 280ms var(--ease-out)",
+        }}>
+          <div className="sigil-popup__compact-row">
+            <span className="sigil-popup__compact-count">{data.sourceCount}</span>
+            <span className="sigil-popup__compact-sources">
+              source{data.sourceCount !== 1 ? "s" : ""} reporting
             </span>
           </div>
-        ))}
-      </div>
+          <span className="sigil-popup__hint">
+            Tap story for full analysis
+          </span>
+        </div>
+      )}
     </div>
     </>,
     document.body,
@@ -381,7 +388,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
 function CountScore({ target, color, active }: { target: number; color: string; active: boolean }) {
   const v = useCountUp(target, 500, active);
-  return <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-sm)", fontWeight: 700, color }}>{v}</span>;
+  return <span className="sigil-popup__score" style={{ color }}>{v}</span>;
 }
 
 function CountText({ target, active }: { target: number; active: boolean }) {
@@ -449,6 +456,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
   const ll = leanLabel(data.politicalLean);
   const lc = leanColor(data.politicalLean);
+  const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
@@ -466,41 +474,34 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       ? "Sources largely agree on this story"
       : undefined;
 
+  const sizeClass = ` sigil--${size}`;
+
   return (
-    <div ref={ref} className={`sigil${ringClass}`} title={ringTitle}
+    <div ref={ref} className={`sigil${ringClass}${sizeClass}`} title={ringTitle}
       onMouseEnter={show} onFocus={show} onMouseLeave={hide} onBlur={hide}
       onClick={toggle} onKeyDown={onKey}
       tabIndex={0} role="button" aria-expanded={open} aria-label={aria}
       aria-controls={open ? tooltipId : undefined}
       style={{
-        display: "inline-flex", alignItems: "center",
-        gap: size === "xl" ? 12 : size === "lg" ? 8 : 5,
-        cursor: "pointer", position: "relative",
-        minHeight: 44,
         opacity: data.pending ? 0.3 : 1,
         filter: data.pending ? "grayscale(1)" : "none",
-        transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
     >
       {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
-      {/* Lean label — with optional hand-drawn ink circle for divergence/consensus */}
-      <span style={{
-        fontFamily: "var(--font-data)", fontWeight: 600,
+      {/* Lean label — with optional hand-drawn ink underline for divergence/consensus */}
+      <span className="sigil__lean-label" style={{
         fontSize: size === "xl" ? "var(--text-sm)" : size === "lg" ? "var(--text-sm)" : "var(--text-xs)",
         color: lc,
-        lineHeight: 1,
-        letterSpacing: "0.02em",
         opacity: mounted ? 1 : 0,
-        transition: "opacity 350ms var(--ease-out) 350ms",
-        position: "relative",
       }}>
         {ll}
-        {data.divergenceFlag === "divergent" && (
+        {/* InkUnderline only rendered at full-detail sizes (lg, xl) */}
+        {full && data.divergenceFlag === "divergent" && (
           <InkUnderline variant={data.politicalLean % 3} color="var(--sense-high)" />
         )}
-        {data.divergenceFlag === "consensus" && (
+        {full && data.divergenceFlag === "consensus" && (
           <InkUnderline variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
         )}
       </span>
@@ -508,7 +509,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
         onMouseEnter={keep} onMouseLeave={hide}
-        id={tooltipId} data={data} instant={instant}
+        id={tooltipId} data={data} instant={instant} size={size}
       />
     </div>
   );

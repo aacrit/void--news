@@ -42,6 +42,77 @@ interface DeepDiveProps {
   totalStories?: number;
 }
 
+/* --- Scoring Methodology — inline disclosure ----------------------------- */
+
+const METHODOLOGY_AXES = [
+  {
+    name: "Political Lean",
+    desc: "Keyword frequency, entity sentiment via NER, framing phrases, and source baseline blending. Score 0\u2013100.",
+  },
+  {
+    name: "Sensationalism",
+    desc: "Clickbait patterns, superlative density, emotional extremity, partisan attack frequency. Score 0\u2013100.",
+  },
+  {
+    name: "Opinion vs Reporting",
+    desc: "First-person pronouns, subjectivity markers, attribution density, rhetorical questions. Score 0\u2013100.",
+  },
+  {
+    name: "Factual Rigor",
+    desc: "Named sources via NER, organizational citations, data patterns, direct quotes, vague-source penalties. Score 0\u2013100.",
+  },
+  {
+    name: "Framing",
+    desc: "Charged synonym detection (50+ pairs), omission analysis across the cluster, headline\u2013body divergence. Score 0\u2013100.",
+  },
+  {
+    name: "Outlet Tracking",
+    desc: "Per-topic, per-outlet exponential moving average that adapts as outlets\u2019 coverage patterns evolve over time.",
+  },
+];
+
+function ScoringMethodology() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="dd-methodology">
+      <button
+        className="dd-methodology__trigger"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-expanded={isOpen}
+        aria-controls="dd-methodology-content"
+      >
+        How we score {isOpen ? "\u25BE" : "\u25B8"}
+      </button>
+      {isOpen && (
+        <div
+          className="dd-methodology__content"
+          id="dd-methodology-content"
+          role="region"
+          aria-label="Scoring methodology"
+        >
+          <p className="dd-methodology__intro">
+            Every article is analyzed by six independent rule-based algorithms.
+            No AI makes scoring decisions &mdash; all analysis uses NLP heuristics,
+            keyword lexicons, and statistical patterns.
+          </p>
+          <dl className="dd-methodology__axes">
+            {METHODOLOGY_AXES.map((axis) => (
+              <div className="dd-methodology__axis" key={axis.name}>
+                <dt className="dd-methodology__axis-name">{axis.name}</dt>
+                <dd className="dd-methodology__axis-desc">{axis.desc}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="dd-methodology__footer">
+            409 sources. 26 ground-truth validation articles. 96.9% accuracy.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* --- Main DeepDive component --------------------------------------------- */
 
 export default function DeepDive({ story, onClose, originRect, onNavigate, storyIndex = -1, totalStories = 0 }: DeepDiveProps) {
@@ -866,8 +937,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             transition: `opacity ${swipeNavOpacity < 1 ? 120 : contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
-          {/* Loading skeleton — structured placeholders while Supabase fetches data */}
-          {isLoadingData && !deepDive && (
+          {/* Loading skeleton — structured placeholders while Supabase fetches data.
+               Check sources.length rather than !deepDive because the homepage query
+               populates deepDive with an empty sources array. */}
+          {isLoadingData && sources.length === 0 && (
             <div className="dd-loading-skeleton" role="status" aria-label="Loading analysis">
               <span className="dd-loading-skeleton__status text-meta" style={{ color: "var(--fg-muted)" }}>
                 Loading analysis...
@@ -992,11 +1065,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {activeTab === "scoring" && spectrumSources.length > 0 && (
             <section id="dd-panel-scoring" role="tabpanel" aria-labelledby="dd-tab-scoring" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <BiasInspectorInline sources={sources} />
+              <ScoringMethodology />
             </section>
           )}
 
           {/* Fetch error — retry UI */}
-          {fetchError && !isLoadingData && !deepDive && (
+          {fetchError && !isLoadingData && sources.length === 0 && (
             <div className="dd-fetch-error">
               <p className="text-base empty-state__body" style={{ color: "var(--fg-muted)", lineHeight: 1.6 }}>
                 Failed to load analysis.
@@ -1011,7 +1085,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {/* No deep dive data at all (no error) */}
-          {!deepDive && !isLoadingData && !fetchError && (
+          {sources.length === 0 && !isLoadingData && !fetchError && (
             <div className="dd-empty-data">
               <p className="text-base empty-state__body--no-margin" style={{ lineHeight: 1.6 }}>
                 Detailed coverage data is not yet available for this story.

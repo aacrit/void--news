@@ -2,14 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import type { Edition, Category } from "../lib/types";
+import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import EditionIcon from "./EditionIcon";
 import { getEditionTimestamp } from "../lib/utils";
-import type { LeanChip } from "./FilterBar";
 import { hapticMicro } from "../lib/haptics";
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
@@ -205,7 +204,6 @@ export default function NavBar({
               ref={topicTriggerRef}
               className="nav-filters__topic-trigger"
               onClick={() => setTopicOpen((v) => !v)}
-              onMouseEnter={() => setTopicOpen(true)}
               aria-expanded={topicOpen}
               aria-haspopup="menu"
               aria-label="Filter by topic"
