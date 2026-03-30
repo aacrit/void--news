@@ -468,7 +468,7 @@ def analyze_factual_rigor(article: dict, source: dict | None = None, doc=None) -
     if source:
         tier = (source.get("tier") or "").lower()
         # Fix 15: low-credibility us_major outlets get a reduced baseline (35.0)
-        source_slug = source.get('slug', '') if source else ''
+        source_slug = (source.get('slug', '') or source.get('id', '')) if source else ''
         if tier == 'us_major' and source_slug in LOW_CREDIBILITY_US_MAJOR:
             tier_baseline = 35.0
         else:

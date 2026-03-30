@@ -58,6 +58,13 @@ jobs:
       - name: Download spaCy model
         if: ${{ !inputs.brief_only && steps.spacy-cache.outputs.cache-hit != 'true' }}
         run: python -m spacy download en_core_web_sm
+      - name: Validate editions input
+        if: ${{ inputs.editions != '' }}
+        run: |
+          if [[ ! "${{ inputs.editions }}" =~ ^[a-z,]+$ ]]; then
+            echo "::error::Invalid editions input. Only lowercase letters and commas allowed."
+            exit 1
+          fi
       - name: Determine editions from schedule
         id: editions
         run: |

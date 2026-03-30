@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-30 (rev 16)
+Last updated: 2026-03-30 (rev 17)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -37,8 +37,8 @@ Per-article, score 0-100 + structured rationale JSONB. No LLM calls for scoring.
 
 1. **Political Lean** — keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending. See `political_lean.py`.
 2. **Sensationalism** — clickbait patterns, superlative density (word-boundary regex), TextBlob extremity, partisan attack density (capped 30pts). See `sensationalism.py`.
-3. **Opinion vs. Reporting** — pronouns, subjectivity, attribution density (14 investigative patterns), value judgments, rhetorical questions. See `opinion_detector.py`.
-4. **Factual Rigor** — named sources (NER + attribution verbs), org citations, data patterns, quotes, vague-source penalty. LOW_CREDIBILITY_US_MAJOR (22 slugs) baseline 35. See `factual_rigor.py`.
+3. **Opinion vs. Reporting** — pronouns, subjectivity, attribution density (24 investigative patterns), value judgments, rhetorical questions. See `opinion_detector.py`.
+4. **Factual Rigor** — named sources (NER + attribution verbs), org citations, data patterns, quotes, vague-source penalty. LOW_CREDIBILITY_US_MAJOR (5 slugs) baseline 35. See `factual_rigor.py`.
 5. **Framing** — charged synonyms (50+ pairs), cluster-aware omission detection, headline-body divergence, passive voice (capped 30). See `framing.py`.
 6. **Per-Topic Per-Outlet EMA** — adaptive alpha (0.3 new / 0.15 established). Stored in `source_topic_lean`. See `topic_outlet_tracker.py`.
 

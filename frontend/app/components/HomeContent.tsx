@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
@@ -10,7 +11,7 @@ import NavBar from "./NavBar";
 import { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
-import DeepDive from "./DeepDive";
+const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
 /* DeepDive-specific ErrorBoundary — shows dismissible error in the panel
@@ -77,7 +78,7 @@ import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
-import BiasLensOnboarding from "./BiasLensOnboarding";
+const BiasLensOnboarding = dynamic(() => import("./BiasLensOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
