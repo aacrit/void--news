@@ -112,6 +112,28 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         )}
       </button>
 
+      {/* Inline seek bar — always visible when audio has progress, even when radio panel closed */}
+      {(isPlaying || currentTime > 0) && !radioOpen && (
+        <div className="skb__inline-seek">
+          <div className="skb__inline-sections">
+            <button className={`skb__inline-sec${!inOpinion ? " skb__inline-sec--active" : ""}`}
+              onClick={() => seekTo(0)} type="button">News</button>
+            {brief.opinion_text && (
+              <button className={`skb__inline-sec${inOpinion ? " skb__inline-sec--active" : ""}`}
+                onClick={() => opinionStart ? seekTo(opinionStart) : null} type="button">Opinion</button>
+            )}
+          </div>
+          <div className="skb__inline-bar-wrap">
+            <div className="skb__inline-bar">
+              <div className="skb__inline-fill" style={{ width: `${progress}%` }} />
+              {hasOpinion && <span className="skb__inline-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+            </div>
+            <input type="range" className="skb__inline-input" min={0} max={displayDuration || 100}
+              value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
+          </div>
+        </div>
+      )}
+
       {/* Radio player expands in place below the pill */}
       <div
         className="skb__radio"
@@ -159,11 +181,11 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             <div className="skb__radio-sections">
               <button className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
                 onClick={() => seekTo(0)} type="button"
-                style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}>News</button>
-              {hasOpinion && (
+                style={hasOpinion ? { width: `${opinionPct}%` } : brief.opinion_text ? { width: "60%" } : { width: "100%" }}>News</button>
+              {brief.opinion_text && (
                 <button className={`skb__radio-sec${inOpinion ? " skb__radio-sec--active" : ""}`}
-                  onClick={() => seekTo(opinionStart)} type="button"
-                  style={{ width: `${100 - opinionPct}%` }}>Opinion</button>
+                  onClick={() => opinionStart ? seekTo(opinionStart) : seekTo(displayDuration * 0.6)} type="button"
+                  style={hasOpinion ? { width: `${100 - opinionPct}%` } : { width: "40%" }}>Opinion</button>
               )}
             </div>
             <div className="skb__radio-bar-wrap">

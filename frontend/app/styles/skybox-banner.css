@@ -157,10 +157,100 @@
 
 /* Side expand no longer needed — using line-clamp toggle instead */
 
-/* OnAir unit — pill + radio player as one block */
+/* OnAir unit — pill + inline seek + radio player as one block */
 .skb__onair-unit {
   display: flex;
   flex-direction: column;
+}
+
+/* ── Inline seek bar — compact, below pill when playing ── */
+
+.skb__inline-seek {
+  padding: var(--space-2) var(--space-1) 0;
+}
+
+.skb__inline-sections {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: 3px;
+}
+
+.skb__inline-sec {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 120ms var(--ease-out);
+}
+
+.skb__inline-sec--active {
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+
+.skb__inline-bar-wrap {
+  position: relative;
+  height: 16px;
+}
+
+.skb__inline-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--border-subtle);
+  border-radius: 2px;
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+
+.skb__inline-fill {
+  height: 100%;
+  background: var(--accent-warm);
+  border-radius: 2px;
+  transition: width 150ms linear;
+  position: relative;
+}
+
+.skb__inline-fill::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-warm);
+  transform: translateY(-50%);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--accent-warm) 40%, transparent);
+}
+
+.skb__inline-mark {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 10px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  z-index: 1;
+}
+
+.skb__inline-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+  z-index: 2;
 }
 
 /* OnAir shifted into a column when the other side is expanded */
