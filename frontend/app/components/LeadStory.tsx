@@ -49,13 +49,12 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
           }
         }}
       />
-      {/* Category tag + time */}
-      <div className="lead-story__meta">
-        {rank === 0 && <span className="lead-story__badge">Top Story</span>}
-        <span className="category-tag category-tag--lead">{story.category}</span>
-        <span className="dot-separator" aria-hidden="true" />
-        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-      </div>
+      {/* Badge (lead only) */}
+      {rank === 0 && (
+        <div className="lead-story__meta">
+          <span className="lead-story__badge">Top Story</span>
+        </div>
+      )}
 
       {/* Hero headline */}
       <h2 className="lead-story__headline">{story.title}</h2>
@@ -63,8 +62,13 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
 
-      {/* Bias indicator */}
+      {/* Footer: category · time (left) | Sigil (right) */}
       <div className="lead-story__footer">
+        <div className="lead-story__byline">
+          <span className="category-tag">{story.category}</span>
+          <span className="dot-separator" aria-hidden="true" />
+          <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+        </div>
         <Sigil data={story.sigilData} size="lg" />
       </div>
     </article>
