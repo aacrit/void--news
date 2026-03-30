@@ -113,12 +113,19 @@ export function useDailyBrief(edition: string): DailyBriefState {
 
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || audioError) return;
+    if (!audio) return;
     hapticMedium();
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
+      // If a previous preload error occurred, reset and retry.
+      // The user click provides a fresh user gesture, satisfying
+      // browser autoplay policy even if preload was blocked.
+      if (audioError) {
+        setAudioError(false);
+        audio.load();
+      }
       audio.play().catch(() => {
         setAudioError(true);
         setIsPlaying(false);

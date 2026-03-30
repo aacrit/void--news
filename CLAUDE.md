@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-29 (rev 15)
+Last updated: 2026-03-30 (rev 16)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -51,8 +51,8 @@ python pipeline/validation/runner.py --verbose    # Per-signal decomposition
 python pipeline/validation/runner.py --update-snapshot  # Refresh regression baseline
 ```
 
-### Importance Ranking — v5.3
-**BIAS-BLIND.** 11-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0): source breadth 20%, maturity 16%, tier diversity 13%, consequentiality 10%, institutional authority 8%, factual density 8%, divergence 7%, perspective diversity 6%, geographic impact 6%, velocity 3%, lean diversity 3%. Plus Gemini editorial importance additive adjustment, gates (confidence, consequentiality, soft-news, factual rigor, lead eligibility), topic diversity re-rank, cross-edition demotion, same-event cap. `pipeline/rerank.py` for standalone re-ranking.
+### Importance Ranking — v5.4
+**BIAS-BLIND.** 11-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0): source breadth 20%, maturity 16%, tier diversity 13%, consequentiality 10%, institutional authority 8%, factual density 8%, divergence 7%, perspective diversity 6%, geographic impact 6%, velocity 3%, lean diversity 3%. Plus Gemini editorial importance additive adjustment, gates (confidence, consequentiality, soft-news, tabloid, factual rigor, lead eligibility), topic diversity re-rank, cross-edition demotion, same-event cap, steepened time-decay. `pipeline/rerank.py` for standalone re-ranking.
 
 ### Cluster Summarization
 3+-source clusters, 25-call Gemini cap/run, 250-350 words. Falls back to rule-based. Op-eds (opinion_fact > 50): single-article, no Gemini.
@@ -70,7 +70,7 @@ World-focused, top 20 clusters. **TL;DR**: 8-12 sentences editorial paragraph (1
  5. ANALYZE (5-axis) → 6. CLUSTER (TF-IDF + entity merge) → 6b. RE-FRAME
  6c. GEMINI REASON → 7b. SUMMARIZE → 7. CATEGORIZE & RANK → 7c. EDITORIAL TRIAGE
  7d. DAILY BRIEF (TL;DR + audio) → 8. STORE → 8b. DEDUP CLUSTERS
- 9. ENRICH → 9b. ARTICLE CATS → 9c. TOPIC TRACK → 10. TRUNCATE + CLEANUP
+ 9. ENRICH → 9a. MEMORY ENGINE → 9b. ARTICLE CATS → 9c. TOPIC TRACK → 10. TRUNCATE + CLEANUP
 ```
 
 Non-audio runs (00:00, 12:00 UTC) carry forward audio fields from previous brief.
@@ -94,7 +94,7 @@ Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as
 Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms. Asymmetric panels.
 
 ### CSS
-Load: `reset → tokens → layout → typography → components → animations → responsive` (in `frontend/app/styles/`). Also: `spectrum.css`, `desktop-feed.css`, `mobile-feed.css`, `skybox-banner.css`, `command-center.css`. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → responsive → command-center` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
 
 ## Data Model (Supabase)
 
@@ -120,6 +120,8 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/daily-ops` | 3-way health check | Morning / post-pipeline |
 | `/source-review` | vet → health check → validate | Source changes |
 | `/security-sweep` | audit → fix → re-verify | Security + perf |
+| `/rank-optimize` | benchmark → tune → validate → audit | Ranking engine tuning |
+| `/frontend-review-fix` | audit → CEO prioritize → fix → build → retest | CEO-in-the-loop UI quality |
 | `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
 
 ### Locked Decisions (CEO Approval Required)
@@ -135,30 +137,34 @@ void-news/
 │   ├── clustering/        # deduplicator.py, story_cluster.py
 │   ├── summarizer/        # gemini_client.py, cluster_summarizer.py
 │   ├── briefing/          # daily_brief_generator, audio_producer, claude_brief_generator, voice_rotation, generate_assets
-│   ├── categorizer/
+│   ├── categorizer/       # auto_categorize.py
 │   ├── ranker/            # importance_ranker.py
 │   ├── validation/        # fixtures, signal_tracker, source_profiles, runner, snapshot
-│   ├── utils/             # supabase client, nlp_shared
+│   ├── memory/            # memory_orchestrator.py, live_poller.py (story memory engine)
+│   ├── utils/             # supabase client, nlp_shared, prohibited_terms
 │   ├── main.py            # Orchestrator
 │   └── rerank.py          # Standalone re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # BiasInspector, BiasLens, DeepDive, DeepDiveSpectrum, HomeContent, LeadStory, StoryCard, NavBar, FilterBar, DailyBrief, ScaleIcon, SpectrumChart, Sigil, Logo*, PageToggle, etc.
-│   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts
-│   │   ├── styles/        # tokens, layout, typography, components, animations, responsive, spectrum
-│   │   └── sources/       # /sources page
+│   │   ├── components/    # 39 components: BiasInspector, BiasLens, BiasLensOnboarding, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FilterBar, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OpEdPage, OpinionCard, PageToggle, ScaleIcon, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, WireCard
+│   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, responsive, command-center
+│   │   ├── sources/       # /sources page
+│   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
+│   │   ├── command-center/ # /command-center KPI dashboard
+│   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
 ├── data/sources.json      # 409 curated sources
 ├── supabase/migrations/   # 001-028
-├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, + 6 more
+├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-opinion.yml, refresh-tldr.yml, refresh-onair.yml
 ├── .claude/agents/        # 23 agent definitions
 ├── .claude/skills/        # pressdesign + 14 workflow skills
-└── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT
+└── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE
 ```
 
 ## Status
 
-**Complete**: Pipeline (all 12 steps + cleanup), 6-axis bias engine, ranking v5.3, daily brief + audio, frontend MVP (feed + deep dive + sources).
+**Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.4, daily brief + audio, frontend MVP (feed + deep dive + sources + paper + command center).
 **In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: Animation polish, GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).

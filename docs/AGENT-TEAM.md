@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-29 (rev 13)
+Last updated: 2026-03-30 (rev 14)
 
 ## Philosophy
 
