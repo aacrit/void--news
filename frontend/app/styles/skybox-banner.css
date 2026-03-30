@@ -25,10 +25,21 @@
   gap: 0 var(--space-5);
 }
 
-/* When a side is expanded: single full-width column */
+/* When a side is expanded: single full-width column + larger type */
 .skb--expand-tldr .skb__columns,
 .skb--expand-opinion .skb__columns {
   grid-template-columns: 1fr;
+}
+
+/* Headline scales up when expanded to full width */
+.skb--expand-tldr .skb__hl--tldr {
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  margin-bottom: var(--space-2);
+}
+
+.skb--expand-opinion .skb__hl--opinion {
+  font-size: clamp(1.25rem, 1rem + 0.7vw, 1.625rem);
+  margin-bottom: var(--space-2);
 }
 
 .skb__col--tldr {
@@ -830,29 +841,29 @@
 
 .skb__expand-text--tldr {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.65;
+  font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.0625rem);
+  line-height: 1.75;
   color: var(--fg-secondary);
   text-align: justify;
   text-align-last: left;
 }
 
 .skb__expand-text--tldr p + p {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 .skb__expand-text--opinion {
   font-family: var(--font-editorial);
-  font-size: var(--text-sm);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);
   font-style: italic;
-  line-height: 1.65;
+  line-height: 1.75;
   color: var(--fg-tertiary);
   text-align: justify;
   text-align-last: left;
 }
 
 .skb__expand-text--opinion p + p {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 /* ---------------------------------------------------------------------------
