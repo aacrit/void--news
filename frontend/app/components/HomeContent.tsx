@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
 import dynamic from "next/dynamic";
-import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
-import { EDITIONS } from "../lib/types";
+import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
+import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar from "./NavBar";
-import { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
@@ -338,11 +337,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
   // Persist edition preference to localStorage — returning visitors who land
   // on the root URL (/) will see their last-used edition instead of "world".
+  // Also sync the URL so it always reflects the active edition.
   useEffect(() => {
     try {
       localStorage.setItem(EDITION_STORAGE_KEY, activeEdition);
     } catch {
       // localStorage unavailable — no-op
+    }
+    // Sync URL without triggering a full page reload
+    const path = activeEdition === "world" ? "/" : `/${activeEdition}`;
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, "", path);
     }
   }, [activeEdition]);
 

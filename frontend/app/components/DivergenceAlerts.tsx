@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Story } from "../lib/types";
-import type { LeanChip } from "./FilterBar";
-import { LEAN_RANGES } from "./FilterBar";
+import type { Story, LeanChip } from "../lib/types";
+import { LEAN_RANGES } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------

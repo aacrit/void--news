@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { Edition, Category } from "../lib/types";
+import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import EditionIcon from "./EditionIcon";
-import type { LeanChip } from "./FilterBar";
 import { hapticMicro, hapticLight } from "../lib/haptics";
 
 interface MobileBottomNavProps {

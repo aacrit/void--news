@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import type { Edition } from "../lib/types";
-import type { OpinionArticle } from "../lib/types";
-import { type LeanChip, LEAN_RANGES } from "./FilterBar";
+import type { Edition, OpinionArticle, LeanChip } from "../lib/types";
+import { LEAN_RANGES } from "../lib/types";
 import { fetchOpinionArticles } from "../lib/supabase";
 import OpinionCard from "./OpinionCard";
 import LoadingSkeleton from "./LoadingSkeleton";

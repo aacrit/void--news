@@ -252,3 +252,18 @@ export const EDITIONS: EditionMeta[] = [
   { slug: "us", label: "US", country: "United States", sourceCount: "130+ sources", description: "United States coverage" },
   { slug: "india", label: "India", country: "India", sourceCount: "19 sources", description: "Indian news in English" },
 ];
+
+/* ---------------------------------------------------------------------------
+   Lean filter types — used by NavBar, MobileBottomNav, HomeContent, etc.
+   Consolidated here from the deprecated FilterBar component.
+   --------------------------------------------------------------------------- */
+
+export type LeanChip = "All" | "Left" | "Center" | "Right";
+
+/** Lean chip boundaries — used by HomeContent to filter stories by political lean */
+export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> = {
+  All: null,
+  Left: { min: 0, max: 46 },
+  Center: { min: 35, max: 65 },
+  Right: { min: 54, max: 100 },
+};

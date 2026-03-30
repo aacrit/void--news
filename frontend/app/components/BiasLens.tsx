@@ -193,15 +193,7 @@ function LeanNeedle({ value, rationale, size }: {
         transition: pressed ? "transform 150ms var(--spring)" : "transform 300ms var(--spring)",
       }}
     >
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-end",
-      }}>
+      <div className="lens__inner">
         {/* Tick mark at center (reference line) */}
         <div style={{
           position: "absolute",
@@ -247,49 +239,44 @@ function LeanNeedle({ value, rationale, size }: {
         title="Political Lean"
         id={tooltipId}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
-          <span style={{ fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", color: "var(--fg-primary)", fontWeight: 600 }}>
+        <div className="bias-lens-popup__header">
+          <span className="bias-lens-popup__label">
             {label}
           </span>
-          <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", color, fontWeight: 600 }}>
+          <span className="bias-lens-popup__value" style={{ color }}>
             {value}
           </span>
         </div>
         {/* Spectrum bar */}
-        <div style={{ position: "relative", height: 14, marginBottom: 10 }}>
-          <div style={{
-            position: "absolute", left: 0, right: 0, top: 3, height: 3,
-            background: "linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right))",
-            borderRadius: 2, opacity: 0.4,
-          }} />
-          <div style={{
-            position: "absolute", left: `${value}%`, top: "50%",
-            width: 8, height: 8, borderRadius: "50%", backgroundColor: color,
-            transform: "translate(-50%, -50%)", boxShadow: "0 0 0 2px var(--bg-card)",
+        <div className="bias-lens-popup__spectrum">
+          <div className="bias-lens-popup__spectrum-track" />
+          <div className="bias-lens-popup__spectrum-dot" style={{
+            left: `${value}%`,
+            backgroundColor: color,
           }} />
         </div>
         {rationale ? (
-          <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.5 }}>
+          <div className="bias-lens-popup__rationale">
             {rationale.topLeftKeywords?.length > 0 && (
-              <div style={{ marginBottom: 4 }}>
-                <span style={{ color: "var(--bias-left)" }}>Left signals:</span>{" "}
+              <div className="bias-lens-popup__rationale-row">
+                <span className="bias-lens-popup__signal--left">Left signals:</span>{" "}
                 {rationale.topLeftKeywords.slice(0, 3).join(", ")}
               </div>
             )}
             {rationale.topRightKeywords?.length > 0 && (
-              <div style={{ marginBottom: 4 }}>
-                <span style={{ color: "var(--bias-right)" }}>Right signals:</span>{" "}
+              <div className="bias-lens-popup__rationale-row">
+                <span className="bias-lens-popup__signal--right">Right signals:</span>{" "}
                 {rationale.topRightKeywords.slice(0, 3).join(", ")}
               </div>
             )}
             {rationale.sourceBaseline !== 50 && (
-              <div style={{ opacity: 0.7 }}>
+              <div className="bias-lens-popup__baseline">
                 Source baseline: {rationale.sourceBaseline} (15% weight)
               </div>
             )}
           </div>
         ) : (
-          <div className="rationale-pending" style={{ fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontStyle: "italic", lineHeight: 1.5 }}>
+          <div className="bias-lens-popup__pending">
             Detailed analysis pending
           </div>
         )}
@@ -386,17 +373,7 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
       </svg>
       {/* Source count — absolutely positioned over ring center.
           Parent div carries position: relative to anchor this correctly. */}
-      <span style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontFamily: "var(--font-data)",
-        fontSize,
-        fontWeight: 700,
-        color: "var(--fg-secondary)",
-        lineHeight: 1,
-      }}>
+      <span className="lens__count" style={{ fontSize }}>
         {sourceCount}
       </span>
 
@@ -409,31 +386,23 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
         title="Coverage"
         id={tooltipId}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
-          <span style={{ fontFamily: "var(--font-structural)", fontSize: "var(--text-sm)", color: "var(--fg-primary)", fontWeight: 600 }}>
+        <div className="bias-lens-popup__header">
+          <span className="bias-lens-popup__label">
             {label}
           </span>
-          <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", color, fontWeight: 600 }}>
+          <span className="bias-lens-popup__value" style={{ color }}>
             {value}
           </span>
         </div>
-        <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
-          <div style={{ marginBottom: 4 }}>
-            <span style={{ fontWeight: 500, color: "var(--fg-secondary)" }}>{sourceCount}</span> source{sourceCount !== 1 ? "s" : ""} covering this story
+        <div className="bias-lens-popup__content">
+          <div className="bias-lens-popup__rationale-row">
+            <span className="bias-lens-popup__count-highlight">{sourceCount}</span> source{sourceCount !== 1 ? "s" : ""} covering this story
           </div>
           {tierBreakdown && Object.values(tierBreakdown).some(v => v > 0) && (
-            <div style={{ marginBottom: 6 }}>
+            <div className="bias-lens-popup__tier-row">
               {Object.entries(tierBreakdown).map(([tier, count]) =>
                 count > 0 ? (
-                  <span key={tier} style={{
-                    display: "inline-block",
-                    marginRight: 8,
-                    padding: "1px 5px",
-                    fontSize: "var(--text-xs)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: 2,
-                    fontFamily: "var(--font-data)",
-                  }}>
+                  <span key={tier} className="bias-lens-popup__tier-tag">
                     {TIER_LABELS[tier] || tier}: {count}
                   </span>
                 ) : null
@@ -453,7 +422,7 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
               )}
             </>
           ) : (
-            <div className="rationale-pending" style={{ marginTop: 4, fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontStyle: "italic" }}>
+            <div className="bias-lens-popup__pending">
               Detailed analysis pending
             </div>
           )}
@@ -466,20 +435,15 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
 /* ── Main BiasLens component ───────────────────────────────────────────── */
 
 export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
-  const gap = size === "lg" ? 10 : 6;
   const pending = lensData.pending;
+  const sizeClass = size === "lg" ? " bias-lens--lg" : "";
 
   return (
     <div
-      className="bias-lens"
+      className={`bias-lens${sizeClass}`}
       style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap,
-        position: "relative",
         opacity: pending ? 0.35 : 1,
         filter: pending ? "grayscale(1)" : "none",
-        transition: "opacity 300ms var(--ease-out), filter 300ms var(--ease-out)",
       }}
       aria-label={pending ? "Bias analysis pending" : undefined}
     >
@@ -496,16 +460,7 @@ export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
         size={size}
       />
       {pending && (
-        <span style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-xs)",
-          fontWeight: 500,
-          letterSpacing: "0.04em",
-          textTransform: "uppercase" as const,
-          color: "var(--fg-tertiary)",
-          marginLeft: 2,
-          whiteSpace: "nowrap",
-        }}>
+        <span className="bias-lens__pending-label">
           Pending
         </span>
       )}
