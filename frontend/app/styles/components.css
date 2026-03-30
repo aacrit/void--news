@@ -22,8 +22,7 @@
   padding: var(--space-5) 0;
   border-bottom: var(--rule-thin);
   cursor: pointer;
-  /* GPU layer hint — promoted at rest so lift doesn't cause layer promotion jank */
-  will-change: transform;
+  /* GPU layer hint — only promoted on hover/active, not at rest (saves VRAM on long feeds) */
   transition:
     background-color 120ms var(--ease-out),
     box-shadow      300ms 30ms var(--ease-out),
@@ -68,6 +67,7 @@
 .story-card:hover {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
+  will-change: transform;
 }
 
 /* Desktop press — instant compression, spring bounce-back on release.
@@ -6951,7 +6951,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     z-index: var(--z-nav);
   }
 
-  /* ── Expanded panel (above the bar) ── */
+  /* ── Backdrop overlay when panel is open ── */
+  .mob-nav__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: -1;
+  }
+
+  /* ── Expanded panel (above the bar) — spring-animated ── */
   .mob-nav__panel {
     background: var(--bg-primary);
     border-top: 1px solid var(--border-subtle);
@@ -6959,8 +6967,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-1);
-    animation: mob-nav-up 150ms var(--ease-out) both;
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.10);
+    /* Panels always rendered, animated via inline translateY + opacity */
   }
 
   /* Option items inside panels */
