@@ -7,7 +7,7 @@ import LogoWordmark from "./LogoWordmark";
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
    Uses LogoIcon (idle animation) + LogoWordmark for branding.
-   Shows "200 curated sources" with last pipeline run time.
+   Shows "409 sources" with last pipeline run time.
    --------------------------------------------------------------------------- */
 
 interface FooterProps {
@@ -23,7 +23,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
-        <p className="footer-tagline">380 sources. Six axes. Zero mystery.</p>
+        <p className="footer-tagline">409 sources. Six axes. Zero mystery.</p>
 
         {/* Product family */}
         <div className="footer-products">
@@ -34,12 +34,12 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-products__item" title="The Board">void --opinion</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-products__item" title="Source Spectrum">void --sources</Link>
-          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/paper" className="footer-products__item" title="Broadsheet Edition">void --paper</Link>
         </div>
 
         <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
-        <Link href="/command-center" className="footer-cc-link" aria-label="Command Center">CC</Link>
+        <p className="footer-kbd-hint" aria-label="Press question mark for keyboard shortcuts">
+          <kbd className="footer-kbd-hint__key">?</kbd> shortcuts
+        </p>
       </div>
     </footer>
   );

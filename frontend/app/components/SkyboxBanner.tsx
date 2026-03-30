@@ -29,6 +29,12 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const [radioOpen, setRadioOpen] = useState(false);
   const radioRef = useRef<HTMLDivElement>(null);
   const [radioHeight, setRadioHeight] = useState(0);
+  const reducedMotion = useRef(false);
+
+  // Check reduced-motion preference once on mount
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
 
   // Measure radio panel height
   useEffect(() => {
@@ -152,7 +158,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
           <div className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`} aria-hidden="true">
             {waveformBars.map((h, i) => (
               <div key={i} className="skb__waveform-bar"
-                style={{ height: `${h}px`, animationDelay: `${i * 55}ms` }} />
+                style={{ height: `${h}px`, ...(reducedMotion.current ? {} : { animationDelay: `${i * 55}ms` }) }} />
             ))}
           </div>
 

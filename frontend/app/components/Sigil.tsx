@@ -237,35 +237,21 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
     <>
       {/* Backdrop overlay on mobile */}
       {isMobile && (
-        <div onClick={onClose} style={{
-          position: "fixed", inset: 0, zIndex: 150,
-          backgroundColor: "var(--overlay-backdrop)",
+        <div className="sigil-popup__backdrop" onClick={onClose} style={{
           opacity: stage >= 1 ? 1 : 0,
-          transition: "opacity 200ms var(--ease-out)",
         }} />
       )}
       <div id={id} role={isMobile ? "dialog" : "tooltip"} aria-modal={isMobile ? true : undefined} aria-label={isMobile ? "Bias analysis details" : undefined} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+        className={isMobile ? "sigil-popup sigil-popup--mobile" : "sigil-popup sigil-popup--desktop"}
         style={isMobile ? {
-          // Mobile: bottom sheet
-          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 151,
-          background: "var(--bg-card)", borderTop: "1px solid var(--border-subtle)",
-          boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
-          borderRadius: "12px 12px 0 0",
-          maxHeight: "80vh", overflowY: "auto" as const,
           transform: stage >= 1 ? "translateY(0)" : "translateY(100%)",
-          transition: "transform 350ms var(--spring)",
         } : {
-          // Desktop: floating popup
-          position: "fixed", top: pos.y, left: pos.x, width: 280, zIndex: 151,
-          background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
-          boxShadow: "var(--shadow-e3)", pointerEvents: "auto",
+          top: pos.y, left: pos.x,
           opacity: stage >= 1 ? 1 : 0, transform: stage >= 1 ? "scale(1) translateY(0)" : "scale(0.94) translateY(6px)",
-          transition: "opacity 250ms var(--ease-out), transform 300ms var(--spring)",
         }}
       >
       {/* ═══ SECTION 1: Beam → Lean Spectrum ═══ */}
-      <div style={{
-        padding: "14px 16px 10px", borderBottom: "1px solid var(--border-subtle)",
+      <div className="sigil-popup__section" style={{
         opacity: stage >= 2 ? 1 : 0, transform: stage >= 2 ? "translateY(0)" : "translateY(-8px)",
         transition: "opacity 300ms var(--ease-out), transform 350ms var(--spring)",
       }}>
@@ -305,7 +291,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {/* Tick labels */}
         <div style={{
           display: "flex", justifyContent: "space-between", padding: "0 2px",
-          fontFamily: "var(--font-data)", fontSize: 8, letterSpacing: "0.05em",
+          fontFamily: "var(--font-data)", fontSize: "var(--text-xxs)", letterSpacing: "0.05em",
           textTransform: "uppercase" as const, color: "var(--fg-muted)",
         }}>
           <span>Left</span><span>Center</span><span>Right</span>
@@ -313,9 +299,8 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       </div>
 
       {/* ═══ SECTION 2: Circle → Source Coverage ═══ */}
-      <div style={{
-        padding: "12px 16px", borderBottom: "1px solid var(--border-subtle)",
-        display: "flex", alignItems: "center", gap: 14,
+      <div className="sigil-popup__section sigil-popup__scores" style={{
+        alignItems: "center",
         opacity: stage >= 3 ? 1 : 0, transform: stage >= 3 ? "translateY(0)" : "translateY(-6px)",
         transition: "opacity 280ms var(--ease-out), transform 320ms var(--spring)",
       }}>
@@ -329,7 +314,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
             opacity={0.6}
           />
           <text x="20" y="20" textAnchor="middle" dominantBaseline="central"
-            style={{ fontFamily: "var(--font-data)", fontSize: 13, fontWeight: 700, fill: "var(--fg-secondary)" }}
+            className="sigil__popup-lean"
           >
             <CountText target={data.sourceCount} active={stage >= 3} />
           </text>
@@ -346,7 +331,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
               {Object.entries(data.tierBreakdown).map(([tier, count]) =>
                 (count as number) > 0 ? (
                   <span key={tier} style={{
-                    fontFamily: "var(--font-data)", fontSize: 9, padding: "1px 5px",
+                    fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", padding: "1px 5px",
                     border: "1px solid var(--border-subtle)", borderRadius: 2, color: "var(--fg-tertiary)",
                   }}>{TM[tier] || tier}: {count as number}</span>
                 ) : null
@@ -357,14 +342,14 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       </div>
 
       {/* ═══ SECTION 3: Secondary Scores — dot scale (matches BiasInspector) ═══ */}
-      <div style={{ padding: "10px 16px 14px" }}>
+      <div className="sigil-popup__section">
         {secondary.map((ax, i) => (
           <div key={ax.label} style={{
             display: "flex", alignItems: "center", gap: 8, marginBottom: 5,
             opacity: stage >= 4 ? 1 : 0,
             transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
           }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--fg-tertiary)", width: 74, flexShrink: 0 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", width: 74, flexShrink: 0 }}>
               {ax.label}
             </span>
             {/* 5-dot scale — consistent with BiasInspector subfactors */}
@@ -380,7 +365,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
                 );
               })}
             </span>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 500, color: "var(--fg-tertiary)", flexShrink: 0 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-xs)", fontWeight: 500, color: "var(--fg-tertiary)", flexShrink: 0 }}>
               {ax.d}
             </span>
           </div>
@@ -396,7 +381,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
 function CountScore({ target, color, active }: { target: number; color: string; active: boolean }) {
   const v = useCountUp(target, 500, active);
-  return <span style={{ fontFamily: "var(--font-data)", fontSize: 13, fontWeight: 700, color }}>{v}</span>;
+  return <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-sm)", fontWeight: 700, color }}>{v}</span>;
 }
 
 function CountText({ target, active }: { target: number; active: boolean }) {
@@ -503,7 +488,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       {/* Lean label — with optional hand-drawn ink circle for divergence/consensus */}
       <span style={{
         fontFamily: "var(--font-data)", fontWeight: 600,
-        fontSize: size === "xl" ? 14 : size === "lg" ? 11 : 10,
+        fontSize: size === "xl" ? "var(--text-sm)" : size === "lg" ? "var(--text-sm)" : "var(--text-xs)",
         color: lc,
         lineHeight: 1,
         letterSpacing: "0.02em",

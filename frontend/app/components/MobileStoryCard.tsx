@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
+import { useInView } from "../lib/sharedObserver";
 
 interface MobileStoryCardProps {
   story: Story;
@@ -28,25 +28,7 @@ interface MobileStoryCardProps {
 export default function MobileStoryCard({
   story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact",
 }: MobileStoryCardProps) {
-  const cardRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    // If already in viewport on mount, show immediately
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 100) {
-      setVisible(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [cardRef, visible] = useInView<HTMLElement>();
 
   const isHero = variant === "hero";
 

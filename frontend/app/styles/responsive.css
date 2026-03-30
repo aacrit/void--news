@@ -846,10 +846,9 @@
     display: none;
   }
 
-  /* Spectrum: tighter zone labels on mobile */
+  /* Spectrum: zone labels unreadable at mobile sizes — hide them */
   .dd-spectrum__zone-label {
-    font-size: 6px;
-    letter-spacing: 0;
+    display: none;
   }
 }
 

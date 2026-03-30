@@ -26,45 +26,58 @@ export default function LoadingSkeleton() {
         <LogoWordmark height={14} />
       </div>
 
-      {/* Lead story skeleton */}
-      <div className="skeleton-lead">
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-          <div className="shimmer-line" style={{ width: 80, height: 14 }} />
-          <div className="shimmer-line" style={{ width: 50, height: 12 }} />
+      {/* Zone 0: SkyboxBanner placeholder — thin bar matching ~40px collapsed height */}
+      <div className="skeleton-skybox">
+        <div className="shimmer-line" style={{ width: 100, height: 12 }} />
+        <div className="shimmer-line" style={{ width: "40%", height: 12 }} />
+        <div className="shimmer-line" style={{ width: 60, height: 12 }} />
+      </div>
+
+      {/* Zone 1: Asymmetric lead section — 2fr | 1fr columns */}
+      <div className="skeleton-lead-v2">
+        {/* Primary column (larger) */}
+        <div className="skeleton-lead-v2__primary">
+          <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
+            <div className="shimmer-line" style={{ width: 80, height: 14 }} />
+            <div className="shimmer-line" style={{ width: 50, height: 12 }} />
+          </div>
+          <div className="shimmer-line" style={{ width: "85%", height: 36, marginBottom: "var(--space-2)" }} />
+          <div className="shimmer-line" style={{ width: "60%", height: 36, marginBottom: "var(--space-3)" }} />
+          <div className="shimmer-line" style={{ width: "95%", height: 16, marginBottom: "var(--space-2)" }} />
+          <div className="shimmer-line" style={{ width: "80%", height: 16, marginBottom: "var(--space-2)" }} />
+          <div className="shimmer-line" style={{ width: "70%", height: 16 }} />
         </div>
-        {/* Headline lines */}
-        <div className="shimmer-line" style={{ width: "75%", height: 40, marginBottom: "var(--space-2)" }} />
-        <div className="shimmer-line" style={{ width: "55%", height: 40, marginBottom: "var(--space-3)" }} />
-        {/* Summary lines */}
-        <div className="shimmer-line" style={{ width: "90%", height: 16, marginBottom: "var(--space-2)" }} />
-        <div className="shimmer-line" style={{ width: "70%", height: 16, marginBottom: "var(--space-4)" }} />
-        {/* Meta items */}
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-5)" }}>
-          <div className="shimmer-line" style={{ width: 90, height: 16 }} />
-          <div className="shimmer-line" style={{ width: 30, height: 24 }} />
+        {/* Secondary column (smaller) */}
+        <div className="skeleton-lead-v2__secondary">
+          <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
+            <div className="shimmer-line" style={{ width: 60, height: 12 }} />
+            <div className="shimmer-line" style={{ width: 40, height: 12 }} />
+          </div>
+          <div className="shimmer-line" style={{ width: "90%", height: 28, marginBottom: "var(--space-2)" }} />
+          <div className="shimmer-line" style={{ width: "70%", height: 28, marginBottom: "var(--space-3)" }} />
+          <div className="shimmer-line" style={{ width: "95%", height: 14, marginBottom: "var(--space-2)" }} />
+          <div className="shimmer-line" style={{ width: "65%", height: 14 }} />
         </div>
       </div>
 
-      {/* Medium story skeletons */}
-      <div className="skeleton-grid">
-        {[0, 1, 2].map((i) => (
-          <div key={i} style={{ padding: "var(--space-3) 0" }}>
-            {/* Meta items */}
-            <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-2)" }}>
-              <div className="shimmer-line" style={{ width: 60, height: 12 }} />
-              <div className="shimmer-line" style={{ width: 40, height: 12 }} />
-            </div>
-            {/* Headline lines */}
-            <div className="shimmer-line" style={{ width: "90%", height: 22, marginBottom: "var(--space-2)" }} />
-            <div className="shimmer-line" style={{ width: "65%", height: 22, marginBottom: "var(--space-2)" }} />
-            {/* Summary lines */}
-            <div className="shimmer-line" style={{ width: "95%", height: 14, marginBottom: "var(--space-1)" }} />
-            <div className="shimmer-line" style={{ width: "80%", height: 14, marginBottom: "var(--space-3)" }} />
-            {/* Meta items */}
-            <div style={{ display: "flex", gap: "var(--space-3)" }}>
-              <div className="shimmer-line" style={{ width: 70, height: 14 }} />
-              <div className="shimmer-line" style={{ width: 24, height: 20 }} />
-            </div>
+      {/* Zone 2: Digest rows — single-line headline placeholders */}
+      <div className="skeleton-digest">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="skeleton-digest__row">
+            <div className="shimmer-line" style={{ width: 60, height: 12 }} />
+            <div className="shimmer-line" style={{ flex: 1, height: 16 }} />
+            <div className="shimmer-line" style={{ width: 24, height: 24, borderRadius: "50%" }} />
+          </div>
+        ))}
+      </div>
+
+      {/* Zone 3: Wire grid — 4-column compact cards */}
+      <div className="skeleton-wire">
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+          <div key={i} className="skeleton-wire__card">
+            <div className="shimmer-line" style={{ width: "50%", height: 10, marginBottom: "var(--space-2)" }} />
+            <div className="shimmer-line" style={{ width: "90%", height: 14, marginBottom: "var(--space-1)" }} />
+            <div className="shimmer-line" style={{ width: "70%", height: 14 }} />
           </div>
         ))}
       </div>

@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://aacrit.github.io"),
   title: "void --news — See every side of the story",
   description:
-    "Free news aggregation with per-article bias analysis across 380 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+    "Free news aggregation with per-article bias analysis across 409 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
   keywords: [
     "news",
     "bias analysis",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "void --news — See every side of the story",
     description:
-      "Free news aggregation with per-article bias analysis across 380 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+      "Free news aggregation with per-article bias analysis across 409 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
     type: "website",
     siteName: "void --news",
     images: [
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "void --news — See every side of the story",
     description:
-      "Free news aggregation with per-article bias analysis across 380 curated sources.",
+      "Free news aggregation with per-article bias analysis across 409 curated sources.",
     images: ["/void--news/twitter-card.svg"],
   },
   icons: {
@@ -101,7 +101,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: light)", color: "#F0EBDD" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1A17" },
   ],
 };
@@ -126,6 +126,13 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
+        {/* CSP: restrict script/connect/style/font/img sources */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: https://*.google.com https://*.googleapis.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+        />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
         {/* PWA: iOS standalone mode + Android install support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

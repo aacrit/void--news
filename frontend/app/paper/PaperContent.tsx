@@ -513,6 +513,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
 
   useEffect(() => {
     async function load() {
+      if (!supabase) { setIsLoading(false); return; }
       try {
         const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_india`;
 

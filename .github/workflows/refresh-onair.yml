@@ -1,4 +1,6 @@
 name: "Refresh: On Air (Full Audio)"
+permissions: {}
+
 on:
   workflow_dispatch:
     inputs:
@@ -25,7 +27,7 @@ jobs:
       - name: Regenerate Audio Broadcast
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           echo "Regenerating full audio broadcast for: ${{ inputs.editions }}"

@@ -10,7 +10,7 @@ import { createPortal } from "react-dom";
    product family (--tl;dr, --onair, --opinion, --sources, --deep-dive),
    and teach the visualization system (Needle, Ring).
 
-   Trigger: 2nd visit OR 90s idle on 1st visit — content comes first.
+   Trigger: 4th visit OR 90s idle on 1st visit — content comes first.
    Always dismissible: Skip button, Esc, backdrop click.
    localStorage tracks: visit count + dismissed state.
    --------------------------------------------------------------------------- */
@@ -45,7 +45,7 @@ const PHASES: Phase[] = [
     id: "why",
     duration: 7000,
     headline: "The space between",
-    body: "We built void to live in that space. No editorial staff picking winners. No algorithm optimizing for outrage. Just 370 sources, scored on six axes, so you can see what every outlet chose to show you — and what they left out.",
+    body: "We built void to live in that space. No editorial staff picking winners. No algorithm optimizing for outrage. Just 409 sources, scored on six axes, so you can see what every outlet chose to show you — and what they left out.",
     visual: "story",
   },
   {
@@ -265,7 +265,7 @@ function ProductFamilyVisual({ active }: { active: boolean }) {
   const products = [
     { cmd: "void --tl;dr", label: "The Daily Brief", desc: "Top stories, editorially weighed" },
     { cmd: "void --opinion", label: "The Board", desc: "What the pattern reveals" },
-    { cmd: "void --sources", label: "Source Spectrum", desc: "370 outlets on one axis" },
+    { cmd: "void --sources", label: "Source Spectrum", desc: "409 sources on one axis" },
     { cmd: "void --deep-dive", label: "Story Analysis", desc: "Every source, every score" },
   ];
 
@@ -390,6 +390,7 @@ export default function BiasLensOnboarding() {
   const [visible, setVisible] = useState(false);
   const [phase, setPhase] = useState(-1);
   const [exiting, setExiting] = useState(false);
+  const [paused, setPaused] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -408,7 +409,7 @@ export default function BiasLensOnboarding() {
       const visits = parseInt(localStorage.getItem(VISITS_KEY) || "0", 10) + 1;
       localStorage.setItem(VISITS_KEY, String(visits));
 
-      if (visits >= 2) {
+      if (visits >= 4) {
         // 2nd+ visit: show after short delay (let content render first)
         setTimeout(() => {
           setVisible(true);
@@ -431,15 +432,23 @@ export default function BiasLensOnboarding() {
     };
   }, []);
 
-  // Auto-advance phases
+  // Auto-advance phases — pauses when user interacts with content
   useEffect(() => {
     if (phase < 0 || phase >= PHASES.length - 1) return;
     if (reducedMotion.current) return;
+    if (paused) {
+      // Clear any pending timer while paused
+      if (timerRef.current) clearTimeout(timerRef.current);
+      return;
+    }
     timerRef.current = setTimeout(() => {
       setPhase((p) => p + 1);
     }, PHASES[phase].duration);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [phase]);
+  }, [phase, paused]);
+
+  const pauseAutoAdvance = useCallback(() => setPaused(true), []);
+  const resumeAutoAdvance = useCallback(() => setPaused(false), []);
 
   const dismiss = useCallback(() => {
     if (exiting) return;
@@ -527,21 +536,37 @@ export default function BiasLensOnboarding() {
           Skip
         </button>
 
-        {/* Illustration area */}
-        <div className="intro__visual">
-          {currentPhase && <PhaseVisual visual={currentPhase.visual} active />}
-        </div>
-
-        {/* Text area */}
-        {currentPhase && (
-          <div key={currentPhase.id} className="intro__text">
-            <h2 className="intro__headline">{currentPhase.headline}</h2>
-            {currentPhase.subtitle && (
-              <p className="intro__subtitle">{currentPhase.subtitle}</p>
-            )}
-            <p className="intro__body">{currentPhase.body}</p>
+        {/* Content area — pause auto-advance on interaction (mouse, touch, keyboard) */}
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div
+          onMouseEnter={pauseAutoAdvance}
+          onMouseLeave={resumeAutoAdvance}
+          onTouchStart={pauseAutoAdvance}
+          onTouchEnd={resumeAutoAdvance}
+          onFocus={pauseAutoAdvance}
+          onBlur={(e) => {
+            // Only resume if focus moves outside the dialog entirely
+            if (!dialogRef.current?.contains(e.relatedTarget as Node)) {
+              resumeAutoAdvance();
+            }
+          }}
+        >
+          {/* Illustration area */}
+          <div className="intro__visual">
+            {currentPhase && <PhaseVisual visual={currentPhase.visual} active />}
           </div>
-        )}
+
+          {/* Text area */}
+          {currentPhase && (
+            <div key={currentPhase.id} className="intro__text">
+              <h2 className="intro__headline">{currentPhase.headline}</h2>
+              {currentPhase.subtitle && (
+                <p className="intro__subtitle">{currentPhase.subtitle}</p>
+              )}
+              <p className="intro__body">{currentPhase.body}</p>
+            </div>
+          )}
+        </div>
 
         {/* Phase dots */}
         <div className="intro__dots" role="tablist" aria-label="Guide sections">

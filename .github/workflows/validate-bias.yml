@@ -1,5 +1,7 @@
 name: Validate Bias Engine
 
+permissions: {}
+
 on:
   push:
     branches: ['claude/**']
