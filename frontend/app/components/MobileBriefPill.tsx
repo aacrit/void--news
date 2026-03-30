@@ -3,8 +3,15 @@
 import { useState, useRef, useEffect } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
-import { hapticLight, hapticMedium } from "../lib/haptics";
+import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
+
+function formatTime(seconds: number): string {
+  const s = Math.floor(seconds);
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${r.toString().padStart(2, "0")}`;
+}
 
 /* ---------------------------------------------------------------------------
    MobileBriefPill — Mobile-optimized skybox with TL;DR, Opinion, OnAir CTA
@@ -14,7 +21,7 @@ import { timeAgo } from "../lib/utils";
    --------------------------------------------------------------------------- */
 
 export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, handlePlayPause, setExpanded } = state;
+  const { brief, isPlaying, currentTime, duration, handlePlayPause, setExpanded, setPlayerVisible } = state;
 
   const [pillExpanded, setPillExpanded] = useState(false);
   const pillContentRef = useRef<HTMLDivElement>(null);
@@ -52,7 +59,8 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url;
-  const durationMin = brief.audio_duration_seconds ? Math.ceil(brief.audio_duration_seconds / 60) : null;
+  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
+  const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
   const tldrSentences = brief.tldr_text.split(/(?<=[.!?])\s+/).filter(Boolean);
   const tldrPreview = tldrSentences.slice(0, 2).join(" ");
@@ -154,30 +162,49 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
             </section>
           )}
 
-          {/* OnAir CTA — triggers persistent AudioPlayer */}
-          {hasAudio && (
-            <div className="mbp__onair-zone">
-              <hr className="mbp__rule" />
-              <div className="mbp__onair-center">
-                <button
-                  className={`skb__onair-cta${isPlaying ? " skb__onair-cta--active" : ""}`}
-                  onClick={() => {
-                    hapticMedium();
+          {/* OnAir pill — always visible, triggers persistent AudioPlayer */}
+          <div className="mbp__onair-zone">
+            <hr className="mbp__rule" />
+            <div className="mbp__onair-center">
+              <button
+                className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}`}
+                onClick={() => {
+                  hapticConfirm();
+                  if (hasAudio) {
+                    setPlayerVisible(true);
                     if (!isPlaying) handlePlayPause();
                     setExpanded(true);
-                  }}
-                  type="button"
-                  aria-label={isPlaying ? "Open audio player" : "Play broadcast"}
-                >
-                  <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
-                  {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
-                  <span className="skb__onair-label">void --onair</span>
-                  {durationMin && !isPlaying && <span className="skb__onair-dur">{durationMin} min</span>}
-                  {isPlaying && <span className="skb__onair-dur">Playing</span>}
-                </button>
-              </div>
+                  }
+                }}
+                type="button"
+                disabled={!hasAudio}
+                aria-label={
+                  !hasAudio ? "Audio broadcast unavailable"
+                    : isPlaying ? "Open audio player" : "Play broadcast"
+                }
+                title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
+              >
+                <span className="skb__radio-waves" aria-hidden="true">
+                  <span className="skb__radio-wave" />
+                  <span className="skb__radio-wave" />
+                  <span className="skb__radio-wave" />
+                </span>
+                {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
+                <span className="skb__onair-label">void --onair</span>
+                {hasAudio ? (
+                  isPlaying ? (
+                    <span className="skb__onair-dur">
+                      {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+                    </span>
+                  ) : (
+                    durationMin && <span className="skb__onair-dur">{durationMin} min</span>
+                  )
+                ) : (
+                  <span className="skb__onair-dur">twice daily</span>
+                )}
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

@@ -166,6 +166,17 @@
   /* Hide total duration on very small screens */
 }
 
+/* Duration hint shown before playback starts */
+.ap__mini-hint {
+  flex-shrink: 0;
+  font-family: var(--font-meta, 'Barlow Condensed', sans-serif);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(200, 149, 108, 0.4);
+}
+
 /* Speed button (mini) */
 .ap__mini-speed {
   flex-shrink: 0;
