@@ -7,6 +7,8 @@ on:
         required: true
         default: 'all'
 
+permissions: {}
+
 jobs:
   migrate:
     runs-on: ubuntu-latest
@@ -20,12 +22,13 @@ jobs:
       - name: Run migration
         env:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
           MIGRATION_INPUT: ${{ inputs.migration }}
         run: |
           python3 << 'PYEOF'
-          import psycopg2, os, glob, re
+          import psycopg2, os, glob, re, pathlib
 
-          ref = 'xryzskhgfuafyotrcdvj'
+          ref = os.environ['SUPABASE_PROJECT_REF']
           pw = os.environ['SUPABASE_DB_PASSWORD']
           migration_input = os.environ.get('MIGRATION_INPUT', 'all')
 
@@ -72,8 +75,12 @@ jobs:
                           print(f'  [FAIL] {fname}: {e}')
                           raise
           else:
-              # Single migration mode (original behavior)
-              fpath = f'supabase/migrations/{migration_input}'
+              # Single migration mode — validate path to prevent traversal
+              base = pathlib.Path('supabase/migrations').resolve()
+              target = (base / os.path.basename(migration_input)).resolve()
+              if not target.is_relative_to(base) or target.suffix != '.sql':
+                  raise ValueError(f'Invalid migration: {migration_input}')
+              fpath = str(target)
               sql = open(fpath).read()
               cur.execute(sql)
               fname = os.path.basename(fpath)

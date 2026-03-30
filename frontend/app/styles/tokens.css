@@ -28,7 +28,7 @@
   --fg-primary:    #1A1A1A;
   --fg-secondary:  #4A4540;
   --fg-tertiary:   #686260;
-  --fg-muted:      #8A857E;
+  --fg-muted:      #6B6660;
 
   /* Borders & Dividers */
   --border-subtle: #E8E2DB;
@@ -56,6 +56,12 @@
 
   /* Warm accent — focus indicators, accessibility outlines */
   --accent-warm: #C8956C;
+
+  /* Foreground accent — warm editorial accent for badges, active states */
+  --fg-accent: #C8956C;
+
+  /* Hover surface — subtle tint for interactive rows */
+  --bg-hover: rgba(0, 0, 0, 0.04);
 
   /* Overlay backdrop */
   --overlay-backdrop: rgba(28, 26, 23, 0.15);
@@ -114,6 +120,13 @@
 
   /* ── Atmospheric Haze ── */
   --cin-haze-far: saturate(0.92) brightness(0.98);
+
+  /* ── Category Colors ── */
+  --cat-conflict:    #C0392B;
+  --cat-science:     #2980B9;
+  --cat-health:      #27AE60;
+  --cat-environment: #16A085;
+  --cat-culture:     #8E44AD;
 }
 
 /* --------------------------------------------------------------------------
@@ -142,17 +155,24 @@
   --bias-far-left:     #4A6FA5;  /* muted steel blue */
   --bias-left:         #6B8DB5;  /* dusty blue */
   --bias-center-left:  #8FAAB8;  /* faded blue-gray */
-  --bias-center:       #7A756E;  /* warm gray — blends with walnut */
+  --bias-center:       #9A9590;  /* warm gray — ~4.5:1 on #2A2725, WCAG AA compliant */
   --bias-center-right: #C09A8A;  /* dusty salmon */
   --bias-right:        #B07060;  /* muted terracotta */
   --bias-far-right:    #964A3A;  /* deep brick */
   --type-reporting:    #6B8DB5;
 
+  /* Category color overrides — desaturated for dark walnut surfaces */
+  --cat-conflict:    #D4645A;
+  --cat-science:     #5A9FCC;
+  --cat-health:      #4DC47A;
+  --cat-environment: #3DBFA8;
+  --cat-culture:     #A86CC1;
+
   /* Text — all pass WCAG AA 4.5:1 on --bg-primary (#1C1A17) */
   --fg-primary:    #EDE8E0;
   --fg-secondary:  #B8B0A5;
-  --fg-tertiary:   #918A80;
-  --fg-muted:      #757068;
+  --fg-tertiary:   #A09890;  /* ~5.0:1 on #1C1A17 — WCAG AA compliant */
+  --fg-muted:      #8A847B;
 
   /* Borders & Dividers */
   --border-subtle: #3A3530;
@@ -180,6 +200,12 @@
 
   /* Warm accent — focus indicators, accessibility outlines */
   --accent-warm: #D4A574;
+
+  /* Foreground accent — warm editorial accent for badges, active states */
+  --fg-accent: #D4A574;
+
+  /* Hover surface — subtle tint for interactive rows */
+  --bg-hover: rgba(255, 255, 255, 0.06);
 
   /* Overlay backdrop — stronger in dark mode for visible dimming */
   --overlay-backdrop: rgba(0, 0, 0, 0.5);
@@ -240,6 +266,7 @@
    Typography Scale — Fluid with clamp()
    -------------------------------------------------------------------------- */
 :root {
+  --text-xxs:   clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
   --text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
   --text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   --text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
@@ -420,4 +447,5 @@
   --z-cinematic: 45;  /* Vignette + film grain layers */
   --z-overlay:  50;
   --z-modal:    100;
+  --z-popup:    150;
 }

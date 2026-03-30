@@ -28,7 +28,7 @@ try {
 }
 
 /** Possibly-null Supabase client. Always check before use. */
-export const supabase = _client as SupabaseClient;
+export const supabase: SupabaseClient | null = _client;
 
 /** Non-null when credentials are absent or client creation failed. */
 export const supabaseError: string | null = _clientError;

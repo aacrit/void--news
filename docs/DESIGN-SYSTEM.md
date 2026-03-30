@@ -1,18 +1,18 @@
-# void --news — Design System: "Press & Precision"
+# void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
-**Version:** 1.9
-**Last updated:** 2026-03-23 (rev 8)
+**Version:** 2.0
+**Last updated:** 2026-03-29 (rev 9)
 
 ---
 
 ## 1. Design Philosophy
 
-**"Press & Precision"** — A modern newspaper that respects the printing press tradition while embracing the data density of modern interfaces.
+**"Cinematic Press"** — Same editorial authority as Press & Precision, now with cinematic depth, light, focus, and atmosphere. A modern newspaper shot through a cinema lens.
 
-**On arrival:** The quiet authority of a broadsheet. Clean, editorial, unhurried.
-**On interaction:** The precision of a data terminal. Rich, layered, immediate.
+**On arrival:** The quiet authority of a broadsheet — warm amber light, subtle film grain, shallow depth of field.
+**On interaction:** The precision of a data terminal with rack focus, atmospheric haze, and cinematic shadows.
 
-This duality is the soul of void --news. The newspaper earns trust through restraint. The data layer earns trust through transparency.
+The newspaper earns trust through restraint. The data layer earns trust through transparency. The cinematic layer earns emotion through light and texture.
 
 ---
 
@@ -142,6 +142,27 @@ Source `political_lean_baseline` values: `far-left`, `left`, `center-left`, `cen
 --rigor-medium:  #EAB308;   /* Yellow — partially sourced */
 --rigor-low:     #EF4444;   /* Red — unsourced claims */
 ```
+
+### Cinematic Palette & Post-Processing (v2)
+
+Cinematic tokens live in `tokens.css` under `:root` (light) and `[data-mode="dark"]` blocks.
+
+| Token Group | Tokens | Purpose |
+|-------------|--------|---------|
+| Amber palette | `--cin-amber`, `--cin-amber-bright`, `--cin-amber-dim`, `--cin-amber-ghost`, `--cin-amber-glow` | Warm cinematic accent — highlights, rim light, hover states |
+| Ash palette | `--cin-ash`, `--cin-ash-warm`, `--cin-ash-cool` | Neutral cinematic tones — shadows, secondary UI |
+| Paper tones | `--cin-paper-highlight`, `--cin-paper-shadow` | Subtle paper texture shifts |
+| Semantics | `--cinematic-accent`, `--cinematic-shadow-tint`, `--cinematic-rim-light` | Mapped aliases for component use |
+| Easings | `--ease-cinematic` (0.22,1,0.36,1), `--ease-whip` (0.25,0,0,1), `--ease-rack` (0.4,0,0.2,1) | Camera-language timing curves |
+| Rack focus | `--rack-focus-dur` (600ms), `--rack-focus-ease` | Selective focus transitions |
+| Shadows | `--shadow-cinematic-contact`, `--shadow-cinematic-ambient`, `--shadow-cinematic-dramatic` | Three-tier depth via `color-mix` |
+| Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay |
+| Vignette | `--cin-vignette-color` | Edge darkening — subtle light, stronger dark |
+| Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Per-edition overrides (US: warmer sepia). |
+| Atmospheric haze | `--cin-haze-far` | Depth-of-field fade on distant elements |
+| Z-index | `--z-cinematic` (45) | Vignette + film grain layer stacking |
+
+All cinematic tokens adapt between light/dark modes. Dark mode: boosted amber brightness, stronger vignette, lower grain, cooler grade.
 
 ---
 
@@ -382,6 +403,14 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | gentle | 150 | 12 | 1.2 | View transitions (feed ↔ deep dive) |
 | bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` CSS token |
 
+### Cinematic Easings
+
+| Token | Curve | Use |
+|-------|-------|-----|
+| `--ease-cinematic` | cubic-bezier(0.22, 1, 0.36, 1) | Primary cinematic ease — smooth deceleration with authority |
+| `--ease-whip` | cubic-bezier(0.25, 0, 0, 1) | Fast whip-pan transitions — aggressive deceleration |
+| `--ease-rack` | cubic-bezier(0.4, 0, 0.2, 1) | Rack focus transitions — measured pull between focal planes |
+
 ### Duration Tokens
 
 | Token | Value | Use |
@@ -392,6 +421,7 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | --dur-morph | 400ms | View transitions |
 | --dur-step | 450ms | Step-by-step reveals, stagger sequences |
 | --dur-slow | 600ms | Page-level animations |
+| --rack-focus-dur | 600ms | Rack focus selective blur transitions |
 
 ### Key Animations
 
@@ -450,8 +480,25 @@ Active components in `frontend/app/components/`:
 | `PageToggle` | Switches between Feed and Sources views. | -- |
 | `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
 | `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. | -- |
+| `DailyBrief` | "void --onair" daily brief: TL;DR + opinion + audio player | -- |
+| `SkyboxBanner` | Top-of-page daily brief skybox with TL;DR, opinion, and OnAir sections | -- |
+| `MobileBriefPill` | Mobile daily brief pill trigger | -- |
+| `DesktopFeed` | Desktop multi-column newspaper grid layout | -- |
+| `MobileFeed` | Mobile single-column feed layout | -- |
+| `MobileStoryCard` | Mobile-optimized story card | -- |
+| `MobileBottomNav` | Bottom navigation bar for mobile | -- |
+| `DigestRow` | Compact digest-style story row | -- |
+| `WireCard` | Wire-service-style compact card | -- |
+| `StoryMeta` | Shared story metadata display (sources, time, category) | -- |
+| `CommandCenter` | KPI monitoring dashboard with sparklines and health score | -- |
+| `ComparativeView` | Side-by-side source comparison view | -- |
+| `DivergenceAlerts` | Highlights divergent coverage across sources | -- |
+| `EditionIcon` | Edition-specific icon (US flag, India Ashoka Chakra, etc.) | -- |
+| `BiasLensOnboarding` | First-encounter onboarding for BiasLens visualization | -- |
+| `KeyboardShortcuts` | Keyboard shortcut handler and help overlay | -- |
+| `InstallPrompt` | PWA install prompt | -- |
 
-**Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).
+**39 components total.** Removed: `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`.
 
 ### Logo Animation Deployment
 
@@ -551,6 +598,8 @@ All values via CSS custom properties. No hardcoded values in components.
 | Typography | `--text-` | `--text-hero`, `--text-base` |
 | Spacing | `--space-` | `--space-3`, `--space-6` |
 | Animation | `--dur-`, `--spring`, `--ease-` | `--dur-normal`, `--ease-out` |
+| Cinematic | `--cin-`, `--cinematic-`, `--ease-cinematic/whip/rack` | `--cin-amber`, `--cin-grade`, `--cin-grain-opacity` |
+| Cinematic shadows | `--shadow-cinematic-` | `--shadow-cinematic-contact`, `--shadow-cinematic-dramatic` |
 | Borders | `--border-` | `--border-subtle`, `--divider` |
 | Elevation | `--blur-`, `--shadow-` | `--blur-e2`, `--shadow-e1` |
-| Z-index | `--z-` | `--z-base(1)`, `--z-modal(100)` |
+| Z-index | `--z-` | `--z-base(1)`, `--z-cinematic(45)`, `--z-modal(100)` |

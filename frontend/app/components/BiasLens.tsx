@@ -75,33 +75,15 @@ function LensPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, ti
     <div
       id={id}
       role="tooltip"
+      className="bias-lens-popup"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       style={{
-        position: "fixed",
         top: pos.y,
         left: pos.x,
-        width: 260,
-        background: "var(--bg-card)",
-        border: "1px solid var(--border-subtle)",
-        boxShadow: "var(--shadow-e3)",
-        zIndex: 9999,
-        padding: "var(--space-3) var(--space-4)",
-        animation: "fadeIn 150ms var(--ease-out)",
-        pointerEvents: "auto",
       }}
     >
-      <div style={{
-        fontFamily: "var(--font-data)",
-        fontSize: "var(--text-xs)",
-        fontWeight: 500,
-        letterSpacing: "0.06em",
-        textTransform: "uppercase" as const,
-        color: "var(--fg-tertiary)",
-        paddingBottom: 6,
-        borderBottom: "1px solid var(--border-subtle)",
-        marginBottom: 10,
-      }}>
+      <div className="bias-lens-popup__title">
         {title}
       </div>
       {children}
@@ -335,7 +317,7 @@ function SignalRing({ value, sourceCount, tierBreakdown, rationale, size }: {
   const dashLen = (fillPct / 100) * circumference;
   const color = getCoverageColor(value);
   const label = getCoverageLabel(value);
-  const fontSize = size === "lg" ? 10 : 7;
+  const fontSize = size === "lg" ? "var(--text-xs)" : "var(--text-xxs)";
 
   useEffect(() => {
     const t = setTimeout(() => setAnimated(true), 110);
@@ -516,7 +498,7 @@ export default function BiasLens({ lensData, size = "sm" }: BiasLensProps) {
       {pending && (
         <span style={{
           fontFamily: "var(--font-data)",
-          fontSize: size === "lg" ? "var(--text-xs)" : 9,
+          fontSize: "var(--text-xs)",
           fontWeight: 500,
           letterSpacing: "0.04em",
           textTransform: "uppercase" as const,

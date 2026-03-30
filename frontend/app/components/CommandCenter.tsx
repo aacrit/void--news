@@ -188,7 +188,7 @@ export default function CommandCenter() {
 
   if (!authed) return (
     <div className="cc-root"><div className="cc-auth-gate"><div className="cc-auth-card">
-      <div style={{ fontFamily: 'var(--cc-font-editorial)', fontSize: '1.125rem', fontWeight: 700, marginBottom: 4 }}>Command Center</div>
+      <div style={{ fontFamily: 'var(--cc-font-editorial)', fontSize: 'var(--text-lg)', fontWeight: 700, marginBottom: 4 }}>Command Center</div>
       <div style={{ fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-xs)', color: 'var(--cc-text3)', marginBottom: 20 }}>void --news</div>
       <input type="password" value={passInput} onChange={e => { setPassInput(e.target.value); setPassErr(false); }} onKeyDown={e => { if (e.key === 'Enter') login(); }} placeholder="Password" autoFocus aria-label="Password"
         style={{ width: '100%', padding: '10px 14px', background: 'var(--cc-bg)', border: `1px solid ${passErr ? 'var(--cc-red)' : 'var(--cc-border)'}`, color: 'var(--cc-text)', fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-sm)', outline: 'none', marginBottom: 12 }} />
@@ -217,7 +217,7 @@ export default function CommandCenter() {
   const dh = data.runs.filter(r => r.completed_at && r.started_at).map(r => Math.round((new Date(r.completed_at!).getTime() - new Date(r.started_at).getTime()) / 60000)).reverse();
   const ah = data.runs.filter(r => r.articles_fetched != null).map(r => r.articles_fetched!).reverse();
   const bins = [0,0,0,0,0,0,0];
-  const bc = ['var(--cc-blue)','#6B8DB5','#8FAAB8','var(--cc-text3)','#C09A8A','#B07060','var(--cc-red)'];
+  const bc = ['var(--cc-blue)','var(--cc-lean-left)','var(--cc-lean-center-left)','var(--cc-text3)','var(--cc-lean-center-right)','var(--cc-lean-right)','var(--cc-red)'];
   for (const l of lns) bins[Math.min(6, Math.floor(l / (100/7)))]++;
   const mb = Math.max(...bins, 1);
   const toggle = (id: string) => setExpanded(p => p === id ? null : id);

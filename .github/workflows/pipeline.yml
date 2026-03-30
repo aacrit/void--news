@@ -1,4 +1,7 @@
 name: News Pipeline
+
+permissions: {}
+
 on:
   schedule:
     # 4x daily, every 6 hours — all editions each run.
@@ -68,7 +71,7 @@ jobs:
         if: ${{ inputs.brief_only }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
@@ -85,7 +88,7 @@ jobs:
         if: ${{ !inputs.brief_only }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"

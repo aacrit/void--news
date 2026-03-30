@@ -60,9 +60,27 @@ interface HighlightedWord {
   highlight: "left" | "right" | null;
 }
 
+/** Common stop words to skip during diff highlighting */
+const STOP_WORDS = new Set([
+  "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
+  "of", "with", "by", "from", "as", "is", "was", "are", "were", "be",
+  "been", "being", "have", "has", "had", "do", "does", "did", "will",
+  "would", "could", "should", "may", "might", "can", "shall", "it",
+  "its", "this", "that", "these", "those", "he", "she", "they", "we",
+  "his", "her", "their", "our", "my", "your", "not", "no", "so",
+  "if", "then", "than", "also", "just", "about", "into", "over",
+  "after", "before", "between", "under", "such", "each", "all", "any",
+  "both", "few", "more", "most", "other", "some", "up", "out", "new",
+  "said", "one", "two", "who", "which", "when", "where", "how", "what",
+]);
+
 /**
  * Word-level diff: marks words unique to left sources in blue,
  * unique to right sources in red, and shared words as neutral.
+ *
+ * If more than 50% of content words would be highlighted, disables
+ * highlighting entirely to avoid overwhelming the reader.
+ * Also filters out stop words and short words (<=3 chars).
  */
 function diffWords(
   text: string,
@@ -76,15 +94,29 @@ function diffWords(
   const excLeft = exclusiveWords(leftTokens, [rightTokens]);
   const excRight = exclusiveWords(rightTokens, [leftTokens]);
 
-  return words.map((chunk) => {
-    // Preserve whitespace chunks verbatim
+  // First pass: compute highlights with stop-word + length filtering
+  const result: HighlightedWord[] = words.map((chunk) => {
     if (/^\s+$/.test(chunk)) return { word: chunk, highlight: null };
     const lower = chunk.toLowerCase().replace(/[^a-z']/g, "");
+    // Skip stop words and short words (3 chars or fewer)
+    if (STOP_WORDS.has(lower) || lower.length <= 3) {
+      return { word: chunk, highlight: null };
+    }
     let highlight: "left" | "right" | null = null;
     if (sideLabel !== "Left" && excLeft.has(lower)) highlight = "left";
     if (sideLabel !== "Right" && excRight.has(lower)) highlight = "right";
     return { word: chunk, highlight };
   });
+
+  // Second pass: if more than 50% of content words are highlighted,
+  // disable all highlighting to avoid visual overload
+  const contentWords = result.filter((w) => !/^\s+$/.test(w.word));
+  const highlightedCount = contentWords.filter((w) => w.highlight !== null).length;
+  if (contentWords.length > 0 && highlightedCount / contentWords.length > 0.5) {
+    return result.map((w) => ({ word: w.word, highlight: null }));
+  }
+
+  return result;
 }
 
 /** Get favicon URL from a source URL. */
@@ -330,6 +362,18 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                         className="comp-view__read-link"
                         aria-label={`Read full article from ${source.name}`}
                       >
+                        {favicon && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={favicon}
+                            alt=""
+                            width={12}
+                            height={12}
+                            className="comp-view__favicon comp-view__read-favicon"
+                            loading="lazy"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                          />
+                        )}
                         Read article
                         <span aria-hidden="true"> &#8594;</span>
                       </a>

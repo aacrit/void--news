@@ -49,6 +49,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [contentVisible, setContentVisible] = useState(false);
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [summaryOverflows, setSummaryOverflows] = useState(false);
@@ -81,6 +82,29 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   }, [story.id]);
   /** Cross-fade opacity for horizontal story swipe navigation */
   const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
+
+  /* ---- One-time swipe hint (mobile only) -------------------------------- */
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
+
+  useEffect(() => {
+    if (isDesktop || !isVisible || !onNavigate || totalStories <= 1) return;
+    try {
+      if (sessionStorage.getItem("dd-swipe-hint-seen")) return;
+    } catch { return; }
+
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+    const showTimer = setTimeout(() => {
+      setShowSwipeHint(true);
+      hideTimer = setTimeout(() => {
+        setShowSwipeHint(false);
+        try { sessionStorage.setItem("dd-swipe-hint-seen", "1"); } catch { /* ignore */ }
+      }, 2000);
+    }, 500);
+    return () => {
+      clearTimeout(showTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, [isDesktop, isVisible, onNavigate, totalStories]);
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
@@ -127,7 +151,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
   /* ---- Detect desktop vs mobile for animation choreography ------------- */
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
+    const mq = window.matchMedia("(min-width: 1024px)");
     setIsDesktop(mq.matches);
 
     function handleChange(e: MediaQueryListEvent) {
@@ -138,12 +162,16 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     return () => mq.removeEventListener("change", handleChange);
   }, []);
 
+  /* ---- Retry counter — incrementing triggers re-fetch ------------------- */
+  const [retryCount, setRetryCount] = useState(0);
+
   /* ---- Fetch live data from Supabase ----------------------------------- */
   useEffect(() => {
     let cancelled = false;
 
     async function loadClusterData() {
       setIsLoadingData(true);
+      setFetchError(false);
       try {
         const raw = await fetchDeepDiveData(story.id);
         if (cancelled || !raw || raw.length === 0) {
@@ -321,7 +349,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           });
         }
       } catch {
-        /* Silently fall back to mock deepDive data */
+        if (!cancelled) setFetchError(true);
       } finally {
         if (!cancelled) setIsLoadingData(false);
       }
@@ -329,7 +357,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
     loadClusterData();
     return () => { cancelled = true; };
-  }, [story.id, story.deepDive]);
+  }, [story.id, story.deepDive, retryCount]);
 
   /* ---- Open animation — FLIP morph or slide-in fallback ----------------- */
   useEffect(() => {
@@ -363,7 +391,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
          measure its final rect. We briefly make it visible but off-screen
          via the morphStyle override, then compute the inverse transform. */
 
-      const isDesktopNow = window.innerWidth >= 768;
+      const isDesktopNow = window.innerWidth >= 1024;
 
       // Step 1: Backdrop blur starts immediately
       setIsVisible(true);
@@ -538,7 +566,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
         // Desktop: offsets are relative to the centering transform
-        const isDesktopNow = window.innerWidth >= 768;
+        const isDesktopNow = window.innerWidth >= 1024;
         const closeTransform = isDesktopNow
           ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
           : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
@@ -768,6 +796,19 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                 >
                   <CaretRight size={14} weight="bold" />
                 </button>
+                {/* One-time swipe hint for mobile users */}
+                {showSwipeHint && (
+                  <span
+                    className="dd-swipe-hint"
+                    style={{
+                      opacity: showSwipeHint ? 1 : 0,
+                      transition: "opacity 300ms ease-out",
+                    }}
+                    aria-hidden="true"
+                  >
+                    swipe for next story
+                  </span>
+                )}
               </div>
             )}
 
@@ -816,24 +857,38 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             transition: `opacity ${swipeNavOpacity < 1 ? 120 : contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
-          {/* Loading indicator — analyzing animation while fetching deep dive data */}
+          {/* Loading skeleton — structured placeholders while Supabase fetches data */}
           {isLoadingData && !deepDive && (
-            <div style={{ padding: "var(--space-5) 0", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)" }}>
-              <LogoIcon size={32} animation="analyzing" />
-              <span className="text-data" style={{ color: "var(--fg-tertiary)" }}>
-                Analyzing coverage...
+            <div className="dd-loading-skeleton" role="status" aria-label="Loading analysis">
+              <span className="dd-loading-skeleton__status text-meta" style={{ color: "var(--fg-muted)" }}>
+                Loading analysis...
               </span>
-            </div>
-          )}
 
-          {/* ---- Skeleton Spectrum — shown while loading, if story has bias data ---- */}
-          {isLoadingData && !deepDive && story.biasScores && (
-            <div className="dd-skeleton-spectrum" aria-hidden="true">
-              <div className="dd-skeleton-spectrum__bar" />
-              <div className="dd-skeleton-spectrum__indicator"
-                style={{ left: `${Math.max(4, Math.min(96, story.biasScores.politicalLean))}%` }}
-              />
-              <p className="dd-skeleton-spectrum__label text-data">Loading source data...</p>
+              {/* Spectrum bar placeholder */}
+              <div className="dd-loading-skeleton__section">
+                <div className="shimmer-line dd-loading-skeleton__bar" />
+              </div>
+
+              {/* Source perspective placeholders */}
+              <div className="dd-loading-skeleton__section">
+                <div className="shimmer-line dd-loading-skeleton__line dd-loading-skeleton__line--short" />
+                <div className="dd-loading-skeleton__perspectives">
+                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
+                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
+                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
+                </div>
+              </div>
+
+              {/* Bias inspector score placeholders */}
+              <div className="dd-loading-skeleton__section">
+                <div className="shimmer-line dd-loading-skeleton__line dd-loading-skeleton__line--short" />
+                <div className="dd-loading-skeleton__scores">
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                </div>
+              </div>
             </div>
           )}
 
@@ -864,8 +919,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             style={{ transitionDelay: "250ms" }}
           >
             <button
+              id="dd-tab-summary"
               role="tab"
               aria-selected={activeTab === "summary"}
+              aria-controls="dd-panel-summary"
               className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
               onClick={() => { hapticLight(); setActiveTab("summary"); }}
             >
@@ -873,8 +930,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </button>
             {hasCrossLeanSources && (
               <button
+                id="dd-tab-allsides"
                 role="tab"
                 aria-selected={activeTab === "allsides"}
+                aria-controls="dd-panel-allsides"
                 className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
                 onClick={() => { hapticLight(); setActiveTab("allsides"); }}
               >
@@ -883,8 +942,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             )}
             {spectrumSources.length > 0 && (
               <button
+                id="dd-tab-scoring"
                 role="tab"
                 aria-selected={activeTab === "scoring"}
+                aria-controls="dd-panel-scoring"
                 className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
                 onClick={() => { hapticLight(); setActiveTab("scoring"); }}
               >
@@ -895,7 +956,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
           {/* ---- Tab panels ---- */}
           {activeTab === "summary" && (
-            <section role="tabpanel" aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
+            <section id="dd-panel-summary" role="tabpanel" aria-labelledby="dd-tab-summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
                 <div className="dd-collapsible__inner" ref={summaryInnerRef}>
                   <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
@@ -910,7 +971,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {activeTab === "allsides" && hasCrossLeanSources && (
-            <section role="tabpanel" aria-label="All Sides comparison" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
+            <section id="dd-panel-allsides" role="tabpanel" aria-labelledby="dd-tab-allsides" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <ComparativeView
                 sources={sources}
                 consensusPoints={deepDive?.consensus}
@@ -920,15 +981,30 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {activeTab === "scoring" && spectrumSources.length > 0 && (
-            <section role="tabpanel" aria-label="Scoring breakdown" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
+            <section id="dd-panel-scoring" role="tabpanel" aria-labelledby="dd-tab-scoring" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <BiasInspectorInline sources={sources} />
             </section>
           )}
 
-          {/* No deep dive data at all */}
-          {!deepDive && !isLoadingData && (
-            <div style={{ padding: "var(--space-6) 0", textAlign: "center" }}>
-              <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
+          {/* Fetch error — retry UI */}
+          {fetchError && !isLoadingData && !deepDive && (
+            <div className="dd-fetch-error">
+              <p className="text-base empty-state__body" style={{ color: "var(--fg-muted)", lineHeight: 1.6 }}>
+                Failed to load analysis.
+              </p>
+              <button
+                className="dd-read-more"
+                onClick={() => setRetryCount((c) => c + 1)}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* No deep dive data at all (no error) */}
+          {!deepDive && !isLoadingData && !fetchError && (
+            <div className="dd-empty-data">
+              <p className="text-base empty-state__body--no-margin" style={{ lineHeight: 1.6 }}>
                 Detailed coverage data is not yet available for this story.
                 Check back after the next pipeline run.
               </p>

@@ -55,7 +55,9 @@ export default function NavBar({
   onLeanChange,
 }: NavBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
+  const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
   const topicRef = useRef<HTMLDivElement>(null);
+  const topicTriggerRef = useRef<HTMLButtonElement>(null);
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
@@ -66,7 +68,52 @@ export default function NavBar({
     hapticMicro();
     onCategoryChange?.(cat);
     setTopicOpen(false);
+    setTopicFocusIdx(-1);
+    topicTriggerRef.current?.focus();
   };
+
+  // Arrow-key navigation for topic dropdown (WAI-ARIA menu pattern)
+  const handleTopicPanelKeyDown = (e: React.KeyboardEvent) => {
+    const items = ALL_CATEGORIES;
+    let nextIdx = topicFocusIdx;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        nextIdx = topicFocusIdx < items.length - 1 ? topicFocusIdx + 1 : 0;
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        nextIdx = topicFocusIdx > 0 ? topicFocusIdx - 1 : items.length - 1;
+        break;
+      case "Home":
+        e.preventDefault();
+        nextIdx = 0;
+        break;
+      case "End":
+        e.preventDefault();
+        nextIdx = items.length - 1;
+        break;
+      case "Escape":
+        e.preventDefault();
+        setTopicOpen(false);
+        setTopicFocusIdx(-1);
+        topicTriggerRef.current?.focus();
+        return;
+      default:
+        return;
+    }
+
+    setTopicFocusIdx(nextIdx);
+    const panel = topicRef.current?.querySelector('[role="menu"]');
+    const buttons = panel?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]');
+    buttons?.[nextIdx]?.focus();
+  };
+
+  // Reset focus index when dropdown closes
+  useEffect(() => {
+    if (!topicOpen) setTopicFocusIdx(-1);
+  }, [topicOpen]);
 
   // Close topic dropdown on outside click
   useEffect(() => {
@@ -155,10 +202,12 @@ export default function NavBar({
             className={`nav-filters__topics${topicOpen ? " nav-filters__topics--open" : ""}`}
           >
             <button
+              ref={topicTriggerRef}
               className="nav-filters__topic-trigger"
               onClick={() => setTopicOpen((v) => !v)}
               onMouseEnter={() => setTopicOpen(true)}
               aria-expanded={topicOpen}
+              aria-haspopup="menu"
               aria-label="Filter by topic"
             >
               {activeCategory === "All" ? "Topics" : activeCategory}
@@ -168,15 +217,16 @@ export default function NavBar({
             {topicOpen && (
               <div
                 className="nav-filters__topic-panel"
-                role="listbox"
+                role="menu"
                 aria-label="Topics"
                 onMouseLeave={() => setTopicOpen(false)}
+                onKeyDown={handleTopicPanelKeyDown}
               >
                 {ALL_CATEGORIES.map((cat) => (
                   <button
                     key={cat}
-                    role="option"
-                    aria-selected={activeCategory === cat}
+                    role="menuitem"
+                    aria-current={activeCategory === cat ? "true" : undefined}
                     onClick={() => handleTopicTap(cat)}
                     className={`nav-filters__topic-opt${activeCategory === cat ? " nav-filters__topic-opt--active" : ""}`}
                   >

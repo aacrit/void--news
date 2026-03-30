@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-29 (rev 12)
+Last updated: 2026-03-29 (rev 13)
 
 ## Philosophy
 
@@ -86,7 +86,7 @@ CEO (Aacrit)
 |-------|---------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 380-source list | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 409-source list | Yes | Source list changes |
 
 ### Cinematic Division
 
@@ -201,11 +201,11 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 
 ## Locked Decisions (Require CEO Approval)
 
-- Press & Precision design system (3-voice type, BiasLens Three Lenses, newspaper grid)
+- Cinematic Press design system (4-voice type, BiasLens Three Lenses, newspaper grid + cinematic tokens)
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 380-source curated list (3 tiers: 49 us_major, 158 international, 173 independent); 7-point political lean spectrum
+- 409-source curated list (3 tiers: 49 us_major, 178 international, 182 independent); 7-point political lean spectrum
 - $0 operational cost constraint
 - Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline summarization
 
@@ -229,12 +229,8 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 
 | Date | Key Changes |
 |------|-------------|
-| 2026-03-19 | Full agent chain run: bias engine fixes (nlp-engineer), Gemini Voice architecture (feed-intelligence), ThreadPoolExecutor parallelization (perf-optimizer), full favicon set + OG meta (logo-designer), responsive fixes (responsive-specialist) |
-| 2026-03-20 | Ranking v3.2→v3.3: 9 signals, confidence multiplier, lead gate, soft-floor normalization, topic diversity re-rank; dedup threshold 0.80; 3-article majority vote categorization; rerank.py; "Why This Story" tooltip; bias-blind ranking principle |
-| 2026-03-20 | Clustering v2 (threshold 0.2, entity-overlap merge pass); multi-section cross-listing (sections[], migration 011); source count corrected to 222 |
-| 2026-03-21 | Ranking v5.1 (Gemini editorial importance 12%, US-only divergence damper, cross-spectrum bonus, step 6c Gemini reasoning, step 7c editorial triage); new gemini_reasoning.py analyzer; migrations 012-013; Deep Dive redesign (seamless lede, dd-analysis-row, BiasInspectorInline, Source Perspectives, slot-machine cascade, iOS bottom-sheet, NavBar dateline with edition badge pills + regional timestamps) |
-| 2026-03-21 | Daily Brief (step 7d): pipeline/briefing/ module (daily_brief_generator.py, audio_producer.py, voice_rotation.py, generate_assets.py); Gemini BBC-style two-host TL;DR + audio script; edge-tts synthesis + pydub stitching; migration 017 (daily_briefs table + audio-briefs Storage); DailyBrief.tsx frontend component ("void --onair" pill + ScaleIcon + progress bar); pipeline cron corrected to 4x daily |
-| 2026-03-21 | Bias engine calibration (all 5 analyzers): sparsity-weighted baseline blending; LOW_CREDIBILITY_US_MAJOR (22 outlets) baseline 35; SPECIFIC_ATTRIBUTION verb-proximity gate; value_judgment denominator fix (weight 0.06); partisan_attack cap 30pts; superlative word-boundary regex; "invasion"/"killed" intensity reduced; passive voice ratio capped at 30; adaptive EMA alpha (0.3/0.15); cluster entity cache excludes current article. New: pipeline/validation/ (28-fixture ground-truth suite, signal_tracker, AllSides cross-ref, runner with --verbose/--quick/--json/--update-snapshot, snapshot.json). |
-| 2026-03-22 | Step 8b cluster dedup (delete stale clusters superseded by current run via article overlap); RSS global timeout fix (as_completed TimeoutError caught gracefully — hung feeds skipped without pipeline crash); refresh_audio.py (standalone audio regeneration ~60-90s); HomeContent progressive batch reveal (BATCH_SIZE=8, infinite scroll mobile); layout fixes (overflow-x hidden, min-width 0 on grid children); Daily Brief typography: Inter regular + blockquote left-border (replaced Playfair italic); justified body text with hyphens:auto; lean chips right-aligned via flex spacer; filter-row opaque bg-primary (was glass-bg). |
-| 2026-03-22 | Audio TTS migration: replaced Google Cloud TTS Neural2 + edge-tts with Gemini 2.5 Flash TTS (`gemini-2.5-flash-preview-tts`). Both speakers synthesized in a single API call with LLM-native prosody — no per-turn stitching. PCM 24kHz → pydub (pips + outro) → MP3 128k mono. voice_rotation.py rewritten to use Gemini prebuilt voices (5 rotating host pairs shared across all editions: Charon/Aoede, Orus/Zephyr, Sadaltager/Kore, Achird/Gacrux, Algenib/Achernar; opinion voice fixed per edition; 30 voices available). claude_brief_generator.py added (Claude CLI premium manual generator). Removed dependencies: edge-tts, google-cloud-texttospeech. Code: 592 lines → 231 lines. Benchmark: 211 words → 75.8s audio, 42s latency, $0. |
-| 2026-03-22 | Vol I clean DB reset: first-ever full pipeline run on empty database, 370 sources, 4,839 articles stored, 1,061 clusters (959 news + 102 opinion). Perf analysis (perf-optimizer): run took 108 min vs. 6 min budget; realistic incremental target 25-35 min after optimizations. Applied: TextBlob 50K→5K chars (sensationalism.py), RSS cap 30/feed (rss_fetcher.py), bias workers 4→8 (main.py). Source count reconciled: sources.json has 370 sources (49 us_major / 154 international / 167 independent), not 222 as previously documented. Validation framework (pipeline/validation/): 26-fixture ground-truth suite + signal_tracker + AllSides cross-ref + runner; 96.9% accuracy on first run. |
+| 2026-03-19 | First agent chain run: bias fixes, Gemini Voice arch, parallelization, favicon/OG, responsive |
+| 2026-03-20 | Ranking v3.3 (9 signals, bias-blind); Clustering v2 (entity-merge); multi-section editions |
+| 2026-03-21 | Ranking v5.1 (Gemini editorial); Deep Dive redesign; Daily Brief + audio pipeline; bias calibration (all 5 axes); validation framework (26 fixtures, 96.9%) |
+| 2026-03-22 | Gemini TTS migration (replaced edge-tts + GCloud); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
+| 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2 design tokens; source expansion 370→409 |

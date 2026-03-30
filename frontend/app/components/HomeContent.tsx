@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
@@ -13,37 +13,44 @@ import StoryCard from "./StoryCard";
 import DeepDive from "./DeepDive";
 import ErrorBoundary from "./ErrorBoundary";
 
+/* DeepDive-specific ErrorBoundary — shows dismissible error in the panel
+   instead of crashing the entire feed. */
+class DeepDiveErrorBoundary extends Component<
+  { children: ReactNode; onClose: () => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; onClose: () => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="deep-dive dd-error-boundary" role="dialog" aria-label="Error">
+          <div className="dd-error-boundary__inner">
+            <p className="text-base empty-state__body">
+              Unable to load analysis for this story.
+            </p>
+            <button className="btn-primary" onClick={this.props.onClose}>Close</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    VisibleCard — defers anim-filter-card until the element enters the viewport.
 
-   Uses a pooled IntersectionObserver (shared across all VisibleCards) to avoid
-   creating 100+ observers on long feeds. The observer is created once and
-   elements register/unregister via a WeakMap callback.
+   Uses the pooled IntersectionObserver from sharedObserver.ts (shared across
+   all card components) to avoid creating 100+ observers on long feeds.
    --------------------------------------------------------------------------- */
 
-// Pooled observer — single instance shared by all VisibleCard components
-const observerCallbacks = new WeakMap<Element, () => void>();
-let sharedObserver: IntersectionObserver | null = null;
-
-function getSharedObserver(): IntersectionObserver {
-  if (sharedObserver) return sharedObserver;
-  sharedObserver = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const cb = observerCallbacks.get(entry.target);
-          if (cb) {
-            cb();
-            observerCallbacks.delete(entry.target);
-            sharedObserver?.unobserve(entry.target);
-          }
-        }
-      }
-    },
-    { rootMargin: "100px" },
-  );
-  return sharedObserver;
-}
+import { useInView } from "../lib/sharedObserver";
 
 interface VisibleCardProps {
   className?: string;
@@ -52,32 +59,7 @@ interface VisibleCardProps {
 }
 
 function VisibleCard({ className = "", style, children }: VisibleCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    // If already in the viewport on mount (e.g. filter re-render), mark
-    // immediately without waiting for the observer callback.
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 100) {
-      setInView(true);
-      return;
-    }
-    // Guard against state updates after unmount — the shared observer's
-    // callback may fire between cleanup starting and the observer removing
-    // the element from its observation list.
-    let unmounted = false;
-    const observer = getSharedObserver();
-    observerCallbacks.set(el, () => { if (!unmounted) setInView(true); });
-    observer.observe(el);
-    return () => {
-      unmounted = true;
-      observerCallbacks.delete(el);
-      observer.unobserve(el);
-    };
-  }, []);
+  const [ref, inView] = useInView<HTMLDivElement>();
 
   return (
     <div
@@ -178,8 +160,30 @@ interface HomeContentProps {
    Edition is URL-driven: each edition has its own route.
    --------------------------------------------------------------------------- */
 
+const EDITION_STORAGE_KEY = "void-news-edition";
+const VALID_EDITIONS: Edition[] = ["world", "us", "india"];
+
 function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
-  const activeEdition: Edition = initialEdition;
+  // Edition state: URL-driven routes (/us, /india) pass the correct edition.
+  // At root URL (/), initialEdition is always "world" — check localStorage for
+  // a saved preference so returning visitors see their last-used edition.
+  const [activeEdition, setActiveEdition] = useState<Edition>(() => {
+    if (typeof window === "undefined") return initialEdition;
+    // Only apply localStorage override at root URL — explicit /us or /india
+    // routes should always honor their URL-specified edition.
+    const isRootUrl = window.location.pathname === "/" || window.location.pathname === "";
+    if (isRootUrl && initialEdition === "world") {
+      try {
+        const saved = localStorage.getItem(EDITION_STORAGE_KEY);
+        if (saved && VALID_EDITIONS.includes(saved as Edition)) {
+          return saved as Edition;
+        }
+      } catch {
+        // localStorage unavailable (private browsing, etc.) — fall through
+      }
+    }
+    return initialEdition;
+  });
 
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -314,6 +318,16 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setActiveCategory("All");
     setVisibleCount(BATCH_SIZE);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeEdition]);
+
+  // Persist edition preference to localStorage — returning visitors who land
+  // on the root URL (/) will see their last-used edition instead of "world".
+  useEffect(() => {
+    try {
+      localStorage.setItem(EDITION_STORAGE_KEY, activeEdition);
+    } catch {
+      // localStorage unavailable — no-op
+    }
   }, [activeEdition]);
 
   useEffect(() => {
@@ -853,16 +867,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive panel */}
+      {/* Deep Dive panel — wrapped in its own ErrorBoundary so one bad
+           cluster doesn't crash the entire feed */}
       {selectedStory && (
-        <DeepDive
-          story={selectedStory}
-          onClose={handleDeepDiveClose}
-          originRect={originRect}
-          onNavigate={handleDeepDiveNav}
-          storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
-          totalStories={filteredStories.length}
-        />
+        <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
+          <DeepDive
+            story={selectedStory}
+            onClose={handleDeepDiveClose}
+            originRect={originRect}
+            onNavigate={handleDeepDiveNav}
+            storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
+            totalStories={filteredStories.length}
+          />
+        </DeepDiveErrorBoundary>
       )}
 
       {/* BiasLens onboarding — first-visit 3-slide carousel */}
@@ -878,6 +895,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {isMobile && (
         <MobileBottomNav
           activeEdition={activeEdition}
+          onEditionChange={(edition) => { setActiveEdition(edition); setVisibleCount(BATCH_SIZE); }}
           activeLean={activeLean}
           onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
           activeCategory={activeCategory}

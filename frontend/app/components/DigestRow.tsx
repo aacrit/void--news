@@ -1,20 +1,20 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
 import type { Story } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
+import { useInView } from "../lib/sharedObserver";
 
-/* Category → left-border color mapping */
+/* Category → left-border color mapping (CSS custom properties from tokens.css) */
 const CAT_COLORS: Record<string, string> = {
   Politics: "var(--bias-left)",
-  Conflict: "#C0392B",
+  Conflict: "var(--cat-conflict)",
   Economy: "var(--accent-warm)",
-  Science: "#2980B9",
-  Health: "#27AE60",
-  Environment: "#16A085",
-  Culture: "#8E44AD",
+  Science: "var(--cat-science)",
+  Health: "var(--cat-health)",
+  Environment: "var(--cat-environment)",
+  Culture: "var(--cat-culture)",
 };
 
 interface DigestRowProps {
@@ -34,21 +34,7 @@ interface DigestRowProps {
    --------------------------------------------------------------------------- */
 
 export default function DigestRow({ story, index, onStoryClick, globalIndex, kbdFocused }: DigestRowProps) {
-  const rowRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = rowRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 100) { setVisible(true); return; }
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [rowRef, visible] = useInView<HTMLElement>();
 
   const borderColor = CAT_COLORS[story.category] || "var(--fg-muted)";
 

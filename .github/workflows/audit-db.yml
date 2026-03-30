@@ -1,5 +1,7 @@
 name: Database Quality Audit
 
+permissions: {}
+
 on:
   schedule:
     # Run after each pipeline execution (with ~30-min buffer)
@@ -37,7 +39,7 @@ jobs:
       - name: Run database quality audit
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           ARGS=""
           if [ "${{ inputs.verbose }}" = "true" ]; then
@@ -52,7 +54,7 @@ jobs:
         if: inputs.json_output
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           python pipeline/db_reviewer.py --json > db-audit-report.json
           cat db-audit-report.json

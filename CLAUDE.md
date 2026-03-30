@@ -1,10 +1,10 @@
 # void --news
 
-Last updated: 2026-03-28 (rev 14)
+Last updated: 2026-03-29 (rev 15)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
-News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 380 curated sources. World, US, India editions.
+News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 409 curated sources. World, US, India editions.
 
 ## Architecture
 
@@ -61,7 +61,7 @@ python pipeline/validation/runner.py --update-snapshot  # Refresh regression bas
 World-focused, top 20 clusters. **TL;DR**: 8-12 sentences editorial paragraph (150-220 words), joint board voice. **Opinion**: 3-5 sentences first-person-plural editorial judgment (lean rotates daily: left/center/right). **Audio**: BBC two-host format, `A:`/`B:` speaker tags (no segment markers), Gemini 2.5 Flash TTS (native multi-speaker, single API call), pydub post-processing (Glass & Gravity sonic identity, no background music bed — intentional), MP3 192k mono → Supabase Storage. 5 rotating host pairs shared across all editions (not edition-specific); opinion voice fixed per edition. Stored in `daily_briefs` table: `audio_duration_seconds`, `audio_file_size`, `audio_voice` columns. 5 calls/run (separate from 25-call cap). Claude CLI premium scripts optional (`claude_brief_generator.py`, generates TL;DR + opinion + audio in one call).
 
 ### Source Curation
-380 sources, 3 tiers: us_major (49), international (158), independent (173). 7-point lean spectrum. Editions: world (default), us, india. Source country determines edition.
+409 sources, 3 tiers: us_major (49), international (178), independent (182). 7-point lean spectrum. Editions: world (default), us, india. Source country determines edition.
 
 ## Pipeline Flow (4x Daily)
 
@@ -77,8 +77,8 @@ Non-audio runs (00:00, 12:00 UTC) carry forward audio fields from previous brief
 
 ## Frontend Design
 
-### "Press & Precision"
-Modern newspaper aesthetic. **Clean on arrival, data-dense on interaction.** Progressive disclosure. 1920s low-tech: space-efficient, enriched on interaction. Spring physics (Motion One) for user actions, ease-out for reveals.
+### "Cinematic Press" (Press & Precision v2)
+Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arrival, data-dense on interaction.** Progressive disclosure. Cinematic tokens in `tokens.css`: `--cin-amber` palette (amber/ash/paper tones, light+dark), `--ease-cinematic`/`--ease-whip`/`--ease-rack` easings, `--z-cinematic`, film grain (`--cin-grain-opacity`), vignette (`--cin-vignette-color`), color grade (`--cin-grade`), rack focus, atmospheric haze (`--cin-haze-far`). Spring physics (Motion One) for user actions, ease-out for reveals.
 
 **Four type voices**: Editorial (Playfair Display), Structural (Inter), Meta (Barlow Condensed, `--font-meta`), Data (IBM Plex Mono).
 
@@ -91,16 +91,16 @@ Importance-ranked feed with category filtering. Edition sections: World/US/India
 Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). Source Perspectives (agree/diverge grid). Asymmetric animation: open bouncy 500ms, close snappy 380ms.
 
 ### Animation
-Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms. Asymmetric panels.
+Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms. Asymmetric panels.
 
 ### CSS
-Load: `reset → tokens → layout → typography → components → animations → responsive` (in `frontend/app/styles/`). Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
+Load: `reset → tokens → layout → typography → components → animations → responsive` (in `frontend/app/styles/`). Also: `spectrum.css`, `desktop-feed.css`, `mobile-feed.css`, `skybox-banner.css`, `command-center.css`. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
 
 ## Data Model (Supabase)
 
 **Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio).
 
-**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-019).
+**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-028).
 
 Frontend edition filter: `.contains("sections", [edition])`.
 
@@ -123,7 +123,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
 
 ### Locked Decisions (CEO Approval Required)
-Press & Precision design, 6-axis bias model, Supabase data layer, static export, 380-source list (3 tiers, 7-point lean), $0 cost, Claude Max CLI only.
+Cinematic Press design, 6-axis bias model, Supabase data layer, static export, 409-source list (3 tiers, 7-point lean), $0 cost, Claude Max CLI only.
 
 ## Project Structure
 
@@ -148,11 +148,11 @@ void-news/
 │   │   ├── styles/        # tokens, layout, typography, components, animations, responsive, spectrum
 │   │   └── sources/       # /sources page
 │   └── next.config.ts
-├── data/sources.json      # 380 curated sources
-├── supabase/migrations/   # 001-019
-├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml
-├── .claude/agents/        # 20 agent definitions
-├── .claude/skills/        # pressdesign + 10 workflow skills
+├── data/sources.json      # 409 curated sources
+├── supabase/migrations/   # 001-028
+├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, + 6 more
+├── .claude/agents/        # 23 agent definitions
+├── .claude/skills/        # pressdesign + 14 workflow skills
 └── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT
 ```
 

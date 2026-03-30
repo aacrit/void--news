@@ -49,7 +49,9 @@ export default function FilterBar({
   activeEdition,
 }: FilterBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
+  const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
   const topicRef = useRef<HTMLDivElement>(null);
+  const topicTriggerRef = useRef<HTMLButtonElement>(null);
 
   function getEditionHref(slug: Edition): string {
     if (slug === "world") return "/";
@@ -65,7 +67,52 @@ export default function FilterBar({
     hapticMicro();
     onCategoryChange(cat);
     setTopicOpen(false);
+    setTopicFocusIdx(-1);
+    topicTriggerRef.current?.focus();
   };
+
+  // Arrow-key navigation for topic dropdown (WAI-ARIA menu pattern)
+  const handleTopicPanelKeyDown = (e: React.KeyboardEvent) => {
+    const items = ALL_CATEGORIES;
+    let nextIdx = topicFocusIdx;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        nextIdx = topicFocusIdx < items.length - 1 ? topicFocusIdx + 1 : 0;
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        nextIdx = topicFocusIdx > 0 ? topicFocusIdx - 1 : items.length - 1;
+        break;
+      case "Home":
+        e.preventDefault();
+        nextIdx = 0;
+        break;
+      case "End":
+        e.preventDefault();
+        nextIdx = items.length - 1;
+        break;
+      case "Escape":
+        e.preventDefault();
+        setTopicOpen(false);
+        setTopicFocusIdx(-1);
+        topicTriggerRef.current?.focus();
+        return;
+      default:
+        return;
+    }
+
+    setTopicFocusIdx(nextIdx);
+    const panel = topicRef.current?.querySelector('[role="menu"]');
+    const buttons = panel?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]');
+    buttons?.[nextIdx]?.focus();
+  };
+
+  // Reset focus index when dropdown closes
+  useEffect(() => {
+    if (!topicOpen) setTopicFocusIdx(-1);
+  }, [topicOpen]);
 
   // Close topic panel on outside click
   useEffect(() => {
@@ -82,13 +129,12 @@ export default function FilterBar({
   return (
     <div className="ubar">
       {/* ── Edition pills — navigation CTAs ── */}
-      <div className="ubar__group ubar__editions" role="tablist" aria-label="Edition">
+      <div className="ubar__group ubar__editions" role="navigation" aria-label="Edition">
         {EDITIONS.map((ed) => (
           <Link
             key={ed.slug}
             href={getEditionHref(ed.slug)}
-            role="tab"
-            aria-selected={activeEdition === ed.slug}
+            aria-current={activeEdition === ed.slug ? "page" : undefined}
             className={`ubar__edition${activeEdition === ed.slug ? " ubar__edition--active" : ""}`}
           >
             <EditionIcon slug={ed.slug} size={12} />
@@ -101,12 +147,11 @@ export default function FilterBar({
       <div className="ubar__sep" aria-hidden="true" />
 
       {/* ── Lean chips — perspective filter ── */}
-      <div className="ubar__group ubar__leans" role="tablist" aria-label="Political perspective">
+      <div className="ubar__group ubar__leans" role="group" aria-label="Filter by perspective">
         {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
           <button
             key={lean}
-            role="tab"
-            aria-selected={activeLean === lean}
+            aria-pressed={activeLean === lean}
             onClick={() => handleLeanTap(lean)}
             className={`ubar__lean ubar__lean--${lean.toLowerCase()}${activeLean === lean ? " ubar__lean--active" : ""}`}
           >
@@ -125,10 +170,12 @@ export default function FilterBar({
         className={`ubar__group ubar__topics${topicOpen ? " ubar__topics--open" : ""}`}
       >
         <button
+          ref={topicTriggerRef}
           className="ubar__topic-trigger"
           onClick={() => setTopicOpen((v) => !v)}
           onMouseEnter={() => setTopicOpen(true)}
           aria-expanded={topicOpen}
+          aria-haspopup="menu"
           aria-label="Filter by topic"
         >
           {activeCategory === "All" ? "All Topics" : activeCategory}
@@ -139,15 +186,16 @@ export default function FilterBar({
         {topicOpen && (
           <div
             className="ubar__topic-panel"
-            role="listbox"
+            role="menu"
             aria-label="Topics"
             onMouseLeave={() => setTopicOpen(false)}
+            onKeyDown={handleTopicPanelKeyDown}
           >
             {ALL_CATEGORIES.map((cat) => (
               <button
                 key={cat}
-                role="option"
-                aria-selected={activeCategory === cat}
+                role="menuitem"
+                aria-current={activeCategory === cat ? "true" : undefined}
                 onClick={() => handleTopicTap(cat)}
                 className={`ubar__topic-option${activeCategory === cat ? " ubar__topic-option--active" : ""}`}
               >

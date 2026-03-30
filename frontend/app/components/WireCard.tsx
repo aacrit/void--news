@@ -4,15 +4,15 @@ import { useRef } from "react";
 import type { Story } from "../lib/types";
 import { hapticLight } from "../lib/haptics";
 
-/* Category → dot color mapping */
+/* Category → dot color mapping (CSS custom properties from tokens.css) */
 const CAT_DOT_COLORS: Record<string, string> = {
   Politics: "var(--bias-left)",
-  Conflict: "#C0392B",
+  Conflict: "var(--cat-conflict)",
   Economy: "var(--accent-warm)",
-  Science: "#2980B9",
-  Health: "#27AE60",
-  Environment: "#16A085",
-  Culture: "#8E44AD",
+  Science: "var(--cat-science)",
+  Health: "var(--cat-health)",
+  Environment: "var(--cat-environment)",
+  Culture: "var(--cat-culture)",
 };
 
 interface WireCardProps {
@@ -62,6 +62,9 @@ export default function WireCard({ story, onStoryClick, globalIndex, kbdFocused 
 
       <span className="wire-card__dot" style={{ backgroundColor: dotColor }} aria-hidden="true" />
       <span className="wire-card__cat">{story.category}</span>
+      {story.sigilData?.sourceCount > 0 && (
+        <span className="wire-card__sources">{story.sigilData.sourceCount}</span>
+      )}
       <h3 className="wire-card__headline">{story.title}</h3>
     </article>
   );

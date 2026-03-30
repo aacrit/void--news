@@ -12,6 +12,13 @@ function getThemeFromStorage(): "light" | "dark" {
   if (typeof window === "undefined") return "dark";
   const stored = localStorage.getItem("void-news-theme") as "light" | "dark" | null;
   if (stored) return stored;
+  // Match the inline script's logic: respect system preference on first visit.
+  // The inline script in layout.tsx sets data-mode before React hydrates, so
+  // reading the DOM attribute is the fastest path. matchMedia is the fallback
+  // if the DOM attribute hasn't been set yet (SSR / edge case).
+  const domMode = document.documentElement.getAttribute("data-mode");
+  if (domMode === "light" || domMode === "dark") return domMode;
+  if (window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
   return "dark";
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import type { Edition } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
@@ -68,6 +68,29 @@ function SourcesPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [activeEdition, setActiveEdition] = useState<Edition>("world");
   const [activeLean, setActiveLean] = useState<LeanFilter>("All");
+  const editionGroupRef = useRef<HTMLDivElement>(null);
+  const leanGroupRef = useRef<HTMLDivElement>(null);
+
+  /** Arrow-key navigation within a radiogroup container */
+  const handleRadioGroupKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      const container = e.currentTarget;
+      const radios = Array.from(
+        container.querySelectorAll<HTMLButtonElement>('[role="radio"]')
+      );
+      const idx = radios.indexOf(e.target as HTMLButtonElement);
+      if (idx < 0) return;
+      const next =
+        e.key === "ArrowRight"
+          ? radios[(idx + 1) % radios.length]
+          : radios[(idx - 1 + radios.length) % radios.length];
+      next.focus();
+      next.click();
+    },
+    []
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -146,22 +169,32 @@ function SourcesPageInner() {
             </Link>
           </div>
 
-          {/* Edition tabs — local state, visually identical to NavBar */}
-          <div className="nav-tabs" role="tablist" aria-label="Edition selector">
-            {EDITIONS.map((edition) => (
-              <button
-                key={edition.slug}
-                role="tab"
-                aria-selected={activeEdition === edition.slug}
-                className={`nav-tab${activeEdition === edition.slug ? " nav-tab--active" : ""}`}
-                onClick={() => setActiveEdition(edition.slug)}
-              >
-                <span className="nav-tab__inner">
-                  <EditionIcon slug={edition.slug} size={14} />
-                  {edition.label}
-                </span>
-              </button>
-            ))}
+          {/* Edition filter — radiogroup (filters content, not panel switch) */}
+          <div
+            className="nav-tabs"
+            role="radiogroup"
+            aria-label="Edition"
+            ref={editionGroupRef}
+            onKeyDown={handleRadioGroupKeyDown}
+          >
+            {EDITIONS.map((edition) => {
+              const checked = activeEdition === edition.slug;
+              return (
+                <button
+                  key={edition.slug}
+                  role="radio"
+                  aria-checked={checked}
+                  tabIndex={checked ? 0 : -1}
+                  className={`nav-tab${checked ? " nav-tab--active" : ""}`}
+                  onClick={() => setActiveEdition(edition.slug)}
+                >
+                  <span className="nav-tab__inner">
+                    <EditionIcon slug={edition.slug} size={14} />
+                    {edition.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Dateline — desktop only */}
@@ -205,15 +238,22 @@ function SourcesPageInner() {
               <span className="sources-toolbar__count">{totalCount}</span> Sources
             </h1>
           </div>
-          <div className="sources-leans" role="tablist" aria-label="Filter by lean">
+          <div
+            className="sources-leans"
+            role="radiogroup"
+            aria-label="Filter by lean"
+            ref={leanGroupRef}
+            onKeyDown={handleRadioGroupKeyDown}
+          >
             {LEAN_FILTERS.map((lean) => {
-              const isActive = activeLean === lean;
+              const checked = activeLean === lean;
               return (
                 <button
                   key={lean}
-                  role="tab"
-                  aria-selected={isActive}
-                  className={`sources-edition-chip${isActive ? " sources-edition-chip--active" : ""}`}
+                  role="radio"
+                  aria-checked={checked}
+                  tabIndex={checked ? 0 : -1}
+                  className={`sources-edition-chip${checked ? " sources-edition-chip--active" : ""}`}
                   onClick={() => handleLeanTap(lean)}
                 >
                   <span
@@ -247,22 +287,10 @@ function SourcesPageInner() {
         {/* ---- Error state ---- */}
         {error && !isLoading && (
           <div className="empty-state">
-            <h2
-              className="text-xl"
-              style={{
-                color: "var(--fg-primary)",
-                marginBottom: "var(--space-3)",
-              }}
-            >
+            <h2 className="text-xl empty-state__title">
               Could not load sources
             </h2>
-            <p
-              className="text-base"
-              style={{
-                color: "var(--fg-tertiary)",
-                marginBottom: "var(--space-4)",
-              }}
-            >
+            <p className="text-base empty-state__body">
               {error}
             </p>
             <button
@@ -278,19 +306,10 @@ function SourcesPageInner() {
         {!isLoading && !error && sources.length === 0 && (
           <div className="empty-state">
             <LogoIcon size={48} animation="analyzing" />
-            <h2
-              className="text-xl"
-              style={{
-                color: "var(--fg-primary)",
-                marginBottom: "var(--space-3)",
-              }}
-            >
+            <h2 className="text-xl empty-state__title">
               No sources found
             </h2>
-            <p
-              className="text-base"
-              style={{ color: "var(--fg-tertiary)" }}
-            >
+            <p className="text-base empty-state__body--no-margin">
               Sources will appear once the pipeline syncs them to the database.
             </p>
           </div>
@@ -302,14 +321,13 @@ function SourcesPageInner() {
         )}
 
         {!isLoading && !error && filteredSources.length === 0 && sources.length > 0 && (
-          <div className="empty-state" style={{ padding: "var(--space-6) 0" }}>
-            <p className="text-base" style={{ color: "var(--fg-tertiary)" }}>
+          <div className="empty-state empty-state--inline">
+            <p className="text-base empty-state__body--no-margin">
               No sources match the current filters.
             </p>
             <button
               className="btn-secondary"
               onClick={() => { setActiveEdition("world"); setActiveLean("All"); }}
-              style={{ marginTop: "var(--space-3)" }}
             >
               Clear filters
             </button>
