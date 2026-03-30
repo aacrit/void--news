@@ -157,6 +157,12 @@
   padding-top: var(--space-2);
 }
 
+/* OnAir unit — pill + radio player as one block */
+.skb__onair-unit {
+  display: flex;
+  flex-direction: column;
+}
+
 /* OnAir shifted into a column when the other side is expanded */
 .skb__onair-shifted {
   margin-top: var(--space-3);
@@ -171,6 +177,33 @@
   padding-top: var(--space-3);
   border-top: 1px dotted color-mix(in srgb, var(--fg-muted) 15%, transparent);
   margin-top: var(--space-2);
+}
+
+.skb__onair-center .skb__onair-unit {
+  align-items: center;
+}
+
+/* Red recorder pulse dot */
+.skb__rec-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #E74C3C;
+  box-shadow: 0 0 6px rgba(231, 76, 60, 0.6);
+  animation: recPulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.skb__rec-dot--lg {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 8px rgba(231, 76, 60, 0.7);
+}
+
+@keyframes recPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -540,22 +573,7 @@
   letter-spacing: 0.03em;
 }
 
-.skb__transport-live {
-  font-family: var(--font-data);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #1A1816;
-  background: #C8956C;
-  padding: 1px 6px;
-  border-radius: 2px;
-  animation: livePulse 1.5s ease-in-out infinite;
-}
-
-@keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.6; }
-}
+/* LIVE badge removed — replaced by .skb__rec-dot red pulse */
 
 .skb__transport-voices {
   display: flex;
@@ -709,7 +727,8 @@
   }
 
   .skb__transport-play--active,
-  .skb__transport-live {
+  .skb__rec-dot {
     animation: none;
+    opacity: 1;
   }
 }
