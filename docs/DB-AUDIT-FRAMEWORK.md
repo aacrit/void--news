@@ -1,16 +1,16 @@
 # Database Quality Audit Framework
 
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-03-30
 **Status:** Read-Only Audit Framework
 
 > This document provides the comprehensive 8-domain audit framework for the void --news Supabase database. It is adapted from DondeAI's db-reviewer and serves as the specification for ongoing data quality validation.
 
 ## Context
 
-The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingesting ~1,200 articles from 380 curated sources and analyzing them through 6-axis NLP bias scoring. The pipeline writes to Supabase PostgreSQL, which serves as the single source of truth for the Next.js frontend (client-side reads only).
+The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingesting ~1,200 articles from 409 curated sources and analyzing them through 6-axis NLP bias scoring. The pipeline writes to Supabase PostgreSQL, which serves as the single source of truth for the Next.js frontend (client-side reads only).
 
-**Current as of 2026-03-27:**
-- Sources: 380 total (49 us_major + 158 international + 173 independent)
+**Current as of 2026-03-30:**
+- Sources: 409 total (49 us_major + 178 international + 182 independent)
 - Pipeline runs: 4x daily (00:00, 06:00, 12:00, 18:00 UTC)
 - Bias engine: 5 axes + confidence (Axis 6 = per-topic per-outlet EMA tracking, dormant)
 - Clustering: 2-phase (TF-IDF + entity-overlap merge)
@@ -22,17 +22,17 @@ The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingest
 
 ### 1. Source Coverage — /10
 
-**Requirement:** All 380 sources from `data/sources.json` are present, valid, and properly categorized.
+**Requirement:** All 409 sources from `data/sources.json` are present, valid, and properly categorized.
 
 #### Checks
 | Check | Expected | Query |
 |-------|----------|-------|
-| Total active sources | 380 | `SELECT COUNT(*) FROM sources WHERE is_active = true` |
+| Total active sources | 409 | `SELECT COUNT(*) FROM sources WHERE is_active = true` |
 | us_major tier | 49 | `SELECT COUNT(*) FROM sources WHERE tier='us_major' AND is_active=true` |
 | international tier | 158 | `SELECT COUNT(*) FROM sources WHERE tier='international' AND is_active=true` |
 | independent tier | 173 | `SELECT COUNT(*) FROM sources WHERE tier='independent' AND is_active=true` |
-| All have rss_url | 380 | `SELECT COUNT(*) FROM sources WHERE rss_url IS NOT NULL AND is_active=true` |
-| All have political_lean_baseline | 380 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline IS NOT NULL AND is_active=true` |
+| All have rss_url | 409 | `SELECT COUNT(*) FROM sources WHERE rss_url IS NOT NULL AND is_active=true` |
+| All have political_lean_baseline | 409 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline IS NOT NULL AND is_active=true` |
 | Baseline distribution: center | 204 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='center' AND is_active=true` |
 | Baseline distribution: center-left | 90 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='center-left' AND is_active=true` |
 | Baseline distribution: center-right | 27 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='center-right' AND is_active=true` |
@@ -47,7 +47,7 @@ The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingest
 - **Nice to Have:** Distribution skewed > 5% in any direction
 
 #### Scoring
-- 10/10: All 380 active, all tiers present, all baselines set
+- 10/10: All 409 active, all tiers present, all baselines set
 - 9/10: < 5 sources missing
 - 8/10: 5-10 sources missing OR 1 us_major missing
 - 6/10: > 10 missing OR multiple tier coverage gaps
@@ -568,7 +568,7 @@ CRITICAL FINDINGS:
   1. [Finding] — [Impact] — [Remediation]
 
 STATISTICS:
-  Sources: [N] active / 380 expected
+  Sources: [N] active / 409 expected
   Articles: [N] total, [N] with full_text, [N] with published_at
   Bias Scores: [N] total, [N] defaults, confidence distribution
   Clusters: [N] total, [N] single-article, avg [N.N] articles/cluster
@@ -622,7 +622,7 @@ When a specific domain shows degradation:
 ## Known Data Patterns & Thresholds
 
 ### Article Ingestion
-- **4x daily runs:** Expect 200-400 new articles per run (80-120 per source average across 380 sources)
+- **4x daily runs:** Expect 200-400 new articles per run (80-120 per source average across 409 sources)
 - **Duplication rate:** TF-IDF cosine 0.80 threshold removes ~15-20% of raw fetch
 - **Scrape success rate:** 85-95% (some RSS summaries retained as fallback)
 - **Section distribution:** World (60%), US (30%), India (10%)
