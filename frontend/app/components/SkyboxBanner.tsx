@@ -3,26 +3,38 @@
 import { useState } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
-import { hapticLight, hapticMedium } from "../lib/haptics";
+import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
+
+function formatTime(seconds: number): string {
+  const s = Math.floor(seconds);
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${r.toString().padStart(2, "0")}`;
+}
 
 /* ---------------------------------------------------------------------------
    SkyboxBanner — Two-column brief with full-width expand
 
    Default: two columns (TL;DR | Opinion) with 2-line previews.
    Expanding either side: full canvas width, other column hides.
-   OnAir CTA triggers the persistent AudioPlayer (rendered in HomeContent).
+   OnAir pill triggers the persistent AudioPlayer (rendered in HomeContent).
    --------------------------------------------------------------------------- */
 
 type ExpandedSide = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, handlePlayPause, setExpanded } = state;
+  const {
+    brief, isPlaying, currentTime, duration,
+    handlePlayPause, setExpanded, setPlayerVisible,
+  } = state;
   const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
 
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url;
+  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
+  const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
   // Full text — line-clamp truncates when collapsed, full when expanded
   const tldrFull = brief.tldr_text;
@@ -46,31 +58,48 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setExpandedSide((prev) => prev === side ? null : side);
   };
 
-  const durationMin = (brief.audio_duration_seconds) ? Math.ceil(brief.audio_duration_seconds / 60) : null;
-
-  // CTA that activates the persistent bottom AudioPlayer
-  const onairCTA = hasAudio ? (
-    <button
-      className={`skb__onair-cta${isPlaying ? " skb__onair-cta--active" : ""}`}
-      onClick={() => {
-        hapticMedium();
-        if (!isPlaying) handlePlayPause();
-        setExpanded(true);
-      }}
-      type="button"
-      aria-label={isPlaying ? "Open audio player" : "Play broadcast"}
-    >
-      <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
-      {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
-      <span className="skb__onair-label">void --onair</span>
-      {durationMin && !isPlaying && (
-        <span className="skb__onair-dur">{durationMin} min</span>
-      )}
-      {isPlaying && (
-        <span className="skb__onair-dur">Playing</span>
-      )}
-    </button>
-  ) : null;
+  // OnAir pill — prominent CTA with radio waves that triggers the bottom player
+  const onairPill = (
+    <div className="skb__onair-unit">
+      <button
+        className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}`}
+        onClick={() => {
+          hapticConfirm();
+          if (hasAudio) {
+            setPlayerVisible(true);
+            if (!isPlaying) handlePlayPause();
+            setExpanded(true);
+          }
+        }}
+        type="button"
+        disabled={!hasAudio}
+        aria-label={
+          !hasAudio ? "Audio broadcast unavailable"
+            : isPlaying ? "Open audio player" : "Play broadcast"
+        }
+        title={!hasAudio ? "Audio broadcast generates twice daily" : undefined}
+      >
+        <span className="skb__radio-waves" aria-hidden="true">
+          <span className="skb__radio-wave" />
+          <span className="skb__radio-wave" />
+          <span className="skb__radio-wave" />
+        </span>
+        {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
+        <span className="skb__onair-label">void --onair</span>
+        {hasAudio ? (
+          isPlaying ? (
+            <span className="skb__onair-dur">
+              {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+            </span>
+          ) : (
+            durationMin && <span className="skb__onair-dur">{durationMin} min</span>
+          )
+        ) : (
+          <span className="skb__onair-dur">twice daily</span>
+        )}
+      </button>
+    </div>
+  );
 
   return (
     <div className={`skb${expandedSide ? ` skb--expand-${expandedSide}` : ""}`} role="complementary" aria-label="Daily Brief">
@@ -153,10 +182,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         )}
       </div>
 
-      {/* OnAir CTA — centered below content */}
-      {onairCTA && (
-        <div className="skb__onair-center">{onairCTA}</div>
-      )}
+      {/* OnAir pill — always visible, centered below content */}
+      <div className="skb__onair-center">{onairPill}</div>
     </div>
   );
 }
