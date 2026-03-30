@@ -29,6 +29,8 @@ interface SigilProps {
   size?: "sm" | "lg" | "xl";
   /** "facts" = standard cluster mode (coverage ring + source count) */
   mode?: "facts";
+  /** Skip 4-stage stagger reveal on mobile — single 150ms transition */
+  instant?: boolean;
 }
 
 
@@ -170,11 +172,11 @@ function DataMark({ data, size, mounted }: {
 
 /* ── Popup: the mark unfolds ──────────────────────────────────────────── */
 
-function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data }: {
+function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data, instant = false }: {
   triggerRef: React.RefObject<HTMLElement | null>;
   isOpen: boolean; onClose: () => void;
   onMouseEnter: () => void; onMouseLeave: () => void;
-  id: string; data: SigilData;
+  id: string; data: SigilData; instant?: boolean;
 }) {
   const [pos, setPos] = useState<{ x: number; y: number; mobile: boolean } | null>(null);
   const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=details
@@ -198,6 +200,11 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       setPos({ x, y, mobile: false });
     }
     // Staggered reveal: mark → beam → circle → details
+    // instant mode: skip stagger, show all in one 150ms transition
+    if (instant) {
+      const t = setTimeout(() => setStage(4), 10);
+      return () => clearTimeout(t);
+    }
     const t1 = setTimeout(() => setStage(1), 30);
     const t2 = setTimeout(() => setStage(2), 180);
     const t3 = setTimeout(() => setStage(3), 320);
@@ -449,7 +456,7 @@ function InkUnderline({ variant, color }: { variant: number; color: string }) {
 
 /* ── Main Sigil ────────────────────────────────────────────────────────── */
 
-export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps) {
+export default function Sigil({ data, size = "sm", mode = "facts", instant = false }: SigilProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { open, show, hide, toggle, onKey, keep } = useHover();
   const [mounted, setMounted] = useState(false);
@@ -516,7 +523,7 @@ export default function Sigil({ data, size = "sm", mode = "facts" }: SigilProps)
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
         onMouseEnter={keep} onMouseLeave={hide}
-        id={tooltipId} data={data}
+        id={tooltipId} data={data} instant={instant}
       />
     </div>
   );

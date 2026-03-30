@@ -82,56 +82,102 @@ export default function MobileBottomNav({
 
   return (
     <nav className="mob-nav" aria-label="Mobile navigation" ref={navRef}>
-      {/* Expanded panel (rendered above the buttons) */}
-      {openPanel === "edition" && (
-        <div className="mob-nav__panel" role="listbox" aria-label="Edition">
-          {EDITIONS.map((ed) => (
-            <Link
-              key={ed.slug}
-              href={getEditionHref(ed.slug)}
-              role="option"
-              aria-selected={activeEdition === ed.slug}
-              className={`mob-nav__opt${activeEdition === ed.slug ? " mob-nav__opt--active" : ""}`}
-              onClick={() => setOpenPanel(null)}
-            >
-              <EditionIcon slug={ed.slug} size={12} />
-              {ed.label}
-            </Link>
-          ))}
-        </div>
-      )}
+      {/* Backdrop — fades in when any panel is open */}
+      <div
+        className="mob-nav__backdrop"
+        style={{
+          opacity: openPanel ? 1 : 0,
+          pointerEvents: openPanel ? "auto" : "none",
+          transition: openPanel
+            ? "opacity 150ms var(--ease-out)"
+            : "opacity 120ms var(--ease-out)",
+        }}
+        onClick={() => setOpenPanel(null)}
+        aria-hidden="true"
+      />
 
-      {openPanel === "lean" && (
-        <div className="mob-nav__panel" role="listbox" aria-label="Perspective">
-          {(["All", "Left", "Center", "Right"] as LeanChip[]).map((lean) => (
-            <button
-              key={lean}
-              role="option"
-              aria-selected={activeLean === lean}
-              className={`mob-nav__opt mob-nav__opt--lean-${lean.toLowerCase()}${activeLean === lean ? " mob-nav__opt--active" : ""}`}
-              onClick={() => handleLeanTap(lean)}
-            >
-              {lean === "All" ? "All Perspectives" : lean}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Edition panel */}
+      <div
+        className="mob-nav__panel"
+        role="listbox"
+        aria-label="Edition"
+        style={{
+          transform: openPanel === "edition" ? "translateY(0)" : "translateY(100%)",
+          opacity: openPanel === "edition" ? 1 : 0,
+          transition: openPanel === "edition"
+            ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
+            : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)",
+          pointerEvents: openPanel === "edition" ? "auto" : "none",
+        }}
+      >
+        {EDITIONS.map((ed) => (
+          <Link
+            key={ed.slug}
+            href={getEditionHref(ed.slug)}
+            role="option"
+            aria-selected={activeEdition === ed.slug}
+            className={`mob-nav__opt${activeEdition === ed.slug ? " mob-nav__opt--active" : ""}`}
+            onClick={() => setOpenPanel(null)}
+          >
+            <EditionIcon slug={ed.slug} size={12} />
+            {ed.label}
+          </Link>
+        ))}
+      </div>
 
-      {openPanel === "topic" && (
-        <div className="mob-nav__panel" role="listbox" aria-label="Topic">
-          {ALL_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              role="option"
-              aria-selected={activeCategory === cat}
-              className={`mob-nav__opt${activeCategory === cat ? " mob-nav__opt--active" : ""}`}
-              onClick={() => handleTopicTap(cat)}
-            >
-              {cat === "All" ? "All Topics" : cat}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Perspective panel */}
+      <div
+        className="mob-nav__panel"
+        role="listbox"
+        aria-label="Perspective"
+        style={{
+          transform: openPanel === "lean" ? "translateY(0)" : "translateY(100%)",
+          opacity: openPanel === "lean" ? 1 : 0,
+          transition: openPanel === "lean"
+            ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
+            : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)",
+          pointerEvents: openPanel === "lean" ? "auto" : "none",
+        }}
+      >
+        {(["All", "Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+          <button
+            key={lean}
+            role="option"
+            aria-selected={activeLean === lean}
+            className={`mob-nav__opt mob-nav__opt--lean-${lean.toLowerCase()}${activeLean === lean ? " mob-nav__opt--active" : ""}`}
+            onClick={() => handleLeanTap(lean)}
+          >
+            {lean === "All" ? "All Perspectives" : lean}
+          </button>
+        ))}
+      </div>
+
+      {/* Topic panel */}
+      <div
+        className="mob-nav__panel"
+        role="listbox"
+        aria-label="Topic"
+        style={{
+          transform: openPanel === "topic" ? "translateY(0)" : "translateY(100%)",
+          opacity: openPanel === "topic" ? 1 : 0,
+          transition: openPanel === "topic"
+            ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
+            : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)",
+          pointerEvents: openPanel === "topic" ? "auto" : "none",
+        }}
+      >
+        {ALL_CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            role="option"
+            aria-selected={activeCategory === cat}
+            className={`mob-nav__opt${activeCategory === cat ? " mob-nav__opt--active" : ""}`}
+            onClick={() => handleTopicTap(cat)}
+          >
+            {cat === "All" ? "All Topics" : cat}
+          </button>
+        ))}
+      </div>
 
       {/* Three CTA buttons */}
       <div className="mob-nav__bar">

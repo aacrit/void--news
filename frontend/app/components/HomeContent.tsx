@@ -98,6 +98,7 @@ import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
+import MobileFeed from "./MobileFeed";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -725,74 +726,86 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* Skybox: editorial brief + audio broadcast — above the news canvas */}
+            {/* News feed — mobile gets dedicated MobileFeed, desktop keeps broadsheet */}
             {!isLoading && stories.length > 0 && (
-              <>
-                <div className="skybox" role="complementary" aria-label="void originals">
-                  <DailyBriefText state={dailyBriefState} />
-                  <OnAirButton state={dailyBriefState} />
-                </div>
+              isMobile ? (
+                <MobileFeed
+                  stories={filteredStories}
+                  dailyBriefState={dailyBriefState}
+                  onStoryClick={handleStoryClick}
+                  filterKey={filterKey}
+                  visibleCount={visibleCount}
+                  hasMore={hasMore}
+                  sentinelRef={sentinelRef}
+                  kbdFocusIndex={kbdFocusIndex}
+                  editionMeta={editionMeta}
+                />
+              ) : (
+                <>
+                  <div className="skybox" role="complementary" aria-label="void originals">
+                    <DailyBriefText state={dailyBriefState} />
+                    <OnAirButton state={dailyBriefState} />
+                  </div>
 
-                {leadStories.length > 0 && (
-                  <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
-                    {leadStories.map((story, i) => (
-                      <VisibleCard
-                        key={story.id}
-                        className="lead-section__col"
-                        style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
-                      >
-                        <div data-story-index={i}>
-                          <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
-                        </div>
-                      </VisibleCard>
-                    ))}
-                  </section>
-                )}
-
-                {mediumStories.length > 0 && (
-                  <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                    {mediumStories.map((story, idx) => {
-                      const gi = leadStories.length + idx;
-                      return (
+                  {leadStories.length > 0 && (
+                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
+                      {leadStories.map((story, i) => (
                         <VisibleCard
                           key={story.id}
-                          className="grid-medium__item"
-                          style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
+                          className="lead-section__col"
+                          style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
                         >
-                          <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                          <div data-story-index={i}>
+                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                          </div>
                         </VisibleCard>
-                      );
-                    })}
-                  </section>
-                )}
+                      ))}
+                    </section>
+                  )}
 
-                {compactStories.length > 0 && (
-                  <>
-                    <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                      {visibleCompact.map((story, idx) => {
-                        const gi = leadStories.length + mediumStories.length + idx;
+                  {mediumStories.length > 0 && (
+                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
+                      {mediumStories.map((story, idx) => {
+                        const gi = leadStories.length + idx;
                         return (
                           <VisibleCard
                             key={story.id}
-                            className="grid-compact__item"
-                            style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
+                            className="grid-medium__item"
+                            style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
                           >
-                            <StoryCard
-                              story={story}
-                              index={idx + mediumStories.length + 1}
-                              onStoryClick={handleStoryClick}
-                              globalIndex={gi}
-                              kbdFocused={kbdFocusIndex === gi}
-                            />
+                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
                           </VisibleCard>
                         );
                       })}
                     </section>
+                  )}
 
-                    {hasMore && (
-                      <div className="feed-continuation" ref={sentinelRef}>
-                        <div className="feed-continuation__fade" aria-hidden="true" />
-                        {!isMobile && (
+                  {compactStories.length > 0 && (
+                    <>
+                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
+                        {visibleCompact.map((story, idx) => {
+                          const gi = leadStories.length + mediumStories.length + idx;
+                          return (
+                            <VisibleCard
+                              key={story.id}
+                              className="grid-compact__item"
+                              style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
+                            >
+                              <StoryCard
+                                story={story}
+                                index={idx + mediumStories.length + 1}
+                                onStoryClick={handleStoryClick}
+                                globalIndex={gi}
+                                kbdFocused={kbdFocusIndex === gi}
+                              />
+                            </VisibleCard>
+                          );
+                        })}
+                      </section>
+
+                      {hasMore && (
+                        <div className="feed-continuation" ref={sentinelRef}>
+                          <div className="feed-continuation__fade" aria-hidden="true" />
                           <button
                             className="feed-continuation__link"
                             onClick={loadMoreStories}
@@ -800,22 +813,22 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                           >
                             Continue reading
                           </button>
-                        )}
-                      </div>
-                    )}
-                  </>
-                )}
+                        </div>
+                      )}
+                    </>
+                  )}
 
-                {filteredStories.length > 0 && (
-                  <div className="edition-line">
-                    <span className="edition-meta">
-                      {editionMeta.label} Edition /{" "}
-                      {filteredStories.length} stories
-                    </span>
-                    <LogoWordmark height={14} />
-                  </div>
-                )}
-              </>
+                  {filteredStories.length > 0 && (
+                    <div className="edition-line">
+                      <span className="edition-meta">
+                        {editionMeta.label} Edition /{" "}
+                        {filteredStories.length} stories
+                      </span>
+                      <LogoWordmark height={14} />
+                    </div>
+                  )}
+                </>
+              )
             )}
         </>
       </main>
