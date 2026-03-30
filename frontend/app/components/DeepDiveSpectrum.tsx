@@ -198,7 +198,7 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
                         aria-hidden="true"
                       />
                     </span>
-                    <span className="dd-spectrum__source-name">{source.name}</span>
+                    <span className="dd-spectrum__source-name" aria-hidden="true">{source.name}</span>
                   </a>
                 );
               })}

@@ -27,6 +27,7 @@ export interface DailyBriefState {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
+  buffered: number;
   audioError: boolean;
   audioRef: React.RefObject<HTMLAudioElement | null>;
   audioCallbackRef: (el: HTMLAudioElement | null) => void;
@@ -40,6 +41,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [audioError, setAudioError] = useState(false);
+  const [buffered, setBuffered] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(0);
     setDuration(0);
     setAudioError(false);
+    setBuffered(0);
     // Fetch edition-specific brief (pipeline generates distinct content per edition)
     fetchDailyBrief(edition).then((data) => {
       if (!cancelled) setBrief(data);
@@ -84,12 +87,18 @@ export function useDailyBrief(edition: string): DailyBriefState {
     };
     const onEnd = () => setIsPlaying(false);
     const onError = () => { setAudioError(true); setIsPlaying(false); };
+    const onProgress = () => {
+      if (el.buffered.length > 0 && el.duration > 0) {
+        setBuffered((el.buffered.end(el.buffered.length - 1) / el.duration) * 100);
+      }
+    };
 
     el.addEventListener("timeupdate", onTime);
     el.addEventListener("loadedmetadata", onMeta);
     el.addEventListener("durationchange", onMeta);
     el.addEventListener("ended", onEnd);
     el.addEventListener("error", onError);
+    el.addEventListener("progress", onProgress);
     if (el.duration && isFinite(el.duration)) setDuration(el.duration);
 
     listenerCleanupRef.current = () => {
@@ -98,6 +107,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
       el.removeEventListener("durationchange", onMeta);
       el.removeEventListener("ended", onEnd);
       el.removeEventListener("error", onError);
+      el.removeEventListener("progress", onProgress);
     };
   }, []);
 
@@ -131,7 +141,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(t);
   }, []);
 
-  return { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek };
+  return { brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek };
 }
 
 /* ---------------------------------------------------------------------------
@@ -281,7 +291,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
    --------------------------------------------------------------------------- */
 
 export function OnAirButton({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioError, audioRef, handlePlayPause, handleSeek } = state;
+  const { brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, handlePlayPause, handleSeek } = state;
 
   if (!brief) return null;
 
@@ -377,6 +387,7 @@ export function OnAirButton({ state }: { state: DailyBriefState }) {
             {/* Seek bar with section divider */}
             <div className="onair__seek-wrap">
               <div className="onair__bar">
+                <div className="onair__buffer" style={{ width: `${buffered}%` }} />
                 <div className="onair__fill" style={{ width: `${progress}%` }} />
                 {hasOpinion && (
                   <span

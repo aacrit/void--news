@@ -770,7 +770,7 @@
   text-transform: uppercase;
 }
 
-/* Source name — truncated to fit column */
+/* Source name — hidden by default, visible on hover (logo suffices) */
 .dd-spectrum__source-name {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
@@ -780,6 +780,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
+  display: none;
+}
+
+.dd-spectrum__source:hover .dd-spectrum__source-name,
+.dd-spectrum__source:focus-visible .dd-spectrum__source-name {
+  display: block;
 }
 
 /* Per-column "more" count when collapsed */
