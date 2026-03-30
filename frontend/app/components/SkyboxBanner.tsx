@@ -100,7 +100,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     <div className="skb__onair-unit">
       <button
         className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
-        onClick={() => { hapticConfirm(); if (audioError) return; setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
+        onClick={() => { hapticConfirm(); setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
         type="button"
         aria-label={radioOpen ? "Close radio player" : "Open radio player"}
         aria-expanded={radioOpen}

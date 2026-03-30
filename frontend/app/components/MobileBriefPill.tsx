@@ -101,7 +101,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
 
   if (!brief) return null;
 
-  const hasAudio = !!brief.audio_url && !audioError;
+  const hasAudio = !!brief.audio_url;
   const displayDuration =
     (hasAudio && brief.audio_duration_seconds) || duration;
   const progress =
