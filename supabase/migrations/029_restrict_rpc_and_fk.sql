@@ -5,6 +5,15 @@ REVOKE EXECUTE ON FUNCTION cleanup_stuck_pipeline_runs(INT) FROM anon, authentic
 REVOKE EXECUTE ON FUNCTION refresh_cluster_enrichment(UUID) FROM anon, authenticated;
 REVOKE EXECUTE ON FUNCTION update_updated_at_column() FROM anon, authenticated;
 
+-- Clean up dangling references before adding FK constraints
+UPDATE daily_briefs SET opinion_cluster_id = NULL
+  WHERE opinion_cluster_id IS NOT NULL
+  AND opinion_cluster_id NOT IN (SELECT id FROM story_clusters);
+
+UPDATE story_clusters SET story_memory_id = NULL
+  WHERE story_memory_id IS NOT NULL
+  AND story_memory_id NOT IN (SELECT id FROM story_memory);
+
 -- P0 Data Integrity: Add FK for opinion_cluster_id on daily_briefs
 -- SET NULL on delete so older briefs gracefully lose their opinion link when clusters are pruned
 ALTER TABLE daily_briefs
