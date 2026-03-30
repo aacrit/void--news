@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
-import { hapticLight, hapticMedium, hapticTick } from "../lib/haptics";
+import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 
 function formatTime(seconds: number): string {
@@ -14,40 +14,90 @@ function formatTime(seconds: number): string {
 }
 
 /* ---------------------------------------------------------------------------
-   MobileBriefPill — Collapsed 44px pill that expands inline.
+   MobileBriefPill — Mobile-optimized skybox with TL;DR, Opinion, OnAir
 
-   Collapsed: "void --tl;dr · 3h ago    [▶] void --onair"
-   Expanded: Full TL;DR + dotted rule + full Opinion + audio player
-   Spring-snappy expand (300ms), ease-out collapse (200ms).
+   Single-column stacked layout. Each section has independent "read more"
+   expand/collapse. OnAir pill uses the retro radio aesthetic from desktop.
+   Radio player expands below the pill with 20 waveform bars.
+   Spring-snappy for section expand, spring-bouncy for radio expand.
    --------------------------------------------------------------------------- */
 
 export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
-  const [expanded, setExpanded] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState(0);
-  const pillRef = useRef<HTMLDivElement>(null);
+  const {
+    brief,
+    isPlaying,
+    currentTime,
+    duration,
+    audioError,
+    audioRef,
+    audioCallbackRef,
+    handlePlayPause,
+    handleSeek,
+  } = state;
 
-  // Measure content height for smooth expand/collapse
+  const [tldrExpanded, setTldrExpanded] = useState(false);
+  const [opinionExpanded, setOpinionExpanded] = useState(false);
+  const [radioOpen, setRadioOpen] = useState(false);
+
+  // Refs for measuring expand heights
+  const tldrRef = useRef<HTMLDivElement>(null);
+  const opinionRef = useRef<HTMLDivElement>(null);
+  const radioRef = useRef<HTMLDivElement>(null);
+
+  const [tldrHeight, setTldrHeight] = useState(0);
+  const [opinionHeight, setOpinionHeight] = useState(0);
+  const [radioHeight, setRadioHeight] = useState(0);
+
+  // ResizeObservers for smooth expand/collapse
   useEffect(() => {
-    if (!contentRef.current) return;
-    const ro = new ResizeObserver(([entry]) => {
-      setContentHeight(entry.contentRect.height);
-    });
-    ro.observe(contentRef.current);
+    if (!tldrRef.current) return;
+    const ro = new ResizeObserver(([e]) => setTldrHeight(e.contentRect.height));
+    ro.observe(tldrRef.current);
     return () => ro.disconnect();
-  }, [expanded]);
+  }, [tldrExpanded]);
+
+  useEffect(() => {
+    if (!opinionRef.current) return;
+    const ro = new ResizeObserver(([e]) =>
+      setOpinionHeight(e.contentRect.height),
+    );
+    ro.observe(opinionRef.current);
+    return () => ro.disconnect();
+  }, [opinionExpanded]);
+
+  useEffect(() => {
+    if (!radioRef.current) return;
+    const ro = new ResizeObserver(([e]) =>
+      setRadioHeight(e.contentRect.height),
+    );
+    ro.observe(radioRef.current);
+    return () => ro.disconnect();
+  }, [radioOpen]);
+
+  // 20 waveform bars for narrower mobile viewport
+  const waveformBars = useMemo(
+    () =>
+      Array.from(
+        { length: 20 },
+        (_, i) => 8 + Math.sin(i * 0.65) * 14 + Math.sin(i * 1.3) * 5,
+      ),
+    [],
+  );
 
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url && !audioError;
-  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
-  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
+  const displayDuration =
+    (hasAudio && brief.audio_duration_seconds) || duration;
+  const progress =
+    displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
+  const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
-  // Opinion section data
   const opinionStart = brief.opinion_start_seconds ?? null;
   const hasOpinion = opinionStart !== null && displayDuration > 0;
-  const opinionPct = hasOpinion ? (opinionStart / displayDuration) * 100 : 100;
+  const opinionPct = hasOpinion
+    ? (opinionStart / displayDuration) * 100
+    : 100;
   const inOpinion = hasOpinion && currentTime >= opinionStart;
 
   const seekTo = (seconds: number) => {
@@ -58,169 +108,319 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
     if (!isPlaying) handlePlayPause();
   };
 
-  const leanLabel = brief.opinion_lean === "left" ? "Progressive"
-    : brief.opinion_lean === "right" ? "Conservative"
-    : "Pragmatic";
-
-  const leanMod = brief.opinion_lean === "left" ? "mbp-lean--left"
-    : brief.opinion_lean === "right" ? "mbp-lean--right"
-    : "mbp-lean--center";
-
-  const paragraphs = brief.tldr_text
-    .split("\n")
-    .map((p) => p.trim())
+  // Split sentences for per-section preview/expand
+  const tldrSentences = brief.tldr_text
+    .split(/(?<=[.!?])\s+/)
     .filter(Boolean);
+  const tldrPreview = tldrSentences.slice(0, 2).join(" ");
+  const tldrRest = tldrSentences.slice(2).join(" ");
+  const tldrHasMore = tldrRest.length > 0;
 
-  const handleToggle = () => {
-    hapticLight();
-    setExpanded((prev) => !prev);
-  };
+  const opinionSentences = brief.opinion_text
+    ? brief.opinion_text.split(/(?<=[.!?])\s+/).filter(Boolean)
+    : [];
+  const opinionPreview = opinionSentences.slice(0, 2).join(" ");
+  const opinionRest = opinionSentences.slice(2).join(" ");
+  const opinionHasMore = opinionRest.length > 0;
+
+  const leanLabel =
+    brief.opinion_lean === "left"
+      ? "Progressive"
+      : brief.opinion_lean === "right"
+        ? "Conservative"
+        : "Pragmatic";
+
+  const leanMod =
+    brief.opinion_lean === "left"
+      ? "skb-lean--left"
+      : brief.opinion_lean === "right"
+        ? "skb-lean--right"
+        : "skb-lean--center";
 
   return (
-    <div className={`mbp${expanded ? " mbp--expanded" : ""}`} ref={pillRef} role="complementary" aria-label="Daily Brief">
+    <div className="mbp" role="complementary" aria-label="Daily Brief">
       {hasAudio && (
-        <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
+        <audio
+          ref={audioCallbackRef}
+          src={brief.audio_url!}
+          preload="metadata"
+        />
       )}
 
-      {/* Collapsed pill header — always visible */}
-      <button
-        className="mbp__header"
-        onClick={handleToggle}
-        type="button"
-        aria-expanded={expanded}
-      >
-        <div className="mbp__left">
+      {/* ── TL;DR Section ── */}
+      <section className="mbp__section" aria-label="void --tl;dr">
+        <div className="mbp__label">
           <ScaleIcon size={12} animation="idle" />
           <span className="mbp__cmd">void --tl;dr</span>
           {brief.created_at && (
             <span className="mbp__time">{timeAgo(brief.created_at)}</span>
           )}
         </div>
-        <div className="mbp__right">
-          {hasAudio && !expanded && (
+
+        {brief.tldr_headline && (
+          <h3 className="mbp__hl mbp__hl--tldr">{brief.tldr_headline}</h3>
+        )}
+
+        <p className="mbp__preview mbp__preview--tldr">{tldrPreview}</p>
+
+        {/* Inline expand */}
+        <div
+          className="mbp__expand"
+          style={{
+            height: tldrExpanded ? tldrHeight : 0,
+            transition: tldrExpanded
+              ? "height 350ms var(--spring-snappy)"
+              : "height 200ms var(--ease-out)",
+          }}
+        >
+          <div ref={tldrRef} className="mbp__expand-inner">
+            <p className="mbp__expand-text mbp__expand-text--tldr">
+              {tldrRest}
+            </p>
+          </div>
+        </div>
+
+        {tldrHasMore && (
+          <button
+            className="mbp__more"
+            onClick={() => {
+              hapticLight();
+              setTldrExpanded((v) => !v);
+            }}
+            type="button"
+            aria-expanded={tldrExpanded}
+          >
+            {tldrExpanded ? "less" : "read more"}
+          </button>
+        )}
+      </section>
+
+      {/* ── Dotted rule ── */}
+      {brief.opinion_text && <hr className="mbp__rule" />}
+
+      {/* ── Opinion Section ── */}
+      {brief.opinion_text && (
+        <section className="mbp__section" aria-label="void --opinion">
+          <div className="mbp__label">
+            <ScaleIcon size={12} animation="idle" />
+            <span className="mbp__cmd">void --opinion</span>
+            {brief.opinion_lean && (
+              <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
+            )}
+          </div>
+
+          {brief.opinion_headline && (
+            <h3 className="mbp__hl mbp__hl--opinion">
+              {brief.opinion_headline}
+            </h3>
+          )}
+
+          <p className="mbp__preview mbp__preview--opinion">
+            {opinionPreview}
+          </p>
+
+          {/* Inline expand */}
+          <div
+            className="mbp__expand"
+            style={{
+              height: opinionExpanded ? opinionHeight : 0,
+              transition: opinionExpanded
+                ? "height 350ms var(--spring-snappy)"
+                : "height 200ms var(--ease-out)",
+            }}
+          >
+            <div ref={opinionRef} className="mbp__expand-inner">
+              <p className="mbp__expand-text mbp__expand-text--opinion">
+                {opinionRest}
+              </p>
+            </div>
+          </div>
+
+          {opinionHasMore && (
             <button
-              className={`mbp__play${isPlaying ? " mbp__play--active" : ""}`}
-              onClick={(e) => { e.stopPropagation(); hapticMedium(); handlePlayPause(); }}
+              className="mbp__more"
+              onClick={() => {
+                hapticLight();
+                setOpinionExpanded((v) => !v);
+              }}
               type="button"
-              aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
+              aria-expanded={opinionExpanded}
             >
-              <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+              {opinionExpanded ? "less" : "read more"}
             </button>
           )}
-          <span className="mbp__toggle" aria-hidden="true">
-            {expanded ? "Less" : "Read"}
-          </span>
-        </div>
-      </button>
+        </section>
+      )}
 
-      {/* Expandable content */}
-      <div
-        className="mbp__expand"
-        style={{
-          height: expanded ? contentHeight : 0,
-          transition: expanded
-            ? "height 300ms var(--spring-snappy)"
-            : "height 200ms var(--ease-out)",
-        }}
-      >
-        <div ref={contentRef} className="mbp__content">
-          {/* TL;DR section */}
-          <section className="mbp__section" aria-label="void --tl;dr">
-            {brief.tldr_headline && (
-              <h3 className="mbp__headline mbp__headline--accent">{brief.tldr_headline}</h3>
-            )}
-            <div className="mbp__text">
-              {paragraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-          </section>
+      {/* ── OnAir Pill + Radio Player ── */}
+      {hasAudio && (
+        <div className="mbp__onair-zone">
+          <hr className="mbp__rule" />
 
-          {/* Dotted firewall rule */}
-          {brief.opinion_text && <hr className="mbp__rule" />}
-
-          {/* Opinion section */}
-          {brief.opinion_text && (
-            <section className="mbp__section" aria-label="void --opinion">
-              <div className="mbp__opinion-label">
-                <ScaleIcon size={12} animation="idle" />
-                <span className="mbp__cmd">void --opinion</span>
-                {brief.opinion_lean && (
-                  <span className={`mbp__lean ${leanMod}`}>{leanLabel}</span>
-                )}
-              </div>
-              {brief.opinion_headline && (
-                <h3 className="mbp__headline">{brief.opinion_headline}</h3>
+          <div className="mbp__onair-center">
+            <button
+              className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
+              onClick={() => {
+                hapticConfirm();
+                setRadioOpen((v) => !v);
+                if (!isPlaying && !radioOpen) handlePlayPause();
+              }}
+              type="button"
+              aria-label={radioOpen ? "Close radio player" : "Open radio player"}
+              aria-expanded={radioOpen}
+            >
+              <span className="skb__radio-waves" aria-hidden="true">
+                <span className="skb__radio-wave" />
+                <span className="skb__radio-wave" />
+                <span className="skb__radio-wave" />
+              </span>
+              {isPlaying && (
+                <span className="skb__rec-dot" aria-hidden="true" />
               )}
-              <div className="mbp__text">
-                <p>{brief.opinion_text}</p>
-              </div>
-            </section>
-          )}
+              <span className="skb__onair-label">void --onair</span>
+              {durationMin && !isPlaying && (
+                <span className="skb__onair-dur">{durationMin} min</span>
+              )}
+              {isPlaying && (
+                <span className="skb__onair-dur">
+                  {formatTime(currentTime)} /{" "}
+                  {formatTime(displayDuration || 0)}
+                </span>
+              )}
+            </button>
+          </div>
 
-          {/* Audio player (inline when expanded) */}
-          {hasAudio && (
-            <div className="mbp__audio">
-              <div className="mbp__audio-header">
+          {/* Radio player expands below the pill */}
+          <div
+            className="skb__radio"
+            style={{
+              height: radioOpen ? radioHeight : 0,
+              transition: radioOpen
+                ? "height 400ms var(--spring-bouncy)"
+                : "height 250ms var(--ease-out)",
+            }}
+          >
+            <div
+              ref={radioRef}
+              className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}
+            >
+              {/* Waveform — 20 bars for mobile */}
+              <div
+                className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`}
+                aria-hidden="true"
+              >
+                {waveformBars.map((h, i) => (
+                  <div
+                    key={i}
+                    className="skb__waveform-bar"
+                    style={{
+                      height: `${h}px`,
+                      animationDelay: `${i * 55}ms`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Transport controls */}
+              <div className="skb__transport">
                 <button
-                  className={`mbp__play mbp__play--lg${isPlaying ? " mbp__play--active" : ""}`}
-                  onClick={() => { hapticMedium(); handlePlayPause(); }}
+                  className={`skb__transport-play${isPlaying ? " skb__transport-play--active" : ""}`}
+                  onClick={() => {
+                    hapticMedium();
+                    handlePlayPause();
+                  }}
                   type="button"
-                  aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
+                  aria-label={isPlaying ? "Pause" : "Play"}
                 >
-                  <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+                  <span aria-hidden="true">
+                    {isPlaying ? "\u275A\u275A" : "\u25B6"}
+                  </span>
                 </button>
-                <span className="mbp__cmd">void --onair</span>
-                <span className="mbp__audio-time">
-                  {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+                <div className="skb__transport-info">
+                  <div className="skb__transport-label">
+                    <ScaleIcon
+                      size={12}
+                      animation={isPlaying ? "analyzing" : "idle"}
+                    />
+                    <span className="skb__transport-cmd">void --onair</span>
+                    {isPlaying && (
+                      <span
+                        className="skb__rec-dot skb__rec-dot--lg"
+                        aria-label="Recording"
+                      />
+                    )}
+                  </div>
+                  <div className="skb__transport-voices">
+                    <span>Voice A: the facts</span>
+                    <span
+                      className="skb__transport-dot"
+                      aria-hidden="true"
+                    />
+                    <span>Voice B: the questions</span>
+                  </div>
+                </div>
+                <span className="skb__transport-time">
+                  {formatTime(currentTime)} /{" "}
+                  {formatTime(displayDuration || 0)}
                 </span>
               </div>
 
-              {/* Section labels */}
-              <div className="mbp__sections">
-                <button
-                  className={`mbp__section-btn${!inOpinion ? " mbp__section-btn--active" : ""}`}
-                  onClick={() => seekTo(0)}
-                  type="button"
-                  style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}
-                >
-                  News
-                </button>
-                {hasOpinion && (
+              {/* Seek bar with section skip */}
+              <div className="skb__radio-seek">
+                <div className="skb__radio-sections">
                   <button
-                    className={`mbp__section-btn${inOpinion ? " mbp__section-btn--active" : ""}`}
-                    onClick={() => seekTo(opinionStart)}
+                    className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
+                    onClick={() => seekTo(0)}
                     type="button"
-                    style={{ width: `${100 - opinionPct}%` }}
+                    style={
+                      hasOpinion
+                        ? { width: `${opinionPct}%` }
+                        : { width: "100%" }
+                    }
                   >
-                    Opinion
+                    News
                   </button>
-                )}
-              </div>
-
-              {/* Seek bar */}
-              <div className="mbp__seek-wrap">
-                <div className="mbp__bar">
-                  <div className="mbp__fill" style={{ width: `${progress}%` }} />
                   {hasOpinion && (
-                    <span className="mbp__section-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />
+                    <button
+                      className={`skb__radio-sec${inOpinion ? " skb__radio-sec--active" : ""}`}
+                      onClick={() => seekTo(opinionStart)}
+                      type="button"
+                      style={{ width: `${100 - opinionPct}%` }}
+                    >
+                      Opinion
+                    </button>
                   )}
                 </div>
-                <input
-                  type="range"
-                  className="mbp__seek"
-                  min={0}
-                  max={displayDuration || 100}
-                  value={currentTime}
-                  step={0.5}
-                  onChange={handleSeek}
-                  aria-label="Broadcast seek position"
-                />
+                <div className="skb__radio-bar-wrap">
+                  <div className="skb__radio-bar">
+                    <div
+                      className="skb__radio-fill"
+                      style={{ width: `${progress}%` }}
+                    />
+                    {hasOpinion && (
+                      <span
+                        className="skb__radio-mark"
+                        style={{ left: `${opinionPct}%` }}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                  <input
+                    type="range"
+                    className="skb__radio-input"
+                    min={0}
+                    max={displayDuration || 100}
+                    value={currentTime}
+                    step={0.5}
+                    onChange={handleSeek}
+                    aria-label="Seek position"
+                  />
+                </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
