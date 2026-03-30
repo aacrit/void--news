@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
 import { hapticLight, hapticMedium } from "../lib/haptics";
@@ -14,20 +14,19 @@ function formatTime(seconds: number): string {
 }
 
 /* ---------------------------------------------------------------------------
-   SkyboxBanner — 40px single-line collapsed brief for desktop v2
+   SkyboxBanner — Two-column brief replacing the old desktop Skybox
 
-   "void --tl;dr · 3h — Six nations broke a decade-long...  [Read]  [▶ 4:32]"
+   Left:  void --tl;dr (Structural voice — Inter, factual, reporting)
+   Right: void --opinion (Editorial voice — Playfair, italic, editorial)
+   Footer: [Read full brief] + [▶ void --onair] prominent player
 
-   Clicking [Read] opens an overlay with full TL;DR + Opinion + audio player.
+   Canvas-width (no full-bleed). Overlay is void-branded dark space.
    --------------------------------------------------------------------------- */
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
   const [expanded, setExpanded] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape
   useEffect(() => {
     if (!expanded) return;
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setExpanded(false); };
@@ -42,7 +41,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
-  // Opinion data
   const opinionStart = brief.opinion_start_seconds ?? null;
   const hasOpinion = opinionStart !== null && displayDuration > 0;
   const opinionPct = hasOpinion ? (opinionStart / displayDuration) * 100 : 100;
@@ -56,9 +54,14 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     if (!isPlaying) handlePlayPause();
   };
 
-  // First sentence for the collapsed banner
-  const firstSentence = brief.tldr_text.split(/[.!?]\s/)[0]?.trim() || brief.tldr_text.slice(0, 120);
-  const firstSentenceText = firstSentence.match(/[.!?]$/) ? firstSentence : firstSentence + "...";
+  // TL;DR preview: first 2 sentences
+  const tldrSentences = brief.tldr_text.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const tldrPreview = tldrSentences.slice(0, 2).join(" ");
+
+  // Opinion preview: first 2 sentences
+  const opinionPreview = brief.opinion_text
+    ? brief.opinion_text.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")
+    : "";
 
   const paragraphs = brief.tldr_text.split("\n").map((p) => p.trim()).filter(Boolean);
 
@@ -66,9 +69,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     : brief.opinion_lean === "right" ? "Conservative"
     : "Pragmatic";
 
-  const leanMod = brief.opinion_lean === "left" ? "mbp-lean--left"
-    : brief.opinion_lean === "right" ? "mbp-lean--right"
-    : "mbp-lean--center";
+  const leanMod = brief.opinion_lean === "left" ? "skb-lean--left"
+    : brief.opinion_lean === "right" ? "skb-lean--right"
+    : "skb-lean--center";
 
   const handleToggle = () => {
     hapticLight();
@@ -81,127 +84,178 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
       )}
 
-      {/* Collapsed single-line banner */}
       <div className="skb" role="complementary" aria-label="Daily Brief">
-        <div className="skb__left">
-          <ScaleIcon size={12} animation="idle" />
-          <span className="skb__cmd">void --tl;dr</span>
-          {brief.created_at && (
-            <span className="skb__time">{timeAgo(brief.created_at)}</span>
+        {/* Two preview columns — different type voices */}
+        <div className="skb__columns">
+          {/* TL;DR — Structural voice (Inter, factual) */}
+          <div className="skb__col skb__col--tldr">
+            <div className="skb__label">
+              <ScaleIcon size={12} animation="idle" />
+              <span className="skb__cmd">void --tl;dr</span>
+              {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
+            </div>
+            {brief.tldr_headline && (
+              <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
+            )}
+            <p className="skb__preview skb__preview--tldr">{tldrPreview}</p>
+          </div>
+
+          {/* Opinion — Editorial voice (Playfair, italic) */}
+          {brief.opinion_text && (
+            <div className="skb__col skb__col--opinion">
+              <div className="skb__label">
+                <ScaleIcon size={12} animation="idle" />
+                <span className="skb__cmd">void --opinion</span>
+                {brief.opinion_lean && (
+                  <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
+                )}
+              </div>
+              {brief.opinion_headline && (
+                <h3 className="skb__hl skb__hl--opinion">{brief.opinion_headline}</h3>
+              )}
+              <p className="skb__preview skb__preview--opinion">{opinionPreview}</p>
+            </div>
           )}
-          <span className="skb__separator" aria-hidden="true">&mdash;</span>
-          <span className="skb__excerpt">{firstSentenceText}</span>
         </div>
-        <div className="skb__right">
-          <button className="skb__read" onClick={handleToggle} type="button">
-            {expanded ? "Close" : "Read"}
+
+        {/* Action row: Read + OnAir */}
+        <div className="skb__actions">
+          <button className="skb__read-btn" onClick={handleToggle} type="button">
+            {expanded ? "Close" : "Read full brief"}
           </button>
+
           {hasAudio && (
-            <button
-              className={`skb__play${isPlaying ? " skb__play--active" : ""}`}
-              onClick={(e) => { e.stopPropagation(); hapticMedium(); handlePlayPause(); }}
-              type="button"
-              aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
-            >
-              <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
-              {durationMin && !isPlaying && (
-                <span className="skb__dur">{durationMin}m</span>
+            <div className={`skb__onair${isPlaying ? " skb__onair--playing" : ""}`}>
+              <button
+                className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}`}
+                onClick={() => { hapticMedium(); handlePlayPause(); }}
+                type="button"
+                aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
+              >
+                <ScaleIcon size={14} animation={isPlaying ? "analyzing" : "idle"} />
+                <span className="skb__onair-icon" aria-hidden="true">
+                  {isPlaying ? "\u275A\u275A" : "\u25B6"}
+                </span>
+                <span className="skb__onair-label">void --onair</span>
+                {durationMin && !isPlaying && (
+                  <span className="skb__onair-dur">{durationMin} min</span>
+                )}
+                {isPlaying && (
+                  <span className="skb__onair-dur">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>
+                )}
+              </button>
+
+              {/* Seek bar when playing */}
+              {(isPlaying || currentTime > 0) && (
+                <div className="skb__onair-track">
+                  <div className="skb__onair-sections">
+                    <button className={`skb__onair-sec${!inOpinion ? " skb__onair-sec--active" : ""}`}
+                      onClick={() => seekTo(0)} type="button"
+                      style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}>News</button>
+                    {hasOpinion && (
+                      <button className={`skb__onair-sec${inOpinion ? " skb__onair-sec--active" : ""}`}
+                        onClick={() => seekTo(opinionStart)} type="button"
+                        style={{ width: `${100 - opinionPct}%` }}>Opinion</button>
+                    )}
+                  </div>
+                  <div className="skb__onair-bar-wrap">
+                    <div className="skb__onair-bar">
+                      <div className="skb__onair-fill" style={{ width: `${progress}%` }} />
+                      {hasOpinion && <span className="skb__onair-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+                    </div>
+                    <input type="range" className="skb__onair-seek" min={0} max={displayDuration || 100}
+                      value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
+                  </div>
+                </div>
               )}
+
               {isPlaying && (
-                <span className="skb__dur">{formatTime(currentTime)}</span>
+                <div className="skb__onair-eq" aria-hidden="true">
+                  <span className="skb__eq-bar" style={{ animationDelay: "0ms" }} />
+                  <span className="skb__eq-bar" style={{ animationDelay: "150ms" }} />
+                  <span className="skb__eq-bar" style={{ animationDelay: "75ms" }} />
+                  <span className="skb__eq-bar" style={{ animationDelay: "200ms" }} />
+                </div>
               )}
-            </button>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Expanded overlay */}
+      {/* ═══ Expanded Overlay — void space ═══ */}
       {expanded && (
-        <div className="skb-overlay" ref={overlayRef}>
-          <div className="skb-overlay__backdrop" onClick={handleToggle} aria-hidden="true" />
-          <div className="skb-overlay__panel" ref={contentRef}>
-            <div className="skb-overlay__header">
-              <div className="skb-overlay__label">
-                <ScaleIcon size={14} animation="idle" />
-                <span className="skb__cmd">void --tl;dr</span>
-                {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
-              </div>
-              <button className="skb-overlay__close" onClick={handleToggle} type="button" aria-label="Close brief">
+        <div className="void-overlay">
+          <div className="void-overlay__backdrop" onClick={handleToggle} aria-hidden="true" />
+          <div className="void-overlay__panel">
+            {/* Void header */}
+            <div className="void-overlay__header">
+              <ScaleIcon size={18} animation="idle" />
+              <span className="void-overlay__brand">void --editorial</span>
+              <button className="void-overlay__close" onClick={handleToggle} type="button" aria-label="Close">
                 &times;
               </button>
             </div>
 
-            {/* Full TL;DR */}
-            <section className="skb-overlay__section">
-              {brief.tldr_headline && (
-                <h3 className="skb-overlay__headline skb-overlay__headline--accent">{brief.tldr_headline}</h3>
-              )}
-              <div className="skb-overlay__text">
-                {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
-              </div>
-            </section>
-
-            {/* Dotted rule */}
-            {brief.opinion_text && <hr className="skb-overlay__rule" />}
-
-            {/* Full Opinion */}
-            {brief.opinion_text && (
-              <section className="skb-overlay__section">
-                <div className="skb-overlay__opinion-label">
-                  <ScaleIcon size={12} animation="idle" />
-                  <span className="skb__cmd">void --opinion</span>
-                  {brief.opinion_lean && (
-                    <span className={`mbp__lean ${leanMod}`}>{leanLabel}</span>
-                  )}
-                </div>
-                {brief.opinion_headline && (
-                  <h3 className="skb-overlay__headline">{brief.opinion_headline}</h3>
+            <div className="void-overlay__body">
+              {/* TL;DR section — Structural voice */}
+              <section className="void-overlay__section void-overlay__section--tldr">
+                <span className="void-overlay__tag">void --tl;dr</span>
+                {brief.tldr_headline && (
+                  <h3 className="void-overlay__hl void-overlay__hl--tldr">{brief.tldr_headline}</h3>
                 )}
-                <div className="skb-overlay__text">
-                  <p>{brief.opinion_text}</p>
+                <div className="void-overlay__text void-overlay__text--tldr">
+                  {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
                 </div>
               </section>
-            )}
 
-            {/* Audio player */}
-            {hasAudio && (
-              <div className="skb-overlay__audio">
-                <div className="skb-overlay__audio-row">
-                  <button
-                    className={`mbp__play mbp__play--lg${isPlaying ? " mbp__play--active" : ""}`}
-                    onClick={() => { hapticMedium(); handlePlayPause(); }}
-                    type="button"
-                    aria-label={isPlaying ? "Pause" : "Play"}
-                  >
-                    <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
-                  </button>
-                  <span className="skb__cmd">void --onair</span>
-                  <span className="skb__time">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>
-                </div>
-                <div className="mbp__sections">
-                  <button
-                    className={`mbp__section-btn${!inOpinion ? " mbp__section-btn--active" : ""}`}
-                    onClick={() => seekTo(0)} type="button"
-                    style={hasOpinion ? { width: `${opinionPct}%` } : { width: "100%" }}
-                  >News</button>
-                  {hasOpinion && (
-                    <button
-                      className={`mbp__section-btn${inOpinion ? " mbp__section-btn--active" : ""}`}
-                      onClick={() => seekTo(opinionStart)} type="button"
-                      style={{ width: `${100 - opinionPct}%` }}
-                    >Opinion</button>
-                  )}
-                </div>
-                <div className="mbp__seek-wrap">
-                  <div className="mbp__bar">
-                    <div className="mbp__fill" style={{ width: `${progress}%` }} />
-                    {hasOpinion && <span className="mbp__section-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+              {/* Void rule */}
+              {brief.opinion_text && <div className="void-overlay__divider" aria-hidden="true" />}
+
+              {/* Opinion section — Editorial voice */}
+              {brief.opinion_text && (
+                <section className="void-overlay__section void-overlay__section--opinion">
+                  <div className="void-overlay__opinion-meta">
+                    <span className="void-overlay__tag">void --opinion</span>
+                    {brief.opinion_lean && (
+                      <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
+                    )}
                   </div>
-                  <input type="range" className="mbp__seek" min={0} max={displayDuration || 100}
-                    value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
+                  {brief.opinion_headline && (
+                    <h3 className="void-overlay__hl void-overlay__hl--opinion">{brief.opinion_headline}</h3>
+                  )}
+                  <div className="void-overlay__text void-overlay__text--opinion">
+                    <p>{brief.opinion_text}</p>
+                  </div>
+                </section>
+              )}
+
+              {/* Audio player */}
+              {hasAudio && (
+                <div className="void-overlay__audio">
+                  <div className="void-overlay__audio-row">
+                    <button
+                      className={`void-overlay__play${isPlaying ? " void-overlay__play--active" : ""}`}
+                      onClick={() => { hapticMedium(); handlePlayPause(); }}
+                      type="button" aria-label={isPlaying ? "Pause" : "Play"}
+                    >
+                      <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+                    </button>
+                    <span className="void-overlay__audio-label">void --onair</span>
+                    <span className="void-overlay__audio-time">
+                      {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
+                    </span>
+                  </div>
+                  <div className="void-overlay__seek-wrap">
+                    <div className="void-overlay__seek-bar">
+                      <div className="void-overlay__seek-fill" style={{ width: `${progress}%` }} />
+                      {hasOpinion && <span className="void-overlay__seek-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+                    </div>
+                    <input type="range" className="void-overlay__seek-input" min={0} max={displayDuration || 100}
+                      value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

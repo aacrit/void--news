@@ -93,6 +93,7 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
+import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import BiasLensOnboarding from "./BiasLensOnboarding";
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -761,10 +762,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 />
               ) : (
                 <>
-                  <div className="skybox" role="complementary" aria-label="void originals">
-                    <DailyBriefText state={dailyBriefState} />
-                    <OnAirButton state={dailyBriefState} />
-                  </div>
+                  <SkyboxBanner state={dailyBriefState} />
 
                   {leadStories.length > 0 && (
                     <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">

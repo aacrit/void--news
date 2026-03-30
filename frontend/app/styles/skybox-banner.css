@@ -1,0 +1,583 @@
+/* ===========================================================================
+   Skybox Banner — Redesigned daily brief for desktop
+   Two-column: TL;DR (Structural) | Opinion (Editorial)
+   Footer: Read + OnAir player
+   Overlay: void-branded dark editorial space
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Banner — canvas width, two-column brief
+   --------------------------------------------------------------------------- */
+
+.skb {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 2px solid var(--accent-warm);
+  border-bottom: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
+}
+
+.skb__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--space-5);
+}
+
+.skb__col--tldr {
+  border-right: 1px solid var(--border-subtle);
+  padding-right: var(--space-5);
+}
+
+.skb__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.skb__cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--fg-secondary);
+  letter-spacing: 0.02em;
+}
+
+.skb__time {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+/* ── Type voice differentiation ── */
+
+/* TL;DR headline: Structural voice (Inter, bold, factual) */
+.skb__hl--tldr {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--fg-accent);
+  margin-bottom: var(--space-1);
+}
+
+/* Opinion headline: Editorial voice (Playfair, italic, personal) */
+.skb__hl--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-1);
+}
+
+/* TL;DR preview: clean, factual, structural */
+.skb__preview--tldr {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-tertiary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Opinion preview: editorial, italic, personal */
+.skb__preview--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-tertiary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Lean badge */
+.skb__lean-badge {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+.skb-lean--left {
+  color: var(--bias-left);
+  background: color-mix(in srgb, var(--bias-left) 12%, transparent);
+}
+
+.skb-lean--right {
+  color: var(--bias-right);
+  background: color-mix(in srgb, var(--bias-right) 12%, transparent);
+}
+
+.skb-lean--center {
+  color: var(--bias-center);
+  background: color-mix(in srgb, var(--bias-center) 12%, transparent);
+}
+
+/* ── Action row ── */
+
+.skb__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-top: var(--space-2);
+  border-top: 1px dotted color-mix(in srgb, var(--fg-muted) 20%, transparent);
+}
+
+.skb__read-btn {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-accent);
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--fg-accent) 30%, transparent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-4);
+  min-height: 36px;
+  flex-shrink: 0;
+  transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+
+.skb__read-btn:hover {
+  background: color-mix(in srgb, var(--fg-accent) 8%, transparent);
+  border-color: color-mix(in srgb, var(--fg-accent) 50%, transparent);
+}
+
+/* ── OnAir — prominent player ── */
+
+.skb__onair {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.skb__onair-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--fg-tertiary);
+  background: none;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 100px;
+  padding: var(--space-1) var(--space-4);
+  min-height: 36px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    border-color 200ms var(--ease-out),
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out),
+    transform 200ms var(--spring-bouncy);
+}
+
+.skb__onair-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--fg-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.skb__onair-btn--active {
+  border-color: var(--fg-accent);
+  color: var(--fg-accent);
+  background: color-mix(in srgb, var(--fg-accent) 6%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--fg-accent) 15%, transparent);
+}
+
+.skb__onair-icon { font-size: 10px; }
+.skb__onair-label { letter-spacing: 0.02em; }
+.skb__onair-dur {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  margin-left: var(--space-1);
+}
+
+.skb__onair-btn--active .skb__onair-dur { color: var(--fg-accent); }
+
+/* Seek track */
+.skb__onair-track { flex: 1; min-width: 0; }
+
+.skb__onair-sections { display: flex; margin-bottom: 2px; }
+
+.skb__onair-sec {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.skb__onair-sec--active { color: var(--fg-secondary); font-weight: 600; }
+
+.skb__onair-bar-wrap { position: relative; height: 14px; }
+
+.skb__onair-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--border-subtle);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.skb__onair-fill {
+  height: 100%;
+  background: var(--fg-accent);
+  border-radius: 2px;
+  transition: width 100ms linear;
+}
+
+.skb__onair-mark {
+  position: absolute;
+  top: -2px;
+  width: 1px;
+  height: 7px;
+  background: var(--fg-muted);
+  opacity: 0.5;
+}
+
+.skb__onair-seek {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* EQ bars */
+.skb__onair-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.skb__eq-bar {
+  width: 3px;
+  background: var(--fg-accent);
+  border-radius: 1px;
+  animation: eq-bounce 0.8s ease-in-out infinite alternate;
+}
+
+.skb__eq-bar:nth-child(1) { height: 5px; }
+.skb__eq-bar:nth-child(2) { height: 10px; }
+.skb__eq-bar:nth-child(3) { height: 14px; }
+.skb__eq-bar:nth-child(4) { height: 7px; }
+
+/* ---------------------------------------------------------------------------
+   Void Overlay — dark editorial space, void-branded
+   --------------------------------------------------------------------------- */
+
+.void-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.void-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 6, 4, 0.85);
+  backdrop-filter: blur(16px) saturate(0.5);
+  animation: voidFadeIn 300ms var(--ease-out) both;
+}
+
+.void-overlay__panel {
+  position: relative;
+  width: 720px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  /* Dark void surface */
+  background: #1A1816;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.6),
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: voidPanelIn 400ms var(--spring-bouncy) both;
+  color: #EDE8E0;
+}
+
+:root[data-mode="light"] .void-overlay__panel {
+  /* Stay dark even in light mode — void is always dark */
+  background: #1A1816;
+  color: #EDE8E0;
+}
+
+.void-overlay__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.void-overlay__brand {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(237, 232, 224, 0.6);
+  flex: 1;
+}
+
+.void-overlay__close {
+  font-size: 22px;
+  color: rgba(237, 232, 224, 0.4);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out);
+}
+
+.void-overlay__close:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(237, 232, 224, 0.8);
+}
+
+.void-overlay__body {
+  padding: 0;
+}
+
+/* Section styling */
+.void-overlay__section {
+  padding: var(--space-5) var(--space-5);
+}
+
+.void-overlay__tag {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(237, 232, 224, 0.35);
+  margin-bottom: var(--space-3);
+}
+
+/* ── TL;DR section: Structural voice ── */
+
+.void-overlay__hl--tldr {
+  font-family: var(--font-structural);
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: #C8956C; /* warm accent */
+  margin-bottom: var(--space-3);
+}
+
+.void-overlay__text--tldr {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.75;
+  color: rgba(237, 232, 224, 0.8);
+  text-align: justify;
+  text-align-last: left;
+}
+
+.void-overlay__text--tldr p + p {
+  margin-top: var(--space-3);
+}
+
+/* ── Opinion section: Editorial voice ── */
+
+.void-overlay__section--opinion {
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.void-overlay__opinion-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.void-overlay__hl--opinion {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.5rem);
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.25;
+  color: #EDE8E0;
+  margin-bottom: var(--space-3);
+}
+
+.void-overlay__text--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-style: italic;
+  line-height: 1.8;
+  color: rgba(237, 232, 224, 0.7);
+  text-align: justify;
+  text-align-last: left;
+}
+
+/* Void divider */
+.void-overlay__divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(200, 149, 108, 0.3) 20%,
+    rgba(200, 149, 108, 0.3) 80%,
+    transparent
+  );
+  margin: 0;
+}
+
+/* ── Audio player in overlay ── */
+
+.void-overlay__audio {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.void-overlay__audio-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.void-overlay__play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(237, 232, 224, 0.2);
+  background: none;
+  color: rgba(237, 232, 224, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 200ms var(--ease-out), color 200ms var(--ease-out), background-color 200ms var(--ease-out);
+}
+
+.void-overlay__play:hover {
+  border-color: rgba(237, 232, 224, 0.4);
+  color: rgba(237, 232, 224, 0.9);
+}
+
+.void-overlay__play--active {
+  border-color: #C8956C;
+  color: #C8956C;
+  background: rgba(200, 149, 108, 0.1);
+}
+
+.void-overlay__audio-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: rgba(237, 232, 224, 0.5);
+  letter-spacing: 0.02em;
+}
+
+.void-overlay__audio-time {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: rgba(237, 232, 224, 0.35);
+  margin-left: auto;
+}
+
+.void-overlay__seek-wrap { position: relative; height: 16px; }
+
+.void-overlay__seek-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.void-overlay__seek-fill {
+  height: 100%;
+  background: #C8956C;
+  border-radius: 2px;
+  transition: width 100ms linear;
+}
+
+.void-overlay__seek-mark {
+  position: absolute;
+  top: -2px;
+  width: 1px;
+  height: 7px;
+  background: rgba(237, 232, 224, 0.3);
+}
+
+.void-overlay__seek-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Lean badges in overlay — stay visible on dark bg */
+.void-overlay .skb__lean-badge {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes voidFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes voidPanelIn {
+  from { opacity: 0; transform: scale(0.95) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .void-overlay__backdrop { animation: none; opacity: 1; }
+  .void-overlay__panel { animation: none; opacity: 1; transform: none; }
+}
