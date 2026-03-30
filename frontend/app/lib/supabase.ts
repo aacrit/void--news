@@ -120,14 +120,28 @@ export async function fetchLastPipelineRun() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (!_client) return null;
-  const { data, error } = await _client
+
+  // Try full column set first; fall back without opinion_start_seconds
+  // if the column hasn't been migrated yet.
+  let res = await _client
     .from('daily_briefs')
-    .select('tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, opinion_start_seconds, audio_url, audio_duration_seconds, created_at')
+    .select('tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, opinion_start_seconds, audio_url, audio_duration_seconds, audio_voice_label, created_at')
     .eq('edition', edition)
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
 
-  if (error || !data) return null;
-  return data;
+  if (res.error?.code === '42703') {
+    // Column doesn't exist — retry without it
+    res = await _client
+      .from('daily_briefs')
+      .select('tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, created_at')
+      .eq('edition', edition)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+  }
+
+  if (res.error || !res.data) return null;
+  return res.data;
 }
