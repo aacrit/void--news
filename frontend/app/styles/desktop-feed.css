@@ -1,0 +1,542 @@
+/* ===========================================================================
+   Desktop Feed v2 — Three-zone broadsheet layout
+   Zone 1 (Lead): asymmetric 2fr|1fr, stories 0-1
+   Zone 2 (Digest): headline-only rows, stories 2-7
+   Zone 3 (Wire): 4-5 col ultra-compact grid, stories 8+
+   SkyboxBanner: 40px collapsed brief
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Skybox Banner — Single-line collapsed brief
+   --------------------------------------------------------------------------- */
+
+.skb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 40px;
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--accent-warm) 4%, var(--bg-primary));
+  border-top: 2px solid var(--accent-warm);
+  border-bottom: 1px solid var(--border-subtle);
+  /* Full-bleed */
+  margin-left: calc(-1 * var(--space-7));
+  margin-right: calc(-1 * var(--space-7));
+  padding-left: var(--space-7);
+  padding-right: var(--space-7);
+}
+
+.skb__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  flex: 1;
+}
+
+.skb__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.skb__cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--fg-secondary);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.skb__time {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  flex-shrink: 0;
+}
+
+.skb__separator {
+  color: var(--fg-muted);
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.skb__excerpt {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.skb__read {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-3);
+  min-height: 32px;
+  transition: opacity 120ms var(--ease-out);
+}
+
+.skb__read:hover {
+  opacity: 0.7;
+}
+
+.skb__play {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-tertiary);
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+  padding: 4px 10px;
+  min-height: 28px;
+  cursor: pointer;
+  transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+
+.skb__play:hover {
+  border-color: var(--border-strong);
+  color: var(--fg-secondary);
+}
+
+.skb__play--active {
+  border-color: var(--fg-accent);
+  color: var(--fg-accent);
+}
+
+.skb__dur {
+  font-family: var(--font-data);
+  font-size: 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   Skybox Overlay — Full brief modal
+   --------------------------------------------------------------------------- */
+
+.skb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 100px;
+}
+
+.skb-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  animation: skbFadeIn 200ms var(--ease-out) both;
+}
+
+.skb-overlay__panel {
+  position: relative;
+  width: 680px;
+  max-width: 90vw;
+  max-height: 75vh;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 6px 16px rgba(0, 0, 0, 0.12);
+  animation: skbPanelIn 350ms var(--spring-bouncy) both;
+}
+
+.skb-overlay__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.skb-overlay__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.skb-overlay__close {
+  font-size: 20px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+
+.skb-overlay__close:hover {
+  background: var(--bg-secondary);
+  color: var(--fg-primary);
+}
+
+.skb-overlay__section {
+  padding: var(--space-4) var(--space-5);
+}
+
+.skb-overlay__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-3);
+}
+
+.skb-overlay__headline--accent {
+  color: var(--fg-accent);
+}
+
+.skb-overlay__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--fg-secondary);
+  text-align: justify;
+  text-align-last: left;
+}
+
+.skb-overlay__text p + p {
+  margin-top: var(--space-3);
+}
+
+.skb-overlay__rule {
+  border: none;
+  border-top: 1px dotted var(--fg-muted);
+  margin: 0 var(--space-5);
+  opacity: 0.4;
+}
+
+.skb-overlay__opinion-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.skb-overlay__audio {
+  padding: var(--space-3) var(--space-5) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.skb-overlay__audio-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+@keyframes skbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes skbPanelIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ---------------------------------------------------------------------------
+   Zone 1: Broadsheet Lead — asymmetric 2fr | 1fr
+   --------------------------------------------------------------------------- */
+
+.df-lead {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+  border-bottom: 2px solid var(--fg-primary);
+  padding-bottom: var(--space-4);
+}
+
+.df-lead__col--primary {
+  padding-right: var(--space-5);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.df-lead__col--secondary {
+  padding-left: var(--space-5);
+}
+
+/* Broadsheet unfold: stories materialize in place */
+.anim-broadsheet-unfold {
+  animation: broadsheetUnfold 500ms var(--spring-bouncy) both;
+}
+
+@keyframes broadsheetUnfold {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* At narrower desktop, stack lead stories */
+@media (max-width: 1023px) {
+  .df-lead {
+    grid-template-columns: 1fr;
+  }
+
+  .df-lead__col--primary {
+    padding-right: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .df-lead__col--secondary {
+    padding-left: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Zone 2: Digest — headline-only rows
+   --------------------------------------------------------------------------- */
+
+.df-digest {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dg-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out);
+}
+
+.dg-row:not(:last-child) {
+  border-bottom: 1px solid var(--divider);
+}
+
+/* Hover: background tint only — no paper lift */
+.dg-row:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* Active: subtle press */
+.dg-row:active {
+  opacity: 0.85;
+  transition: opacity 60ms var(--ease-out);
+}
+
+.dg-row__cat {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.dg-row__time {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  min-width: 36px;
+}
+
+.dg-row__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--fg-primary);
+  flex: 1;
+  min-width: 0;
+  /* Single line with ellipsis on narrow viewports */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 1280px) {
+  .dg-row__headline {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+}
+
+.dg-row__sigil {
+  flex-shrink: 0;
+}
+
+/* Typewriter entrance: left-to-right wipe */
+.anim-typewriter {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
+.anim-typewriter--visible {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 200ms var(--ease-out), transform 250ms var(--spring-snappy);
+}
+
+/* ---------------------------------------------------------------------------
+   Zone 3: Wire — ultra-compact grid
+   --------------------------------------------------------------------------- */
+
+.df-wire {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  /* Batch reveal — entire grid fades in */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+}
+
+.df-wire--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (min-width: 1024px) {
+  .df-wire {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .df-wire {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.wire-card {
+  position: relative;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.wire-card__dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: var(--space-1);
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.wire-card__cat {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  margin-right: var(--space-1);
+}
+
+.wire-card__headline {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fg-primary);
+  display: inline;
+  position: relative;
+}
+
+/* Hover: underline draws left→right */
+.wire-card__headline::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--fg-secondary);
+  transition: width 200ms var(--ease-out);
+}
+
+.wire-card:hover .wire-card__headline::after {
+  width: 100%;
+}
+
+/* Active press */
+.wire-card:active {
+  transform: scale(0.98);
+  transition: transform 60ms var(--ease-out);
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-broadsheet-unfold {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .anim-typewriter,
+  .anim-typewriter--visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .df-wire,
+  .df-wire--visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .dg-row:hover {
+    background-color: var(--bg-secondary);
+  }
+
+  .dg-row:active,
+  .wire-card:active {
+    transform: none;
+  }
+
+  .skb-overlay__backdrop {
+    animation: none;
+    opacity: 1;
+  }
+
+  .skb-overlay__panel {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
