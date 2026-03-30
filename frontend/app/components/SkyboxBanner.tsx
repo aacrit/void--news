@@ -1,77 +1,28 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
-import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
+import { hapticLight, hapticMedium } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
-
-function formatTime(seconds: number): string {
-  const s = Math.floor(seconds);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${r.toString().padStart(2, "0")}`;
-}
 
 /* ---------------------------------------------------------------------------
    SkyboxBanner — Two-column brief with full-width expand
 
    Default: two columns (TL;DR | Opinion) with 2-line previews.
    Expanding either side: full canvas width, other column hides.
-   OnAir pill always centered below the content area.
+   OnAir CTA triggers the persistent AudioPlayer (rendered in HomeContent).
    --------------------------------------------------------------------------- */
 
 type ExpandedSide = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
-  const { brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
+  const { brief, isPlaying, handlePlayPause, setExpanded } = state;
   const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
-  const [radioOpen, setRadioOpen] = useState(false);
-  const radioRef = useRef<HTMLDivElement>(null);
-  const [radioHeight, setRadioHeight] = useState(0);
-  const reducedMotion = useRef(false);
-
-  // Check reduced-motion preference once on mount
-  useEffect(() => {
-    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-
-  // Measure radio panel height
-  useEffect(() => {
-    if (!radioRef.current) return;
-    const ro = new ResizeObserver(([e]) => setRadioHeight(e.contentRect.height));
-    ro.observe(radioRef.current);
-    return () => ro.disconnect();
-  }, [radioOpen]);
-
-  // Waveform bar heights
-  const waveformBars = useMemo(() =>
-    Array.from({ length: 32 }, (_, i) => 10 + Math.sin(i * 0.55) * 16 + (Math.sin(i * 1.3) * 6)),
-  []);
 
   if (!brief) return null;
 
   const hasAudio = !!brief.audio_url;
-  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
-  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
-  const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
-
-  const opinionStart = brief.opinion_start_seconds ?? null;
-  const hasOpinionTimestamp = opinionStart !== null && displayDuration > 0;
-  // Estimate opinion start at 60% if no timestamp but opinion text exists
-  const effectiveOpinionStart = opinionStart ?? (brief.opinion_text ? displayDuration * 0.6 : null);
-  const hasOpinionSection = brief.opinion_text != null;
-  const opinionPct = hasOpinionTimestamp ? (opinionStart / displayDuration) * 100
-    : hasOpinionSection ? 60 : 100;
-  const inOpinion = hasOpinionSection && effectiveOpinionStart !== null && currentTime >= effectiveOpinionStart;
-
-  const seekTo = (seconds: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    hapticLight();
-    audio.currentTime = seconds;
-    if (!isPlaying) handlePlayPause();
-  };
 
   // Full text — line-clamp truncates when collapsed, full when expanded
   const tldrFull = brief.tldr_text;
@@ -95,224 +46,117 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setExpandedSide((prev) => prev === side ? null : side);
   };
 
-  // OnAir pill + radio player as a single unit that renders wherever the pill goes
-  const onairUnit = hasAudio ? (
-    <div className="skb__onair-unit">
-      <button
-        className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
-        onClick={() => { hapticConfirm(); setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
-        type="button"
-        aria-label={radioOpen ? "Close radio player" : "Open radio player"}
-        aria-expanded={radioOpen}
-      >
-        <span className="skb__radio-waves" aria-hidden="true">
-          <span className="skb__radio-wave" />
-          <span className="skb__radio-wave" />
-          <span className="skb__radio-wave" />
-        </span>
-        {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
-        <span className="skb__onair-label">void --onair</span>
-        {durationMin && !isPlaying && (
-          <span className="skb__onair-dur">{durationMin} min</span>
-        )}
-        {isPlaying && (
-          <span className="skb__onair-dur">
-            {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
-          </span>
-        )}
-      </button>
+  const durationMin = (brief.audio_duration_seconds) ? Math.ceil(brief.audio_duration_seconds / 60) : null;
 
-      {/* Inline seek bar — always visible when audio has progress, even when radio panel closed */}
-      {(isPlaying || currentTime > 0) && !radioOpen && (
-        <div className="skb__inline-seek">
-          <div className="skb__inline-sections">
-            <button className={`skb__inline-sec${!inOpinion ? " skb__inline-sec--active" : ""}`}
-              onClick={() => seekTo(0)} type="button">News</button>
-            {hasOpinionSection && (
-              <button className={`skb__inline-sec${inOpinion ? " skb__inline-sec--active" : ""}`}
-                onClick={() => effectiveOpinionStart ? seekTo(effectiveOpinionStart) : null} type="button">Opinion</button>
-            )}
-          </div>
-          <div className="skb__inline-bar-wrap">
-            <div className="skb__inline-bar">
-              <div className="skb__inline-buffer" style={{ width: `${buffered}%` }} />
-              <div className="skb__inline-fill" style={{ width: `${progress}%` }} />
-              {hasOpinionSection && <span className="skb__inline-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
-            </div>
-            <input type="range" className="skb__inline-input" min={0} max={displayDuration || 100}
-              value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek" />
-          </div>
-        </div>
+  // CTA that activates the persistent bottom AudioPlayer
+  const onairCTA = hasAudio ? (
+    <button
+      className={`skb__onair-cta${isPlaying ? " skb__onair-cta--active" : ""}`}
+      onClick={() => {
+        hapticMedium();
+        if (!isPlaying) handlePlayPause();
+        setExpanded(true);
+      }}
+      type="button"
+      aria-label={isPlaying ? "Open audio player" : "Play broadcast"}
+    >
+      <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
+      {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
+      <span className="skb__onair-label">void --onair</span>
+      {durationMin && !isPlaying && (
+        <span className="skb__onair-dur">{durationMin} min</span>
       )}
-
-      {/* Radio player expands in place below the pill */}
-      <div
-        className="skb__radio"
-        style={{
-          height: radioOpen ? radioHeight : 0,
-          transition: radioOpen
-            ? "height 400ms var(--spring-bouncy)"
-            : "height 250ms var(--ease-out)",
-        }}
-      >
-        <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
-          <div className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`} aria-hidden="true">
-            {waveformBars.map((h, i) => (
-              <div key={i} className="skb__waveform-bar"
-                style={{ height: `${h}px`, ...(reducedMotion.current ? {} : { animationDelay: `${i * 55}ms` }) }} />
-            ))}
-          </div>
-
-          <div className="skb__transport">
-            <button
-              className={`skb__transport-play${isPlaying ? " skb__transport-play--active" : ""}`}
-              onClick={() => { hapticMedium(); handlePlayPause(); }}
-              type="button" aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
-            </button>
-            <div className="skb__transport-info">
-              <div className="skb__transport-label">
-                <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
-                <span className="skb__transport-cmd">void --onair</span>
-                {isPlaying && <span className="skb__rec-dot skb__rec-dot--lg" aria-label="Recording" />}
-              </div>
-              <div className="skb__transport-voices">
-                <span>{inOpinion ? "Opinion" : "News"}</span>
-                {displayDuration > 0 && (
-                  <>
-                    <span className="skb__transport-dot" aria-hidden="true" />
-                    <span>{Math.round(progress)}%</span>
-                  </>
-                )}
-              </div>
-            </div>
-            <span className="skb__transport-time">
-              {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
-            </span>
-          </div>
-
-          <div className="skb__radio-seek">
-            <div className="skb__radio-sections">
-              <button className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
-                onClick={() => seekTo(0)} type="button"
-                style={{ width: `${opinionPct}%` }}>News</button>
-              {hasOpinionSection && (
-                <button className={`skb__radio-sec${inOpinion ? " skb__radio-sec--active" : ""}`}
-                  onClick={() => effectiveOpinionStart ? seekTo(effectiveOpinionStart) : null} type="button"
-                  style={{ width: `${100 - opinionPct}%` }}>Opinion</button>
-              )}
-            </div>
-            <div className="skb__radio-bar-wrap">
-              <div className="skb__radio-bar">
-                <div className="skb__radio-buffer" style={{ width: `${buffered}%` }} />
-                <div className="skb__radio-fill" style={{ width: `${progress}%` }} />
-                {hasOpinionSection && <span className="skb__radio-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
-              </div>
-              <input type="range" className="skb__radio-input" min={0} max={displayDuration || 100}
-                value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek position" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      {isPlaying && (
+        <span className="skb__onair-dur">Playing</span>
+      )}
+    </button>
   ) : null;
 
   return (
-    <>
-      {hasAudio && (
-        <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
-      )}
+    <div className={`skb${expandedSide ? ` skb--expand-${expandedSide}` : ""}`} role="complementary" aria-label="Daily Brief">
+      {/* Columns — two-col preview or single-col expanded */}
+      <div className="skb__columns">
+        {/* TL;DR column */}
+        {expandedSide !== "opinion" && (
+          <div className={`skb__col skb__col--tldr${expandedSide === "tldr" ? " skb__col--full" : ""}`}>
+            <div className="skb__label">
+              <ScaleIcon size={12} animation="idle" />
+              <span className="skb__cmd">void --tl;dr</span>
+              {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
+            </div>
+            {brief.tldr_headline && (
+              <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
+            )}
 
-      <div className={`skb${expandedSide ? ` skb--expand-${expandedSide}` : ""}`} role="complementary" aria-label="Daily Brief">
-        {/* Columns — two-col preview or single-col expanded */}
-        <div className="skb__columns">
-          {/* ── TL;DR column (visible when collapsed OR when TL;DR is expanded) ── */}
-          {expandedSide !== "opinion" && (
-            <div className={`skb__col skb__col--tldr${expandedSide === "tldr" ? " skb__col--full" : ""}`}>
-              <div className="skb__label">
-                <ScaleIcon size={12} animation="idle" />
-                <span className="skb__cmd">void --tl;dr</span>
-                {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
+            {expandedSide === "tldr" ? (
+              <div className="skb__expand-text--tldr">
+                {tldrFull.split(/\n\n+/).map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
               </div>
-              {brief.tldr_headline && (
-                <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
-              )}
+            ) : (
+              <p className="skb__preview skb__preview--tldr">
+                {tldrFull}
+              </p>
+            )}
 
-              {expandedSide === "tldr" ? (
-                /* Full text — no line-clamp, full canvas width */
-                <div className="skb__expand-text--tldr">
-                  {tldrFull.split(/\n\n+/).map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-              ) : (
-                /* Preview — 2-line clamp */
-                <p className="skb__preview skb__preview--tldr">
-                  {tldrFull}
-                </p>
-              )}
+            {tldrHasMore && (
+              <button
+                className="skb__more"
+                onClick={() => toggleSide("tldr")}
+                type="button"
+                aria-expanded={expandedSide === "tldr"}
+              >
+                {expandedSide === "tldr" ? "less" : "read more"}
+              </button>
+            )}
+          </div>
+        )}
 
-              {tldrHasMore && (
-                <button
-                  className="skb__more"
-                  onClick={() => toggleSide("tldr")}
-                  type="button"
-                  aria-expanded={expandedSide === "tldr"}
-                >
-                  {expandedSide === "tldr" ? "less" : "read more"}
-                </button>
+        {/* Opinion column */}
+        {brief.opinion_text && expandedSide !== "tldr" && (
+          <div className={`skb__col skb__col--opinion${expandedSide === "opinion" ? " skb__col--full" : ""}`}>
+            <div className="skb__label">
+              <ScaleIcon size={12} animation="idle" />
+              <span className="skb__cmd">void --opinion</span>
+              {brief.opinion_lean && (
+                <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
               )}
             </div>
-          )}
+            {brief.opinion_headline && (
+              <h3 className="skb__hl skb__hl--opinion">{brief.opinion_headline}</h3>
+            )}
 
-          {/* ── Opinion column (visible when collapsed OR when opinion is expanded) ── */}
-          {brief.opinion_text && expandedSide !== "tldr" && (
-            <div className={`skb__col skb__col--opinion${expandedSide === "opinion" ? " skb__col--full" : ""}`}>
-              <div className="skb__label">
-                <ScaleIcon size={12} animation="idle" />
-                <span className="skb__cmd">void --opinion</span>
-                {brief.opinion_lean && (
-                  <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
-                )}
+            {expandedSide === "opinion" ? (
+              <div className="skb__expand-text--opinion">
+                {opinionFull.split(/\n\n+/).map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
               </div>
-              {brief.opinion_headline && (
-                <h3 className="skb__hl skb__hl--opinion">{brief.opinion_headline}</h3>
-              )}
+            ) : (
+              <p className="skb__preview skb__preview--opinion">
+                {opinionFull}
+              </p>
+            )}
 
-              {expandedSide === "opinion" ? (
-                /* Full text — no line-clamp, full canvas width */
-                <div className="skb__expand-text--opinion">
-                  {opinionFull.split(/\n\n+/).map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-              ) : (
-                /* Preview — 2-line clamp */
-                <p className="skb__preview skb__preview--opinion">
-                  {opinionFull}
-                </p>
-              )}
-
-              {opinionHasMore && (
-                <button
-                  className="skb__more"
-                  onClick={() => toggleSide("opinion")}
-                  type="button"
-                  aria-expanded={expandedSide === "opinion"}
-                >
-                  {expandedSide === "opinion" ? "less" : "read more"}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* OnAir — always centered below content */}
-        {onairUnit && (
-          <div className="skb__onair-center">{onairUnit}</div>
+            {opinionHasMore && (
+              <button
+                className="skb__more"
+                onClick={() => toggleSide("opinion")}
+                type="button"
+                aria-expanded={expandedSide === "opinion"}
+              >
+                {expandedSide === "opinion" ? "less" : "read more"}
+              </button>
+            )}
+          </div>
         )}
       </div>
-    </>
+
+      {/* OnAir CTA — centered below content */}
+      {onairCTA && (
+        <div className="skb__onair-center">{onairCTA}</div>
+      )}
+    </div>
   );
 }

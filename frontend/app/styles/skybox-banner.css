@@ -336,6 +336,50 @@
   margin-top: var(--space-2);
 }
 
+/* OnAir CTA — simple trigger that activates the persistent AudioPlayer */
+.skb__onair-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 5%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 35%, transparent);
+  border-radius: 100px;
+  padding: var(--space-2) var(--space-5) var(--space-2) var(--space-4);
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--accent-warm) 12%, transparent),
+    0 0 20px color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  transition:
+    border-color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out),
+    box-shadow 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+}
+
+.skb__onair-cta:hover {
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  transform: scale(1.03) translateY(-1px);
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--accent-warm) 24%, transparent),
+    0 0 36px color-mix(in srgb, var(--accent-warm) 12%, transparent);
+}
+
+.skb__onair-cta:active {
+  transform: scale(0.97);
+  transition-duration: 60ms;
+}
+
+.skb__onair-cta--active {
+  border-color: var(--accent-warm);
+  animation: onair-glow 2s ease-in-out infinite alternate;
+}
+
 .skb__onair-center .skb__onair-unit {
   align-items: center;
 }

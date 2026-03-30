@@ -33,6 +33,22 @@ export interface DailyBriefState {
   audioCallbackRef: (el: HTMLAudioElement | null) => void;
   handlePlayPause: () => void;
   handleSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Current playback speed (1, 1.25, 1.5, 2) */
+  playbackSpeed: number;
+  /** Cycle to next speed */
+  cycleSpeed: () => void;
+  /** Skip forward 15 seconds */
+  skipForward: () => void;
+  /** SkipBackward 15 seconds */
+  skipBackward: () => void;
+  /** Direct seek to a time in seconds */
+  seekTo: (seconds: number) => void;
+  /** Whether the persistent bottom player is visible */
+  isPlayerVisible: boolean;
+  setPlayerVisible: (v: boolean) => void;
+  /** Whether the player is expanded (full panel) */
+  isExpanded: boolean;
+  setExpanded: (v: boolean) => void;
 }
 
 export function useDailyBrief(edition: string): DailyBriefState {
@@ -42,6 +58,12 @@ export function useDailyBrief(edition: string): DailyBriefState {
   const [duration, setDuration] = useState(0);
   const [audioError, setAudioError] = useState(false);
   const [buffered, setBuffered] = useState(0);
+  const [playbackSpeed, setPlaybackSpeed] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    try { const s = localStorage.getItem("void-onair-speed"); return s ? Number(s) : 1; } catch { return 1; }
+  });
+  const [isPlayerVisible, setPlayerVisible] = useState(false);
+  const [isExpanded, setExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -148,7 +170,63 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setCurrentTime(t);
   }, []);
 
-  return { brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek };
+  const SPEEDS = [1, 1.25, 1.5, 2] as const;
+  const cycleSpeed = useCallback(() => {
+    setPlaybackSpeed((prev) => {
+      const idx = SPEEDS.indexOf(prev as typeof SPEEDS[number]);
+      const next = SPEEDS[(idx + 1) % SPEEDS.length];
+      const audio = audioRef.current;
+      if (audio) audio.playbackRate = next;
+      try { localStorage.setItem("void-onair-speed", String(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  // Apply saved speed when audio loads
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && playbackSpeed !== 1) audio.playbackRate = playbackSpeed;
+  }, [brief, playbackSpeed]);
+
+  const skipForward = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    hapticTick();
+    audio.currentTime = Math.min(audio.currentTime + 15, audio.duration || Infinity);
+    setCurrentTime(audio.currentTime);
+  }, []);
+
+  const skipBackward = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    hapticTick();
+    audio.currentTime = Math.max(audio.currentTime - 15, 0);
+    setCurrentTime(audio.currentTime);
+  }, []);
+
+  const seekTo = useCallback((seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    hapticLight();
+    audio.currentTime = seconds;
+    setCurrentTime(seconds);
+    if (!isPlaying) {
+      if (audioError) { setAudioError(false); audio.load(); }
+      audio.play().catch(() => { setAudioError(true); setIsPlaying(false); });
+      setIsPlaying(true);
+    }
+  }, [isPlaying, audioError]);
+
+  // Auto-show player when brief has audio
+  useEffect(() => {
+    if (brief?.audio_url) setPlayerVisible(true);
+  }, [brief]);
+
+  return {
+    brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef,
+    handlePlayPause, handleSeek, playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
+    isPlayerVisible, setPlayerVisible, isExpanded, setExpanded,
+  };
 }
 
 /* ---------------------------------------------------------------------------
@@ -158,14 +236,12 @@ export function useDailyBrief(edition: string): DailyBriefState {
    --------------------------------------------------------------------------- */
 
 export function DailyBriefText({ state }: { state: DailyBriefState }) {
-  const { brief, audioError, audioCallbackRef } = state;
+  const { brief } = state;
 
   const [tldrExpanded, setTldrExpanded] = useState(false);
   const [opinionExpanded, setOpinionExpanded] = useState(false);
 
   if (!brief) return null;
-
-  const hasAudio = !!brief.audio_url;
 
   const paragraphs = brief.tldr_text
     .split("\n")
@@ -204,10 +280,6 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
 
   return (
     <>
-      {hasAudio && (
-        <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
-      )}
-
       <div className="daily-brief-banner" role="complementary" aria-label="Daily Brief">
 
         <div className="db-banner-columns">

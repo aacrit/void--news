@@ -4,6 +4,17 @@
    375px → 768px → 1024px → 1280px → 1440px
    ========================================================================== */
 
+/* Bottom clearance for persistent audio player (56px bar + safe area) */
+body {
+  padding-bottom: 60px;
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+  }
+}
+
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
 @media (min-width: 768px) {

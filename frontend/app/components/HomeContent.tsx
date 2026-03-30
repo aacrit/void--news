@@ -75,7 +75,8 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
+import { useDailyBrief } from "./DailyBrief";
+import AudioPlayer from "./AudioPlayer";
 import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const BiasLensOnboarding = dynamic(() => import("./BiasLensOnboarding"), { ssr: false });
@@ -912,6 +913,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
+
+      {/* Persistent audio player — fixed bottom bar */}
+      <AudioPlayer state={dailyBriefState} />
 
       {/* Mobile bottom nav — single-row filters (thumb-reachable) */}
       {isMobile && (
