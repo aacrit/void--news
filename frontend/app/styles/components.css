@@ -203,7 +203,15 @@
 .story-card__footer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-4);
+}
+
+.story-card__byline,
+.lead-story__byline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .story-card__why,
@@ -376,6 +384,7 @@
 .lead-story__footer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-5);
 }
 

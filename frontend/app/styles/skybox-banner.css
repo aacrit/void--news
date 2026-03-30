@@ -602,39 +602,56 @@
 
 /* ── Radio seek bar ── */
 
+/* ── Radio seek bar + section skip ── */
+
 .skb__radio-seek {
-  padding-top: var(--space-2);
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Section skip buttons — prominent, clickable zones */
 .skb__radio-sections {
   display: flex;
-  margin-bottom: 4px;
+  gap: 2px;
+  margin-bottom: var(--space-2);
 }
 
 .skb__radio-sec {
-  font-family: var(--font-meta);
-  font-size: 10px;
-  font-weight: 500;
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: rgba(237, 232, 224, 0.3);
-  background: none;
-  border: none;
-  padding: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: var(--space-1) var(--space-3);
+  min-height: 28px;
   cursor: pointer;
-  text-align: left;
-  transition: color 150ms var(--ease-out);
+  text-align: center;
+  transition: color 150ms var(--ease-out), background-color 150ms var(--ease-out),
+              border-color 150ms var(--ease-out);
+}
+
+.skb__radio-sec:hover {
+  color: rgba(237, 232, 224, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .skb__radio-sec--active {
-  color: rgba(200, 149, 108, 0.8);
-  font-weight: 600;
+  color: #C8956C;
+  background: rgba(200, 149, 108, 0.1);
+  border-color: rgba(200, 149, 108, 0.25);
+  font-weight: 700;
 }
 
+/* Progress bar — taller, more visible */
 .skb__radio-bar-wrap {
   position: relative;
-  height: 18px;
+  height: 24px;
+  cursor: pointer;
 }
 
 .skb__radio-bar {
@@ -642,28 +659,50 @@
   top: 50%;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 6px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
+  border-radius: 3px;
   transform: translateY(-50%);
+  overflow: hidden;
 }
 
+/* Buffer/progress track */
 .skb__radio-fill {
   height: 100%;
   background: linear-gradient(90deg, #C8956C, #D4A574);
-  border-radius: 2px;
-  transition: width 100ms linear;
-  box-shadow: 0 0 8px rgba(200, 149, 108, 0.3);
+  border-radius: 3px;
+  transition: width 150ms linear;
+  box-shadow: 0 0 10px rgba(200, 149, 108, 0.35);
+  position: relative;
 }
 
+/* Playhead dot — visible scrub indicator */
+.skb__radio-fill::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #D4A574;
+  transform: translateY(-50%);
+  box-shadow: 0 0 6px rgba(200, 149, 108, 0.5);
+}
+
+/* Section divider mark */
 .skb__radio-mark {
   position: absolute;
-  top: -3px;
-  width: 1px;
-  height: 10px;
-  background: rgba(237, 232, 224, 0.2);
+  top: 50%;
+  width: 2px;
+  height: 14px;
+  transform: translateY(-50%);
+  background: rgba(200, 149, 108, 0.4);
+  border-radius: 1px;
+  z-index: 1;
 }
 
+/* Invisible range input overlaid for scrubbing */
 .skb__radio-input {
   position: absolute;
   inset: 0;
@@ -672,6 +711,7 @@
   opacity: 0;
   cursor: pointer;
   margin: 0;
+  z-index: 2;
 }
 
 /* ── Expanded text styles (shared by per-side expand) ── */

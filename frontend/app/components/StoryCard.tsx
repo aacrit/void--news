@@ -67,12 +67,6 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
           }
         }}
       />
-      {/* Category tag + time */}
-      <div className="story-card__meta">
-        <span className="category-tag">{story.category}</span>
-        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-      </div>
-
       {/* Headline */}
       <h3 className="story-card__headline">
         <span className="story-card__headline-text">{story.title}</span>
@@ -87,8 +81,13 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       {/* Summary */}
       <p className="story-card__summary">{story.summary}</p>
 
-      {/* Bias indicator */}
+      {/* Footer: category · time (left) | Sigil (right) */}
       <div className="story-card__footer">
+        <div className="story-card__byline">
+          <span className="category-tag">{story.category}</span>
+          <span className="dot-separator" aria-hidden="true" />
+          <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+        </div>
         <Sigil data={story.sigilData} size="lg" />
       </div>
     </article>
