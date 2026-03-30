@@ -14,56 +14,52 @@ function formatTime(seconds: number): string {
 }
 
 /* ---------------------------------------------------------------------------
-   SkyboxBanner — Two-column brief replacing the old desktop Skybox
+   SkyboxBanner — Two-column brief with per-section expand
 
-   Left:  void --tl;dr (Structural voice — Inter, factual, reporting)
-   Right: void --opinion (Editorial voice — Playfair, italic, editorial)
-   Footer: [Read full brief] + [▶ void --onair] retro radio player
-
-   Canvas-width (no full-bleed). Inline expand — no overlay.
+   Each column has its own subtle "read more". Expanding one side pushes
+   the void --onair pill to the other side. Only one side expands at a time.
+   OnAir pill is centered and prominent when nothing is expanded.
    --------------------------------------------------------------------------- */
+
+type ExpandedSide = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const { brief, isPlaying, currentTime, duration, audioError, audioRef, audioCallbackRef, handlePlayPause, handleSeek } = state;
-  const [expanded, setExpanded] = useState(false);
+  const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
   const [radioOpen, setRadioOpen] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const tldrRef = useRef<HTMLDivElement>(null);
+  const opinionRef = useRef<HTMLDivElement>(null);
   const radioRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState(0);
+  const [tldrHeight, setTldrHeight] = useState(0);
+  const [opinionHeight, setOpinionHeight] = useState(0);
   const [radioHeight, setRadioHeight] = useState(0);
 
-  // Measure expanded content height for smooth spring animation
+  // Measure expand heights
   useEffect(() => {
-    if (!contentRef.current) return;
-    const ro = new ResizeObserver(([entry]) => {
-      setContentHeight(entry.contentRect.height);
-    });
-    ro.observe(contentRef.current);
+    if (!tldrRef.current) return;
+    const ro = new ResizeObserver(([e]) => setTldrHeight(e.contentRect.height));
+    ro.observe(tldrRef.current);
     return () => ro.disconnect();
-  }, [expanded]);
+  }, [expandedSide]);
 
-  // Measure radio panel height
+  useEffect(() => {
+    if (!opinionRef.current) return;
+    const ro = new ResizeObserver(([e]) => setOpinionHeight(e.contentRect.height));
+    ro.observe(opinionRef.current);
+    return () => ro.disconnect();
+  }, [expandedSide]);
+
   useEffect(() => {
     if (!radioRef.current) return;
-    const ro = new ResizeObserver(([entry]) => {
-      setRadioHeight(entry.contentRect.height);
-    });
+    const ro = new ResizeObserver(([e]) => setRadioHeight(e.contentRect.height));
     ro.observe(radioRef.current);
     return () => ro.disconnect();
   }, [radioOpen]);
 
-  // Generate stable waveform bar heights (24 bars, sin wave pattern)
+  // Waveform bar heights
   const waveformBars = useMemo(() =>
     Array.from({ length: 32 }, (_, i) => 10 + Math.sin(i * 0.55) * 16 + (Math.sin(i * 1.3) * 6)),
   []);
-
-  // Escape key to collapse
-  useEffect(() => {
-    if (!expanded) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setExpanded(false); };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [expanded]);
 
   if (!brief) return null;
 
@@ -85,16 +81,16 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     if (!isPlaying) handlePlayPause();
   };
 
-  // TL;DR preview: first 2 sentences
+  // Previews
   const tldrSentences = brief.tldr_text.split(/(?<=[.!?])\s+/).filter(Boolean);
   const tldrPreview = tldrSentences.slice(0, 2).join(" ");
+  const tldrFull = brief.tldr_text.split("\n").map((p) => p.trim()).filter(Boolean);
+  const tldrHasMore = tldrSentences.length > 2 || tldrFull.length > 1;
 
-  // Opinion preview: first 2 sentences
   const opinionPreview = brief.opinion_text
     ? brief.opinion_text.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")
     : "";
-
-  const paragraphs = brief.tldr_text.split("\n").map((p) => p.trim()).filter(Boolean);
+  const opinionHasMore = brief.opinion_text ? brief.opinion_text.split(/(?<=[.!?])\s+/).length > 2 : false;
 
   const leanLabel = brief.opinion_lean === "left" ? "Progressive"
     : brief.opinion_lean === "right" ? "Conservative"
@@ -104,10 +100,37 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     : brief.opinion_lean === "right" ? "skb-lean--right"
     : "skb-lean--center";
 
-  const handleToggle = () => {
+  const toggleSide = (side: "tldr" | "opinion") => {
     hapticLight();
-    setExpanded((prev) => !prev);
+    setExpandedSide((prev) => prev === side ? null : side);
   };
+
+  // OnAir pill renders in the column that is NOT expanded, or centered when neither is
+  const onairPill = hasAudio ? (
+    <button
+      className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
+      onClick={() => { hapticConfirm(); setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
+      type="button"
+      aria-label={radioOpen ? "Close radio player" : "Open radio player"}
+      aria-expanded={radioOpen}
+    >
+      <span className="skb__radio-waves" aria-hidden="true">
+        <span className="skb__radio-wave" />
+        <span className="skb__radio-wave" />
+        <span className="skb__radio-wave" />
+      </span>
+      <span className="skb__onair-label">void --onair</span>
+      {durationMin && !isPlaying && !radioOpen && (
+        <span className="skb__onair-dur">{durationMin} min</span>
+      )}
+      {isPlaying && !radioOpen && (
+        <span className="skb__onair-dur">{formatTime(currentTime)}</span>
+      )}
+      {radioOpen && (
+        <span className="skb__onair-dur">{isPlaying ? "ON AIR" : "STANDBY"}</span>
+      )}
+    </button>
+  ) : null;
 
   return (
     <>
@@ -115,10 +138,10 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />
       )}
 
-      <div className={`skb${expanded ? " skb--expanded" : ""}`} role="complementary" aria-label="Daily Brief">
-        {/* Two preview columns — different type voices */}
+      <div className={`skb${expandedSide ? ` skb--expand-${expandedSide}` : ""}`} role="complementary" aria-label="Daily Brief">
+        {/* Two columns */}
         <div className="skb__columns">
-          {/* TL;DR — Structural voice (Inter, factual) */}
+          {/* ── TL;DR column ── */}
           <div className="skb__col skb__col--tldr">
             <div className="skb__label">
               <ScaleIcon size={12} animation="idle" />
@@ -129,9 +152,42 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               <h3 className="skb__hl skb__hl--tldr">{brief.tldr_headline}</h3>
             )}
             <p className="skb__preview skb__preview--tldr">{tldrPreview}</p>
+
+            {/* Inline expand for TL;DR */}
+            <div
+              className="skb__side-expand"
+              style={{
+                height: expandedSide === "tldr" ? tldrHeight : 0,
+                transition: expandedSide === "tldr"
+                  ? "height 350ms var(--spring-snappy)"
+                  : "height 200ms var(--ease-out)",
+              }}
+            >
+              <div ref={tldrRef} className="skb__side-expand-inner">
+                <div className="skb__expand-text skb__expand-text--tldr">
+                  {tldrFull.slice(1).map((p, i) => <p key={i}>{p}</p>)}
+                </div>
+              </div>
+            </div>
+
+            {tldrHasMore && (
+              <button
+                className="skb__more"
+                onClick={() => toggleSide("tldr")}
+                type="button"
+                aria-expanded={expandedSide === "tldr"}
+              >
+                {expandedSide === "tldr" ? "less" : "read more"}
+              </button>
+            )}
+
+            {/* OnAir lands here when opinion is expanded */}
+            {expandedSide === "opinion" && onairPill && (
+              <div className="skb__onair-shifted">{onairPill}</div>
+            )}
           </div>
 
-          {/* Opinion — Editorial voice (Playfair, italic) */}
+          {/* ── Opinion column ── */}
           {brief.opinion_text && (
             <div className="skb__col skb__col--opinion">
               <div className="skb__label">
@@ -145,49 +201,49 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 <h3 className="skb__hl skb__hl--opinion">{brief.opinion_headline}</h3>
               )}
               <p className="skb__preview skb__preview--opinion">{opinionPreview}</p>
+
+              {/* Inline expand for Opinion */}
+              <div
+                className="skb__side-expand"
+                style={{
+                  height: expandedSide === "opinion" ? opinionHeight : 0,
+                  transition: expandedSide === "opinion"
+                    ? "height 350ms var(--spring-snappy)"
+                    : "height 200ms var(--ease-out)",
+                }}
+              >
+                <div ref={opinionRef} className="skb__side-expand-inner">
+                  <div className="skb__expand-text skb__expand-text--opinion">
+                    <p>{brief.opinion_text.split(/(?<=[.!?])\s+/).slice(2).join(" ")}</p>
+                  </div>
+                </div>
+              </div>
+
+              {opinionHasMore && (
+                <button
+                  className="skb__more"
+                  onClick={() => toggleSide("opinion")}
+                  type="button"
+                  aria-expanded={expandedSide === "opinion"}
+                >
+                  {expandedSide === "opinion" ? "less" : "read more"}
+                </button>
+              )}
+
+              {/* OnAir lands here when tldr is expanded */}
+              {expandedSide === "tldr" && onairPill && (
+                <div className="skb__onair-shifted">{onairPill}</div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Action row: Read + OnAir */}
-        <div className="skb__actions">
-          <button
-            className="skb__read-btn"
-            onClick={handleToggle}
-            type="button"
-            aria-expanded={expanded}
-          >
-            {expanded ? "Close brief" : "Read full brief"}
-          </button>
+        {/* Centered OnAir when nothing is expanded */}
+        {!expandedSide && onairPill && (
+          <div className="skb__onair-center">{onairPill}</div>
+        )}
 
-          {hasAudio && (
-            <button
-              className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
-              onClick={() => { hapticConfirm(); setRadioOpen((v) => !v); if (!isPlaying && !radioOpen) handlePlayPause(); }}
-              type="button"
-              aria-label={radioOpen ? "Close radio player" : "Open radio player"}
-              aria-expanded={radioOpen}
-            >
-              <span className="skb__radio-waves" aria-hidden="true">
-                <span className="skb__radio-wave" />
-                <span className="skb__radio-wave" />
-                <span className="skb__radio-wave" />
-              </span>
-              <span className="skb__onair-label">void --onair</span>
-              {durationMin && !isPlaying && !radioOpen && (
-                <span className="skb__onair-dur">{durationMin} min</span>
-              )}
-              {isPlaying && !radioOpen && (
-                <span className="skb__onair-dur">{formatTime(currentTime)}</span>
-              )}
-              {radioOpen && (
-                <span className="skb__onair-dur">{isPlaying ? "ON AIR" : "STANDBY"}</span>
-              )}
-            </button>
-          )}
-        </div>
-
-        {/* ═══ Radio Player — expands in place with waveform visualization ═══ */}
+        {/* ═══ Radio Player ═══ */}
         {hasAudio && (
           <div
             className="skb__radio"
@@ -199,31 +255,21 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             }}
           >
             <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
-              {/* Waveform visualization — 32 bars, animated when playing */}
               <div className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`} aria-hidden="true">
                 {waveformBars.map((h, i) => (
-                  <div
-                    key={i}
-                    className="skb__waveform-bar"
-                    style={{
-                      height: `${h}px`,
-                      animationDelay: `${i * 55}ms`,
-                    }}
-                  />
+                  <div key={i} className="skb__waveform-bar"
+                    style={{ height: `${h}px`, animationDelay: `${i * 55}ms` }} />
                 ))}
               </div>
 
-              {/* Transport controls */}
               <div className="skb__transport">
                 <button
                   className={`skb__transport-play${isPlaying ? " skb__transport-play--active" : ""}`}
                   onClick={() => { hapticMedium(); handlePlayPause(); }}
-                  type="button"
-                  aria-label={isPlaying ? "Pause" : "Play"}
+                  type="button" aria-label={isPlaying ? "Pause" : "Play"}
                 >
                   <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
                 </button>
-
                 <div className="skb__transport-info">
                   <div className="skb__transport-label">
                     <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
@@ -236,13 +282,11 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <span>Voice B: the questions</span>
                   </div>
                 </div>
-
                 <span className="skb__transport-time">
                   {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
                 </span>
               </div>
 
-              {/* Seek bar with section markers */}
               <div className="skb__radio-seek">
                 <div className="skb__radio-sections">
                   <button className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
@@ -266,50 +310,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             </div>
           </div>
         )}
-
-        {/* ═══ Inline expanded content — spring snap-expand ═══ */}
-        <div
-          className="skb__expand"
-          style={{
-            height: expanded ? contentHeight : 0,
-            transition: expanded
-              ? "height 400ms var(--spring-bouncy)"
-              : "height 250ms var(--ease-out)",
-          }}
-        >
-          <div ref={contentRef} className="skb__expand-inner">
-            <div className="skb__expand-columns">
-              {/* TL;DR full — Structural voice, warm accent headline */}
-              <section className="skb__expand-col skb__expand-col--tldr" aria-label="Full TL;DR">
-                <span className="skb__expand-tag">void --tl;dr</span>
-                {brief.tldr_headline && (
-                  <h3 className="skb__expand-hl skb__expand-hl--tldr">{brief.tldr_headline}</h3>
-                )}
-                <div className="skb__expand-text skb__expand-text--tldr">
-                  {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
-                </div>
-              </section>
-
-              {/* Opinion full — Editorial voice, Playfair italic */}
-              {brief.opinion_text && (
-                <section className="skb__expand-col skb__expand-col--opinion" aria-label="Editorial Opinion">
-                  <div className="skb__expand-opinion-meta">
-                    <span className="skb__expand-tag">void --opinion</span>
-                    {brief.opinion_lean && (
-                      <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>
-                    )}
-                  </div>
-                  {brief.opinion_headline && (
-                    <h3 className="skb__expand-hl skb__expand-hl--opinion">{brief.opinion_headline}</h3>
-                  )}
-                  <div className="skb__expand-text skb__expand-text--opinion">
-                    <p>{brief.opinion_text}</p>
-                  </div>
-                </section>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
     </>
   );
