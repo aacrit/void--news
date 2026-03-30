@@ -7574,7 +7574,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   content: "";
   position: fixed;
   inset: 0;
-  z-index: var(--z-cinematic);
+  z-index: calc(var(--z-cinematic) + 1);
   pointer-events: none;
   background: radial-gradient(
     ellipse 80% 70% at 50% 50%,
@@ -7588,9 +7588,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   content: "";
   position: fixed;
   inset: 0;
-  z-index: calc(var(--z-cinematic) + 1);
+  z-index: var(--z-cinematic);
   pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
   opacity: var(--cin-grain-opacity);
   will-change: transform;
@@ -7604,7 +7604,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .df:has(.lead-story:hover) .lead-story:not(:hover),
   .grid-medium:has(.story-card:hover) .story-card:not(:hover) {
     opacity: 0.72;
-    transition: opacity var(--rack-focus-dur) var(--rack-focus-ease);
+    filter: var(--rack-blur-neighbor);
+    transition: opacity var(--rack-focus-dur) var(--rack-focus-ease),
+                filter var(--rack-focus-dur) var(--rack-focus-ease);
   }
 
   .story-card:hover {
@@ -7627,13 +7629,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 /* ── Chromatic Aberration (Lead Story) ── */
 .lead-story__headline {
   text-shadow:
-    -0.3px 0 rgba(180, 60, 40, 0.015),
-     0.3px 0 rgba(40, 60, 180, 0.015);
+    -0.4px 0 rgba(180, 60, 40, 0.015),
+     0.4px 0 rgba(40, 60, 180, 0.015);
 }
 :root[data-mode="dark"] .lead-story__headline {
   text-shadow:
-    -0.3px 0 rgba(180, 60, 40, 0.02),
-     0.3px 0 rgba(40, 60, 180, 0.02);
+    -0.4px 0 rgba(180, 60, 40, 0.02),
+     0.4px 0 rgba(40, 60, 180, 0.02);
 }
 
 /* ── Anamorphic Flare (OnAir Active) ── */
@@ -7643,7 +7645,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   top: 50%;
   left: -100%;
   right: -100%;
-  height: 1px;
+  height: 2px;
   transform: translateY(-50%);
   background: linear-gradient(
     90deg,

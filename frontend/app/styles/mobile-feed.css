@@ -121,9 +121,9 @@
 }
 
 .msc__headline--compact {
-  font-family: var(--font-structural);
+  font-family: var(--font-editorial);
   font-size: clamp(0.875rem, 2.5vw, 0.9375rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.35;
   color: var(--fg-primary);
   flex: 1;

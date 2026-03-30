@@ -448,7 +448,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             transform: finalTransform,
             borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
             opacity: 1,
-            boxShadow: "var(--shadow-e3)",
+            boxShadow: "var(--shadow-cinematic-dramatic)",
             transition: [
               "transform 500ms var(--spring-bouncy)",
               "border-radius 350ms var(--spring-bouncy)",
@@ -460,7 +460,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
 
           // Clear morph style after spring fully settles
-          setTimeout(() => setMorphStyle(null), 550);
+          setTimeout(() => {
+            setMorphStyle(null);
+            // Signal CSS that the panel has settled — enables studio reflection ::before fade-in
+            panelRef.current?.setAttribute('data-settled', '');
+          }, 550);
         }, 0);
       });
     } else {
@@ -468,7 +472,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       requestAnimationFrame(() => {
         setIsVisible(true);
         const delay = window.innerWidth >= 768 ? 200 : 120;
-        setTimeout(() => setContentVisible(true), delay);
+        setTimeout(() => {
+          setContentVisible(true);
+          panelRef.current?.setAttribute('data-settled', '');
+        }, delay);
       });
     }
 
@@ -544,6 +551,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
     hapticLight();
+    // Remove settled state — hides studio reflection ::before immediately
+    panelRef.current?.removeAttribute('data-settled');
     // Phase 1: Content fades out quickly
     setContentVisible(false);
 
@@ -585,8 +594,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           ].join(", "),
         });
 
-        // Phase 3: Backdrop fades as panel shrinks
-        setTimeout(() => setIsVisible(false), 150);
+        // Phase 3: Backdrop fades as panel shrinks — L-cut: feed refocuses before panel reaches card
+        setTimeout(() => setIsVisible(false), 80);
 
         // Phase 4: Cleanup — fast dismissal
         setTimeout(() => {
@@ -752,7 +761,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               ? "translate(-50%, -50%) scale(0.95) translateY(12px)"
               : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
-          boxShadow: isVisible ? "var(--shadow-e3)" : "none",
+          boxShadow: isVisible ? "var(--shadow-cinematic-dramatic)" : "none",
           transition: isDragging
             ? "none"
             : isDismissing

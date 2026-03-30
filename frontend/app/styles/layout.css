@@ -183,14 +183,14 @@
 .deep-dive-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.72);
+  background-color: var(--cin-backdrop-bg);
   z-index: var(--z-overlay);
   cursor: pointer;
   /* Cinematic blur — page becomes abstract texture, full attention on overlay.
      Reduced to 24px for better perf on mid-range devices.
      @supports fallback for browsers without backdrop-filter. */
-  backdrop-filter: blur(24px) saturate(0.5) brightness(0.6);
-  -webkit-backdrop-filter: blur(24px) saturate(0.5) brightness(0.6);
+  backdrop-filter: var(--cin-backdrop-blur);
+  -webkit-backdrop-filter: var(--cin-backdrop-blur);
 }
 
 .deep-dive-panel {
@@ -211,10 +211,11 @@
 
   /* Solid opaque surface — no see-through, full attention on content */
   background-color: var(--bg-primary);
-  box-shadow: var(--shadow-e3);
+  box-shadow: var(--shadow-cinematic-dramatic);
 }
 
-/* Studio light reflection on top edge — glass refraction artifact */
+/* Studio light reflection on top edge — glass refraction artifact.
+   Fades in only after panel morph settles (data-settled attribute). */
 .deep-dive-panel::before {
   content: "";
   position: absolute;
@@ -234,6 +235,11 @@
   pointer-events: none;
   z-index: 1;
   opacity: 0;
+  transition: opacity 300ms var(--ease-cinematic);
+}
+
+.deep-dive-panel[data-settled]::before {
+  opacity: 1;
 }
 
 .deep-dive-panel__header {

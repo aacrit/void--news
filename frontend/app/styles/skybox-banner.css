@@ -1010,6 +1010,22 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Practical Light — OnAir ambient warmth when audio is playing
+   --------------------------------------------------------------------------- */
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .skb:has(.skb__onair-cta--active) {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent-warm) 10%, var(--bg-primary)) 0%,
+        color-mix(in srgb, var(--accent-warm) 4%, var(--bg-primary)) 100%
+      );
+    transition: background 800ms var(--ease-cinematic);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
 

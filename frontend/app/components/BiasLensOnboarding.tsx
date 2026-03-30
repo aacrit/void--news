@@ -10,14 +10,14 @@ import { createPortal } from "react-dom";
    product family (--tl;dr, --onair, --opinion, --sources, --deep-dive),
    and teach the visualization system (Needle, Ring).
 
-   Trigger: 4th visit OR 90s idle on 1st visit — content comes first.
+   Trigger: 8th visit OR 3min idle on 1st visit — content comes first.
    Always dismissible: Skip button, Esc, backdrop click.
    localStorage tracks: visit count + dismissed state.
    --------------------------------------------------------------------------- */
 
 const STORAGE_KEY = "void-news-intro-seen";
 const VISITS_KEY = "void-news-visit-count";
-const IDLE_TRIGGER_MS = 90_000; // 90 seconds idle before showing on 1st visit
+const IDLE_TRIGGER_MS = 180_000; // 3 minutes idle before showing on 1st visit
 
 /* ── Phase definitions ─────────────────────────────────────────────────── */
 
@@ -409,14 +409,14 @@ export default function BiasLensOnboarding() {
       const visits = parseInt(localStorage.getItem(VISITS_KEY) || "0", 10) + 1;
       localStorage.setItem(VISITS_KEY, String(visits));
 
-      if (visits >= 4) {
-        // 2nd+ visit: show after short delay (let content render first)
+      if (visits >= 8) {
+        // Regular user (8+ visits): show after short delay (let content render first)
         setTimeout(() => {
           setVisible(true);
           setTimeout(() => setPhase(0), reducedMotion.current ? 0 : 600);
         }, 1500);
       } else {
-        // 1st visit: show after 90s idle (content first)
+        // Early visits: show after 3min idle (content first)
         idleTimerRef.current = setTimeout(() => {
           // Re-check — user might have navigated away
           if (!localStorage.getItem(STORAGE_KEY)) {

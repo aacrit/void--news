@@ -223,6 +223,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
+  // Whip pan direction — track previous edition index for direction-aware animation
+  const EDITION_ORDER: Edition[] = ["world", "us", "india"];
+  const prevEditionRef = useRef<Edition>(activeEdition);
+  const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
+
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
@@ -313,6 +318,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Reset category filter, close DeepDive, and scroll to top when edition changes.
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
+  // Whip pan direction: content exits left when navigating "right" in edition order.
   useEffect(() => {
     hapticConfirm();
     setSelectedStory(null);
@@ -320,6 +326,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setActiveCategory("All");
     setVisibleCount(BATCH_SIZE);
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Compute whip pan direction based on edition order
+    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
+    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
+    if (prevIdx !== nextIdx) {
+      setWhipDirection(nextIdx > prevIdx ? "right" : "left");
+    }
+    prevEditionRef.current = activeEdition;
   }, [activeEdition]);
 
   // Persist edition preference to localStorage — returning visitors who land
@@ -651,7 +665,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
-    <div className="page-container">
+    <div className="page-container" data-whip={whipDirection === "left" ? "left" : undefined}>
       <NavBar
         activeEdition={activeEdition}
         activeCategory={activeCategory}

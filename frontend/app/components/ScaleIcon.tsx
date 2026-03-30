@@ -54,8 +54,8 @@ const STYLES = `
 /* idle — gentle tipping */
 @keyframes si-idle {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2.5deg); }
-  75% { transform: rotate(-2.5deg); }
+  25% { transform: rotate(2deg); }
+  75% { transform: rotate(-2deg); }
 }
 
 /* loading — dramatic tipping */
@@ -120,7 +120,7 @@ const STYLES = `
 
 .si-beam--idle {
   transform-origin: 16px 13px;
-  animation: si-idle 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation: si-idle 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-beam--loading {

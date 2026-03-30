@@ -35,9 +35,9 @@
   gap: 10px;
   height: 56px;
   padding: 0 16px;
-  background: #1A1816;
-  border-top: 1px solid rgba(200, 149, 108, 0.15);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25), 0 0 20px rgba(200, 149, 108, 0.04);
+  background: var(--bg-primary);
+  border-top: 1px solid color-mix(in srgb, var(--cin-amber) 15%, transparent);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25), 0 0 20px color-mix(in srgb, var(--cin-amber) 4%, transparent);
 }
 
 /* Safe area for iOS home indicator */
@@ -54,30 +54,30 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1.5px solid rgba(200, 149, 108, 0.4);
+  border: 1.5px solid color-mix(in srgb, var(--cin-amber) 40%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
   font-size: 12px;
   transition: border-color 200ms, background-color 200ms, box-shadow 300ms;
   min-width: 36px;
 }
 
 .ap__play:hover {
-  border-color: var(--accent-warm, #C8956C);
-  background: rgba(200, 149, 108, 0.08);
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--cin-amber) 8%, transparent);
 }
 
 .ap__play--active {
-  border-color: var(--accent-warm, #C8956C);
-  box-shadow: 0 0 12px rgba(200, 149, 108, 0.25);
+  border-color: var(--accent-warm);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cin-amber) 25%, transparent);
   animation: ap-glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes ap-glow {
-  from { box-shadow: 0 0 8px rgba(200, 149, 108, 0.15); }
-  to   { box-shadow: 0 0 18px rgba(200, 149, 108, 0.35); }
+  from { box-shadow: 0 0 8px color-mix(in srgb, var(--cin-amber) 15%, transparent); }
+  to   { box-shadow: 0 0 18px color-mix(in srgb, var(--cin-amber) 35%, transparent); }
 }
 
 /* Section label */
@@ -88,7 +88,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
   min-width: 56px;
 }
 
@@ -106,7 +106,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: rgba(200, 149, 108, 0.12);
+  background: color-mix(in srgb, var(--cin-amber) 12%, transparent);
   border-radius: 2px;
   overflow: visible;
 }
@@ -116,7 +116,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: rgba(200, 149, 108, 0.15);
+  background: color-mix(in srgb, var(--cin-amber) 15%, transparent);
   border-radius: 2px;
   transition: width 300ms linear;
 }
@@ -126,7 +126,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--accent-warm, #C8956C);
+  background: var(--accent-warm);
   border-radius: 2px;
   transition: width 100ms linear;
 }
@@ -136,7 +136,7 @@
   top: -3px;
   width: 1px;
   height: 10px;
-  background: rgba(200, 149, 108, 0.4);
+  background: color-mix(in srgb, var(--cin-amber) 40%, transparent);
   transform: translateX(-50%);
 }
 
@@ -157,7 +157,7 @@
   flex-shrink: 0;
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 11px;
-  color: rgba(200, 149, 108, 0.6);
+  color: color-mix(in srgb, var(--cin-amber) 60%, transparent);
   min-width: 44px;
   text-align: right;
 }
@@ -174,7 +174,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(200, 149, 108, 0.4);
+  color: color-mix(in srgb, var(--cin-amber) 40%, transparent);
 }
 
 /* Speed button (mini) */
@@ -183,8 +183,8 @@
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 10px;
   font-weight: 600;
-  color: var(--accent-warm, #C8956C);
-  border: 1px solid rgba(200, 149, 108, 0.25);
+  color: var(--accent-warm);
+  border: 1px solid color-mix(in srgb, var(--cin-amber) 25%, transparent);
   border-radius: 4px;
   padding: 2px 6px;
   min-width: 36px;
@@ -193,8 +193,8 @@
 }
 
 .ap__mini-speed:hover {
-  border-color: rgba(200, 149, 108, 0.5);
-  background: rgba(200, 149, 108, 0.06);
+  border-color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
+  background: color-mix(in srgb, var(--cin-amber) 6%, transparent);
 }
 
 /* Expand chevron */
@@ -205,18 +205,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(200, 149, 108, 0.5);
+  color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
   transition: color 150ms;
 }
 
 .ap__expand:hover {
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
 }
 
 /* ---- Expanded Panel ---- */
 .ap__panel {
-  background: #1A1816;
-  border-top: 1px solid rgba(200, 149, 108, 0.2);
+  background: var(--bg-primary);
+  border-top: 1px solid color-mix(in srgb, var(--cin-amber) 20%, transparent);
   padding: 20px 20px 8px;
   display: flex;
   flex-direction: column;
@@ -255,7 +255,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #E74C3C;
+  background: var(--indicator-broadcast, #E74C3C);
   animation: ap-rec-pulse 1.5s ease-in-out infinite;
 }
 
@@ -268,7 +268,7 @@
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 13px;
   font-weight: 500;
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
   letter-spacing: 0.03em;
 }
 
@@ -278,19 +278,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(200, 149, 108, 0.5);
+  color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
   transition: color 150ms;
 }
 
 .ap__collapse:hover {
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
 }
 
 /* Voice label */
 .ap__voice-label {
   font-family: var(--font-structural, 'Inter', sans-serif);
   font-size: 12px;
-  color: rgba(200, 149, 108, 0.45);
+  color: color-mix(in srgb, var(--cin-amber) 45%, transparent);
   letter-spacing: 0.02em;
   margin-top: -8px;
 }
@@ -308,14 +308,14 @@
 .ap__waveform-bar {
   width: 3px;
   border-radius: 1.5px;
-  background: rgba(200, 149, 108, 0.2);
+  background: color-mix(in srgb, var(--cin-amber) 20%, transparent);
   transform: scaleY(0.5);
   opacity: 0.4;
   transition: transform 400ms ease, opacity 400ms ease;
 }
 
 .ap__waveform--active .ap__waveform-bar {
-  background: var(--accent-warm, #C8956C);
+  background: var(--accent-warm);
   animation: ap-wave 1.2s ease-in-out infinite alternate;
 }
 
@@ -339,35 +339,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(200, 149, 108, 0.6);
+  color: color-mix(in srgb, var(--cin-amber) 60%, transparent);
   transition: color 150ms;
   border-radius: 50%;
 }
 
 .ap__skip:hover {
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
 }
 
 .ap__play-lg {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  border: 2px solid rgba(200, 149, 108, 0.5);
+  border: 2px solid color-mix(in srgb, var(--cin-amber) 50%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-warm, #C8956C);
+  color: var(--accent-warm);
   font-size: 18px;
   transition: border-color 200ms, box-shadow 300ms, background 200ms;
 }
 
 .ap__play-lg:hover {
-  border-color: var(--accent-warm, #C8956C);
-  background: rgba(200, 149, 108, 0.08);
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--cin-amber) 8%, transparent);
 }
 
 .ap__play-lg--active {
-  box-shadow: 0 0 20px rgba(200, 149, 108, 0.3);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--cin-amber) 30%, transparent);
   animation: ap-glow 2s ease-in-out infinite alternate;
 }
 
@@ -384,23 +384,23 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(200, 149, 108, 0.35);
+  color: color-mix(in srgb, var(--cin-amber) 35%, transparent);
   padding: 4px 16px;
-  border: 1px solid rgba(200, 149, 108, 0.12);
+  border: 1px solid color-mix(in srgb, var(--cin-amber) 12%, transparent);
   border-radius: 4px;
   transition: color 150ms, border-color 150ms, background 150ms;
   min-height: 32px;
 }
 
 .ap__section-btn:hover {
-  color: rgba(200, 149, 108, 0.7);
-  border-color: rgba(200, 149, 108, 0.25);
+  color: color-mix(in srgb, var(--cin-amber) 70%, transparent);
+  border-color: color-mix(in srgb, var(--cin-amber) 25%, transparent);
 }
 
 .ap__section-btn--active {
-  color: var(--accent-warm, #C8956C);
-  border-color: rgba(200, 149, 108, 0.4);
-  background: rgba(200, 149, 108, 0.06);
+  color: var(--accent-warm);
+  border-color: color-mix(in srgb, var(--cin-amber) 40%, transparent);
+  background: color-mix(in srgb, var(--cin-amber) 6%, transparent);
 }
 
 /* Seek bar (expanded) */
@@ -416,7 +416,7 @@
   left: 0;
   right: 0;
   height: 6px;
-  background: rgba(200, 149, 108, 0.1);
+  background: color-mix(in srgb, var(--cin-amber) 10%, transparent);
   border-radius: 3px;
   overflow: visible;
 }
@@ -426,7 +426,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: rgba(200, 149, 108, 0.12);
+  background: color-mix(in srgb, var(--cin-amber) 12%, transparent);
   border-radius: 3px;
   transition: width 300ms linear;
 }
@@ -436,7 +436,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--accent-warm, #C8956C);
+  background: var(--accent-warm);
   border-radius: 3px;
   transition: width 100ms linear;
 }
@@ -446,7 +446,7 @@
   top: -4px;
   width: 1px;
   height: 14px;
-  background: rgba(200, 149, 108, 0.4);
+  background: color-mix(in srgb, var(--cin-amber) 40%, transparent);
   transform: translateX(-50%);
 }
 
@@ -472,23 +472,23 @@
 .ap__time {
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 12px;
-  color: rgba(200, 149, 108, 0.5);
+  color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
 }
 
 .ap__speed {
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent-warm, #C8956C);
-  border: 1px solid rgba(200, 149, 108, 0.25);
+  color: var(--accent-warm);
+  border: 1px solid color-mix(in srgb, var(--cin-amber) 25%, transparent);
   border-radius: 4px;
   padding: 3px 10px;
   transition: border-color 150ms, background 150ms;
 }
 
 .ap__speed:hover {
-  border-color: rgba(200, 149, 108, 0.5);
-  background: rgba(200, 149, 108, 0.06);
+  border-color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
+  background: color-mix(in srgb, var(--cin-amber) 6%, transparent);
 }
 
 /* ==========================================================================
@@ -591,7 +591,7 @@
   .ap__play--active,
   .ap__play-lg--active {
     animation: none;
-    box-shadow: 0 0 12px rgba(200, 149, 108, 0.25);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--cin-amber) 25%, transparent);
   }
 
   .ap__waveform--active .ap__waveform-bar {
@@ -607,10 +607,7 @@
 }
 
 /* ==========================================================================
-   DARK MODE — already dark by default, light mode adjustments
+   MODE ADAPTATION — inherits from design system tokens (--bg-primary, etc.)
+   No per-mode overrides needed: var(--bg-primary), var(--cin-amber),
+   and var(--accent-warm) resolve correctly in both light and dark modes.
    ========================================================================== */
-
-:root[data-mode="light"] .ap__mini,
-:root[data-mode="light"] .ap__panel {
-  background: #1A1816;
-}

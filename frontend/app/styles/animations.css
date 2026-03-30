@@ -178,10 +178,15 @@
   animation: fadeInUp var(--dur-morph) var(--ease-out) 120ms both;
 }
 
-/* Content arrival — subtle fade when data loads after edition switch or retry.
-   Applied to the content wrapper, not individual cards (cards have their own stagger). */
+/* Content arrival — whip pan when edition switches, subtle fade otherwise.
+   Applied to the content wrapper, not individual cards (cards have their own stagger).
+   Direction-aware: [data-whip="left"] on page-container reverses the pan direction. */
 .anim-content-arrive {
-  animation: fadeIn var(--dur-normal) var(--ease-out) both;
+  animation: whipPanIn var(--whip-pan-dur) var(--ease-whip) both;
+}
+
+[data-whip="left"] .anim-content-arrive {
+  animation: whipPanInLeft var(--whip-pan-dur) var(--ease-whip) both;
 }
 
 /* Skeleton → content crossfade: skeleton fades out as content arrives */
@@ -230,6 +235,21 @@
 /* Theme toggle spring entrance on icon swap — elastic for joy */
 .theme-toggle__icon:not(.theme-toggle__icon--hidden) {
   animation: springToggleSpin var(--dur-morph) var(--spring-elastic, var(--spring)) both;
+}
+
+/* ---- Cold Open Utility Classes ----------------------------------------- */
+
+.anim-cold-open-nav {
+  animation: coldOpenSettle var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-nav) both;
+}
+.anim-cold-open-skybox {
+  animation: coldOpenDollyIn var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-skybox) both;
+}
+
+/* ---- Golden Hour Utility Class ----------------------------------------- */
+
+.cin-golden-hour {
+  animation: cinGoldenHourPulse 700ms var(--ease-cinematic) both;
 }
 
 /* ---- Lean Filter -------------------------------------------------------- */
@@ -379,9 +399,9 @@
 
 /* ── Film Grain Drift ── */
 @keyframes cin-grain-drift {
-  0% { transform: translate(0, 0); }
-  33% { transform: translate(0.5px, -0.3px); }
-  66% { transform: translate(-0.3px, 0.5px); }
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(0.3px, -0.5px); }
+  66%  { transform: translate(-0.4px, 0.3px); }
   100% { transform: translate(0, 0); }
 }
 
@@ -402,6 +422,26 @@
   from { transform: translateX(8%); filter: blur(2px); opacity: 0; }
   60% { filter: blur(1px); }
   to { transform: translateX(0); filter: blur(0); opacity: 1; }
+}
+
+/* ── Direction-aware whip pan (rightward exit) ── */
+@keyframes whipPanOutRight {
+  from { transform: translateX(0); filter: blur(0); opacity: 1; }
+  40%  { filter: blur(2px); }
+  to   { transform: translateX(8%); filter: blur(0); opacity: 0; }
+}
+
+@keyframes whipPanInLeft {
+  from { transform: translateX(-8%); filter: blur(2px); opacity: 0; }
+  60%  { filter: blur(1px); }
+  to   { transform: translateX(0); filter: blur(0); opacity: 1; }
+}
+
+/* ── Golden Hour Pulse — theme toggle dissolve ── */
+@keyframes cinGoldenHourPulse {
+  0%   { filter: var(--cin-grade); }
+  40%  { filter: contrast(1.03) saturate(1.12) sepia(0.06) brightness(1.01); }
+  100% { filter: var(--cin-grade); }
 }
 
 /* ---- Reduced Motion ---------------------------------------------------- */

@@ -34,6 +34,14 @@ export default function ThemeToggle() {
     setMode(next);
     document.documentElement.setAttribute("data-mode", next);
     localStorage.setItem("void-news-theme", next);
+
+    // Golden hour pulse — cinematic color grade flash on theme switch
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const container = document.querySelector('.page-container');
+    if (!prefersReducedMotion && container) {
+      container.classList.add('cin-golden-hour');
+      setTimeout(() => container.classList.remove('cin-golden-hour'), 700);
+    }
   };
 
   if (!mounted) {
