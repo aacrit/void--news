@@ -148,7 +148,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
   const handlePlayPause = useCallback(() => {
     const audio = getAudio();
     if (!audio) return;
-    hapticMedium();
+    // No haptic here — callers provide their own (hapticConfirm on pill, hapticMedium on transport)
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
