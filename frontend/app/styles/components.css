@@ -33,25 +33,18 @@
   --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
-/* Organic glow — irregular radial gradient that softly diffuses at edges.
-   Multiple layered gradients create natural, non-uniform light diffusion.
-   No hard rectangle boundary — warmth bleeds outward organically. */
+/* Warm tint on hover — paper catching more light, not emitting it.
+   Contained within card bounds (inset: 0). Ink absorbs, paper reflects. */
 .story-card::before {
   content: "";
   position: absolute;
-  /* Extend beyond card bounds for soft bleed — organic, not clipped */
-  inset: -8px -12px;
-  border-radius: 16px;
-  background:
-    radial-gradient(ellipse 70% 55% at 45% 35%, var(--bg-secondary) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 60% 55%, color-mix(in srgb, var(--bg-secondary) 60%, transparent) 0%, transparent 65%);
+  inset: 0;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
   opacity: 0;
   transition: opacity 200ms var(--ease-out);
   pointer-events: none;
   z-index: 0;
-  /* Soft mask to feather the very edge — dissolve, not cut */
-  mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 100%);
 }
 
 /* Ensure card content sits above the glow layer */
@@ -593,17 +586,13 @@
     transform  320ms var(--spring-snappy);
 }
 
-/* Wider, taller radial glow — hero card casts a bigger aura */
+/* Warm tint — paper catching light, contained within card bounds */
 .lead-story::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(
-    ellipse 90% 75% at 50% 45%,
-    var(--bg-secondary) 0%,
-    transparent 100%
-  );
+  background: color-mix(in srgb, var(--bg-secondary) 40%, transparent);
   opacity: 0;
   transition: opacity 200ms var(--ease-out);
   pointer-events: none;
@@ -4832,7 +4821,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   background-color: var(--indicator-broadcast);
   flex-shrink: 0;
   animation: onair-pulse 1.5s ease-in-out infinite;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--indicator-broadcast) 40%, transparent);
 }
 
 .onair__cmd {
@@ -4901,7 +4889,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .onair__play:hover {
   background: color-mix(in srgb, var(--accent-cool) 10%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-cool) 18%, transparent);
   transform: scale(1.06);
 }
 
@@ -4912,7 +4899,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .onair__play--active {
   background: color-mix(in srgb, var(--accent-cool) 10%, transparent);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-cool) 20%, transparent);
+  border-width: 2.5px;
 }
 
 .onair__play:disabled {
