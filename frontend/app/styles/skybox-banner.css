@@ -427,6 +427,7 @@
 .skb__dial-time {
   display: flex;
   justify-content: space-between;
+  padding-bottom: var(--space-1);
 }
 
 .skb__radio-sec {
