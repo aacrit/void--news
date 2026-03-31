@@ -165,7 +165,16 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               transition: radioOpen ? "height 400ms var(--spring-bouncy, ease)" : "height 250ms var(--ease-out, ease)",
             }}>
               <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
-                {/* Waveform */}
+                {/* Radio header: voice label + speed */}
+                <div className="skb__radio-header">
+                  {brief.audio_voice_label && (
+                    <span className="skb__radio-voices">{brief.audio_voice_label}</span>
+                  )}
+                  <button className="skb__radio-speed" onClick={() => { hapticLight(); cycleSpeed(); }}
+                    type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
+                </div>
+
+                {/* Waveform / VU meter */}
                 <div className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`} aria-hidden="true">
                   {waveformBars.map((h, i) => (
                     <div key={i} className="skb__waveform-bar" style={{ height: `${h}px`, animationDelay: `${i * 55}ms` }} />
@@ -189,36 +198,31 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   </button>
                 </div>
 
-                {/* Section nav + speed */}
-                <div className="skb__radio-controls">
-                  <div className="skb__radio-sections">
+                {/* Tuning dial: section labels + seek bar + time */}
+                <div className="skb__dial">
+                  <div className="skb__dial-row">
                     <button className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
                       onClick={() => seekTo(0)} type="button">News</button>
+                    <div className="skb__radio-bar-wrap">
+                      <div className="skb__radio-bar">
+                        <div className="skb__radio-buffer" style={{ width: `${buffered}%` }} />
+                        <div className="skb__radio-fill" style={{ width: `${progress}%` }} />
+                        {hasOpinionSection && <span className="skb__radio-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+                      </div>
+                      <input type="range" className="skb__radio-input" min={0} max={displayDuration || 100}
+                        value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek"
+                        aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`} />
+                    </div>
                     {hasOpinionSection && (
                       <button className={`skb__radio-sec${inOpinion ? " skb__radio-sec--active" : ""}`}
                         onClick={() => effectiveOpinionStart != null ? seekTo(effectiveOpinionStart) : null}
                         type="button">Opinion</button>
                     )}
                   </div>
-                  <button className="skb__radio-speed" onClick={() => { hapticLight(); cycleSpeed(); }}
-                    type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
-                </div>
-
-                {/* Seek bar */}
-                <div className="skb__radio-bar-wrap">
-                  <div className="skb__radio-bar">
-                    <div className="skb__radio-buffer" style={{ width: `${buffered}%` }} />
-                    <div className="skb__radio-fill" style={{ width: `${progress}%` }} />
-                    {hasOpinionSection && <span className="skb__radio-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+                  <div className="skb__dial-time">
+                    <span className="skb__radio-time">{formatTime(currentTime)}</span>
+                    <span className="skb__radio-time">{formatTime(displayDuration || 0)}</span>
                   </div>
-                  <input type="range" className="skb__radio-input" min={0} max={displayDuration || 100}
-                    value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek"
-                    aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`} />
-                </div>
-
-                {/* Time */}
-                <div className="skb__radio-time">
-                  {formatTime(currentTime)} / {formatTime(displayDuration || 0)}
                 </div>
               </div>
             </div>

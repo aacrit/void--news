@@ -1976,7 +1976,7 @@ def main():
                                 # frontend always has something to play.
                                 try:
                                     prev = supabase.table("daily_briefs").select(
-                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size,opinion_start_seconds"
+                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size"
                                     ).eq("edition", edition).order(
                                         "created_at", desc=True
                                     ).limit(1).execute()
@@ -1987,7 +1987,6 @@ def main():
                                         brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                         brief_row["audio_voice"] = p.get("audio_voice")
                                         brief_row["audio_file_size"] = p.get("audio_file_size")
-                                        brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                         print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
                                 except Exception as e:
                                     print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
@@ -1996,7 +1995,7 @@ def main():
                             # previous audio so frontend always has audio available.
                             try:
                                 prev = supabase.table("daily_briefs").select(
-                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
+                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
                                 ).eq("edition", edition).order(
                                     "created_at", desc=True
                                 ).limit(1).execute()
@@ -2007,7 +2006,6 @@ def main():
                                     brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                     brief_row["audio_voice"] = p.get("audio_voice")
                                     brief_row["audio_file_size"] = p.get("audio_file_size")
-                                    brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                     if not brief_row.get("audio_script"):
                                         brief_row["audio_script"] = p.get("audio_script")
                                     print(f"  [brief:{edition}] No audio script — carried forward previous audio")
@@ -2019,7 +2017,22 @@ def main():
                             brief_row, on_conflict="edition,pipeline_run_id"
                         ).execute()
                     except Exception as e:
-                        print(f"  [warn] Failed to store brief for {edition}: {e}")
+                        # If the error is a missing column (e.g. opinion_start_seconds
+                        # before migration 028), strip the unknown column and retry.
+                        err_msg = str(e)
+                        if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
+                            # Extract column name from error if possible, or strip known optional cols
+                            for optional_col in ("opinion_start_seconds",):
+                                brief_row.pop(optional_col, None)
+                            try:
+                                supabase.table("daily_briefs").upsert(
+                                    brief_row, on_conflict="edition,pipeline_run_id"
+                                ).execute()
+                                print(f"  [brief:{edition}] Stored (stripped missing column)")
+                            except Exception as e2:
+                                print(f"  [warn] Failed to store brief for {edition} (retry): {e2}")
+                        else:
+                            print(f"  [warn] Failed to store brief for {edition}: {e}")
 
                 elapsed_7d = time.time() - start_7d
                 print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
