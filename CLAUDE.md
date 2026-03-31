@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-30 (rev 18)
+Last updated: 2026-03-31 (rev 19)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -94,7 +94,7 @@ Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as
 Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
 
 ### CSS
-Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → audio-player → responsive → command-center` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → responsive → command-center` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
 
 ## Data Model (Supabase)
 
@@ -136,7 +136,7 @@ void-news/
 │   ├── analyzers/         # political_lean, sensationalism, opinion_detector, factual_rigor, framing, gemini_reasoning, topic_outlet_tracker
 │   ├── clustering/        # deduplicator.py, story_cluster.py
 │   ├── summarizer/        # gemini_client.py, cluster_summarizer.py
-│   ├── briefing/          # daily_brief_generator, audio_producer, claude_brief_generator, voice_rotation, generate_assets
+│   ├── briefing/          # daily_brief_generator, audio_producer, claude_brief_generator, voice_rotation, generate_assets, podcast_feed_generator
 │   ├── categorizer/       # auto_categorize.py
 │   ├── ranker/            # importance_ranker.py
 │   ├── validation/        # fixtures, signal_tracker, source_profiles, runner, snapshot
@@ -146,9 +146,9 @@ void-news/
 │   └── rerank.py          # Standalone re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # 39 components: AudioPlayer, BiasInspector, BiasLens, BiasLensOnboarding, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OpEdPage, OpinionCard, PageToggle, ScaleIcon, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, WireCard
+│   │   ├── components/    # 38 components: BiasInspector, BiasLens, BiasLensOnboarding, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OpEdPage, OpinionCard, PageToggle, ScaleIcon, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, WireCard
 │   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts
-│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, audio-player, responsive, command-center
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, responsive, command-center
 │   │   ├── sources/       # /sources page
 │   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
 │   │   ├── command-center/ # /command-center KPI dashboard
@@ -156,10 +156,10 @@ void-news/
 │   └── next.config.ts
 ├── data/sources.json      # 409 curated sources
 ├── supabase/migrations/   # 001-029
-├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-opinion.yml, refresh-tldr.yml, refresh-onair.yml
+├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml
 ├── .claude/agents/        # 23 agent definitions
-├── .claude/skills/        # pressdesign + 14 workflow skills
-└── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE
+├── .claude/skills/        # pressdesign + prompt-iterate + workflows + 13 workflow skills (16 total)
+└── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE, VOICE-BRAND
 ```
 
 ## Status

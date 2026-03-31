@@ -1,6 +1,6 @@
 # void --news — Project Charter
 
-**Date:** 2026-03-30 (rev 4)
+**Date:** 2026-03-31 (rev 5)
 **Project Owner:** Aacrit (CEO)
 **Status:** Phase 4 In Progress
 
@@ -76,7 +76,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | 6 | Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
 | 7 | Design | "Press & Precision" — newspaper aesthetic, modern data density |
 | 8 | Typography | Playfair Display + Inter + Barlow Condensed + IBM Plex Mono |
-| 9 | Bias viz | BiasLens Three Lenses (Needle, Ring, Prism) |
+| 9 | Bias viz | BiasLens Three Lenses (Beam, Ring, Prism) |
 | 10 | Ranking | v5.4: 11 deterministic signals + optional Gemini editorial intelligence |
 | 11 | Color | Light mode (warm paper) + adaptive dark mode |
 | 12 | Hosting | GitHub Pages + Supabase + GitHub Actions |

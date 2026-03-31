@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.0
-**Last updated:** 2026-03-30 (rev 10)
+**Last updated:** 2026-03-31 (rev 11)
 
 ---
 
@@ -197,14 +197,14 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 
 | Lens | Name | Visual | Encoding |
 |------|------|--------|----------|
-| 1 (N) | **The Needle** | Tilting line with pivot dot | Political lean: rotates -30 to +30 degrees from center. Color from lean spectrum (blue left, gray center, red right). |
+| 1 (B) | **The Beam** | Horizontal tilting beam with center post | Political lean: tilts ±15° from center (formula: `(lean - 50) * 0.30`). Color from lean spectrum (blue left, gray center, red right). Matches the Sigil DataMark beam. |
 | 2 (R) | **The Signal Ring** | SVG ring (Harvey ball) with source count | Coverage/confidence composite: ring fill 0-100%. Source count displayed in center. Color: green (strong) / yellow (moderate) / red (weak). |
 | 3 (P) | **The Prism** | Morphing shape (square to circle) | Opinion vs. reporting: square = factual reporting, circle = opinion. Color: blue (reporting) / purple (analysis) / orange (opinion). |
 
 ### Sizes
 
-- **sm** (story cards): Needle 18px, Ring 18px, Prism 14px. Gap 6px.
-- **lg** (lead story, deep dive header): Needle 28px, Ring 28px, Prism 22px. Gap 10px.
+- **sm** (story cards): Beam 18px, Ring 18px, Prism 14px. Gap 6px.
+- **lg** (lead story, deep dive header): Beam 28px, Ring 28px, Prism 22px. Gap 10px.
 
 ### Interaction
 
@@ -218,7 +218,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 - Each lens has `role="img"` with descriptive `aria-label` (e.g., "Political lean: Center-Left, score 42").
 - Popups use `role="tooltip"` with `aria-describedby` linking.
 - Keyboard accessible: Tab to focus, Enter/Space to toggle popup, Escape to close.
-- Color is never the sole differentiator -- shape (needle angle, ring fill, square-to-circle morph) encodes the data independently.
+- Color is never the sole differentiator -- shape (beam tilt angle, ring fill, square-to-circle morph) encodes the data independently.
 - Min 4.5:1 contrast on both light and dark backgrounds.
 
 ---
@@ -392,7 +392,7 @@ Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blu
 - Hero typography (--text-hero for headline)
 - 3-4 line summary
 - Source count badge prominent
-- BiasLens (lg) — larger Needle (28px), Ring (28px), Prism (22px)
+- BiasLens (lg) — larger Beam (28px), Ring (28px), Prism (22px)
 
 ---
 
@@ -478,7 +478,7 @@ Active components in `frontend/app/components/`:
 | Component | Purpose | Bias Visualization |
 |-----------|---------|-------------------|
 | `BiasInspector` | "Press Analysis" 4-axis scorecard (Lean, Sensationalism, Factual Rigor, Framing). Three exports: `BiasInspectorInline` (rendered inline in Deep Dive, expanded via ▶ trigger — no dialog wrapper), `BiasInspectorTrigger` + `BiasInspectorPanel` (legacy pop-out, kept for backward compat). Each axis row is collapsible — expand for sub-scores + Gemini reasoning text. | Cluster-averaged across all sources |
-| `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
+| `BiasLens` | Three Lenses bias visualization (Beam, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
 | `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
@@ -486,7 +486,6 @@ Active components in `frontend/app/components/`:
 | `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
-| `AudioPlayer` | Persistent bottom audio player for void --onair broadcast (play/pause, scrub, progress, volume). CSS custom properties only — no hardcoded colors. | -- |
 | `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Cold open animation class (`anim-cold-open-nav`). Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
 | `ThemeToggle` | Light/dark mode toggle. Golden hour pulse on toggle (700ms cinGoldenHourPulse targeting `.page-main`, reduced-motion guarded). | -- |
 | `LoadingSkeleton` | Animated skeleton loading state | -- |
@@ -517,7 +516,7 @@ Active components in `frontend/app/components/`:
 | `KeyboardShortcuts` | Keyboard shortcut handler and help overlay | -- |
 | `InstallPrompt` | PWA install prompt | -- |
 
-**39 components total** (39 `.tsx` files). Removed: `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
+**38 components total** (38 `.tsx` files). Removed: `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 
@@ -571,7 +570,7 @@ Minimal. Line-style icons only. No filled icons except for active/selected state
 
 - **Category icons**: Minimal line illustrations (politics gavel, economy chart, health cross, etc.)
 - **Navigation**: Standard line icons (home, search, settings, back)
-- **Bias**: BiasLens Three Lenses (Needle, Ring, Prism) — no traditional icons needed
+- **Bias**: BiasLens Three Lenses (Beam, Ring, Prism) — no traditional icons needed
 - **Actions**: Minimal line (refresh, external link, expand, collapse)
 
 ---
@@ -587,14 +586,14 @@ Minimal. Line-style icons only. No filled icons except for active/selected state
 - **Reduced motion**: All animations instant under `prefers-reduced-motion`
 - **Touch targets**: ≥ 44×44px on mobile
 - **Zoom**: Content readable at 200% zoom, no horizontal scroll
-- **Color independence**: BiasLens uses shape + angle + fill + morph (never color alone) — Needle angle, Ring fill percentage, and Prism square-to-circle morph all encode data independently of color.
+- **Color independence**: BiasLens uses shape + angle + fill + morph (never color alone) — Beam tilt angle, Ring fill percentage, and Prism square-to-circle morph all encode data independently of color.
 
 ### BiasLens Screen Reader Pattern
 
 ```html
 <!-- Each lens has role="img" with descriptive aria-label -->
 <div class="bias-lens" role="group" aria-label="Bias analysis for this article">
-  <div class="bias-lens__needle" role="img" aria-label="Political lean: Center-Left, score 42"></div>
+  <div class="bias-lens__beam" role="img" aria-label="Political lean: Center-Left, score 42"></div>
   <div class="bias-lens__ring" role="img" aria-label="Coverage confidence: 67%, 8 sources"></div>
   <div class="bias-lens__prism" role="img" aria-label="Article type: Reporting (factual)"></div>
 </div>
