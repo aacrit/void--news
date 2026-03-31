@@ -138,45 +138,67 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                 </span>
               </div>
 
-              {/* Source list — favicon + name + first 2 headlines */}
+              {/* Source list — compact wire-ticker: logo + name + summary + arrow, all inline */}
               <div className="comp-view__items">
                 {visibleItems.map((source, i) => {
                   const favicon = getFaviconUrl(source.url);
                   const title = source.articleTitle || source.name;
 
                   return (
-                    <article key={`${source.name}-${i}`} className="comp-view__item">
-                      <div className="comp-view__item-row">
-                        {favicon && (
-                          <span className="comp-view__favicon-wrap">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={favicon}
-                              alt=""
-                              width={16}
-                              height={16}
-                              className="comp-view__favicon"
-                              loading="lazy"
-                              onError={(e) => {
-                                const wrap = e.currentTarget.parentElement;
-                                if (wrap) wrap.style.display = "none";
-                              }}
-                            />
-                          </span>
-                        )}
-                        <span className="comp-view__source-name text-data">{source.name}</span>
-                      </div>
-                      <p className="comp-view__headline">{title}</p>
-                      {source.url && (
+                    <article key={`${source.name}-${i}`} className="comp-view__item comp-view__item--wire">
+                      {source.url ? (
                         <a
                           href={source.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="comp-view__read-link"
-                          aria-label={`Read article from ${source.name}`}
+                          className="comp-view__wire-link"
+                          aria-label={`${source.name}: ${title}`}
                         >
-                          Read <span aria-hidden="true">&#8594;</span>
+                          {favicon && (
+                            <span className="comp-view__favicon-wrap">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={favicon}
+                                alt=""
+                                width={14}
+                                height={14}
+                                className="comp-view__favicon"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const wrap = e.currentTarget.parentElement;
+                                  if (wrap) wrap.style.display = "none";
+                                }}
+                              />
+                            </span>
+                          )}
+                          <span className="comp-view__source-name text-data">{source.name}</span>
+                          <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
+                          <span className="comp-view__wire-title">{title}</span>
+                          <span className="comp-view__wire-arrow" aria-hidden="true">&#8250;</span>
                         </a>
+                      ) : (
+                        <span className="comp-view__wire-link comp-view__wire-link--static">
+                          {favicon && (
+                            <span className="comp-view__favicon-wrap">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={favicon}
+                                alt=""
+                                width={14}
+                                height={14}
+                                className="comp-view__favicon"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const wrap = e.currentTarget.parentElement;
+                                  if (wrap) wrap.style.display = "none";
+                                }}
+                              />
+                            </span>
+                          )}
+                          <span className="comp-view__source-name text-data">{source.name}</span>
+                          <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
+                          <span className="comp-view__wire-title">{title}</span>
+                        </span>
                       )}
                     </article>
                   );
