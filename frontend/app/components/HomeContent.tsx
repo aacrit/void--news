@@ -678,11 +678,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
       />
 
-      {/* eslint-disable-next-line react/no-unknown-property */}
       <main
         id="main-content"
         className="page-main"
-        inert={selectedStory ? true : undefined}
         onTouchStart={handlePullStart}
         onTouchMove={handlePullMove}
         onTouchEnd={handlePullEnd}

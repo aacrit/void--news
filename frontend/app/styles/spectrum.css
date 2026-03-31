@@ -345,7 +345,7 @@
 
 /* Individual logo hover: pop above neighbors */
 .spectrum-logo:hover {
-  transform: scale(1.15);
+  transform: scale(1.35);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   z-index: var(--z-tooltip);
   border-color: var(--border-strong);

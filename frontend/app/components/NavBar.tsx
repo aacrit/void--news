@@ -128,17 +128,8 @@ export default function NavBar({
 
   const hasFilters = !!onLeanChange;
 
-  // Cold open plays once per session — not on every edition switch
-  const [coldOpen] = useState(() => {
-    try {
-      if (sessionStorage.getItem("cold-open-played")) return false;
-      sessionStorage.setItem("cold-open-played", "1");
-      return true;
-    } catch { return true; }
-  });
-
   return (
-    <header className={`nav-header${coldOpen ? " anim-cold-open-nav" : ""}`}>
+    <header className="nav-header anim-cold-open-nav">
       {/* ── Row 1: Masthead ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">

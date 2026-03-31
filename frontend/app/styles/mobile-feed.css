@@ -50,9 +50,7 @@
 
 .msc--hero {
   padding: var(--space-3) 0 var(--space-4);
-  padding-left: var(--space-3);
   border-bottom: var(--rule-thin);
-  border-left: 3px solid var(--accent-warm);
 }
 
 .msc--hero .msc__meta {

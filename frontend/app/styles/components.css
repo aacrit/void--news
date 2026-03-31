@@ -587,6 +587,7 @@
   padding: var(--space-6) 0;
   border-bottom: var(--rule-strong);
   cursor: pointer;
+  will-change: transform;
   transition:
     box-shadow 300ms 30ms var(--ease-out),
     transform  320ms var(--spring-snappy);
@@ -619,7 +620,6 @@
 }
 
 .lead-story:hover {
-  will-change: transform;
   box-shadow: var(--shadow-card-lead-hover);
   transform: translateY(-2px);
 }
