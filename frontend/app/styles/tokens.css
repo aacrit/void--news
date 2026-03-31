@@ -18,17 +18,7 @@
   --thumb-border:        #fff;
   --indicator-broadcast: #c0392b;
 
-  /* ── Accent Cool — Verdigris (broadcast / listening mode) ──
-     Split-complementary of amber (H:170 vs H:43). Warm-shifted teal.
-     Verdigris = oxidized brass — same metal as amber, different state.
-     Used on page surface for all audio/broadcast elements.
-     5.41:1 on #F0EBDD — WCAG AA compliant. */
-  --accent-cool:       #196A5C;
-  --accent-cool-dim:   #145A4E;
-  --accent-cool-ghost: rgba(25, 106, 92, 0.08);
-  --accent-cool-glow:  rgba(25, 106, 92, 0.15);
-
-  /* ── Voice Accent — fixed value for always-dark radio console ──
+  /* ── Voice Accent — scoped to always-dark radio console only ──
      The radio panel (#1A1816) is always dark regardless of theme.
      This fixed value ensures 6.71:1 contrast on that surface. */
   --voice-accent:       #4DAFA0;
@@ -101,10 +91,13 @@
   --cin-paper-highlight: #F5EFE0;
   --cin-paper-shadow: #E4DDD0;
 
+  --cin-amber-muted: #B08A40;
+
   /* ── Cinematic Palette Bridge ── */
   --cinematic-accent: var(--cin-amber);
-  --cinematic-shadow-tint: rgba(28, 26, 23, 0.85);
+  --cinematic-shadow-tint: rgba(42, 32, 18, 0.82);
   --cinematic-rim-light: var(--cin-amber-glow);
+  --cinematic-rim-cool: rgba(100, 116, 139, 0.10);
 
   /* ── Cinematic Easings ── */
   --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
@@ -130,16 +123,18 @@
     -1px 2px 6px color-mix(in srgb, var(--cinematic-shadow-tint) 6%, transparent);
 
   /* ── Vignette ── */
-  --cin-vignette-color: rgba(28, 26, 23, 0.03);
+  --cin-vignette-color: rgba(28, 26, 23, 0.05);
 
   /* ── Film Grain ── */
   --cin-grain-opacity: 0.035;
 
   /* ── Color Grade ── */
-  --cin-grade: contrast(1.02) saturate(0.95) sepia(0.03);
+  --cin-grade: contrast(1.03) saturate(0.92) sepia(0.04);
 
   /* ── Atmospheric Haze ── */
   --cin-haze-far: saturate(0.92) brightness(0.98);
+  --cin-haze-mid: saturate(0.96) brightness(0.99);
+  --cin-warmth-near: sepia(0.02) saturate(1.02);
 
   /* ── Cold Open — staged reveal timing ── */
   --cold-open-nav:     80ms;
@@ -149,7 +144,9 @@
   --cold-open-dur:    500ms;
 
   /* ── Rack Focus — neighbor defocus ── */
-  --rack-blur-neighbor: blur(0.5px);
+  --rack-blur-neighbor: blur(0.8px);
+  --rack-dim-neighbor: 0.65;
+  --rack-recede-neighbor: scale(0.998);
 
   /* ── Deep Dive Backdrop — cinematic chiaroscuro ── */
   --cin-backdrop-bg: rgba(28, 26, 23, 0.45);
@@ -157,6 +154,16 @@
 
   /* ── Whip Pan — edition switch ── */
   --whip-pan-dur: 350ms;
+  --ease-whip-out: cubic-bezier(0.55, 0, 1, 0.45);
+
+  /* ── Deep Dive — cascade timing ── */
+  --dd-cascade-gap: 120ms;
+  --dd-content-scale-from: 0.98;
+  --dd-feed-scale: 0.998;
+
+  /* ── Practical Light — breathing radius + period ── */
+  --cin-practical-radius: 40px;
+  --cin-practical-pulse: 4s;
 
   /* ── Practical Light — OnAir ambient warmth ── */
   --cin-practical-warmth: color-mix(in srgb, var(--cin-amber) 4%, var(--bg-primary));
@@ -190,13 +197,7 @@
   --thumb-border:        var(--bg-secondary);
   --indicator-broadcast: #DC2626;
 
-  /* ── Accent Cool — Verdigris (dark mode) ── */
-  --accent-cool:       #5DB6A2;
-  --accent-cool-dim:   #4A9E8C;
-  --accent-cool-ghost: rgba(93, 182, 162, 0.06);
-  --accent-cool-glow:  rgba(93, 182, 162, 0.12);
-
-  /* ── Voice Accent — fixed for always-dark radio console (same both modes) ── */
+  /* ── Voice Accent — scoped to always-dark radio console (same both modes) ── */
   --voice-accent:       #4DAFA0;
   --voice-accent-dim:   #3D9A8C;
   --voice-accent-ghost: rgba(77, 175, 160, 0.08);
@@ -281,12 +282,17 @@
   --cin-ash: #9CA3AF;
   --cin-ash-warm: #A8A29E;
   --cin-ash-cool: #94A3B8;
+  --cin-amber-muted: #9E8568;
   --cin-shadow-color: rgba(20, 16, 10, 1);
-  --cinematic-shadow-tint: rgba(0, 0, 0, 0.9);
+  --cinematic-shadow-tint: rgba(12, 8, 2, 0.92);
   --cinematic-rim-light: var(--cin-amber-glow);
-  --cin-vignette-color: rgba(20, 16, 10, 0.08);
-  --cin-grain-opacity: 0.025;
-  --cin-grade: contrast(1.04) saturate(0.88) brightness(0.97);
+  --cinematic-rim-cool: rgba(148, 163, 184, 0.08);
+  --cin-vignette-color: rgba(12, 8, 2, 0.12);
+  --cin-grain-opacity: 0.030;
+  --cin-grade: contrast(1.05) saturate(0.86) brightness(0.96) sepia(0.02);
+  --cin-haze-far: saturate(0.88) brightness(0.95);
+  --cin-haze-mid: saturate(0.93) brightness(0.97);
+  --cin-warmth-near: sepia(0.03) saturate(1.01);
 
   /* ── Dark mode overrides for cinematic tokens ── */
   --cin-backdrop-bg: rgba(0, 0, 0, 0.55);
