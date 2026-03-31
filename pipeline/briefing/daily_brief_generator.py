@@ -154,8 +154,10 @@ Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
 "Ceasefire Holds as Trade War Enters Week Two"
 
 TL;DR INSTRUCTIONS (return as "tldr_text"):
-Write 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
-Target 180-240 words. Write in the voice of today's lead host:
+Write 8-12 sentences as a flowing editorial paragraph. Target 180-240 words. \
+CRITICAL: Put exactly one sentence per line, separated by \\n (literal newline). \
+Each line = one sentence. Do NOT concatenate all sentences into one block. \
+Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
 STRUCTURE — Hook > Stakes > Sweep > Pattern:
@@ -174,10 +176,14 @@ Never use: "amid," "raises questions," "remains to be seen," \
 "this isn't just," "this is not just," "it's not just," "here's the thing," \
 "the question now is," "the reality is," "the bigger picture," \
 "what makes this," "the takeaway," "the bottom line," "this goes beyond," \
-"this matters because," "what's really happening," "this is about more than."
+"this matters because," "what's really happening," "this is about more than," \
+"robust," "comprehensive," "pivotal," "nuanced," "landscape," "navigate," \
+"navigating," "underscores," "multifaceted," "delve," "delves into."
 
-RHYTHM: Alternate long and short sentences. "That changed Tuesday." Short \
-sentences are the most powerful tool in editorial writing.
+RHYTHM: At least 15% of sentences must be 8 words or fewer. "That changed Tuesday." \
+"Three days." "Eighteen months." Short sentences are the most powerful tool \
+in editorial writing. Alternate long and short deliberately — never let three \
+long sentences appear in a row without a short one.
 
 ---
 
@@ -203,11 +209,13 @@ A and B trade off — both contribute facts, both provide context.
 these stories, or the question they leave unanswered. Then the last speaker says: \
 "This was Void news." — with finality. Done.
 
-PACING — Write for the ear:
+PACING — Write for the ear (MANDATORY rhythm markers — minimum 8 total):
+- Use [short pause] for breath beats between thoughts (minimum 4 per script).
+- Use [long pause] before key revelations or topic shifts (minimum 2 per script).
+- Use em dashes (—) for mid-thought pivots (minimum 2 per script).
 - Short sentences for emphasis, then a longer one that unpacks.
-- Ellipses (...) for deliberate pauses. Em dashes (—) for mid-thought pivots.
-- [short pause] for breath beats between thoughts. [long pause] before a key revelation.
 - Vary sentence length dramatically. "The bond market noticed." / "Eighteen months."
+- At least 15% of sentences must be 8 words or fewer.
 - Contractions fine. Elevated register — informed professionals, not casual hangout.
 - Numbers: write out small ones ("three"). Figures for big ones ("$1.4 trillion").
 - Names, numbers, places, dates always. Not "officials say" — "the Treasury Secretary \
@@ -225,7 +233,8 @@ to know.", "Think of it this way.", "So here's what's happening.", "Let me expla
 "This matters because...", "What's really happening...", "This is about more than..."
 - Performance: "I mean...", "Look...", "Right?" (seeking agreement), "So basically..."
 - Slop words (never use these adjectives): "significant", "notable", "crucially", \
-"importantly", "unprecedented", "comprehensive", "pivotal", "nuanced"
+"importantly", "unprecedented", "comprehensive", "pivotal", "nuanced", "robust", \
+"landscape", "navigate", "navigating", "underscores", "multifaceted", "delve"
 
 ---
 
@@ -294,8 +303,9 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
 
     # --- HARD GATE: Prohibited terms ---
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
-    report["failures" if found else "metrics"]["prohibited_terms_found"] = found
+    report["metrics"]["prohibited_terms_found"] = found
     if found:
+        report["failures"].append(f"Prohibited terms: {found}")
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
 
     # Validate script has actual dialogue (A:/B: speaker tags)
@@ -610,7 +620,8 @@ Never announce what you are about to argue. These are ALL banned: \
 "This matters because...", "This is about more than...", "Let's be clear..."
 Also banned — slop adjectives that assert instead of showing: \
 "significant", "notable", "crucially", "importantly", "unprecedented", \
-"pivotal", "nuanced", "comprehensive."
+"pivotal", "nuanced", "comprehensive", "robust", "landscape", "navigate", \
+"navigating", "underscores", "multifaceted", "delve", "delves into."
 Start every sentence with the FACT or the ARGUMENT. If the sentence works \
 without its opening clause, delete the opening clause.
 
