@@ -334,7 +334,6 @@
   background: #1A1816;
   border-radius: 0 0 12px 12px;
   border: 1px solid color-mix(in srgb, var(--voice-accent) 15%, transparent);
-  border-top: none;
   padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
@@ -381,16 +380,9 @@
   transition: transform 400ms, opacity 400ms;
 }
 
-/* VU meter gradient: teal nominal → amber peak */
 .skb__waveform--active .skb__waveform-bar {
   background: var(--voice-accent);
   animation: vuBar-mid 1.2s ease-in-out infinite alternate;
-}
-.skb__waveform--active .skb__waveform-bar:nth-child(n+18) {
-  background: color-mix(in srgb, var(--voice-accent) 60%, var(--cin-amber));
-}
-.skb__waveform--active .skb__waveform-bar:nth-child(n+25) {
-  background: var(--cin-amber);
 }
 
 /* Organic VU bar variants — different bars reach different peaks */

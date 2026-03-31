@@ -70,7 +70,7 @@ export default function DesktopFeed({
       <SkyboxBanner state={dailyBriefState} />
 
       {/* OnAir Band — standalone broadcast strip */}
-      <OnAirBand state={dailyBriefState} edition={editionMeta.slug} />
+      <OnAirBand state={dailyBriefState} />
 
       {/* Zone 1: Broadsheet Lead — asymmetric 2fr | 1fr */}
       {leadStories.length > 0 && (
