@@ -1,0 +1,61 @@
+name: "Refresh: Daily Brief"
+permissions: {}
+
+on:
+  workflow_dispatch:
+    inputs:
+      editions:
+        description: 'Editions (comma-separated: world,us,india,uk,canada)'
+        required: false
+        default: 'world'
+      mode:
+        description: 'Mode: full (TL;DR + opinion + audio), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - text
+          - tldr
+          - opinion
+
+jobs:
+  refresh-brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install system dependencies
+        if: inputs.mode == 'full'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Refresh Daily Brief
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          MODE="${{ inputs.mode }}"
+          EDITIONS="${{ inputs.editions }}"
+          echo "Mode: ${MODE} | Editions: ${EDITIONS}"
+
+          case "${MODE}" in
+            full)
+              python pipeline/refresh_brief.py --editions "${EDITIONS}"
+              ;;
+            text)
+              python pipeline/refresh_brief.py --editions "${EDITIONS}" --no-audio
+              ;;
+            tldr)
+              python pipeline/refresh_brief.py --editions "${EDITIONS}" --tldr-only --no-audio
+              ;;
+            opinion)
+              python pipeline/refresh_brief.py --editions "${EDITIONS}" --opinion-only
+              ;;
+          esac

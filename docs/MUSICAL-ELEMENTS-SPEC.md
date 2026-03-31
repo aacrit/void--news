@@ -592,7 +592,7 @@ Recommended sequence for the developer:
 6. `audio_producer.py`: Wire headline underscore overlay in assembly Step 4.
 7. `audio_producer.py`: Wire opinion kicker in assembly Step 4.
 8. `audio_producer.py`: Update gap timings for news-to-opinion transition.
-9. Full integration test: `python pipeline/refresh_audio.py --editions world`
+9. Full integration test: `python pipeline/refresh_brief.py --editions world`
 10. Listening test against checklist (Section 13).
 
 ---

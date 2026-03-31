@@ -167,8 +167,14 @@ Start mid-action.
 one sentence showing what shifted. Vary sentence length for rhythm.
 4. CLOSE (1-2 sentences): The pattern the reader didn't see. End on tension.
 
-ANTI-SLOP: Never use "amid," "raises questions," "remains to be seen," \
-"only time will tell," "in a move that," "sends a clear signal."
+ANTI-SLOP — ZERO TOLERANCE (output containing these is REJECTED and regenerated):
+Never use: "amid," "raises questions," "remains to be seen," \
+"only time will tell," "in a move that," "sends a clear signal," \
+"significant," "notable," "crucially," "importantly," "unprecedented," \
+"this isn't just," "this is not just," "it's not just," "here's the thing," \
+"the question now is," "the reality is," "the bigger picture," \
+"what makes this," "the takeaway," "the bottom line," "this goes beyond," \
+"this matters because," "what's really happening," "this is about more than."
 
 RHYTHM: Alternate long and short sentences. "That changed Tuesday." Short \
 sentences are the most powerful tool in editorial writing.
@@ -209,13 +215,17 @@ said Tuesday."
 - Substantive reactions only: "But that contradicts the Q3 numbers." / \
 "Which is what makes the timing interesting — the vote is Thursday."
 
-BANNED — zero tolerance:
+BANNED — zero tolerance (output containing these is REJECTED and regenerated):
 - Filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", "Interesting.", \
 "Exactly.", "That's a fair point.", "Great question."
 - Scaffolding: "This isn't just...", "Here's the thing...", "Here's what you need \
 to know.", "Think of it this way.", "So here's what's happening.", "Let me explain.", \
-"The bigger picture...", "What makes this...", "The reality is...", "Zoom out..."
+"The bigger picture...", "What makes this...", "The reality is...", "Zoom out...", \
+"The question now is...", "The takeaway...", "The bottom line...", "This goes beyond...", \
+"This matters because...", "What's really happening...", "This is about more than..."
 - Performance: "I mean...", "Look...", "Right?" (seeking agreement), "So basically..."
+- Slop words (never use these adjectives): "significant", "notable", "crucially", \
+"importantly", "unprecedented", "comprehensive", "pivotal", "nuanced"
 
 ---
 
@@ -236,8 +246,12 @@ else:
     })
 
 
-def _check_quality(result: dict, edition: str) -> None:
-    """Log quality warnings for out-of-spec brief output."""
+def _check_quality(result: dict, edition: str) -> bool:
+    """Log quality warnings for out-of-spec brief output.
+
+    Returns True if output passes hard gates (no prohibited terms).
+    Returns False if prohibited scaffolding/slop was found (caller should retry).
+    """
     tldr = result.get("tldr_text", "")
     lines = [l.strip() for l in tldr.split("\n") if l.strip()]
     words = len(tldr.split())
@@ -259,9 +273,11 @@ def _check_quality(result: dict, edition: str) -> None:
 
     all_text = f"{tldr} {script}".lower()
 
+    has_prohibited = False
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
     if found:
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
+        has_prohibited = True
 
     # Validate script has actual dialogue (A:/B: speaker tags)
     speaker_lines = [l for l in script.splitlines() if l.strip().startswith(("A:", "B:"))]
@@ -309,6 +325,47 @@ def _check_quality(result: dict, edition: str) -> None:
         found_filler = [f for f in _BANNED_FILLER if f.lower() in script.lower()]
         if found_filler:
             print(f"  [quality][brief:{edition}] Banned filler in audio script: {found_filler}")
+
+    # 4e. Pacing enforcement — sentence rhythm and pause markers in audio script
+    if script.strip():
+        import re
+        # Split into sentences (rough: split on .|!|? followed by space/newline)
+        sentences = re.split(r'(?<=[.!?])\s+', script.strip())
+        sentences = [s for s in sentences if s.strip() and not s.strip().startswith(("A:", "B:")[:0])]
+        # Count words per sentence (strip speaker tags)
+        word_counts = []
+        for s in sentences:
+            cleaned = re.sub(r'^[AB]:\s*', '', s.strip())
+            wc = len(cleaned.split())
+            if wc > 0:
+                word_counts.append(wc)
+
+        if word_counts:
+            short_sentences = sum(1 for w in word_counts if w <= 8)
+            long_sentences = sum(1 for w in word_counts if w >= 20)
+            total = len(word_counts)
+            short_pct = short_sentences / total * 100
+            long_pct = long_sentences / total * 100
+
+            if short_pct < 15:
+                print(f"  [quality][brief:{edition}] Pacing: only {short_pct:.0f}% short sentences "
+                      f"(<=8 words, want >=15%) — rhythm is flat")
+            if long_pct < 10:
+                print(f"  [quality][brief:{edition}] Pacing: only {long_pct:.0f}% long sentences "
+                      f"(>=20 words, want >=10%) — no build-up sentences")
+
+        # Pause markers
+        pause_count = script.lower().count("[short pause]") + script.lower().count("[long pause]")
+        ellipsis_count = script.count("...")
+        dash_count = script.count(" — ") + script.count("—")
+        total_markers = pause_count + ellipsis_count + dash_count
+
+        if total_markers < 5:
+            print(f"  [quality][brief:{edition}] Pacing: only {total_markers} rhythm markers "
+                  f"(pauses: {pause_count}, ellipses: {ellipsis_count}, dashes: {dash_count}) — "
+                  f"want >=5 for natural spoken cadence")
+
+    return not has_prohibited
 
 
 def _get_previous_cluster_ids(edition: str) -> set[str]:
@@ -494,12 +551,16 @@ Every sentence earns its place through evidence. Never assert significance — \
 demonstrate it through mechanism and historical parallel. The editorial's weight \
 comes from facts marshaled in sequence, not from adjectives.
 
-KILL SCAFFOLDING:
+KILL SCAFFOLDING — ZERO TOLERANCE (output containing these is REJECTED):
 Never announce what you are about to argue. These are ALL banned: \
 "This isn't just...", "Here's the thing...", "The bigger picture...", \
 "What makes this...", "The reality is...", "The question now is...", \
 "This goes beyond...", "What's really happening here is...", \
-"It's not just about...", "The takeaway is..."
+"It's not just about...", "The takeaway is...", "The bottom line...", \
+"This matters because...", "This is about more than...", "Let's be clear..."
+Also banned — slop adjectives that assert instead of showing: \
+"significant", "notable", "crucially", "importantly", "unprecedented", \
+"pivotal", "nuanced", "comprehensive."
 Start every sentence with the FACT or the ARGUMENT. If the sentence works \
 without its opening clause, delete the opening clause.
 
@@ -742,76 +803,94 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
         DIVERGENCE="; ".join(str(x) for x in divergence[:4]) if divergence else "None available",
     )
 
-    _brief_call_count += 1
-    raw = generate_json(
-        prompt,
-        system_instruction=system,
-        count_call=False,
+    _OPINION_RETRY_SUFFIX = (
+        "\n\nCRITICAL: Your previous attempt contained banned scaffolding. "
+        "Do NOT use: 'this isn't just', 'the question now is', 'significant', "
+        "'the reality is', 'what makes this', 'the bigger picture', 'notable', "
+        "'unprecedented'. Start every sentence with a FACT or ARGUMENT."
     )
 
-    if raw and isinstance(raw, dict):
-        opinion = raw.get("opinion_text", "")
-        if isinstance(opinion, str) and opinion.strip():
-            text = opinion.strip()
-            words = len(text.split())
-            # Quality check
-            if words < 100:
-                print(f"  [opinion] Too short ({words} words) — discarding")
-                return None
-            if words > 700:
-                print(f"  [opinion] Long ({words} words) — keeping but flagged")
+    for attempt in range(2):
+        _brief_call_count += 1
+        attempt_prompt = prompt if attempt == 0 else prompt + _OPINION_RETRY_SUFFIX
+        raw = generate_json(
+            attempt_prompt,
+            system_instruction=system,
+            count_call=False,
+        )
 
-            # Check prohibited terms
-            lower = text.lower()
-            found = [t for t in _PROHIBITED_TERMS if t in lower]
-            if found:
-                print(f"  [opinion] Prohibited terms: {found}")
+        if raw and isinstance(raw, dict):
+            opinion = raw.get("opinion_text", "")
+            if isinstance(opinion, str) and opinion.strip():
+                text = opinion.strip()
+                words = len(text.split())
+                # Quality check
+                if words < 100:
+                    print(f"  [opinion] Too short ({words} words) — discarding")
+                    return None
+                if words > 700:
+                    print(f"  [opinion] Long ({words} words) — keeping but flagged")
 
-            # Extract opinion headline (needed before audio script fallback)
-            headline = raw.get("opinion_headline", "")
-            if not isinstance(headline, str) or not headline.strip():
-                headline = None
-            else:
-                headline = headline.strip()
+                # Check prohibited terms — retry if found and budget allows
+                lower = text.lower()
+                # Also check audio script for prohibited terms
+                opinion_audio_raw = raw.get("opinion_audio_script", "") or ""
+                all_opinion_text = f"{lower} {opinion_audio_raw.lower()}"
+                found = [t for t in _PROHIBITED_TERMS if t in all_opinion_text]
+                if found:
+                    print(f"  [opinion] Prohibited terms: {found}")
+                    if attempt == 0 and _brief_calls_remaining() > 0:
+                        print(f"  [opinion] Retrying opinion generation (attempt 2)...")
+                        continue
+                    else:
+                        print(f"  [opinion] Accepting with prohibited terms (no retry budget)")
 
-            # Extract opinion audio script
-            opinion_audio = raw.get("opinion_audio_script", "")
-            if isinstance(opinion_audio, str) and opinion_audio.strip():
-                opinion_audio = opinion_audio.strip()
-                audio_words = len(opinion_audio.split())
-                print(f"  [opinion] Audio script: {audio_words} words")
-            else:
-                # Fallback: synthesize audio script from opinion text.
-                # Gemini often omits the third JSON field. The opinion text
-                # is already written in spoken cadence — just add the preamble.
-                preamble = "Now... void opinion."
+                # Extract opinion headline (needed before audio script fallback)
+                headline = raw.get("opinion_headline", "")
+                if not isinstance(headline, str) or not headline.strip():
+                    headline = None
+                else:
+                    headline = headline.strip()
+
+                # Extract opinion audio script
+                opinion_audio = raw.get("opinion_audio_script", "")
+                if isinstance(opinion_audio, str) and opinion_audio.strip():
+                    opinion_audio = opinion_audio.strip()
+                    audio_words = len(opinion_audio.split())
+                    print(f"  [opinion] Audio script: {audio_words} words")
+                else:
+                    # Fallback: synthesize audio script from opinion text.
+                    # Gemini often omits the third JSON field. The opinion text
+                    # is already written in spoken cadence — just add the preamble.
+                    preamble = "Now... void opinion."
+                    if headline:
+                        preamble += f" {headline}."
+                    opinion_audio = f"{preamble}\n{text}\nvoid opinion."
+                    print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
+
+                cluster_id = cluster.get("_db_id", "")
+                print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
+                      f"({words} words, {source_count} sources"
+                      f"{', headline: ' + repr(headline[:50]) if headline else ''})"
+                      f"{' (retry)' if attempt > 0 else ''}")
+
+                # 4e. Check for first-person plural in opinion
+                if "we " not in lower and "we'" not in lower and " we " not in lower:
+                    print(f"  [quality][opinion] Missing first-person plural ('we') — opinion should use editorial 'we'")
+
+                # 4f. Check opinion headline word count (4-15 words)
                 if headline:
-                    preamble += f" {headline}."
-                opinion_audio = f"{preamble}\n{text}\nvoid opinion."
-                print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
+                    hl_words = len(headline.split())
+                    if hl_words < 4 or hl_words > 15:
+                        print(f"  [quality][opinion] Headline word count {hl_words} (expected 4-15): {headline!r}")
 
-            cluster_id = cluster.get("_db_id", "")
-            print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
-                  f"({words} words, {source_count} sources"
-                  f"{', headline: ' + repr(headline[:50]) if headline else ''})")
-
-            # 4e. Check for first-person plural in opinion
-            if "we " not in lower and "we'" not in lower and " we " not in lower:
-                print(f"  [quality][opinion] Missing first-person plural ('we') — opinion should use editorial 'we'")
-
-            # 4f. Check opinion headline word count (4-15 words)
-            if headline:
-                hl_words = len(headline.split())
-                if hl_words < 4 or hl_words > 15:
-                    print(f"  [quality][opinion] Headline word count {hl_words} (expected 4-15): {headline!r}")
-
-            return {
-                "opinion_text": text,
-                "opinion_headline": headline,
-                "opinion_audio_script": opinion_audio,
-                "opinion_lean": lean,
-                "opinion_cluster_id": cluster_id if cluster_id else None,
-            }
+                return {
+                    "opinion_text": text,
+                    "opinion_headline": headline,
+                    "opinion_audio_script": opinion_audio,
+                    "opinion_lean": lean,
+                    "opinion_cluster_id": cluster_id if cluster_id else None,
+                }
 
     print(f"  [opinion] Gemini call failed for {lean} editorial")
     return None
@@ -900,36 +979,55 @@ def generate_daily_briefs(
                 HOST_B_BLOCK=host_b_block,
                 LEAD_HOST_BLOCK=lead_host_block,
             )
-            _brief_call_count += 1
-            raw = generate_json(
-                prompt,
-                system_instruction=_SYSTEM_INSTRUCTION,
-                count_call=False,
+            # Retry once if prohibited terms detected (costs 1 extra call)
+            _RETRY_SUFFIX = (
+                "\n\nCRITICAL REMINDER: Your previous attempt contained banned phrases. "
+                "Do NOT use: 'this isn't just', 'the question now is', 'significant', "
+                "'notable', 'the reality is', 'the bigger picture', 'what makes this', "
+                "'unprecedented', 'crucially'. Start every sentence with a FACT or NAME."
             )
-            if raw and isinstance(raw, dict):
-                tldr = raw.get("tldr_text", "")
-                script = raw.get("audio_script")
-                if isinstance(script, list):
-                    script = "\n".join(str(s) for s in script)
+            for attempt in range(2):
+                _brief_call_count += 1
+                attempt_prompt = prompt if attempt == 0 else prompt + _RETRY_SUFFIX
+                raw = generate_json(
+                    attempt_prompt,
+                    system_instruction=_SYSTEM_INSTRUCTION,
+                    count_call=False,
+                )
+                if raw and isinstance(raw, dict):
+                    tldr = raw.get("tldr_text", "")
+                    script = raw.get("audio_script")
+                    if isinstance(script, list):
+                        script = "\n".join(str(s) for s in script)
 
-                if isinstance(tldr, str) and tldr.strip():
-                    brief_result = {
-                        "tldr_headline": raw.get("tldr_headline") or None,
-                        "tldr_text": tldr.strip(),
-                        "opinion_text": None,
-                        "opinion_headline": None,
-                        "opinion_lean": None,
-                        "opinion_cluster_id": None,
-                        "audio_script": script if isinstance(script, str) and script.strip() else None,
-                        "top_cluster_ids": top_ids,
-                    }
-                    _check_quality(raw, edition)
-                    print(f"  [brief:{edition}] Gemini OK — TL;DR {len(tldr.split(chr(10)))} lines, "
-                          f"script {'yes' if brief_result['audio_script'] else 'no'}")
+                    if isinstance(tldr, str) and tldr.strip():
+                        brief_result = {
+                            "tldr_headline": raw.get("tldr_headline") or None,
+                            "tldr_text": tldr.strip(),
+                            "opinion_text": None,
+                            "opinion_headline": None,
+                            "opinion_lean": None,
+                            "opinion_cluster_id": None,
+                            "audio_script": script if isinstance(script, str) and script.strip() else None,
+                            "top_cluster_ids": top_ids,
+                        }
+                        passed = _check_quality(raw, edition)
+                        if passed or attempt == 1:
+                            if not passed and attempt == 1:
+                                print(f"  [quality][brief:{edition}] Prohibited terms still present after retry — accepting")
+                            print(f"  [brief:{edition}] Gemini OK — TL;DR {len(tldr.split(chr(10)))} lines, "
+                                  f"script {'yes' if brief_result['audio_script'] else 'no'}"
+                                  f"{' (retry)' if attempt > 0 else ''}")
+                            break
+                        else:
+                            print(f"  [quality][brief:{edition}] Prohibited terms found — retrying (attempt {attempt + 2})")
+                            brief_result = None  # Reset so retry replaces it
+                    else:
+                        print(f"  [brief:{edition}] Gemini returned invalid tldr_text — falling back")
+                        break
                 else:
-                    print(f"  [brief:{edition}] Gemini returned invalid tldr_text — falling back")
-            else:
-                print(f"  [brief:{edition}] Gemini call failed — falling back to rule-based")
+                    print(f"  [brief:{edition}] Gemini call failed — falling back to rule-based")
+                    break
         elif not gemini_ok:
             print(f"  [brief:{edition}] Gemini not available — using rule-based TL;DR")
         else:

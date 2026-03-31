@@ -148,6 +148,7 @@ def main():
                 audio_result = produce_audio(
                     brief["audio_script"], voices, edition,
                     opinion_audio_script=brief.get("opinion_audio_script"),
+                    opinion_lean=brief.get("opinion_lean"),
                 )
                 if audio_result:
                     print(f"  Audio: {audio_result['duration_seconds']}s, "
@@ -161,6 +162,7 @@ def main():
         print("\n  Storing to DB...")
         row = {
             "edition": edition,
+            "tldr_headline": brief.get("tldr_headline"),
             "tldr_text": brief.get("tldr_text", current.get("tldr_text", "") if current else ""),
             "opinion_text": brief.get("opinion_text"),
             "opinion_headline": brief.get("opinion_headline"),
