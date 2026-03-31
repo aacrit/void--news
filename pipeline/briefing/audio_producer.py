@@ -137,12 +137,16 @@ def _synthesize_single_chunk(
     dialogue_chunk: str,
     voice_a: str,
     voice_b: str,
+    tts_preamble: str = "",
 ) -> Optional[bytes]:
     """Synthesize a single dialogue chunk via Gemini TTS. Returns raw PCM or None."""
+    # Prepend style preamble (director's notes) if provided.
+    # Gemini TTS uses this to adjust pacing, tone, and delivery.
+    content = f"{tts_preamble}\n\n{dialogue_chunk}" if tts_preamble else dialogue_chunk
     try:
         response = client.models.generate_content(
             model=_TTS_MODEL,
-            contents=dialogue_chunk,
+            contents=content,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
@@ -184,11 +188,18 @@ def _synthesize_gemini_tts(
     dialogue: str,
     voice_a: str,
     voice_b: str,
+    tts_preamble: str = "",
 ) -> Optional[bytes]:
     """Generate two-speaker audio via Gemini 2.5 Flash TTS.
 
     Chunks long dialogues to avoid TTS truncation. Each chunk is synthesized
     separately and the raw PCM bytes are concatenated (same sample rate/format).
+
+    Args:
+        dialogue: Two-speaker dialogue (One:/Two: format).
+        voice_a: Gemini voice ID for speaker One.
+        voice_b: Gemini voice ID for speaker Two.
+        tts_preamble: Director's notes for TTS style (pacing, tone, cadence).
 
     Returns raw PCM audio bytes (24kHz 16-bit mono), or None on failure.
     """
@@ -204,14 +215,16 @@ def _synthesize_gemini_tts(
     chunks = _chunk_dialogue(dialogue)
 
     if len(chunks) == 1:
-        return _synthesize_single_chunk(client, chunks[0], voice_a, voice_b)
+        return _synthesize_single_chunk(client, chunks[0], voice_a, voice_b, tts_preamble)
 
     print(f"  [audio] Long script — synthesizing in {len(chunks)} chunks")
     all_pcm = bytearray()
     for i, chunk in enumerate(chunks):
         if i > 0:
             time.sleep(5)  # Rate-limit buffer between TTS chunks
-        pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b)
+        # Only prepend preamble to first chunk — consistent style across chunks
+        preamble = tts_preamble if i == 0 else ""
+        pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b, preamble)
         if pcm is None:
             print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed — aborting")
             return None
@@ -602,12 +615,23 @@ def produce_audio(
     voice_a_name = voices["host_a"]["id"]
     voice_b_name = voices["host_b"]["id"]
 
+    # Build TTS style preamble from host personality data
+    host_a_preamble = voices["host_a"].get("tts_preamble", "")
+    host_b_preamble = voices["host_b"].get("tts_preamble", "")
+    tts_preamble = ""
+    if host_a_preamble or host_b_preamble:
+        tts_preamble = (
+            f"Scene: Two senior journalists in a newsroom studio. "
+            f"Speaker One: {host_a_preamble} "
+            f"Speaker Two: {host_b_preamble}"
+        )
+
     # --- Step 1: Synthesize news dialogue (2 speakers) ---
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
     print(f"  [audio] News TTS: {word_count} words, voices {voice_a_name}+{voice_b_name}")
 
-    pcm_data = _synthesize_gemini_tts(dialogue, voice_a_name, voice_b_name)
+    pcm_data = _synthesize_gemini_tts(dialogue, voice_a_name, voice_b_name, tts_preamble)
     if not pcm_data:
         print("  [warn][audio] News TTS synthesis failed — no audio")
         return None

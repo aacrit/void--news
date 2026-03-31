@@ -107,6 +107,22 @@ PROHIBITED_TERMS = frozenset({
     "this is about more than",
     "the question now is",
     "this matters because",
+
+    # --- 8. Vox/explainer scaffolding (synonym variants) ---
+    # These slip through when the model paraphrases banned phrases.
+    "this goes beyond", "it goes beyond",
+    "what's really happening", "what is really happening",
+    "here's what's happening", "here is what is happening",
+    "here's what you need to know", "here is what you need to know",
+    "think of it this way",
+    "zoom out", "if you zoom out",
+    "the short version",
+    "let me explain",
+    "so here's", "so here is",
+    "the key thing", "the key here",
+    "the point is",
+    "what this means is",
+    "the upshot",
 })
 
 
