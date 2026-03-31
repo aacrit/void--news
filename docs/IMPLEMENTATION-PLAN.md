@@ -1,7 +1,7 @@
 # void --news — Implementation Plan
 
 **Version:** 1.2
-**Last updated:** 2026-03-30 (rev 4)
+**Last updated:** 2026-03-31 (rev 5)
 
 12-week implementation plan across 5 phases. All work is $0 operational cost.
 
@@ -43,7 +43,7 @@
 **What was built:**
 - Next.js 16 App Router + React 19 + TypeScript
 - CSS split architecture: `globals.css` → `./styles/` (tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, responsive, command-center)
-- BiasLens Three Lenses (Needle, Ring, Prism) — replaces Dot Matrix and BiasStamp (removed)
+- BiasLens Three Lenses (Beam, Ring, Prism) — replaces Dot Matrix and BiasStamp (removed)
 - Desktop broadsheet grid + mobile tabloid stack
 - LeadStory (hero) + StoryCard (standard) + "Why This Story" tooltip
 - FilterBar, NavBar (World/US/India with dateline + edition badge pills), ThemeToggle, MobileBottomNav
