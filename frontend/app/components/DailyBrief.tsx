@@ -134,7 +134,12 @@ export function useDailyBrief(edition: string): DailyBriefState {
   }, []);
 
   const handlePlayPause = useCallback(() => {
-    const audio = audioRef.current;
+    let audio = audioRef.current;
+    // Fallback: if ref not set yet, find the audio element in the DOM
+    if (!audio) {
+      audio = document.querySelector("audio[src]") as HTMLAudioElement | null;
+      if (audio) audioRef.current = audio;
+    }
     if (!audio) return;
     hapticMedium();
     if (isPlaying) {

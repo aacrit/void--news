@@ -2647,24 +2647,6 @@
 /* Analysis depth dots — 3 dots showing exploration progress.
    First dot auto-fills (spectrum), second fills on All Sides open,
    third fills on Scoring open. Subtle reward for curiosity. */
-.dd-depth {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.dd-depth__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: var(--border-subtle);
-  transition: background-color 300ms var(--ease-out), transform 300ms var(--spring-bouncy);
-}
-
-.dd-depth__dot--filled {
-  background-color: var(--accent-warm);
-  transform: scale(1.2);
-}
 
 /* ---- Deep Dive Source Icons --------------------------------------------- */
 .dd-source-icon {

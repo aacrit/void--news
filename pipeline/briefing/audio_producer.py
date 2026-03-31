@@ -483,10 +483,11 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
             {"content-type": "audio/mpeg", "upsert": "true"},
         )
         base_url = supabase.storage.from_("audio-briefs").get_public_url(path)
-        # Cache-bust: append timestamp so browsers/CDNs don't serve stale audio
+        # Cache-bust: append fingerprint so browsers/CDNs don't serve stale audio
         import hashlib
         fingerprint = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
-        return f"{base_url}?v={fingerprint}"
+        sep = "&" if "?" in base_url else "?"
+        return f"{base_url}{sep}v={fingerprint}"
     except Exception as e:
         print(f"  [warn][audio] Supabase upload failed for {edition}: {e}")
         return None
