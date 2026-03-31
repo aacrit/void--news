@@ -6,7 +6,7 @@ import type { DailyBriefState } from "./DailyBrief";
 import LeadStory from "./LeadStory";
 import DigestRow from "./DigestRow";
 import WireCard from "./WireCard";
-import SkyboxBanner from "./SkyboxBanner";
+import SkyboxBanner, { OnAirBand } from "./SkyboxBanner";
 import LogoWordmark from "./LogoWordmark";
 
 interface DesktopFeedProps {
@@ -66,8 +66,11 @@ export default function DesktopFeed({
 
   return (
     <div className="df" key={filterKey}>
-      {/* Skybox Banner — 40px collapsed brief */}
+      {/* Skybox Banner — editorial brief (TL;DR + Opinion) */}
       <SkyboxBanner state={dailyBriefState} />
+
+      {/* OnAir Band — standalone broadcast strip */}
+      <OnAirBand state={dailyBriefState} edition={editionMeta.slug} />
 
       {/* Zone 1: Broadsheet Lead — asymmetric 2fr | 1fr */}
       {leadStories.length > 0 && (

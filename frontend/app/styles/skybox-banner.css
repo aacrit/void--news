@@ -237,27 +237,28 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-family: var(--font-data);
+  font-family: var(--font-meta);
   font-size: var(--text-sm);
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--voice-accent);
   background: var(--voice-accent-ghost);
-  border: 1.5px solid color-mix(in srgb, var(--voice-accent) 35%, transparent);
-  border-radius: 100px;
+  border: 1px solid color-mix(in srgb, var(--voice-accent) 20%, transparent);
+  border-radius: 8px;
   padding: var(--space-2) var(--space-5) var(--space-2) var(--space-4);
   min-height: 44px;
   cursor: pointer;
   box-shadow: 0 0 8px var(--voice-accent-glow),
               0 0 20px color-mix(in srgb, var(--voice-accent) 6%, transparent);
-  transition: border-color 200ms, background 200ms, box-shadow 300ms, transform 300ms, border-radius 300ms;
+  transition: border-color 200ms, background 200ms, box-shadow 300ms, border-radius 300ms;
 }
 
 .skb__onair-btn:hover {
-  border-color: var(--voice-accent);
-  background: color-mix(in srgb, var(--voice-accent) 10%, transparent);
-  transform: scale(1.03) translateY(-1px);
-  box-shadow: 0 0 16px color-mix(in srgb, var(--voice-accent) 24%, transparent),
-              0 0 36px color-mix(in srgb, var(--voice-accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--voice-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 6%, transparent);
+  box-shadow: 0 0 12px var(--voice-accent-glow),
+              0 0 24px color-mix(in srgb, var(--voice-accent) 8%, transparent);
 }
 
 .skb__onair-btn:active { transform: scale(0.97); transition-duration: 60ms; }
@@ -268,7 +269,7 @@
 }
 
 .skb__onair-btn--open {
-  border-radius: 12px 12px 0 0;
+  border-radius: 8px 8px 0 0;
   background: color-mix(in srgb, var(--voice-accent) 8%, #1A1816);
   border-color: color-mix(in srgb, var(--voice-accent) 30%, transparent);
   color: var(--voice-accent);
@@ -281,14 +282,24 @@
 }
 
 .skb__onair-label {
+  font-family: var(--font-meta);
+  letter-spacing: 0.06em;
+}
+
+.skb__onair-freq {
   font-family: var(--font-data);
-  letter-spacing: 0.02em;
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  opacity: 0.4;
 }
 
 .skb__onair-dur {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   opacity: 0.7;
+  text-transform: none;
+  letter-spacing: 0.02em;
 }
 
 .skb__onair-dur--error {
@@ -365,14 +376,36 @@
   transition: transform 400ms, opacity 400ms;
 }
 
+/* VU meter gradient: teal nominal → amber peak */
 .skb__waveform--active .skb__waveform-bar {
   background: var(--voice-accent);
-  animation: radioWaveBar 1.2s ease-in-out infinite alternate;
+  animation: vuBar-mid 1.2s ease-in-out infinite alternate;
+}
+.skb__waveform--active .skb__waveform-bar:nth-child(n+18) {
+  background: color-mix(in srgb, var(--voice-accent) 60%, var(--cin-amber));
+}
+.skb__waveform--active .skb__waveform-bar:nth-child(n+25) {
+  background: var(--cin-amber);
 }
 
-@keyframes radioWaveBar {
+/* Organic VU bar variants — different bars reach different peaks */
+.skb__waveform--active .skb__waveform-bar:nth-child(3n)   { animation-name: vuBar-short; }
+.skb__waveform--active .skb__waveform-bar:nth-child(3n+1) { animation-name: vuBar-mid; }
+.skb__waveform--active .skb__waveform-bar:nth-child(3n+2) { animation-name: vuBar-tall; }
+
+@keyframes vuBar-short {
+  0%   { transform: scaleY(0.2); opacity: 0.3; }
+  50%  { transform: scaleY(0.5); opacity: 0.6; }
+  100% { transform: scaleY(0.3); opacity: 0.35; }
+}
+@keyframes vuBar-mid {
   0%   { transform: scaleY(0.3); opacity: 0.35; }
-  50%  { transform: scaleY(1); opacity: 0.8; }
+  50%  { transform: scaleY(0.8); opacity: 0.75; }
+  100% { transform: scaleY(0.4); opacity: 0.45; }
+}
+@keyframes vuBar-tall {
+  0%   { transform: scaleY(0.4); opacity: 0.4; }
+  50%  { transform: scaleY(1.0); opacity: 0.85; }
   100% { transform: scaleY(0.5); opacity: 0.5; }
 }
 
@@ -514,6 +547,16 @@
   transition: width 100ms linear;
 }
 
+/* Tuning needle at playhead */
+.skb__radio-fill::after {
+  content: "";
+  position: absolute;
+  right: -1px; top: -3px;
+  width: 2px; height: 10px;
+  background: var(--voice-accent);
+  border-radius: 1px;
+}
+
 .skb__radio-mark {
   position: absolute;
   top: 50%; width: 1px; height: 10px;
@@ -539,6 +582,10 @@
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: color-mix(in srgb, var(--voice-accent) 50%, transparent);
+}
+
+.skb__radio-inner--live .skb__radio-time {
+  text-shadow: 0 0 8px var(--voice-accent-glow);
 }
 
 /* ---------------------------------------------------------------------------
@@ -585,7 +632,7 @@
   }
 
   .skb__onair-btn--open {
-    border-radius: 16px 16px 0 0;
+    border-radius: 8px 8px 0 0;
   }
 
   /* Waveform: slightly taller */
@@ -709,6 +756,62 @@
   .skb__col { animation: none; }
   .skb__onair-btn--active { animation: none; }
   .skb__transport-play--active { animation: none; }
-  .skb__waveform--active .skb__waveform-bar { animation: none; transform: scaleY(0.6); opacity: 0.5; }
+  .skb__waveform--active .skb__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .skb__rec-dot { animation: none; opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   OnAir Band — Standalone broadcast strip between skybox and feed
+   Promoted out of the skybox to give void --onair its own visual territory.
+   --------------------------------------------------------------------------- */
+
+.onair-band {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--voice-accent) 3%, var(--bg-primary));
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Mobile: collapsed pill shows OnAir inline */
+.mbp__onair-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.mbp__onair-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--voice-accent) 40%, transparent);
+  background: none;
+  color: var(--voice-accent);
+  font-size: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 150ms, background 150ms;
+  padding: 0;
+}
+
+.mbp__onair-play:hover {
+  border-color: var(--voice-accent);
+  background: var(--voice-accent-ghost);
+}
+
+.mbp__onair-play:active {
+  transform: scale(0.92);
+  transition-duration: 60ms;
+}
+
+.mbp__onair-dur {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--voice-accent-dim);
+  white-space: nowrap;
 }
