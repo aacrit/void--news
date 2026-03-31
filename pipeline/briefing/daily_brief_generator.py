@@ -621,7 +621,10 @@ Never announce what you are about to argue. These are ALL banned: \
 Also banned — slop adjectives that assert instead of showing: \
 "significant", "notable", "crucially", "importantly", "unprecedented", \
 "pivotal", "nuanced", "comprehensive", "robust", "landscape", "navigate", \
-"navigating", "underscores", "multifaceted", "delve", "delves into."
+"navigating", "underscores", "multifaceted", "delve", "delves into", \
+"breaking", "historic", "controversial", "divisive."
+Never reference outlet names, "coverage," "sources," or "reporting patterns." \
+Synthesize the facts — do not cite where they came from. \
 Start every sentence with the FACT or the ARGUMENT. If the sentence works \
 without its opening clause, delete the opening clause.
 
@@ -709,7 +712,9 @@ Concrete nouns and active verbs. No "slams," "blasts," "rips." \
 Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
 2. "opinion_text" — 300-500 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
-opening → thesis → evidence → turn → close.
+opening → thesis → evidence → turn → close. \
+Never reference outlet names, "coverage," "sources," or "reporting." \
+Synthesize the facts — do not cite where they came from.
 3. "opinion_audio_script" — A single-voice editorial monologue. 3-4 minutes \
 (500-700 words). Someone at the editorial desk who has spent the day with \
 this story and has something to say. Not reading — TELLING. The difference: \
@@ -865,10 +870,17 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
     )
 
     _OPINION_RETRY_SUFFIX = (
-        "\n\nCRITICAL: Your previous attempt contained banned scaffolding. "
-        "Do NOT use: 'this isn't just', 'the question now is', 'significant', "
-        "'the reality is', 'what makes this', 'the bigger picture', 'notable', "
-        "'unprecedented'. Start every sentence with a FACT or ARGUMENT."
+        "\n\nCRITICAL: Your previous attempt contained banned phrases. "
+        "ZERO TOLERANCE — do NOT use ANY of these: "
+        "'this isn't just', 'this is not just', 'it's not just', "
+        "'the question now is', 'the reality is', 'the bigger picture', "
+        "'what makes this', 'the takeaway', 'the bottom line', "
+        "'this goes beyond', 'this matters because', 'let's be clear', "
+        "'significant', 'notable', 'unprecedented', 'robust', 'comprehensive', "
+        "'pivotal', 'nuanced', 'landscape', 'breaking', 'historic', "
+        "'navigate', 'navigating', 'underscores', 'multifaceted', 'delve'. "
+        "Start every sentence with a FACT or ARGUMENT. "
+        "Never reference outlet names, coverage patterns, or media."
     )
 
     for attempt in range(2):
