@@ -54,7 +54,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {expandedSide !== "opinion" && (
           <div className={`skb__col skb__col--tldr${expandedSide === "tldr" ? " skb__col--full" : ""}`}>
             <div className="skb__label">
-              <ScaleIcon size={12} animation="none" />
+              <ScaleIcon size={12} animation="idle" />
               <span className="skb__cmd">void --tl;dr</span>
               {brief.created_at && <span className="skb__time">{timeAgo(brief.created_at)}</span>}
             </div>
@@ -76,7 +76,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {brief.opinion_text && expandedSide !== "tldr" && (
           <div className={`skb__col skb__col--opinion${expandedSide === "opinion" ? " skb__col--full" : ""}`}>
             <div className="skb__label">
-              <ScaleIcon size={12} animation="none" />
+              <ScaleIcon size={12} animation="idle" />
               <span className="skb__cmd">void --opinion</span>
               {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
             </div>

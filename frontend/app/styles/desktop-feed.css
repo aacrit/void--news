@@ -381,11 +381,10 @@
   color: var(--fg-primary);
   flex: 1;
   min-width: 0;
-  /* Two-line clamp below 1280px to preserve headline information */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  /* Single line with ellipsis on narrow viewports */
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (min-width: 1280px) {

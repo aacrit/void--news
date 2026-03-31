@@ -119,8 +119,9 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           className="mbp__pill-main"
           onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
           type="button" aria-expanded={pillExpanded} aria-controls="mbp-content"
+          style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", flex: 1, minWidth: 0, background: "none", border: "none", padding: 0, cursor: "pointer", WebkitTapHighlightColor: "transparent", textAlign: "left" as const }}
         >
-          <ScaleIcon size={12} animation="none" />
+          <ScaleIcon size={12} animation="idle" />
           <span className="mbp__pill-cmd">void --tl;dr</span>
           <span className="mbp__pill-sep" aria-hidden="true">&middot;</span>
           <span className="mbp__pill-label">{pillLabel}</span>
@@ -142,6 +143,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           className="mbp__pill-chevron-btn"
           onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
           type="button" aria-expanded={pillExpanded} aria-label={pillExpanded ? "Collapse brief" : "Expand brief"}
+          style={{ background: "none", border: "none", padding: "0 0 0 var(--space-1)", cursor: "pointer", flexShrink: 0, WebkitTapHighlightColor: "transparent" }}
         >
           <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
         </button>
@@ -154,7 +156,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
         <div ref={pillContentRef} className="mbp__content-inner">
           <section className="mbp__section" aria-label="void --tl;dr">
             <div className="mbp__label">
-              <ScaleIcon size={12} animation="none" />
+              <ScaleIcon size={12} animation="idle" />
               <span className="mbp__cmd">void --tl;dr</span>
               {brief.created_at && <span className="mbp__time">{timeAgo(brief.created_at)}</span>}
             </div>
@@ -179,7 +181,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           {brief.opinion_text && (
             <section className="mbp__section" aria-label="void --opinion">
               <div className="mbp__label">
-                <ScaleIcon size={12} animation="none" />
+                <ScaleIcon size={12} animation="idle" />
                 <span className="mbp__cmd">void --opinion</span>
                 {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
               </div>
