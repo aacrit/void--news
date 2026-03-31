@@ -237,35 +237,35 @@
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--accent-cool);
-  background: var(--accent-cool-ghost);
-  border: 1px solid color-mix(in srgb, var(--accent-cool) 20%, transparent);
+  color: var(--accent-warm);
+  background: var(--cin-amber-ghost);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
   border-radius: 8px;
   padding: var(--space-2) var(--space-5) var(--space-2) var(--space-4);
   min-height: 44px;
   cursor: pointer;
   /* Ink-stamp deboss — no emission. Paper absorbs, it does not glow. */
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-cool) 12%, transparent),
-              inset 0 -1px 0 color-mix(in srgb, var(--accent-cool) 6%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent),
+              inset 0 -1px 0 color-mix(in srgb, var(--accent-warm) 6%, transparent);
   transition: border-color 200ms, background 200ms, box-shadow 200ms, border-radius 300ms;
 }
 
 .skb__onair-btn:hover {
-  border-color: color-mix(in srgb, var(--accent-cool) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-cool) 8%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-cool) 16%, transparent),
-              inset 0 -1px 0 color-mix(in srgb, var(--accent-cool) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 16%, transparent),
+              inset 0 -1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
 .skb__onair-btn:active { transform: scale(0.97); transition-duration: 60ms; }
 
 /* Active: heavier ink — thicker border, solid fill. Ink doesn't pulse. */
 .skb__onair-btn--active {
-  border-color: var(--accent-cool);
+  border-color: var(--accent-warm);
   border-width: 2px;
-  background: color-mix(in srgb, var(--accent-cool) 10%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-cool) 18%, transparent),
-              inset 0 -1px 0 color-mix(in srgb, var(--accent-cool) 10%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 18%, transparent),
+              inset 0 -1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
 }
 
 /* Open state: pill merges with dark radio panel — teal reveal */
@@ -780,9 +780,9 @@
   justify-content: center;
   width: 28px; height: 28px;
   border-radius: 50%;
-  border: 1.5px solid color-mix(in srgb, var(--accent-cool) 40%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 40%, transparent);
   background: none;
-  color: var(--accent-cool);
+  color: var(--accent-warm);
   font-size: 10px;
   cursor: pointer;
   flex-shrink: 0;
@@ -802,8 +802,8 @@
 }
 
 .mbp__onair-play:hover {
-  border-color: var(--accent-cool);
-  background: var(--accent-cool-ghost);
+  border-color: var(--accent-warm);
+  background: var(--cin-amber-ghost);
 }
 
 .mbp__onair-play:active {
@@ -814,7 +814,7 @@
 .mbp__onair-dur {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
-  color: var(--accent-cool-dim);
+  color: var(--cin-amber-dim);
   white-space: nowrap;
 }
 
@@ -824,15 +824,15 @@
 
 @media (hover: none) {
   .skb__onair-btn:hover {
-    border-color: color-mix(in srgb, var(--accent-cool) 20%, transparent);
-    background: var(--accent-cool-ghost);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-cool) 12%, transparent),
-                inset 0 -1px 0 color-mix(in srgb, var(--accent-cool) 6%, transparent);
+    border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent);
+    background: var(--cin-amber-ghost);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent),
+                inset 0 -1px 0 color-mix(in srgb, var(--accent-warm) 6%, transparent);
   }
   /* Radio panel interior: keep teal for touch resets */
   .skb__transport-skip:hover { color: color-mix(in srgb, var(--voice-accent) 50%, transparent); }
   .skb__transport-play:hover { border-color: color-mix(in srgb, var(--voice-accent) 50%, transparent); }
   .skb__radio-speed:hover { border-color: color-mix(in srgb, var(--voice-accent) 25%, transparent); }
   /* Surface: amber */
-  .mbp__onair-play:hover { border-color: color-mix(in srgb, var(--accent-cool) 40%, transparent); background: none; }
+  .mbp__onair-play:hover { border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent); background: none; }
 }
