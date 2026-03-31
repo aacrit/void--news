@@ -18,15 +18,23 @@
   --thumb-border:        #fff;
   --indicator-broadcast: #c0392b;
 
-  /* ── Voice Accent — Institutional Teal, scoped to radio panel interior ──
-     Used ONLY inside .skb__radio-inner (the dark broadcast console).
-     Teal on dark panel = broadcast hardware. Amber on page surface = brand.
-     The amber→teal shift when opening the radio is the deliberate "enter
-     the broadcast booth" reveal. */
-  --voice-accent:       #157268;
-  --voice-accent-dim:   #0F5C54;
-  --voice-accent-ghost: rgba(21, 114, 104, 0.08);
-  --voice-accent-glow:  rgba(21, 114, 104, 0.15);
+  /* ── Accent Cool — Verdigris (broadcast / listening mode) ──
+     Split-complementary of amber (H:170 vs H:43). Warm-shifted teal.
+     Verdigris = oxidized brass — same metal as amber, different state.
+     Used on page surface for all audio/broadcast elements.
+     5.41:1 on #F0EBDD — WCAG AA compliant. */
+  --accent-cool:       #196A5C;
+  --accent-cool-dim:   #145A4E;
+  --accent-cool-ghost: rgba(25, 106, 92, 0.08);
+  --accent-cool-glow:  rgba(25, 106, 92, 0.15);
+
+  /* ── Voice Accent — fixed value for always-dark radio console ──
+     The radio panel (#1A1816) is always dark regardless of theme.
+     This fixed value ensures 6.71:1 contrast on that surface. */
+  --voice-accent:       #4DAFA0;
+  --voice-accent-dim:   #3D9A8C;
+  --voice-accent-ghost: rgba(77, 175, 160, 0.08);
+  --voice-accent-glow:  rgba(77, 175, 160, 0.15);
 
   /* Surfaces — warm newsprint tones */
   --bg-primary:    #F0EBDD;
@@ -161,7 +169,7 @@
   --cinematic-accent-far-bias: rgba(139, 105, 20, 0.12);
 
   /* ── Category Colors ── */
-  --cat-conflict:    #C0392B;
+  --cat-conflict:    #E53E3E;  /* distinct from --indicator-broadcast (#c0392b) */
   --cat-science:     #2980B9;
   --cat-health:      #27AE60;
   --cat-environment: #16A085;
@@ -182,11 +190,17 @@
   --thumb-border:        var(--bg-secondary);
   --indicator-broadcast: #DC2626;
 
-  /* ── Voice Accent — Institutional Teal, radio panel interior (dark mode) ── */
-  --voice-accent:       #3AADA0;
-  --voice-accent-dim:   #2D8B80;
-  --voice-accent-ghost: rgba(58, 173, 160, 0.06);
-  --voice-accent-glow:  rgba(58, 173, 160, 0.12);
+  /* ── Accent Cool — Verdigris (dark mode) ── */
+  --accent-cool:       #5DB6A2;
+  --accent-cool-dim:   #4A9E8C;
+  --accent-cool-ghost: rgba(93, 182, 162, 0.06);
+  --accent-cool-glow:  rgba(93, 182, 162, 0.12);
+
+  /* ── Voice Accent — fixed for always-dark radio console (same both modes) ── */
+  --voice-accent:       #4DAFA0;
+  --voice-accent-dim:   #3D9A8C;
+  --voice-accent-ghost: rgba(77, 175, 160, 0.08);
+  --voice-accent-glow:  rgba(77, 175, 160, 0.15);
 
   /* Surfaces */
   --bg-primary:    #1C1A17;
