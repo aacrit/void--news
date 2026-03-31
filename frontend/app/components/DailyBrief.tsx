@@ -296,7 +296,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           {/* TL;DR Column */}
           <section className="db-col db-col--tldr" aria-label="void --tl;dr">
             <div className="db-col__label">
-              <ScaleIcon size={12} animation="idle" />
+              <ScaleIcon size={12} animation="none" />
               <span className="db-col__cmd">void --tl;dr</span>
               {brief.created_at && (
                 <span className="db-col__time">{timeAgo(brief.created_at)}</span>
@@ -338,7 +338,7 @@ export function DailyBriefText({ state }: { state: DailyBriefState }) {
           {brief.opinion_text && (
             <section className="db-col db-col--opinion" aria-label="void --opinion">
               <div className="db-col__label">
-                <ScaleIcon size={12} animation="idle" />
+                <ScaleIcon size={12} animation="none" />
                 <span className="db-col__cmd">void --opinion</span>
                 {brief.opinion_lean && (
                   <span className={`db-lean-badge ${leanMod}`}>{leanLabel}</span>

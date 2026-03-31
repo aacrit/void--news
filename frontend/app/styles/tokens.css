@@ -330,7 +330,7 @@
    Typography Scale — Fluid with clamp()
    -------------------------------------------------------------------------- */
 :root {
-  --text-xxs:   clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
+  --text-xxs:   clamp(0.5625rem, 0.5rem + 0.2vw, 0.625rem);
   --text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
   --text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   --text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);

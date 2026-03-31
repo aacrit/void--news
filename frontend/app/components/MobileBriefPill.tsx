@@ -120,7 +120,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
           type="button" aria-expanded={pillExpanded} aria-controls="mbp-content"
         >
-          <ScaleIcon size={12} animation="idle" />
+          <ScaleIcon size={12} animation="none" />
           <span className="mbp__pill-cmd">void --tl;dr</span>
           <span className="mbp__pill-sep" aria-hidden="true">&middot;</span>
           <span className="mbp__pill-label">{pillLabel}</span>
@@ -154,7 +154,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
         <div ref={pillContentRef} className="mbp__content-inner">
           <section className="mbp__section" aria-label="void --tl;dr">
             <div className="mbp__label">
-              <ScaleIcon size={12} animation="idle" />
+              <ScaleIcon size={12} animation="none" />
               <span className="mbp__cmd">void --tl;dr</span>
               {brief.created_at && <span className="mbp__time">{timeAgo(brief.created_at)}</span>}
             </div>
@@ -179,7 +179,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           {brief.opinion_text && (
             <section className="mbp__section" aria-label="void --opinion">
               <div className="mbp__label">
-                <ScaleIcon size={12} animation="idle" />
+                <ScaleIcon size={12} animation="none" />
                 <span className="mbp__cmd">void --opinion</span>
                 {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
               </div>
