@@ -50,7 +50,10 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
 
   useEffect(() => {
     if (!radioRef.current) return;
-    const ro = new ResizeObserver(([e]) => setRadioHeight(e.contentRect.height));
+    const ro = new ResizeObserver(([e]) => {
+      const h = e.borderBoxSize?.[0]?.blockSize ?? e.target.getBoundingClientRect().height;
+      setRadioHeight(h);
+    });
     ro.observe(radioRef.current);
     return () => ro.disconnect();
   }, [radioOpen]);
