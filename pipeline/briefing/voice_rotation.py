@@ -110,6 +110,17 @@ HOSTS = {
             "evidence chains. Slows deliberately for key revelations. Conviction in "
             "every sentence."
         ),
+        "opinion_tts_preamble": (
+            "Scene: A veteran investigative journalist delivering a closing editorial "
+            "at the anchor desk. This is not a reading — it is a closing argument. "
+            "Speaker One builds the case like a prosecutor: measured opening, then "
+            "accelerating through each piece of evidence with growing urgency. Voice "
+            "rises slightly when stacking facts. Gets quieter — almost conspiratorial "
+            "— when landing the key detail. Pauses before the damning number. "
+            "Pace shifts constantly: slow setup, fast evidence chain, sudden stillness "
+            "for the turn. Conviction in every word. This person has done the homework "
+            "and is certain of the conclusion."
+        ),
         "opinion_lean": "left",
     },
     "realist": {
@@ -129,6 +140,16 @@ HOSTS = {
             "between gentle tone and sharp content. Slight pauses before delivering "
             "counter-evidence. Thoughtful, never strident."
         ),
+        "opinion_tts_preamble": (
+            "Scene: A columnist leaning back in their chair, talking directly to you "
+            "across the desk. Speaker One is conversational and unhurried — the tone "
+            "of someone explaining the obvious to a friend. Soft-spoken but every word "
+            "is chosen. Slight skeptical inflection on received wisdom — eyebrow-raise "
+            "energy. Pauses before counter-evidence like setting down a card. Never "
+            "raises voice; the calm is the weapon. Occasional wry half-smile audible "
+            "in the delivery. Pace stays even until the close, where it slows to let "
+            "the final line land with its own weight. Intimate, not performative."
+        ),
         "opinion_lean": "right",
     },
     "editor": {
@@ -147,6 +168,17 @@ HOSTS = {
             "Knowledgeable, warm authority. Senior editorial voice. Comfortable pace "
             "with weight behind each sentence. Slight warmth — the voice of someone "
             "who has seen this before. Measured gravitas."
+        ),
+        "opinion_tts_preamble": (
+            "Scene: The editor-in-chief at the editorial desk, delivering the paper's "
+            "position. Speaker One speaks with measured authority — the weight of the "
+            "institution behind every sentence. Comfortable, unhurried pace that "
+            "suddenly sharpens into direct, clipped sentences when cutting through "
+            "noise. Knows when to let a fact sit in silence. Occasional dry edge — "
+            "not sarcasm, but the precision of someone who chose that word deliberately. "
+            "Builds from context to conclusion with the patience of a teacher, then "
+            "delivers the verdict with the brevity of a judge. Warmth underneath, "
+            "steel when it matters."
         ),
         "opinion_lean": "center",
     },
