@@ -15,11 +15,6 @@ function formatTime(seconds: number): string {
 
 type ExpandedSide = null | "tldr" | "opinion";
 
-/* Edition → decorative frequency (atmospheric, not functional) */
-const EDITION_FREQ: Record<string, string> = {
-  world: "98.1", us: "101.5", india: "89.3",
-};
-
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const { brief } = state;
   const [expandedSide, setExpandedSide] = useState<ExpandedSide>(null);
@@ -109,7 +104,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
    Pill + expanding radio player. Teal accent, "Frequency" tuner metaphor.
    --------------------------------------------------------------------------- */
 
-export function OnAirBand({ state, edition }: { state: DailyBriefState; edition?: string }) {
+export function OnAirBand({ state }: { state: DailyBriefState }) {
   const {
     brief, isPlaying, currentTime, duration, buffered, audioError,
     audioCallbackRef, handlePlayPause, handleSeek,
@@ -141,7 +136,6 @@ export function OnAirBand({ state, edition }: { state: DailyBriefState; edition?
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
   const speedLabel = `${playbackSpeed}x`;
-  const freq = EDITION_FREQ[edition || "world"] || "98.1";
 
   const opinionStart = brief.opinion_start_seconds ?? null;
   const effectiveOpinionStart = opinionStart ?? (brief.opinion_text ? displayDuration * 0.6 : null);
@@ -171,7 +165,6 @@ export function OnAirBand({ state, edition }: { state: DailyBriefState; edition?
           {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
           <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
           <span className="skb__onair-label">void --onair</span>
-          <span className="skb__onair-freq" aria-hidden="true">{freq}</span>
           {audioError ? (
             <span className="skb__onair-dur skb__onair-dur--error">Unavailable</span>
           ) : hasAudio ? (
@@ -192,11 +185,8 @@ export function OnAirBand({ state, edition }: { state: DailyBriefState; edition?
           transition: radioOpen ? "height 400ms var(--spring-bouncy, ease)" : "height 250ms var(--ease-out, ease)",
         }}>
           <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
-            {/* Radio header: voice label + speed */}
+            {/* Radio header: speed control */}
             <div className="skb__radio-header">
-              {brief.audio_voice_label && (
-                <span className="skb__radio-voices">{brief.audio_voice_label}</span>
-              )}
               <button className="skb__radio-speed" onClick={() => { hapticLight(); cycleSpeed(); }}
                 type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
             </div>

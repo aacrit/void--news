@@ -818,7 +818,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               ) : (
                 <>
                   <SkyboxBanner state={dailyBriefState} />
-                  <OnAirBand state={dailyBriefState} edition={editionMeta.slug} />
+                  <OnAirBand state={dailyBriefState} />
 
                   {leadStories.length > 0 && (
                     <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
