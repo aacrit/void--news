@@ -82,7 +82,6 @@ import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcu
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeed from "./MobileFeed";
-import DesktopFeed from "./DesktopFeed";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -215,8 +214,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  // Experimental desktop v2 layout — opt-in via ?layout=v2
-  const [layoutV2, setLayoutV2] = useState(false);
 
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
@@ -308,9 +305,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Detect mobile for infinite scroll vs editorial link
   useEffect(() => {
     setIsMobile(window.matchMedia("(max-width: 767px)").matches);
-    // Experimental desktop v2: ?layout=v2
-    const params = new URLSearchParams(window.location.search);
-    setLayoutV2(params.get("layout") === "v2");
   }, []);
 
   // Reset category filter, close DeepDive, and scroll to top when edition changes.
@@ -799,19 +793,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   visibleCount={visibleCount}
                   hasMore={hasMore}
                   sentinelRef={sentinelRef}
-                  kbdFocusIndex={kbdFocusIndex}
-                  editionMeta={editionMeta}
-                />
-              ) : layoutV2 ? (
-                <DesktopFeed
-                  stories={filteredStories}
-                  dailyBriefState={dailyBriefState}
-                  onStoryClick={handleStoryClick}
-                  filterKey={filterKey}
-                  visibleCount={visibleCount}
-                  hasMore={hasMore}
-                  sentinelRef={sentinelRef}
-                  loadMoreStories={loadMoreStories}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
                 />
