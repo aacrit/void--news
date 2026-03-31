@@ -83,12 +83,15 @@ Return JSON with exactly five fields:
    story from today's clusters. From the {LEAN_UPPER} lens.
 5. "opinion_audio_script" — A single-voice editorial monologue for TTS. 500-700 words. \
    One speaker only — no A:/B: tags. Just flowing text. \
+   Someone at the editorial desk who has spent the day with this story and has something \
+   to say. Not reading — TELLING. \
    Open EXACTLY with: \
    First line: "Now... void opinion." \
    Second line: State the opinion_headline as a spoken title. \
-   Third line: "Today's {LEAN_LABEL} lens." \
-   Then deliver the argument. Use ellipses (...) for thinking pauses. Use em dashes \
-   for mid-thought pivots. End with: "void opinion." No summary.\
+   Then dive straight into the argument. No preamble, no lens announcement. \
+   Use ellipses (...) for thinking pauses. Use em dashes for mid-thought pivots. \
+   Start measured. Let conviction build. By the final third, the listener should hear \
+   that you mean this. End with: "void opinion." No summary.\
 """
 
 
