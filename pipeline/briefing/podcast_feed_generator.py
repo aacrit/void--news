@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from email.utils import formatdate
 from pathlib import Path
 from time import mktime
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring, register_namespace
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -122,14 +122,15 @@ def _episode_description(brief: dict) -> str:
 
 def _build_feed(edition: str, episodes: list[dict]) -> bytes:
     """Build RSS 2.0 XML bytes for a single edition."""
+    # Register namespaces so ElementTree uses itunes:/podcast: prefixes
+    # instead of auto-generated ns0:/ns1: (critical for Apple/Spotify parsing)
+    register_namespace("itunes", ITUNES_NS)
+    register_namespace("podcast", PODCAST_NS)
+    register_namespace("content", CONTENT_NS)
+
     meta = SHOW_META.get(edition, SHOW_META["world"])
 
-    rss = Element("rss", {
-        "version": "2.0",
-        "xmlns:itunes": ITUNES_NS,
-        "xmlns:podcast": PODCAST_NS,
-        "xmlns:content": CONTENT_NS,
-    })
+    rss = Element("rss", {"version": "2.0"})
     channel = SubElement(rss, "channel")
 
     # Channel-level metadata
@@ -146,7 +147,7 @@ def _build_feed(edition: str, episodes: list[dict]) -> bytes:
     SubElement(owner, f"{{{ITUNES_NS}}}name").text = AUTHOR
     SubElement(owner, f"{{{ITUNES_NS}}}email").text = CONTACT_EMAIL
 
-    cover_url = f"{SITE_URL}/podcast-cover-{edition}.svg"
+    cover_url = f"{SITE_URL}/podcast-cover-{edition}.jpg"
     SubElement(channel, f"{{{ITUNES_NS}}}image", {"href": cover_url})
 
     cat = SubElement(channel, f"{{{ITUNES_NS}}}category", {"text": CATEGORY})
