@@ -92,6 +92,10 @@
   min-width: 56px;
 }
 
+.ap__section-label--error {
+  color: color-mix(in srgb, var(--cin-amber) 35%, transparent);
+}
+
 /* Mini progress bar */
 .ap__mini-bar-wrap {
   flex: 1;
@@ -157,7 +161,7 @@
   flex-shrink: 0;
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 11px;
-  color: color-mix(in srgb, var(--cin-amber) 60%, transparent);
+  color: color-mix(in srgb, var(--cin-amber) 80%, transparent);
   min-width: 44px;
   text-align: right;
 }
@@ -215,6 +219,7 @@
 
 /* ---- Expanded Panel ---- */
 .ap__panel {
+  position: relative;
   background: var(--bg-primary);
   border-top: 1px solid color-mix(in srgb, var(--cin-amber) 20%, transparent);
   padding: 20px 20px 8px;
@@ -472,7 +477,7 @@
 .ap__time {
   font-family: var(--font-data, 'IBM Plex Mono', monospace);
   font-size: 12px;
-  color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
+  color: color-mix(in srgb, var(--cin-amber) 75%, transparent);
 }
 
 .ap__speed {
@@ -489,6 +494,11 @@
 .ap__speed:hover {
   border-color: color-mix(in srgb, var(--cin-amber) 50%, transparent);
   background: color-mix(in srgb, var(--cin-amber) 6%, transparent);
+}
+
+/* Disable player interaction when Deep Dive is open (backdrop is a prior sibling) */
+.deep-dive-backdrop ~ .ap {
+  pointer-events: none;
 }
 
 /* ==========================================================================
@@ -544,6 +554,7 @@
   .ap__panel {
     padding: 16px 16px 4px;
     max-height: 60vh;
+    overflow-y: auto;
   }
 
   .ap__transport {
