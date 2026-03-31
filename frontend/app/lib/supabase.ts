@@ -121,22 +121,22 @@ export async function fetchLastPipelineRun() {
 export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (!_client) return null;
 
-  // Try full column set first; fall back without opinion_start_seconds
-  // if the column hasn't been migrated yet.
+  const cols = 'tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, created_at';
+
+  // Try requested edition first, then fall back to any edition
   let res = await _client
     .from('daily_briefs')
-    .select('tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, opinion_start_seconds, audio_url, audio_duration_seconds, audio_voice_label, created_at')
+    .select(cols)
     .eq('edition', edition)
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
 
-  if (res.error?.code === '42703') {
-    // Column doesn't exist — retry without it
+  if (res.error || !res.data) {
+    // No brief for this edition — fall back to most recent brief from any edition
     res = await _client
       .from('daily_briefs')
-      .select('tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, created_at')
-      .eq('edition', edition)
+      .select(cols)
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
