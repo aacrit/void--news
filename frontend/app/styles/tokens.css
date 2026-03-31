@@ -73,12 +73,12 @@
   --accent-hover: #333333;
 
   /* Warm accent — focus indicators, accessibility outlines.
-     Deep ochre-gold: aged brass under a desk lamp. ~4.9:1 on #F0EBDD.
+     Deep ochre-gold: aged brass under a desk lamp. ~4.6:1 on #F0EBDD.
      Deepened from #C8956C (2.2:1 — failed WCAG AA) to pass 4.5:1. */
-  --accent-warm: #8B6914;
+  --accent-warm: #946B15;
 
   /* Foreground accent — warm editorial accent for badges, active states */
-  --fg-accent: #8B6914;
+  --fg-accent: #946B15;
 
   /* Hover surface — subtle tint for interactive rows */
   --bg-hover: rgba(0, 0, 0, 0.04);
@@ -90,11 +90,11 @@
   --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
 
   /* ── Cinematic Palette ── */
-  --cin-amber: #8B6914;
-  --cin-amber-bright: #A57D1A;
-  --cin-amber-dim: #6E5310;
-  --cin-amber-ghost: rgba(139, 105, 20, 0.08);
-  --cin-amber-glow: rgba(139, 105, 20, 0.15);
+  --cin-amber: #946B15;
+  --cin-amber-bright: #AD7E1E;
+  --cin-amber-dim: #775610;
+  --cin-amber-ghost: rgba(148, 107, 21, 0.08);
+  --cin-amber-glow: rgba(148, 107, 21, 0.15);
   --cin-ash: #6B7280;
   --cin-ash-warm: #78716C;
   --cin-ash-cool: #64748B;
@@ -162,11 +162,11 @@
   --cin-practical-warmth: color-mix(in srgb, var(--cin-amber) 4%, var(--bg-primary));
 
   /* ── Cinematic rim-top highlight for elevated surfaces ── */
-  --cinematic-rim-top: rgba(139, 105, 20, 0.08);
+  --cinematic-rim-top: rgba(148, 107, 21, 0.08);
 
   /* ── Accent isolation for bias-adjacent elements ── */
-  --cinematic-accent-near-bias: rgba(139, 105, 20, 0.04);
-  --cinematic-accent-far-bias: rgba(139, 105, 20, 0.12);
+  --cinematic-accent-near-bias: rgba(148, 107, 21, 0.04);
+  --cinematic-accent-far-bias: rgba(148, 107, 21, 0.12);
 
   /* ── Category Colors ── */
   --cat-conflict:    #E53E3E;  /* distinct from --indicator-broadcast (#c0392b) */

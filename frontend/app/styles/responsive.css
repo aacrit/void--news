@@ -482,8 +482,8 @@
   /* Drag indicator pill — iOS bottom sheet handle */
   .dd-drag-indicator {
     display: block;
-    width: 36px;
-    height: 4px;
+    width: 56px;
+    height: 6px;
     border-radius: 2px;
     background-color: var(--border-subtle);
     margin: var(--space-2) auto var(--space-1);
@@ -495,7 +495,7 @@
 
   /* Grabbed state: wider pill + full opacity — confirms the handle is active */
   .dd-drag-indicator--grabbed {
-    width: 48px;
+    width: 72px;
     opacity: 1;
   }
 
