@@ -4807,13 +4807,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   gap: var(--space-2);
   margin: 0 0 var(--space-4);
   padding: var(--space-3) var(--space-4);
-  border-left: 3px solid var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
+  border-left: 3px solid var(--voice-accent);
+  background: color-mix(in srgb, var(--voice-accent) 3%, var(--bg-primary));
   transition: background-color var(--dur-normal) var(--ease-out);
 }
 
 .onair--playing {
-  background: color-mix(in srgb, var(--accent-warm) 5%, var(--bg-primary));
+  background: color-mix(in srgb, var(--voice-accent) 5%, var(--bg-primary));
 }
 
 /* ---- Header ---- */
@@ -4829,10 +4829,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--accent-warm);
+  background-color: var(--indicator-broadcast);
   flex-shrink: 0;
   animation: onair-pulse 1.5s ease-in-out infinite;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--indicator-broadcast) 40%, transparent);
 }
 
 .onair__cmd {
@@ -4840,7 +4840,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--accent-warm);
+  color: var(--voice-accent);
   white-space: nowrap;
 }
 
@@ -4868,7 +4868,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent-warm);
+  color: var(--voice-accent);
   margin-left: auto;
   white-space: nowrap;
 }
@@ -4881,7 +4881,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   gap: var(--space-3);
 }
 
-/* Play button — warm accent circle */
+/* Play button — voice accent circle */
 .onair__play {
   width: 48px;
   height: 48px;
@@ -4889,10 +4889,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--accent-warm);
+  border: 2px solid var(--voice-accent);
   border-radius: 50%;
   background: none;
-  color: var(--accent-warm);
+  color: var(--voice-accent);
   cursor: pointer;
   transition: background-color var(--dur-fast) var(--ease-out),
               transform var(--dur-fast) var(--ease-out),
@@ -4900,8 +4900,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .onair__play:hover {
-  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-warm) 18%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 10%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--voice-accent) 18%, transparent);
   transform: scale(1.06);
 }
 
@@ -4911,8 +4911,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .onair__play--active {
-  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 10%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--voice-accent) 20%, transparent);
 }
 
 .onair__play:disabled {
@@ -4958,7 +4958,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .onair__eq-bar:nth-child(5) { height: 12px; }
 
 .onair__eq--active .onair__eq-bar {
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   animation: eq-bounce 0.8s ease-in-out infinite alternate;
 }
 
@@ -4980,9 +4980,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   letter-spacing: 0.06em;
   text-transform: uppercase;
 
-  color: var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
-  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 30%, transparent);
+  color: var(--voice-accent);
+  background: var(--voice-accent-ghost);
+  border: 1.5px solid color-mix(in srgb, var(--voice-accent) 30%, transparent);
   border-radius: 4px;
   cursor: pointer;
 
@@ -4995,8 +4995,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .onair__cta:hover {
-  background: color-mix(in srgb, var(--accent-warm) 14%, transparent);
-  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--voice-accent) 50%, transparent);
 }
 
 .onair__cta:active {
@@ -5004,7 +5004,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .onair__cta:focus-visible {
-  outline: 2px solid var(--accent-warm);
+  outline: 2px solid var(--voice-accent);
   outline-offset: 2px;
 }
 
@@ -5064,12 +5064,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .onair__section--active {
-  color: var(--accent-warm);
+  color: var(--voice-accent);
   font-weight: 600;
 }
 
 .onair__section:focus-visible {
-  outline: 1px solid var(--accent-warm);
+  outline: 1px solid var(--voice-accent);
   outline-offset: 1px;
   border-radius: 2px;
 }
@@ -5109,7 +5109,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   border-radius: 2px;
   transition: width 250ms linear;
   z-index: 1;
@@ -5146,9 +5146,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   border: 2px solid var(--bg-card);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-warm) 30%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--voice-accent) 30%, transparent);
   cursor: pointer;
   transition: transform 150ms var(--ease-out);
 }
@@ -5162,9 +5162,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   border: 2px solid var(--bg-card);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-warm) 30%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--voice-accent) 30%, transparent);
   cursor: pointer;
 }
 
@@ -5208,7 +5208,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 @media (hover: none) {
   .onair__play:hover { background: none; box-shadow: none; transform: none; }
   .onair__play:active { transform: scale(0.94); }
-  .onair__cta:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); border-color: color-mix(in srgb, var(--accent-warm) 30%, transparent); }
+  .onair__cta:hover { background: var(--voice-accent-ghost); border-color: color-mix(in srgb, var(--voice-accent) 30%, transparent); }
   .onair__cta:active { transform: scale(0.96); }
   .onair__section:hover { color: var(--fg-muted); }
   .db-col__more:hover { color: var(--fg-muted); text-decoration-color: transparent; }
@@ -6784,7 +6784,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   min-width: 240px;
 }
 .intro-audio__cmd {
-  font-size: var(--text-sm); font-weight: 600; color: var(--accent-warm);
+  font-size: var(--text-sm); font-weight: 600; color: var(--voice-accent);
   letter-spacing: -0.02em;
 }
 .intro-audio__label {
@@ -6799,7 +6799,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 .intro-audio__bar {
   width: 3px; border-radius: 2px;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   opacity: 0.5;
   animation: introWaveBar 1.2s ease-in-out infinite alternate;
 }
@@ -7909,11 +7909,11 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--cin-amber) 3%, transparent) 20%,
-    color-mix(in srgb, var(--cin-amber) 8%, transparent) 40%,
-    color-mix(in srgb, var(--cin-amber) 12%, transparent) 50%,
-    color-mix(in srgb, var(--cin-amber) 8%, transparent) 60%,
-    color-mix(in srgb, var(--cin-amber) 3%, transparent) 80%,
+    color-mix(in srgb, var(--voice-accent) 3%, transparent) 20%,
+    color-mix(in srgb, var(--voice-accent) 8%, transparent) 40%,
+    color-mix(in srgb, var(--voice-accent) 12%, transparent) 50%,
+    color-mix(in srgb, var(--voice-accent) 8%, transparent) 60%,
+    color-mix(in srgb, var(--voice-accent) 3%, transparent) 80%,
     transparent 100%
   );
   pointer-events: none;
