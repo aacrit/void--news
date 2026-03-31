@@ -75,7 +75,7 @@ function VisibleCard({ className = "", style, children }: VisibleCardProps) {
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
-import SkyboxBanner, { OnAirBand } from "./SkyboxBanner";
+import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const BiasLensOnboarding = dynamic(() => import("./BiasLensOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -799,8 +799,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               ) : (
                 <>
                   <SkyboxBanner state={dailyBriefState} />
-                  <OnAirBand state={dailyBriefState} />
-
                   {leadStories.length > 0 && (
                     <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
                       {leadStories.map((story, i) => (

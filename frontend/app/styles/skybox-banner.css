@@ -218,19 +218,15 @@
    OnAir — Pill + expanding inline radio player
    --------------------------------------------------------------------------- */
 
-.skb__onair-center {
-  display: flex;
-  justify-content: center;
-  padding-top: var(--space-3);
-  border-top: 1px dotted color-mix(in srgb, var(--fg-muted) 15%, transparent);
-  margin-top: var(--space-2);
-}
-
+/* OnAir unit: left-aligned inside skybox, above editorial columns.
+   Like a dateline or radio-schedule listing in a newspaper masthead. */
 .skb__onair-unit {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
+  align-items: flex-start;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dotted color-mix(in srgb, var(--fg-muted) 20%, transparent);
+  margin-bottom: var(--space-3);
 }
 
 .skb__onair-btn {
@@ -240,8 +236,7 @@
   font-family: var(--font-meta);
   font-size: var(--text-sm);
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--accent-cool);
   background: var(--accent-cool-ghost);
   border: 1px solid color-mix(in srgb, var(--accent-cool) 20%, transparent);
@@ -283,8 +278,8 @@
 }
 
 .skb__onair-label {
-  font-family: var(--font-meta);
-  letter-spacing: 0.06em;
+  font-family: var(--font-data);
+  letter-spacing: 0.02em;
 }
 
 .skb__onair-freq {
@@ -323,7 +318,6 @@
   overflow: hidden;
   width: 100%;
   max-width: 420px;
-  margin: 0 auto;
 }
 
 /* Radio panel: always dark regardless of site theme — intentional
@@ -770,19 +764,6 @@
   .skb__rec-dot { animation: none; opacity: 1; }
 }
 
-/* ---------------------------------------------------------------------------
-   OnAir Band — Standalone broadcast strip between skybox and feed
-   Promoted out of the skybox to give void --onair its own visual territory.
-   --------------------------------------------------------------------------- */
-
-.onair-band {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-2) var(--space-4);
-  background: color-mix(in srgb, var(--accent-cool) 3%, var(--bg-primary));
-  border-bottom: 1px solid var(--border-subtle);
-}
 
 /* Mobile: collapsed pill shows OnAir inline */
 .mbp__onair-inline {

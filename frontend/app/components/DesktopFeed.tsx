@@ -6,7 +6,7 @@ import type { DailyBriefState } from "./DailyBrief";
 import LeadStory from "./LeadStory";
 import DigestRow from "./DigestRow";
 import WireCard from "./WireCard";
-import SkyboxBanner, { OnAirBand } from "./SkyboxBanner";
+import SkyboxBanner from "./SkyboxBanner";
 import LogoWordmark from "./LogoWordmark";
 
 interface DesktopFeedProps {
@@ -70,8 +70,6 @@ export default function DesktopFeed({
       <SkyboxBanner state={dailyBriefState} />
 
       {/* OnAir Band — standalone broadcast strip */}
-      <OnAirBand state={dailyBriefState} />
-
       {/* Zone 1: Broadsheet Lead — asymmetric 2fr | 1fr */}
       {leadStories.length > 0 && (
         <section aria-label="Lead stories" className="df-lead anim-broadsheet-unfold">
