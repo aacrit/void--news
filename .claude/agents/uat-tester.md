@@ -170,7 +170,7 @@ Audit EVERY component. For each, evaluate:
 | `DeepDive` | Does the panel feel like a natural extension, not a jarring mode change? Is the close affordance obvious? |
 | `DeepDiveSpectrum` | Can The Analyst read source positions accurately? Do overlapping logos resolve? Is the 7-zone gradient intuitive? |
 | `BiasInspector` | Are the 4 axes understandable to a non-expert? Does collapsible Gemini reasoning add value? |
-| `BiasLens` | Do the Three Lenses (Needle, Ring, Prism) communicate at a glance? Or do they require explanation? |
+| `BiasLens` | Do the Three Lenses (Beam, Ring, Prism) communicate at a glance? Or do they require explanation? |
 | `Sigil` | Is the compact bias indicator readable at small sizes? Does it carry enough information? |
 | `SpectrumChart` | Does the full source spectrum communicate the platform's breadth? Is "Show all" discoverable? |
 | `PageToggle` | Is Feed/Sources switching obvious? Is the active state clear? |
