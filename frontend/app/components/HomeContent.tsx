@@ -215,8 +215,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  // Experimental desktop v2 layout — opt-in via ?layout=v2
-  const [layoutV2, setLayoutV2] = useState(false);
+  // DesktopFeed three-zone broadsheet is the default desktop layout.
+  const [layoutV2, setLayoutV2] = useState(true);
 
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
@@ -308,9 +308,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Detect mobile for infinite scroll vs editorial link
   useEffect(() => {
     setIsMobile(window.matchMedia("(max-width: 767px)").matches);
-    // Experimental desktop v2: ?layout=v2
+    // Legacy grid: opt-in via ?layout=v1
     const params = new URLSearchParams(window.location.search);
-    setLayoutV2(params.get("layout") === "v2");
+    if (params.get("layout") === "v1") setLayoutV2(false);
   }, []);
 
   // Reset category filter, close DeepDive, and scroll to top when edition changes.

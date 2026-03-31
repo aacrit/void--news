@@ -177,6 +177,7 @@
   cursor: pointer;
   padding: var(--space-1) 0;
   margin-top: var(--space-1);
+  min-height: 44px;
   letter-spacing: 0.03em;
   transition: color 150ms var(--ease-out);
 }
