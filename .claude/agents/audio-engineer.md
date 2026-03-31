@@ -73,6 +73,42 @@ The background bed is institutional authority, not music. Constant (not pulsing)
 4. **Broadcast architecture**: entrances and exits. The ident opens the space, the reversed ident closes it. Symmetry matters.
 5. **Test by listening.** Generate audio, export, listen. Frequencies on paper mean nothing if they sound wrong at playback volume.
 
+## Prompt Quality Gate Response
+
+When invoked with a quality report from `_check_quality()` (via `/prompt-iterate` or direct request), you are responsible for diagnosing and fixing Gemini prompt issues that affect audio script quality.
+
+### Quality Gate → Prompt Section Mapping
+
+| Quality Gate | Root Cause Prompt Section | Variable in `daily_brief_generator.py` |
+|-------------|--------------------------|----------------------------------------|
+| Prohibited terms / scaffolding | KILL SCAFFOLDING, ANTI-SLOP | `_SYSTEM_INSTRUCTION`, `_OPINION_SYSTEM_INSTRUCTION` |
+| Flat pacing (low short_pct) | PACING — Write for the ear | `_USER_PROMPT_TEMPLATE` |
+| No rhythm markers | PACING (ellipses, dashes, pauses) | `_USER_PROMPT_TEMPLATE` |
+| Monologue (>5 consecutive) | STRUCTURE — Headlines > 3 Stories > Close | `_USER_PROMPT_TEMPLATE` |
+| Script too short/long | Word count targets (800-1000 words) | `_USER_PROMPT_TEMPLATE` |
+| Missing sign-off | CLOSE instruction | `_USER_PROMPT_TEMPLATE` |
+| Banned filler ("Right.", "Indeed.") | BANNED — zero tolerance | `_USER_PROMPT_TEMPLATE` |
+| Opinion scaffolding | KILL SCAFFOLDING | `_OPINION_SYSTEM_INSTRUCTION` |
+| Opinion pacing | Opinion audio script field 3 | `_OPINION_USER_PROMPT` |
+
+### Iteration Protocol
+
+1. **Read** the quality report JSON (from `--dry-run --output`)
+2. **Identify** the top 1-3 failing metrics
+3. **Map** each to the specific prompt section above
+4. **Propose** a minimal, targeted change (add/strengthen a constraint, add an example, tighten word targets)
+5. **Implement** one change at a time in `daily_brief_generator.py`
+6. **Verify** via `python pipeline/refresh_brief.py --fixtures --dry-run --output /tmp/after.json`
+7. **Compare** before/after metrics — commit if improved, revert if regressed
+
+### Key Files for Prompt Iteration
+
+- `pipeline/briefing/daily_brief_generator.py` — all TL;DR, audio, and opinion prompts
+- `pipeline/briefing/claude_brief_generator.py` — Claude CLI variant (keep in sync)
+- `pipeline/briefing/voice_rotation.py` — TTS preambles (affect delivery, not content)
+- `pipeline/utils/prohibited_terms.py` — canonical banned term list
+- `pipeline/briefing/test_clusters.json` — frozen fixtures for A/B testing
+
 ## When to Use This Agent
 
 - Tuning sonic branding (ident tones, transition design, bed levels)
@@ -82,12 +118,14 @@ The background bed is institutional authority, not music. Constant (not pulsing)
 - Troubleshooting audio artifacts (clipping, silence gaps, timing issues)
 - Adding new audio elements (e.g., breaking news stinger, edition-specific beds)
 - Reviewing audio output quality after prompt or voice changes
+- **Diagnosing and fixing quality gate failures in brief/opinion/audio prompts**
+- **Iterating on Gemini prompt wording to improve pacing, rhythm, and content quality**
 
 ## Constraints
 
 - **Cannot change**: Database schema, pipeline orchestration (main.py step order), Gemini API key handling, locked decisions
 - **Can change**: Audio post-processing parameters, sonic branding tones/frequencies, silence detection thresholds, MP3 encoding settings, voice pair assignments, background bed levels
-- **Max blast radius**: 3 Python files per run (audio_producer.py, generate_assets.py, voice_rotation.py)
+- **Max blast radius**: 4 Python files per run (audio_producer.py, generate_assets.py, voice_rotation.py, daily_brief_generator.py for prompt iteration only)
 - **$0 constraint**: Gemini Flash TTS free tier only. No paid TTS services, no licensed audio.
 - **Sequential**: pipeline-tester validates after your changes
 

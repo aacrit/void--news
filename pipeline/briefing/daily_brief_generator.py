@@ -246,25 +246,44 @@ else:
     })
 
 
-def _check_quality(result: dict, edition: str) -> bool:
-    """Log quality warnings for out-of-spec brief output.
+def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
+    """Check brief output against quality gates.
 
-    Returns True if output passes hard gates (no prohibited terms).
-    Returns False if prohibited scaffolding/slop was found (caller should retry).
+    Returns (passed, report) where:
+    - passed: True if hard gates pass (no prohibited terms). False = caller should retry.
+    - report: Structured dict with all metrics for programmatic consumption.
+
+    Also prints warnings to stdout for pipeline log readability.
     """
+    import re
+
+    report: dict = {"edition": edition, "warnings": [], "failures": [], "metrics": {}}
+
     tldr = result.get("tldr_text", "")
     lines = [l.strip() for l in tldr.split("\n") if l.strip()]
     words = len(tldr.split())
+    report["metrics"]["tldr_lines"] = len(lines)
+    report["metrics"]["tldr_words"] = words
     if len(lines) < 5 or len(lines) > 15:
-        print(f"  [quality][brief:{edition}] TL;DR has {len(lines)} lines (expected 8-12)")
+        msg = f"TL;DR has {len(lines)} lines (expected 8-12)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
     if words < 120 or words > 300:
-        print(f"  [quality][brief:{edition}] TL;DR has {words} words (expected 180-240)")
+        msg = f"TL;DR has {words} words (expected 180-240)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
 
     headline = result.get("tldr_headline", "")
+    hl_words = len(headline.split()) if headline and isinstance(headline, str) else 0
+    report["metrics"]["headline_words"] = hl_words
     if not headline or not isinstance(headline, str) or not headline.strip():
-        print(f"  [quality][brief:{edition}] TL;DR headline missing")
-    elif len(headline.split()) > 12:
-        print(f"  [quality][brief:{edition}] TL;DR headline too long: {len(headline.split())} words (expected 6-10)")
+        msg = "TL;DR headline missing"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    elif hl_words > 12:
+        msg = f"TL;DR headline too long: {hl_words} words (expected 6-10)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):
@@ -273,40 +292,51 @@ def _check_quality(result: dict, edition: str) -> bool:
 
     all_text = f"{tldr} {script}".lower()
 
-    has_prohibited = False
+    # --- HARD GATE: Prohibited terms ---
     found = [t for t in _PROHIBITED_TERMS if t in all_text]
+    report["failures" if found else "metrics"]["prohibited_terms_found"] = found
     if found:
         print(f"  [quality][brief:{edition}] Prohibited terms found: {found}")
-        has_prohibited = True
 
     # Validate script has actual dialogue (A:/B: speaker tags)
     speaker_lines = [l for l in script.splitlines() if l.strip().startswith(("A:", "B:"))]
+    report["metrics"]["speaker_lines"] = len(speaker_lines)
     if len(speaker_lines) < 10:
-        print(f"  [quality][brief:{edition}] Script has only {len(speaker_lines)} speaker lines (expected 10+)")
+        msg = f"Script has only {len(speaker_lines)} speaker lines (expected 10+)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
 
-    # --- Enhanced quality gates (Recommendation 4) ---
-
-    # 4a. Audio script word count (warn if outside 600-1200)
+    # Audio script word count
+    script_words = len(script.split()) if script.strip() else 0
+    report["metrics"]["script_words"] = script_words
     if script.strip():
-        script_words = len(script.split())
         if script_words < 600:
-            print(f"  [quality][brief:{edition}] Audio script too short: {script_words} words (expected 600-1200)")
+            msg = f"Audio script too short: {script_words} words (expected 600-1200)"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
         elif script_words > 1200:
-            print(f"  [quality][brief:{edition}] Audio script too long: {script_words} words (expected 600-1200)")
+            msg = f"Audio script too long: {script_words} words (expected 600-1200)"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
 
-    # 4b. "This was Void news" close check
+    # "This was Void news" close check
+    sign_off = False
     if script.strip():
-        last_200 = script[-200:].lower()
-        if "this was void news" not in last_200:
-            print(f"  [quality][brief:{edition}] Audio script missing 'This was Void news' sign-off in final 200 chars")
+        sign_off = "this was void news" in script[-200:].lower()
+        if not sign_off:
+            msg = "Audio script missing 'This was Void news' sign-off"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
+    report["metrics"]["sign_off_present"] = sign_off
 
-    # 4c. Monologue detection (warn if >5 consecutive same-speaker lines)
+    # Monologue detection
+    max_consecutive = 0
     if speaker_lines:
         max_consecutive = 1
         current_consecutive = 1
         current_speaker = None
         for line in speaker_lines:
-            speaker = line.strip()[:2]  # "A:" or "B:"
+            speaker = line.strip()[:2]
             if speaker == current_speaker:
                 current_consecutive += 1
                 max_consecutive = max(max_consecutive, current_consecutive)
@@ -314,25 +344,34 @@ def _check_quality(result: dict, edition: str) -> bool:
                 current_speaker = speaker
                 current_consecutive = 1
         if max_consecutive > 5:
-            print(f"  [quality][brief:{edition}] Monologue detected: {max_consecutive} consecutive lines by same speaker (max 5)")
+            msg = f"Monologue detected: {max_consecutive} consecutive lines by same speaker (max 5)"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
+    report["metrics"]["monologue_max"] = max_consecutive
 
-    # 4d. Banned filler scan in audio script
+    # Banned filler scan
     _BANNED_FILLER = [
         "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.",
         "Interesting.", "Exactly.", "That's a fair point.", "Great question.",
     ]
+    found_filler = []
     if script.strip():
         found_filler = [f for f in _BANNED_FILLER if f.lower() in script.lower()]
         if found_filler:
-            print(f"  [quality][brief:{edition}] Banned filler in audio script: {found_filler}")
+            msg = f"Banned filler in audio script: {found_filler}"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
+    report["metrics"]["filler_found"] = found_filler
 
-    # 4e. Pacing enforcement — sentence rhythm and pause markers in audio script
+    # Pacing enforcement — sentence rhythm and pause markers
+    short_pct = 0.0
+    long_pct = 0.0
+    pause_count = 0
+    ellipsis_count = 0
+    dash_count = 0
+    total_markers = 0
     if script.strip():
-        import re
-        # Split into sentences (rough: split on .|!|? followed by space/newline)
         sentences = re.split(r'(?<=[.!?])\s+', script.strip())
-        sentences = [s for s in sentences if s.strip() and not s.strip().startswith(("A:", "B:")[:0])]
-        # Count words per sentence (strip speaker tags)
         word_counts = []
         for s in sentences:
             cleaned = re.sub(r'^[AB]:\s*', '', s.strip())
@@ -344,28 +383,39 @@ def _check_quality(result: dict, edition: str) -> bool:
             short_sentences = sum(1 for w in word_counts if w <= 8)
             long_sentences = sum(1 for w in word_counts if w >= 20)
             total = len(word_counts)
-            short_pct = short_sentences / total * 100
-            long_pct = long_sentences / total * 100
+            short_pct = round(short_sentences / total * 100, 1)
+            long_pct = round(long_sentences / total * 100, 1)
 
             if short_pct < 15:
-                print(f"  [quality][brief:{edition}] Pacing: only {short_pct:.0f}% short sentences "
-                      f"(<=8 words, want >=15%) — rhythm is flat")
+                msg = f"Pacing: only {short_pct:.0f}% short sentences (<=8 words, want >=15%)"
+                report["warnings"].append(msg)
+                print(f"  [quality][brief:{edition}] {msg}")
             if long_pct < 10:
-                print(f"  [quality][brief:{edition}] Pacing: only {long_pct:.0f}% long sentences "
-                      f"(>=20 words, want >=10%) — no build-up sentences")
+                msg = f"Pacing: only {long_pct:.0f}% long sentences (>=20 words, want >=10%)"
+                report["warnings"].append(msg)
+                print(f"  [quality][brief:{edition}] {msg}")
 
-        # Pause markers
         pause_count = script.lower().count("[short pause]") + script.lower().count("[long pause]")
         ellipsis_count = script.count("...")
         dash_count = script.count(" — ") + script.count("—")
         total_markers = pause_count + ellipsis_count + dash_count
 
         if total_markers < 5:
-            print(f"  [quality][brief:{edition}] Pacing: only {total_markers} rhythm markers "
-                  f"(pauses: {pause_count}, ellipses: {ellipsis_count}, dashes: {dash_count}) — "
-                  f"want >=5 for natural spoken cadence")
+            msg = (f"Pacing: only {total_markers} rhythm markers "
+                   f"(pauses: {pause_count}, ellipses: {ellipsis_count}, dashes: {dash_count})")
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
 
-    return not has_prohibited
+    report["metrics"]["pacing_short_pct"] = short_pct
+    report["metrics"]["pacing_long_pct"] = long_pct
+    report["metrics"]["rhythm_markers"] = total_markers
+    report["metrics"]["rhythm_pauses"] = pause_count
+    report["metrics"]["rhythm_ellipses"] = ellipsis_count
+    report["metrics"]["rhythm_dashes"] = dash_count
+
+    passed = not bool(found)
+    report["passed"] = passed
+    return passed, report
 
 
 def _get_previous_cluster_ids(edition: str) -> set[str]:
@@ -1011,7 +1061,8 @@ def generate_daily_briefs(
                             "audio_script": script if isinstance(script, str) and script.strip() else None,
                             "top_cluster_ids": top_ids,
                         }
-                        passed = _check_quality(raw, edition)
+                        passed, quality_report = _check_quality(raw, edition)
+                        brief_result["quality_report"] = quality_report
                         if passed or attempt == 1:
                             if not passed and attempt == 1:
                                 print(f"  [quality][brief:{edition}] Prohibited terms still present after retry — accepting")
