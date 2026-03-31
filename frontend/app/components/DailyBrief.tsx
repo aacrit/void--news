@@ -133,22 +133,26 @@ export function useDailyBrief(edition: string): DailyBriefState {
     };
   }, []);
 
-  const handlePlayPause = useCallback(() => {
-    let audio = audioRef.current;
-    // Fallback: if ref not set yet, find the audio element in the DOM
-    if (!audio) {
-      audio = document.querySelector("audio[src]") as HTMLAudioElement | null;
-      if (audio) audioRef.current = audio;
+  const getAudio = useCallback((): HTMLAudioElement | null => {
+    if (audioRef.current) return audioRef.current;
+    // Fallback: grab by id if callback ref hasn't fired yet
+    const el = document.getElementById("void-onair-audio") as HTMLAudioElement | null;
+    if (el) {
+      audioRef.current = el;
+      // Attach listeners if not already attached
+      if (!listenerCleanupRef.current) audioCallbackRef(el);
     }
+    return el;
+  }, [audioCallbackRef]);
+
+  const handlePlayPause = useCallback(() => {
+    const audio = getAudio();
     if (!audio) return;
     hapticMedium();
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      // If a previous preload error occurred, reset and retry.
-      // The user click provides a fresh user gesture, satisfying
-      // browser autoplay policy even if preload was blocked.
       if (audioError) {
         setAudioError(false);
         audio.load();
@@ -159,11 +163,11 @@ export function useDailyBrief(edition: string): DailyBriefState {
       });
       setIsPlaying(true);
     }
-  }, [isPlaying, audioError]);
+  }, [isPlaying, audioError, getAudio]);
 
   const lastSeekTick = useRef(0);
   const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const audio = audioRef.current;
+    const audio = getAudio();
     if (!audio) return;
     const t = Number(e.target.value);
     const tick = Math.floor(t / 5);
@@ -173,7 +177,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
     }
     audio.currentTime = t;
     setCurrentTime(t);
-  }, []);
+  }, [getAudio]);
 
   const SPEEDS = [1, 1.25, 1.5, 2] as const;
   const cycleSpeed = useCallback(() => {
@@ -194,23 +198,23 @@ export function useDailyBrief(edition: string): DailyBriefState {
   }, [brief, playbackSpeed]);
 
   const skipForward = useCallback(() => {
-    const audio = audioRef.current;
+    const audio = getAudio();
     if (!audio) return;
     hapticTick();
     audio.currentTime = Math.min(audio.currentTime + 15, audio.duration || Infinity);
     setCurrentTime(audio.currentTime);
-  }, []);
+  }, [getAudio]);
 
   const skipBackward = useCallback(() => {
-    const audio = audioRef.current;
+    const audio = getAudio();
     if (!audio) return;
     hapticTick();
     audio.currentTime = Math.max(audio.currentTime - 15, 0);
     setCurrentTime(audio.currentTime);
-  }, []);
+  }, [getAudio]);
 
   const seekTo = useCallback((seconds: number) => {
-    const audio = audioRef.current;
+    const audio = getAudio();
     if (!audio) return;
     hapticLight();
     audio.currentTime = seconds;
