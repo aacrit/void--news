@@ -303,7 +303,7 @@
 }
 
 .skb__onair-dur--error {
-  color: #E74C3C;
+  color: var(--indicator-broadcast);
   opacity: 0.8;
 }
 
@@ -325,6 +325,10 @@
   margin: 0 auto;
 }
 
+/* Radio panel: always dark regardless of site theme — intentional
+   "broadcast hardware embedded in the page" metaphor. Uses a fixed
+   dark value rather than --bg-primary so it reads as a physical
+   device (radio console on a newspaper desk). */
 .skb__radio-inner {
   background: #1A1816;
   border-radius: 0 0 12px 12px;
@@ -653,9 +657,16 @@
   .skb__transport-skip {
     width: 36px; height: 36px;
     font-size: 11px;
+    position: relative;
     background: color-mix(in srgb, var(--voice-accent) 3%, transparent);
     border: 1px solid color-mix(in srgb, var(--voice-accent) 10%, transparent);
     box-shadow: inset 0 1px 0 color-mix(in srgb, var(--voice-accent) 6%, transparent), inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+  }
+
+  /* 44px minimum touch target — visual 36px, tap area 44px */
+  .skb__transport-skip::after {
+    content: ""; position: absolute;
+    inset: -4px;
   }
 
   .skb__transport-skip:hover {
@@ -825,4 +836,21 @@
   font-size: var(--text-xxs);
   color: var(--voice-accent-dim);
   white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Touch device guards — prevent sticky hover states on iOS/Android
+   --------------------------------------------------------------------------- */
+
+@media (hover: none) {
+  .skb__onair-btn:hover {
+    border-color: color-mix(in srgb, var(--voice-accent) 20%, transparent);
+    background: var(--voice-accent-ghost);
+    box-shadow: 0 0 8px var(--voice-accent-glow),
+                0 0 20px color-mix(in srgb, var(--voice-accent) 6%, transparent);
+  }
+  .skb__transport-skip:hover { color: color-mix(in srgb, var(--voice-accent) 50%, transparent); }
+  .skb__transport-play:hover { border-color: color-mix(in srgb, var(--voice-accent) 50%, transparent); }
+  .skb__radio-speed:hover { border-color: color-mix(in srgb, var(--voice-accent) 25%, transparent); }
+  .mbp__onair-play:hover { border-color: color-mix(in srgb, var(--voice-accent) 40%, transparent); background: none; }
 }
