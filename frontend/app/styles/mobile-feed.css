@@ -402,6 +402,14 @@
   opacity: 0.4;
 }
 
+/* OnAir zone: center pill and radio panel */
+.mbp__onair-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 /* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */

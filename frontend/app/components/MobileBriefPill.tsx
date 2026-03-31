@@ -184,8 +184,9 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
                 className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
                 onClick={() => {
                   hapticConfirm();
+                  if (!hasAudio) return;
                   setRadioOpen((v) => !v);
-                  if (!isPlaying && !radioOpen && hasAudio) handlePlayPause();
+                  if (!isPlaying && !radioOpen) handlePlayPause();
                 }}
                 type="button"
                 aria-label={radioOpen ? "Close player" : hasAudio ? "Play broadcast" : "Audio unavailable"}
@@ -205,7 +206,8 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
                 )}
               </button>
 
-              <div className="skb__radio" style={{
+              {/* eslint-disable-next-line react/no-unknown-property */}
+              <div className="skb__radio" inert={!radioOpen ? true : undefined} style={{
                 height: radioOpen ? radioHeight : 0,
                 transition: radioOpen ? "height 400ms var(--spring-bouncy, ease)" : "height 250ms var(--ease-out, ease)",
               }}>

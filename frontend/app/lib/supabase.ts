@@ -121,7 +121,7 @@ export async function fetchLastPipelineRun() {
 export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (!_client) return null;
 
-  const cols = 'tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, created_at';
+  const cols = 'tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, opinion_start_seconds, audio_voice_label, created_at';
 
   // Try requested edition first, then fall back to any edition
   let res = await _client

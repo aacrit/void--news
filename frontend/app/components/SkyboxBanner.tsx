@@ -138,8 +138,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
               onClick={() => {
                 hapticConfirm();
+                if (!hasAudio) return;
                 setRadioOpen((v) => !v);
-                if (!isPlaying && !radioOpen && hasAudio) handlePlayPause();
+                if (!isPlaying && !radioOpen) handlePlayPause();
               }}
               type="button"
               aria-label={radioOpen ? "Close player" : hasAudio ? "Play broadcast" : "Audio unavailable"}
@@ -148,7 +149,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
               <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
               <span className="skb__onair-label">void --onair</span>
-              {hasAudio ? (
+              {audioError ? (
+                <span className="skb__onair-dur skb__onair-dur--error">Unavailable</span>
+              ) : hasAudio ? (
                 isPlaying ? (
                   <span className="skb__onair-dur">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>
                 ) : (
@@ -160,7 +163,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             </button>
 
             {/* Expanding radio player */}
-            <div className="skb__radio" style={{
+            {/* eslint-disable-next-line react/no-unknown-property */}
+            <div className="skb__radio" inert={!radioOpen ? true : undefined} style={{
               height: radioOpen ? radioHeight : 0,
               transition: radioOpen ? "height 400ms var(--spring-bouncy, ease)" : "height 250ms var(--ease-out, ease)",
             }}>
