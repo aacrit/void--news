@@ -146,7 +146,7 @@ def _build_feed(edition: str, episodes: list[dict]) -> bytes:
     SubElement(owner, f"{{{ITUNES_NS}}}name").text = AUTHOR
     SubElement(owner, f"{{{ITUNES_NS}}}email").text = CONTACT_EMAIL
 
-    cover_url = f"{SITE_URL}/podcast-cover-{edition}.jpg"
+    cover_url = f"{SITE_URL}/podcast-cover-{edition}.svg"
     SubElement(channel, f"{{{ITUNES_NS}}}image", {"href": cover_url})
 
     cat = SubElement(channel, f"{{{ITUNES_NS}}}category", {"text": CATEGORY})
