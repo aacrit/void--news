@@ -114,17 +114,40 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
     <div className="mbp" role="complementary" aria-label="Daily Brief">
       {hasAudio && <audio id="void-onair-audio" ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
 
-      <button
-        className={`mbp__pill${pillExpanded ? " mbp__pill--open" : ""}`}
-        onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
-        type="button" aria-expanded={pillExpanded} aria-controls="mbp-content"
-      >
-        <ScaleIcon size={12} animation="idle" />
-        <span className="mbp__pill-cmd">void --tl;dr</span>
-        <span className="mbp__pill-sep" aria-hidden="true">&middot;</span>
-        <span className="mbp__pill-label">{pillLabel}</span>
-        <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
-      </button>
+      <div className={`mbp__pill${pillExpanded ? " mbp__pill--open" : ""}`}>
+        <button
+          className="mbp__pill-main"
+          onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
+          type="button" aria-expanded={pillExpanded} aria-controls="mbp-content"
+          style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", flex: 1, minWidth: 0, background: "none", border: "none", padding: 0, cursor: "pointer", WebkitTapHighlightColor: "transparent", textAlign: "left" as const }}
+        >
+          <ScaleIcon size={12} animation="idle" />
+          <span className="mbp__pill-cmd">void --tl;dr</span>
+          <span className="mbp__pill-sep" aria-hidden="true">&middot;</span>
+          <span className="mbp__pill-label">{pillLabel}</span>
+        </button>
+        {hasAudio && !pillExpanded && (
+          <button
+            className="mbp__onair-play"
+            onClick={(e) => { e.stopPropagation(); hapticConfirm(); handlePlayPause(); }}
+            type="button"
+            aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}
+          >
+            <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+          </button>
+        )}
+        {hasAudio && !pillExpanded && durationMin && !isPlaying && (
+          <span className="mbp__onair-dur">{durationMin}m</span>
+        )}
+        <button
+          className="mbp__pill-chevron-btn"
+          onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
+          type="button" aria-expanded={pillExpanded} aria-label={pillExpanded ? "Collapse brief" : "Expand brief"}
+          style={{ background: "none", border: "none", padding: "0 0 0 var(--space-1)", cursor: "pointer", flexShrink: 0, WebkitTapHighlightColor: "transparent" }}
+        >
+          <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
+        </button>
+      </div>
 
       <div id="mbp-content" className="mbp__content" style={{
         height: pillExpanded ? pillContentHeight : 0,
@@ -198,6 +221,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
                 {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
                 <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
                 <span className="skb__onair-label">void --onair</span>
+                <span className="skb__onair-freq" aria-hidden="true">98.1</span>
                 {hasAudio ? (
                   isPlaying ? (
                     <span className="skb__onair-dur">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>
