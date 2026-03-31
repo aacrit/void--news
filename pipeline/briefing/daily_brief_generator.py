@@ -147,9 +147,11 @@ STORIES:
 ---
 
 TL;DR HEADLINE (return as "tldr_headline"):
-5-6 words. Declarative, present tense, concrete nouns. Not a question. Not a teaser. \
-A newsdesk summary — the single most important thing today.
-Example: "Trade Talks Collapse as Tariffs Bite"
+6-10 words. Declarative, present tense, concrete nouns. Not a question. Not a teaser. \
+Must encompass the top 2-3 stories — a sweep headline, not a single-story slug. \
+Stitch the day's themes into one line using commas, semicolons, or conjunctions.
+Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
+"Ceasefire Holds as Trade War Enters Week Two"
 
 TL;DR INSTRUCTIONS (return as "tldr_text"):
 Write 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
@@ -247,8 +249,8 @@ def _check_quality(result: dict, edition: str) -> None:
     headline = result.get("tldr_headline", "")
     if not headline or not isinstance(headline, str) or not headline.strip():
         print(f"  [quality][brief:{edition}] TL;DR headline missing")
-    elif len(headline.split()) > 8:
-        print(f"  [quality][brief:{edition}] TL;DR headline too long: {len(headline.split())} words (expected 5-6)")
+    elif len(headline.split()) > 12:
+        print(f"  [quality][brief:{edition}] TL;DR headline too long: {len(headline.split())} words (expected 6-10)")
 
     script_raw = result.get("audio_script", "") or ""
     if isinstance(script_raw, list):
