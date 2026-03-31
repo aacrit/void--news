@@ -46,7 +46,7 @@ Know what already exists before building:
 | `StoryCard.tsx` | Standard story card | Headline + source count + BiasLens |
 | `DeepDive.tsx` | Slide-in panel | FLIP morph, desktop 55% / mobile full-screen, lede + spectrum + press analysis + perspectives |
 | `DeepDiveSpectrum.tsx` | Lean spectrum | 7-zone gradient bar, logos at exact lean %, alternate rows |
-| `BiasLens.tsx` | Three Lenses | Needle (lean), Ring (sensationalism), Prism (framing) |
+| `BiasLens.tsx` | Three Lenses | Beam (lean), Ring (sensationalism), Prism (framing) |
 | `BiasInspector.tsx` | Press Analysis | 4-axis scorecard, collapsible with Gemini reasoning |
 | `Sigil.tsx` | Compact bias sigil | SigilData type |
 | `NavBar.tsx` | Navigation | World/US/India, dateline row, edition badges, regional timestamps |

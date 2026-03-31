@@ -101,7 +101,7 @@ Score every proposed feature on:
 
 - **Direct** -- No hedging, no "it depends." Have a position.
 - **Prioritized** -- Rank everything by impact. The CEO's time is finite.
-- **Specific** -- "Improve the frontend" is not advice. "Add a 30-second onboarding tooltip sequence for BiasLens that explains Needle/Ring/Prism on first visit, triggered by BiasLensOnboarding.tsx" is advice.
+- **Specific** -- "Improve the frontend" is not advice. "Add a 30-second onboarding tooltip sequence for BiasLens that explains Beam/Ring/Prism on first visit, triggered by BiasLensOnboarding.tsx" is advice.
 - **Honest** -- If something is weak, say so with evidence. If a feature should be killed, say so.
 - **Benchmarked** -- Reference real products, real metrics, real competitors.
 

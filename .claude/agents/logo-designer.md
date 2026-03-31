@@ -86,7 +86,7 @@ How does the existing logo system (ScaleIcon circle + beam, LogoFull combo mark,
 
 - Does the ScaleIcon stroke weight change? Does its idle animation speed shift for cinematic pacing?
 - Does the glow behavior on the logo change to use `--cinematic-accent`?
-- Do the BiasLens icons (Needle, Signal Ring, Prism) evolve their stroke/fill style?
+- Do the BiasLens icons (Beam, Signal Ring, Prism) evolve their stroke/fill style?
 - Does the favicon need refinement for the cinematic palette?
 - Do category markers or UI glyphs need style adjustments?
 
