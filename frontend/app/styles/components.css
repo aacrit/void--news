@@ -6588,15 +6588,16 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   75% { transform: rotate(-6deg); }
 }
 
-/* Phase 1: Animated Needle */
-.intro-needle {
+/* Phase 1: Animated Beam (mirrors Sigil DataMark) */
+.intro-beam {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
   animation: introTextIn 500ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1)
     both;
 }
-.intro-needle__spectrum { width: 200px; height: 4px; border-radius: 4px; overflow: hidden; position: relative; }
-.intro-needle__spectrum-fill {
+.intro-beam__svg { display: block; }
+.intro-beam__spectrum { width: 200px; height: 4px; border-radius: 4px; overflow: hidden; position: relative; }
+.intro-beam__spectrum-fill {
   position: absolute; inset: 0;
   background: linear-gradient(to right, var(--bias-far-left), var(--bias-left) 20%, var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right) 80%, var(--bias-far-right));
   border-radius: 4px;
@@ -6606,13 +6607,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   from { clip-path: inset(0 100% 0 0); }
   to { clip-path: inset(0 0 0 0); }
 }
-.intro-needle__svg { display: block; }
-.intro-needle__labels { display: flex; justify-content: space-between; width: 200px; }
-.intro-needle__label {
+.intro-beam__labels { display: flex; justify-content: space-between; width: 200px; }
+.intro-beam__label {
   font-family: var(--font-data); font-size: var(--text-xs); font-weight: 500;
   letter-spacing: 0.06em; text-transform: uppercase;
 }
-.intro-needle__readout {
+.intro-beam__readout {
   font-size: clamp(2rem, 1.5rem + 2vw, 3rem); font-weight: 700;
   letter-spacing: -0.02em; line-height: 1;
   transition: color 400ms ease;
@@ -6816,7 +6816,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 /* ---- Cinematic Intro: Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   .intro, .intro__stage, .intro__text,
-  .intro-scale, .intro-needle, .intro-needle__spectrum-fill,
+  .intro-scale, .intro-beam, .intro-beam__spectrum-fill,
   .intro-ring, .intro-verdict, .intro-verdict__card,
   .intro-ring__tier,
   .intro-story-visual, .intro-story-visual__tab, .intro-story-visual__void-line,

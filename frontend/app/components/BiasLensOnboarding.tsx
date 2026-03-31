@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 
    Redesigned flow: 7 phases that tell the void --news story, explain the
    product family (--tl;dr, --onair, --opinion, --sources, --deep-dive),
-   and teach the visualization system (Needle, Ring).
+   and teach the visualization system (Beam, Ring).
 
    Trigger: 8th visit OR 3min idle on 1st visit — content comes first.
    Always dismissible: Skip button, Esc, backdrop click.
@@ -29,7 +29,7 @@ interface Phase {
   /** Optional subtitle below headline — used for product branding education */
   subtitle?: string;
   /** Visual type for the illustration area */
-  visual: "scale-draw" | "story" | "needle" | "ring" | "product" | "product-audio" | "verdict";
+  visual: "scale-draw" | "story" | "beam" | "ring" | "product" | "product-audio" | "verdict";
 }
 
 const PHASES: Phase[] = [
@@ -51,10 +51,10 @@ const PHASES: Phase[] = [
   {
     id: "lean",
     duration: 6000,
-    headline: "The Needle",
+    headline: "The Beam",
     subtitle: "Political lean at a glance",
-    body: "Each source lands somewhere on the spectrum. The needle shows you where — not to judge, but so you know which direction the wind is blowing.",
-    visual: "needle",
+    body: "The scale tilts toward the lean of the coverage. Left, right, or balanced — not to judge, but so you know which direction the weight falls.",
+    visual: "beam",
   },
   {
     id: "depth",
@@ -90,9 +90,9 @@ const PHASES: Phase[] = [
 /* ── Spring easing (CSS linear() approximation of damped spring) ────── */
 const SPRING = "linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1)";
 
-/* ── Animated Needle SVG ───────────────────────────────────────────────── */
+/* ── Animated Beam SVG — mirrors the actual Sigil DataMark ────────────── */
 
-function AnimatedNeedle({ active }: { active: boolean }) {
+function AnimatedBeam({ active }: { active: boolean }) {
   const [step, setStep] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -118,36 +118,72 @@ function AnimatedNeedle({ active }: { active: boolean }) {
 
   const value = SWEEP_VALUES[step];
   const color = SWEEP_COLORS[step];
-  const angle = ((value - 50) / 50) * 35;
+  // ±15° beam tilt — same formula as Sigil: (lean - 50) * 0.30
+  const beamAngle = (value - 50) * 0.30;
 
   return (
-    <div className="intro-needle" aria-hidden="true">
-      <div className="intro-needle__spectrum">
-        <div className="intro-needle__spectrum-fill" />
-      </div>
-      <svg width="200" height="100" viewBox="0 0 200 100" className="intro-needle__svg">
-        <line x1="20" y1="45" x2="20" y2="55" stroke="var(--border-strong)" strokeWidth="1" opacity="0.4" />
-        <line x1="100" y1="42" x2="100" y2="58" stroke="var(--border-strong)" strokeWidth="1.5" opacity="0.5" />
-        <line x1="180" y1="45" x2="180" y2="55" stroke="var(--border-strong)" strokeWidth="1" opacity="0.4" />
-        <line
-          x1="100" y1="50" x2="100" y2="8"
-          stroke={color}
-          strokeWidth="3"
-          strokeLinecap="round"
-          style={{
-            transformOrigin: "100px 50px",
-            transform: `rotate(${active ? angle : 0}deg)`,
-            transition: `transform 500ms ${SPRING}, stroke 400ms ease`,
-          }}
+    <div className="intro-beam" aria-hidden="true">
+      {/* Enlarged Sigil mark — beam + circle + post + base */}
+      <svg width="200" height="160" viewBox="0 0 32 32" fill="none"
+        strokeLinecap="round" strokeLinejoin="round"
+        className="intro-beam__svg"
+      >
+        {/* Void circle — faint background ring */}
+        <circle cx="16" cy="13" r="9"
+          stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
         />
-        <circle cx="100" cy="50" r="5" fill={color} style={{ transition: `fill 400ms ease` }} />
+        {/* Coverage ring fill — static demo at ~70% */}
+        <circle cx="16" cy="13" r="9"
+          stroke={color} strokeWidth="1.8" strokeLinecap="round"
+          strokeDasharray={`${active ? 0.7 * 2 * Math.PI * 9 : 0} ${2 * Math.PI * 9}`}
+          style={{
+            transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+            transition: `stroke-dasharray 700ms ${SPRING} 120ms, stroke 400ms ease`,
+          }}
+          opacity={0.9}
+        />
+        {/* Beam group — tilts by lean */}
+        <g style={{
+          transformOrigin: "16px 13px",
+          transform: `rotate(${active ? beamAngle : 0}deg)`,
+          transition: `transform 500ms ${SPRING}`,
+        }}>
+          <line x1="4" y1="13" x2="28" y2="13"
+            stroke={color} strokeWidth="1.8"
+            style={{ transition: "stroke 400ms ease" }}
+          />
+          {/* Left weight tick */}
+          <line x1="6" y1="11.5" x2="6" y2="14.5"
+            stroke={color} strokeWidth="1.4"
+            style={{ transition: "stroke 400ms ease" }}
+            opacity={0.85}
+          />
+          {/* Right weight tick */}
+          <line x1="26" y1="11.5" x2="26" y2="14.5"
+            stroke={color} strokeWidth="1.4"
+            style={{ transition: "stroke 400ms ease" }}
+            opacity={0.85}
+          />
+        </g>
+        {/* Center post */}
+        <line x1="16" y1="22" x2="16" y2="28"
+          stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4}
+        />
+        {/* Base */}
+        <line x1="12" y1="28.5" x2="20" y2="28.5"
+          stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3}
+        />
       </svg>
-      <div className="intro-needle__labels">
-        <span className="intro-needle__label" style={{ color: "var(--bias-left)" }}>Left</span>
-        <span className="intro-needle__label" style={{ color: "var(--fg-muted)" }}>Center</span>
-        <span className="intro-needle__label" style={{ color: "var(--bias-right)" }}>Right</span>
+      {/* Spectrum bar below */}
+      <div className="intro-beam__spectrum">
+        <div className="intro-beam__spectrum-fill" />
       </div>
-      <div className="intro-needle__readout text-data" style={{ color }}>
+      <div className="intro-beam__labels">
+        <span className="intro-beam__label" style={{ color: "var(--bias-left)" }}>Left</span>
+        <span className="intro-beam__label" style={{ color: "var(--fg-muted)" }}>Center</span>
+        <span className="intro-beam__label" style={{ color: "var(--bias-right)" }}>Right</span>
+      </div>
+      <div className="intro-beam__readout text-data" style={{ color }}>
         {value}
       </div>
     </div>
@@ -317,50 +353,50 @@ function AudioProductVisual({ active }: { active: boolean }) {
 
 /* ── Verdict Combined Display ──────────────────────────────────────────── */
 
+function MiniSigil({ lean, leanColor: lc, coverage, coverageColor }: {
+  lean: number; leanColor: string; coverage: number; coverageColor: string;
+}) {
+  const beamAngle = (lean - 50) * 0.30;
+  const r = 9;
+  const circ = 2 * Math.PI * r;
+  return (
+    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      {/* Coverage ring */}
+      <circle cx="16" cy="13" r={r} stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} />
+      <circle cx="16" cy="13" r={r} stroke={coverageColor} strokeWidth="1.8"
+        strokeDasharray={`${coverage * circ} ${circ}`}
+        transform="rotate(-90 16 13)" opacity={0.9} />
+      {/* Beam */}
+      <g style={{ transformOrigin: "16px 13px", transform: `rotate(${beamAngle}deg)` }}>
+        <line x1="4" y1="13" x2="28" y2="13" stroke={lc} strokeWidth="1.8" />
+        <line x1="6" y1="11.5" x2="6" y2="14.5" stroke={lc} strokeWidth="1.4" opacity={0.85} />
+        <line x1="26" y1="11.5" x2="26" y2="14.5" stroke={lc} strokeWidth="1.4" opacity={0.85} />
+      </g>
+      {/* Post + base */}
+      <line x1="16" y1="22" x2="16" y2="28" stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4} />
+      <line x1="12" y1="28.5" x2="20" y2="28.5" stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3} />
+    </svg>
+  );
+}
+
 function VerdictDisplay({ active }: { active: boolean }) {
   return (
     <div className={`intro-verdict${active ? " intro-verdict--active" : ""}`} aria-hidden="true">
       <div className="intro-verdict__row">
         <div className="intro-verdict__card intro-verdict__card--left" style={{ transitionDelay: "200ms" }}>
-          <svg width="32" height="40" viewBox="0 0 32 40">
-            <line x1="16" y1="32" x2="16" y2="4" stroke="var(--bias-left)" strokeWidth="3" strokeLinecap="round"
-              style={{ transformOrigin: "16px 32px", transform: "rotate(-18deg)" }} />
-            <circle cx="16" cy="32" r="3" fill="var(--bias-left)" />
-          </svg>
-          <svg width="32" height="32" viewBox="0 0 32 32">
-            <circle cx="16" cy="16" r="10" fill="none" stroke="var(--border-subtle)" strokeWidth="3" opacity="0.3" />
-            <circle cx="16" cy="16" r="10" fill="none" stroke="var(--sense-low)" strokeWidth="3" strokeLinecap="round"
-              strokeDasharray={`${0.8 * 2 * Math.PI * 10} ${2 * Math.PI * 10}`} transform="rotate(-90 16 16)" />
-          </svg>
+          <MiniSigil lean={25} leanColor="var(--bias-left)" coverage={0.8} coverageColor="var(--sense-low)" />
           <span className="intro-verdict__label text-data">Left, Broad</span>
           <span className="intro-verdict__sub text-data">Well sourced</span>
         </div>
 
         <div className="intro-verdict__card intro-verdict__card--center" style={{ transitionDelay: "400ms" }}>
-          <svg width="32" height="40" viewBox="0 0 32 40">
-            <line x1="16" y1="32" x2="16" y2="4" stroke="var(--bias-center)" strokeWidth="3" strokeLinecap="round" />
-            <circle cx="16" cy="32" r="3" fill="var(--bias-center)" />
-          </svg>
-          <svg width="32" height="32" viewBox="0 0 32 32">
-            <circle cx="16" cy="16" r="10" fill="none" stroke="var(--border-subtle)" strokeWidth="3" opacity="0.3" />
-            <circle cx="16" cy="16" r="10" fill="none" stroke="var(--sense-low)" strokeWidth="3" strokeLinecap="round"
-              strokeDasharray={`${0.92 * 2 * Math.PI * 10} ${2 * Math.PI * 10}`} transform="rotate(-90 16 16)" />
-          </svg>
+          <MiniSigil lean={50} leanColor="var(--bias-center)" coverage={0.92} coverageColor="var(--sense-low)" />
           <span className="intro-verdict__label text-data">Center, Deep</span>
           <span className="intro-verdict__sub text-data">Most reliable</span>
         </div>
 
         <div className="intro-verdict__card intro-verdict__card--right" style={{ transitionDelay: "600ms" }}>
-          <svg width="32" height="40" viewBox="0 0 32 40">
-            <line x1="16" y1="32" x2="16" y2="4" stroke="var(--bias-right)" strokeWidth="3" strokeLinecap="round"
-              style={{ transformOrigin: "16px 32px", transform: "rotate(22deg)" }} />
-            <circle cx="16" cy="32" r="3" fill="var(--bias-right)" />
-          </svg>
-          <svg width="32" height="32" viewBox="0 0 32 32">
-            <circle cx="16" cy="16" r="10" fill="none" stroke="var(--border-subtle)" strokeWidth="3" opacity="0.3" />
-            <circle cx="16" cy="16" r="10" fill="none" stroke="var(--sense-high)" strokeWidth="3" strokeLinecap="round"
-              strokeDasharray={`${0.25 * 2 * Math.PI * 10} ${2 * Math.PI * 10}`} transform="rotate(-90 16 16)" />
-          </svg>
+          <MiniSigil lean={78} leanColor="var(--bias-right)" coverage={0.25} coverageColor="var(--sense-high)" />
           <span className="intro-verdict__label text-data">Right, Thin</span>
           <span className="intro-verdict__sub text-data">Scrutinize more</span>
         </div>
@@ -375,7 +411,7 @@ function PhaseVisual({ visual, active }: { visual: Phase["visual"]; active: bool
   switch (visual) {
     case "scale-draw": return <ScaleIconDraw active={active} />;
     case "story": return <StoryVisual active={active} />;
-    case "needle": return <AnimatedNeedle active={active} />;
+    case "beam": return <AnimatedBeam active={active} />;
     case "ring": return <AnimatedRing active={active} />;
     case "product": return <ProductFamilyVisual active={active} />;
     case "product-audio": return <AudioProductVisual active={active} />;
