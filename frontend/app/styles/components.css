@@ -102,8 +102,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Sigil sits above the stretch-link so hover/tap targets the popup (lg/xl only).
-   sm Sigils use pointer-events:none in JSX to let clicks pass through. */
+/* Sigil sits above the stretch-link so hover/tap targets the Sigil popup,
+   not the deep-dive navigation. Applies in all card contexts. */
 .story-card .sigil,
 .lead-story .sigil,
 .dg-row .sigil,
@@ -111,6 +111,27 @@
   position: relative;
   z-index: 3;
 }
+
+/* Mobile: small "i" dot at top-right of Sigil to hint interactivity */
+@media (hover: none) and (max-width: 768px) {
+  .sigil::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: -2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-warm);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+}
+
+/* Sigil font-size utility classes — replaces inline fontSize values */
+.sigil__text-xxs { font-size: var(--text-xxs); }
+.sigil__text-xs  { font-size: var(--text-xs); }
+.sigil__text-sm  { font-size: var(--text-sm); }
 
 /* Sigil popup lean count — SVG text inside source-count ring */
 .sigil__popup-lean {
@@ -169,10 +190,11 @@
   gap: var(--space-3);
 }
 
-/* ---- Sigil — base layout (Dial redesign) ----------------------------- */
+/* ---- Sigil — base layout (F01/F13) ----------------------------------- */
 .sigil {
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
   position: relative;
   min-height: 44px;
   transition: opacity 300ms var(--ease-out), filter 300ms var(--ease-out);
@@ -317,6 +339,74 @@
   color: var(--fg-tertiary);
 }
 
+/* Secondary axis row in full popup */
+.sigil-popup__axis-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.sigil-popup__axis-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  width: 74px;
+  flex-shrink: 0;
+}
+
+.sigil-popup__dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.sigil-popup__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.sigil-popup__axis-desc {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
+}
+
+/* ---- Sigil Popup — Compact view for feed-level (F01) ------------------ */
+.sigil-popup__compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sigil-popup__compact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.sigil-popup__compact-count {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-secondary);
+}
+
+.sigil-popup__compact-sources {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+}
+
+.sigil-popup__hint {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
 
 /* ---- DeepDive Error Boundary (F04) ------------------------------------- */
 .dd-error-boundary {
