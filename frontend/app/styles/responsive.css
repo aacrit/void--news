@@ -827,13 +827,15 @@ body {
     flex-basis: 100%;
   }
 
-  /* === PAGE MAIN — clear bottom nav === */
+  /* === PAGE MAIN — clear bottom nav + audio player === */
+  /* MobileBottomNav: 52px. AudioPlayer (above nav): 56px. Total fixed = 108px.
+     Plus breathing room (--space-5 ~16px) and iOS safe-area for home indicator. */
   .page-main {
-    padding-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--nav-bottom-height, 52px) + 60px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
-    margin-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(var(--nav-bottom-height, 52px) + 60px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   /* === META TAGS — bump readability on mobile === */
@@ -908,10 +910,6 @@ body {
   }
   .lead-story__headline {
     text-shadow: none;
-  }
-  .skb__onair-btn--active::before {
-    left: -50%;
-    right: -50%;
   }
 }
 

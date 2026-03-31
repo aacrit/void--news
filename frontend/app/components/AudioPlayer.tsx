@@ -21,7 +21,7 @@ function formatTime(seconds: number): string {
 export default function AudioPlayer({ state }: { state: DailyBriefState }) {
   const {
     brief, isPlaying, currentTime, duration, buffered, audioError,
-    audioRef, audioCallbackRef, handlePlayPause, handleSeek,
+    audioCallbackRef, handlePlayPause, handleSeek,
     playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
     isExpanded, setExpanded,
   } = state;
@@ -43,17 +43,6 @@ export default function AudioPlayer({ state }: { state: DailyBriefState }) {
   const speedLabel = `${playbackSpeed}x`;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
-  // Direct play function that bypasses the hook's audioRef check —
-  // grabs the DOM element directly if the ref hasn't been set yet.
-  const doPlay = () => {
-    const el = audioRef.current;
-    if (!el) return;
-    if (audioError) {
-      el.src = brief.audio_url!;
-      el.load();
-    }
-    el.play().catch(() => {});
-  };
 
   return (
     <>
@@ -151,14 +140,14 @@ export default function AudioPlayer({ state }: { state: DailyBriefState }) {
         <div className="ap__mini">
           <button
             className={`ap__play${isPlaying ? " ap__play--active" : ""}`}
-            onClick={() => { hapticMedium(); handlePlayPause(); doPlay(); }}
+            onClick={() => { hapticMedium(); handlePlayPause(); }}
             type="button"
             aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}>
             <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
           </button>
 
-          <span className="ap__section-label">
-            {isPlaying || currentTime > 0 ? (inOpinion ? "Opinion" : "News") : "void --onair"}
+          <span className={`ap__section-label${audioError ? " ap__section-label--error" : ""}`}>
+            {audioError ? "Unavailable" : isPlaying || currentTime > 0 ? (inOpinion ? "Opinion" : "News") : "void --onair"}
           </span>
 
           {!isPlaying && currentTime === 0 && durationMin && (
@@ -175,7 +164,8 @@ export default function AudioPlayer({ state }: { state: DailyBriefState }) {
             </div>
             <input type="range" className="ap__mini-seek" min={0}
               max={displayDuration || 100} value={currentTime} step={0.5}
-              onChange={handleSeek} aria-label="Seek position" />
+              onChange={handleSeek} aria-label="Seek position"
+              aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`} />
           </div>
 
           <span className="ap__mini-time">

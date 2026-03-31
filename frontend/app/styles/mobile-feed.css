@@ -402,57 +402,6 @@
   opacity: 0.4;
 }
 
-/* ── OnAir zone ── */
-
-.mbp__onair-zone {
-  display: flex;
-  flex-direction: column;
-}
-
-.mbp__onair-center {
-  display: flex;
-  justify-content: center;
-  padding-top: var(--space-2);
-}
-
-/* Touch-optimize the radio seek input on mobile */
-.mbp .skb__radio-input {
-  min-height: 44px;
-  top: -10px;
-  height: calc(100% + 20px);
-}
-
-/* Touch-optimize section skip buttons on mobile */
-.mbp .skb__radio-sec {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Slightly smaller transport play button on mobile to fit */
-.mbp .skb__transport-play {
-  width: 44px;
-  height: 44px;
-}
-
-/* Tighter radio padding on mobile */
-.mbp .skb__radio-inner {
-  padding: var(--space-3) var(--space-4);
-  border-radius: 10px;
-}
-
-/* Fewer waveform bars → allow tighter gap */
-.mbp .skb__waveform {
-  gap: 4px;
-  height: 40px;
-}
-
-/* Voices row wraps on narrow screens */
-.mbp .skb__transport-voices {
-  font-size: var(--text-xs);
-}
-
 /* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
