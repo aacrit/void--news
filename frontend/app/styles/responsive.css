@@ -943,5 +943,11 @@
     font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
     padding: var(--space-2);
   }
+
+  /* MobileBriefPill: hide duration text on ultra-narrow to give headline
+     more room. Play button remains visible as the primary audio affordance. */
+  .mbp__onair-dur {
+    display: none;
+  }
 }
 

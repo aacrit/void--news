@@ -797,6 +797,17 @@
   flex-shrink: 0;
   transition: border-color 150ms, background 150ms;
   padding: 0;
+  /* WCAG 2.1 AA: 44px minimum touch target.
+     Visual circle stays 28px; ::after pseudo expands tap area to 44x44px. */
+  position: relative;
+}
+
+.mbp__onair-play::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 44px; height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .mbp__onair-play:hover {
