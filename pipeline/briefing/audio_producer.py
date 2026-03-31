@@ -48,6 +48,14 @@ except ImportError:
     except ImportError:
         generate_headline_underscore = None
 
+try:
+    from briefing.voice_rotation import get_opinion_host
+except ImportError:
+    try:
+        from pipeline.briefing.voice_rotation import get_opinion_host
+    except ImportError:
+        get_opinion_host = None
+
 # Allow running from pipeline root
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -513,10 +521,13 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
 def _synthesize_opinion_monologue(
     opinion_audio_script: str,
     voice: str,
+    opinion_tts_preamble: str = "",
 ) -> Optional[bytes]:
     """Synthesize a single-voice opinion editorial monologue.
 
     Uses the same Gemini TTS but with a single speaker format.
+    The opinion_tts_preamble provides scene-setting / director's notes
+    that shape the voice delivery (pace, conviction, dynamics).
     Returns raw PCM bytes or None.
     """
     if not GEMINI_TTS_AVAILABLE:
@@ -541,11 +552,14 @@ def _synthesize_opinion_monologue(
     if not dialogue:
         return None
 
+    # Prepend editorial voice direction if provided
+    content = f"{opinion_tts_preamble}\n\n{dialogue}" if opinion_tts_preamble else dialogue
+
     client = genai.Client(api_key=api_key)
     try:
         response = client.models.generate_content(
             model=_TTS_MODEL,
-            contents=dialogue,
+            contents=content,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
@@ -590,6 +604,7 @@ def produce_audio(
     voices: dict,
     edition: str,
     opinion_audio_script: str | None = None,
+    opinion_lean: str | None = None,
 ) -> Optional[dict]:
     """
     Synthesize the full broadcast via Gemini Flash TTS.
@@ -603,6 +618,10 @@ def produce_audio(
 
     News and opinion use SEPARATE TTS calls because Gemini multi-speaker
     TTS only supports 2 speakers. Opinion uses its own dedicated voice.
+
+    Args:
+        opinion_lean: The editorial lean ("left"/"center"/"right"). Used to
+            look up the opinion host's TTS preamble for voice direction.
     """
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
@@ -647,6 +666,15 @@ def produce_audio(
     if opinion_audio_script:
         opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
         opinion_words = len(opinion_audio_script.split())
+
+        # Look up opinion host's TTS preamble for editorial voice direction
+        opinion_preamble = ""
+        if opinion_lean and get_opinion_host is not None:
+            opinion_host = get_opinion_host(opinion_lean)
+            opinion_preamble = opinion_host.get("opinion_tts_preamble", "")
+            if opinion_preamble:
+                print(f"  [audio] Opinion preamble: {opinion_host.get('name', 'unknown')} ({opinion_lean})")
+
         print(f"  [audio] Opinion TTS: {opinion_words} words, voice {opinion_voice_name}")
 
         # Wait 20s between news and opinion TTS to avoid rate limits.
@@ -658,7 +686,9 @@ def produce_audio(
         # Retry up to 3 times with increasing backoff
         opinion_pcm = None
         for attempt in range(3):
-            opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, opinion_voice_name)
+            opinion_pcm = _synthesize_opinion_monologue(
+                opinion_audio_script, opinion_voice_name, opinion_preamble
+            )
             if opinion_pcm:
                 opinion_dur = len(opinion_pcm) / (24000 * 2)
                 print(f"  [audio] Opinion TTS: {opinion_dur:.1f}s (attempt {attempt + 1})")

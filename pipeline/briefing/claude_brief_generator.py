@@ -257,6 +257,7 @@ def generate_claude_brief(
         audio_result = produce_audio(
             script, voices, edition,
             opinion_audio_script=brief.get("opinion_audio_script"),
+            opinion_lean=brief.get("opinion_lean"),
         )
 
         if audio_result:
