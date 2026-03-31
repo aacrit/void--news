@@ -82,7 +82,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   return (
     <>
-      {hasAudio && <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
+      {hasAudio && <audio id="void-onair-audio" ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
 
       <div className={`skb${expandedSide ? ` skb--expand-${expandedSide}` : ""}`} role="complementary" aria-label="Daily Brief">
         <div className="skb__columns">
