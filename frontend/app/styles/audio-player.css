@@ -497,6 +497,20 @@
    ========================================================================== */
 
 @media (max-width: 767px) {
+  /* Position above MobileBottomNav (52px + safe-area) so player doesn't
+     obscure the bottom navigation buttons. The nav handles its own
+     safe-area padding, so the player sits just above the nav bar. */
+  .ap {
+    bottom: calc(var(--nav-bottom-height, 52px) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Safe-area already handled by bottom offset — reset the mini bar's own
+     safe-area padding so it doesn't double-pad on notched devices. */
+  .ap__mini {
+    padding-bottom: 0;
+    height: 56px;
+  }
+
   /* Hide speed from mini bar on mobile (too tight) */
   .ap__mini-speed {
     display: none;
@@ -510,6 +524,20 @@
   /* Hide extra waveform bars beyond 20 */
   .ap__waveform-bar:nth-child(n+21) {
     display: none;
+  }
+
+  /* Mini bar play button: WCAG 44x44px touch target */
+  .ap__play {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  /* Expand/collapse chevrons: WCAG 44x44px touch target */
+  .ap__expand,
+  .ap__collapse {
+    width: 44px;
+    height: 44px;
   }
 
   /* Expanded panel: full-width bottom sheet */

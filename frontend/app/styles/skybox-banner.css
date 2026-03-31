@@ -1014,7 +1014,7 @@
    --------------------------------------------------------------------------- */
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .skb:has(.skb__onair-cta--active) {
+  .skb:has(.skb__onair-btn--active, .skb__onair-cta--active) {
     background:
       linear-gradient(
         180deg,

@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.0
-**Last updated:** 2026-03-29 (rev 9)
+**Last updated:** 2026-03-30 (rev 10)
 
 ---
 
@@ -36,12 +36,23 @@ The newspaper earns trust through restraint. The data layer earns trust through 
 --text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);               /* 24-48px: lead story */
 ```
 
+### Tracking (letter-spacing)
+
+| Class | Tracking | Purpose |
+|-------|----------|---------|
+| `.text-hero` | -0.03em | Tighten display headlines |
+| `.text-xl` | -0.015em | Tighten section headlines |
+| `.text-lg` | -0.005em | Subtle tightening for subheads |
+| `.text-label` | 0.08em | Open spacing for uppercase labels |
+| `.category-tag` | 0.04em | Open spacing for meta wayfinding |
+| `.text-data` | — | line-height 1.3, tabular-nums |
+
 ### Editorial Rules
 
 - Headlines: Playfair Display 700, sentence case
 - Body: Inter 400, 1.6 line height, max 65ch measure
-- Meta labels: Barlow Condensed 500, all-caps for category tags, condensed letter-spacing
-- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums
+- Meta labels: Barlow Condensed 500 (`.category-tag`: 400), all-caps for category tags, condensed letter-spacing
+- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums, line-height 1.3
 - Never mix voices within a single element
 - Headline hierarchy: hero > xl > lg (max 3 levels visible at once)
 
@@ -63,9 +74,9 @@ Warm paper tones. Think aged broadsheet under morning light, not sterile white.
 
   /* Text */
   --fg-primary:    #1A1A1A;   /* Near-black ink */
-  --fg-secondary:  #4A4A4A;   /* Secondary text */
-  --fg-tertiary:   #7A7A7A;   /* Captions, metadata */
-  --fg-muted:      #A0A0A0;   /* Disabled, placeholder */
+  --fg-secondary:  #4A4540;   /* Secondary text */
+  --fg-tertiary:   #686260;   /* Captions, metadata */
+  --fg-muted:      #5A5550;   /* Disabled, placeholder (WCAG AA 5.0:1) */
 
   /* Borders & Dividers */
   --border-subtle: #E8E2DB;   /* Light warm rule */
@@ -89,8 +100,8 @@ Dark walnut warmth. Retains newspaper character — not terminal black, not pure
   /* Text */
   --fg-primary:    #EDE8E0;   /* Warm cream text */
   --fg-secondary:  #B8B0A5;   /* Secondary */
-  --fg-tertiary:   #8A8278;   /* Tertiary */
-  --fg-muted:      #5A5550;   /* Disabled */
+  --fg-tertiary:   #A09890;   /* Tertiary (WCAG AA on #1C1A17) */
+  --fg-muted:      #8A847B;   /* Disabled */
 
   /* Borders & Dividers */
   --border-subtle: #3A3530;   /* Subtle warm rule */
@@ -156,11 +167,15 @@ Cinematic tokens live in `tokens.css` under `:root` (light) and `[data-mode="dar
 | Easings | `--ease-cinematic` (0.22,1,0.36,1), `--ease-whip` (0.25,0,0,1), `--ease-rack` (0.4,0,0.2,1) | Camera-language timing curves |
 | Rack focus | `--rack-focus-dur` (600ms), `--rack-focus-ease` | Selective focus transitions |
 | Shadows | `--shadow-cinematic-contact`, `--shadow-cinematic-ambient`, `--shadow-cinematic-dramatic` | Three-tier depth via `color-mix` |
-| Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay |
-| Vignette | `--cin-vignette-color` | Edge darkening — subtle light, stronger dark |
-| Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Per-edition overrides (US: warmer sepia). |
+| Backdrop | `--cin-backdrop-bg`, `--cin-backdrop-blur` | DeepDive overlay backdrop (blur + desaturate + dim) |
+| Practical warmth | `--cin-practical-warmth` | `color-mix(in srgb, amber 4%, bg-primary)` — OnAir warmth spread via `:has()` |
+| Cold open timing | `--cold-open-nav` (80ms), `--cold-open-skybox` (200ms), `--cold-open-lead` (320ms), `--cold-open-feed` (480ms), `--cold-open-dur` (500ms) | Staggered page entrance sequence |
+| Whip pan | `--whip-pan-dur` (350ms) | Direction-aware edition switch transition |
+| Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay (numOctaves=3, fractalNoise) |
+| Vignette | `--cin-vignette-color` | Edge darkening — subtle light, stronger dark. Z-index: `calc(--z-cinematic + 1)` — above film grain |
+| Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Applied to `.page-main` + `.nav-header` (not `.page-container` — filter creates containing block that breaks position:fixed children). Per-edition overrides (US: warmer sepia, India: boosted saturation). |
 | Atmospheric haze | `--cin-haze-far` | Depth-of-field fade on distant elements |
-| Z-index | `--z-cinematic` (45) | Vignette + film grain layer stacking |
+| Z-index | `--z-cinematic` (45) | Film grain layer; vignette at `+1` (above grain) |
 
 All cinematic tokens adapt between light/dark modes. Dark mode: boosted amber brightness, stronger vignette, lower grain, cooler grade.
 
@@ -332,7 +347,7 @@ Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blu
 | `.page-main`, `.nav-inner`, `.site-footer` | padding: `--space-5` (~16px) | Recovers 32px content width vs desktop `--space-7` |
 | `.lead-story__headline`, `.lead-story__summary` | `max-width` constraints removed | Container constrains width; `ch` limits are redundant and wasteful on mobile |
 | `.story-card__headline`, `.lead-story__headline` | `overflow-wrap: break-word` (global) | Prevents long words from causing horizontal overflow |
-| `.section-header` | `flex-wrap: wrap` | RefreshButton timestamp wraps instead of overflowing |
+| `.section-header` | `flex-wrap: wrap` | Timestamp wraps instead of overflowing |
 | Deep Dive source rows | `flex-wrap: wrap` | Source metadata wraps on narrow viewports |
 
 ---
@@ -434,9 +449,12 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: content reveal 180ms; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Desktop reveal delay 120ms, mobile 30ms |
 | Press Analysis expand | Click ▶ trigger | grid-template-rows 0fr→1fr | var(--dur-morph) ease-out desktop; 300ms ease-out mobile |
 | Filter chips | Select | Scale 1→0.97→1, fill color wipe | 200ms spring |
-| Refresh confirm | Tap refresh | Modal scale from 0.95, backdrop fade | 300ms ease-out |
-| Dark mode toggle | Tap | Cross-fade colors, 0 layout shift | 400ms ease-out |
+| Dark mode toggle | Tap | Cross-fade colors + cinGoldenHourPulse on `.page-main` (warmth swell: contrast/saturation/sepia peak at 40% then return), 0 layout shift | 400ms ease-out + 700ms pulse |
 | Source list expand | Tap "12 sources" | Height auto with spring, items stagger | 300ms, 30ms stagger |
+| Cold open (nav) | Page load | coldOpenSettle (translateY -6px→0, opacity 0→1) | 500ms, delay 80ms |
+| Cold open (skybox) | Page load | coldOpenDollyIn (scale 0.985→1, opacity 0→1) | 500ms, delay 200ms |
+| Edition switch | Click edition tab | Direction-aware whip pan: whipPanOutRight + whipPanInLeft (translateX 8%, blur 2px) | 350ms `--ease-whip` |
+| ScaleIcon idle | Continuous | Gentle beam tipping (rotate 0→2deg→-2deg→0) | 5s, `--ease-cinematic`, infinite |
 
 ### Reduced Motion
 
@@ -444,7 +462,9 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
   }
 }
 ```
@@ -461,27 +481,26 @@ Active components in `frontend/app/components/`:
 | `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms. Content reveal 180ms desktop, 30ms mobile. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
+| `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
 | `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels (smaller font on mobile). Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. No max-height cap. 3-row algorithm for dense source clustering. "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
-| `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
+| `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
-| `FilterBar` | Category filter chips | -- |
-| `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
-| `RefreshButton` | Refresh with "last updated" timestamp | -- |
-| `ThemeToggle` | Light/dark mode toggle | -- |
+| `AudioPlayer` | Persistent bottom audio player for void --onair broadcast (play/pause, scrub, progress, volume). CSS custom properties only — no hardcoded colors. | -- |
+| `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Cold open animation class (`anim-cold-open-nav`). Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
+| `ThemeToggle` | Light/dark mode toggle. Golden hour pulse on toggle (700ms cinGoldenHourPulse targeting `.page-main`, reduced-motion guarded). | -- |
 | `LoadingSkeleton` | Animated skeleton loading state | -- |
 | `ErrorBoundary` | Error boundary wrapper | -- |
 | `Footer` | Page footer with last-updated info | -- |
 | `LogoFull` | Combination mark: void circle + scale beam icon + "void --news" wordmark as single SVG. Use in NavBar (desktop), Footer, error pages. Direction 5 "Negative Space O" — hollow O in "void", monospace "--news". | -- |
 | `LogoIcon` | Icon-only wrapper around `ScaleIcon`. Use in mobile nav, loading indicators, compact contexts. `animation="none"` shows void circle only (favicon mark). | -- |
 | `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
-| `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping), `loading` (dramatic tipping), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
+| `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping — 5s period, 2-degree amplitude, `--ease-cinematic`), `loading` (dramatic tipping — 8-degree), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
 | `PageToggle` | Switches between Feed and Sources views. | -- |
 | `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
-| `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. | -- |
+| `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. Simplified at sm size (no InkUnderline, compact popup); full detail at lg/xl. | -- |
 | `DailyBrief` | "void --onair" daily brief: TL;DR + opinion + audio player | -- |
-| `SkyboxBanner` | Top-of-page daily brief skybox with TL;DR, opinion, and OnAir sections | -- |
+| `SkyboxBanner` | Top-of-page daily brief skybox with TL;DR, opinion, and OnAir sections. Cold open animation class (`anim-cold-open-skybox`). OnAir practical light warmth spread via `:has()` selector. | -- |
 | `MobileBriefPill` | Mobile daily brief pill trigger | -- |
 | `DesktopFeed` | Desktop multi-column newspaper grid layout | -- |
 | `MobileFeed` | Mobile single-column feed layout | -- |
@@ -498,7 +517,7 @@ Active components in `frontend/app/components/`:
 | `KeyboardShortcuts` | Keyboard shortcut handler and help overlay | -- |
 | `InstallPrompt` | PWA install prompt | -- |
 
-**39 components total.** Removed: `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`.
+**39 components total** (39 `.tsx` files). Removed: `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 
@@ -510,8 +529,6 @@ Active components in `frontend/app/components/`:
 | ErrorBoundary | `LogoIcon` | `balanced` |
 | DeepDive panel header | `LogoIcon` | `analyzing` |
 | Empty state | `LogoIcon` | `analyzing` |
-| RefreshButton (idle) | `LogoIcon` | `idle` |
-| RefreshButton (refreshing) | `LogoIcon` | `loading` |
 | Footer | `LogoIcon` | `idle` |
 | Favicon (`/public/icon.svg`) | Static SVG | void circle only (`none` equivalent) |
 
