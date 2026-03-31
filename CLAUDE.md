@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-03-30 (rev 17)
+Last updated: 2026-03-30 (rev 18)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -78,29 +78,29 @@ Non-audio runs (00:00, 12:00 UTC) carry forward audio fields from previous brief
 ## Frontend Design
 
 ### "Cinematic Press" (Press & Precision v2)
-Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arrival, data-dense on interaction.** Progressive disclosure. Cinematic tokens in `tokens.css`: `--cin-amber` palette (amber/ash/paper tones, light+dark), `--ease-cinematic`/`--ease-whip`/`--ease-rack` easings, `--z-cinematic`, film grain (`--cin-grain-opacity`), vignette (`--cin-vignette-color`), color grade (`--cin-grade`), rack focus, atmospheric haze (`--cin-haze-far`). Spring physics (Motion One) for user actions, ease-out for reveals.
+Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arrival, data-dense on interaction.** Progressive disclosure. Cinematic tokens in `tokens.css`: `--cin-amber` palette (amber/ash/paper tones, light+dark), `--ease-cinematic`/`--ease-whip`/`--ease-rack` easings, `--z-cinematic`, film grain (`--cin-grain-opacity`, numOctaves=3), vignette (`--cin-vignette-color`, z-index above grain), color grade (`--cin-grade`, applied to `.page-main` + `.nav-header` not `.page-container`), rack focus, atmospheric haze (`--cin-haze-far`), backdrop (`--cin-backdrop-bg/blur`), practical warmth (`--cin-practical-warmth`). Cold open stagger (nav 80ms, skybox 200ms, lead 320ms, feed 480ms), direction-aware whip pan (edition switch), golden hour pulse (theme toggle, 700ms). Spring physics (Motion One) for user actions, ease-out for reveals.
 
 **Four type voices**: Editorial (Playfair Display), Structural (Inter), Meta (Barlow Condensed, `--font-meta`), Data (IBM Plex Mono).
 
 **Responsive**: desktop = multi-column newspaper grid, top nav. Mobile = single-column feed, bottom nav, bottom sheets. Touch targets 44px+. Breakpoints: 375/768/1024/1440px.
 
 ### Homepage
-Importance-ranked feed with category filtering. Edition sections: World/US/India. Daily Brief between FilterBar and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" pill with audio player + progress bar.
+Importance-ranked feed with category filtering (lean chips in HomeContent). Edition sections: World/US/India. Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
 
 ### Deep Dive
-Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). Source Perspectives (agree/diverge grid). Asymmetric animation: open bouncy 500ms, close snappy 380ms.
+Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). ScoringMethodology ("How we score" collapsible dl/dt/dd, 6 axes). Source Perspectives (agree/diverge grid). Asymmetric animation: open bouncy 500ms, close snappy 380ms, cinematic dramatic shadow, data-settled studio reflection.
 
 ### Animation
-Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms. Asymmetric panels.
+Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
 
 ### CSS
-Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → responsive → command-center` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → audio-player → responsive → command-center` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
 
 ## Data Model (Supabase)
 
 **Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio).
 
-**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-028).
+**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-029).
 
 Frontend edition filter: `.contains("sections", [edition])`.
 
@@ -146,16 +146,16 @@ void-news/
 │   └── rerank.py          # Standalone re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # 39 components: BiasInspector, BiasLens, BiasLensOnboarding, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FilterBar, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OpEdPage, OpinionCard, PageToggle, ScaleIcon, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, WireCard
+│   │   ├── components/    # 39 components: AudioPlayer, BiasInspector, BiasLens, BiasLensOnboarding, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OpEdPage, OpinionCard, PageToggle, ScaleIcon, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, WireCard
 │   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts
-│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, responsive, command-center
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, audio-player, responsive, command-center
 │   │   ├── sources/       # /sources page
 │   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
 │   │   ├── command-center/ # /command-center KPI dashboard
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
 ├── data/sources.json      # 409 curated sources
-├── supabase/migrations/   # 001-028
+├── supabase/migrations/   # 001-029
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-opinion.yml, refresh-tldr.yml, refresh-onair.yml
 ├── .claude/agents/        # 23 agent definitions
 ├── .claude/skills/        # pressdesign + 14 workflow skills
@@ -166,11 +166,12 @@ void-news/
 
 **Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.4, daily brief + audio, frontend MVP (feed + deep dive + sources + paper + command center).
 **In progress**: Deep Dive framing comparison, source credibility panels.
-**Pending**: Animation polish, GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
+**Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
 
 ## Git & Dev
 
 - **Always push to `claude/*` branches.** Auto-merge to main. Confirm deploy passes.
+- **Always commit after every task.** Never wait to be asked. Confirm the commit to the user.
 - Python 3.11+, Node 18+, TypeScript frontend. All bias analysis rule-based.
 - Pipeline: 25-35 min incremental, 108 min fresh DB. Static export (`next export`).
