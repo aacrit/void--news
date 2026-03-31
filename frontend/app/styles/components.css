@@ -3399,6 +3399,32 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   border-bottom: none;
 }
 
+/* Compact axis — single flat row: name · dots · score · label · caret
+   All children are direct flex items (no __left / __score-row wrappers) */
+.bi-axis--compact .bi-axis__header {
+  justify-content: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+}
+
+.bi-axis--compact .bi-axis__name {
+  min-width: 100px;
+}
+
+.bi-axis--compact .bi-dots {
+  margin-right: auto;
+}
+
+.bi-axis--compact .bi-dots__dot {
+  width: 7px;
+  height: 7px;
+}
+
+.bi-axis--compact .bi-axis__score {
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
 .bi-axis__header {
   display: flex;
   align-items: center;
