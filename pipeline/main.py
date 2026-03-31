@@ -2040,6 +2040,15 @@ def main():
 
                 elapsed_7d = time.time() - start_7d
                 print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
+
+                # Generate podcast RSS feeds (world + us)
+                try:
+                    from briefing.podcast_feed_generator import generate_podcast_feeds
+                    feed_results = generate_podcast_feeds(["world", "us"])
+                    if feed_results:
+                        print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
+                except Exception as e:
+                    print(f"  [warn] Podcast feed generation failed: {e}")
             except Exception as e:
                 print(f"  [warn] Daily brief generation failed: {e}")
         else:
