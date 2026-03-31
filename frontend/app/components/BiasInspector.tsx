@@ -323,8 +323,8 @@ interface AxisRowProps {
   /** Stagger index for entrance animation delay */
   staggerIndex: number;
   contentVisible: boolean;
-  /** When true: monochrome gradient bar, fg-secondary score, muted badge */
-  monochrome?: boolean;
+  /** Compact mode: single flat row with dots instead of gradient bar */
+  compact?: boolean;
 }
 
 function AxisRow({
@@ -340,7 +340,7 @@ function AxisRow({
   hasRationale,
   staggerIndex,
   contentVisible,
-  monochrome = false,
+  compact = false,
 }: AxisRowProps) {
   const headingId = `${axisId}-heading`;
   const contentId = `${axisId}-content`;
@@ -348,7 +348,7 @@ function AxisRow({
 
   return (
     <div
-      className={`bi-axis bi-panel__axis-stagger${contentVisible ? " bi-panel__axis-stagger--visible" : ""}`}
+      className={`bi-axis${compact ? " bi-axis--compact" : ""} bi-panel__axis-stagger${contentVisible ? " bi-panel__axis-stagger--visible" : ""}`}
       style={{ transitionDelay: contentVisible ? `${staggerDelay}ms` : "0ms" }}
       role="region"
       aria-labelledby={headingId}
@@ -361,56 +361,71 @@ function AxisRow({
         disabled={!hasRationale}
         id={headingId}
       >
-        {/* Left: axis name + gradient bar */}
-        <div className="bi-axis__left">
-          <span className="bi-axis__name">{label}</span>
-          <GradientBar
-            value={score}
-            gradient={
-              monochrome
-                ? "linear-gradient(to right, var(--border-subtle), var(--fg-tertiary))"
-                : gradient
-            }
-            color={monochrome ? "var(--fg-secondary)" : color}
-          />
-        </div>
-
-        {/* Right: score number + label + caret */}
-        <div className="bi-axis__score-row">
-          <span
-            className="bi-axis__score"
-            style={{ color: monochrome ? "var(--fg-secondary)" : color }}
-          >
-            {score}
-          </span>
-          <span
-            className="bi-axis__badge"
-            style={{
-              color,
-              opacity: monochrome ? 0.7 : undefined,
-            }}
-          >
-            {scoreLabel}
-          </span>
-          {hasRationale && (
-            <svg
-              className={`bi-axis__caret${isExpanded ? " bi-axis__caret--open" : ""}`}
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M2 4L6 8L10 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
-        </div>
+        {compact ? (
+          /* Compact: flat row — name · dots · score · label · caret */
+          <>
+            <span className="bi-axis__name">{label}</span>
+            <DotScale value={score} />
+            <span className="bi-axis__score" style={{ color: "var(--fg-secondary)" }}>
+              {score}
+            </span>
+            <span className="bi-axis__badge" style={{ color: "var(--fg-tertiary)" }}>
+              {scoreLabel}
+            </span>
+            {hasRationale && (
+              <svg
+                className={`bi-axis__caret${isExpanded ? " bi-axis__caret--open" : ""}`}
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M2 4L6 8L10 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </>
+        ) : (
+          /* Full: stacked — name + gradient bar | score + label + caret */
+          <>
+            <div className="bi-axis__left">
+              <span className="bi-axis__name">{label}</span>
+              <GradientBar value={score} gradient={gradient} color={color} />
+            </div>
+            <div className="bi-axis__score-row">
+              <span className="bi-axis__score" style={{ color }}>
+                {score}
+              </span>
+              <span className="bi-axis__badge" style={{ color }}>
+                {scoreLabel}
+              </span>
+              {hasRationale && (
+                <svg
+                  className={`bi-axis__caret${isExpanded ? " bi-axis__caret--open" : ""}`}
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M2 4L6 8L10 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </div>
+          </>
+        )}
       </button>
 
       {hasRationale && (
@@ -607,7 +622,7 @@ function SensationalismAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
-      monochrome
+      compact
     >
       {/* Layer 1: Summary */}
       {geminiText && (
@@ -680,7 +695,7 @@ function RigorAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
-      monochrome
+      compact
     >
       {/* Layer 1: Summary */}
       {geminiText && (
@@ -750,7 +765,7 @@ function FramingAxis({
   return (
     <AxisRow
       axisId={axisId}
-      label="Framing Analysis"
+      label="Framing"
       score={score}
       color={color}
       scoreLabel={framingLabel(score)}
@@ -760,7 +775,7 @@ function FramingAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
-      monochrome
+      compact
     >
       {/* Layer 1: Summary */}
       {geminiText && (
