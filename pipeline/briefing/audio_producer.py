@@ -493,19 +493,34 @@ def _place_proportional_elements(
 # ---------------------------------------------------------------------------
 
 def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
-    """Upload MP3 to Supabase Storage. Returns public URL with cache-bust param."""
+    """Upload MP3 to Supabase Storage.
+
+    Uploads twice:
+      1. ``{edition}/{YYYY-MM-DD}-{am|pm}.mp3`` — persistent URL for podcast feeds
+      2. ``{edition}/latest.mp3`` — overwritten each run for web player
+
+    Returns the persistent URL (with cache-bust param) so ``daily_briefs.audio_url``
+    always points to a stable file that podcast directories can reference.
+    """
     try:
         from utils.supabase_client import supabase
-
-        path = f"{edition}/latest.mp3"
-        supabase.storage.from_("audio-briefs").upload(
-            path,
-            audio_bytes,
-            {"content-type": "audio/mpeg", "upsert": "true"},
-        )
-        base_url = supabase.storage.from_("audio-briefs").get_public_url(path)
-        # Cache-bust: append fingerprint so browsers/CDNs don't serve stale audio
+        from datetime import datetime, timezone
         import hashlib
+
+        now = datetime.now(timezone.utc)
+        slot = "am" if now.hour < 12 else "pm"
+        persistent_path = f"{edition}/{now.strftime('%Y-%m-%d')}-{slot}.mp3"
+        latest_path = f"{edition}/latest.mp3"
+
+        opts = {"content-type": "audio/mpeg", "upsert": "true"}
+
+        # 1. Persistent copy (podcast feeds reference this)
+        supabase.storage.from_("audio-briefs").upload(persistent_path, audio_bytes, opts)
+
+        # 2. Latest copy (web player uses this)
+        supabase.storage.from_("audio-briefs").upload(latest_path, audio_bytes, opts)
+
+        base_url = supabase.storage.from_("audio-briefs").get_public_url(persistent_path)
         fingerprint = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
         sep = "&" if "?" in base_url else "?"
         return f"{base_url}{sep}v={fingerprint}"
