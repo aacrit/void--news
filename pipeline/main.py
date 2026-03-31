@@ -1930,7 +1930,7 @@ def main():
                                 "tldr_headline,tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
                                 "audio_script,audio_url,audio_duration_seconds,"
                                 "audio_voice_label,audio_voice,audio_file_size,"
-                                "opinion_audio_script,top_cluster_ids"
+                                "opinion_audio_script,top_cluster_ids,opinion_start_seconds"
                             ).eq("edition", edition).order(
                                 "created_at", desc=True
                             ).limit(1).execute()
@@ -1948,6 +1948,7 @@ def main():
                                 brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                 brief_row["audio_voice"] = p.get("audio_voice")
                                 brief_row["audio_file_size"] = p.get("audio_file_size")
+                                brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                 brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
                                 print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
                         except Exception as e:
@@ -1987,6 +1988,7 @@ def main():
                                         brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                         brief_row["audio_voice"] = p.get("audio_voice")
                                         brief_row["audio_file_size"] = p.get("audio_file_size")
+                                        brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                         print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
                                 except Exception as e:
                                     print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
@@ -2006,6 +2008,7 @@ def main():
                                     brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                     brief_row["audio_voice"] = p.get("audio_voice")
                                     brief_row["audio_file_size"] = p.get("audio_file_size")
+                                    brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                     if not brief_row.get("audio_script"):
                                         brief_row["audio_script"] = p.get("audio_script")
                                     print(f"  [brief:{edition}] No audio script — carried forward previous audio")

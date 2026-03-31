@@ -174,7 +174,7 @@ def main():
         # Carry forward audio from current brief if not regenerated
         if not audio_result and current:
             for field in ("audio_url", "audio_duration_seconds", "audio_file_size",
-                          "audio_voice", "audio_voice_label"):
+                          "audio_voice", "audio_voice_label", "opinion_start_seconds"):
                 if current.get(field):
                     row[field] = current[field]
         elif audio_result:
@@ -187,6 +187,7 @@ def main():
                 f"+{voices['opinion']['id']}" if has_opinion else ""
             )
             row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
+            row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
 
         try:
             # Delete old and insert new (no pipeline_run_id for standalone)

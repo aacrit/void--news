@@ -87,6 +87,7 @@ def main():
                     f"+{voices['opinion']['id']}" if brief.get("opinion_audio_script") else ""
                 ),
                 "audio_voice_label": "Three voices" if brief.get("opinion_audio_script") else "Two voices",
+                "opinion_start_seconds": result.get("opinion_start_seconds"),
                 "top_cluster_ids": brief.get("top_cluster_ids", []),
             }
             try:

@@ -7,11 +7,11 @@ Both speakers generated in a single API call — no per-turn stitching.
 Post-processing via pydub:
   - Intro: ~2s D major 9th bloom chord (Glass & Gravity sonic identity)
   - Section breaks: glass-bell chimes overlaid at detected silence gaps
-    between stories (gaps >= 600ms at <= -35dB)
+    between stories (gaps >= 800ms at <= -45dB)
   - News-to-opinion: deliberate editorial page-turn transition
   - Outro: ~1.8s resolving chord — intro bloom returning to root
-  - No background bed — the voices carry the broadcast
-  - MP3 192k mono export → Supabase Storage
+  - Subharmonic presence layer (D2/D3/A3 at -34 to -42 dB)
+  - MP3 96k mono export → Supabase Storage (voice-optimized)
 """
 
 import io
@@ -746,7 +746,7 @@ def produce_audio(
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
-    # 6. Export to MP3 128kbps mono (voice-optimized; 192k unnecessary for speech)
+    # 6. Export to MP3 96kbps mono (voice-optimized; sufficient for speech)
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
         tmp_path = tmp.name
 
