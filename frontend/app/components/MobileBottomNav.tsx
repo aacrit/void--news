@@ -67,7 +67,9 @@ export default function MobileBottomNav({
   const handleEditionTap = (edition: Edition) => {
     hapticMicro();
     onEditionChange(edition);
-    // URL sync handled by HomeContent's useEffect — single source of truth
+    // Sync URL without full navigation
+    const href = edition === "world" ? "/" : `/${edition}`;
+    window.history.pushState({}, "", href);
     setOpenPanel(null);
   };
 

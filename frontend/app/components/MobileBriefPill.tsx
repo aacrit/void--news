@@ -119,6 +119,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           className="mbp__pill-main"
           onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
           type="button" aria-expanded={pillExpanded} aria-controls="mbp-content"
+          style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", flex: 1, minWidth: 0, background: "none", border: "none", padding: 0, cursor: "pointer", WebkitTapHighlightColor: "transparent", textAlign: "left" as const }}
         >
           <ScaleIcon size={12} animation="idle" />
           <span className="mbp__pill-cmd">void --tl;dr</span>
@@ -142,6 +143,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
           className="mbp__pill-chevron-btn"
           onClick={() => { hapticLight(); setPillExpanded((v) => !v); }}
           type="button" aria-expanded={pillExpanded} aria-label={pillExpanded ? "Collapse brief" : "Expand brief"}
+          style={{ background: "none", border: "none", padding: "0 0 0 var(--space-1)", cursor: "pointer", flexShrink: 0, WebkitTapHighlightColor: "transparent" }}
         >
           <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
         </button>

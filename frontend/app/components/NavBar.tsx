@@ -217,6 +217,7 @@ export default function NavBar({
                 className="nav-filters__topic-panel"
                 role="menu"
                 aria-label="Topics"
+                onMouseLeave={() => setTopicOpen(false)}
                 onKeyDown={handleTopicPanelKeyDown}
               >
                 {ALL_CATEGORIES.map((cat) => (
