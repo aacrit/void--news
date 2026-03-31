@@ -13,7 +13,11 @@ function formatTime(seconds: number): string {
   return `${m}:${r.toString().padStart(2, "0")}`;
 }
 
-export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
+const EDITION_FREQ: Record<string, string> = {
+  world: "98.1", us: "101.5", india: "89.3",
+};
+
+export default function MobileBriefPill({ state, edition }: { state: DailyBriefState; edition?: string }) {
   const {
     brief, isPlaying, currentTime, duration, buffered,
     audioCallbackRef, handlePlayPause, handleSeek,
@@ -221,7 +225,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
                 {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
                 <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
                 <span className="skb__onair-label">void --onair</span>
-                <span className="skb__onair-freq" aria-hidden="true">98.1</span>
+                <span className="skb__onair-freq" aria-hidden="true">{EDITION_FREQ[edition || "world"] || "98.1"}</span>
                 {hasAudio ? (
                   isPlaying ? (
                     <span className="skb__onair-dur">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>

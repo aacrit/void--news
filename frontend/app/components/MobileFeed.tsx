@@ -57,7 +57,7 @@ export default function MobileFeed({
       )}
 
       {/* Brief pill — collapsed by default, expands inline */}
-      <MobileBriefPill state={dailyBriefState} />
+      <MobileBriefPill state={dailyBriefState} edition={editionMeta.slug} />
 
       {/* Compact story cards */}
       <div className="mf__cards" aria-label="Stories">
