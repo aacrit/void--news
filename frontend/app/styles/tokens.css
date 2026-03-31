@@ -18,10 +18,11 @@
   --thumb-border:        #fff;
   --indicator-broadcast: #c0392b;
 
-  /* ── Voice Accent — Institutional Teal for void --onair ──
-     Complementary to cinematic amber. BBC World Service register.
-     Deep teal communicates signal clarity and broadcast authority.
-     All values pass WCAG AA 4.5:1 on their respective surfaces. */
+  /* ── Voice Accent — Institutional Teal, scoped to radio panel interior ──
+     Used ONLY inside .skb__radio-inner (the dark broadcast console).
+     Teal on dark panel = broadcast hardware. Amber on page surface = brand.
+     The amber→teal shift when opening the radio is the deliberate "enter
+     the broadcast booth" reveal. */
   --voice-accent:       #157268;
   --voice-accent-dim:   #0F5C54;
   --voice-accent-ghost: rgba(21, 114, 104, 0.08);
@@ -63,11 +64,13 @@
   --accent: #1A1A1A;
   --accent-hover: #333333;
 
-  /* Warm accent — focus indicators, accessibility outlines */
-  --accent-warm: #C8956C;
+  /* Warm accent — focus indicators, accessibility outlines.
+     Deep ochre-gold: aged brass under a desk lamp. ~4.9:1 on #F0EBDD.
+     Deepened from #C8956C (2.2:1 — failed WCAG AA) to pass 4.5:1. */
+  --accent-warm: #8B6914;
 
   /* Foreground accent — warm editorial accent for badges, active states */
-  --fg-accent: #C8956C;
+  --fg-accent: #8B6914;
 
   /* Hover surface — subtle tint for interactive rows */
   --bg-hover: rgba(0, 0, 0, 0.04);
@@ -79,11 +82,11 @@
   --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
 
   /* ── Cinematic Palette ── */
-  --cin-amber: #C8956C;
-  --cin-amber-bright: #D4A574;
-  --cin-amber-dim: #A07A56;
-  --cin-amber-ghost: rgba(200, 149, 108, 0.08);
-  --cin-amber-glow: rgba(200, 149, 108, 0.15);
+  --cin-amber: #8B6914;
+  --cin-amber-bright: #A57D1A;
+  --cin-amber-dim: #6E5310;
+  --cin-amber-ghost: rgba(139, 105, 20, 0.08);
+  --cin-amber-glow: rgba(139, 105, 20, 0.15);
   --cin-ash: #6B7280;
   --cin-ash-warm: #78716C;
   --cin-ash-cool: #64748B;
@@ -151,11 +154,11 @@
   --cin-practical-warmth: color-mix(in srgb, var(--cin-amber) 4%, var(--bg-primary));
 
   /* ── Cinematic rim-top highlight for elevated surfaces ── */
-  --cinematic-rim-top: rgba(200, 149, 108, 0.08);
+  --cinematic-rim-top: rgba(139, 105, 20, 0.08);
 
   /* ── Accent isolation for bias-adjacent elements ── */
-  --cinematic-accent-near-bias: rgba(200, 149, 108, 0.04);
-  --cinematic-accent-far-bias: rgba(200, 149, 108, 0.12);
+  --cinematic-accent-near-bias: rgba(139, 105, 20, 0.04);
+  --cinematic-accent-far-bias: rgba(139, 105, 20, 0.12);
 
   /* ── Category Colors ── */
   --cat-conflict:    #C0392B;
@@ -179,7 +182,7 @@
   --thumb-border:        var(--bg-secondary);
   --indicator-broadcast: #DC2626;
 
-  /* ── Voice Accent — Institutional Teal (dark mode) ── */
+  /* ── Voice Accent — Institutional Teal, radio panel interior (dark mode) ── */
   --voice-accent:       #3AADA0;
   --voice-accent-dim:   #2D8B80;
   --voice-accent-ghost: rgba(58, 173, 160, 0.06);
