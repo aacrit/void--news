@@ -236,51 +236,6 @@ function DotScale({ value, max = 100 }: { value: number; max?: number }) {
   );
 }
 
-/* ── Sub-factor grid — 2-column compact layout ──────────────────────────── */
-
-function SubFactorGrid({
-  items,
-}: {
-  items: { label: string; value: number; max?: number }[];
-}) {
-  return (
-    <div className="bi-subfactors">
-      {items.slice(0, 3).map(({ label, value, max }) => (
-        <div key={label} className="bi-subfactors__item">
-          <span className="bi-subfactors__label">{label}</span>
-          <DotScale value={value} max={max} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Progressive disclosure — summary first, details on demand ──────────── */
-
-function AxisDetails({ children }: { children: React.ReactNode }) {
-  const [showDetails, setShowDetails] = useState(false);
-  return (
-    <div className="bi-axis-details">
-      <button
-        type="button"
-        className={`bi-axis-details__toggle${showDetails ? " bi-axis-details__toggle--open" : ""}`}
-        onClick={() => setShowDetails(!showDetails)}
-        aria-expanded={showDetails}
-      >
-        {showDetails ? "Hide details" : "Show details"}
-        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true"
-          className={`bi-axis-details__caret${showDetails ? " bi-axis-details__caret--open" : ""}`}>
-          <path d="M1.5 3L4 5.5L6.5 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <div className={`bi-axis-details__content${showDetails ? " bi-axis-details__content--open" : ""}`}
-        aria-hidden={!showDetails}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 /* ── Gradient bar for Tier 1 axis summary ───────────────────────────────── */
 
 interface GradientBarProps {
@@ -480,7 +435,7 @@ function LeanAxis({
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
-      {/* Layer 1: Summary — Gemini reasoning or auto-generated 1-liner */}
+      {/* Summary — Gemini reasoning or auto-generated 1-liner */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -498,87 +453,58 @@ function LeanAxis({
         </p>
       )}
 
-      {/* Layer 2: Details — subfactors, keywords, entity sentiments behind toggle */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Partisan language", value: rationale.keywordScore },
-              { label: "Outlet pattern", value: rationale.sourceBaseline },
-            ]}
-          />
-          {(rationale.topLeftKeywords?.length > 0 ||
-            rationale.topRightKeywords?.length > 0) && (
-            <div className="bi-keyword-signals">
-              {rationale.topLeftKeywords?.length > 0 && (
-                <p className="bi-keyword-signals__line">
-                  <span
-                    className="bi-keyword-signals__dir"
-                    style={{ color: "var(--bias-left)" }}
-                  >
-                    Left signals:
-                  </span>{" "}
-                  {rationale.topLeftKeywords.slice(0, 5).join(", ")}
-                </p>
-              )}
-              {rationale.topRightKeywords?.length > 0 && (
-                <p className="bi-keyword-signals__line">
-                  <span
-                    className="bi-keyword-signals__dir"
-                    style={{ color: "var(--bias-right)" }}
-                  >
-                    Right signals:
-                  </span>{" "}
-                  {rationale.topRightKeywords.slice(0, 5).join(", ")}
-                </p>
-              )}
-            </div>
+      {/* Keywords — the concrete evidence, shown directly (no toggle) */}
+      {rationale && (rationale.topLeftKeywords?.length > 0 ||
+        rationale.topRightKeywords?.length > 0) && (
+        <div className="bi-keyword-signals">
+          {rationale.topLeftKeywords?.length > 0 && (
+            <p className="bi-keyword-signals__line">
+              <span className="bi-keyword-signals__dir" style={{ color: "var(--bias-left)" }}>
+                Left signals:
+              </span>{" "}
+              {rationale.topLeftKeywords.slice(0, 5).join(", ")}
+            </p>
           )}
+          {rationale.topRightKeywords?.length > 0 && (
+            <p className="bi-keyword-signals__line">
+              <span className="bi-keyword-signals__dir" style={{ color: "var(--bias-right)" }}>
+                Right signals:
+              </span>{" "}
+              {rationale.topRightKeywords.slice(0, 5).join(", ")}
+            </p>
+          )}
+        </div>
+      )}
 
-          {/* Framing phrases — computed but previously never rendered.
-              These are the actual editorial phrases that reveal framing intent. */}
-          {rationale.framingPhrasesFound && rationale.framingPhrasesFound.length > 0 && (
-            <div className="bi-keyword-signals">
-              <p className="bi-keyword-signals__line">
-                <span className="bi-keyword-signals__dir" style={{ color: "var(--fg-tertiary)" }}>
-                  Framing phrases:
-                </span>{" "}
-                {rationale.framingPhrasesFound.slice(0, 4).join(", ")}
-              </p>
-            </div>
-          )}
-
-          {/* Entity sentiments — plain language instead of opaque ±floats */}
-          {rationale.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
-            <div className="bi-entity-sentiments">
-              <p className="bi-entity-sentiments__title">Key figures mentioned</p>
-              {Object.entries(rationale.entitySentiments)
-                .slice(0, 5)
-                .map(([entity, sentiment]) => {
-                  const tone = Math.abs(sentiment) < 0.1 ? "Neutral" : sentiment > 0 ? "Favorable" : "Critical";
-                  const toneClass = Math.abs(sentiment) < 0.1 ? "" : sentiment > 0 ? " bi-entity-row__tone--pos" : " bi-entity-row__tone--neg";
-                  return (
-                    <div key={entity} className="bi-entity-row">
-                      <span className="bi-entity-row__name">{entity}</span>
-                      <span className="bi-entity-row__bar">
-                        <span className="bi-entity-row__center" />
-                        <span
-                          className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
-                          style={{
-                            width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
-                            [sentiment >= 0 ? "left" : "right"]: "50%",
-                          }}
-                        />
-                      </span>
-                      <span className={`bi-entity-row__tone${toneClass}`}>
-                        {tone}
-                      </span>
-                    </div>
-                  );
-                })}
-            </div>
-          )}
-        </AxisDetails>
+      {/* Entity sentiments — shown directly when available */}
+      {rationale?.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
+        <div className="bi-entity-sentiments">
+          <p className="bi-entity-sentiments__title">Key figures mentioned</p>
+          {Object.entries(rationale.entitySentiments)
+            .slice(0, 4)
+            .map(([entity, sentiment]) => {
+              const tone = Math.abs(sentiment) < 0.1 ? "Neutral" : sentiment > 0 ? "Favorable" : "Critical";
+              const toneClass = Math.abs(sentiment) < 0.1 ? "" : sentiment > 0 ? " bi-entity-row__tone--pos" : " bi-entity-row__tone--neg";
+              return (
+                <div key={entity} className="bi-entity-row">
+                  <span className="bi-entity-row__name">{entity}</span>
+                  <span className="bi-entity-row__bar">
+                    <span className="bi-entity-row__center" />
+                    <span
+                      className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
+                      style={{
+                        width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
+                        [sentiment >= 0 ? "left" : "right"]: "50%",
+                      }}
+                    />
+                  </span>
+                  <span className={`bi-entity-row__tone${toneClass}`}>
+                    {tone}
+                  </span>
+                </div>
+              );
+            })}
+        </div>
       )}
     </AxisRow>
   );
@@ -624,7 +550,6 @@ function SensationalismAxis({
       contentVisible={contentVisible}
       compact
     >
-      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -638,19 +563,8 @@ function SensationalismAxis({
             : score > 60
               ? "Elevated sensationalism across headline and body."
               : "Measured tone overall."}
+          {rationale.clickbaitSignals > 3 && ` ${rationale.clickbaitSignals} clickbait patterns detected.`}
         </p>
-      )}
-      {/* Layer 2: Details */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Headline tone", value: rationale.headlineScore },
-              { label: "Body tone", value: rationale.bodyScore },
-              { label: "Clickbait patterns", value: rationale.clickbaitSignals, max: 10 },
-            ]}
-          />
-        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -697,7 +611,6 @@ function RigorAxis({
       contentVisible={contentVisible}
       compact
     >
-      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -707,31 +620,12 @@ function RigorAxis({
       {!geminiText && rationale && (
         <p className="bi-axis-summary">
           {rationale.namedSourcesCount >= 5
-            ? `Well-sourced: ${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes.`
+            ? `${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes, ${rationale.dataPointsCount} data points.`
             : rationale.namedSourcesCount >= 2
-              ? `Moderately sourced: ${rationale.namedSourcesCount} named sources.`
-              : "Lightly sourced. Few named sources or direct quotes."}
+              ? `${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes.`
+              : "Few named sources or direct quotes."}
+          {rationale.vagueSourcesCount > 2 && ` ${rationale.vagueSourcesCount} vague attributions.`}
         </p>
-      )}
-      {/* Layer 2: Details */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
-              { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
-              { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
-            ]}
-          />
-          {/* Vague sources — computed but previously never rendered.
-              A high vague count with low named sources is a key journalistic red flag. */}
-          {rationale.vagueSourcesCount > 0 && (
-            <p className="bi-axis-summary" style={{ marginTop: "var(--space-2)" }}>
-              {rationale.vagueSourcesCount} vague source{rationale.vagueSourcesCount !== 1 ? "s" : ""} detected
-              {rationale.vagueSourcesCount > 2 ? " — relies on anonymous or unverifiable attribution." : "."}
-            </p>
-          )}
-        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -777,7 +671,6 @@ function FramingAxis({
       contentVisible={contentVisible}
       compact
     >
-      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -792,18 +685,6 @@ function FramingAxis({
           {rationale.omissionScore > 40 && " One-sided sourcing detected."}
           {rationale.headlineBodyDivergence > 40 && " Headline doesn\u2019t match body tone."}
         </p>
-      )}
-      {/* Layer 2: Details */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Loaded language", value: rationale.connotationScore },
-              { label: "One-sided sourcing", value: rationale.omissionScore },
-              { label: "Headline mismatch", value: rationale.headlineBodyDivergence },
-            ]}
-          />
-        </AxisDetails>
       )}
     </AxisRow>
   );
