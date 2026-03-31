@@ -92,8 +92,23 @@
   min-width: 56px;
 }
 
-.ap__section-label--error {
+.ap__section-label--error,
+.ap__section-label--disabled {
   color: color-mix(in srgb, var(--cin-amber) 35%, transparent);
+}
+
+/* No-audio state — dimmed bar */
+.ap--no-audio .ap__play {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ap--no-audio .ap__mini-bar-wrap,
+.ap--no-audio .ap__mini-time,
+.ap--no-audio .ap__mini-speed,
+.ap--no-audio .ap__expand {
+  opacity: 0.2;
+  pointer-events: none;
 }
 
 /* Mini progress bar */
