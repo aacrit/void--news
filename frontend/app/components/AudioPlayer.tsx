@@ -30,8 +30,9 @@ export default function AudioPlayer({ state }: { state: DailyBriefState }) {
     Array.from({ length: 32 }, (_, i) => 10 + Math.sin(i * 0.55) * 16 + Math.sin(i * 1.3) * 6),
   []);
 
-  if (!brief?.audio_url) return null;
+  if (!brief) return null;
 
+  const hasAudio = !!brief.audio_url;
   const displayDuration = brief.audio_duration_seconds || duration;
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const effectiveOpinionStart = brief.opinion_start_seconds ?? (brief.opinion_text ? displayDuration * 0.6 : null);
@@ -46,15 +47,15 @@ export default function AudioPlayer({ state }: { state: DailyBriefState }) {
 
   return (
     <>
-      <audio ref={audioCallbackRef} src={brief.audio_url} preload="metadata" />
+      {hasAudio && <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
 
       <div
-        className={`ap${isPlaying ? " ap--playing" : ""}${isExpanded ? " ap--expanded" : ""}`}
+        className={`ap${isPlaying ? " ap--playing" : ""}${isExpanded ? " ap--expanded" : ""}${!hasAudio ? " ap--no-audio" : ""}`}
         role="region"
         aria-label="void --onair audio player"
       >
         {/* ── Expanded Panel ── */}
-        {isExpanded && (
+        {isExpanded && hasAudio && (
           <div className="ap__panel">
             <div className="ap__panel-header">
               <div className="ap__identity">
@@ -140,17 +141,21 @@ export default function AudioPlayer({ state }: { state: DailyBriefState }) {
         <div className="ap__mini">
           <button
             className={`ap__play${isPlaying ? " ap__play--active" : ""}`}
-            onClick={() => { hapticMedium(); handlePlayPause(); }}
+            onClick={() => { if (hasAudio) { hapticMedium(); handlePlayPause(); } }}
             type="button"
-            aria-label={isPlaying ? "Pause broadcast" : "Play broadcast"}>
+            disabled={!hasAudio}
+            aria-label={!hasAudio ? "Audio broadcast unavailable" : isPlaying ? "Pause broadcast" : "Play broadcast"}>
             <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
           </button>
 
-          <span className={`ap__section-label${audioError ? " ap__section-label--error" : ""}`}>
-            {audioError ? "Unavailable" : isPlaying || currentTime > 0 ? (inOpinion ? "Opinion" : "News") : "void --onair"}
+          <span className={`ap__section-label${audioError ? " ap__section-label--error" : ""}${!hasAudio ? " ap__section-label--disabled" : ""}`}>
+            {!hasAudio ? "void --onair" : audioError ? "Unavailable" : isPlaying || currentTime > 0 ? (inOpinion ? "Opinion" : "News") : "void --onair"}
           </span>
 
-          {!isPlaying && currentTime === 0 && durationMin && (
+          {!hasAudio && (
+            <span className="ap__mini-hint">Audio generates twice daily</span>
+          )}
+          {hasAudio && !isPlaying && currentTime === 0 && durationMin && (
             <span className="ap__mini-hint">{durationMin} min</span>
           )}
 
