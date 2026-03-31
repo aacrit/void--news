@@ -33,20 +33,21 @@ from briefing.daily_brief_generator import (
 from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
 
-# Claude-specific craft — Vox-style explanatory energy
+# Claude-specific craft — enhanced prosody and voice personality
 _CLAUDE_SYSTEM_ADDENDUM = """
 
 ADDITIONAL CRAFT RULES (Claude-generated scripts):
-- Think Vox "Today Explained" energy. You're curious about this material. Show it.
-- Voice B is the audience proxy — asks "so what does that actually mean?",
-  reframes headlines, explains WHY not just WHAT.
+- Both hosts are equals — senior journalists briefing each other, not performing.
 - Use concrete analogies to make abstract policy real.
-- Pacing variation is critical. Short punchy sentences next to longer unpacking.
 - Self-correction allowed: "roughly $1.4 trillion — depending on the estimate."
-- Still banned (hollow filler): "Mm.", "Right.", "Indeed.", "Good point."
-- Substantive reactions encouraged: "But that contradicts..." "So basically..."
-- Direct address: "Here's what you need to know." "Think about it this way."
-- The close: direct editorial take. What does today actually mean?
+- Pacing: use [short pause] for breath beats, [long pause] before key revelations.
+- Ellipses (...) for trailing off. Em dashes (—) for pivots. Vary sentence length.
+- Substantive reactions: "But that contradicts the Q3 numbers." / "Which is what
+  makes the timing interesting — the vote is Thursday."
+- BANNED (zero tolerance): "Mm.", "Right.", "Indeed.", "Good point.", "Exactly.",
+  "Here's what you need to know.", "Think of it this way.", "Here's the thing...",
+  "This isn't just...", "The bigger picture...", "So here's what's happening."
+- The close: one sharp observation, then "This was Void news." with finality.
 """
 
 # Claude-specific prompt — generates TL;DR, audio script, AND opinion in one call.

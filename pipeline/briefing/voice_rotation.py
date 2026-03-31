@@ -1,12 +1,19 @@
 """Voice rotation for the void --news audio broadcast.
 
-Uses Gemini 2.5 Flash TTS prebuilt voices. Newsroom model: 5 male hosts
-and 5 female hosts rotate across runs so each broadcast sounds fresh.
-Opinion voice is a separate fixed pool per edition.
+6-host newsroom model: 3 fixed pairs rotate across 3 editions so every
+host works every day. Each host has a distinct personality that shapes
+the script — not just the voice timbre.
 
-Rotation: pipeline_run_count (4x daily) cycles through host pairs.
-Day 1 run 1 gets pair 0, run 2 gets pair 1, etc. 5 pairs = 20 runs
-(5 days) before repeating.
+Pairs:
+  Alpha:   Correspondent (Charon) + Structuralist (Kore)
+  Bravo:   Investigator (Orus) + Realist (Achernar)
+  Charlie: Editor (Sadaltager) + Pragmatist (Gacrux)
+
+Rotation: 4 runs/day × 3 editions. Each run assigns one pair per edition.
+Over 6 runs (1.5 days), every pair has led every edition.
+
+Opinion voice uses a fixed timbre per edition (brand recognition) but
+the editorial *persona* rotates with the lean lens.
 
 Official voice data from Google Cloud TTS docs:
 
@@ -26,82 +33,226 @@ Female (14): Achernar (soft), Aoede (breezy), Autonoe (bright),
 from datetime import datetime, timezone
 
 # ---------------------------------------------------------------------------
-# Host pools — 5 male, 5 female. Chosen for maximum tonal contrast so
-# each broadcast pair sounds distinct. Official style labels from Google.
+# Host definitions — 6 hosts, each with voice ID, personality, and lean.
+# Personality traits shape the script prompt; lean activates in opinion only.
 # ---------------------------------------------------------------------------
-MALE_HOSTS: list[str] = [
-    "Charon",       # informative — authoritative anchor
-    "Orus",         # firm — decisive, commanding
-    "Sadaltager",   # knowledgeable — expert analyst
-    "Achird",       # friendly — approachable co-host
-    "Algenib",      # gravelly — distinctive texture
+HOSTS = {
+    "structuralist": {
+        "id": "Kore",
+        "name": "The Structuralist",
+        "gender": "female",
+        "lean": "center-left",
+        "google_label": "firm",
+        "trait": (
+            "Sees systems, not events. Connects policy to outcome, incentive to "
+            "behavior, structure to consequence. Measured pace. Builds sentences "
+            "that layer — short setup, then a longer sentence that reveals the "
+            "mechanism. Uses 'because' and 'which means' naturally."
+        ),
+        "tts_preamble": (
+            "Firm, measured, authoritative. Mid-tempo with deliberate slowing on "
+            "causal explanations. Clear emphasis on connecting phrases. Thoughtful, "
+            "not rushed."
+        ),
+        "opinion_lean": "left",
+    },
+    "correspondent": {
+        "id": "Charon",
+        "name": "The Correspondent",
+        "gender": "male",
+        "lean": "center",
+        "google_label": "informative",
+        "trait": (
+            "The unhurried authority. Lets facts land with their own weight. Short "
+            "declarative sentences. Pauses after key facts to let them register. "
+            "Trusts proximity to reveal the pattern — places two facts next to each "
+            "other without editorializing."
+        ),
+        "tts_preamble": (
+            "Low, steady, unhurried. BBC World Service gravitas. Deliberate pauses "
+            "after key statements. Calm authority — never raises voice. Precision "
+            "over speed."
+        ),
+        "opinion_lean": "center",
+    },
+    "pragmatist": {
+        "id": "Gacrux",
+        "name": "The Pragmatist",
+        "gender": "female",
+        "lean": "center-right",
+        "google_label": "mature",
+        "trait": (
+            "Institutional memory and fiscal instinct. Skeptical of grand narratives. "
+            "Always asks 'at what cost?' and 'has this been tried before?' Crisp and "
+            "efficient. Shorter sentences. Dry delivery — lets understatement do "
+            "the work."
+        ),
+        "tts_preamble": (
+            "Mature, crisp, composed. Slightly faster pace — efficient delivery. "
+            "Dry wit when appropriate. Emphasis on numbers and costs. No wasted words."
+        ),
+        "opinion_lean": "right",
+    },
+    "investigator": {
+        "id": "Orus",
+        "name": "The Investigator",
+        "gender": "male",
+        "lean": "left",
+        "google_label": "firm",
+        "trait": (
+            "Follows the money, the mechanism, the paper trail. Prosecutorial "
+            "instinct — lays out evidence in sequence so the conclusion is "
+            "inescapable. Builds momentum: starts measured, accelerates through "
+            "a chain of evidence, then slows for the key detail."
+        ),
+        "tts_preamble": (
+            "Firm, commanding, builds intensity. Starts measured, accelerates through "
+            "evidence chains. Slows deliberately for key revelations. Conviction in "
+            "every sentence."
+        ),
+        "opinion_lean": "left",
+    },
+    "realist": {
+        "id": "Achernar",
+        "name": "The Realist",
+        "gender": "female",
+        "lean": "right",
+        "google_label": "soft",
+        "trait": (
+            "Challenges consensus with data. 'What does the evidence actually show?' "
+            "Fiscally rigorous, skeptical of interventionism. Calm, almost "
+            "conversational — delivers hard truths in a soft register. The contrast "
+            "makes them land harder."
+        ),
+        "tts_preamble": (
+            "Soft-spoken but precise. Calm, almost intimate delivery. Contrast "
+            "between gentle tone and sharp content. Slight pauses before delivering "
+            "counter-evidence. Thoughtful, never strident."
+        ),
+        "opinion_lean": "right",
+    },
+    "editor": {
+        "id": "Sadaltager",
+        "name": "The Editor",
+        "gender": "male",
+        "lean": "center",
+        "google_label": "knowledgeable",
+        "trait": (
+            "The senior voice. Synthesizes, contextualizes, places today's news in "
+            "the arc of the week or the decade. Identifies the through-line across "
+            "stories. Comfortable with silence. The voice that provides perspective "
+            "— not prediction, but framing that helps the listener think."
+        ),
+        "tts_preamble": (
+            "Knowledgeable, warm authority. Senior editorial voice. Comfortable pace "
+            "with weight behind each sentence. Slight warmth — the voice of someone "
+            "who has seen this before. Measured gravitas."
+        ),
+        "opinion_lean": "center",
+    },
+}
+
+# ---------------------------------------------------------------------------
+# 3 fixed pairs — each pair covers one edition per run.
+# ---------------------------------------------------------------------------
+PAIRS = [
+    ("correspondent", "structuralist"),   # Alpha: authority + systems
+    ("investigator", "realist"),          # Bravo: evidence + counter-data
+    ("editor", "pragmatist"),             # Charlie: perspective + fiscal rigor
 ]
 
-FEMALE_HOSTS: list[str] = [
-    "Kore",         # firm — strong anchor presence
-    "Aoede",        # breezy — natural conversational flow
-    "Gacrux",       # mature — seasoned correspondent
-    "Zephyr",       # bright — energetic reporter
-    "Achernar",     # soft — thoughtful, measured
-]
+# Edition order for desk assignment rotation.
+_EDITIONS = ["world", "us", "india"]
 
-# 5 host pairs — each broadcast gets a unique male+female combination.
-# Pairs maximize vocal contrast: authoritative+breezy, firm+bright, etc.
-HOST_PAIRS: list[tuple[str, str]] = [
-    ("Charon", "Aoede"),       # pair 0: informative anchor + breezy analyst
-    ("Orus", "Zephyr"),        # pair 1: firm decisive + bright energetic
-    ("Sadaltager", "Kore"),    # pair 2: knowledgeable expert + firm anchor
-    ("Achird", "Gacrux"),      # pair 3: friendly co-host + mature correspondent
-    ("Algenib", "Achernar"),   # pair 4: gravelly texture + soft thoughtful
-]
-
-# Opinion voices — one per edition, never used as news hosts.
-# Fixed for brand consistency: opinion always sounds the same per edition.
-# Chosen for editorial gravitas — voices that suit monologue delivery.
+# Opinion voices — fixed timbre per edition for brand recognition.
+# The editorial *persona* changes with the lean lens (see get_opinion_host).
 OPINION_VOICES: dict[str, str] = {
-    "world": "Sulafat",       # female, warm — ideal for editorial
-    "us": "Schedar",          # male, even — measured editorial tone
-    "india": "Despina",       # female, smooth — composed editorial
-    "uk": "Rasalgethi",       # male, informative — authoritative editorial
-    "canada": "Vindemiatrix", # female, gentle — thoughtful editorial
+    "world": "Sulafat",       # female, warm
+    "us": "Schedar",          # male, even
+    "india": "Despina",       # female, smooth
+    "uk": "Rasalgethi",       # male, informative
+    "canada": "Vindemiatrix", # female, gentle
+}
+
+# Lean → host mapping for opinion persona.
+_OPINION_HOST_BY_LEAN = {
+    "left": "investigator",
+    "center": "editor",
+    "right": "realist",
+}
+
+# Alternate opinion hosts (fallback if primary is already on news desk —
+# not currently used since opinion is a monologue by a separate voice,
+# but available for future scheduling constraints).
+_OPINION_HOST_ALT = {
+    "left": "structuralist",
+    "center": "correspondent",
+    "right": "pragmatist",
 }
 
 
 def _get_rotation_index() -> int:
     """Get the current rotation index based on UTC time.
 
-    4 runs per day x 5 pairs = cycles every 5 days (20 runs).
+    4 runs per day × 3 pair-edition permutations = 12-run cycle (3 days).
     Uses UTC hour buckets: 0-5=run0, 6-11=run1, 12-17=run2, 18-23=run3.
     """
     now = datetime.now(timezone.utc)
     day_of_year = now.timetuple().tm_yday
     run_of_day = now.hour // 6  # 0, 1, 2, or 3
     total_runs = (day_of_year * 4) + run_of_day
-    return total_runs % len(HOST_PAIRS)
+    return total_runs
+
+
+def _get_desk_assignment(edition: str) -> tuple[str, str]:
+    """Return (host_a_key, host_b_key) for the given edition this run.
+
+    Each run assigns one of the 3 pairs to each of the 3 editions.
+    The pair-to-edition mapping rotates so every pair covers every
+    edition over 3 runs (18 hours at 4x/day).
+
+    Within each pair, who leads (Host A) alternates by run index.
+    """
+    idx = _get_rotation_index()
+    edition_index = _EDITIONS.index(edition) if edition in _EDITIONS else 0
+
+    # Rotate which pair covers which edition
+    pair_index = (idx + edition_index) % len(PAIRS)
+    host_1_key, host_2_key = PAIRS[pair_index]
+
+    # Alternate lead within the pair
+    if idx % 2 == 0:
+        return host_1_key, host_2_key
+    else:
+        return host_2_key, host_1_key
+
+
+def get_opinion_host(lean: str) -> dict:
+    """Return the host profile for today's opinion persona.
+
+    The opinion *persona* determines how the argument is built.
+    The opinion *voice timbre* is fixed per edition (see OPINION_VOICES).
+    """
+    host_key = _OPINION_HOST_BY_LEAN.get(lean, "editor")
+    return {**HOSTS[host_key], "key": host_key}
 
 
 def get_voices_for_today(edition: str) -> dict:
     """Return voice config for the current broadcast.
 
-    News hosts rotate across runs — 5 distinct male+female pairs cycle
-    every 20 runs (5 days at 4x/day). Each broadcast sounds different.
-    Opinion voice stays fixed per edition for brand consistency.
+    Returns host_a, host_b (news pair) and opinion voice for the edition.
+    Each host dict includes: id (Gemini voice ID), name, trait, tts_preamble.
     """
-    idx = _get_rotation_index()
-    male, female = HOST_PAIRS[idx]
+    host_a_key, host_b_key = _get_desk_assignment(edition)
+    host_a = HOSTS[host_a_key]
+    host_b = HOSTS[host_b_key]
 
-    # Alternate who leads (host_a) vs. who responds (host_b) each run
-    if idx % 2 == 0:
-        host_a, host_b = male, female
-    else:
-        host_a, host_b = female, male
-
-    opinion_voice = OPINION_VOICES.get(edition, OPINION_VOICES["world"])
+    opinion_voice_id = OPINION_VOICES.get(edition, OPINION_VOICES["world"])
 
     return {
-        "host_a": {"id": host_a},
-        "host_b": {"id": host_b},
-        "opinion": {"id": opinion_voice},
+        "host_a": {**host_a, "key": host_a_key},
+        "host_b": {**host_b, "key": host_b_key},
+        "opinion": {"id": opinion_voice_id},
     }
 
 
