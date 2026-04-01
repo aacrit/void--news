@@ -611,7 +611,6 @@
   padding: var(--space-6) 0;
   border-bottom: var(--rule-strong);
   cursor: pointer;
-  will-change: transform;
   filter: var(--cin-warmth-near);
   transition:
     box-shadow 300ms 30ms var(--ease-out),
@@ -641,6 +640,7 @@
 }
 
 .lead-story:hover {
+  will-change: transform;
   box-shadow: var(--shadow-card-lead-hover);
   transform: translateY(-2px) scale(1.005);
 }
@@ -7967,20 +7967,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 }
 
-/* ── Chromatic Aberration (Lead Story) ──
-   Subtle red/blue fringing — the optical artifact of a fast lens at
-   wide aperture. Sub-pixel offsets that the brain registers without
-   consciously noticing. */
-.lead-story__headline {
-  text-shadow:
-    -0.4px 0 rgba(180, 60, 40, 0.015),
-     0.4px 0 rgba(40, 60, 180, 0.015);
-}
-:root[data-mode="dark"] .lead-story__headline {
-  text-shadow:
-    -0.4px 0 rgba(180, 60, 40, 0.02),
-     0.4px 0 rgba(40, 60, 180, 0.02);
-}
 
 /* ══ SCENE 7: Practical Light System — OnAir Warmth Propagation ══
    When audio is playing, the OnAir button becomes a "practical light"

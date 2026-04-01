@@ -896,8 +896,7 @@
   }
   /* Film grain: static, near-invisible — 1 compositing layer, no animation */
   .page-container::after {
-    animation: none;
-    opacity: 0.02;
+    display: none;
   }
   /* Vignette: 50% reduced — subtle framing preserved without GPU cost */
   .page-container::before {
@@ -906,10 +905,6 @@
   /* Atmospheric haze: disabled — per-card filters are expensive on mobile */
   .story-card:not(.anim-stagger--visible) {
     filter: none;
-  }
-  /* Chromatic aberration: disabled — sub-pixel text-shadow is fuzzy on mobile DPI */
-  .lead-story__headline {
-    text-shadow: none;
   }
 }
 
