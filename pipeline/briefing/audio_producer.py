@@ -567,51 +567,71 @@ def _synthesize_opinion_monologue(
     if not dialogue:
         return None
 
-    # Prepend editorial voice direction if provided
-    content = f"{opinion_tts_preamble}\n\n{dialogue}" if opinion_tts_preamble else dialogue
-
+    # Chunk long monologues to avoid Gemini TTS truncation (same as news)
+    chunks = _chunk_dialogue(dialogue)
     client = genai.Client(api_key=api_key)
-    try:
-        response = client.models.generate_content(
-            model=_TTS_MODEL,
-            contents=content,
-            config=types.GenerateContentConfig(
-                response_modalities=["AUDIO"],
-                speech_config=types.SpeechConfig(
-                    multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
-                        speaker_voice_configs=[
-                            types.SpeakerVoiceConfig(
-                                speaker="One",
-                                voice_config=types.VoiceConfig(
-                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                                        voice_name=voice,
-                                    )
+
+    def _synth_opinion_chunk(chunk_content: str) -> Optional[bytes]:
+        try:
+            response = client.models.generate_content(
+                model=_TTS_MODEL,
+                contents=chunk_content,
+                config=types.GenerateContentConfig(
+                    response_modalities=["AUDIO"],
+                    speech_config=types.SpeechConfig(
+                        multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
+                            speaker_voice_configs=[
+                                types.SpeakerVoiceConfig(
+                                    speaker="One",
+                                    voice_config=types.VoiceConfig(
+                                        prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                            voice_name=voice,
+                                        )
+                                    ),
                                 ),
-                            ),
-                            # Gemini requires exactly 2 speakers in multi_speaker config.
-                            # "Two" is never referenced in the dialogue — silent placeholder.
-                            types.SpeakerVoiceConfig(
-                                speaker="Two",
-                                voice_config=types.VoiceConfig(
-                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                                        voice_name=voice,
-                                    )
+                                # Gemini requires exactly 2 speakers in multi_speaker config.
+                                # "Two" is never referenced — silent placeholder.
+                                types.SpeakerVoiceConfig(
+                                    speaker="Two",
+                                    voice_config=types.VoiceConfig(
+                                        prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                            voice_name=voice,
+                                        )
+                                    ),
                                 ),
-                            ),
-                        ]
-                    )
+                            ]
+                        )
+                    ),
                 ),
-            ),
-        )
+            )
+            if response.candidates and response.candidates[0].content.parts:
+                part = response.candidates[0].content.parts[0]
+                if hasattr(part, "inline_data") and part.inline_data:
+                    return part.inline_data.data
+        except Exception as e:
+            print(f"  [warn][audio] Opinion TTS chunk failed: {e}")
+        return None
 
-        if response.candidates and response.candidates[0].content.parts:
-            part = response.candidates[0].content.parts[0]
-            if hasattr(part, "inline_data") and part.inline_data:
-                return part.inline_data.data
-    except Exception as e:
-        print(f"  [warn][audio] Opinion TTS failed: {e}")
+    if len(chunks) == 1:
+        content = f"{opinion_tts_preamble}\n\n{chunks[0]}" if opinion_tts_preamble else chunks[0]
+        return _synth_opinion_chunk(content)
 
-    return None
+    print(f"  [audio] Opinion long script — synthesizing in {len(chunks)} chunks")
+    all_pcm = bytearray()
+    for i, chunk in enumerate(chunks):
+        if i > 0:
+            time.sleep(5)
+        preamble = opinion_tts_preamble if i == 0 else ""
+        content = f"{preamble}\n\n{chunk}" if preamble else chunk
+        pcm = _synth_opinion_chunk(content)
+        if pcm is None:
+            print(f"  [warn][audio] Opinion chunk {i+1}/{len(chunks)} failed — aborting")
+            return None
+        all_pcm.extend(pcm)
+        chunk_dur = len(pcm) / (24000 * 2)
+        print(f"  [audio] Opinion chunk {i+1}/{len(chunks)}: {chunk_dur:.1f}s")
+
+    return bytes(all_pcm) if all_pcm else None
 
 
 def produce_audio(
