@@ -1978,7 +1978,7 @@ def main():
                                 # frontend always has something to play.
                                 try:
                                     prev = supabase.table("daily_briefs").select(
-                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size"
+                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size,opinion_start_seconds"
                                     ).eq("edition", edition).order(
                                         "created_at", desc=True
                                     ).limit(1).execute()
@@ -1998,7 +1998,7 @@ def main():
                             # previous audio so frontend always has audio available.
                             try:
                                 prev = supabase.table("daily_briefs").select(
-                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
+                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
                                 ).eq("edition", edition).order(
                                     "created_at", desc=True
                                 ).limit(1).execute()
