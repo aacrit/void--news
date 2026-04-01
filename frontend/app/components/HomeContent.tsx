@@ -7,8 +7,10 @@ import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
+import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
-import DesktopFeed from "./DesktopFeed";
+import LeadStory from "./LeadStory";
+import StoryCard from "./StoryCard";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -44,7 +46,7 @@ class DeepDiveErrorBoundary extends Component<
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import { useDailyBrief } from "./DailyBrief";
+import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -608,16 +610,22 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
   }, [stories, activeCategory, activeLean]);
 
-  // Pool size depends on feed layout: MobileFeed shows hero(1)+rest, DesktopFeed shows lead(2)+digest(6)+wire
+  // Story slicing — desktop broadsheet: lead(2) + medium(3) + compact(rest)
+  const leadStories = filteredStories.slice(0, 2);
+  const mediumStories = filteredStories.slice(2, 5);
+  const compactStories = filteredStories.slice(5);
+  const visibleCompact = compactStories.slice(0, visibleCount);
+
+  // Pool size depends on feed layout
   const poolSize = isMobile
     ? filteredStories.length - 1
-    : filteredStories.length - 8;
+    : compactStories.length;
   const hasMore = poolSize > visibleCount && poolSize > 0;
 
   const loadMoreStories = useCallback(() => {
     hapticScrollEdge();
-    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, Math.max(poolSize, 0)));
-  }, [poolSize]);
+    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
+  }, [compactStories.length]);
 
   // Infinite scroll via IntersectionObserver on sentinel (desktop + mobile)
   useEffect(() => {
@@ -791,7 +799,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* News feed — mobile / desktop v2 / desktop v1 */}
+            {/* News feed — mobile gets MobileFeed, desktop keeps broadsheet */}
             {!isLoading && stories.length > 0 && (
               isMobile ? (
                 <MobileFeed
@@ -806,17 +814,71 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   editionMeta={editionMeta}
                 />
               ) : (
-                <DesktopFeed
-                  stories={filteredStories}
-                  dailyBriefState={dailyBriefState}
-                  onStoryClick={handleStoryClick}
-                  filterKey={filterKey}
-                  visibleCount={visibleCount}
-                  hasMore={hasMore}
-                  sentinelRef={sentinelRef}
-                  kbdFocusIndex={kbdFocusIndex}
-                  editionMeta={editionMeta}
-                />
+                <>
+                  <div className="skybox" role="complementary" aria-label="void originals">
+                    <DailyBriefText state={dailyBriefState} />
+                    <OnAirButton state={dailyBriefState} />
+                  </div>
+
+                  {leadStories.length > 0 && (
+                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
+                      {leadStories.map((story, i) => (
+                        <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
+                          <div data-story-index={i}>
+                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                          </div>
+                        </div>
+                      ))}
+                    </section>
+                  )}
+
+                  {mediumStories.length > 0 && (
+                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
+                      {mediumStories.map((story, idx) => {
+                        const gi = leadStories.length + idx;
+                        return (
+                          <div key={story.id} className="grid-medium__item" style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
+                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                          </div>
+                        );
+                      })}
+                    </section>
+                  )}
+
+                  {compactStories.length > 0 && (
+                    <>
+                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
+                        {visibleCompact.map((story, idx) => {
+                          const gi = leadStories.length + mediumStories.length + idx;
+                          return (
+                            <div key={story.id} className="grid-compact__item" style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}>
+                              <StoryCard
+                                story={story}
+                                index={idx + mediumStories.length + 1}
+                                onStoryClick={handleStoryClick}
+                                globalIndex={gi}
+                                kbdFocused={kbdFocusIndex === gi}
+                              />
+                            </div>
+                          );
+                        })}
+                      </section>
+
+                      {hasMore && (
+                        <div className="feed-sentinel" ref={sentinelRef} aria-hidden="true" />
+                      )}
+                    </>
+                  )}
+
+                  {filteredStories.length > 0 && (
+                    <div className="edition-line">
+                      <span className="edition-meta">
+                        {editionMeta.label} Edition / {filteredStories.length} stories
+                      </span>
+                      <LogoWordmark height={14} />
+                    </div>
+                  )}
+                </>
               )
             )}
         </>
