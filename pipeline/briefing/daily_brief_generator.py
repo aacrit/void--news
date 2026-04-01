@@ -345,7 +345,7 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     if script.strip():
         if script_words < 700:
             msg = f"Audio script too short: {script_words} words (minimum 700)"
-            report["warnings"].append(msg)
+            report["failures"].append(msg)
             found.append(f"short_script({script_words}w)")
             print(f"  [quality][brief:{edition}] {msg}")
         elif script_words > 1200:
@@ -1091,13 +1091,13 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
             parts.append("- MISSING SIGN-OFF: Last speaker MUST say: void logs out.")
         elif "filler" in failure.lower():
             parts.append(f"- {failure}. Replace with substantive reactions containing new facts.")
-        elif "flat_pacing" in failure:
+        elif "Pacing critically flat" in failure:
             parts.append(
                 "- PACING TOO FLAT: Add short punchy sentences (<=8 words). "
                 "'Three days.' 'That changed.' 'The math doesn't work.' "
                 "At least 15% of sentences must be 8 words or fewer."
             )
-        elif "short_script" in failure:
+        elif "too short" in failure.lower():
             parts.append("- SCRIPT TOO SHORT: Minimum 800 words. Expand the 3 stories in depth.")
     return "\n".join(parts)
 
