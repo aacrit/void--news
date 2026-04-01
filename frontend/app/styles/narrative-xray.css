@@ -15,11 +15,39 @@
 }
 
 /* --------------------------------------------------------------------------
-   Fix 3: Omission banner word-break for long entity names
+   NX-02: Omission banner always visible — not gated behind highlight toggle.
+   Override the cinematographer's clip-path:hidden default so the banner
+   shows immediately when a source is expanded.
    -------------------------------------------------------------------------- */
 .nx-omission-banner {
+  clip-path: none;
+  opacity: 1;
   overflow-wrap: break-word;
   word-break: break-word;
+  animation: nxOmissionReveal var(--dur-morph) var(--ease-cinematic) both;
+}
+
+/* --------------------------------------------------------------------------
+   NX-03: Desktop tooltip positioning — base rule lacks top/bottom/left
+   -------------------------------------------------------------------------- */
+.nx-tooltip {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+}
+
+.nx-highlight:hover .nx-tooltip,
+.nx-highlight:focus-visible .nx-tooltip,
+.nx-entity:hover .nx-tooltip,
+.nx-entity:focus-visible .nx-tooltip {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* NX-04: Wire-link expandable rows need 44px touch targets on all viewports */
+.comp-view__wire-link[role="button"] {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 /* --------------------------------------------------------------------------
@@ -33,23 +61,22 @@
     padding: var(--space-2) var(--space-3);
   }
 
-  /* Fix 2: Tooltip viewport overflow — flush-left on mobile, width-clamped */
+  /* Mobile: Tooltip below text, flush-left, viewport-clamped */
   .nx-tooltip {
     bottom: auto;
     top: calc(100% + 6px);
     left: 0;
     right: auto;
-    transform: translateY(4px);
+    transform: translateX(0) translateY(4px);
     max-width: min(240px, calc(100vw - 2 * var(--space-5)));
     white-space: normal;
   }
 
-  /* Fix 5: Tooltip entrance slides DOWN into below-position */
   .nx-highlight:hover .nx-tooltip,
   .nx-highlight:focus-visible .nx-tooltip,
   .nx-entity:hover .nx-tooltip,
   .nx-entity:focus-visible .nx-tooltip {
-    transform: translateY(0);
+    transform: translateX(0) translateY(0);
   }
 
   .nx-tooltip::before {

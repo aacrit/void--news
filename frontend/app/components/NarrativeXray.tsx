@@ -48,22 +48,28 @@ function ChargedSpan({ text, match, index, active }: ChargedSpanProps) {
   const [showTip, setShowTip] = useState(false);
 
   const toggle = useCallback(() => setShowTip((p) => !p), []);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+  }, [toggle]);
 
   return (
     <span
       className="nx-highlight"
       style={{ "--nx-index": index } as React.CSSProperties}
       onClick={active ? toggle : undefined}
+      onKeyDown={active ? handleKeyDown : undefined}
       onMouseEnter={active ? () => setShowTip(true) : undefined}
       onMouseLeave={active ? () => setShowTip(false) : undefined}
       tabIndex={active ? 0 : undefined}
       role={active ? "button" : undefined}
-      onFocus={active ? () => setShowTip(true) : undefined}
-      onBlur={active ? () => setShowTip(false) : undefined}
+      aria-label={active ? `Charged synonym: ${text}. Neutral alternative: ${match.neutral}` : undefined}
     >
       {text}
       {active && showTip && (
-        <span className="nx-tooltip">
+        <span className="nx-tooltip" role="tooltip">
           <span className="nx-tooltip__label">Charged synonym</span>
           <span className="nx-tooltip__value">
             Neutral: {match.neutral}
@@ -86,24 +92,32 @@ function EntitySpan({ text, sentiment, index, active }: EntitySpanProps) {
   const polarity = sentiment > 0.05 ? "warm" : sentiment < -0.05 ? "cool" : null;
 
   const toggle = useCallback(() => setShowTip((p) => !p), []);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+  }, [toggle]);
 
   if (!polarity) return <>{text}</>;
+
+  const label = polarity === "warm" ? "positive" : "negative";
 
   return (
     <span
       className={`nx-entity nx-entity--${polarity}`}
       style={{ "--nx-index": index } as React.CSSProperties}
       onClick={active ? toggle : undefined}
+      onKeyDown={active ? handleKeyDown : undefined}
       onMouseEnter={active ? () => setShowTip(true) : undefined}
       onMouseLeave={active ? () => setShowTip(false) : undefined}
       tabIndex={active ? 0 : undefined}
       role={active ? "button" : undefined}
-      onFocus={active ? () => setShowTip(true) : undefined}
-      onBlur={active ? () => setShowTip(false) : undefined}
+      aria-label={active ? `Entity ${text}: ${label} sentiment (${sentiment.toFixed(2)})` : undefined}
     >
       {text}
       {active && showTip && (
-        <span className="nx-tooltip">
+        <span className="nx-tooltip" role="tooltip">
           <span className="nx-tooltip__label">Entity sentiment</span>
           <span className="nx-tooltip__value">
             {polarity === "warm" ? "Positive" : "Negative"} ({sentiment > 0 ? "+" : ""}{sentiment.toFixed(2)})
