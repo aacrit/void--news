@@ -336,6 +336,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             headlineBodyDivergence: rawFraming.headline_body_divergence ?? rawFraming.headlineBodyDivergence ?? 0,
             passiveVoiceScore: rawFraming.passive_voice_score ?? rawFraming.passiveVoiceScore ?? 0,
             hasClusterContext: rawFraming.has_cluster_context ?? rawFraming.hasClusterContext ?? false,
+            // Narrative X-Ray signal data
+            chargedMatches: rawFraming.charged_matches ?? rawFraming.chargedMatches ?? undefined,
+            entitiesFound: rawFraming.entities_found ?? rawFraming.entitiesFound ?? undefined,
+            entitiesMissing: rawFraming.entities_missing ?? rawFraming.entitiesMissing ?? undefined,
+            passiveMatches: rawFraming.passive_matches ?? rawFraming.passiveMatches ?? undefined,
           } : undefined;
 
           const mappedGemini = rawGemini ? {
