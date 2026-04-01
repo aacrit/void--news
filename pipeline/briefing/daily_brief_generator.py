@@ -190,7 +190,9 @@ long sentences appear in a row without a short one.
 
 AUDIO SCRIPT INSTRUCTIONS (return as "audio_script"):
 Two senior journalists briefing each other as equals — not newsreaders, not a \
-podcast. 4-5 minutes (800-1000 words). Each line starts with "A:" or "B:". \
+podcast. 4-5 minutes. HARD MINIMUM: 800 words. Target 800-1000 words. \
+Scripts under 700 words are REJECTED and regenerated — count your words. \
+Each line starts with "A:" or "B:". \
 No other formatting. No [MARKERS]. No segment labels.
 
 {HOST_A_BLOCK}
@@ -317,16 +319,17 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
 
-    # Audio script word count
+    # Audio script word count — hard floor triggers retry
     script_words = len(script.split()) if script.strip() else 0
     report["metrics"]["script_words"] = script_words
     if script.strip():
-        if script_words < 600:
-            msg = f"Audio script too short: {script_words} words (expected 600-1200)"
+        if script_words < 700:
+            msg = f"Audio script too short: {script_words} words (minimum 700)"
             report["warnings"].append(msg)
+            found.append(f"short_script({script_words}w)")
             print(f"  [quality][brief:{edition}] {msg}")
         elif script_words > 1200:
-            msg = f"Audio script too long: {script_words} words (expected 600-1200)"
+            msg = f"Audio script too long: {script_words} words (expected 800-1200)"
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
@@ -752,8 +755,9 @@ from the {LEAN_UPPER} ideological lens. Follow the structure: \
 opening → thesis → evidence → turn → close. \
 Never reference outlet names, "coverage," "sources," or "reporting." \
 Synthesize the facts — do not cite where they came from.
-3. "opinion_audio_script" — A single-voice editorial monologue. 3-4 minutes \
-(500-700 words). Someone at the editorial desk who has spent the day with \
+3. "opinion_audio_script" — A single-voice editorial monologue. 3-4 minutes. \
+HARD MINIMUM: 500 words. Target 500-700 words. Scripts under 450 words are \
+REJECTED — count your words. Someone at the editorial desk who has spent the day with \
 this story and has something to say. Not reading — TELLING. The difference: \
 a reader hits every word evenly; a teller emphasizes, pauses, speeds up, \
 gets quiet. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
@@ -968,6 +972,9 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                 if isinstance(opinion_audio, str) and opinion_audio.strip():
                     opinion_audio = opinion_audio.strip()
                     audio_words = len(opinion_audio.split())
+                    if audio_words < 450 and attempt == 0 and _brief_calls_remaining() > 0:
+                        print(f"  [opinion] Audio script too short: {audio_words} words (minimum 450) — retrying")
+                        continue
                     print(f"  [opinion] Audio script: {audio_words} words")
                 else:
                     # Fallback: synthesize audio script from opinion text.
