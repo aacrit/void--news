@@ -69,14 +69,6 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       {/* Summary */}
       <p className="story-card__summary">{story.summary}</p>
 
-      {/* Divergence badge — surfaces when sources actively disagree */}
-      {story.sigilData.divergenceFlag === "divergent" && story.deepDive?.divergence?.[0] && (
-        <p className="story-card__divergence">
-          <span className="story-card__divergence-icon" aria-hidden="true" />
-          {story.deepDive.divergence[0]}
-        </p>
-      )}
-
       {/* Footer: category · time · sources (left) | Sigil (right) */}
       <div className="story-card__footer">
         <div className="story-card__byline">
