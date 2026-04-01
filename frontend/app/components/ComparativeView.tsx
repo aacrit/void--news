@@ -2,13 +2,11 @@
 
 import { useMemo, useState } from "react";
 import type { StorySource } from "../lib/types";
-import NarrativeXray from "./NarrativeXray";
 
 /* ---------------------------------------------------------------------------
    ComparativeView — "Read All Sides"
    Groups sources into Left / Center / Right buckets.
    Clean layout: source logo + first 2 headlines per bucket.
-   Expandable Narrative X-Ray per source (charged synonyms, entity sentiment, omissions).
    --------------------------------------------------------------------------- */
 
 interface ComparativeViewProps {
@@ -60,7 +58,6 @@ const VISIBLE_LIMIT = 5;
 
 export default function ComparativeView({ sources, consensusPoints, divergencePoints }: ComparativeViewProps) {
   const [expandedBuckets, setExpandedBuckets] = useState<Record<string, boolean>>({});
-  const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
 
   const buckets: Record<string, StorySource[]> = useMemo(() => {
     const result: Record<string, StorySource[]> = { Left: [], Center: [], Right: [] };
@@ -146,102 +143,62 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                 {visibleItems.map((source, i) => {
                   const favicon = getFaviconUrl(source.url);
                   const title = source.articleTitle || source.name;
-                  const sourceKey = `${source.name}-${i}`;
-                  const isSourceExpanded = !!expandedSources[sourceKey];
-                  const hasXrayData = source.lensData?.framingRationale?.chargedMatches?.length
-                    || source.lensData?.framingRationale?.entitiesMissing?.length
-                    || (source.lensData?.leanRationale?.entitySentiments
-                      && Object.values(source.lensData.leanRationale.entitySentiments).some((s) => Math.abs(s) > 0.05));
-                  const hasExpandableContent = !!source.articleSummary && hasXrayData;
 
                   return (
-                    <article key={sourceKey} className="comp-view__item comp-view__item--wire">
-                      <div
-                        className="comp-view__wire-link"
-                        role={hasExpandableContent ? "button" : undefined}
-                        tabIndex={hasExpandableContent ? 0 : undefined}
-                        aria-expanded={hasExpandableContent ? isSourceExpanded : undefined}
-                        aria-label={`${source.name}: ${title}`}
-                        onClick={(e) => {
-                          if (hasExpandableContent) {
-                            e.preventDefault();
-                            setExpandedSources((prev) => ({ ...prev, [sourceKey]: !prev[sourceKey] }));
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (hasExpandableContent && (e.key === "Enter" || e.key === " ")) {
-                            e.preventDefault();
-                            setExpandedSources((prev) => ({ ...prev, [sourceKey]: !prev[sourceKey] }));
-                          }
-                        }}
-                        style={hasExpandableContent ? { cursor: "pointer" } : undefined}
-                      >
-                        {favicon && (
-                          <span className="comp-view__favicon-wrap">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={favicon}
-                              alt=""
-                              width={14}
-                              height={14}
-                              className="comp-view__favicon"
-                              loading="lazy"
-                              onError={(e) => {
-                                const wrap = e.currentTarget.parentElement;
-                                if (wrap) wrap.style.display = "none";
-                              }}
-                            />
-                          </span>
-                        )}
-                        <span className="comp-view__source-name text-data">{source.name}</span>
-                        <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
-                        <span className="comp-view__wire-title">{title}</span>
-                        {hasExpandableContent ? (
-                          <span
-                            className="comp-view__wire-arrow"
-                            aria-hidden="true"
-                            style={{
-                              display: "inline-block",
-                              transform: isSourceExpanded ? "rotate(90deg)" : "none",
-                              transition: "transform 150ms var(--ease-out)",
-                            }}
-                          >
-                            &#8250;
-                          </span>
-                        ) : source.url ? (
-                          <a
-                            href={source.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="comp-view__wire-arrow"
-                            aria-label={`Open ${source.name} article`}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            &#8250;
-                          </a>
-                        ) : null}
-                      </div>
-
-                      {/* Expanded X-Ray view */}
-                      {isSourceExpanded && source.articleSummary && (
-                        <div className="comp-view__xray-wrap">
-                          <NarrativeXray
-                            text={source.articleSummary}
-                            framingRationale={source.lensData?.framingRationale}
-                            leanRationale={source.lensData?.leanRationale}
-                          />
-                          {source.url && (
-                            <a
-                              href={source.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="comp-view__expand-btn"
-                              style={{ display: "inline-block", marginTop: "var(--space-2)" }}
-                            >
-                              Read full article &#8250;
-                            </a>
+                    <article key={`${source.name}-${i}`} className="comp-view__item comp-view__item--wire">
+                      {source.url ? (
+                        <a
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="comp-view__wire-link"
+                          aria-label={`${source.name}: ${title}`}
+                        >
+                          {favicon && (
+                            <span className="comp-view__favicon-wrap">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={favicon}
+                                alt=""
+                                width={14}
+                                height={14}
+                                className="comp-view__favicon"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const wrap = e.currentTarget.parentElement;
+                                  if (wrap) wrap.style.display = "none";
+                                }}
+                              />
+                            </span>
                           )}
-                        </div>
+                          <span className="comp-view__source-name text-data">{source.name}</span>
+                          <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
+                          <span className="comp-view__wire-title">{title}</span>
+                          <span className="comp-view__wire-arrow" aria-hidden="true">&#8250;</span>
+                        </a>
+                      ) : (
+                        <span className="comp-view__wire-link comp-view__wire-link--static">
+                          {favicon && (
+                            <span className="comp-view__favicon-wrap">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={favicon}
+                                alt=""
+                                width={14}
+                                height={14}
+                                className="comp-view__favicon"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const wrap = e.currentTarget.parentElement;
+                                  if (wrap) wrap.style.display = "none";
+                                }}
+                              />
+                            </span>
+                          )}
+                          <span className="comp-view__source-name text-data">{source.name}</span>
+                          <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
+                          <span className="comp-view__wire-title">{title}</span>
+                        </span>
                       )}
                     </article>
                   );
