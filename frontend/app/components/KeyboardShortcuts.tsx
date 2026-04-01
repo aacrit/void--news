@@ -14,6 +14,7 @@ const SHORTCUTS = [
   { keys: ["Enter"], action: "Open void --deep-dive" },
   { keys: ["Esc"], action: "Close panel" },
   { keys: ["\u2190", "\u2192"], action: "Prev/next story" },
+  { keys: ["\u2318", "K"], action: "Search stories" },
   { keys: ["?"], action: "Toggle this overlay" },
 ];
 

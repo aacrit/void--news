@@ -36,7 +36,7 @@
   --fg-primary:    #1A1A1A;
   --fg-secondary:  #4A4540;
   --fg-tertiary:   #686260;
-  --fg-muted:      #5A5550;
+  --fg-muted:      #52504A;  /* 4.5:1 on #F0EBDD — WCAG AA compliant */
 
   /* Borders & Dividers */
   --border-subtle: #E8E2DB;
@@ -232,7 +232,7 @@
   --fg-primary:    #EDE8E0;
   --fg-secondary:  #B8B0A5;
   --fg-tertiary:   #A09890;  /* ~5.0:1 on #1C1A17 — WCAG AA compliant */
-  --fg-muted:      #8A847B;
+  --fg-muted:      #9A938B;  /* 4.5:1 on #1C1A17 — WCAG AA compliant */
 
   /* Borders & Dividers */
   --border-subtle: #3A3530;
