@@ -60,9 +60,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
       <h2 className="lead-story__headline">{story.title}</h2>
 
       {/* Extended summary */}
-      <p className="lead-story__summary">
-        {story.summary.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")}
-      </p>
+      <p className="lead-story__summary">{story.summary}</p>
 
       {/* Footer: category · time (left) | Sigil (right) */}
       <div className="lead-story__footer">

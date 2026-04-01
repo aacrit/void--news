@@ -72,9 +72,7 @@ export default function MobileStoryCard({
         /* Hero layout: headline + summary + Sigil footer */
         <>
           <h2 className="msc__headline msc__headline--hero">{story.title}</h2>
-          <p className="msc__summary">
-            {story.summary.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")}
-          </p>
+          <p className="msc__summary">{story.summary}</p>
           <div className="msc__footer">
             <Sigil data={story.sigilData} size="lg" instant />
           </div>
