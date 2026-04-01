@@ -59,7 +59,7 @@
 
 .story-card:hover {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.005);
   will-change: transform;
 }
 
@@ -581,6 +581,7 @@
   border-bottom: var(--rule-strong);
   cursor: pointer;
   will-change: transform;
+  filter: var(--cin-warmth-near);
   transition:
     box-shadow 300ms 30ms var(--ease-out),
     transform  320ms var(--spring-snappy);
@@ -610,7 +611,7 @@
 
 .lead-story:hover {
   box-shadow: var(--shadow-card-lead-hover);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.005);
 }
 
 /* Hero press — slightly more give than story card (0.99 vs 0.995)
@@ -6223,33 +6224,24 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   mix-blend-mode: overlay;
 }
 
-/* Stage — frosted glass panel. Semi-transparent, blurred, with light
-   refraction edges. Content behind bleeds through at ~15% — cinematic depth. */
+/* Stage — warm broadsheet page floating in cinematic depth.
+   Paper surface, not glass. Double-rule top signals editorial authority. */
 .intro__stage {
   position: relative;
   width: min(520px, calc(100vw - 40px));
   max-height: calc(100vh - 80px);
   overflow-y: auto;
   overflow-x: hidden;
-  /* Glass morphism: semi-transparent bg + backdrop blur */
-  background: linear-gradient(
-    165deg,
-    rgba(var(--intro-glass-r, 245), var(--intro-glass-g, 240), var(--intro-glass-b, 228), 0.82),
-    rgba(var(--intro-glass-r, 245), var(--intro-glass-g, 240), var(--intro-glass-b, 228), 0.92) 60%,
-    rgba(var(--intro-glass-r, 245), var(--intro-glass-g, 240), var(--intro-glass-b, 228), 0.88)
-  );
-  backdrop-filter: blur(20px) saturate(1.3);
-  -webkit-backdrop-filter: blur(20px) saturate(1.3);
-  /* Layered borders: outer glow + inner light refraction + edge */
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Paper surface — warm broadsheet, not glass */
+  background: var(--bg-card);
+  /* Double rule top — editorial edition marker */
+  border: none;
+  border-top: 3px double var(--cin-amber);
+  /* Cinematic depth — paper floating in dark theater */
   box-shadow:
-    /* Outer cinematic depth */
-    0 32px 100px rgba(0, 0, 0, 0.4),
-    0 12px 40px rgba(0, 0, 0, 0.25),
-    /* Inner light refraction — top edge catch */
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    /* Inner glow — subtle warmth */
-    inset 0 0 60px rgba(255, 255, 255, 0.04);
+    0 32px 80px rgba(0, 0, 0, 0.35),
+    0 12px 32px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
   padding: var(--space-6) var(--space-6) var(--space-5);
   text-align: center;
   animation: introStageIn 700ms
@@ -6257,35 +6249,25 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     200ms both;
 }
 
-/* Top-edge light reflection — simulates overhead studio light */
+/* Paper grain overlay — newsprint texture on the card */
 .intro__stage::before {
   content: "";
   position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.5) 30%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0.5) 70%,
-    transparent
-  );
+  inset: 0;
+  background: var(--paper-texture);
+  opacity: 0.5;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
+  border-radius: inherit;
 }
 
-/* Dark mode glass variables */
+/* Dark mode paper */
 :root[data-mode="dark"] .intro__stage {
-  --intro-glass-r: 42;
-  --intro-glass-g: 39;
-  --intro-glass-b: 34;
-  border-color: rgba(255, 255, 255, 0.08);
+  border-top-color: var(--cin-amber-dim);
   box-shadow:
-    0 32px 100px rgba(0, 0, 0, 0.6),
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 0 60px rgba(255, 255, 255, 0.02);
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 12px 32px rgba(0, 0, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .intro--exiting .intro__stage {
@@ -6345,8 +6327,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .intro__progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-warm), rgba(200, 149, 108, 0.6));
-  box-shadow: 0 0 12px rgba(200, 149, 108, 0.4), 0 0 4px rgba(200, 149, 108, 0.6);
+  background: var(--cin-amber);
   transition: width 600ms var(--ease-out);
 }
 
@@ -6369,26 +6350,28 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .intro__skip:hover { color: var(--fg-tertiary); background-color: var(--bg-secondary); }
 .intro__skip:focus-visible { outline: 2px solid var(--accent-warm); outline-offset: 2px; }
 
-/* ---- Visual area — recessed glass well ---- */
+/* ---- Visual area — recessed paper inset ---- */
 .intro__visual {
   min-height: 180px;
   display: flex; align-items: center; justify-content: center;
   margin: 0 calc(var(--space-4) * -1) var(--space-4);
   padding: var(--space-5) var(--space-4);
   position: relative;
-  /* Recessed glass inset — content sits "inside" the panel */
-  background: linear-gradient(180deg, rgba(0,0,0,0.03), transparent 60%);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  z-index: 1;
+  /* Warm paper inset — slightly darker than card */
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 :root[data-mode="dark"] .intro__visual {
-  background: linear-gradient(180deg, rgba(0,0,0,0.15), transparent 60%);
-  border-top-color: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 /* ---- Text area (spring entrance per phase) ---- */
 .intro__text {
+  position: relative;
+  z-index: 1;
   animation: introTextIn 600ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1)
     both;
@@ -6405,7 +6388,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-weight: 700; line-height: 1.15;
   letter-spacing: -0.01em;
   color: var(--fg-primary);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .intro__body {
@@ -6415,10 +6398,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   line-height: 1.65;
   max-width: 38ch;
   margin: 0 auto var(--space-5);
+  text-align: justify;
+  text-align-last: center;
 }
 
 /* ---- Phase dots ---- */
 .intro__dots {
+  position: relative; z-index: 1;
   display: flex; justify-content: center;
   gap: 10px; margin-bottom: var(--space-4);
 }
@@ -6437,10 +6423,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .intro__dot--active {
-  background-color: var(--accent-warm);
-  border-color: var(--accent-warm);
+  background-color: var(--cin-amber);
+  border-color: var(--cin-amber);
   transform: scale(1.5);
-  box-shadow: 0 0 10px rgba(200, 149, 108, 0.5), 0 0 3px rgba(200, 149, 108, 0.8);
 }
 
 .intro__dot--done {
@@ -6452,6 +6437,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 /* ---- Action buttons ---- */
 .intro__actions {
+  position: relative; z-index: 1;
   display: flex; justify-content: center; margin-bottom: var(--space-2);
 }
 
@@ -6465,71 +6451,35 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 .intro__btn--next {
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent;
   color: var(--fg-tertiary);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-subtle);
 }
 .intro__btn--next:hover {
   color: var(--fg-secondary);
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
 }
 
 .intro__btn--primary {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.12),
-    transparent 40%
-  ), var(--accent);
+  background: var(--accent);
   color: var(--bg-primary);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.15),
-    0 0 20px rgba(200, 149, 108, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: introBtnPulse 2.5s ease-in-out 0.5s infinite;
+  font-family: var(--font-structural);
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   position: relative;
   overflow: hidden;
 }
 
-/* Glass highlight sweep — cinematic light pass */
-.intro__btn--primary::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%; right: -100%; bottom: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.2) 45%,
-    rgba(255, 255, 255, 0.3) 50%,
-    rgba(255, 255, 255, 0.2) 55%,
-    transparent 60%
-  );
-  animation: introSheen 3s ease-in-out 1.5s infinite;
-  pointer-events: none;
-}
-
-@keyframes introSheen {
-  0% { transform: translateX(-30%); }
-  100% { transform: translateX(130%); }
-}
-
 .intro__btn--primary:hover {
   transform: translateY(-1px);
-  box-shadow:
-    0 6px 24px rgba(0, 0, 0, 0.2),
-    0 0 32px rgba(200, 149, 108, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
 }
 
 .intro__btn:active { transform: scale(0.97); }
 .intro__btn:focus-visible { outline: 2px solid var(--accent-warm); outline-offset: 2px; }
 
-@keyframes introBtnPulse {
-  0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 0 20px rgba(200, 149, 108, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
-  50% { box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 0 36px rgba(200, 149, 108, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
-}
+/* (introBtnPulse removed — editorial buttons are quiet) */
 
 /* ═══ Phase illustrations — spring-animated SVGs ═══ */
 
@@ -6631,9 +6581,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .intro-ring__tier {
   font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary);
   padding: 2px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
   border-radius: 100px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-elevated);
   opacity: 0; transform: translateY(8px);
   transition: opacity 300ms var(--ease-out), transform 400ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
@@ -6651,12 +6601,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .intro-verdict__card {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
   min-width: 100px;
-  /* Glass card — semi-transparent with inner glow */
-  background: linear-gradient(165deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0,0,0,0.06);
+  /* Paper card — matches broadsheet surface */
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-e1);
   opacity: 0; transform: translateY(16px) scale(0.95);
   transition: opacity 400ms var(--ease-out), transform 500ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
@@ -6668,6 +6618,17 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 .intro-verdict__sub { font-size: var(--text-xs); color: var(--fg-muted); letter-spacing: 0.02em; }
 
+/* ---- Chapter number — Roman numeral section marker ---- */
+.intro__chapter {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: var(--cin-amber);
+  margin-bottom: var(--space-2);
+}
+
 /* ---- Subtitle (product labels under headlines) ---- */
 .intro__subtitle {
   font-family: var(--font-meta);
@@ -6675,7 +6636,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent-warm);
+  color: var(--cin-amber);
   margin-bottom: var(--space-1);
 }
 
@@ -6693,10 +6654,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 .intro-story-visual__tab {
   width: 48px; height: 56px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
   border-top: 3px solid var(--fg-muted);
   border-radius: 4px 4px 2px 2px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-elevated);
   opacity: 0; transform: translateY(12px);
   transition: opacity 300ms var(--ease-out), transform 400ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
@@ -6722,9 +6683,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   grid-template-rows: auto auto;
   gap: 0 var(--space-3);
   padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
   opacity: 0; transform: translateX(-12px);
   transition: opacity 300ms var(--ease-out), transform 400ms
     linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1);
@@ -6765,9 +6726,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .intro-audio__card {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
   padding: var(--space-4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
   min-width: 240px;
 }
 .intro-audio__cmd {
@@ -6815,8 +6776,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .intro-scale--active .intro-scale__line--post,
   .intro-scale--active .intro-scale__line--base,
   .intro-scale--active .intro-scale__beam,
-  .intro__dot, .intro__btn,
-  .intro__btn--primary::after {
+  .intro__dot, .intro__btn, .intro__chapter {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;

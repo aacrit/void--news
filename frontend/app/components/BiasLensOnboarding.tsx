@@ -35,54 +35,54 @@ interface Phase {
 const PHASES: Phase[] = [
   {
     id: "origin",
-    duration: 7000,
+    duration: 10000,
     headline: "void --news",
     subtitle: "See every side of the story",
-    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. The truth isn't in any single tab — it's in the space between them.",
+    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. The truth isn\u2019t in any single tab \u2014 it\u2019s in the space between them.",
     visual: "scale-draw",
   },
   {
     id: "why",
-    duration: 7000,
+    duration: 10000,
     headline: "The space between",
-    body: "We built void to live in that space. No editorial staff picking winners. No algorithm optimizing for outrage. Just 409 sources, scored on six axes, so you can see what every outlet chose to show you — and what they left out.",
+    body: "409 sources. Six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record. No editorial staff picking winners. No algorithm chasing clicks. Just the pattern, laid bare.",
     visual: "story",
   },
   {
     id: "lean",
-    duration: 6000,
+    duration: 9000,
     headline: "The Beam",
     subtitle: "Political lean at a glance",
-    body: "The scale tilts toward the lean of the coverage. Left, right, or balanced — not to judge, but so you know which direction the weight falls.",
+    body: "The beam tilts toward the lean of the coverage. Left, right, or balanced \u2014 not to judge, but so you know which direction the weight falls.",
     visual: "beam",
   },
   {
     id: "depth",
-    duration: 6000,
+    duration: 9000,
     headline: "The Ring",
     subtitle: "Coverage depth and breadth",
-    body: "A thin ring means one outlet is talking. A full ring means the world noticed. The fuller it gets, the more you can trust that the story has been pressure-tested by competing newsrooms.",
+    body: "A thin ring means one outlet is talking. A full ring means the world noticed. The fuller it gets, the more sources have pressure-tested the story from competing newsrooms.",
     visual: "ring",
   },
   {
     id: "products",
-    duration: 7000,
+    duration: 10000,
     headline: "Your daily toolkit",
-    body: "Everything in void is a command you run — transparent, no mystery behind the curtain.",
+    body: "Everything in void is a command \u2014 transparent, no mystery behind the curtain.",
     visual: "product",
   },
   {
     id: "audio",
-    duration: 6000,
+    duration: 9000,
     headline: "Listen, don\u2019t scroll",
-    body: "Two voices. One delivers the facts, the other asks the questions you\u2019d ask. Three minutes, no filler, no \u201Cthat\u2019s interesting.\u201D Just the story and why it matters.",
+    body: "Two voices. One delivers the facts, the other asks the questions you\u2019d ask. Five host pairs rotate to keep the perspective fresh. Three minutes, no filler \u2014 just the story and why it matters.",
     visual: "product-audio",
   },
   {
     id: "verdict",
-    duration: 7000,
+    duration: 10000,
     headline: "Read with clarity",
-    body: "Lean and depth together. A story reported broadly across the spectrum, from many credible sources — that\u2019s where confidence lives.",
+    body: "Lean and depth together. A story reported broadly across the spectrum, from many credible sources \u2014 that\u2019s where confidence lives.",
     visual: "verdict",
   },
 ];
@@ -299,10 +299,12 @@ function StoryVisual({ active }: { active: boolean }) {
 
 function ProductFamilyVisual({ active }: { active: boolean }) {
   const products = [
-    { cmd: "void --tl;dr", label: "The Daily Brief", desc: "Top stories, editorially weighed" },
-    { cmd: "void --opinion", label: "The Board", desc: "What the pattern reveals" },
-    { cmd: "void --sources", label: "Source Spectrum", desc: "409 sources on one axis" },
-    { cmd: "void --deep-dive", label: "Story Analysis", desc: "Every source, every score" },
+    { cmd: "void --tl;dr", label: "Daily Brief", desc: "Top stories, editorially weighed" },
+    { cmd: "void --onair", label: "Audio Broadcast", desc: "Two hosts, three minutes" },
+    { cmd: "void --opinion", label: "The Board", desc: "Editorial lean rotates daily" },
+    { cmd: "void --sources", label: "Source Spectrum", desc: "409 sources, one axis" },
+    { cmd: "void --deep-dive", label: "Deep Dive", desc: "Every source, every score" },
+    { cmd: "void --paper", label: "E-Paper", desc: "The broadsheet front page" },
   ];
 
   return (
@@ -343,8 +345,8 @@ function AudioProductVisual({ active }: { active: boolean }) {
           ))}
         </div>
         <div className="intro-audio__voices">
-          <span>Voice A: the facts</span>
-          <span>Voice B: the questions</span>
+          <span>Host A: the facts</span>
+          <span>Host B: the questions</span>
         </div>
       </div>
     </div>
@@ -595,6 +597,7 @@ export default function BiasLensOnboarding() {
           {/* Text area */}
           {currentPhase && (
             <div key={currentPhase.id} className="intro__text">
+              <span className="intro__chapter">{["I", "II", "III", "IV", "V", "VI", "VII"][phase]}</span>
               <h2 className="intro__headline">{currentPhase.headline}</h2>
               {currentPhase.subtitle && (
                 <p className="intro__subtitle">{currentPhase.subtitle}</p>
