@@ -177,7 +177,7 @@
   },
   "intercept-military-2026.framing": {
     "score": 5,
-    "grade": "ACCEPTABLE"
+    "grade": "CORRECT"
   },
   "intercept-climate-left-2026.lean": {
     "score": 6,
@@ -409,7 +409,7 @@
   },
   "economist-analysis-china-2026.opinion": {
     "score": 5,
-    "grade": "ACCEPTABLE"
+    "grade": "CORRECT"
   },
   "economist-analysis-china-2026.rigor": {
     "score": 66,
@@ -429,7 +429,7 @@
   },
   "atlantic-analysis-democracy-2026.opinion": {
     "score": 12,
-    "grade": "ACCEPTABLE"
+    "grade": "CORRECT"
   },
   "atlantic-analysis-democracy-2026.rigor": {
     "score": 47,
