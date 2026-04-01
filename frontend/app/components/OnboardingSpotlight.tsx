@@ -4,18 +4,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 
 /* ---------------------------------------------------------------------------
-   FirstVisitTooltips — 3-step spotlight tour for first-time visitors
+   OnboardingSpotlight — Act 2 of unified onboarding
 
-   Fires once on first visit (after 1500ms delay when `active` becomes true).
-   Teaches the three core concepts: Sigil, Lean filters, Deep Dive.
+   3-step spotlight tour that highlights real UI elements after the
+   carousel (Act 1) has taught concepts. Teaches: Sigil, lean filters,
+   deep dive.
 
-   sessionStorage key `void-tour-complete` gates re-display.
-   Overlay uses box-shadow spotlight trick (no clip-path).
-   Tooltip repositions on window resize.
-   Escape / Skip / backdrop click all dismiss.
+   Controlled by UnifiedOnboarding orchestrator via visible/onComplete/onSkip.
    --------------------------------------------------------------------------- */
-
-const STORAGE_KEY = "void-tour-complete";
 
 interface TourStep {
   selector: string;
@@ -26,8 +22,8 @@ interface TourStep {
 const STEPS: TourStep[] = [
   {
     selector: ".sigil",
-    title: "Your bias compass",
-    body: "The tilted scale shows political lean. The ring shows how many sources covered this story. Tap any story for the full picture.",
+    title: "Now see it live",
+    body: "The beam and ring you just learned about \u2014 here they are on a real story. Tap any sigil for the full breakdown.",
   },
   {
     selector: ".nav-filters__group",
@@ -49,9 +45,10 @@ interface Rect {
 }
 
 const PADDING = 8;
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 500;
 
 function getTargetRect(selector: string): Rect | null {
-  // Support comma-separated selectors — take first match
   const parts = selector.split(",").map((s) => s.trim());
   for (const sel of parts) {
     const el = document.querySelector<HTMLElement>(sel);
@@ -84,7 +81,6 @@ function computeTooltipPos(
   const viewW = window.innerWidth;
   const scrollY = window.scrollY;
 
-  // Prefer below the spotlight
   const spotBottom = spotRect.top + spotRect.height + PADDING;
   const spotTop = spotRect.top - PADDING;
   const spaceBelow = viewH + scrollY - spotBottom;
@@ -100,14 +96,11 @@ function computeTooltipPos(
     top = spotTop - GAP - tooltipHeight;
     arrowDir = "down";
   } else {
-    // Fallback: position below anyway
     top = spotBottom + GAP;
     arrowDir = "up";
   }
 
-  // Center horizontally on the spotlight
   let left = spotRect.left + spotRect.width / 2 - tooltipWidth / 2;
-  // Clamp to viewport
   left = Math.max(16 + window.scrollX, Math.min(left, viewW + window.scrollX - tooltipWidth - 16));
 
   return { top, left, arrowDir };
@@ -115,13 +108,15 @@ function computeTooltipPos(
 
 /* ── Main Component ─────────────────────────────────────────────────────── */
 
-interface FirstVisitTooltipsProps {
-  active: boolean;
+interface OnboardingSpotlightProps {
+  visible: boolean;
+  onComplete: () => void;
+  onSkip: () => void;
 }
 
-export default function FirstVisitTooltips({ active }: FirstVisitTooltipsProps) {
+export default function OnboardingSpotlight({ visible, onComplete, onSkip }: OnboardingSpotlightProps) {
   const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [ready, setReady] = useState(false);
   const [step, setStep] = useState(0);
   const [spotRect, setSpotRect] = useState<Rect | null>(null);
   const [tooltipPos, setTooltipPos] = useState<TooltipPos | null>(null);
@@ -129,11 +124,10 @@ export default function FirstVisitTooltips({ active }: FirstVisitTooltipsProps) 
   const [transitioning, setTransitioning] = useState(false);
 
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const dismissedRef = useRef(false);
-  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reducedMotion = useRef(false);
+  const retryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryCountRef = useRef(0);
 
-  // Mount check
   useEffect(() => {
     setMounted(true);
     reducedMotion.current = window.matchMedia(
@@ -141,67 +135,67 @@ export default function FirstVisitTooltips({ active }: FirstVisitTooltipsProps) 
     ).matches;
   }, []);
 
-  // Check sessionStorage and trigger tour
+  // Trigger entrance when visible
   useEffect(() => {
-    if (!mounted || !active || dismissedRef.current) return;
-    try {
-      if (sessionStorage.getItem(STORAGE_KEY)) {
-        dismissedRef.current = true;
-        return;
-      }
-    } catch {
-      /* sessionStorage blocked */
+    if (!mounted || !visible) {
+      setReady(false);
+      setStep(0);
+      retryCountRef.current = 0;
+      return;
     }
 
-    delayRef.current = setTimeout(() => {
-      setVisible(true);
-      setEntering(true);
-      // Allow enter animation to paint
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setEntering(false));
-      });
-    }, 1500);
+    setReady(true);
+    setEntering(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setEntering(false));
+    });
 
     return () => {
-      if (delayRef.current) clearTimeout(delayRef.current);
+      if (retryRef.current) clearTimeout(retryRef.current);
     };
-  }, [mounted, active]);
+  }, [mounted, visible]);
 
-  // Measure target and position tooltip whenever step changes or window resizes
+  // Measure target and position tooltip
   const measure = useCallback(() => {
-    if (!visible || dismissedRef.current) return;
+    if (!ready) return;
     const currentStep = STEPS[step];
     if (!currentStep) return;
 
     const rect = getTargetRect(currentStep.selector);
     if (!rect) {
-      // Target not found — try to skip to next step
+      // Retry up to MAX_RETRIES times before skipping
+      if (retryCountRef.current < MAX_RETRIES) {
+        retryCountRef.current++;
+        retryRef.current = setTimeout(measure, RETRY_DELAY);
+        return;
+      }
+      // Exhausted retries — skip to next step or finish
+      retryCountRef.current = 0;
       if (step < STEPS.length - 1) {
         setStep((s) => s + 1);
       } else {
-        dismiss();
+        onComplete();
       }
       return;
     }
 
+    retryCountRef.current = 0;
     setSpotRect(rect);
 
-    // Defer tooltip positioning to after render so we can measure tooltip size
     requestAnimationFrame(() => {
       const tooltipEl = tooltipRef.current;
       const tw = tooltipEl ? tooltipEl.offsetWidth : 320;
       const th = tooltipEl ? tooltipEl.offsetHeight : 200;
       setTooltipPos(computeTooltipPos(rect, tw, th));
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, step]);
+  }, [ready, step, onComplete]);
 
   useEffect(() => {
     measure();
   }, [measure]);
 
   useEffect(() => {
-    if (!visible) return;
+    if (!ready) return;
     const onResize = () => measure();
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onResize, { passive: true });
@@ -209,48 +203,37 @@ export default function FirstVisitTooltips({ active }: FirstVisitTooltipsProps) 
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onResize);
     };
-  }, [visible, measure]);
-
-  // Dismiss helper
-  const dismiss = useCallback(() => {
-    if (dismissedRef.current) return;
-    dismissedRef.current = true;
-    try {
-      sessionStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      /* ignore */
-    }
-    setVisible(false);
-  }, []);
+  }, [ready, measure]);
 
   // Advance to next step
   const advance = useCallback(() => {
     if (step >= STEPS.length - 1) {
-      dismiss();
+      onComplete();
       return;
     }
     setTransitioning(true);
+    retryCountRef.current = 0;
     const dur = reducedMotion.current ? 0 : 180;
     setTimeout(() => {
       setStep((s) => s + 1);
       setTransitioning(false);
     }, dur);
-  }, [step, dismiss]);
+  }, [step, onComplete]);
 
   // Keyboard handler
   useEffect(() => {
-    if (!visible) return;
+    if (!ready) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        dismiss();
+        onSkip();
       }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [visible, dismiss]);
+  }, [ready, onSkip]);
 
-  if (!mounted || !visible) return null;
+  if (!mounted || !ready) return null;
 
   const currentStep = STEPS[step];
   if (!currentStep) return null;
@@ -280,33 +263,28 @@ export default function FirstVisitTooltips({ active }: FirstVisitTooltipsProps) 
       aria-modal="true"
       aria-label={`Tour step ${step + 1} of ${STEPS.length}: ${currentStep.title}`}
     >
-      {/* Backdrop — click to advance */}
       <div
         className="tour__backdrop"
         onClick={advance}
         aria-hidden="true"
       />
 
-      {/* Spotlight cutout */}
       <div
         className="tour__spotlight"
         style={spotStyle}
         aria-hidden="true"
       />
 
-      {/* Tooltip card */}
       <div
         ref={tooltipRef}
         className={`tour__tooltip${tooltipPos?.arrowDir === "down" ? " tour__tooltip--above" : ""}${isEnteringOrTransitioning ? " tour__tooltip--animating" : ""}`}
         style={tooltipStyle}
       >
-        {/* Arrow */}
         <div
           className={`tour__tooltip-arrow tour__tooltip-arrow--${tooltipPos?.arrowDir || "up"}`}
           aria-hidden="true"
         />
 
-        {/* Step dots */}
         <div className="tour__dots" aria-hidden="true">
           {STEPS.map((_, i) => (
             <span
@@ -316,15 +294,13 @@ export default function FirstVisitTooltips({ active }: FirstVisitTooltipsProps) 
           ))}
         </div>
 
-        {/* Content */}
         <h3 className="tour__title">{currentStep.title}</h3>
         <p className="tour__body">{currentStep.body}</p>
 
-        {/* Actions */}
         <div className="tour__actions">
           <button
             className="tour__skip"
-            onClick={dismiss}
+            onClick={onSkip}
             type="button"
           >
             Skip tour

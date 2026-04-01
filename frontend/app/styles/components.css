@@ -6556,6 +6556,20 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   75% { transform: rotate(-6deg); }
 }
 
+/* Beam & Ring combined layout (unified onboarding phase 2) */
+.intro-beam-ring {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+  justify-content: center;
+}
+@media (max-width: 479px) {
+  .intro-beam-ring {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 /* Phase 1: Animated Beam (mirrors Sigil DataMark) */
 .intro-beam {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
@@ -7882,7 +7896,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .df:has(.story-card:hover) .story-card:not(:hover),
   .df:has(.lead-story:hover) .story-card:not(:hover),
   .df:has(.lead-story:hover) .lead-story:not(:hover),
-  .grid-medium:has(.story-card:hover) .story-card:not(:hover) {
+  .lead-section:has(.lead-story:hover) .lead-story:not(:hover),
+  .grid-medium:has(.story-card:hover) .story-card:not(:hover),
+  .grid-compact:has(.story-card:hover) .story-card:not(:hover) {
     opacity: var(--rack-dim-neighbor);
     filter: var(--rack-blur-neighbor);
     transform: var(--rack-recede-neighbor);
