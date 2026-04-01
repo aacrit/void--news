@@ -540,6 +540,28 @@
   -webkit-hyphens: auto;
 }
 
+/* Divergence badge — surfaces when sources actively disagree */
+.story-card__divergence {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-3);
+  border-left: 2px solid color-mix(in srgb, var(--bias-right) 60%, var(--accent-warm));
+  background: color-mix(in srgb, var(--bias-right) 4%, transparent);
+  border-radius: 0 4px 4px 0;
+}
+
+.story-card__divergence-icon::before {
+  content: "\2194"; /* ↔ */
+  font-size: var(--text-xs);
+  color: color-mix(in srgb, var(--bias-right) 70%, var(--accent-warm));
+}
+
 .story-card__footer {
   display: flex;
   align-items: center;

@@ -82,6 +82,8 @@ import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcu
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeed from "./MobileFeed";
+import SearchOverlay from "./SearchOverlay";
+const FirstVisitTooltips = dynamic(() => import("./FirstVisitTooltips"), { ssr: false });
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -215,6 +217,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Search overlay state
+  const [searchOpen, setSearchOpen] = useState(false);
+
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
@@ -307,6 +312,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setIsMobile(window.matchMedia("(max-width: 767px)").matches);
   }, []);
 
+  // Cmd+K / Ctrl+K to open search
+  useEffect(() => {
+    function handleCmdK(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    }
+    document.addEventListener("keydown", handleCmdK);
+    return () => document.removeEventListener("keydown", handleCmdK);
+  }, []);
+
   // Reset category filter, close DeepDive, and scroll to top when edition changes.
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
@@ -346,6 +363,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
   useEffect(() => {
     const controller = new AbortController();
+
+    // Stale-while-revalidate: show cached stories instantly on mount,
+    // then fetch fresh data in background and swap when ready.
+    try {
+      const cached = localStorage.getItem(`void-stories-${activeEdition}`);
+      if (cached && stories.length === 0) {
+        const parsed = JSON.parse(cached) as Story[];
+        if (parsed.length > 0) {
+          setStories(parsed);
+        }
+      }
+    } catch { /* localStorage unavailable */ }
 
     async function loadFromSupabase() {
       setIsLoading(true);
@@ -660,6 +689,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     }
   }, [selectedStory, filteredStories]);
 
+  // Search: when a result is selected, open its Deep Dive
+  const handleSearchSelect = useCallback((story: Story) => {
+    setSearchOpen(false);
+    handleStoryClick(story, new DOMRect());
+  }, [handleStoryClick]);
+
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
@@ -902,6 +937,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           />
         </DeepDiveErrorBoundary>
       )}
+
+      {/* Search overlay — Cmd+K */}
+      <SearchOverlay
+        stories={filteredStories}
+        onStorySelect={handleSearchSelect}
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+
+      {/* First-visit spotlight tour — 3-step intro to Sigil, filters, Deep Dive */}
+      <FirstVisitTooltips active={!isLoading && stories.length > 0} />
 
       {/* BiasLens onboarding — first-visit 3-slide carousel */}
       <BiasLensOnboarding />

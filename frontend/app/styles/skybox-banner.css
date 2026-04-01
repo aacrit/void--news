@@ -750,6 +750,195 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Collapsed Bar — single-line expandable summary
+   Lead story always visible above fold. Click to expand full editorial.
+   --------------------------------------------------------------------------- */
+
+.skb--collapsed {
+  padding: 0;
+  border-top: 2px solid var(--accent-warm);
+  border-bottom: 1px solid var(--border-subtle);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent-warm) 6%, var(--bg-primary)) 0%,
+      color-mix(in srgb, var(--accent-warm) 2%, var(--bg-primary)) 100%
+    );
+}
+
+.skb--collapsed .skb__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+}
+
+.skb__bar-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  color: inherit;
+  text-align: left;
+}
+
+.skb__bar-toggle:hover .skb__bar-excerpt {
+  color: var(--fg-secondary);
+}
+
+.skb__bar-human {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.skb__bar-cli {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.skb__bar-time {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.skb__bar-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.skb__bar-excerpt {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+  transition: color 150ms var(--ease-out);
+}
+
+.skb__bar-caret {
+  font-size: 10px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  transition: transform 200ms var(--ease-out);
+}
+
+.skb__bar-caret--up {
+  /* already using ▲ character */
+}
+
+/* Listen button in collapsed bar */
+.skb__bar-listen {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-warm);
+  background: var(--cin-amber-ghost);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  border-radius: 6px;
+  padding: var(--space-1) var(--space-3);
+  min-height: 36px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color 200ms, background 200ms;
+}
+
+.skb__bar-listen:hover {
+  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+.skb__bar-listen--active {
+  border-color: var(--accent-warm);
+  border-width: 2px;
+}
+
+.skb__bar-listen-icon {
+  font-size: 11px;
+}
+
+.skb__bar-listen-label {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.skb__bar-listen-cli {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.skb__bar-listen-dur {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  opacity: 0.7;
+}
+
+/* Expanded state header */
+.skb__expanded-header {
+  padding: var(--space-2) var(--space-4) 0;
+}
+
+.skb__collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  color: inherit;
+}
+
+.skb__collapse-btn:hover .skb__bar-human {
+  text-decoration: underline;
+}
+
+/* Expanded state: show OnAir human label */
+.skb__onair-human {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Dual label in editorial columns */
+.skb__label-human {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-secondary);
+  letter-spacing: 0.02em;
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
 
