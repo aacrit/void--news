@@ -4,20 +4,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 
 /* ---------------------------------------------------------------------------
-   BiasLensOnboarding — Origin story + product guide
+   OnboardingCarousel — Act 1 of unified onboarding
 
-   Redesigned flow: 7 phases that tell the void --news story, explain the
-   product family (--tl;dr, --onair, --opinion, --sources, --deep-dive),
-   and teach the visualization system (Beam, Ring).
+   5-phase modal carousel: origin story, beam & ring, product family,
+   audio broadcast, verdict. Teaches concepts abstractly before the
+   spotlight tour (Act 2) grounds them in real UI.
 
-   Trigger: 8th visit OR 3min idle on 1st visit — content comes first.
-   Always dismissible: Skip button, Esc, backdrop click.
-   localStorage tracks: visit count + dismissed state.
+   Controlled by UnifiedOnboarding orchestrator via visible/onComplete/onSkip.
    --------------------------------------------------------------------------- */
-
-const STORAGE_KEY = "void-news-intro-seen";
-const VISITS_KEY = "void-news-visit-count";
-const IDLE_TRIGGER_MS = 180_000; // 3 minutes idle before showing on 1st visit
 
 /* ── Phase definitions ─────────────────────────────────────────────────── */
 
@@ -26,10 +20,8 @@ interface Phase {
   duration: number;
   headline: string;
   body: string;
-  /** Optional subtitle below headline — used for product branding education */
   subtitle?: string;
-  /** Visual type for the illustration area */
-  visual: "scale-draw" | "story" | "beam" | "ring" | "product" | "product-audio" | "verdict";
+  visual: "story" | "beam-ring" | "product" | "product-audio" | "verdict";
 }
 
 const PHASES: Phase[] = [
@@ -38,31 +30,16 @@ const PHASES: Phase[] = [
     duration: 10000,
     headline: "void --news",
     subtitle: "See every side of the story",
-    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. The truth isn\u2019t in any single tab \u2014 it\u2019s in the space between them.",
-    visual: "scale-draw",
-  },
-  {
-    id: "why",
-    duration: 10000,
-    headline: "The space between",
-    body: "419 sources. Six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record. No editorial staff picking winners. No algorithm chasing clicks. Just the pattern, laid bare.",
+    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. void --news reads 419 sources across six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record \u2014 so you don\u2019t have to.",
     visual: "story",
   },
   {
-    id: "lean",
-    duration: 9000,
-    headline: "The Beam",
-    subtitle: "Political lean at a glance",
-    body: "The beam tilts toward the lean of the coverage. Left, right, or balanced \u2014 not to judge, but so you know which direction the weight falls.",
-    visual: "beam",
-  },
-  {
-    id: "depth",
-    duration: 9000,
-    headline: "The Ring",
-    subtitle: "Coverage depth and breadth",
-    body: "A thin ring means one outlet is talking. A full ring means the world noticed. The fuller it gets, the more sources have pressure-tested the story from competing newsrooms.",
-    visual: "ring",
+    id: "beam-ring",
+    duration: 10000,
+    headline: "Beam & Ring",
+    subtitle: "Lean and depth at a glance",
+    body: "The beam tilts toward the lean of the coverage. The ring fills as more sources cover the story. Together, they tell you: where does the weight fall, and how many newsrooms have pressure-tested it?",
+    visual: "beam-ring",
   },
   {
     id: "products",
@@ -90,7 +67,7 @@ const PHASES: Phase[] = [
 /* ── Spring easing (CSS linear() approximation of damped spring) ────── */
 const SPRING = "linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1)";
 
-/* ── Animated Beam SVG — mirrors the actual Sigil DataMark ────────────── */
+/* ── Animated Beam SVG ─────────────────────────────────────────────────── */
 
 function AnimatedBeam({ active }: { active: boolean }) {
   const [step, setStep] = useState(0);
@@ -118,21 +95,17 @@ function AnimatedBeam({ active }: { active: boolean }) {
 
   const value = SWEEP_VALUES[step];
   const color = SWEEP_COLORS[step];
-  // ±15° beam tilt — same formula as Sigil: (lean - 50) * 0.30
   const beamAngle = (value - 50) * 0.30;
 
   return (
     <div className="intro-beam" aria-hidden="true">
-      {/* Enlarged Sigil mark — beam + circle + post + base */}
       <svg width="200" height="160" viewBox="0 0 32 32" fill="none"
         strokeLinecap="round" strokeLinejoin="round"
         className="intro-beam__svg"
       >
-        {/* Void circle — faint background ring */}
         <circle cx="16" cy="13" r="9"
           stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
         />
-        {/* Coverage ring fill — static demo at ~70% */}
         <circle cx="16" cy="13" r="9"
           stroke={color} strokeWidth="1.8" strokeLinecap="round"
           strokeDasharray={`${active ? 0.7 * 2 * Math.PI * 9 : 0} ${2 * Math.PI * 9}`}
@@ -142,7 +115,6 @@ function AnimatedBeam({ active }: { active: boolean }) {
           }}
           opacity={0.9}
         />
-        {/* Beam group — tilts by lean */}
         <g style={{
           transformOrigin: "16px 13px",
           transform: `rotate(${active ? beamAngle : 0}deg)`,
@@ -152,29 +124,24 @@ function AnimatedBeam({ active }: { active: boolean }) {
             stroke={color} strokeWidth="1.8"
             style={{ transition: "stroke 400ms ease" }}
           />
-          {/* Left weight tick */}
           <line x1="6" y1="11.5" x2="6" y2="14.5"
             stroke={color} strokeWidth="1.4"
             style={{ transition: "stroke 400ms ease" }}
             opacity={0.85}
           />
-          {/* Right weight tick */}
           <line x1="26" y1="11.5" x2="26" y2="14.5"
             stroke={color} strokeWidth="1.4"
             style={{ transition: "stroke 400ms ease" }}
             opacity={0.85}
           />
         </g>
-        {/* Center post */}
         <line x1="16" y1="22" x2="16" y2="28"
           stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4}
         />
-        {/* Base */}
         <line x1="12" y1="28.5" x2="20" y2="28.5"
           stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3}
         />
       </svg>
-      {/* Spectrum bar below */}
       <div className="intro-beam__spectrum">
         <div className="intro-beam__spectrum-fill" />
       </div>
@@ -254,25 +221,6 @@ function AnimatedRing({ active }: { active: boolean }) {
   );
 }
 
-/* ── Scale Icon Draw Animation ─────────────────────────────────────────── */
-
-function ScaleIconDraw({ active }: { active: boolean }) {
-  return (
-    <div className={`intro-scale${active ? " intro-scale--active" : ""}`} aria-hidden="true">
-      <svg width="120" height="120" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="16" cy="13" r="9" className="intro-scale__void" />
-        <g className="intro-scale__beam">
-          <line x1="3" y1="13" x2="29" y2="13" className="intro-scale__line intro-scale__line--beam" />
-          <line x1="5" y1="11" x2="5" y2="15" className="intro-scale__line intro-scale__line--tick-l" />
-          <line x1="27" y1="11" x2="27" y2="15" className="intro-scale__line intro-scale__line--tick-r" />
-        </g>
-        <line x1="16" y1="22" x2="16" y2="29" className="intro-scale__line intro-scale__line--post" />
-        <line x1="12" y1="29" x2="20" y2="29" className="intro-scale__line intro-scale__line--base" />
-      </svg>
-    </div>
-  );
-}
-
 /* ── Story Visual — abstract "five tabs" illustration ──────────────────── */
 
 function StoryVisual({ active }: { active: boolean }) {
@@ -291,6 +239,17 @@ function StoryVisual({ active }: { active: boolean }) {
         ))}
       </div>
       <div className="intro-story-visual__void-line" />
+    </div>
+  );
+}
+
+/* ── Beam & Ring Combined Visual ──────────────────────────────────────── */
+
+function BeamAndRing({ active }: { active: boolean }) {
+  return (
+    <div className="intro-beam-ring" aria-hidden="true">
+      <AnimatedBeam active={active} />
+      <AnimatedRing active={active} />
     </div>
   );
 }
@@ -363,18 +322,15 @@ function MiniSigil({ lean, leanColor: lc, coverage, coverageColor }: {
   const circ = 2 * Math.PI * r;
   return (
     <svg width="48" height="48" viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round">
-      {/* Coverage ring */}
       <circle cx="16" cy="13" r={r} stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} />
       <circle cx="16" cy="13" r={r} stroke={coverageColor} strokeWidth="1.8"
         strokeDasharray={`${coverage * circ} ${circ}`}
         transform="rotate(-90 16 13)" opacity={0.9} />
-      {/* Beam */}
       <g style={{ transformOrigin: "16px 13px", transform: `rotate(${beamAngle}deg)` }}>
         <line x1="4" y1="13" x2="28" y2="13" stroke={lc} strokeWidth="1.8" />
         <line x1="6" y1="11.5" x2="6" y2="14.5" stroke={lc} strokeWidth="1.4" opacity={0.85} />
         <line x1="26" y1="11.5" x2="26" y2="14.5" stroke={lc} strokeWidth="1.4" opacity={0.85} />
       </g>
-      {/* Post + base */}
       <line x1="16" y1="22" x2="16" y2="28" stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4} />
       <line x1="12" y1="28.5" x2="20" y2="28.5" stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3} />
     </svg>
@@ -411,71 +367,51 @@ function VerdictDisplay({ active }: { active: boolean }) {
 
 function PhaseVisual({ visual, active }: { visual: Phase["visual"]; active: boolean }) {
   switch (visual) {
-    case "scale-draw": return <ScaleIconDraw active={active} />;
     case "story": return <StoryVisual active={active} />;
-    case "beam": return <AnimatedBeam active={active} />;
-    case "ring": return <AnimatedRing active={active} />;
+    case "beam-ring": return <BeamAndRing active={active} />;
     case "product": return <ProductFamilyVisual active={active} />;
     case "product-audio": return <AudioProductVisual active={active} />;
     case "verdict": return <VerdictDisplay active={active} />;
   }
 }
 
-/* ── Main Onboarding Component ─────────────────────────────────────────── */
+/* ── Main Carousel Component ──────────────────────────────────────────── */
 
-export default function BiasLensOnboarding() {
+interface OnboardingCarouselProps {
+  visible: boolean;
+  onComplete: () => void;
+  onSkip: () => void;
+}
+
+export default function OnboardingCarousel({ visible, onComplete, onSkip }: OnboardingCarouselProps) {
   const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [phase, setPhase] = useState(-1);
   const [exiting, setExiting] = useState(false);
   const [paused, setPaused] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reducedMotion = useRef(false);
+  const exitCallbackRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     setMounted(true);
     reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    try {
-      // Already dismissed — never show again
-      if (localStorage.getItem(STORAGE_KEY)) return;
-
-      // Track visit count
-      const visits = parseInt(localStorage.getItem(VISITS_KEY) || "0", 10) + 1;
-      localStorage.setItem(VISITS_KEY, String(visits));
-
-      if (visits >= 8) {
-        // Regular user (8+ visits): show after short delay (let content render first)
-        setTimeout(() => {
-          setVisible(true);
-          setTimeout(() => setPhase(0), reducedMotion.current ? 0 : 600);
-        }, 1500);
-      } else {
-        // Early visits: show after 3min idle (content first)
-        idleTimerRef.current = setTimeout(() => {
-          // Re-check — user might have navigated away
-          if (!localStorage.getItem(STORAGE_KEY)) {
-            setVisible(true);
-            setTimeout(() => setPhase(0), reducedMotion.current ? 0 : 600);
-          }
-        }, IDLE_TRIGGER_MS);
-      }
-    } catch { /* localStorage blocked — skip */ }
-
-    return () => {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    };
   }, []);
 
-  // Auto-advance phases — pauses when user interacts with content
+  // Start phase 0 when visible becomes true
+  useEffect(() => {
+    if (!mounted || !visible) return;
+    const delay = reducedMotion.current ? 0 : 600;
+    const timer = setTimeout(() => setPhase(0), delay);
+    return () => clearTimeout(timer);
+  }, [mounted, visible]);
+
+  // Auto-advance phases
   useEffect(() => {
     if (phase < 0 || phase >= PHASES.length - 1) return;
     if (reducedMotion.current) return;
     if (paused) {
-      // Clear any pending timer while paused
       if (timerRef.current) clearTimeout(timerRef.current);
       return;
     }
@@ -488,16 +424,17 @@ export default function BiasLensOnboarding() {
   const pauseAutoAdvance = useCallback(() => setPaused(true), []);
   const resumeAutoAdvance = useCallback(() => setPaused(false), []);
 
-  const dismiss = useCallback(() => {
+  const dismiss = useCallback((callback: () => void) => {
     if (exiting) return;
     setExiting(true);
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    try { localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
+    exitCallbackRef.current = callback;
     setTimeout(() => {
-      setVisible(false);
-      previousFocusRef.current?.focus();
-    }, 500);
+      callback();
+    }, reducedMotion.current ? 0 : 500);
   }, [exiting]);
+
+  const handleSkip = useCallback(() => dismiss(onSkip), [dismiss, onSkip]);
+  const handleComplete = useCallback(() => dismiss(onComplete), [dismiss, onComplete]);
 
   const skipToEnd = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -506,7 +443,7 @@ export default function BiasLensOnboarding() {
 
   // Focus trap + keyboard
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || !mounted) return;
     previousFocusRef.current = document.activeElement as HTMLElement;
 
     const timer = setTimeout(() => {
@@ -514,14 +451,14 @@ export default function BiasLensOnboarding() {
     }, 100);
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { dismiss(); return; }
+      if (e.key === "Escape") { handleSkip(); return; }
       if (e.key === "ArrowRight" || e.key === " ") {
         e.preventDefault();
         if (phase < PHASES.length - 1) {
           if (timerRef.current) clearTimeout(timerRef.current);
           setPhase((p) => Math.min(PHASES.length - 1, p + 1));
         } else {
-          dismiss();
+          handleComplete();
         }
       }
       if (e.key === "ArrowLeft" && phase > 0) {
@@ -545,7 +482,7 @@ export default function BiasLensOnboarding() {
     };
     document.addEventListener("keydown", onKey);
     return () => { clearTimeout(timer); document.removeEventListener("keydown", onKey); };
-  }, [visible, phase, dismiss]);
+  }, [visible, mounted, phase, handleSkip, handleComplete]);
 
   if (!mounted || !visible) return null;
 
@@ -555,7 +492,7 @@ export default function BiasLensOnboarding() {
 
   return createPortal(
     <div className={`intro${exiting ? " intro--exiting" : ""}`}>
-      <div className="intro__backdrop" aria-hidden="true" onClick={dismiss} />
+      <div className="intro__backdrop" aria-hidden="true" onClick={handleSkip} />
 
       <div
         ref={dialogRef}
@@ -569,12 +506,12 @@ export default function BiasLensOnboarding() {
           <div className="intro__progress-fill" style={{ width: `${progress}%` }} />
         </div>
 
-        {/* Skip — always visible, easy to reach */}
-        <button className="intro__skip" onClick={dismiss} aria-label="Skip introduction">
+        {/* Skip */}
+        <button className="intro__skip" onClick={handleSkip} aria-label="Skip introduction">
           Skip
         </button>
 
-        {/* Content area — pause auto-advance on interaction (mouse, touch, keyboard) */}
+        {/* Content area */}
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div
           onMouseEnter={pauseAutoAdvance}
@@ -583,7 +520,6 @@ export default function BiasLensOnboarding() {
           onTouchEnd={resumeAutoAdvance}
           onFocus={pauseAutoAdvance}
           onBlur={(e) => {
-            // Only resume if focus moves outside the dialog entirely
             if (!dialogRef.current?.contains(e.relatedTarget as Node)) {
               resumeAutoAdvance();
             }
@@ -597,7 +533,7 @@ export default function BiasLensOnboarding() {
           {/* Text area */}
           {currentPhase && (
             <div key={currentPhase.id} className="intro__text">
-              <span className="intro__chapter">{["I", "II", "III", "IV", "V", "VI", "VII"][phase]}</span>
+              <span className="intro__chapter">{["I", "II", "III", "IV", "V"][phase]}</span>
               <h2 className="intro__headline">{currentPhase.headline}</h2>
               {currentPhase.subtitle && (
                 <p className="intro__subtitle">{currentPhase.subtitle}</p>
@@ -631,7 +567,7 @@ export default function BiasLensOnboarding() {
               Skip to end
             </button>
           ) : (
-            <button className="intro__btn intro__btn--primary" onClick={dismiss} autoFocus>
+            <button className="intro__btn intro__btn--primary" onClick={handleComplete} autoFocus>
               Start reading
             </button>
           )}

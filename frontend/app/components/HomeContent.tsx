@@ -77,13 +77,12 @@ import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
-const BiasLensOnboarding = dynamic(() => import("./BiasLensOnboarding"), { ssr: false });
+const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeed from "./MobileFeed";
 import SearchOverlay from "./SearchOverlay";
-const FirstVisitTooltips = dynamic(() => import("./FirstVisitTooltips"), { ssr: false });
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -348,6 +347,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Persist edition preference to localStorage — returning visitors who land
   // on the root URL (/) will see their last-used edition instead of "world".
   // Also sync the URL so it always reflects the active edition.
+  // Set data-edition on <html> so CSS edition color grades activate.
   useEffect(() => {
     try {
       localStorage.setItem(EDITION_STORAGE_KEY, activeEdition);
@@ -359,6 +359,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (window.location.pathname !== path) {
       window.history.pushState({}, "", path);
     }
+    // Set data-edition on <html> — enables per-edition cinematic color grades
+    // (e.g., warmer sepia for India, cooler contrast for US) defined in CSS.
+    document.documentElement.setAttribute("data-edition", activeEdition);
   }, [activeEdition]);
 
   useEffect(() => {
@@ -709,7 +712,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       <main
         id="main-content"
-        className="page-main"
+        className="page-main anim-cold-open-feed"
         onTouchStart={handlePullStart}
         onTouchMove={handlePullMove}
         onTouchEnd={handlePullEnd}
@@ -946,11 +949,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         onClose={() => setSearchOpen(false)}
       />
 
-      {/* First-visit spotlight tour — 3-step intro to Sigil, filters, Deep Dive */}
-      <FirstVisitTooltips active={!isLoading && stories.length > 0} />
-
-      {/* BiasLens onboarding — first-visit 3-slide carousel */}
-      <BiasLensOnboarding />
+      {/* Unified onboarding — carousel (concepts) then spotlight tour (real UI) */}
+      <UnifiedOnboarding active={!isLoading && stories.length > 0} />
 
       {/* Keyboard shortcuts overlay — press ? to toggle */}
       <KeyboardShortcutsOverlay />
