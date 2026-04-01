@@ -43,6 +43,16 @@ export function leanLabel(v: number): string {
   return "Far Right";
 }
 
+export function leanLabelAbbr(v: number): string {
+  if (v <= 20) return "FL";
+  if (v <= 35) return "L";
+  if (v <= 45) return "CL";
+  if (v <= 55) return "C";
+  if (v <= 65) return "CR";
+  if (v <= 80) return "R";
+  return "FR";
+}
+
 export function senseLabel(v: number): string {
   if (v <= 25) return "Measured";
   if (v <= 50) return "Moderate";

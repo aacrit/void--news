@@ -6,7 +6,7 @@ import { hapticLight } from "../lib/haptics";
 
 /* Category → dot color mapping (CSS custom properties from tokens.css) */
 const CAT_DOT_COLORS: Record<string, string> = {
-  Politics: "var(--bias-left)",
+  Politics: "var(--cat-politics)",
   Conflict: "var(--cat-conflict)",
   Economy: "var(--accent-warm)",
   Science: "var(--cat-science)",

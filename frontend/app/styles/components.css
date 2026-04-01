@@ -216,6 +216,11 @@
   position: relative;
 }
 
+.sigil--sm .sigil__lean-label {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 /* ---- Sigil Popup — extracted from inline styles (F13) ----------------- */
 .sigil-popup__header {
   display: flex;
@@ -1908,6 +1913,45 @@
   white-space: nowrap;
 }
 
+.nav-edition-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-meta);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-secondary);
+}
+
+.nav-dateline-sep {
+  margin: 0 var(--space-1);
+  opacity: 0.4;
+}
+
+.nav-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: color 150ms var(--ease-out), background-color 150ms var(--ease-out);
+}
+
+.nav-search-btn:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+.nav-search-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
 /* Legacy aliases — no longer used in JSX but kept to avoid stray-ref crashes */
 .nav-dateline {
   display: none;
@@ -2239,7 +2283,7 @@
 .theme-toggle--placeholder {
   width: 44px;
   height: 44px;
-  opacity: 0;
+  opacity: 0.3;
 }
 
 .theme-toggle__icon {
