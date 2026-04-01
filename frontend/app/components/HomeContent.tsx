@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
 import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
+import { BASE_PATH } from "../lib/utils";
 import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar from "./NavBar";
@@ -171,7 +172,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (typeof window === "undefined") return initialEdition;
     // Only apply localStorage override at root URL — explicit /us or /india
     // routes should always honor their URL-specified edition.
-    const isRootUrl = window.location.pathname === "/" || window.location.pathname === "";
+    const p = window.location.pathname.replace(/\/+$/, "");
+    const isRootUrl = p === "" || p === BASE_PATH;
     if (isRootUrl && initialEdition === "world") {
       try {
         const saved = localStorage.getItem(EDITION_STORAGE_KEY);
@@ -355,7 +357,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       // localStorage unavailable — no-op
     }
     // Sync URL without triggering a full page reload
-    const path = activeEdition === "world" ? "/" : `/${activeEdition}`;
+    const path = activeEdition === "world" ? `${BASE_PATH}/` : `${BASE_PATH}/${activeEdition}/`;
     if (window.location.pathname !== path) {
       window.history.pushState({}, "", path);
     }
