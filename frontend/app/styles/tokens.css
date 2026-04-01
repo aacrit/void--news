@@ -278,6 +278,23 @@
   --dd-content-scale-from: 0.97;
   --dd-feed-scale: 0.997;
 
+  /* ── Scroll-Driven Animation ──
+     Ranges and rates for CSS animation-timeline: scroll()/view()
+     progressive enhancement. These tokens parameterize the scroll-driven
+     keyframes defined in animations.css so they can be tuned from one
+     place. The parallax range (300vh) means the background texture
+     displacement plays out over 3 viewport heights of scrolling. */
+  --scroll-parallax-range: 300vh;
+  --scroll-haze-entry-end: 80%;
+  --scroll-vignette-range: 200vh;
+
+  /* ── Lens Breathing — scroll direction change pulse ──
+     When the user reverses scroll direction, content micro-pulses to
+     simulate a camera refocusing. The pulse is 3/1000 scale change —
+     imperceptible consciously but felt subconsciously. */
+  --lens-breathe-scale: 1.003;
+  --lens-breathe-dur: 600ms;
+
   /* ── Practical Light — OnAir ambient warmth ──
      In cinematography, a "practical" is a visible light source within
      the frame (a lamp, a candle, a screen). The OnAir indicator is our

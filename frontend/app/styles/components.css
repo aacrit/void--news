@@ -7903,6 +7903,32 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   transition: filter 600ms var(--ease-steadicam), opacity 600ms var(--ease-steadicam);
 }
 
+/* ── Scroll-Driven Haze Clearing (Progressive Enhancement) ──
+   On browsers supporting view() timelines, the atmospheric haze
+   clears progressively as the card scrolls into the viewport,
+   rather than switching abruptly at the IO threshold. This creates
+   the Steadicam approach effect — continuous depth perception
+   rather than binary visible/hidden.
+
+   The filter transitions from --cin-haze-far (distant, desaturated)
+   through --cin-haze-mid (approaching) to none (sharp, present).
+   This layers on top of the IO-based class toggle. */
+@keyframes scrollHazeClear {
+  0%   { filter: var(--cin-haze-far); }
+  40%  { filter: var(--cin-haze-mid); }
+  100% { filter: none; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .story-card.anim-stagger--visible {
+      animation: scrollHazeClear linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+  }
+}
+
 /* ── Chromatic Aberration (Lead Story) ──
    Subtle red/blue fringing — the optical artifact of a fast lens at
    wide aperture. Sub-pixel offsets that the brain registers without
