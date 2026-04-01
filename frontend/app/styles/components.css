@@ -537,7 +537,7 @@
   max-width: 65ch;
   margin-bottom: var(--space-3);
   display: -webkit-box;
-  -webkit-line-clamp: 5;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   /* Newspaper norm: justified body copy with hyphenation.
