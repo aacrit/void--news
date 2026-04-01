@@ -7925,3 +7925,219 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     var(--shadow-card-hover),
     inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 80%, transparent);
 }
+
+
+/* ==========================================================================
+   FirstVisitTooltips — Spotlight Tour
+   3-step first-visit walkthrough. Overlay + spotlight cutout + tooltip card.
+   ========================================================================== */
+
+/* ── Overlay ── */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  pointer-events: none;
+}
+
+.tour__backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  /* Transparent — the spotlight's box-shadow provides the dimming */
+}
+
+/* ── Spotlight Cutout ── */
+.tour__spotlight {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  border: 2px solid var(--accent-warm);
+  pointer-events: none;
+  transition:
+    top 300ms var(--spring-smooth, var(--ease-out)),
+    left 300ms var(--spring-smooth, var(--ease-out)),
+    width 300ms var(--spring-smooth, var(--ease-out)),
+    height 300ms var(--spring-smooth, var(--ease-out));
+}
+
+/* ── Tooltip Card ── */
+.tour__tooltip {
+  position: absolute;
+  max-width: 320px;
+  width: calc(100vw - 32px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-4);
+  box-shadow: var(--shadow-e3);
+  pointer-events: auto;
+  z-index: 9501;
+  transform: scale(1);
+  opacity: 1;
+  transition:
+    top 300ms var(--spring-smooth, var(--ease-out)),
+    left 300ms var(--spring-smooth, var(--ease-out)),
+    transform 200ms var(--spring-smooth, var(--ease-out)),
+    opacity 200ms ease;
+}
+
+.tour__tooltip--animating {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+/* ── Arrow / Caret ── */
+.tour__tooltip-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.tour__tooltip-arrow--up {
+  top: -8px;
+  border-bottom: 8px solid var(--bg-elevated);
+}
+
+.tour__tooltip-arrow--down {
+  bottom: -8px;
+  border-top: 8px solid var(--bg-elevated);
+}
+
+/* ── Step Dots ── */
+.tour__dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: var(--space-3);
+}
+
+.tour__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--fg-muted) 30%, transparent);
+  transition: background 200ms ease;
+}
+
+.tour__dot--active {
+  background: var(--accent-warm);
+}
+
+/* ── Typography ── */
+.tour__title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.3;
+}
+
+.tour__body {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-4) 0;
+}
+
+/* ── Actions Row ── */
+.tour__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tour__next-btn {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  border: none;
+  border-radius: 6px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  transition: background 150ms ease;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tour__next-btn:hover {
+  background: color-mix(in srgb, var(--accent-warm) 18%, transparent);
+}
+
+.tour__next-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.tour__skip {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  min-height: 44px;
+  min-width: 44px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: color 150ms ease;
+}
+
+.tour__skip:hover {
+  color: var(--fg-secondary);
+}
+
+.tour__skip:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ── Enter animation (overlay fade) ── */
+.tour--entering .tour__backdrop {
+  animation: tourFadeIn 200ms ease forwards;
+}
+
+.tour--entering .tour__spotlight {
+  animation: tourFadeIn 200ms ease forwards;
+}
+
+@keyframes tourFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .tour__spotlight {
+    transition: none;
+  }
+  .tour__tooltip {
+    transition: none;
+  }
+  .tour__tooltip--animating {
+    transform: none;
+    opacity: 1;
+  }
+  .tour__dot {
+    transition: none;
+  }
+  .tour__next-btn,
+  .tour__skip {
+    transition: none;
+  }
+  .tour--entering .tour__backdrop,
+  .tour--entering .tour__spotlight {
+    animation: none;
+  }
+}
