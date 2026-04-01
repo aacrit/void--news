@@ -1,5 +1,5 @@
 """
-Importance/impact ranker v5.1 for the void --news pipeline.
+Importance/impact ranker v5.5 for the void --news pipeline.
 
 Scores story clusters by importance for feed ordering on the homepage.
 Higher scores appear first in the news feed.
@@ -49,6 +49,16 @@ v4.0 calibration changes (2026-03-20):
     - Perspective diversity: 10% → 6% (partially redundant with tier diversity)
     - Recency + velocity merged into maturity (14% + 9% → 16%)
     - Confidence multiplier: unchanged (0.65 + 0.35 * conf)
+
+v5.5 calibration changes (2026-03-31):
+    - ADD: kidnapping/hostage/seizure consequentiality terms (15 new terms).
+      Benchmark found "American Journalist Kidnapped" scoring 0 consequentiality.
+    - FIX: Confidence floor 0.85 for 15+ source clusters. Brief wire articles
+      in large clusters dragged p25 confidence down, penalizing major stories.
+    - FIX: Cross-spectrum bonus threshold relaxed from 35/65 to 38/62.
+      35-source Iran cluster missed bonus with min_lean=36 (1 point above cutoff).
+    - FIX: Tier concentration penalty exempts clusters with all 3 tiers
+      represented. 89% international on global stories is natural, not inflation.
 
 v3.1 optimizations (retained):
     - Source map built once, shared across all sub-functions
@@ -184,6 +194,14 @@ _CONSEQUENTIALITY_TERMS: list[str] = [
     "suspends", "suspended", "freezes", "froze",
     "launches", "launched", "declares", "declared",
     "indicted", "indicts",
+    # v5.5: kidnapping/hostage + seizure verbs (ranker benchmark finding:
+    # "American Journalist Kidnapped in Baghdad" scored 0 consequentiality)
+    "kidnapped", "kidnaps", "kidnapping",
+    "abducted", "abducts", "abduction",
+    "hostage", "taken hostage", "held hostage",
+    "seized", "seizes", "seizure",
+    "confiscated", "confiscates",
+    "nationalized", "nationalizes",
 ]
 
 # Pre-compile regex with word boundaries to prevent false matches
@@ -385,13 +403,15 @@ def _source_coverage_score(
 
     raw_count = len(seen_sources)
 
-    # v5.1: Tier concentration penalty — when >70% of sources are from
-    # the same tier, the coverage is likely wire roundup inflation
-    # (9 us_major outlets all running the same AP story).
-    # Apply 0.85x to weighted count to deflate the score.
+    # v5.5: Tier concentration penalty — fire only when coverage is
+    # genuinely single-tier dominated. Exempt clusters with 3 tiers
+    # (all tiers represented = genuine cross-tier coverage, even if
+    # one tier dominates by count). Benchmark finding: 89% international
+    # on a 35-source geopolitical story is natural, not inflation.
     if raw_count >= 4:
         max_tier_pct = max(tier_counts.values()) / raw_count if tier_counts else 0
-        if max_tier_pct > 0.70:
+        num_tiers = len(tier_counts)
+        if max_tier_pct > 0.70 and num_tiers < 3:
             weighted_count *= 0.85
 
     # Diminishing returns: 100 * (1 - e^(-weighted_count/5))
@@ -1120,8 +1140,10 @@ def rank_importance(
             if bs.get("political_lean") is not None
         ]
         if len(lean_vals) >= 3:
-            has_left = any(v < 35.0 for v in lean_vals)
-            has_right = any(v > 65.0 for v in lean_vals)
+            # v5.5: Relaxed from 35/65 to 38/62 (benchmark finding: 35-source
+            # Iran cluster missed bonus with min_lean=36, one point above cutoff)
+            has_left = any(v < 38.0 for v in lean_vals)
+            has_right = any(v > 62.0 for v in lean_vals)
             if has_left and has_right:
                 # Scale bonus by how far apart the extremes are (0-4.0 pts)
                 lean_spread = max(lean_vals) - min(lean_vals)
@@ -1142,9 +1164,14 @@ def rank_importance(
         headline_rank += adjustment
 
     # Confidence multiplier: discount low-confidence clusters.
-    # v3.3: softened curve — 0.65 + 0.35 * confidence.
-    # Maps: 0.0→0.65, 0.5→0.825, 0.7→0.895, 1.0→1.0
+    # v5.5: For high-source clusters (15+), raise the floor to 0.85.
+    # Brief wire articles in large clusters drag down p25 confidence,
+    # but 15+ sources covering a story is itself a confidence signal.
+    # (Benchmark finding: 35-source Iran story got 0.797 mult vs 0.902
+    # for a 10-source story, a 12.5% swing that undervalued major news.)
     conf_mult = 0.65 + 0.35 * max(0.0, min(1.0, cluster_confidence))
+    if source_count >= 15:
+        conf_mult = max(conf_mult, 0.85)
     headline_rank *= conf_mult
 
     # v5.3: Longevity penalty — old stories decay to prevent "consensus noise"
