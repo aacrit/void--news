@@ -6,16 +6,25 @@
 
 /* ---- Story Card -------------------------------------------------------- */
 /*
- * Interaction philosophy: paper on a wooden desk.
- * Hover → card lifts slightly, shadow grows underneath, edges soften.
- * The shadow trails the lift (light physics: shadow lags behind matter).
- * Active → card compresses like paper under a finger, shadow collapses.
- * Release → spring bounce-back, card settles with physical authority.
+ * ══ Dolly In — Motivated Card Hover ══
  *
- * Three-layer transition timing:
- *   background  — fastest (instant pointer awareness, 120ms)
- *   transform   — spring-snappy (physical lift with slight overshoot, 320ms)
- *   box-shadow  — ease-out, 30ms delay (shadows lag behind matter, 300ms + 30ms)
+ * The camera approaches the subject. In Deakins' "Blade Runner 2049,"
+ * the camera's slow dolly-in on a subject creates physical intimacy
+ * without cutting to a close-up. The card hover recreates this:
+ *
+ *   1. Surface warms (key light brightens the paper) — 120ms
+ *   2. Card lifts toward camera (translateY -2px, scale 1.005) — spring 320ms
+ *   3. Shadow deepens and spreads (light physics: shadow lags matter) — 300ms + 30ms delay
+ *
+ * The shadow lag (30ms delay) is the critical detail — in reality, when
+ * an object moves, its shadow follows with a slight delay because light
+ * travels in straight lines from the key source. This physics-aware
+ * timing is what separates cinematic hover from generic hover.
+ *
+ * Active (press): Instant compression (60ms) — the tactile response of
+ * pressing paper against a surface. Shadow collapses because the card
+ * is now flush with the desk. Release: spring bounce-back provides the
+ * "physical authority" of a card settling after being handled.
  */
 .story-card {
   position: relative;
@@ -26,7 +35,7 @@
   transition:
     background-color 120ms var(--ease-out),
     box-shadow      300ms 30ms var(--ease-out),
-    transform       320ms var(--spring-snappy);
+    transform       var(--scene-dolly-in) var(--spring-snappy);
   /* Mobile separator token — hairline iOS-convention border.
      Referenced by the max-width: 767px block. Toggling --separator-mobile
      here is the single-point change for the mobile card border weight. */
@@ -7824,39 +7833,80 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   animation: cin-grain-drift 8s steps(3, end) infinite;
 }
 
-/* ── Rack Focus (Desktop Hover) ── */
+/* ══ SCENE 3: Rack Focus (Desktop Hover) ══
+   When the viewer hovers a story card, the camera "racks focus" to that
+   card. Everything outside the focal plane softens — blur, dimming, and
+   micro-recession create genuine depth-of-field, not just a highlight.
+
+   This is the Deakins hallmark: one subject is razor-sharp while the
+   world behind it becomes an impressionist wash. The transition timing
+   (--rack-focus-dur: 600ms at --rack-focus-ease) is deliberately slower
+   than a typical hover effect — it mimics the physical rotation speed
+   of a lens barrel pulling focus.
+
+   The hovered card gets:
+   - Elevated shadow (dolly in: card approaches the camera)
+   - Rim light (key light catch on the edge — Deakins top-left motivation)
+   - No blur (sharp: the focal plane)
+
+   Non-hovered cards get:
+   - Defocus blur (--focus-soft: 1.5px — T2.8 equivalent)
+   - Dimming (opacity reduction — exposure falloff)
+   - Micro-recession (scale 0.997 — perspective depth)
+
+   The CSS :has() selector makes this zero-JS — the browser engine
+   handles the rack focus natively via GPU-composited properties. */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .df:has(.story-card:hover) .story-card:not(:hover),
   .df:has(.lead-story:hover) .story-card:not(:hover),
   .df:has(.lead-story:hover) .lead-story:not(:hover),
   .grid-medium:has(.story-card:hover) .story-card:not(:hover) {
-    opacity: var(--rack-dim-neighbor, 0.65);
+    opacity: var(--rack-dim-neighbor);
     filter: var(--rack-blur-neighbor);
-    transform: var(--rack-recede-neighbor, scale(0.998));
-    transition: opacity var(--rack-focus-dur) var(--rack-focus-ease),
-                filter var(--rack-focus-dur) var(--rack-focus-ease),
-                transform var(--rack-focus-dur) var(--rack-focus-ease);
+    transform: var(--rack-recede-neighbor);
+    transition:
+      opacity var(--rack-focus-dur) var(--rack-focus-ease),
+      filter var(--rack-focus-dur) var(--rack-focus-ease),
+      transform var(--rack-focus-dur) var(--rack-focus-ease);
   }
 
+  /* Hovered card: sharp focal plane with dolly-in shadow elevation
+     and rim light from the key (top-left). The inset shadow creates
+     a subtle edge-light that simulates a physical light source
+     catching the card's beveled edge. */
   .story-card:hover {
     box-shadow:
       var(--shadow-card-hover),
       inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 60%, transparent),
       inset -1px -1px 0 0 color-mix(in srgb, var(--cin-ash-warm, #78716C) 4%, transparent);
   }
+
+  /* Lead story rack focus: larger card warrants stronger shadow depth. */
+  .lead-story:hover {
+    box-shadow:
+      var(--shadow-card-lead-hover),
+      inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 50%, transparent);
+  }
 }
 
-/* ── Atmospheric Haze ── */
+/* ── Atmospheric Haze ──
+   Distant elements (not yet scrolled into view) have reduced saturation
+   and slight brightness reduction — simulating atmospheric perspective
+   where objects further from the camera appear muted and hazy. As the
+   Steadicam approaches (scroll into view), the haze clears. */
 .story-card:not(.anim-stagger--visible) {
   filter: var(--cin-haze-far);
-  transition: filter 600ms var(--ease-out), opacity 600ms var(--ease-out);
+  transition: filter 600ms var(--ease-steadicam), opacity 600ms var(--ease-steadicam);
 }
 .story-card.anim-stagger--visible {
   filter: none;
-  transition: filter 600ms var(--ease-out), opacity 600ms var(--ease-out);
+  transition: filter 600ms var(--ease-steadicam), opacity 600ms var(--ease-steadicam);
 }
 
-/* ── Chromatic Aberration (Lead Story) ── */
+/* ── Chromatic Aberration (Lead Story) ──
+   Subtle red/blue fringing — the optical artifact of a fast lens at
+   wide aperture. Sub-pixel offsets that the brain registers without
+   consciously noticing. */
 .lead-story__headline {
   text-shadow:
     -0.4px 0 rgba(180, 60, 40, 0.015),
@@ -7868,7 +7918,26 @@ a.footer-products__item:hover { color: var(--accent-warm); }
      0.4px 0 rgba(40, 60, 180, 0.02);
 }
 
-/* ── Anamorphic Flare (OnAir Active) ── */
+/* ══ SCENE 7: Practical Light System — OnAir Warmth Propagation ══
+   When audio is playing, the OnAir button becomes a "practical light"
+   in the scene — a visible light source that emits warmth affecting
+   nearby elements. This is Bradford Young's approach in "Arrival":
+   every light in the frame has a motivated source, and its warmth
+   radiates with inverse-square falloff.
+
+   The system has three layers:
+   1. Anamorphic flare: horizontal light streak on the button itself
+   2. Warm background tint: the skybox banner surface warms up
+   3. Ambient glow: subtle shadow radiation from the practical
+
+   The :has() selector propagates the warmth without JS — when the
+   onair button has the --active class, the parent skybox shifts its
+   background-color to --cin-practical-warmth. */
+
+/* Layer 1: Anamorphic flare — horizontal light streak.
+   Simulates the horizontal smear artifact of an anamorphic lens
+   catching a practical light source. The flare is wider than the
+   button (left/right: -100%) and fades at the edges. */
 .skb__onair-btn--active::before {
   content: "";
   position: absolute;
@@ -7895,10 +7964,39 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   content: none;
 }
 
-/* ── Theme Dissolve ──
-   Uses individual transition-* properties to AVOID overwriting
-   existing transition shorthand on .story-card and .lead-story
-   (which set transform 320ms spring-snappy, box-shadow 300ms 30ms). */
+/* Layer 2: Warm background propagation — skybox warms when audio plays.
+   The background-color shifts to --cin-practical-warmth (amber 4% mix).
+   Uses :has() to detect the active OnAir state from the parent. */
+@media (prefers-reduced-motion: no-preference) {
+  .skb:has(.skb__onair-btn--active),
+  .skb:has(.skb__bar-listen--active) {
+    background-color: var(--cin-practical-warmth);
+    transition:
+      background-color 800ms var(--ease-cinematic),
+      border-color 450ms var(--ease-cinematic);
+  }
+}
+
+/* ══ SCENE 8: Theme Dissolve ══
+   A cross-dissolve between Morning Edition (light) and Evening Edition
+   (dark). In film, a dissolve is the gradual replacement of one image
+   with another — both are visible simultaneously during the transition,
+   creating a brief "golden hour" warmth as the exposures overlap.
+
+   The .cin-golden-hour class (applied momentarily by ThemeToggle.tsx)
+   fires the cinGoldenHourPulse keyframe on .page-main and .nav-header,
+   producing a warm saturation peak at 40% through the dissolve.
+
+   Timing breakdown:
+   - background-color: 500ms (the slow exposure shift — primary dissolve)
+   - color: 400ms (text reacts slightly faster — ink adapts before paper)
+   - border-color: 450ms (structural lines follow the paper)
+   - box-shadow: 500ms (shadow depth shifts with ambient exposure)
+   - filter: 400ms (color grade shifts — the post-processing adaptation)
+
+   Each element transitions independently (not a single page-level
+   transition) because different materials respond to light at different
+   speeds — paper (background) is slower than ink (text). */
 @media (prefers-reduced-motion: no-preference) {
   body,
   .deep-dive-panel,
@@ -7906,35 +8004,33 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .filter-chip,
   .site-footer {
     transition:
-      background-color 500ms var(--ease-cinematic),
+      background-color var(--scene-dissolve) var(--ease-cinematic),
       color 400ms var(--ease-cinematic),
       border-color 450ms var(--ease-cinematic),
-      box-shadow 500ms var(--ease-cinematic);
+      box-shadow var(--scene-dissolve) var(--ease-cinematic);
   }
-  /* .page-main and .nav-header carry filter: var(--cin-grade) — include
-     filter in the dissolve so color grade transitions smoothly on theme change */
   .page-main,
   .nav-header {
     transition:
-      background-color 500ms var(--ease-cinematic),
+      background-color var(--scene-dissolve) var(--ease-cinematic),
       color 400ms var(--ease-cinematic),
       border-color 450ms var(--ease-cinematic),
-      box-shadow 500ms var(--ease-cinematic),
+      box-shadow var(--scene-dissolve) var(--ease-cinematic),
       filter 400ms var(--ease-out);
   }
-  /* story-card and lead-story: preserve existing hover transitions,
-     add theme dissolve properties without overwriting transform/box-shadow timing */
+  /* story-card and lead-story: preserve hover transitions (dolly-in
+     transform + shadow lag), layer theme dissolve underneath */
   .story-card {
     transition:
-      background-color 500ms var(--ease-cinematic),
+      background-color var(--scene-dissolve) var(--ease-cinematic),
       color 400ms var(--ease-cinematic),
       border-color 450ms var(--ease-cinematic),
       box-shadow 300ms 30ms var(--ease-out),
-      transform 320ms var(--spring-snappy);
+      transform var(--scene-dolly-in) var(--spring-snappy);
   }
   .lead-story {
     transition:
-      background-color 500ms var(--ease-cinematic),
+      background-color var(--scene-dissolve) var(--ease-cinematic),
       color 400ms var(--ease-cinematic),
       border-color 450ms var(--ease-cinematic),
       box-shadow 300ms 30ms var(--ease-out);

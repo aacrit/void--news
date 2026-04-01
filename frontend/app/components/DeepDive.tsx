@@ -449,16 +449,27 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     const hasMorph = originRect && originRect.width > 0 && panelRef.current;
 
     if (hasMorph) {
-      /* ═══ FLIP MORPH: card expands into panel ═══
-         Choreography:
-         1. Backdrop blur fades in (feed goes soft behind the card)
-         2. Panel appears at the card's exact rect
-         3. Panel morphs from card → final panel rect (spring physics)
-         4. Content cascades in after morph settles
+      /* ═══ SCENE 4: MATCH CUT — Card expands into Deep Dive panel ═══
+         Cinematic reference: Kubrick match cuts (2001 bone → satellite).
+         The headline maintains visual continuity from its card position
+         to its panel position — the viewer's eye never loses the subject.
 
-         The panel is position:fixed with opacity:0 in CSS. We need to
-         measure its final rect. We briefly make it visible but off-screen
-         via the morphStyle override, then compute the inverse transform. */
+         Choreography (L-cut timing — content begins before morph settles):
+         1. Backdrop blur fades in → feed goes shallow DoF (Deakins chiaroscuro)
+         2. Panel snaps to card's exact rect (first frame of the match cut)
+         3. Panel morphs card → final rect via spring-bouncy (500ms)
+            - Shadow depth increases during morph (dolly in: approaching)
+            - Border-radius transitions (card edge → panel edge)
+            - Box-shadow ramps from e0 → cinematic-dramatic
+         4. Content cascades in at ~40% morph completion (L-cut: new scene
+            audio starts before old scene visual completes)
+         5. Studio reflection ::before fades in after panel settles
+
+         The L-cut offset (content at 180ms into a 500ms morph = 36%) is
+         motivated: the viewer needs to see the content "behind" the panel
+         before the panel finishes its physical movement. This creates the
+         sensation that the Deep Dive was always there — the camera merely
+         revealed it. */
 
       const isDesktopNow = window.innerWidth >= 1024;
 
@@ -509,15 +520,25 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           transition: "none",
         });
 
-        // Step 4: Animate from card → final with spring physics.
+        // Step 4: Match cut morph — card position → final panel position.
         // setTimeout(0) guarantees the snap frame paints before the
         // transition begins — more reliable than nested rAF on 90/120Hz.
+        //
+        // The spring-bouncy easing (500ms) provides the dramatic overshoot
+        // that makes the panel feel like it has physical mass — it arrives
+        // with momentum, overshoots slightly, then settles into position.
+        // This is the Spielberg "motivated camera" approach: the camera
+        // movement has weight and inertia.
+        //
+        // Shadow ramps from e0 → cinematic-lifted (maximum depth) with
+        // a 60ms delay — shadows lag matter, consistent with the card
+        // hover dolly-in physics throughout the system.
         setTimeout(() => {
           setMorphStyle({
             transform: finalTransform,
             borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
             opacity: 1,
-            boxShadow: "var(--shadow-cinematic-dramatic)",
+            boxShadow: "var(--shadow-cinematic-lifted)",
             transition: [
               "transform 500ms var(--spring-bouncy)",
               "border-radius 350ms var(--spring-bouncy)",
@@ -525,13 +546,18 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             ].join(", "),
           });
 
-          // Content layers in as the panel settles (~50% through spring)
+          // L-cut: content cascades in while morph is still settling.
+          // At 180ms (36% of 500ms morph), the panel is mid-spring —
+          // this overlap creates the cinematic sensation that the content
+          // was always there and the camera merely revealed it.
           setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
 
           // Clear morph style after spring fully settles
           setTimeout(() => {
             setMorphStyle(null);
-            // Signal CSS that the panel has settled — enables studio reflection ::before fade-in
+            // Signal CSS that the panel has settled — enables studio
+            // reflection ::before fade-in (the key light catching the
+            // top edge of the panel, like a glass refraction artifact).
             panelRef.current?.setAttribute('data-settled', '');
           }, 550);
         }, 0);
@@ -626,12 +652,27 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     setContentVisible(false);
 
     if (originRect && originRect.width > 0 && panelRef.current) {
-      /* ═══ REVERSE MORPH: panel collapses back into the card ═══
+      /* ═══ SCENE 5: REVERSE SHOT — Panel collapses back to card ═══
+         Cinematic reference: The reverse shot in conversation editing.
+         After the close-up (Deep Dive), cut back to the wide (feed).
+
+         Asymmetric timing is critical here:
+         - Open: bouncy, dramatic, 500ms (the reveal is the spectacle)
+         - Close: snappy, decisive, 380ms (returning is editorial efficiency)
+
+         This asymmetry mirrors real film editing: establishing shots are
+         held longer, reaction shots are cut quicker. The viewer has
+         already absorbed the Deep Dive content; the close should feel
+         like a confident editorial decision, not a slow retreat.
+
          Choreography:
-         1. Content fades out (100ms)
-         2. Panel morphs from current rect → card origin (500ms spring)
-         3. Panel fades to transparent as it nears the card
-         4. Backdrop blur fades out — article becomes clear again
+         1. Content fades out (100ms) — J-cut: content exits first
+         2. Panel morphs panel rect → card origin (380ms spring-snappy)
+         3. Panel fades to transparent as it approaches the card
+         4. Backdrop blur fades out at 80ms — L-cut: feed refocuses
+            before panel physically reaches the card. This creates the
+            sensation that the world behind is already sharp by the time
+            the viewer's attention returns to it.
          5. onClose fires, DOM unmounts */
       setTimeout(() => {
         const panel = panelRef.current;
@@ -643,13 +684,14 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
-        // Desktop: offsets are relative to the centering transform
         const isDesktopNow = window.innerWidth >= 1024;
         const closeTransform = isDesktopNow
           ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
           : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
 
-        // Phase 2: Panel morphs back to card rect — fast, decisive close
+        // Phase 2: Reverse shot morph — spring-snappy for decisive close.
+        // 380ms (vs 500ms open) = 24% faster. The close is a cut-back,
+        // not a reveal. Shadow collapses to nothing (dolly out: receding).
         setMorphStyle({
           transform: closeTransform,
           borderRadius: "8px",
@@ -663,15 +705,18 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           ].join(", "),
         });
 
-        // Phase 3: Backdrop fades as panel shrinks — L-cut: feed refocuses before panel reaches card
+        // Phase 3: L-cut — backdrop fades early so the feed is already
+        // sharp before the panel reaches the card. The viewer's peripheral
+        // vision registers the returning world before their foveal attention
+        // leaves the closing panel.
         setTimeout(() => setIsVisible(false), 80);
 
-        // Phase 4: Cleanup — fast dismissal
+        // Phase 4: Cleanup — fast dismissal matches editorial pace
         setTimeout(() => {
           previousFocusRef.current?.focus();
           onClose();
         }, 400);
-      }, 100); // Content fades 100ms, then morph begins immediately
+      }, 100); // J-cut: content fades 100ms before morph begins
     } else {
       /* ═══ FALLBACK: fast slide-out ═══ */
       setTimeout(() => {
