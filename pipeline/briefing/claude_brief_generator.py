@@ -91,7 +91,7 @@ Return JSON with exactly five fields:
    Then dive straight into the argument. No preamble, no lens announcement. \
    Use ellipses (...) for thinking pauses. Use em dashes for mid-thought pivots. \
    Start measured. Let conviction build. By the final third, the listener should hear \
-   that you mean this. End with: "void opinion." No summary.\
+   that you mean this. End with: "This was void opinion." No summary.\
 """
 
 
