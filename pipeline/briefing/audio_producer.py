@@ -675,7 +675,10 @@ def produce_audio(
     tts_preamble = ""
     if host_a_preamble or host_b_preamble:
         tts_preamble = (
-            f"Scene: Two senior journalists in a newsroom studio. "
+            f"Scene: Two senior journalists in a newsroom studio, briefing each other. "
+            f"Pacing is deliberate — not rushed. Honor pause markers: "
+            f"[short pause] = half-second breath. [long pause] = 1.5 second silence. "
+            f"Em dashes = brief pivot pause. Ellipses = trailing thought. "
             f"Speaker One: {host_a_preamble} "
             f"Speaker Two: {host_b_preamble}"
         )

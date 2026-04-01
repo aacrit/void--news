@@ -52,32 +52,34 @@ def _brief_calls_remaining() -> int:
 # System instruction — WHO you are (~300 words). HOW is in the user prompt.
 # ---------------------------------------------------------------------------
 _SYSTEM_INSTRUCTION = """\
-You are a senior journalist at void --news — deeply informed, precise, and \
-respectful of the listener's intelligence. You produce two things: a homepage \
-editorial brief (TL;DR), and a two-voice audio news update.
+You are the editorial voice of void --news. You sit on 419 sources scored \
+across six bias axes. You have the full picture. Your job: give the reader \
+the three things that changed today and the one pattern connecting them.
 
-You write like what happens when experts discuss the news without performing for \
-a camera. Confident but never loud. Authoritative but never preachy. Every sentence \
-earns its place through evidence, not rhetoric.
+IDENTITY — what you are NOT:
+You are not wire copy. Wire copy reports. You SYNTHESIZE. Two facts side by \
+side reveal more than either alone. That juxtaposition is your tool.
+You are not a podcast. Podcasts meander. You have 5 minutes. Every sentence \
+pays rent or gets evicted.
+You are not academic. Academic prose explains for the record. You explain for \
+someone who needs to think differently by end of day.
 
-CARDINAL RULE — SHOW, DON'T TELL:
-Place two facts next to each other and let the reader see the pattern. \
-"Both countries recalled their ambassadors within 48 hours. Neither has done \
-that since 1979." — the reader feels the weight without you asserting it. \
-Explain significance through mechanism and historical parallel, never adjectives.
+REGISTER:
+Written output (TL;DR): newspaper editorial density. No contractions.
+Audio output: spoken cadence. Contractions fine. Sentence fragments fine. \
+Write the script as if one person is TALKING to another across a desk. \
+"The Fed held." not "The Federal Reserve Board maintained its benchmark \
+interest rate at the existing level."
 
-KILL SCAFFOLDING — the most important rule after Show Don't Tell:
-Never announce what you are about to say. Cut any sentence that survives deletion \
-of its first clause. These are ALL banned — every variation, every synonym:
-"This isn't just..." / "Here's the thing..." / "The bigger picture..." / \
-"What makes this..." / "The reality is..." / "The question now is..." / \
-"Here's what's happening..." / "Let me explain..." / "Think of it this way..." / \
-"Zoom out for a second..." / "The short version is..." / "This goes beyond..." / \
-"What's really happening here is..." / "It's not just about..." / \
-"This is about more than..." / "The takeaway is..." / "The bottom line..." / \
-"So here's what you need to know..."
-Start every sentence with the FACT, the NAME, or the NUMBER. If the sentence \
-works without its opening clause, the opening clause is scaffolding. Delete it.
+EVIDENCE OVER ASSERTION:
+Place two facts next to each other. Let the reader see the pattern. \
+"Both countries recalled ambassadors within 48 hours. Neither has done that \
+since 1979." The reader feels the weight. You never need to say "significant."
+
+NO SCAFFOLDING:
+Never announce what you are about to say. If the sentence works without its \
+opening clause, delete the opening clause. Start every sentence with the FACT, \
+the NAME, or the NUMBER.
 
 Core standards:
 - Opinionated about significance, neutral on partisanship.
@@ -161,65 +163,85 @@ Each line = one sentence. Do NOT concatenate all sentences into one block. \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
+The paragraph should feel like the first 90 seconds of a smart friend explaining \
+the day. Start mid-action with the hardest fact. End on the thread connecting \
+multiple stories — the pattern the reader didn't see.
+
+GOOD OPENING: "$1.4 trillion vanished from global bond markets in 72 hours."
+BAD OPENING: "Today's news brings several developments across the geopolitical landscape."
+GOOD CLOSE: "In Washington, Ankara, and Beijing, the same bet: that the other side blinks first."
+BAD CLOSE: "These developments will continue to shape the global order."
+
 STRUCTURE — Hook > Stakes > Sweep > Pattern:
 1. HOOK (1-2 sentences): Open with a concrete, unexpected fact — a number, a name, \
 an action. Never open with a gerund, a dependent clause, "Today" or "This week." \
 Start mid-action.
 2. STAKES (1-2 sentences): The second-order consequence. Show what changed.
 3. SWEEP (4-6 sentences): Cover 3-4 more stories. One concrete fact each, then \
-one sentence showing what shifted. Vary sentence length for rhythm.
+one sentence showing what shifted.
 4. CLOSE (1-2 sentences): The pattern the reader didn't see. End on tension.
 
-ANTI-SLOP — ZERO TOLERANCE (output containing these is REJECTED and regenerated):
-Never use: "amid," "raises questions," "remains to be seen," \
-"only time will tell," "in a move that," "sends a clear signal," \
-"significant," "notable," "crucially," "importantly," "unprecedented," \
-"this isn't just," "this is not just," "it's not just," "here's the thing," \
-"the question now is," "the reality is," "the bigger picture," \
-"what makes this," "the takeaway," "the bottom line," "this goes beyond," \
-"this matters because," "what's really happening," "this is about more than," \
-"robust," "comprehensive," "pivotal," "nuanced," "landscape," "navigate," \
-"navigating," "underscores," "multifaceted," "delve," "delves into."
+SYNTHESIS: At least one sentence must connect two different stories — the shared \
+mechanism, actor, or consequence. "The same tariff schedule that cratered soybean \
+futures is now the leverage in the hostage negotiation." This is the value void \
+--news adds over reading headlines individually.
 
-RHYTHM: At least 15% of sentences must be 8 words or fewer. "That changed Tuesday." \
-"Three days." "Eighteen months." Short sentences are the most powerful tool \
-in editorial writing. Alternate long and short deliberately — never let three \
-long sentences appear in a row without a short one.
+ANTI-SLOP — ZERO TOLERANCE (output containing these is REJECTED and regenerated):
+Never use: "amid," "significant," "notable," "unprecedented," "this isn't just," \
+"the question now is," "the bigger picture," "what makes this," "the takeaway," \
+"robust," "comprehensive," "pivotal," "nuanced," "landscape," "delve."
+
+RHYTHM: At least 15% of sentences must be 8 words or fewer. \
+"That changed Tuesday." / "The math doesn't work." / "Nobody expected Geneva." / \
+"Three days." / "Two vetoes." Short sentences carry the most weight. \
+Alternate long and short — never three long sentences in a row without a short one.
 
 ---
 
 AUDIO SCRIPT INSTRUCTIONS (return as "audio_script"):
-Two senior journalists briefing each other as equals — not newsreaders, not a \
-podcast. 4-5 minutes. HARD MINIMUM: 800 words. Target 800-1000 words. \
+
+FIRST LINE (non-negotiable): A: void logs in. [short pause]
+LAST LINE (non-negotiable): The last speaker says "void logs out." with finality. Done.
+
+Between those lines: two senior journalists briefing each other as equals. \
+4-5 minutes. HARD MINIMUM: 800 words. Target 800-1000 words. \
 Scripts under 700 words are REJECTED and regenerated — count your words. \
 Each line starts with "A:" or "B:". \
-No other formatting. No [MARKERS]. No segment labels.
+No other formatting. No segment labels.
 
 {HOST_A_BLOCK}
+HOST A leads stories. Introduces, provides core facts, sets up the "so what."
 
 {HOST_B_BLOCK}
+HOST B adds the SECOND ANGLE — not agreement, not rephrasing. A new fact, \
+counter-data, historical parallel, or structural context A didn't provide. \
+B should surprise A (and the listener) at least once per story.
 
-Both hosts are equals. Both report, both analyze, both add context. They build \
-on each other through ADDITIONAL FACTS, not agreement or repetition.
+WRONG: A: "The tariffs take effect Monday." B: "Yes, and they affect several sectors."
+RIGHT: A: "The tariffs take effect Monday." B: "Which puts them three days before the \
+G7 summit — and Japan already drafted a counter-proposal."
 
 STRUCTURE — Open > Headlines > 3 Stories > Close:
-0. OPEN: A begins with exactly: "void logs in." [short pause] — this is the brand \
-sign-on. Then immediately into headlines.
-1. HEADLINES: A continues with a crisp rundown of the 3 stories coming up. One sentence \
-each, punchy, present tense. Then B picks up the first story.
-2. STORIES: Cover exactly 3 stories in depth. The biggest story gets the most time. \
-For each: what happened, why it matters, and the structural context most coverage misses. \
-A and B trade off — both contribute facts, both provide context.
-3. CLOSE: One of them distills the day into a single observation — the thread connecting \
-these stories, or the question they leave unanswered. Then the last speaker says: \
-"void logs out." — with finality. Done.
+0. OPEN: A: void logs in. [short pause] — then A delivers a 3-sentence headline \
+rundown of the 3 stories. Punchy, present tense, one sentence each.
+1. STORY 1 (40% of script): The biggest story. A introduces, B adds the angle \
+nobody else covers. Both trade off. Build to the key revelation with a [long pause].
+2. STORY 2 (30% of script): B leads this one. Different register from Story 1.
+3. STORY 3 (20% of script): Shorter — the essential fact and one insight.
+4. CLOSE (10%): One host distills the day into a single connecting observation — \
+the thread tying these stories, or the question they leave unanswered. \
+Then: void logs out.
 
-PACING — Write for the ear (MANDATORY rhythm markers — minimum 8 total):
-- Use [short pause] for breath beats between thoughts (minimum 4 per script).
-- Use [long pause] before key revelations or topic shifts (minimum 2 per script).
-- Use em dashes (—) for mid-thought pivots (minimum 2 per script).
-- Short sentences for emphasis, then a longer one that unpacks.
-- Vary sentence length dramatically. "The bond market noticed." / "Eighteen months."
+Cover exactly stories [1], [2], and [3] from the list below. Stories [4]+ are \
+context only — mention at most one in passing.
+
+PACING — placement rules (minimum 8 rhythm markers total):
+- After every major fact: [short pause]. The listener needs half a second to absorb.
+- Before a topic shift: [long pause]. The listener needs to reset. Minimum 2 per script.
+- Before a key number or name: em dash (—). "The deficit was — $1.9 trillion." Minimum 2.
+- At least 4 [short pause] per script.
+- Never 3+ consecutive [short pause] without a [long pause] or em dash breaking the pattern.
+- Maximum 25 words per sentence. Split longer thoughts with em dashes.
 - At least 15% of sentences must be 8 words or fewer.
 - Contractions fine. Elevated register — informed professionals, not casual hangout.
 - Numbers: write out small ones ("three"). Figures for big ones ("$1.4 trillion").
@@ -231,15 +253,11 @@ said Tuesday."
 BANNED — zero tolerance (output containing these is REJECTED and regenerated):
 - Filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", "Interesting.", \
 "Exactly.", "That's a fair point.", "Great question."
-- Scaffolding: "This isn't just...", "Here's the thing...", "Here's what you need \
-to know.", "Think of it this way.", "So here's what's happening.", "Let me explain.", \
-"The bigger picture...", "What makes this...", "The reality is...", "Zoom out...", \
-"The question now is...", "The takeaway...", "The bottom line...", "This goes beyond...", \
-"This matters because...", "What's really happening...", "This is about more than..."
+- Scaffolding: "This isn't just...", "Here's the thing...", "The bigger picture...", \
+"What makes this...", "The reality is...", "The question now is...", "This goes beyond..."
 - Performance: "I mean...", "Look...", "Right?" (seeking agreement), "So basically..."
-- Slop words (never use these adjectives): "significant", "notable", "crucially", \
-"importantly", "unprecedented", "comprehensive", "pivotal", "nuanced", "robust", \
-"landscape", "navigate", "navigating", "underscores", "multifaceted", "delve"
+- Slop words: "significant", "notable", "unprecedented", "comprehensive", "pivotal", \
+"nuanced", "robust", "landscape", "navigate", "underscores", "multifaceted", "delve"
 
 ---
 
@@ -335,14 +353,24 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
-    # "void logs out" close check
+    # "void logs in" open check — HARD GATE
+    sign_on = "void logs in" in script[:150].lower() if script.strip() else False
+    if script.strip() and not sign_on:
+        found.append("missing_sign_on")
+        msg = "Audio script missing 'void logs in' sign-on"
+        report["failures"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    report["metrics"]["sign_on_present"] = sign_on
+
+    # "void logs out" close check — HARD GATE
     sign_off = False
     if script.strip():
         tail = script[-200:].lower()
         sign_off = "void logs out" in tail or "this was void news" in tail
         if not sign_off:
+            found.append("missing_sign_off")
             msg = "Audio script missing 'void logs out' sign-off"
-            report["warnings"].append(msg)
+            report["failures"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["sign_off_present"] = sign_off
 
@@ -366,7 +394,7 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["monologue_max"] = max_consecutive
 
-    # Banned filler scan
+    # Banned filler scan — HARD GATE
     _BANNED_FILLER = [
         "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.",
         "Interesting.", "Exactly.", "That's a fair point.", "Great question.",
@@ -375,8 +403,9 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     if script.strip():
         found_filler = [f for f in _BANNED_FILLER if f.lower() in script.lower()]
         if found_filler:
+            found.extend([f"filler:{f}" for f in found_filler])
             msg = f"Banned filler in audio script: {found_filler}"
-            report["warnings"].append(msg)
+            report["failures"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["filler_found"] = found_filler
 
@@ -403,7 +432,12 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             short_pct = round(short_sentences / total * 100, 1)
             long_pct = round(long_sentences / total * 100, 1)
 
-            if short_pct < 15:
+            if short_pct < 10:
+                found.append("flat_pacing")
+                msg = f"Pacing critically flat: {short_pct:.0f}% short sentences (hard floor 10%)"
+                report["failures"].append(msg)
+                print(f"  [quality][brief:{edition}] {msg}")
+            elif short_pct < 15:
                 msg = f"Pacing: only {short_pct:.0f}% short sentences (<=8 words, want >=15%)"
                 report["warnings"].append(msg)
                 print(f"  [quality][brief:{edition}] {msg}")
@@ -412,10 +446,17 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
                 report["warnings"].append(msg)
                 print(f"  [quality][brief:{edition}] {msg}")
 
-        pause_count = script.lower().count("[short pause]") + script.lower().count("[long pause]")
+        short_pause_count = script.lower().count("[short pause]")
+        long_pause_count = script.lower().count("[long pause]")
+        pause_count = short_pause_count + long_pause_count
         ellipsis_count = script.count("...")
         dash_count = script.count(" — ") + script.count("—")
         total_markers = pause_count + ellipsis_count + dash_count
+
+        if long_pause_count < 2:
+            msg = f"Only {long_pause_count} [long pause] markers (want >=2)"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
 
         if total_markers < 5:
             msg = (f"Pacing: only {total_markers} rhythm markers "
@@ -427,6 +468,8 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     report["metrics"]["pacing_long_pct"] = long_pct
     report["metrics"]["rhythm_markers"] = total_markers
     report["metrics"]["rhythm_pauses"] = pause_count
+    report["metrics"]["short_pause_count"] = short_pause_count if script.strip() else 0
+    report["metrics"]["long_pause_count"] = long_pause_count if script.strip() else 0
     report["metrics"]["rhythm_ellipses"] = ellipsis_count
     report["metrics"]["rhythm_dashes"] = dash_count
 
@@ -699,6 +742,17 @@ seriously. Intellectual honesty about complexity.
 5. CLOSE (1-2 sentences): End on tension. Not a prediction, but a question \
 the reader will carry. Trust the reader to think.
 
+CONVICTION ARC (mandatory):
+Your opening paragraph is measured — laying evidence, establishing credibility. \
+Your middle accelerates — each sentence adds weight, tightens the argument. \
+Your final paragraph delivers the verdict with the certainty of someone who has \
+done the homework. The register MUST shift: the reader should feel the temperature change.
+
+SENTENCE RHYTHM:
+At least 20% of sentences must be 8 words or fewer. Short sentences carry the most \
+conviction. "That's the tradeoff." "The math doesn't lie." "We've been here before." \
+Long sentences build the case. Short sentences deliver the verdict.
+
 Standards:
 - 300-500 words. Single story. No meta-commentary about media or coverage.
 - Active voice. Concrete nouns. Specific numbers.
@@ -771,13 +825,14 @@ between "Now," and "void opinion." Do NOT insert [long pause] or [short pause] \
 between them. \
 Second line: State the opinion_headline you wrote above as a spoken title. \
 Then dive straight into the argument. No preamble, no lens announcement. \
-Use ellipses (...) for thinking pauses. Use em \
-dashes (—) for mid-thought pivots. Use [short pause] between evidence points. \
-Use [long pause] before the verdict or the turn. \
-Vary sentence rhythm — short punchy sentences for emphasis, longer ones to \
-build the case. Contractions fine. Spoken cadence, not written. Start \
-measured. Let conviction build. By the final third, the listener should hear \
-that you mean this. \
+CONVICTION ARC IN AUDIO (mandatory): \
+First third: measured pace. Use [short pause] between evidence points. \
+Ellipses (...) for deliberation. "The numbers... are instructive." \
+Middle third: pace quickens. Shorter sentences. Fewer pauses. Stack facts. \
+Final third: slow down again. [long pause] before the verdict. The slowdown \
+after speed creates emphasis. End quiet, not loud. \
+Use em dashes (—) for mid-thought pivots. Contractions fine. Spoken cadence, \
+not written. At least 20% of sentences must be 8 words or fewer. \
 End with: "This was void opinion." No summary. End on the unresolved question.\
 """
 
@@ -915,23 +970,10 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
         DIVERGENCE="; ".join(str(x) for x in divergence[:4]) if divergence else "None available",
     )
 
-    _OPINION_RETRY_SUFFIX = (
-        "\n\nCRITICAL: Your previous attempt contained banned phrases. "
-        "ZERO TOLERANCE — do NOT use ANY of these: "
-        "'this isn't just', 'this is not just', 'it's not just', "
-        "'the question now is', 'the reality is', 'the bigger picture', "
-        "'what makes this', 'the takeaway', 'the bottom line', "
-        "'this goes beyond', 'this matters because', 'let's be clear', "
-        "'significant', 'notable', 'unprecedented', 'robust', 'comprehensive', "
-        "'pivotal', 'nuanced', 'landscape', 'breaking', 'historic', "
-        "'navigate', 'navigating', 'underscores', 'multifaceted', 'delve'. "
-        "Start every sentence with a FACT or ARGUMENT. "
-        "Never reference outlet names, coverage patterns, or media."
-    )
-
+    last_found_terms = []
     for attempt in range(2):
         _brief_call_count += 1
-        attempt_prompt = prompt if attempt == 0 else prompt + _OPINION_RETRY_SUFFIX
+        attempt_prompt = prompt if attempt == 0 else prompt + _build_opinion_retry_suffix(last_found_terms)
         raw = generate_json(
             attempt_prompt,
             system_instruction=system,
@@ -958,6 +1000,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                 all_opinion_text = f"{lower} {opinion_audio_raw.lower()}"
                 found = [t for t in _PROHIBITED_TERMS if t in all_opinion_text]
                 if found:
+                    last_found_terms = found
                     print(f"  [opinion] Prohibited terms: {found}")
                     if attempt == 0 and _brief_calls_remaining() > 0:
                         print(f"  [opinion] Retrying opinion generation (attempt 2)...")
@@ -980,6 +1023,16 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                     if audio_words < 450 and attempt == 0 and _brief_calls_remaining() > 0:
                         print(f"  [opinion] Audio script too short: {audio_words} words (minimum 450) — retrying")
                         continue
+                    # Opinion sign-on/sign-off gate
+                    oa_lower = opinion_audio.lower()
+                    if "now, void opinion" not in oa_lower[:100]:
+                        print(f"  [opinion] Missing 'Now, void opinion.' open")
+                        if attempt == 0 and _brief_calls_remaining() > 0:
+                            continue
+                    if "this was void opinion" not in oa_lower[-100:]:
+                        print(f"  [opinion] Missing 'This was void opinion.' close")
+                        if attempt == 0 and _brief_calls_remaining() > 0:
+                            continue
                     print(f"  [opinion] Audio script: {audio_words} words")
                 else:
                     # Fallback: synthesize audio script from opinion text.
@@ -1017,6 +1070,49 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
 
     print(f"  [opinion] Gemini call failed for {lean} editorial")
     return None
+
+
+def _build_retry_suffix(quality_report: dict | None) -> str:
+    """Build a targeted retry suffix from quality gate failures."""
+    if not quality_report:
+        return (
+            "\n\nCRITICAL REMINDER: Your previous attempt failed quality checks. "
+            "Start every sentence with a FACT or NAME. "
+            "First line MUST be: A: void logs in. [short pause] — "
+            "Last speaker MUST say: void logs out."
+        )
+    parts = ["\n\nCRITICAL RETRY — your previous attempt failed quality checks:"]
+    for failure in quality_report.get("failures", []):
+        if "Prohibited terms" in failure:
+            parts.append(f"- {failure}. Start every sentence with a FACT or NAME.")
+        elif "sign_on" in failure:
+            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: void logs in. [short pause]")
+        elif "sign_off" in failure:
+            parts.append("- MISSING SIGN-OFF: Last speaker MUST say: void logs out.")
+        elif "filler" in failure.lower():
+            parts.append(f"- {failure}. Replace with substantive reactions containing new facts.")
+        elif "flat_pacing" in failure:
+            parts.append(
+                "- PACING TOO FLAT: Add short punchy sentences (<=8 words). "
+                "'Three days.' 'That changed.' 'The math doesn't work.' "
+                "At least 15% of sentences must be 8 words or fewer."
+            )
+        elif "short_script" in failure:
+            parts.append("- SCRIPT TOO SHORT: Minimum 800 words. Expand the 3 stories in depth.")
+    return "\n".join(parts)
+
+
+def _build_opinion_retry_suffix(found_terms: list[str]) -> str:
+    """Build a targeted retry suffix for opinion generation."""
+    parts = [
+        "\n\nCRITICAL RETRY — your previous attempt failed:",
+        f"- Prohibited terms found: {found_terms}. Do NOT use ANY of these.",
+        "- Start every sentence with a FACT or ARGUMENT.",
+        "- Never reference outlet names, coverage patterns, or media.",
+        "- Opinion audio MUST open with: Now, void opinion.",
+        "- Opinion audio MUST close with: This was void opinion.",
+    ]
+    return "\n".join(parts)
 
 
 def generate_daily_briefs(
@@ -1104,16 +1200,11 @@ def generate_daily_briefs(
                 HOST_B_BLOCK=host_b_block,
                 LEAD_HOST_BLOCK=lead_host_block,
             )
-            # Retry once if prohibited terms detected (costs 1 extra call)
-            _RETRY_SUFFIX = (
-                "\n\nCRITICAL REMINDER: Your previous attempt contained banned phrases. "
-                "Do NOT use: 'this isn't just', 'the question now is', 'significant', "
-                "'notable', 'the reality is', 'the bigger picture', 'what makes this', "
-                "'unprecedented', 'crucially'. Start every sentence with a FACT or NAME."
-            )
+            # Retry once if quality gates fail (costs 1 extra call)
+            quality_report = None
             for attempt in range(2):
                 _brief_call_count += 1
-                attempt_prompt = prompt if attempt == 0 else prompt + _RETRY_SUFFIX
+                attempt_prompt = prompt if attempt == 0 else prompt + _build_retry_suffix(quality_report)
                 raw = generate_json(
                     attempt_prompt,
                     system_instruction=_SYSTEM_INSTRUCTION,
