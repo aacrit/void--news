@@ -1,3 +1,6 @@
+/** Base path for GitHub Pages deployment — must match next.config.ts basePath. */
+export const BASE_PATH = "/void--news";
+
 /**
  * Returns "Morning" or "Evening" based on the edition's regional time zone.
  * US → America/New_York, India → Asia/Kolkata, World → UTC.
