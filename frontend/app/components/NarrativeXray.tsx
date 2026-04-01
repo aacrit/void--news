@@ -7,6 +7,9 @@ import type { FramingRationale, LeanRationale, ChargedMatch } from "../lib/types
    NarrativeXray — Per-sentence framing highlights
    Reveals charged synonyms, entity sentiment, and omissions inline.
    Progressive disclosure: count badge toggles highlights on/off.
+
+   Uses cinematographer's `.nx-*` class system for staggered rack-focus
+   reveal animation. Highlights resolve top-to-bottom when badge is toggled.
    --------------------------------------------------------------------------- */
 
 interface NarrativeXrayProps {
@@ -22,104 +25,91 @@ interface NarrativeXrayProps {
 
 function XrayIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2" fill="none" />
-      <path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <line x1="16" y1="16" x2="21" y2="21" />
+      <line x1="5.5" y1="5.5" x2="3.5" y2="3.5" />
+      <line x1="4" y1="8" x2="2" y2="7.2" />
+      <line x1="7.8" y1="4.2" x2="7" y2="2" />
     </svg>
   );
 }
 
-function OmissionIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2" fill="none" strokeDasharray="2 2" />
-      <path d="M5 7h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/* --- Intensity Dots -------------------------------------------------------- */
-
-function IntensityDots({ level }: { level: number }) {
-  return (
-    <span className="xray__tip-intensity" aria-label={`Intensity ${level} of 3`}>
-      {[1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className={`xray__tip-intensity-dot${i <= level ? " xray__tip-intensity-dot--filled" : ""}`}
-        />
-      ))}
-    </span>
-  );
-}
-
-/* --- Highlight a single charged match inline ------------------------------- */
+/* --- Tooltip sub-components ------------------------------------------------ */
 
 interface ChargedSpanProps {
   text: string;
   match: ChargedMatch;
-  showTooltips: boolean;
+  index: number;
+  active: boolean;
 }
 
-function ChargedSpan({ text, match, showTooltips }: ChargedSpanProps) {
-  const [tapped, setTapped] = useState(false);
+function ChargedSpan({ text, match, index, active }: ChargedSpanProps) {
+  const [showTip, setShowTip] = useState(false);
 
-  const handleClick = useCallback(() => {
-    if (showTooltips) setTapped((prev) => !prev);
-  }, [showTooltips]);
-
-  if (!showTooltips) return <>{text}</>;
+  const toggle = useCallback(() => setShowTip((p) => !p), []);
 
   return (
     <span
-      className="xray__charged"
-      onClick={handleClick}
-      tabIndex={0}
-      role="button"
-      aria-describedby={undefined}
+      className="nx-highlight"
+      style={{ "--nx-index": index } as React.CSSProperties}
+      onClick={active ? toggle : undefined}
+      onMouseEnter={active ? () => setShowTip(true) : undefined}
+      onMouseLeave={active ? () => setShowTip(false) : undefined}
+      tabIndex={active ? 0 : undefined}
+      role={active ? "button" : undefined}
+      onFocus={active ? () => setShowTip(true) : undefined}
+      onBlur={active ? () => setShowTip(false) : undefined}
     >
       {text}
-      <span className={`xray__tip${tapped ? " xray__tip--visible" : ""}`}>
-        <span className="xray__tip-label">Charged synonym</span>
-        Neutral: <span className="xray__tip-neutral">{match.neutral}</span>
-        <IntensityDots level={match.intensity} />
-      </span>
+      {active && showTip && (
+        <span className="nx-tooltip">
+          <span className="nx-tooltip__label">Charged synonym</span>
+          <span className="nx-tooltip__value">
+            Neutral: {match.neutral}
+          </span>
+        </span>
+      )}
     </span>
   );
 }
 
-/* --- Highlight a single entity with sentiment ------------------------------ */
-
 interface EntitySpanProps {
   text: string;
   sentiment: number;
-  showTooltips: boolean;
+  index: number;
+  active: boolean;
 }
 
-function EntitySpan({ text, sentiment, showTooltips }: EntitySpanProps) {
-  const [tapped, setTapped] = useState(false);
-  const polarity = sentiment > 0.05 ? "pos" : sentiment < -0.05 ? "neg" : null;
+function EntitySpan({ text, sentiment, index, active }: EntitySpanProps) {
+  const [showTip, setShowTip] = useState(false);
+  const polarity = sentiment > 0.05 ? "warm" : sentiment < -0.05 ? "cool" : null;
 
-  const handleClick = useCallback(() => {
-    if (showTooltips) setTapped((prev) => !prev);
-  }, [showTooltips]);
+  const toggle = useCallback(() => setShowTip((p) => !p), []);
 
-  if (!showTooltips || !polarity) return <>{text}</>;
-
-  const label = polarity === "pos" ? "Positive framing" : "Negative framing";
+  if (!polarity) return <>{text}</>;
 
   return (
     <span
-      className={`xray__entity xray__entity--${polarity}`}
-      onClick={handleClick}
-      tabIndex={0}
-      role="button"
+      className={`nx-entity nx-entity--${polarity}`}
+      style={{ "--nx-index": index } as React.CSSProperties}
+      onClick={active ? toggle : undefined}
+      onMouseEnter={active ? () => setShowTip(true) : undefined}
+      onMouseLeave={active ? () => setShowTip(false) : undefined}
+      tabIndex={active ? 0 : undefined}
+      role={active ? "button" : undefined}
+      onFocus={active ? () => setShowTip(true) : undefined}
+      onBlur={active ? () => setShowTip(false) : undefined}
     >
       {text}
-      <span className={`xray__tip${tapped ? " xray__tip--visible" : ""}`}>
-        <span className="xray__tip-label">Entity sentiment</span>
-        {label} ({sentiment > 0 ? "+" : ""}{sentiment.toFixed(2)})
-      </span>
+      {active && showTip && (
+        <span className="nx-tooltip">
+          <span className="nx-tooltip__label">Entity sentiment</span>
+          <span className="nx-tooltip__value">
+            {polarity === "warm" ? "Positive" : "Negative"} ({sentiment > 0 ? "+" : ""}{sentiment.toFixed(2)})
+          </span>
+        </span>
+      )}
     </span>
   );
 }
@@ -131,6 +121,8 @@ interface Segment {
   type: "plain" | "charged" | "entity";
   match?: ChargedMatch;
   sentiment?: number;
+  /** Global highlight index for stagger animation */
+  highlightIndex?: number;
 }
 
 function buildSegments(
@@ -140,7 +132,6 @@ function buildSegments(
 ): Segment[] {
   if (!text) return [];
 
-  // Build a list of all matches with their positions
   const annotations: Array<{
     start: number;
     end: number;
@@ -151,7 +142,6 @@ function buildSegments(
 
   const textLower = text.toLowerCase();
 
-  // Find charged synonym positions
   for (const match of chargedMatches) {
     const term = match.charged.toLowerCase();
     let searchFrom = 0;
@@ -159,7 +149,6 @@ function buildSegments(
     while (true) {
       const idx = textLower.indexOf(term, searchFrom);
       if (idx === -1) break;
-      // Word boundary check for single-word terms
       if (!term.includes(" ")) {
         const before = idx > 0 ? textLower[idx - 1] : " ";
         const after = idx + term.length < textLower.length ? textLower[idx + term.length] : " ";
@@ -168,43 +157,28 @@ function buildSegments(
           continue;
         }
       }
-      annotations.push({
-        start: idx,
-        end: idx + term.length,
-        type: "charged",
-        match,
-      });
+      annotations.push({ start: idx, end: idx + term.length, type: "charged", match });
       searchFrom = idx + term.length;
     }
   }
 
-  // Find entity positions
   for (const [entity, sentiment] of Object.entries(entitySentiments)) {
-    if (Math.abs(sentiment) <= 0.05) continue; // Skip near-neutral
+    if (Math.abs(sentiment) <= 0.05) continue;
     const entityLower = entity.toLowerCase();
     let searchFrom = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const idx = textLower.indexOf(entityLower, searchFrom);
       if (idx === -1) break;
-      annotations.push({
-        start: idx,
-        end: idx + entity.length,
-        type: "entity",
-        sentiment,
-      });
+      annotations.push({ start: idx, end: idx + entity.length, type: "entity", sentiment });
       searchFrom = idx + entity.length;
     }
   }
 
-  if (annotations.length === 0) {
-    return [{ text, type: "plain" }];
-  }
+  if (annotations.length === 0) return [{ text, type: "plain" }];
 
-  // Sort by position, longer matches first for overlaps
   annotations.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
 
-  // Remove overlapping annotations (keep first/longest)
   const filtered: typeof annotations = [];
   let lastEnd = 0;
   for (const ann of annotations) {
@@ -214,9 +188,9 @@ function buildSegments(
     }
   }
 
-  // Build segments
   const segments: Segment[] = [];
   let cursor = 0;
+  let highlightIdx = 0;
 
   for (const ann of filtered) {
     if (ann.start > cursor) {
@@ -227,6 +201,7 @@ function buildSegments(
       type: ann.type,
       match: ann.match,
       sentiment: ann.sentiment,
+      highlightIndex: highlightIdx++,
     });
     cursor = ann.end;
   }
@@ -248,11 +223,9 @@ export default function NarrativeXray({ text, framingRationale, leanRationale }:
   const entitiesMissing = framingRationale?.entitiesMissing ?? [];
   const entitySentiments = leanRationale?.entitySentiments ?? {};
 
-  // Count total signals for the badge
   const signalCount = useMemo(() => {
     let count = 0;
     for (const m of chargedMatches) count += m.count;
-    // Count entities with non-neutral sentiment
     for (const s of Object.values(entitySentiments)) {
       if (Math.abs(s) > 0.05) count++;
     }
@@ -262,50 +235,50 @@ export default function NarrativeXray({ text, framingRationale, leanRationale }:
   const hasOmissions = entitiesMissing.length > 0 && entitiesFound.length > 0;
   const totalEntities = entitiesFound.length + entitiesMissing.length;
 
-  // Don't render if no signals at all
+  // Always build segments so text renders; highlights are CSS-controlled via .nx-active
+  const segments = buildSegments(text, chargedMatches, entitySentiments);
+
+  const totalHighlights = segments.filter((s) => s.type !== "plain").length;
+
   if (signalCount === 0 && !hasOmissions) return null;
 
-  const segments = buildSegments(
-    text,
-    highlightsOn ? chargedMatches : [],
-    highlightsOn ? entitySentiments : {},
-  );
-
   return (
-    <div className="xray">
-      {/* Omission Banner */}
+    <div
+      className={highlightsOn ? "nx-active" : ""}
+      style={{ "--nx-total-highlights": totalHighlights } as React.CSSProperties}
+    >
+      {/* Omission Banner — clip-path wipe entrance when active */}
       {hasOmissions && (
-        <div className="xray__omission" role="status">
-          <OmissionIcon className="xray__omission-icon" />
-          <span>
-            <span className="xray__omission-stat">
-              Covers {entitiesFound.length} of {totalEntities} key entities.
-            </span>
-            {" "}
-            <span className="xray__omission-missing">
-              Missing: {entitiesMissing.slice(0, 5).join(", ")}
-              {entitiesMissing.length > 5 && ` +${entitiesMissing.length - 5} more`}
-            </span>
-          </span>
+        <div className="nx-omission-banner" role="status">
+          <div className="nx-omission-banner__headline">
+            Covers {entitiesFound.length} of {totalEntities} key entities
+          </div>
+          <div className="nx-omission-banner__entities">
+            Missing: {entitiesMissing.slice(0, 5).join(", ")}
+            {entitiesMissing.length > 5 && ` +${entitiesMissing.length - 5} more`}
+          </div>
         </div>
       )}
 
-      {/* Count Badge Toggle */}
+      {/* Count Badge — toggles .nx-active on wrapper */}
       {signalCount > 0 && (
         <button
-          className={`xray__badge${highlightsOn ? " xray__badge--active" : ""}`}
+          className={`nx-badge${highlightsOn ? " nx-badge--active" : ""}`}
           onClick={() => setHighlightsOn((prev) => !prev)}
           type="button"
           aria-pressed={highlightsOn}
           aria-label={`${signalCount} framing signals. ${highlightsOn ? "Hide" : "Show"} highlights.`}
         >
-          <XrayIcon className="xray__badge-icon" />
-          {signalCount} framing signal{signalCount !== 1 ? "s" : ""}
+          <XrayIcon className="nx-badge__icon" />
+          <span className="nx-badge__count">{signalCount}</span>
+          <span className="nx-badge__label">
+            framing signal{signalCount !== 1 ? "s" : ""}
+          </span>
         </button>
       )}
 
-      {/* Annotated Text */}
-      <p className="xray__text">
+      {/* Annotated Text — highlights stagger-resolve when .nx-active */}
+      <p className="nx-source-body">
         {segments.map((seg, i) => {
           if (seg.type === "charged" && seg.match) {
             return (
@@ -313,7 +286,8 @@ export default function NarrativeXray({ text, framingRationale, leanRationale }:
                 key={i}
                 text={seg.text}
                 match={seg.match}
-                showTooltips={highlightsOn}
+                index={seg.highlightIndex ?? 0}
+                active={highlightsOn}
               />
             );
           }
@@ -323,7 +297,8 @@ export default function NarrativeXray({ text, framingRationale, leanRationale }:
                 key={i}
                 text={seg.text}
                 sentiment={seg.sentiment}
-                showTooltips={highlightsOn}
+                index={seg.highlightIndex ?? 0}
+                active={highlightsOn}
               />
             );
           }
