@@ -16,6 +16,7 @@ Falls back to rule-based TL;DR when Gemini is unavailable.
 """
 
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -570,6 +571,42 @@ def _rule_based_tldr(top_clusters: list[dict]) -> str:
     return "\n".join(sentences[:7])
 
 
+def _fetch_last_successful_brief(edition: str) -> dict | None:
+    """Fetch the most recent Gemini-generated brief for this edition.
+
+    A brief is considered "successful" if it has a non-NULL tldr_headline,
+    which only Gemini produces. Returns the full brief dict ready for use
+    as a carry-forward fallback, or None if no previous successful brief exists.
+    """
+    try:
+        from utils.supabase_client import supabase
+        res = supabase.table("daily_briefs").select(
+            "tldr_headline,tldr_text,opinion_text,opinion_headline,"
+            "opinion_lean,opinion_cluster_id,audio_script,"
+            "opinion_audio_script,top_cluster_ids"
+        ).eq("edition", edition).not_.is_(
+            "tldr_headline", "null"
+        ).order("created_at", desc=True).limit(1).execute()
+
+        if res.data and res.data[0].get("tldr_text"):
+            p = res.data[0]
+            print(f"  [brief:{edition}] Carrying forward last successful Gemini brief")
+            return {
+                "tldr_headline": p.get("tldr_headline"),
+                "tldr_text": p["tldr_text"],
+                "opinion_text": p.get("opinion_text"),
+                "opinion_headline": p.get("opinion_headline"),
+                "opinion_lean": p.get("opinion_lean"),
+                "opinion_cluster_id": p.get("opinion_cluster_id"),
+                "audio_script": p.get("audio_script"),
+                "opinion_audio_script": p.get("opinion_audio_script"),
+                "top_cluster_ids": p.get("top_cluster_ids", []),
+            }
+    except Exception as e:
+        print(f"  [warn] Could not fetch previous successful brief for {edition}: {e}")
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Lean rotation — cycles left → center → right daily.
 # Based on ideological principles, not party allegiance.
@@ -999,6 +1036,7 @@ def generate_daily_briefs(
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
 
     results: dict[str, dict] = {}
+    _stats = {"fresh": 0, "carried": 0, "rule_based": 0}
 
     for edition in edition_sections:
         top_clusters, stories_block = _build_stories_block(clusters, edition)
@@ -1023,6 +1061,7 @@ def generate_daily_briefs(
 
         # --- Step 1: Generate TL;DR + audio script ---
         brief_result = None
+        gemini_failure_reason = None
         if gemini_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
@@ -1097,32 +1136,58 @@ def generate_daily_briefs(
                             print(f"  [quality][brief:{edition}] Prohibited terms found — retrying (attempt {attempt + 2})")
                             brief_result = None  # Reset so retry replaces it
                     else:
-                        print(f"  [brief:{edition}] Gemini returned invalid tldr_text — falling back")
+                        gemini_failure_reason = "invalid_tldr"
+                        print(f"  [brief:{edition}] Gemini returned invalid tldr_text (type={type(tldr).__name__}, len={len(str(tldr))})")
                         break
                 else:
-                    print(f"  [brief:{edition}] Gemini call failed — falling back to rule-based")
+                    gemini_failure_reason = "api_error" if attempt == 0 else "api_error_retry"
+                    print(f"  [brief:{edition}] Gemini call failed (attempt {attempt + 1}, "
+                          f"raw={'None' if raw is None else type(raw).__name__})")
+                    # On first API failure, wait and retry once before giving up.
+                    # Gemini 429s and transient 500s often clear within 20 seconds.
+                    if attempt == 0 and _brief_calls_remaining() > 0:
+                        print(f"  [brief:{edition}] Waiting 20s before retry...")
+                        time.sleep(20)
+                        continue
                     break
         elif not gemini_ok:
-            print(f"  [brief:{edition}] Gemini not available — using rule-based TL;DR")
+            gemini_failure_reason = "unavailable"
+            print(f"  [brief:{edition}] Gemini not available")
         else:
-            print(f"  [brief:{edition}] Brief call cap reached — using rule-based TL;DR")
+            gemini_failure_reason = "budget"
+            print(f"  [brief:{edition}] Brief call cap reached ({_brief_call_count}/{_MAX_BRIEF_CALLS})")
 
+        # Fallback: carry forward last successful Gemini brief instead of
+        # generating a dry rule-based stub.  Only use rule-based as last resort.
         if brief_result is None:
-            brief_result = {
-                "tldr_headline": None,
-                "tldr_text": _rule_based_tldr(top_clusters),
-                "opinion_text": None,
-                "opinion_headline": None,
-                "opinion_lean": None,
-                "opinion_cluster_id": None,
-                "audio_script": None,
-                "top_cluster_ids": top_ids,
-            }
+            print(f"  [brief:{edition}] Gemini failed ({gemini_failure_reason}) — "
+                  f"trying carry-forward from last successful brief")
+            carried = _fetch_last_successful_brief(edition)
+            if carried:
+                brief_result = carried
+                _stats["carried"] += 1
+            else:
+                print(f"  [brief:{edition}] No previous successful brief — using rule-based fallback")
+                brief_result = {
+                    "tldr_headline": None,
+                    "tldr_text": _rule_based_tldr(top_clusters),
+                    "opinion_text": None,
+                    "opinion_headline": None,
+                    "opinion_lean": None,
+                    "opinion_cluster_id": None,
+                    "audio_script": None,
+                    "top_cluster_ids": top_ids,
+                }
+                _stats["rule_based"] += 1
+        else:
+            _stats["fresh"] += 1
 
         # --- Step 2: Generate single-story opinion (separate call) ---
+        # Skip if brief was carried forward and already has a good opinion.
+        has_carried_opinion = bool(brief_result.get("opinion_text") and brief_result.get("opinion_headline"))
         today_lean = _get_today_lean()
         opinion_cluster = _select_opinion_cluster(clusters, edition)
-        if opinion_cluster:
+        if opinion_cluster and not has_carried_opinion:
             opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str, edition=edition)
             if opinion_result:
                 brief_result["opinion_text"] = opinion_result["opinion_text"]
@@ -1132,26 +1197,31 @@ def generate_daily_briefs(
                 brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
                 print(f"  [opinion:{edition}] Opinion generated — audio_script: "
                       f"{'yes' if brief_result.get('opinion_audio_script') else 'NO'}")
-            else:
-                # Gemini opinion call failed — build rule-based opinion from cluster
-                print(f"  [opinion:{edition}] Gemini failed — building rule-based opinion")
+            elif not brief_result.get("opinion_text"):
+                # Gemini failed and no carried-forward opinion — rule-based last resort
+                print(f"  [opinion:{edition}] Gemini failed, no carry-forward — building rule-based opinion")
                 brief_result.update(_rule_based_opinion(opinion_cluster, today_lean))
+            else:
+                print(f"  [opinion:{edition}] Gemini failed — keeping carried-forward opinion")
+        elif has_carried_opinion:
+            print(f"  [opinion:{edition}] Using carried-forward opinion")
         else:
             # No suitable cluster — use top cluster from this edition as last resort
-            edition_top = [c for c in top_clusters if c.get("summary", "").strip()]
-            if edition_top:
-                print(f"  [opinion:{edition}] No ideal cluster — using top-ranked cluster")
-                brief_result.update(_rule_based_opinion(edition_top[0], today_lean))
-            else:
-                print(f"  [opinion:{edition}] No clusters with summaries — skipping opinion")
+            if not brief_result.get("opinion_text"):
+                edition_top = [c for c in top_clusters if c.get("summary", "").strip()]
+                if edition_top:
+                    print(f"  [opinion:{edition}] No ideal cluster — using top-ranked cluster")
+                    brief_result.update(_rule_based_opinion(edition_top[0], today_lean))
+                else:
+                    print(f"  [opinion:{edition}] No clusters with summaries — skipping opinion")
 
         results[edition] = brief_result
 
-    total_gemini = sum(1 for r in results.values() if r.get("audio_script") is not None)
     total_opinions = sum(1 for r in results.values() if r.get("opinion_text") is not None)
-    total_fallback = len(results) - total_gemini
     print(f"  Daily briefs: {len(results)} editions "
-          f"({total_gemini} Gemini, {total_fallback} rule-based, "
+          f"({_stats['fresh']} fresh Gemini, "
+          f"{_stats['carried']} carried-forward, "
+          f"{_stats['rule_based']} rule-based, "
           f"{total_opinions} opinions [{_get_today_lean().upper()}], "
           f"{_brief_calls_remaining()} brief calls remaining)")
 
