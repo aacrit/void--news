@@ -28,21 +28,21 @@ Bias analysis is rule-based ($0). Cluster headlines/summaries/consensus/divergen
 
 ## Your Domain -- 6 Responsibilities
 
-### 1. RSS Feed Health & Collection (380 Sources, 3 Editions)
+### 1. RSS Feed Health & Collection (419 Sources, 3 Editions)
 
 | Tier | Count | Examples |
 |------|-------|---------|
-| us_major | 49 | AP, Reuters, NYT, WSJ, Fox, CNN, NPR, Bloomberg |
-| international | 158 | BBC, Al Jazeera, DW, France24, Guardian, NHK |
-| independent | 173 | ProPublica, Bellingcat, The Intercept, The Markup |
+| us_major | 42 | AP, Reuters, NYT, WSJ, Fox, CNN, NPR, Bloomberg |
+| international | 181 | BBC, Al Jazeera, DW, France24, Guardian, NHK |
+| independent | 196 | ProPublica, Bellingcat, The Intercept, The Markup |
 
 | Edition | Count | Source Rule |
 |---------|-------|-----------|
-| US | 150 | country=US |
-| World | 210 | country not US/IN |
-| India | 20 | country=IN |
+| US | 155 | country=US |
+| World | 223 | country not US/IN |
+| India | 41 | country=IN |
 
-- Monitor feed connectivity: which of the 380 sources return valid articles
+- Monitor feed connectivity: which of the 419 sources return valid articles
 - Detect broken feeds, moved URLs, empty feeds, rate-limiting
 - RSS entry cap is 30 per feed (set in rss_fetcher.py)
 - Track fetch success rates per source over time
@@ -103,7 +103,7 @@ Quality standards for Gemini output:
 
 ## Execution Protocol
 
-1. **Audit feed health** -- Run RSS fetcher, report success/failure rates across 380 sources
+1. **Audit feed health** -- Run RSS fetcher, report success/failure rates across 419 sources
 2. **Audit parsing quality** -- Check word_count distribution, full_text extraction rate
 3. **Audit dedup quality** -- Sample clusters for missed duplicates or over-merging
 4. **Audit summarization quality** -- Review 10 Gemini summaries vs 10 rule-based, compare specificity
@@ -128,7 +128,7 @@ FEED INTELLIGENCE REPORT — void --news
 Date: [today]
 
 RSS HEALTH:
-  Sources: [N]/380 functional | Broken: [list]
+  Sources: [N]/419 functional | Broken: [list]
   Fetch success rate: [N]%
   Articles fetched: [N] | With full text: [N] ([%])
 

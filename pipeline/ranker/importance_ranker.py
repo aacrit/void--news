@@ -1,5 +1,5 @@
 """
-Importance/impact ranker v5.5 for the void --news pipeline.
+Importance/impact ranker v5.6 for the void --news pipeline.
 
 Scores story clusters by importance for feed ordering on the homepage.
 Higher scores appear first in the news feed.
@@ -59,6 +59,10 @@ v5.5 calibration changes (2026-03-31):
       35-source Iran cluster missed bonus with min_lean=36 (1 point above cutoff).
     - FIX: Tier concentration penalty exempts clusters with all 3 tiers
       represented. 89% international on global stories is natural, not inflation.
+
+v5.6 calibration changes (2026-04-01):
+    - FIX: Confidence floor quality gate — requires factual_rigor > 40.
+      Without this, tabloid clusters at 16+ sources got unintended boost.
 
 v3.1 optimizations (retained):
     - Source map built once, shared across all sub-functions
@@ -1169,8 +1173,12 @@ def rank_importance(
     # but 15+ sources covering a story is itself a confidence signal.
     # (Benchmark finding: 35-source Iran story got 0.797 mult vs 0.902
     # for a 10-source story, a 12.5% swing that undervalued major news.)
+    # v5.6: Quality gate — only apply floor when factual rigor > 40.
+    # Without this, tabloid/celebrity clusters that go viral (16+ sources)
+    # get the same confidence floor as major geopolitical stories.
+    # (Tiger Woods DUI at 16 sources got an unintended +3.7% boost in v5.5.)
     conf_mult = 0.65 + 0.35 * max(0.0, min(1.0, cluster_confidence))
-    if source_count >= 15:
+    if source_count >= 15 and factual > 40:
         conf_mult = max(conf_mult, 0.85)
     headline_rank *= conf_mult
 

@@ -12,7 +12,7 @@ You are the workflow orchestrator for the **Bias Audit Cycle** — the most rigo
 
 ## Objective
 
-Validate bias scoring accuracy against ground truth, identify systematic errors, fix them, and confirm no regressions. Target: maintain or exceed 96.9% validation accuracy.
+Validate bias scoring accuracy against ground truth, identify systematic errors, fix them, and confirm no regressions. Target: maintain or exceed 100% validation accuracy.
 
 ## Workflow Stages
 
@@ -49,7 +49,7 @@ Launch these two agents **in parallel**:
 
 2. **bias-auditor** — Qualitative ground-truth validation:
    - Run `python pipeline/validation/runner.py --verbose`
-   - Cross-reference 26 ground-truth fixtures against expected ranges
+   - Cross-reference 38 ground-truth fixtures against expected ranges
    - AllSides alignment check (source_profiles.py)
    - Per-category accuracy (wire, opinion, investigative, partisan_left/right, state_media, breaking, analysis)
    - Signal decomposition on any failures (`signal_tracker.py`)
@@ -81,14 +81,14 @@ Launch **nlp-engineer** with the categorized findings:
 Launch **pipeline-tester** and **bias-calibrator** in parallel:
 - pipeline-tester: full pipeline output validation
 - bias-calibrator: `python pipeline/validation/runner.py --verbose --json`
-- Confirm: accuracy >= 96.9%, no new regressions, all original findings resolved
+- Confirm: accuracy >= 100%, no new regressions, all original findings resolved
 
 ### Final Report
 
 ```
 ## Bias Audit Report
 - **Result**: PASS / FAIL
-- **Accuracy**: [X]% (baseline: 96.9%)
+- **Accuracy**: [X]% (baseline: 100%)
 - **Axes audited**: 6
 - **Ground-truth fixtures**: 26 ([passed]/26 passed)
 - **AllSides alignment**: [X]% concordance
@@ -108,7 +108,7 @@ Launch **pipeline-tester** and **bias-calibrator** in parallel:
 | `pipeline/analyzers/framing.py` | Axis 5: Framing Analysis |
 | `pipeline/analyzers/topic_outlet_tracker.py` | Axis 6: Per-Topic Tracking |
 | `pipeline/validation/runner.py` | Validation runner |
-| `pipeline/validation/fixtures.py` | 26 ground-truth articles |
+| `pipeline/validation/fixtures.py` | 38 ground-truth articles |
 | `pipeline/validation/signal_tracker.py` | Per-signal decomposition |
 | `pipeline/validation/source_profiles.py` | AllSides cross-reference |
 

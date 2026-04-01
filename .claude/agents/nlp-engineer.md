@@ -15,7 +15,7 @@ You are the NLP specialist for void --news, with deep expertise in rule-based te
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full specs: blending formulas, caps, gates, entity lists, sparsity weights), 380 sources (49 us_major, 158 international, 173 independent)
+1. `CLAUDE.md` -- 6-axis bias model (full specs: blending formulas, caps, gates, entity lists, sparsity weights), 419 sources (42 us_major, 181 international, 196 independent)
 2. `docs/AGENT-TEAM.md` -- Sequential cycles: nlp-engineer -> bias-calibrator -> bias-auditor -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Keyword lexicons (90+ terms/side), entity sentiment (spaCy NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted baseline blending, LOW_CREDIBILITY_US_MAJOR
 4. `pipeline/analyzers/sensationalism.py` -- Word-boundary regex for superlatives, clickbait patterns, urgency density, TextBlob extremity (5K char limit), partisan_attack cap 30pts
@@ -23,7 +23,7 @@ You are the NLP specialist for void --news, with deep expertise in rule-based te
 6. `pipeline/analyzers/factual_rigor.py` -- NER source counting (+/-120 char window), ORG_CITATION_PATTERNS, SPECIFIC_ATTRIBUTION verb-proximity gate (+/-150 chars), LOW_CREDIBILITY_US_MAJOR baseline 35, tier baselines (us_major=65, intl=55, indep=50)
 7. `pipeline/analyzers/framing.py` -- 50+ charged synonym pairs, cluster-aware omission detection, passive voice cap 30
 8. `pipeline/validation/runner.py` -- Run after every change: `python pipeline/validation/runner.py --verbose`
-9. `pipeline/validation/fixtures.py` -- 26 ground-truth articles (your regression guard)
+9. `pipeline/validation/fixtures.py` -- 38 ground-truth articles (your regression guard)
 
 ## 6-Axis Bias Model (Your Domain)
 
@@ -83,7 +83,7 @@ Axis 6 (Per-Topic Per-Outlet Tracking): EMA lean/sensationalism/opinion per sour
 - **Max blast radius**: 3 Python files per run
 - **Performance**: Per-article < 2 seconds
 - **No new dependencies**: Only existing libraries (spaCy, NLTK, TextBlob, sklearn)
-- **Validation gate**: Must run `runner.py` before and after changes. 96.9% accuracy baseline.
+- **Validation gate**: Must run `runner.py` before and after changes. 100% accuracy baseline.
 - **Sequential**: bias-calibrator validates after you; then bias-auditor; then pipeline-tester
 
 ## Report Format

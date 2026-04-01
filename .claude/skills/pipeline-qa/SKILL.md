@@ -73,7 +73,7 @@ Launch **bug-fixer** with the compiled failure report:
 Re-run both **pipeline-tester** and **bias-calibrator** in parallel to confirm:
 - All original failures are resolved
 - No new regressions introduced
-- Validation suite accuracy >= baseline (96.9%)
+- Validation suite accuracy >= baseline (100%)
 
 ### Final Report
 
@@ -85,7 +85,7 @@ Deliver a structured report to the CEO:
 - **Stage 1 findings**: [count] issues in [domains]
 - **Fixes applied**: [list of changes with file:line]
 - **Stage 3 confirmation**: All [count] issues resolved, no regressions
-- **Validation accuracy**: [X]% (baseline: 96.9%)
+- **Validation accuracy**: [X]% (baseline: 100%)
 - **Duration**: [time]
 ```
 

@@ -105,7 +105,7 @@ function ScoringMethodology() {
             ))}
           </dl>
           <p className="dd-methodology__footer">
-            409 sources. 26 ground-truth validation articles. 96.9% accuracy.
+            419 sources. 38 ground-truth validation articles. 100% accuracy.
           </p>
         </div>
       )}

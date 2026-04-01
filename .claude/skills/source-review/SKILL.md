@@ -8,7 +8,7 @@ allowed-tools: Agent, Read, Grep, Glob, Bash, Edit, Write, TaskCreate, TaskUpdat
 
 # /source-review — Source Curation Review
 
-You are the workflow orchestrator for the **Source Curation Review** — the quality gate for any changes to the 370-source curated list. Sources are the foundation of void --news; bad sources corrupt everything downstream.
+You are the workflow orchestrator for the **Source Curation Review** — the quality gate for any changes to the 419-source curated list. Sources are the foundation of void --news; bad sources corrupt everything downstream.
 
 ## Objective
 
@@ -76,9 +76,9 @@ Launch these two agents **in parallel**:
    - Check article volume (too few = low value, too many = noise)
 
 2. **analytics-expert** — Spectrum balance:
-   - Current lean distribution: Left:Right ratio (target: near 1:1, currently 1.91:1)
+   - Current lean distribution: Left:Right ratio (target: near 1:1, currently 1.54:1)
    - Per-tier lean coverage (each tier should span the spectrum)
-   - Per-edition source count (US=150, World=200, India=20 targets)
+   - Per-edition source count (US=155, World=223, India=41 targets)
    - Flag any lean zone with <5 sources
    - Flag any tier with >60% concentration in one lean zone
 
@@ -108,7 +108,7 @@ Launch **pipeline-tester** to confirm:
 
 ## Locked Constraints
 
-- 370-source curated list (expandable, not reducible without CEO approval)
+- 419-source curated list (expandable, not reducible without CEO approval)
 - 3-tier system (us_major, international, independent)
 - 7-point lean spectrum
 - Source country determines edition routing

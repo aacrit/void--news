@@ -24,17 +24,17 @@ python pipeline/db_reviewer.py
 ## Audit Framework — 8 Domains
 
 ### 1. Source Coverage (10 pts)
-Ensures all 90 curated sources exist in the database with valid configuration.
+Ensures all 419 curated sources exist in the database with valid configuration.
 
 **Checks:**
-- All 90 sources from `data/sources.json` exist in DB (`is_active=true`)
+- All 419 sources from `data/sources.json` exist in DB (`is_active=true`)
 - Every source has valid `rss_url` (not null)
 - Every source has `political_lean_baseline` set
-- Tier distribution: ~30 each (us_major, international, independent) ±10% tolerance
+- Tier distribution: 42 us_major, 181 international, 196 independent ±10% tolerance
 - No inactive sources blocking coverage
 
 **Scoring:**
-- -5 pts: 10+ missing sources (critical)
+- -5 pts: 20+ missing sources (critical)
 - -3 pts: Per missing baseline lean
 - -2 pts: Tier imbalance >10 off target
 - -1 pt: Missing RSS URLs
@@ -219,7 +219,7 @@ NICE TO HAVE FINDINGS
   2. Low headline_rank variance: stdev=4.2 (goal >10)
 
 KEY STATISTICS
-  sources_total: 409
+  sources_total: 419
   sources_active: 368
   articles_total: 45280
   articles_null_full_text: 5620
@@ -325,7 +325,7 @@ Run the auditor:
 
 ## Related Tools
 
-- `pipeline/validation/runner.py` — Bias engine regression testing (26 ground-truth articles)
+- `pipeline/validation/runner.py` — Bias engine regression testing (38 ground-truth articles)
 - `pipeline/rerank.py` — Standalone cluster re-scoring
 - `supabase/migrations/` — Schema documentation
 - `CLAUDE.md` — Pipeline architecture
@@ -339,4 +339,4 @@ Run the auditor:
 
 ---
 
-**Author:** db-reviewer agent | **Last Updated:** 2026-03-27 | **Status:** Production
+**Author:** db-reviewer agent | **Last Updated:** 2026-03-31 | **Status:** Production

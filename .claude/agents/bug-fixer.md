@@ -103,7 +103,7 @@ FIXES APPLIED: [N] files
 
 SPOT-CHECK: [3-5 cases verified with results]
 
-VALIDATION SUITE: [PASS/FAIL] — [N]% accuracy (baseline: 96.9%)
+VALIDATION SUITE: [PASS/FAIL] — [N]% accuracy (baseline: 100%)
 
 REGRESSION RISK: [Low/Med/High] — [specific concern if any]
 

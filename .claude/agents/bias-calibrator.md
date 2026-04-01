@@ -18,7 +18,7 @@ You are the quantitative scoring engineer for void --news, responsible for the m
 1. `CLAUDE.md` -- 6-axis bias model (full axis specs, blending formulas, caps, gates)
 2. `docs/AGENT-TEAM.md` -- Sequential cycle: nlp-engineer -> bias-calibrator -> bias-auditor -> pipeline-tester
 3. `pipeline/validation/runner.py` -- Main entry point (--verbose, --quick, --json, --update-snapshot, --category)
-4. `pipeline/validation/fixtures.py` -- 26 ground-truth articles across 8 categories with expected score ranges + rationale
+4. `pipeline/validation/fixtures.py` -- 38 ground-truth articles across 8 categories with expected score ranges + rationale
 5. `pipeline/validation/signal_tracker.py` -- Per-signal decomposition (decompose_lean, decompose_sensationalism, etc., detect_dead_signals)
 6. `pipeline/validation/source_profiles.py` -- AllSides/AdFontes cross-reference alignment data
 7. `pipeline/validation/snapshot.json` -- Regression baseline (frozen scores for drift detection)
@@ -85,7 +85,7 @@ Triggered after any change to `pipeline/analyzers/*.py`. Workflow:
 
 ## Fixture Maintenance
 
-The 26-article ground-truth corpus must stay representative:
+The 38-article ground-truth corpus must stay representative:
 - **8 categories**: wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis
 - When adding fixtures: include expected score ranges for all 5 axes + rationale for ranges
 - Periodically add new articles to prevent overfitting to existing fixtures
@@ -98,7 +98,7 @@ The 26-article ground-truth corpus must stay representative:
 - When updating the snapshot, record the commit hash and date
 - Flag dead signals (contribute <1% across all test articles)
 - Target: 90%+ CORRECT+ACCEPTABLE rate across all axes
-- Current baseline: 96.9% accuracy
+- Current baseline: 100% accuracy
 - $0 cost constraint: no paid APIs, no LLM calls in validation
 
 ## Report Format
@@ -107,7 +107,7 @@ The 26-article ground-truth corpus must stay representative:
 CALIBRATION REPORT -- void --news Bias Engine
 Date: [today] | Commit: [hash] | Articles: [N] | Checks: [N]*5
 
-ACCURACY: [N]% (baseline: 96.9%)
+ACCURACY: [N]% (baseline: 100%)
   CORRECT: [N]% | ACCEPTABLE: [N]% | WRONG: [N]% | CATASTROPHIC: [N]%
 
 PER-AXIS:

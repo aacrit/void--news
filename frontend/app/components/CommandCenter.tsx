@@ -264,7 +264,7 @@ export default function CommandCenter() {
             <div className="cc-edition-dots">{([['W',data.editionClusters.world],['US',data.editionClusters.us],['IN',data.editionClusters.india]] as [string,number][]).map(([n,c]) => <div key={n} className="cc-edition-dot"><div className="cc-edition-dot__circle" style={{ background: c > 0 ? 'var(--cc-green)' : 'var(--cc-red)' }} />{n} {c}</div>)}</div>
           </KpiCard>
           <KpiCard id="C1" label="Bias Accuracy" domain="bias" expanded={expanded==='C1'} onToggle={() => toggle('C1')}
-            value="96.9%" valueClass="cc-green" sub="26 ground-truth articles"
+            value="100%" valueClass="cc-green" sub="38 ground-truth articles"
             expandContent={<><div className="cc-expand-row"><span className="cc-expand-row__label">Categories</span><span className="cc-expand-row__value">8</span></div><div className="cc-expand-row"><span className="cc-expand-row__label">CI gate</span><span className="cc-expand-row__value cc-green">active</span></div></>} />
           <KpiCard id="C2" label="Lean Distribution" domain="bias" expanded={expanded==='C2'} onToggle={() => toggle('C2')}
             value={`\u03BC${lm}`} valueClass={lm >= 40 && lm <= 60 ? 'cc-cyan' : 'cc-amber'} sub={`\u03C3=${ls} \u00B7 n=${lns.length}`}>
