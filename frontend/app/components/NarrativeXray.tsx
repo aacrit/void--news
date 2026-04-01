@@ -235,8 +235,12 @@ export default function NarrativeXray({ text, framingRationale, leanRationale }:
   const hasOmissions = entitiesMissing.length > 0 && entitiesFound.length > 0;
   const totalEntities = entitiesFound.length + entitiesMissing.length;
 
-  // Always build segments so text renders; highlights are CSS-controlled via .nx-active
-  const segments = buildSegments(text, chargedMatches, entitySentiments);
+  // Memoize segment computation — O(n*m) string scanning should not re-run
+  // when parent re-renders without prop changes (e.g., sibling source expand).
+  const segments = useMemo(
+    () => buildSegments(text, chargedMatches, entitySentiments),
+    [text, chargedMatches, entitySentiments],
+  );
 
   const totalHighlights = segments.filter((s) => s.type !== "plain").length;
 

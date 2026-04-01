@@ -2,7 +2,7 @@
    void --news — Narrative X-Ray (structural overrides)
    Core styles live in components.css (.nx-* classes from cinematographer).
    This file handles integration-specific layout: ComparativeView wrapper,
-   mobile tooltip repositioning, and reduced motion for tooltips.
+   mobile tooltip repositioning, touch targets, and responsive fixes.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -15,16 +15,46 @@
 }
 
 /* --------------------------------------------------------------------------
-   Mobile: Tooltips reposition below on narrow viewports
+   Fix 3: Omission banner word-break for long entity names
+   -------------------------------------------------------------------------- */
+.nx-omission-banner {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile responsive fixes
    -------------------------------------------------------------------------- */
 @media (max-width: 767px) {
+  /* Fix 1: Badge touch target — WCAG 2.1 AA requires 44x44px minimum */
+  .nx-badge {
+    min-height: 44px;
+    min-width: 44px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  /* Fix 2: Tooltip viewport overflow — flush-left on mobile, width-clamped */
   .nx-tooltip {
     bottom: auto;
     top: calc(100% + 6px);
+    left: 0;
+    right: auto;
+    transform: translateY(4px);
+    max-width: min(240px, calc(100vw - 2 * var(--space-5)));
+    white-space: normal;
+  }
+
+  /* Fix 5: Tooltip entrance slides DOWN into below-position */
+  .nx-highlight:hover .nx-tooltip,
+  .nx-highlight:focus-visible .nx-tooltip,
+  .nx-entity:hover .nx-tooltip,
+  .nx-entity:focus-visible .nx-tooltip {
+    transform: translateY(0);
   }
 
   .nx-tooltip::before {
     top: -5px;
+    bottom: auto;
     border-bottom-color: var(--bg-elevated);
     border-top: 0;
   }
@@ -35,5 +65,20 @@
 
   .nx-omission-banner__entities {
     font-size: var(--text-xxs);
+  }
+
+  /* Fix 3 (mobile): Omission banner wrapping */
+  .nx-omission-banner {
+    flex-wrap: wrap;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Fix 4: Arrow rotation reduced-motion — inline styles can't respect
+   prefers-reduced-motion, so we override with sufficient specificity
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .comp-view__wire-arrow {
+    transition: none !important;
   }
 }
