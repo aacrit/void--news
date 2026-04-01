@@ -72,7 +72,7 @@ export default function DesktopFeed({
       {/* OnAir Band — standalone broadcast strip */}
       {/* Zone 1: Broadsheet Lead — asymmetric 2fr | 1fr */}
       {leadStories.length > 0 && (
-        <section aria-label="Lead stories" className="df-lead anim-broadsheet-unfold">
+        <section aria-label="Lead stories" className="df-lead anim-broadsheet-unfold anim-cold-open-lead">
           {leadStories.map((story, i) => (
             <div key={story.id} className={`df-lead__col df-lead__col--${i === 0 ? "primary" : "secondary"}`} data-story-index={i}>
               <LeadStory story={story} rank={i} onStoryClick={onStoryClick} kbdFocused={kbdFocusIndex === i} />

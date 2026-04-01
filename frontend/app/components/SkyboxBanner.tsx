@@ -49,7 +49,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   []);
 
   if (!brief) return (
-    <div className="skb skb--collapsed" role="complementary" aria-label="Daily Brief">
+    <div className="skb anim-cold-open-skybox skb--collapsed" role="complementary" aria-label="Daily Brief">
       <div className="skb__bar">
         <ScaleIcon size={12} animation="analyzing" />
         <span className="skb__bar-human">Daily Brief</span>
@@ -102,7 +102,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
       {hasAudio && <audio id="void-onair-audio" ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
 
       <div
-        className={`skb${expanded ? " skb--expanded" : " skb--collapsed"}${expandedSide ? ` skb--expand-${expandedSide}` : ""}`}
+        className={`skb anim-cold-open-skybox${expanded ? " skb--expanded" : " skb--collapsed"}${expandedSide ? ` skb--expand-${expandedSide}` : ""}`}
         role="complementary"
         aria-label="Daily Brief"
       >

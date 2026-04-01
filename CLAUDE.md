@@ -29,6 +29,9 @@ Applies to: `cluster_summarizer.py`, `daily_brief_generator.py`, `claude_brief_g
 ### Product Family Branding
 CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void --onair` (audio), `void --opinion` (editorial), `void --sources` (spectrum), `void --deep-dive` (analysis), `void --paper` (e-paper). Subtitles show on first encounter (sessionStorage) then fade.
 
+### No Personalization — The Newspaper Principle
+void --news is a newspaper, not a feed. Every reader sees the same stories in the same order. The engine decides what is shown based on editorial importance, not user behavior. No reading history tracking, no recommendation algorithms, no "for you" logic, no user accounts. This is a locked architectural decision. Features that adapt content to individual consumption patterns violate the platform's core philosophy.
+
 ### Zero Operational Cost
 $0. All bias analysis is rule-based NLP. Gemini Flash free tier (~116/1500 RPD). GitHub Actions + Supabase + Pages all free tier. Motion One via CDN importmap.
 
@@ -125,7 +128,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
 
 ### Locked Decisions (CEO Approval Required)
-Cinematic Press design, 6-axis bias model, Supabase data layer, static export, 419-source list (3 tiers, 7-point lean), $0 cost, Claude Max CLI only.
+Cinematic Press design, 6-axis bias model, Supabase data layer, static export, 419-source list (3 tiers, 7-point lean), $0 cost, no user personalization (newspaper principle), Claude Max CLI only.
 
 ## Project Structure
 
