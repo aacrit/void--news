@@ -43,7 +43,7 @@ PROHIBITED_TERMS = frozenset({
     "a us major source", "an international outlet", "a major source",
 
     # --- 5. Brief-specific anti-slop ---
-    "comprehensive", "amidst", "landscape", "breaking",
+    "comprehensive", "amid", "amidst", "landscape", "breaking",
 
     # --- 6. AI slop / LLM crutch phrases ---
     "delve", "delves into",
@@ -123,6 +123,10 @@ PROHIBITED_TERMS = frozenset({
     "the point is",
     "what this means is",
     "the upshot",
+
+    # --- 9. Commonly-slipping scaffolding ---
+    "the question remains",
+    "what remains to be seen",
 })
 
 

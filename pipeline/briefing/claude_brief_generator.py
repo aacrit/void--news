@@ -47,7 +47,7 @@ ADDITIONAL CRAFT RULES (Claude-generated scripts):
 - BANNED (zero tolerance): "Mm.", "Right.", "Indeed.", "Good point.", "Exactly.",
   "Here's what you need to know.", "Think of it this way.", "Here's the thing...",
   "This isn't just...", "The bigger picture...", "So here's what's happening."
-- The close: one sharp observation, then "This was Void news." with finality.
+- The close: one sharp observation, then "void logs out." with finality.
 """
 
 # Claude-specific prompt — generates TL;DR, audio script, AND opinion in one call.
@@ -72,7 +72,7 @@ Return JSON with exactly five fields:
    180-240 words. Hook → Stakes → Sweep → Pattern structure.
 2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
    4-5 minutes (800-1000 words). Structure: Headlines (3-sentence rundown) → \
-   3 stories in depth → Close with "This was Void news." \
+   3 stories in depth → Close with "void logs out." \
    No segment markers, no formatting. Just the dialogue.
 3. "opinion_headline" — 6-12 word editorial headline. Not a news headline. \
    A declarative statement of the editorial thesis. Concrete nouns and active verbs. \
@@ -86,7 +86,7 @@ Return JSON with exactly five fields:
    Someone at the editorial desk who has spent the day with this story and has something \
    to say. Not reading — TELLING. \
    Open EXACTLY with: \
-   First line: "Now... void opinion." \
+   First line: "Now, void opinion." \
    Second line: State the opinion_headline as a spoken title. \
    Then dive straight into the argument. No preamble, no lens announcement. \
    Use ellipses (...) for thinking pauses. Use em dashes for mid-thought pivots. \
