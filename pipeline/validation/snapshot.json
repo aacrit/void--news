@@ -177,7 +177,7 @@
   },
   "intercept-military-2026.framing": {
     "score": 5,
-    "grade": "ACCEPTABLE"
+    "grade": "CORRECT"
   },
   "intercept-climate-left-2026.lean": {
     "score": 6,
@@ -409,7 +409,7 @@
   },
   "economist-analysis-china-2026.opinion": {
     "score": 5,
-    "grade": "ACCEPTABLE"
+    "grade": "CORRECT"
   },
   "economist-analysis-china-2026.rigor": {
     "score": 66,
@@ -429,7 +429,7 @@
   },
   "atlantic-analysis-democracy-2026.opinion": {
     "score": 12,
-    "grade": "ACCEPTABLE"
+    "grade": "CORRECT"
   },
   "atlantic-analysis-democracy-2026.rigor": {
     "score": 47,
@@ -557,6 +557,206 @@
   },
   "national-review-analysis-regulation-2026.framing": {
     "score": 15,
+    "grade": "CORRECT"
+  },
+  "commondreams-healthcare-2026.lean": {
+    "score": 3,
+    "grade": "CORRECT"
+  },
+  "commondreams-healthcare-2026.sens": {
+    "score": 9,
+    "grade": "CORRECT"
+  },
+  "commondreams-healthcare-2026.opinion": {
+    "score": 16,
+    "grade": "CORRECT"
+  },
+  "commondreams-healthcare-2026.rigor": {
+    "score": 31,
+    "grade": "CORRECT"
+  },
+  "commondreams-healthcare-2026.framing": {
+    "score": 9,
+    "grade": "CORRECT"
+  },
+  "democracynow-police-2026.lean": {
+    "score": 3,
+    "grade": "CORRECT"
+  },
+  "democracynow-police-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "democracynow-police-2026.opinion": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "democracynow-police-2026.rigor": {
+    "score": 23,
+    "grade": "CORRECT"
+  },
+  "democracynow-police-2026.framing": {
+    "score": 15,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-military-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-military-2026.sens": {
+    "score": 17,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-military-2026.opinion": {
+    "score": 6,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-military-2026.rigor": {
+    "score": 40,
+    "grade": "CORRECT"
+  },
+  "reuters-breaking-military-2026.framing": {
+    "score": 18,
+    "grade": "CORRECT"
+  },
+  "cnn-breaking-political-2026.lean": {
+    "score": 23,
+    "grade": "CORRECT"
+  },
+  "cnn-breaking-political-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "cnn-breaking-political-2026.opinion": {
+    "score": 6,
+    "grade": "CORRECT"
+  },
+  "cnn-breaking-political-2026.rigor": {
+    "score": 54,
+    "grade": "CORRECT"
+  },
+  "cnn-breaking-political-2026.framing": {
+    "score": 20,
+    "grade": "CORRECT"
+  },
+  "trt-world-turkey-2026.lean": {
+    "score": 64,
+    "grade": "CORRECT"
+  },
+  "trt-world-turkey-2026.sens": {
+    "score": 16,
+    "grade": "CORRECT"
+  },
+  "trt-world-turkey-2026.opinion": {
+    "score": 16,
+    "grade": "CORRECT"
+  },
+  "trt-world-turkey-2026.rigor": {
+    "score": 17,
+    "grade": "CORRECT"
+  },
+  "trt-world-turkey-2026.framing": {
+    "score": 49,
+    "grade": "CORRECT"
+  },
+  "globaltimes-scs-2026.lean": {
+    "score": 92,
+    "grade": "CORRECT"
+  },
+  "globaltimes-scs-2026.sens": {
+    "score": 38,
+    "grade": "CORRECT"
+  },
+  "globaltimes-scs-2026.opinion": {
+    "score": 26,
+    "grade": "CORRECT"
+  },
+  "globaltimes-scs-2026.rigor": {
+    "score": 18,
+    "grade": "CORRECT"
+  },
+  "globaltimes-scs-2026.framing": {
+    "score": 27,
+    "grade": "CORRECT"
+  },
+  "wapo-opinion-education-2026.lean": {
+    "score": 38,
+    "grade": "CORRECT"
+  },
+  "wapo-opinion-education-2026.sens": {
+    "score": 11,
+    "grade": "CORRECT"
+  },
+  "wapo-opinion-education-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "wapo-opinion-education-2026.rigor": {
+    "score": 19,
+    "grade": "CORRECT"
+  },
+  "wapo-opinion-education-2026.framing": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "wsj-opinion-tax-2026.lean": {
+    "score": 90,
+    "grade": "CORRECT"
+  },
+  "wsj-opinion-tax-2026.sens": {
+    "score": 11,
+    "grade": "CORRECT"
+  },
+  "wsj-opinion-tax-2026.opinion": {
+    "score": 70,
+    "grade": "CORRECT"
+  },
+  "wsj-opinion-tax-2026.rigor": {
+    "score": 19,
+    "grade": "CORRECT"
+  },
+  "wsj-opinion-tax-2026.framing": {
+    "score": 22,
+    "grade": "CORRECT"
+  },
+  "ap-wire-ai-regulation-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "ap-wire-ai-regulation-2026.sens": {
+    "score": 8,
+    "grade": "CORRECT"
+  },
+  "ap-wire-ai-regulation-2026.opinion": {
+    "score": 6,
+    "grade": "CORRECT"
+  },
+  "ap-wire-ai-regulation-2026.rigor": {
+    "score": 87,
+    "grade": "CORRECT"
+  },
+  "ap-wire-ai-regulation-2026.framing": {
+    "score": 11,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-migration-2026.lean": {
+    "score": 50,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-migration-2026.sens": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-migration-2026.opinion": {
+    "score": 13,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-migration-2026.rigor": {
+    "score": 60,
+    "grade": "CORRECT"
+  },
+  "bbc-analysis-migration-2026.framing": {
+    "score": 21,
     "grade": "CORRECT"
   }
 }

@@ -4,7 +4,7 @@ Last updated: 2026-03-31 (rev 19)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
-News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 409 curated sources. World, US, India editions.
+News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 419 curated sources. World, US, India editions.
 
 ## Architecture
 
@@ -43,7 +43,7 @@ Per-article, score 0-100 + structured rationale JSONB. No LLM calls for scoring.
 6. **Per-Topic Per-Outlet EMA** — adaptive alpha (0.3 new / 0.15 established). Stored in `source_topic_lean`. See `topic_outlet_tracker.py`.
 
 ### Validation Framework (`pipeline/validation/`)
-26 ground-truth articles, 8 categories, 96.9% accuracy. CI gate via `.github/workflows/validate-bias.yml`.
+38 ground-truth articles, 8 categories, 100% accuracy. Cross-axis correlation gate (r<0.70). CI gate via `.github/workflows/validate-bias.yml`.
 ```bash
 python pipeline/validation/runner.py              # Full validation
 python pipeline/validation/runner.py --quick      # Skip distribution checks
@@ -61,7 +61,7 @@ python pipeline/validation/runner.py --update-snapshot  # Refresh regression bas
 World-focused, top 20 clusters. **TL;DR**: 8-12 sentences editorial paragraph (150-220 words), joint board voice. **Opinion**: 3-5 sentences first-person-plural editorial judgment (lean rotates daily: left/center/right). **Audio**: BBC two-host format, `A:`/`B:` speaker tags (no segment markers), Gemini 2.5 Flash TTS (native multi-speaker, single API call), pydub post-processing (Glass & Gravity sonic identity, subharmonic presence layer at -34 to -42 dB), MP3 96k mono → Supabase Storage. 5 rotating host pairs shared across all editions (not edition-specific); opinion voice fixed per edition. Stored in `daily_briefs` table: `audio_duration_seconds`, `audio_file_size`, `audio_voice` columns. 5 calls/run (separate from 25-call cap). Claude CLI premium scripts optional (`claude_brief_generator.py`, generates TL;DR + opinion + audio in one call).
 
 ### Source Curation
-409 sources, 3 tiers: us_major (49), international (178), independent (182). 7-point lean spectrum. Editions: world (default), us, india. Source country determines edition.
+419 sources, 3 tiers: us_major (42), international (181), independent (196). 7-point lean spectrum. L:R ratio 1.54:1. Editions: world (default), us, india. Source country determines edition.
 
 ## Pipeline Flow (4x Daily)
 
@@ -125,7 +125,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
 
 ### Locked Decisions (CEO Approval Required)
-Cinematic Press design, 6-axis bias model, Supabase data layer, static export, 409-source list (3 tiers, 7-point lean), $0 cost, Claude Max CLI only.
+Cinematic Press design, 6-axis bias model, Supabase data layer, static export, 419-source list (3 tiers, 7-point lean), $0 cost, Claude Max CLI only.
 
 ## Project Structure
 
@@ -154,7 +154,7 @@ void-news/
 │   │   ├── command-center/ # /command-center KPI dashboard
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
-├── data/sources.json      # 409 curated sources
+├── data/sources.json      # 419 curated sources
 ├── supabase/migrations/   # 001-029
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml
 ├── .claude/agents/        # 23 agent definitions

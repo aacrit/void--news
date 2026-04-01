@@ -187,6 +187,47 @@ def check_distribution_health(
     return results
 
 
+def check_cross_axis_correlation(
+    axis_scores: dict[str, list[int]],
+    threshold: float = 0.70,
+) -> list[tuple[bool, str]]:
+    """
+    Check pairwise Pearson correlation between axes.
+
+    Flags pairs with |r| > threshold as potential redundancy.
+    Returns list of (passed, message) tuples.
+    """
+    results = []
+    axes = list(axis_scores.keys())
+    n = len(axes)
+    if not axes or len(axis_scores[axes[0]]) < 3:
+        return results
+
+    import statistics as _stats
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            xs = axis_scores[axes[i]]
+            ys = axis_scores[axes[j]]
+            if len(xs) != len(ys) or len(xs) < 3:
+                continue
+            mean_x = _stats.mean(xs)
+            mean_y = _stats.mean(ys)
+            std_x = _stats.stdev(xs)
+            std_y = _stats.stdev(ys)
+            if std_x == 0 or std_y == 0:
+                continue
+            cov = sum((x - mean_x) * (y - mean_y) for x, y in zip(xs, ys)) / (len(xs) - 1)
+            r = cov / (std_x * std_y)
+            label = f"{axes[i]} x {axes[j]}: r={r:.3f}"
+            if abs(r) > threshold:
+                results.append((False, f"{label} (EXCEEDS {threshold} redundancy threshold)"))
+            else:
+                results.append((True, label))
+
+    return results
+
+
 def check_directional_invariants(
     lean_scores: list[int],
     baselines: list[str],
@@ -506,6 +547,7 @@ def run_validation(
     # ---------------------------------------------------------------------------
     dist_results: dict[str, list[tuple[bool, str]]] = {}
     directional_results: list[tuple[bool, str]] = []
+    correlation_results: list[tuple[bool, str]] = []
 
     if not quick:
         for ax in AXES:
@@ -518,6 +560,8 @@ def run_validation(
         directional_results = check_directional_invariants(
             axis_scores["lean"], lean_baselines
         )
+
+        correlation_results = check_cross_axis_correlation(axis_scores)
 
     # Dead signal detection
     dead_signals = detect_dead_signals(all_decompositions)
@@ -567,6 +611,12 @@ def run_validation(
             print()
             print("DIRECTIONAL INVARIANTS:")
             for passed, msg in directional_results:
+                status = "PASS" if passed else "FAIL"
+                print(f"  [{status}] {msg}")
+            print()
+
+            print("CROSS-AXIS CORRELATION (redundancy threshold: 0.70):")
+            for passed, msg in correlation_results:
                 status = "PASS" if passed else "FAIL"
                 print(f"  [{status}] {msg}")
             print()
@@ -631,6 +681,10 @@ def run_validation(
                 "pct": round(allsides_passed / max(allsides_total, 1) * 100, 1),
             },
             "dead_signals": dead_signals,
+            "cross_axis_correlation": [
+                {"pair": msg.split(":")[0].strip(), "passed": ok, "detail": msg}
+                for ok, msg in correlation_results
+            ],
             "regression_issues": regression_issues,
             "worst_failures": worst_failures[:10],
             "fixture_results": all_results,
