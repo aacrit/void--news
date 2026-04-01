@@ -927,6 +927,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
             attempt_prompt,
             system_instruction=system,
             count_call=False,
+            max_output_tokens=65536,
         )
 
         if raw and isinstance(raw, dict):
@@ -1105,6 +1106,7 @@ def generate_daily_briefs(
                     attempt_prompt,
                     system_instruction=_SYSTEM_INSTRUCTION,
                     count_call=False,
+                    max_output_tokens=65536,
                 )
                 if raw and isinstance(raw, dict):
                     tldr = raw.get("tldr_text", "")
