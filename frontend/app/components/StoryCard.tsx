@@ -66,10 +66,8 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         />
       </h3>
 
-      {/* Summary — first 2 sentences only; full text lives in DeepDive */}
-      <p className="story-card__summary">
-        {story.summary.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")}
-      </p>
+      {/* Summary */}
+      <p className="story-card__summary">{story.summary}</p>
 
       {/* Divergence badge — surfaces when sources actively disagree */}
       {story.sigilData.divergenceFlag === "divergent" && story.deepDive?.divergence?.[0] && (
