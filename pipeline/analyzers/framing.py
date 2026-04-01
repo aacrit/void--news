@@ -212,13 +212,13 @@ def _connotation_score(text: str, doc=None) -> float:
     entities = [ent for ent in doc.ents if ent.label_ in key_labels]
 
     if not entities:
-        # No entities to frame — reduced from 10.0 to 5.0 to widen the gap
+        # No entities to frame — reduced from 5.0 to 2.0 to widen the gap
         # between entity-free articles and articles with neutral entity
-        # sentiment (avg_abs_polarity ~0.05-0.10 → score 12-25).  The old
-        # floor of 10 compressed neutral articles into [10,19], causing 57%
-        # clustering.  At 5.0 the baseline gap is 7-20 pts, spreading the
-        # distribution.  (nlp-engineer — framing distribution spread)
-        return 5.0
+        # sentiment (avg_abs_polarity ~0.05-0.10 → score 12-25).  At 2.0
+        # the baseline gap is 10-23 pts, spreading the distribution further
+        # and eliminating floor compression in the [5-19] band.
+        # (bias-audit 2026-04-01 — framing distribution spread)
+        return 2.0
 
     # Collect sentiment of sentences containing entities
     total_abs_polarity = 0.0
@@ -232,7 +232,7 @@ def _connotation_score(text: str, doc=None) -> float:
             entity_sentences += 1
 
     if entity_sentences == 0:
-        return 5.0  # reduced from 10.0 (same rationale as no-entities case)
+        return 2.0  # reduced from 5.0 (same rationale as no-entities case)
 
     avg_abs_polarity = total_abs_polarity / entity_sentences
     # avg_abs_polarity ranges 0-1; 0 = neutral, 0.5+ = heavily framed.
@@ -273,12 +273,11 @@ def _keyword_emphasis_score(text: str) -> float:
             total_pairs_found += charged_count
 
     if total_pairs_found == 0:
-        # Reduced from 5.0 to 2.0 to widen the gap between articles with
-        # no charged synonyms (most wire/analysis) and articles with even
-        # mild charged language.  The old 5.0 floor compressed neutral
-        # articles into the same band as lightly-framed ones.
-        # (nlp-engineer — framing distribution spread)
-        return 2.0
+        # Zero floor: articles with no charged synonyms should score 0 on
+        # this sub-signal.  Previous floors (5.0, then 2.0) compressed
+        # neutral articles into the same band as lightly-framed ones.
+        # (bias-audit 2026-04-01 — framing distribution spread)
+        return 0.0
 
     # Normalize by article length
     density = charged_score / max(word_count / 100, 1)

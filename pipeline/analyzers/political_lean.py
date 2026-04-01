@@ -506,10 +506,14 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     # Direction: weighted ratio (high-weight terms count more than low-weight fillers)
     right_ratio = right_total / total_weight
 
-    # Confidence: sigmoid on DISTINCT keyword count (k=0.9, x0=3).
-    # This is independent of article length and repetition, so short articles
-    # with 1-2 keyword hits no longer saturate the sigmoid.
-    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.9 * (total_distinct - 3.0)))
+    # Confidence: sigmoid on DISTINCT keyword count (k=0.7, x0=4).
+    # Widened from (k=0.9, x0=3) to improve right-tail discrimination:
+    # outlets with 7+ distinct keyword types (Breitbart, Daily Wire, Newsmax,
+    # Sputnik) previously all saturated at 97.  The gentler slope and higher
+    # midpoint preserve sensitivity for short articles while allowing the
+    # sigmoid to differentiate outlets of different partisan intensity.
+    # (bias-audit 2026-04-01 — lean right-side saturation fix)
+    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.7 * (total_distinct - 4.0)))
 
     score = 50.0 + (right_ratio - 0.5) * sigmoid_weight * 100.0
     return score, top_left, top_right, total_distinct
