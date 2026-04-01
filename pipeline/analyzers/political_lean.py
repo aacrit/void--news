@@ -723,6 +723,20 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
         baseline_weight = max(baseline_weight, 0.60)
         text_weight = 1.0 - baseline_weight
 
+    # Extremity dampener: when text_score saturates at the floor (<=5) or
+    # ceiling (>=95), the keyword/framing signals have maxed out and the
+    # article's measured text is at the partisan extreme.  In this regime,
+    # the source baseline should provide meaningful anchoring to prevent
+    # over-saturation — an NYT (center-left, baseline=35) opinion piece
+    # with dense left keywords should not score identically to a Jacobin
+    # (left, baseline=20) piece with the same vocabulary.  Raise baseline
+    # weight to at least 0.30 so the calibrated editorial lean of the
+    # outlet tempers the extreme text signal.
+    # (nlp-engineer fix — NYT Opinion Rhetorical AllSides alignment)
+    if text_score <= 5 or text_score >= 95:
+        baseline_weight = max(baseline_weight, 0.30)
+        text_weight = 1.0 - baseline_weight
+
     # 4. Blend with source baseline (length-adaptive weights computed above).
     final_score = text_weight * text_score + baseline_weight * source_baseline
     score = max(0, min(100, int(round(final_score))))

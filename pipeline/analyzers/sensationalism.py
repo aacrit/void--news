@@ -378,6 +378,22 @@ def _headline_score(title: str) -> float:
     title_lower = title.lower()
     score += len(_SUPERLATIVE_PATTERN.findall(title_lower)) * 3.0
 
+    # Urgency and hyperbolic modifiers in headlines.
+    # Previously only checked in _body_score(), leaving headlines like
+    # "We Must Ban Assault Weapons Now" (urgency: "now" is not in
+    # URGENCY_WORDS, but "crisis" and "emergency" are) and "Big Oil's
+    # Climate Genocide Is Killing Frontline Communities" scoring 0.
+    # Adding these checks widens the sensationalism range for articles
+    # with urgent/hyperbolic headlines that lack traditional clickbait
+    # patterns.  Weight per-hit is lower than body (2.0 vs 8.0) because
+    # a single urgency word in a headline is a weaker signal than
+    # sustained urgency throughout body text.
+    # (nlp-engineer — sensationalism distribution spread)
+    for phrase in URGENCY_WORDS:
+        if phrase in title_lower:
+            score += 2.0
+    score += len(_HYPERBOLIC_PATTERN.findall(title_lower)) * 2.0
+
     # Very short headlines (< 5 words) can be sensational
     if 0 < len(words) < 5:
         score += 3.0
@@ -409,7 +425,13 @@ def _body_score(text: str) -> float:
     polarity_extremity = abs(blob.sentiment.polarity)
     subjectivity = blob.sentiment.subjectivity
     score += polarity_extremity * 20.0  # up to 20 pts
-    score += subjectivity * 15.0  # up to 15 pts
+    # Subjectivity multiplier increased from 15 to 20 to widen the dynamic
+    # range.  Wire articles (subjectivity ~0.20-0.30) get +4-6 pts; opinion
+    # pieces (subjectivity ~0.45-0.60) get +9-12 pts.  The 5-point increase
+    # creates more separation between neutral reporting and subjective
+    # editorial content, helping break the low-range clustering.
+    # (nlp-engineer — sensationalism distribution spread)
+    score += subjectivity * 20.0  # up to 20 pts (was 15.0)
 
     # --- Urgency language density ---
     urgency_count = 0
@@ -511,13 +533,17 @@ def analyze_sensationalism(article: dict) -> dict:
     # Headline is the strongest discriminator between wire copy and tabloid
     combined = 0.5 * h_score + 0.5 * b_score
 
-    # Apply a mild floor-stretch to spread the compressed 4-7 range wider.
-    # Stretch the 0-30 raw range into 0-50 and preserve 30-100 into 50-100.
-    # This makes AP wire copy score ~10-20 and tabloid headlines score 50-80.
-    if combined <= 30:
-        stretched = combined * (50.0 / 30.0)
+    # Apply a floor-stretch to spread the compressed low range wider.
+    # Steeper low-end curve (2.0x for combined <= 25) pushes articles with
+    # moderate signals (combined 4-8) above the floor of 8, creating more
+    # separation between truly neutral wire copy and articles with mild
+    # sensationalism signals.  The breakpoint at 25 (was 30) ensures that
+    # the high-end mapping (50+ scores for tabloid content) remains stable.
+    # (nlp-engineer — sensationalism distribution spread)
+    if combined <= 25:
+        stretched = combined * 2.0
     else:
-        stretched = 50.0 + (combined - 30.0) * (50.0 / 70.0)
+        stretched = 50.0 + (combined - 25.0) * (50.0 / 75.0)
 
     # Minimum floor for articles with actual text content.
     # Heavy attribution-language in wire copy pushes body_score to 0 via the

@@ -43,15 +43,15 @@ RIGOR_REF_BONUS_MAX = 8.0
 FRAMING_WEIGHTS_NORMAL: dict[str, float] = {
     "connotation": 0.25,
     "keyword_emp": 0.30,
-    "omission":    0.20,
-    "headline_div": 0.15,
+    "omission":    0.15,
+    "headline_div": 0.20,
     "passive":     0.10,
 }
 FRAMING_WEIGHTS_HIGH_KW: dict[str, float] = {
     "connotation": 0.15,
     "keyword_emp": 0.40,
-    "omission":    0.20,
-    "headline_div": 0.15,
+    "omission":    0.15,
+    "headline_div": 0.20,
     "passive":     0.10,
 }
 

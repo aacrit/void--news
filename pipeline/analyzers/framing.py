@@ -212,7 +212,13 @@ def _connotation_score(text: str, doc=None) -> float:
     entities = [ent for ent in doc.ents if ent.label_ in key_labels]
 
     if not entities:
-        return 10.0  # no entities to frame
+        # No entities to frame — reduced from 10.0 to 5.0 to widen the gap
+        # between entity-free articles and articles with neutral entity
+        # sentiment (avg_abs_polarity ~0.05-0.10 → score 12-25).  The old
+        # floor of 10 compressed neutral articles into [10,19], causing 57%
+        # clustering.  At 5.0 the baseline gap is 7-20 pts, spreading the
+        # distribution.  (nlp-engineer — framing distribution spread)
+        return 5.0
 
     # Collect sentiment of sentences containing entities
     total_abs_polarity = 0.0
@@ -226,11 +232,15 @@ def _connotation_score(text: str, doc=None) -> float:
             entity_sentences += 1
 
     if entity_sentences == 0:
-        return 10.0
+        return 5.0  # reduced from 10.0 (same rationale as no-entities case)
 
     avg_abs_polarity = total_abs_polarity / entity_sentences
-    # avg_abs_polarity ranges 0-1; 0 = neutral, 0.5+ = heavily framed
-    return min(100.0, avg_abs_polarity * 200.0)
+    # avg_abs_polarity ranges 0-1; 0 = neutral, 0.5+ = heavily framed.
+    # Multiplier increased from 200 to 250 to widen the dynamic range:
+    # articles with moderate entity sentiment (0.10-0.20) now score 25-50
+    # instead of 20-40, creating more separation from neutral articles.
+    # (nlp-engineer — framing distribution spread)
+    return min(100.0, avg_abs_polarity * 250.0)
 
 
 def _keyword_emphasis_score(text: str) -> float:
@@ -263,7 +273,12 @@ def _keyword_emphasis_score(text: str) -> float:
             total_pairs_found += charged_count
 
     if total_pairs_found == 0:
-        return 5.0  # baseline low framing
+        # Reduced from 5.0 to 2.0 to widen the gap between articles with
+        # no charged synonyms (most wire/analysis) and articles with even
+        # mild charged language.  The old 5.0 floor compressed neutral
+        # articles into the same band as lightly-framed ones.
+        # (nlp-engineer — framing distribution spread)
+        return 2.0
 
     # Normalize by article length
     density = charged_score / max(word_count / 100, 1)
@@ -362,9 +377,15 @@ def _headline_body_divergence(title: str, body: str) -> float:
     # Subjectivity divergence
     subj_diff = abs(title_blob.sentiment.subjectivity - body_blob.sentiment.subjectivity)
 
-    # Combined divergence: both range 0-2, so combined max ~4
+    # Combined divergence: both range 0-2, so combined max ~4.
+    # Multiplier increased from 50 to 65 to make headline-body divergence
+    # a stronger discriminator.  Headlines that editorialize beyond the
+    # body content (e.g. "BREAKING: Crime Wave Hits Record" over a
+    # measured AP story) now produce larger framing scores, widening the
+    # gap between neutral and framed articles.
+    # (nlp-engineer — framing distribution spread)
     divergence = polarity_diff + subj_diff
-    return min(100.0, divergence * 50.0)
+    return min(100.0, divergence * 65.0)
 
 
 def _passive_voice_score(text: str, doc=None) -> float:
@@ -474,7 +495,14 @@ def analyze_framing(
     # Weight redistribution (nlp-engineer P1 fix): passive_voice contributes
     # <1% mean signal (92% of articles at zero). Shifted 5% from passive (0.15
     # -> 0.10) to keyword_emphasis (0.25->0.30 / 0.35->0.40) to widen the
-    # dynamic range for articles with charged synonyms. Weights still sum to 1.0.
+    # dynamic range for articles with charged synonyms.
+    #
+    # Weight swap (nlp-engineer — framing distribution spread): headline_div
+    # raised from 0.15 to 0.20, omission lowered from 0.20 to 0.15.
+    # Headline-body divergence has the widest variation across articles (0-65)
+    # while omission clusters at 10.0 (the default for no pro/anti sourcing).
+    # Giving headline_div more weight spreads the distribution wider.
+    # Weights still sum to 1.0.
     if keyword_emp > 60:
         w_connotation = 0.15
         w_keyword_emp = 0.40
@@ -485,8 +513,8 @@ def analyze_framing(
     weighted = (
         connotation * w_connotation
         + keyword_emp * w_keyword_emp
-        + omission * 0.20
-        + headline_div * 0.15
+        + omission * 0.15
+        + headline_div * 0.20
         + passive * 0.10
     )
 
