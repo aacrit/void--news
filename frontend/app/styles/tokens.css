@@ -324,6 +324,7 @@
   --cinematic-accent-far-bias: rgba(148, 107, 21, 0.12);
 
   /* ── Category Colors ── */
+  --cat-politics:    #6366F1;  /* indigo — distinct from --bias-left blue */
   --cat-conflict:    #E53E3E;  /* distinct from --indicator-broadcast (#c0392b) */
   --cat-science:     #2980B9;
   --cat-health:      #27AE60;
@@ -370,6 +371,7 @@
   --type-reporting:    #6B8DB5;
 
   /* Category color overrides — desaturated for dark walnut surfaces */
+  --cat-politics:    #818CF8;  /* indigo — distinct from --bias-left blue */
   --cat-conflict:    #D4645A;
   --cat-science:     #5A9FCC;
   --cat-health:      #4DC47A;
