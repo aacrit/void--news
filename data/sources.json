@@ -47,7 +47,7 @@
     "id": "washington-post",
     "name": "The Washington Post",
     "url": "https://www.washingtonpost.com",
-    "rss_url": "https://feeds.washingtonpost.com/rss/world",
+    "rss_url": "https://news.google.com/rss/search?q=site:washingtonpost.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
@@ -58,7 +58,7 @@
     "id": "wsj",
     "name": "The Wall Street Journal",
     "url": "https://www.wsj.com",
-    "rss_url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:wsj.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
@@ -106,7 +106,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
-    "political_lean_baseline": "center-left",
+    "political_lean_baseline": "left",
     "credibility_notes": "24-hour cable news pioneer. Large global newsgathering operation. Opinion programming leans left; straight news is generally factual."
   },
   {
@@ -157,7 +157,7 @@
     "id": "abc-news",
     "name": "ABC News",
     "url": "https://abcnews.go.com",
-    "rss_url": "https://abcnews.go.com/abcnews/topstories",
+    "rss_url": "https://abcnews.com/abcnews/topstories",
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
@@ -358,7 +358,7 @@
     "rss_url": "https://nypost.com/feed/",
     "tier": "us_major",
     "country": "US",
-    "type": "broadsheet",
+    "type": "tabloid",
     "political_lean_baseline": "right",
     "credibility_notes": "Oldest continuously published daily newspaper in the US (founded 1801). Owned by News Corp. Tabloid format, conservative editorial stance. Mix of tabloid sensationalism and factual news reporting."
   },
@@ -370,7 +370,7 @@
     "tier": "us_major",
     "country": "US",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "center-right",
     "credibility_notes": "Historic American news magazine, founded 1933. Digital-first since 2012. Editorial stance has shifted toward center-to-center-right under current ownership. Factual news operation."
   },
   {
@@ -388,7 +388,7 @@
     "id": "huffpost",
     "name": "HuffPost",
     "url": "https://www.huffpost.com",
-    "rss_url": "https://www.huffpost.com/section/front-page/feed",
+    "rss_url": "https://news.google.com/rss/search?q=site:huffpost.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "digital",
@@ -400,7 +400,7 @@
     "name": "Salon",
     "url": "https://www.salon.com",
     "rss_url": "https://www.salon.com/feed",
-    "tier": "us_major",
+    "tier": "independent",
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "left",
@@ -432,7 +432,7 @@
     "id": "newsmax",
     "name": "Newsmax",
     "url": "https://www.newsmax.com",
-    "rss_url": "https://www.newsmax.com/rss/Newsfront/16",
+    "rss_url": "https://news.google.com/rss/search?q=site:newsmax.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
@@ -624,7 +624,8 @@
     "country": "AE",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Abu Dhabi-based English-language daily. Good Middle East and South Asia coverage. State-connected; generally avoids criticism of UAE government."
+    "credibility_notes": "Abu Dhabi-based English-language daily. Good Middle East and South Asia coverage. State-connected; generally avoids criticism of UAE government.",
+    "state_affiliated": true
   },
   {
     "id": "nhk-world",
@@ -903,17 +904,6 @@
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Japan's oldest English-language newspaper, founded 1897. Majority-owned by News2u Holdings. Editorially independent with a centrist perspective on Japanese and Asian affairs."
-  },
-  {
-    "id": "the-local-europe",
-    "name": "The Local",
-    "url": "https://www.thelocal.com",
-    "rss_url": "https://www.thelocal.com/rss.php",
-    "tier": "international",
-    "country": "SE",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language news network covering life in European countries including Sweden, Germany, France, Italy, Spain, and others. Founded in Stockholm 2004. Good pan-European perspective."
   },
   {
     "id": "propublica",
@@ -1283,7 +1273,7 @@
     "name": "Slate",
     "url": "https://slate.com",
     "rss_url": "https://feeds.slate.com/slate/all",
-    "tier": "us_major",
+    "tier": "independent",
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "left",
@@ -1436,8 +1426,8 @@
     "id": "semafor",
     "name": "Semafor",
     "url": "https://www.semafor.com",
-    "rss_url": "https://www.semafor.com/feed",
-    "tier": "us_major",
+    "rss_url": "https://news.google.com/rss/search?q=site:semafor.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "center",
@@ -1448,7 +1438,7 @@
     "name": "The Information",
     "url": "https://www.theinformation.com",
     "rss_url": "https://news.google.com/rss/search?q=site:theinformation.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "us_major",
+    "tier": "independent",
     "country": "US",
     "type": "digital",
     "political_lean_baseline": "center",
@@ -1569,7 +1559,7 @@
     "name": "Foreign Policy",
     "url": "https://foreignpolicy.com",
     "rss_url": "https://foreignpolicy.com/feed/",
-    "tier": "us_major",
+    "tier": "independent",
     "country": "US",
     "type": "magazine",
     "political_lean_baseline": "center",
@@ -1579,7 +1569,7 @@
     "id": "foreign-affairs",
     "name": "Foreign Affairs",
     "url": "https://www.foreignaffairs.com",
-    "rss_url": "https://www.foreignaffairs.com/rss.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:foreignaffairs.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "independent",
     "country": "US",
     "type": "magazine",
@@ -1694,7 +1684,8 @@
     "country": "SA",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Saudi Arabia's first English-language newspaper, founded 1975. English-language coverage of Arab world affairs, international news. Saudi state-aligned editorial perspective on regional politics."
+    "credibility_notes": "Saudi Arabia's first English-language newspaper, founded 1975. English-language coverage of Arab world affairs, international news. Saudi state-aligned editorial perspective on regional politics.",
+    "state_affiliated": true
   },
   {
     "id": "middle-east-eye",
@@ -1766,9 +1757,9 @@
     "id": "radio-free-europe",
     "name": "Radio Free Europe / Radio Liberty",
     "url": "https://www.rferl.org",
-    "rss_url": "https://www.rferl.org/api/zbqiml-vomx-tpeqkmy",
+    "rss_url": "https://news.google.com/rss/search?q=site:rferl.org+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
-    "country": "US",
+    "country": "CZ",
     "type": "broadcast",
     "political_lean_baseline": "center",
     "credibility_notes": "US government-funded broadcaster targeting authoritarian countries in Europe and Asia. Editorially independent and professional. Considered credible for Eastern Europe/former Soviet region coverage. Maintains journalistic standards."
@@ -1777,7 +1768,7 @@
     "id": "voice-of-america",
     "name": "Voice of America",
     "url": "https://www.voanews.com",
-    "rss_url": "https://www.voanews.com/api/zumgqol-vomx-tpeg--qi",
+    "rss_url": "https://news.google.com/rss/search?q=site:voanews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "US",
     "type": "broadcast",
@@ -1895,17 +1886,6 @@
     "credibility_notes": "Global Jewish news agency, founded 1917. Nonpartisan wire service covering Jewish communities and Israel worldwide. Widely syndicated. Essential for Jewish community coverage."
   },
   {
-    "id": "five-thirty-eight",
-    "name": "FiveThirtyEight",
-    "url": "https://fivethirtyeight.com",
-    "rss_url": "https://fivethirtyeight.com/all/feed",
-    "tier": "us_major",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Data journalism outlet founded by Nate Silver. Now part of ABC News. Statistics-driven analysis of politics, sports, and science. Centrist methodological approach."
-  },
-  {
     "id": "dissent-magazine",
     "name": "Dissent Magazine",
     "url": "https://www.dissentmagazine.org",
@@ -1960,17 +1940,6 @@
     "type": "fact_check",
     "political_lean_baseline": "center",
     "credibility_notes": "Fact-checking operation of the Associated Press. Non-partisan verification of claims by politicians, public figures, and viral content. Highest factual credibility standard."
-  },
-  {
-    "id": "daily-caller-news-foundation",
-    "name": "Daily Caller News Foundation",
-    "url": "https://dailycallernewsfoundation.org",
-    "rss_url": "https://dailycallernewsfoundation.org/feed/",
-    "tier": "independent",
-    "country": "US",
-    "type": "investigative",
-    "political_lean_baseline": "right",
-    "credibility_notes": "Investigative arm of The Daily Caller. Nonprofit. Produces original investigative journalism with a right-leaning editorial perspective. Content widely republished. Founded 2010."
   },
   {
     "id": "persuasion",
@@ -2884,7 +2853,8 @@
     "country": "AE",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "UAE's most widely read English-language newspaper. Al Nisr Publishing. Founded 1978."
+    "credibility_notes": "UAE's most widely read English-language newspaper. Al Nisr Publishing. Founded 1978.",
+    "state_affiliated": true
   },
   {
     "id": "morocco-world-news",
@@ -2972,7 +2942,8 @@
     "country": "SA",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Pan-Arab daily, London-published. Saudi-funded (MBC Group). Gulf establishment perspective."
+    "credibility_notes": "Pan-Arab daily, London-published. Saudi-funded (MBC Group). Gulf establishment perspective.",
+    "state_affiliated": true
   },
   {
     "id": "nawaat-tunisia",
@@ -3011,7 +2982,7 @@
     "id": "tolonews",
     "name": "TOLOnews",
     "url": "https://tolonews.com",
-    "rss_url": "https://tolonews.com/rss.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:tolonews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "AF",
     "type": "broadcast",
@@ -3827,7 +3798,7 @@
     "name": "Wired",
     "url": "https://www.wired.com",
     "rss_url": "https://www.wired.com/feed/rss",
-    "tier": "us_major",
+    "tier": "independent",
     "country": "US",
     "type": "magazine",
     "political_lean_baseline": "center-left",
@@ -4442,7 +4413,7 @@
     "id": "wion",
     "name": "WION",
     "url": "https://www.wionews.com",
-    "rss_url": "https://www.wionews.com/feeds",
+    "rss_url": "https://news.google.com/rss/search?q=site:wionews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "independent",
     "country": "IN",
     "type": "broadcast",
@@ -4503,5 +4474,148 @@
     "type": "broadsheet",
     "political_lean_baseline": "right",
     "credibility_notes": "Major Argentine daily, founded 1870. Conservative/liberal editorial stance. One of Latin America's most influential newspapers."
+  },
+  {
+    "id": "the-australian",
+    "name": "The Australian",
+    "url": "https://www.theaustralian.com.au",
+    "rss_url": "https://news.google.com/rss/search?q=site:theaustralian.com.au+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "AU",
+    "type": "newspaper",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Australia's only national broadsheet. Owned by News Corp (Murdoch). Center-right editorial stance with strong business and political coverage."
+  },
+  {
+    "id": "spectator-uk",
+    "name": "The Spectator",
+    "url": "https://www.spectator.co.uk",
+    "rss_url": "https://news.google.com/rss/search?q=site:spectator.co.uk+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "GB",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Britain's oldest continuously published magazine (est. 1828). Conservative editorial stance. High-quality political commentary and analysis."
+  },
+  {
+    "id": "spiked-online",
+    "name": "Spiked",
+    "url": "https://www.spiked-online.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:spiked-online.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "GB",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "British online magazine promoting free speech and libertarian perspectives. Originally evolved from Living Marxism but shifted to right-libertarian stance."
+  },
+  {
+    "id": "the-blaze",
+    "name": "The Blaze",
+    "url": "https://www.theblaze.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:theblaze.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative media company founded by Glenn Beck. Mix of news, opinion, and commentary. AllSides: Right."
+  },
+  {
+    "id": "american-spectator",
+    "name": "The American Spectator",
+    "url": "https://spectator.org",
+    "rss_url": "https://news.google.com/rss/search?q=site:spectator.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "magazine",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative monthly magazine founded 1967. Known for investigative journalism from a right-leaning perspective."
+  },
+  {
+    "id": "redstate",
+    "name": "RedState",
+    "url": "https://redstate.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:redstate.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative/Republican political blog and news site. Part of Townhall Media (Salem Communications). AllSides: Right."
+  },
+  {
+    "id": "just-the-news",
+    "name": "Just The News",
+    "url": "https://justthenews.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:justthenews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Founded by John Solomon (former Washington Times, The Hill). Focuses on government accountability from conservative perspective."
+  },
+  {
+    "id": "hot-air",
+    "name": "Hot Air",
+    "url": "https://hotair.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:hotair.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative political commentary site. Part of Townhall Media (Salem Communications). Founded 2006."
+  },
+  {
+    "id": "western-journal",
+    "name": "The Western Journal",
+    "url": "https://www.westernjournal.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:westernjournal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Conservative news and commentary. Founded 2008 by Floyd Brown. AllSides: Right. MBFC: Right."
+  },
+  {
+    "id": "one-america-news",
+    "name": "One America News Network",
+    "url": "https://www.oann.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:oann.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Far-right cable news network. Known for promoting conspiracy theories and strong pro-Trump stance. Included for spectrum completeness, not credibility."
+  },
+  {
+    "id": "gateway-pundit",
+    "name": "The Gateway Pundit",
+    "url": "https://www.thegatewaypundit.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:thegatewaypundit.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Far-right political website. Low factual accuracy rating from multiple media monitors. Included for spectrum completeness and divergence detection."
+  },
+  {
+    "id": "rebel-news",
+    "name": "Rebel News",
+    "url": "https://www.rebelnews.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:rebelnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "CA",
+    "type": "digital",
+    "political_lean_baseline": "far-right",
+    "credibility_notes": "Canadian far-right online media company. Founded by Ezra Levant. Included for spectrum completeness in Canadian coverage."
+  },
+  {
+    "id": "daily-telegraph-au",
+    "name": "The Daily Telegraph (AU)",
+    "url": "https://www.dailytelegraph.com.au",
+    "rss_url": "https://news.google.com/rss/search?q=site:dailytelegraph.com.au+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "AU",
+    "type": "newspaper",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Sydney-based tabloid owned by News Corp Australia. Center-right editorial stance. Australia's highest-circulation daily."
   }
 ]
