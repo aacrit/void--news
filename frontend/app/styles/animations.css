@@ -203,13 +203,25 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — cascade reveal on panel open.
-   Sections fade in + slide up (translateY 16px→0, opacity 0→1).
-   Stagger applied via inline transitionDelay: section 1 = 120ms, 2 = 220ms, 3 = 320ms.
-   Uses gentle spring for smooth, weighted deceleration. */
+/* ══ SCENE 4/5: Deep Dive Content Cascade (L-cut) ══
+   When the Deep Dive panel opens, content sections cascade in while
+   the panel morph is still settling — an L-cut where the new scene's
+   audio (content) begins before the previous scene's visual (morph)
+   completes.
+
+   Each section is a new focal plane sharpening:
+   Section 1 (headline/summary): sharpens first — the subject
+   Section 2 (analysis/spectrum): sharpens second — the context
+   Section 3 (sources/methodology): sharpens last — the supporting detail
+
+   The stagger gap (--dd-cascade-gap: 120ms) creates rhythmic reveal
+   that feels like sequential focus pulls, not simultaneous pop-in.
+
+   The scale shift (0.97->1) is the dolly-in micro-movement — each
+   section approaches the viewer as it sharpens. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(16px) scale(0.98);
+  transform: translateY(16px) scale(var(--dd-content-scale-from, 0.97));
   transition:
     opacity var(--dur-reveal, 500ms) var(--ease-out),
     transform var(--dur-reveal, 500ms) var(--spring-gentle, var(--ease-out));
@@ -238,6 +250,10 @@
 }
 
 /* ---- Cold Open Utility Classes ----------------------------------------- */
+/* Each class corresponds to an element in the opening shot stagger.
+   The delays create the sensation of a camera settling and finding
+   its composition — nav frames the world, skybox establishes context,
+   lead story sharpens into focus, feed fills with content. */
 
 .anim-cold-open-nav {
   animation: coldOpenSettle var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-nav) both;
@@ -247,6 +263,9 @@
 }
 .anim-cold-open-lead {
   animation: coldOpenRackIn var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-lead) both;
+}
+.anim-cold-open-feed {
+  animation: coldOpenFeedRise var(--cold-open-dur) var(--spring-gentle) var(--cold-open-feed) both;
 }
 
 /* ---- Golden Hour Utility Class ----------------------------------------- */
@@ -521,17 +540,77 @@
   100% { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
 }
 
-/* ── Golden Hour Pulse — theme toggle dissolve ── */
+/* ══ SCENE 8: Golden Hour Pulse — Theme Toggle Dissolve ══
+   When the theme toggles, there is a brief "golden hour" moment —
+   the warmth peak that occurs during the cross-dissolve between
+   day and night exposure. This mimics the brief warming of
+   a film negative during a lab dissolve — the two exposures overlap,
+   and the composite is momentarily warmer and more saturated than
+   either individual frame.
+
+   Bradford Young's "Arrival" uses this exact technique: the flash-forward
+   sequences shift through a warm golden intermediate before resolving
+   into the scene's actual color temperature.
+
+   Timing: warmth peaks at 40% (not 50%) — fast attack, slow release.
+   This asymmetry mirrors the photochemical reality of film dissolves. */
 @keyframes cinGoldenHourPulse {
   0%   { filter: var(--cin-grade); }
-  40%  { filter: contrast(1.03) saturate(1.15) sepia(0.12) brightness(1.03); }
+  40%  { filter: contrast(1.04) saturate(1.18) sepia(0.14) brightness(1.04); }
   100% { filter: var(--cin-grade); }
 }
 
-/* ── Practical Light — breathing pulse for OnAir active state ── */
+/* ══ SCENE 7: Practical Light — OnAir Breathing Pulse ══
+   When audio is playing, the OnAir indicator becomes a "practical light"
+   — a visible light source in the frame. Its glow pulses at human
+   respiratory rhythm (4s period, matching --cin-practical-pulse).
+
+   This is not decorative animation — it is motivated by the metaphor
+   of a broadcast being alive, breathing. The pulse communicates state
+   (playing vs paused) through peripheral vision — the user does not
+   need to look directly at the indicator to know audio is active.
+
+   The amber glow uses box-shadow (GPU-composited) rather than
+   background-color to avoid layout recalculation. */
 @keyframes practicalPulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.7; }
+}
+
+/* Practical light warmth radiation — applied to elements near the
+   audio player when it is active. Subtle warm tint that fades in
+   and breathes with the pulse cycle. */
+@keyframes practicalWarmth {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 var(--cin-practical-radius) var(--cin-practical-glow-near);
+  }
+}
+
+/* ── Dolly In on scroll — element approaches as user scrolls to it ── */
+@keyframes scrollDollyIn {
+  from {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── Dolly out — element recedes as it leaves focus ── */
+@keyframes scrollDollyOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.985);
+    opacity: 0.6;
+  }
 }
 
 /* ---- Reduced Motion ---------------------------------------------------- */
