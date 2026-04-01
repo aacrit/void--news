@@ -243,12 +243,10 @@ def _connotation_score(text: str, doc=None) -> float:
     return min(100.0, avg_abs_polarity * 250.0)
 
 
-def _keyword_emphasis_score(text: str) -> tuple[float, list[dict]]:
+def _keyword_emphasis_score(text: str) -> float:
     """
     Check for emotionally charged synonyms vs neutral alternatives.
-    Returns (score 0-100, charged_matches list).
-
-    charged_matches: [{"charged": str, "neutral": str, "intensity": int, "count": int}, ...]
+    Returns 0-100.
 
     Uses word-boundary regex for single-word terms to prevent substring
     false positives: "killed" in "unskilled", "mob" in "mobilize",
@@ -258,11 +256,10 @@ def _keyword_emphasis_score(text: str) -> tuple[float, list[dict]]:
     text_lower = text.lower()
     word_count = len(text_lower.split())
     if word_count == 0:
-        return 0.0, []
+        return 0.0
 
     charged_score = 0
     total_pairs_found = 0
-    charged_matches: list[dict] = []
 
     for pat, charged, neutral, intensity in _SYNONYM_PATTERNS:
         if pat is not None:
@@ -274,12 +271,6 @@ def _keyword_emphasis_score(text: str) -> tuple[float, list[dict]]:
         if charged_count > 0:
             charged_score += charged_count * intensity
             total_pairs_found += charged_count
-            charged_matches.append({
-                "charged": charged,
-                "neutral": neutral,
-                "intensity": intensity,
-                "count": charged_count,
-            })
 
     if total_pairs_found == 0:
         # Reduced from 5.0 to 2.0 to widen the gap between articles with
@@ -287,11 +278,11 @@ def _keyword_emphasis_score(text: str) -> tuple[float, list[dict]]:
         # mild charged language.  The old 5.0 floor compressed neutral
         # articles into the same band as lightly-framed ones.
         # (nlp-engineer — framing distribution spread)
-        return 2.0, []
+        return 2.0
 
     # Normalize by article length
     density = charged_score / max(word_count / 100, 1)
-    return min(100.0, density * 15.0), charged_matches
+    return min(100.0, density * 15.0)
 
 
 def _omission_score(
@@ -299,7 +290,7 @@ def _omission_score(
     cluster_articles: list[dict] | None = None,
     doc=None,
     cluster_entity_cache: set[str] | None = None,
-) -> tuple[float, list[str], list[str]]:
+) -> float:
     """
     Detect one-sided sourcing within the article.
     If cluster_articles provided, compare entity coverage.
@@ -315,11 +306,9 @@ def _omission_score(
         cluster_entity_cache: Pre-computed set of entity strings from all
             cluster articles. When provided, skips parsing other articles.
 
-    Returns (score 0-100, entities_found list, entities_missing list).
+    Returns 0-100.
     """
     text_lower = text.lower()
-    entities_found: list[str] = []
-    entities_missing: list[str] = []
 
     pro_count = len(PRO_INDICATORS.findall(text_lower))
     anti_count = len(ANTI_INDICATORS.findall(text_lower))
@@ -360,10 +349,6 @@ def _omission_score(
                             cluster_entities.add(ent.text.lower())
 
         if cluster_entities:
-            # Record which entities this article covers vs. misses
-            entities_found = sorted(this_entities & cluster_entities)
-            entities_missing = sorted(cluster_entities - this_entities)
-
             # What fraction of cluster entities does this article mention?
             if this_entities:
                 overlap = len(this_entities & cluster_entities) / len(cluster_entities)
@@ -371,7 +356,7 @@ def _omission_score(
                 omission_penalty = (1.0 - overlap) * 30.0
                 base += omission_penalty
 
-    return min(100.0, base), entities_found, entities_missing
+    return min(100.0, base)
 
 
 def _headline_body_divergence(title: str, body: str) -> float:
@@ -403,24 +388,20 @@ def _headline_body_divergence(title: str, body: str) -> float:
     return min(100.0, divergence * 65.0)
 
 
-def _passive_voice_score(text: str, doc=None) -> tuple[float, list[str]]:
+def _passive_voice_score(text: str, doc=None) -> float:
     """
     Check for evasive passive voice constructions.
-    Returns (score 0-100, passive_matches list of matched evasive phrases).
+    Returns 0-100.
     """
     text_lower = text.lower()
     word_count = len(text_lower.split())
     if word_count == 0:
-        return 0.0, []
+        return 0.0
 
     # Check for evasive passive patterns
     evasive_count = 0
-    passive_matches: list[str] = []
     for phrase in EVASIVE_PASSIVE:
-        count = text_lower.count(phrase)
-        if count > 0:
-            evasive_count += count
-            passive_matches.append(phrase)
+        evasive_count += text_lower.count(phrase)
 
     # General passive voice density using spaCy
     if doc is None:
@@ -450,7 +431,7 @@ def _passive_voice_score(text: str, doc=None) -> tuple[float, list[str]]:
     # detection above carries full weight for genuinely evasive constructions.
     ratio_score = min(30.0, max(0.0, (passive_ratio - 0.2)) * 100.0)
 
-    return min(100.0, evasive_score + ratio_score), passive_matches
+    return min(100.0, evasive_score + ratio_score)
 
 
 def analyze_framing(
@@ -492,15 +473,15 @@ def analyze_framing(
         nlp = get_nlp()
         doc = nlp(full_text[:15000])
 
-    # Sub-scores (with Narrative X-Ray signal data)
+    # Sub-scores
     connotation = _connotation_score(full_text, doc=doc)  # 0-100
-    keyword_emp, charged_matches = _keyword_emphasis_score(full_text)  # 0-100, matches
-    omission, entities_found, entities_missing = _omission_score(
+    keyword_emp = _keyword_emphasis_score(full_text)       # 0-100
+    omission = _omission_score(
         full_text, cluster_articles, doc=doc,
         cluster_entity_cache=cluster_entity_cache,
-    )  # 0-100, found, missing
+    )  # 0-100
     headline_div = _headline_body_divergence(title, full_text)  # 0-100
-    passive, passive_matches = _passive_voice_score(full_text, doc=doc)  # 0-100, matches
+    passive = _passive_voice_score(full_text, doc=doc)     # 0-100
 
     # Weighted combination.
     # When geopolitical synonym pairs fire strongly (kw_emphasis > 60), the
@@ -548,10 +529,5 @@ def analyze_framing(
             "headline_body_divergence": round(headline_div, 1),
             "passive_voice_score": round(passive, 1),
             "has_cluster_context": cluster_articles is not None and len(cluster_articles or []) >= 2,
-            # Narrative X-Ray signal data — which specific tokens/entities fired
-            "charged_matches": charged_matches,
-            "entities_found": entities_found,
-            "entities_missing": entities_missing,
-            "passive_matches": passive_matches,
         },
     }

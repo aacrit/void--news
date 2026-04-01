@@ -77,15 +77,6 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         </p>
       )}
 
-      {/* X-Ray teaser — surfaces when cluster framing is above neutral */}
-      {story.biasScores.framing > 40 && (
-        <p className="story-card__xray-teaser" aria-label="Framing analysis available">
-          <svg className="story-card__xray-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
-          {story.biasScores.framing > 65 ? "High" : "Moderate"} framing
-          {story.source.count > 1 ? ` · ${story.source.count} sources` : ""}
-        </p>
-      )}
-
       {/* Footer: category · time · sources (left) | Sigil (right) */}
       <div className="story-card__footer">
         <div className="story-card__byline">

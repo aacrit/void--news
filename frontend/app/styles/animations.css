@@ -467,66 +467,6 @@
   50%      { opacity: 0.7; }
 }
 
-/* ---- Narrative X-Ray Keyframes ----------------------------------------- */
-/* Cinematic ref: rack focus resolve — highlights emerging from transparent
-   into signal color, like detail sharpening under a documentary lens.
-   Stagger via --nx-index custom property on each <mark> element. */
-
-@keyframes nxHighlightResolve {
-  from {
-    background-color: transparent;
-    box-decoration-break: clone;
-  }
-  to {
-    background-color: var(--nx-highlight-color, var(--nx-charged-bg));
-    box-decoration-break: clone;
-  }
-}
-
-/* Entity sentiment underline: draws in left-to-right via background-size.
-   Same ink-draw language as the Sigil underline (inkUnderlineDraw). */
-@keyframes nxUnderlineDraw {
-  from { background-size: 0% 2px; }
-  to   { background-size: 100% 2px; }
-}
-
-/* Tooltip entrance: micro-dolly — camera pulls in to examine a word.
-   Scale from 97% (slightly receded) to 100% (sharp focus plane). */
-@keyframes nxTooltipIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes nxTooltipOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(2px) scale(0.98);
-  }
-}
-
-/* Omission banner: vertical wipe via clip-path.
-   Cinematic ref: documentary chyron — information arriving as text. */
-@keyframes nxOmissionReveal {
-  from {
-    clip-path: inset(100% 0 0 0);
-    opacity: 0.5;
-  }
-  to {
-    clip-path: inset(0);
-    opacity: 1;
-  }
-}
-
 /* ---- Reduced Motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -671,29 +611,5 @@
   }
   .skb__onair-btn--active {
     animation: none;
-  }
-
-  /* ── Narrative X-Ray: instant appearance, no stagger ── */
-  .nx-active .nx-highlight {
-    animation: none !important;
-    background-color: var(--nx-highlight-color, var(--nx-charged-bg));
-  }
-  .nx-active .nx-entity {
-    animation: none !important;
-    background-size: 100% 2px;
-  }
-  .nx-tooltip {
-    animation: none !important;
-    opacity: 1;
-    transform: none;
-  }
-  .nx-tooltip--exiting {
-    animation: none !important;
-    opacity: 0;
-  }
-  .nx-active .nx-omission-banner {
-    animation: none !important;
-    clip-path: none;
-    opacity: 1;
   }
 }

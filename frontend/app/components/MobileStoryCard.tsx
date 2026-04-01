@@ -73,13 +73,6 @@ export default function MobileStoryCard({
         <>
           <h2 className="msc__headline msc__headline--hero">{story.title}</h2>
           <p className="msc__summary">{story.summary}</p>
-          {story.biasScores.framing > 40 && (
-            <p className="story-card__xray-teaser" aria-label="Framing analysis available">
-              <svg className="story-card__xray-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
-              {story.biasScores.framing > 65 ? "High" : "Moderate"} framing
-              {story.source.count > 1 ? ` · ${story.source.count} sources` : ""}
-            </p>
-          )}
           <div className="msc__footer">
             <Sigil data={story.sigilData} size="lg" instant />
           </div>
