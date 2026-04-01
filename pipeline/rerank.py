@@ -325,16 +325,20 @@ def main():
                 pool[:] = new_pool
                 print(f"  Lead gate ({section_val}): enforced 3+ sources in top-{LEAD_SLOTS} ({len(lead_deferred)} stories deferred)")
 
-        # --- Same-event cap (v5.1): max 3 stories about the same event ---
+        # --- Same-event cap (v5.1, strengthened v5.6) ---
         # Detects event clusters by keyword overlap in titles.
         # "Iran war" stories all share keywords like iran/tehran/hormuz.
-        # Without this, 11/20 top stories can be Iran war variants.
-        MAX_SAME_EVENT = 3
+        # v5.6: Reduced from 3 to 2 in top pool. Deferred stories get
+        # 0.92x rank decay so they don't cluster at positions 11-20
+        # (benchmark found 11/20 world stories were Iran variants).
+        MAX_SAME_EVENT = 2
+        EVENT_DECAY = 0.92  # rank multiplier for deferred same-event stories
         _EVENT_KEYWORDS = {
-            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth"},
-            "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky"},
-            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf"},
+            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth", "isfahan"},
+            "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky", "donbas", "crimea"},
+            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf", "hezbollah"},
             "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
+            "us_scotus": {"supreme court", "scotus", "constitutional"},
         }
 
         def _detect_event(title: str) -> str | None:
@@ -359,6 +363,14 @@ def main():
                     event_promoted.append(u)
                     if event:
                         event_counts[event] = event_counts.get(event, 0) + 1
+
+            # v5.6: Apply rank decay to deferred same-event stories.
+            # Without decay, deferred stories keep their original rank and
+            # cluster at positions 11-20 (e.g., 8 Iran stories in a row).
+            # Each deferred story gets 0.92x, making them spread out and
+            # allowing non-event stories to interleave naturally.
+            for u in event_deferred:
+                u["headline_rank"] = round(u["headline_rank"] * EVENT_DECAY, 2)
 
             # Merge: promoted first, deferred after
             pool[:] = event_promoted + event_deferred

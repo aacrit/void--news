@@ -300,6 +300,11 @@ _OVERLY_COMMON_ENTITIES = frozenset({
     "congress", "senate", "pentagon", "white house",
     "the united states", "the us", "washington",
     "republicans", "democrats", "gop",
+    # v5.6: Added to prevent false merges at lower entity threshold (3→2).
+    # These GPEs/ORGs appear across many unrelated stories.
+    "new york", "california", "texas", "florida",
+    "london", "paris", "beijing", "moscow",
+    "european union", "eu", "united nations",
 })
 
 
@@ -334,7 +339,7 @@ def _extract_cluster_entities(articles: list[dict]) -> set[str]:
 
 def merge_related_clusters(
     clusters: list[dict],
-    min_shared_entities: int = 3,
+    min_shared_entities: int = 2,
     max_age_spread_hours: float = 48.0,
     max_cluster_articles: int = 50,
 ) -> list[dict]:
@@ -361,10 +366,13 @@ def merge_related_clusters(
         min_shared_entities: How many entities two clusters must share to
             trigger a merge (default 2 — requires two matching actors/places,
             preventing false merges on single common words like "Trump").
+            v5.6: Lowered from 3 to 2 to catch cases like duplicate Supreme
+            Court conversion therapy clusters ("supreme court" + "colorado").
+            _OVERLY_COMMON_ENTITIES filter expanded to prevent false merges.
         max_age_spread_hours: Maximum time between the earliest articles of
             two clusters for them to be eligible for merging. Prevents
             cross-month merges (e.g., "Iran nuclear deal 2015" with
-            "Iran-Israel war 2026"). Default 72h covers evolving stories
+            "Iran-Israel war 2026"). Default 48h covers evolving stories
             that span 2-3 pipeline runs.
         max_cluster_articles: Maximum articles in a merged cluster. Prevents
             runaway transitive merges where Union-Find chains unrelated

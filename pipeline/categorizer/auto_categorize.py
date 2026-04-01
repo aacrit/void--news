@@ -53,6 +53,10 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "investor": 2, "investment": 2, "venture capital": 3,
         "ipo": 3, "merger": 3, "acquisition": 2, "bankruptcy": 3,
         "supply chain": 2, "manufacturing": 2, "industrial": 1,
+        # v5.6: Strengthen export/trade signals — "S. Korea monthly exports"
+        # was miscategorized as health due to weak economy keyword matching
+        "exports": 3, "imports": 3, "trade surplus": 3,
+        "trade deficit": 3, "trade balance": 3, "ceo": 2,
     },
     "technology": {
         # AI/ML — strong signals
@@ -136,6 +140,14 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "strike": 2, "strikes": 2, "shelling": 3, "artillery": 3,
         "airforce": 3, "warship": 3, "submarine": 3,
         "killed": 2, "wounded": 2, "fighters": 2,
+        # v5.6: Nuclear disambiguation — "nuclear" in news context is almost
+        # always geopolitical, not science. "nuclear threat eliminated" was
+        # miscategorized as science; these phrases anchor it to conflict.
+        "nuclear": 2, "nuclear threat": 3, "nuclear program": 3,
+        "nuclear deal": 3, "nuclear arsenal": 3, "nuclear capability": 3,
+        "nuclear talks": 3, "nuclear strike": 3,
+        # v5.6: Kidnapping/abduction — conflict, not general crime
+        "kidnapped": 3, "abducted": 3, "hostage crisis": 3,
     },
     "science": {
         "research": 2, "study": 1, "discovery": 2, "nasa": 3,
@@ -167,6 +179,10 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "podcast": 2, "documentary": 2, "animation": 2,
         "photography": 2, "sculpture": 2, "painting": 2,
         "cultural": 2, "heritage": 2, "tradition": 1,
+        # v5.6: Celebrity trouble stories — often miscategorized as
+        # health/politics when the subject is a public figure
+        "dui": 2, "mugshot": 2, "rehab": 2, "tabloid": 2,
+        "paparazzi": 2, "red carpet": 2, "memoir": 2,
     },
     "sports": {
         "game": 1, "championship": 3, "player": 2, "team": 1,
