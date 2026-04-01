@@ -74,6 +74,7 @@ def generate_json(
     system_instruction: str | None = None,
     max_retries: int = 1,
     count_call: bool = True,
+    max_output_tokens: int = 8192,
 ) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
@@ -88,6 +89,9 @@ def generate_json(
             and enforces the 25-call summarization budget cap. When False,
             both the cap check and the increment are skipped — use for
             editorial triage calls that have their own separate budget.
+        max_output_tokens: Maximum output tokens including thinking tokens.
+            Default 8192 for cluster summaries. Use 65536 for briefs which
+            produce TL;DR + audio script (~1200 words of output).
 
     Returns parsed JSON dict, or None on failure (caller falls back
     to rule-based generation).
@@ -105,7 +109,7 @@ def generate_json(
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
         temperature=0.2,
-        max_output_tokens=8192,  # Gemini 2.5 Flash uses thinking tokens internally
+        max_output_tokens=max_output_tokens,
         system_instruction=system_instruction,  # None = no system turn (backward-compatible)
     )
 
