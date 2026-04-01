@@ -1,0 +1,332 @@
+/* ==========================================================================
+   void --news — Narrative X-Ray
+   Per-sentence framing highlights inside Deep Dive source perspectives.
+   Reveals charged synonyms, entity sentiment, and omissions inline.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   X-Ray Color Tokens — Light Mode
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-mode="light"] {
+  /* Charged synonym highlight — amber wash, visible but not garish */
+  --xray-charged-bg: rgba(148, 107, 21, 0.12);
+  --xray-charged-border: rgba(148, 107, 21, 0.35);
+  --xray-charged-text: var(--fg-primary);
+
+  /* Entity sentiment — warm (positive) / cool (negative) underlines */
+  --xray-entity-pos: #946B15;
+  --xray-entity-neg: #64748B;
+
+  /* Omission banner */
+  --xray-omission-bg: rgba(148, 107, 21, 0.05);
+  --xray-omission-border: var(--cin-amber-dim);
+  --xray-omission-text: var(--fg-secondary);
+
+  /* Count badge */
+  --xray-badge-bg: var(--bg-secondary);
+  --xray-badge-text: var(--fg-secondary);
+  --xray-badge-bg-active: var(--cin-amber-ghost);
+  --xray-badge-text-active: var(--cin-amber);
+
+  /* Tooltip */
+  --xray-tooltip-bg: var(--bg-elevated);
+  --xray-tooltip-border: var(--border-strong);
+  --xray-tooltip-shadow: var(--shadow-e2);
+}
+
+/* --------------------------------------------------------------------------
+   X-Ray Color Tokens — Dark Mode
+   -------------------------------------------------------------------------- */
+:root[data-mode="dark"] {
+  --xray-charged-bg: rgba(212, 165, 116, 0.10);
+  --xray-charged-border: rgba(212, 165, 116, 0.30);
+  --xray-charged-text: var(--fg-primary);
+
+  --xray-entity-pos: #D4A574;
+  --xray-entity-neg: #94A3B8;
+
+  --xray-omission-bg: rgba(212, 165, 116, 0.04);
+  --xray-omission-border: var(--cin-amber-dim);
+  --xray-omission-text: var(--fg-secondary);
+
+  --xray-badge-bg: var(--bg-secondary);
+  --xray-badge-text: var(--fg-secondary);
+  --xray-badge-bg-active: rgba(212, 165, 116, 0.10);
+  --xray-badge-text-active: var(--cin-amber);
+
+  --xray-tooltip-bg: var(--bg-elevated);
+  --xray-tooltip-border: var(--border-strong);
+  --xray-tooltip-shadow: var(--shadow-e2);
+}
+
+/* --------------------------------------------------------------------------
+   X-Ray Container
+   -------------------------------------------------------------------------- */
+.xray {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+/* --------------------------------------------------------------------------
+   Omission Banner — top of each source excerpt
+   -------------------------------------------------------------------------- */
+.xray__omission {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-3);
+  background: var(--xray-omission-bg);
+  border-left: 2px solid var(--xray-omission-border);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  color: var(--xray-omission-text);
+}
+
+.xray__omission-icon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  opacity: 0.7;
+}
+
+.xray__omission-stat {
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+.xray__omission-missing {
+  font-style: italic;
+  color: var(--fg-tertiary);
+}
+
+/* --------------------------------------------------------------------------
+   Count Badge — "14 framing signals" toggle
+   -------------------------------------------------------------------------- */
+.xray__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  margin-bottom: var(--space-2);
+  background: var(--xray-badge-bg);
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--xray-badge-text);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+  user-select: none;
+}
+
+.xray__badge:hover {
+  background: var(--xray-badge-bg-active);
+  color: var(--xray-badge-text-active);
+  border-color: var(--xray-charged-border);
+}
+
+.xray__badge--active {
+  background: var(--xray-badge-bg-active);
+  color: var(--xray-badge-text-active);
+  border-color: var(--xray-charged-border);
+}
+
+.xray__badge-icon {
+  width: 12px;
+  height: 12px;
+  opacity: 0.7;
+}
+
+.xray__badge--active .xray__badge-icon {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Article Text — the annotated excerpt
+   -------------------------------------------------------------------------- */
+.xray__text {
+  color: var(--fg-primary);
+  line-height: 1.75;
+}
+
+/* --------------------------------------------------------------------------
+   Charged Synonym Highlight
+   -------------------------------------------------------------------------- */
+.xray__charged {
+  background: var(--xray-charged-bg);
+  border-bottom: 1.5px solid var(--xray-charged-border);
+  padding: 0 1px;
+  cursor: help;
+  position: relative;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.xray__charged:hover,
+.xray__charged:focus-visible {
+  background: rgba(148, 107, 21, 0.20);
+}
+
+:root[data-mode="dark"] .xray__charged:hover,
+:root[data-mode="dark"] .xray__charged:focus-visible {
+  background: rgba(212, 165, 116, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   Entity Sentiment Underline
+   -------------------------------------------------------------------------- */
+.xray__entity {
+  border-bottom: 1.5px solid transparent;
+  padding-bottom: 0.5px;
+  cursor: help;
+  position: relative;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.xray__entity--pos {
+  border-bottom-color: var(--xray-entity-pos);
+}
+
+.xray__entity--neg {
+  border-bottom-color: var(--xray-entity-neg);
+}
+
+.xray__entity:hover,
+.xray__entity:focus-visible {
+  border-bottom-width: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Tooltip — appears on hover/tap for both charged and entity highlights
+   -------------------------------------------------------------------------- */
+.xray__tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-tooltip);
+  min-width: 160px;
+  max-width: 260px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--xray-tooltip-bg);
+  border: 1px solid var(--xray-tooltip-border);
+  box-shadow: var(--xray-tooltip-shadow);
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  pointer-events: none;
+  white-space: normal;
+
+  /* Entrance animation */
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.xray__charged:hover .xray__tip,
+.xray__charged:focus-visible .xray__tip,
+.xray__entity:hover .xray__tip,
+.xray__entity:focus-visible .xray__tip,
+.xray__charged .xray__tip--visible,
+.xray__entity .xray__tip--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.xray__tip-label {
+  display: block;
+  font-weight: 600;
+  color: var(--fg-primary);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.xray__tip-neutral {
+  color: var(--cin-amber);
+  font-weight: 600;
+}
+
+.xray__tip-intensity {
+  display: inline-flex;
+  gap: 1px;
+  margin-left: var(--space-1);
+}
+
+.xray__tip-intensity-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cin-amber);
+  opacity: 0.3;
+}
+
+.xray__tip-intensity-dot--filled {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Expanded Source Article — in ComparativeView
+   -------------------------------------------------------------------------- */
+.comp-view__xray-wrap {
+  padding: var(--space-3) 0;
+  border-top: 1px dashed var(--border-subtle);
+  margin-top: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .xray__tip {
+    transition: none;
+  }
+
+  .xray__charged {
+    transition: none;
+  }
+
+  .xray__entity {
+    transition: none;
+  }
+
+  .xray__badge {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile refinements
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* Tooltips reposition below on mobile to avoid viewport overflow */
+  .xray__tip {
+    bottom: auto;
+    top: calc(100% + 4px);
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  .xray__charged:hover .xray__tip,
+  .xray__charged:focus-visible .xray__tip,
+  .xray__entity:hover .xray__tip,
+  .xray__entity:focus-visible .xray__tip,
+  .xray__charged .xray__tip--visible,
+  .xray__entity .xray__tip--visible {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .xray__omission {
+    font-size: var(--text-xxs);
+  }
+}

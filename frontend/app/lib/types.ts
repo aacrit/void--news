@@ -75,6 +75,14 @@ export interface SensationalismRationale {
   measuredDensity: number;
 }
 
+/** A single charged synonym match from the framing analyzer */
+export interface ChargedMatch {
+  charged: string;
+  neutral: string;
+  intensity: number;
+  count: number;
+}
+
 /** Rationale for framing analysis scoring */
 export interface FramingRationale {
   connotationScore: number;
@@ -83,6 +91,14 @@ export interface FramingRationale {
   headlineBodyDivergence: number;
   passiveVoiceScore: number;
   hasClusterContext: boolean;
+  /** Narrative X-Ray: matched charged synonyms with neutral alternatives */
+  chargedMatches?: ChargedMatch[];
+  /** Narrative X-Ray: cluster entities this article covers */
+  entitiesFound?: string[];
+  /** Narrative X-Ray: cluster entities this article omits */
+  entitiesMissing?: string[];
+  /** Narrative X-Ray: evasive passive voice phrases detected */
+  passiveMatches?: string[];
 }
 
 /** Gemini LLM reasoning text per bias axis — stored under rationale.gemini_reasoning */
