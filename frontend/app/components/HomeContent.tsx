@@ -650,9 +650,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
   }, [compactStories.length]);
 
-  // Mobile: infinite scroll via IntersectionObserver on sentinel
+  // Infinite scroll via IntersectionObserver on sentinel (desktop + mobile)
   useEffect(() => {
-    if (!isMobile) return;
     const sentinel = sentinelRef.current;
     if (!sentinel || !hasMore) return;
 
@@ -662,7 +661,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [isMobile, hasMore, loadMoreStories]);
+  }, [hasMore, loadMoreStories]);
 
   // Stable key that changes whenever the active filter changes.
   // Keying the <section> elements on this value causes React to unmount+remount
@@ -896,16 +895,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                       </section>
 
                       {hasMore && (
-                        <div className="feed-continuation" ref={sentinelRef}>
-                          <div className="feed-continuation__fade" aria-hidden="true" />
-                          <button
-                            className="feed-continuation__link"
-                            onClick={loadMoreStories}
-                            aria-label="Show more stories"
-                          >
-                            Continue reading
-                          </button>
-                        </div>
+                        <div className="feed-sentinel" ref={sentinelRef} aria-hidden="true" />
                       )}
                     </>
                   )}

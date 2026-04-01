@@ -556,18 +556,6 @@
     padding: var(--space-4) var(--space-5);
   }
 
-  /* === FEED CONTINUATION — INFINITE SCROLL === */
-
-  /* Hide editorial link on mobile — infinite scroll handles loading */
-  .feed-continuation__link {
-    display: none;
-  }
-
-  /* Sentinel: minimal height, just enough for IntersectionObserver */
-  .feed-continuation {
-    padding: var(--space-2) 0;
-  }
-
   /* === NATIVE APP TOUCH FEEDBACK === */
 
   /* Bottom nav removed — filters are in the nav-header now */

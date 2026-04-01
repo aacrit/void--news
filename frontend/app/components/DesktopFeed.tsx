@@ -17,7 +17,6 @@ interface DesktopFeedProps {
   visibleCount: number;
   hasMore: boolean;
   sentinelRef: RefObject<HTMLDivElement | null>;
-  loadMoreStories: () => void;
   kbdFocusIndex: number;
   editionMeta: EditionMeta;
 }
@@ -39,7 +38,6 @@ export default function DesktopFeed({
   visibleCount,
   hasMore,
   sentinelRef,
-  loadMoreStories,
   kbdFocusIndex,
   editionMeta,
 }: DesktopFeedProps) {
@@ -123,16 +121,7 @@ export default function DesktopFeed({
           </section>
 
           {hasMore && (
-            <div className="feed-continuation" ref={sentinelRef}>
-              <div className="feed-continuation__fade" aria-hidden="true" />
-              <button
-                className="feed-continuation__link"
-                onClick={loadMoreStories}
-                aria-label="Show more stories"
-              >
-                Continue reading
-              </button>
-            </div>
+            <div className="feed-sentinel" ref={sentinelRef} aria-hidden="true" />
           )}
         </>
       )}

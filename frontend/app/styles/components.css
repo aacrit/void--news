@@ -2271,89 +2271,11 @@
    Desktop: text link with slide-in underline (dd-read-more pattern).
    Mobile: sentinel-only (infinite scroll), link hidden. */
 
-.feed-continuation {
-  position: relative;
-  text-align: center;
-  padding: var(--space-4) 0 var(--space-5);
-}
-
-/* Gradient fade — hints at more content below the last visible card.
-   Overlaps the bottom of .grid-compact by 3em. */
-.feed-continuation__fade {
-  position: absolute;
-  top: -3em;
-  left: 0;
-  right: 0;
-  height: 3em;
-  background: linear-gradient(transparent, var(--bg-primary));
-  pointer-events: none;
-}
-
-/* "Continue reading" text link — editorial, not SaaS.
-   Mirrors .dd-read-more: tertiary color, underline slides in on hover,
-   spring press feedback. */
-.feed-continuation__link {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--fg-tertiary);
-  cursor: pointer;
-  text-decoration: none;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
-  min-height: 44px;
-  background: none;
-  border: none;
-  transition: color var(--dur-fast) var(--ease-out);
-}
-
-/* Underline slide-in — identical to .dd-read-more::after */
-.feed-continuation__link::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
+/* Invisible scroll sentinel — triggers IntersectionObserver to load
+   the next batch of stories as the user scrolls near the bottom. */
+.feed-sentinel {
   height: 1px;
-  background-color: var(--fg-primary);
-  transition: width var(--dur-normal) var(--ease-out);
-}
-
-.feed-continuation__link:hover {
-  color: var(--fg-primary);
-}
-
-.feed-continuation__link:hover::after {
   width: 100%;
-}
-
-.feed-continuation__link:active {
-  transform: scale(0.95);
-  transition: transform 100ms var(--spring);
-}
-
-.feed-continuation__link:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-/* Story count — data voice, muted, parenthetical */
-.feed-continuation__count {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  font-feature-settings: "tnum" 1;
-}
-
-.feed-continuation__count::before {
-  content: "(";
-}
-
-.feed-continuation__count::after {
-  content: ")";
 }
 
 /* ---- Buttons (shared) -------------------------------------------------- */
