@@ -390,18 +390,54 @@
 
 /* ---- Cinematic Keyframes ----------------------------------------------- */
 
-/* ── Cold Open ── */
+/* ══ SCENE 1: Cold Open ══
+   The film's opening shot. Each element arrives with purpose — not random
+   pop-ins but a choreographed establishing shot. The camera starts slightly
+   pulled back (Malick crane opening) and settles into the composition.
+
+   Stagger order:
+   1. Nav descends from above (crane down) — establishes the frame
+   2. Skybox dolly-in (scale 0.985->1) — the camera pushes into the content
+   3. Lead story racks into focus (blur 2px->0 + scale) — subject sharpens
+   4. Feed fades in with upward drift — content fills the frame
+
+   The cold open plays exactly once per page load. It is the viewer's first
+   impression — the equivalent of a film's opening frame. */
+
 @keyframes coldOpenSettle {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  /* Nav: Tilt down — camera settling onto its tripod after a crane move.
+     Small translateY, quick opacity. The nav is structure, not spectacle. */
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes coldOpenDollyIn {
-  from { opacity: 0; transform: scale(0.985); }
-  to { opacity: 1; transform: scale(1); }
+  /* Skybox: Dolly in — the camera pushes toward the subject.
+     Scale from 0.985 simulates the lens approaching the banner.
+     Lubezki's Revenant opening: slow, inevitable forward momentum. */
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes coldOpenRackIn {
+  /* Lead story: Rack focus — the subject sharpens from background blur.
+     This is the star of the cold open. The blur-to-sharp transition is
+     the moment the cinematographer says "look HERE."
+     Deakins in Sicario: the convoy emerges from heat haze into clarity.
+     The scale shift (0.97->1) creates micro-parallax — the subject
+     feels like it's moving toward the viewer as it sharpens. */
   from {
     opacity: 0;
     transform: scale(0.97);
@@ -411,6 +447,20 @@
     opacity: 1;
     transform: scale(1);
     filter: blur(0);
+  }
+}
+
+/* Feed entrance: Tilt up — content rises into the frame like a
+   newspaper being lifted from a desk. Gentle spring overshoot gives
+   physical weight to the content mass arriving. */
+@keyframes coldOpenFeedRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -428,30 +478,47 @@
   to { opacity: 1; }
 }
 
-/* ── Whip Pan (Edition Switch) — GPU-only (transform + opacity) ── */
+/* ══ SCENE 6: Whip Pan (Edition Switch) ══
+   Directional momentum with motion blur — the camera whips to track
+   a moving subject. Content exits in the direction of the new edition,
+   enters from the opposite side.
+
+   The scaleX(1.01) at 30% simulates the horizontal stretch artifact
+   from a real whip pan (motion blur elongates horizontal elements).
+   The filter: blur(1.5px) during the fastest movement phase creates
+   true motion blur — everything is sharp at rest, blurred in transit.
+
+   Choreography:
+   1. Old content exits (whipPanOut): accelerate -> blur peak -> gone
+   2. New content enters (whipPanIn): arrive blurred -> decelerate -> sharp
+
+   The overlap is an L-cut: new content begins entering before old content
+   fully exits, creating the sensation of continuous camera movement
+   rather than cut-insert-cut. */
+
 @keyframes whipPanOut {
-  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
-  30%  { transform: translateX(-3%) scaleX(1.01); opacity: 0.8; }
-  100% { transform: translateX(-10%) scaleX(1); opacity: 0; }
+  0%   { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
+  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.7; filter: blur(1.5px); }
+  100% { transform: translateX(-12%) scaleX(1); opacity: 0; filter: blur(0); }
 }
 
 @keyframes whipPanIn {
-  0%   { transform: translateX(10%) scaleX(1); opacity: 0; }
-  30%  { transform: translateX(3%) scaleX(1.01); opacity: 0.2; }
-  100% { transform: translateX(0) scaleX(1); opacity: 1; }
+  0%   { transform: translateX(12%) scaleX(1); opacity: 0; filter: blur(0); }
+  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.3; filter: blur(1.5px); }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
 }
 
-/* ── Direction-aware whip pan (rightward exit) ── */
+/* Direction-aware: rightward exit (switching to an earlier edition) */
 @keyframes whipPanOutRight {
-  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
-  30%  { transform: translateX(3%) scaleX(1.01); opacity: 0.8; }
-  100% { transform: translateX(10%) scaleX(1); opacity: 0; }
+  0%   { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
+  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.7; filter: blur(1.5px); }
+  100% { transform: translateX(12%) scaleX(1); opacity: 0; filter: blur(0); }
 }
 
 @keyframes whipPanInLeft {
-  0%   { transform: translateX(-10%) scaleX(1); opacity: 0; }
-  30%  { transform: translateX(-3%) scaleX(1.01); opacity: 0.2; }
-  100% { transform: translateX(0) scaleX(1); opacity: 1; }
+  0%   { transform: translateX(-12%) scaleX(1); opacity: 0; filter: blur(0); }
+  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.3; filter: blur(1.5px); }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
 }
 
 /* ── Golden Hour Pulse — theme toggle dissolve ── */

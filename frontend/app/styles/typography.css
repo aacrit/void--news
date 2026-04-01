@@ -108,6 +108,13 @@
   display: inline-block;
 }
 
+/* Prominent category tags — lead story, Deep Dive header.
+   Barlow Condensed 500 for stronger wayfinding at larger sizes.
+   Mirrors Washington Post section labels (Franklin Gothic Condensed medium). */
+.category-tag--prominent {
+  font-weight: 500;
+}
+
 /* Time stamp — data voice (IBM Plex Mono), tabular numerals */
 .time-tag {
   font-family: var(--font-data);
