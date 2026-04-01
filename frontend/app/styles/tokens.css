@@ -212,8 +212,8 @@
   --cin-grade: contrast(1.03) saturate(0.92) sepia(0.04);
 
   /* ── Atmospheric Haze ── */
-  --cin-haze-far: saturate(0.92) brightness(0.98);
-  --cin-haze-mid: saturate(0.96) brightness(0.99);
+  --cin-haze-far: saturate(0.96) brightness(0.99);
+  --cin-haze-mid: saturate(0.98) brightness(0.995);
   --cin-warmth-near: sepia(0.02) saturate(1.02);
 
   /* ── Cold Open — staged reveal timing ── */
@@ -236,7 +236,7 @@
      the rack happens at lens-barrel speed — mechanical, measured, deliberate.
      Not instant (that would be a cut), not slow (that would be dreamy). */
   --rack-blur-neighbor: var(--focus-soft);
-  --rack-dim-neighbor: 0.62;
+  --rack-dim-neighbor: 0.80;
   --rack-recede-neighbor: scale(0.997);
 
   /* ── Deep Dive Backdrop — cinematic chiaroscuro ── */
@@ -438,8 +438,8 @@
   --cin-vignette-color: rgba(12, 8, 2, 0.12);
   --cin-grain-opacity: 0.025;
   --cin-grade: contrast(1.05) saturate(0.86) brightness(0.96) sepia(0.02);
-  --cin-haze-far: saturate(0.88) brightness(0.95);
-  --cin-haze-mid: saturate(0.93) brightness(0.97);
+  --cin-haze-far: saturate(0.93) brightness(0.97);
+  --cin-haze-mid: saturate(0.96) brightness(0.98);
   --cin-warmth-near: sepia(0.03) saturate(1.01);
 
   /* ── Dark mode overrides for cinematic tokens ── */
@@ -449,7 +449,7 @@
 
   /* Dark mode: rack focus uses softer blur (less contrast needed on dark bg) */
   --rack-blur-neighbor: blur(1.2px);
-  --rack-dim-neighbor: 0.58;
+  --rack-dim-neighbor: 0.75;
 
   /* Dark mode: practical light is more visible against dark surfaces —
      Bradford Young's approach: warm practicals glow brighter when the
