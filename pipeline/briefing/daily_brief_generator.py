@@ -766,7 +766,9 @@ a reader hits every word evenly; a teller emphasizes, pauses, speeds up, \
 gets quiet. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
 This is read by a DIFFERENT voice than the news hosts — a distinct editorial \
 voice. Open EXACTLY with this two-part structure: \
-First line: "void --opinion logs in." [short pause] \
+First line: "Now, void opinion." — spoken as one fluid phrase with NO pause \
+between "Now," and "void opinion." Do NOT insert [long pause] or [short pause] \
+between them. \
 Second line: State the opinion_headline you wrote above as a spoken title. \
 Then dive straight into the argument. No preamble, no lens announcement. \
 Use ellipses (...) for thinking pauses. Use em \
@@ -776,7 +778,7 @@ Vary sentence rhythm — short punchy sentences for emphasis, longer ones to \
 build the case. Contractions fine. Spoken cadence, not written. Start \
 measured. Let conviction build. By the final third, the listener should hear \
 that you mean this. \
-End with: "void --opinion logs out." No summary. End on the unresolved question.\
+End with: "This was void opinion." No summary. End on the unresolved question.\
 """
 
 
@@ -793,10 +795,10 @@ def _rule_based_opinion(cluster: dict, lean: str) -> dict:
 
     # Build audio script from summary
     audio_script = (
-        f"void --opinion logs in.\n"
+        f"Now, void opinion.\n"
         f"{title}.\n"
         f"{summary}\n"
-        f"void --opinion logs out."
+        f"This was void opinion."
     )
 
     print(f"  [opinion] Rule-based fallback: \"{title[:60]}\" ({len(summary.split())} words)")
@@ -983,10 +985,10 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                     # Fallback: synthesize audio script from opinion text.
                     # Gemini often omits the third JSON field. The opinion text
                     # is already written in spoken cadence — just add the preamble.
-                    preamble = "void --opinion logs in."
+                    preamble = "Now, void opinion."
                     if headline:
                         preamble += f" {headline}."
-                    opinion_audio = f"{preamble}\n{text}\nvoid --opinion logs out."
+                    opinion_audio = f"{preamble}\n{text}\nThis was void opinion."
                     print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
 
                 cluster_id = cluster.get("_db_id", "")
