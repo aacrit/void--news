@@ -877,26 +877,37 @@
   /* DivergenceAlerts removed from homepage — CSS kept for reference */
 }
 
-/* ---- Cinematic Mobile Degradation -------------------------------------- */
+/* ---- Cinematic Mobile Degradation --------------------------------------
+   Mobile devices: battery + GPU budget is limited. Cinematic layers are
+   either disabled or reduced to static, low-opacity versions.
+
+   Layer 1 (Grain):     Static (no drift animation), nearly invisible (0.02)
+   Layer 2 (Grade):     Disabled (filter: none on .page-main + .nav-header)
+   Layer 3 (Vignette):  Reduced to 50% opacity (still frames content subtly)
+   Layer 4 (Haze):      Disabled (no per-card filter)
+   Layer 5 (Chromatic): Disabled (no text-shadow on lead headline)
+   Layer 6 (Light):     Unchanged (practical light is CSS box-shadow, cheap) */
 
 @media (max-width: 767px) {
-  /* Disable color grade on mobile — saves GPU and reduces battery drain.
-     Targets .page-main and .nav-header which carry the filter (not .page-container). */
+  /* Color grade: disabled — CSS filter on root causes full-page repaint */
   .page-main,
   .nav-header {
     filter: none;
   }
+  /* Film grain: static, near-invisible — 1 compositing layer, no animation */
   .page-container::after {
     animation: none;
     opacity: 0.02;
-    will-change: auto;
   }
+  /* Vignette: 50% reduced — subtle framing preserved without GPU cost */
   .page-container::before {
     opacity: 0.5;
   }
+  /* Atmospheric haze: disabled — per-card filters are expensive on mobile */
   .story-card:not(.anim-stagger--visible) {
     filter: none;
   }
+  /* Chromatic aberration: disabled — sub-pixel text-shadow is fuzzy on mobile DPI */
   .lead-story__headline {
     text-shadow: none;
   }

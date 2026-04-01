@@ -7819,18 +7819,40 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, var(--cin-vignette-color) 100%);
 }
 
-/* ── Film Grain ── */
+/* ── Film Grain ──
+   Kodak Vision3 500T emulation: warm in highlights (the feColorMatrix
+   shifts R+G channels warm via 0.36/0.34/0.28 weighting), neutral-cool
+   in shadows (B channel preserved at 0.32). The grain character is:
+   - Fine: baseFrequency 0.75 (tighter than 0.65, closer to 500T native)
+   - Rich: numOctaves 4 (one more octave for finer micro-detail)
+   - Warm: colorMatrix biases highlights warm, leaves shadows neutral
+   - Living: cin-grain-drift at 8s period, steps(4) for 0.25fps gate
+
+   Light mode: mix-blend-mode overlay (grain bites into mid-tones and
+   highlights — the natural behavior of film grain on a bright exposure).
+   Dark mode: mix-blend-mode soft-light (gentler compositing on dark
+   surfaces — overlay is too harsh when the base luminance is low, creating
+   visible banding. Soft-light preserves shadow detail while still adding
+   the organic texture feel of underexposed negative stock).
+
+   will-change is NOT set at rest (saves VRAM on long feeds) — it is
+   only promoted during animation via the keyframe transform property.
+   The browser will auto-promote during cin-grain-drift animation. */
 .page-container::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: var(--z-cinematic);
   pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.010 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.010 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
   opacity: var(--cin-grain-opacity);
-  will-change: transform;
-  animation: cin-grain-drift 8s steps(3, end) infinite;
+  animation: cin-grain-drift 8s steps(4, end) infinite;
+}
+
+/* Dark mode: soft-light blend for gentler grain on dark surfaces */
+:root[data-mode="dark"] .page-container::after {
+  mix-blend-mode: soft-light;
 }
 
 /* ══ SCENE 3: Rack Focus (Desktop Hover) ══
