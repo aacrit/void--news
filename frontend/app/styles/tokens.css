@@ -436,7 +436,7 @@
   --cinematic-rim-light: var(--cin-amber-glow);
   --cinematic-rim-cool: rgba(148, 163, 184, 0.08);
   --cin-vignette-color: rgba(12, 8, 2, 0.12);
-  --cin-grain-opacity: 0.030;
+  --cin-grain-opacity: 0.025;
   --cin-grade: contrast(1.05) saturate(0.86) brightness(0.96) sepia(0.02);
   --cin-haze-far: saturate(0.88) brightness(0.95);
   --cin-haze-mid: saturate(0.93) brightness(0.97);

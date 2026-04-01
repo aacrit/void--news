@@ -171,7 +171,7 @@ Cinematic tokens live in `tokens.css` under `:root` (light) and `[data-mode="dar
 | Practical warmth | `--cin-practical-warmth` | `color-mix(in srgb, amber 4%, bg-primary)` — OnAir warmth spread via `:has()` |
 | Cold open timing | `--cold-open-nav` (80ms), `--cold-open-skybox` (200ms), `--cold-open-lead` (320ms), `--cold-open-feed` (480ms), `--cold-open-dur` (500ms) | Staggered page entrance sequence |
 | Whip pan | `--whip-pan-dur` (350ms) | Direction-aware edition switch transition |
-| Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay (numOctaves=3, fractalNoise) |
+| Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay (numOctaves=4, baseFrequency=0.75, fractalNoise). Light: overlay blend. Dark: soft-light blend. Warm feColorMatrix (R-biased). |
 | Vignette | `--cin-vignette-color` | Edge darkening — subtle light, stronger dark. Z-index: `calc(--z-cinematic + 1)` — above film grain |
 | Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Applied to `.page-main` + `.nav-header` (not `.page-container` — filter creates containing block that breaks position:fixed children). Per-edition overrides (US: warmer sepia, India: boosted saturation). |
 | Atmospheric haze | `--cin-haze-far` | Depth-of-field fade on distant elements |

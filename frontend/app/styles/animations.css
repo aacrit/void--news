@@ -483,11 +483,16 @@
   }
 }
 
-/* ── Film Grain Drift ── */
+/* ── Film Grain Drift ──
+   Subtle sub-pixel translation that creates "living grain" — the slight
+   inter-frame registration error of a film print. 4 positions over 8s
+   = 0.5fps effective gate rate (matches 500T at native speed).
+   Drift stays under 0.5px to avoid conscious perception. */
 @keyframes cin-grain-drift {
   0%   { transform: translate(0, 0); }
-  33%  { transform: translate(0.3px, -0.5px); }
-  66%  { transform: translate(-0.4px, 0.3px); }
+  25%  { transform: translate(0.3px, -0.4px); }
+  50%  { transform: translate(-0.35px, 0.25px); }
+  75%  { transform: translate(0.2px, 0.35px); }
   100% { transform: translate(0, 0); }
 }
 
@@ -892,20 +897,22 @@
 /* ── Parallax Background Drift ──
    The paper texture layer scrolls at 0.3x the viewport rate, creating
    the Steadicam depth illusion. Content at 1x, texture recedes.
-   Only on desktop (mobile: parallax disabled for performance). */
+   Only on desktop (mobile: parallax disabled for performance).
+
+   NOTE: This cannot target .page-container::before or ::after —
+   those are the vignette and film grain layers (position: fixed overlays).
+   Applying parallax transform to a fixed overlay would break its viewport
+   anchoring. Instead, parallax is applied to the .page-container background
+   via background-attachment/position on the element itself, which does not
+   interfere with fixed pseudo-elements.
+
+   If CSS scroll-driven parallax is desired in the future, a dedicated
+   .parallax-bg child element should be added to the DOM rather than
+   reusing the pseudo-elements. For now, the static paper texture on
+   .page-container's background provides the depth layer. */
 @keyframes scrollParallaxBg {
   from { transform: translateY(0); }
   to   { transform: translateY(-20vh); }
-}
-
-@supports (animation-timeline: scroll()) {
-  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    .page-container::before {
-      animation: scrollParallaxBg linear both;
-      animation-timeline: scroll();
-      animation-range: 0vh 300vh;
-    }
-  }
 }
 
 /* ── Scroll Dolly — Cards approach as they enter viewport ──
@@ -937,15 +944,22 @@
 /* ── Scroll Vignette Intensification ──
    As the user scrolls deeper into the feed, the vignette darkens slightly
    creating a natural tunnel-vision focus on the content being read.
-   Achieved by transitioning the vignette pseudo-element opacity. */
+
+   IMPORTANT: Targets .page-container::before (the VIGNETTE layer), not
+   ::after (the film grain layer). The grain layer has its own animation
+   (cin-grain-drift) and applying a second animation property via scroll-
+   timeline would overwrite it (CSS animation property is not additive).
+
+   Opacity ramps from 1 to 1.4 (capped — beyond 1.5 becomes perceptible
+   as a filter, violating the subliminal constraint). */
 @keyframes scrollVignetteDeepen {
   from { opacity: 1; }
-  to   { opacity: 1.5; }
+  to   { opacity: 1.4; }
 }
 
 @supports (animation-timeline: scroll()) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    .page-container::after {
+    .page-container::before {
       animation: scrollVignetteDeepen linear both;
       animation-timeline: scroll();
       animation-range: 0vh 200vh;
@@ -1111,10 +1125,20 @@
   }
 }
 
-/* ── Cinematic Reduced Motion Overrides -------------------------------- */
+/* ── Cinematic Reduced Motion Overrides --------------------------------
+   All MOTION is suppressed; color/texture effects remain.
+   Grain: static (no drift), opacity unchanged (it is texture, not motion)
+   Vignette: static (no scroll-driven deepening), opacity unchanged
+   Color grade: instant swap (0ms transition), filter values unchanged
+   Haze: transition disabled (cards appear at final state immediately) */
 
 @media (prefers-reduced-motion: reduce) {
+  /* Film grain: static texture, no drift animation */
   .page-container::after {
+    animation: none;
+  }
+  /* Vignette: no scroll-driven deepening */
+  .page-container::before {
     animation: none;
   }
   /* Color grade filter lives on .page-main and .nav-header — instant swap */
