@@ -175,6 +175,18 @@
   --cinematic-accent-near-bias: rgba(148, 107, 21, 0.04);
   --cinematic-accent-far-bias: rgba(148, 107, 21, 0.12);
 
+  /* ── Narrative X-Ray — framing highlight tokens ── */
+  --nx-charged-bg: rgba(148, 107, 21, 0.10);
+  --nx-charged-border: rgba(148, 107, 21, 0.20);
+  --nx-entity-warm: rgba(180, 100, 50, 0.50);
+  --nx-entity-cool: rgba(80, 120, 170, 0.50);
+  --nx-entity-neutral: rgba(140, 130, 120, 0.35);
+  --nx-omission-bg: color-mix(in srgb, var(--cin-amber) 6%, var(--bg-secondary));
+  --nx-stagger-gap: 30ms;
+  --nx-badge-bg: var(--cin-amber-ghost);
+  --nx-badge-border: color-mix(in srgb, var(--cin-amber-dim) 25%, transparent);
+  --nx-badge-color: var(--cin-amber);
+
   /* ── Category Colors ── */
   --cat-conflict:    #E53E3E;  /* distinct from --indicator-broadcast (#c0392b) */
   --cat-science:     #2980B9;
@@ -298,6 +310,17 @@
   --cin-backdrop-bg: rgba(0, 0, 0, 0.55);
   --cin-backdrop-blur: blur(20px) saturate(0.5) brightness(0.5);
   --cinematic-rim-top: rgba(200, 149, 108, 0.06);
+
+  /* ── Narrative X-Ray (dark) ── */
+  --nx-charged-bg: rgba(212, 165, 116, 0.10);
+  --nx-charged-border: rgba(212, 165, 116, 0.18);
+  --nx-entity-warm: rgba(200, 140, 80, 0.45);
+  --nx-entity-cool: rgba(100, 150, 200, 0.45);
+  --nx-entity-neutral: rgba(160, 150, 140, 0.30);
+  --nx-omission-bg: color-mix(in srgb, var(--cin-amber) 8%, var(--bg-secondary));
+  --nx-badge-bg: var(--cin-amber-ghost);
+  --nx-badge-border: color-mix(in srgb, var(--cin-amber-dim) 20%, transparent);
+  --nx-badge-color: var(--cin-amber);
 }
 
 /* --------------------------------------------------------------------------
