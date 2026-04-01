@@ -202,15 +202,17 @@ No other formatting. No [MARKERS]. No segment labels.
 Both hosts are equals. Both report, both analyze, both add context. They build \
 on each other through ADDITIONAL FACTS, not agreement or repetition.
 
-STRUCTURE — Headlines > 3 Stories > Close:
-1. HEADLINES: A opens with a crisp rundown of the 3 stories coming up. One sentence \
+STRUCTURE — Open > Headlines > 3 Stories > Close:
+0. OPEN: A begins with exactly: "void logs in." [short pause] — this is the brand \
+sign-on. Then immediately into headlines.
+1. HEADLINES: A continues with a crisp rundown of the 3 stories coming up. One sentence \
 each, punchy, present tense. Then B picks up the first story.
 2. STORIES: Cover exactly 3 stories in depth. The biggest story gets the most time. \
 For each: what happened, why it matters, and the structural context most coverage misses. \
 A and B trade off — both contribute facts, both provide context.
 3. CLOSE: One of them distills the day into a single observation — the thread connecting \
 these stories, or the question they leave unanswered. Then the last speaker says: \
-"This was Void news." — with finality. Done.
+"void logs out." — with finality. Done.
 
 PACING — Write for the ear (MANDATORY rhythm markers — minimum 8 total):
 - Use [short pause] for breath beats between thoughts (minimum 4 per script).
@@ -333,12 +335,13 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
-    # "This was Void news" close check
+    # "void logs out" close check
     sign_off = False
     if script.strip():
-        sign_off = "this was void news" in script[-200:].lower()
+        tail = script[-200:].lower()
+        sign_off = "void logs out" in tail or "this was void news" in tail
         if not sign_off:
-            msg = "Audio script missing 'This was Void news' sign-off"
+            msg = "Audio script missing 'void logs out' sign-off"
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["sign_off_present"] = sign_off
@@ -763,7 +766,7 @@ a reader hits every word evenly; a teller emphasizes, pauses, speeds up, \
 gets quiet. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
 This is read by a DIFFERENT voice than the news hosts — a distinct editorial \
 voice. Open EXACTLY with this two-part structure: \
-First line: "Now... [long pause] void opinion." \
+First line: "void --opinion logs in." [short pause] \
 Second line: State the opinion_headline you wrote above as a spoken title. \
 Then dive straight into the argument. No preamble, no lens announcement. \
 Use ellipses (...) for thinking pauses. Use em \
@@ -773,7 +776,7 @@ Vary sentence rhythm — short punchy sentences for emphasis, longer ones to \
 build the case. Contractions fine. Spoken cadence, not written. Start \
 measured. Let conviction build. By the final third, the listener should hear \
 that you mean this. \
-End with: "void opinion." No summary. End on the unresolved question.\
+End with: "void --opinion logs out." No summary. End on the unresolved question.\
 """
 
 
@@ -790,10 +793,10 @@ def _rule_based_opinion(cluster: dict, lean: str) -> dict:
 
     # Build audio script from summary
     audio_script = (
-        f"Now... void opinion.\n"
+        f"void --opinion logs in.\n"
         f"{title}.\n"
         f"{summary}\n"
-        f"void opinion."
+        f"void --opinion logs out."
     )
 
     print(f"  [opinion] Rule-based fallback: \"{title[:60]}\" ({len(summary.split())} words)")
@@ -980,10 +983,10 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                     # Fallback: synthesize audio script from opinion text.
                     # Gemini often omits the third JSON field. The opinion text
                     # is already written in spoken cadence — just add the preamble.
-                    preamble = "Now... void opinion."
+                    preamble = "void --opinion logs in."
                     if headline:
                         preamble += f" {headline}."
-                    opinion_audio = f"{preamble}\n{text}\nvoid opinion."
+                    opinion_audio = f"{preamble}\n{text}\nvoid --opinion logs out."
                     print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
 
                 cluster_id = cluster.get("_db_id", "")
