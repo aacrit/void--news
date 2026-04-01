@@ -46,7 +46,7 @@ Per-article, score 0-100 + structured rationale JSONB. No LLM calls for scoring.
 6. **Per-Topic Per-Outlet EMA** — adaptive alpha (0.3 new / 0.15 established). Stored in `source_topic_lean`. See `topic_outlet_tracker.py`.
 
 ### Validation Framework (`pipeline/validation/`)
-38 ground-truth articles, 8 categories, 100% accuracy. Cross-axis correlation gate (r<0.70). CI gate via `.github/workflows/validate-bias.yml`.
+42 ground-truth articles, 9 categories, 100% accuracy. Cross-axis correlation gate (r<0.70). CI gate via `.github/workflows/validate-bias.yml`.
 ```bash
 python pipeline/validation/runner.py              # Full validation
 python pipeline/validation/runner.py --quick      # Skip distribution checks

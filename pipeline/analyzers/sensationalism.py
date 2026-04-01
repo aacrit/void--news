@@ -554,7 +554,7 @@ def analyze_sensationalism(article: dict) -> dict:
     # intent (AP ≈ 10-20, tabloid ≈ 50-80) without clamping genuine low-end
     # reporting to zero. (Priority H2 fix — sensationalism floor for real text)
     has_content = bool(title.strip() or full_text.strip())
-    floor = 8 if has_content else 0
+    floor = 3 if has_content else 0
     score = max(floor, min(100, int(round(stretched))))
 
     # Compute sub-signal rationale
