@@ -54,10 +54,11 @@ function AgreementIcon({ type }: { type: "agree" | "diverge" }) {
   );
 }
 
-const VISIBLE_LIMIT = 5;
+const VISIBLE_LIMIT = 3;
 
 export default function ComparativeView({ sources, consensusPoints, divergencePoints }: ComparativeViewProps) {
   const [expandedBuckets, setExpandedBuckets] = useState<Record<string, boolean>>({});
+  const [showInsights, setShowInsights] = useState(false);
 
   const buckets: Record<string, StorySource[]> = useMemo(() => {
     const result: Record<string, StorySource[]> = { Left: [], Center: [], Right: [] };
@@ -87,38 +88,6 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
 
   return (
     <div className="comp-view" role="region" aria-label="Read all sides: sources by perspective">
-      {/* Convergence & Divergence */}
-      {(hasConsensus || hasDivergence) && (
-        <div className="comp-view__insights">
-          {hasConsensus && (
-            <div className="comp-view__insight-col comp-view__insight-col--agree">
-              <div className="comp-view__insight-header">
-                <AgreementIcon type="agree" />
-                <span className="comp-view__insight-label">Where sources converge</span>
-              </div>
-              <ul className="comp-view__insight-list">
-                {consensusPoints.map((pt, i) => (
-                  <li key={i}>{pt}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {hasDivergence && (
-            <div className="comp-view__insight-col comp-view__insight-col--diverge">
-              <div className="comp-view__insight-header">
-                <AgreementIcon type="diverge" />
-                <span className="comp-view__insight-label">Where sources diverge</span>
-              </div>
-              <ul className="comp-view__insight-list">
-                {divergencePoints.map((pt, i) => (
-                  <li key={i}>{pt}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
       <div className="comp-view__grid">
         {BUCKETS.map((bucket) => {
           const items = buckets[bucket.label];
@@ -220,6 +189,50 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
           );
         })}
       </div>
+
+      {/* Convergence & Divergence — collapsed by default, below the grid */}
+      {(hasConsensus || hasDivergence) && (
+        <div className="comp-view__insights-disclosure">
+          <button
+            className="comp-view__insights-trigger"
+            onClick={() => setShowInsights((prev) => !prev)}
+            aria-expanded={showInsights}
+            type="button"
+          >
+            Key agreements &amp; disagreements {showInsights ? "\u25BE" : "\u25B8"}
+          </button>
+          {showInsights && (
+            <div className="comp-view__insights-content">
+              {hasConsensus && (
+                <div className="comp-view__insight-item">
+                  <AgreementIcon type="agree" />
+                  <div>
+                    <span className="comp-view__insight-label">Where sources converge</span>
+                    <ul className="comp-view__insight-list">
+                      {consensusPoints.map((pt, i) => (
+                        <li key={i}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+              {hasDivergence && (
+                <div className="comp-view__insight-item">
+                  <AgreementIcon type="diverge" />
+                  <div>
+                    <span className="comp-view__insight-label">Where sources diverge</span>
+                    <ul className="comp-view__insight-list">
+                      {divergencePoints.map((pt, i) => (
+                        <li key={i}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

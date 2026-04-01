@@ -1039,6 +1039,7 @@ export interface BiasInspectorInlineProps {
 
 export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
   const [expandedAxes, setExpandedAxes] = useState<Set<string>>(new Set());
+  const [showSecondaryAxes, setShowSecondaryAxes] = useState(false);
   const headingId = useId();
 
   function toggleAxis(key: string) {
@@ -1053,63 +1054,103 @@ export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
   if (sources.length === 0) return null;
 
   const averages = computeClusterAverages(sources);
+  const confPct = Math.round(averages.confidence * 100);
+  const confTier = confPct >= 70 ? "strong" : confPct >= 40 ? "moderate" : "pending";
+  const confLabels = { strong: "Strong", moderate: "Moderate", pending: "Limited" };
 
   return (
-    <div className="bi-inline" role="region" aria-label="Press analysis">
-      <div className="bi-inline__header">
-        <span className="bi-inline__title" id={headingId}>Press Analysis</span>
-        <span className="bi-inline__subtitle">
-          Cluster avg · {sources.length} {sources.length === 1 ? "source" : "sources"}
-        </span>
-      </div>
+    <div className="bi-inline" role="region" aria-label="Bias scores">
       <div
         className="bi-scorecard"
         role="region"
-        aria-labelledby={headingId}
         aria-label="Cluster bias scores"
       >
-        <LeanAxis
-          axisId={`${headingId}-lean`}
-          score={averages.lean}
-          rationale={averages.leanRationale}
-          geminiText={averages.geminiReasoning?.political_lean}
-          isExpanded={expandedAxes.has("lean")}
-          onToggle={() => toggleAxis("lean")}
-          staggerIndex={0}
-          contentVisible={true}
-        />
-        <SensationalismAxis
-          axisId={`${headingId}-sense`}
-          score={averages.sensationalism}
-          rationale={averages.sensationalismRationale}
-          geminiText={averages.geminiReasoning?.sensationalism}
-          isExpanded={expandedAxes.has("sense")}
-          onToggle={() => toggleAxis("sense")}
-          staggerIndex={1}
-          contentVisible={true}
-        />
-        <RigorAxis
-          axisId={`${headingId}-rigor`}
-          score={averages.factualRigor}
-          rationale={averages.coverageRationale}
-          geminiText={averages.geminiReasoning?.factual_rigor}
-          isExpanded={expandedAxes.has("rigor")}
-          onToggle={() => toggleAxis("rigor")}
-          staggerIndex={2}
-          contentVisible={true}
-        />
-        <FramingAxis
-          axisId={`${headingId}-framing`}
-          score={averages.framing}
-          rationale={averages.framingRationale}
-          geminiText={averages.geminiReasoning?.framing}
-          isExpanded={expandedAxes.has("framing")}
-          onToggle={() => toggleAxis("framing")}
-          staggerIndex={3}
-          contentVisible={true}
-        />
+        {/* Hero: Political Lean with inline confidence badge */}
+        <div className="bi-lean-hero">
+          <LeanAxis
+            axisId={`${headingId}-lean`}
+            score={averages.lean}
+            rationale={averages.leanRationale}
+            geminiText={averages.geminiReasoning?.political_lean}
+            isExpanded={expandedAxes.has("lean")}
+            onToggle={() => toggleAxis("lean")}
+            staggerIndex={0}
+            contentVisible={true}
+          />
+          <span className={`bi-confidence-inline bi-confidence-inline--${confTier}`} aria-label={`${confLabels[confTier]} analysis`}>
+            {confTier === "strong" && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <path d="M3 5L4.5 6.5L7 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+            {confTier === "moderate" && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <line x1="3.5" y1="5" x2="6.5" y2="5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            )}
+            {confTier === "pending" && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              </svg>
+            )}
+            <span>{confLabels[confTier]}</span>
+          </span>
+        </div>
+
+        {/* Secondary axes — collapsed behind disclosure */}
+        <div className="bi-secondary-disclosure">
+          <button
+            className="bi-secondary-trigger"
+            onClick={() => setShowSecondaryAxes((prev) => !prev)}
+            aria-expanded={showSecondaryAxes}
+            type="button"
+          >
+            <span className="bi-secondary-trigger__dots" aria-hidden="true">
+              <ScoreDot color={getSenseColor(averages.sensationalism)} />
+              <ScoreDot color={getRigorColor(averages.factualRigor)} />
+              <ScoreDot color={getFramingColor(averages.framing)} />
+            </span>
+            <span>Sensationalism, Rigor, Framing</span>
+            <span>{showSecondaryAxes ? "\u25BE" : "\u25B8"}</span>
+          </button>
+          {showSecondaryAxes && (
+            <div className="bi-secondary-axes">
+              <SensationalismAxis
+                axisId={`${headingId}-sense`}
+                score={averages.sensationalism}
+                rationale={averages.sensationalismRationale}
+                geminiText={averages.geminiReasoning?.sensationalism}
+                isExpanded={expandedAxes.has("sense")}
+                onToggle={() => toggleAxis("sense")}
+                staggerIndex={0}
+                contentVisible={true}
+              />
+              <RigorAxis
+                axisId={`${headingId}-rigor`}
+                score={averages.factualRigor}
+                rationale={averages.coverageRationale}
+                geminiText={averages.geminiReasoning?.factual_rigor}
+                isExpanded={expandedAxes.has("rigor")}
+                onToggle={() => toggleAxis("rigor")}
+                staggerIndex={1}
+                contentVisible={true}
+              />
+              <FramingAxis
+                axisId={`${headingId}-framing`}
+                score={averages.framing}
+                rationale={averages.framingRationale}
+                geminiText={averages.geminiReasoning?.framing}
+                isExpanded={expandedAxes.has("framing")}
+                onToggle={() => toggleAxis("framing")}
+                staggerIndex={2}
+                contentVisible={true}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      <ConfidenceBadge confidence={averages.confidence} contentVisible={true} />
     </div>
   );
 }
