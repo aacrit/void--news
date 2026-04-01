@@ -698,16 +698,25 @@ def produce_audio(
         print("  [audio] Rate-limit pause (20s) before opinion TTS...")
         time.sleep(20)
 
+        # Expected duration: ~150 words/minute speech rate, 2x ceiling
+        expected_dur = opinion_words / 150 * 60
+        max_opinion_dur = expected_dur * 2
+
         # Retry up to 3 times with increasing backoff
         opinion_pcm = None
         for attempt in range(3):
-            opinion_pcm = _synthesize_opinion_monologue(
+            pcm_candidate = _synthesize_opinion_monologue(
                 opinion_audio_script, opinion_voice_name, opinion_preamble
             )
-            if opinion_pcm:
-                opinion_dur = len(opinion_pcm) / (24000 * 2)
-                print(f"  [audio] Opinion TTS: {opinion_dur:.1f}s (attempt {attempt + 1})")
-                break
+            if pcm_candidate:
+                candidate_dur = len(pcm_candidate) / (24000 * 2)
+                if candidate_dur > max_opinion_dur:
+                    print(f"  [warn][audio] Opinion TTS attempt {attempt + 1}: {candidate_dur:.1f}s "
+                          f"exceeds 2x expected ({max_opinion_dur:.0f}s) — discarding inflated audio")
+                else:
+                    opinion_pcm = pcm_candidate
+                    print(f"  [audio] Opinion TTS: {candidate_dur:.1f}s (attempt {attempt + 1})")
+                    break
             wait = 20 * (attempt + 1)  # 20s, 40s, 60s
             print(f"  [warn][audio] Opinion TTS attempt {attempt + 1}/3 failed — "
                   f"{'retrying in ' + str(wait) + 's' if attempt < 2 else 'giving up'}")
@@ -815,29 +824,61 @@ def produce_audio(
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
-    # 6. Export to MP3 96kbps mono (voice-optimized; sufficient for speech)
-    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
-        tmp_path = tmp.name
+    # 6. Export to MP3 — 96kbps mono, fallback to 64kbps if file too large
+    _MAX_FILE_SIZE = 8 * 1024 * 1024  # 8MB Supabase limit
 
-    try:
-        combined.export(
-            tmp_path,
-            format="mp3",
-            bitrate="96k",
-            parameters=["-ac", "1"],
-        )
-        with open(tmp_path, "rb") as f:
-            audio_bytes = f.read()
-    except Exception as e:
-        print(f"  [warn][audio] MP3 export failed: {e}")
-        return None
-    finally:
+    def _export_mp3(segment: "AudioSegment", bitrate: str = "96k") -> Optional[bytes]:
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+            tmp_path = tmp.name
         try:
-            Path(tmp_path).unlink(missing_ok=True)
-        except Exception:
-            pass
+            segment.export(tmp_path, format="mp3", bitrate=bitrate, parameters=["-ac", "1"])
+            with open(tmp_path, "rb") as f:
+                return f.read()
+        except Exception as e:
+            print(f"  [warn][audio] MP3 export failed: {e}")
+            return None
+        finally:
+            try:
+                Path(tmp_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+    audio_bytes = _export_mp3(combined)
+    if not audio_bytes:
+        return None
 
     file_size = len(audio_bytes)
+
+    # If too large at 96k, try 64k
+    if file_size > _MAX_FILE_SIZE:
+        print(f"  [audio] {file_size / 1024:.0f} KB exceeds {_MAX_FILE_SIZE // 1024 // 1024}MB — re-exporting at 64kbps")
+        audio_bytes = _export_mp3(combined, bitrate="64k")
+        if audio_bytes:
+            file_size = len(audio_bytes)
+
+    # Still too large — drop opinion and re-export at 96k
+    if audio_bytes and file_size > _MAX_FILE_SIZE and opinion_seg:
+        print(f"  [warn][audio] Still {file_size / 1024:.0f} KB — dropping opinion to fit size limit")
+        news_only = AudioSegment.empty()
+        # Rebuild without opinion: everything up to opinion_start_ms
+        if opinion_start_ms and opinion_start_ms < len(combined):
+            news_only = combined[:opinion_start_ms]
+        else:
+            news_only = combined
+        outro = _load_asset("outro.wav")
+        if outro:
+            news_only += outro
+        audio_bytes = _export_mp3(news_only)
+        if audio_bytes:
+            file_size = len(audio_bytes)
+            opinion_start_ms = None
+            has_opinion = False
+            duration_seconds = round(len(news_only) / 1000.0, 1)
+            print(f"  [audio] Re-assembled {duration_seconds}s (news only) for {edition}")
+
+    if not audio_bytes:
+        return None
+
     print(f"  [audio] Exported {file_size / 1024:.1f} KB MP3 — uploading to Supabase")
 
     public_url = _upload_to_supabase(audio_bytes, edition)
