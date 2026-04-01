@@ -17,6 +17,7 @@ import { BiasInspectorInline } from "./BiasInspector";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
+import FramingContrastStrip from "./FramingContrastStrip";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Centered popup overlay showing unified summary of a story cluster.
@@ -1034,6 +1035,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               </div>
               {summaryOverflows && !summaryExpanded && (
                 <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              )}
+
+              {/* Framing Contrast Strip — per-source signal bars + omissions */}
+              {sources.length > 0 && (
+                <FramingContrastStrip sources={sources} />
               )}
             </section>
           )}
