@@ -232,9 +232,17 @@ def _synthesize_gemini_tts(
             time.sleep(5)  # Rate-limit buffer between TTS chunks
         # Only prepend preamble to first chunk — consistent style across chunks
         preamble = tts_preamble if i == 0 else ""
-        pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b, preamble)
+        pcm = None
+        for attempt in range(3):
+            if attempt > 0:
+                wait = 20 * attempt
+                print(f"  [audio] Chunk {i+1}/{len(chunks)} retry {attempt+1}/3 after {wait}s...")
+                time.sleep(wait)
+            pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b, preamble)
+            if pcm is not None:
+                break
         if pcm is None:
-            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed — aborting")
+            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed after 3 attempts — aborting")
             return None
         all_pcm.extend(pcm)
         chunk_dur = len(pcm) / (24000 * 2)
