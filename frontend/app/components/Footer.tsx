@@ -7,7 +7,7 @@ import LogoWordmark from "./LogoWordmark";
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
    Uses LogoIcon (idle animation) + LogoWordmark for branding.
-   Shows "409 sources" with last pipeline run time.
+   Shows "419 sources" with last pipeline run time.
    --------------------------------------------------------------------------- */
 
 interface FooterProps {
@@ -23,7 +23,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
-        <p className="footer-tagline">409 sources. Six axes. Zero mystery.</p>
+        <p className="footer-tagline">419 sources. Six axes. Zero mystery.</p>
 
         {/* Product family */}
         <div className="footer-products">

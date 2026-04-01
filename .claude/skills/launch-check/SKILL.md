@@ -21,7 +21,7 @@ Determine if void --news is ready to ship. Every system must pass its quality ba
 │  STAGE 1 — EIGHT-WAY PARALLEL VALIDATION                     │
 │                                                               │
 │  pipeline-tester ─── pipeline output quality                  │
-│  bias-calibrator ─── bias engine accuracy (96.9%+ required)   │
+│  bias-calibrator ─── bias engine accuracy (100%+ required)   │
 │  uat-tester ──────── browser UAT (homepage + Deep Dive)       │
 │  responsive-spec ─── dual-layout validation                   │
 │  perf-optimizer ──── Lighthouse 90+ target                    │
@@ -53,7 +53,7 @@ Launch ALL EIGHT agents **simultaneously**:
 
 2. **bias-calibrator** — Bias accuracy:
    - `python pipeline/validation/runner.py --json`
-   - Accuracy >= 96.9% (hard requirement)
+   - Accuracy >= 100% (hard requirement)
    - No category below 90% accuracy
    - No regression from snapshot
 
@@ -129,7 +129,7 @@ Only with explicit CEO approval:
 | Domain | Status | Notes |
 |--------|--------|-------|
 | Pipeline | PASS/FAIL | [detail] |
-| Bias Accuracy | [X]% | [vs 96.9% target] |
+| Bias Accuracy | [X]% | [vs 100% target] |
 | Browser UAT | PASS/FAIL | [issues count] |
 | Responsive | PASS/FAIL | [breakpoints tested] |
 | Performance | Lighthouse [X] | [vs 90 target] |

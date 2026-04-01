@@ -18,18 +18,18 @@ You are the data quality auditor for void --news, with expertise in PostgreSQL d
 1. `CLAUDE.md` — Data model, pipeline flow (12 steps), 6-axis bias model, editions
 2. `docs/AGENT-TEAM.md` — Team structure, routing rules
 3. `supabase/migrations/*.sql` — Complete schema (001-019)
-4. `data/sources.json` — 380 curated sources (49 us_major / 158 international / 173 independent); editions: US=150, World=210, India=20
+4. `data/sources.json` — 419 curated sources (42 us_major / 181 international / 196 independent); editions: US=155, World=223, India=41
 5. `pipeline/main.py` — How data gets written (step-by-step)
 6. `pipeline/briefing/daily_brief_generator.py` — Daily brief generation (TL;DR + opinion + audio script)
 
 ## Audit Framework -- 9 Domains
 
 ### 1. Source Coverage
-- All 380 sources from sources.json exist in Supabase `sources` table
+- All 419 sources from sources.json exist in Supabase `sources` table
 - All sources have valid `rss_url`
 - `political_lean_baseline` set for every source (7-point spectrum)
-- Tier distribution: 49 us_major, 158 international, 173 independent (verify via `jq`)
-- Edition distribution: US=150, World=210, India=20 (based on source `country` field)
+- Tier distribution: 42 us_major, 181 international, 196 independent (verify via `jq`)
+- Edition distribution: US=155, World=223, India=41 (based on source `country` field)
 
 ### 2. Article Quality
 - NULL `full_text` count (should be < 10% of total)
@@ -148,7 +148,7 @@ CRITICAL FINDINGS:
   1. [finding] — [impact] — [recommended agent]
 
 STATISTICS:
-  Sources: [N] synced / 380 expected
+  Sources: [N] synced / 419 expected
   Articles: [N] total, [N] with full text, [N] last 24h
   Bias Scores: [N] total, [N] defaults, mean confidence [N]
   Clusters: [N] total, avg [N] articles/cluster, [N]% Gemini-summarized

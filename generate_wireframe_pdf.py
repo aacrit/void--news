@@ -206,7 +206,7 @@ def page_cover(c):
     # Stats bar
     stats_y = cy - 160
     stats = [
-        ("409", "Sources"),
+        ("419", "Sources"),
         ("6", "Bias Axes"),
         ("5", "Pages"),
         ("38", "Components"),
@@ -261,10 +261,10 @@ def page_system_architecture(c):
     rounded_rect(c, 40, y_ext, 200, 50, fill=HexColor("#1B2838"), stroke=C.flow_rss)
     c.setFillColor(C.flow_rss)
     c.setFont("Helvetica-Bold", 11)
-    c.drawCentredString(140, y_ext + 30, "409 RSS Sources")
+    c.drawCentredString(140, y_ext + 30, "419 RSS Sources")
     c.setFont("Helvetica", 8)
     c.setFillColor(C.text_dim)
-    c.drawCentredString(140, y_ext + 14, "49 US Major | 178 Intl | 182 Indie")
+    c.drawCentredString(140, y_ext + 14, "42 US Major | 181 Intl | 196 Indie")
 
     rounded_rect(c, 280, y_ext, 140, 50, fill=HexColor("#1B2838"), stroke=C.flow_external)
     c.setFillColor(C.flow_external)
@@ -320,7 +320,7 @@ def page_system_architecture(c):
     c.setFont("Helvetica-Bold", 13)
     c.drawString(60, y_db + db_h - 22, "Supabase (PostgreSQL)")
     db_items = [
-        "sources (409) | articles (100k+) | bias_scores",
+        "sources (419) | articles (100k+) | bias_scores",
         "story_clusters | cluster_articles (junction)",
         "categories | article_categories | pipeline_runs",
         "daily_briefs (TL;DR + audio) | source_topic_lean",
@@ -344,7 +344,7 @@ def page_system_architecture(c):
         ("/ (World)", "Homepage — importance-ranked news feed"),
         ("/us, /india", "Edition-specific feeds (section[] filter)"),
         ("/paper", "E-paper broadsheet layout"),
-        ("/sources", "409-source political spectrum chart"),
+        ("/sources", "419-source political spectrum chart"),
         ("/command-center", "CEO KPI dashboard (14 cards, 4 domains)"),
         ("DeepDive modal", "Tabbed: Summary | AllSides | Scoring"),
         ("void --onair", "TL;DR + opinion + 2-voice audio player"),
@@ -401,7 +401,7 @@ def page_data_flow(c):
 
     cols = [
         ("INGEST", C.flow_rss, [
-            ("409 RSS\nFeeds", "rss_fetcher.py\n30 parallel workers"),
+            ("419 RSS\nFeeds", "rss_fetcher.py\n30 parallel workers"),
             ("Web\nScraper", "web_scraper.py\nPlaywright Chrome"),
             ("Dedup\nFilter", "deduplicator.py\n48h URL + semantic"),
         ]),
@@ -434,7 +434,7 @@ def page_data_flow(c):
             ("Desktop\nFeed", "3-zone layout\nLead+Digest+Wire"),
             ("DeepDive\nModal", "3 tabs: Summary\nAllSides | Scoring"),
             ("Daily\nBrief", "SkyboxBanner +\nOnAir audio player"),
-            ("Sources\nPage", "SpectrumChart\n409 sources"),
+            ("Sources\nPage", "SpectrumChart\n419 sources"),
         ]),
     ]
 
@@ -502,7 +502,7 @@ def page_pipeline_flow(c):
     section_title(c, 40, H - 40, "PIPELINE PROCESS FLOW — 10-Step Execution (4x Daily)")
 
     steps = [
-        ("1", "LOAD\nSOURCES", "sources.json\n409 -> Supabase", C.flow_rss, "1-2 min"),
+        ("1", "LOAD\nSOURCES", "sources.json\n419 -> Supabase", C.flow_rss, "1-2 min"),
         ("2", "FETCH\nRSS", "30 parallel workers\n~3000 articles/run", C.flow_rss, "3-5 min"),
         ("3", "SCRAPE\nTEXT", "Playwright Chrome\n30 workers", C.flow_rss, "5-8 min"),
         ("4", "DEDUP\nFILTER", "48h URL + semantic\nNear-dupe detection", C.teal, "< 1 min"),
@@ -817,7 +817,7 @@ def page_wireframe_homepage(c):
     # ── Footer ──
     c.setFillColor(C.text_muted)
     c.setFont("Helvetica", 5)
-    c.drawCentredString(wx + ww / 2, wy + 8, "World Edition / 487 stories | void --news | 409 sources")
+    c.drawCentredString(wx + ww / 2, wy + 8, "World Edition / 487 stories | void --news | 419 sources")
 
     # ── RIGHT SIDE: Annotations ──
     ax = 540
@@ -1221,7 +1221,7 @@ def page_wireframe_other_pages(c):
 
     c.setFillColor(C.amber)
     c.setFont("Helvetica-Bold", 8)
-    c.drawString(sx + 10, sy + sh - 15, "409 Sources")
+    c.drawString(sx + 10, sy + sh - 15, "419 Sources")
     c.setFillColor(C.text_dim)
     c.setFont("Helvetica", 5)
     c.drawString(sx + 80, sy + sh - 15, "3 tiers | 7-point lean")
@@ -1292,7 +1292,7 @@ def page_wireframe_other_pages(c):
         ("Last Run", "Completed", C.green),
         ("Articles 24h", "487", C.blue),
         ("Clusters", "1,061", C.teal),
-        ("Sources", "409/409", C.green),
+        ("Sources", "419/419", C.green),
     ]
     kpi_w = (cw - 20) / 2
     kpi_h = 28
@@ -1523,7 +1523,7 @@ def page_component_map(c):
         ("DesktopFeed", "story_clusters (sorted by headline_rank)"),
         ("DeepDive", "cluster_articles -> articles -> bias_scores"),
         ("DeepDive", "cluster_bias_summary (view)"),
-        ("Sources", "sources (all 409, sorted by lean)"),
+        ("Sources", "sources (all 419, sorted by lean)"),
         ("CommandCenter", "pipeline_runs + aggregates (14 KPIs)"),
         ("DailyBrief", "daily_briefs.audio_url (Supabase Storage)"),
     ]
@@ -1572,7 +1572,7 @@ def page_database_bias(c):
 
     # ── DATABASE TABLES (left half) ──
     tables = [
-        ("sources", "409 rows", ["slug (PK)", "name, url, rss_url", "tier, country, type", "political_lean_baseline", "credibility_notes"], C.flow_rss),
+        ("sources", "419 rows", ["slug (PK)", "name, url, rss_url", "tier, country, type", "political_lean_baseline", "credibility_notes"], C.flow_rss),
         ("articles", "100k+ rows", ["source_id (FK)", "url (unique), title", "summary, full_text (300ch)", "author, published_at", "section, image_url, word_count"], C.blue),
         ("bias_scores", "1:1 article", ["article_id (FK)", "political_lean (0-100)", "sensationalism (0-100)", "opinion_fact (0-100)", "factual_rigor (0-100)", "framing (0-100)", "confidence, rationale JSONB"], C.purple),
         ("story_clusters", "1k+ rows", ["title, summary", "consensus_points, divergence_points", "category, sections text[]", "importance_score, headline_rank", "divergence_score, bias_diversity"], C.teal),
@@ -1712,7 +1712,7 @@ def page_database_bias(c):
     rounded_rect(c, bx, vy, 280, 35, fill=HexColor("#1A2A1A"), stroke=C.green, stroke_width=1)
     c.setFillColor(C.green)
     c.setFont("Helvetica-Bold", 9)
-    c.drawString(bx + 10, vy + 20, "Validation: 26 articles | 8 cats | 96.9%")
+    c.drawString(bx + 10, vy + 20, "Validation: 38 articles | 8 cats | 100%")
     c.setFillColor(C.text_dim)
     c.setFont("Helvetica", 7)
     c.drawString(bx + 10, vy + 6, "CI gate: .github/workflows/validate-bias.yml")

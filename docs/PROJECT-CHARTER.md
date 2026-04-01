@@ -18,14 +18,14 @@ A free, transparent news aggregation platform delivering World, US, and India ne
 |---------|---------------------|---------------------|
 | Bias is per-outlet, not per-article | Tools label an entire outlet "left" or "right" | Multi-axis NLP on every individual article |
 | Bias features are paywalled | Full insights require subscriptions | All bias data free and central |
-| Aggregators include untrusted sources | Low-credibility outlets mixed in | 409 curated, vetted sources only |
+| Aggregators include untrusted sources | Low-credibility outlets mixed in | 419 curated, vetted sources only |
 | Left/right is too simplistic | Single-axis spectrum | 6-axis analysis + 7-point lean spectrum (far-left → far-right) |
 
 ## 3. Scope
 
 ### In Scope (MVP)
 - World, US, and India editions (3 editions)
-- 409 curated sources across 3 tiers (49 us_major, 178 international, 182 independent); 7-point political lean spectrum
+- 419 curated sources across 3 tiers (42 us_major, 181 international, 196 independent); 7-point political lean spectrum
 - 4x daily automated pipeline (GitHub Actions)
 - Rule-based NLP bias engine (6 axes, $0 cost)
 - Gemini Flash: cluster summarization + editorial importance + reasoning (~116 RPD, free tier)
@@ -45,7 +45,7 @@ A free, transparent news aggregation platform delivering World, US, and India ne
 
 | Metric | Target |
 |--------|--------|
-| Sources at launch | 409 (49 us_major + 178 international + 182 independent) |
+| Sources at launch | 419 (42 us_major + 181 international + 196 independent) |
 | Pipeline reliability | 95%+ successful runs |
 | Pipeline completion time | < 6 minutes per run |
 | Bias scoring coverage | 100% of articles scored on all 6 axes |
@@ -69,7 +69,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | # | Decision | Choice |
 |---|----------|--------|
 | 1 | Bias model | Per-article, 6-axis, rule-based NLP |
-| 2 | Source strategy | 409 curated; 7-point lean spectrum |
+| 2 | Source strategy | 419 curated; 7-point lean spectrum |
 | 3 | Pipeline frequency | 4x daily (every 6h, all editions each run) |
 | 4 | Frontend | Next.js 16 (static export) + React 19 + TypeScript |
 | 5 | Responsive | One project, two layouts (desktop/mobile) |
@@ -130,7 +130,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 The MVP is complete when:
 
-- [ ] 409 sources actively ingested 4x daily with 95%+ reliability
+- [ ] 419 sources actively ingested 4x daily with 95%+ reliability
 - [ ] All 6 bias axes scored on every article
 - [ ] Story clustering groups related articles with 85%+ accuracy
 - [ ] Desktop layout renders newspaper-style multi-column grid

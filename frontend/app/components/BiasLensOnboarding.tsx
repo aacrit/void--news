@@ -45,7 +45,7 @@ const PHASES: Phase[] = [
     id: "why",
     duration: 10000,
     headline: "The space between",
-    body: "409 sources. Six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record. No editorial staff picking winners. No algorithm chasing clicks. Just the pattern, laid bare.",
+    body: "419 sources. Six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record. No editorial staff picking winners. No algorithm chasing clicks. Just the pattern, laid bare.",
     visual: "story",
   },
   {
@@ -302,7 +302,7 @@ function ProductFamilyVisual({ active }: { active: boolean }) {
     { cmd: "void --tl;dr", label: "Daily Brief", desc: "Top stories, editorially weighed" },
     { cmd: "void --onair", label: "Audio Broadcast", desc: "Two hosts, three minutes" },
     { cmd: "void --opinion", label: "The Board", desc: "Editorial lean rotates daily" },
-    { cmd: "void --sources", label: "Source Spectrum", desc: "409 sources, one axis" },
+    { cmd: "void --sources", label: "Source Spectrum", desc: "419 sources, one axis" },
     { cmd: "void --deep-dive", label: "Deep Dive", desc: "Every source, every score" },
     { cmd: "void --paper", label: "E-Paper", desc: "The broadsheet front page" },
   ];

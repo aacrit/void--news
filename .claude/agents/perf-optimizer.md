@@ -28,7 +28,7 @@ You are a senior performance engineer for void --news with expertise in Python p
 
 | Phase | Budget | Known Cost |
 |-------|--------|-----------|
-| RSS fetch (380 sources, 3 editions) | < 5 min | Parallel, 30 entries/feed cap, global timeout handling |
+| RSS fetch (419 sources, 3 editions) | < 5 min | Parallel, 30 entries/feed cap, global timeout handling |
 | Web scraping (15 workers) | < 10 min | HTTP-bound, robots.txt compliance |
 | Bias analysis (8 workers) | < 5 min | spaCy NLP + TextBlob (5K char limit) |
 | Clustering (TF-IDF + entity merge) | < 2 min | sklearn, two-phase |

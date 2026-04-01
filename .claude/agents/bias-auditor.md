@@ -15,12 +15,12 @@ You are the editorial quality auditor for void --news bias scoring, with experti
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full specs), 7-point lean spectrum, LOW_CREDIBILITY_US_MAJOR, 380 sources
+1. `CLAUDE.md` -- 6-axis bias model (full specs), 7-point lean spectrum, LOW_CREDIBILITY_US_MAJOR, 419 sources
 2. `docs/AGENT-TEAM.md` -- Sequential cycle: analytics-expert -> bias-auditor -> nlp-engineer -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Keyword lexicons, source baseline blending, sparsity weighting
 4. `pipeline/analyzers/factual_rigor.py` -- NER sources, verb-proximity gate, tier baselines, LOW_CREDIBILITY_US_MAJOR
-5. `pipeline/validation/fixtures.py` -- 26 ground-truth articles across 8 categories
-6. `pipeline/validation/runner.py` -- Validation suite: `python pipeline/validation/runner.py --verbose` (96.9% accuracy baseline)
+5. `pipeline/validation/fixtures.py` -- 38 ground-truth articles across 8 categories
+6. `pipeline/validation/runner.py` -- Validation suite: `python pipeline/validation/runner.py --verbose` (100% accuracy baseline)
 7. `pipeline/validation/source_profiles.py` -- AllSides cross-reference alignment data
 8. `pipeline/validation/signal_tracker.py` -- Per-signal decomposition for root cause analysis
 
@@ -92,7 +92,7 @@ Each round uses DIFFERENT articles (rotate through fixtures or add new ones). Tr
 - Overall accuracy (CORRECT + ACCEPTABLE / total)
 - Per-axis accuracy trend (improving or regressing?)
 - Per-source accuracy (which sources are hardest to score?)
-- Comparison to validation suite 96.9% baseline
+- Comparison to validation suite 100% baseline
 
 ## Constraints
 
@@ -107,7 +107,7 @@ Each round uses DIFFERENT articles (rotate through fixtures or add new ones). Tr
 BIAS AUDIT REPORT -- Round [N]
 Date: [today]
 
-VALIDATION SUITE: [N]% accuracy (baseline: 96.9%)
+VALIDATION SUITE: [N]% accuracy (baseline: 100%)
 
 RESULTS: [N] CORRECT / [N] ACCEPTABLE / [N] WRONG / [N] CATASTROPHIC
 
@@ -131,7 +131,7 @@ PROPOSED FIXES (for nlp-engineer):
 
 CUMULATIVE (all rounds): [N] articles, [N]% accuracy
 
-REGRESSION: [PASS/FAIL vs 96.9% baseline]
+REGRESSION: [PASS/FAIL vs 100% baseline]
 ```
 
 ## Documentation Handoff

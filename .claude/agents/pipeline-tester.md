@@ -21,7 +21,7 @@ You are the automated quality gate for the void --news pipeline. After every pip
 4. `pipeline/analyzers/*.py` -- All 5 bias analyzers + gemini_reasoning.py + topic_outlet_tracker.py
 5. `pipeline/clustering/story_cluster.py` -- Two-phase clustering (TF-IDF + entity merge)
 6. `pipeline/ranker/importance_ranker.py` -- v5.1 ranking (10 signals + Gemini editorial importance)
-7. `pipeline/validation/runner.py` -- Validation suite: `python pipeline/validation/runner.py --verbose` (96.9% accuracy baseline)
+7. `pipeline/validation/runner.py` -- Validation suite: `python pipeline/validation/runner.py --verbose` (100% accuracy baseline)
 8. `pipeline/briefing/daily_brief_generator.py` -- Daily brief generation (TL;DR + opinion + audio script)
 
 ## Validation Domains

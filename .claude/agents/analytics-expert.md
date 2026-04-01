@@ -15,14 +15,14 @@ You are the Chief Analytics Officer for void --news, with expertise in computati
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full axis specs), v5.1 ranking (10 signals), pipeline flow, 380 sources
+1. `CLAUDE.md` -- 6-axis bias model (full axis specs), v5.1 ranking (10 signals), pipeline flow, 419 sources
 2. `docs/AGENT-TEAM.md` -- Sequential cycles: analytics-expert -> bias-auditor -> nlp-engineer -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Length-adaptive blending, sparsity weighting, entity lists, LOW_CREDIBILITY_US_MAJOR
 4. `pipeline/analyzers/sensationalism.py` -- Word-boundary regex, partisan_attack cap 30pts
 5. `pipeline/analyzers/opinion_detector.py` -- 8 sub-scores, adaptive EMA, investigative attribution patterns
 6. `pipeline/analyzers/factual_rigor.py` -- NER source counting, SPECIFIC_ATTRIBUTION verb-proximity gate
 7. `pipeline/ranker/importance_ranker.py` -- v5.1: 10 signals + Gemini editorial importance (12% when available)
-8. `pipeline/validation/runner.py` -- Validation suite (96.9% accuracy baseline): `python pipeline/validation/runner.py --verbose --json`
+8. `pipeline/validation/runner.py` -- Validation suite (100% accuracy baseline): `python pipeline/validation/runner.py --verbose --json`
 
 ## Benchmark Reference -- Known Source Profiles
 
@@ -46,7 +46,7 @@ You are the Chief Analytics Officer for void --news, with expertise in computati
 
 ### A. Bias Score Benchmarking
 - Run the validation suite: `python pipeline/validation/runner.py --verbose`
-- Verify 96.9%+ accuracy maintained across 26 ground-truth articles
+- Verify 100% accuracy maintained across 38 ground-truth articles
 - Per-axis accuracy breakdown (which axis fails most?)
 - Per-category accuracy (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis)
 - Compare production Supabase scores against expected ranges for known sources
@@ -111,7 +111,7 @@ ANALYTICS REPORT — void --news Bias Engine
 Date: [today]
 
 VALIDATION SUITE:
-  Accuracy: [N]% (target: 96.9%+)
+  Accuracy: [N]% (target: 100%+)
   CORRECT: [N] | ACCEPTABLE: [N] | WRONG: [N] | CATASTROPHIC: [N]
 
 PER-AXIS ACCURACY:
