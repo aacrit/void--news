@@ -121,6 +121,7 @@ def generate_json(
             )
 
             if not response.text:
+                print(f"  [warn] Gemini returned empty response (attempt {attempt + 1})")
                 continue
 
             text = response.text.strip()
@@ -133,17 +134,23 @@ def generate_json(
 
             return json.loads(text)
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as je:
+            # Log what Gemini actually returned so we can diagnose format issues
+            snippet = (text[:200] + "...") if len(text) > 200 else text
+            print(f"  [warn] Gemini JSON parse failed (attempt {attempt + 1}): "
+                  f"{je} — response starts with: {snippet!r}")
             if attempt < max_retries:
                 continue
             return None
         except Exception as e:
             error_str = str(e).lower()
             if "429" in error_str or "quota" in error_str or "rate" in error_str:
+                print(f"  [warn] Gemini rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
                     time.sleep(15)
                     continue
-            print(f"  [warn] Gemini API error: {e}")
+            else:
+                print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
             return None
 
     return None
