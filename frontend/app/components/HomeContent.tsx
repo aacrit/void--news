@@ -6,11 +6,9 @@ import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, O
 import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { supabase, supabaseError } from "../lib/supabase";
 import { BASE_PATH } from "../lib/utils";
-import LogoWordmark from "./LogoWordmark";
 import LogoIcon from "./LogoIcon";
 import NavBar from "./NavBar";
-import LeadStory from "./LeadStory";
-import StoryCard from "./StoryCard";
+import DesktopFeed from "./DesktopFeed";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -44,39 +42,9 @@ class DeepDiveErrorBoundary extends Component<
   }
 }
 
-/* ---------------------------------------------------------------------------
-   VisibleCard — defers anim-filter-card until the element enters the viewport.
-
-   Uses the pooled IntersectionObserver from sharedObserver.ts (shared across
-   all card components) to avoid creating 100+ observers on long feeds.
-   --------------------------------------------------------------------------- */
-
-import { useInView } from "../lib/sharedObserver";
-
-interface VisibleCardProps {
-  className?: string;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-}
-
-function VisibleCard({ className = "", style, children }: VisibleCardProps) {
-  const [ref, inView] = useInView<HTMLDivElement>();
-
-  return (
-    <div
-      ref={ref}
-      className={`${className}${inView ? " anim-filter-card" : ""}`}
-      style={style}
-    >
-      {children}
-    </div>
-  );
-}
-
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
-import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -308,9 +276,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
-  // Detect mobile for infinite scroll vs editorial link
+  // Detect mobile for feed layout — responsive to viewport changes
   useEffect(() => {
-    setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+    const mql = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
   }, []);
 
   // Cmd+K / Ctrl+K to open search
@@ -636,19 +608,16 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
   }, [stories, activeCategory, activeLean]);
 
-  const leadStories = filteredStories.slice(0, 2);
-  const mediumStories = filteredStories.slice(2, 5);
-  const compactStories = filteredStories.slice(5);
-
-  // Progressive batch reveal — no hard cap
-  const visibleCompact = compactStories.slice(0, visibleCount);
-  const remainingCount = compactStories.length - visibleCount;
-  const hasMore = remainingCount > 0;
+  // Pool size depends on feed layout: MobileFeed shows hero(1)+rest, DesktopFeed shows lead(2)+digest(6)+wire
+  const poolSize = isMobile
+    ? filteredStories.length - 1
+    : filteredStories.length - 8;
+  const hasMore = poolSize > visibleCount && poolSize > 0;
 
   const loadMoreStories = useCallback(() => {
     hapticScrollEdge();
-    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
-  }, [compactStories.length]);
+    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, Math.max(poolSize, 0)));
+  }, [poolSize]);
 
   // Infinite scroll via IntersectionObserver on sentinel (desktop + mobile)
   useEffect(() => {
@@ -709,6 +678,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
         activeLean={activeLean}
         onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+        onSearchClick={() => setSearchOpen(true)}
       />
 
       <main
@@ -836,80 +806,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   editionMeta={editionMeta}
                 />
               ) : (
-                <>
-                  <SkyboxBanner state={dailyBriefState} />
-                  {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
-                      {leadStories.map((story, i) => (
-                        <VisibleCard
-                          key={story.id}
-                          className="lead-section__col"
-                          style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
-                        >
-                          <div data-story-index={i}>
-                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
-                          </div>
-                        </VisibleCard>
-                      ))}
-                    </section>
-                  )}
-
-                  {mediumStories.length > 0 && (
-                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                      {mediumStories.map((story, idx) => {
-                        const gi = leadStories.length + idx;
-                        return (
-                          <VisibleCard
-                            key={story.id}
-                            className="grid-medium__item"
-                            style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
-                          >
-                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
-                          </VisibleCard>
-                        );
-                      })}
-                    </section>
-                  )}
-
-                  {compactStories.length > 0 && (
-                    <>
-                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                        {visibleCompact.map((story, idx) => {
-                          const gi = leadStories.length + mediumStories.length + idx;
-                          return (
-                            <VisibleCard
-                              key={story.id}
-                              className="grid-compact__item"
-                              style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
-                            >
-                              <StoryCard
-                                story={story}
-                                index={idx + mediumStories.length + 1}
-                                onStoryClick={handleStoryClick}
-                                globalIndex={gi}
-                                kbdFocused={kbdFocusIndex === gi}
-                              />
-                            </VisibleCard>
-                          );
-                        })}
-                      </section>
-
-                      {hasMore && (
-                        <div className="feed-sentinel" ref={sentinelRef} aria-hidden="true" />
-                      )}
-                    </>
-                  )}
-
-                  {filteredStories.length > 0 && (
-                    <div className="edition-line">
-                      <span className="edition-meta">
-                        {editionMeta.label} Edition /{" "}
-                        {filteredStories.length} stories
-                      </span>
-                      <LogoWordmark height={14} />
-                    </div>
-                  )}
-                </>
+                <DesktopFeed
+                  stories={filteredStories}
+                  dailyBriefState={dailyBriefState}
+                  onStoryClick={handleStoryClick}
+                  filterKey={filterKey}
+                  visibleCount={visibleCount}
+                  hasMore={hasMore}
+                  sentinelRef={sentinelRef}
+                  kbdFocusIndex={kbdFocusIndex}
+                  editionMeta={editionMeta}
+                />
               )
             )}
         </>

@@ -8,7 +8,7 @@ import { useInView } from "../lib/sharedObserver";
 
 /* Category → left-border color mapping (CSS custom properties from tokens.css) */
 const CAT_COLORS: Record<string, string> = {
-  Politics: "var(--bias-left)",
+  Politics: "var(--cat-politics)",
   Conflict: "var(--cat-conflict)",
   Economy: "var(--accent-warm)",
   Science: "var(--cat-science)",

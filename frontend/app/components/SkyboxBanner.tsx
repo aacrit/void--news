@@ -13,12 +13,6 @@ function formatTime(seconds: number): string {
   return `${m}:${r.toString().padStart(2, "0")}`;
 }
 
-/** Truncate text to a single line with ellipsis at ~80 chars */
-function truncateLine(text: string, max = 80): string {
-  if (text.length <= max) return text;
-  return text.slice(0, max).replace(/\s+\S*$/, "") + "\u2026";
-}
-
 type ExpandedSide = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
@@ -95,7 +89,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   };
 
   // Collapsed bar: single-line summary with listen button
-  const barExcerpt = brief.tldr_headline || truncateLine(tldrFull);
+  const barExcerpt = brief.tldr_headline || tldrFull;
 
   return (
     <>

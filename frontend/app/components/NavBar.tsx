@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
@@ -22,6 +23,7 @@ interface NavBarProps {
   onCategoryChange?: (category: "All" | Category) => void;
   activeLean?: LeanChip;
   onLeanChange?: (lean: LeanChip) => void;
+  onSearchClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -52,6 +54,7 @@ export default function NavBar({
   onCategoryChange,
   activeLean = "All",
   onLeanChange,
+  onSearchClick,
 }: NavBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
   const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
@@ -149,10 +152,26 @@ export default function NavBar({
           <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
         </span>
         <span className="nav-dateline-mobile" aria-hidden="true">
+          <span className="nav-edition-badge">
+            <EditionIcon slug={activeEdition} size={10} />
+            {EDITIONS.find(e => e.slug === activeEdition)?.label ?? "World"}
+          </span>
+          <span className="nav-dateline-sep">&middot;</span>
           {formatDateCompact()}
         </span>
 
         <div className="nav-right">
+          {onSearchClick && (
+            <button
+              className="nav-search-btn"
+              onClick={onSearchClick}
+              aria-label="Search stories (Ctrl+K)"
+              title="Search (Ctrl+K)"
+              type="button"
+            >
+              <MagnifyingGlass size={18} weight="light" />
+            </button>
+          )}
           <PageToggle activePage="feed" />
           <ThemeToggle />
         </div>

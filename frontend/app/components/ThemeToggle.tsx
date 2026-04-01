@@ -48,7 +48,13 @@ export default function ThemeToggle() {
   };
 
   if (!mounted) {
-    return <button aria-label="Toggle theme" className="theme-toggle theme-toggle--placeholder" />;
+    return (
+      <button aria-label="Toggle theme" className="theme-toggle theme-toggle--placeholder">
+        <span aria-hidden="true" className="theme-toggle__icon">
+          <Sun size={18} weight="light" />
+        </span>
+      </button>
+    );
   }
 
   return (
