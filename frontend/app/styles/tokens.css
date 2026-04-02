@@ -123,6 +123,12 @@
   --ease-dramatic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
   --ease-steadicam: cubic-bezier(0.16, 1, 0.3, 1);
 
+  /* ── Broadsheet Paper Physics ──
+     Organic paper transitions for the Skybox banner.
+     Not springs (digital), not slides (mechanical) — paper. */
+  --ease-unfold: cubic-bezier(0.14, 0.8, 0.26, 1);
+  --ease-refold: cubic-bezier(0.32, 0, 0.15, 1);
+
   /* ── Rack Focus ── */
   --rack-focus-dur: 600ms;
   --rack-focus-ease: var(--ease-rack);
