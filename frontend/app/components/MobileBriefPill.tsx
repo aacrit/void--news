@@ -71,12 +71,12 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
 
   const hasAudio = !!brief.audio_url;
 
-  const tldrSentences = brief.tldr_text.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const tldrSentences = String(brief.tldr_text).split(/(?<=[.!?])\s+/).filter(Boolean);
   const tldrPreview = tldrSentences.slice(0, 2).join(" ");
   const tldrRest = tldrSentences.slice(2).join(" ");
   const tldrHasMore = tldrRest.length > 0;
 
-  const opinionSentences = brief.opinion_text ? brief.opinion_text.split(/(?<=[.!?])\s+/).filter(Boolean) : [];
+  const opinionSentences = brief.opinion_text ? String(brief.opinion_text).split(/(?<=[.!?])\s+/).filter(Boolean) : [];
   const opinionPreview = opinionSentences.slice(0, 2).join(" ");
   const opinionRest = opinionSentences.slice(2).join(" ");
   const opinionHasMore = opinionRest.length > 0;
@@ -86,7 +86,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const leanMod = brief.opinion_lean === "left" ? "skb-lean--left"
     : brief.opinion_lean === "right" ? "skb-lean--right" : "skb-lean--center";
 
-  const pillLabel = brief.tldr_headline || "Today\u2019s brief";
+  const pillLabel = (brief.tldr_headline ? String(brief.tldr_headline) : null) || "Today\u2019s brief";
 
   // OnAir: trigger floating player
   const handleOnairClick = () => {

@@ -363,6 +363,26 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     document.documentElement.setAttribute("data-edition", activeEdition);
   }, [activeEdition]);
 
+  // Coerce cached Story fields to strings — localStorage may contain stale
+  // data from before JSONB coercion was added, triggering React #310.
+  function sanitizeStory(s: Story): Story {
+    return {
+      ...s,
+      title: typeof s.title === "string" ? s.title : String(s.title ?? ""),
+      summary: typeof s.summary === "string" ? s.summary : String(s.summary ?? ""),
+      category: (typeof s.category === "string" ? s.category : "Politics") as Category,
+      deepDive: s.deepDive ? {
+        ...s.deepDive,
+        consensus: Array.isArray(s.deepDive.consensus)
+          ? s.deepDive.consensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
+          : [],
+        divergence: Array.isArray(s.deepDive.divergence)
+          ? s.deepDive.divergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
+          : [],
+      } : undefined,
+    };
+  }
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -373,7 +393,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       if (cached && stories.length === 0) {
         const parsed = JSON.parse(cached) as Story[];
         if (parsed.length > 0) {
-          setStories(parsed);
+          setStories(parsed.map(sanitizeStory));
         }
       }
     } catch { /* localStorage unavailable */ }
@@ -430,7 +450,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             if (cached) {
               const parsed = JSON.parse(cached) as Story[];
               if (parsed.length > 0) {
-                setStories(parsed);
+                setStories(parsed.map(sanitizeStory));
                 setIsLoading(false);
                 return;
               }

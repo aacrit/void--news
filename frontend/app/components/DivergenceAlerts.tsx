@@ -73,9 +73,10 @@ export default function DivergenceAlerts({
 
           <div className="div-alerts__row" role="list">
             {alertStories.map((story) => {
-              const insight = Array.isArray(story.deepDive?.divergence) && story.deepDive.divergence.length > 0
+              const rawInsight = Array.isArray(story.deepDive?.divergence) && story.deepDive.divergence.length > 0
                 ? story.deepDive.divergence[0]
                 : "Sources differ significantly on framing";
+              const insight = typeof rawInsight === "string" ? rawInsight : String(rawInsight);
 
               return (
                 <article
