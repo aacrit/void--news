@@ -101,9 +101,13 @@ def generate_json(
             if count_call:
                 _call_count += 1
 
+            # Cap max_tokens to 4096 for brief generation — keeps responses
+            # focused and avoids the streaming requirement for long operations.
+            effective_max = min(max_output_tokens, 4096)
+
             kwargs = {
                 "model": _MODEL,
-                "max_tokens": max_output_tokens,
+                "max_tokens": effective_max,
                 "messages": messages,
                 "temperature": 0.3,
             }
