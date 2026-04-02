@@ -295,11 +295,40 @@
 
 .skb__section-content {
   padding: var(--space-3) var(--space-4) var(--space-4);
-  animation: skbSectionIn 400ms var(--ease-cinematic, ease) both;
+  /* Animation removed — children animate individually via L-cut cascade */
 }
 
-@keyframes skbSectionIn {
-  from { opacity: 0; transform: translateY(6px); }
+/* Directional section swap: Opinion enters from right, TL;DR from left */
+.skb--show-opinion .skb__section-content {
+  animation: skbSwapFromRight 350ms var(--ease-cinematic) both;
+}
+.skb--show-tldr .skb__section-content {
+  animation: skbSwapFromLeft 350ms var(--ease-cinematic) both;
+}
+
+@keyframes skbSwapFromRight {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes skbSwapFromLeft {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Section content L-cut cascade — label, headline, body stagger in */
+.skb__section-content .skb__section-label {
+  animation: skbElementIn 350ms var(--spring-gentle, var(--ease-cinematic)) 120ms both;
+}
+.skb__section-content .skb__section-hl {
+  animation: skbElementIn 400ms var(--spring-gentle, var(--ease-cinematic)) 200ms both;
+}
+.skb__section-content .skb__section-body--tldr,
+.skb__section-content .skb__section-body--opinion {
+  animation: skbElementIn 400ms var(--spring-gentle, var(--ease-cinematic)) 300ms both;
+}
+
+@keyframes skbElementIn {
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -942,6 +971,85 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Cinematic Motion Choreography
+   --------------------------------------------------------------------------- */
+
+/* ── Cold open: internal L-cut stagger within the compact bar ── */
+.anim-cold-open-skybox .skb__compact-col--tldr {
+  animation: skbElementIn 350ms var(--ease-cinematic) 280ms both;
+}
+.anim-cold-open-skybox .skb__compact-col--opinion {
+  animation: skbElementIn 350ms var(--ease-cinematic) 360ms both;
+}
+.anim-cold-open-skybox .skb__compact-onair {
+  animation: skbFadeIn 300ms var(--ease-cinematic) 440ms both;
+}
+
+@keyframes skbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Topbar entrance — slides down when expanding from compact ── */
+.skb--section-open .skb__topbar {
+  animation: skbTopbarIn 300ms var(--ease-cinematic) both;
+}
+
+@keyframes skbTopbarIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Compact restore — plays when collapsing back from expanded ── */
+.skb--compact .skb__compact {
+  animation: skbCompactRestore 250ms var(--ease-cinematic) both;
+}
+/* Cold open takes precedence — prevent double animation on first load */
+.anim-cold-open-skybox.skb--compact .skb__compact {
+  animation: none;
+}
+
+@keyframes skbCompactRestore {
+  from { opacity: 0; transform: scale(0.995); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Radio panel internal L-cut cascade ── */
+.skb__radio-inner .skb__radio-header {
+  animation: skbElementIn 250ms var(--ease-cinematic) 80ms both;
+}
+.skb__radio-inner .skb__waveform {
+  animation: skbElementIn 300ms var(--ease-cinematic) 140ms both;
+}
+.skb__radio-inner .skb__transport {
+  animation: skbElementIn 250ms var(--ease-cinematic) 200ms both;
+}
+.skb__radio-inner .skb__dial {
+  animation: skbElementIn 300ms var(--ease-cinematic) 260ms both;
+}
+
+/* ── Mobile: compress cascade delays ── */
+@media (max-width: 767px) {
+  .skb__section-content .skb__section-label { animation-delay: 60ms; }
+  .skb__section-content .skb__section-hl { animation-delay: 100ms; }
+  .skb__section-content .skb__section-body--tldr,
+  .skb__section-content .skb__section-body--opinion { animation-delay: 150ms; }
+
+  /* Directional swap → simple vertical fade on mobile */
+  .skb--show-opinion .skb__section-content,
+  .skb--show-tldr .skb__section-content {
+    animation-name: skbElementIn;
+    animation-duration: 300ms;
+  }
+
+  /* Radio internal stagger compressed */
+  .skb__radio-inner .skb__radio-header { animation-delay: 40ms; }
+  .skb__radio-inner .skb__waveform { animation-delay: 70ms; }
+  .skb__radio-inner .skb__transport { animation-delay: 100ms; }
+  .skb__radio-inner .skb__dial { animation-delay: 130ms; }
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
 
@@ -950,8 +1058,23 @@
   .skb__transport-play--active { animation: none; }
   .skb__waveform--active .skb__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .skb__rec-dot { animation: none; opacity: 1; }
-  .skb__section-content { animation: none; }
-  .skb__topbar { animation: none; }
+  /* Disable all choreography animations */
+  .skb__section-content,
+  .skb--show-opinion .skb__section-content,
+  .skb--show-tldr .skb__section-content,
+  .skb__section-content .skb__section-label,
+  .skb__section-content .skb__section-hl,
+  .skb__section-content .skb__section-body--tldr,
+  .skb__section-content .skb__section-body--opinion,
+  .skb--section-open .skb__topbar,
+  .skb--compact .skb__compact,
+  .skb__radio-inner .skb__radio-header,
+  .skb__radio-inner .skb__waveform,
+  .skb__radio-inner .skb__transport,
+  .skb__radio-inner .skb__dial,
+  .anim-cold-open-skybox .skb__compact-col--tldr,
+  .anim-cold-open-skybox .skb__compact-col--opinion,
+  .anim-cold-open-skybox .skb__compact-onair { animation: none; }
 }
 
 /* ---------------------------------------------------------------------------
