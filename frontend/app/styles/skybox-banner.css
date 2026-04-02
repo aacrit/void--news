@@ -34,13 +34,7 @@
   flex-direction: column;
 }
 
-/* Header: columns + OnAir pill in one row */
-.skb__compact-header {
-  display: flex;
-  gap: 0;
-}
-
-/* Columns fill available space, OnAir pill sits to the right */
+/* Columns */
 .skb__compact-cols {
   display: grid;
   grid-template-columns: 1fr;
@@ -207,33 +201,6 @@
   border-color: var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
   transform: translateY(1px);
-}
-
-/* OnAir pill — top right, alongside columns */
-.skb__compact-onair {
-  padding: var(--space-3) var(--space-3);
-  border-left: 1px dotted color-mix(in srgb, var(--fg-muted) 20%, transparent);
-  display: flex;
-  align-items: flex-start;
-  flex-shrink: 0;
-}
-
-.skb__compact-onair .skb__onair-pill {
-  display: inline-flex;
-  width: auto;
-  flex-direction: column;
-  gap: var(--space-1);
-  text-align: center;
-  padding: var(--space-2) var(--space-3);
-  min-height: auto;
-}
-
-.skb__compact-onair .skb__onair-cmd {
-  font-size: var(--text-xxs);
-}
-
-.skb__compact-onair .skb__onair-dur {
-  font-size: 10px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -480,111 +447,6 @@
 .skb__section-body--opinion p + p {
   margin-top: var(--space-3);
 }
-
-/* ---------------------------------------------------------------------------
-   OnAir pill — shared between compact strip and expanded topbar
-   --------------------------------------------------------------------------- */
-
-.skb__onair-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--accent-warm);
-  background: var(--cin-amber-ghost);
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
-  border-radius: 8px;
-  padding: var(--space-2) var(--space-4);
-  min-height: 40px;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent),
-              inset 0 -1px 0 color-mix(in srgb, var(--accent-warm) 6%, transparent);
-  transition: border-color 200ms, background 200ms, box-shadow 200ms, border-radius 300ms var(--ease-cinematic, ease);
-}
-
-.skb__onair-pill:hover {
-  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
-}
-
-.skb__onair-pill:active {
-  transform: scale(0.97);
-  transition-duration: 60ms;
-}
-
-.skb__onair-pill--active {
-  border-color: var(--accent-warm);
-  border-width: 2px;
-  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 18%, transparent),
-              inset 0 -1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
-}
-
-.skb__onair-cmd {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  letter-spacing: 0.02em;
-}
-
-.skb__onair-dur {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  opacity: 0.7;
-  text-transform: none;
-  letter-spacing: 0.02em;
-}
-
-.skb__onair-dur--error {
-  color: var(--indicator-broadcast);
-  opacity: 0.8;
-}
-
-/* Lean badge */
-.skb__lean-badge {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 3px;
-  letter-spacing: 0.04em;
-}
-
-.skb__lean-badge--sm {
-  font-size: 9px;
-  padding: 1px 4px;
-}
-
-/* F16: Lean badges use warm accent tones, not bias data colors (Dot Matrix Rule) */
-.skb-lean--left {
-  color: var(--fg-secondary);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
-}
-
-.skb-lean--right {
-  color: var(--fg-secondary);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
-}
-
-.skb-lean--center {
-  color: var(--fg-secondary);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
-}
-
-/* Solid ink dot */
-.skb__rec-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--indicator-broadcast);
-  animation: recPulse 1.5s ease-in-out infinite;
-  flex-shrink: 0;
-}
-
-@keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 /* ---------------------------------------------------------------------------
    Cinematic Motion Choreography
    --------------------------------------------------------------------------- */
@@ -605,9 +467,7 @@
   from { opacity: 0; transform: translateX(4px); }
   to   { opacity: 1; transform: translateX(0); }
 }
-.anim-cold-open-skybox .skb__compact-onair {
-  animation: skbFadeIn 300ms var(--ease-cinematic) 440ms both;
-}
+/* OnAir cold open removed — trigger is now in NavBar */
 
 @keyframes skbFadeIn {
   from { opacity: 0; }
@@ -679,7 +539,6 @@
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .skb__rec-dot { animation: none; opacity: 1; }
   .skb__section-content,
   .skb--show-opinion .skb__section-content,
   .skb--show-tldr .skb__section-content,
@@ -691,7 +550,6 @@
   .skb--compact .skb__compact,
   .anim-cold-open-skybox .skb__compact-col--tldr,
   .anim-cold-open-skybox .skb__compact-col--opinion,
-  .anim-cold-open-skybox .skb__compact-onair,
   .skb__section-label svg { animation: none; }
 }
 

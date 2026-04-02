@@ -689,6 +689,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         activeLean={activeLean}
         onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
         onSearchClick={() => setSearchOpen(true)}
+        hasAudio={!!dailyBriefState.brief?.audio_url}
+        isAudioPlaying={dailyBriefState.isPlaying}
+        onOnairClick={() => {
+          dailyBriefState.setPlayerVisible(true);
+          if (!dailyBriefState.isPlaying) dailyBriefState.handlePlayPause();
+        }}
       />
 
       <main

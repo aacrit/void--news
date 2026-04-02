@@ -24,6 +24,10 @@ interface NavBarProps {
   activeLean?: LeanChip;
   onLeanChange?: (lean: LeanChip) => void;
   onSearchClick?: () => void;
+  /** OnAir audio — show broadcast button in nav */
+  hasAudio?: boolean;
+  isAudioPlaying?: boolean;
+  onOnairClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
@@ -55,6 +59,9 @@ export default function NavBar({
   activeLean = "All",
   onLeanChange,
   onSearchClick,
+  hasAudio,
+  isAudioPlaying,
+  onOnairClick,
 }: NavBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
   const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
@@ -170,6 +177,17 @@ export default function NavBar({
               type="button"
             >
               <MagnifyingGlass size={18} weight="light" />
+            </button>
+          )}
+          {hasAudio && onOnairClick && (
+            <button
+              className={`nav-onair${isAudioPlaying ? " nav-onair--active" : ""}`}
+              onClick={onOnairClick}
+              type="button"
+              aria-label={isAudioPlaying ? "Now playing — open player" : "Listen to broadcast"}
+            >
+              {isAudioPlaying && <span className="nav-onair__dot" aria-hidden="true" />}
+              <span className="nav-onair__label">onair</span>
             </button>
           )}
           <PageToggle activePage="feed" />
