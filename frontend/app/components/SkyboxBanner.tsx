@@ -16,8 +16,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   // Focus management refs
   const collapseRef = useRef<HTMLButtonElement>(null);
-  const expandTldrRef = useRef<HTMLButtonElement>(null);
-  const expandOpinionRef = useRef<HTMLButtonElement>(null);
+  const expandTldrRef = useRef<HTMLDivElement>(null);
+  const expandOpinionRef = useRef<HTMLDivElement>(null);
   const prevSectionRef = useRef<ExpandedSection>(null);
 
   useEffect(() => {
@@ -95,12 +95,17 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {isCompact && (
           <div className="skb__compact">
               <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
-                {/* TL;DR column — entire column is clickable to expand */}
-                <button
+                {/* TL;DR column — entire column is clickable to expand.
+                    Uses div[role=button] instead of <button> because <button> cannot
+                    contain block-level elements (<h3>, <p>) — browser parser restructures
+                    the DOM, causing React hydration mismatch (error #310). */}
+                <div
                   ref={expandTldrRef}
                   className="skb__compact-col skb__compact-col--tldr"
                   onClick={() => toggleSection("tldr")}
-                  type="button"
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSection("tldr"); } }}
+                  role="button"
+                  tabIndex={0}
                   aria-expanded={false}
                   aria-label="Expand news brief"
                 >
@@ -113,15 +118,17 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{brief.tldr_headline}</h3>}
                   <p className="skb__compact-preview skb__compact-preview--tldr">{brief.tldr_text}</p>
                   <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
-                </button>
+                </div>
 
                 {/* Opinion column — entire column is clickable to expand */}
                 {brief.opinion_text && (
-                  <button
+                  <div
                     ref={expandOpinionRef}
                     className="skb__compact-col skb__compact-col--opinion"
                     onClick={() => toggleSection("opinion")}
-                    type="button"
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSection("opinion"); } }}
+                    role="button"
+                    tabIndex={0}
                     aria-expanded={false}
                     aria-label="Expand editorial opinion"
                   >
@@ -134,7 +141,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{brief.opinion_headline}</h3>}
                     <p className="skb__compact-preview skb__compact-preview--opinion">{brief.opinion_text}</p>
                     <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
-                  </button>
+                  </div>
                 )}
               </div>
 

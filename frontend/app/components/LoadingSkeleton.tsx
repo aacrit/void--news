@@ -11,9 +11,7 @@ import LogoWordmark from "./LogoWordmark";
 
 export default function LoadingSkeleton() {
   const [visible, setVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 300);
