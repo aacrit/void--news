@@ -37,17 +37,21 @@ from briefing.voice_rotation import get_voices_for_today
 _CLAUDE_SYSTEM_ADDENDUM = """
 
 ADDITIONAL CRAFT RULES (Claude-generated scripts):
-- Both hosts are equals — senior journalists briefing each other, not performing.
-- Use concrete analogies to make abstract policy real.
-- Self-correction allowed: "roughly $1.4 trillion — depending on the estimate."
-- Pacing: use [short pause] for breath beats, [long pause] before key revelations.
-- Ellipses (...) for trailing off. Em dashes (—) for pivots. Vary sentence length.
-- Substantive reactions: "But that contradicts the Q3 numbers." / "Which is what
-  makes the timing interesting — the vote is Thursday."
+- Both hosts are co-anchors — senior journalists briefing each other, not performing.
+  A leads Story 1, B leads Story 2. Non-lead adds second dimension, not reaction.
+- Make abstract policy concrete through specifics: name the affected population, \
+cite the dollar amount, state the timeline.
+- Cite ranges when numbers are uncertain: "$1.3 to $1.5 trillion, depending on \
+the CBO or OMB estimate."
+- Pacing: use [short pause] for breath beats. Em dashes (—) for pivots. Vary sentence length.
+- Ellipses (...) for deliberation. Tight turns — 2-3 sentences each.
+- Second dimensions, not reactions: "But that contradicts the Q3 numbers." / \
+  "The vote is Thursday — three days after the tariffs take effect."
 - BANNED (zero tolerance): "Mm.", "Right.", "Indeed.", "Good point.", "Exactly.",
   "Here's what you need to know.", "Think of it this way.", "Here's the thing...",
   "This isn't just...", "The bigger picture...", "So here's what's happening."
-- The close: one sharp observation, then "void logs out." with finality.
+- The close: the last fact that reframes the day, then "This was void news." \
+with finality.
 """
 
 # Claude-specific prompt — generates TL;DR, audio script, AND opinion in one call.
@@ -70,9 +74,10 @@ STORIES:
 Return JSON with exactly five fields:
 1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
    180-240 words. Hook → Stakes → Sweep → Pattern structure.
-2. "audio_script" — two-voice explainer (A: and B: speaker tags, one per line). \
-   4-5 minutes (800-1000 words). Structure: Headlines (3-sentence rundown) → \
-   3 stories in depth → Close with "void logs out." \
+2. "audio_script" — two-voice newsroom broadcast (A: and B: speaker tags, one per line). \
+   4-5 minutes (800-1000 words). Open: "A: From void news, [date]." \
+   Structure: Headlines (3-sentence rundown) → A leads Story 1, B leads Story 2, \
+   Story 3 briefer → Close with "This was void news." \
    No segment markers, no formatting. Just the dialogue.
 3. "opinion_headline" — 6-12 word editorial headline. Not a news headline. \
    A declarative statement of the editorial thesis. Concrete nouns and active verbs. \
@@ -89,9 +94,10 @@ Return JSON with exactly five fields:
    First line: "Now, void opinion." \
    Second line: State the opinion_headline as a spoken title. \
    Then dive straight into the argument. No preamble, no lens announcement. \
-   Use ellipses (...) for thinking pauses. Use em dashes for mid-thought pivots. \
-   Start measured. Let conviction build. By the final third, the listener should hear \
-   that you mean this. End with: "This was void opinion." No summary.\
+   Use ellipses (...) for genuine deliberation (2-3 max). Em dashes for mid-thought pivots. \
+   Use paragraph breaks for silence beats — 3-4 per piece. At least one single-sentence \
+   paragraph standing alone as a verdict. Steady pace throughout — never rush. Each \
+   sentence of evidence adds weight. End with: "This was void opinion." No summary.\
 """
 
 
