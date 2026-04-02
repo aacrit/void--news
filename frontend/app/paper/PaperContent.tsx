@@ -234,23 +234,27 @@ function Masthead({
   lastUpdated: string | null;
   edition: Edition;
 }) {
-  const now = new Date();
+  // Use a stable default for SSG, then update on client mount to avoid
+  // hydration mismatch (#310). Date-dependent values differ at build vs load.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  const dateStr = now
-    .toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-    .toUpperCase();
+  const now = mounted ? new Date() : new Date("2026-01-01T00:00:00Z");
+
+  const dateStr = mounted
+    ? now.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).toUpperCase()
+    : "";
 
   const epoch = new Date("2026-03-01T00:00:00Z");
-  const issueNo = Math.max(
-    1,
-    Math.floor((now.getTime() - epoch.getTime()) / 86400000),
-  );
-  const year = now.getFullYear();
+  const issueNo = mounted
+    ? Math.max(1, Math.floor((now.getTime() - epoch.getTime()) / 86400000))
+    : 1;
+  const year = mounted ? now.getFullYear() : 2026;
 
   const pressTime = lastUpdated
     ? new Date(lastUpdated).toLocaleString("en-US", {
@@ -467,18 +471,18 @@ function Classifieds({
 // --- Colophon ---
 
 function Colophon({ edition }: { edition: string }) {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const [dateStr, setDateStr] = useState("");
+  useEffect(() => {
+    setDateStr(new Date().toLocaleDateString("en-US", {
+      month: "long", day: "numeric", year: "numeric",
+    }));
+  }, []);
 
   return (
     <footer className="np-colophon">
       <hr className="np-colophon__rule" />
-      <p>
-        Void News &middot; The {edition} Edition &middot; {dateStr}
+      <p suppressHydrationWarning>
+        Void News &middot; The {edition} Edition{dateStr ? ` \u00b7 ${dateStr}` : ""}
       </p>
       <p>
         <Link href="/void--news/" className="np-colophon__link">
@@ -568,15 +572,12 @@ export default function PaperContent({ edition }: { edition: Edition }) {
   const layout = distributeStories(allStories, edition);
   const sectionConfig = getSectionConfig(edition);
 
-  const hour = new Date().getUTCHours();
   const editionDisplayName =
     edition === "us"
       ? "United States"
       : edition === "india"
         ? "India"
-        : hour < 17
-          ? "Morning"
-          : "Evening";
+        : "World";
 
   return (
     <div className="np-root" id="main-content" role="main">

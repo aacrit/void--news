@@ -812,7 +812,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
                   No stories yet for the {editionMeta.label} edition &mdash; the pipeline is still
                   collecting and analyzing {editionMeta.sourceCount}.
-                  The {new Date().getUTCHours() < 17 ? "morning" : "evening"} edition will appear shortly.
+                  The next edition will appear shortly.
                 </p>
                 <p className="edition-meta">
                   Morning edition: 11:00 AM UTC &middot; Evening edition: 11:00 PM UTC

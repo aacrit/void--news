@@ -68,6 +68,12 @@ export default function NavBar({
   const topicRef = useRef<HTMLDivElement>(null);
   const topicTriggerRef = useRef<HTMLButtonElement>(null);
 
+  // Defer date rendering to client to avoid SSG/client hydration mismatch (#310)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const dateline = mounted ? formatDateCompact() : "";
+  const timestamp = mounted ? getEditionTimestamp(activeEdition) : "";
+
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
     onLeanChange?.(lean === activeLean ? "All" : lean);
@@ -153,18 +159,18 @@ export default function NavBar({
           </Link>
         </div>
 
-        <span className="nav-dateline-inline" aria-hidden="true">
-          {formatDateCompact()}
+        <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
+          {dateline}
           <span className="nav-dateline-inline__sep">&middot;</span>
-          <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
+          <span className="nav-dateline-inline__time">{timestamp}</span>
         </span>
-        <span className="nav-dateline-mobile" aria-hidden="true">
+        <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
           <span className="nav-edition-badge">
             <EditionIcon slug={activeEdition} size={10} />
             {EDITIONS.find(e => e.slug === activeEdition)?.label ?? "World"}
           </span>
           <span className="nav-dateline-sep">&middot;</span>
-          {formatDateCompact()}
+          {dateline}
         </span>
 
         <div className="nav-right">
