@@ -37,10 +37,6 @@
     padding-right: 0;
   }
 
-  /* Daily Brief Banner: tablet+ — wider padding */
-  .daily-brief-banner {
-    padding: var(--space-3) var(--space-5);
-  }
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
@@ -790,34 +786,6 @@
   /* === NAV FILTERS — hide from top bar on mobile (moved to bottom nav) === */
   .nav-filters {
     display: none;
-  }
-
-  /* === DAILY BRIEF BANNER — compact stacked mobile layout === */
-  .daily-brief-banner {
-    padding: var(--space-2) var(--space-3);
-    margin: var(--space-2) 0 var(--space-1);
-  }
-
-  /* Tighter banner header on mobile */
-  .db-banner-header {
-    margin-bottom: var(--space-2);
-    padding-bottom: var(--space-1);
-  }
-
-  /* On Air: tighter padding on mobile */
-  .onair {
-    padding: var(--space-2) var(--space-3);
-    margin-bottom: var(--space-3);
-  }
-
-  /* Wrap controls on narrow screens */
-  .onair__controls {
-    flex-wrap: wrap;
-  }
-
-  .onair__track {
-    width: 100%;
-    flex-basis: 100%;
   }
 
   /* === PAGE MAIN — clear bottom nav + audio player === */

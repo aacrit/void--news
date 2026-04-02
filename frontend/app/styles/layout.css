@@ -55,6 +55,11 @@
     border-bottom: 1px solid var(--border-subtle);
     animation: skyboxReveal var(--dur-slow) var(--ease-out) both;
   }
+
+  /* F14: SkyboxBanner already has its own border-top — prevent doubling */
+  .skybox .skb {
+    border-top: none;
+  }
 }
 
 /* Ultra-wide: extend bleed further */

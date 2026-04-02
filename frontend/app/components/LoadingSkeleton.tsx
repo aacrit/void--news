@@ -26,11 +26,23 @@ export default function LoadingSkeleton() {
         <LogoWordmark height={14} />
       </div>
 
-      {/* Zone 0: SkyboxBanner placeholder — thin bar matching ~40px collapsed height */}
+      {/* Zone 0: SkyboxBanner placeholder — 2-column compact bar + OnAir strip */}
       <div className="skeleton-skybox">
-        <div className="shimmer-line" style={{ width: 100, height: 12 }} />
-        <div className="shimmer-line" style={{ width: "40%", height: 12 }} />
-        <div className="shimmer-line" style={{ width: 60, height: 12 }} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+          <div>
+            <div className="shimmer-line" style={{ width: 90, height: 10, marginBottom: 6 }} />
+            <div className="shimmer-line" style={{ width: "80%", height: 14, marginBottom: 6 }} />
+            <div className="shimmer-line" style={{ width: "60%", height: 10 }} />
+          </div>
+          <div>
+            <div className="shimmer-line" style={{ width: 100, height: 10, marginBottom: 6 }} />
+            <div className="shimmer-line" style={{ width: "70%", height: 14, marginBottom: 6 }} />
+            <div className="shimmer-line" style={{ width: "50%", height: 10 }} />
+          </div>
+        </div>
+        <div style={{ marginTop: 8, borderTop: "1px dotted var(--border-subtle)", paddingTop: 8 }}>
+          <div className="shimmer-line" style={{ width: 140, height: 12 }} />
+        </div>
       </div>
 
       {/* Zone 1: Asymmetric lead section — 2fr | 1fr columns */}

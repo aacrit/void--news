@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
@@ -24,8 +24,15 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [onairExpanded, setOnairExpanded] = useState(false);
+  const [announcement, setAnnouncement] = useState(""); // F02: aria-live
   const radioRef = useRef<HTMLDivElement>(null);
   const [radioHeight, setRadioHeight] = useState(0);
+
+  // F03: Focus management refs
+  const collapseRef = useRef<HTMLButtonElement>(null);
+  const expandTldrRef = useRef<HTMLButtonElement>(null);
+  const expandOpinionRef = useRef<HTMLButtonElement>(null);
+  const prevSectionRef = useRef<ExpandedSection>(null);
 
   useEffect(() => {
     if (!radioRef.current) return;
@@ -49,8 +56,25 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     return () => main.classList.remove('page-main--audio-playing');
   }, [isPlaying]);
 
+  // F03: Focus management on expand/collapse transitions
+  useEffect(() => {
+    const prev = prevSectionRef.current;
+    if (expandedSection && !prev) {
+      // Expanded from compact — focus the collapse button
+      requestAnimationFrame(() => collapseRef.current?.focus());
+    } else if (!expandedSection && prev) {
+      // Collapsed — return focus to the appropriate expand chevron
+      requestAnimationFrame(() => {
+        if (prev === "tldr") expandTldrRef.current?.focus();
+        else expandOpinionRef.current?.focus();
+      });
+    }
+    prevSectionRef.current = expandedSection;
+  }, [expandedSection]);
+
+  // F18: Clamp waveform bar heights to container max
   const waveformBars = useMemo(() =>
-    Array.from({ length: 32 }, (_, i) => 10 + Math.sin(i * 0.55) * 16 + Math.sin(i * 1.3) * 6),
+    Array.from({ length: 32 }, (_, i) => Math.min(32, 10 + Math.sin(i * 0.55) * 16 + Math.sin(i * 1.3) * 6)),
   []);
 
   if (!brief) return (
@@ -90,25 +114,34 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const isCompact = expandedSection === null;
 
-  const toggleSection = (section: "tldr" | "opinion") => {
+  const toggleSection = useCallback((section: "tldr" | "opinion") => {
     hapticLight();
-    setExpandedSection(prev => prev === section ? null : section);
-  };
+    setExpandedSection(prev => {
+      const next = prev === section ? null : section;
+      // F02: Announce state change
+      if (next) {
+        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "TL;DR" : "editorial opinion"}.`);
+      } else {
+        setAnnouncement("Daily brief collapsed.");
+      }
+      return next;
+    });
+  }, []);
 
-  const collapseAll = () => {
+  const collapseAll = useCallback(() => {
     hapticLight();
     setExpandedSection(null);
-  };
+    setAnnouncement("Daily brief collapsed.");
+  }, []);
 
-  const toggleOnair = () => {
+  // F06: Decouple expand from play — only toggle the radio panel
+  const toggleOnair = useCallback(() => {
     hapticConfirm();
     setOnairExpanded(v => !v);
-    if (!isPlaying && !onairExpanded && hasAudio) handlePlayPause();
-  };
+  }, []);
 
   // ── Radio Player (shared between compact and expanded) ──
   const radioPlayer = (
-    /* eslint-disable-next-line react/no-unknown-property */
     <div className="skb__radio" inert={!onairExpanded ? true : undefined} style={{
       height: onairExpanded ? radioHeight : 0,
       transition: onairExpanded
@@ -174,7 +207,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
       className={`skb__onair-pill${isPlaying ? " skb__onair-pill--active" : ""}${onairExpanded ? " skb__onair-pill--open" : ""}`}
       onClick={toggleOnair}
       type="button"
-      aria-label={onairExpanded ? "Close player" : hasAudio ? "Play broadcast" : "Audio unavailable"}
+      aria-label={onairExpanded ? "Close audio player" : "Open audio player"}
       aria-expanded={onairExpanded}
     >
       {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
@@ -205,7 +238,11 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   return (
     <>
-      {hasAudio && <audio id="void-onair-audio" ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
+      {/* F08: Remove id to avoid duplicate with MobileBriefPill */}
+      {hasAudio && <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
+
+      {/* F02: aria-live region for state announcements */}
+      <div aria-live="polite" className="sr-only">{announcement}</div>
 
       <div className={rootClass} role="complementary" aria-label="Daily Brief">
 
@@ -213,7 +250,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {isCompact && (
           <div className="skb__compact">
             {/* Row 1: TL;DR + Opinion side by side */}
-            <div className="skb__compact-cols">
+            {/* F13: single-column modifier when no opinion */}
+            <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
               {/* TL;DR column */}
               <div className="skb__compact-col skb__compact-col--tldr">
                 <div className="skb__compact-label">
@@ -224,6 +262,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{brief.tldr_headline}</h3>}
                 <p className="skb__compact-preview skb__compact-preview--tldr">{brief.tldr_text}</p>
                 <button
+                  ref={expandTldrRef}
                   className="skb__compact-expand"
                   onClick={() => toggleSection("tldr")}
                   type="button"
@@ -244,6 +283,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{brief.opinion_headline}</h3>}
                   <p className="skb__compact-preview skb__compact-preview--opinion">{brief.opinion_text}</p>
                   <button
+                    ref={expandOpinionRef}
                     className="skb__compact-expand"
                     onClick={() => toggleSection("opinion")}
                     type="button"
@@ -302,8 +342,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   </button>
                 )}
 
-                {/* Collapse all */}
+                {/* Collapse all — F03: receives focus on expand */}
                 <button
+                  ref={collapseRef}
                   className="skb__topbar-collapse"
                   onClick={collapseAll}
                   type="button"
