@@ -140,6 +140,10 @@ function SourcesPageInner() {
   const editionGroupRef = useRef<HTMLDivElement>(null);
   const leanGroupRef = useRef<HTMLDivElement>(null);
 
+  // Defer date rendering to client to avoid SSG hydration mismatch (#310)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   /** Arrow-key navigation within a radiogroup container */
   const handleRadioGroupKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -267,12 +271,12 @@ function SourcesPageInner() {
           </div>
 
           {/* Dateline — desktop only */}
-          <span className="nav-dateline-inline" aria-hidden="true">
-            {getEditionTimeOfDay(activeEdition)} Edition
+          <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
+            {mounted ? `${getEditionTimeOfDay(activeEdition)} Edition` : "Edition"}
             <span className="nav-dateline-inline__sep">&middot;</span>
-            {formatDateCompact()}
+            {mounted ? formatDateCompact() : ""}
             <span className="nav-dateline-inline__sep">&middot;</span>
-            <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
+            <span className="nav-dateline-inline__time">{mounted ? getEditionTimestamp(activeEdition) : ""}</span>
           </span>
 
           <div className="nav-right">
