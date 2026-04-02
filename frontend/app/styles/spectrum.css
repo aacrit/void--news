@@ -1013,6 +1013,33 @@
   margin: 0 0 var(--space-5) 0;
 }
 
+.meth__skip-link-wrap {
+  text-align: right;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.meth__skip-link {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-2);
+  transition: color 200ms var(--ease-out);
+}
+
+.meth__skip-link:hover {
+  color: var(--accent-warm);
+}
+
+.meth__skip-link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* ---- Sections: scroll-reveal dolly entrance ---- */
 
 .meth__section {
@@ -1188,7 +1215,8 @@
 /* ---- Bar meter ---- */
 
 .meth-eq__bar {
-  padding-bottom: var(--space-1);
+  /* Horizontal padding prevents the 12px marker dot from clipping at 0%/100% */
+  padding: 0 6px var(--space-1);
 }
 
 .meth-eq__track {
@@ -1377,6 +1405,8 @@
   background: none;
   border: none;
   border-bottom: 1px solid var(--border-subtle);
+  /* Reserve left-border width so the active indicator doesn't shift content */
+  border-left: 3px solid transparent;
   cursor: pointer;
   text-align: left;
   min-height: 44px;
@@ -1395,7 +1425,7 @@
 
 .meth-picker__row--active {
   background-color: var(--bg-secondary);
-  border-left: 3px solid var(--accent-warm);
+  border-left-color: var(--accent-warm);
 }
 
 .meth-picker__row:focus-visible {
@@ -1439,7 +1469,7 @@
   text-transform: uppercase;
   color: var(--fg-tertiary);
   flex-shrink: 0;
-  max-width: 8ch;
+  max-width: 14ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1535,6 +1565,7 @@
   align-items: baseline;
   gap: var(--space-2);
   padding: var(--space-1) 0;
+  min-width: 0;
 }
 
 .meth-rationale__connector {
@@ -1558,6 +1589,8 @@
   font-weight: 500;
   color: var(--fg-primary);
   font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 /* ==========================================================================
@@ -1934,7 +1967,10 @@
   }
 
   .meth-eq__label {
-    display: none;
+    font-size: var(--text-xxs, 0.65rem);
+    max-width: 8ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .meth-eq__panel-inner {
