@@ -2,25 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { DailyBriefState } from "./DailyBrief";
-import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
-import { hapticLight, hapticConfirm } from "../lib/haptics";
+import { hapticLight } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
-
-function formatTime(seconds: number): string {
-  const s = Math.floor(seconds);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${r.toString().padStart(2, "0")}`;
-}
 
 type ExpandedSection = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
-  const {
-    brief, isPlaying, currentTime, duration,
-    handlePlayPause, setPlayerVisible,
-  } = state;
+  const { brief } = state;
 
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [announcement, setAnnouncement] = useState("");
@@ -30,17 +19,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const expandTldrRef = useRef<HTMLButtonElement>(null);
   const expandOpinionRef = useRef<HTMLButtonElement>(null);
   const prevSectionRef = useRef<ExpandedSection>(null);
-
-  useEffect(() => {
-    const main = document.querySelector('.page-main');
-    if (!main) return;
-    if (isPlaying) {
-      main.classList.add('page-main--audio-playing');
-    } else {
-      main.classList.remove('page-main--audio-playing');
-    }
-    return () => main.classList.remove('page-main--audio-playing');
-  }, [isPlaying]);
 
   useEffect(() => {
     const prev = prevSectionRef.current;
@@ -74,10 +52,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     </div>
   );
 
-  const hasAudio = !!brief.audio_url;
-  const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
-  const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
-
   const leanLabel = brief.opinion_lean === "left" ? "Progressive"
     : brief.opinion_lean === "right" ? "Conservative" : "Pragmatic";
   const leanMod = brief.opinion_lean === "left" ? "skb-lean--left"
@@ -104,36 +78,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setAnnouncement("Daily brief collapsed.");
   }, []);
 
-  // OnAir pill: show/play via the floating player
-  const handleOnairClick = useCallback(() => {
-    hapticConfirm();
-    setPlayerVisible(true);
-    if (!isPlaying) handlePlayPause();
-  }, [isPlaying, handlePlayPause, setPlayerVisible]);
-
-  // ── OnAir pill — triggers floating player ──
-  const onairPill = (
-    <button
-      className={`skb__onair-pill${isPlaying ? " skb__onair-pill--active" : ""}`}
-      onClick={handleOnairClick}
-      type="button"
-      aria-label={isPlaying ? "Now playing" : hasAudio ? "Play broadcast" : "Audio unavailable"}
-    >
-      {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
-      <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "none"} />
-      <span className="skb__onair-cmd">void --onair</span>
-      {hasAudio ? (
-        isPlaying ? (
-          <span className="skb__onair-dur">{formatTime(currentTime)}</span>
-        ) : (
-          durationMin && <span className="skb__onair-dur">{durationMin} min</span>
-        )
-      ) : (
-        <span className="skb__onair-dur">twice daily</span>
-      )}
-    </button>
-  );
-
   const rootClass = [
     "skb",
     "anim-cold-open-skybox",
@@ -150,7 +94,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {/* ── COMPACT MODE ── */}
         {isCompact && (
           <div className="skb__compact">
-            <div className="skb__compact-header">
               <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
                 {/* TL;DR column */}
                 <div className="skb__compact-col skb__compact-col--tldr">
@@ -197,11 +140,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 )}
               </div>
 
-              {/* OnAir pill — top right */}
-              <div className="skb__compact-onair">
-                {onairPill}
-              </div>
-            </div>
           </div>
         )}
 
@@ -209,10 +147,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {!isCompact && (
           <>
             <div className="skb__topbar">
-              <div className="skb__topbar-left">
-                {onairPill}
-              </div>
-
               <div className="skb__topbar-right">
                 {expandedSection === "tldr" && brief.opinion_text && (
                   <button

@@ -1997,6 +1997,55 @@
   outline-offset: 2px;
 }
 
+/* OnAir button — broadcast trigger in nav */
+.nav-onair {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  border-radius: 4px;
+  padding: var(--space-1) var(--space-2);
+  min-height: 28px;
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms, background 150ms;
+}
+
+.nav-onair:hover {
+  color: var(--accent-warm);
+  border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+}
+
+.nav-onair--active {
+  color: var(--accent-warm);
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+}
+
+.nav-onair__dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--indicator-broadcast);
+  animation: recPulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.nav-onair__label {
+  white-space: nowrap;
+}
+
+.nav-onair:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
 /* Dateline wrapper — inline next to logo */
 .nav-dateline {
   font-family: var(--font-data);
