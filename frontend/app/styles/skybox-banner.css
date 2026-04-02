@@ -47,6 +47,17 @@
   }
 }
 
+/* F13: Single column when no opinion text */
+.skb__compact-cols--single {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .skb__compact-cols--single {
+    grid-template-columns: 1fr;
+  }
+}
+
 .skb__compact-col {
   position: relative;
   padding: var(--space-3) var(--space-4);
@@ -146,13 +157,20 @@
   color: var(--fg-secondary);
 }
 
-/* Down chevron — positioned at column's right edge */
+/* F09: More preview lines on wider viewports */
+@media (min-width: 768px) {
+  .skb__compact-preview { -webkit-line-clamp: 4; }
+}
+
+/* Down chevron — positioned at column's right edge. F01: 36px visual, 44px touch */
 .skb__compact-expand {
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,12 +181,6 @@
   font-size: 12px;
   cursor: pointer;
   transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out), transform 200ms var(--ease-out);
-}
-
-.skb__compact-expand::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
 }
 
 .skb__compact-expand:hover {
@@ -204,12 +216,8 @@
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
   border-bottom: 1px dotted color-mix(in srgb, var(--fg-muted) 20%, transparent);
-  animation: skbTopbarIn 300ms var(--ease-cinematic, ease) both;
-}
-
-@keyframes skbTopbarIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  /* F12: No animation on topbar — it persists across section switches.
+     Only section content animates via skbSectionIn. */
 }
 
 .skb__topbar-left {
@@ -222,7 +230,7 @@
   gap: var(--space-2);
 }
 
-/* Section chip — clickable chip for the other section */
+/* Section chip — clickable chip for the other section. F04: 44px touch target */
 .skb__topbar-chip {
   display: flex;
   align-items: center;
@@ -236,7 +244,7 @@
   border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
   border-radius: 6px;
   padding: var(--space-1) var(--space-3);
-  min-height: 32px;
+  min-height: 44px;
   cursor: pointer;
   transition: border-color 200ms, background 200ms, color 200ms;
 }
@@ -258,27 +266,22 @@
   opacity: 0.6;
 }
 
-/* Collapse button */
+/* Collapse button — F04: 36px visual, 44px min touch target */
 .skb__topbar-collapse {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
-  background: var(--cin-amber-ghost);
+  border-radius: 6px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
   color: var(--accent-warm);
-  font-size: 10px;
+  font-size: 12px;
   cursor: pointer;
   transition: border-color 200ms, background 200ms;
-  position: relative;
-}
-
-.skb__topbar-collapse::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
 }
 
 .skb__topbar-collapse:hover {
@@ -479,19 +482,23 @@
   padding: 1px 4px;
 }
 
+/* F16: Lean badges use warm accent tones, not bias data colors (Dot Matrix Rule) */
 .skb-lean--left {
-  color: var(--bias-left);
-  background: color-mix(in srgb, var(--bias-left) 12%, transparent);
+  color: var(--fg-secondary);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
 }
 
 .skb-lean--right {
-  color: var(--bias-right);
-  background: color-mix(in srgb, var(--bias-right) 12%, transparent);
+  color: var(--fg-secondary);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
 }
 
 .skb-lean--center {
-  color: var(--bias-center);
-  background: color-mix(in srgb, var(--bias-center) 12%, transparent);
+  color: var(--fg-secondary);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
 }
 
 /* Solid ink dot */
@@ -511,8 +518,10 @@
 .skb__radio {
   overflow: hidden;
   width: 100%;
-  max-width: 420px;
+  max-width: 100%;
 }
+
+/* F05: Full-width on tablet, constrained on desktop (see 1024px block below) */
 
 .skb__radio-inner {
   background: var(--bg-secondary);
