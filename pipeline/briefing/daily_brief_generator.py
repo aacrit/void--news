@@ -23,8 +23,62 @@ from pathlib import Path
 # Allow running from pipeline root or as part of main.py
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from summarizer.gemini_client import generate_json, is_available
+from summarizer.gemini_client import generate_json as gemini_generate_json, is_available as gemini_is_available
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
+
+# Claude API client — optional, used as primary when available
+try:
+    from summarizer.claude_client import (
+        generate_json as claude_generate_json,
+        is_available as claude_is_available,
+    )
+    _CLAUDE_CLIENT_AVAILABLE = True
+except ImportError:
+    _CLAUDE_CLIENT_AVAILABLE = False
+    def claude_generate_json(*a, **kw): return None
+    def claude_is_available(): return False
+
+
+def _smart_generate_json(
+    prompt: str,
+    system_instruction: str | None = None,
+    max_output_tokens: int = 8192,
+    edition: str = "",
+) -> tuple[dict | None, str]:
+    """Try Claude first, fall back to Gemini. Returns (result, generator_label)."""
+    if claude_is_available():
+        result = claude_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=False,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            print(f"  [brief:{edition}] Claude Sonnet OK")
+            return result, "claude-sonnet"
+        print(f"  [brief:{edition}] Claude failed — falling back to Gemini")
+
+    if gemini_is_available():
+        result = gemini_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=False,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "gemini-flash"
+
+    return None, "none"
+
+
+# Backward-compatible aliases used throughout this module
+def generate_json(prompt, system_instruction=None, max_retries=1, count_call=True, max_output_tokens=8192):
+    return gemini_generate_json(prompt, system_instruction=system_instruction,
+                                max_retries=max_retries, count_call=count_call,
+                                max_output_tokens=max_output_tokens)
+
+def is_available():
+    return gemini_is_available()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -938,17 +992,17 @@ def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
 
 
 def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "world") -> dict | None:
-    """Generate a single-story editorial opinion via Gemini.
+    """Generate a single-story editorial opinion via Claude (primary) or Gemini (fallback).
 
     Returns dict with opinion_text, opinion_headline, opinion_lean, opinion_cluster_id, or None.
     """
     global _brief_call_count
 
-    if not is_available():
-        print(f"  [opinion] Gemini not available — skipping Gemini opinion")
+    if not is_available() and not claude_is_available():
+        print(f"  [opinion] No LLM available — skipping opinion")
         return None
     if _brief_calls_remaining() <= 0:
-        print(f"  [opinion] Brief call budget exhausted ({_brief_call_count} used) — skipping Gemini opinion")
+        print(f"  [opinion] Brief call budget exhausted ({_brief_call_count} used) — skipping opinion")
         return None
 
     title = (cluster.get("title") or "").strip()
@@ -990,11 +1044,11 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
     for attempt in range(2):
         _brief_call_count += 1
         attempt_prompt = prompt if attempt == 0 else prompt + _build_opinion_retry_suffix(last_found_terms)
-        raw = generate_json(
+        raw, gen_label = _smart_generate_json(
             attempt_prompt,
             system_instruction=system,
-            count_call=False,
             max_output_tokens=65536,
+            edition=edition,
         )
 
         if raw and isinstance(raw, dict):
@@ -1084,7 +1138,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
                     "opinion_cluster_id": cluster_id if cluster_id else None,
                 }
 
-    print(f"  [opinion] Gemini call failed for {lean} editorial")
+    print(f"  [opinion] LLM call failed for {lean} editorial")
     return None
 
 
@@ -1157,7 +1211,12 @@ def generate_daily_briefs(
     if edition_sections is None:
         edition_sections = ["world", "us", "india"]
 
-    gemini_ok = is_available()
+    gemini_ok = gemini_is_available()
+    claude_ok = claude_is_available()
+    if claude_ok:
+        print(f"  [brief] Claude Sonnet available — using as primary")
+    elif gemini_ok:
+        print(f"  [brief] Gemini Flash available — using as primary")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
 
     results: dict[str, dict] = {}
@@ -1186,8 +1245,10 @@ def generate_daily_briefs(
 
         # --- Step 1: Generate TL;DR + audio script ---
         brief_result = None
+        generator_label = None
         gemini_failure_reason = None
-        if gemini_ok and _brief_calls_remaining() > 0:
+        any_llm_ok = (gemini_ok or claude_is_available())
+        if any_llm_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
 
@@ -1221,11 +1282,11 @@ def generate_daily_briefs(
             for attempt in range(2):
                 _brief_call_count += 1
                 attempt_prompt = prompt if attempt == 0 else prompt + _build_retry_suffix(quality_report)
-                raw = generate_json(
+                raw, generator_label = _smart_generate_json(
                     attempt_prompt,
                     system_instruction=_SYSTEM_INSTRUCTION,
-                    count_call=False,
                     max_output_tokens=65536,
+                    edition=edition,
                 )
                 if raw and isinstance(raw, dict):
                     tldr = raw.get("tldr_text", "")
@@ -1246,10 +1307,11 @@ def generate_daily_briefs(
                         }
                         passed, quality_report = _check_quality(raw, edition)
                         brief_result["quality_report"] = quality_report
+                        brief_result["generator"] = generator_label
                         if passed or attempt == 1:
                             if not passed and attempt == 1:
                                 print(f"  [quality][brief:{edition}] Prohibited terms still present after retry — accepting")
-                            print(f"  [brief:{edition}] Gemini OK — TL;DR {len(tldr.split(chr(10)))} lines, "
+                            print(f"  [brief:{edition}] {generator_label} OK — TL;DR {len(tldr.split(chr(10)))} lines, "
                                   f"script {'yes' if brief_result['audio_script'] else 'no'}"
                                   f"{' (retry)' if attempt > 0 else ''}")
                             break
@@ -1262,18 +1324,17 @@ def generate_daily_briefs(
                         break
                 else:
                     gemini_failure_reason = "api_error" if attempt == 0 else "api_error_retry"
-                    print(f"  [brief:{edition}] Gemini call failed (attempt {attempt + 1}, "
+                    print(f"  [brief:{edition}] LLM call failed (attempt {attempt + 1}, "
                           f"raw={'None' if raw is None else type(raw).__name__})")
                     # On first API failure, wait and retry once before giving up.
-                    # Gemini 429s and transient 500s often clear within 20 seconds.
                     if attempt == 0 and _brief_calls_remaining() > 0:
                         print(f"  [brief:{edition}] Waiting 20s before retry...")
                         time.sleep(20)
                         continue
                     break
-        elif not gemini_ok:
+        elif not any_llm_ok:
             gemini_failure_reason = "unavailable"
-            print(f"  [brief:{edition}] Gemini not available")
+            print(f"  [brief:{edition}] No LLM available (Claude + Gemini both unavailable)")
         else:
             gemini_failure_reason = "budget"
             print(f"  [brief:{edition}] Brief call cap reached ({_brief_call_count}/{_MAX_BRIEF_CALLS})")
@@ -1281,7 +1342,7 @@ def generate_daily_briefs(
         # Fallback: carry forward last successful Gemini brief instead of
         # generating a dry rule-based stub.  Only use rule-based as last resort.
         if brief_result is None:
-            print(f"  [brief:{edition}] Gemini failed ({gemini_failure_reason}) — "
+            print(f"  [brief:{edition}] LLM failed ({gemini_failure_reason}) — "
                   f"trying carry-forward from last successful brief")
             carried = _fetch_last_successful_brief(edition)
             if carried:
@@ -1339,8 +1400,10 @@ def generate_daily_briefs(
         results[edition] = brief_result
 
     total_opinions = sum(1 for r in results.values() if r.get("opinion_text") is not None)
+    generators_used = set(r.get("generator", "rule-based") for r in results.values() if r.get("generator"))
+    gen_str = "+".join(sorted(generators_used)) if generators_used else "rule-based"
     print(f"  Daily briefs: {len(results)} editions "
-          f"({_stats['fresh']} fresh Gemini, "
+          f"({_stats['fresh']} fresh [{gen_str}], "
           f"{_stats['carried']} carried-forward, "
           f"{_stats['rule_based']} rule-based, "
           f"{total_opinions} opinions [{_get_today_lean().upper()}], "
