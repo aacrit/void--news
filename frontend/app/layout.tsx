@@ -137,6 +137,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Status bar integration — matches app chrome to warm paper tones */}
+        <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
         {/* Inline script to set theme before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{

@@ -134,7 +134,8 @@
 .fp__play {
   width: 32px;
   height: 32px;
-  min-width: 32px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 50%;
   border: 1.5px solid var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 8%, transparent);

@@ -35,6 +35,11 @@ export default function ThemeToggle() {
     document.documentElement.setAttribute("data-mode", next);
     localStorage.setItem("void-news-theme", next);
 
+    // Update status bar color to match app chrome
+    const themeColor = next === "light" ? "#F0EBDD" : "#1C1A17";
+    document.querySelector('meta[name="theme-color"][media*="dark"]')?.setAttribute("content", themeColor);
+    document.querySelector('meta[name="theme-color"][media*="light"]')?.setAttribute("content", themeColor);
+
     // Golden hour pulse — cinematic color grade flash on theme switch.
     // Targets .page-main (not .page-container) because the color grade filter
     // lives on .page-main. Applying filter to .page-container would create a
