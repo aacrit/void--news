@@ -175,6 +175,7 @@ void-news/
 ## Git & Dev
 
 - **Always push to `claude/*` branches.** Auto-merge to main. Confirm deploy passes.
-- **Always commit after every task.** Never wait to be asked. Confirm the commit to the user.
+- **Always commit AND push after every task.** Never wait to be asked. Commit, push, then confirm both to the user.
+- **Before every push, sync with main:** `git fetch origin main && git merge origin/main --no-edit`. Multiple sessions may advance main concurrently. Never push without syncing first.
 - Python 3.11+, Node 18+, TypeScript frontend. All bias analysis rule-based.
 - Pipeline: 25-35 min incremental, 108 min fresh DB. Static export (`next export`).

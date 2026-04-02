@@ -466,6 +466,18 @@
     opacity: 0;
   }
 
+  /* Override cinematic settled shadow — bottom sheet keeps upward shadow, no inset vignette */
+  .deep-dive-panel[data-settled] {
+    box-shadow:
+      0 -8px 40px rgba(0, 0, 0, 0.25),
+      0 -2px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Suppress DD breathing on mobile — 0.05% scale is imperceptible on small viewports */
+  .deep-dive-panel[data-settled] .deep-dive-panel__content {
+    animation: none;
+  }
+
   .deep-dive-panel::-webkit-scrollbar {
     display: none;
   }
@@ -886,9 +898,10 @@
   .nav-header {
     filter: none;
   }
-  /* Film grain: static, near-invisible — 1 compositing layer, no animation */
+  /* Film grain: static texture preserved, animation disabled — saves GPU compositing */
   .page-container::after {
-    display: none;
+    animation: none;
+    opacity: var(--cin-grain-opacity);
   }
   /* Vignette: 50% reduced — subtle framing preserved without GPU cost */
   .page-container::before {
