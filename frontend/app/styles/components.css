@@ -34,7 +34,7 @@
   /* GPU layer hint — only promoted on hover/active, not at rest (saves VRAM on long feeds) */
   transition:
     background-color 120ms var(--ease-out),
-    box-shadow      300ms 30ms var(--ease-out),
+    box-shadow      300ms var(--shadow-lag, 30ms) var(--ease-out),
     transform       var(--scene-dolly-in) var(--spring-snappy);
   /* Mobile separator token — hairline iOS-convention border.
      Referenced by the max-width: 767px block. Toggling --separator-mobile
@@ -219,6 +219,35 @@
 .sigil--sm .sigil__lean-label {
   font-weight: 700;
   letter-spacing: 0.04em;
+}
+
+/* ---- Sigil first-visit tap hint (mobile only) ---- */
+.sigil__tap-hint {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  transform: translateY(-100%);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  animation: sigilHintFadeIn 600ms var(--ease-cinematic) 200ms forwards;
+  box-shadow: var(--shadow-e1);
+}
+
+@keyframes sigilHintFadeIn {
+  from { opacity: 0; transform: translateY(calc(-100% + 4px)); }
+  to   { opacity: 0.85; transform: translateY(-100%); }
+}
+
+@media (min-width: 768px) {
+  .sigil__tap-hint { display: none; }
 }
 
 /* ---- Sigil Popup — extracted from inline styles (F13) ----------------- */
@@ -2937,6 +2966,28 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .skeleton-wire {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* ---- Mobile skeleton (single-column, matches MobileFeed) ---- */
+.skeleton-mobile-hero {
+  padding: var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.skeleton-mobile-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.skeleton-mobile-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 /* Legacy skeleton classes — kept for backward compat */
@@ -7858,6 +7909,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     linear-gradient(to bottom, var(--cin-vignette-color) 0%, transparent 6%),
     linear-gradient(to top, var(--cin-vignette-color) 0%, transparent 6%),
     radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, var(--cin-vignette-color) 100%);
+  /* Cold-open: vignette fades in at 600ms as the camera settles.
+     Initial opacity 0 prevents flash; cinVignetteEntrance animates to 1.
+     The @supports scroll-timeline block below overrides this with
+     scroll-driven vignette deepening on supported browsers. */
+  opacity: 0;
+  animation: cinVignetteEntrance 500ms var(--ease-cinematic) 600ms both;
 }
 
 /* ── Film Grain ──
@@ -7887,8 +7944,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.010 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
-  opacity: var(--cin-grain-opacity);
-  animation: cin-grain-drift 8s steps(4, end) infinite;
+  /* Cold-open: grain fades in at 700ms, then drifts perpetually.
+     cinGrainEntrance sets final opacity to --cin-grain-opacity via `both`.
+     The drift starts 1200ms in (after grain has faded in). */
+  animation:
+    cinGrainEntrance 500ms var(--ease-cinematic) 700ms both,
+    cin-grain-drift 8s steps(4, end) 1200ms infinite;
 }
 
 /* Dark mode: soft-light blend for gentler grain on dark surfaces */
@@ -7920,6 +7981,25 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    The CSS :has() selector makes this zero-JS — the browser engine
    handles the rack focus natively via GPU-composited properties. */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  /* Asymmetric rack focus: slow refocus (600ms) when returning to sharp.
+     The base card carries the "return" transition — when :has() no longer
+     matches, these durations govern how the card pulls back into focus. */
+  .df .story-card,
+  .df .lead-story,
+  .lead-section .lead-story,
+  .grid-medium .story-card,
+  .grid-compact .story-card {
+    transition:
+      opacity var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
+      filter var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
+      transform var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
+      background-color 120ms var(--ease-out),
+      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out);
+  }
+
+  /* Asymmetric rack focus: fast defocus throw (420ms) when sibling hovered.
+     The :has() selector overrides the base transition with a quicker throw
+     to soft — the lens snaps to the new subject, then slowly relaxes back. */
   .df:has(.story-card:hover) .story-card:not(:hover),
   .df:has(.lead-story:hover) .story-card:not(:hover),
   .df:has(.lead-story:hover) .lead-story:not(:hover),
@@ -7930,9 +8010,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     filter: var(--rack-blur-neighbor);
     transform: var(--rack-recede-neighbor);
     transition:
-      opacity var(--rack-focus-dur) var(--rack-focus-ease),
-      filter var(--rack-focus-dur) var(--rack-focus-ease),
-      transform var(--rack-focus-dur) var(--rack-focus-ease);
+      opacity var(--rack-defocus-dur, 420ms) var(--rack-focus-ease),
+      filter var(--rack-defocus-dur, 420ms) var(--rack-focus-ease),
+      transform var(--rack-defocus-dur, 420ms) var(--rack-focus-ease);
   }
 
   /* Hovered card: sharp focal plane with dolly-in shadow elevation
@@ -7994,6 +8074,36 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 }
 
+
+/* ── Deep Dive: Editorial Grade + Warm Vignette + Breathing ──
+   Once the Deep Dive panel settles (data-settled attribute), the content
+   receives a subtle editorial color grade (slightly higher contrast, lower
+   saturation) that distinguishes the reading surface from the feed.
+   The warm inset vignette creates an intimate reading atmosphere — a
+   desk lamp casting warm falloff at the panel edges. The breathing
+   animation (ddBreathe, 6s period, 0.05% scale) is imperceptible
+   consciously but creates organic "living" quality in the panel. */
+.deep-dive-panel[data-settled] .deep-dive-panel__content {
+  filter: var(--cin-grade-editorial);
+  transition: filter 500ms var(--ease-cinematic);
+  animation: ddBreathe var(--dd-breathe-dur, 6s) var(--ease-cinematic) infinite;
+}
+
+.deep-dive-panel[data-settled] {
+  box-shadow:
+    var(--shadow-cinematic-dramatic),
+    inset 0 0 120px 40px var(--cin-vignette-warm);
+}
+
+/* ── Page Warmth During Audio Playback ──
+   When audio is playing, the entire page receives an imperceptible
+   warmth shift (sepia 0.01) — the motivated lighting from the
+   "practical" OnAir source warming the scene. The existing color
+   grade in --cin-grade is preserved; sepia(0.01) layers on top. */
+.page-main--audio-playing {
+  filter: var(--cin-grade) sepia(0.01);
+  transition: filter 800ms var(--ease-cinematic);
+}
 
 /* ══ SCENE 7: Practical Light System — OnAir Warmth Propagation ══
    When audio is playing, the OnAir button becomes a "practical light"
@@ -8081,36 +8191,36 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .filter-chip,
   .site-footer {
     transition:
-      background-color var(--scene-dissolve) var(--ease-cinematic),
-      color 400ms var(--ease-cinematic),
-      border-color 450ms var(--ease-cinematic),
-      box-shadow var(--scene-dissolve) var(--ease-cinematic);
+      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
+      box-shadow var(--dissolve-shadow-dur, 400ms) var(--ease-cinematic);
   }
   .page-main,
   .nav-header {
     transition:
-      background-color var(--scene-dissolve) var(--ease-cinematic),
-      color 400ms var(--ease-cinematic),
-      border-color 450ms var(--ease-cinematic),
-      box-shadow var(--scene-dissolve) var(--ease-cinematic),
-      filter 400ms var(--ease-out);
+      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
+      box-shadow var(--dissolve-shadow-dur, 400ms) var(--ease-cinematic),
+      filter var(--dissolve-filter-dur, 400ms) var(--ease-out);
   }
   /* story-card and lead-story: preserve hover transitions (dolly-in
      transform + shadow lag), layer theme dissolve underneath */
   .story-card {
     transition:
-      background-color var(--scene-dissolve) var(--ease-cinematic),
-      color 400ms var(--ease-cinematic),
-      border-color 450ms var(--ease-cinematic),
-      box-shadow 300ms 30ms var(--ease-out),
+      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
+      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out),
       transform var(--scene-dolly-in) var(--spring-snappy);
   }
   .lead-story {
     transition:
-      background-color var(--scene-dissolve) var(--ease-cinematic),
-      color 400ms var(--ease-cinematic),
-      border-color 450ms var(--ease-cinematic),
-      box-shadow 300ms 30ms var(--ease-out);
+      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
+      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out);
   }
 }
 
@@ -8119,6 +8229,24 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   box-shadow:
     var(--shadow-card-hover),
     inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 80%, transparent);
+}
+
+/* ── Mobile Cinematic Overrides ──
+   On mobile, grain animation is disabled (static texture only — saves
+   GPU compositing budget on constrained devices). Vignette entrance
+   runs at 50% final opacity to preserve readability. Lens breathing
+   is suppressed (scroll reversals are too frequent on touch). */
+@media (max-width: 767px) {
+  .page-container::after {
+    animation: none;
+    opacity: var(--cin-grain-opacity);
+  }
+  .page-container::before {
+    animation: cinVignetteEntranceMobile 500ms var(--ease-cinematic) 600ms both;
+  }
+  .anim-lens-breathe {
+    animation: none;
+  }
 }
 
 
