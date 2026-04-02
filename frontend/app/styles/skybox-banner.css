@@ -60,12 +60,30 @@
   }
 }
 
+/* Column is a <button> for full-area clickability — reset button defaults */
 .skb__compact-col {
   position: relative;
   padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  /* Button reset */
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 120ms var(--ease-out);
+}
+
+.skb__compact-col:hover {
+  background-color: color-mix(in srgb, var(--fg-primary) 3%, transparent);
+}
+
+.skb__compact-col:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
 }
 
 /* Divider between columns */
@@ -197,7 +215,9 @@
   transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out), transform 200ms var(--ease-out);
 }
 
-.skb__compact-expand:hover {
+/* Chevron highlights when parent column is hovered or focused */
+.skb__compact-col:hover .skb__compact-expand,
+.skb__compact-col:focus-visible .skb__compact-expand {
   border-color: var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
   transform: translateY(1px);
@@ -558,7 +578,7 @@
    --------------------------------------------------------------------------- */
 
 @media (hover: none) {
-  .skb__compact-expand:hover { border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent); background: var(--cin-amber-ghost); }
+  .skb__compact-col:hover .skb__compact-expand { border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent); background: var(--cin-amber-ghost); }
   .skb__topbar-chip:hover { color: var(--fg-secondary); border-color: color-mix(in srgb, var(--accent-warm) 15%, transparent); background: color-mix(in srgb, var(--accent-warm) 4%, transparent); }
   .skb__topbar-collapse:hover { border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent); background: var(--cin-amber-ghost); }
 }

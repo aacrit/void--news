@@ -204,6 +204,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const prevEditionRef = useRef<Edition>(activeEdition);
   const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
 
+  // Mobile edition switch transition — cross-fade out/in
+  const [editionTransition, setEditionTransition] = useState<"out" | "in" | null>(null);
+  const editionTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
@@ -257,11 +261,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     pullStartRef.current = null;
   }, [isPulling, pullOffset]);
 
-  // Cleanup pull-to-refresh reset timer on unmount to prevent state updates
-  // on an unmounted component if the user navigates away mid-refresh.
+  // Cleanup timers on unmount to prevent state updates on unmounted component.
   useEffect(() => {
     return () => {
       if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
+      if (editionTransitionTimerRef.current !== null) clearTimeout(editionTransitionTimerRef.current);
     };
   }, []);
 
@@ -308,17 +312,33 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
   // Whip pan direction: content exits left when navigating "right" in edition order.
+  // Mobile edition cross-fade: out (200ms) -> in (300ms) -> clear.
   useEffect(() => {
     hapticConfirm();
     setSelectedStory(null);
     setOriginRect(null);
     setActiveCategory("All");
     setVisibleCount(BATCH_SIZE);
+
+    // Mobile edition cross-fade — trigger out/in sequence before scroll
+    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
+    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
+    if (prevIdx !== nextIdx && isMobile) {
+      // Clear any pending timer from a rapid edition switch
+      if (editionTransitionTimerRef.current) clearTimeout(editionTransitionTimerRef.current);
+      setEditionTransition("out");
+      editionTransitionTimerRef.current = setTimeout(() => {
+        setEditionTransition("in");
+        editionTransitionTimerRef.current = setTimeout(() => {
+          setEditionTransition(null);
+          editionTransitionTimerRef.current = null;
+        }, 300);
+      }, 200);
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     // Compute whip pan direction based on edition order
-    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
-    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
     if (prevIdx !== nextIdx) {
       setWhipDirection(nextIdx > prevIdx ? "right" : "left");
     }
@@ -817,6 +837,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   sentinelRef={sentinelRef}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
+                  transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                 />
               ) : (
                 <DesktopFeed

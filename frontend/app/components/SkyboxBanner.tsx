@@ -95,8 +95,15 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {isCompact && (
           <div className="skb__compact">
               <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
-                {/* TL;DR column */}
-                <div className="skb__compact-col skb__compact-col--tldr">
+                {/* TL;DR column — entire column is clickable to expand */}
+                <button
+                  ref={expandTldrRef}
+                  className="skb__compact-col skb__compact-col--tldr"
+                  onClick={() => toggleSection("tldr")}
+                  type="button"
+                  aria-expanded={false}
+                  aria-label="Expand news brief"
+                >
                   <div className="skb__compact-label">
                     <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                     <span className="skb__compact-human">News Brief</span>
@@ -105,20 +112,19 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{brief.tldr_headline}</h3>}
                   <p className="skb__compact-preview skb__compact-preview--tldr">{brief.tldr_text}</p>
-                  <button
-                    ref={expandTldrRef}
-                    className="skb__compact-expand"
-                    onClick={() => toggleSection("tldr")}
-                    type="button"
-                    aria-label="Expand news brief"
-                  >
-                    <span aria-hidden="true">&#9662;</span>
-                  </button>
-                </div>
+                  <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
+                </button>
 
-                {/* Opinion column */}
+                {/* Opinion column — entire column is clickable to expand */}
                 {brief.opinion_text && (
-                  <div className="skb__compact-col skb__compact-col--opinion">
+                  <button
+                    ref={expandOpinionRef}
+                    className="skb__compact-col skb__compact-col--opinion"
+                    onClick={() => toggleSection("opinion")}
+                    type="button"
+                    aria-expanded={false}
+                    aria-label="Expand editorial opinion"
+                  >
                     <div className="skb__compact-label">
                       <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                       <span className="skb__compact-human">Editorial</span>
@@ -127,16 +133,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     </div>
                     {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{brief.opinion_headline}</h3>}
                     <p className="skb__compact-preview skb__compact-preview--opinion">{brief.opinion_text}</p>
-                    <button
-                      ref={expandOpinionRef}
-                      className="skb__compact-expand"
-                      onClick={() => toggleSection("opinion")}
-                      type="button"
-                      aria-label="Expand editorial opinion"
-                    >
-                      <span aria-hidden="true">&#9662;</span>
-                    </button>
-                  </div>
+                    <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
+                  </button>
                 )}
               </div>
 

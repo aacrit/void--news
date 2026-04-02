@@ -17,6 +17,8 @@ interface MobileFeedProps {
   sentinelRef: RefObject<HTMLDivElement | null>;
   kbdFocusIndex: number;
   editionMeta: EditionMeta;
+  /** CSS class for edition switch cross-fade animation */
+  transitionClass?: string;
 }
 
 /* ---------------------------------------------------------------------------
@@ -37,13 +39,14 @@ export default function MobileFeed({
   sentinelRef,
   kbdFocusIndex,
   editionMeta,
+  transitionClass,
 }: MobileFeedProps) {
   const hero = stories[0];
   const rest = stories.slice(1);
   const visibleRest = rest.slice(0, visibleCount);
 
   return (
-    <div className="mf" key={filterKey}>
+    <div className={["mf", transitionClass].filter(Boolean).join(" ")} key={filterKey}>
       {/* Hero story */}
       {hero && (
         <MobileStoryCard

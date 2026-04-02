@@ -49,7 +49,7 @@
   position: absolute;
   inset: 0;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
   opacity: 0;
   transition: opacity 200ms var(--ease-out);
   pointer-events: none;
@@ -3056,6 +3056,36 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   gap: var(--space-3);
   padding: var(--space-3);
   border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ---- Mobile skeleton v2 — BEM, matches MobileFeed structure ---- */
+.skeleton-mobile {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-mobile__hero {
+  padding: var(--space-3) 0 var(--space-4);
+  border-bottom: var(--rule-thin);
+}
+
+.skeleton-mobile__pill {
+  padding: var(--space-3) 0;
+  border-bottom: var(--rule-thin);
+}
+
+.skeleton-mobile__card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: var(--rule-thin);
+  min-height: 72px;
+}
+
+.skeleton-mobile__card-text {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Legacy skeleton classes — kept for backward compat */
