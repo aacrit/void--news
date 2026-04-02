@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
-import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
+import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 
 function formatTime(seconds: number): string {
@@ -18,32 +18,18 @@ type ExpandedSection = null | "tldr" | "opinion";
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const {
-    brief, isPlaying, currentTime, duration, buffered, audioError,
-    audioCallbackRef, handlePlayPause, handleSeek,
-    playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
+    brief, isPlaying, currentTime, duration,
+    handlePlayPause, setPlayerVisible,
   } = state;
 
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
-  const [onairExpanded, setOnairExpanded] = useState(false);
   const [announcement, setAnnouncement] = useState("");
-  const radioRef = useRef<HTMLDivElement>(null);
-  const [radioHeight, setRadioHeight] = useState(0);
 
   // Focus management refs
   const collapseRef = useRef<HTMLButtonElement>(null);
   const expandTldrRef = useRef<HTMLButtonElement>(null);
   const expandOpinionRef = useRef<HTMLButtonElement>(null);
   const prevSectionRef = useRef<ExpandedSection>(null);
-
-  useEffect(() => {
-    if (!radioRef.current) return;
-    const ro = new ResizeObserver(([e]) => {
-      const h = e.borderBoxSize?.[0]?.blockSize ?? e.target.getBoundingClientRect().height;
-      setRadioHeight(h);
-    });
-    ro.observe(radioRef.current);
-    return () => ro.disconnect();
-  }, [onairExpanded]);
 
   useEffect(() => {
     const main = document.querySelector('.page-main');
@@ -69,10 +55,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     prevSectionRef.current = expandedSection;
   }, [expandedSection]);
 
-  const waveformBars = useMemo(() =>
-    Array.from({ length: 32 }, (_, i) => Math.min(32, 10 + Math.sin(i * 0.55) * 16 + Math.sin(i * 1.3) * 6)),
-  []);
-
   if (!brief) return (
     <div className="skb skb--compact anim-cold-open-skybox" role="complementary" aria-label="Daily Brief">
       <div className="skb__compact">
@@ -94,17 +76,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const hasAudio = !!brief.audio_url;
   const displayDuration = (hasAudio && brief.audio_duration_seconds) || duration;
-  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
-  const speedLabel = `${playbackSpeed}x`;
-
-  const opinionStart = brief.opinion_start_seconds ?? null;
-  const effectiveOpinionStart = opinionStart ?? (brief.opinion_text ? displayDuration * 0.6 : null);
-  const hasOpinionSection = brief.opinion_text != null;
-  const opinionPct = opinionStart !== null && displayDuration > 0
-    ? (opinionStart / displayDuration) * 100
-    : hasOpinionSection ? 60 : 100;
-  const inOpinion = hasOpinionSection && effectiveOpinionStart !== null && currentTime >= effectiveOpinionStart;
 
   const leanLabel = brief.opinion_lean === "left" ? "Progressive"
     : brief.opinion_lean === "right" ? "Conservative" : "Pragmatic";
@@ -132,96 +104,33 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setAnnouncement("Daily brief collapsed.");
   }, []);
 
-  const toggleOnair = useCallback(() => {
+  // OnAir pill: show/play via the floating player
+  const handleOnairClick = useCallback(() => {
     hapticConfirm();
-    setOnairExpanded(v => !v);
-  }, []);
+    setPlayerVisible(true);
+    if (!isPlaying) handlePlayPause();
+  }, [isPlaying, handlePlayPause, setPlayerVisible]);
 
-  // ── Radio Player ──
-  const radioPlayer = (
-    <div className="skb__radio" inert={!onairExpanded ? true : undefined} style={{
-      height: onairExpanded ? radioHeight : 0,
-      transition: onairExpanded
-        ? "height 450ms var(--ease-unfold, ease)"
-        : "height 220ms var(--ease-refold, ease)",
-    }}>
-      <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
-        <div className="skb__radio-header">
-          <button className="skb__radio-speed" onClick={() => { hapticLight(); cycleSpeed(); }}
-            type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
-        </div>
-
-        <div className={`skb__waveform${isPlaying ? " skb__waveform--active" : ""}`} aria-hidden="true">
-          {waveformBars.map((h, i) => (
-            <div key={i} className="skb__waveform-bar" style={{ height: `${h}px`, animationDelay: `${i * 55}ms` }} />
-          ))}
-        </div>
-
-        <div className="skb__transport">
-          <button className="skb__transport-skip" onClick={() => skipBackward()} type="button" aria-label="Back 15s">-15</button>
-          <button
-            className={`skb__transport-play${isPlaying ? " skb__transport-play--active" : ""}`}
-            onClick={() => { hapticMedium(); handlePlayPause(); }}
-            type="button" aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
-          </button>
-          <button className="skb__transport-skip" onClick={() => skipForward()} type="button" aria-label="Forward 15s">+15</button>
-        </div>
-
-        <div className="skb__dial">
-          <div className="skb__dial-row">
-            <button className={`skb__radio-sec${!inOpinion ? " skb__radio-sec--active" : ""}`}
-              onClick={() => seekTo(0)} type="button">News</button>
-            <div className="skb__radio-bar-wrap">
-              <div className="skb__radio-bar">
-                <div className="skb__radio-buffer" style={{ width: `${buffered}%` }} />
-                <div className="skb__radio-fill" style={{ width: `${progress}%` }} />
-                {hasOpinionSection && <span className="skb__radio-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
-              </div>
-              <input type="range" className="skb__radio-input" min={0} max={displayDuration || 100}
-                value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek"
-                aria-valuetext={`${formatTime(currentTime)} of ${formatTime(displayDuration)}`} />
-            </div>
-            {hasOpinionSection && (
-              <button className={`skb__radio-sec${inOpinion ? " skb__radio-sec--active" : ""}`}
-                onClick={() => effectiveOpinionStart != null ? seekTo(effectiveOpinionStart) : null}
-                type="button">Opinion</button>
-            )}
-          </div>
-          <div className="skb__dial-time">
-            <span className="skb__radio-time">{formatTime(currentTime)}</span>
-            <span className="skb__radio-time">{formatTime(displayDuration || 0)}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // ── OnAir pill ──
+  // ── OnAir pill — triggers floating player ──
   const onairPill = (
     <button
-      className={`skb__onair-pill${isPlaying ? " skb__onair-pill--active" : ""}${onairExpanded ? " skb__onair-pill--open" : ""}`}
-      onClick={toggleOnair}
+      className={`skb__onair-pill${isPlaying ? " skb__onair-pill--active" : ""}`}
+      onClick={handleOnairClick}
       type="button"
-      aria-label={onairExpanded ? "Close audio player" : "Open audio player"}
-      aria-expanded={onairExpanded}
+      aria-label={isPlaying ? "Now playing" : hasAudio ? "Play broadcast" : "Audio unavailable"}
     >
       {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
       <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "none"} />
       <span className="skb__onair-cmd">void --onair</span>
-      {audioError ? (
-        <span className="skb__onair-dur skb__onair-dur--error">Unavailable</span>
-      ) : hasAudio ? (
+      {hasAudio ? (
         isPlaying ? (
-          <span className="skb__onair-dur">{formatTime(currentTime)} / {formatTime(displayDuration || 0)}</span>
+          <span className="skb__onair-dur">{formatTime(currentTime)}</span>
         ) : (
           durationMin && <span className="skb__onair-dur">{durationMin} min</span>
         )
       ) : (
         <span className="skb__onair-dur">twice daily</span>
       )}
-      <span className={`skb__onair-caret${onairExpanded ? " skb__onair-caret--up" : ""}`} aria-hidden="true">&#9662;</span>
     </button>
   );
 
@@ -230,12 +139,10 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     "anim-cold-open-skybox",
     isCompact ? "skb--compact" : "skb--section-open",
     expandedSection ? `skb--show-${expandedSection}` : "",
-    onairExpanded ? "skb--onair-open" : "",
   ].filter(Boolean).join(" ");
 
   return (
     <>
-      {hasAudio && <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
       <div aria-live="polite" className="sr-only">{announcement}</div>
 
       <div className={rootClass} role="complementary" aria-label="Daily Brief">
@@ -243,7 +150,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
         {/* ── COMPACT MODE ── */}
         {isCompact && (
           <div className="skb__compact">
-            {/* Header row: columns + OnAir pill (top-right) */}
             <div className="skb__compact-header">
               <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
                 {/* TL;DR column */}
@@ -296,16 +202,12 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 {onairPill}
               </div>
             </div>
-
-            {/* OnAir expanded radio (pushes content below) */}
-            {radioPlayer}
           </div>
         )}
 
         {/* ── EXPANDED MODE ── */}
         {!isCompact && (
           <>
-            {/* Top bar: OnAir pill (left) + other section chip (right) + collapse */}
             <div className="skb__topbar">
               <div className="skb__topbar-left">
                 {onairPill}
@@ -352,10 +254,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               </div>
             </div>
 
-            {/* OnAir expanded radio */}
-            {radioPlayer}
-
-            {/* Expanded section content */}
             <div className="skb__section-content">
               {expandedSection === "tldr" && (
                 <div className="skb__section skb__section--tldr">

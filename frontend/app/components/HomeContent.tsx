@@ -48,6 +48,7 @@ import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
+const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -918,6 +919,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
+
+      {/* Floating audio player — persistent, above all content */}
+      {dailyBriefState.brief?.audio_url && (
+        <audio ref={dailyBriefState.audioCallbackRef} src={dailyBriefState.brief.audio_url} preload="metadata" />
+      )}
+      <FloatingPlayer state={dailyBriefState} />
 
       {/* Mobile bottom nav — single-row filters (thumb-reachable) */}
       {isMobile && (
