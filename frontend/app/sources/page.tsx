@@ -428,16 +428,16 @@ function ValidationStat({ stat, index }: { stat: typeof VALIDATION_STATS[number]
     if (!numMatch) { setDisplayNum(stat.number); return; }
     const target = parseInt(numMatch[0], 10);
     const suffix = stat.number.replace(/\d+/, "");
-    const prefix = stat.number.startsWith("r") ? "r\u2009<\u2009" : "";
+    // For non-counting stats (like "r < 0.70"), skip counter — just show final value
+    if (stat.number.startsWith("r")) { setDisplayNum(stat.number); return; }
     const dur = 800;
     const start = performance.now();
 
     function tick(now: number) {
       const t = Math.min((now - start) / dur, 1);
-      // ease-out quadratic
       const eased = 1 - (1 - t) * (1 - t);
       const current = Math.round(eased * target);
-      setDisplayNum(prefix ? `${prefix}${(eased * 0.70).toFixed(2)}` : `${current}${suffix}`);
+      setDisplayNum(`${current}${suffix}`);
       if (t < 1) requestAnimationFrame(tick);
       else setDisplayNum(stat.number);
     }
@@ -686,6 +686,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         className={`meth__rule meth__rule--gradient${ruleVisible ? " meth__rule--visible" : ""}`}
         aria-hidden="true"
       />
+      <h2 className="sr-only">Scoring Methodology</h2>
       <p className="meth__bridge-line">
         Every article above was scored by 6 independent analyzers. Here is how.
       </p>
@@ -848,7 +849,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           {tierCounts.map((tier) => (
             <div key={tier.tier} className="meth__source-stat">
               <div className="meth__source-stat-head">
-                <span className="meth__source-tier">{tier.tier}</span>
+                <span className="meth__source-tier">{tier.label}</span>
                 <span className="meth__source-count">{tier.count || tier.total}</span>
               </div>
               <div className="meth__source-bar-track">
@@ -1190,8 +1191,8 @@ function SourcesPageInner() {
         {!isLoading && !error && filteredSources.length > 0 && (
           <>
             <SpectrumChart sources={filteredSources} />
-            <div style={{ textAlign: "right", marginTop: "var(--space-2)", marginBottom: "var(--space-3)" }}>
-              <a href="#methodology" style={{ fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", textDecoration: "none", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            <div className="meth__skip-link-wrap">
+              <a href="#methodology" className="meth__skip-link">
                 How we score &darr;
               </a>
             </div>
