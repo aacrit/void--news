@@ -22,9 +22,23 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
   const [expanded, setExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [pulsing, setPulsing] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const [dragTilt, setDragTilt] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
   const dragStart = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const lastPointerX = useRef(0);
+  const prevPlayingRef = useRef(isPlaying);
+
+  // Play state pulse — micro-scale on toggle
+  useEffect(() => {
+    if (isPlaying !== prevPlayingRef.current) {
+      prevPlayingRef.current = isPlaying;
+      setPulsing(true);
+      const t = setTimeout(() => setPulsing(false), 300);
+      return () => clearTimeout(t);
+    }
+  }, [isPlaying]);
 
   const waveformBars = useMemo(() =>
     Array.from({ length: 24 }, (_, i) => Math.min(28, 8 + Math.sin(i * 0.6) * 14 + Math.sin(i * 1.4) * 5)),
@@ -62,18 +76,30 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     const dy = e.clientY - dragStart.current.y;
     const nx = dragStart.current.px + dx;
     const ny = dragStart.current.py + dy;
-    // Clamp to viewport
     const maxX = window.innerWidth - (playerRef.current?.offsetWidth || 200);
     const maxY = window.innerHeight - (playerRef.current?.offsetHeight || 60);
+    // Velocity-based tilt (max 2deg)
+    const vx = e.clientX - lastPointerX.current;
+    lastPointerX.current = e.clientX;
+    setDragTilt(Math.max(-2, Math.min(2, vx * 0.15)));
     setPosition({
-      x: Math.max(0, Math.min(nx, maxX)),
-      y: Math.max(0, Math.min(ny, maxY)),
+      x: Math.max(8, Math.min(nx, maxX - 8)),
+      y: Math.max(8, Math.min(ny, maxY - 8)),
     });
   };
 
   const handlePointerUp = () => {
     setIsDragging(false);
+    setDragTilt(0);
     dragStart.current = null;
+    // Snap to nearest horizontal edge
+    if (position && playerRef.current) {
+      const w = playerRef.current.offsetWidth;
+      const snapLeft = 12;
+      const snapRight = window.innerWidth - w - 12;
+      const finalX = position.x < window.innerWidth / 2 ? snapLeft : snapRight;
+      setPosition({ x: finalX, y: position.y });
+    }
   };
 
   const toggleExpand = () => {
@@ -101,8 +127,13 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
         expanded ? "fp--expanded" : "fp--compact",
         isPlaying ? "fp--playing" : "",
         isDragging ? "fp--dragging" : "",
+        pulsing ? "fp--pulse" : "",
       ].filter(Boolean).join(" ")}
-      style={posStyle}
+      style={{
+        ...posStyle,
+        ...(isDragging && dragTilt ? { transform: `rotateZ(${dragTilt}deg)` } : {}),
+        ...(position && !expanded && !isDragging ? { transition: "left 350ms var(--ease-cinematic), top 350ms var(--ease-cinematic)" } : {}),
+      } as React.CSSProperties}
       role="region"
       aria-label="Audio player"
     >
