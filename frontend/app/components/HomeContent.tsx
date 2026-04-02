@@ -51,11 +51,12 @@ import SkyboxBanner from "./SkyboxBanner";
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
-import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
+import { useStoryKeyboardNav } from "./KeyboardShortcuts";
+const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeed from "./MobileFeed";
-import SearchOverlay from "./SearchOverlay";
+const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -430,7 +431,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .select(enrichedFields)
           .contains("sections", [activeEdition])
           .order(rankColumn, { ascending: false })
-          .limit(500);
+          .limit(200);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -440,7 +441,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(500);
+            .limit(200);
         }
 
         if (controller.signal.aborted) return;

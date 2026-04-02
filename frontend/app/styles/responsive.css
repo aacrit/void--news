@@ -384,8 +384,8 @@
     position: sticky;
     top: var(--nav-height);
     z-index: var(--z-sticky);
-    backdrop-filter: blur(8px) saturate(1.1);
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    /* Solid bg instead of backdrop-filter — sticky elements with blur during
+       scroll force recompositing on every frame on mobile GPUs. */
     background-color: var(--bg-primary);
     margin-left: calc(-1 * var(--space-5));
     margin-right: calc(-1 * var(--space-5));
@@ -861,10 +861,11 @@
    Layer 6 (Light):     Unchanged (practical light is CSS box-shadow, cheap) */
 
 @media (max-width: 767px) {
-  /* Color grade: restored on .page-main (single stacking context, negligible cost).
-     Disabled on .nav-header only (small element, grade imperceptible there).
-     The grade values are micro-adjustments (contrast/saturate/sepia) — one composited
-     filter on the scrollable content area, comparable to filtering a single <img>. */
+  /* Color grade: DISABLED on mobile — forces recomposite of entire scrollable
+     content on every scroll frame. The micro-adjustments (contrast 1.03, saturate
+     0.92, sepia 0.04) are imperceptible on 5-6" screens. Biggest single scroll
+     jank source identified in perf audit 2026-04-02. */
+  .page-main,
   .nav-header {
     filter: none;
   }
