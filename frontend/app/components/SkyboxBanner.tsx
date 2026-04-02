@@ -28,18 +28,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const radioRef = useRef<HTMLDivElement>(null);
   const [radioHeight, setRadioHeight] = useState(0);
 
-  // Cinematic: toggle page-level warmth when audio plays (sepia(0.01) on .page-main)
-  useEffect(() => {
-    const main = document.querySelector('.page-main');
-    if (!main) return;
-    if (isPlaying) {
-      main.classList.add('page-main--audio-playing');
-    } else {
-      main.classList.remove('page-main--audio-playing');
-    }
-    return () => main.classList.remove('page-main--audio-playing');
-  }, [isPlaying]);
-
   useEffect(() => {
     if (!radioRef.current) return;
     const ro = new ResizeObserver(([e]) => {
