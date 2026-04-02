@@ -966,13 +966,34 @@
 .meth {
   margin-top: var(--space-7);
   padding-top: var(--space-6);
-  scroll-margin-top: var(--space-6);
+  /* Clear sticky nav (--nav-height: 53px) + breathing room on deep-link scroll */
+  scroll-margin-top: calc(var(--nav-height) + var(--space-3));
 }
+
+/* ---- Rule: curtain-pull reveal (width 0 -> 100%) when visible ---- */
 
 .meth__rule {
   border: none;
   border-top: 2px solid var(--fg-primary);
   margin-bottom: var(--space-6);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.meth__rule--visible {
+  animation: methRuleCurtain var(--dur-reveal) var(--ease-cinematic) both;
+}
+
+@keyframes methRuleCurtain {
+  /* Curtain pull — a horizontal wipe that reveals the rule like a
+     divider being drawn across the page. The scaleX avoids layout
+     shift (GPU-only transform). Deakins' geometric precision. */
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .meth__header {
@@ -998,12 +1019,35 @@
   margin: 0;
 }
 
-/* ---- Sections ---- */
+/* ---- Sections: scroll-reveal dolly entrance ----
+   Each section starts invisible, then fades in with a gentle dolly
+   (translateY 12px -> 0) when the IntersectionObserver fires.
+   Stagger is applied via inline --meth-stagger-delay on each section. */
 
 .meth__section {
   padding-bottom: var(--space-5);
   margin-bottom: var(--space-5);
   border-bottom: var(--rule-thin);
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.meth__section--visible {
+  animation: methSectionDolly var(--dur-reveal) var(--ease-cinematic) var(--meth-stagger-delay, 0ms) both;
+}
+
+@keyframes methSectionDolly {
+  /* Gentle dolly in — camera easing forward toward the subject.
+     translateY(12px) -> 0 simulates the lens settling onto a new
+     subject. Lubezki's Tree of Life: unhurried, gravitational. */
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .meth__section--last {
@@ -1135,11 +1179,21 @@
   opacity: 0.5;
 }
 
+/* Chevron: cinematic rotation on open/close, not just color shift.
+   Uses a real rotation instead of swapping Unicode glyphs. */
+
 .meth-axis__chevron {
   font-size: var(--text-xs);
   color: var(--fg-muted);
   flex-shrink: 0;
-  transition: color var(--dur-fast) var(--ease-out);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-normal) var(--ease-cinematic);
+  display: inline-block;
+}
+
+.meth-axis--open .meth-axis__chevron {
+  transform: rotate(90deg);
 }
 
 .meth-axis__trigger:hover .meth-axis__chevron {
@@ -1148,17 +1202,23 @@
 
 .meth-axis__panel {
   padding: 0 0 var(--space-4) 0;
-  animation: methAxisReveal var(--dur-normal) var(--ease-cinematic) both;
+  animation: methAxisRackIn var(--dur-morph) var(--ease-rack) both;
 }
 
-@keyframes methAxisReveal {
+@keyframes methAxisRackIn {
+  /* Rack focus — content racks into sharp focus as the panel opens.
+     Blur 2px -> 0 mirrors coldOpenRackIn: the moment the
+     cinematographer pulls focus to reveal hidden detail.
+     Deakins in Sicario: clarity emerging from heat haze. */
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(0.99);
+    filter: blur(2px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
@@ -1208,15 +1268,40 @@
   font-size: var(--text-xs);
   color: var(--fg-muted);
   letter-spacing: 0.02em;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
-/* ---- Worked Example ---- */
+/* ---- Worked Example ----
+   Practical warmth: like a desk lamp illuminating an evidence board.
+   A warm glow pulse when the card enters the viewport, settling
+   into a subtle ambient shadow. */
 
 .meth__example {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   padding: var(--space-4) var(--space-5);
   margin-top: var(--space-3);
+  transition: box-shadow var(--dur-slow) var(--ease-cinematic);
+}
+
+.meth__section--visible .meth__example {
+  animation: methPracticalWarmth 2.4s var(--ease-cinematic) 400ms both;
+}
+
+@keyframes methPracticalWarmth {
+  0% {
+    box-shadow: 0 0 0 0 var(--cin-practical-glow-near);
+  }
+  40% {
+    box-shadow:
+      0 2px 16px var(--cin-practical-glow-near),
+      0 0 32px var(--cin-practical-glow-far);
+  }
+  100% {
+    box-shadow:
+      0 1px 8px var(--cin-practical-glow-far);
+  }
 }
 
 .meth__example-header {
@@ -1296,7 +1381,10 @@
   max-width: 60ch;
 }
 
-/* ---- Validation Stats ---- */
+/* ---- Validation Stats ----
+   Stat numbers fade-settle when first visible: a one-shot
+   entrance where numbers drop into place from slightly above
+   with staggered timing. Like a newsroom ticker settling. */
 
 .meth__validation-grid {
   display: grid;
@@ -1318,6 +1406,27 @@
   color: var(--fg-primary);
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.meth__validation-stat--visible .meth__validation-number {
+  animation: methStatSettle var(--dur-morph) var(--spring-gentle) var(--meth-stat-delay, 0ms) both;
+}
+
+@keyframes methStatSettle {
+  /* Stat settle — numbers drop into position from above with
+     spring physics. The spring-gentle easing gives each number
+     organic weight, like a physical counter clicking into place.
+     One-shot: fires once on first scroll intersection. */
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .meth__validation-label {
@@ -1409,6 +1518,7 @@
 
   .meth__open-links {
     flex-direction: row;
+    flex-wrap: wrap;
     gap: var(--space-5);
   }
 
@@ -1439,6 +1549,13 @@
   .meth {
     margin-top: var(--space-5);
     padding-top: var(--space-4);
+  }
+
+  /* Justify creates visible rivers below ~400px column width.
+     Left-align body text + axis descriptions on mobile. */
+  .meth__body,
+  .meth-axis__what {
+    text-align: left;
   }
 
   .meth__title {
@@ -1503,10 +1620,53 @@
 
 /* ==========================================================================
    Methodology — Reduced motion
+   All cinematic entrances, rack focus, warm glow, stat settle, and
+   curtain reveals collapse to instant visibility. No transform, no
+   filter, no animation. Matches the pattern in animations.css.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+  /* Sections: visible immediately, no dolly */
+  .meth__section {
+    opacity: 1;
+    transform: none;
+  }
+
+  .meth__section--visible {
+    animation: none;
+  }
+
+  /* Rule: visible immediately, no curtain pull */
+  .meth__rule {
+    transform: none;
+  }
+
+  .meth__rule--visible {
+    animation: none;
+  }
+
+  /* Accordion: no rack focus, instant reveal */
   .meth-axis__panel {
+    animation: none;
+  }
+
+  /* Chevron: no rotation transition */
+  .meth-axis__chevron {
+    transition: none;
+  }
+
+  /* Worked example: no warm glow */
+  .meth__section--visible .meth__example {
+    animation: none;
+  }
+
+  /* Validation stats: visible immediately */
+  .meth__validation-number {
+    opacity: 1;
+    transform: none;
+  }
+
+  .meth__validation-stat--visible .meth__validation-number {
     animation: none;
   }
 }
