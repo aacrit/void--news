@@ -685,9 +685,11 @@ def produce_audio(
         tts_preamble = (
             f"Scene: Two senior journalists in a newsroom studio, briefing each "
             f"other across a desk. Natural, unhurried. They know each other well.\n\n"
-            f"Pacing: Honor pause markers. [short pause] = half-second breath. "
-            f"[long pause] = 1.5 second silence. Em dashes = brief pivot pause. "
-            f"Ellipses = trailing thought.\n\n"
+            f"Pacing: Honor pause markers when present. [short pause] = half-second "
+            f"breath. [long pause] = full second of silence. Em dashes = brief pivot "
+            f"pause. When a speaker's line ends with a period and the NEXT speaker "
+            f"begins a new topic, insert a natural breath before the new speaker — "
+            f"do not rush the transition.\n\n"
             f"Speaker One: {host_a_preamble}\n\n"
             f"Speaker Two: {host_b_preamble}"
         )
