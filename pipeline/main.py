@@ -1915,6 +1915,7 @@ def main():
                         "opinion_audio_script": brief.get("opinion_audio_script"),
                         "audio_script": brief.get("audio_script"),
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
+                        "generator": brief.get("generator"),
                     }
 
                     # Fallback: if this run produced an empty/placeholder brief,
