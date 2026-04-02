@@ -11,6 +11,7 @@ import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } fr
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
+import { generateShareCardImage } from "../lib/shareCardRenderer";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
@@ -74,6 +75,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
   /* ---- Share button state ------------------------------------------------ */
   const [shareCopied, setShareCopied] = useState(false);
+  const [shareToastText, setShareToastText] = useState("Link copied");
   const shareCopiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* Reset swipe gesture state when the parent navigates to a different story
@@ -594,28 +596,79 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const handleShare = useCallback(async () => {
     hapticLight();
     const url = typeof window !== "undefined" ? window.location.href : "";
-    const title = story.title;
 
-    // Mobile: use native share sheet if available
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ url, title });
-      } catch {
-        // User cancelled or share failed — no action needed
-      }
-      return;
-    }
-
-    // Desktop: copy URL to clipboard
-    try {
-      await navigator.clipboard.writeText(url);
+    /** Show a transient toast under the share button. */
+    const showToast = (msg: string) => {
+      setShareToastText(msg);
       setShareCopied(true);
       if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
-      shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2000);
+      shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2400);
+    };
+
+    /* 1. Generate the Evidence Card PNG via Canvas 2D */
+    let blob: Blob | null = null;
+    try {
+      blob = await generateShareCardImage(story);
+    } catch {
+      // Canvas rendering failed — fall back to URL-only sharing below
+    }
+
+    /* 2a. Mobile with file-sharing support: share card image + URL */
+    if (blob && typeof navigator !== "undefined" && navigator.share && navigator.canShare) {
+      const file = new File([blob], "void-news-evidence-card.png", { type: "image/png" });
+      const shareData = { files: [file], title: story.title, url };
+      try {
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return; // OS share sheet handled feedback
+        }
+      } catch {
+        // User cancelled or share failed — fall through to download
+      }
+    }
+
+    /* 2b. Mobile without file support: share URL via native sheet */
+    if (!blob && typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ url, title: story.title });
+        return;
+      } catch {
+        // User cancelled — fall through
+      }
+    }
+
+    /* 3. Desktop (or file-share not supported): download the PNG */
+    if (blob) {
+      try {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "void-news-evidence-card.png";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        // Cleanup after a tick so the download starts
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        }, 100);
+        // Also copy URL to clipboard for easy pasting
+        try { await navigator.clipboard.writeText(url); } catch { /* ok */ }
+        showToast("Card saved");
+        return;
+      } catch {
+        // Download failed — fall through to clipboard-only
+      }
+    }
+
+    /* 4. Last resort: copy URL to clipboard */
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast("Link copied");
     } catch {
       // Clipboard API not available — silent fail
     }
-  }, [story.title]);
+  }, [story]);
 
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
@@ -941,11 +994,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                   <path d="M4 11V14H14V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
-              {shareCopied && <span className="dd-share-toast">Link copied</span>}
+              {shareCopied && <span className="dd-share-toast">{shareToastText}</span>}
             </button>
             {/* Accessible announcement for screen readers */}
             <div aria-live="polite" className="sr-only">
-              {shareCopied ? "Link copied to clipboard" : ""}
+              {shareCopied ? shareToastText : ""}
             </div>
 
             <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
