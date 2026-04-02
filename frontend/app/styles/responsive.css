@@ -923,10 +923,5 @@
     padding: var(--space-2);
   }
 
-  /* MobileBriefPill: hide duration text on ultra-narrow to give headline
-     more room. Play button remains visible as the primary audio affordance. */
-  .mbp__onair-dur {
-    display: none;
-  }
 }
 

@@ -238,16 +238,77 @@
      dim:    reduced opacity simulates exposure falloff on defocused areas
      recede: micro-scale reduction creates physical depth recession
 
-     The transition timing (--rack-focus-dur at --rack-focus-ease) ensures
-     the rack happens at lens-barrel speed — mechanical, measured, deliberate.
-     Not instant (that would be a cut), not slow (that would be dreamy). */
+     Staggered timing (Deakins, Blade Runner 2049 interrogation): a real
+     lens rack has blur arriving first (barrel rotation), dimming second
+     (exposure system adjusts), and scale recession last (cognitive depth
+     perception). The throw is mechanical — the return is Steadicam glide. */
   --rack-blur-neighbor: var(--focus-soft);
   --rack-dim-neighbor: 0.80;
   --rack-recede-neighbor: scale(0.997);
 
-  /* ── Deep Dive Backdrop — cinematic chiaroscuro ── */
+  /* ── Staggered Rack Focus Timing ──
+     Defocus throw: blur first → dim second → recede last.
+     Refocus return: all properties return simultaneously but at different
+     speeds — blur recovers fastest, scale lingers longest (Steadicam glide). */
+  --rack-blur-throw-dur: 350ms;
+  --rack-dim-throw-dur: 420ms;
+  --rack-dim-throw-delay: 60ms;
+  --rack-recede-throw-dur: 480ms;
+  --rack-recede-throw-delay: 90ms;
+  --rack-blur-return-dur: 500ms;
+  --rack-dim-return-dur: 600ms;
+  --rack-recede-return-dur: 650ms;
+
+  /* ── Rack Focus — key light boost on focused card ──
+     When the lens racks to a subject, the focused plane appears brighter
+     because the defocused areas lose light energy to bokeh scatter. This
+     is the exposure differential that makes shallow DOF feel dimensional.
+
+     key-light:  micro brightness+contrast lift on hovered card (subliminal)
+     warm-cast:  focused card gets warmer sepia (subject lit by key light)
+     neighbor-cool: defocused cards cool slightly (inverse of warm-cast)
+     shadow-warm: hovered card shadow picks up ambient warmth from the key */
+  --rack-key-light: brightness(1.015) contrast(1.01);
+  --rack-warm-cast: sepia(0.02);
+  --rack-neighbor-cool: sepia(0) saturate(0.94);
+  --rack-shadow-warm: color-mix(in srgb, var(--cin-amber) 8%, rgba(28, 26, 23, 0.12));
+
+  /* ── Deep Dive Backdrop — cinematic chiaroscuro ──
+     Blur reduced from 20px to 14px: at 14px, headline shapes behind the
+     panel remain vaguely recognizable (the viewer knows there is content
+     behind), but detail is suppressed enough for full subject isolation.
+     This is the Kaminski crowd-behind-the-subject look (Schindler's List). */
   --cin-backdrop-bg: rgba(28, 26, 23, 0.45);
-  --cin-backdrop-blur: blur(20px) saturate(0.65) brightness(0.72);
+  --cin-backdrop-blur: blur(14px) saturate(0.65) brightness(0.72);
+  --cin-backdrop-ramp-dur: 500ms;
+  --cin-backdrop-rack-out-dur: 280ms;
+
+  /* ── Deep Dive Backdrop — chiaroscuro layers ──
+     The backdrop is not a flat wash. Real cinema uses:
+     1. Color separation: background cools as foreground warms (Deakins)
+     2. Light falloff: edges darker than center (practical light from panel)
+     3. Vignette intensification: frame tightens when attention narrows
+
+     backdrop-vignette:  radial darkening on the backdrop layer itself
+     backdrop-grade:     separate color grade for the blurred world behind
+     vignette-dd-open:   page vignette opacity multiplier when DD is open
+     light-adaptation:   brightness normalization on DD close (eye adjust) */
+  --cin-backdrop-vignette: radial-gradient(
+    ellipse 65% 60% at 50% 45%,
+    transparent 30%,
+    rgba(28, 26, 23, 0.12) 100%
+  );
+  --cin-backdrop-grade: saturate(0.55) brightness(0.68) sepia(0.06);
+  --cin-vignette-dd-open: 1.4;
+  --cin-light-adapt-dur: 250ms;
+
+  /* ── Focus Breathing — exposure shift during rack ──
+     When a real lens pulls focus, the T-stop shifts fractionally causing
+     a micro-exposure change across the frame. This simulates it with a
+     brightness dip on the overall feed container during active rack focus.
+     Value is deliberately < 1% — felt as "the scene dimmed around the
+     subject" but consciously invisible. */
+  --rack-breathe-brightness: 0.992;
 
   /* ── Whip Pan — edition switch ── */
   --whip-pan-dur: 350ms;
@@ -489,12 +550,33 @@
 
   /* ── Dark mode overrides for cinematic tokens ── */
   --cin-backdrop-bg: rgba(0, 0, 0, 0.55);
-  --cin-backdrop-blur: blur(20px) saturate(0.5) brightness(0.5);
+  --cin-backdrop-blur: blur(16px) saturate(0.5) brightness(0.5);
   --cinematic-rim-top: rgba(200, 149, 108, 0.06);
 
   /* Dark mode: rack focus uses softer blur (less contrast needed on dark bg) */
   --rack-blur-neighbor: blur(1.2px);
   --rack-dim-neighbor: 0.75;
+
+  /* Dark mode: key light boost — brighter differential on dark surfaces
+     because the surrounding dimness is already low. Less brightness lift
+     needed but more contrast to separate the subject. */
+  --rack-key-light: brightness(1.02) contrast(1.015);
+  --rack-warm-cast: sepia(0.025);
+  --rack-neighbor-cool: sepia(0) saturate(0.90);
+  --rack-shadow-warm: color-mix(in srgb, var(--cin-amber) 10%, rgba(0, 0, 0, 0.30));
+
+  /* Dark mode: backdrop chiaroscuro — deeper vignette, stronger grade */
+  --cin-backdrop-vignette: radial-gradient(
+    ellipse 65% 60% at 50% 45%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  --cin-backdrop-grade: saturate(0.45) brightness(0.48) sepia(0.04);
+  --cin-vignette-dd-open: 1.6;
+
+  /* Dark mode: focus breathing slightly stronger — lower ambient means
+     the exposure shift from rack focus is more perceptible */
+  --rack-breathe-brightness: 0.988;
 
   /* Dark mode: practical light is more visible against dark surfaces —
      Bradford Young's approach: warm practicals glow brighter when the

@@ -374,6 +374,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     document.body.style.width = "100%";
     document.body.style.top = `-${scrollY}px`;
 
+    // Feed recession: page-main scales down 0.3%, creating physical depth
+    // — the feed recedes as the Deep Dive approaches the viewer.
+    const pageMain = document.querySelector('.page-main');
+    pageMain?.classList.remove('page-main--deep-dive-closing');
+    pageMain?.classList.add('page-main--deep-dive-open');
+
     hapticMedium();
     const hasMorph = originRect && originRect.width > 0 && panelRef.current;
 
@@ -513,6 +519,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       document.body.style.top = originalTop;
       // Restore scroll position that was frozen by position:fixed
       window.scrollTo(0, scrollY);
+      // Remove feed recession classes
+      const pm = document.querySelector('.page-main');
+      pm?.classList.remove('page-main--deep-dive-open', 'page-main--deep-dive-closing');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -583,6 +592,15 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     // Phase 1: Content fades out quickly
     setContentVisible(false);
 
+    // Feed recession: swap open → closing (scale returns with snappy spring)
+    const pageMain = document.querySelector('.page-main');
+    pageMain?.classList.remove('page-main--deep-dive-open');
+    pageMain?.classList.add('page-main--deep-dive-closing');
+
+    // Backdrop rack-out: blur clears (feed refocuses) via CSS animation
+    const backdrop = document.querySelector('.deep-dive-backdrop');
+    backdrop?.classList.add('deep-dive-backdrop--closing');
+
     if (originRect && originRect.width > 0 && panelRef.current) {
       /* ═══ SCENE 5: REVERSE SHOT — Panel collapses back to card ═══
          Cinematic reference: The reverse shot in conversation editing.
@@ -646,6 +664,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
         // Phase 4: Cleanup — fast dismissal matches editorial pace
         setTimeout(() => {
+          pageMain?.classList.remove('page-main--deep-dive-closing');
           previousFocusRef.current?.focus();
           onClose();
         }, 400);
@@ -655,6 +674,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
+          pageMain?.classList.remove('page-main--deep-dive-closing');
           previousFocusRef.current?.focus();
           onClose();
         }, 400);
