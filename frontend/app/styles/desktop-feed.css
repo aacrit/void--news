@@ -141,7 +141,7 @@
 .skb-overlay__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--overlay-backdrop);
   backdrop-filter: blur(8px);
   animation: skbFadeIn 200ms var(--ease-out) both;
 }
@@ -156,8 +156,8 @@
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.25),
-    0 6px 16px rgba(0, 0, 0, 0.12);
+    0 20px 60px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+    0 6px 16px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
   animation: skbPanelIn 350ms var(--spring-bouncy) both;
 }
 
