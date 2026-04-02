@@ -7068,88 +7068,75 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
   }
 
+  /* Material 3-inspired icon+label vertical stacking */
   .mob-nav__cta {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    min-height: 44px;
-    padding: var(--space-2) var(--space-2);
+    gap: 2px;
+    min-height: 52px;
+    padding: var(--space-1) var(--space-2);
 
     font-family: var(--font-meta);
-    font-size: var(--text-sm);
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 
     color: var(--fg-muted);
     background: none;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
+    border: none;
+    border-radius: 0;
     cursor: pointer;
+    position: relative;
 
-    transition: color 120ms var(--ease-out),
-                background-color 120ms var(--ease-out),
-                border-color 120ms var(--ease-out);
+    transition: color 120ms var(--ease-out);
   }
 
+  /* Active indicator — amber underline slides in from center */
   .mob-nav__cta--open {
     color: var(--fg-primary);
-    background: var(--bg-secondary);
-    border-color: var(--border-strong);
+  }
+
+  .mob-nav__cta--open::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background: var(--accent-warm);
+    border-radius: 1px;
+    animation: mobNavIndicator 200ms var(--ease-cinematic) both;
+  }
+
+  @keyframes mobNavIndicator {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .mob-nav__cta-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
   }
 
   .mob-nav__cta-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .mob-nav__cta-caret {
-    font-size: var(--text-xxs);
-    flex-shrink: 0;
-    transition: transform 150ms var(--ease-out);
-  }
-
-  .mob-nav__cta--open .mob-nav__cta-caret {
-    transform: rotate(180deg);
+    max-width: 100%;
+    line-height: 1;
   }
 
   /* ── CTA visual differentiation ── */
 
-  /* Edition CTA: warm accent border-left signals "primary context" */
-  .mob-nav__cta--edition {
-    font-weight: 700;
-    border-left: 2px solid var(--accent-warm);
-  }
-
-  /* Perspective CTA: three colored lean dots before label */
-  .mob-nav__lean-dots {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    flex-shrink: 0;
-  }
-
-  .mob-nav__lean-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .mob-nav__lean-dot--left   { background-color: var(--bias-left); }
-  .mob-nav__lean-dot--center { background-color: var(--bias-center); }
-  .mob-nav__lean-dot--right  { background-color: var(--bias-right); }
-
-  /* Topic CTA: hash symbol in data voice */
-  .mob-nav__topic-hash {
-    font-family: var(--font-data);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    color: var(--fg-tertiary);
-    flex-shrink: 0;
-    line-height: 1;
+  /* Edition CTA: icon is EditionIcon (globe/flag), styled by component */
+  .mob-nav__cta--edition .mob-nav__cta-icon {
+    color: var(--accent-warm);
   }
 
   @keyframes mob-nav-up {

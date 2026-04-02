@@ -249,7 +249,7 @@ export default function MobileBottomNav({
         ))}
       </div>
 
-      {/* Three CTA buttons */}
+      {/* Navigation bar — icon + label vertical stacking (Material 3 pattern) */}
       <div className="mob-nav__bar">
         <button
           className={`mob-nav__cta mob-nav__cta--edition${openPanel === "edition" ? " mob-nav__cta--open" : ""}`}
@@ -257,9 +257,10 @@ export default function MobileBottomNav({
           aria-expanded={openPanel === "edition"}
           type="button"
         >
-          <EditionIcon slug={activeEdition} size={10} />
+          <span className="mob-nav__cta-icon" aria-hidden="true">
+            <EditionIcon slug={activeEdition} size={18} />
+          </span>
           <span className="mob-nav__cta-label">{editionLabel}</span>
-          <span className="mob-nav__cta-caret" aria-hidden="true">&#9652;</span>
         </button>
 
         <button
@@ -268,13 +269,14 @@ export default function MobileBottomNav({
           aria-expanded={openPanel === "lean"}
           type="button"
         >
-          <span className="mob-nav__lean-dots" aria-hidden="true">
-            <span className="mob-nav__lean-dot mob-nav__lean-dot--left" />
-            <span className="mob-nav__lean-dot mob-nav__lean-dot--center" />
-            <span className="mob-nav__lean-dot mob-nav__lean-dot--right" />
+          <span className="mob-nav__cta-icon" aria-hidden="true">
+            <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+              <circle cx="3" cy="7" r="2.5" fill="var(--bias-left)" />
+              <circle cx="10" cy="7" r="2.5" fill="var(--bias-center)" />
+              <circle cx="17" cy="7" r="2.5" fill="var(--bias-right)" />
+            </svg>
           </span>
           <span className="mob-nav__cta-label">{leanLabel}</span>
-          <span className="mob-nav__cta-caret" aria-hidden="true">&#9652;</span>
         </button>
 
         <button
@@ -283,9 +285,16 @@ export default function MobileBottomNav({
           aria-expanded={openPanel === "topic"}
           type="button"
         >
-          <span className="mob-nav__topic-hash" aria-hidden="true">#</span>
+          <span className="mob-nav__cta-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <rect x="1" y="4" width="5" height="5" rx="1" opacity="0.8" />
+              <rect x="7" y="4" width="5" height="5" rx="1" opacity="0.6" />
+              <rect x="13" y="4" width="4" height="5" rx="1" opacity="0.4" />
+              <rect x="1" y="10" width="5" height="4" rx="1" opacity="0.6" />
+              <rect x="7" y="10" width="5" height="4" rx="1" opacity="0.4" />
+            </svg>
+          </span>
           <span className="mob-nav__cta-label">{topicLabel}</span>
-          <span className="mob-nav__cta-caret" aria-hidden="true">&#9652;</span>
         </button>
       </div>
     </nav>

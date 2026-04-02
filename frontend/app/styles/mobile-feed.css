@@ -487,7 +487,8 @@
    Narrow viewports — prevent justified text rivers
    --------------------------------------------------------------------------- */
 
-@media (max-width: 480px) {
+/* All mobile widths: left-align text to prevent rivers in single-column layouts */
+@media (max-width: 767px) {
   .msc__summary,
   .mbp__preview,
   .mbp__expand-text {

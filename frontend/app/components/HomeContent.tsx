@@ -55,6 +55,7 @@ import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcu
 import InstallPrompt from "./InstallPrompt";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeed from "./MobileFeed";
+import DesktopFeed from "./DesktopFeed";
 import SearchOverlay from "./SearchOverlay";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
@@ -716,14 +717,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               transition: isPulling ? "none" : "height 300ms cubic-bezier(0.2, 1, 0.3, 1), opacity 300ms ease-out",
             }}
           >
-            <div
-              className={`pull-to-refresh__spinner ${isRefreshing ? "pull-to-refresh__spinner--active" : ""}`}
-              style={{
-                transform: `rotate(${pullOffset * 3}deg)`,
-                transition: isPulling ? "none" : "transform 300ms ease-out",
-              }}
-            >
-              {isRefreshing ? "↻" : "↓"}
+            <div className="pull-to-refresh__spinner">
+              <LogoIcon size={24} animation={isRefreshing ? "analyzing" : "idle"} />
             </div>
             <span className="pull-to-refresh__text">
               {isRefreshing ? "Updating…" : pullOffset >= PULL_THRESHOLD ? "Release to refresh" : "Pull to refresh"}
@@ -824,70 +819,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   editionMeta={editionMeta}
                 />
               ) : (
-                <>
-                  <div className="skybox" role="complementary" aria-label="void originals">
-                    <SkyboxBanner state={dailyBriefState} />
-                  </div>
-
-                  {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
-                      {leadStories.map((story, i) => (
-                        <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
-                          <div data-story-index={i}>
-                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
-                          </div>
-                        </div>
-                      ))}
-                    </section>
-                  )}
-
-                  {mediumStories.length > 0 && (
-                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                      {mediumStories.map((story, idx) => {
-                        const gi = leadStories.length + idx;
-                        return (
-                          <div key={story.id} className="grid-medium__item" style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
-                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
-                          </div>
-                        );
-                      })}
-                    </section>
-                  )}
-
-                  {compactStories.length > 0 && (
-                    <>
-                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                        {visibleCompact.map((story, idx) => {
-                          const gi = leadStories.length + mediumStories.length + idx;
-                          return (
-                            <div key={story.id} className="grid-compact__item" style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}>
-                              <StoryCard
-                                story={story}
-                                index={idx + mediumStories.length + 1}
-                                onStoryClick={handleStoryClick}
-                                globalIndex={gi}
-                                kbdFocused={kbdFocusIndex === gi}
-                              />
-                            </div>
-                          );
-                        })}
-                      </section>
-
-                      {hasMore && (
-                        <div className="feed-sentinel" ref={sentinelRef} aria-hidden="true" />
-                      )}
-                    </>
-                  )}
-
-                  {filteredStories.length > 0 && (
-                    <div className="edition-line">
-                      <span className="edition-meta">
-                        {editionMeta.label} Edition / {filteredStories.length} stories
-                      </span>
-                      <LogoWordmark height={14} />
-                    </div>
-                  )}
-                </>
+                <DesktopFeed
+                  stories={filteredStories}
+                  dailyBriefState={dailyBriefState}
+                  onStoryClick={handleStoryClick}
+                  filterKey={filterKey}
+                  visibleCount={visibleCount}
+                  hasMore={hasMore}
+                  sentinelRef={sentinelRef}
+                  kbdFocusIndex={kbdFocusIndex}
+                  editionMeta={editionMeta}
+                />
               )
             )}
         </>
