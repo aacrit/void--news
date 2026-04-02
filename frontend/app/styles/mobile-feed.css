@@ -92,6 +92,19 @@
   margin-bottom: var(--space-2);
 }
 
+.msc__summary--compact {
+  -webkit-line-clamp: 1;
+  font-size: var(--text-xs);
+  margin-bottom: 0;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.msc__row-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .msc__footer {
   display: flex;
   align-items: center;

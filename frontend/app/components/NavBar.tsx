@@ -18,6 +18,7 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
 
 interface NavBarProps {
   activeEdition: Edition;
+  onEditionChange?: (edition: Edition) => void;
   /** Filter props — when provided, renders the compact filter row */
   activeCategory?: "All" | Category;
   onCategoryChange?: (category: "All" | Category) => void;
@@ -54,6 +55,7 @@ function getEditionHref(slug: Edition): string {
 
 export default function NavBar({
   activeEdition,
+  onEditionChange,
   activeCategory = "All",
   onCategoryChange,
   activeLean = "All",
@@ -207,15 +209,16 @@ export default function NavBar({
           {/* Edition pills */}
           <nav className="nav-filters__group" aria-label="Edition">
             {EDITIONS.map((ed) => (
-              <Link
+              <button
                 key={ed.slug}
-                href={getEditionHref(ed.slug)}
+                type="button"
                 aria-current={activeEdition === ed.slug ? "page" : undefined}
                 className={`nav-filters__ed${activeEdition === ed.slug ? " nav-filters__ed--active" : ""}`}
+                onClick={() => onEditionChange?.(ed.slug)}
               >
                 <EditionIcon slug={ed.slug} size={11} />
                 <span>{ed.label}</span>
-              </Link>
+              </button>
             ))}
           </nav>
 

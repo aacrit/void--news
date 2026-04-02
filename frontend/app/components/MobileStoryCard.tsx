@@ -37,7 +37,7 @@ export default function MobileStoryCard({
       ref={cardRef}
       data-story-index={globalIndex}
       className={`msc msc--${variant}${isHero ? " anim-cold-open-hero" : " anim-stagger"}${!isHero && visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
-      style={{ animationDelay: `${Math.round(30 * Math.log2(index + 2))}ms` }}
+      style={{ animationDelay: isHero ? "0ms" : `${Math.min(index * 40, 200)}ms` }}
     >
       {/* Stretched link covers entire card */}
       <button
@@ -78,12 +78,15 @@ export default function MobileStoryCard({
           </div>
         </>
       ) : (
-        /* Compact layout: headline with inline Sigil */
+        /* Compact layout: headline + 1-line summary + Sigil */
         <div className="msc__row">
-          <h3 className="msc__headline msc__headline--compact">
-            <span>{story.title}</span>
-            <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
-          </h3>
+          <div className="msc__row-text">
+            <h3 className="msc__headline msc__headline--compact">
+              <span>{story.title}</span>
+              <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
+            </h3>
+            {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
+          </div>
           <div className="msc__sigil">
             <Sigil data={story.sigilData} size="sm" instant />
           </div>
