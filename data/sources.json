@@ -4259,7 +4259,7 @@
     "id": "star-tribune",
     "name": "Star Tribune",
     "url": "https://www.startribune.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:startribune.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "rss_url": "https://www.startribune.com/rss",
     "tier": "independent",
     "country": "US",
     "type": "broadsheet",
@@ -4314,12 +4314,12 @@
     "id": "denver-post",
     "name": "The Denver Post",
     "url": "https://www.denverpost.com",
-    "rss_url": "https://www.denverpost.com/feed/",
+    "rss_url": "https://news.google.com/rss/search?q=site:denverpost.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "independent",
     "country": "US",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Colorado's largest newspaper, founded 1892. Four Pulitzer Prizes. Strong on Mountain West politics, public lands, and water issues."
+    "credibility_notes": "Colorado's largest newspaper, founded 1892. Four Pulitzer Prizes. Strong on Mountain West politics, public lands, and water issues. RSS via Google News (native feed blocked by bot protection)."
   },
   {
     "id": "tampa-bay-times",
@@ -4391,7 +4391,7 @@
     "id": "fox-business",
     "name": "Fox Business",
     "url": "https://www.foxbusiness.com",
-    "rss_url": "https://moxie.foxbusiness.com/google-publisher/latest.xml",
+    "rss_url": "https://feeds.foxnews.com/foxbusiness/latest",
     "tier": "us_major",
     "country": "US",
     "type": "broadcast",
@@ -4413,7 +4413,7 @@
     "id": "australian-financial-review",
     "name": "Australian Financial Review",
     "url": "https://www.afr.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:afr.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "rss_url": "https://www.afr.com/rss/feed.xml",
     "tier": "international",
     "country": "AU",
     "type": "broadsheet",
@@ -4424,7 +4424,7 @@
     "id": "kyodo-news",
     "name": "Kyodo News",
     "url": "https://english.kyodonews.net",
-    "rss_url": "https://english.kyodonews.net/rss/all.xml",
+    "rss_url": "https://english.kyodonews.net/list/feed/rss4kyodonews-fzone",
     "tier": "international",
     "country": "JP",
     "type": "wire",
@@ -4447,12 +4447,12 @@
     "id": "stars-and-stripes",
     "name": "Stars and Stripes",
     "url": "https://www.stripes.com",
-    "rss_url": "https://www.stripes.com/arcio/rss/",
+    "rss_url": "https://news.google.com/rss/search?q=site:stripes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "independent",
     "country": "US",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Congressionally funded US military newspaper, founded 1861. Editorially independent from DoD. Essential for military personnel, veterans, and defense coverage."
+    "credibility_notes": "Congressionally funded US military newspaper, founded 1861. Editorially independent from DoD. Essential for military personnel, veterans, and defense coverage. RSS via Google News (native feeds defunct)."
   },
   {
     "id": "defense-news",
@@ -4491,12 +4491,12 @@
     "id": "hurriyet-daily-news",
     "name": "Hürriyet Daily News",
     "url": "https://www.hurriyetdailynews.com",
-    "rss_url": "https://www.hurriyetdailynews.com/rss",
+    "rss_url": "https://news.google.com/rss/search?q=site:hurriyetdailynews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "TR",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Turkey's oldest English-language newspaper, founded 1961. Provides centrist perspective alongside TRT World (state) and Daily Sabah (pro-government). Demirören Holding."
+    "credibility_notes": "Turkey's oldest English-language newspaper, founded 1961. Provides centrist perspective alongside TRT World (state) and Daily Sabah (pro-government). Demirören Holding. RSS via Google News (native feed unreliable)."
   },
   {
     "id": "sky-news-australia",
