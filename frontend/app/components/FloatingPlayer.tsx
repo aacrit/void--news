@@ -115,6 +115,16 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           {/* Void logo */}
           <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} className="fp__logo" />
 
+          {/* Mini equalizer bars — visible when playing */}
+          {isPlaying && (
+            <div className="fp__pill-eq" aria-hidden="true">
+              <div className="fp__pill-eq-bar" style={{ height: 10 }} />
+              <div className="fp__pill-eq-bar" style={{ height: 14 }} />
+              <div className="fp__pill-eq-bar" style={{ height: 8 }} />
+              <div className="fp__pill-eq-bar" style={{ height: 12 }} />
+            </div>
+          )}
+
           {/* Play/Pause */}
           <button
             className={`fp__play${isPlaying ? " fp__play--active" : ""}`}

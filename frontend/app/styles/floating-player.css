@@ -365,6 +365,39 @@
 .fp__waveform--active .fp__waveform-bar:nth-child(3n+1) { animation-name: vuBar-mid; }
 .fp__waveform--active .fp__waveform-bar:nth-child(3n+2) { animation-name: vuBar-tall; }
 
+/* VU meter bar keyframes — matches intro-audio waveform style */
+@keyframes vuBar-short {
+  from { transform: scaleY(0.2); opacity: 0.3; }
+  to   { transform: scaleY(0.6); opacity: 0.6; }
+}
+@keyframes vuBar-mid {
+  from { transform: scaleY(0.3); opacity: 0.4; }
+  to   { transform: scaleY(1); opacity: 0.7; }
+}
+@keyframes vuBar-tall {
+  from { transform: scaleY(0.4); opacity: 0.3; }
+  to   { transform: scaleY(0.85); opacity: 0.8; }
+}
+
+/* Compact pill waveform — small equalizer bars beside the logo when playing */
+.fp__pill-eq {
+  display: flex;
+  align-items: center;
+  gap: 1.5px;
+  height: 16px;
+  margin-left: var(--space-1);
+}
+.fp__pill-eq-bar {
+  width: 2px;
+  border-radius: 1px;
+  background: var(--accent-warm);
+  animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate;
+}
+.fp__pill-eq-bar:nth-child(1) { animation-name: vuBar-short; animation-delay: 0ms; }
+.fp__pill-eq-bar:nth-child(2) { animation-name: vuBar-tall; animation-delay: 80ms; }
+.fp__pill-eq-bar:nth-child(3) { animation-name: vuBar-mid; animation-delay: 160ms; }
+.fp__pill-eq-bar:nth-child(4) { animation-name: vuBar-short; animation-delay: 240ms; }
+
 /* Transport */
 .fp__transport {
   display: flex;
@@ -657,6 +690,7 @@
   .fp__play--active { animation: none; }
   .fp__play-lg--active { animation: none; }
   .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
+  .fp__pill-eq-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .fp__rec-dot { animation: none; opacity: 1; }
   .fp--playing .fp__pill { animation: none; }
 }

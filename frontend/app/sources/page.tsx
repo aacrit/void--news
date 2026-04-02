@@ -981,16 +981,8 @@ function SourcesPageInner() {
     return () => controller.abort();
   }, []);
 
-  const filteredSources = useMemo(() => {
-    let result = sources;
-    const countries = EDITION_COUNTRIES[activeEdition];
-    if (countries) result = result.filter((s) => countries.includes(s.country));
-    const allowed = LEAN_ALLOWED[activeLean];
-    if (allowed) result = result.filter((s) => allowed.includes(normalizeLean(s.political_lean_baseline)));
-    return result;
-  }, [sources, activeEdition, activeLean]);
-
-  const totalCount = filteredSources.length;
+  // Show all sources — no edition/lean filtering on the sources page
+  const filteredSources = sources;
 
   const handleLeanTap = (lean: LeanFilter) => {
     if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
@@ -1017,41 +1009,9 @@ function SourcesPageInner() {
             </Link>
           </div>
 
-          {/* Edition filter — radiogroup (filters content, not panel switch) */}
-          <div
-            className="nav-tabs"
-            role="radiogroup"
-            aria-label="Edition"
-            ref={editionGroupRef}
-            onKeyDown={handleRadioGroupKeyDown}
-          >
-            {EDITIONS.map((edition) => {
-              const checked = activeEdition === edition.slug;
-              return (
-                <button
-                  key={edition.slug}
-                  role="radio"
-                  aria-checked={checked}
-                  tabIndex={checked ? 0 : -1}
-                  className={`nav-tab${checked ? " nav-tab--active" : ""}`}
-                  onClick={() => setActiveEdition(edition.slug)}
-                >
-                  <span className="nav-tab__inner">
-                    <EditionIcon slug={edition.slug} size={14} />
-                    {edition.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Dateline — desktop only */}
           <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
-            {mounted ? `${getEditionTimeOfDay(activeEdition)} Edition` : "Edition"}
-            <span className="nav-dateline-inline__sep">&middot;</span>
             {mounted ? formatDateCompact() : ""}
-            <span className="nav-dateline-inline__sep">&middot;</span>
-            <span className="nav-dateline-inline__time">{mounted ? getEditionTimestamp(activeEdition) : ""}</span>
           </span>
 
           <div className="nav-right">
@@ -1061,58 +1021,13 @@ function SourcesPageInner() {
         </nav>
       </header>
 
-      {/* Mobile bottom nav — edition switching */}
-      <nav className="nav-bottom" aria-label="Edition navigation">
-        {EDITIONS.map((edition) => (
-          <button
-            key={`mobile-${edition.slug}`}
-            aria-current={activeEdition === edition.slug ? "page" : undefined}
-            className={`nav-bottom-tab${activeEdition === edition.slug ? " nav-bottom-tab--active" : ""}`}
-            onClick={() => setActiveEdition(edition.slug)}
-          >
-            <span className="nav-tab__inner">
-              <EditionIcon slug={edition.slug} size={18} />
-              {edition.label}
-            </span>
-          </button>
-        ))}
-      </nav>
-
       <main id="main-content" className="page-main sources-page">
-        {/* ---- Toolbar: title + lean filter ---- */}
+        {/* ---- Toolbar: title ---- */}
         <div className="sources-toolbar">
           <div className="sources-toolbar__text">
             <h1 className="sources-toolbar__title" title="void --sources">
-              <span className="sources-toolbar__count">{totalCount}</span> Sources
+              <span className="sources-toolbar__count">{sources.length}</span> Sources
             </h1>
-          </div>
-          <div
-            className="sources-leans"
-            role="radiogroup"
-            aria-label="Filter by lean"
-            ref={leanGroupRef}
-            onKeyDown={handleRadioGroupKeyDown}
-          >
-            {LEAN_FILTERS.map((lean) => {
-              const checked = activeLean === lean;
-              return (
-                <button
-                  key={lean}
-                  role="radio"
-                  aria-checked={checked}
-                  tabIndex={checked ? 0 : -1}
-                  className={`sources-edition-chip${checked ? " sources-edition-chip--active" : ""}`}
-                  onClick={() => handleLeanTap(lean)}
-                >
-                  <span
-                    className="filter-chip__dot"
-                    style={{ backgroundColor: LEAN_DOT_COLOR[lean] }}
-                    aria-hidden="true"
-                  />
-                  {lean}
-                </button>
-              );
-            })}
           </div>
         </div>
 
