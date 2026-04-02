@@ -115,8 +115,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <span className="skb__compact-cmd">void --tl;dr</span>
                     {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
-                  {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{brief.tldr_headline}</h3>}
-                  <p className="skb__compact-preview skb__compact-preview--tldr">{brief.tldr_text}</p>
+                  {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
+                  <p className="skb__compact-preview skb__compact-preview--tldr">{String(brief.tldr_text)}</p>
                   <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
                 </div>
 
@@ -138,8 +138,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                       <span className="skb__compact-cmd">void --opinion</span>
                       {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                     </div>
-                    {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{brief.opinion_headline}</h3>}
-                    <p className="skb__compact-preview skb__compact-preview--opinion">{brief.opinion_text}</p>
+                    {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{String(brief.opinion_headline)}</h3>}
+                    <p className="skb__compact-preview skb__compact-preview--opinion">{String(brief.opinion_text)}</p>
                     <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
                   </div>
                 )}
@@ -202,9 +202,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <span className="skb__section-label-cmd">void --tl;dr</span>
                     {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   </div>
-                  {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{brief.tldr_headline}</h3>}
+                  {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
                   <div className="skb__section-body skb__section-body--tldr">
-                    {brief.tldr_text.split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
+                    {String(brief.tldr_text).split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
                   </div>
                 </div>
               )}
@@ -217,9 +217,9 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <span className="skb__section-label-cmd">void --opinion</span>
                     {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                   </div>
-                  {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{brief.opinion_headline}</h3>}
+                  {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
                   <div className="skb__section-body skb__section-body--opinion">
-                    {(brief.opinion_text || "").split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
+                    {String(brief.opinion_text || "").split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
                   </div>
                 </div>
               )}

@@ -210,7 +210,7 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                     <span className="comp-view__insight-label">Where sources converge</span>
                     <ul className="comp-view__insight-list">
                       {consensusPoints.map((pt, i) => (
-                        <li key={i}>{pt}</li>
+                        <li key={i}>{typeof pt === "string" ? pt : String(pt)}</li>
                       ))}
                     </ul>
                   </div>
@@ -223,7 +223,7 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                     <span className="comp-view__insight-label">Where sources diverge</span>
                     <ul className="comp-view__insight-list">
                       {divergencePoints.map((pt, i) => (
-                        <li key={i}>{pt}</li>
+                        <li key={i}>{typeof pt === "string" ? pt : String(pt)}</li>
                       ))}
                     </ul>
                   </div>

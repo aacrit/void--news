@@ -159,12 +159,15 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
   const rawConsensus = usingEnriched ? cluster.consensus_points : null;
   const rawDivergence = usingEnriched ? cluster.divergence_points : null;
 
+  const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
+  const safeSummary = typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
+
   return {
     id: cluster.id,
-    title: cluster.title,
-    summary: cluster.summary || "",
+    title: safeTitle,
+    summary: safeSummary,
     source: { name: "Multiple Sources", count: sourceCount },
-    category: capitalize(cluster.category || "politics") as Category,
+    category: capitalize(typeof cluster.category === "string" ? cluster.category : "politics") as Category,
     publishedAt:
       cluster.first_published ||
       cluster.last_updated ||
@@ -183,8 +186,8 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
       (Array.isArray(rawConsensus) && rawConsensus.length > 0) ||
       (Array.isArray(rawDivergence) && rawDivergence.length > 0)
         ? {
-            consensus: Array.isArray(rawConsensus) ? rawConsensus : [],
-            divergence: Array.isArray(rawDivergence) ? rawDivergence : [],
+            consensus: Array.isArray(rawConsensus) ? rawConsensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? "")) : [],
+            divergence: Array.isArray(rawDivergence) ? rawDivergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? "")) : [],
             sources: [],
           }
         : undefined,
