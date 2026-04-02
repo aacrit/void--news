@@ -11,7 +11,7 @@ import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } fr
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
-import { generateShareCardImage } from "../lib/shareCardRenderer";
+import { generateShareCardImage, generateSquareCardImage } from "../lib/shareCardRenderer";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
@@ -605,10 +605,13 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2400);
     };
 
-    /* 1. Generate the Evidence Card PNG via Canvas 2D */
+    /* 1. Generate Evidence Card — square for mobile (Insta/TikTok), OG for desktop */
+    const isMobileShare = typeof window !== "undefined" && window.innerWidth < 768;
     let blob: Blob | null = null;
     try {
-      blob = await generateShareCardImage(story);
+      blob = isMobileShare
+        ? await generateSquareCardImage(story)
+        : await generateShareCardImage(story);
     } catch {
       // Canvas rendering failed — fall back to URL-only sharing below
     }
