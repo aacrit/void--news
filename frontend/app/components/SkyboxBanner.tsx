@@ -142,8 +142,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     <div className="skb__radio" inert={!onairExpanded ? true : undefined} style={{
       height: onairExpanded ? radioHeight : 0,
       transition: onairExpanded
-        ? "height 450ms var(--spring-bouncy, ease)"
-        : "height 220ms var(--ease-whip, ease)",
+        ? "height 450ms var(--ease-unfold, ease)"
+        : "height 220ms var(--ease-refold, ease)",
     }}>
       <div ref={radioRef} className={`skb__radio-inner${isPlaying ? " skb__radio-inner--live" : ""}`}>
         <div className="skb__radio-header">

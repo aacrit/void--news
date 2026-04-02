@@ -345,12 +345,14 @@
   /* Animation removed — children animate individually via L-cut cascade */
 }
 
-/* Directional section swap: Opinion enters from right, TL;DR from left */
+/* Directional section swap — paper page turn.
+   Opinion enters from right, TL;DR from left. Uses --ease-unfold
+   for the organic broadsheet feel. */
 .skb--show-opinion .skb__section-content {
-  animation: skbSwapFromRight 350ms var(--ease-cinematic) both;
+  animation: skbSwapFromRight 350ms var(--ease-unfold, var(--ease-cinematic)) both;
 }
 .skb--show-tldr .skb__section-content {
-  animation: skbSwapFromLeft 350ms var(--ease-cinematic) both;
+  animation: skbSwapFromLeft 350ms var(--ease-unfold, var(--ease-cinematic)) both;
 }
 
 @keyframes skbSwapFromRight {
@@ -362,22 +364,39 @@
   to   { opacity: 1; transform: translateX(0) scale(1); }
 }
 
-/* Section content L-cut cascade — label, headline, body stagger in */
+/* Section content L-cut cascade — broadsheet unfold stagger.
+   Label (wayfinding), headline (subject), body (detail) arrive
+   in L-cut sequence like copy resolving on a freshly opened page. */
 .skb__section-content .skb__section-label {
-  animation: skbElementIn 350ms var(--spring-gentle, var(--ease-cinematic)) 120ms both;
+  animation: skbElementIn 350ms var(--ease-unfold, var(--ease-cinematic)) 120ms both;
 }
-/* Headline: rack-focus effect — blur(0.5px) dissolves to sharp (Deakins in Sicario) */
+
+/* Headline: rack-focus + blur dissolve — Cooke S4 lens resolving a close-up */
 .skb__section-content .skb__section-hl {
-  animation: skbHeadlineRack 400ms var(--ease-cinematic) 160ms both;
+  animation: skbHeadlineRack 400ms var(--ease-unfold, var(--ease-cinematic)) 200ms both;
+}
+
+/* Body: settles last, organic paper weight */
+.skb__section-content .skb__section-body--tldr,
+.skb__section-content .skb__section-body--opinion {
+  animation: skbElementIn 420ms var(--ease-unfold, var(--ease-cinematic)) 320ms both;
+}
+
+/* Logo mark activation — printer's colophon catching the light
+   as the section takes editorial focus. Subtle scale pulse. */
+.skb__section-label svg {
+  animation: skbMarkActivate 320ms var(--ease-cinematic) 120ms both;
+}
+
+@keyframes skbMarkActivate {
+  0%   { opacity: 0.4; transform: scale(0.85); }
+  60%  { opacity: 1;   transform: scale(1.04); }
+  100% { opacity: 1;   transform: scale(1); }
 }
 
 @keyframes skbHeadlineRack {
   from { opacity: 0; transform: translateY(4px); filter: blur(0.5px); }
   to   { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-.skb__section-content .skb__section-body--tldr,
-.skb__section-content .skb__section-body--opinion {
-  animation: skbElementIn 400ms var(--spring-gentle, var(--ease-cinematic)) 300ms both;
 }
 
 @keyframes skbElementIn {
@@ -1017,12 +1036,12 @@
    Cinematic Motion Choreography
    --------------------------------------------------------------------------- */
 
-/* ── Cold open: horizontal pan stagger — newspaper unfolding ── */
+/* ── Cold open: broadsheet unfolding — columns spread from center ── */
 .anim-cold-open-skybox .skb__compact-col--tldr {
-  animation: skbColSlideLeft 400ms var(--ease-cinematic) 280ms both;
+  animation: skbColSlideLeft 400ms var(--ease-unfold, var(--ease-cinematic)) 280ms both;
 }
 .anim-cold-open-skybox .skb__compact-col--opinion {
-  animation: skbColSlideRight 400ms var(--ease-cinematic) 360ms both;
+  animation: skbColSlideRight 400ms var(--ease-unfold, var(--ease-cinematic)) 360ms both;
 }
 
 @keyframes skbColSlideLeft {
@@ -1052,9 +1071,9 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Compact restore — plays when collapsing back from expanded ── */
+/* ── Compact restore — newspaper refolded, tucked under arm ── */
 .skb--compact .skb__compact {
-  animation: skbCompactRestore 250ms var(--ease-cinematic) both;
+  animation: skbCompactRestore 280ms var(--ease-refold, var(--ease-cinematic)) both;
 }
 /* Cold open takes precedence — prevent double animation on first load */
 .anim-cold-open-skybox.skb--compact .skb__compact {
@@ -1133,7 +1152,8 @@
   .anim-cold-open-skybox .skb__compact-col--tldr,
   .anim-cold-open-skybox .skb__compact-col--opinion,
   .anim-cold-open-skybox .skb__compact-onair,
-  .skb__radio:not([inert]) .skb__radio-inner { animation: none; }
+  .skb__radio:not([inert]) .skb__radio-inner,
+  .skb__section-label svg { animation: none; }
   .skb__radio[inert] .skb__radio-inner { opacity: 1; transition: none; }
 }
 
