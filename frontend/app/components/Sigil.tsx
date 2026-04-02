@@ -220,10 +220,20 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, [isOpen, triggerRef, full, instant]);
 
+  // Outside-click handler: capture-phase listener that closes the popup AND
+  // stops propagation so the click doesn't reach the underlying story card
+  // (which would open Deep Dive — bug F03).
+  const popupRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!isOpen) return;
     const h = (e: MouseEvent) => {
-      if (triggerRef.current && !triggerRef.current.contains(e.target as Node)) onClose();
+      const target = e.target as Node;
+      const insideTrigger = triggerRef.current?.contains(target);
+      const insidePopup = popupRef.current?.contains(target);
+      if (!insideTrigger && !insidePopup) {
+        e.stopPropagation();
+        onClose();
+      }
     };
     document.addEventListener("click", h, true);
     return () => document.removeEventListener("click", h, true);
@@ -249,7 +259,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           opacity: stage >= 1 ? 1 : 0,
         }} />
       )}
-      <div id={id} role={isMobile ? "dialog" : "tooltip"} aria-modal={isMobile ? true : undefined} aria-label={isMobile ? "Bias analysis details" : undefined} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+      <div ref={popupRef} id={id} role={isMobile ? "dialog" : "tooltip"} aria-modal={isMobile ? true : undefined} aria-label={isMobile ? "Bias analysis details" : undefined} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
         className={isMobile ? "sigil-popup sigil-popup--mobile" : "sigil-popup sigil-popup--desktop"}
         style={isMobile ? {
           transform: stage >= 1 ? "translateY(0)" : "translateY(100%)",
@@ -484,6 +494,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       onClick={toggle} onKeyDown={onKey}
       tabIndex={0} role="button" aria-expanded={open} aria-label={aria}
       aria-controls={open ? tooltipId : undefined}
+      aria-describedby={open ? tooltipId : undefined}
       style={{
         opacity: data.pending ? 0.3 : 1,
         filter: data.pending ? "grayscale(1)" : "none",

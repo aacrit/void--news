@@ -4525,6 +4525,22 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 }
 
+/* ---- Inline methodology hint (near spectrum in Deep Dive) --------------- */
+.dd-methodology-inline {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-meta);
+  letter-spacing: 0.02em;
+}
+
+.dd-methodology-inline__link {
+  transition: color 150ms var(--ease-out);
+}
+
+.dd-methodology-inline__link:hover {
+  color: var(--fg-secondary);
+}
+
 /* ---- Scoring Methodology — used on /sources page ----------------------- */
 .dd-methodology {
   border-top: 1px solid var(--border-subtle);
