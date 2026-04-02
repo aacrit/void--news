@@ -205,7 +205,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
             <hr className="mbp__rule" />
             <div className="mbp__onair-center">
               <button
-                className={`skb__onair-btn${isPlaying ? " skb__onair-btn--active" : ""}${radioOpen ? " skb__onair-btn--open" : ""}`}
+                className={`skb__onair-pill${isPlaying ? " skb__onair-pill--active" : ""}${radioOpen ? " skb__onair-pill--open" : ""}`}
                 onClick={() => {
                   hapticConfirm();
                   if (!hasAudio) return;

@@ -8125,7 +8125,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    Simulates the horizontal smear artifact of an anamorphic lens
    catching a practical light source. The flare is wider than the
    button (left/right: -100%) and fades at the edges. */
-.skb__onair-btn--active::before {
+.skb__onair-pill--active::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -8147,7 +8147,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   z-index: -1;
   animation: cin-flare-in 800ms var(--ease-out) both;
 }
-.skb__onair-btn:not(.skb__onair-btn--active)::before {
+.skb__onair-pill:not(.skb__onair-pill--active)::before {
   content: none;
 }
 
@@ -8155,8 +8155,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    The background-color shifts to --cin-practical-warmth (amber 4% mix).
    Uses :has() to detect the active OnAir state from the parent. */
 @media (prefers-reduced-motion: no-preference) {
-  .skb:has(.skb__onair-btn--active),
-  .skb:has(.skb__bar-listen--active) {
+  .skb:has(.skb__onair-pill--active),
+  .skb:has(.skb__onair-pill--active) {
     background-color: var(--cin-practical-warmth);
     transition:
       background-color 800ms var(--ease-cinematic),

@@ -46,7 +46,8 @@ class DeepDiveErrorBoundary extends Component<
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import { useDailyBrief, DailyBriefText, OnAirButton } from "./DailyBrief";
+import { useDailyBrief } from "./DailyBrief";
+import SkyboxBanner from "./SkyboxBanner";
 import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -816,8 +817,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               ) : (
                 <>
                   <div className="skybox" role="complementary" aria-label="void originals">
-                    <DailyBriefText state={dailyBriefState} />
-                    <OnAirButton state={dailyBriefState} />
+                    <SkyboxBanner state={dailyBriefState} />
                   </div>
 
                   {leadStories.length > 0 && (
