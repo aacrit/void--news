@@ -512,21 +512,26 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             const rawConsensus = usingEnriched ? cluster.consensus_points : null;
             const rawDivergence = usingEnriched ? cluster.divergence_points : null;
             const consensusPoints: string[] = Array.isArray(rawConsensus)
-              ? rawConsensus
+              ? rawConsensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
               : [];
             const divergencePoints: string[] = Array.isArray(rawDivergence)
-              ? rawDivergence
+              ? rawDivergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
               : [];
+
+            // Defensive: coerce title/summary to string — JSONB fields or
+            // corrupted data can return objects, crashing React (#310).
+            const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
+            const safeSummary = typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
 
             return {
               id: cluster.id,
-              title: cluster.title,
-              summary: cluster.summary || "",
+              title: safeTitle,
+              summary: safeSummary,
               source: {
                 name: "Multiple Sources",
                 count: sourceCount,
               },
-              category: capitalize(cluster.category || "politics") as Category,
+              category: capitalize(typeof cluster.category === "string" ? cluster.category : "politics") as Category,
               publishedAt:
                 cluster.first_published ||
                 cluster.last_updated ||
