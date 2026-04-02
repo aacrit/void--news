@@ -56,8 +56,8 @@ export default function MobileFeed({
         />
       )}
 
-      {/* Brief pill — collapsed by default, expands inline */}
-      <MobileBriefPill state={dailyBriefState} />
+      {/* Brief pill — collapsed by default, expands inline (cold-open entrance) */}
+      <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
 
       {/* Compact story cards */}
       <div className="mf__cards" aria-label="Stories">

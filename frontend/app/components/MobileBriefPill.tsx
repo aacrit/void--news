@@ -20,7 +20,7 @@ const PauseIcon = () => (
   </svg>
 );
 
-export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
+export default function MobileBriefPill({ state, className }: { state: DailyBriefState; className?: string }) {
   const {
     brief, isPlaying, handlePlayPause,
     isPlayerVisible, setPlayerVisible,
@@ -59,7 +59,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
   }, [pillExpanded, tldrExpanded, opinionExpanded]);
 
   if (!brief) return (
-    <div className="mbp" role="complementary" aria-label="Daily Brief">
+    <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
       <div className="mbp__pill">
         <ScaleIcon size={16} animation="analyzing" />
         <span className="mbp__pill-cmd">void --tl;dr</span>
@@ -96,7 +96,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
   };
 
   return (
-    <div className="mbp" role="complementary" aria-label="Daily Brief">
+    <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
       <div className={`mbp__pill${pillExpanded ? " mbp__pill--open" : ""}`}>
         <button
           className="mbp__pill-main"

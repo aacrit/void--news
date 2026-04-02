@@ -149,15 +149,28 @@
   padding-top: 2px;
 }
 
-/* Touch interaction — press states */
+/* Touch interaction — asymmetric press states (Spielberg hold-and-release)
+   Fast attack (60ms), slow spring release (350ms spring-gentle). */
+.msc {
+  transition: transform 350ms var(--spring-gentle), opacity 350ms var(--ease-steadicam);
+}
+
 .msc:active {
-  transform: scale(0.975);
+  transform: scale(0.975) translateY(1px);
   opacity: 0.9;
   transition: transform 60ms var(--ease-out), opacity 60ms var(--ease-out);
 }
 
 .msc--hero:active {
   transform: scale(0.985);
+}
+
+/* Touch rack focus — sibling dimming during press (depth-of-field on touch) */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .mf__cards:has(.msc:active) .msc:not(:active) {
+    opacity: 0.65;
+    transition: opacity 120ms var(--ease-rack);
+  }
 }
 
 /* Stagger animation — faster on mobile */
@@ -507,6 +520,83 @@
   cursor: pointer;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile Cold Open — Cinematic entrance choreography
+   Hero (120ms) → Pill (240ms) → Cards (360ms+) → Bottom Nav (500ms)
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  /* Hero card: dedicated cold-open entrance */
+  .msc--hero.anim-cold-open-hero {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: mobileHeroEnter 400ms var(--ease-cinematic) 120ms both;
+  }
+
+  /* Brief pill: unfold entrance */
+  .mbp.anim-cold-open-pill {
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: mobilePillSlideIn 350ms var(--ease-unfold) 240ms both;
+  }
+
+  /* Compact cards: tighter stagger base (300ms offset from cold-open start) */
+  .msc--compact.anim-stagger {
+    animation-delay: calc(300ms + var(--stagger-delay, 0ms));
+  }
+
+  /* Bottom nav: last element — frame completes */
+  .mob-nav.anim-cold-open-nav {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: mobileNavRise 300ms var(--ease-cinematic) 500ms both;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile Edition Switch — Vertical dissolve (not horizontal whip)
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .mf.anim-edition-out {
+    animation: mobileEditionOut 200ms var(--ease-whip) both;
+  }
+
+  .mf.anim-edition-in {
+    animation: mobileEditionIn 300ms var(--ease-cinematic) both;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Selective Film Grain — Paper texture on key mobile surfaces
+   Tiny composited areas, no animation. Establishes cinematic texture brand.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  /* Brief pill: printed insert texture */
+  .mbp::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.01 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    opacity: 0.06;
+  }
+
+  .mbp {
+    position: relative;
+  }
+
+  /* Ensure pill content sits above grain */
+  .mbp__pill,
+  .mbp__content-inner {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 /* ---------------------------------------------------------------------------
