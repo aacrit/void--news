@@ -145,7 +145,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 200ms, box-shadow 200ms;
+  transition: background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
   flex-shrink: 0;
 }
 
@@ -172,7 +172,7 @@
 .fp__rec-dot {
   width: 5px; height: 5px; border-radius: 50%;
   background: var(--indicator-broadcast);
-  animation: recPulse 1.5s ease-in-out infinite;
+  animation: recPulse 1.5s var(--ease-rack) infinite;
   flex-shrink: 0;
 }
 
@@ -299,7 +299,7 @@
   padding: 2px 8px;
   min-height: 28px;
   cursor: pointer;
-  transition: border-color 150ms;
+  transition: border-color 150ms var(--ease-out);
 }
 
 .fp__speed:hover {
@@ -313,7 +313,7 @@
   border-radius: 50%;
   color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   cursor: pointer;
-  transition: color 150ms, background 150ms;
+  transition: color 150ms var(--ease-out), background 150ms var(--ease-out);
   position: relative;
 }
 
@@ -353,12 +353,12 @@
   background: color-mix(in srgb, var(--accent-warm) 20%, transparent);
   transform: scaleY(0.5);
   opacity: 0.4;
-  transition: transform 400ms, opacity 400ms;
+  transition: transform 400ms var(--ease-cinematic), opacity 400ms var(--ease-cinematic);
 }
 
 .fp__waveform--active .fp__waveform-bar {
   background: var(--accent-warm);
-  animation: vuBar-mid 1.2s ease-in-out infinite alternate;
+  animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate;
 }
 
 .fp__waveform--active .fp__waveform-bar:nth-child(3n)   { animation-name: vuBar-short; }
@@ -382,7 +382,7 @@
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  transition: color 150ms;
+  transition: color 150ms var(--ease-out);
   position: relative;
 }
 
@@ -398,7 +398,7 @@
   font-size: 18px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: background 200ms, box-shadow 300ms;
+  transition: background 200ms var(--ease-out), box-shadow 300ms var(--ease-cinematic);
 }
 
 .fp__play-lg:hover {
@@ -436,7 +436,7 @@
   border-radius: 3px;
   min-height: 24px;
   cursor: pointer;
-  transition: color 150ms, border-color 150ms;
+  transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out);
 }
 
 .fp__seek-sec--active {
@@ -551,7 +551,7 @@
 
   /* Practical light breathing pulse — 4s respiratory rhythm (Bradford Young) */
   .fp--playing .fp__pill {
-    animation: fpPracticalPulse 4s ease-in-out infinite;
+    animation: fpPracticalPulse 4s var(--ease-rack) infinite;
   }
 
   /* Console grain texture — finer noise on dark broadcast surface */

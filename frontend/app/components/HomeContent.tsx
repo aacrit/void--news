@@ -203,10 +203,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
-  // Whip pan direction — track previous edition index for direction-aware animation
+  // Whip pan direction — track previous edition index for direction-aware animation.
+  // isEditionSwitch tracks whether the current content remount is from an edition
+  // change (whip pan) vs a filter change (no whip pan, just card reshuffling).
   const EDITION_ORDER: Edition[] = ["world", "us", "india"];
   const prevEditionRef = useRef<Edition>(activeEdition);
   const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
+  const [isEditionSwitch, setIsEditionSwitch] = useState(false);
 
   // Mobile edition switch transition — cross-fade out/in
   const [editionTransition, setEditionTransition] = useState<"out" | "in" | null>(null);
@@ -343,9 +346,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // Compute whip pan direction based on edition order
+    // Compute whip pan direction based on edition order.
+    // Mark isEditionSwitch so the desktop whip pan animation applies to
+    // all grid sections. Cleared after whip pan duration (350ms + buffer).
     if (prevIdx !== nextIdx) {
       setWhipDirection(nextIdx > prevIdx ? "right" : "left");
+      setIsEditionSwitch(true);
+      setTimeout(() => setIsEditionSwitch(false), 500);
     }
     prevEditionRef.current = activeEdition;
   }, [activeEdition]);
@@ -369,6 +376,20 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     // (e.g., warmer sepia for India, cooler contrast for US) defined in CSS.
     document.documentElement.setAttribute("data-edition", activeEdition);
   }, [activeEdition]);
+
+  // Scene 7: Practical light warmth propagation — when audio is playing,
+  // the page-main receives a subtle warm sepia tint (motivated by the
+  // OnAir "practical" light source). The CSS rule .page-main--audio-playing
+  // applies sepia(0.01) layered on top of the existing color grade.
+  useEffect(() => {
+    const el = document.querySelector('.page-main');
+    if (!el) return;
+    if (dailyBriefState.isPlaying) {
+      el.classList.add('page-main--audio-playing');
+    } else {
+      el.classList.remove('page-main--audio-playing');
+    }
+  }, [dailyBriefState.isPlaying]);
 
   // Coerce cached Story fields to strings — localStorage may contain stale
   // data from before JSONB coercion was added, triggering React #310.
@@ -874,7 +895,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   </div>
 
                   {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-cold-open-lead anim-content-arrive">
+                    <section key={filterKey} aria-label="Lead stories" className={`lead-section anim-cold-open-lead${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {leadStories.map((story, i) => (
                         <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
                           <div data-story-index={i}>
@@ -886,7 +907,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   )}
 
                   {mediumStories.length > 0 && (
-                    <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
+                    <section key={`med-${filterKey}`} aria-label="Top stories" className={`grid-medium${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {mediumStories.map((story, idx) => {
                         const gi = leadStories.length + idx;
                         return (
@@ -900,7 +921,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
                   {compactStories.length > 0 && (
                     <>
-                      <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
+                      <section key={`cmp-${filterKey}`} aria-label="More stories" className={`grid-compact${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                         {visibleCompact.map((story, idx) => {
                           const gi = leadStories.length + mediumStories.length + idx;
                           return (

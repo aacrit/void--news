@@ -44,11 +44,14 @@ export default function ThemeToggle() {
     // Targets .page-main (not .page-container) because the color grade filter
     // lives on .page-main. Applying filter to .page-container would create a
     // containing block that breaks position:fixed children (AudioPlayer, DeepDive).
+    // Golden hour pulse on both page-main AND nav-header — the dissolve
+    // warms the entire visible frame, not just the content area. Scene 8
+    // spec: "paper is slower than ink, both are slower than light."
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const main = document.querySelector('.page-main');
-    if (!prefersReducedMotion && main) {
-      main.classList.add('cin-golden-hour');
-      setTimeout(() => main.classList.remove('cin-golden-hour'), 700);
+    if (!prefersReducedMotion) {
+      const targets = document.querySelectorAll('.page-main, .nav-header');
+      targets.forEach(el => el.classList.add('cin-golden-hour'));
+      setTimeout(() => targets.forEach(el => el.classList.remove('cin-golden-hour')), 700);
     }
   };
 

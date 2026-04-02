@@ -2016,7 +2016,7 @@
   padding: var(--space-1) var(--space-2);
   min-height: 28px;
   cursor: pointer;
-  transition: color 150ms, border-color 150ms, background 150ms;
+  transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out), background 150ms var(--ease-out);
 }
 
 .nav-onair:hover {
@@ -2034,7 +2034,7 @@
 .nav-onair__dot {
   width: 5px; height: 5px; border-radius: 50%;
   background: var(--indicator-broadcast);
-  animation: recPulse 1.5s ease-in-out infinite;
+  animation: recPulse 1.5s var(--ease-rack) infinite;
   flex-shrink: 0;
 }
 
@@ -6245,7 +6245,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   width: 3px; border-radius: 2px;
   background: var(--accent-warm);
   opacity: 0.5;
-  animation: introWaveBar 1.2s ease-in-out infinite alternate;
+  animation: introWaveBar 1.2s var(--ease-rack) infinite alternate;
 }
 @keyframes introWaveBar {
   from { transform: scaleY(0.3); opacity: 0.3; }
@@ -7467,7 +7467,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 @supports (animation-timeline: view()) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    .story-card.anim-stagger--visible {
+    /* Exclude :hover — CSS animation values override normal declarations,
+       so the scroll-driven haze would suppress the rack focus key light
+       boost (filter: brightness/sepia) on hovered cards. By excluding
+       :hover, the haze clears via the animation on scroll, but the key
+       light filter takes over cleanly on hover via the cascade. */
+    .story-card.anim-stagger--visible:not(:hover) {
       animation: scrollHazeClear linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 80%;
