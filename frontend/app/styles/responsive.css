@@ -258,6 +258,11 @@
     display: none;
   }
 
+  /* Dateline row: hidden on mobile */
+  .nav-dateline-row {
+    display: none;
+  }
+
   /* Mobile dateline: compact date only */
   .nav-dateline-mobile {
     display: block;
@@ -266,8 +271,21 @@
     padding: 0 var(--space-2);
   }
 
-  /* Tighter vertical padding + explicit gap — horizontal is already --space-5
-     in the base rule (components.css), so only override what changes on mobile */
+  /* Dateline: show medium variant, hide full */
+  .nav-dateline__full {
+    display: none;
+  }
+
+  .nav-dateline__medium {
+    display: inline;
+  }
+
+  .nav-dateline {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* Tighter vertical padding + explicit gap */
   .nav-inner {
     padding-top: var(--space-2);
     padding-bottom: var(--space-2);
