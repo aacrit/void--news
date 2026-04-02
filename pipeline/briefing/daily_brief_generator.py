@@ -229,7 +229,11 @@ G7 summit — and Japan already drafted a counter-proposal."
 
 Cover stories [1], [2], and [3]. Story 1 gets the most depth. \
 Story 3 is brief. Stories [4]+ are context — mention at most one in passing. \
-Open with a quick headline rundown, close with the thread connecting them.
+Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
+"US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
+B enters IMMEDIATELY after the headline rundown with a reaction or pivot \
+before Story 1's deep dive. The listener must hear both voices in the first \
+20 seconds. Close with the thread connecting the stories.
 
 WRITING FOR THE EAR:
 - Em dashes (—) for pivots and before key numbers. These create natural breath points.
