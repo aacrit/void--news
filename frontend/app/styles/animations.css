@@ -565,6 +565,40 @@
   100% { filter: var(--cin-grade); }
 }
 
+/* ── Cold Open: Film grain entrance at 700ms ──
+   Grain fades in 700ms after page load, after the lead story has
+   racked into focus. This ensures the grain does not compete with
+   the establishing shot — it arrives as texture, not distraction. */
+@keyframes cinGrainEntrance {
+  from { opacity: 0; }
+  to { opacity: var(--cin-grain-opacity); }
+}
+
+/* ── Cold Open: Vignette entrance at 600ms ──
+   Vignette fades in slightly before the grain, framing the viewport
+   as the camera settles into its composition. */
+@keyframes cinVignetteEntrance {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Cold Open: Mobile vignette entrance (50% opacity) ──
+   On mobile, the vignette is halved to preserve readability on
+   smaller screens where the radial gradient covers more content area. */
+@keyframes cinVignetteEntranceMobile {
+  from { opacity: 0; }
+  to { opacity: 0.5; }
+}
+
+/* ── Deep Dive: Imperceptible breathing while reading ──
+   A 6s micro-scale pulse (1.0005x — 0.05% change) that simulates
+   the organic imprecision of a film projector's gate. Consciously
+   invisible but subconsciously felt as "alive." */
+@keyframes ddBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(var(--dd-breathe-scale, 1.0005)); }
+}
+
 /* ══ SCENE 7: Practical Light — OnAir Breathing Pulse ══
    When audio is playing, the OnAir indicator becomes a "practical light"
    — a visible light source in the frame. Its glow pulses at human
@@ -667,6 +701,11 @@
   .theme-toggle__icon,
   .category-tag {
     transition: none !important;
+  }
+
+  /* Deep Dive breathing: suppress imperceptible scale pulse */
+  .deep-dive-panel[data-settled] .deep-dive-panel__content {
+    animation: none;
   }
 
   /* Suppress hover transforms — keep visual hover feedback via color only */

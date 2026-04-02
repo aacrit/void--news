@@ -330,6 +330,47 @@
   --cat-health:      #27AE60;
   --cat-environment: #16A085;
   --cat-culture:     #8E44AD;
+
+  /* ── Cinematic Palette Additions (logo-designer) ── */
+  --cinematic-accent-warm-hover: #A8781C;
+  --cinematic-accent-focus: rgba(148, 107, 21, 0.22);
+  --cinematic-accent-active: #775610;
+  --cinematic-rim-edge: rgba(148, 107, 21, 0.06);
+  --cin-grade-editorial: contrast(1.04) saturate(0.88) sepia(0.06);
+  --cin-vignette-warm: rgba(42, 32, 18, 0.03);
+  --cin-grain-seed-editorial: 13;
+  --line-height-editorial: 1.65;
+
+  /* ── Dissolve Timing (cinematographer — theme toggle) ── */
+  --dissolve-shadow-dur: 400ms;
+  --dissolve-surface-dur: 500ms;
+  --dissolve-ink-dur: 380ms;
+  --dissolve-border-dur: 450ms;
+  --dissolve-filter-dur: 400ms;
+
+  /* ── Asymmetric Rack Focus (cinematographer) ── */
+  --rack-defocus-dur: 420ms;
+  --rack-refocus-dur: 600ms;
+
+  /* ── Match Cut Safety (cinematographer) ── */
+  --morph-scale-min: 0.15;
+  --morph-scale-max: 1.0;
+
+  /* ── Scroll Vignette (cinematographer) ── */
+  --vignette-scroll-min: 0.5;
+  --vignette-scroll-max: 1.0;
+
+  /* ── Shadow Lag (cinematographer — formalizes existing 30ms) ── */
+  --shadow-lag: 30ms;
+
+  /* ── Deep Dive Breathing (cinematographer) ── */
+  --dd-breathe-scale: 1.0005;
+  --dd-breathe-dur: 6s;
+
+  /* ── Per-Edition Color Grades (cinematographer) ── */
+  --cin-grade-world: contrast(1.03) saturate(0.92) sepia(0.04);
+  --cin-grade-us: contrast(1.03) saturate(0.94) sepia(0.03);
+  --cin-grade-india: contrast(1.04) saturate(0.90) sepia(0.06);
 }
 
 /* --------------------------------------------------------------------------
@@ -465,6 +506,11 @@
     -4px 8px 20px color-mix(in srgb, var(--cinematic-shadow-tint) 16%, transparent),
     -1px 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 50%, transparent);
+
+  /* ── Dark mode: cinematic additions ── */
+  --cinematic-rim-edge: rgba(212, 165, 116, 0.05);
+  --cin-grade-editorial: contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03);
+  --cin-vignette-warm: rgba(20, 14, 6, 0.06);
 }
 
 /* --------------------------------------------------------------------------
