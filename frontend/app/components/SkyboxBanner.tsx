@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
+import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 
@@ -24,11 +25,11 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [onairExpanded, setOnairExpanded] = useState(false);
-  const [announcement, setAnnouncement] = useState(""); // F02: aria-live
+  const [announcement, setAnnouncement] = useState("");
   const radioRef = useRef<HTMLDivElement>(null);
   const [radioHeight, setRadioHeight] = useState(0);
 
-  // F03: Focus management refs
+  // Focus management refs
   const collapseRef = useRef<HTMLButtonElement>(null);
   const expandTldrRef = useRef<HTMLButtonElement>(null);
   const expandOpinionRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +45,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     return () => ro.disconnect();
   }, [onairExpanded]);
 
-  // Toggle .page-main--audio-playing for motivated lighting
   useEffect(() => {
     const main = document.querySelector('.page-main');
     if (!main) return;
@@ -56,14 +56,11 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     return () => main.classList.remove('page-main--audio-playing');
   }, [isPlaying]);
 
-  // F03: Focus management on expand/collapse transitions
   useEffect(() => {
     const prev = prevSectionRef.current;
     if (expandedSection && !prev) {
-      // Expanded from compact — focus the collapse button
       requestAnimationFrame(() => collapseRef.current?.focus());
     } else if (!expandedSection && prev) {
-      // Collapsed — return focus to the appropriate expand chevron
       requestAnimationFrame(() => {
         if (prev === "tldr") expandTldrRef.current?.focus();
         else expandOpinionRef.current?.focus();
@@ -72,7 +69,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     prevSectionRef.current = expandedSection;
   }, [expandedSection]);
 
-  // F18: Clamp waveform bar heights to container max
   const waveformBars = useMemo(() =>
     Array.from({ length: 32 }, (_, i) => Math.min(32, 10 + Math.sin(i * 0.55) * 16 + Math.sin(i * 1.3) * 6)),
   []);
@@ -80,13 +76,16 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   if (!brief) return (
     <div className="skb skb--compact anim-cold-open-skybox" role="complementary" aria-label="Daily Brief">
       <div className="skb__compact">
-        <div className="skb__compact-cols">
-          <div className="skb__compact-col">
-            <div className="skb__compact-label">
-              <ScaleIcon size={12} animation="analyzing" />
-              <span className="skb__compact-cmd">void --tl;dr</span>
+        <div className="skb__compact-header">
+          <div className="skb__compact-cols">
+            <div className="skb__compact-col">
+              <div className="skb__compact-label">
+                <LogoIcon size={16} animation="analyzing" />
+                <span className="skb__compact-human">News Brief</span>
+                <span className="skb__compact-cmd">void --tl;dr</span>
+              </div>
+              <span className="skb__compact-loading">Loading today&rsquo;s brief&hellip;</span>
             </div>
-            <span className="skb__compact-loading">Loading today&rsquo;s brief&hellip;</span>
           </div>
         </div>
       </div>
@@ -118,9 +117,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     hapticLight();
     setExpandedSection(prev => {
       const next = prev === section ? null : section;
-      // F02: Announce state change
       if (next) {
-        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "TL;DR" : "editorial opinion"}.`);
+        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : "editorial opinion"}.`);
       } else {
         setAnnouncement("Daily brief collapsed.");
       }
@@ -134,13 +132,12 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setAnnouncement("Daily brief collapsed.");
   }, []);
 
-  // F06: Decouple expand from play — only toggle the radio panel
   const toggleOnair = useCallback(() => {
     hapticConfirm();
     setOnairExpanded(v => !v);
   }, []);
 
-  // ── Radio Player (shared between compact and expanded) ──
+  // ── Radio Player ──
   const radioPlayer = (
     <div className="skb__radio" inert={!onairExpanded ? true : undefined} style={{
       height: onairExpanded ? radioHeight : 0,
@@ -201,7 +198,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     </div>
   );
 
-  // ── OnAir pill (reused in compact strip and expanded topbar) ──
+  // ── OnAir pill ──
   const onairPill = (
     <button
       className={`skb__onair-pill${isPlaying ? " skb__onair-pill--active" : ""}${onairExpanded ? " skb__onair-pill--open" : ""}`}
@@ -212,7 +209,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     >
       {isPlaying && <span className="skb__rec-dot" aria-hidden="true" />}
       <ScaleIcon size={12} animation={isPlaying ? "analyzing" : "none"} />
-      <span className="skb__onair-label">void --onair</span>
+      <span className="skb__onair-cmd">void --onair</span>
       {audioError ? (
         <span className="skb__onair-dur skb__onair-dur--error">Unavailable</span>
       ) : hasAudio ? (
@@ -238,66 +235,66 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   return (
     <>
-      {/* F08: Remove id to avoid duplicate with MobileBriefPill */}
       {hasAudio && <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
-
-      {/* F02: aria-live region for state announcements */}
       <div aria-live="polite" className="sr-only">{announcement}</div>
 
       <div className={rootClass} role="complementary" aria-label="Daily Brief">
 
-        {/* ── COMPACT MODE: 2-row preview bar ── */}
+        {/* ── COMPACT MODE ── */}
         {isCompact && (
           <div className="skb__compact">
-            {/* Row 1: TL;DR + Opinion side by side */}
-            {/* F13: single-column modifier when no opinion */}
-            <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
-              {/* TL;DR column */}
-              <div className="skb__compact-col skb__compact-col--tldr">
-                <div className="skb__compact-label">
-                  <ScaleIcon size={12} animation="none" />
-                  <span className="skb__compact-cmd">void --tl;dr</span>
-                  {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
-                </div>
-                {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{brief.tldr_headline}</h3>}
-                <p className="skb__compact-preview skb__compact-preview--tldr">{brief.tldr_text}</p>
-                <button
-                  ref={expandTldrRef}
-                  className="skb__compact-expand"
-                  onClick={() => toggleSection("tldr")}
-                  type="button"
-                  aria-label="Expand daily brief"
-                >
-                  <span aria-hidden="true">&#9662;</span>
-                </button>
-              </div>
-
-              {/* Opinion column */}
-              {brief.opinion_text && (
-                <div className="skb__compact-col skb__compact-col--opinion">
+            {/* Header row: columns + OnAir pill (top-right) */}
+            <div className="skb__compact-header">
+              <div className={`skb__compact-cols${!brief.opinion_text ? " skb__compact-cols--single" : ""}`}>
+                {/* TL;DR column */}
+                <div className="skb__compact-col skb__compact-col--tldr">
                   <div className="skb__compact-label">
-                    <ScaleIcon size={12} animation="none" />
-                    <span className="skb__compact-cmd">void --opinion</span>
-                    {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
+                    <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
+                    <span className="skb__compact-human">News Brief</span>
+                    <span className="skb__compact-cmd">void --tl;dr</span>
+                    {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
-                  {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{brief.opinion_headline}</h3>}
-                  <p className="skb__compact-preview skb__compact-preview--opinion">{brief.opinion_text}</p>
+                  {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{brief.tldr_headline}</h3>}
+                  <p className="skb__compact-preview skb__compact-preview--tldr">{brief.tldr_text}</p>
                   <button
-                    ref={expandOpinionRef}
+                    ref={expandTldrRef}
                     className="skb__compact-expand"
-                    onClick={() => toggleSection("opinion")}
+                    onClick={() => toggleSection("tldr")}
                     type="button"
-                    aria-label="Expand editorial opinion"
+                    aria-label="Expand news brief"
                   >
                     <span aria-hidden="true">&#9662;</span>
                   </button>
                 </div>
-              )}
-            </div>
 
-            {/* Row 2: On Air strip */}
-            <div className="skb__compact-onair">
-              {onairPill}
+                {/* Opinion column */}
+                {brief.opinion_text && (
+                  <div className="skb__compact-col skb__compact-col--opinion">
+                    <div className="skb__compact-label">
+                      <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
+                      <span className="skb__compact-human">Editorial</span>
+                      <span className="skb__compact-cmd">void --opinion</span>
+                      {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
+                    </div>
+                    {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{brief.opinion_headline}</h3>}
+                    <p className="skb__compact-preview skb__compact-preview--opinion">{brief.opinion_text}</p>
+                    <button
+                      ref={expandOpinionRef}
+                      className="skb__compact-expand"
+                      onClick={() => toggleSection("opinion")}
+                      type="button"
+                      aria-label="Expand editorial opinion"
+                    >
+                      <span aria-hidden="true">&#9662;</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* OnAir pill — top right */}
+              <div className="skb__compact-onair">
+                {onairPill}
+              </div>
             </div>
 
             {/* OnAir expanded radio (pushes content below) */}
@@ -305,7 +302,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
           </div>
         )}
 
-        {/* ── EXPANDED MODE: topbar + content ── */}
+        {/* ── EXPANDED MODE ── */}
         {!isCompact && (
           <>
             {/* Top bar: OnAir pill (left) + other section chip (right) + collapse */}
@@ -315,15 +312,15 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               </div>
 
               <div className="skb__topbar-right">
-                {/* Chip for the OTHER section */}
                 {expandedSection === "tldr" && brief.opinion_text && (
                   <button
                     className="skb__topbar-chip"
                     onClick={() => toggleSection("opinion")}
                     type="button"
-                    aria-label="Switch to editorial opinion"
+                    aria-label="Switch to editorial"
                   >
-                    <ScaleIcon size={10} animation="none" />
+                    <LogoIcon size={12} animation="none" className="skb__topbar-chip-logo" />
+                    <span className="skb__topbar-chip-human">Editorial</span>
                     <span className="skb__topbar-chip-cmd">void --opinion</span>
                     {brief.opinion_lean && <span className={`skb__lean-badge skb__lean-badge--sm ${leanMod}`}>{leanLabel}</span>}
                     <span className="skb__topbar-chip-caret" aria-hidden="true">&#9662;</span>
@@ -334,15 +331,15 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     className="skb__topbar-chip"
                     onClick={() => toggleSection("tldr")}
                     type="button"
-                    aria-label="Switch to daily brief"
+                    aria-label="Switch to news brief"
                   >
-                    <ScaleIcon size={10} animation="none" />
+                    <LogoIcon size={12} animation="none" className="skb__topbar-chip-logo" />
+                    <span className="skb__topbar-chip-human">News Brief</span>
                     <span className="skb__topbar-chip-cmd">void --tl;dr</span>
                     <span className="skb__topbar-chip-caret" aria-hidden="true">&#9662;</span>
                   </button>
                 )}
 
-                {/* Collapse all — F03: receives focus on expand */}
                 <button
                   ref={collapseRef}
                   className="skb__topbar-collapse"
@@ -355,7 +352,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               </div>
             </div>
 
-            {/* OnAir expanded radio (pushes content below) */}
+            {/* OnAir expanded radio */}
             {radioPlayer}
 
             {/* Expanded section content */}
@@ -363,8 +360,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               {expandedSection === "tldr" && (
                 <div className="skb__section skb__section--tldr">
                   <div className="skb__section-label">
-                    <ScaleIcon size={12} animation="none" />
-                    <span className="skb__section-label-human">Daily Brief</span>
+                    <LogoIcon size={18} animation="idle" />
+                    <span className="skb__section-label-human">News Brief</span>
                     <span className="skb__section-label-cmd">void --tl;dr</span>
                     {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   </div>
@@ -378,7 +375,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               {expandedSection === "opinion" && (
                 <div className="skb__section skb__section--opinion">
                   <div className="skb__section-label">
-                    <ScaleIcon size={12} animation="none" />
+                    <LogoIcon size={18} animation="idle" />
                     <span className="skb__section-label-human">Editorial</span>
                     <span className="skb__section-label-cmd">void --opinion</span>
                     {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
