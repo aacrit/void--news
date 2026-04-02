@@ -189,9 +189,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const BATCH_SIZE = 8;
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
 
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);

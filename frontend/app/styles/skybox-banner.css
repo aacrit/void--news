@@ -60,20 +60,15 @@
   }
 }
 
-/* Column is a <button> for full-area clickability — reset button defaults */
+/* Column is a div[role=button] — full-area clickability without
+   <button> nesting restrictions (h3/p inside button breaks hydration) */
 .skb__compact-col {
   position: relative;
   padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  /* Button reset */
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
   cursor: pointer;
-  width: 100%;
   transition: background-color 120ms var(--ease-out);
 }
 
