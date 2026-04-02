@@ -861,21 +861,25 @@
    Layer 6 (Light):     Unchanged (practical light is CSS box-shadow, cheap) */
 
 @media (max-width: 767px) {
-  /* Color grade: disabled — CSS filter on root causes full-page repaint */
-  .page-main,
+  /* Color grade: restored on .page-main (single stacking context, negligible cost).
+     Disabled on .nav-header only (small element, grade imperceptible there).
+     The grade values are micro-adjustments (contrast/saturate/sepia) — one composited
+     filter on the scrollable content area, comparable to filtering a single <img>. */
   .nav-header {
     filter: none;
   }
-  /* Film grain: static texture preserved, animation disabled — saves GPU compositing */
+  /* Film grain: half-rate drift restored (16s period, steps(2) = 0.125 Hz compositing).
+     Near-zero GPU cost — single sub-pixel translate on a fixed pseudo-element. */
   .page-container::after {
-    animation: none;
-    opacity: var(--cin-grain-opacity);
+    animation:
+      cinGrainEntrance 500ms var(--ease-cinematic) 700ms both,
+      cin-grain-drift 16s steps(2, end) 1200ms infinite;
   }
-  /* Vignette: 50% reduced — subtle framing preserved without GPU cost */
+  /* Vignette: 50% reduced — subtle framing preserved */
   .page-container::before {
     opacity: 0.5;
   }
-  /* Atmospheric haze: disabled — per-card filters are expensive on mobile */
+  /* Atmospheric haze: opacity-only on mobile (no filter chain) */
   .story-card:not(.anim-stagger--visible) {
     filter: none;
   }

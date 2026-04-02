@@ -21,17 +21,59 @@
   animation: fpSlideIn 500ms var(--ease-unfold, ease) both;
 }
 
+/* Pill entrance: spring overshoot + practical light bloom */
+@keyframes fpPillEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes fpSlideIn {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Expanded bar — grows from pill position ── */
+/* ── Expanded bar — wipe-up from bottom with L-cut content cascade ── */
 .fp--expanded {
   bottom: 0;
   left: 0;
   right: 0;
-  animation: fpExpandIn 400ms var(--ease-unfold, ease) both;
+  animation: fpBarWipeIn 380ms var(--ease-unfold, ease) both;
+}
+
+/* Content cascade inside expanded bar — L-cut timing */
+.fp--expanded .fp__bar-header {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 80ms both;
+}
+
+.fp--expanded .fp__waveform {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 120ms both;
+}
+
+.fp--expanded .fp__transport {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 160ms both;
+}
+
+.fp--expanded .fp__seek {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 220ms both;
+}
+
+@keyframes fpBarWipeIn {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fpExpandIn {
@@ -475,10 +517,12 @@
 
 /* Mobile (< 768px): full-width pill, above bottom nav */
 @media (max-width: 767px) {
+  /* Cinematic pill entrance on mobile (spring overshoot + light bloom) */
   .fp--compact {
     bottom: calc(var(--nav-bottom-height, 52px) + var(--space-2));
     left: var(--space-3);
     right: var(--space-3);
+    animation: fpPillEntrance 500ms var(--ease-cinematic, ease) both;
   }
 
   .fp--compact .fp__pill {
@@ -503,6 +547,53 @@
 
   .fp__skip { min-width: 44px; min-height: 44px; }
   .fp__seek-sec { min-height: 32px; }
+
+  /* Practical light breathing pulse — 4s respiratory rhythm (Bradford Young) */
+  .fp--playing .fp__pill {
+    animation: fpPracticalPulse 4s ease-in-out infinite;
+  }
+
+  /* Console grain texture — finer noise on dark broadcast surface */
+  .fp__bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.12'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+    opacity: 0.04;
+  }
+
+  .fp__bar {
+    position: relative;
+  }
+
+  /* Bar content above grain */
+  .fp__bar-header,
+  .fp__drag-indicator,
+  .fp__waveform,
+  .fp__transport,
+  .fp__seek {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Practical light breathing pulse keyframe */
+@keyframes fpPracticalPulse {
+  0%, 100% {
+    box-shadow:
+      0 4px 20px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent),
+      0 0 8px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 4px 24px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 18%, transparent),
+      0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  }
 }
 
 /* Ultra-narrow (375px) */
@@ -556,12 +647,17 @@
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .fp--compact { animation: none; }
-  .fp--expanded { animation: none; }
+  .fp--compact { animation: none; opacity: 1; transform: none; }
+  .fp--expanded { animation: none; opacity: 1; transform: none; }
+  .fp--expanded .fp__bar-header,
+  .fp--expanded .fp__waveform,
+  .fp--expanded .fp__transport,
+  .fp--expanded .fp__seek { animation: none; opacity: 1; transform: none; }
   .fp__play--active { animation: none; }
   .fp__play-lg--active { animation: none; }
   .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .fp__rec-dot { animation: none; opacity: 1; }
+  .fp--playing .fp__pill { animation: none; }
 }
 
 /* ---------------------------------------------------------------------------

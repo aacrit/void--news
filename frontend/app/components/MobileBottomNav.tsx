@@ -141,7 +141,7 @@ export default function MobileBottomNav({
   const topicLabel = activeCategory === "All" ? "All Topics" : activeCategory;
 
   return (
-    <nav className="mob-nav" aria-label="Mobile navigation" ref={navRef}>
+    <nav className="mob-nav anim-cold-open-nav" aria-label="Mobile navigation" ref={navRef}>
       {/* Backdrop — fades in when any panel is open */}
       <div
         className="mob-nav__backdrop"
