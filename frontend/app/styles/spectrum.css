@@ -1081,7 +1081,6 @@
   font-weight: 400;
   line-height: 1.6;
   color: var(--fg-secondary);
-  max-width: 65ch;
   text-align: justify;
   text-align-last: left;
   hyphens: auto;

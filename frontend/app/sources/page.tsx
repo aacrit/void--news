@@ -78,7 +78,6 @@ const AXES_DATA: {
   high: string;
   what: string;
   signals: string[];
-  file: string;
 }[] = [
   {
     id: "lean",
@@ -89,11 +88,10 @@ const AXES_DATA: {
     what: "Where an article lands on the left\u2013right spectrum, independent of its outlet\u2019s reputation.",
     signals: [
       "Keyword lexicons scored against curated left/right phrase lists",
-      "Named-entity sentiment via spaCy NER + TextBlob polarity",
+      "Named-entity sentiment via NER + polarity analysis",
       "Framing phrases that signal ideological perspective",
       "Length-adaptive + sparsity-weighted source baseline blending",
     ],
-    file: "pipeline/analyzers/political_lean.py",
   },
   {
     id: "sensationalism",
@@ -105,10 +103,9 @@ const AXES_DATA: {
     signals: [
       "Clickbait headline patterns (questions, listicles, superlatives)",
       "Superlative density via word-boundary regex",
-      "TextBlob emotional extremity score",
+      "Emotional extremity score",
       "Partisan attack density (capped at 30 points)",
     ],
-    file: "pipeline/analyzers/sensationalism.py",
   },
   {
     id: "opinion",
@@ -119,11 +116,10 @@ const AXES_DATA: {
     what: "Whether the article reports facts or argues a position. 50 marks the analysis midpoint.",
     signals: [
       "First- and second-person pronoun frequency",
-      "TextBlob subjectivity score",
+      "Subjectivity score",
       "Attribution density (24 investigative verb patterns)",
       "Value judgments and rhetorical questions",
     ],
-    file: "pipeline/analyzers/opinion_detector.py",
   },
   {
     id: "rigor",
@@ -133,12 +129,11 @@ const AXES_DATA: {
     high: "Well-sourced",
     what: "How thoroughly an article cites named sources, data, and direct quotes.",
     signals: [
-      "Named sources detected via spaCy NER + attribution verbs",
+      "Named sources detected via NER + attribution verbs",
       "Organizational citations (agencies, institutions)",
       "Data patterns (percentages, dollar figures, dates)",
       "Direct quotes count; vague-source penalty (\u201cofficials say\u201d)",
     ],
-    file: "pipeline/analyzers/factual_rigor.py",
   },
   {
     id: "framing",
@@ -153,7 +148,6 @@ const AXES_DATA: {
       "Headline\u2013body divergence score",
       "Passive voice frequency (capped at 30 points)",
     ],
-    file: "pipeline/analyzers/framing.py",
   },
   {
     id: "tracking",
@@ -165,10 +159,8 @@ const AXES_DATA: {
     signals: [
       "Adaptive alpha: 0.3 for new outlets, 0.15 for established",
       "Topic-specific tracking (an outlet\u2019s economy coverage vs. its foreign policy coverage)",
-      "Stored in source_topic_lean table",
       "Smooths single-article noise into a reliable baseline",
     ],
-    file: "pipeline/analyzers/topic_outlet_tracker.py",
   },
 ];
 
@@ -368,9 +360,6 @@ function EqualizerRow({
               <li key={i} className="meth-axis__signal">{s}</li>
             ))}
           </ul>
-          <p className="meth-axis__file">
-            <code>{axis.file}</code>
-          </p>
         </div>
       </div>
     </div>
@@ -833,7 +822,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           If any axis drifts outside its expected range, the pipeline build fails.
         </p>
         <p className="meth__body meth__body--code">
-          Run it yourself: <code className="meth__inline-code">python pipeline/validation/runner.py</code>
+          The validation suite runs on every commit as a CI gate.
         </p>
       </MethSection>
 
@@ -885,29 +874,16 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         </div>
       </MethSection>
 
-      {/* ---- Section 5: Open Source ---- */}
+      {/* ---- Section 5: Transparency ---- */}
       <MethSection index={4} className="meth__section--last">
-        <h3 className="meth__section-title">Open Source</h3>
+        <h3 className="meth__section-title">Transparency</h3>
         <p className="meth__body">
-          Every analyzer is a standalone Python module in <code className="meth__inline-code">pipeline/analyzers/</code>.
-          The validation framework, ground-truth fixtures, and signal decomposition tools are
-          all public. No black-box models. No proprietary scoring. Read the code, run the
-          tests, file an issue.
+          No LLMs. No black-box models. No proprietary data sources. Every score is produced by
+          deterministic rule-based NLP&mdash;the same text always produces the same result. Every score
+          includes a structured rationale explaining the signals that produced it. Every source carries
+          hand-written credibility notes and a documented lean baseline. If a score looks wrong, the
+          rationale tells you exactly why it scored that way.
         </p>
-        <div className="meth__open-links">
-          <a href="https://github.com/aacrit/void--news/tree/main/pipeline/analyzers" target="_blank" rel="noopener noreferrer" className="meth__open-link-item meth__open-link-item--accent">
-            <code className="meth__inline-code">pipeline/analyzers/</code>
-            <span className="meth__open-link-desc">All 6 scoring modules</span>
-          </a>
-          <a href="https://github.com/aacrit/void--news/tree/main/pipeline/validation" target="_blank" rel="noopener noreferrer" className="meth__open-link-item meth__open-link-item--accent">
-            <code className="meth__inline-code">pipeline/validation/</code>
-            <span className="meth__open-link-desc">Test suite + fixtures</span>
-          </a>
-          <a href="https://github.com/aacrit/void--news/blob/main/data/sources.json" target="_blank" rel="noopener noreferrer" className="meth__open-link-item meth__open-link-item--accent">
-            <code className="meth__inline-code">data/sources.json</code>
-            <span className="meth__open-link-desc">All 419 source definitions</span>
-          </a>
-        </div>
       </MethSection>
     </section>
   );
