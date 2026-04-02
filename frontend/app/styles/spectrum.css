@@ -956,3 +956,557 @@
 .nav-tab--link:hover {
   color: var(--fg-primary);
 }
+
+/* ==========================================================================
+   Methodology — /sources#methodology trust anchor
+   Six sections: Per-Article, Six Axes, Worked Example, Validation,
+   Curated Sources, Open Source.
+   ========================================================================== */
+
+.meth {
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  scroll-margin-top: var(--space-6);
+}
+
+.meth__rule {
+  border: none;
+  border-top: 2px solid var(--fg-primary);
+  margin-bottom: var(--space-6);
+}
+
+.meth__header {
+  margin-bottom: var(--space-6);
+}
+
+.meth__title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.meth__subtitle {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  margin: 0;
+}
+
+/* ---- Sections ---- */
+
+.meth__section {
+  padding-bottom: var(--space-5);
+  margin-bottom: var(--space-5);
+  border-bottom: var(--rule-thin);
+}
+
+.meth__section--last {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.meth__section-title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.meth__body {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  max-width: 65ch;
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.meth__body:last-child {
+  margin-bottom: 0;
+}
+
+.meth__body--code {
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+}
+
+.meth__inline-code {
+  font-family: var(--font-data);
+  font-size: 0.9em;
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+  word-break: break-all;
+}
+
+/* ---- Six Axes Accordions ---- */
+
+.meth__axes {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: var(--space-3);
+}
+
+.meth-axis {
+  border-top: var(--rule-thin);
+}
+
+.meth-axis:last-child {
+  border-bottom: var(--rule-thin);
+}
+
+.meth-axis__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  min-height: 44px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.meth-axis__trigger:hover {
+  color: var(--fg-primary);
+}
+
+.meth-axis__trigger:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.meth-axis__name {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.meth-axis__range {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.meth-axis__scale {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  flex: 1;
+  min-width: 0;
+}
+
+.meth-axis__scale-low,
+.meth-axis__scale-high {
+  white-space: nowrap;
+}
+
+.meth-axis__scale-arrow {
+  color: var(--fg-muted);
+  opacity: 0.5;
+}
+
+.meth-axis__chevron {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.meth-axis__trigger:hover .meth-axis__chevron {
+  color: var(--fg-secondary);
+}
+
+.meth-axis__panel {
+  padding: 0 0 var(--space-4) 0;
+  animation: methAxisReveal var(--dur-normal) var(--ease-cinematic) both;
+}
+
+@keyframes methAxisReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.meth-axis__what {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
+  max-width: 65ch;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.meth-axis__signals {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.meth-axis__signal {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-tertiary);
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.meth-axis__signal::before {
+  content: "\2022";
+  position: absolute;
+  left: var(--space-1);
+  color: var(--fg-muted);
+}
+
+.meth-axis__file {
+  margin: 0;
+}
+
+.meth-axis__file code {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+}
+
+/* ---- Worked Example ---- */
+
+.meth__example {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-4) var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.meth__example-header {
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  border-bottom: var(--rule-thin);
+}
+
+.meth__example-source {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.meth__example-headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.meth__example-scores {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.meth__score-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-1);
+}
+
+.meth__score-left {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.meth__score-axis {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+}
+
+.meth__score-value {
+  font-family: var(--font-data);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.meth__score-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.meth__score-detail {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-tertiary);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ---- Validation Stats ---- */
+
+.meth__validation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+}
+
+.meth__validation-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.meth__validation-number {
+  font-family: var(--font-data);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.meth__validation-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+}
+
+/* ---- Curated Sources ---- */
+
+.meth__source-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+}
+
+.meth__source-stat {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+}
+
+.meth__source-tier {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.meth__source-count {
+  font-family: var(--font-data);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.meth__source-desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+  line-height: 1.5;
+}
+
+.meth__source-meta {
+  margin-top: var(--space-3);
+}
+
+/* ---- Open Source ---- */
+
+.meth__open-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.meth__open-link-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.meth__open-link-desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+/* ==========================================================================
+   Methodology — Desktop (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .meth__validation-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .meth__score-row {
+    grid-template-columns: minmax(200px, 280px) 1fr;
+    gap: var(--space-2) var(--space-4);
+    align-items: baseline;
+  }
+
+  .meth__open-links {
+    flex-direction: row;
+    gap: var(--space-5);
+  }
+
+  .meth__source-stat {
+    grid-template-columns: 120px 48px 1fr;
+  }
+}
+
+/* ==========================================================================
+   Methodology — Large Desktop (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .meth-axis__trigger {
+    gap: var(--space-4);
+  }
+
+  .meth__example {
+    padding: var(--space-5) var(--space-6);
+  }
+}
+
+/* ==========================================================================
+   Methodology — Mobile (< 768px)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .meth {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+  }
+
+  .meth__title {
+    font-size: var(--text-lg);
+  }
+
+  .meth__section-title {
+    font-size: var(--text-base);
+  }
+
+  .meth-axis__trigger {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .meth-axis__scale {
+    flex-basis: 100%;
+    order: 3;
+    padding-left: 0;
+    margin-top: calc(-1 * var(--space-1));
+  }
+
+  .meth-axis__chevron {
+    margin-left: auto;
+    order: 2;
+  }
+
+  .meth-axis__range {
+    order: 1;
+  }
+
+  .meth-axis__name {
+    order: 0;
+    flex: 1;
+  }
+
+  .meth__example {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .meth__example-headline {
+    font-size: var(--text-base);
+  }
+
+  .meth__score-left {
+    gap: var(--space-1) var(--space-2);
+  }
+
+  .meth__source-stat {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+
+  .meth__source-count {
+    font-size: var(--text-base);
+  }
+
+  .meth__validation-number {
+    font-size: var(--text-lg);
+  }
+}
+
+/* ==========================================================================
+   Methodology — Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .meth-axis__panel {
+    animation: none;
+  }
+}
