@@ -230,8 +230,8 @@ def _synthesize_gemini_tts(
     for i, chunk in enumerate(chunks):
         if i > 0:
             time.sleep(5)  # Rate-limit buffer between TTS chunks
-        # Only prepend preamble to first chunk — consistent style across chunks
-        preamble = tts_preamble if i == 0 else ""
+        # Send preamble with every chunk to maintain voice direction consistency
+        preamble = tts_preamble
         pcm = None
         for attempt in range(3):
             if attempt > 0:
@@ -683,11 +683,12 @@ def produce_audio(
     tts_preamble = ""
     if host_a_preamble or host_b_preamble:
         tts_preamble = (
-            f"Scene: Two senior journalists in a newsroom studio, briefing each other. "
-            f"Pacing is deliberate — not rushed. Honor pause markers: "
-            f"[short pause] = half-second breath. [long pause] = 1.5 second silence. "
-            f"Em dashes = brief pivot pause. Ellipses = trailing thought. "
-            f"Speaker One: {host_a_preamble} "
+            f"Scene: Two senior journalists in a newsroom studio, briefing each "
+            f"other across a desk. Natural, unhurried. They know each other well.\n\n"
+            f"Pacing: Honor pause markers. [short pause] = half-second breath. "
+            f"[long pause] = 1.5 second silence. Em dashes = brief pivot pause. "
+            f"Ellipses = trailing thought.\n\n"
+            f"Speaker One: {host_a_preamble}\n\n"
             f"Speaker Two: {host_b_preamble}"
         )
 
@@ -762,37 +763,24 @@ def produce_audio(
     else:
         print("  [audio] No opinion_audio_script — broadcast ends after news")
 
-    # --- Step 3: Place section breaks + headline sting via proportional positioning ---
-    news_seg = _place_proportional_elements(news_seg, dialogue)
+    # --- Step 3: Section breaks + headline sting REMOVED ---
+    # _place_proportional_elements overlaid headline_sting.wav and section_break.wav
+    # at proportional positions. CEO found these distracting — background bed and
+    # structural transitions (ident, news_to_opinion, outro) are retained.
 
-    # --- Step 3b: Overlay headline underscore on news audio ---
-    if generate_headline_underscore is not None:
-        total_news_ms = len(news_seg)
-        headlines_end_ms = int(total_news_ms * 0.08)
-        headlines_end_ms = max(10000, min(25000, headlines_end_ms))
-        underscore = generate_headline_underscore(headlines_end_ms)
-        news_seg = news_seg.overlay(underscore, position=0)
-        print(f"  [audio] Headline underscore overlaid ({headlines_end_ms}ms)")
-    else:
-        print("  [audio] generate_headline_underscore not available — skipping")
+    # --- Step 3b: Headline underscore REMOVED ---
+    # The rhythmic D3 pulse bed under opening headlines was distracting.
+    # Background bed provides sufficient sonic texture.
 
     # --- Step 4: Assemble final audio ---
     combined = AudioSegment.empty()
 
     ident = _load_asset("ident.wav")
     if ident:
-        # Overlap last 200ms of ident with first speech for smooth handoff
-        # (inspired by The Daily's theme-to-voice overlap)
-        ident_body = ident[:-200]
-        ident_tail = ident[-200:]
-        combined += ident_body
-        # Create a crossfade zone: ident tail + silence, overlaid with news start
-        crossfade = ident_tail + AudioSegment.silent(duration=50)
-        news_start = news_seg[:250]
-        news_rest = news_seg[250:]
-        blended = crossfade.overlay(news_start)
-        combined += blended
-        combined += news_rest
+        # Crossfade ident into speech — ident fades out as speech fades in
+        # over 200ms for a smooth handoff (inspired by The Daily's overlap)
+        news_with_fadein = news_seg.fade_in(150)
+        combined = ident.append(news_with_fadein, crossfade=200)
     else:
         combined += AudioSegment.silent(duration=250)
         combined += news_seg
@@ -829,21 +817,57 @@ def produce_audio(
     if outro:
         combined += outro
 
-    # --- Step 5: Overlay background bed across entire broadcast ---
+    # --- Step 5: Overlay background bed with RMS-based dynamic ducking ---
     bed_seg = _load_asset("background_bed.wav")
     if bed_seg and len(combined) > 0:
-        # Tile the 10s bed segment to cover full broadcast length + margin
         total_len = len(combined)
-        tiled_bed = AudioSegment.empty()
-        while len(tiled_bed) < total_len:
-            tiled_bed += bed_seg
+        # Tile the bed with crossfade at seams to avoid volume dips
+        tiled_bed = bed_seg
+        while len(tiled_bed) < total_len + 500:
+            tiled_bed = tiled_bed.append(bed_seg, crossfade=500)
         tiled_bed = tiled_bed[:total_len]
-        # Fade bed in after ident, fade out before outro ends
-        bed_fade_in = 1500   # 1.5s gentle entrance
-        bed_fade_out = 2000  # 2s fade for smooth exit
-        tiled_bed = tiled_bed.fade_in(bed_fade_in).fade_out(bed_fade_out)
-        combined = combined.overlay(tiled_bed)
-        print(f"  [audio] Background bed overlaid ({total_len}ms)")
+
+        # RMS-based ducking: lower bed during speech, breathe up in pauses
+        grain_ms = 200
+        speech_threshold_rms = 200  # Typical Gemini TTS speech RMS
+        duck_db = -6.0  # Additional attenuation during speech
+
+        # Build gain envelope
+        gains = []
+        pos = 0
+        while pos < total_len:
+            end = min(pos + grain_ms, total_len)
+            speech_rms = combined[pos:end].rms
+            gains.append(duck_db if speech_rms > speech_threshold_rms else 0.0)
+            pos += grain_ms
+
+        # Smooth gain curve (3-point moving average to avoid pumping)
+        smoothed = []
+        for i in range(len(gains)):
+            window = gains[max(0, i - 1):min(len(gains), i + 2)]
+            smoothed.append(sum(window) / len(window))
+
+        # Apply smoothed gains per grain
+        chunks = []
+        for i, g in enumerate(smoothed):
+            start = i * grain_ms
+            end = min(start + grain_ms, total_len)
+            chunk = tiled_bed[start:end]
+            if g < -0.5:
+                chunk = chunk.apply_gain(g)
+            chunks.append(chunk)
+
+        ducked_bed = chunks[0]
+        for c in chunks[1:]:
+            ducked_bed = ducked_bed + c
+
+        # Edge fades
+        bed_fade_in = 1500
+        bed_fade_out = 2000
+        ducked_bed = ducked_bed.fade_in(bed_fade_in).fade_out(bed_fade_out)
+        combined = combined.overlay(ducked_bed)
+        duck_pct = sum(1 for g in smoothed if g < -0.5) / max(len(smoothed), 1) * 100
+        print(f"  [audio] Dynamic bed overlaid ({total_len}ms, ducked {duck_pct:.0f}% of grains)")
 
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")
