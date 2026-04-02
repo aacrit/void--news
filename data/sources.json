@@ -2063,17 +2063,6 @@
     "credibility_notes": "English-language business newspaper by HT Media, launched 2007 in association with Wall Street Journal. Strong on economic policy, markets, and corporate news. Centrist editorial line."
   },
   {
-    "id": "financial-express-india",
-    "name": "Financial Express",
-    "url": "https://www.financialexpress.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:financialexpress.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
-    "tier": "international",
-    "country": "IN",
-    "type": "broadsheet",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Indian Express Group's financial daily, founded 1961. Covers economy, markets, industry, and government policy. Pro-reform editorial stance. RSS via Google News (native feeds block scraping)."
-  },
-  {
     "id": "telegraph-india",
     "name": "The Telegraph India",
     "url": "https://www.telegraphindia.com",
@@ -2083,17 +2072,6 @@
     "type": "broadsheet",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Kolkata-based English broadsheet, founded 1982 by ABP Group. Strong on eastern India and national politics. Known for editorial independence and critical coverage of government. RSS via Google News."
-  },
-  {
-    "id": "the-statesman",
-    "name": "The Statesman",
-    "url": "https://www.thestatesman.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:thestatesman.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
-    "tier": "international",
-    "country": "IN",
-    "type": "broadsheet",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Historic Kolkata/Delhi broadsheet, founded 1875. Once India's newspaper of record. Conservative-liberal editorial tradition. Independent ownership. RSS via Google News."
   },
   {
     "id": "tribune-india",
@@ -2149,17 +2127,6 @@
     "type": "digital",
     "political_lean_baseline": "center-left",
     "credibility_notes": "South India-focused digital outlet, founded 2014. Covers Karnataka, Tamil Nadu, Kerala, Telangana, and Andhra Pradesh. Strong on regional politics, gender issues, and accountability reporting."
-  },
-  {
-    "id": "deccan-chronicle",
-    "name": "Deccan Chronicle",
-    "url": "https://www.deccanchronicle.com",
-    "rss_url": "https://www.deccanchronicle.com/rss_feed/",
-    "tier": "international",
-    "country": "IN",
-    "type": "broadsheet",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Hyderabad-based English daily, founded 1938. Covers Telangana and Andhra Pradesh. Deccan Chronicle Holdings. Centrist editorial line. Native RSS feed available."
   },
   {
     "id": "zee-news",
@@ -2294,28 +2261,6 @@
     "credibility_notes": "Kashmir's largest English daily, founded 1989. Covers Jammu & Kashmir and Ladakh. Essential regional voice on India's most sensitive conflict zone. Native RSS feed. Center-left on civil liberties and autonomy issues."
   },
   {
-    "id": "cnbctv18",
-    "name": "CNBC-TV18",
-    "url": "https://www.cnbctv18.com",
-    "rss_url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/latest.xml",
-    "tier": "independent",
-    "country": "IN",
-    "type": "broadcast",
-    "political_lean_baseline": "center",
-    "credibility_notes": "India's leading business news channel, Network18/Reliance-owned. CNBC franchise. Covers markets, economy, corporate India. Centrist on business and economic policy. Native RSS feed."
-  },
-  {
-    "id": "moneycontrol",
-    "name": "Moneycontrol",
-    "url": "https://www.moneycontrol.com",
-    "rss_url": "https://www.moneycontrol.com/rss/latestnews.xml",
-    "tier": "independent",
-    "country": "IN",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "India's largest financial news platform, Network18/Reliance-owned. Covers stock markets, personal finance, economy. Business-focused, centrist. Native RSS feed."
-  },
-  {
     "id": "kathmandu-post",
     "name": "The Kathmandu Post",
     "url": "https://kathmandupost.com",
@@ -2358,17 +2303,6 @@
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Sri Lanka's leading English-language daily, published by Wijeya Newspapers. Covers Sri Lankan politics, economy, and South Asian affairs. Centrist editorial line. RSS via Google News."
-  },
-  {
-    "id": "colombo-gazette",
-    "name": "Colombo Gazette",
-    "url": "https://colombogazette.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:colombogazette.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "international",
-    "country": "LK",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Sri Lankan English-language digital news outlet. Covers Sri Lankan politics, economy, and regional affairs. Centrist editorial stance. RSS via Google News (native feed returns HTML)."
   },
   {
     "id": "national-post-canada",
@@ -3112,17 +3046,6 @@
     "credibility_notes": "Expert analysis of Chinese media and propaganda. University of Hong Kong."
   },
   {
-    "id": "mongolia-weekly",
-    "name": "Mongolia Weekly",
-    "url": "https://mongoliaweekly.org",
-    "rss_url": "https://mongoliaweekly.org/feed/",
-    "tier": "independent",
-    "country": "MN",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language coverage of Mongolia. Fills significant geographic gap."
-  },
-  {
     "id": "the-third-pole",
     "name": "The Third Pole",
     "url": "https://www.thethirdpole.net",
@@ -3143,72 +3066,6 @@
     "type": "broadcast",
     "political_lean_baseline": "center",
     "credibility_notes": "Radio New Zealand's Pacific service. Primary source for Pacific Islands news."
-  },
-  {
-    "id": "fiji-times",
-    "name": "The Fiji Times",
-    "url": "https://www.fijitimes.com",
-    "rss_url": "https://www.fijitimes.com/feed/",
-    "tier": "international",
-    "country": "FJ",
-    "type": "broadsheet",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Fiji's oldest newspaper, founded 1869."
-  },
-  {
-    "id": "islands-business",
-    "name": "Islands Business",
-    "url": "https://islandsbusiness.com",
-    "rss_url": "https://islandsbusiness.com/feed/",
-    "tier": "international",
-    "country": "FJ",
-    "type": "magazine",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Pan-Pacific magazine covering business and politics across Pacific Island nations."
-  },
-  {
-    "id": "the-local-sweden",
-    "name": "The Local Sweden",
-    "url": "https://www.thelocal.se",
-    "rss_url": "https://feeds.thelocal.com/rss/se",
-    "tier": "international",
-    "country": "SE",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language news covering Sweden."
-  },
-  {
-    "id": "iceland-review",
-    "name": "Iceland Review",
-    "url": "https://www.icelandreview.com",
-    "rss_url": "https://www.icelandreview.com/feed/",
-    "tier": "international",
-    "country": "IS",
-    "type": "magazine",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Iceland's English-language magazine. Founded 1963. Covers Arctic affairs."
-  },
-  {
-    "id": "the-local-denmark",
-    "name": "The Local Denmark",
-    "url": "https://www.thelocal.dk",
-    "rss_url": "https://feeds.thelocal.com/rss/dk",
-    "tier": "international",
-    "country": "DK",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language news covering Denmark."
-  },
-  {
-    "id": "the-local-norway",
-    "name": "The Local Norway",
-    "url": "https://www.thelocal.no",
-    "rss_url": "https://feeds.thelocal.com/rss/no",
-    "tier": "international",
-    "country": "NO",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language news covering Norway."
   },
   {
     "id": "err-news-estonia",
@@ -3343,17 +3200,6 @@
     "credibility_notes": "Swiss Broadcasting Corporation's international service. Covers UN, WTO, Red Cross in Geneva."
   },
   {
-    "id": "the-portugal-news",
-    "name": "The Portugal News",
-    "url": "https://www.theportugalnews.com",
-    "rss_url": "https://www.theportugalnews.com/feed/",
-    "tier": "international",
-    "country": "PT",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Portugal's leading English-language newspaper. Founded 1988."
-  },
-  {
     "id": "dutchnews",
     "name": "DutchNews.nl",
     "url": "https://www.dutchnews.nl",
@@ -3363,28 +3209,6 @@
     "type": "digital",
     "political_lean_baseline": "center",
     "credibility_notes": "The Netherlands' leading English-language news site."
-  },
-  {
-    "id": "the-local-italy",
-    "name": "The Local Italy",
-    "url": "https://www.thelocal.it",
-    "rss_url": "https://feeds.thelocal.com/rss/it",
-    "tier": "international",
-    "country": "IT",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language news covering Italy."
-  },
-  {
-    "id": "the-local-austria",
-    "name": "The Local Austria",
-    "url": "https://www.thelocal.at",
-    "rss_url": "https://feeds.thelocal.com/rss/at",
-    "tier": "international",
-    "country": "AT",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "English-language news covering Austria."
   },
   {
     "id": "euractiv",
@@ -3486,17 +3310,6 @@
     "credibility_notes": "Trinidad and Tobago's most-read newspaper."
   },
   {
-    "id": "barbados-today",
-    "name": "Barbados Today",
-    "url": "https://barbadostoday.bb",
-    "rss_url": "https://barbadostoday.bb/feed/",
-    "tier": "international",
-    "country": "BB",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Barbados's leading digital news outlet."
-  },
-  {
     "id": "the-tyee",
     "name": "The Tyee",
     "url": "https://thetyee.ca",
@@ -3539,17 +3352,6 @@
     "type": "digital",
     "political_lean_baseline": "center-left",
     "credibility_notes": "Australia's leading independent digital news outlet. Subscriber-funded."
-  },
-  {
-    "id": "post-courier-png",
-    "name": "Post-Courier PNG",
-    "url": "https://www.postcourier.com.pg",
-    "rss_url": "https://news.google.com/rss/search?q=site:postcourier.com.pg+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "international",
-    "country": "PG",
-    "type": "broadsheet",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Papua New Guinea's oldest newspaper. Only English source for PNG and Melanesia."
   },
   {
     "id": "america-magazine",
@@ -3618,17 +3420,6 @@
     "credibility_notes": "Jewish American news org. Founded 1897. Center-left on Jewish affairs and Israel."
   },
   {
-    "id": "five-pillars",
-    "name": "5Pillars",
-    "url": "https://5pillarsuk.com",
-    "rss_url": "https://5pillarsuk.com/feed/",
-    "tier": "independent",
-    "country": "GB",
-    "type": "digital",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "British Muslim news and commentary. Founded 2013. Muslim-British perspective."
-  },
-  {
     "id": "crux-now",
     "name": "Crux",
     "url": "https://cruxnow.com",
@@ -3660,50 +3451,6 @@
     "type": "magazine",
     "political_lean_baseline": "left",
     "credibility_notes": "Progressive evangelical magazine. Social justice and peace. Founded 1971."
-  },
-  {
-    "id": "world-watch-monitor",
-    "name": "World Watch Monitor",
-    "url": "https://www.worldwatchmonitor.org",
-    "rss_url": "https://www.worldwatchmonitor.org/feed/",
-    "tier": "independent",
-    "country": "GB",
-    "type": "nonprofit",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Journalism about Christians facing persecution globally. Open Doors affiliated."
-  },
-  {
-    "id": "buddhistdoor-global",
-    "name": "Buddhistdoor Global",
-    "url": "https://www.buddhistdoor.net",
-    "rss_url": "https://www.buddhistdoor.net/feed/",
-    "tier": "independent",
-    "country": "HK",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Leading English-language Buddhist publication. Hong Kong-based."
-  },
-  {
-    "id": "sikh24",
-    "name": "Sikh24",
-    "url": "https://www.sikh24.com",
-    "rss_url": "https://www.sikh24.com/feed/",
-    "tier": "independent",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Leading English-language Sikh news. Covers Punjab and Sikh diaspora."
-  },
-  {
-    "id": "muslim-news-uk",
-    "name": "Muslim News UK",
-    "url": "https://muslimnews.co.uk",
-    "rss_url": "https://muslimnews.co.uk/feed/",
-    "tier": "independent",
-    "country": "GB",
-    "type": "digital",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "UK's leading Muslim newspaper. Founded 1993."
   },
   {
     "id": "carbon-brief",
@@ -3882,28 +3629,6 @@
     "credibility_notes": "Royal United Services Institute. UK's premier defense think-tank. Founded 1831."
   },
   {
-    "id": "sipri",
-    "name": "SIPRI",
-    "url": "https://www.sipri.org",
-    "rss_url": "https://www.sipri.org/news/rss",
-    "tier": "independent",
-    "country": "SE",
-    "type": "independent",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Stockholm International Peace Research Institute. Authoritative arms trade data."
-  },
-  {
-    "id": "iiss-analysis",
-    "name": "IISS",
-    "url": "https://www.iiss.org",
-    "rss_url": "https://www.iiss.org/rss",
-    "tier": "independent",
-    "country": "GB",
-    "type": "independent",
-    "political_lean_baseline": "center",
-    "credibility_notes": "International Institute for Strategic Studies. Military Balance publisher."
-  },
-  {
     "id": "c4isrnet",
     "name": "C4ISRNET",
     "url": "https://www.c4isrnet.com",
@@ -3924,17 +3649,6 @@
     "type": "independent",
     "political_lean_baseline": "center",
     "credibility_notes": "Premier US foreign policy think-tank. Publisher of Foreign Affairs."
-  },
-  {
-    "id": "carnegie-endowment",
-    "name": "Carnegie Endowment",
-    "url": "https://carnegieendowment.org",
-    "rss_url": "https://carnegieendowment.org/rss/solr/?fa=allPublications",
-    "tier": "independent",
-    "country": "US",
-    "type": "independent",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Nonpartisan global policy research. Founded 1910. Offices on five continents."
   },
   {
     "id": "chatham-house",
@@ -3968,28 +3682,6 @@
     "type": "independent",
     "political_lean_baseline": "center",
     "credibility_notes": "Pro-transatlantic think-tank. NATO, Europe, global security. Founded 1961."
-  },
-  {
-    "id": "rand-corporation",
-    "name": "RAND Corporation",
-    "url": "https://www.rand.org",
-    "rss_url": "https://www.rand.org/pubs/rss/research.xml",
-    "tier": "independent",
-    "country": "US",
-    "type": "independent",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Nonpartisan research org. Defense, health, education. Founded 1948."
-  },
-  {
-    "id": "peterson-institute",
-    "name": "Peterson Institute",
-    "url": "https://www.piie.com",
-    "rss_url": "https://www.piie.com/rss.xml",
-    "tier": "independent",
-    "country": "US",
-    "type": "independent",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Premier economics think-tank. Trade, finance, global economy."
   },
   {
     "id": "ecfr",
@@ -4047,17 +3739,6 @@
     "credibility_notes": "Congressionally-chartered. Bipartisan international affairs. Founded 1968."
   },
   {
-    "id": "stimson-center",
-    "name": "Stimson Center",
-    "url": "https://www.stimson.org",
-    "rss_url": "https://www.stimson.org/rss/",
-    "tier": "independent",
-    "country": "US",
-    "type": "independent",
-    "political_lean_baseline": "center",
-    "credibility_notes": "Nonpartisan. Peace, security, nuclear nonproliferation. Founded 1989."
-  },
-  {
     "id": "devex",
     "name": "Devex",
     "url": "https://www.devex.com",
@@ -4102,17 +3783,6 @@
     "credibility_notes": "Independent Latino political commentary. Immigration, Puerto Rico."
   },
   {
-    "id": "face2face-africa",
-    "name": "Face2Face Africa",
-    "url": "https://face2faceafrica.com",
-    "rss_url": "https://face2faceafrica.com/feed",
-    "tier": "independent",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "Pan-African diasporic news. African diaspora in the Americas."
-  },
-  {
     "id": "global-voices",
     "name": "Global Voices",
     "url": "https://globalvoices.org",
@@ -4133,28 +3803,6 @@
     "type": "nonprofit",
     "political_lean_baseline": "center",
     "credibility_notes": "Legal news by law faculty and practitioners. University of Pittsburgh."
-  },
-  {
-    "id": "arab-american-news",
-    "name": "The Arab American News",
-    "url": "https://arabamericannews.com",
-    "rss_url": "https://arabamericannews.com/feed/",
-    "tier": "independent",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "Michigan-based Arab American newspaper. Founded 1984."
-  },
-  {
-    "id": "colorlines",
-    "name": "Colorlines",
-    "url": "https://colorlines.com",
-    "rss_url": "https://colorlines.com/feed/",
-    "tier": "independent",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "left",
-    "credibility_notes": "Race Forward nonprofit. Racial justice, immigration, civil rights."
   },
   {
     "id": "investigate-europe",
@@ -4221,17 +3869,6 @@
     "type": "investigative",
     "political_lean_baseline": "center",
     "credibility_notes": "Amsterdam-based cross-border investigative. Migration and border policy."
-  },
-  {
-    "id": "inkstick-media",
-    "name": "Inkstick Media",
-    "url": "https://inkstickmedia.com",
-    "rss_url": "https://inkstickmedia.com/feed/",
-    "tier": "independent",
-    "country": "US",
-    "type": "nonprofit",
-    "political_lean_baseline": "center-left",
-    "credibility_notes": "National security from peace/human security perspective. Women-led."
   },
   {
     "id": "tortoise-media",
@@ -4487,17 +4124,6 @@
     "credibility_notes": "Australia's only national broadsheet. Owned by News Corp (Murdoch). Center-right editorial stance with strong business and political coverage."
   },
   {
-    "id": "spectator-uk",
-    "name": "The Spectator",
-    "url": "https://www.spectator.co.uk",
-    "rss_url": "https://news.google.com/rss/search?q=site:spectator.co.uk+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "international",
-    "country": "GB",
-    "type": "magazine",
-    "political_lean_baseline": "right",
-    "credibility_notes": "Britain's oldest continuously published magazine (est. 1828). Conservative editorial stance. High-quality political commentary and analysis."
-  },
-  {
     "id": "spiked-online",
     "name": "Spiked",
     "url": "https://www.spiked-online.com",
@@ -4575,28 +4201,6 @@
     "credibility_notes": "Conservative news and commentary. Founded 2008 by Floyd Brown. AllSides: Right. MBFC: Right."
   },
   {
-    "id": "one-america-news",
-    "name": "One America News Network",
-    "url": "https://www.oann.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:oann.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "independent",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "far-right",
-    "credibility_notes": "Far-right cable news network. Known for promoting conspiracy theories and strong pro-Trump stance. Included for spectrum completeness, not credibility."
-  },
-  {
-    "id": "gateway-pundit",
-    "name": "The Gateway Pundit",
-    "url": "https://www.thegatewaypundit.com",
-    "rss_url": "https://news.google.com/rss/search?q=site:thegatewaypundit.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "independent",
-    "country": "US",
-    "type": "digital",
-    "political_lean_baseline": "far-right",
-    "credibility_notes": "Far-right political website. Low factual accuracy rating from multiple media monitors. Included for spectrum completeness and divergence detection."
-  },
-  {
     "id": "rebel-news",
     "name": "Rebel News",
     "url": "https://www.rebelnews.com",
@@ -4617,5 +4221,292 @@
     "type": "newspaper",
     "political_lean_baseline": "center-right",
     "credibility_notes": "Sydney-based tabloid owned by News Corp Australia. Center-right editorial stance. Australia's highest-circulation daily."
+  },
+  {
+    "id": "philadelphia-inquirer",
+    "name": "The Philadelphia Inquirer",
+    "url": "https://www.inquirer.com",
+    "rss_url": "https://www.inquirer.com/arcio/rss/",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Philadelphia's newspaper of record, founded 1829. Pulitzer Prize-winning investigative journalism. Strong political and national coverage."
+  },
+  {
+    "id": "miami-herald",
+    "name": "Miami Herald",
+    "url": "https://www.miamiherald.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:miamiherald.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "South Florida's newspaper of record. Strong on Latin America, immigration, and Florida politics. McClatchy/Chatham Asset Management."
+  },
+  {
+    "id": "houston-chronicle",
+    "name": "Houston Chronicle",
+    "url": "https://www.houstonchronicle.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:houstonchronicle.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Texas's largest newspaper, founded 1901. Essential for energy sector, NASA, and Gulf Coast coverage. Hearst-owned."
+  },
+  {
+    "id": "star-tribune",
+    "name": "Star Tribune",
+    "url": "https://www.startribune.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:startribune.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Minneapolis-St. Paul's newspaper of record. Largest in the Upper Midwest. Strong on agriculture, climate, and social policy."
+  },
+  {
+    "id": "sf-chronicle",
+    "name": "San Francisco Chronicle",
+    "url": "https://www.sfchronicle.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:sfchronicle.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Northern California's dominant newspaper, founded 1865. Strong on tech industry, housing, and West Coast politics. Hearst-owned."
+  },
+  {
+    "id": "dallas-morning-news",
+    "name": "The Dallas Morning News",
+    "url": "https://www.dallasnews.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:dallasnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Dallas-Fort Worth's newspaper of record, founded 1885. Nine Pulitzer Prizes. Strong on Texas politics and Southwest affairs."
+  },
+  {
+    "id": "seattle-times",
+    "name": "The Seattle Times",
+    "url": "https://www.seattletimes.com",
+    "rss_url": "https://www.seattletimes.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Pacific Northwest's largest newspaper, founded 1891. Family-owned (Blethen). Strong on tech, Boeing, environment, and Northwest politics."
+  },
+  {
+    "id": "atlanta-journal-constitution",
+    "name": "The Atlanta Journal-Constitution",
+    "url": "https://www.ajc.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:ajc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Southeast's dominant newspaper, founded 1868. Pulitzer Prize-winning. Essential for Southern politics, civil rights, and CDC coverage. Cox Enterprises."
+  },
+  {
+    "id": "denver-post",
+    "name": "The Denver Post",
+    "url": "https://www.denverpost.com",
+    "rss_url": "https://www.denverpost.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Colorado's largest newspaper, founded 1892. Four Pulitzer Prizes. Strong on Mountain West politics, public lands, and water issues."
+  },
+  {
+    "id": "tampa-bay-times",
+    "name": "Tampa Bay Times",
+    "url": "https://www.tampabay.com",
+    "rss_url": "https://www.tampabay.com/arcio/rss/",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Florida's largest newspaper, founded 1884. Home to PolitiFact. 13 Pulitzer Prizes. Strong investigative tradition. Nonprofit Poynter Institute-owned."
+  },
+  {
+    "id": "daily-mail",
+    "name": "Daily Mail",
+    "url": "https://www.dailymail.co.uk",
+    "rss_url": "https://www.dailymail.co.uk/articles.rss",
+    "tier": "international",
+    "country": "GB",
+    "type": "tabloid",
+    "political_lean_baseline": "right",
+    "credibility_notes": "World's most-visited English-language news website. Founded 1896. Right-leaning editorial stance. Tabloid format but covers every major international story. DMGT (Rothermere)."
+  },
+  {
+    "id": "the-sun-uk",
+    "name": "The Sun",
+    "url": "https://www.thesun.co.uk",
+    "rss_url": "https://www.thesun.co.uk/feed/",
+    "tier": "international",
+    "country": "GB",
+    "type": "tabloid",
+    "political_lean_baseline": "right",
+    "credibility_notes": "UK's highest-circulation tabloid. Founded 1964. Right-leaning editorial. News Corp (Murdoch). Covers all major national and international stories."
+  },
+  {
+    "id": "techcrunch",
+    "name": "TechCrunch",
+    "url": "https://techcrunch.com",
+    "rss_url": "https://techcrunch.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Leading tech industry news outlet, founded 2005. Covers startups, AI, venture capital, and Silicon Valley. Yahoo/Apollo Global Management."
+  },
+  {
+    "id": "the-verge",
+    "name": "The Verge",
+    "url": "https://www.theverge.com",
+    "rss_url": "https://www.theverge.com/rss/index.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Technology and culture news outlet, founded 2011. Strong on consumer tech, AI policy, and digital rights. Vox Media."
+  },
+  {
+    "id": "marketwatch",
+    "name": "MarketWatch",
+    "url": "https://www.marketwatch.com",
+    "rss_url": "https://feeds.marketwatch.com/marketwatch/topstories/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Financial news and data. Dow Jones (News Corp). Founded 1997. Essential for markets, economic data, and business coverage."
+  },
+  {
+    "id": "fox-business",
+    "name": "Fox Business",
+    "url": "https://www.foxbusiness.com",
+    "rss_url": "https://moxie.foxbusiness.com/google-publisher/latest.xml",
+    "tier": "us_major",
+    "country": "US",
+    "type": "broadcast",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Business news network, Fox Corporation. Center-right perspective on economics and markets. More policy-focused than Fox News. Covers major economic stories."
+  },
+  {
+    "id": "new-york-sun",
+    "name": "New York Sun",
+    "url": "https://www.nysun.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:nysun.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Relaunched 2022 as digital broadsheet. Center-right editorial perspective. Quality conservative journalism with editorial standards. Founded originally 2002."
+  },
+  {
+    "id": "australian-financial-review",
+    "name": "Australian Financial Review",
+    "url": "https://www.afr.com",
+    "rss_url": "https://news.google.com/rss/search?q=site:afr.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "AU",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-right",
+    "credibility_notes": "Australia's premier financial daily. Nine Entertainment. Pro-market, center-right editorial stance. Essential for Australian business and economic policy."
+  },
+  {
+    "id": "kyodo-news",
+    "name": "Kyodo News",
+    "url": "https://english.kyodonews.net",
+    "rss_url": "https://english.kyodonews.net/rss/all.xml",
+    "tier": "international",
+    "country": "JP",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Japan's largest news agency, founded 1945. Nonprofit cooperative owned by 52 Japanese media organizations. Covers Asia-Pacific comprehensively. English service active."
+  },
+  {
+    "id": "anadolu-agency",
+    "name": "Anadolu Agency",
+    "url": "https://www.aa.com.tr/en",
+    "rss_url": "https://www.aa.com.tr/en/rss/default?cat=world",
+    "tier": "international",
+    "country": "TR",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Turkey's state-run wire service, founded 1920. Covers Middle East, Balkans, Central Asia. State-affiliated; reflects Turkish government positions on foreign policy. English service available.",
+    "state_affiliated": true
+  },
+  {
+    "id": "stars-and-stripes",
+    "name": "Stars and Stripes",
+    "url": "https://www.stripes.com",
+    "rss_url": "https://www.stripes.com/arcio/rss/",
+    "tier": "independent",
+    "country": "US",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Congressionally funded US military newspaper, founded 1861. Editorially independent from DoD. Essential for military personnel, veterans, and defense coverage."
+  },
+  {
+    "id": "defense-news",
+    "name": "Defense News",
+    "url": "https://www.defensenews.com",
+    "rss_url": "https://www.defensenews.com/arc/outboundfeeds/rss/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Leading defense industry and military policy publication. Sightline Media Group. Covers Pentagon procurement, global defense, military technology."
+  },
+  {
+    "id": "scotusblog",
+    "name": "SCOTUSblog",
+    "url": "https://www.scotusblog.com",
+    "rss_url": "https://www.scotusblog.com/feed/",
+    "tier": "independent",
+    "country": "US",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Authoritative US Supreme Court coverage, founded 2002. Run by practicing Supreme Court lawyers. Only news outlet to have argued before SCOTUS. Nonpartisan legal analysis."
+  },
+  {
+    "id": "sydney-morning-herald",
+    "name": "The Sydney Morning Herald",
+    "url": "https://www.smh.com.au",
+    "rss_url": "https://www.smh.com.au/rss/feed.xml",
+    "tier": "international",
+    "country": "AU",
+    "type": "broadsheet",
+    "political_lean_baseline": "center-left",
+    "credibility_notes": "Australia's oldest newspaper, founded 1831. Sydney-based. Nine Entertainment. Strong on Australian politics and Asia-Pacific affairs."
+  },
+  {
+    "id": "hurriyet-daily-news",
+    "name": "Hürriyet Daily News",
+    "url": "https://www.hurriyetdailynews.com",
+    "rss_url": "https://www.hurriyetdailynews.com/rss",
+    "tier": "international",
+    "country": "TR",
+    "type": "broadsheet",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Turkey's oldest English-language newspaper, founded 1961. Provides centrist perspective alongside TRT World (state) and Daily Sabah (pro-government). Demirören Holding."
+  },
+  {
+    "id": "sky-news-australia",
+    "name": "Sky News Australia",
+    "url": "https://www.skynews.com.au",
+    "rss_url": "https://news.google.com/rss/search?q=site:skynews.com.au+when:24h&ceid=US:en&hl=en-US&gl=US",
+    "tier": "international",
+    "country": "AU",
+    "type": "broadcast",
+    "political_lean_baseline": "right",
+    "credibility_notes": "Australian 24-hour news channel. News Corp Australia. Right-leaning editorial stance. Provides conservative Australian perspective on national and international affairs."
   }
 ]
