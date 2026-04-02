@@ -56,6 +56,16 @@ export default function MobileBottomNav({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
+  // Lock body scroll when a panel is open
+  useEffect(() => {
+    if (openPanel) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [openPanel]);
+
   const toggle = useCallback((panel: OpenPanel) => {
     hapticLight();
     setOpenPanel((prev) => {
