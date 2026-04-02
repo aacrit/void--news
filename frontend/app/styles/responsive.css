@@ -95,6 +95,11 @@
   .grid-compact__item {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
+    padding-left: var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(3n+1) {
+    padding-left: 0;
   }
 
   /* Reset 2-col rule from 768px breakpoint so the 3-col layout takes over */
@@ -190,6 +195,10 @@
   .grid-compact__item:nth-child(3n) {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
+  }
+
+  .grid-compact__item:nth-child(4n+1) {
+    padding-left: 0;
   }
 
   .grid-compact__item:nth-child(4n) {
