@@ -1105,7 +1105,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {/* ---- Source Perspectives ---- */}
           {hasCrossLeanSources && (
             <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
-              <h3 className="dd-section-label" style={{ fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--fg-muted)", marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
+              <hr style={{ border: "none", borderTop: "var(--rule-thin)", margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
+              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
               <ComparativeView
                 sources={sources}
                 consensusPoints={deepDive?.consensus}
@@ -1116,7 +1117,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
           {/* ---- Methodology link ---- */}
           <div className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ transitionDelay: "450ms", marginBottom: "var(--space-4)" }}>
-            <a href="/void--news/sources/#methodology" className="dd-methodology-link" style={{ fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", color: "var(--fg-muted)", textDecoration: "underline", textUnderlineOffset: "3px", letterSpacing: "0.04em" }}>
+            <a href={`${typeof window !== "undefined" ? "" : ""}/void--news/sources/#methodology`} className="dd-methodology-link text-meta" style={{ textDecoration: "underline", textUnderlineOffset: "3px" }}>
               How we score — 6-axis methodology
             </a>
           </div>

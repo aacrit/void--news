@@ -321,15 +321,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Whip pan direction: content exits left when navigating "right" in edition order.
   // Mobile edition cross-fade: out (200ms) -> in (300ms) -> clear.
   useEffect(() => {
-    hapticConfirm();
+    // Only fire haptic on actual user-initiated edition switches, not on mount
+    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
+    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
+    if (prevIdx !== nextIdx) hapticConfirm();
+
     setSelectedStory(null);
     setOriginRect(null);
     setActiveCategory("All");
     setVisibleCount(BATCH_SIZE);
 
     // Mobile edition cross-fade — trigger out/in sequence before scroll
-    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
-    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
     if (prevIdx !== nextIdx && isMobile) {
       // Clear any pending timer from a rapid edition switch
       if (editionTransitionTimerRef.current) clearTimeout(editionTransitionTimerRef.current);
