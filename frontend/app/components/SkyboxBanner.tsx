@@ -50,6 +50,20 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     return () => ro.disconnect();
   }, [radioOpen]);
 
+  // Toggle .page-main--audio-playing on .page-main when audio is playing.
+  // The CSS rule adds an imperceptible sepia warmth shift (motivated lighting
+  // from the OnAir "practical light" source warming the scene).
+  useEffect(() => {
+    const main = document.querySelector('.page-main');
+    if (!main) return;
+    if (isPlaying) {
+      main.classList.add('page-main--audio-playing');
+    } else {
+      main.classList.remove('page-main--audio-playing');
+    }
+    return () => main.classList.remove('page-main--audio-playing');
+  }, [isPlaying]);
+
   const waveformBars = useMemo(() =>
     Array.from({ length: 32 }, (_, i) => 10 + Math.sin(i * 0.55) * 16 + Math.sin(i * 1.3) * 6),
   []);
@@ -100,8 +114,8 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setExpandedSide((prev) => prev === side ? null : side);
   };
 
-  // Collapsed bar: single-line summary with listen button
-  const barExcerpt = brief.tldr_headline || tldrFull;
+  // Collapsed bar: headline only (no truncated paragraph text)
+  const barExcerpt = brief.tldr_headline || "Today\u2019s editorial brief";
 
   return (
     <>
