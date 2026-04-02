@@ -402,7 +402,36 @@
   opacity: 0.4;
 }
 
-/* OnAir removed — handled by FloatingPlayer */
+/* ── OnAir play button (collapsed pill, triggers FloatingPlayer) ── */
+
+.mbp__onair-play {
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  color: var(--accent-warm);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 200ms, box-shadow 200ms;
+}
+
+.mbp__onair-play:active {
+  transform: scale(0.92);
+  transition-duration: 60ms;
+}
+
+.mbp__onair-play:hover {
+  background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
+}
 
 /* ---------------------------------------------------------------------------
    Narrow viewports — prevent justified text rivers

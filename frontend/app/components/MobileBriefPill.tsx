@@ -7,6 +7,19 @@ import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 
+const PlayIcon = () => (
+  <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true">
+    <path d="M1 1.5v10l9-5z" />
+  </svg>
+);
+
+const PauseIcon = () => (
+  <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true">
+    <rect x="1" y="1" width="2.5" height="10" rx="0.5" />
+    <rect x="6.5" y="1" width="2.5" height="10" rx="0.5" />
+  </svg>
+);
+
 export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
   const {
     brief, isPlaying, handlePlayPause,
@@ -102,7 +115,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
             type="button"
             aria-label={isPlaying ? "Now playing" : "Play broadcast"}
           >
-            <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
         )}
         <button

@@ -188,7 +188,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const BATCH_SIZE = 8;
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
 
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);
@@ -928,7 +930,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* Floating audio player — persistent, above all content */}
       {dailyBriefState.brief?.audio_url && (
-        <audio ref={dailyBriefState.audioCallbackRef} src={dailyBriefState.brief.audio_url} preload="metadata" />
+        <audio ref={dailyBriefState.audioCallbackRef} src={dailyBriefState.brief.audio_url} preload="metadata" hidden />
       )}
       <FloatingPlayer state={dailyBriefState} />
 

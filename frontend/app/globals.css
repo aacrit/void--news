@@ -53,6 +53,10 @@ svg {
   max-width: 100%;
 }
 
+audio {
+  display: none;
+}
+
 input,
 button,
 textarea,

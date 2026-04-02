@@ -10,7 +10,7 @@
 
 .fp {
   position: fixed;
-  z-index: var(--z-cinematic, 900);
+  z-index: var(--z-overlay);
   pointer-events: auto;
 }
 

@@ -710,9 +710,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     const absX = Math.abs(deltaX);
     const absY = Math.abs(deltaY);
 
-    // Determine direction on first significant movement
-    if (touchStartRef.current.direction === "none" && (absX > 10 || absY > 10)) {
-      touchStartRef.current.direction = absX > absY * 1.5 ? "horizontal" : "vertical";
+    // Determine direction on first significant movement (20px dead zone)
+    if (touchStartRef.current.direction === "none" && (absX > 20 || absY > 20)) {
+      touchStartRef.current.direction = absX > absY * 2 ? "horizontal" : "vertical";
     }
 
     // --- Horizontal swipe (story navigation) ---

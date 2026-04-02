@@ -5,6 +5,19 @@ import type { DailyBriefState } from "./DailyBrief";
 import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 
+const PlayIcon = () => (
+  <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true">
+    <path d="M1 1.5v10l9-5z" />
+  </svg>
+);
+
+const PauseIcon = () => (
+  <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true">
+    <rect x="1" y="1" width="2.5" height="10" rx="0.5" />
+    <rect x="6.5" y="1" width="2.5" height="10" rx="0.5" />
+  </svg>
+);
+
 function formatTime(seconds: number): string {
   const s = Math.floor(seconds);
   const m = Math.floor(s / 60);
@@ -77,7 +90,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             type="button"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
-            <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
 
           {/* Track info */}
@@ -136,7 +149,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
               onClick={() => { hapticMedium(); handlePlayPause(); }}
               type="button" aria-label={isPlaying ? "Pause" : "Play"}
             >
-              <span aria-hidden="true">{isPlaying ? "\u275A\u275A" : "\u25B6"}</span>
+              {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
             <button className="fp__skip" onClick={() => skipForward()} type="button" aria-label="Forward 15s">+15</button>
           </div>
