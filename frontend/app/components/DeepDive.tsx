@@ -70,16 +70,23 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [isDismissing, setIsDismissing] = useState(false);
   const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal"; hapticFired: boolean } | null>(null);
 
+  /** Cross-fade opacity for horizontal story swipe navigation */
+  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
+
+  /* ---- Share button state ------------------------------------------------ */
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareCopiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   /* Reset swipe gesture state when the parent navigates to a different story
      without unmounting this component (handleDeepDiveNav changes story prop). */
   useEffect(() => {
     setIsDismissing(false);
     setIsDragging(false);
     setDragOffset(0);
+    setShareCopied(false);
     touchStartRef.current = null;
+    if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
   }, [story.id]);
-  /** Cross-fade opacity for horizontal story swipe navigation */
-  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
 
   /* ---- One-time swipe hint (mobile only) -------------------------------- */
   const [showSwipeHint, setShowSwipeHint] = useState(false);
@@ -584,6 +591,33 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     return () => ro.disconnect();
   }, [summaryExpanded, story.summary, contentVisible]);
 
+  /* ---- Share handler ------------------------------------------------------ */
+  const handleShare = useCallback(async () => {
+    hapticLight();
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const title = story.title;
+
+    // Mobile: use native share sheet if available
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ url, title });
+      } catch {
+        // User cancelled or share failed — no action needed
+      }
+      return;
+    }
+
+    // Desktop: copy URL to clipboard
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareCopied(true);
+      if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
+      shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      // Clipboard API not available — silent fail
+    }
+  }, [story.title]);
+
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
     hapticLight();
@@ -892,6 +926,28 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                 )}
               </div>
             )}
+
+            {/* Share button */}
+            <button onClick={handleShare} aria-label="Share this story" className="deep-dive-share">
+              {shareCopied ? (
+                /* Checkmark icon — confirms clipboard copy */
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M4 9.5L7.5 13L14 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                /* Share icon — arrow up from box */
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M6 7L9 4L12 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M9 4V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M4 11V14H14V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+              {shareCopied && <span className="dd-share-toast">Link copied</span>}
+            </button>
+            {/* Accessible announcement for screen readers */}
+            <div aria-live="polite" className="sr-only">
+              {shareCopied ? "Link copied to clipboard" : ""}
+            </div>
 
             <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
               <X size={20} weight="regular" aria-hidden="true" />

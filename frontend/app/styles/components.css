@@ -2675,6 +2675,61 @@
   outline-offset: 2px;
 }
 
+/* ---- Deep Dive Share Button -------------------------------------------- */
+.deep-dive-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  color: var(--fg-secondary);
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-step) var(--spring);
+}
+
+.deep-dive-share:hover {
+  background-color: var(--bg-secondary);
+}
+
+.deep-dive-share:active {
+  transform: scale(0.90);
+}
+
+.deep-dive-share:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* Toast that appears on clipboard copy */
+.dd-share-toast {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: ddToastIn var(--dur-fast) var(--ease-cinematic) forwards;
+  z-index: 10;
+}
+
+@keyframes ddToastIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ---- Deep Dive Header Bar ---------------------------------------------- */
 .deep-dive-header-bar {
   display: flex;
