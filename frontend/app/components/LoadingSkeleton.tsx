@@ -66,9 +66,9 @@ export default function LoadingSkeleton() {
           ))}
         </div>
       ) : (
-        /* ── Desktop skeleton — three-zone broadsheet ── */
+        /* ── Desktop skeleton — broadsheet grid matching actual layout ── */
         <>
-          {/* Zone 0: SkyboxBanner placeholder — 2-column compact bar + OnAir strip */}
+          {/* SkyboxBanner placeholder — 2-column compact bar */}
           <div className="skeleton-skybox">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
               <div>
@@ -82,53 +82,41 @@ export default function LoadingSkeleton() {
                 <div className="shimmer-line" style={{ width: "50%", height: 10 }} />
               </div>
             </div>
-            <div style={{ marginTop: 8, borderTop: "1px dotted var(--border-subtle)", paddingTop: 8 }}>
-              <div className="shimmer-line" style={{ width: 140, height: 12 }} />
-            </div>
           </div>
 
-          {/* Zone 1: Asymmetric lead section — 2fr | 1fr columns */}
-          <div className="skeleton-lead-v2">
-            {/* Primary column (larger) */}
-            <div className="skeleton-lead-v2__primary">
-              <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-                <div className="shimmer-line" style={{ width: 80, height: 14 }} />
-                <div className="shimmer-line" style={{ width: 50, height: 12 }} />
-              </div>
-              <div className="shimmer-line" style={{ width: "85%", height: 36, marginBottom: "var(--space-2)" }} />
-              <div className="shimmer-line" style={{ width: "60%", height: 36, marginBottom: "var(--space-3)" }} />
-              <div className="shimmer-line" style={{ width: "95%", height: 16, marginBottom: "var(--space-2)" }} />
-              <div className="shimmer-line" style={{ width: "80%", height: 16, marginBottom: "var(--space-2)" }} />
-              <div className="shimmer-line" style={{ width: "70%", height: 16 }} />
-            </div>
-            {/* Secondary column (smaller) */}
-            <div className="skeleton-lead-v2__secondary">
-              <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-                <div className="shimmer-line" style={{ width: 60, height: 12 }} />
-                <div className="shimmer-line" style={{ width: 40, height: 12 }} />
-              </div>
-              <div className="shimmer-line" style={{ width: "90%", height: 28, marginBottom: "var(--space-2)" }} />
-              <div className="shimmer-line" style={{ width: "70%", height: 28, marginBottom: "var(--space-3)" }} />
-              <div className="shimmer-line" style={{ width: "95%", height: 14, marginBottom: "var(--space-2)" }} />
-              <div className="shimmer-line" style={{ width: "65%", height: 14 }} />
-            </div>
-          </div>
-
-          {/* Zone 2: Digest rows — single-line headline placeholders */}
-          <div className="skeleton-digest">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="skeleton-digest__row">
-                <div className="shimmer-line" style={{ width: 60, height: 12 }} />
-                <div className="shimmer-line" style={{ flex: 1, height: 16 }} />
-                <div className="shimmer-line" style={{ width: 24, height: 24, borderRadius: "50%" }} />
+          {/* Lead section — 2 equal columns (matches lead-section 1fr 1fr) */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-5)", marginBottom: "var(--space-5)", paddingTop: "var(--space-4)" }}>
+            {[0, 1].map((i) => (
+              <div key={i}>
+                <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
+                  <div className="shimmer-line" style={{ width: 70, height: 12 }} />
+                  <div className="shimmer-line" style={{ width: 50, height: 12 }} />
+                </div>
+                <div className="shimmer-line" style={{ width: "90%", height: 32, marginBottom: "var(--space-2)" }} />
+                <div className="shimmer-line" style={{ width: "65%", height: 32, marginBottom: "var(--space-3)" }} />
+                <div className="shimmer-line" style={{ width: "95%", height: 14, marginBottom: "var(--space-2)" }} />
+                <div className="shimmer-line" style={{ width: "80%", height: 14 }} />
               </div>
             ))}
           </div>
 
-          {/* Zone 3: Wire grid — 4-column compact cards */}
-          <div className="skeleton-wire">
-            {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-              <div key={i} className="skeleton-wire__card">
+          {/* Medium grid — 3 columns (matches grid-medium) */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "var(--space-5)", marginBottom: "var(--space-5)" }}>
+            {[0, 1, 2].map((i) => (
+              <div key={i} style={{ borderRight: i < 2 ? "1px solid var(--border-subtle)" : "none", paddingRight: i < 2 ? "var(--space-5)" : 0 }}>
+                <div className="shimmer-line" style={{ width: 60, height: 10, marginBottom: "var(--space-2)" }} />
+                <div className="shimmer-line" style={{ width: "90%", height: 20, marginBottom: "var(--space-2)" }} />
+                <div className="shimmer-line" style={{ width: "70%", height: 20, marginBottom: "var(--space-3)" }} />
+                <div className="shimmer-line" style={{ width: "95%", height: 12, marginBottom: "var(--space-1)" }} />
+                <div className="shimmer-line" style={{ width: "75%", height: 12 }} />
+              </div>
+            ))}
+          </div>
+
+          {/* Compact grid — 3 columns (matches grid-compact) */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "var(--space-5)" }}>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} style={{ borderRight: (i % 3) < 2 ? "1px solid var(--border-subtle)" : "none", paddingRight: (i % 3) < 2 ? "var(--space-5)" : 0, paddingBottom: "var(--space-4)" }}>
                 <div className="shimmer-line" style={{ width: "50%", height: 10, marginBottom: "var(--space-2)" }} />
                 <div className="shimmer-line" style={{ width: "90%", height: 14, marginBottom: "var(--space-1)" }} />
                 <div className="shimmer-line" style={{ width: "70%", height: 14 }} />

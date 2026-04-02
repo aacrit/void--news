@@ -870,7 +870,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 />
               ) : (
                 <>
-                  <SkyboxBanner state={dailyBriefState} />
+                  <div className="skybox">
+                    <SkyboxBanner state={dailyBriefState} />
+                  </div>
 
                   {leadStories.length > 0 && (
                     <section key={filterKey} aria-label="Lead stories" className="lead-section anim-cold-open-lead anim-content-arrive">
