@@ -68,6 +68,12 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
           <span className="category-tag">{story.category}</span>
           <span className="dot-separator" aria-hidden="true" />
           <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+          {story.source && story.source.count > 1 && (
+            <>
+              <span className="dot-separator" aria-hidden="true" />
+              <span className="source-count">{story.source.count} sources</span>
+            </>
+          )}
         </div>
         <Sigil data={story.sigilData} size="lg" />
       </div>

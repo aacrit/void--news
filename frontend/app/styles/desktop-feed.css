@@ -541,6 +541,47 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Desktop Rack Focus — sibling dimming on hover (depth-of-field)
+   --------------------------------------------------------------------------- */
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  /* Digest: hovered row sharpens, siblings dim */
+  .df-digest:has(.dg-row:hover) .dg-row:not(:hover) {
+    opacity: var(--rack-dim-neighbor, 0.80);
+    transition: opacity 200ms var(--ease-rack);
+  }
+
+  .df-digest .dg-row {
+    transition: opacity 350ms var(--ease-steadicam), background-color 150ms var(--ease-out);
+  }
+
+  /* Wire: hovered card sharpens, siblings dim */
+  .df-wire:has(.wire-card:hover) .wire-card:not(:hover) {
+    opacity: var(--rack-dim-neighbor, 0.80);
+    transition: opacity 200ms var(--ease-rack);
+  }
+
+  .df-wire .wire-card {
+    transition: opacity 350ms var(--ease-steadicam), transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Feed Recession — depth effect when Deep Dive opens
+   --------------------------------------------------------------------------- */
+
+.page-main--deep-dive-open {
+  transform: scale(0.997);
+  transform-origin: center top;
+  transition: transform 400ms var(--ease-cinematic);
+}
+
+.page-main--deep-dive-closing {
+  transform: scale(1);
+  transition: transform 300ms var(--ease-out);
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
 
