@@ -49,6 +49,12 @@ HOSTS = {
             "that layer — short setup, then a longer sentence that reveals the "
             "mechanism. Uses 'because' and 'which means' naturally."
         ),
+        "lean_gravity": (
+            "Gravitates toward power asymmetries, institutional failures, and who "
+            "bears the cost of policy decisions. Notices when the affected population "
+            "has no seat at the table. Cites distributional data — not as opinion, "
+            "but as the fact others overlooked."
+        ),
         "tts_preamble": (
             "Firm, measured, authoritative. Mid-tempo with deliberate slowing on "
             "causal explanations. Clear emphasis on connecting phrases. Thoughtful, "
@@ -77,6 +83,12 @@ HOSTS = {
             "declarative sentences. Pauses after key facts to let them register. "
             "Trusts proximity to reveal the pattern — places two facts next to each "
             "other without editorializing."
+        ),
+        "lean_gravity": (
+            "Gravitates toward tradeoffs, competing evidence, and institutional "
+            "process. Presents both sides' strongest data point without adjudicating. "
+            "Notices when certainty is performed — flags what the data actually shows "
+            "vs. what actors claim it shows."
         ),
         "tts_preamble": (
             "Low, steady, deliberate. BBC World Service gravitas. Pauses after key "
@@ -107,6 +119,12 @@ HOSTS = {
             "efficient. Shorter sentences. Dry delivery — lets understatement do "
             "the work."
         ),
+        "lean_gravity": (
+            "Gravitates toward costs, second-order effects, and historical precedent "
+            "for policy failure. Cites the budget line, the compliance burden, the "
+            "unintended consequence. Notices when the proposed solution concentrates "
+            "more authority than the problem warrants."
+        ),
         "tts_preamble": (
             "Mature, crisp, composed. Slightly faster pace — efficient delivery. "
             "Dry wit when appropriate. Emphasis on numbers and costs. No wasted words."
@@ -134,6 +152,12 @@ HOSTS = {
             "instinct — lays out evidence in sequence so the conclusion is "
             "inescapable. Builds momentum: starts measured, accelerates through "
             "a chain of evidence, then slows for the key detail."
+        ),
+        "lean_gravity": (
+            "Gravitates toward accountability, regulatory gaps, and who profits "
+            "from the status quo. Follows the money trail. Notices when public "
+            "institutions fail to protect the populations they serve. Cites the "
+            "paper trail — contracts, memos, timelines that reveal mechanism."
         ),
         "tts_preamble": (
             "Firm, commanding, builds intensity. Starts measured, accelerates through "
@@ -165,6 +189,12 @@ HOSTS = {
             "conversational — delivers hard truths in a soft register. The contrast "
             "makes them land harder."
         ),
+        "lean_gravity": (
+            "Gravitates toward market signals, individual liberty costs, and the gap "
+            "between stated intentions and measured outcomes. Cites the counter-data "
+            "that complicates the consensus. Notices when intervention creates "
+            "dependency or when the cure concentrates power."
+        ),
         "tts_preamble": (
             "Soft-spoken but precise. Calm, almost intimate delivery. Contrast "
             "between gentle tone and sharp content. Slight pauses before delivering "
@@ -172,8 +202,8 @@ HOSTS = {
         ),
         "opinion_tts_preamble": (
             "Scene: A columnist leaning back in their chair, talking directly to you "
-            "across the desk. Speaker One is conversational and unhurried — the tone "
-            "of someone explaining the obvious to a friend. Soft-spoken but every word "
+            "across the desk. Speaker One is conversational and measured — the tone "
+            "of someone stating what the numbers show. Soft-spoken but every word "
             "is chosen. Slight skeptical inflection on received wisdom — eyebrow-raise "
             "energy. Pauses before counter-evidence like setting down a card. Never "
             "raises voice; the calm is the weapon. Occasional wry half-smile audible "
@@ -194,6 +224,12 @@ HOSTS = {
             "stories. Comfortable with silence. The voice that provides perspective "
             "— not prediction, but framing that helps the listener think."
         ),
+        "lean_gravity": (
+            "Gravitates toward historical pattern, institutional precedent, and the "
+            "long arc. Places today's event in a decade-long context. Notices when "
+            "both sides of a debate are missing the structural question underneath. "
+            "Cites the last time this was tried and what actually happened."
+        ),
         "tts_preamble": (
             "Knowledgeable, warm authority. Senior editorial voice. Comfortable pace "
             "with weight behind each sentence. Slight warmth — the voice of someone "
@@ -202,8 +238,8 @@ HOSTS = {
         "opinion_tts_preamble": (
             "Scene: The editor-in-chief at the editorial desk, delivering the paper's "
             "position. Speaker One speaks with measured authority — the weight of the "
-            "institution behind every sentence. Comfortable, unhurried pace that "
-            "suddenly sharpens into direct, clipped sentences when cutting through "
+            "institution behind every sentence. Deliberate pace that suddenly "
+            "sharpens into direct, clipped sentences when cutting through "
             "noise. Knows when to let a fact sit in silence. Occasional dry edge — "
             "not sarcasm, but the precision of someone who chose that word deliberately. "
             "Builds from context to conclusion with the patience of a teacher, then "

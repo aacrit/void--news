@@ -114,17 +114,17 @@ You synthesize, not summarize. Two facts side by side reveal more than either \
 alone. That juxtaposition is your primary tool. Every sentence pays rent or \
 gets evicted.
 
-CRAFT:
-- Start every sentence with the fact, the name, or the number. Never announce \
-what you are about to say.
-- Opinionated about significance, neutral on partisanship.
-- Active voice. Present tense. Concrete nouns.
-- Attribute facts to institutions, officials, and documents — not to media outlets. \
-"The Pentagon confirmed" is reporting. "Reuters reported" is meta-coverage.
-- Never reference "coverage," "outlets," "sources," or "reporting patterns."
-- You receive up to 20 stories. Treat them as raw intelligence. Your job is \
-to find the pattern that connects them.
-- Return exactly TWO JSON fields: "tldr_headline", "tldr_text", "audio_script".\
+Your instinct: lead with the fact, the name, or the number. Never announce \
+what you are about to say. Be opinionated about significance, neutral on \
+partisanship. Active voice. Present tense. Concrete nouns.
+
+Attribute facts to institutions, officials, and documents — not to media outlets. \
+"The Pentagon confirmed" is reporting. "Reuters reported" is meta-coverage. \
+Never reference "coverage," "outlets," "sources," or "reporting patterns."
+
+You receive up to 20 stories as raw intelligence. Find the pattern that \
+connects them. Return exactly three JSON fields: "tldr_headline", "tldr_text", \
+"audio_script".\
 """
 
 # ---------------------------------------------------------------------------
@@ -154,10 +154,16 @@ _EDITION_FOCUS = {
 
 def _build_host_block(label: str, host: dict) -> str:
     """Build a host personality block for prompt injection."""
-    return (
+    block = (
         f"HOST {label} — {host['name']} ({host['gender']}):\n"
         f"{host['trait']}"
     )
+    # Lean gravity: what this host notices, cites, gravitates toward.
+    # This shapes the host's reporting instinct without stating positions.
+    lean_gravity = host.get("lean_gravity")
+    if lean_gravity:
+        block += f"\nEDITORIAL INSTINCT: {lean_gravity}"
+    return block
 
 
 def _build_host_blocks(voices: dict) -> tuple[str, str]:
@@ -190,7 +196,9 @@ Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
 TL;DR INSTRUCTIONS (return as "tldr_text"):
 REGISTER: Newspaper editorial page. No contractions. No spoken fragments. \
 Declarative sentences. Every clause load-bearing.
-8-12 sentences as a flowing editorial paragraph. Target 180-240 words. \
+8-10 sentences as a flowing editorial paragraph. Aim for exactly 200 words. \
+Acceptable range: 180-240 words. Density over length — if a sentence restates \
+rather than advances, cut it. \
 Put one sentence per line, separated by \\n (literal newline). \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
@@ -215,7 +223,8 @@ FIRST LINE: A: From void news, {DATE_SHORT}. [short pause]
 LAST LINE: The last speaker says "This was void news." with finality.
 
 Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
-Target 800-1000 words. Each line starts with "A:" or "B:". \
+Target 850-1000 words. You MUST produce at least 800 words — the broadcast \
+needs this length for proper pacing. Each line starts with "A:" or "B:". \
 No other formatting.
 
 {HOST_A_BLOCK}
@@ -231,10 +240,18 @@ counter-data, historical parallel, or structural context the lead did not \
 provide. The second dimension is not reaction — it is reporting from a \
 different angle on the same story.
 
+Each host's EDITORIAL INSTINCT shapes what facts they gravitate toward — \
+what costs they cite, what patterns they notice, what data they surface. \
+This is NOT opinion. It is the journalistic instinct that makes one reporter \
+ask about the budget line while another asks about who bears the cost. \
+Let each host's instinct come through in their choice of facts, not in \
+any stated position.
+
 WRONG: A reports. B reacts. A reports. B reacts.
 RIGHT: A reports Story 1. B adds a dimension. B reports Story 2. A adds a dimension.
 
-Story [1] gets the most depth. \
+Story [1] gets the most depth — at least 6 exchanges between hosts. \
+Story [2] gets 4 exchanges. Story [3] gets 2. \
 Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
 B enters IMMEDIATELY after the headline rundown with a reaction or pivot \
@@ -332,7 +349,19 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     all_text = f"{tldr} {script}".lower()
 
     # --- HARD GATE: Prohibited terms ---
-    found = [t for t in _PROHIBITED_TERMS if t in all_text]
+    # Use word-boundary matching for single-word terms to avoid false positives
+    # like "extreme" matching inside "extremely" (valid in direct quotes).
+    # Multi-word phrases use substring matching (they're specific enough).
+    found = []
+    for t in _PROHIBITED_TERMS:
+        if " " in t:
+            # Multi-word phrase: substring match is fine
+            if t in all_text:
+                found.append(t)
+        else:
+            # Single word: require word boundary
+            if re.search(r'\b' + re.escape(t) + r'\b', all_text):
+                found.append(t)
     report["metrics"]["prohibited_terms_found"] = found
     if found:
         report["failures"].append(f"Prohibited terms: {found}")
@@ -789,7 +818,9 @@ Standards:
 - 300-500 words. Single story. No meta-commentary about media or coverage.
 - Active voice. Concrete nouns. Specific numbers.
 - Write as if for a reader who already knows the news. Add the insight they missed.
-- Short sentences deliver verdicts. Long sentences build cases. Vary both.\
+- Short sentences deliver verdicts. Long sentences build cases. Vary both.
+- MUST use first-person plural "we" at least 3 times. This is the editorial board \
+speaking as an institution, not a single author. "We" is how editorials carry weight.\
 """
 
 _LEAN_INSTRUCTIONS = {
