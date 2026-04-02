@@ -434,6 +434,43 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Pull-to-refresh indicator
+   --------------------------------------------------------------------------- */
+
+.pull-to-refresh {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  overflow: hidden;
+}
+
+.pull-to-refresh__spinner {
+  font-family: var(--font-data);
+  font-size: var(--text-base);
+  color: var(--fg-muted);
+  line-height: 1;
+}
+
+.pull-to-refresh__spinner--active {
+  animation: pullSpin 600ms linear infinite;
+}
+
+@keyframes pullSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pull-to-refresh__text {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
    Narrow viewports — prevent justified text rivers
    --------------------------------------------------------------------------- */
 
@@ -500,6 +537,14 @@
   }
 
   .msc:active {
+    transform: none;
+  }
+
+  .pull-to-refresh__spinner--active {
+    animation: none;
+  }
+
+  .mbp__onair-play:active {
     transform: none;
   }
 }

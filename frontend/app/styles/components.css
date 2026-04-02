@@ -1956,6 +1956,9 @@
   letter-spacing: 0.03em;
   font-feature-settings: "tnum" 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50vw;
 }
 
 .nav-edition-badge {
@@ -7000,8 +7003,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     background: var(--bg-primary);
     border-top: 1px solid var(--border-subtle);
     padding: var(--space-2) var(--space-3);
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: var(--space-1);
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.10);
     /* Panels always rendered, animated via inline translateY + opacity */
