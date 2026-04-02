@@ -57,13 +57,13 @@
 
 /* Divider between columns */
 .skb__compact-col--tldr {
-  border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 @media (min-width: 768px) {
   .skb__compact-col--tldr {
     border-bottom: none;
-    border-right: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent);
+    border-right: 1px solid var(--border-subtle);
     padding-right: var(--space-5);
   }
 
@@ -100,7 +100,7 @@
   opacity: 0.4;
 }
 
-/* Headlines — compact size */
+/* Headlines — compact but readable */
 .skb__compact-hl {
   margin: 0;
   line-height: 1.3;
@@ -108,14 +108,14 @@
 
 .skb__compact-hl--tldr {
   font-family: var(--font-editorial);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--accent-warm);
 }
 
 .skb__compact-hl--opinion {
   font-family: var(--font-editorial);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: 700;
   font-style: italic;
   color: var(--fg-primary);
@@ -133,17 +133,17 @@
 
 .skb__compact-preview--tldr {
   font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.5;
-  color: var(--fg-tertiary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-secondary);
 }
 
 .skb__compact-preview--opinion {
   font-family: var(--font-editorial);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-style: italic;
-  line-height: 1.5;
-  color: var(--fg-tertiary);
+  line-height: 1.55;
+  color: var(--fg-secondary);
 }
 
 /* Down chevron — positioned at column's right edge */
@@ -151,37 +151,41 @@
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
-  background: var(--cin-amber-ghost);
+  border-radius: 6px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
   color: var(--accent-warm);
-  font-size: 10px;
+  font-size: 12px;
   cursor: pointer;
-  transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out);
-  /* 44px touch target */
-  position: absolute;
+  transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out), transform 200ms var(--ease-out);
 }
 
 .skb__compact-expand::after {
   content: "";
   position: absolute;
-  inset: -8px;
+  inset: -6px;
 }
 
 .skb__compact-expand:hover {
-  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border-color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  transform: translateY(1px);
 }
 
-/* Row 2: On Air strip */
+/* Row 2: On Air strip — full width */
 .skb__compact-onair {
   padding: var(--space-2) var(--space-4);
   border-top: 1px dotted color-mix(in srgb, var(--fg-muted) 20%, transparent);
+}
+
+.skb__compact-onair .skb__onair-pill {
+  display: flex;
+  width: 100%;
 }
 
 /* ---------------------------------------------------------------------------
@@ -424,6 +428,17 @@
 .skb__onair-label {
   font-family: var(--font-data);
   letter-spacing: 0.02em;
+  flex: 1;
+}
+
+/* In expanded topbar, pill should NOT stretch — keep inline sizing */
+.skb__topbar-left .skb__onair-pill {
+  display: inline-flex;
+  width: auto;
+}
+
+.skb__topbar-left .skb__onair-label {
+  flex: 0 0 auto;
 }
 
 .skb__onair-dur {
