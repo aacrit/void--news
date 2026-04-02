@@ -427,8 +427,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
         // Compute inverse transform: final → card origin
         // On desktop, offsets are relative to the centered position (translate(-50%,-50%))
-        const scaleX = originRect.width / finalRect.width;
-        const scaleY = originRect.height / finalRect.height;
+        // Clamp minimum scale to prevent tiny-card-to-large-panel morphs from
+        // starting at an invisible scale (e.g., a narrow card on mobile).
+        const MORPH_SCALE_MIN = 0.15;
+        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / finalRect.width);
+        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / finalRect.height);
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
@@ -608,8 +611,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
 
         const currentRect = panel.getBoundingClientRect();
-        const scaleX = originRect.width / currentRect.width;
-        const scaleY = originRect.height / currentRect.height;
+        const MORPH_SCALE_MIN = 0.15;
+        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / currentRect.width);
+        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / currentRect.height);
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
@@ -688,7 +692,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
     // Determine direction on first significant movement
     if (touchStartRef.current.direction === "none" && (absX > 10 || absY > 10)) {
-      touchStartRef.current.direction = absX > absY * 1.2 ? "horizontal" : "vertical";
+      touchStartRef.current.direction = absX > absY * 1.5 ? "horizontal" : "vertical";
     }
 
     // --- Horizontal swipe (story navigation) ---
@@ -948,48 +952,50 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Tab bar ---- */}
-          <nav
-            className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-            role="tablist"
-            aria-label="Deep dive sections"
-            style={{ transitionDelay: "250ms" }}
-          >
-            <button
-              id="dd-tab-summary"
-              role="tab"
-              aria-selected={activeTab === "summary"}
-              aria-controls="dd-panel-summary"
-              className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
-              onClick={() => { hapticLight(); setActiveTab("summary"); }}
+          {/* ---- Tab bar (hidden when only Summary tab exists) ---- */}
+          {(hasCrossLeanSources || spectrumSources.length > 0) && (
+            <nav
+              className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              role="tablist"
+              aria-label="Deep dive sections"
+              style={{ transitionDelay: "250ms" }}
             >
-              Summary
-            </button>
-            {hasCrossLeanSources && (
               <button
-                id="dd-tab-allsides"
+                id="dd-tab-summary"
                 role="tab"
-                aria-selected={activeTab === "allsides"}
-                aria-controls="dd-panel-allsides"
-                className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
-                onClick={() => { hapticLight(); setActiveTab("allsides"); }}
+                aria-selected={activeTab === "summary"}
+                aria-controls="dd-panel-summary"
+                className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
+                onClick={() => { hapticLight(); setActiveTab("summary"); }}
               >
-                All Sides
+                Summary
               </button>
-            )}
-            {spectrumSources.length > 0 && (
-              <button
-                id="dd-tab-scoring"
-                role="tab"
-                aria-selected={activeTab === "scoring"}
-                aria-controls="dd-panel-scoring"
-                className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
-                onClick={() => { hapticLight(); setActiveTab("scoring"); }}
-              >
-                Scoring
-              </button>
-            )}
-          </nav>
+              {hasCrossLeanSources && (
+                <button
+                  id="dd-tab-allsides"
+                  role="tab"
+                  aria-selected={activeTab === "allsides"}
+                  aria-controls="dd-panel-allsides"
+                  className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
+                  onClick={() => { hapticLight(); setActiveTab("allsides"); }}
+                >
+                  All Sides
+                </button>
+              )}
+              {spectrumSources.length > 0 && (
+                <button
+                  id="dd-tab-scoring"
+                  role="tab"
+                  aria-selected={activeTab === "scoring"}
+                  aria-controls="dd-panel-scoring"
+                  className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
+                  onClick={() => { hapticLight(); setActiveTab("scoring"); }}
+                >
+                  Scoring
+                </button>
+              )}
+            </nav>
+          )}
 
           {/* ---- Tab panels ---- */}
           {activeTab === "summary" && (
