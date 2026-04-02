@@ -73,20 +73,20 @@ HOSTS = {
         "lean": "center",
         "google_label": "informative",
         "trait": (
-            "The unhurried authority. Lets facts land with their own weight. Short "
+            "Measured authority. Lets facts land with their own weight. Short "
             "declarative sentences. Pauses after key facts to let them register. "
             "Trusts proximity to reveal the pattern — places two facts next to each "
             "other without editorializing."
         ),
         "tts_preamble": (
-            "Low, steady, unhurried. BBC World Service gravitas. Deliberate pauses "
-            "after key statements. Calm authority — never raises voice. Precision "
-            "over speed."
+            "Low, steady, deliberate. BBC World Service gravitas. Pauses after key "
+            "facts — not for drama, but for weight. Calm authority — never raises "
+            "voice. Precision over speed."
         ),
         "opinion_tts_preamble": (
             "Scene: A veteran foreign correspondent delivering a dispatch from the "
-            "editorial desk. Speaker One is unhurried — the authority of someone who "
-            "has been in the room where it happened. Short declarative sentences that "
+            "editorial desk. Speaker One carries the authority of someone who has "
+            "been in the room where it happened. Short declarative sentences that "
             "land like dispatches. Pauses after key facts — not for drama, but because "
             "the fact deserves the silence. Places two observations side by side and "
             "lets the listener connect them. Low register, steady pace. Never raises "

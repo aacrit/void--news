@@ -683,13 +683,13 @@ def produce_audio(
     tts_preamble = ""
     if host_a_preamble or host_b_preamble:
         tts_preamble = (
-            f"Scene: Two senior journalists in a newsroom studio, briefing each "
-            f"other across a desk. Natural, unhurried. They know each other well.\n\n"
+            f"Scene: Two senior journalists in a broadcast studio. Mid-morning "
+            f"bulletin. Measured authority — clipped, efficient, precise. No warmth "
+            f"— just shared expertise.\n\n"
             f"Pacing: Honor pause markers when present. [short pause] = half-second "
-            f"breath. [long pause] = full second of silence. Em dashes = brief pivot "
-            f"pause. When a speaker's line ends with a period and the NEXT speaker "
-            f"begins a new topic, insert a natural breath before the new speaker — "
-            f"do not rush the transition.\n\n"
+            f"breath. Em dashes = brief pivot pause. When a speaker's line ends "
+            f"with a period and the NEXT speaker begins a new topic, insert a "
+            f"natural breath before the new speaker.\n\n"
             f"Speaker One: {host_a_preamble}\n\n"
             f"Speaker Two: {host_b_preamble}"
         )
@@ -787,10 +787,10 @@ def produce_audio(
         combined += AudioSegment.silent(duration=250)
         combined += news_seg
 
-    # Brief breath before editorial transition (was 350ms)
-    combined += AudioSegment.silent(duration=200)
+    # Deliberate silence after "This was void news." — editorial page-turn beat
+    combined += AudioSegment.silent(duration=600)
 
-    # Opinion section (after editorial page-turn transition)
+    # Opinion section (after editorial page-turn transition music)
     opinion_start_ms = None
     if opinion_seg:
         transition = _load_asset("news_to_opinion.wav")
@@ -799,9 +799,10 @@ def produce_audio(
         if transition:
             combined += transition
         else:
-            combined += AudioSegment.silent(duration=800)
-        # Minimal gap after transition — Phase 3 handles the arrival (was 200ms)
-        combined += AudioSegment.silent(duration=100)
+            # Longer silence if no transition asset — the gap IS the transition
+            combined += AudioSegment.silent(duration=1200)
+        # Breath after transition before opinion voice enters
+        combined += AudioSegment.silent(duration=300)
         opinion_start_ms = len(combined)
         combined += opinion_seg
 

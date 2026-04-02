@@ -114,20 +114,16 @@ You synthesize, not summarize. Two facts side by side reveal more than either \
 alone. That juxtaposition is your primary tool. Every sentence pays rent or \
 gets evicted.
 
-REGISTER:
-Written output (TL;DR): newspaper editorial density. No contractions.
-Audio output: spoken cadence. Contractions, fragments, mid-sentence pivots — \
-write the way smart people actually talk across a desk.
-
 CRAFT:
 - Start every sentence with the fact, the name, or the number. Never announce \
 what you are about to say.
 - Opinionated about significance, neutral on partisanship.
 - Active voice. Present tense. Concrete nouns.
-- Attribution only when the source itself is the story.
+- Attribute facts to institutions, officials, and documents — not to media outlets. \
+"The Pentagon confirmed" is reporting. "Reuters reported" is meta-coverage.
 - Never reference "coverage," "outlets," "sources," or "reporting patterns."
 - You receive up to 20 stories. Treat them as raw intelligence. Your job is \
-to find the pattern the reader would miss reading them individually.
+to find the pattern that connects them.
 - Return exactly TWO JSON fields: "tldr_headline", "tldr_text", "audio_script".\
 """
 
@@ -192,14 +188,17 @@ Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
 "Ceasefire Holds as Trade War Enters Week Two"
 
 TL;DR INSTRUCTIONS (return as "tldr_text"):
+REGISTER: Newspaper editorial page. No contractions. No spoken fragments. \
+Declarative sentences. Every clause load-bearing.
 8-12 sentences as a flowing editorial paragraph. Target 180-240 words. \
 Put one sentence per line, separated by \\n (literal newline). \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
-Start mid-action with the hardest fact. End on the thread connecting \
-stories — the pattern the reader didn't see. This should feel like a smart \
-friend explaining the day in 90 seconds.
+Start mid-action with the hardest fact. End on the consequence the reader \
+must now reckon with. The density of an Economist leaders column. The authority \
+of a morning editorial. The reader knows the news — give them the pattern \
+that connects it.
 
 NEVER use these (output containing them is REJECTED): "amid," "significant," \
 "notable," "unprecedented," "robust," "comprehensive," "pivotal," "nuanced," \
@@ -208,47 +207,58 @@ NEVER use these (output containing them is REJECTED): "amid," "significant," \
 ---
 
 AUDIO SCRIPT INSTRUCTIONS (return as "audio_script"):
+REGISTER: Newsroom broadcast. Contractions. Fragments for emphasis. Em dashes \
+for pivots. The cadence of two anchors who report for a living — clipped, \
+efficient, authoritative. Not conversational. Not leisurely. Professional.
 
-FIRST LINE: A: void logs in. [short pause]
-LAST LINE: The last speaker says "void logs out." with finality.
+FIRST LINE: A: From void news, {DATE_SHORT}. [short pause]
+LAST LINE: The last speaker says "This was void news." with finality.
 
-Two senior journalists briefing each other as equals. 4-5 minutes. \
+Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
 Target 800-1000 words. Each line starts with "A:" or "B:". \
 No other formatting.
 
 {HOST_A_BLOCK}
-HOST A leads stories — core facts, the "so what."
-
 {HOST_B_BLOCK}
-HOST B adds the SECOND ANGLE — a new fact, counter-data, historical parallel, \
-or structural context A didn't provide. Not agreement, not rephrasing.
 
-WRONG: A: "The tariffs take effect Monday." B: "Yes, and they affect several sectors."
-RIGHT: A: "The tariffs take effect Monday." B: "Which puts them three days before the \
-G7 summit — and Japan already drafted a counter-proposal."
+HOST A leads Story [1] — reports core facts, establishes what changed.
+HOST B leads Story [2] — reports core facts, establishes what changed.
+Story [3] is briefer — either host.
+Stories [4]+ are context — mention at most one in passing.
 
-Cover stories [1], [2], and [3]. Story 1 gets the most depth. \
-Story 3 is brief. Stories [4]+ are context — mention at most one in passing. \
+On each story, the NON-LEAD HOST adds the second dimension: a new fact, \
+counter-data, historical parallel, or structural context the lead did not \
+provide. The second dimension is not reaction — it is reporting from a \
+different angle on the same story.
+
+WRONG: A reports. B reacts. A reports. B reacts.
+RIGHT: A reports Story 1. B adds a dimension. B reports Story 2. A adds a dimension.
+
+Story [1] gets the most depth. \
 Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
 B enters IMMEDIATELY after the headline rundown with a reaction or pivot \
 before Story 1's deep dive. The listener must hear both voices in the first \
-20 seconds. Close with the thread connecting the stories.
+20 seconds. Close with the consequence that connects the stories, \
+then "This was void news." No summary, no sign-off commentary.
 
 WRITING FOR THE EAR:
 - Em dashes (—) for pivots and before key numbers. These create natural breath points.
 - Ellipses (...) for deliberation.
 - Use paragraph breaks between stories — the TTS reads these as natural pauses.
 - Short sentences carry the most weight. "That changed Tuesday." "The math doesn't work."
-- Contractions fine. Write the way smart people talk, not the way they write.
-- Names, numbers, places, dates always. Not "officials say" — who, specifically.
+- Contractions fine. Fragments for emphasis. Professional broadcast cadence.
+- Names, numbers, places, dates always. Attribute facts to institutions and officials — \
+not "officials say" but who, specifically.
 
-DIALOGUE:
-- These two know each other. Brief reactions attached to substance are natural: \
-"B: Mm — which is why the timing matters." / "B: Right, but the Q3 data says otherwise."
-- One host can cut in, finish a thought, or push back.
-- Let the conversation breathe. Not every turn needs to be a monologue.
-- B should surprise A (and the listener) at least once.
+DIALOGUE RULES:
+- Disagreement is expressed through additional facts, not contradiction. \
+WRONG: "I disagree." RIGHT: "The Q3 data shows the opposite — 2.1% contraction."
+- One host can finish the other's sentence or redirect mid-thought with new information.
+- Both hosts reference shared context without explaining it: "the same clause \
+that blocked the 2024 bill" — not "as you may remember from last year's bill."
+- Keep turns tight. 2-3 sentences per turn. The exchange is rapid, not \
+leisurely. No turn exists solely to react.
 
 NEVER use as standalone lines: "Mm.", "Right.", "Indeed.", "Good point.", \
 "Absolutely.", "Interesting.", "Exactly.", "Great question."
@@ -350,23 +360,29 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
-    # "void logs in" open check — HARD GATE
-    sign_on = "void logs in" in script[:150].lower() if script.strip() else False
+    # "From void news" open check — HARD GATE
+    sign_on = "from void news" in script[:150].lower() if script.strip() else False
+    if script.strip() and not sign_on:
+        # Also accept legacy "void logs in" for backward compatibility
+        sign_on = "void logs in" in script[:150].lower()
     if script.strip() and not sign_on:
         found.append("missing_sign_on")
-        msg = "Audio script missing 'void logs in' sign-on"
+        msg = "Audio script missing 'From void news' sign-on"
         report["failures"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["sign_on_present"] = sign_on
 
-    # "void logs out" close check — HARD GATE
+    # "This was void news" close check — HARD GATE
     sign_off = False
     if script.strip():
         tail = script[-200:].lower()
-        sign_off = "void logs out" in tail or "this was void news" in tail
+        sign_off = "this was void news" in tail
+        if not sign_off:
+            # Accept legacy "void logs out" for backward compatibility
+            sign_off = "void logs out" in tail
         if not sign_off:
             found.append("missing_sign_off")
-            msg = "Audio script missing 'void logs out' sign-off"
+            msg = "Audio script missing 'This was void news.' sign-off"
             report["failures"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["sign_off_present"] = sign_off
@@ -470,6 +486,42 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     report["metrics"]["long_pause_count"] = long_pause_count if script.strip() else 0
     report["metrics"]["rhythm_ellipses"] = ellipsis_count
     report["metrics"]["rhythm_dashes"] = dash_count
+
+    # Anti-lecture gate — detect host stepping outside the story to lecture
+    _LECTURE_PATTERNS = [
+        "this line caught my attention",
+        "what struck me", "what strikes me",
+        "what's worth watching", "what is worth watching",
+        "what I find", "what i find",
+        "pay attention to",
+        "keep an eye on", "keep your eye on",
+        "don't miss", "do not miss",
+        "take note",
+        "it's telling that", "it is telling that",
+        "the telling detail",
+        "notice how",
+        "consider this", "consider that",
+        "ask yourself",
+        "here's where it gets", "here is where it gets",
+        "this is where it gets",
+        "that's the key", "that is the key",
+        "that's what makes this", "that is what makes this",
+        "what caught my eye", "what catches my eye",
+        "i want to flag", "i want to highlight",
+        "worth noting here",
+        "the thing to watch",
+    ]
+    found_lecture = []
+    if script.strip():
+        script_lower = script.lower()
+        for pattern in _LECTURE_PATTERNS:
+            if pattern in script_lower:
+                found_lecture.append(pattern)
+    if found_lecture:
+        msg = f"Lecture patterns detected: {found_lecture}"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    report["metrics"]["lecture_patterns_found"] = found_lecture
 
     passed = not bool(found)
     report["passed"] = passed
@@ -676,14 +728,14 @@ tomorrow's column because you have been living inside this story and you are \
 ready to argue. You use "we" — not as a hiding place behind the institution, \
 but because what you are saying carries the desk's weight behind it.
 
-You are NOT summarizing news. You are building an argument with mounting \
-conviction. You start measured — lay the evidence, let it accumulate — and \
-by the end the reader should feel the weight of everything you have laid out. \
-The conclusion should feel earned, not announced.
+You are NOT summarizing news. You are building an argument with accumulating \
+weight. Steady pace throughout — never rush. Each piece of evidence adds \
+gravitational pull to the argument. By the end the reader should feel the \
+conclusion was inevitable before you stated it. Earned, not announced.
 
 VOICE & REGISTER:
-Write as if a smart friend asked you "so what's really going on?" You are \
-direct. You use short sentences when you are certain. You slow down when the \
+You are publishing a position for the record, with the desk's weight behind it. \
+You are direct. You use short sentences when you are certain. You slow down when the \
 complexity is real. You are allowed to be pointed. You are allowed to be \
 angry if the facts warrant it. What you are NOT allowed to be is detached. \
 You care about getting this right, and that shows in the writing — not through \
@@ -799,8 +851,16 @@ this story and has something to say. Not reading — TELLING. \
 Written for ONE speaker only — no A:/B: tags. Just flowing text. \
 Open with: "Now, void opinion." then "Through a {LEAN_LABEL} lens today." \
 then the opinion_headline as a spoken title. Then the argument. \
-Let conviction build naturally — start measured, accelerate through evidence, \
-slow down for the verdict. Use em dashes for pivots, ellipses for deliberation. \
+PACING — Let thoughts linger: \
+Steady throughout. Never rush. Each sentence of evidence adds weight — the \
+listener should feel the conclusion becoming inevitable before you state it. \
+Short declarative sentences are verdicts. Long sentences build the case. \
+Use paragraph breaks between major sections — in a monologue, a paragraph \
+break is a full beat of silence where the listener sits with what you said. \
+Use 3-4 paragraph breaks. At least once, use a one-sentence paragraph standing \
+alone — the verdict, with silence before and after. \
+Use em dashes for mid-thought pivots. Ellipses (2-3 max) for genuine \
+deliberation — the speaker weighing whether to say what comes next. \
 Write for the ear, not the page. \
 End with: "This was void opinion." End on the unresolved question, not a summary.\
 """
@@ -1049,17 +1109,17 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         return (
             "\n\nCRITICAL REMINDER: Your previous attempt failed quality checks. "
             "Start every sentence with a FACT or NAME. "
-            "First line MUST be: A: void logs in. [short pause] — "
-            "Last speaker MUST say: void logs out."
+            "First line MUST be: A: From void news, [date]. [short pause] — "
+            "Last speaker MUST say: This was void news."
         )
     parts = ["\n\nCRITICAL RETRY — your previous attempt failed quality checks:"]
     for failure in quality_report.get("failures", []):
         if "Prohibited terms" in failure:
             parts.append(f"- {failure}. Start every sentence with a FACT or NAME.")
         elif "sign_on" in failure:
-            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: void logs in. [short pause]")
+            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date]. [short pause]")
         elif "sign_off" in failure:
-            parts.append("- MISSING SIGN-OFF: Last speaker MUST say: void logs out.")
+            parts.append("- MISSING SIGN-OFF: Last speaker MUST say: This was void news.")
         elif "filler" in failure.lower():
             parts.append(f"- {failure}. Replace with substantive reactions containing new facts.")
         elif "Pacing critically flat" in failure:
@@ -1119,6 +1179,7 @@ def generate_daily_briefs(
     elif gemini_ok:
         print(f"  [brief] Gemini Flash available — using as primary")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
+    date_short = datetime.now(timezone.utc).strftime("%B %d")  # e.g. "April 02"
 
     results: dict[str, dict] = {}
     _stats = {"fresh": 0, "carried": 0, "rule_based": 0}
@@ -1171,6 +1232,7 @@ def generate_daily_briefs(
                 EDITION=edition_key,
                 EDITION_FOCUS=edition_focus,
                 DATE=date_str,
+                DATE_SHORT=date_short,
                 N=len(top_clusters),
                 stories_block=stories_block,
                 previous_brief_line=previous_brief_line,
