@@ -6,11 +6,12 @@
    - Audio files: never cached (too large)
 */
 
-const CACHE_VERSION = 'void-news-v2';
+const CACHE_VERSION = 'void-news-v3';
 
 const APP_SHELL = [
   '/void--news/',
   '/void--news/index.html',
+  '/void--news/offline.html',
   '/',
 ];
 
@@ -126,10 +127,13 @@ function networkFirstNavigation(request) {
     });
   }).catch(function() {
     return caches.open(CACHE_VERSION).then(function(cache) {
-      // Try the exact URL first, then the app shell root
+      // Try the exact URL first, then the app shell root, then offline page
       return cache.match(request).then(function(cached) {
         if (cached) return cached;
-        return cache.match('/void--news/') || cache.match('/');
+        return cache.match('/void--news/').then(function(shell) {
+          if (shell) return shell;
+          return cache.match('/void--news/offline.html');
+        });
       });
     });
   });
