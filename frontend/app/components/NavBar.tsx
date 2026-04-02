@@ -73,8 +73,10 @@ export default function NavBar({
   // Defer date rendering to client to avoid SSG/client hydration mismatch (#310)
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
-  const dateline = mounted ? formatDateCompact() : "";
-  const timestamp = mounted ? getEditionTimestamp(activeEdition) : "";
+  // Render non-breaking spaces as placeholder during SSR to reserve layout
+  // width and prevent dateline flicker on hydration (F14).
+  const dateline = mounted ? formatDateCompact() : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
+  const timestamp = mounted ? getEditionTimestamp(activeEdition) : "\u00A0\u00A0\u00A0\u00A0\u00A0";
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();

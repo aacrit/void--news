@@ -128,6 +128,17 @@
     -webkit-line-clamp: 3;
   }
 
+  /* F15: CaretRight icon creates visual noise at high density — hide at rest,
+     reveal on hover. GPU-only transition (opacity). */
+  .grid-compact .story-card__headline-icon {
+    opacity: 0;
+    transition: opacity 150ms var(--ease-out);
+  }
+
+  .grid-compact .story-card:hover .story-card__headline-icon {
+    opacity: 0.6;
+  }
+
   /* Deep Dive: centered overlay covering 75% of viewport.
      Opaque surface — no see-through. Cinematic depth via shadow layers.
      The backdrop blur handles the "frosted world behind" feel. */
