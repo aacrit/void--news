@@ -117,6 +117,44 @@ export async function fetchLastPipelineRun() {
   return data;
 }
 
+/**
+ * Fetch recent articles with bias scores for methodology live autopsy.
+ * Returns 10 most recent articles that have non-null bias_scores.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function fetchMethodologyArticles(): Promise<any[]> {
+  if (!_client) return [];
+  const { data, error } = await _client
+    .from('articles')
+    .select('id, title, published_at, excerpt, source:sources(name, slug, url), bias_scores(political_lean, sensationalism, opinion_fact, factual_rigor, framing, rationale)')
+    .not('bias_scores', 'is', null)
+    .order('published_at', { ascending: false })
+    .limit(10);
+
+  if (error || !data) return [];
+
+  // Parse rationale strings into objects (same pattern as fetchDeepDiveData)
+  for (const row of data) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const scores = (row as any).bias_scores;
+    if (!scores) continue;
+    const arr = Array.isArray(scores) ? scores : [scores];
+    for (const score of arr) {
+      if (typeof score.rationale === 'string') {
+        try {
+          score.rationale = JSON.parse(score.rationale);
+        } catch {
+          score.rationale = null;
+        }
+      }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (row as any).bias_scores = arr;
+  }
+
+  return data;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (!_client) return null;
