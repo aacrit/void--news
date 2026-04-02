@@ -40,6 +40,13 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     Array.from({ length: 24 }, (_, i) => Math.min(28, 8 + Math.sin(i * 0.6) * 14 + Math.sin(i * 1.4) * 5)),
   []);
 
+  /* ---- Swipe-down gesture (expanded → minimize) ---- */
+  // IMPORTANT: All hooks must be called before any conditional return.
+  // Moving these above the early return fixes React error #310:
+  // "Rendered more hooks than during the previous render."
+  const dragYRef = useRef<{ startY: number; current: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+
   if (!brief || !brief.audio_url || !isPlayerVisible) return null;
 
   const displayDuration = brief.audio_duration_seconds || duration;
@@ -65,10 +72,6 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     setPlayerVisible(false);
     setExpanded(false);
   };
-
-  /* ---- Swipe-down gesture (expanded → minimize) ---- */
-  const dragYRef = useRef<{ startY: number; current: number } | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
 
   const handleBarTouchStart = (e: React.TouchEvent) => {
     dragYRef.current = { startY: e.touches[0].clientY, current: 0 };
