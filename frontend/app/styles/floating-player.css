@@ -124,11 +124,10 @@
   border-radius: 24px;
   cursor: grab;
 
-  /* Frosted glass surface */
-  background: color-mix(in srgb, var(--bg-secondary) 85%, transparent);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  /* Fixed dark console — broadcast equipment does not adapt to room lighting */
+  background: #1A1816;
+  border: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 18%, transparent);
+  overflow: hidden; /* For mini progress bar */
 
   /* Broadcast console shadow */
   box-shadow:
@@ -145,6 +144,31 @@
     0 6px 24px rgba(0, 0, 0, 0.25),
     0 0 16px var(--cin-amber-glow),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
+}
+
+/* Console text — always light on dark, theme-independent */
+.fp__pill,
+.fp__bar {
+  color: #EDE8E0;
+}
+
+/* Mini progress bar — 2px amber strip along pill bottom edge */
+.fp__mini-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent);
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+.fp__mini-progress-fill {
+  height: 100%;
+  background: var(--cin-amber, var(--accent-warm));
+  border-radius: inherit;
+  transition: width 100ms linear;
 }
 
 /* Play button — circular, accented */
@@ -287,9 +311,9 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
 
-  /* Solid dark console surface */
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-card, var(--bg-secondary)) 100%);
-  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  /* Fixed dark console — Nagra III field recorder aesthetic */
+  background: linear-gradient(180deg, #1A1816 0%, #151310 100%);
+  border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent);
 
   /* Console depth */
   box-shadow:
@@ -393,13 +417,20 @@
   font-weight: 300;
 }
 
-/* Waveform */
+/* Waveform — visible only when playing, collapses when paused */
 .fp__waveform {
   display: flex;
   align-items: flex-end;
   justify-content: center;
   gap: 3px;
+  height: 0;
+  overflow: hidden;
+  transition: height 220ms var(--ease-refold, ease);
+}
+
+.fp__waveform--active {
   height: 28px;
+  transition: height 350ms var(--ease-unfold, ease);
 }
 
 .fp__waveform-bar {
