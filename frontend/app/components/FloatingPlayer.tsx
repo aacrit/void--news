@@ -66,6 +66,34 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     setExpanded(false);
   };
 
+  /* ---- Swipe-down gesture (expanded → minimize) ---- */
+  const dragYRef = useRef<{ startY: number; current: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+
+  const handleBarTouchStart = (e: React.TouchEvent) => {
+    dragYRef.current = { startY: e.touches[0].clientY, current: 0 };
+  };
+
+  const handleBarTouchMove = (e: React.TouchEvent) => {
+    if (!dragYRef.current) return;
+    const dy = e.touches[0].clientY - dragYRef.current.startY;
+    if (dy > 0) {
+      dragYRef.current.current = dy;
+      setDragOffset(dy * 0.6);
+    }
+  };
+
+  const handleBarTouchEnd = () => {
+    if (!dragYRef.current) return;
+    const dy = dragYRef.current.current;
+    dragYRef.current = null;
+    setDragOffset(0);
+    if (dy > 80) {
+      hapticLight();
+      setExpanded(false);
+    }
+  };
+
   return (
     <div
       ref={playerRef}
@@ -74,6 +102,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
         expanded ? "fp--expanded" : "fp--compact",
         isPlaying ? "fp--playing" : "",
       ].filter(Boolean).join(" ")}
+      style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: "none" } : undefined}
       role="region"
       aria-label="Audio player"
     >
@@ -114,8 +143,15 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
       {/* ── EXPANDED BAR ── */}
       {expanded && (
-        <div className="fp__bar">
-          {/* Header */}
+        <div
+          className="fp__bar"
+          onTouchStart={handleBarTouchStart}
+          onTouchMove={handleBarTouchMove}
+          onTouchEnd={handleBarTouchEnd}
+        >
+          {/* Drag indicator */}
+          <div className="fp__drag-indicator" aria-hidden="true" />
+          {/* Header — drag handle for swipe-down-to-minimize */}
           <div className="fp__bar-header">
             <div className="fp__bar-brand">
               <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />

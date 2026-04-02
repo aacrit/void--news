@@ -204,6 +204,15 @@
   transition: box-shadow 500ms var(--ease-cinematic, ease), border-color 300ms;
 }
 
+/* Drag indicator — swipe down to minimize */
+.fp__drag-indicator {
+  width: 32px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  margin: 0 auto var(--space-1);
+}
+
 /* Header */
 .fp__bar-header {
   display: flex;

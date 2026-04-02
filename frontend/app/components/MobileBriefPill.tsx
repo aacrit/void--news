@@ -61,7 +61,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
   if (!brief) return (
     <div className="mbp" role="complementary" aria-label="Daily Brief">
       <div className="mbp__pill">
-        <ScaleIcon size={12} animation="analyzing" />
+        <ScaleIcon size={16} animation="analyzing" />
         <span className="mbp__pill-cmd">void --tl;dr</span>
         <span className="mbp__pill-sep" aria-hidden="true">&middot;</span>
         <span className="mbp__pill-label" style={{ opacity: 0.4 }}>Loading&hellip;</span>
