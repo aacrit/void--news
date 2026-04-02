@@ -234,12 +234,12 @@
     "id": "bloomberg",
     "name": "Bloomberg",
     "url": "https://www.bloomberg.com",
-    "rss_url": "https://feeds.bloomberg.com/politics/news.rss",
+    "rss_url": "https://news.google.com/rss/search?q=site:bloomberg.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "us_major",
     "country": "US",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "Premier financial news service. Massive global newsgathering operation. Strong on economics, markets, and data-driven reporting."
+    "credibility_notes": "Premier financial news service. Massive global newsgathering operation. Strong on economics, markets, and data-driven reporting. RSS via Google News filter (native feed was politics-only, missing core financial coverage)"
   },
   {
     "id": "cnbc",
