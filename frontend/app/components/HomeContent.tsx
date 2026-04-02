@@ -331,13 +331,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       // Clear any pending timer from a rapid edition switch
       if (editionTransitionTimerRef.current) clearTimeout(editionTransitionTimerRef.current);
       setEditionTransition("out");
+      // L-cut overlap: new content starts entering before old fully exits
       editionTransitionTimerRef.current = setTimeout(() => {
         setEditionTransition("in");
         editionTransitionTimerRef.current = setTimeout(() => {
           setEditionTransition(null);
           editionTransitionTimerRef.current = null;
-        }, 300);
-      }, 200);
+        }, 250);
+      }, 120);
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -736,6 +737,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     <div className="page-container" data-whip={whipDirection === "left" ? "left" : undefined}>
       <NavBar
         activeEdition={activeEdition}
+        onEditionChange={(edition) => { setActiveEdition(edition); setVisibleCount(BATCH_SIZE); }}
         activeCategory={activeCategory}
         onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
         activeLean={activeLean}
@@ -769,9 +771,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             <div className="pull-to-refresh__spinner">
               <LogoIcon size={24} animation={isRefreshing ? "analyzing" : "idle"} />
             </div>
-            <span className="pull-to-refresh__text">
-              {isRefreshing ? "Updating…" : pullOffset >= PULL_THRESHOLD ? "Release to refresh" : "Pull to refresh"}
-            </span>
           </div>
         )}
 

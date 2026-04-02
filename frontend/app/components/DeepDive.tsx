@@ -10,7 +10,7 @@ import {
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
-import { hapticMedium, hapticLight } from "../lib/haptics";
+import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import { BiasInspectorInline } from "./BiasInspector";
@@ -68,7 +68,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
-  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal" } | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal"; hapticFired: boolean } | null>(null);
 
   /* Reset swipe gesture state when the parent navigates to a different story
      without unmounting this component (handleDeepDiveNav changes story prop). */
@@ -698,6 +698,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       time: Date.now(),
       scrollTop,
       direction: "none",
+      hapticFired: false,
     };
   }, [isDesktop]);
 
@@ -717,7 +718,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
     // --- Horizontal swipe (story navigation) ---
     if (touchStartRef.current.direction === "horizontal" && onNavigateRef.current) {
-      // Don't interfere with vertical scroll
+      // Haptic detent at threshold crossing (once per gesture)
+      if (absX > 60 && !touchStartRef.current.hapticFired) {
+        hapticMicro();
+        touchStartRef.current.hapticFired = true;
+      }
       return;
     }
 
@@ -1046,6 +1051,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {activeTab === "scoring" && spectrumSources.length > 0 && (
             <section id="dd-panel-scoring" role="tabpanel" aria-labelledby="dd-tab-scoring" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
               <BiasInspectorInline sources={sources} />
+              <a href="/void--news/sources/#methodology" className="dd-methodology-link" style={{ display: "block", marginTop: "var(--space-3)", fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", color: "var(--fg-muted)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                How we score — 6-axis methodology
+              </a>
             </section>
           )}
 
