@@ -13,6 +13,7 @@ import LogoIcon from "../components/LogoIcon";
 import Footer from "../components/Footer";
 import { getEditionTimeOfDay, getEditionTimestamp } from "../lib/utils";
 import ErrorBoundary from "../components/ErrorBoundary";
+import { useInView } from "../lib/sharedObserver";
 
 /* ---------------------------------------------------------------------------
    Sources Page — /sources
@@ -194,7 +195,7 @@ function AxisAccordion({ axis }: { axis: typeof AXES_DATA[number] }) {
           <span className="meth-axis__scale-arrow" aria-hidden="true">&rarr;</span>
           <span className="meth-axis__scale-high">{axis.high}</span>
         </span>
-        <span className="meth-axis__chevron" aria-hidden="true">{open ? "\u25BE" : "\u25B8"}</span>
+        <span className="meth-axis__chevron" aria-hidden="true">{"\u25B8"}</span>
       </button>
       {open && (
         <div className="meth-axis__panel" id={panelId} role="region" aria-label={`${axis.name} details`}>
@@ -213,10 +214,71 @@ function AxisAccordion({ axis }: { axis: typeof AXES_DATA[number] }) {
   );
 }
 
+/* ---------------------------------------------------------------------------
+   MethSection — scroll-revealed section wrapper.
+   Uses useInView to trigger the dolly entrance animation when the section
+   scrolls into the viewport. Stagger delay is set via CSS custom property.
+   --------------------------------------------------------------------------- */
+
+function MethSection({
+  index,
+  className = "",
+  children,
+}: {
+  index: number;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const [ref, visible] = useInView<HTMLDivElement>();
+  const staggerDelay = `${index * 80}ms`;
+  return (
+    <div
+      ref={ref}
+      className={`meth__section${visible ? " meth__section--visible" : ""}${className ? ` ${className}` : ""}`}
+      style={{ "--meth-stagger-delay": staggerDelay } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   ValidationGrid — stat numbers with staggered fade-settle entrance.
+   Each stat gets its own IO-driven visibility and a stagger delay.
+   --------------------------------------------------------------------------- */
+
+const VALIDATION_STATS = [
+  { number: "42", label: "Ground-truth articles" },
+  { number: "9", label: "Categories tested" },
+  { number: "100%", label: "Accuracy" },
+  { number: "r\u2009<\u20090.70", label: "Cross-axis correlation gate" },
+];
+
+function ValidationStat({ stat, index }: { stat: typeof VALIDATION_STATS[number]; index: number }) {
+  const [ref, visible] = useInView<HTMLDivElement>();
+  return (
+    <div
+      ref={ref}
+      className={`meth__validation-stat${visible ? " meth__validation-stat--visible" : ""}`}
+      style={{ "--meth-stat-delay": `${index * 100}ms` } as React.CSSProperties}
+    >
+      <span className="meth__validation-number">{stat.number}</span>
+      <span className="meth__validation-label">{stat.label}</span>
+    </div>
+  );
+}
+
 function Methodology() {
+  /* Rule curtain-pull entrance */
+  const [ruleRef, ruleVisible] = useInView<HTMLDivElement>();
+
   return (
     <section id="methodology" className="meth" aria-label="Methodology">
-      <div className="meth__rule" aria-hidden="true" />
+      <div
+        ref={ruleRef}
+        className={`meth__rule${ruleVisible ? " meth__rule--visible" : ""}`}
+        aria-hidden="true"
+      />
 
       <header className="meth__header">
         <h2 className="meth__title">Methodology</h2>
@@ -224,7 +286,7 @@ function Methodology() {
       </header>
 
       {/* ---- Section 1: Per-Article ---- */}
-      <div className="meth__section">
+      <MethSection index={0}>
         <h3 className="meth__section-title">Per-Article, Not Per-Outlet</h3>
         <p className="meth__body">
           Most bias tools rate outlets. The New York Times is &ldquo;Lean Left&rdquo;
@@ -239,10 +301,10 @@ function Methodology() {
           TextBlob sentiment, curated keyword lexicons, and statistical patterns. The
           algorithms are deterministic: the same text produces the same scores every time.
         </p>
-      </div>
+      </MethSection>
 
       {/* ---- Section 2: Six Axes ---- */}
-      <div className="meth__section">
+      <MethSection index={1}>
         <h3 className="meth__section-title">Six Axes of Analysis</h3>
         <p className="meth__body">
           Each article passes through six independent analyzers. They run in parallel,
@@ -255,10 +317,10 @@ function Methodology() {
             <AxisAccordion key={axis.id} axis={axis} />
           ))}
         </div>
-      </div>
+      </MethSection>
 
       {/* ---- Section 3: Worked Example ---- */}
-      <div className="meth__section">
+      <MethSection index={2}>
         <h3 className="meth__section-title">Worked Example</h3>
         <p className="meth__body">
           A real-world decomposition of how the six axes score a single article.
@@ -283,10 +345,10 @@ function Methodology() {
             ))}
           </div>
         </div>
-      </div>
+      </MethSection>
 
       {/* ---- Section 4: Validation ---- */}
-      <div className="meth__section">
+      <MethSection index={3}>
         <h3 className="meth__section-title">Validation</h3>
         <p className="meth__body">
           The bias engine is tested against a ground-truth corpus of 42 articles spanning
@@ -294,22 +356,9 @@ function Methodology() {
           tabloid sensationalism. Every article has hand-verified expected scores.
         </p>
         <div className="meth__validation-grid">
-          <div className="meth__validation-stat">
-            <span className="meth__validation-number">42</span>
-            <span className="meth__validation-label">Ground-truth articles</span>
-          </div>
-          <div className="meth__validation-stat">
-            <span className="meth__validation-number">9</span>
-            <span className="meth__validation-label">Categories tested</span>
-          </div>
-          <div className="meth__validation-stat">
-            <span className="meth__validation-number">100%</span>
-            <span className="meth__validation-label">Accuracy</span>
-          </div>
-          <div className="meth__validation-stat">
-            <span className="meth__validation-number">r&thinsp;&lt;&thinsp;0.70</span>
-            <span className="meth__validation-label">Cross-axis correlation gate</span>
-          </div>
+          {VALIDATION_STATS.map((stat, i) => (
+            <ValidationStat key={stat.label} stat={stat} index={i} />
+          ))}
         </div>
         <p className="meth__body">
           A CI gate runs the full validation suite on every commit via GitHub Actions.
@@ -318,10 +367,10 @@ function Methodology() {
         <p className="meth__body meth__body--code">
           Run it yourself: <code className="meth__inline-code">python pipeline/validation/runner.py</code>
         </p>
-      </div>
+      </MethSection>
 
       {/* ---- Section 5: 419 Curated Sources ---- */}
-      <div className="meth__section">
+      <MethSection index={4}>
         <h3 className="meth__section-title">419 Curated Sources</h3>
         <p className="meth__body">
           Every source in the spectrum above was added by hand. Each has a tier
@@ -352,10 +401,10 @@ function Methodology() {
             deliberate tilt toward the center with representation from both wings.
           </p>
         </div>
-      </div>
+      </MethSection>
 
       {/* ---- Section 6: Open Source ---- */}
-      <div className="meth__section meth__section--last">
+      <MethSection index={5} className="meth__section--last">
         <h3 className="meth__section-title">Open Source</h3>
         <p className="meth__body">
           Every analyzer is a standalone Python module in <code className="meth__inline-code">pipeline/analyzers/</code>.
@@ -377,7 +426,7 @@ function Methodology() {
             <span className="meth__open-link-desc">All 419 source definitions</span>
           </span>
         </div>
-      </div>
+      </MethSection>
     </section>
   );
 }
