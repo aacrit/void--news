@@ -1119,6 +1119,45 @@
   transition: transform 380ms var(--spring-snappy);
 }
 
+/* ── Backdrop Rack Focus ──
+   The Deep Dive backdrop-filter ramps from no blur to full blur (rack-in)
+   simulating the depth of field deepening as the camera acquires focus on
+   the subject (the Deep Dive panel). On close, the blur clears (rack-out)
+   — the feed "refocuses" — and the viewer sees the world sharpening.
+   Lubezki, The Revenant — progressive depth-of-field shift. */
+@keyframes backdropRackIn {
+  from {
+    backdrop-filter: blur(0px) saturate(1) brightness(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
+  }
+  to {
+    backdrop-filter: var(--cin-backdrop-blur);
+    -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  }
+}
+
+@keyframes backdropRackOut {
+  from {
+    backdrop-filter: var(--cin-backdrop-blur);
+    -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  }
+  to {
+    backdrop-filter: blur(0px) saturate(1) brightness(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
+  }
+}
+
+/* ── Whip Pan Motion Blur ──
+   During edition switch, the feed receives a blur pulse that simulates
+   motion blur from a real whip pan. The blur holds at 3px during the
+   fastest movement phase (30-70%) and resolves at both ends. */
+@keyframes whipPanBlurPulse {
+  0%   { filter: blur(0); }
+  30%  { filter: blur(3px); }
+  70%  { filter: blur(3px); }
+  100% { filter: blur(0); }
+}
+
 /* ── Scroll direction lens breathing ──
    When scroll direction reverses, content micro-pulses scale
    to simulate a camera refocusing. Applied via JS class toggle. */
@@ -1203,6 +1242,11 @@
   .page-main--deep-dive-closing {
     transform: none;
     transition: none;
+  }
+  /* Backdrop rack animations: instant state, no ramp */
+  .deep-dive-backdrop,
+  .deep-dive-backdrop--closing {
+    animation: none;
   }
   .anim-lens-breathe {
     animation: none;
