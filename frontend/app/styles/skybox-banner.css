@@ -307,20 +307,26 @@
 }
 
 @keyframes skbSwapFromRight {
-  from { opacity: 0; transform: translateX(8px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
 }
 @keyframes skbSwapFromLeft {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(-8px) scale(0.985); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
 }
 
 /* Section content L-cut cascade — label, headline, body stagger in */
 .skb__section-content .skb__section-label {
   animation: skbElementIn 350ms var(--spring-gentle, var(--ease-cinematic)) 120ms both;
 }
+/* Headline: rack-focus effect — blur(0.5px) dissolves to sharp (Deakins in Sicario) */
 .skb__section-content .skb__section-hl {
-  animation: skbElementIn 400ms var(--spring-gentle, var(--ease-cinematic)) 200ms both;
+  animation: skbHeadlineRack 400ms var(--ease-cinematic) 160ms both;
+}
+
+@keyframes skbHeadlineRack {
+  from { opacity: 0; transform: translateY(4px); filter: blur(0.5px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 .skb__section-content .skb__section-body--tldr,
 .skb__section-content .skb__section-body--opinion {
@@ -974,12 +980,21 @@
    Cinematic Motion Choreography
    --------------------------------------------------------------------------- */
 
-/* ── Cold open: internal L-cut stagger within the compact bar ── */
+/* ── Cold open: horizontal pan stagger — newspaper unfolding ── */
 .anim-cold-open-skybox .skb__compact-col--tldr {
-  animation: skbElementIn 350ms var(--ease-cinematic) 280ms both;
+  animation: skbColSlideLeft 400ms var(--ease-cinematic) 280ms both;
 }
 .anim-cold-open-skybox .skb__compact-col--opinion {
-  animation: skbElementIn 350ms var(--ease-cinematic) 360ms both;
+  animation: skbColSlideRight 400ms var(--ease-cinematic) 360ms both;
+}
+
+@keyframes skbColSlideLeft {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes skbColSlideRight {
+  from { opacity: 0; transform: translateX(4px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 .anim-cold-open-skybox .skb__compact-onair {
   animation: skbFadeIn 300ms var(--ease-cinematic) 440ms both;
@@ -1012,6 +1027,12 @@
 @keyframes skbCompactRestore {
   from { opacity: 0; transform: scale(0.995); }
   to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Radio collapse: content fades before height shrinks (prevents guillotine edge) ── */
+.skb__radio[inert] .skb__radio-inner {
+  opacity: 0;
+  transition: opacity 180ms var(--ease-whip);
 }
 
 /* ── Radio panel internal L-cut cascade ── */
@@ -1074,7 +1095,9 @@
   .skb__radio-inner .skb__dial,
   .anim-cold-open-skybox .skb__compact-col--tldr,
   .anim-cold-open-skybox .skb__compact-col--opinion,
-  .anim-cold-open-skybox .skb__compact-onair { animation: none; }
+  .anim-cold-open-skybox .skb__compact-onair,
+  .skb__radio:not([inert]) .skb__radio-inner { animation: none; }
+  .skb__radio[inert] .skb__radio-inner { opacity: 1; transition: none; }
 }
 
 /* ---------------------------------------------------------------------------
