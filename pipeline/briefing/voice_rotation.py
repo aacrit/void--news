@@ -54,6 +54,16 @@ HOSTS = {
             "causal explanations. Clear emphasis on connecting phrases. Thoughtful, "
             "not rushed."
         ),
+        "opinion_tts_preamble": (
+            "Scene: A policy analyst at the editorial desk, laying out the structural "
+            "argument. Speaker One builds layer by layer — short setup sentences, then "
+            "a longer sentence that reveals the mechanism underneath. Measured, almost "
+            "professorial, but never dry. Slows deliberately on causal chains: 'because' "
+            "and 'which means' land with weight. Pace is steady until the structural "
+            "insight clicks — then a brief pause to let it register. Conviction comes "
+            "from connecting the dots, not raising the voice. The close is quiet and "
+            "certain: the structure speaks for itself."
+        ),
         "opinion_lean": "left",
     },
     "correspondent": {
@@ -73,6 +83,16 @@ HOSTS = {
             "after key statements. Calm authority — never raises voice. Precision "
             "over speed."
         ),
+        "opinion_tts_preamble": (
+            "Scene: A veteran foreign correspondent delivering a dispatch from the "
+            "editorial desk. Speaker One is unhurried — the authority of someone who "
+            "has been in the room where it happened. Short declarative sentences that "
+            "land like dispatches. Pauses after key facts — not for drama, but because "
+            "the fact deserves the silence. Places two observations side by side and "
+            "lets the listener connect them. Low register, steady pace. Never raises "
+            "voice. The close is two facts next to each other, then silence. The "
+            "listener draws the conclusion."
+        ),
         "opinion_lean": "center",
     },
     "pragmatist": {
@@ -90,6 +110,16 @@ HOSTS = {
         "tts_preamble": (
             "Mature, crisp, composed. Slightly faster pace — efficient delivery. "
             "Dry wit when appropriate. Emphasis on numbers and costs. No wasted words."
+        ),
+        "opinion_tts_preamble": (
+            "Scene: A fiscal hawk at the editorial desk, making the case with numbers "
+            "and institutional memory. Speaker One is crisp, efficient — every word "
+            "earns its place. Slightly faster pace than conversational, the cadence of "
+            "someone who respects the listener's time. Dry understatement does the heavy "
+            "lifting — delivers hard truths in a matter-of-fact register. Pauses before "
+            "cost figures to let them land. Skeptical inflection on grand promises. "
+            "The close is short and declarative — the pragmatist doesn't need to "
+            "persuade, just lay out what the numbers say."
         ),
         "opinion_lean": "right",
     },

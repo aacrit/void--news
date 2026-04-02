@@ -221,38 +221,47 @@ WRONG: A: "The tariffs take effect Monday." B: "Yes, and they affect several sec
 RIGHT: A: "The tariffs take effect Monday." B: "Which puts them three days before the \
 G7 summit — and Japan already drafted a counter-proposal."
 
-STRUCTURE — Open > Headlines > 3 Stories > Close:
-0. OPEN: A: void logs in. [short pause] — then A delivers a 3-sentence headline \
-rundown of the 3 stories. Punchy, present tense, one sentence each.
-1. STORY 1 (40% of script): The biggest story. A introduces, B adds the angle \
-nobody else covers. Both trade off. Build to the key revelation with a [long pause].
-2. STORY 2 (30% of script): B leads this one. Different register from Story 1.
-3. STORY 3 (20% of script): Shorter — the essential fact and one insight.
-4. CLOSE (10%): One host distills the day into a single connecting observation — \
+FLOW — Open > Headlines > Stories > Close:
+0. OPEN: A: void logs in. [short pause] — then A delivers a quick headline rundown \
+of the top stories. Punchy, present tense.
+1. STORY 1: The biggest story. Gets the most time. A introduces, B adds the angle \
+nobody else covers. Both trade off. Build to the key revelation.
+2. STORY 2: B leads this one. Different register from Story 1.
+3. STORY 3: Shorter — the essential fact and one insight.
+4. CLOSE: One host distills the day into a single connecting observation — \
 the thread tying these stories, or the question they leave unanswered. \
 Then: void logs out.
+
+Let the stories find their natural weight — Story 1 gets the most time, \
+Story 3 is brief. Don't force rigid proportions.
 
 Cover exactly stories [1], [2], and [3] from the list below. Stories [4]+ are \
 context only — mention at most one in passing.
 
-PACING — placement rules (minimum 8 rhythm markers total):
-- After every major fact: [short pause]. The listener needs half a second to absorb.
-- Before a topic shift: [long pause]. The listener needs to reset. Minimum 2 per script.
-- Before a key number or name: em dash (—). "The deficit was — $1.9 trillion." Minimum 2.
-- At least 4 [short pause] per script.
-- Never 3+ consecutive [short pause] without a [long pause] or em dash breaking the pattern.
+PACING — write for the ear:
+- Use [short pause] after major facts. The listener needs half a second to absorb.
+- Use [long pause] before topic shifts. The listener needs to reset.
+- Use em dashes (—) before key numbers or names. "The deficit was — $1.9 trillion."
+- Use them generously and naturally throughout. Rhythm > quota.
 - Maximum 25 words per sentence. Split longer thoughts with em dashes.
 - At least 15% of sentences must be 8 words or fewer.
-- Contractions fine. Elevated register — informed professionals, not casual hangout.
+- Contractions fine. Precise in content, natural in delivery — the tone of two people \
+who actually know what they're talking about.
 - Numbers: write out small ones ("three"). Figures for big ones ("$1.4 trillion").
 - Names, numbers, places, dates always. Not "officials say" — "the Treasury Secretary \
 said Tuesday."
-- Substantive reactions only: "But that contradicts the Q3 numbers." / \
+
+NATURAL DIALOGUE — these two are colleagues, not performers:
+- Brief acknowledgments attached to substance are fine: \
+"B: Mm — which is why the timing matters." / "B: Right, but that contradicts the Q3 data."
+- One host can finish the other's thought or cut in with a fact.
+- Substantive reactions: "But that contradicts the Q3 numbers." / \
 "Which is what makes the timing interesting — the vote is Thursday."
 
 BANNED — zero tolerance (output containing these is REJECTED and regenerated):
-- Filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", "Interesting.", \
-"Exactly.", "That's a fair point.", "Great question."
+- Standalone filler: "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.", \
+"Interesting.", "Exactly.", "That's a fair point.", "Great question." \
+(These are banned ONLY as standalone lines. Attached to substance is fine.)
 - Scaffolding: "This isn't just...", "Here's the thing...", "The bigger picture...", \
 "What makes this...", "The reality is...", "The question now is...", "This goes beyond..."
 - Performance: "I mean...", "Look...", "Right?" (seeking agreement), "So basically..."
@@ -394,14 +403,18 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["monologue_max"] = max_consecutive
 
-    # Banned filler scan — HARD GATE
+    # Banned filler scan — standalone lines only (filler as prefix to substance is OK)
     _BANNED_FILLER = [
         "Mm.", "Right.", "Indeed.", "Good point.", "Absolutely.",
         "Interesting.", "Exactly.", "That's a fair point.", "Great question.",
     ]
     found_filler = []
     if script.strip():
-        found_filler = [f for f in _BANNED_FILLER if f.lower() in script.lower()]
+        for line in script.splitlines():
+            stripped = re.sub(r'^[AB]:\s*', '', line.strip()).strip()
+            for f in _BANNED_FILLER:
+                if stripped.lower() == f.lower():
+                    found_filler.append(f)
         if found_filler:
             found.extend([f"filler:{f}" for f in found_filler])
             msg = f"Banned filler in audio script: {found_filler}"
@@ -819,12 +832,13 @@ this story and has something to say. Not reading — TELLING. The difference: \
 a reader hits every word evenly; a teller emphasizes, pauses, speeds up, \
 gets quiet. Written for ONE speaker only — no A:/B: tags. Just flowing text. \
 This is read by a DIFFERENT voice than the news hosts — a distinct editorial \
-voice. Open EXACTLY with this two-part structure: \
+voice. Open EXACTLY with this three-part structure: \
 First line: "Now, void opinion." — spoken as one fluid phrase with NO pause \
 between "Now," and "void opinion." Do NOT insert [long pause] or [short pause] \
 between them. \
-Second line: State the opinion_headline you wrote above as a spoken title. \
-Then dive straight into the argument. No preamble, no lens announcement. \
+Second line: "Through a {LEAN_LABEL} lens today." — brief, matter-of-fact. \
+Third line: State the opinion_headline you wrote above as a spoken title. \
+Then dive straight into the argument. \
 CONVICTION ARC IN AUDIO (mandatory): \
 First third: measured pace. Use [short pause] between evidence points. \
 Ellipses (...) for deliberation. "The numbers... are instructive." \
@@ -849,8 +863,10 @@ def _rule_based_opinion(cluster: dict, lean: str) -> dict:
     cluster_id = cluster.get("_db_id", cluster.get("id", ""))
 
     # Build audio script from summary
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
     audio_script = (
         f"Now, void opinion.\n"
+        f"Through a {lean_label} lens today.\n"
         f"{title}.\n"
         f"{summary}\n"
         f"This was void opinion."
