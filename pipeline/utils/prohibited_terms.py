@@ -127,6 +127,13 @@ PROHIBITED_TERMS = frozenset({
     # --- 9. Commonly-slipping scaffolding ---
     "the question remains",
     "what remains to be seen",
+
+    # --- 10. Claude-specific scaffolding ---
+    "let's start with", "let us start with",
+    "let's unpack", "let us unpack",
+    "let's break this down", "let us break this down",
+    "let's look at", "let us look at",
+    "let's talk about", "let us talk about",
 })
 
 
