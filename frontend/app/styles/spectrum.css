@@ -1200,26 +1200,32 @@
   color: var(--fg-secondary);
 }
 
+/* Accordion panel: always mounted, animated via grid-template-rows + rack focus.
+   Open = grid-template-rows: 1fr, opacity 1, blur(0). Close = 0fr, opacity 0, blur(2px).
+   Asymmetric: open 400ms (rack-in), close 200ms (snappy retreat). */
 .meth-axis__panel {
-  padding: 0 0 var(--space-4) 0;
-  animation: methAxisRackIn var(--dur-morph) var(--ease-rack) both;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    grid-template-rows 200ms var(--ease-cinematic),
+    opacity 200ms var(--ease-cinematic),
+    filter 200ms var(--ease-cinematic);
+  overflow: hidden;
 }
 
-@keyframes methAxisRackIn {
-  /* Rack focus — content racks into sharp focus as the panel opens.
-     Blur 2px -> 0 mirrors coldOpenRackIn: the moment the
-     cinematographer pulls focus to reveal hidden detail.
-     Deakins in Sicario: clarity emerging from heat haze. */
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.99);
-    filter: blur(2px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
+.meth-axis--open .meth-axis__panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  filter: blur(0);
+  transition-duration: 400ms;
+  transition-timing-function: var(--ease-rack);
+}
+
+.meth-axis__panel-inner {
+  min-height: 0;
+  padding: 0 0 var(--space-4) 0;
 }
 
 .meth-axis__what {
@@ -1648,6 +1654,12 @@
   /* Accordion: no rack focus, instant reveal */
   .meth-axis__panel {
     animation: none;
+    transition: none;
+    opacity: 1;
+    filter: none;
+  }
+  .meth-axis--open .meth-axis__panel {
+    transition: none;
   }
 
   /* Chevron: no rotation transition */
