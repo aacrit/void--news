@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { DailyBriefState } from "./DailyBrief";
-import { ScaleIcon } from "./ScaleIcon";
+import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 
 function formatTime(seconds: number): string {
@@ -21,24 +21,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   } = state;
 
   const [expanded, setExpanded] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [pulsing, setPulsing] = useState(false);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
-  const [dragTilt, setDragTilt] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
-  const dragStart = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
-  const lastPointerX = useRef(0);
-  const prevPlayingRef = useRef(isPlaying);
-
-  // Play state pulse — micro-scale on toggle
-  useEffect(() => {
-    if (isPlaying !== prevPlayingRef.current) {
-      prevPlayingRef.current = isPlaying;
-      setPulsing(true);
-      const t = setTimeout(() => setPulsing(false), 300);
-      return () => clearTimeout(t);
-    }
-  }, [isPlaying]);
 
   const waveformBars = useMemo(() =>
     Array.from({ length: 24 }, (_, i) => Math.min(28, 8 + Math.sin(i * 0.6) * 14 + Math.sin(i * 1.4) * 5)),
@@ -59,65 +42,16 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     : hasOpinionSection ? 60 : 100;
   const inOpinion = hasOpinionSection && effectiveOpinionStart !== null && currentTime >= effectiveOpinionStart;
 
-  // ── Drag handlers ──
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (expanded) return; // Only compact pill is draggable
-    const el = playerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    dragStart.current = { x: e.clientX, y: e.clientY, px: rect.left, py: rect.top };
-    setIsDragging(true);
-    el.setPointerCapture(e.pointerId);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging || !dragStart.current) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    const nx = dragStart.current.px + dx;
-    const ny = dragStart.current.py + dy;
-    const maxX = window.innerWidth - (playerRef.current?.offsetWidth || 200);
-    const maxY = window.innerHeight - (playerRef.current?.offsetHeight || 60);
-    // Velocity-based tilt (max 2deg)
-    const vx = e.clientX - lastPointerX.current;
-    lastPointerX.current = e.clientX;
-    setDragTilt(Math.max(-2, Math.min(2, vx * 0.15)));
-    setPosition({
-      x: Math.max(8, Math.min(nx, maxX - 8)),
-      y: Math.max(8, Math.min(ny, maxY - 8)),
-    });
-  };
-
-  const handlePointerUp = () => {
-    setIsDragging(false);
-    setDragTilt(0);
-    dragStart.current = null;
-    // Snap to nearest horizontal edge
-    if (position && playerRef.current) {
-      const w = playerRef.current.offsetWidth;
-      const snapLeft = 12;
-      const snapRight = window.innerWidth - w - 12;
-      const finalX = position.x < window.innerWidth / 2 ? snapLeft : snapRight;
-      setPosition({ x: finalX, y: position.y });
-    }
-  };
-
   const toggleExpand = () => {
     hapticLight();
     setExpanded(v => !v);
-    if (!expanded) setPosition(null); // Reset position when expanding
   };
 
   const dismiss = () => {
     hapticLight();
     setPlayerVisible(false);
     setExpanded(false);
-    setPosition(null);
   };
-
-  const posStyle = position && !expanded
-    ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } as const
-    : {};
 
   return (
     <div
@@ -126,25 +60,16 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
         "fp",
         expanded ? "fp--expanded" : "fp--compact",
         isPlaying ? "fp--playing" : "",
-        isDragging ? "fp--dragging" : "",
-        pulsing ? "fp--pulse" : "",
       ].filter(Boolean).join(" ")}
-      style={{
-        ...posStyle,
-        ...(isDragging && dragTilt ? { transform: `rotateZ(${dragTilt}deg)` } : {}),
-        ...(position && !expanded && !isDragging ? { transition: "left 350ms var(--ease-cinematic), top 350ms var(--ease-cinematic)" } : {}),
-      } as React.CSSProperties}
       role="region"
       aria-label="Audio player"
     >
       {/* ── COMPACT PILL ── */}
       {!expanded && (
-        <div
-          className="fp__pill"
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-        >
+        <div className="fp__pill" onClick={toggleExpand}>
+          {/* Void logo */}
+          <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} className="fp__logo" />
+
           {/* Play/Pause */}
           <button
             className={`fp__play${isPlaying ? " fp__play--active" : ""}`}
@@ -156,34 +81,18 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           </button>
 
           {/* Track info */}
-          <div className="fp__info" onClick={toggleExpand}>
+          <div className="fp__info">
             {isPlaying && <span className="fp__rec-dot" aria-hidden="true" />}
             <span className="fp__title">void --onair</span>
             <span className="fp__section">{inOpinion ? "Opinion" : "News"}</span>
           </div>
-
-          {/* Mini progress ring */}
-          <svg className="fp__ring" viewBox="0 0 32 32" aria-hidden="true">
-            <circle className="fp__ring-track" cx="16" cy="16" r="14" />
-            <circle
-              className="fp__ring-fill"
-              cx="16" cy="16" r="14"
-              strokeDasharray={`${progress * 0.88} ${88 - progress * 0.88}`}
-              strokeDashoffset="22"
-            />
-          </svg>
 
           {/* Time */}
           <span className="fp__time">
             {isPlaying || currentTime > 0 ? formatTime(currentTime) : durationMin ? `${durationMin}m` : ""}
           </span>
 
-          {/* Expand */}
-          <button className="fp__expand-btn" onClick={toggleExpand} type="button" aria-label="Expand player">
-            <span aria-hidden="true">&#9650;</span>
-          </button>
-
-          {/* Mini progress bar — amber strip along bottom edge */}
+          {/* Mini progress bar */}
           <div className="fp__mini-progress" aria-hidden="true">
             <div className="fp__mini-progress-fill" style={{ width: `${progress}%` }} />
           </div>
@@ -193,10 +102,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
       {/* ── EXPANDED BAR ── */}
       {expanded && (
         <div className="fp__bar">
-          {/* Header: title + controls */}
+          {/* Header */}
           <div className="fp__bar-header">
             <div className="fp__bar-brand">
-              <ScaleIcon size={14} animation={isPlaying ? "analyzing" : "none"} />
+              <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
               <span className="fp__bar-title">void --onair</span>
               {audioError && <span className="fp__bar-error">Unavailable</span>}
             </div>
@@ -232,7 +141,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             <button className="fp__skip" onClick={() => skipForward()} type="button" aria-label="Forward 15s">+15</button>
           </div>
 
-          {/* Seek bar with section markers */}
+          {/* Seek bar */}
           <div className="fp__seek">
             <div className="fp__seek-sections">
               <button className={`fp__seek-sec${!inOpinion ? " fp__seek-sec--active" : ""}`}

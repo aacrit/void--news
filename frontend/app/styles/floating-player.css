@@ -1,46 +1,32 @@
 /* ===========================================================================
    Floating Player — void --onair
-   Persistent audio player: compact draggable pill + expandable full bar.
-   Glass surface, practical amber light, broadcast console aesthetic.
+   Persistent audio pill (bottom-left) + expandable broadcast console.
+   Fixed dark #1A1816 console surface, amber practical light.
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   Root — fixed position, z-index above content, below modals
+   Root — fixed bottom-left, above content, below modals
    --------------------------------------------------------------------------- */
 
 .fp {
   position: fixed;
   z-index: var(--z-cinematic, 900);
   pointer-events: auto;
-  touch-action: none;
-  /* Crane up entrance — rises from below frame, resolves into focus */
-  animation: fpCraneUp 600ms var(--ease-unfold, ease) both;
 }
 
-@keyframes fpCraneUp {
-  0% {
-    opacity: 0;
-    transform: translateY(100%) scale(0.92);
-    filter: blur(1px);
-  }
-  60% {
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-/* ── Compact pill — bottom-right, draggable ── */
+/* ── Compact pill — bottom-left ── */
 .fp--compact {
-  bottom: var(--space-5);
-  right: var(--space-5);
+  bottom: var(--space-4);
+  left: var(--space-4);
+  animation: fpSlideIn 500ms var(--ease-unfold, ease) both;
 }
 
-/* ── Expanded bar — bottom-center, full width ── */
+@keyframes fpSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Expanded bar — grows from pill position ── */
 .fp--expanded {
   bottom: 0;
   left: 0;
@@ -49,70 +35,22 @@
 }
 
 @keyframes fpExpandIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Dragging state — lifted off surface ── */
-.fp--dragging {
-  cursor: grabbing;
-  z-index: calc(var(--z-cinematic, 900) + 5);
-}
-
-.fp--dragging .fp__pill {
-  transform: scale(1.03);
-  box-shadow:
-    -4px 8px 32px rgba(0, 0, 0, 0.25),
-    -1px 4px 12px rgba(0, 0, 0, 0.15),
-    0 0 20px var(--cin-amber-glow);
-  transition: box-shadow 180ms var(--ease-steadicam, ease), transform 180ms var(--ease-steadicam, ease);
-}
-
-/* ── Playing state — practical light emission (ambient glow tier) ── */
+/* ── Playing state — practical amber glow ── */
 .fp--playing .fp__pill {
+  border-color: var(--accent-warm);
   box-shadow:
-    0 8px 32px color-mix(in srgb, var(--cin-amber) 10%, transparent),
-    0 2px 8px color-mix(in srgb, var(--cin-amber) 8%, transparent),
+    0 4px 20px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent),
+    0 0 8px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 15%, transparent);
-  transition: box-shadow 600ms var(--ease-rack, ease);
-}
-
-/* Breathing glow — practical light alive (4s respiratory rhythm) */
-.fp--playing::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: inherit;
-  box-shadow: 0 0 24px color-mix(in srgb, var(--cin-amber) 8%, transparent);
-  animation: fpBreath 4s ease-in-out infinite;
-  pointer-events: none;
-  z-index: -1;
-}
-
-@keyframes fpBreath {
-  0%, 100% { opacity: 0.4; }
-  50%      { opacity: 1; }
-}
-
-/* Play state pulse — smash cut micro-scale on toggle */
-.fp--pulse {
-  animation: fpStatePulse 300ms var(--ease-cinematic) both;
-}
-
-@keyframes fpStatePulse {
-  0%   { transform: scale(1); }
-  15%  { transform: scale(1.025); }
-  100% { transform: scale(1); }
+  transition: box-shadow 600ms var(--ease-cinematic, ease), border-color 300ms;
 }
 
 /* ---------------------------------------------------------------------------
-   COMPACT PILL — The broadcast console in your pocket
+   COMPACT PILL
    --------------------------------------------------------------------------- */
 
 .fp__pill {
@@ -120,94 +58,63 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  min-height: 48px;
-  border-radius: 24px;
-  cursor: grab;
+  min-height: 44px;
+  border-radius: 22px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 
-  /* Fixed dark console — broadcast equipment does not adapt to room lighting */
+  /* Fixed dark console surface */
   background: #1A1816;
   border: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 18%, transparent);
-  overflow: hidden; /* For mini progress bar */
+  color: #EDE8E0;
 
-  /* Broadcast console shadow */
+  /* Console shadow */
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    0 2px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
 
-  transition: box-shadow 300ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
-  user-select: none;
+  transition: box-shadow 300ms var(--ease-cinematic, ease), border-color 200ms;
 }
 
 .fp__pill:hover {
+  border-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
   box-shadow:
-    0 6px 24px rgba(0, 0, 0, 0.25),
-    0 0 16px var(--cin-amber-glow),
-    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
 }
 
-/* Console text — always light on dark, theme-independent */
-.fp__pill,
-.fp__bar {
-  color: #EDE8E0;
-}
+/* Void logo */
+.fp__logo { flex-shrink: 0; }
 
-/* Mini progress bar — 2px amber strip along pill bottom edge */
-.fp__mini-progress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent);
-  border-radius: 0 0 12px 12px;
-  overflow: hidden;
-}
-
-.fp__mini-progress-fill {
-  height: 100%;
-  background: var(--cin-amber, var(--accent-warm));
-  border-radius: inherit;
-  transition: width 100ms linear;
-}
-
-/* Play button — circular, accented */
+/* Play button */
 .fp__play {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 50%;
-  border: 2px solid var(--accent-warm);
+  border: 1.5px solid var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
   color: var(--accent-warm);
-  font-size: 13px;
+  font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 200ms, box-shadow 300ms, transform 100ms;
+  transition: background 200ms, box-shadow 200ms;
   flex-shrink: 0;
 }
 
 .fp__play:hover {
   background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
-  box-shadow: 0 0 12px var(--cin-amber-glow);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
 }
 
-.fp__play:active {
-  transform: scale(0.92);
-  transition-duration: 60ms;
-}
+.fp__play:active { transform: scale(0.92); transition-duration: 60ms; }
 
 .fp__play--active {
-  background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
-  box-shadow: 0 0 16px var(--cin-amber-glow);
-  animation: fpPlayGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes fpPlayGlow {
-  from { box-shadow: 0 0 8px var(--cin-amber-glow); }
-  to   { box-shadow: 0 0 20px color-mix(in srgb, var(--accent-warm) 30%, transparent); }
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 20%, transparent);
 }
 
 /* Track info */
@@ -215,15 +122,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  cursor: pointer;
   min-width: 0;
   flex: 1;
 }
 
 .fp__rec-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
+  width: 5px; height: 5px; border-radius: 50%;
   background: var(--indicator-broadcast);
   animation: recPulse 1.5s ease-in-out infinite;
   flex-shrink: 0;
@@ -244,65 +148,38 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--fg-muted);
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   white-space: nowrap;
 }
 
-/* Mini progress ring */
-.fp__ring {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  transform: rotate(-90deg);
-}
-
-.fp__ring-track {
-  fill: none;
-  stroke: color-mix(in srgb, var(--accent-warm) 15%, transparent);
-  stroke-width: 2.5;
-}
-
-.fp__ring-fill {
-  fill: none;
-  stroke: var(--accent-warm);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  transition: stroke-dasharray 200ms linear;
-}
-
-/* Time display */
 .fp__time {
   font-family: var(--font-data);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: var(--fg-muted);
+  color: color-mix(in srgb, var(--accent-warm) 60%, transparent);
   white-space: nowrap;
   min-width: 28px;
   text-align: right;
 }
 
-/* Expand button */
-.fp__expand-btn {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--fg-muted);
-  font-size: 8px;
-  cursor: pointer;
-  transition: color 150ms, background 150ms;
-  flex-shrink: 0;
+/* Mini progress bar — bottom edge */
+.fp__mini-progress {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  border-radius: 0 0 22px 22px;
+  overflow: hidden;
 }
 
-.fp__expand-btn:hover {
-  color: var(--accent-warm);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+.fp__mini-progress-fill {
+  height: 100%;
+  background: var(--accent-warm);
+  transition: width 100ms linear;
 }
 
 /* ---------------------------------------------------------------------------
-   EXPANDED BAR — Full broadcast console
+   EXPANDED BAR — Broadcast console
    --------------------------------------------------------------------------- */
 
 .fp__bar {
@@ -310,28 +187,24 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
-
-  /* Fixed dark console — Nagra III field recorder aesthetic */
   background: linear-gradient(180deg, #1A1816 0%, #151310 100%);
-  border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent);
-
-  /* Console depth */
+  border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
+  color: #EDE8E0;
   box-shadow:
-    0 -4px 30px rgba(0, 0, 0, 0.3),
+    0 -4px 20px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
-/* Playing state — radiant glow (full practical emission) */
 .fp--playing .fp__bar {
   border-top-color: var(--accent-warm);
   box-shadow:
-    0 -4px 30px rgba(0, 0, 0, 0.3),
-    0 -2px 20px color-mix(in srgb, var(--cin-amber) 12%, transparent),
+    0 -4px 20px rgba(0, 0, 0, 0.3),
+    0 -2px 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
-  transition: box-shadow 600ms var(--ease-rack, ease), border-top-color 500ms var(--ease-rack, ease);
+  transition: box-shadow 500ms var(--ease-cinematic, ease), border-color 300ms;
 }
 
-/* Header: brand + actions */
+/* Header */
 .fp__bar-header {
   display: flex;
   align-items: center;
@@ -364,7 +237,6 @@
   gap: var(--space-2);
 }
 
-/* Speed button */
 .fp__speed {
   font-family: var(--font-data);
   font-size: 11px;
@@ -375,25 +247,19 @@
   padding: 2px 8px;
   min-height: 28px;
   cursor: pointer;
-  transition: border-color 150ms, background 150ms;
+  transition: border-color 150ms;
 }
 
 .fp__speed:hover {
   border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
 }
 
-/* Minimize / dismiss */
 .fp__minimize,
 .fp__dismiss {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
-  color: var(--fg-muted);
-  font-size: 12px;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   cursor: pointer;
   transition: color 150ms, background 150ms;
   position: relative;
@@ -401,9 +267,7 @@
 
 .fp__minimize::after,
 .fp__dismiss::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
+  content: ""; position: absolute; inset: -6px;
 }
 
 .fp__minimize:hover,
@@ -412,12 +276,10 @@
   background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
-.fp__dismiss {
-  font-size: 18px;
-  font-weight: 300;
-}
+.fp__minimize { font-size: 12px; }
+.fp__dismiss { font-size: 18px; font-weight: 300; }
 
-/* Waveform — visible only when playing, collapses when paused */
+/* Waveform — visible when playing, collapses when paused */
 .fp__waveform {
   display: flex;
   align-items: flex-end;
@@ -464,53 +326,38 @@
   font-size: 11px;
   font-weight: 600;
   color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   cursor: pointer;
   transition: color 150ms;
   position: relative;
 }
 
-.fp__skip::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-}
-
+.fp__skip::after { content: ""; position: absolute; inset: -4px; }
 .fp__skip:hover { color: var(--accent-warm); }
 
 .fp__play-lg {
-  width: 48px;
-  height: 48px;
+  width: 48px; height: 48px;
   border-radius: 50%;
   border: 2px solid var(--accent-warm);
   background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
   color: var(--accent-warm);
   font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: border-color 200ms, box-shadow 300ms, transform 100ms;
+  transition: background 200ms, box-shadow 300ms;
 }
 
 .fp__play-lg:hover {
   background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
-  box-shadow: 0 0 16px var(--cin-amber-glow);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
 }
 
-.fp__play-lg:active {
-  transform: scale(0.92);
-  transition-duration: 60ms;
-}
+.fp__play-lg:active { transform: scale(0.92); transition-duration: 60ms; }
 
 .fp__play-lg--active {
-  box-shadow: 0 0 20px var(--cin-amber-glow);
-  animation: fpPlayGlow 2s ease-in-out infinite alternate;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 20%, transparent);
 }
 
 /* Seek bar */
@@ -543,7 +390,7 @@
 .fp__seek-sec--active {
   color: var(--accent-warm);
   border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
-  background: var(--cin-amber-ghost);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
 }
 
 .fp__seek-bar-wrap {
@@ -553,9 +400,7 @@
 
 .fp__seek-bar {
   position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
+  top: 50%; left: 0; right: 0;
   height: 4px;
   background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
   border-radius: 2px;
@@ -563,60 +408,40 @@
 }
 
 .fp__seek-buffer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+  position: absolute; top: 0; left: 0; height: 100%;
   background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
   border-radius: 2px;
   transition: width 300ms linear;
 }
 
 .fp__seek-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+  position: absolute; top: 0; left: 0; height: 100%;
   background: var(--accent-warm);
   border-radius: 2px;
   transition: width 100ms linear;
-  box-shadow: 0 0 6px var(--cin-amber-glow);
 }
 
-/* Playhead needle */
 .fp__seek-fill::after {
   content: "";
   position: absolute;
-  right: -1px;
-  top: -4px;
-  width: 2px;
-  height: 12px;
+  right: -1px; top: -4px;
+  width: 2px; height: 12px;
   background: var(--accent-warm);
   border-radius: 1px;
-  box-shadow: 0 0 4px var(--cin-amber-glow);
 }
 
 .fp__seek-mark {
   position: absolute;
-  top: 50%;
-  width: 1px;
-  height: 12px;
+  top: 50%; width: 1px; height: 12px;
   transform: translateY(-50%);
   background: color-mix(in srgb, var(--accent-warm) 40%, transparent);
   z-index: 1;
 }
 
 .fp__seek-input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  margin: 0;
-  z-index: 2;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  cursor: pointer; margin: 0; z-index: 2;
+  -webkit-appearance: none; appearance: none; background: transparent;
   opacity: 0;
 }
 
@@ -639,80 +464,50 @@
    Responsive — 375 / 768 / 1024 / 1440
    --------------------------------------------------------------------------- */
 
-/* Mobile (< 768px): full-width bar, no floating pill, above bottom nav */
+/* Mobile (< 768px): full-width pill, above bottom nav */
 @media (max-width: 767px) {
   .fp--compact {
     bottom: calc(var(--nav-bottom-height, 52px) + var(--space-2));
     left: var(--space-3);
     right: var(--space-3);
-    /* No drag on mobile — fixed position */
-    cursor: default;
   }
 
   .fp--compact .fp__pill {
-    cursor: default;
-    border-radius: 12px;
     width: 100%;
+    border-radius: 12px;
   }
 
   .fp--expanded {
     bottom: var(--nav-bottom-height, 52px);
-    left: 0;
-    right: 0;
-    border-radius: 0;
   }
 
   .fp__bar {
     padding: var(--space-3) var(--space-4);
     padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
     gap: var(--space-2);
-    border-radius: 0;
   }
 
   .fp__play-lg {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    width: 44px; height: 44px;
+    min-width: 44px; min-height: 44px;
   }
 
-  .fp__skip {
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .fp__seek-sec {
-    min-height: 32px;
-  }
-
-  /* Compact pill: hide progress ring on narrow, show mini progress instead */
-  .fp__ring { display: none; }
-
-  /* Breathing glow: reduced on mobile (performance) */
-  .fp--playing::after {
-    box-shadow: 0 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent);
-  }
+  .fp__skip { min-width: 44px; min-height: 44px; }
+  .fp__seek-sec { min-height: 32px; }
 }
 
-/* Ultra-narrow (375px): tighter spacing */
+/* Ultra-narrow (375px) */
 @media (max-width: 375px) {
-  .fp--compact {
-    left: var(--space-2);
-    right: var(--space-2);
-  }
-
-  .fp__title { font-size: 10px; }
+  .fp--compact { left: var(--space-2); right: var(--space-2); }
   .fp__section { display: none; }
   .fp__time { display: none; }
-  .fp__expand-btn { display: none; }
 }
 
-/* Tablet (768px+): floating pill returns, expanded centered */
+/* Tablet (768px+): floating pill, expanded centered */
 @media (min-width: 768px) {
   .fp--compact {
     bottom: var(--space-4);
-    right: var(--space-4);
-    left: auto;
+    left: var(--space-4);
   }
 
   .fp--expanded {
@@ -728,31 +523,23 @@
 
   .fp__bar {
     border-radius: 16px;
-    border: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
   }
 
   .fp--playing .fp__bar {
-    border-color: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 40%, transparent);
+    border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
   }
 }
 
-/* Desktop (1024px+): wider expanded bar, thicker seek */
+/* Desktop (1024px+) */
 @media (min-width: 1024px) {
-  .fp--expanded {
-    max-width: 640px;
-  }
-
-  .fp__seek-bar {
-    height: 5px;
-    border-radius: 2.5px;
-  }
+  .fp--expanded { max-width: 640px; }
+  .fp__seek-bar { height: 5px; border-radius: 2.5px; }
 }
 
-/* Ultra-wide (1440px+): max width cap */
+/* Ultra-wide (1440px+) */
 @media (min-width: 1440px) {
-  .fp--expanded {
-    max-width: 720px;
-  }
+  .fp--expanded { max-width: 720px; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -760,15 +547,12 @@
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .fp { animation: none; opacity: 1; transform: none; filter: none; }
+  .fp--compact { animation: none; }
   .fp--expanded { animation: none; }
-  .fp--playing::after { animation: none; }
-  .fp--pulse { animation: none; }
   .fp__play--active { animation: none; }
   .fp__play-lg--active { animation: none; }
   .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .fp__rec-dot { animation: none; opacity: 1; }
-  .fp--dragging .fp__pill { transform: none; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -777,15 +561,12 @@
 
 @media (hover: none) {
   .fp__pill:hover {
-    box-shadow:
-      0 4px 20px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
+    border-color: color-mix(in srgb, var(--accent-warm) 18%, transparent);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
   }
   .fp__play:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); box-shadow: none; }
   .fp__play-lg:hover { background: color-mix(in srgb, var(--accent-warm) 6%, transparent); box-shadow: none; }
-  .fp__expand-btn:hover { color: var(--fg-muted); background: none; }
-  .fp__minimize:hover,
-  .fp__dismiss:hover { color: var(--fg-muted); background: none; }
+  .fp__minimize:hover, .fp__dismiss:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); background: none; }
   .fp__skip:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); }
-  .fp__speed:hover { border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); background: none; }
+  .fp__speed:hover { border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); }
 }
