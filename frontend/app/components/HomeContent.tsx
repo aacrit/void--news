@@ -160,6 +160,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return initialEdition;
   });
 
+  // When navigating between edition routes (e.g. /us → /), the component is
+  // reused and useState doesn't re-initialize. Sync state to the prop.
+  useEffect(() => {
+    setActiveEdition(initialEdition);
+  }, [initialEdition]);
+
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
