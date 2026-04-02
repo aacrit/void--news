@@ -167,11 +167,11 @@ const WORKED_EXAMPLE = {
   headline: "Senate Passes Emergency Spending Bill After Marathon Session",
   source: "Associated Press",
   scores: [
-    { axis: "Political Lean", score: 48, color: "var(--bias-center)", label: "Center", detail: "Neutral framing, balanced quote selection (3 Democratic, 3 Republican sources), no loaded modifiers." },
-    { axis: "Sensationalism", score: 18, color: "var(--sense-low)", label: "Measured", detail: "\u201cMarathon session\u201d is the only heightened phrase. No superlatives, no clickbait patterns, no partisan attacks." },
-    { axis: "Opinion vs Reporting", score: 12, color: "var(--type-reporting)", label: "Hard reporting", detail: "Zero first-person pronouns. 8 direct attributions. No value judgments or rhetorical questions." },
-    { axis: "Factual Rigor", score: 82, color: "var(--rigor-high)", label: "Well-sourced", detail: "6 named sources, 2 org citations (CBO, OMB), 4 direct quotes, specific dollar figures and vote counts." },
-    { axis: "Framing", score: 15, color: "var(--sense-low)", label: "Neutral", detail: "No charged synonyms detected. Headline matches body content. Active voice throughout." },
+    { axis: "Political Lean", score: 48, color: "var(--fg-secondary)", label: "Center", detail: "Neutral framing, balanced quote selection (3 Democratic, 3 Republican sources), no loaded modifiers." },
+    { axis: "Sensationalism", score: 18, color: "var(--fg-secondary)", label: "Measured", detail: "\u201cMarathon session\u201d is the only heightened phrase. No superlatives, no clickbait patterns, no partisan attacks." },
+    { axis: "Opinion vs Reporting", score: 12, color: "var(--fg-secondary)", label: "Hard reporting", detail: "Zero first-person pronouns. 8 direct attributions. No value judgments or rhetorical questions." },
+    { axis: "Factual Rigor", score: 82, color: "var(--accent-warm)", label: "Well-sourced", detail: "6 named sources, 2 org citations (CBO, OMB), 4 direct quotes, specific dollar figures and vote counts." },
+    { axis: "Framing", score: 15, color: "var(--fg-secondary)", label: "Neutral", detail: "No charged synonyms detected. Headline matches body content. Active voice throughout." },
     { axis: "Outlet Tracking", score: null, color: "var(--fg-muted)", label: "EMA: 47.2", detail: "AP\u2019s economy coverage averages 47.2 (center) across 342 tracked articles on this topic." },
   ],
 };
@@ -197,8 +197,14 @@ function AxisAccordion({ axis }: { axis: typeof AXES_DATA[number] }) {
         </span>
         <span className="meth-axis__chevron" aria-hidden="true">{"\u25B8"}</span>
       </button>
-      {open && (
-        <div className="meth-axis__panel" id={panelId} role="region" aria-label={`${axis.name} details`}>
+      <div
+        className={`meth-axis__panel${open ? " meth-axis__panel--open" : ""}`}
+        id={panelId}
+        role="region"
+        aria-label={`${axis.name} details`}
+        aria-hidden={!open}
+      >
+        <div className="meth-axis__panel-inner">
           <p className="meth-axis__what">{axis.what}</p>
           <ul className="meth-axis__signals">
             {axis.signals.map((s, i) => (
@@ -209,7 +215,7 @@ function AxisAccordion({ axis }: { axis: typeof AXES_DATA[number] }) {
             <code>{axis.file}</code>
           </p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -413,18 +419,18 @@ function Methodology() {
           tests, file an issue.
         </p>
         <div className="meth__open-links">
-          <span className="meth__open-link-item">
+          <a href="https://github.com/aacrit/void--news/tree/main/pipeline/analyzers" target="_blank" rel="noopener noreferrer" className="meth__open-link-item">
             <code className="meth__inline-code">pipeline/analyzers/</code>
             <span className="meth__open-link-desc">All 6 scoring modules</span>
-          </span>
-          <span className="meth__open-link-item">
+          </a>
+          <a href="https://github.com/aacrit/void--news/tree/main/pipeline/validation" target="_blank" rel="noopener noreferrer" className="meth__open-link-item">
             <code className="meth__inline-code">pipeline/validation/</code>
             <span className="meth__open-link-desc">Test suite + fixtures</span>
-          </span>
-          <span className="meth__open-link-item">
+          </a>
+          <a href="https://github.com/aacrit/void--news/blob/main/data/sources.json" target="_blank" rel="noopener noreferrer" className="meth__open-link-item">
             <code className="meth__inline-code">data/sources.json</code>
             <span className="meth__open-link-desc">All 419 source definitions</span>
-          </span>
+          </a>
         </div>
       </MethSection>
     </section>
@@ -500,6 +506,15 @@ function SourcesPageInner() {
 
         setSources((data as SpectrumSource[]) || []);
         setIsLoading(false);
+
+        // Deep link: after data loads and Methodology mounts, scroll to hash target.
+        // Browser already attempted the scroll before React rendered — retry now.
+        requestAnimationFrame(() => {
+          const hash = window.location.hash.slice(1);
+          if (hash) {
+            document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+          }
+        });
       } catch (err) {
         if (!controller.signal.aborted) {
           setError(
@@ -698,7 +713,14 @@ function SourcesPageInner() {
 
         {/* ---- Spectrum visualization ---- */}
         {!isLoading && !error && filteredSources.length > 0 && (
-          <SpectrumChart sources={filteredSources} />
+          <>
+            <SpectrumChart sources={filteredSources} />
+            <div style={{ textAlign: "right", marginTop: "var(--space-2)", marginBottom: "var(--space-3)" }}>
+              <a href="#methodology" style={{ fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", textDecoration: "none", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                How we score &darr;
+              </a>
+            </div>
+          </>
         )}
 
         {!isLoading && !error && filteredSources.length === 0 && sources.length > 0 && (
