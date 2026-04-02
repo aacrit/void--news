@@ -8213,7 +8213,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
       color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
       box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out),
-      transform var(--scene-dolly-in) var(--spring-snappy);
+      transform var(--scene-dolly-in) var(--spring-snappy),
+      opacity var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
+      filter var(--rack-refocus-dur, 600ms) var(--rack-focus-ease);
   }
   .lead-story {
     transition:

@@ -427,8 +427,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
         // Compute inverse transform: final → card origin
         // On desktop, offsets are relative to the centered position (translate(-50%,-50%))
-        const scaleX = originRect.width / finalRect.width;
-        const scaleY = originRect.height / finalRect.height;
+        // Clamp scale to prevent invisible-start morphs on tiny cards (mobile compact → full sheet)
+        const MORPH_SCALE_MIN = 0.15;
+        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / finalRect.width);
+        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / finalRect.height);
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
@@ -608,8 +610,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
 
         const currentRect = panel.getBoundingClientRect();
-        const scaleX = originRect.width / currentRect.width;
-        const scaleY = originRect.height / currentRect.height;
+        const MORPH_SCALE_MIN = 0.15;
+        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / currentRect.width);
+        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / currentRect.height);
         const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
 

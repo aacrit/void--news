@@ -367,10 +367,6 @@
   --dd-breathe-scale: 1.0005;
   --dd-breathe-dur: 6s;
 
-  /* ── Per-Edition Color Grades (cinematographer) ── */
-  --cin-grade-world: contrast(1.03) saturate(0.92) sepia(0.04);
-  --cin-grade-us: contrast(1.03) saturate(0.94) sepia(0.03);
-  --cin-grade-india: contrast(1.04) saturate(0.90) sepia(0.06);
 }
 
 /* --------------------------------------------------------------------------
