@@ -95,7 +95,7 @@
     var(--bg-secondary) 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmer 1.5s var(--ease-rack) infinite;
   border-radius: var(--radius-md);
 }
 
@@ -125,7 +125,7 @@
     rgba(255, 255, 255, 0.06) 50%,
     transparent 100%
   );
-  animation: shimmerSweep 1.5s ease-in-out infinite;
+  animation: shimmerSweep 1.5s var(--ease-rack) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1033,8 +1033,13 @@
 
 @supports (animation-timeline: view()) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    .story-card.anim-stagger--visible,
-    .lead-story {
+    /* Exclude :hover — scroll-driven animation values override normal
+       declarations, which would suppress the rack focus dolly-in transform
+       (translateY + scale) on hovered cards. The :not(:hover) ensures the
+       scroll dolly applies only to cards at rest, yielding to the rack
+       focus system on hover. */
+    .story-card.anim-stagger--visible:not(:hover),
+    .lead-story:not(:hover) {
       animation: scrollCardDolly linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 100%;
@@ -1290,6 +1295,7 @@
     animation: none;
     opacity: 1;
   }
+  .anim-cold-open-nav,
   .anim-cold-open-lead,
   .anim-cold-open-skybox,
   .anim-cold-open-feed {

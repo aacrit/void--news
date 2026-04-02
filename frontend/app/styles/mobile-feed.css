@@ -446,7 +446,7 @@
   cursor: pointer;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  transition: background 200ms, box-shadow 200ms;
+  transition: background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
 }
 
 .mbp__onair-play:active {
@@ -641,6 +641,19 @@
 
 @media (prefers-reduced-motion: reduce) {
   .msc.anim-stagger {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Mobile cold-open: hero + pill must appear instantly with no motion */
+  .msc--hero.anim-cold-open-hero {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .mbp.anim-cold-open-pill {
     animation: none;
     opacity: 1;
     transform: none;
