@@ -1,0 +1,655 @@
+/* ===========================================================================
+   Floating Player — void --onair
+   Persistent audio player: compact draggable pill + expandable full bar.
+   Glass surface, practical amber light, broadcast console aesthetic.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Root — fixed position, z-index above content, below modals
+   --------------------------------------------------------------------------- */
+
+.fp {
+  position: fixed;
+  z-index: var(--z-cinematic, 900);
+  pointer-events: auto;
+  touch-action: none;
+  animation: fpEnter 500ms var(--ease-unfold, ease) both;
+}
+
+@keyframes fpEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Compact pill — bottom-right, draggable ── */
+.fp--compact {
+  bottom: var(--space-5);
+  right: var(--space-5);
+}
+
+/* ── Expanded bar — bottom-center, full width ── */
+.fp--expanded {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  animation: fpExpandIn 400ms var(--ease-unfold, ease) both;
+}
+
+@keyframes fpExpandIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Dragging state ── */
+.fp--dragging {
+  cursor: grabbing;
+  transition: none !important;
+}
+
+.fp--dragging .fp__pill {
+  transform: scale(1.02);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px var(--cin-amber-glow);
+}
+
+/* ── Playing state — practical light emission ── */
+.fp--playing .fp__pill {
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 30px var(--cin-amber-glow),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 15%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   COMPACT PILL — The broadcast console in your pocket
+   --------------------------------------------------------------------------- */
+
+.fp__pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: 48px;
+  border-radius: 24px;
+  cursor: grab;
+
+  /* Frosted glass surface */
+  background: color-mix(in srgb, var(--bg-secondary) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
+
+  /* Broadcast console shadow */
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+
+  transition: box-shadow 300ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
+  user-select: none;
+}
+
+.fp__pill:hover {
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.25),
+    0 0 16px var(--cin-amber-glow),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
+}
+
+/* Play button — circular, accented */
+.fp__play {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  color: var(--accent-warm);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 200ms, box-shadow 300ms, transform 100ms;
+  flex-shrink: 0;
+}
+
+.fp__play:hover {
+  background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  box-shadow: 0 0 12px var(--cin-amber-glow);
+}
+
+.fp__play:active {
+  transform: scale(0.92);
+  transition-duration: 60ms;
+}
+
+.fp__play--active {
+  background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  box-shadow: 0 0 16px var(--cin-amber-glow);
+  animation: fpPlayGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes fpPlayGlow {
+  from { box-shadow: 0 0 8px var(--cin-amber-glow); }
+  to   { box-shadow: 0 0 20px color-mix(in srgb, var(--accent-warm) 30%, transparent); }
+}
+
+/* Track info */
+.fp__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  min-width: 0;
+  flex: 1;
+}
+
+.fp__rec-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--indicator-broadcast);
+  animation: recPulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.fp__title {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.fp__section {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+/* Mini progress ring */
+.fp__ring {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.fp__ring-track {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  stroke-width: 2.5;
+}
+
+.fp__ring-fill {
+  fill: none;
+  stroke: var(--accent-warm);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: stroke-dasharray 200ms linear;
+}
+
+/* Time display */
+.fp__time {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* Expand button */
+.fp__expand-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--fg-muted);
+  font-size: 8px;
+  cursor: pointer;
+  transition: color 150ms, background 150ms;
+  flex-shrink: 0;
+}
+
+.fp__expand-btn:hover {
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   EXPANDED BAR — Full broadcast console
+   --------------------------------------------------------------------------- */
+
+.fp__bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+
+  /* Solid dark console surface */
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-card, var(--bg-secondary)) 100%);
+  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
+
+  /* Console depth */
+  box-shadow:
+    0 -4px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+/* Playing state — warm glow along top edge */
+.fp--playing .fp__bar {
+  border-top-color: var(--accent-warm);
+  box-shadow:
+    0 -4px 30px rgba(0, 0, 0, 0.3),
+    0 -2px 20px var(--cin-amber-glow),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
+}
+
+/* Header: brand + actions */
+.fp__bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fp__bar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.fp__bar-title {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.02em;
+}
+
+.fp__bar-error {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--indicator-broadcast);
+}
+
+.fp__bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Speed button */
+.fp__speed {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-warm);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  border-radius: 4px;
+  padding: 2px 8px;
+  min-height: 28px;
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+}
+
+.fp__speed:hover {
+  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+}
+
+/* Minimize / dismiss */
+.fp__minimize,
+.fp__dismiss {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--fg-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 150ms, background 150ms;
+  position: relative;
+}
+
+.fp__minimize::after,
+.fp__dismiss::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.fp__minimize:hover,
+.fp__dismiss:hover {
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+.fp__dismiss {
+  font-size: 18px;
+  font-weight: 300;
+}
+
+/* Waveform */
+.fp__waveform {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 28px;
+}
+
+.fp__waveform-bar {
+  width: 3px;
+  border-radius: 1.5px;
+  background: color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  transform: scaleY(0.5);
+  opacity: 0.4;
+  transition: transform 400ms, opacity 400ms;
+}
+
+.fp__waveform--active .fp__waveform-bar {
+  background: var(--accent-warm);
+  animation: vuBar-mid 1.2s ease-in-out infinite alternate;
+}
+
+.fp__waveform--active .fp__waveform-bar:nth-child(3n)   { animation-name: vuBar-short; }
+.fp__waveform--active .fp__waveform-bar:nth-child(3n+1) { animation-name: vuBar-mid; }
+.fp__waveform--active .fp__waveform-bar:nth-child(3n+2) { animation-name: vuBar-tall; }
+
+/* Transport */
+.fp__transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.fp__skip {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 150ms;
+  position: relative;
+}
+
+.fp__skip::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+.fp__skip:hover { color: var(--accent-warm); }
+
+.fp__play-lg {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  color: var(--accent-warm);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 200ms, box-shadow 300ms, transform 100ms;
+}
+
+.fp__play-lg:hover {
+  background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  box-shadow: 0 0 16px var(--cin-amber-glow);
+}
+
+.fp__play-lg:active {
+  transform: scale(0.92);
+  transition-duration: 60ms;
+}
+
+.fp__play-lg--active {
+  box-shadow: 0 0 20px var(--cin-amber-glow);
+  animation: fpPlayGlow 2s ease-in-out infinite alternate;
+}
+
+/* Seek bar */
+.fp__seek {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fp__seek-sections {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.fp__seek-sec {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
+  padding: 2px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  border-radius: 3px;
+  min-height: 24px;
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms;
+}
+
+.fp__seek-sec--active {
+  color: var(--accent-warm);
+  border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  background: var(--cin-amber-ghost);
+}
+
+.fp__seek-bar-wrap {
+  position: relative;
+  height: 20px;
+}
+
+.fp__seek-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.fp__seek-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  border-radius: 2px;
+  transition: width 300ms linear;
+}
+
+.fp__seek-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent-warm);
+  border-radius: 2px;
+  transition: width 100ms linear;
+  box-shadow: 0 0 6px var(--cin-amber-glow);
+}
+
+/* Playhead needle */
+.fp__seek-fill::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  width: 2px;
+  height: 12px;
+  background: var(--accent-warm);
+  border-radius: 1px;
+  box-shadow: 0 0 4px var(--cin-amber-glow);
+}
+
+.fp__seek-mark {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 12px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  z-index: 1;
+}
+
+.fp__seek-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  margin: 0;
+  z-index: 2;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  opacity: 0;
+}
+
+.fp__seek-input:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.fp__seek-time {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Desktop: constrain expanded bar width
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .fp--expanded {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: 600px;
+    width: 100%;
+    bottom: var(--space-4);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .fp__bar {
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  }
+
+  .fp--playing .fp__bar {
+    border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  }
+
+  .fp__seek-bar {
+    height: 5px;
+    border-radius: 2.5px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile: pill above bottom nav, expanded full-width
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .fp--compact {
+    bottom: calc(var(--nav-bottom-height, 52px) + var(--space-3));
+    right: var(--space-3);
+  }
+
+  .fp--expanded {
+    bottom: var(--nav-bottom-height, 52px);
+  }
+
+  .fp__bar {
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .fp__play-lg {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .fp { animation: none; }
+  .fp--expanded { animation: none; }
+  .fp__play--active { animation: none; }
+  .fp__play-lg--active { animation: none; }
+  .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
+  .fp__rec-dot { animation: none; opacity: 1; }
+  .fp--dragging .fp__pill { transform: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Touch device guards
+   --------------------------------------------------------------------------- */
+
+@media (hover: none) {
+  .fp__pill:hover {
+    box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  }
+  .fp__play:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); box-shadow: none; }
+  .fp__play-lg:hover { background: color-mix(in srgb, var(--accent-warm) 6%, transparent); box-shadow: none; }
+  .fp__expand-btn:hover { color: var(--fg-muted); background: none; }
+  .fp__minimize:hover,
+  .fp__dismiss:hover { color: var(--fg-muted); background: none; }
+  .fp__skip:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); }
+  .fp__speed:hover { border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); background: none; }
+}

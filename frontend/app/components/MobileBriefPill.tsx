@@ -112,7 +112,7 @@ export default function MobileBriefPill({ state }: { state: DailyBriefState }) {
 
   return (
     <div className="mbp" role="complementary" aria-label="Daily Brief">
-      {hasAudio && <audio ref={audioCallbackRef} src={brief.audio_url!} preload="metadata" />}
+      {/* Audio element lifted to HomeContent for shared FloatingPlayer */}
 
       <div className={`mbp__pill${pillExpanded ? " mbp__pill--open" : ""}`}>
         <button
