@@ -390,6 +390,11 @@
   --cinematic-accent-near-bias: rgba(148, 107, 21, 0.04);
   --cinematic-accent-far-bias: rgba(148, 107, 21, 0.12);
 
+  /* ── Methodology Scoring Stage ── */
+  --meth-bar-track: var(--bg-secondary);
+  --meth-mark-opacity: 0.12;
+  --meth-mark-focus-opacity: 0.85;
+
   /* ── Category Colors ── */
   --cat-politics:    #6366F1;  /* indigo — distinct from --bias-left blue */
   --cat-conflict:    #E53E3E;  /* distinct from --indicator-broadcast (#c0392b) */
@@ -595,6 +600,11 @@
   --cinematic-rim-edge: rgba(212, 165, 116, 0.05);
   --cin-grade-editorial: contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03);
   --cin-vignette-warm: rgba(20, 14, 6, 0.06);
+
+  /* ── Methodology Scoring Stage (Dark) ── */
+  --meth-bar-track: var(--bg-secondary);
+  --meth-mark-opacity: 0.15;
+  --meth-mark-focus-opacity: 0.90;
 }
 
 /* --------------------------------------------------------------------------
