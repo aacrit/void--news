@@ -182,6 +182,11 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           <button className="fp__expand-btn" onClick={toggleExpand} type="button" aria-label="Expand player">
             <span aria-hidden="true">&#9650;</span>
           </button>
+
+          {/* Mini progress bar — amber strip along bottom edge */}
+          <div className="fp__mini-progress" aria-hidden="true">
+            <div className="fp__mini-progress-fill" style={{ width: `${progress}%` }} />
+          </div>
         </div>
       )}
 
