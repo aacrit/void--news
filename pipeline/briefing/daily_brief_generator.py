@@ -254,9 +254,9 @@ Story [1] gets the most depth — at least 6 exchanges between hosts. \
 Story [2] gets 4 exchanges. Story [3] gets 2. \
 Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
-B enters IMMEDIATELY after the headline rundown with a reaction or pivot \
-before Story 1's deep dive. The listener must hear both voices in the first \
-20 seconds. Close with the consequence that connects the stories, \
+B enters IMMEDIATELY after the headline rundown with a NEW FACT or counter-data \
+— not a reaction, not a framing comment. The listener must hear both voices \
+in the first 20 seconds. Close with the consequence that connects the stories, \
 then "This was void news." No summary, no sign-off commentary.
 
 WRITING FOR THE EAR:
@@ -274,8 +274,15 @@ WRONG: "I disagree." RIGHT: "The Q3 data shows the opposite — 2.1% contraction
 - One host can finish the other's sentence or redirect mid-thought with new information.
 - Both hosts reference shared context without explaining it: "the same clause \
 that blocked the 2024 bill" — not "as you may remember from last year's bill."
-- Keep turns tight. 2-3 sentences per turn. The exchange is rapid, not \
-leisurely. No turn exists solely to react.
+- Keep turns tight. Maximum 40 words per turn. If a turn runs longer, split it \
+into two exchanges. The pace should feel like a volley, not a monologue.
+- NEVER start a line with meta-framing. These are BANNED sentence openers: \
+"That's the tension...", "Which tells you...", "And there's a...", \
+"The question is...", "Let's go to...", "Now to...", "Here's why...", \
+"What's interesting is...", "That's what makes...", "The key here...", \
+"Worth noting...", "The important thing..."  \
+Instead, start every line with the FACT: the name, the number, the place, \
+the date, or the institution. The story speaks for itself.
 
 NEVER use as standalone lines: "Mm.", "Right.", "Indeed.", "Good point.", \
 "Absolutely.", "Interesting.", "Exactly.", "Great question."
@@ -539,6 +546,14 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
         "i want to flag", "i want to highlight",
         "worth noting here",
         "the thing to watch",
+        # Meta-framing: host pointing at the story instead of reporting it
+        "that's the tension",
+        "which tells you",
+        "let's go to",
+        "now to london", "now to washington", "now to tehran", "now to",
+        "is being underread", "is being overlooked",
+        "is doing a lot of work",
+        "is doing enormous work",
     ]
     found_lecture = []
     if script.strip():

@@ -143,5 +143,13 @@ export async function fetchDailyBrief(edition: string): Promise<any | null> {
   }
 
   if (res.error || !res.data) return null;
-  return res.data;
+
+  // Defensive: coerce text fields to strings — Supabase JSONB or corrupted
+  // data can return objects, which crash React when rendered as children (#310).
+  const d = res.data;
+  if (d.tldr_text && typeof d.tldr_text !== "string") d.tldr_text = String(d.tldr_text);
+  if (d.opinion_text && typeof d.opinion_text !== "string") d.opinion_text = String(d.opinion_text);
+  if (d.tldr_headline && typeof d.tldr_headline !== "string") d.tldr_headline = String(d.tldr_headline);
+  if (d.opinion_headline && typeof d.opinion_headline !== "string") d.opinion_headline = String(d.opinion_headline);
+  return d;
 }
