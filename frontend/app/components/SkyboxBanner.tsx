@@ -33,6 +33,29 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     prevSectionRef.current = expandedSection;
   }, [expandedSection]);
 
+  // IMPORTANT: All hooks must be called before any conditional return.
+  // These useCallback hooks were previously below the `if (!brief) return`
+  // guard, causing React error #310: "Rendered more hooks than during the
+  // previous render" when brief transitioned from null to loaded.
+  const toggleSection = useCallback((section: "tldr" | "opinion") => {
+    hapticLight();
+    setExpandedSection(prev => {
+      const next = prev === section ? null : section;
+      if (next) {
+        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : "editorial opinion"}.`);
+      } else {
+        setAnnouncement("Daily brief collapsed.");
+      }
+      return next;
+    });
+  }, []);
+
+  const collapseAll = useCallback(() => {
+    hapticLight();
+    setExpandedSection(null);
+    setAnnouncement("Daily brief collapsed.");
+  }, []);
+
   if (!brief) return (
     <div className="skb skb--compact anim-cold-open-skybox" role="complementary" aria-label="Daily Brief">
       <div className="skb__compact">
@@ -58,25 +81,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     : brief.opinion_lean === "right" ? "skb-lean--right" : "skb-lean--center";
 
   const isCompact = expandedSection === null;
-
-  const toggleSection = useCallback((section: "tldr" | "opinion") => {
-    hapticLight();
-    setExpandedSection(prev => {
-      const next = prev === section ? null : section;
-      if (next) {
-        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : "editorial opinion"}.`);
-      } else {
-        setAnnouncement("Daily brief collapsed.");
-      }
-      return next;
-    });
-  }, []);
-
-  const collapseAll = useCallback(() => {
-    hapticLight();
-    setExpandedSection(null);
-    setAnnouncement("Daily brief collapsed.");
-  }, []);
 
   const rootClass = [
     "skb",
