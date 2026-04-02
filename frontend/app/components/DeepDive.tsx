@@ -13,7 +13,6 @@ import { timeAgo } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
-import { BiasInspectorInline } from "./BiasInspector";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
@@ -54,7 +53,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [summaryOverflows, setSummaryOverflows] = useState(false);
   const summaryInnerRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState<"summary" | "allsides" | "scoring">("summary");
+  // Tabs removed — Deep Dive is now a single continuous scroll view
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -1033,69 +1032,24 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Tab bar (hidden when only Summary tab exists) ---- */}
-          {(hasCrossLeanSources || spectrumSources.length > 0) && (
-            <nav
-              className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              role="tablist"
-              aria-label="Deep dive sections"
-              style={{ transitionDelay: "250ms" }}
-            >
-              <button
-                id="dd-tab-summary"
-                role="tab"
-                aria-selected={activeTab === "summary"}
-                aria-controls="dd-panel-summary"
-                className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
-                onClick={() => { hapticLight(); setActiveTab("summary"); }}
-              >
-                Summary
-              </button>
-              {hasCrossLeanSources && (
-                <button
-                  id="dd-tab-allsides"
-                  role="tab"
-                  aria-selected={activeTab === "allsides"}
-                  aria-controls="dd-panel-allsides"
-                  className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
-                  onClick={() => { hapticLight(); setActiveTab("allsides"); }}
-                >
-                  All Sides
-                </button>
-              )}
-              {spectrumSources.length > 0 && (
-                <button
-                  id="dd-tab-scoring"
-                  role="tab"
-                  aria-selected={activeTab === "scoring"}
-                  aria-controls="dd-panel-scoring"
-                  className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
-                  onClick={() => { hapticLight(); setActiveTab("scoring"); }}
-                >
-                  Scoring
-                </button>
-              )}
-            </nav>
-          )}
-
-          {/* ---- Tab panels ---- */}
-          {activeTab === "summary" && (
-            <section id="dd-panel-summary" role="tabpanel" aria-labelledby="dd-tab-summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
-              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
-                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
-                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                    {story.summary}
-                  </p>
-                </div>
+          {/* ---- Summary ---- */}
+          <section className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "250ms" }}>
+            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+              <div className="dd-collapsible__inner" ref={summaryInnerRef}>
+                <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                  {story.summary}
+                </p>
               </div>
-              {summaryOverflows && !summaryExpanded && (
-                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
-              )}
-            </section>
-          )}
+            </div>
+            {summaryOverflows && !summaryExpanded && (
+              <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+            )}
+          </section>
 
-          {activeTab === "allsides" && hasCrossLeanSources && (
-            <section id="dd-panel-allsides" role="tabpanel" aria-labelledby="dd-tab-allsides" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
+          {/* ---- Source Perspectives ---- */}
+          {hasCrossLeanSources && (
+            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
+              <h3 className="dd-section-label" style={{ fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--fg-muted)", marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
               <ComparativeView
                 sources={sources}
                 consensusPoints={deepDive?.consensus}
@@ -1104,14 +1058,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </section>
           )}
 
-          {activeTab === "scoring" && spectrumSources.length > 0 && (
-            <section id="dd-panel-scoring" role="tabpanel" aria-labelledby="dd-tab-scoring" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
-              <BiasInspectorInline sources={sources} />
-              <a href="/void--news/sources/#methodology" className="dd-methodology-link" style={{ display: "block", marginTop: "var(--space-3)", fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", color: "var(--fg-muted)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-                How we score — 6-axis methodology
-              </a>
-            </section>
-          )}
+          {/* ---- Methodology link ---- */}
+          <div className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ transitionDelay: "450ms", marginBottom: "var(--space-4)" }}>
+            <a href="/void--news/sources/#methodology" className="dd-methodology-link" style={{ fontFamily: "var(--font-meta)", fontSize: "var(--text-xs)", color: "var(--fg-muted)", textDecoration: "underline", textUnderlineOffset: "3px", letterSpacing: "0.04em" }}>
+              How we score — 6-axis methodology
+            </a>
+          </div>
 
           {/* Fetch error — retry UI */}
           {fetchError && !isLoadingData && sources.length === 0 && (
