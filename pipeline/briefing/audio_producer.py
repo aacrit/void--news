@@ -683,13 +683,16 @@ def produce_audio(
     tts_preamble = ""
     if host_a_preamble or host_b_preamble:
         tts_preamble = (
-            f"Scene: Two senior journalists in a broadcast studio. Mid-morning "
-            f"bulletin. Measured authority — clipped, efficient, precise. No warmth "
-            f"— just shared expertise.\n\n"
-            f"Pacing: Honor pause markers when present. [short pause] = half-second "
-            f"breath. Em dashes = brief pivot pause. When a speaker's line ends "
-            f"with a period and the NEXT speaker begins a new topic, insert a "
-            f"natural breath before the new speaker.\n\n"
+            f"Audio Profile: Two veteran broadcast journalists delivering a live "
+            f"news bulletin. Professional, authoritative, precise.\n\n"
+            f"Scene: A glass-walled broadcast studio, mid-morning. Monitors show "
+            f"live feeds. Both journalists sit across a desk with notes. The energy "
+            f"is focused — they are here to inform, not entertain.\n\n"
+            f"Director's Notes: Measured authority. Clipped delivery. Neither speaker "
+            f"rushes, but neither wastes a syllable. Emphasis lands on names, numbers, "
+            f"and dates — these are the load-bearing words. Em dashes create brief "
+            f"pivot pauses. Paragraph breaks between stories produce a full breath "
+            f"beat. Speaker transitions are clean — no overlapping, no rushing.\n\n"
             f"Speaker One: {host_a_preamble}\n\n"
             f"Speaker Two: {host_b_preamble}"
         )
