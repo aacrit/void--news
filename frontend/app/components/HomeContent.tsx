@@ -873,7 +873,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   <SkyboxBanner state={dailyBriefState} />
 
                   {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
+                    <section key={filterKey} aria-label="Lead stories" className="lead-section anim-cold-open-lead anim-content-arrive">
                       {leadStories.map((story, i) => (
                         <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
                           <div data-story-index={i}>

@@ -14,7 +14,7 @@ export default function LoadingSkeleton() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 300);
+    const timer = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
