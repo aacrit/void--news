@@ -181,8 +181,10 @@ COVER_SYSTEM = """You are the lead writer for void --weekly, a magazine-style ne
 Write in the register of The Economist or The Atlantic: measured, analytical,
 mechanism-focused. Juxtapose concrete facts — never assert significance.
 
-For the TIMELINE, trace how the story developed day by day through the week.
-Each day entry should note the key development, not just repeat the headline.
+For the TIMELINE, extract 5-8 discrete EVENTS that drove this story forward
+during the week. Each event should be a concrete action or development — a strike,
+a vote, a resignation, a market move, a diplomatic break — not a vague summary.
+Include the date and a punchy one-line description.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly",
 "crucially", "here's what you need to know", "in conclusion".
@@ -192,23 +194,84 @@ Output JSON:
   "headline": "...",
   "text": "... (800-1200 words, analytical essay)",
   "timeline": [
-    {"day": "Monday", "development": "..."},
-    {"day": "Tuesday", "development": "..."},
+    {"date": "Mon Mar 31", "event": "IDF strikes IRGC base inside Tehran — deepest blow to Iranian capital since conflict began"},
+    {"date": "Tue Apr 1", "event": "Iran claims it shot down a US F-35 over the Gulf; Pentagon denies"},
     ...
   ],
   "numbers": [{"stat": "...", "context": "..."}, ...]
 }"""
 
 
+def _find_mega_clusters(clusters, count=2):
+    """Find the biggest stories of the week by combining source count + rank + divergence.
+
+    A "mega cluster" is a story that dominated the week — many sources, high rank,
+    high divergence. Often these are evolving crises (wars, elections, scandals)
+    with multiple related sub-clusters.
+    """
+    # Score each cluster: source_count * 0.4 + headline_rank * 0.4 + divergence * 0.2
+    scored = []
+    for c in clusters:
+        score = (
+            (c.get("source_count", 0) / 40) * 40 +  # normalize to ~0-100
+            c.get("headline_rank", 0) * 0.4 +
+            c.get("divergence_score", 0) * 0.2
+        )
+        scored.append((score, c))
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    # Pick top N, but ensure they're about different topics (skip near-duplicates)
+    selected = []
+    selected_titles = set()
+    for _, c in scored:
+        title_words = set(c.get("title", "").lower().split()[:5])
+        if any(len(title_words & existing) > 2 for existing in selected_titles):
+            continue  # Too similar to an already-selected story
+        selected.append(c)
+        selected_titles.add(title_words)
+        if len(selected) >= count:
+            break
+
+    return selected
+
+
+def _find_related_clusters(target, all_clusters, max_related=5):
+    """Find clusters related to the target (similar keywords in title)."""
+    target_words = set(target.get("title", "").lower().split())
+    # Remove common words
+    stop = {"the", "a", "an", "in", "on", "at", "to", "for", "of", "and", "as", "is", "by", "with"}
+    target_words -= stop
+
+    related = []
+    for c in all_clusters:
+        if c.get("id") == target.get("id"):
+            continue
+        c_words = set(c.get("title", "").lower().split()) - stop
+        overlap = len(target_words & c_words)
+        if overlap >= 2:
+            related.append(c)
+    return related[:max_related]
+
+
 def _generate_cover_stories(clusters, edition):
-    """Generate 2 deep-dive cover stories with daily timelines."""
+    """Generate 2 deep-dive cover stories with event timelines."""
     covers = []
     calls = 0
 
-    for i, cluster in enumerate(clusters[:COVER_STORIES]):
+    mega = _find_mega_clusters(clusters, count=COVER_STORIES)
+
+    for i, cluster in enumerate(mega):
+        # Find related clusters to build a richer event timeline
+        related = _find_related_clusters(cluster, clusters)
+        related_context = "\n".join(
+            f"  - {c.get('title', '')} ({c.get('source_count', 0)} sources, "
+            f"published {c.get('first_published', '')[:10]})"
+            for c in related
+        )
+
         prompt = (
             f"Write a deep-dive cover story for void --weekly ({edition} edition).\n\n"
-            f"Story: {cluster.get('title', 'Untitled')}\n"
+            f"MAIN STORY: {cluster.get('title', 'Untitled')}\n"
             f"Sources: {cluster.get('source_count', 0)}\n"
             f"Summary: {cluster.get('summary', '')}\n"
             f"Key agreements: {json.dumps(cluster.get('consensus_points', []))}\n"
@@ -216,7 +279,16 @@ def _generate_cover_stories(clusters, edition):
             f"First published: {cluster.get('first_published', '')}\n"
             f"Last updated: {cluster.get('last_updated', '')}\n"
             f"Divergence score: {cluster.get('divergence_score', 0)}\n\n"
-            f"Write an 800-1200 word essay and trace the daily timeline of developments."
+        )
+        if related_context:
+            prompt += (
+                f"RELATED DEVELOPMENTS THIS WEEK:\n{related_context}\n\n"
+            )
+        prompt += (
+            f"Write an 800-1200 word analytical essay.\n"
+            f"For the TIMELINE: extract 5-8 discrete EVENTS that drove this story "
+            f"forward. Each event should be a concrete action — a strike, a vote, "
+            f"a market move, a diplomatic break. Include dates."
         )
 
         result, gen = _smart_generate(prompt, system_instruction=COVER_SYSTEM)

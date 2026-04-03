@@ -229,6 +229,19 @@
   gap: 0;
   margin-top: var(--space-5);
   padding-left: var(--space-5);
+  border-left: 2px solid var(--divider);
+  margin-left: var(--space-3);
+}
+
+.wk-timeline__heading {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-3);
+  margin-left: calc(-1 * var(--space-5) - var(--space-3));
 }
 
 .wk-timeline__track {
