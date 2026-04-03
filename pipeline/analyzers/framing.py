@@ -142,6 +142,46 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("hostile forces", "opposition groups", 2),        # CCP/state media catch-all
     ("western smear", "western criticism", 3),         # CGTN dismissive framing
     ("genocide allegations", "human rights abuses", 2),    # state denial framing
+    # -------------------------------------------------------------------
+    # Everyday editorial verb/noun choices — UF journalism framing research,
+    # Recasens et al. 2013 "one-sided terms", NPR Public Editor guidance.
+    # These are common editorial verb substitutions that carry connotative
+    # loading compared to neutral wire-service alternatives. Intensity 1-2
+    # because they appear in professional journalism (not just tabloids).
+    # Each term passed the AP/Reuters false-positive gate.
+    # Evidence: B (frequency-differential), C (MBFC methodology)
+    # (computational-linguist expansion 2026-04-03)
+    # -------------------------------------------------------------------
+    # Economic/fiscal verbs — editorial intensification
+    ("slashed", "reduced", 2),             # B — editorial drama vs neutral
+    ("axed", "eliminated", 2),             # B — editorial drama vs neutral
+    ("gutted", "reduced significantly", 2),# B — editorial drama vs neutral
+    ("soared", "increased", 1),            # B — common in headlines, mild charge
+    ("plunged", "declined", 1),            # B — common in financial headlines
+    ("surged", "increased sharply", 1),    # B — financial headline register
+    ("plummeted", "dropped", 2),           # B — editorial drama vs neutral
+    ("skyrocketed", "rose sharply", 2),    # B — editorial drama vs neutral
+    # Action/conflict verbs — editorial intensification
+    ("sparked", "caused", 1),              # B — UF journalism study: fire/destruction metaphor
+    ("ignited", "started", 1),             # B — UF journalism study: fire metaphor
+    ("fueled", "contributed to", 1),       # B — UF journalism study: fire metaphor
+    ("erupted", "began", 1),               # B — UF journalism study: fire metaphor
+    ("unleashed", "released", 2),          # B — editorial drama vs neutral
+    ("rattled", "concerned", 1),           # B — financial headline register
+    ("rocked", "affected", 2),             # B — editorial drama vs neutral
+    # Political/institutional verbs — editorial intensification
+    ("unveiled", "announced", 1),          # B — editorial drama vs neutral
+    ("crackdown", "enforcement action", 2),# C — MBFC: loaded noun choice
+    ("backlash", "opposition", 1),         # B — editorial register vs neutral
+    ("uproar", "controversy", 2),          # B — editorial drama vs neutral
+    ("firestorm", "controversy", 2),       # B — editorial drama metaphor
+    ("outcry", "criticism", 1),            # B — editorial register vs neutral
+    ("embattled", "facing criticism", 2),  # C — editorial characterization
+    ("beleaguered", "struggling", 2),      # C — editorial characterization
+    # Factive/presuppositional verbs (Recasens et al. 2013) — intensity 1
+    # because the bias is subtle presupposition, not overt charge
+    ("exposed", "reported on", 1),         # A — Recasens: factive presupposition
+    ("revealed", "reported", 1),           # A — Recasens: factive presupposition
 ]
 
 # ---------------------------------------------------------------------------

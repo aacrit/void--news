@@ -200,7 +200,7 @@
     "grade": "CORRECT"
   },
   "motherjones-wealth-left-2026.lean": {
-    "score": 11,
+    "score": 10,
     "grade": "CORRECT"
   },
   "motherjones-wealth-left-2026.sens": {
@@ -376,7 +376,7 @@
     "grade": "CORRECT"
   },
   "reuters-breaking-market-2026.framing": {
-    "score": 10,
+    "score": 14,
     "grade": "CORRECT"
   },
   "npr-analysis-immigration-2026.lean": {
@@ -540,7 +540,7 @@
     "grade": "CORRECT"
   },
   "national-review-analysis-regulation-2026.lean": {
-    "score": 71,
+    "score": 76,
     "grade": "CORRECT"
   },
   "national-review-analysis-regulation-2026.sens": {
@@ -700,7 +700,7 @@
     "grade": "CORRECT"
   },
   "wsj-opinion-tax-2026.lean": {
-    "score": 87,
+    "score": 89,
     "grade": "CORRECT"
   },
   "wsj-opinion-tax-2026.sens": {
@@ -796,8 +796,8 @@
     "grade": "ACCEPTABLE"
   },
   "daily-mail-tabloid-celebrity-2026.framing": {
-    "score": 15,
-    "grade": "ACCEPTABLE"
+    "score": 24,
+    "grade": "CORRECT"
   },
   "guardian-entity-sentiment-2026.lean": {
     "score": 38,
@@ -836,7 +836,7 @@
     "grade": "CORRECT"
   },
   "fox-evasive-passive-2026.framing": {
-    "score": 27,
+    "score": 30,
     "grade": "CORRECT"
   }
 }
