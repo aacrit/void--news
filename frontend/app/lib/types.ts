@@ -268,3 +268,75 @@ export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> 
   Center: { min: 35, max: 65 },
   Right: { min: 54, max: 100 },
 };
+
+/* ---------------------------------------------------------------------------
+   Weekly Digest types — void --weekly
+   --------------------------------------------------------------------------- */
+
+export interface WeeklyCoverStory {
+  headline: string;
+  text: string;
+  timeline?: WeeklyTimelineDay[];
+  numbers?: WeeklyCoverNumber[];
+}
+
+export interface WeeklyTimelineDay {
+  day: string;
+  note: string;
+}
+
+export interface WeeklyCoverNumber {
+  value: string;
+  label: string;
+}
+
+export interface WeeklyRecapStory {
+  headline: string;
+  summary: string;
+  section?: string;
+}
+
+export interface WeeklyOpinion {
+  headline: string;
+  text: string;
+  lean: string;
+  topic?: string;
+}
+
+export interface WeeklyBiasReportData {
+  most_polarized?: Array<{
+    headline: string;
+    lean_spread: number;
+    avg_lean: number;
+  }>;
+  aggregate?: {
+    avg_lean: number;
+    avg_rigor: number;
+    avg_sensationalism: number;
+    total_articles: number;
+  };
+}
+
+export interface WeeklyDigestData {
+  id: string;
+  edition: string;
+  week_start: string;
+  week_end: string;
+  issue_number: number;
+  cover_headline: string;
+  cover_text: WeeklyCoverStory[];
+  cover_numbers: WeeklyCoverNumber[] | null;
+  recap_stories: WeeklyRecapStory[];
+  opinion_left: WeeklyOpinion[] | null;
+  opinion_center: WeeklyOpinion[] | null;
+  opinion_right: WeeklyOpinion[] | null;
+  opinion_headlines: string[] | null;
+  opinion_topic: string | null;
+  bias_report_text: string | null;
+  bias_report_data: WeeklyBiasReportData | null;
+  audio_url: string | null;
+  audio_duration_seconds: number | null;
+  total_articles: number | null;
+  total_clusters: number | null;
+  created_at: string;
+}

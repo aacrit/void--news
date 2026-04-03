@@ -191,3 +191,75 @@ export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (d.opinion_headline && typeof d.opinion_headline !== "string") d.opinion_headline = String(d.opinion_headline);
   return d;
 }
+
+/* ---------------------------------------------------------------------------
+   Weekly Digest — void --weekly
+   --------------------------------------------------------------------------- */
+
+/**
+ * Fetch the latest weekly digest for a given edition.
+ * Falls back to any edition if none exists for the requested one.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
+  if (!_client) return null;
+
+  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, cover_text, cover_numbers, recap_stories, opinion_left, opinion_center, opinion_right, opinion_headlines, opinion_topic, bias_report_text, bias_report_data, audio_url, audio_duration_seconds, total_articles, total_clusters, created_at';
+
+  let res = await _client
+    .from('weekly_digests')
+    .select(cols)
+    .eq('edition', edition)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (res.error || !res.data) {
+    // Fall back to most recent from any edition
+    res = await _client
+      .from('weekly_digests')
+      .select(cols)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+  }
+
+  if (res.error || !res.data) return null;
+
+  // Parse JSONB fields that may arrive as strings
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const d = res.data as Record<string, any>;
+  const jsonFields = ['cover_text', 'cover_numbers', 'recap_stories', 'opinion_left', 'opinion_center', 'opinion_right', 'opinion_headlines', 'bias_report_data'];
+  for (const field of jsonFields) {
+    if (typeof d[field] === 'string') {
+      try { d[field] = JSON.parse(d[field]); } catch { d[field] = null; }
+    }
+  }
+
+  return d;
+}
+
+/**
+ * Fetch all weekly digests (for archive listing).
+ * Returns id, edition, week_start, week_end, issue_number, created_at.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function fetchWeeklyArchive(edition?: string): Promise<any[]> {
+  if (!_client) return [];
+
+  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, created_at';
+
+  let query = _client
+    .from('weekly_digests')
+    .select(cols)
+    .order('created_at', { ascending: false })
+    .limit(52);
+
+  if (edition) {
+    query = query.eq('edition', edition);
+  }
+
+  const { data, error } = await query;
+  if (error || !data) return [];
+  return data;
+}

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass, BookOpen } from "@phosphor-icons/react";
 import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
@@ -201,6 +201,15 @@ export default function NavBar({
             </button>
           )}
           <PageToggle activePage="feed" />
+          <Link
+            href="/weekly"
+            className="page-toggle"
+            aria-label="Go to Weekly digest"
+            title="void --weekly"
+          >
+            <BookOpen size={14} weight="regular" aria-hidden="true" />
+            <span className="page-toggle__label">Weekly</span>
+          </Link>
           <ThemeToggle />
         </div>
       </nav>
