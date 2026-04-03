@@ -123,6 +123,31 @@ AGENT CROSS-REFERENCE WARNING:
 THE ONE THING: [single most dangerous piece of stale documentation]
 ```
 
+## Phase 2: Frontend UAT Review
+
+After documentation sync, perform a read-only frontend audit to verify that documentation accurately describes the current UI/UX state. This catches stale frontend descriptions that code-level fact-checking misses.
+
+### UAT Checklist for Documentation
+
+1. **Component inventory** — Read `frontend/app/components/*.tsx` file list. Compare to CLAUDE.md component list and DESIGN-SYSTEM.md component descriptions. Flag any components that exist but aren't documented, or documented but don't exist.
+2. **Animation/interaction descriptions** — Read `frontend/app/styles/animations.css` and `tokens.css` for current spring presets, keyframe names, and cinematic tokens. Compare to CLAUDE.md Animation section. Flag stale easing names, removed keyframes, or new animations.
+3. **CSS load order** — Read `frontend/app/globals.css` import order. Compare to CLAUDE.md CSS section. Flag any new or removed stylesheets.
+4. **Deep Dive behavior** — Read `frontend/app/components/DeepDive.tsx` opening comment block and animation timings. Compare to CLAUDE.md Deep Dive section. Flag stale timing values or removed/added features.
+5. **Page routes** — Read `frontend/app/` directory structure for route segments. Compare to CLAUDE.md Project Structure section. Flag new pages or removed routes.
+6. **Design tokens** — Grep `tokens.css` for `--cin-`, `--spring-`, `--ease-`, `--font-` custom properties. Compare to DESIGN-SYSTEM.md token tables. Flag undocumented tokens or documented tokens that no longer exist.
+
+### UAT Report Section
+
+Add to the drift report:
+
+```
+FRONTEND UAT REVIEW:
+  [N] frontend descriptions out of sync with codebase
+  - [STALE] CLAUDE.md says "[old description]", actual is "[new state]"
+  - [MISSING] Component [name] not in docs
+  - [ORPHAN] Docs reference [removed feature]
+```
+
 ## Output
 
 Return findings and changes to the main session. Do not attempt to spawn other agents.
