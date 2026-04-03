@@ -26,7 +26,7 @@ interface CCData {
   biasScores: { political_lean: number | null; sensationalism: number | null; opinion_fact: number | null; factual_rigor: number | null; framing: number | null; confidence: number | null }[];
   briefs: { edition: string; created_at: string; audio_url: string | null; opinion_text: string | null }[];
   feedFreshness: string | null;
-  editionClusters: { world: number; us: number; india: number };
+  editionClusters: { world: number; us: number; europe: number; india: number };
 }
 
 // ---- Health Score ----
@@ -45,8 +45,8 @@ function computeHealth(d: CCData) {
   const b2 = (d.tiers.us_major >= 44 && d.tiers.international >= 140 && d.tiers.independent >= 155) ? 5 : 3;
   const cq = d.clustersTotal > 0 ? (d.clustersMulti / d.clustersTotal) * 100 : 0;
   const b3 = cq > 25 ? 10 : cq > 15 ? 5 : 0;
-  const ea = [d.editionClusters.world, d.editionClusters.us, d.editionClusters.india].filter(v => v > 0).length;
-  const b4 = ea >= 3 ? 5 : ea >= 2 ? 3 : 0;
+  const ea = [d.editionClusters.world, d.editionClusters.us, d.editionClusters.europe, d.editionClusters.india].filter(v => v > 0).length;
+  const b4 = ea >= 4 ? 5 : ea >= 3 ? 4 : ea >= 2 ? 3 : 0;
   const cs = b1 + b2 + b3 + b4;
 
   const c1 = 10;
@@ -163,11 +163,11 @@ export default function CommandCenter() {
         biasScores: (f.data as any[]) ?? [], briefs: (g.data as any[]) ?? [],
         feedFreshness: h.data?.[0]?.updated_at ?? null,
         tiers: { us_major: src.filter((s: {tier:string}) => s.tier === 'us_major').length, international: src.filter((s: {tier:string}) => s.tier === 'international').length, independent: src.filter((s: {tier:string}) => s.tier === 'independent').length, total: src.length },
-        editionClusters: { world: i.count ?? 0, us: j.count ?? 0, india: k.count ?? 0 },
+        editionClusters: { world: i.count ?? 0, us: j.count ?? 0, europe: 0, india: k.count ?? 0 },
       });
     } catch (err) {
       console.error('CC load failed:', err);
-      setData({ runs: [], tiers: { us_major: 0, international: 0, independent: 0, total: 0 }, articles24h: 0, clustersTotal: 0, clustersMulti: 0, biasScores: [], briefs: [], feedFreshness: null, editionClusters: { world: 0, us: 0, india: 0 } });
+      setData({ runs: [], tiers: { us_major: 0, international: 0, independent: 0, total: 0 }, articles24h: 0, clustersTotal: 0, clustersMulti: 0, biasScores: [], briefs: [], feedFreshness: null, editionClusters: { world: 0, us: 0, europe: 0, india: 0 } });
     }
   }, []);
 
@@ -260,8 +260,8 @@ export default function CommandCenter() {
             <div className="cc-progress-bar"><div className="cc-progress-bar__fill" style={{ width: `${cq}%`, background: 'var(--cc-accent)' }} /></div>
           </KpiCard>
           <KpiCard id="B4" label="Editions" domain="coverage" expanded={expanded==='B4'} onToggle={() => toggle('B4')}
-            value={`${[data.editionClusters.world,data.editionClusters.us,data.editionClusters.india].filter(v=>v>0).length}/3`} valueClass={ragC([data.editionClusters.world,data.editionClusters.us,data.editionClusters.india].filter(v=>v>0).length, 3, 2)} sub="active editions today">
-            <div className="cc-edition-dots">{([['W',data.editionClusters.world],['US',data.editionClusters.us],['IN',data.editionClusters.india]] as [string,number][]).map(([n,c]) => <div key={n} className="cc-edition-dot"><div className="cc-edition-dot__circle" style={{ background: c > 0 ? 'var(--cc-green)' : 'var(--cc-red)' }} />{n} {c}</div>)}</div>
+            value={`${[data.editionClusters.world,data.editionClusters.us,data.editionClusters.europe,data.editionClusters.india].filter(v=>v>0).length}/4`} valueClass={ragC([data.editionClusters.world,data.editionClusters.us,data.editionClusters.europe,data.editionClusters.india].filter(v=>v>0).length, 4, 3)} sub="active editions today">
+            <div className="cc-edition-dots">{([['W',data.editionClusters.world],['US',data.editionClusters.us],['EU',data.editionClusters.europe],['IN',data.editionClusters.india]] as [string,number][]).map(([n,c]) => <div key={n} className="cc-edition-dot"><div className="cc-edition-dot__circle" style={{ background: c > 0 ? 'var(--cc-green)' : 'var(--cc-red)' }} />{n} {c}</div>)}</div>
           </KpiCard>
           <KpiCard id="C1" label="Bias Accuracy" domain="bias" expanded={expanded==='C1'} onToggle={() => toggle('C1')}
             value="100%" valueClass="cc-green" sub="38 ground-truth articles"

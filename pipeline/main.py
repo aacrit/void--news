@@ -136,8 +136,16 @@ _US_DOMESTIC_PATTERN = re.compile(
 _COUNTRY_EDITION_MAP: dict[str, str] = {
     "US": "us",
     "IN": "india",
-    "GB": "uk",
-    "UK": "uk",  # Non-standard code in some sources; normalize to GB
+    # Europe edition — UK + EU + EEA + Balkans + Caucasus + Ukraine
+    "GB": "europe", "UK": "europe",
+    "FR": "europe", "DE": "europe", "ES": "europe", "IT": "europe",
+    "NL": "europe", "BE": "europe", "PT": "europe", "AT": "europe",
+    "CH": "europe", "IE": "europe", "SE": "europe", "DK": "europe",
+    "NO": "europe", "FI": "europe", "IS": "europe",
+    "PL": "europe", "CZ": "europe", "RO": "europe", "BG": "europe",
+    "HR": "europe", "RS": "europe", "GR": "europe", "HU": "europe",
+    "EE": "europe", "LV": "europe", "LT": "europe",
+    "UA": "europe", "GE": "europe",
     "CA": "canada",
 }
 
@@ -1833,14 +1841,14 @@ def main():
         # in other editions, ensuring each edition surfaces unique stories.
         CROSS_EDITION_TOP = 5
         CROSS_DEMOTION = 0.92
-        _RANK_EDITIONS = ["world", "us", "india"]
+        _RANK_EDITIONS = ["world", "us", "europe", "india"]
 
         # Each cluster starts with its headline_rank as the base for all editions
         for c in clusters:
             for ed in _RANK_EDITIONS:
                 c[f"rank_{ed}"] = c.get("headline_rank", 0)
 
-        # Local-priority boost: US-only or India-only clusters get 1.20x
+        # Local-priority boost: edition-specific clusters get 1.20x
         # in their home edition. This ensures domestic stories rise to the
         # top of the local feed without inflating global rankings.
         # 1.20x chosen so that a local 44-pt story (52.8) outranks a
@@ -1848,7 +1856,7 @@ def main():
         LOCAL_BOOST = 1.20
         for c in clusters:
             sections = c.get("sections") or [c.get("section", "world")]
-            for ed in ("us", "india"):
+            for ed in ("us", "europe", "india"):
                 if ed in sections and "world" not in sections:
                     c[f"rank_{ed}"] = round(c.get(f"rank_{ed}", 0) * LOCAL_BOOST, 2)
 
@@ -1880,8 +1888,9 @@ def main():
             _section_top5[ed] = [c.get("_db_id", str(id(c))) for c in pool[:CROSS_EDITION_TOP]]
 
         _wu = len(set(_section_top5.get("world", [])) & set(_section_top5.get("us", [])))
+        _we = len(set(_section_top5.get("world", [])) & set(_section_top5.get("europe", [])))
         _wi = len(set(_section_top5.get("world", [])) & set(_section_top5.get("india", [])))
-        print(f"\n  Per-edition ranks computed. Cross-edition overlap: world/us={_wu}/5, world/india={_wi}/5")
+        print(f"\n  Per-edition ranks computed. Cross-edition overlap: world/us={_wu}/5, world/europe={_we}/5, world/india={_wi}/5")
 
         # Print top 10 per edition for diagnostics
         for ed in _RANK_EDITIONS:
@@ -1899,7 +1908,7 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
-                    edition_sections=["world", "us", "india"],
+                    edition_sections=["world", "us", "europe", "india"],
                 )
 
                 for edition, brief in brief_results.items():
@@ -2101,6 +2110,7 @@ def main():
                 "coverage_velocity": cluster.get("coverage_velocity", 0),
                 "rank_world": round(cluster.get("rank_world", cluster.get("headline_rank", 0.0)), 2),
                 "rank_us": round(cluster.get("rank_us", cluster.get("headline_rank", 0.0)), 2),
+                "rank_europe": round(cluster.get("rank_europe", cluster.get("headline_rank", 0.0)), 2),
                 "rank_india": round(cluster.get("rank_india", cluster.get("headline_rank", 0.0)), 2),
             }
 
@@ -2425,7 +2435,7 @@ def main():
     # Clean old daily briefs (keep only latest per edition)
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
-        for ed in ("world", "us", "uk", "india", "canada"):
+        for ed in ("world", "us", "europe", "uk", "india", "canada"):
             old = supabase.table("daily_briefs").select("id").eq(
                 "edition", ed
             ).lt("created_at", cutoff).execute()

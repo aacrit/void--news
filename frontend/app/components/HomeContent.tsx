@@ -135,7 +135,7 @@ interface HomeContentProps {
    --------------------------------------------------------------------------- */
 
 const EDITION_STORAGE_KEY = "void-news-edition";
-const VALID_EDITIONS: Edition[] = ["world", "us", "india"];
+const VALID_EDITIONS: Edition[] = ["world", "us", "europe", "india"];
 
 function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Edition state: URL-driven routes (/us, /india) pass the correct edition.
@@ -206,7 +206,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Whip pan direction — track previous edition index for direction-aware animation.
   // isEditionSwitch tracks whether the current content remount is from an edition
   // change (whip pan) vs a filter change (no whip pan, just card reshuffling).
-  const EDITION_ORDER: Edition[] = ["world", "us", "india"];
+  const EDITION_ORDER: Edition[] = ["world", "us", "europe", "india"];
   const prevEditionRef = useRef<Edition>(activeEdition);
   const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
   const [isEditionSwitch, setIsEditionSwitch] = useState(false);
@@ -441,11 +441,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_india`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_india`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         // Use per-edition rank column for ordering (cross-edition differentiation)
-        const rankColumn = `rank_${activeEdition}` as "rank_world" | "rank_us" | "rank_india";
+        const rankColumn = `rank_${activeEdition}` as "rank_world" | "rank_us" | "rank_europe" | "rank_india";
 
         let res;
         let usingEnriched = true;
