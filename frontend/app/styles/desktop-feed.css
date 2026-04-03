@@ -630,6 +630,10 @@
      active card. The same depth-of-field treatment applies: the focused
      card is sharp, everything else defocuses. This ensures keyboard
      users get the same cinematic depth experience as pointer users. */
+  .story-card--kbd-focus {
+    filter: var(--rack-key-light) var(--rack-warm-cast);
+  }
+
   .df:has(.story-card--kbd-focus) .lead-story:not(.story-card--kbd-focus),
   .df:has(.story-card--kbd-focus) .dg-row:not(.story-card--kbd-focus),
   .df:has(.story-card--kbd-focus) .wire-card:not(.story-card--kbd-focus) {

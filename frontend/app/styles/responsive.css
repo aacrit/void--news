@@ -352,6 +352,19 @@
     filter: blur(3px) saturate(0.8) brightness(0.9);
   }
 
+  /* Mobile GPU budget: disable backdrop-filters on elements hidden behind
+     the Deep Dive overlay (z-50). These elements already have solid background
+     fallbacks — the backdrop-filter is pure enhancement, invisible when
+     occluded. Drops simultaneous backdrop-filter count from 4 to 1 (DD only). */
+  .deep-dive-active .mob-nav__bar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .deep-dive-active .page-toggle {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
      on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
   body::before {
