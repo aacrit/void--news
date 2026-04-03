@@ -4711,6 +4711,183 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-tertiary);
 }
 
+/* ---- Deep Dive: Six Lenses — ink-stamp 6-axis bias scores --------------- */
+
+.dd-lenses {
+  margin-bottom: var(--space-4);
+}
+
+.dd-lenses__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  margin: var(--space-3) 0;
+}
+
+/* Rack focus when one stamp is active */
+.dd-lenses__grid--has-active .dd-lens:not(.dd-lens--active) {
+  opacity: 0.4;
+  filter: blur(0.5px);
+  transition: opacity 300ms var(--ease-rack), filter 300ms var(--ease-rack);
+}
+
+.dd-lens {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  min-width: 90px;
+  min-height: 44px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: transform 200ms var(--spring-snappy), opacity 200ms var(--ease-out);
+}
+
+.dd-lens--visible {
+  animation: ddLensIn 250ms var(--ease-cinematic) var(--lens-delay, 0ms) both;
+}
+
+@keyframes ddLensIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ink circle background — hand-drawn SVG ring */
+.dd-lens::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%2352504A' stroke-width='1.5' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  transition: opacity 200ms var(--ease-out);
+}
+
+/* Dark mode ink circle */
+:root[data-mode="dark"] .dd-lens::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%239CA3AF' stroke-width='1.5' fill='none' opacity='0.2'/%3E%3C/svg%3E");
+}
+
+/* Rotation variety — each stamp slightly askew */
+.dd-lens:nth-child(2)::before { transform: rotate(3deg) scaleX(-1); }
+.dd-lens:nth-child(3)::before { transform: rotate(-2deg); }
+.dd-lens:nth-child(4)::before { transform: rotate(4deg) scaleY(-1); }
+.dd-lens:nth-child(5)::before { transform: rotate(-3deg) scaleX(-1); }
+.dd-lens:nth-child(6)::before { transform: rotate(2deg) scaleX(-1) scaleY(-1); }
+
+.dd-lens:hover {
+  transform: translateY(-2px);
+}
+
+.dd-lens:hover::before {
+  filter: drop-shadow(0 0 4px var(--accent-warm));
+}
+
+/* Active stamp gets accent ink */
+.dd-lens--active::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%23946B15' stroke-width='2' fill='none' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+:root[data-mode="dark"] .dd-lens--active::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%23AD7E1E' stroke-width='2' fill='none' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.dd-lens:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+/* Stamp content — score number */
+.dd-lens__score {
+  font-family: var(--font-data);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 1;
+}
+
+/* Dot strip — 5 pips showing filled proportion */
+.dd-lens__dots {
+  display: inline-flex;
+  gap: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.dd-lens__pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--border-subtle);
+  transition: background-color 300ms var(--ease-out);
+}
+
+/* Arc arrangement — outer pips dip slightly */
+.dd-lens__pip:nth-child(1) { transform: translateY(1.5px); }
+.dd-lens__pip:nth-child(2) { transform: translateY(0.5px); }
+.dd-lens__pip:nth-child(4) { transform: translateY(0.5px); }
+.dd-lens__pip:nth-child(5) { transform: translateY(1.5px); }
+
+.dd-lens__pip--filled {
+  background-color: var(--fg-secondary);
+}
+
+/* Axis label */
+.dd-lens__name {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs, 0.65rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  position: relative;
+  z-index: 1;
+}
+
+/* "How we score" link below the stamps */
+.dd-lenses__link {
+  display: block;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-top: var(--space-2);
+}
+
+.dd-lenses__link:hover {
+  color: var(--fg-secondary);
+}
+
+/* Reduced motion — show instantly, no hover lift */
+@media (prefers-reduced-motion: reduce) {
+  .dd-lens {
+    opacity: 1;
+    transform: none;
+  }
+  .dd-lens--visible {
+    animation: none;
+  }
+  .dd-lens:hover {
+    transform: none;
+  }
+  .dd-lens::before {
+    transition: none;
+  }
+}
+
 /* F07: DailyBriefText/OnAirButton CSS removed — replaced by SkyboxBanner + MobileBriefPill */
 /* [REMOVED: ~780 lines of .daily-brief-banner, .db-col, .onair styles]
    See SkyboxBanner styles in skybox-banner.css, MobileBriefPill in mobile-feed.css */
