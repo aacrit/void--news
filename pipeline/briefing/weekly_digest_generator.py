@@ -490,19 +490,45 @@ Output JSON: {{"headline": "...", "text": "..."}}"""
 
 
 def _generate_opinions(top_threads, all_threads, edition):
-    """Generate 5 opinions: 2 opposing on cover story, 3 on other important topics."""
+    """Generate 5 opinions: 2 opposing on cover story, 3 on other important topics.
+
+    The reader sees a genuine dialectic on the #1 story (progressive vs conservative)
+    plus diverse perspectives on other key stories.
+    """
     opinions = []
     calls = 0
 
-    # Select diverse clusters for opinions (skip the 2 cover stories)
-    opinion_clusters = clusters[COVER_STORIES:COVER_STORIES + OPINION_COUNT]
-    if len(opinion_clusters) < OPINION_COUNT:
-        opinion_clusters = clusters[:OPINION_COUNT]
+    # Build opinion plan: 2 opposing on #1, then 3 on other stories
+    plan = []  # list of (cluster_dict, lean_str)
 
-    for i, cluster in enumerate(opinion_clusters):
-        lean = OPINION_LEANS[i % len(OPINION_LEANS)]
-        voice = OPINION_VOICE_CONFIGS[lean]
+    # First 2: opposing voices on cover story #1
+    if top_threads:
+        lead = top_threads[0]["lead_cluster"]
+        plan.append((lead, "left"))
+        plan.append((lead, "right"))
+
+    # Third: center voice on cover story #2
+    if len(top_threads) > 1:
+        second = top_threads[1]["lead_cluster"]
+        plan.append((second, "center"))
+
+    # Remaining: other important threads not in cover
+    cover_ids = set()
+    for t in top_threads:
+        for c in t["clusters"]:
+            cover_ids.add(c.get("id"))
+    other = [t for t in all_threads if t.get("lead_cluster", {}).get("id") not in cover_ids]
+    lean_cycle = ["center-left", "center-right"]
+    for i, thread in enumerate(other[:2]):
+        plan.append((thread["lead_cluster"], lean_cycle[i % 2]))
+
+    for i, (cluster, lean) in enumerate(plan):
+        voice = OPINION_VOICE_CONFIGS.get(lean, OPINION_VOICE_CONFIGS["center"])
+        is_paired = i < 2 and len(plan) >= 2
         system = OPINION_SYSTEM.format(**voice)
+        if is_paired:
+            opposing = "conservative" if lean == "left" else "progressive"
+            system += f"\n\nThis is a PAIRED opinion. A {opposing} columnist writes about the same story. Your reader sees both side by side."
 
         prompt = (
             f"Write a {voice['perspective']} opinion essay for void --weekly ({edition}).\n\n"
@@ -518,9 +544,8 @@ def _generate_opinions(top_threads, all_threads, edition):
         if result and isinstance(result, dict):
             result["lean"] = lean
             result["topic"] = cluster.get("title", "")
-            result["cluster_id"] = lead.get("id")
-            result["timeline"] = timeline
-            result["thread_cluster_ids"] = [c.get("id") for c in thread["clusters"]]
+            result["cluster_id"] = cluster.get("id")
+            result["paired"] = is_paired
             opinions.append(result)
             print(f"    Opinion {i+1} ({lean}): {result.get('headline', '?')[:50]}...")
         time.sleep(2)
@@ -1140,6 +1165,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # Produce audio TTS — weekly uses fixed Editor+Correspondent pair
         audio_url = None
         audio_duration = None
+        audio_size = None
         if audio_script and len(audio_script) > 100:
             print(f"    Producing audio ({len(audio_script.split())} words)...")
             try:
@@ -1156,7 +1182,8 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 )
                 if result and isinstance(result, dict):
                     audio_url = result.get("audio_url")
-                    audio_duration = result.get("audio_duration_seconds")
+                    audio_duration = result.get("duration_seconds")
+                    audio_size = result.get("file_size")
                     print(f"    Audio: {audio_duration:.0f}s uploaded" if audio_duration else "    Audio: uploaded")
             except Exception as e:
                 print(f"    [warn] Audio failed: {e}")
@@ -1200,7 +1227,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
             "audio_script": audio_script,
             "audio_url": audio_url,
             "audio_duration_seconds": audio_duration,
-            "audio_voice": f"{WEEKLY_VOICE_PAIR['host_a']['id']}+{WEEKLY_VOICE_PAIR['host_b']['id']}",
+            "audio_file_size": audio_size,
             # Stats
             "total_articles": sum(c.get("source_count", 0) for c in clusters),
             "total_clusters": len(clusters),
