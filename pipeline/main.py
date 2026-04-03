@@ -1836,64 +1836,167 @@ def main():
                     c["headline_rank"] = round(min(c.get("headline_rank", 0), floor_rank - 0.01), 2)
                 print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
 
-        # ── Per-edition rank computation (v5.4) ──
-        # Compute independent rank_world, rank_us, rank_south_asia so that:
-        #   1) Daily briefs use edition-specific top stories
-        #   2) Frontend orders by the correct per-edition column
-        # Cross-edition demotion: stories in one edition's top-5 get 0.92x
-        # in other editions, ensuring each edition surfaces unique stories.
-        CROSS_EDITION_TOP = 5
-        CROSS_DEMOTION = 0.92
-        _RANK_EDITIONS = ["world", "us", "europe", "south-asia"]
+        # ── Per-edition rank computation (v5.7 — edition-unique) ──
+        # Each edition surfaces its region's stories first. Three mechanisms:
+        #
+        # 1. REGIONAL AFFINITY BOOST: proportional to % of cluster articles
+        #    from the edition's region (up to 1.50x). A cluster where 80% of
+        #    articles come from Indian sources gets 1.40x in south-asia.
+        #
+        # 2. LOCAL-PRIORITY BOOST: edition-exclusive stories (not cross-listed
+        #    with world) get 1.40x; cross-listed get 1.15x. v5.4 had 1.20x
+        #    gated on "world not in sections" — which never fired for important
+        #    stories since they all include "world" in sections.
+        #
+        # 3. CROSS-EDITION DEMOTION: stories claimed by a previous edition's
+        #    top-8 get 0.70x in subsequent editions. Stories meeting "global
+        #    significance" threshold (20+ sources, 3+ editions) get milder
+        #    0.88x so US-Iran War still appears everywhere.
+        #
+        # Processing order: regional first (us → europe → south-asia), then
+        # world. Regional editions claim their stories first; world gets the
+        # remaining globally important stories.
+        #
+        # Goal: top 5 should never overlap between editions unless a story
+        # is genuinely globally significant.
 
-        # Each cluster starts with its headline_rank as the base for all editions
+        CROSS_EDITION_TOP = 8
+        CROSS_DEMOTION = 0.70
+        GLOBAL_SIG_DEMOTION = 0.88   # milder demotion for globally significant
+        GLOBAL_SIG_SOURCES = 20      # source count threshold
+        GLOBAL_SIG_EDITIONS = 3      # edition count threshold
+        LOCAL_EXCLUSIVE_BOOST = 1.40  # edition-exclusive stories
+        LOCAL_CROSSLIST_BOOST = 1.0   # no boost for cross-listed; affinity handles it
+        AFFINITY_MAX_BOOST = 2.0     # max boost at 100% regional sources
+        WORLD_MULTI_ED_BOOST = 1.12  # world boost for 3+ edition stories
+        _RANK_EDITIONS = ["us", "europe", "south-asia", "world"]  # regional first!
+
+        # Each cluster starts with headline_rank as base for all editions
         for c in clusters:
             for ed in _RANK_EDITIONS:
                 c[f"rank_{ed}"] = c.get("headline_rank", 0)
 
-        # Local-priority boost: edition-specific clusters get 1.20x
-        # in their home edition. This ensures domestic stories rise to the
-        # top of the local feed without inflating global rankings.
-        # 1.20x chosen so that a local 44-pt story (52.8) outranks a
-        # globally demoted 55-pt story (50.6) in the home edition.
-        LOCAL_BOOST = 1.20
+        # Apply regional affinity + local-priority boost
         for c in clusters:
-            sections = c.get("sections") or [c.get("section", "world")]
-            for ed in ("us", "europe", "south-asia"):
-                if ed in sections and "world" not in sections:
-                    c[f"rank_{ed}"] = round(c.get(f"rank_{ed}", 0) * LOCAL_BOOST, 2)
+            c_sections = c.get("sections") or [c.get("section", "world")]
+            c_articles = c.get("articles", [])
 
-        # Cross-edition demotion: iterate editions in order, demoting stories
-        # already claimed as top-5 by a previous edition.
+            for ed in ("us", "europe", "south-asia"):
+                if ed not in c_sections:
+                    continue
+
+                # 1. Regional affinity boost: proportional to % of articles
+                #    from this edition's region. Article.section is set by
+                #    source country mapping in step 4, so this measures how
+                #    much of the coverage originates from regional outlets.
+                if c_articles:
+                    regional_count = sum(
+                        1 for a in c_articles
+                        if a.get("section", "") == ed
+                    )
+                    total = len(c_articles)
+                    if total > 0:
+                        affinity = regional_count / total
+                        affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
+                        # Quality cap: proportional to source count. Prevents
+                        # tabloid stories with 100% regional sources from being
+                        # catapulted to #1 by a 2.0x boost. Graduated scale:
+                        # 1src→1.2x, 2→1.4x, 3→1.6x, 4→1.8x, 5+→full 2.0x.
+                        _src_count = c.get("source_count", 0)
+                        if _src_count < 5:
+                            _cap = 1.0 + (_src_count / 5.0) * (AFFINITY_MAX_BOOST - 1.0)
+                            affinity_mult = min(affinity_mult, _cap)
+                        c[f"rank_{ed}"] = round(c[f"rank_{ed}"] * affinity_mult, 2)
+
+                # 2. Local-priority boost
+                if "world" not in c_sections:
+                    # Edition-exclusive story: strong boost
+                    c[f"rank_{ed}"] = round(c[f"rank_{ed}"] * LOCAL_EXCLUSIVE_BOOST, 2)
+                else:
+                    # Cross-listed with world: moderate boost (v5.4 gave 0x here)
+                    c[f"rank_{ed}"] = round(c[f"rank_{ed}"] * LOCAL_CROSSLIST_BOOST, 2)
+
+        # World edition: boost truly global stories (appearing in 3+ editions)
+        for c in clusters:
+            c_sections = c.get("sections") or [c.get("section", "world")]
+            if "world" in c_sections:
+                edition_count = sum(1 for ed in _RANK_EDITIONS if ed in c_sections)
+                if edition_count >= 3:
+                    c["rank_world"] = round(c["rank_world"] * WORLD_MULTI_ED_BOOST, 2)
+
+        # Cross-edition demotion: regional editions claim first, world last
         claimed_ids: set[str] = set()
         for ed in _RANK_EDITIONS:
             pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
 
-            # Apply demotion for already-claimed stories
+            # Demote stories already claimed by a previous edition
             for c in pool:
                 cid = c.get("_db_id", "") or str(id(c))
                 if cid in claimed_ids:
-                    c[f"rank_{ed}"] = round(c.get(f"rank_{ed}", 0) * CROSS_DEMOTION, 2)
+                    c_sections = c.get("sections") or [c.get("section", "world")]
+                    edition_count = sum(1 for e in _RANK_EDITIONS if e in c_sections)
+                    src_count = c.get("source_count", 0)
 
-            # Sort by this edition's rank
+                    # Global significance exemption: major international events
+                    # (20+ sources, 3+ editions) get milder demotion so they
+                    # still appear in multiple feeds (e.g., US-Iran War)
+                    if src_count >= GLOBAL_SIG_SOURCES and edition_count >= GLOBAL_SIG_EDITIONS:
+                        c[f"rank_{ed}"] = round(c[f"rank_{ed}"] * GLOBAL_SIG_DEMOTION, 2)
+                    else:
+                        c[f"rank_{ed}"] = round(c[f"rank_{ed}"] * CROSS_DEMOTION, 2)
+
             pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
 
-            # Claim this edition's top-5
+            # Edition-level lead gate: top-10 positions require 3+ sources.
+            # Prevents low-source tabloid stories from being catapulted to
+            # top positions by the affinity boost (e.g., 3-source celebrity
+            # story with 100% regional sources getting 2.8x combined boost).
+            # Modifies rank values so the gate persists in final sort order.
+            _ED_LEAD_MIN = 3
+            _ED_LEAD_SLOTS = 10
+            eligible = [c for c in pool if c.get("source_count", 0) >= _ED_LEAD_MIN]
+            ineligible = [c for c in pool if c.get("source_count", 0) < _ED_LEAD_MIN]
+            if len(eligible) >= _ED_LEAD_SLOTS and ineligible:
+                floor_rank = eligible[_ED_LEAD_SLOTS - 1].get(f"rank_{ed}", 0) - 0.1
+                for c in ineligible:
+                    if c.get(f"rank_{ed}", 0) > floor_rank:
+                        c[f"rank_{ed}"] = round(floor_rank, 2)
+                        floor_rank -= 0.1
+            pool[:] = eligible[:_ED_LEAD_SLOTS]
+            remaining = eligible[_ED_LEAD_SLOTS:] + ineligible
+            remaining.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
+            pool.extend(remaining)
+
+            # Claim this edition's top stories
             for c in pool[:CROSS_EDITION_TOP]:
                 cid = c.get("_db_id", "") or str(id(c))
                 claimed_ids.add(cid)
 
-        # Report cross-edition overlap
-        _section_top5: dict[str, list[str]] = {}
+        # Report cross-edition overlap (top-5 and top-10)
+        _section_top: dict[str, list[str]] = {}
         for ed in _RANK_EDITIONS:
             pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
             pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
-            _section_top5[ed] = [c.get("_db_id", str(id(c))) for c in pool[:CROSS_EDITION_TOP]]
+            _section_top[ed] = [c.get("_db_id", str(id(c))) for c in pool[:10]]
 
-        _wu = len(set(_section_top5.get("world", [])) & set(_section_top5.get("us", [])))
-        _we = len(set(_section_top5.get("world", [])) & set(_section_top5.get("europe", [])))
-        _wi = len(set(_section_top5.get("world", [])) & set(_section_top5.get("south-asia", [])))
-        print(f"\n  Per-edition ranks computed. Cross-edition overlap: world/us={_wu}/5, world/europe={_we}/5, world/south-asia={_wi}/5")
+        def _overlap(a: str, b: str, n: int) -> int:
+            return len(set(_section_top.get(a, [])[:n]) & set(_section_top.get(b, [])[:n]))
+
+        print(f"\n  Per-edition ranks computed (v5.7 edition-unique).")
+        print(f"  Top-5 overlap: "
+              f"world/us={_overlap('world','us',5)}, "
+              f"world/eu={_overlap('world','europe',5)}, "
+              f"world/sa={_overlap('world','south-asia',5)}, "
+              f"us/eu={_overlap('us','europe',5)}, "
+              f"us/sa={_overlap('us','south-asia',5)}, "
+              f"eu/sa={_overlap('europe','south-asia',5)}")
+        print(f"  Top-10 overlap: "
+              f"world/us={_overlap('world','us',10)}, "
+              f"world/eu={_overlap('world','europe',10)}, "
+              f"world/sa={_overlap('world','south-asia',10)}, "
+              f"us/eu={_overlap('us','europe',10)}, "
+              f"us/sa={_overlap('us','south-asia',10)}, "
+              f"eu/sa={_overlap('europe','south-asia',10)}")
 
         # Print top 10 per edition for diagnostics
         for ed in _RANK_EDITIONS:
@@ -2114,7 +2217,8 @@ def main():
                 "rank_world": round(cluster.get("rank_world", cluster.get("headline_rank", 0.0)), 2),
                 "rank_us": round(cluster.get("rank_us", cluster.get("headline_rank", 0.0)), 2),
                 "rank_europe": round(cluster.get("rank_europe", cluster.get("headline_rank", 0.0)), 2),
-                "rank_south_asia": round(cluster.get("rank_south_asia", cluster.get("headline_rank", 0.0)), 2),
+                # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
+                "rank_south_asia": round(cluster.get("rank_south-asia", cluster.get("headline_rank", 0.0)), 2),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)

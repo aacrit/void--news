@@ -86,7 +86,7 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
 def main():
     start = time.time()
     print("=" * 60)
-    print(f"void --news re-ranker v5.0 {'(DRY RUN)' if DRY_RUN else ''}")
+    print(f"void --news re-ranker v5.7 {'(DRY RUN)' if DRY_RUN else ''}")
     print("=" * 60)
 
     # 1. Load sources with DB IDs
@@ -284,7 +284,7 @@ def main():
 
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    for section_val in ("world", "us", "india"):
+    for section_val in ("world", "us", "europe", "south-asia"):
         pool = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
         if not pool:
             continue
@@ -415,99 +415,185 @@ def main():
 
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    # --- Per-edition rank computation (v5.4) ---
-    # The per-section gates above modified headline_rank in-place, which
-    # causes cross-contamination between editions. Now compute independent
-    # per-edition ranks using the base importance score, and apply
-    # cross-edition demotion (0.92x for stories already top-5 elsewhere).
-    CROSS_EDITION_TOP = 5
-    CROSS_DEMOTION = 0.92
-    EDITIONS = ["world", "us", "india"]
+    # --- Per-edition rank computation (v5.7 — edition-unique) ---
+    # Mirrors main.py's v5.7 logic. Regional affinity computed from source
+    # country since DB-fetched articles don't carry the section field.
+    #
+    # Three mechanisms:
+    # 1. Regional affinity boost (up to 1.50x per source-country match)
+    # 2. Local-priority boost (1.40x exclusive, 1.15x cross-listed)
+    # 3. Cross-edition demotion (0.70x, milder 0.88x for global events)
+    # Processing order: regional first, world last.
 
-    # Store base importance (pre-gate) for each update
+    _COUNTRY_EDITION = {
+        "US": "us",
+        "IN": "south-asia", "PK": "south-asia", "BD": "south-asia",
+        "LK": "south-asia", "NP": "south-asia", "AF": "south-asia",
+        "MV": "south-asia", "BT": "south-asia",
+        "GB": "europe", "UK": "europe",
+        "FR": "europe", "DE": "europe", "ES": "europe", "IT": "europe",
+        "NL": "europe", "BE": "europe", "PT": "europe", "AT": "europe",
+        "CH": "europe", "IE": "europe", "SE": "europe", "DK": "europe",
+        "NO": "europe", "FI": "europe", "IS": "europe",
+        "PL": "europe", "CZ": "europe", "RO": "europe", "BG": "europe",
+        "HR": "europe", "RS": "europe", "GR": "europe", "HU": "europe",
+        "EE": "europe", "LV": "europe", "LT": "europe",
+        "UA": "europe", "GE": "europe",
+    }
+
+    # Build source_id → edition lookup from sources list
+    _src_edition: dict[str, str] = {}
+    for s in sources:
+        country = (s.get("country", "") or "").upper()
+        ed_val = _COUNTRY_EDITION.get(country, "world")
+        db_id = s.get("db_id", "")
+        slug = s.get("id", "")
+        if db_id:
+            _src_edition[db_id] = ed_val
+        if slug:
+            _src_edition[slug] = ed_val
+
+    # Build cluster_id → sections lookup for efficiency
+    _cluster_sections: dict[str, list[str]] = {}
+    for c in clusters:
+        _cluster_sections[c["id"]] = c.get("sections") or [c.get("section", "world")]
+
+    CROSS_EDITION_TOP = 8
+    CROSS_DEMOTION = 0.70
+    GLOBAL_SIG_DEMOTION = 0.88
+    GLOBAL_SIG_SOURCES = 20
+    GLOBAL_SIG_EDITIONS = 3
+    LOCAL_EXCLUSIVE_BOOST = 1.40
+    LOCAL_CROSSLIST_BOOST = 1.0   # no boost for cross-listed; affinity handles it
+    AFFINITY_MAX_BOOST = 2.0     # max boost at 100% regional sources
+    WORLD_MULTI_ED_BOOST = 1.12
+    EDITIONS = ["us", "europe", "south-asia", "world"]  # regional first!
+
+    # Store base importance for each update
     for u in updates:
         if "base_rank" not in u:
             u["base_rank"] = u["importance_score"]
 
-    claimed_ids: set[str] = set()
-    for edition in EDITIONS:
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, edition)]
-        # Start from base_rank for each edition (independent of other editions)
-        for u in pool:
-            u[f"rank_{edition}"] = u["base_rank"]
+    # Initialize edition ranks from base
+    for u in updates:
+        for ed in EDITIONS:
+            u[f"rank_{ed}"] = u["base_rank"]
 
-        # Apply cross-edition demotion: stories already top-5 elsewhere
+    # Apply regional affinity + local-priority boost
+    for u in updates:
+        c_sections = _cluster_sections.get(u["id"], ["world"])
+        articles = u.get("_articles", [])
+
+        for ed in ("us", "europe", "south-asia"):
+            if ed not in c_sections:
+                continue
+
+            # Regional affinity: % of articles from this edition's sources
+            if articles:
+                regional_count = sum(
+                    1 for a in articles
+                    if _src_edition.get(a.get("source_id", ""), "world") == ed
+                )
+                total = len(articles)
+                if total > 0:
+                    affinity = regional_count / total
+                    affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
+                    # Quality cap: proportional to source count
+                    # 1→1.2x, 2→1.4x, 3→1.6x, 4→1.8x, 5+→full 2.0x
+                    _sc = u.get("source_count", 0)
+                    if _sc < 5:
+                        _cap = 1.0 + (_sc / 5.0) * (AFFINITY_MAX_BOOST - 1.0)
+                        affinity_mult = min(affinity_mult, _cap)
+                    u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * affinity_mult, 2)
+
+            # Local-priority boost
+            if "world" not in c_sections:
+                u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_EXCLUSIVE_BOOST, 2)
+            else:
+                u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_CROSSLIST_BOOST, 2)
+
+    # World edition: boost truly global stories (3+ editions)
+    for u in updates:
+        c_sections = _cluster_sections.get(u["id"], ["world"])
+        if "world" in c_sections:
+            edition_count = sum(1 for ed in EDITIONS if ed in c_sections)
+            if edition_count >= 3:
+                u["rank_world"] = round(u["rank_world"] * WORLD_MULTI_ED_BOOST, 2)
+
+    # Cross-edition demotion: regional first, world last
+    claimed_ids: set[str] = set()
+    for ed in EDITIONS:
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
+
         for u in pool:
             if u["id"] in claimed_ids:
-                u[f"rank_{edition}"] = round(u[f"rank_{edition}"] * CROSS_DEMOTION, 2)
+                c_sections = _cluster_sections.get(u["id"], ["world"])
+                edition_count = sum(1 for e in EDITIONS if e in c_sections)
+                src_count = u.get("source_count", 0)
 
-        # Re-sort by this edition's rank
-        pool.sort(key=lambda u: u[f"rank_{edition}"], reverse=True)
-
-        # Apply per-edition topic diversity (same logic but on edition rank)
-        if len(pool) > TOP_N:
-            promoted_e: list[dict] = []
-            deferred_e: list[dict] = []
-            cat_counts_e: dict[str, int] = {}
-            for u in pool:
-                if len(promoted_e) >= TOP_N:
-                    deferred_e.append(u)
-                    continue
-                cat = u.get("category", "general")
-                cat_limit = MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
-                if cat_counts_e.get(cat, 0) < cat_limit:
-                    promoted_e.append(u)
-                    cat_counts_e[cat] = cat_counts_e.get(cat, 0) + 1
+                if src_count >= GLOBAL_SIG_SOURCES and edition_count >= GLOBAL_SIG_EDITIONS:
+                    u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * GLOBAL_SIG_DEMOTION, 2)
                 else:
-                    deferred_e.append(u)
-            while len(promoted_e) < TOP_N and deferred_e:
-                promoted_e.append(deferred_e.pop(0))
-            for j in range(1, len(promoted_e)):
-                if promoted_e[j][f"rank_{edition}"] >= promoted_e[j - 1][f"rank_{edition}"]:
-                    promoted_e[j][f"rank_{edition}"] = round(
-                        promoted_e[j - 1][f"rank_{edition}"] - 0.1, 2
-                    )
-            pool_final = promoted_e + deferred_e
-        else:
-            pool_final = pool
+                    u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * CROSS_DEMOTION, 2)
 
-        # Claim this edition's top 5
-        for u in pool_final[:CROSS_EDITION_TOP]:
+        pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
+
+        # Edition-level lead gate: top-10 positions require 3+ sources.
+        # Modifies rank values so the gate persists in final sort order.
+        _ED_LEAD_MIN = 3
+        _ED_LEAD_SLOTS = 10
+        eligible = [u for u in pool if u.get("source_count", 0) >= _ED_LEAD_MIN]
+        ineligible = [u for u in pool if u.get("source_count", 0) < _ED_LEAD_MIN]
+        if len(eligible) >= _ED_LEAD_SLOTS and ineligible:
+            floor_rank = eligible[_ED_LEAD_SLOTS - 1].get(f"rank_{ed}", 0) - 0.1
+            for u in ineligible:
+                if u.get(f"rank_{ed}", 0) > floor_rank:
+                    u[f"rank_{ed}"] = round(floor_rank, 2)
+                    floor_rank -= 0.1
+        pool[:] = eligible[:_ED_LEAD_SLOTS]
+        remaining_lead = eligible[_ED_LEAD_SLOTS:] + ineligible
+        remaining_lead.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
+        pool.extend(remaining_lead)
+
+        for u in pool[:CROSS_EDITION_TOP]:
             claimed_ids.add(u["id"])
 
     # Report overlap
-    section_top5: dict[str, list[str]] = {}
-    for edition in EDITIONS:
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, edition)]
-        pool.sort(key=lambda u: u.get(f"rank_{edition}", 0), reverse=True)
-        section_top5[edition] = [u["id"] for u in pool[:CROSS_EDITION_TOP]]
+    _section_top: dict[str, list[str]] = {}
+    for ed in EDITIONS:
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
+        pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
+        _section_top[ed] = [u["id"] for u in pool[:10]]
 
-    world_us = len(set(section_top5.get("world", [])) & set(section_top5.get("us", [])))
-    world_india = len(set(section_top5.get("world", [])) & set(section_top5.get("india", [])))
-    print(f"  Cross-edition overlap: world/us={world_us}/5, world/india={world_india}/5")
+    def _overlap(a: str, b: str, n: int) -> int:
+        return len(set(_section_top.get(a, [])[:n]) & set(_section_top.get(b, [])[:n]))
+
+    print(f"\n  Edition-unique ranks (v5.7).")
+    print(f"  Top-5 overlap: world/us={_overlap('world','us',5)}, "
+          f"world/eu={_overlap('world','europe',5)}, "
+          f"world/sa={_overlap('world','south-asia',5)}, "
+          f"us/eu={_overlap('us','europe',5)}, "
+          f"us/sa={_overlap('us','south-asia',5)}, "
+          f"eu/sa={_overlap('europe','south-asia',5)}")
 
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    # Print top 15 per section using per-edition ranks
-    for section_val in ("world", "us", "india"):
-        rank_col = f"rank_{section_val}"
-        section_updates = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
-        section_updates.sort(key=lambda u: u.get(rank_col, 0), reverse=True)
-        print(f"\n  --- Top 15 {section_val.upper()} by rank_{section_val} ---")
-        for j, u in enumerate(section_updates[:15]):
+    # Print top 15 per edition
+    for ed in EDITIONS:
+        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
+        pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
+        print(f"\n  --- Top 15 {ed.upper()} by rank_{ed} ---")
+        for j, u in enumerate(pool[:15]):
             title = next(
                 (c["title"] for c in clusters if c["id"] == u["id"]), "?"
             )[:60]
-            print(f"  {j+1:2}. [{u.get(rank_col, 0):5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
+            print(f"  {j+1:2}. [{u.get(f'rank_{ed}', 0):5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
 
     if DRY_RUN:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")
         return
 
-    # 4. Write back to Supabase
-    # 4. Write back to Supabase in batches.
-    # Previously: one UPDATE per cluster = 8,647 sequential HTTP calls.
-    # Now: parallel batches of 100 rows, 16 concurrent workers.
+    # 4. Write back to Supabase in batches (16 concurrent workers).
     print(f"\n[4/4] Writing {len(updates)} updates to Supabase (batched, 16 workers)...")
     write_rows = [
         {
@@ -521,7 +607,9 @@ def main():
             "source_count": u["source_count"],
             "rank_world": u.get("rank_world", u["headline_rank"]),
             "rank_us": u.get("rank_us", u["headline_rank"]),
-            "rank_india": u.get("rank_india", u["headline_rank"]),
+            "rank_europe": u.get("rank_europe", u["headline_rank"]),
+            # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
+            "rank_south_asia": u.get("rank_south-asia", u["headline_rank"]),
         }
         for u in updates
     ]
