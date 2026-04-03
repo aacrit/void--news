@@ -190,6 +190,83 @@ function Masthead({
   );
 }
 
+function CoverStoryCard({
+  story,
+  numbers,
+  defaultExpanded,
+}: {
+  story: WeeklyCoverStory;
+  numbers: { value: string; label: string }[];
+  defaultExpanded: boolean;
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const previewText = story.text.slice(0, 200).replace(/\s+\S*$/, "");
+
+  return (
+    <article className="wk-cover__story">
+      <h3 className="wk-cover__headline">{story.headline}</h3>
+      <div className={`wk-collapsible${expanded ? " wk-collapsible--open" : ""}`}>
+        <div className="wk-collapsible__inner">
+          {!expanded && (
+            <div className="wk-cover__preview">
+              <p>{previewText}...</p>
+              <div className="wk-cover__preview-fade" aria-hidden="true" />
+            </div>
+          )}
+          {expanded && (
+            <>
+              <div className="wk-cover__body-wrap">
+                <div className="wk-cover__text">
+                  {story.text.split("\n\n").map((para, j) => (
+                    <p key={j}>{para}</p>
+                  ))}
+                </div>
+                {numbers.length > 0 && (
+                  <aside className="wk-cover__numbers" aria-label="This week in numbers">
+                    <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
+                    <dl className="wk-cover__numbers-list">
+                      {numbers.map((n, k) => (
+                        <div key={k} className="wk-cover__number-item">
+                          <dt className="wk-cover__number-value">{n.value}</dt>
+                          <dd className="wk-cover__number-label">{n.label}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </aside>
+                )}
+              </div>
+              {story.timeline && story.timeline.length > 0 && (
+                <div className="wk-timeline" role="list" aria-label="Key events">
+                  <h4 className="wk-timeline__heading">Key Events</h4>
+                  <div className="wk-timeline__track" aria-hidden="true" />
+                  {story.timeline.map((entry, k) => (
+                    <div key={k} className="wk-timeline__node" role="listitem">
+                      <span className="wk-timeline__dot" aria-hidden="true" />
+                      <span className="wk-timeline__day">{(entry as Record<string, string>).date || (entry as Record<string, string>).day || ""}</span>
+                      <span className="wk-timeline__note">{(entry as Record<string, string>).event || (entry as Record<string, string>).note || (entry as Record<string, string>).development || ""}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+      <button
+        className="wk-toggle"
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        type="button"
+      >
+        {expanded ? "Read less" : "Read more"}{" "}
+        <span className="wk-toggle__chevron" aria-hidden="true">
+          {expanded ? "\u25B2" : "\u25BC"}
+        </span>
+      </button>
+    </article>
+  );
+}
+
 function CoverSection({
   stories,
   topLevelNumbers,
@@ -201,53 +278,108 @@ function CoverSection({
     <section className="wk-cover" aria-labelledby="wk-cover-heading">
       <h2 className="wk-section-label" id="wk-cover-heading">The Cover</h2>
       {stories.map((story, i) => {
-        // Prefer numbers embedded in the story; fall back to top-level cover_numbers for the first story
         const storyNums = parseCoverNumbers(story.numbers);
         const numbers = storyNums.length > 0
           ? storyNums
           : (i === 0 ? parseCoverNumbers(topLevelNumbers) : []);
         return (
-          <article key={i} className="wk-cover__story">
-            <h3 className="wk-cover__headline">{story.headline}</h3>
-            <div className="wk-cover__body-wrap">
-              <div className="wk-cover__text">
-                {story.text.split("\n\n").map((para, j) => (
-                  <p key={j}>{para}</p>
-                ))}
-              </div>
-              {numbers.length > 0 && (
-                <aside className="wk-cover__numbers" aria-label="This week in numbers">
-                  <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
-                  <dl className="wk-cover__numbers-list">
-                    {numbers.map((n, k) => (
-                      <div key={k} className="wk-cover__number-item">
-                        <dt className="wk-cover__number-value">{n.value}</dt>
-                        <dd className="wk-cover__number-label">{n.label}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </aside>
-              )}
-            </div>
-            {story.timeline && story.timeline.length > 0 && (
-              <div className="wk-timeline" role="list" aria-label="Key events">
-                <h4 className="wk-timeline__heading">Key Events</h4>
-                <div className="wk-timeline__track" aria-hidden="true" />
-                {story.timeline.map((entry, k) => (
-                  <div key={k} className="wk-timeline__node" role="listitem">
-                    <span className="wk-timeline__dot" aria-hidden="true" />
-                    <span className="wk-timeline__day">{(entry as Record<string, string>).date || (entry as Record<string, string>).day || ""}</span>
-                    <span className="wk-timeline__note">{(entry as Record<string, string>).event || (entry as Record<string, string>).note || (entry as Record<string, string>).development || ""}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div key={i}>
+            <CoverStoryCard
+              story={story}
+              numbers={numbers}
+              defaultExpanded={false}
+            />
             {i < stories.length - 1 && (
               <hr className="wk-divider" aria-hidden="true" />
             )}
-          </article>
+          </div>
         );
       })}
+    </section>
+  );
+}
+
+function OpinionCard({ op }: { op: WeeklyOpinion }) {
+  const [expanded, setExpanded] = useState(false);
+  const previewText = op.text.slice(0, 120).replace(/\s+\S*$/, "");
+  const needsTruncation = op.text.length > 140;
+
+  return (
+    <article className="wk-opinion">
+      <div className="wk-opinion__header">
+        <span
+          className={leanBadgeClass(op.lean)}
+          style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
+        >
+          {leanBadgeLabel(op.lean)}
+        </span>
+        {op.topic && (
+          <span className="wk-opinion__topic">{op.topic}</span>
+        )}
+      </div>
+      <h3 className="wk-opinion__headline">{op.headline}</h3>
+      <div className={`wk-opinion__text${!expanded && needsTruncation ? " wk-opinion__text--clamped" : ""}`}>
+        {expanded ? (
+          op.text.split("\n\n").map((para, j) => (
+            <p key={j}>{para}</p>
+          ))
+        ) : (
+          <p>{needsTruncation ? `${previewText}...` : op.text}</p>
+        )}
+        {!expanded && needsTruncation && (
+          <div className="wk-opinion__text-fade" aria-hidden="true" />
+        )}
+      </div>
+      {needsTruncation && (
+        <button
+          className="wk-toggle wk-toggle--inline"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+          type="button"
+        >
+          {expanded ? "Read less" : "Read more"}{" "}
+          <span className="wk-toggle__chevron" aria-hidden="true">
+            {expanded ? "\u25B2" : "\u25BC"}
+          </span>
+        </button>
+      )}
+    </article>
+  );
+}
+
+function CollapsibleSection({
+  id,
+  label,
+  defaultOpen,
+  children,
+}: {
+  id: string;
+  label: string;
+  defaultOpen: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <section className="wk-collapsible-section" aria-labelledby={id}>
+      <button
+        className="wk-section-toggle"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        type="button"
+      >
+        <h2 className="wk-section-label wk-section-label--toggle" id={id}>
+          {label}
+        </h2>
+        <span className="wk-section-toggle__chevron" aria-hidden="true">
+          {open ? "\u25B2" : "\u25BC"}
+        </span>
+      </button>
+      <div className={`wk-section-body${open ? " wk-section-body--open" : ""}`}>
+        <div className="wk-section-body__inner">
+          {children}
+        </div>
+      </div>
     </section>
   );
 }
@@ -269,32 +401,13 @@ function OpinionsSection({
   if (all.length === 0) return null;
 
   return (
-    <section className="wk-opinions" aria-labelledby="wk-opinions-heading">
-      <h2 className="wk-section-label" id="wk-opinions-heading">The Opinions</h2>
+    <CollapsibleSection id="wk-opinions-heading" label="The Opinions" defaultOpen={true}>
       <div className="wk-opinions__grid">
         {all.map((op, i) => (
-          <article key={i} className="wk-opinion">
-            <div className="wk-opinion__header">
-              <span
-                className={leanBadgeClass(op.lean)}
-                style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
-              >
-                {leanBadgeLabel(op.lean)}
-              </span>
-              {op.topic && (
-                <span className="wk-opinion__topic">{op.topic}</span>
-              )}
-            </div>
-            <h3 className="wk-opinion__headline">{op.headline}</h3>
-            <div className="wk-opinion__text">
-              {op.text.split("\n\n").map((para, j) => (
-                <p key={j}>{para}</p>
-              ))}
-            </div>
-          </article>
+          <OpinionCard key={i} op={op} />
         ))}
       </div>
-    </section>
+    </CollapsibleSection>
   );
 }
 
@@ -332,9 +445,7 @@ function BiasReport({
   const polarized = data?.most_polarized ?? [];
 
   return (
-    <section className="wk-bias" aria-labelledby="wk-bias-heading">
-      <h2 className="wk-section-label" id="wk-bias-heading">Bias Report</h2>
-
+    <CollapsibleSection id="wk-bias-heading" label="Bias Report" defaultOpen={false}>
       {agg && (
         <div className="wk-bias__aggregate">
           <div className="wk-bias__stat">
@@ -388,25 +499,38 @@ function BiasReport({
           ))}
         </div>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }
 
 function WeekInBrief({ stories }: { stories: WeeklyRecapStory[] }) {
+  const [expanded, setExpanded] = useState(false);
   if (stories.length === 0) return null;
 
   return (
-    <section className="wk-brief" aria-labelledby="wk-brief-heading">
-      <h2 className="wk-section-label" id="wk-brief-heading">Week in Brief</h2>
+    <CollapsibleSection id="wk-brief-heading" label="Week in Brief" defaultOpen={false}>
       <div className="wk-brief__list">
         {stories.map((story, i) => (
-          <article key={i} className="wk-brief__item">
+          <article key={i} className={`wk-brief__item${!expanded ? " wk-brief__item--compact" : ""}`}>
             <h3 className="wk-brief__headline">{story.headline}</h3>
-            <p className="wk-brief__summary">{story.summary}</p>
+            {expanded && (
+              <p className="wk-brief__summary wk-brief__summary--full">{story.summary}</p>
+            )}
           </article>
         ))}
       </div>
-    </section>
+      <button
+        className="wk-toggle wk-toggle--inline"
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        type="button"
+      >
+        {expanded ? "Headlines only" : "Show summaries"}{" "}
+        <span className="wk-toggle__chevron" aria-hidden="true">
+          {expanded ? "\u25B2" : "\u25BC"}
+        </span>
+      </button>
+    </CollapsibleSection>
   );
 }
 
@@ -447,10 +571,11 @@ function WeeklyAudioPlayer({
   };
 
   return (
-    <section className="wk-audio" aria-labelledby="wk-audio-heading">
-      <h2 className="wk-section-label" id="wk-audio-heading">
-        <span className="wk-audio__brand">void --onair</span> Weekly
-      </h2>
+    <CollapsibleSection
+      id="wk-audio-heading"
+      label="void --onair Weekly"
+      defaultOpen={false}
+    >
       <div className="wk-audio__player">
         <audio
           ref={audioRef}
@@ -500,7 +625,7 @@ function WeeklyAudioPlayer({
           </div>
         </div>
       </div>
-    </section>
+    </CollapsibleSection>
   );
 }
 
