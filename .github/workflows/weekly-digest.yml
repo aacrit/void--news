@@ -1,0 +1,47 @@
+name: Weekly Digest
+on:
+  schedule:
+    - cron: '0 12 * * 0'  # Sunday 12:00 UTC = 6:00 AM CST
+  workflow_dispatch:
+    inputs:
+      editions:
+        description: 'Comma-separated editions (default: all)'
+        required: false
+        default: ''
+      week_offset:
+        description: '0=current week, -1=last week'
+        required: false
+        default: '0'
+
+permissions: {}
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          python -m spacy download en_core_web_sm
+
+      - name: Generate weekly digest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.editions }}" ]; then
+            ARGS="--editions ${{ inputs.editions }}"
+          fi
+          if [ -n "${{ inputs.week_offset }}" ] && [ "${{ inputs.week_offset }}" != "0" ]; then
+            ARGS="$ARGS --week-offset ${{ inputs.week_offset }}"
+          fi
+          python -m pipeline.briefing.weekly_digest_generator $ARGS
