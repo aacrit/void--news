@@ -621,6 +621,7 @@ export default function AboutPage() {
 
       {/* ── Section 4: The Six Axes — Interactive ── */}
       <section
+        id="methodology"
         className="about-section about-section--act2"
         aria-label="The Six Axes"
         data-has-annotations
