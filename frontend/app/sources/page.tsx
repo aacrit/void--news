@@ -5,10 +5,6 @@ import Link from "next/link";
 import type { Edition } from "../lib/types";
 import { supabase, supabaseError, fetchMethodologyArticles } from "../lib/supabase";
 import {
-  getLeanColor,
-  getSenseColor,
-  getRigorColor,
-  getFramingColor,
   leanLabel,
   senseLabel,
   rigorLabel,
@@ -225,37 +221,7 @@ function getAxisLabel(id: string, score: number | null): string {
   }
 }
 
-function getAxisColor(id: string, score: number): string {
-  switch (id) {
-    case "lean": return getLeanColor(score);
-    case "sensationalism": return getSenseColor(score);
-    case "opinion": return getSenseColor(score); // blue-to-orange via same gradient
-    case "rigor": return getRigorColor(score);
-    case "framing": return getFramingColor(score);
-    default: return "var(--fg-muted)";
-  }
-}
 
-/* ---------------------------------------------------------------------------
-   Axis gradient strings for bar fills
-   --------------------------------------------------------------------------- */
-
-function getAxisGradient(id: string): string {
-  switch (id) {
-    case "lean":
-      return "linear-gradient(to right, var(--bias-far-left), var(--bias-left) 14%, var(--bias-center-left) 28%, var(--bias-center) 42%, var(--bias-center-right) 57%, var(--bias-right) 71%, var(--bias-far-right))";
-    case "sensationalism":
-      return "linear-gradient(to right, var(--sense-low), var(--sense-medium), var(--sense-high))";
-    case "opinion":
-      return "linear-gradient(to right, var(--type-reporting), var(--type-analysis), var(--type-opinion))";
-    case "rigor":
-      return "linear-gradient(to right, var(--rigor-low), var(--rigor-medium), var(--rigor-high))";
-    case "framing":
-      return "linear-gradient(to right, var(--sense-low), var(--sense-medium), var(--sense-high))";
-    default:
-      return "var(--fg-muted)";
-  }
-}
 
 /* ---------------------------------------------------------------------------
    EqualizerRow — single axis bar meter with accordion
@@ -282,10 +248,7 @@ function EqualizerRow({
   const barStyle: React.CSSProperties = {
     "--eq-fill": displayScore !== null ? `${displayScore}%` : "0%",
     "--eq-delay": `${index * 80}ms`,
-    "--eq-gradient": getAxisGradient(axis.id),
   } as React.CSSProperties;
-
-  const markerColor = displayScore !== null ? getAxisColor(axis.id, displayScore) : "var(--fg-muted)";
 
   return (
     <div className={`meth-eq${open ? " meth-eq--open" : ""}`}>
@@ -298,7 +261,7 @@ function EqualizerRow({
         <div className="meth-eq__head">
           <AxisGlyph id={axis.id} />
           <span className="meth-eq__name">{axis.name}</span>
-          <span className="meth-eq__score" style={{ color: markerColor }}>
+          <span className="meth-eq__score">
             {displayScore !== null ? displayScore : "\u2014"}
           </span>
           <span className="meth-eq__label">{getAxisLabel(axis.id, displayScore)}</span>
@@ -316,10 +279,7 @@ function EqualizerRow({
           >
             <div className="meth-eq__track">
               <div className="meth-eq__fill" />
-              <div
-                className="meth-eq__marker"
-                style={{ backgroundColor: markerColor }}
-              />
+              <div className="meth-eq__marker" />
             </div>
             <div className="meth-eq__endpoints">
               <span>{axis.low}</span>
@@ -767,7 +727,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                 <div key={axis.id} className="meth-rationale__axis" style={{ "--rationale-delay": `${i * 80}ms` } as React.CSSProperties}>
                   <div className="meth-rationale__header">
                     <span className="meth-rationale__axis-name">{axis.name}</span>
-                    <span className="meth-rationale__axis-score" style={{ color: score != null ? getAxisColor(axis.id, score) : "var(--fg-muted)" }}>
+                    <span className="meth-rationale__axis-score">
                       {score ?? "\u2014"}
                     </span>
                     <span className="meth-rationale__axis-label">{getAxisLabel(axis.id, score)}</span>
@@ -791,7 +751,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                 <div className="meth__score-row" key={s.axis}>
                   <div className="meth__score-left">
                     <span className="meth__score-axis">{s.axis}</span>
-                    <span className="meth__score-value" style={{ color: s.color }}>
+                    <span className="meth__score-value">
                       {s.score !== null ? s.score : "\u2014"}
                     </span>
                     <span className="meth__score-label">{s.label}</span>
