@@ -262,6 +262,36 @@ export const EDITIONS: EditionMeta[] = [
 export type LeanChip = "All" | "Left" | "Center" | "Right";
 
 /** Lean chip boundaries — used by HomeContent to filter stories by political lean */
+/* ---------------------------------------------------------------------------
+   void --ship types
+   --------------------------------------------------------------------------- */
+
+export type ShipCategory = 'bug' | 'feature' | 'enhancement';
+export type ShipArea = 'frontend' | 'pipeline' | 'bias' | 'audio' | 'design' | 'other';
+export type ShipStatus = 'submitted' | 'triaged' | 'building' | 'shipped' | 'wontship';
+export type ShipPriority = 'p0' | 'p1' | 'p2' | 'p3';
+
+export interface ShipRequest {
+  id: string;
+  title: string;
+  description: string;
+  category: ShipCategory;
+  area: ShipArea;
+  edition_context: Edition | null;
+  status: ShipStatus;
+  priority: ShipPriority | null;
+  votes: number;
+  ceo_response: string | null;
+  claude_branch: string | null;
+  shipped_commit: string | null;
+  device_info: string | null;
+  ip_hash: string | null;
+  created_at: string;
+  triaged_at: string | null;
+  shipped_at: string | null;
+  updated_at: string;
+}
+
 export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> = {
   All: null,
   Left: { min: 0, max: 46 },

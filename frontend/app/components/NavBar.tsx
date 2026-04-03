@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { MagnifyingGlass, BookOpen, Compass } from "@phosphor-icons/react";
+import { MagnifyingGlass, BookOpen, Compass, RocketLaunch } from "@phosphor-icons/react";
 import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
@@ -209,6 +209,15 @@ export default function NavBar({
           >
             <BookOpen size={14} weight="regular" aria-hidden="true" />
             <span className="page-toggle__label">Weekly</span>
+          </Link>
+          <Link
+            href="/ship"
+            className="page-toggle page-toggle--ship"
+            aria-label="void --ship — request features"
+            title="void --ship"
+          >
+            <RocketLaunch size={14} weight="regular" aria-hidden="true" />
+            <span className="page-toggle__label">Ship</span>
           </Link>
           <Link
             href="/about"

@@ -1,5 +1,5 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Edition } from './types';
+import { createClient, type SupabaseClient, type RealtimeChannel } from '@supabase/supabase-js';
+import type { Edition, ShipRequest } from './types';
 
 // Supabase project credentials — must be set via environment variables.
 // Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
@@ -262,4 +262,115 @@ export async function fetchWeeklyArchive(edition?: string): Promise<any[]> {
   const { data, error } = await query;
   if (error || !data) return [];
   return data;
+}
+
+/* ---------------------------------------------------------------------------
+   void --ship — Feature/Bug Request Tracker
+   --------------------------------------------------------------------------- */
+
+/** Generate a browser fingerprint for vote dedup */
+export function generateFingerprint(): string {
+  const nav = typeof navigator !== 'undefined' ? navigator : null;
+  const raw = [
+    nav?.userAgent || '',
+    nav?.language || '',
+    screen?.width || 0,
+    screen?.height || 0,
+    Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone || '',
+  ].join('|');
+  let h = 0x811c9dc5;
+  for (let i = 0; i < raw.length; i++) {
+    h ^= raw.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+
+/** Fetch all ship requests */
+export async function fetchShipRequests(): Promise<ShipRequest[]> {
+  if (!_client) return [];
+  const { data, error } = await _client
+    .from('ship_requests')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return data as ShipRequest[];
+}
+
+/** Submit a new ship request */
+export async function submitShipRequest(req: {
+  title: string;
+  description: string;
+  category: string;
+  area: string;
+  edition_context?: string | null;
+  device_info?: string | null;
+  ip_hash?: string | null;
+}): Promise<ShipRequest | null> {
+  if (!_client) return null;
+  const { data, error } = await _client
+    .from('ship_requests')
+    .insert([req])
+    .select()
+    .single();
+  if (error || !data) return null;
+  return data as ShipRequest;
+}
+
+/** Vote on a ship request. Returns true if vote counted. */
+export async function voteOnShipRequest(requestId: string, fingerprint: string): Promise<boolean> {
+  if (!_client) return false;
+  const { error: voteError } = await _client
+    .from('ship_votes')
+    .insert([{ request_id: requestId, fingerprint }]);
+  if (voteError) return false;
+  // Increment vote count
+  const { data: current } = await _client
+    .from('ship_requests')
+    .select('votes')
+    .eq('id', requestId)
+    .single();
+  if (current) {
+    await _client
+      .from('ship_requests')
+      .update({ votes: (current.votes || 0) + 1 })
+      .eq('id', requestId);
+  }
+  return true;
+}
+
+/** Subscribe to realtime changes on ship_requests */
+export function subscribeToShipRequests(
+  onUpdate: (payload: { eventType: string; new: ShipRequest; old: Partial<ShipRequest> }) => void
+): (() => void) {
+  if (!_client) return () => {};
+  const channel: RealtimeChannel = _client
+    .channel('ship-requests-realtime')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'ship_requests' },
+      (payload) => {
+        onUpdate({
+          eventType: payload.eventType,
+          new: payload.new as ShipRequest,
+          old: payload.old as Partial<ShipRequest>,
+        });
+      }
+    )
+    .subscribe();
+  return () => { channel.unsubscribe(); };
+}
+
+/** Fetch ship request counts by status (for Command Center) */
+export async function fetchShipStats(): Promise<Record<string, number>> {
+  if (!_client) return {};
+  const { data, error } = await _client
+    .from('ship_requests')
+    .select('status');
+  if (error || !data) return {};
+  const counts: Record<string, number> = { submitted: 0, triaged: 0, building: 0, shipped: 0, wontship: 0 };
+  for (const row of data) {
+    counts[row.status] = (counts[row.status] || 0) + 1;
+  }
+  return counts;
 }
