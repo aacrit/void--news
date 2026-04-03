@@ -1896,6 +1896,19 @@
   outline-offset: 2px;
 }
 
+/* Weekly link accent — stands out from other nav items */
+.page-toggle--weekly {
+  color: var(--cin-amber, var(--accent-warm));
+  border-color: var(--cin-amber, var(--accent-warm));
+  font-weight: 600;
+}
+
+.page-toggle--weekly:hover {
+  color: var(--fg-primary);
+  background-color: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent);
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
 .page-toggle__label {
   display: inline;
 }

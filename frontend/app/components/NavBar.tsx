@@ -203,7 +203,7 @@ export default function NavBar({
           <PageToggle activePage="feed" />
           <Link
             href="/weekly"
-            className="page-toggle"
+            className="page-toggle page-toggle--weekly"
             aria-label="Go to Weekly digest"
             title="void --weekly"
           >
