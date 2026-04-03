@@ -15,6 +15,7 @@ import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
 import { leanLabel as getLeanLabel, getLeanColor } from "../lib/biasColors";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    WeeklyDigest — void --weekly
@@ -131,7 +132,52 @@ function Masthead({
   return (
     <header className="wk-masthead">
       <div className="wk-masthead__rule" aria-hidden="true" />
-      <h1 className="wk-masthead__title">void --weekly</h1>
+      <div className="wk-masthead__brand">
+        <ScaleIcon size={36} animation="idle" className="wk-masthead__icon" />
+        <h1 className="wk-masthead__title">
+          {/* "void" — bold serif letterforms with hollow O, matching LogoFull SVG */}
+          <svg
+            className="wk-masthead__wordmark"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 360 40"
+            fill="currentColor"
+            role="img"
+            aria-label="void --weekly"
+          >
+            <g transform="translate(0,2)">
+              {/* "v" */}
+              <polygon points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36" />
+              {/* "o" — THE VOID: hollow outline */}
+              <path
+                d="M48 3.5 C61 3 62 10 61.5 20 C61 30 58 37 48 36.5 C38 37 35 30 34.5 20 C34 10 35 3 48 3.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+              />
+              {/* "i" */}
+              <rect x="69" y="2" width="5" height="5" rx="0.8" />
+              <rect x="69.5" y="11" width="4" height="25" rx="0.5" />
+              {/* "d" */}
+              <path d="M82,20C82,10.5 87,3 94,3C97,3 100,4.5 102,7.5L102,0L107,0L107,36L102,36L102,32.5C100,35.5 97,37 94,37C87,37 82,29.5 82,20ZM88,20C88,27.5 90.8,32 95,32C98,32 100.5,29.5 102,26L102,14C100.5,10.5 98,8 95,8C90.8,8 88,12.5 88,20Z" />
+              {/* "--weekly" — lighter monospace letterforms */}
+              <rect x="122" y="17.5" width="10" height="3" rx="0.5" />
+              <rect x="134" y="17.5" width="10" height="3" rx="0.5" />
+              {/* "w" */}
+              <path d="M156,12L159.5,12L164,29L168.5,14L171.5,14L176,29L180.5,12L184,12L177.5,36L174,36L169.5,21L165,36L161.5,36Z" />
+              {/* "e" */}
+              <path d="M190,23.5C190,17.5 193.5,11 200,11C206.5,11 209.5,17 209.5,23L209.5,24.5L193.5,24.5C193.8,29 196.5,33 200.5,33C203.5,33 205.5,31 206.8,29L209,30.5C207,33.5 204,36 200,36C194,36 190,30 190,23.5ZM193.5,22L206,22C205.5,17.5 203.5,14 200,14C196.5,14 194.2,17.5 193.5,22Z" />
+              {/* "e" */}
+              <path d="M216,23.5C216,17.5 219.5,11 226,11C232.5,11 235.5,17 235.5,23L235.5,24.5L219.5,24.5C219.8,29 222.5,33 226.5,33C229.5,33 231.5,31 232.8,29L235,30.5C233,33.5 230,36 226,36C220,36 216,30 216,23.5ZM219.5,22L232,22C231.5,17.5 229.5,14 226,14C222.5,14 220.2,17.5 219.5,22Z" />
+              {/* "k" */}
+              <path d="M242,0L245.2,0L245.2,22L254,12L258,12L250,21.5L259,36L255,36L248,24L245.2,27.5L245.2,36L242,36Z" />
+              {/* "l" */}
+              <rect x="264" y="0" width="3.2" height="36" rx="0.5" />
+              {/* "y" */}
+              <path d="M276,12L279.5,12L284.5,28L289.5,12L293,12L285,36L282.5,36L276.5,20Z" />
+            </g>
+          </svg>
+        </h1>
+      </div>
       <p className="wk-masthead__meta">
         Issue #{issueNumber}
         <span className="wk-masthead__sep">&mdash;</span>
