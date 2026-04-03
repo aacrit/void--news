@@ -19,9 +19,118 @@ import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    WeeklyDigest — void --weekly
-   Magazine-scroll layout. Single column, long-form reading experience.
+   Cinematic magazine-scroll layout. Single column, long-form reading.
    Slower, warmer, more editorial than the daily feed.
+   Interactive timeline, count-up numbers, organic ink design, parallax.
    --------------------------------------------------------------------------- */
+
+/* ── Organic Ink SVG Components ────────────────────────────────────────────── */
+
+/** Hand-drawn horizontal rule — organic ink stroke with slight waviness */
+function InkRule({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`wk-ink-rule ${className}`}
+      viewBox="0 0 400 4"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        fill="none"
+        opacity="0.35"
+      />
+    </svg>
+  );
+}
+
+/** Organic ink vertical track for timeline — slightly irregular vertical path */
+function InkVerticalTrack() {
+  return (
+    <svg
+      className="wk-timeline__ink-track"
+      viewBox="0 0 4 400"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M2 0 C0.5 20, 3.5 40, 2 80 S0.5 160, 2 200 S3.5 280, 2 320 S0.5 380, 2 400"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+        opacity="0.25"
+        strokeDasharray="8 4"
+      />
+    </svg>
+  );
+}
+
+/** Organic ink horizontal track for desktop timeline */
+function InkHorizontalTrack() {
+  return (
+    <svg
+      className="wk-timeline__ink-track"
+      viewBox="0 0 400 4"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+        opacity="0.25"
+        strokeDasharray="8 4"
+      />
+    </svg>
+  );
+}
+
+/** Organic ink quotation mark — hand-drawn feel */
+function InkQuoteMark() {
+  return (
+    <svg
+      className="wk-ink-quote"
+      viewBox="0 0 40 32"
+      aria-hidden="true"
+    >
+      <path
+        d="M6 24 C2 20, 1 14, 4 8 C6 4, 10 2, 14 2 C12 6, 10 10, 10 14 C14 14, 17 17, 17 21 C17 25, 14 28, 10 28 C8 28, 6.5 26, 6 24Z"
+        fill="currentColor"
+        opacity="0.5"
+      />
+      <path
+        d="M26 24 C22 20, 21 14, 24 8 C26 4, 30 2, 34 2 C32 6, 30 10, 30 14 C34 14, 37 17, 37 21 C37 25, 34 28, 30 28 C28 28, 26.5 26, 26 24Z"
+        fill="currentColor"
+        opacity="0.5"
+      />
+    </svg>
+  );
+}
+
+/** Organic ink left border — vertical wavey line for sidebar */
+function InkLeftBorder() {
+  return (
+    <svg
+      className="wk-ink-border"
+      viewBox="0 0 4 200"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M2 0 C0.5 10, 3.5 20, 2 40 S0.5 80, 2 100 S3.5 140, 2 160 S0.5 190, 2 200"
+        stroke="currentColor"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.4"
+      />
+    </svg>
+  );
+}
+
+/* ── Formatting Helpers ────────────────────────────────────────────────────── */
 
 function formatWeekRange(start: string, end: string): string {
   const s = new Date(start + "T00:00:00");
@@ -50,7 +159,6 @@ function leanBadgeClass(lean: string): string {
 }
 
 function leanBadgeLabel(lean: string): string {
-  // Map lean values to editorial voice persona names (matches daily brief pattern)
   const map: Record<string, string> = {
     "left": "The Progressive",
     "center-left": "The Reformist",
@@ -76,13 +184,8 @@ function leanToScore(lean: string): number {
   return map[lean.toLowerCase()] ?? 50;
 }
 
-/* ── Helpers ─────────────────────────────────────────────────────────────── */
+/* ── Data Parsing ──────────────────────────────────────────────────────────── */
 
-/**
- * Normalize cover numbers from pipeline data.
- * Pipeline may send {stat, context} or {value, label} format,
- * and the data may be a JSON string (double-encoded) or already parsed.
- */
 function parseCoverNumbers(
   raw: unknown
 ): { value: string; label: string }[] {
@@ -90,7 +193,6 @@ function parseCoverNumbers(
 
   let arr: unknown[] = [];
 
-  // Handle double-encoded JSON strings
   if (typeof raw === "string") {
     try {
       const parsed = JSON.parse(raw);
@@ -105,7 +207,6 @@ function parseCoverNumbers(
     return [];
   }
 
-  // Normalize each item: accept {stat, context} OR {value, label}
   return arr
     .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
     .map((item) => ({
@@ -113,6 +214,171 @@ function parseCoverNumbers(
       label: String(item.label ?? item.context ?? ""),
     }))
     .filter((n) => n.value !== "" && n.label !== "");
+}
+
+/* ── Scroll-Reveal Hook ────────────────────────────────────────────────────── */
+
+/**
+ * IntersectionObserver hook for scroll-triggered reveal animations.
+ * Returns a ref to attach to the element and a boolean for visibility.
+ */
+function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>, boolean] {
+  const ref = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // Check prefers-reduced-motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return [ref, visible];
+}
+
+/* ── Count-Up Animation Hook ───────────────────────────────────────────────── */
+
+/**
+ * Animates a number counting up from 0 to the target value when triggered.
+ * Returns the current display value as a string.
+ */
+function useCountUp(
+  targetStr: string,
+  trigger: boolean,
+  duration = 1200
+): { displayValue: string; isCounting: boolean } {
+  const [displayValue, setDisplayValue] = useState(targetStr);
+  const [isCounting, setIsCounting] = useState(false);
+
+  useEffect(() => {
+    if (!trigger) return;
+
+    // Extract numeric part from the value string
+    const match = targetStr.match(/^([^0-9]*)([\d,.]+)(.*)$/);
+    if (!match) {
+      setDisplayValue(targetStr);
+      return;
+    }
+
+    const prefix = match[1];
+    const numStr = match[2];
+    const suffix = match[3];
+    const targetNum = parseFloat(numStr.replace(/,/g, ""));
+    const hasCommas = numStr.includes(",");
+    const hasDecimal = numStr.includes(".");
+    const decimalPlaces = hasDecimal ? numStr.split(".")[1].length : 0;
+
+    if (isNaN(targetNum) || targetNum === 0) {
+      setDisplayValue(targetStr);
+      return;
+    }
+
+    // Check prefers-reduced-motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setDisplayValue(targetStr);
+      return;
+    }
+
+    setIsCounting(true);
+    const startTime = performance.now();
+
+    function animate(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out: fast start, slow end
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = targetNum * eased;
+
+      let formatted: string;
+      if (hasDecimal) {
+        formatted = current.toFixed(decimalPlaces);
+      } else {
+        formatted = Math.round(current).toString();
+      }
+
+      if (hasCommas) {
+        const parts = formatted.split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        formatted = parts.join(".");
+      }
+
+      setDisplayValue(`${prefix}${formatted}${suffix}`);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(targetStr);
+        setIsCounting(false);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }, [trigger, targetStr, duration]);
+
+  return { displayValue, isCounting };
+}
+
+/* ── Parallax Hook ─────────────────────────────────────────────────────────── */
+
+/**
+ * Subtle parallax effect on scroll. Returns a ref and current transform offset.
+ * Rate: how many pixels of offset per pixel of scroll (0.1 = subtle).
+ */
+function useParallax(rate = 0.08): [React.RefObject<HTMLElement | null>, number] {
+  const ref = useRef<HTMLElement | null>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // Check prefers-reduced-motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    // No parallax on mobile (performance)
+    if (window.innerWidth < 768) return;
+
+    let rafId: number;
+    const handleScroll = () => {
+      rafId = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const viewportCenter = window.innerHeight / 2;
+        const elementCenter = rect.top + rect.height / 2;
+        const delta = (elementCenter - viewportCenter) * rate;
+        setOffset(delta);
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, [rate]);
+
+  return [ref, offset];
 }
 
 /* ── Section Components ──────────────────────────────────────────────────── */
@@ -130,12 +396,11 @@ function Masthead({
 }) {
   const editionLabel = EDITIONS.find((e) => e.slug === edition)?.label ?? "World";
   return (
-    <header className="wk-masthead">
-      <div className="wk-masthead__rule" aria-hidden="true" />
+    <header className="wk-masthead wk-cold-open--masthead">
+      <InkRule className="wk-ink-rule--strong" />
       <div className="wk-masthead__brand">
         <ScaleIcon size={36} animation="idle" className="wk-masthead__icon" />
         <h1 className="wk-masthead__title">
-          {/* "void" — bold serif letterforms with hollow O, matching LogoFull SVG */}
           <svg
             className="wk-masthead__wordmark"
             xmlns="http://www.w3.org/2000/svg"
@@ -145,34 +410,23 @@ function Masthead({
             aria-label="void --weekly"
           >
             <g transform="translate(0,2)">
-              {/* "v" */}
               <polygon points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36" />
-              {/* "o" — THE VOID: hollow outline */}
               <path
                 d="M48 3.5 C61 3 62 10 61.5 20 C61 30 58 37 48 36.5 C38 37 35 30 34.5 20 C34 10 35 3 48 3.5"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.2"
               />
-              {/* "i" */}
               <rect x="69" y="2" width="5" height="5" rx="0.8" />
               <rect x="69.5" y="11" width="4" height="25" rx="0.5" />
-              {/* "d" */}
               <path d="M82,20C82,10.5 87,3 94,3C97,3 100,4.5 102,7.5L102,0L107,0L107,36L102,36L102,32.5C100,35.5 97,37 94,37C87,37 82,29.5 82,20ZM88,20C88,27.5 90.8,32 95,32C98,32 100.5,29.5 102,26L102,14C100.5,10.5 98,8 95,8C90.8,8 88,12.5 88,20Z" />
-              {/* "--weekly" — lighter monospace letterforms */}
               <rect x="122" y="17.5" width="10" height="3" rx="0.5" />
               <rect x="134" y="17.5" width="10" height="3" rx="0.5" />
-              {/* "w" */}
               <path d="M156,12L159.5,12L164,29L168.5,14L171.5,14L176,29L180.5,12L184,12L177.5,36L174,36L169.5,21L165,36L161.5,36Z" />
-              {/* "e" */}
               <path d="M190,23.5C190,17.5 193.5,11 200,11C206.5,11 209.5,17 209.5,23L209.5,24.5L193.5,24.5C193.8,29 196.5,33 200.5,33C203.5,33 205.5,31 206.8,29L209,30.5C207,33.5 204,36 200,36C194,36 190,30 190,23.5ZM193.5,22L206,22C205.5,17.5 203.5,14 200,14C196.5,14 194.2,17.5 193.5,22Z" />
-              {/* "e" */}
               <path d="M216,23.5C216,17.5 219.5,11 226,11C232.5,11 235.5,17 235.5,23L235.5,24.5L219.5,24.5C219.8,29 222.5,33 226.5,33C229.5,33 231.5,31 232.8,29L235,30.5C233,33.5 230,36 226,36C220,36 216,30 216,23.5ZM219.5,22L232,22C231.5,17.5 229.5,14 226,14C222.5,14 220.2,17.5 219.5,22Z" />
-              {/* "k" */}
               <path d="M242,0L245.2,0L245.2,22L254,12L258,12L250,21.5L259,36L255,36L248,24L245.2,27.5L245.2,36L242,36Z" />
-              {/* "l" */}
               <rect x="264" y="0" width="3.2" height="36" rx="0.5" />
-              {/* "y" */}
               <path d="M276,12L279.5,12L284.5,28L289.5,12L293,12L285,36L282.5,36L276.5,20Z" />
             </g>
           </svg>
@@ -185,26 +439,176 @@ function Masthead({
         <span className="wk-masthead__sep">&mdash;</span>
         <span className="wk-masthead__edition">{editionLabel} Edition</span>
       </p>
-      <div className="wk-masthead__rule" aria-hidden="true" />
+      <InkRule className="wk-ink-rule--strong" />
     </header>
   );
 }
+
+/* ── Interactive Numbers Sidebar ───────────────────────────────────────────── */
+
+function NumberItem({
+  value,
+  label,
+  visible,
+  delay,
+}: {
+  value: string;
+  label: string;
+  visible: boolean;
+  delay: number;
+}) {
+  const [triggerCount, setTriggerCount] = useState(false);
+  const { displayValue, isCounting } = useCountUp(value, triggerCount, 1200 + delay);
+
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => setTriggerCount(true), delay);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, delay]);
+
+  return (
+    <div className="wk-cover__number-item">
+      <dt className={`wk-cover__number-value${isCounting ? " wk-number-counting" : ""}`}>
+        {displayValue}
+      </dt>
+      <dd className="wk-cover__number-label">{label}</dd>
+      <div className="wk-cover__number-tooltip" role="tooltip">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function NumbersSidebar({
+  numbers,
+}: {
+  numbers: { value: string; label: string }[];
+}) {
+  const [sidebarRef, sidebarVisible] = useScrollReveal(0.3);
+
+  if (numbers.length === 0) return null;
+
+  return (
+    <aside
+      ref={sidebarRef as React.RefObject<HTMLElement>}
+      className={`wk-cover__numbers wk-cold-open--numbers`}
+      aria-label="This week in numbers"
+    >
+      <InkLeftBorder />
+      <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
+      <dl className="wk-cover__numbers-list">
+        {numbers.map((n, k) => (
+          <NumberItem
+            key={k}
+            value={n.value}
+            label={n.label}
+            visible={sidebarVisible}
+            delay={k * 150}
+          />
+        ))}
+      </dl>
+    </aside>
+  );
+}
+
+/* ── Interactive Timeline ──────────────────────────────────────────────────── */
+
+function TimelineNode({
+  entry,
+  index,
+}: {
+  entry: Record<string, string>;
+  index: number;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const dateText = entry.date || entry.day || "";
+  const noteText = entry.event || entry.note || entry.development || "";
+
+  // For expandable detail: show first sentence as summary, rest as detail
+  const sentences = noteText.split(/(?<=[.!?])\s+/);
+  const summary = sentences[0] || noteText;
+  const detail = sentences.length > 1 ? sentences.slice(1).join(" ") : "";
+  const hasDetail = detail.length > 0;
+
+  return (
+    <button
+      className={`wk-timeline__node${expanded ? " wk-timeline__node--expanded" : ""}`}
+      onClick={() => hasDetail && setExpanded(!expanded)}
+      role="listitem"
+      aria-expanded={hasDetail ? expanded : undefined}
+      type="button"
+      style={{ "--node-delay": `${index * 80}ms` } as React.CSSProperties}
+    >
+      <span className="wk-timeline__dot" aria-hidden="true" />
+      <span className="wk-timeline__day">{dateText}</span>
+      <span className="wk-timeline__note">{hasDetail ? summary : noteText}</span>
+      {hasDetail && (
+        <>
+          <div className="wk-timeline__detail">
+            <div className="wk-timeline__detail-inner">
+              <p className="wk-timeline__detail-text">{detail}</p>
+            </div>
+          </div>
+          <span className="wk-timeline__expand-hint">
+            {expanded ? "Collapse" : "Expand"}
+          </span>
+        </>
+      )}
+    </button>
+  );
+}
+
+function InteractiveTimeline({ timeline }: { timeline: Record<string, string>[] }) {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  if (!timeline || timeline.length === 0) return null;
+
+  return (
+    <div className="wk-timeline" role="list" aria-label="Key events">
+      <h4 className="wk-timeline__heading">Key Events</h4>
+      {isDesktop ? <InkHorizontalTrack /> : <InkVerticalTrack />}
+      {timeline.map((entry, k) => (
+        <TimelineNode key={k} entry={entry} index={k} />
+      ))}
+    </div>
+  );
+}
+
+/* ── Cover Story Card ──────────────────────────────────────────────────────── */
 
 function CoverStoryCard({
   story,
   numbers,
   defaultExpanded,
+  isFirst,
 }: {
   story: WeeklyCoverStory;
   numbers: { value: string; label: string }[];
   defaultExpanded: boolean;
+  isFirst: boolean;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const previewText = story.text.slice(0, 200).replace(/\s+\S*$/, "");
+  const [parallaxRef, parallaxOffset] = useParallax(0.06);
 
   return (
     <article className="wk-cover__story">
-      <h3 className="wk-cover__headline">{story.headline}</h3>
+      <h3
+        ref={isFirst ? (parallaxRef as React.RefObject<HTMLHeadingElement>) : undefined}
+        className={`wk-cover__headline${isFirst ? " wk-cold-open--headline" : ""}`}
+        style={isFirst ? { transform: `translateY(${parallaxOffset}px)` } : undefined}
+      >
+        {story.headline}
+      </h3>
       <div className={`wk-collapsible${expanded ? " wk-collapsible--open" : ""}`}>
         <div className="wk-collapsible__inner">
           {!expanded && (
@@ -215,39 +619,17 @@ function CoverStoryCard({
           )}
           {expanded && (
             <>
-              <div className="wk-cover__body-wrap">
+              <div className={`wk-cover__body-wrap${isFirst ? " wk-cold-open--body" : ""}`}>
                 <div className="wk-cover__text">
                   {story.text.split("\n\n").map((para, j) => (
                     <p key={j}>{para}</p>
                   ))}
                 </div>
-                {numbers.length > 0 && (
-                  <aside className="wk-cover__numbers" aria-label="This week in numbers">
-                    <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
-                    <dl className="wk-cover__numbers-list">
-                      {numbers.map((n, k) => (
-                        <div key={k} className="wk-cover__number-item">
-                          <dt className="wk-cover__number-value">{n.value}</dt>
-                          <dd className="wk-cover__number-label">{n.label}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </aside>
-                )}
+                <NumbersSidebar numbers={numbers} />
               </div>
-              {story.timeline && story.timeline.length > 0 && (
-                <div className="wk-timeline" role="list" aria-label="Key events">
-                  <h4 className="wk-timeline__heading">Key Events</h4>
-                  <div className="wk-timeline__track" aria-hidden="true" />
-                  {story.timeline.map((entry, k) => (
-                    <div key={k} className="wk-timeline__node" role="listitem">
-                      <span className="wk-timeline__dot" aria-hidden="true" />
-                      <span className="wk-timeline__day">{(entry as Record<string, string>).date || (entry as Record<string, string>).day || ""}</span>
-                      <span className="wk-timeline__note">{(entry as Record<string, string>).event || (entry as Record<string, string>).note || (entry as Record<string, string>).development || ""}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <InteractiveTimeline
+                timeline={story.timeline as Record<string, string>[] ?? []}
+              />
             </>
           )}
         </div>
@@ -266,6 +648,8 @@ function CoverStoryCard({
     </article>
   );
 }
+
+/* ── Cover Section ─────────────────────────────────────────────────────────── */
 
 function CoverSection({
   stories,
@@ -288,9 +672,10 @@ function CoverSection({
               story={story}
               numbers={numbers}
               defaultExpanded={false}
+              isFirst={i === 0}
             />
             {i < stories.length - 1 && (
-              <hr className="wk-divider" aria-hidden="true" />
+              <InkRule />
             )}
           </div>
         );
@@ -299,13 +684,15 @@ function CoverSection({
   );
 }
 
+/* ── Opinion Card ──────────────────────────────────────────────────────────── */
+
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   const [expanded, setExpanded] = useState(false);
   const previewText = op.text.slice(0, 120).replace(/\s+\S*$/, "");
   const needsTruncation = op.text.length > 140;
 
   return (
-    <article className="wk-opinion">
+    <article className="wk-opinion wk-reveal-child">
       <div className="wk-opinion__header">
         <span
           className={leanBadgeClass(op.lean)}
@@ -347,6 +734,8 @@ function OpinionCard({ op }: { op: WeeklyOpinion }) {
   );
 }
 
+/* ── Collapsible Section with Scroll Reveal ────────────────────────────────── */
+
 function CollapsibleSection({
   id,
   label,
@@ -359,9 +748,14 @@ function CollapsibleSection({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const [sectionRef, sectionVisible] = useScrollReveal(0.1);
 
   return (
-    <section className="wk-collapsible-section" aria-labelledby={id}>
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className={`wk-collapsible-section wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby={id}
+    >
       <button
         className="wk-section-toggle"
         onClick={() => setOpen(!open)}
@@ -383,6 +777,8 @@ function CollapsibleSection({
     </section>
   );
 }
+
+/* ── Opinions Section ──────────────────────────────────────────────────────── */
 
 function OpinionsSection({
   left,
@@ -411,6 +807,8 @@ function OpinionsSection({
   );
 }
 
+/* ── Special Section ───────────────────────────────────────────────────────── */
+
 function SpecialSection({
   story,
   sectionType,
@@ -420,9 +818,14 @@ function SpecialSection({
 }) {
   const label = sectionType === "tech" ? "Tech Brief" : "Sports Page";
   const id = `wk-${sectionType}-heading`;
+  const [ref, visible] = useScrollReveal(0.15);
 
   return (
-    <section className={`wk-special wk-special--${sectionType}`} aria-labelledby={id}>
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-special wk-special--${sectionType} wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby={id}
+    >
       <h2 className="wk-section-label" id={id}>{label}</h2>
       <article className={`wk-special__card wk-special__card--${sectionType}`}>
         <h3 className="wk-special__headline">{story.headline}</h3>
@@ -431,6 +834,8 @@ function SpecialSection({
     </section>
   );
 }
+
+/* ── Bias Report ───────────────────────────────────────────────────────────── */
 
 function BiasReport({
   text,
@@ -503,6 +908,8 @@ function BiasReport({
   );
 }
 
+/* ── Week in Brief ─────────────────────────────────────────────────────────── */
+
 function WeekInBrief({ stories }: { stories: WeeklyRecapStory[] }) {
   const [expanded, setExpanded] = useState(false);
   if (stories.length === 0) return null;
@@ -533,6 +940,8 @@ function WeekInBrief({ stories }: { stories: WeeklyRecapStory[] }) {
     </CollapsibleSection>
   );
 }
+
+/* ── Audio Player ──────────────────────────────────────────────────────────── */
 
 function WeeklyAudioPlayer({
   audioUrl,
@@ -629,6 +1038,8 @@ function WeeklyAudioPlayer({
   );
 }
 
+/* ── Issue Archive ─────────────────────────────────────────────────────────── */
+
 interface ArchiveEntry {
   id: string;
   edition: string;
@@ -646,10 +1057,16 @@ function IssueArchive({
   entries: ArchiveEntry[];
   currentId: string;
 }) {
+  const [ref, visible] = useScrollReveal(0.15);
+
   if (entries.length <= 1) return null;
 
   return (
-    <section className="wk-archive" aria-labelledby="wk-archive-heading">
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-archive wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-archive-heading"
+    >
       <h2 className="wk-section-label" id="wk-archive-heading">Issue Archive</h2>
       <div className="wk-archive__list">
         {entries.map((entry) => (
@@ -707,9 +1124,6 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
     return () => { cancelled = true; };
   }, [edition]);
-
-  // Separate recap stories into categories
-  // All recap stories unified (tech/sports sections removed)
 
   return (
     <div className="wk-page">
