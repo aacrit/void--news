@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-03 (rev 25)
+Last updated: 2026-04-03 (rev 26)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -46,7 +46,7 @@ Per-article, score 0-100 + structured rationale JSONB. No LLM calls for scoring.
 6. **Per-Topic Per-Outlet EMA** — adaptive alpha (0.3 new / 0.15 established). Stored in `source_topic_lean`. See `topic_outlet_tracker.py`.
 
 ### Validation Framework (`pipeline/validation/`)
-42 ground-truth articles, 9 categories, 100% accuracy. Cross-axis correlation gate (r<0.70). CI gate via `.github/workflows/validate-bias.yml`.
+42 ground-truth articles, 8 categories, 100% accuracy. Cross-axis correlation gate (r<0.70). CI gate via `.github/workflows/validate-bias.yml`.
 ```bash
 python pipeline/validation/runner.py              # Full validation
 python pipeline/validation/runner.py --quick      # Skip distribution checks
@@ -54,10 +54,10 @@ python pipeline/validation/runner.py --verbose    # Per-signal decomposition
 python pipeline/validation/runner.py --update-snapshot  # Refresh regression baseline
 ```
 
-### Importance Ranking — v5.6 + v5.7 Edition-Unique
+### Importance Ranking — v5.6 + v5.7/v5.8 Edition-Unique
 **BIAS-BLIND.** 11-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0): source breadth 20%, maturity 16%, tier diversity 13%, consequentiality 10%, institutional authority 8%, factual density 8%, divergence 7%, perspective diversity 6%, geographic impact 6%, velocity 3%, lean diversity 3%. Plus Gemini editorial importance additive adjustment, gates (confidence, consequentiality, soft-news, tabloid, factual rigor, lead eligibility), topic diversity re-rank, same-event cap, steepened time-decay.
 
-**v5.7 edition-unique ranking** (in `pipeline/main.py` + `pipeline/rerank.py`): regional affinity boost (up to 2.0x, quality-capped for <5 sources), local-priority boost (1.40x edition-exclusive), cross-edition demotion (0.70x, milder 0.88x for globally significant 20+ source/3+ edition stories), edition-level lead gate (3+ sources for top 10). Processing order: regional first (us -> europe -> south-asia), then world.
+**v5.7/v5.8 edition-unique ranking** (in `pipeline/main.py` + `pipeline/rerank.py`): regional affinity boost (up to 1.5x, quality-capped for <5 sources), local-priority boost (1.40x edition-exclusive), cross-edition demotion (0.70x, milder 0.88x for globally significant 20+ source/3+ edition stories), world multi-edition boost (1.12x for 3+ edition stories), edition-level lead gate (3+ sources for top 10), thin-edition backfill (imports from world when <10 quality stories). Processing order: regional first (us -> europe -> south-asia), then world.
 
 ### Cluster Summarization
 3+-source clusters, 25-call Gemini cap/run, 250-350 words. Falls back to rule-based. Op-eds (opinion_fact > 50): single-article, no Gemini.
@@ -93,7 +93,7 @@ Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arri
 Importance-ranked feed with category filtering (lean chips in HomeContent). Edition sections: World/US/Europe/South Asia. Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
 
 ### Deep Dive
-Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). ScoringMethodology ("How we score" collapsible dl/dt/dd, 6 axes). Source Perspectives (agree/diverge grid). Asymmetric animation: open bouncy 500ms, close snappy 380ms, cinematic dramatic shadow, data-settled studio reflection.
+Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). ScoringMethodology ("How we score" collapsible dl/dt/dd, 6 axes). Source Perspectives (agree/diverge grid). FLIP morph animation: double-rAF for open (card rect via `data-story-id` attribute on StoryCard/LeadStory/MobileStoryCard), reverse morph on close (finds source card via DOM query), slide-in fallback when no source rect. Cinematic dramatic shadow, data-settled studio reflection.
 
 ### Animation
 Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
@@ -171,7 +171,7 @@ void-news/
 
 ## Status
 
-**Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.6/v5.7, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center).
+**Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.6/v5.7/v5.8, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center).
 **In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
