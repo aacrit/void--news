@@ -7,7 +7,7 @@ import LogoWordmark from "./LogoWordmark";
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
    Uses LogoIcon (idle animation) + LogoWordmark for branding.
-   Shows "951 sources" with last pipeline run time.
+   Shows source count with last pipeline run time.
    --------------------------------------------------------------------------- */
 
 interface FooterProps {

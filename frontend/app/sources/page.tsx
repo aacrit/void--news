@@ -541,8 +541,8 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
   const tierCounts = useMemo(() => {
     const tiers = [
       { tier: "us_major", label: "US Major", count: 0, total: 43, sources: [] as SpectrumSource[] },
-      { tier: "international", label: "International", count: 0, total: 341, sources: [] as SpectrumSource[] },
-      { tier: "independent", label: "Independent", count: 0, total: 567, sources: [] as SpectrumSource[] },
+      { tier: "international", label: "International", count: 0, total: 373, sources: [] as SpectrumSource[] },
+      { tier: "independent", label: "Independent", count: 0, total: 597, sources: [] as SpectrumSource[] },
     ];
     for (const s of sources) {
       const t = tiers.find((t) => t.tier === s.tier);
@@ -552,6 +552,19 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
       }
     }
     return tiers;
+  }, [sources]);
+
+  /* L:R ratio computed from source lean baselines */
+  const lrRatio = useMemo(() => {
+    const LEFT_LEANS = new Set(["far-left", "left", "center-left"]);
+    const RIGHT_LEANS = new Set(["far-right", "right", "center-right"]);
+    let left = 0, right = 0;
+    for (const s of sources) {
+      const lean = s.political_lean_baseline;
+      if (lean && LEFT_LEANS.has(lean)) left++;
+      else if (lean && RIGHT_LEANS.has(lean)) right++;
+    }
+    return right > 0 ? (left / right).toFixed(2) : "1.20";
   }, [sources]);
 
   /* Collect all source favicons for the river (up to 60) */
@@ -702,7 +715,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <div className="meth-finale">
           {/* Hero count — giant ink circle around source number */}
           <div className="meth-finale__hero">
-            <span className="meth-finale__count">{sources.length || 951}</span>
+            <span className="meth-finale__count">{sources.length || 1013}</span>
             <span className="meth-finale__subtitle">Hand-Curated Sources</span>
           </div>
 
@@ -743,7 +756,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
 
           {/* Closing line */}
           <p className="meth__body meth-finale__closing">
-            7 lean zones. L:R ratio <strong>1.16:1</strong>.
+            7 lean zones. L:R ratio <strong>{lrRatio}:1</strong>.
             Every score is deterministic&mdash;same text, same result.
             Every score includes a structured rationale.
             If a score looks wrong, the rationale tells you why.

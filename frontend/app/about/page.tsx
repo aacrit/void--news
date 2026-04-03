@@ -97,7 +97,7 @@ export default function AboutPage() {
               same order, for every reader.
             </p>
             <p className="about-data">
-              951 sources&ensp;·&ensp;155 countries&ensp;·&ensp;4 editions&ensp;·&ensp;Updated 4&times; daily
+              <Link href="/sources" className="about-data__link">1,013 sources</Link>&ensp;·&ensp;158 countries&ensp;·&ensp;4 editions&ensp;·&ensp;Updated 4&times; daily
             </p>
             <p className="about-body">
               Every article scored on six axes&thinsp;&mdash;&thinsp;not by outlet reputation, but by
