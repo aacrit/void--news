@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.0
-**Last updated:** 2026-04-02 (rev 12)
+**Last updated:** 2026-04-03 (rev 13)
 
 ---
 
@@ -293,7 +293,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 ### Deep Dive — Desktop
 
 ```
-┌──────────────────────────────────────────────────────┐  ← 55% width, min 560px
+┌──────────────────────────────────────────────────────┐  ← 75vw centered, max-width 920px (1080px at 1280px+), 80vh
 │  ← Back          Story headline [BiasLens]            │
 ├──────────────────────────────────────────────────────┤
 │                                                      │
@@ -325,7 +325,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 └──────────────────────────────────────────────────────┘
 ```
 
-Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blurred (6px backdrop blur) when open. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
+Desktop: 75vw centered modal (max-width 920px, 1080px at 1280px+, 80vh); main feed blurred (6px backdrop blur) when open. FLIP morph animation: card expands into panel via double-rAF (open 500ms bouncy, close 420ms smooth), `data-story-id` attributes on StoryCard/LeadStory/MobileStoryCard enable DOM-based rect lookup for reverse morph on close. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
 
 ### Deep Dive — Mobile
 
@@ -403,20 +403,20 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 ### Principles
 
 1. **Purposeful** — every animation communicates state change, never decorative
-2. **Asymmetric for panels** — Deep Dive open uses `--spring-bouncy` (500ms, genuine overshoot); close uses `--spring-snappy` (380ms, tight). Micro-interactions (chips, toggles) remain symmetric.
+2. **Asymmetric for panels** — Deep Dive open uses FLIP morph with `--spring-bouncy` (500ms, genuine overshoot from card origin); close uses reverse morph (420ms smooth deceleration back to card). Micro-interactions (chips, toggles) remain symmetric.
 3. **Accessible** — all → 0ms under `prefers-reduced-motion: reduce`
 4. **Performant** — only animate transform and opacity (GPU composite)
 5. **Interruptible** — no animation locks
-6. **High-refresh ready** — rAF snap via `setTimeout(0)` for 90/120Hz reliability
+6. **High-refresh ready** — double-rAF snap (first rAF commits snap to DOM, browser paints, second rAF starts transition) for 90/120Hz reliability
 
 ### Spring Presets
 
 | Preset | Stiffness | Damping | Mass | Use |
 |--------|-----------|---------|------|-----|
-| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles; Deep Dive close (380ms) |
+| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles |
 | smooth | 280 | 22 | 1 | Card expansion, panel slides |
 | gentle | 150 | 12 | 1.2 | View transitions (feed ↔ deep dive) |
-| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` CSS token |
+| bouncy | — | — | — | Deep Dive FLIP morph open (500ms, genuine overshoot from card origin); `--spring-bouncy` CSS token. Close uses 420ms smooth reverse morph. |
 
 ### Cinematic Easings
 

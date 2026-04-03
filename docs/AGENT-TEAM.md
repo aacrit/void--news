@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-03 (rev 17)
+Last updated: 2026-04-03 (rev 18)
 
 ## Philosophy
 
@@ -238,4 +238,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2 design tokens; source expansion 370→409 |
 | 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
 | 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
-| 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7 edition-unique (regional affinity, local-priority, cross-edition demotion); migrations 030-036; linguist agent added; weekly digest; 24 agents, 11 divisions |
+| 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
