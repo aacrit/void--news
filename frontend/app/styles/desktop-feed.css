@@ -656,7 +656,7 @@
    and environment. */
 
 .page-main--deep-dive-open {
-  transform: scale(0.997);
+  transform: scale(var(--dd-feed-scale, 0.997));
   filter: blur(6px) saturate(0.7) brightness(0.88);
   transform-origin: center top;
   transition:
