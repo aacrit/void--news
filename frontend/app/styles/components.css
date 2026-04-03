@@ -114,21 +114,7 @@
   z-index: 3;
 }
 
-/* Mobile: small "i" dot at top-right of Sigil to hint interactivity */
-@media (hover: none) and (max-width: 768px) {
-  .sigil::after {
-    content: "";
-    position: absolute;
-    top: 2px;
-    right: -2px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-warm);
-    opacity: 0.55;
-    pointer-events: none;
-  }
-}
+/* Mobile interactivity hint removed per CEO — lean label is sufficient */
 
 /* Sigil font-size utility classes — replaces inline fontSize values */
 .sigil__text-xxs { font-size: var(--text-xxs); }

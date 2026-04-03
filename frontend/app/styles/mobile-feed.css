@@ -100,10 +100,7 @@
   color: var(--fg-tertiary);
 }
 
-.msc__row-text {
-  flex: 1;
-  min-width: 0;
-}
+/* Compact headline now renders directly in article — no wrapper needed */
 
 .msc__footer {
   display: flex;
@@ -127,10 +124,11 @@
   margin-bottom: var(--space-1);
 }
 
-.msc__row {
+/* Sigil dedicated row — full-width beneath headline+summary */
+.msc__sigil-row {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
+  align-items: center;
+  margin-top: var(--space-1);
 }
 
 .msc__headline--compact {
@@ -157,9 +155,9 @@
   opacity: 0.5;
 }
 
-.msc__sigil {
-  flex-shrink: 0;
-  padding-top: 2px;
+/* .msc__sigil-row .sigil — smaller SVG for compact cards */
+.msc__sigil-row .sigil--sm {
+  gap: 4px;
 }
 
 /* Touch interaction — asymmetric press states (Spielberg hold-and-release)
