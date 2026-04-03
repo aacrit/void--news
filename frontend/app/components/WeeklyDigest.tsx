@@ -911,32 +911,18 @@ function BiasReport({
 /* ── Week in Brief ─────────────────────────────────────────────────────────── */
 
 function WeekInBrief({ stories }: { stories: WeeklyRecapStory[] }) {
-  const [expanded, setExpanded] = useState(false);
   if (stories.length === 0) return null;
 
   return (
-    <CollapsibleSection id="wk-brief-heading" label="Week in Brief" defaultOpen={false}>
+    <CollapsibleSection id="wk-brief-heading" label="Week in Brief" defaultOpen={true}>
       <div className="wk-brief__list">
         {stories.map((story, i) => (
-          <article key={i} className={`wk-brief__item${!expanded ? " wk-brief__item--compact" : ""}`}>
+          <article key={i} className="wk-brief__item">
             <h3 className="wk-brief__headline">{story.headline}</h3>
-            {expanded && (
-              <p className="wk-brief__summary wk-brief__summary--full">{story.summary}</p>
-            )}
+            <p className="wk-brief__summary">{story.summary}</p>
           </article>
         ))}
       </div>
-      <button
-        className="wk-toggle wk-toggle--inline"
-        onClick={() => setExpanded(!expanded)}
-        aria-expanded={expanded}
-        type="button"
-      >
-        {expanded ? "Headlines only" : "Show summaries"}{" "}
-        <span className="wk-toggle__chevron" aria-hidden="true">
-          {expanded ? "\u25B2" : "\u25BC"}
-        </span>
-      </button>
     </CollapsibleSection>
   );
 }
