@@ -141,7 +141,7 @@
 }
 
 .anim-fade-in-up {
-  animation: fadeInUp var(--dur-normal) var(--ease-out) both;
+  animation: fadeInUp var(--dur-normal) var(--ease-cinematic) both;
 }
 
 /* Staggered entrance — story cards with spring physics.
@@ -169,13 +169,14 @@
   animation: springEntranceCard var(--dur-step) var(--spring) both;
 }
 
-/* Lead story stagger — primary lead fades in first, secondary 120ms later */
+/* Lead story stagger — primary lead fades in first, secondary 120ms later.
+   Uses --ease-cinematic (Deakins dolly settle) not --ease-out for reveals. */
 .anim-lead-primary {
-  animation: fadeInUp var(--dur-morph) var(--ease-out) both;
+  animation: fadeInUp var(--dur-morph) var(--ease-cinematic) both;
 }
 
 .anim-lead-secondary {
-  animation: fadeInUp var(--dur-morph) var(--ease-out) 120ms both;
+  animation: fadeInUp var(--dur-morph) var(--ease-cinematic) 120ms both;
 }
 
 /* Content arrival — whip pan when edition switches, subtle fade otherwise.
@@ -223,8 +224,8 @@
   opacity: 0;
   transform: translateY(16px) scale(var(--dd-content-scale-from, 0.97));
   transition:
-    opacity var(--dur-reveal, 500ms) var(--ease-out),
-    transform var(--dur-reveal, 500ms) var(--spring-gentle, var(--ease-out));
+    opacity var(--dur-reveal, 500ms) var(--ease-cinematic),
+    transform var(--dur-reveal, 500ms) var(--spring-gentle, var(--ease-cinematic));
 }
 
 .anim-dd-section--visible {
@@ -1045,6 +1046,25 @@
       animation: scrollCardDolly linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
+/* ── Scroll Skybox Recession ──
+   As the SkyboxBanner exits the viewport upward, it fades and recedes —
+   a set piece losing prominence as the camera tracks past it.
+   Malick, The New World: foreground elements gently lose prominence. */
+@keyframes scrollSkyboxRecede {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.7; transform: scale(0.995); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .skb {
+      animation: scrollSkyboxRecede linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
     }
   }
 }
