@@ -431,6 +431,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     document.body.style.width = "100%";
     document.body.style.top = `-${scrollY}px`;
 
+    // Global state: allows CSS to disable expensive backdrop-filters on
+    // elements hidden behind the Deep Dive overlay (mobile GPU budget).
+    document.documentElement.classList.add('deep-dive-active');
+
     // Feed recession: page-main scales down 0.3%, creating physical depth
     // — the feed recedes as the Deep Dive approaches the viewer.
     const pageMain = document.querySelector('.page-main');
@@ -576,7 +580,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       document.body.style.top = originalTop;
       // Restore scroll position that was frozen by position:fixed
       window.scrollTo(0, scrollY);
-      // Remove feed recession classes
+      // Remove feed recession + global state classes
+      document.documentElement.classList.remove('deep-dive-active');
       const pm = document.querySelector('.page-main');
       pm?.classList.remove('page-main--deep-dive-open', 'page-main--deep-dive-closing');
     };
