@@ -961,9 +961,9 @@ function SourcesPageInner() {
           <>
             <SpectrumChart sources={filteredSources} />
             <div className="meth__skip-link-wrap">
-              <a href="#methodology" className="meth__skip-link">
-                How we score &darr;
-              </a>
+              <Link href="/about#methodology" className="meth__skip-link">
+                How we score &rarr;
+              </Link>
             </div>
           </>
         )}
@@ -982,10 +982,7 @@ function SourcesPageInner() {
           </div>
         )}
 
-        {/* ---- Methodology (trust anchor) ---- */}
-        {!isLoading && !error && sources.length > 0 && (
-          <Methodology sources={sources} />
-        )}
+        {/* Methodology moved to /about#methodology — sources is pure data reference */}
       </main>
 
       <Footer />
