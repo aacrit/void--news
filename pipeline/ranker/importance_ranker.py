@@ -1216,6 +1216,20 @@ def rank_importance(
     if tabloid_hits >= 1:
         headline_rank *= 0.75
 
+    # Gate 2c: Sensationalism gate (v5.8) — clusters with high average
+    # sensationalism get demoted. Catches tabloid "conflict" stories like
+    # "Rapper kidnapped" that pass the soft-news and tabloid keyword gates
+    # because kidnapping is semantically conflict, not entertainment.
+    # The bias engine already scores sensationalism — use it.
+    if bias_scores:
+        sens_vals = [bs.get("sensationalism", 0) for bs in bias_scores if bs.get("sensationalism") is not None]
+        if sens_vals:
+            avg_sens = sum(sens_vals) / len(sens_vals)
+            if avg_sens > 65:
+                headline_rank *= 0.80
+            elif avg_sens > 55:
+                headline_rank *= 0.90
+
     # Gate 3: Low factual rigor gate (v4.0) — clusters with poor sourcing
     # and attribution get penalized. Rewards AP/Reuters/ProPublica-style
     # reporting over speculative/unattributed coverage.
