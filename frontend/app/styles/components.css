@@ -4034,8 +4034,11 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   /* Sits above Deep Dive content (z-modal = 100) but below the drawer (z-modal + 1) */
   z-index: calc(var(--z-modal) + 1);
   cursor: pointer;
-  -webkit-backdrop-filter: blur(1px);
-  backdrop-filter: blur(1px);
+  /* Rack focus: Deep Dive content defocuses when inspector opens — same
+     cinematic principle as feed→DeepDive, now DeepDive→Inspector.
+     Blur 6px matches the page-main defocus intensity for visual consistency. */
+  -webkit-backdrop-filter: blur(6px) saturate(0.8);
+  backdrop-filter: blur(6px) saturate(0.8);
 }
 
 /* ---- Pop-out panel: drawer ---------------------------------------------- */

@@ -345,6 +345,13 @@
     -webkit-backdrop-filter: blur(8px);
   }
 
+  /* Mobile page defocus: halved blur (3px vs 6px desktop) for GPU budget.
+     Mobile renders full-screen bottom sheet — the defocus is less critical
+     because the Deep Dive covers most of the viewport anyway. */
+  .page-main--deep-dive-open {
+    filter: blur(3px) saturate(0.8) brightness(0.9);
+  }
+
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
      on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
   body::before {
