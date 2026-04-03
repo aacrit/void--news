@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://aacrit.github.io"),
   title: "void --news — See every side of the story",
   description:
-    "Free news aggregation with per-article bias analysis across 419 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+    "Free news aggregation with per-article bias analysis across 950+ curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
   keywords: [
     "news",
     "bias analysis",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "void --news — See every side of the story",
     description:
-      "Free news aggregation with per-article bias analysis across 419 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+      "Free news aggregation with per-article bias analysis across 950+ curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
     type: "website",
     siteName: "void --news",
     images: [
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "void --news — See every side of the story",
     description:
-      "Free news aggregation with per-article bias analysis across 419 curated sources.",
+      "Free news aggregation with per-article bias analysis across 950+ curated sources.",
     images: ["/void--news/twitter-card.svg"],
   },
   icons: {
