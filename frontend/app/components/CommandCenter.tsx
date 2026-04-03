@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { supabase } from '../lib/supabase';
+import { supabase, fetchShipStats } from '../lib/supabase';
 
 /* ==========================================================================
    void --news CEO Command Center v2
@@ -118,6 +118,34 @@ function KpiCard({ id, label, domain, value, valueClass, sub, children, expandCo
           <div className="cc-kpi-expand__inner"><div className="cc-kpi-expand__content" onClick={e => e.stopPropagation()}>{expandContent}</div></div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ---- Ship Queue Widget ----
+function ShipQueueWidget() {
+  const [stats, setStats] = useState<Record<string, number> | null>(null);
+  useEffect(() => { fetchShipStats().then(setStats); }, []);
+  if (!stats) return null;
+  const total = Object.values(stats).reduce((a, b) => a + b, 0);
+  if (total === 0) return null;
+  const items = [
+    { label: 'Open', count: (stats.submitted || 0) + (stats.triaged || 0), color: 'var(--cc-text)' },
+    { label: 'Building', count: stats.building || 0, color: 'var(--cc-cyan)' },
+    { label: 'Shipped', count: stats.shipped || 0, color: 'var(--cc-green)' },
+  ];
+  return (
+    <div className="cc-ticker cc-animate-in" style={{ animationDelay: '500ms' }}>
+      <div className="cc-ticker__title"><Link href="/ship" style={{ color: 'inherit', textDecoration: 'none' }}>void --ship</Link></div>
+      <div style={{ display: 'flex', gap: 16, padding: '8px 0' }}>
+        {items.map(i => (
+          <div key={i.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-xs)' }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: i.color }} />
+            <span style={{ color: 'var(--cc-text3)' }}>{i.label}</span>
+            <span style={{ color: i.color, fontWeight: 600 }}>{i.count}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -280,7 +308,8 @@ export default function CommandCenter() {
             <span>{fmtTime(r.created_at)}</span><div className="cc-ticker__dot" style={{ background: r.status==='completed'?'var(--cc-green)':r.status==='running'?'var(--cc-amber)':'var(--cc-red)' }} /><span>{r.status}</span><span>{fmtDur(r.started_at,r.completed_at)}</span><span>{r.articles_fetched??'?'} fetched</span><span>{r.clusters_created??'?'} clusters</span>
           </div>)}
         </div>
-        <div className="cc-footer">Auto-refreshes every 5 min &middot; {data.tiers.total} sources &middot; 20 agents &middot; $0 ops</div>
+        <ShipQueueWidget />
+        <div className="cc-footer">Auto-refreshes every 5 min &middot; {data.tiers.total} sources &middot; 24 agents &middot; $0 ops</div>
       </main>
     </div>
   );
