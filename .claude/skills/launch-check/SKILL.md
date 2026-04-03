@@ -59,7 +59,7 @@ Launch ALL EIGHT agents **simultaneously**:
 
 3. **uat-tester** — Browser UAT:
    - Homepage loads with real data
-   - Edition switching works (World/US/India)
+   - Edition switching works (World/US/Europe/South Asia)
    - Category filtering works
    - Deep Dive opens/closes correctly
    - BiasLens renders correctly

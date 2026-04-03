@@ -73,7 +73,7 @@ Launch these two agents **in parallel**:
 
 Launch **uat-tester** with the build output:
 - Click every interactive element (buttons, toggles, filters, Deep Dive triggers)
-- Test edition switching (World/US/India)
+- Test edition switching (World/US/Europe/South Asia)
 - Test category filtering
 - Test Deep Dive open/close on desktop and mobile
 - Test BiasLens hover/click interactions

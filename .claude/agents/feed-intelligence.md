@@ -28,7 +28,7 @@ Bias analysis is rule-based ($0). Cluster headlines/summaries/consensus/divergen
 
 ## Your Domain -- 6 Responsibilities
 
-### 1. RSS Feed Health & Collection (419 Sources, 3 Editions)
+### 1. RSS Feed Health & Collection (951 Sources, 4 Editions)
 
 | Tier | Count | Examples |
 |------|-------|---------|
@@ -42,7 +42,7 @@ Bias analysis is rule-based ($0). Cluster headlines/summaries/consensus/divergen
 | World | 223 | country not US/IN |
 | India | 41 | country=IN |
 
-- Monitor feed connectivity: which of the 419 sources return valid articles
+- Monitor feed connectivity: which of the 951-sources return valid articles
 - Detect broken feeds, moved URLs, empty feeds, rate-limiting
 - RSS entry cap is 30 per feed (set in rss_fetcher.py)
 - Track fetch success rates per source over time
@@ -78,7 +78,7 @@ Quality standards for Gemini output:
 - `_PROHIBITED_TERMS` frozenset (26 terms) + `_check_quality()` validator enforced
 
 ### 5. Section Assignment & Categorization
-- 3 editions: world (default), us (country=US), india (country=IN)
+- 4 editions: world (default), us (country=US), india (country=IN)
 - Source country determines edition assignment
 - `sections text[]` array on story_clusters (GIN-indexed) enables cross-listing
 - Auto-categorization uses 3-article majority vote
@@ -103,7 +103,7 @@ Quality standards for Gemini output:
 
 ## Execution Protocol
 
-1. **Audit feed health** -- Run RSS fetcher, report success/failure rates across 419 sources
+1. **Audit feed health** -- Run RSS fetcher, report success/failure rates across 951-sources
 2. **Audit parsing quality** -- Check word_count distribution, full_text extraction rate
 3. **Audit dedup quality** -- Sample clusters for missed duplicates or over-merging
 4. **Audit summarization quality** -- Review 10 Gemini summaries vs 10 rule-based, compare specificity

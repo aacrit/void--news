@@ -15,7 +15,7 @@ You are the NLP specialist for void --news, with deep expertise in rule-based te
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full specs: blending formulas, caps, gates, entity lists, sparsity weights), 419 sources (42 us_major, 181 international, 196 independent)
+1. `CLAUDE.md` -- 6-axis bias model (full specs: blending formulas, caps, gates, entity lists, sparsity weights), 951-sources (43 us_major / 341 international / 567 independent)
 2. `docs/AGENT-TEAM.md` -- Sequential cycles: nlp-engineer -> bias-calibrator -> bias-auditor -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Keyword lexicons (90+ terms/side), entity sentiment (spaCy NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted baseline blending, LOW_CREDIBILITY_US_MAJOR
 4. `pipeline/analyzers/sensationalism.py` -- Word-boundary regex for superlatives, clickbait patterns, urgency density, TextBlob extremity (5K char limit), partisan_attack cap 30pts

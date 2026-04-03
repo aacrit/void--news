@@ -54,7 +54,7 @@ Launch ALL FIVE agents **simultaneously** using the Agent tool:
    - Article completeness (% with full_text, bias_scores, categories)
    - Bias score distributions (no axis stuck at defaults)
    - Cluster integrity (no orphaned junction records)
-   - Source coverage (all 419 sources active? any returning 0 articles?)
+   - Source coverage (all 951-sources active? any returning 0 articles?)
    - NULL audit on critical fields
    - `daily_briefs` freshness
    - Score: 0-100 data quality rating

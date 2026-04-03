@@ -18,18 +18,18 @@ You are the data quality auditor for void --news, with expertise in PostgreSQL d
 1. `CLAUDE.md` — Data model, pipeline flow (12 steps), 6-axis bias model, editions
 2. `docs/AGENT-TEAM.md` — Team structure, routing rules
 3. `supabase/migrations/*.sql` — Complete schema (001-019)
-4. `data/sources.json` — 419 curated sources (42 us_major / 181 international / 196 independent); editions: US=155, World=223, India=41
+4. `data/sources.json` — 951 curated sources (43 us_major / 341 international / 567 independent); editions: US=420, Europe=146, World=443, South Asia=72
 5. `pipeline/main.py` — How data gets written (step-by-step)
 6. `pipeline/briefing/daily_brief_generator.py` — Daily brief generation (TL;DR + opinion + audio script)
 
 ## Audit Framework -- 9 Domains
 
 ### 1. Source Coverage
-- All 419 sources from sources.json exist in Supabase `sources` table
+- All 951-sources from sources.json exist in Supabase `sources` table
 - All sources have valid `rss_url`
 - `political_lean_baseline` set for every source (7-point spectrum)
 - Tier distribution: 42 us_major, 181 international, 196 independent (verify via `jq`)
-- Edition distribution: US=155, World=223, India=41 (based on source `country` field)
+- Edition distribution: US=420, Europe=146, World=443, South Asia=72 (based on source `country` field)
 
 ### 2. Article Quality
 - NULL `full_text` count (should be < 10% of total)

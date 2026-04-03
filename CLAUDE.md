@@ -1,10 +1,10 @@
 # void --news
 
-Last updated: 2026-04-03 (rev 23)
+Last updated: 2026-04-02 (rev 24)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
-News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 951 curated sources. World, US, Europe, India editions.
+News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 951 curated sources across 155 countries. World, US, Europe, South Asia editions.
 
 ## Architecture
 
@@ -88,7 +88,7 @@ Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arri
 **Responsive**: desktop = multi-column newspaper grid, top nav. Mobile = single-column feed, bottom nav, bottom sheets. Touch targets 44px+. Breakpoints: 375/768/1024/1440px.
 
 ### Homepage
-Importance-ranked feed with category filtering (lean chips in HomeContent). Edition sections: World/US/India. Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
+Importance-ranked feed with category filtering (lean chips in HomeContent). Edition sections: World/US/Europe/South Asia. Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
 
 ### Deep Dive
 Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). ScoringMethodology ("How we score" collapsible dl/dt/dd, 6 axes). Source Perspectives (agree/diverge grid). Asymmetric animation: open bouncy 500ms, close snappy 380ms, cinematic dramatic shadow, data-settled studio reflection.
@@ -157,7 +157,7 @@ void-news/
 │   │   ├── command-center/ # /command-center KPI dashboard
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
-├── data/sources.json      # 419 curated sources
+├── data/sources.json      # 951 curated sources
 ├── supabase/migrations/   # 001-029
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml
 ├── .claude/agents/        # 23 agent definitions

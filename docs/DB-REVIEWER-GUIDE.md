@@ -24,10 +24,10 @@ python pipeline/db_reviewer.py
 ## Audit Framework — 8 Domains
 
 ### 1. Source Coverage (10 pts)
-Ensures all 419 curated sources exist in the database with valid configuration.
+Ensures all 951 curated sources exist in the database with valid configuration.
 
 **Checks:**
-- All 419 sources from `data/sources.json` exist in DB (`is_active=true`)
+- All 951 sources from `data/sources.json` exist in DB (`is_active=true`)
 - Every source has valid `rss_url` (not null)
 - Every source has `political_lean_baseline` set
 - Tier distribution: 42 us_major, 181 international, 196 independent ±10% tolerance
@@ -219,7 +219,7 @@ NICE TO HAVE FINDINGS
   2. Low headline_rank variance: stdev=4.2 (goal >10)
 
 KEY STATISTICS
-  sources_total: 419
+  sources_total: 951
   sources_active: 368
   articles_total: 45280
   articles_null_full_text: 5620

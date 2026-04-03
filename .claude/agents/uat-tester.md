@@ -87,7 +87,7 @@ Every finding must reference which persona it affects and how.
 ### Phase 1: First Impression (The 5-Second Test)
 - Open homepage cold. What do you understand in 5 seconds?
 - Is the value proposition clear: "news + bias analysis"?
-- Can you tell this is a news site? Is the edition (World/US/India) clear?
+- Can you tell this is a news site? Is the edition (World/US/Europe/South Asia) clear?
 - What's the first thing that draws your eye? Is it the right thing?
 
 ### Phase 2: The Scanner's Journey (30-Second Flow)
