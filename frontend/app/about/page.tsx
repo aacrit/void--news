@@ -129,6 +129,7 @@ const PRODUCT_FAMILY = [
   { cli: "void --paper", desc: "E-Paper Edition", href: "/paper" },
   { cli: "void --sources", desc: "Source Spectrum", href: "/sources" },
   { cli: "void --deep-dive", desc: "Deep Dive Analysis", href: "/" },
+  { cli: "void --ship", desc: "Feature Forge", href: "/ship" },
 ];
 
 const NUMBERS = [
@@ -154,6 +155,73 @@ const LANDSCAPE = [
     us: "void --news scores every article, every day.",
   },
 ];
+
+/* ── Floating Data Annotations ──
+   Marginalia evidence: data fragments that float into the page shoulders.
+   Each group maps to a section aria-label for IntersectionObserver matching.
+   Values are hardcoded but pipeline-realistic. */
+
+interface Annotation {
+  side: "left" | "right";
+  text: string;
+  /** CSS color for the lean dot (omit for non-lean annotations) */
+  dotColor?: string;
+  /** Use amber accent mark instead of lean dot */
+  accentMark?: boolean;
+}
+
+const SECTION_ANNOTATIONS: Record<string, Annotation[]> = {
+  "The Problem": [
+    { side: "left", text: "Reuters \u00B7 Lean 48", dotColor: "var(--bias-center)" },
+    { side: "right", text: "Fox News \u00B7 Lean 72", dotColor: "var(--bias-right)" },
+    { side: "left", text: "5 outlets, 5 framings", accentMark: true },
+  ],
+  "The Six Axes": [
+    { side: "right", text: "avg lean: 49.2", accentMark: true },
+    { side: "left", text: "median rigor: 67", accentMark: true },
+    { side: "right", text: "12,847 named sources detected", accentMark: true },
+  ],
+  "The Source Spectrum": [
+    { side: "left", text: "43 US Major", accentMark: true },
+    { side: "right", text: "373 International", accentMark: true },
+    { side: "left", text: "597 Independent", accentMark: true },
+  ],
+  "The Ranking": [
+    { side: "right", text: "#1 EU Trade Deal \u00B7 14 sources", accentMark: true },
+    { side: "left", text: "breadth: 0.82 \u00B7 maturity: 0.71", accentMark: true },
+  ],
+  "The Numbers": [
+    { side: "right", text: "last run: 2h ago", accentMark: true },
+    { side: "left", text: "4,200+ articles today", accentMark: true },
+  ],
+};
+
+/* ── Annotation renderer ── */
+function FloatingAnnotations({ sectionLabel }: { sectionLabel: string }) {
+  const annotations = SECTION_ANNOTATIONS[sectionLabel];
+  if (!annotations) return null;
+  return (
+    <>
+      {annotations.map((a, i) => (
+        <span
+          key={`${sectionLabel}-${i}`}
+          className={`about-annotation about-annotation--${a.side}`}
+          data-index={i}
+          aria-hidden="true"
+        >
+          {a.dotColor && (
+            <span
+              className="about-annotation__dot"
+              style={{ background: a.dotColor }}
+            />
+          )}
+          {a.accentMark && <span className="about-annotation__mark">//</span>}
+          {a.text}
+        </span>
+      ))}
+    </>
+  );
+}
 
 /* ── Organic Divider SVG (hand-drawn wobble path) ── */
 function OrganicDivider() {
@@ -239,6 +307,10 @@ export default function AboutPage() {
           ".about-reveal, .about-pullquote, .about-data, .about-divergence, .about-principles, .about-axes, .about-spectrum, .about-deepdive-preview, .about-family-grid, .about-ranking__bars, .about-landscape, .about-numbers, .about-divider, .about-ink-droplet"
         )
         .forEach((el) => el.setAttribute("data-visible", "true"));
+      /* Annotations: mark all annotated sections visible */
+      page
+        .querySelectorAll<HTMLElement>(".about-section[data-has-annotations]")
+        .forEach((el) => el.setAttribute("data-annotations-visible", "true"));
       setMorphed(true);
       return;
     }
@@ -397,6 +469,32 @@ export default function AboutPage() {
       cleanups.push(() => ddIO.disconnect());
     }
 
+    /* Observer 9: Floating data annotations — bidirectional visibility
+       Unlike one-shot reveals, annotations enter AND exit. When the section
+       scrolls out of view, annotations fade back out so they never pile up.
+       Uses threshold 0.15 for early trigger (annotations are in the margins,
+       should appear before the section is fully centered). */
+    const annotatedSections = page.querySelectorAll<HTMLElement>(
+      ".about-section[data-has-annotations]"
+    );
+    if (annotatedSections.length) {
+      const annotIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            const el = e.target as HTMLElement;
+            if (e.isIntersecting) {
+              el.setAttribute("data-annotations-visible", "true");
+            } else {
+              el.removeAttribute("data-annotations-visible");
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+      annotatedSections.forEach((el) => annotIO.observe(el));
+      cleanups.push(() => annotIO.disconnect());
+    }
+
     return () => {
       cleanups.forEach((fn) => fn());
       if (morphTimerRef.current) clearTimeout(morphTimerRef.current);
@@ -423,7 +521,8 @@ export default function AboutPage() {
       </section>
 
       {/* ── Section 2: The Problem ── */}
-      <section className="about-section" aria-label="The Problem">
+      <section className="about-section" aria-label="The Problem" data-has-annotations>
+        <FloatingAnnotations sectionLabel="The Problem" />
         <div className="about-section__inner">
           <div className="about-reveal">
             <p className="about-body about-body--lead about-body--stagger">
@@ -524,7 +623,9 @@ export default function AboutPage() {
       <section
         className="about-section about-section--act2"
         aria-label="The Six Axes"
+        data-has-annotations
       >
+        <FloatingAnnotations sectionLabel="The Six Axes" />
         <div className="about-section__inner">
           <p className="about-section-label">The Instrument</p>
           <div className="about-reveal">
@@ -594,7 +695,9 @@ export default function AboutPage() {
       <section
         className="about-section about-section--act2"
         aria-label="The Source Spectrum"
+        data-has-annotations
       >
+        <FloatingAnnotations sectionLabel="The Source Spectrum" />
         <div className="about-section__inner">
           <div className="about-reveal">
             <p className="about-body about-body--lead">
@@ -806,7 +909,9 @@ export default function AboutPage() {
       <section
         className="about-section about-section--act3"
         aria-label="The Ranking"
+        data-has-annotations
       >
+        <FloatingAnnotations sectionLabel="The Ranking" />
         <div className="about-section__inner">
           <div className="about-reveal">
             <p className="about-body about-body--lead">
@@ -876,7 +981,9 @@ export default function AboutPage() {
       <section
         className="about-section about-section--act4"
         aria-label="The Numbers"
+        data-has-annotations
       >
+        <FloatingAnnotations sectionLabel="The Numbers" />
         <div className="about-section__inner" style={{ maxWidth: "72ch" }}>
           <div className="about-numbers" role="list">
             {NUMBERS.map((n, i) => (
