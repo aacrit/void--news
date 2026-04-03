@@ -142,6 +142,31 @@ LEFT_KEYWORDS: dict[str, int] = {
     "for the wealthy": 2,
     "struggling families": 2,
     "trickle-down economics": 3,
+    # -----------------------------------------------------------------------
+    # Subtle register markers (weight 1) — Gentzkow & Shapiro methodology.
+    # These are everyday vocabulary items that appear 3x+ more frequently in
+    # left-coded outlets (MSNBC, Vox, Guardian, HuffPost) than in wire copy
+    # (AP/Reuters). Each term passed the false-positive gate: AP/Reuters do
+    # NOT routinely use it in neutral reporting. Paired with right register
+    # markers below to maintain L:R balance.
+    # Evidence levels: B (frequency-differential), C (MBFC/AllSides methodology)
+    # (computational-linguist expansion 2026-04-03)
+    # -----------------------------------------------------------------------
+    # Social/identity register
+    "stakeholders": 1,              # B — progressive governance register
+    "underserved": 1,               # B — left public-health/education register
+    "disparities": 1,               # B — left health/economic equity register
+    "inequities": 1,                # B — left public-health register
+    "centering": 1,                 # B — progressive activist register ("centering voices")
+    "uplift communities": 2,        # B — progressive policy register
+    "vulnerable populations": 1,    # B — left public-health register
+    # Economic register
+    "working people": 1,            # B — Gentzkow-Shapiro: Dem 4x Rep in Congress
+    "corporate power": 2,           # B — progressive economic critique register
+    "economic justice": 2,          # B — progressive economic register
+    # Governance register
+    "civil liberties": 1,           # B — left governance/ACLU register
+    "accountability measures": 1,   # B — progressive governance register
 }
 
 RIGHT_KEYWORDS: dict[str, int] = {
@@ -308,6 +333,30 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "russophobia": 3,             # RT anti-Western framing
     "nato aggression": 3,         # state-media adversarial frame
     "western smear": 3,           # CGTN dismissive framing
+    # -----------------------------------------------------------------------
+    # Subtle register markers (weight 1) — paired with left register markers.
+    # These are everyday vocabulary items that appear 3x+ more frequently in
+    # right-coded outlets (Fox, Daily Wire, NY Post, Newsmax) than in wire
+    # copy (AP/Reuters). Each term passed the false-positive gate.
+    # Evidence levels: B (frequency-differential), C (MBFC/AllSides methodology)
+    # (computational-linguist expansion 2026-04-03)
+    # -----------------------------------------------------------------------
+    # Economic register
+    "bureaucrats": 1,               # B — right anti-government register
+    "overregulation": 2,            # B — right economic register
+    "red tape": 1,                  # B — right anti-regulatory register
+    "out-of-touch": 1,              # B — right populist register
+    "hardworking americans": 2,     # B — Gentzkow-Shapiro: Rep 3x Dem in Congress
+    "job-killing policies": 2,      # B — right economic register (phrase-scoped)
+    "bloated bureaucracy": 2,       # B — right anti-government register
+    # Social/culture register
+    "unelected bureaucrats": 2,     # B — right governance register
+    "government intrusion": 2,      # B — right anti-government register
+    "special interests": 1,         # B — right populist register
+    # Governance register
+    "regulatory burden": 1,         # B — right economic/governance register
+    "government waste": 1,          # B — right fiscal register
+    "runaway spending": 2,          # B — right fiscal register
 }
 
 # ---------------------------------------------------------------------------
