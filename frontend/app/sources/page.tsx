@@ -332,65 +332,8 @@ function MethSection({
 }
 
 /* ---------------------------------------------------------------------------
-   ValidationGrid — stat numbers with staggered fade-settle entrance.
-   Each stat gets its own IO-driven visibility and a stagger delay.
+   Validation + Sources — compact inline stats, no progress bars
    --------------------------------------------------------------------------- */
-
-const VALIDATION_STATS = [
-  { number: "42", label: "Ground-truth articles", barPct: "42%", barColor: "var(--fg-tertiary)", gate: undefined as string | undefined },
-  { number: "9", label: "Categories tested", barPct: "9%", barColor: "var(--fg-tertiary)", gate: undefined as string | undefined },
-  { number: "100%", label: "Accuracy", barPct: "100%", barColor: "var(--accent-warm)", gate: undefined as string | undefined },
-  { number: "r\u2009<\u20090.70", label: "Cross-axis correlation gate", barPct: "70%", barColor: "var(--fg-tertiary)", gate: "70%" },
-];
-
-function ValidationStat({ stat, index }: { stat: typeof VALIDATION_STATS[number]; index: number }) {
-  const [ref, visible] = useInView<HTMLDivElement>();
-  const [displayNum, setDisplayNum] = useState("0");
-
-  useEffect(() => {
-    if (!visible) return;
-    // Extract numeric target for counter animation
-    const numMatch = stat.number.match(/\d+/);
-    if (!numMatch) { setDisplayNum(stat.number); return; }
-    const target = parseInt(numMatch[0], 10);
-    const suffix = stat.number.replace(/\d+/, "");
-    // For non-counting stats (like "r < 0.70"), skip counter — just show final value
-    if (stat.number.startsWith("r")) { setDisplayNum(stat.number); return; }
-    const dur = 800;
-    const start = performance.now();
-
-    function tick(now: number) {
-      const t = Math.min((now - start) / dur, 1);
-      const eased = 1 - (1 - t) * (1 - t);
-      const current = Math.round(eased * target);
-      setDisplayNum(`${current}${suffix}`);
-      if (t < 1) requestAnimationFrame(tick);
-      else setDisplayNum(stat.number);
-    }
-    requestAnimationFrame(tick);
-  }, [visible, stat.number]);
-
-  return (
-    <div
-      ref={ref}
-      className={`meth__validation-stat${visible ? " meth__validation-stat--visible" : ""}`}
-      style={{ "--meth-stat-delay": `${index * 100}ms` } as React.CSSProperties}
-    >
-      <span className="meth__validation-number">{displayNum}</span>
-      <div className={`meth__validation-bar${visible ? " meth__validation-bar--visible" : ""}`} style={{ "--meth-stat-delay": `${index * 100}ms` } as React.CSSProperties}>
-        <div
-          className="meth__validation-bar-fill"
-          style={{
-            "--val-fill-pct": stat.barPct,
-            "--val-fill-color": stat.barColor,
-          } as React.CSSProperties}
-        />
-        {stat.gate && <div className="meth__validation-gate" style={{ left: stat.gate }} />}
-      </div>
-      <span className="meth__validation-label">{stat.label}</span>
-    </div>
-  );
-}
 
 /* ---------------------------------------------------------------------------
    ArticlePicker — live article selection for the autopsy
@@ -514,14 +457,11 @@ function RationaleTree({ axisId, rationale }: { axisId: string; rationale: Recor
   if (signals.length === 0) return null;
 
   return (
-    <div className="meth-rationale">
-      {signals.map((s, i) => (
-        <div key={s.label} className="meth-rationale__row">
-          <span className="meth-rationale__connector" aria-hidden="true">
-            {i < signals.length - 1 ? "\u251C\u2500\u2500" : "\u2514\u2500\u2500"}
-          </span>
-          <span className="meth-rationale__label">{s.label}:</span>
-          <span className="meth-rationale__value">{s.value}</span>
+    <div className="meth-rationale-signals">
+      {signals.map((s) => (
+        <div key={s.label} className="meth-rationale-signals__row">
+          <span className="meth-rationale-signals__label">{s.label}</span>
+          <span className="meth-rationale-signals__value">{s.value}</span>
         </div>
       ))}
     </div>
@@ -628,15 +568,14 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         </div>
       </MethSection>
 
-      {/* ---- Section 2: Live Article Autopsy ---- */}
+      {/* ---- Section 2: Live Article Autopsy (compact picker + inline rationale) ---- */}
       <MethSection index={1}>
         <h3 className="meth__section-title">Live Article Autopsy</h3>
         <p className="meth__body">
-          Select a recently published article to see how the six axes scored it.
-          The equalizer above updates to show real scores.
+          Select an article to see real scores. The dot grid above updates live.
         </p>
 
-        {/* Article picker */}
+        {/* Compact article picker — tight rows */}
         <div className="meth-picker" role="listbox" aria-label="Select an article to analyze">
           {diverseArticles.length > 0 ? (
             diverseArticles.map((article, i) => {
@@ -659,13 +598,11 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                     )}
                   </span>
                   <span className="meth-picker__source">{article.source?.name ?? "Unknown"}</span>
-                  <span className="meth-picker__time">{timeAgo(article.published_at)}</span>
                   <span className="meth-picker__headline">{article.title}</span>
                 </button>
               );
             })
           ) : (
-            /* Fallback to worked example */
             <button
               role="option"
               aria-selected={selectedIdx === 0}
@@ -676,100 +613,63 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                 <span className="meth-picker__fallback">A</span>
               </span>
               <span className="meth-picker__source">{WORKED_EXAMPLE.source}</span>
-              <span className="meth-picker__time">example</span>
               <span className="meth-picker__headline">{WORKED_EXAMPLE.headline}</span>
             </button>
           )}
         </div>
 
-        {/* Rationale decomposition tree */}
+        {/* Rationale — compact 3-col signal grid */}
         {selectedIdx !== null && activeRationale && (
-          <div className="meth-rationale__container">
+          <div className="meth-rationale-grid">
             {AXES_DATA.filter(a => a.id !== "tracking").map((axis, i) => {
               const score = activeScores[i];
               return (
-                <div key={axis.id} className="meth-rationale__axis" style={{ "--rationale-delay": `${i * 80}ms` } as React.CSSProperties}>
-                  <div className="meth-rationale__header">
-                    <span className="meth-rationale__axis-name">{axis.name}</span>
-                    <span className="meth-rationale__axis-score">
-                      {score ?? "\u2014"}
-                    </span>
-                    <span className="meth-rationale__axis-label">{getAxisLabel(axis.id, score)}</span>
-                  </div>
+                <div key={axis.id} className="meth-rationale-card">
+                  <span className="meth-rationale-card__name">{axis.name}</span>
+                  <span className="meth-rationale-card__score">{score ?? "\u2014"}</span>
                   <RationaleTree axisId={axis.id} rationale={activeRationale} />
                 </div>
               );
             })}
           </div>
         )}
+      </MethSection>
 
-        {/* Fallback: when no live articles, show static worked example inline */}
-        {diverseArticles.length === 0 && selectedIdx === null && (
-          <div className="meth__example">
-            <div className="meth__example-header">
-              <p className="meth__example-source">{WORKED_EXAMPLE.source}</p>
-              <h4 className="meth__example-headline">{WORKED_EXAMPLE.headline}</h4>
-            </div>
-            <div className="meth__example-scores">
-              {WORKED_EXAMPLE.scores.map((s) => (
-                <div className="meth__score-row" key={s.axis}>
-                  <div className="meth__score-left">
-                    <span className="meth__score-axis">{s.axis}</span>
-                    <span className="meth__score-value">
-                      {s.score !== null ? s.score : "\u2014"}
-                    </span>
-                    <span className="meth__score-label">{s.label}</span>
-                  </div>
-                  <p className="meth__score-detail">{s.detail}</p>
-                </div>
-              ))}
-            </div>
+      {/* ---- Section 3: Validation + Sources + Transparency (merged compact) ---- */}
+      <MethSection index={2} className="meth__section--last">
+        <h3 className="meth__section-title">Validation &amp; Sources</h3>
+
+        {/* Inline validation stats strip */}
+        <div className="meth-stats-strip">
+          <div className="meth-stats-strip__item">
+            <span className="meth-stats-strip__number">42</span>
+            <span className="meth-stats-strip__label">ground-truth articles</span>
           </div>
-        )}
-      </MethSection>
-
-      {/* ---- Section 3: Validation ---- */}
-      <MethSection index={2}>
-        <h3 className="meth__section-title">Validation</h3>
-        <p className="meth__body">
-          The bias engine is tested against a ground-truth corpus of 42 articles spanning
-          9 categories&mdash;from hard-news wire copy to partisan opinion columns to
-          tabloid sensationalism. Every article has hand-verified expected scores.
-        </p>
-        <div className="meth__validation-grid">
-          {VALIDATION_STATS.map((stat, i) => (
-            <ValidationStat key={stat.label} stat={stat} index={i} />
-          ))}
+          <span className="meth-stats-strip__sep" aria-hidden="true">&middot;</span>
+          <div className="meth-stats-strip__item">
+            <span className="meth-stats-strip__number">9</span>
+            <span className="meth-stats-strip__label">categories</span>
+          </div>
+          <span className="meth-stats-strip__sep" aria-hidden="true">&middot;</span>
+          <div className="meth-stats-strip__item">
+            <span className="meth-stats-strip__number">100%</span>
+            <span className="meth-stats-strip__label">accuracy</span>
+          </div>
+          <span className="meth-stats-strip__sep" aria-hidden="true">&middot;</span>
+          <div className="meth-stats-strip__item">
+            <span className="meth-stats-strip__number">r{"\u2009<\u2009"}0.70</span>
+            <span className="meth-stats-strip__label">cross-axis gate</span>
+          </div>
         </div>
-        <p className="meth__body">
-          Every change to the scoring engine is tested against this corpus. If any axis
-          drifts outside its expected range, the change is rejected.
-        </p>
-      </MethSection>
 
-      {/* ---- Section 4: 419 Curated Sources ---- */}
-      <MethSection index={3}>
-        <h3 className="meth__section-title">480 Curated Sources</h3>
-        <p className="meth__body">
-          Every source in the spectrum above was added by hand. Each has a tier
-          classification, a baseline political lean, a country of origin, and
-          credibility notes written by a human editor.
-        </p>
-        <div className="meth__source-grid">
+        {/* Source tiers — compact 3-col grid */}
+        <div className="meth-tier-grid">
           {tierCounts.map((tier) => (
-            <div key={tier.tier} className="meth__source-stat">
-              <div className="meth__source-stat-head">
-                <span className="meth__source-tier">{tier.label}</span>
-                <span className="meth__source-count">{tier.count || tier.total}</span>
-              </div>
-              <div className="meth__source-bar-track">
-                <div
-                  className="meth__source-bar-fill"
-                  style={{ width: `${((tier.count || tier.total) / 480) * 100}%` }}
-                />
-              </div>
-              <div className="meth__source-favicons">
-                {tier.sources.slice(0, 7).map((s) => {
+            <div key={tier.tier} className="meth-tier-card">
+              <span className="meth-tier-card__count">{tier.count || tier.total}</span>
+              <span className="meth-tier-card__label">{tier.label}</span>
+              <div className="meth-tier-card__favicons">
+                {tier.sources.slice(0, 5).map((s) => {
                   const fav = s.url ? getFaviconUrlMeth(s.url) : "";
                   return (
                     <span key={s.slug} className="meth__source-fav" title={s.name}>
@@ -786,23 +686,11 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
             </div>
           ))}
         </div>
-        <div className="meth__source-meta">
-          <p className="meth__body">
-            The lean spectrum uses 7 zones from Far Left to Far Right. The current
-            left-to-right ratio across all 480 sources is <strong>1.50:1</strong>&mdash;representation
-            from both wings with a slight structural lean toward the center.
-          </p>
-        </div>
-      </MethSection>
 
-      {/* ---- Section 5: Transparency ---- */}
-      <MethSection index={4} className="meth__section--last">
-        <h3 className="meth__section-title">Transparency</h3>
         <p className="meth__body">
-          Every score is deterministic&mdash;the same text always produces the same result. Every score
-          includes a structured rationale explaining what produced it. Every source carries hand-written
-          credibility notes and a documented lean baseline. If a score looks wrong, the rationale tells
-          you exactly why.
+          480 hand-curated sources across 7 lean zones, L:R ratio <strong>1.50:1</strong>.
+          Every score is deterministic&mdash;same text, same result. Every score includes
+          a structured rationale. If a score looks wrong, the rationale tells you why.
         </p>
       </MethSection>
     </section>
