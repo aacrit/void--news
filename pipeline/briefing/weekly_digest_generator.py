@@ -1176,8 +1176,9 @@ def generate_weekly_digest(editions=None, week_offset=0):
                     "host_b": WEEKLY_VOICE_PAIR["host_b"],
                     "opinion": {"id": WEEKLY_VOICE_PAIR["host_a"]["id"]},
                 }
+                # Use "weekly-{edition}" path to avoid overwriting daily audio
                 result = produce_audio(
-                    audio_script, weekly_voices, edition,
+                    audio_script, weekly_voices, f"weekly-{edition}",
                     tts_preamble_override=_WEEKLY_TTS_PREAMBLE,
                 )
                 if result and isinstance(result, dict):
