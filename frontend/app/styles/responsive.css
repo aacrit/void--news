@@ -764,7 +764,8 @@
   .page-toggle,
   .theme-toggle,
   .nav-search-btn,
-  .deep-dive-close {
+  .deep-dive-close,
+  .skb-overlay__close {
     min-height: 44px;
     min-width: 44px;
   }
