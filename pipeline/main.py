@@ -2435,9 +2435,11 @@ def main():
     except Exception as e:
         print(f"  [warn] cleanup_stuck_pipeline_runs failed: {e}")
 
-    # Clean old daily briefs (keep only latest per edition)
+    # Clean old daily briefs — keep 8 days for weekly digest signal
+    # The weekly generator uses daily TL;DR headlines and top_cluster_ids
+    # to determine which stories dominated the week.
     try:
-        cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
         for ed in ("world", "us", "europe", "uk", "south-asia", "canada"):
             old = supabase.table("daily_briefs").select("id").eq(
                 "edition", ed
