@@ -587,7 +587,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
 
       {isLoading && (
         <p className="np-loading">
-          Setting type &mdash; your edition is being prepared&hellip;
+          Setting type. Your edition is being prepared&hellip;
         </p>
       )}
 

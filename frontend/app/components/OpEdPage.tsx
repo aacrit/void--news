@@ -64,7 +64,7 @@ export default function OpEdPage({ edition, activeLean = "All" }: OpEdPageProps)
         <div className="oped-page__header-inner">
           <h2 className="oped-page__title">The Op-Ed Page</h2>
           <p className="oped-page__subtitle">
-            Opinion, analysis, and editorial &mdash; ranked by recency, balanced across the spectrum.
+            Opinion, analysis, and editorial. Ranked by recency, balanced across the spectrum.
           </p>
         </div>
         <div className="oped-page__header-rule" />
@@ -120,7 +120,7 @@ export default function OpEdPage({ edition, activeLean = "All" }: OpEdPageProps)
       {!isLoading && filteredArticles.length > 0 && (
         <p className="oped-page__count">
           {filteredArticles.length} opinion piece{filteredArticles.length !== 1 ? "s" : ""}
-          {activeLean !== "All" ? " (filtered)" : ""} &mdash; curated from {edition === "world" ? "world" : "US"} sources
+          {activeLean !== "All" ? " (filtered)" : ""} · curated from {edition === "world" ? "world" : "US"} sources
         </p>
       )}
     </div>
