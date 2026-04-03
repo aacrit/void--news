@@ -489,8 +489,8 @@ BANNED: "notable", "significant", "it should be noted", "in conclusion".
 Output JSON: {{"headline": "...", "text": "..."}}"""
 
 
-def _generate_opinions(clusters, edition):
-    """Generate 5-6 opinion pieces, one lean per topic, cycling voices."""
+def _generate_opinions(top_threads, all_threads, edition):
+    """Generate 5 opinions: 2 opposing on cover story, 3 on other important topics."""
     opinions = []
     calls = 0
 
@@ -673,45 +673,349 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
 
 # ── SECTION 7: AUDIO ──
 
-AUDIO_SYSTEM = """You are writing void --onair WEEKLY, a 15-minute magazine-pace
-Sunday broadcast. Two hosts: A (anchor) and B (analyst). Reflective, analytical tone.
+# ---------------------------------------------------------------------------
+# Weekly-specific voice pair — fixed for gravitas and reflective authority.
+# The Editor (Sadaltager, knowledgeable) + Correspondent (Charon, informative)
+# are the two most authoritative, lowest-tempo voices in the roster. The Editor
+# synthesizes and contextualizes (the "step back" voice); the Correspondent
+# delivers facts with weight and patience. Together they create the Sunday
+# magazine register: unhurried, substantive, the voice of two people who have
+# spent the week reading everything so you don't have to.
+#
+# This pair does NOT rotate. The weekly is a branded product — same hosts
+# every Sunday, same sonic signature. Listeners learn to associate these
+# two voices with the long-form format.
+# ---------------------------------------------------------------------------
+WEEKLY_VOICE_PAIR = {
+    "host_a": {
+        "id": "Sadaltager",
+        "name": "The Editor",
+        "key": "editor",
+        "gender": "male",
+        "google_label": "knowledgeable",
+        "trait": (
+            "The senior voice. Synthesizes, contextualizes, places today's news in "
+            "the arc of the week or the decade. Identifies the through-line across "
+            "stories. Comfortable with silence. The voice that provides perspective "
+            "— not prediction, but framing that helps the listener think."
+        ),
+        "tts_preamble": (
+            "Knowledgeable, warm authority. Senior editorial voice. Comfortable pace "
+            "with weight behind each sentence. Slight warmth — the voice of someone "
+            "who has seen this before. Measured gravitas."
+        ),
+    },
+    "host_b": {
+        "id": "Charon",
+        "name": "The Correspondent",
+        "key": "correspondent",
+        "gender": "male",
+        "google_label": "informative",
+        "trait": (
+            "Measured authority. Lets facts land with their own weight. Short "
+            "declarative sentences. Pauses after key facts to let them register. "
+            "Trusts proximity to reveal the pattern — places two facts next to each "
+            "other without editorializing."
+        ),
+        "tts_preamble": (
+            "Low, steady, deliberate. BBC World Service gravitas. Pauses after key "
+            "facts — not for drama, but for weight. Calm authority — never raises "
+            "voice. Precision over speed."
+        ),
+    },
+}
 
-Format: A: and B: tags only. NO [MUSIC], NO stage directions, NO segment markers.
+# Weekly TTS preamble — slower, more spacious than daily.
+_WEEKLY_TTS_PREAMBLE = (
+    "Audio Profile: Two senior journalists recording a Sunday magazine broadcast. "
+    "This is NOT a breaking-news bulletin. The pace is slower, more reflective — "
+    "the rhythm of a long-form conversation between two people who have spent the "
+    "week inside the stories and are now making sense of them.\n\n"
+    "Scene: A wood-paneled studio on a Sunday morning. Coffee. No monitors. No urgency. "
+    "These two sit across from each other with notes and memory. The energy is "
+    "contemplative — they are here to understand, not to update.\n\n"
+    "Director's Notes: Magazine pace. Each speaker takes their time. Individual turns "
+    "run 30 to 60 seconds — full paragraphs, not volleys. Pauses between speakers are "
+    "real pauses, a full breath beat, not rapid-fire handoffs. Em dashes create "
+    "thinking-out-loud pivots. Ellipses trail into reflection. Paragraph breaks "
+    "between segments produce a deliberate scene change. The tone is two colleagues "
+    "in no hurry, turning the week over in their hands.\n\n"
+    "Speaker One: Knowledgeable, warm authority. Senior editorial voice. Comfortable "
+    "pace — slower than daily broadcast. Weight behind each sentence. The voice of "
+    "someone who has seen this before and wants to explain what it means. Longer "
+    "sentences that build to a point. Comfortable with silence.\n\n"
+    "Speaker Two: Low, steady, unhurried. BBC World Service gravitas. Deliberate "
+    "pauses after key facts. Places two observations next to each other and lets "
+    "the silence do the work. When he adds context, it lands like a footnote — "
+    "precise, clarifying, never competing."
+)
 
-Structure:
-1. A opens the week (30 sec)
-2. Cover stories: A and B discuss the 2 top stories in depth (7 min)
-3. Opinions spotlight: A shares one striking opinion excerpt, B reacts (2 min)
-4. Tech + Sports: Quick hits (2 min)
-5. Week recap: A runs through 4-5 key stories (3 min)
-6. B closes with a forward look, A signs off (30 sec)
 
-Output JSON: {"script": "A: ...\\n\\nB: ..."}
-Target: 2500-3000 words (~15 min at broadcast pace)."""
+AUDIO_SYSTEM = """\
+You are writing void --onair WEEKLY — the Sunday magazine broadcast from void --news. \
+This is a 15-minute long-form conversation, NOT a breaking-news update. Two hosts: \
+A (the senior editor) and B (the foreign correspondent). They have spent the week \
+reading everything. Now they sit down and make sense of it.
+
+FORMAT: A: and B: tags only. NO [MUSIC], NO [TRANSITION], NO stage directions, \
+NO segment markers, NO [SEGMENT] headers. Raw dialogue only.
+
+---
+
+PACE AND REGISTER:
+
+This is The Economist's podcast, not CNN's morning show. Magazine pace means:
+- Individual turns run 3-5 sentences (40-80 words). A speaks for 30-60 seconds \
+at a time. B responds with 20-40 seconds of analysis. This is a CONVERSATION, \
+not a volley.
+- Between major topics, leave a blank line (paragraph break). The TTS reads this \
+as a scene-change pause — a full breath beat.
+- Use em dashes (—) mid-sentence for thinking-out-loud pivots: "The vote was \
+Thursday — three days after the leak, which changes the calculus."
+- Use ellipses (...) for deliberate trailing: "And the precedent that sets..."
+- Short sentences after long ones create emphasis. "That changed Tuesday." lands \
+harder after a 30-word explanation.
+- Names, numbers, dates, places always. Attribute to institutions and officials.
+
+WRONG (daily-brief pace): A reports 3 sentences. B reacts 2 sentences. Repeat.
+RIGHT (magazine pace): A develops a thought across 4-5 sentences, building to \
+a point. B responds with a new angle or counter-fact, also developed across \
+3-4 sentences. They are two minds working through the material together.
+
+---
+
+STRUCTURE (target: 2500-3000 words total):
+
+1. COLD OPEN (~100 words, ~30 sec)
+   A hooks the listener with the week's defining tension in one dramatic sentence.
+   B adds the second dimension — the fact that complicates the obvious reading.
+   Example tone: "This was the week the trade war stopped being theoretical." / \
+   "And the week both sides discovered their threat had the same price tag."
+
+2. COVER STORY #1 — DEEP DIVE (~800-1000 words, ~5-6 min)
+   The week's dominant story. A and B discuss it IN DEPTH, referencing:
+   - The DATA TIMELINE: specific dates and events from the week (provided below).
+     Reference these dates naturally: "By Wednesday..." / "That Friday number — \
+     $4.2 billion — was the one that moved markets."
+   - How the story evolved: what changed from Monday to Sunday.
+   - What the numbers tell us that the headlines missed.
+   - The structural question underneath the surface narrative.
+   Turns are LONG here. A might speak for 60+ words tracing a cause-effect chain. \
+   B might respond with 50 words of historical parallel or counter-data.
+
+3. COVER STORY #2 — SECOND STORY (~400-500 words, ~2-3 min)
+   Briefer treatment. A introduces the essential facts. B provides the dimension \
+   the first telling missed — the cost, the precedent, the affected population.
+
+4. OPINION SPOTLIGHT (~300-400 words, ~2 min)
+   A reads a KEY EXCERPT from one of the week's opinion pieces (progressive or \
+   conservative — pick the most provocative). A does not summarize — A READS \
+   a striking passage of 2-3 sentences, then says which perspective it came from.
+   B reacts with the strongest counter-argument from the opposing perspective.
+   This is the most conversational segment — genuine intellectual engagement \
+   with a position they may or may not share.
+
+5. THE WEEK OTHERWISE (~400-500 words, ~2-3 min)
+   Quick hits on 3-4 other stories from the week that didn't make the cover.
+   A takes one, B takes one, A takes one. Each gets 80-120 words — enough for \
+   the essential fact and one "why it matters" sentence. Pace picks up slightly \
+   here — crisper transitions, shorter turns.
+
+6. CLOSE (~100-150 words, ~30 sec)
+   B offers a forward-looking thought about next week — what to watch, what \
+   question remains unanswered. Not prediction — orientation. "The vote is \
+   Thursday. The math hasn't changed. But the politics have."
+   A signs off: "From void news, this was the weekly. We'll be back next Sunday."
+
+---
+
+DIALOGUE RULES:
+
+- A and B are EQUALS. Both contribute facts, both provide analysis. A leads \
+stories and introduces segments. B adds the dimension A didn't cover — counter-data, \
+historical parallel, structural context, the affected population. B is NOT a \
+reactor — B is a co-reporter with different instincts.
+- Disagreement is expressed through additional facts, NEVER through contradiction. \
+WRONG: "I disagree." RIGHT: "The Q3 data shows the opposite — 2.1% contraction."
+- NO backchannel filler. NEVER as standalone lines: "Mm.", "Right.", "Indeed.", \
+"Good point.", "Absolutely.", "Interesting.", "Exactly.", "Great question."
+- NO meta-framing. BANNED sentence openers: "That's the tension...", \
+"Which tells you...", "Here's why...", "What's interesting is...", \
+"The question is...", "Let's go to...", "Now to...", "Worth noting...", \
+"The key here...", "The bigger picture...", "This isn't just..."
+- Instead, start every line with the FACT: the name, the number, the place, \
+the date, the institution.
+- NO scaffolding. Never announce what you're about to discuss. Jump straight \
+to the first fact.
+
+MAGAZINE-PACE TRANSITION PHRASES (use naturally, not as templates):
+- "This week, the story that kept coming back..."
+- "Step back for a moment..."
+- "The number that tells the story..."
+- "What both sides agree on — and where the argument breaks..."
+- "By Thursday, the picture had changed..."
+- "That's the surface reading. Underneath..."
+- "The week started with... By Friday..."
+
+BANNED WORDS/PHRASES (hard kill):
+"notable", "significant", "unprecedented", "comprehensive", "pivotal", \
+"landscape", "robust", "nuanced", "game-changing", "paves the way", \
+"sends a clear message", "delve", "navigate", "underscores", "multifaceted", \
+"it should be noted", "interestingly", "crucially", "in conclusion"
+
+---
+
+FIRST LINE: A: From void news, this is the weekly for {WEEK_LABEL}.
+LAST LINE: A: From void news, this was the weekly. We'll be back next Sunday.
+
+Output JSON: {{"script": "A: ...\\nB: ...\\n\\nA: ..."}}
+"""
 
 
-def _generate_audio(covers, opinions, tech, sports, recap, edition):
-    """Generate the weekly audio broadcast script."""
-    cover_context = "\n".join(
-        f"Cover {i+1}: {c.get('headline', '?')}\n{c.get('text', '')[:600]}"
-        for i, c in enumerate(covers)
-    )
-    opinion_context = "\n".join(
-        f"Opinion ({o.get('lean', '?')} on {o.get('topic', '?')}): {o.get('text', '')[:200]}..."
-        for o in (opinions or [])[:3]
-    )
-    tech_context = f"Tech: {tech.get('headline', '?')}\n{tech.get('text', '')[:200]}" if tech else ""
-    sports_context = f"Sports: {sports.get('headline', '?')}\n{sports.get('text', '')[:200]}" if sports else ""
+def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
+                    week_start=None, week_end=None):
+    """Generate the weekly audio broadcast script.
 
+    Unlike the daily brief audio, the weekly script:
+    - Includes data timelines so hosts can reference real dates
+    - Includes full opinion excerpts with lean labels for the opinion spotlight
+    - Includes bias report highlights (most polarized story, lean spread)
+    - Targets 2500-3000 words for ~15 min at magazine pace
+    """
+    # Week label for sign-on
+    week_label = ""
+    if week_start and week_end:
+        if hasattr(week_start, 'strftime'):
+            week_label = f"{week_start.strftime('%B %d')} through {week_end.strftime('%B %d, %Y')}"
+        else:
+            week_label = f"{week_start} through {week_end}"
+    else:
+        week_label = "this week"
+
+    # --- Cover stories with data timelines ---
+    cover_blocks = []
+    for i, c in enumerate(covers):
+        block = f"COVER STORY {i+1}: {c.get('headline', '?')}\n"
+        # Include the full essay text (truncated to 1200 words for prompt budget)
+        text = c.get('text', '')
+        text_words = text.split()
+        if len(text_words) > 1200:
+            text = ' '.join(text_words[:1200]) + '...'
+        block += f"Essay:\n{text}\n"
+
+        # Data timeline — real dates and events for hosts to reference
+        timeline = c.get('timeline', [])
+        if timeline:
+            block += "\nDATA TIMELINE (use these real dates in dialogue):\n"
+            for entry in timeline:
+                block += f"  {entry.get('date', '?')}: {entry.get('title', '?')} ({entry.get('source_count', 0)} sources)\n"
+
+        # Key numbers
+        numbers = c.get('numbers', [])
+        if numbers and isinstance(numbers, list):
+            block += "\nKEY NUMBERS:\n"
+            for n in numbers[:5]:
+                if isinstance(n, dict):
+                    block += f"  {n.get('stat', '?')} — {n.get('context', '')}\n"
+
+        cover_blocks.append(block)
+
+    cover_context = "\n\n".join(cover_blocks)
+
+    # --- Opinion excerpts with lean labels for spotlight segment ---
+    opinion_blocks = []
+    if opinions:
+        for o in opinions[:4]:
+            lean = o.get('lean', '?')
+            topic = o.get('topic', '?')
+            text = o.get('text', '')
+            # Include more text for the opinion spotlight — hosts need to quote from it
+            text_words = text.split()
+            if len(text_words) > 300:
+                text = ' '.join(text_words[:300]) + '...'
+            perspective = OPINION_VOICE_CONFIGS.get(lean, {}).get('perspective', lean)
+            opinion_blocks.append(
+                f"OPINION ({perspective} perspective on: {topic}):\n"
+                f"Lean: {lean}\n"
+                f"Headline: {o.get('headline', '?')}\n"
+                f"Text: {text}"
+            )
+    opinion_context = "\n\n".join(opinion_blocks) if opinion_blocks else "No opinions available."
+
+    # --- Bias report highlights ---
+    bias_context = ""
+    if bias_data and isinstance(bias_data, dict):
+        stats = bias_data.get('stats', {})
+        polarized = bias_data.get('most_polarized', [])
+        lines = []
+        if stats:
+            lines.append(f"Coverage lean this week: {stats.get('avg_lean', '?')}/100")
+            lines.append(f"Lean spread (std dev): {stats.get('lean_std', '?')}")
+            lines.append(f"Average factual rigor: {stats.get('avg_rigor', '?')}/100")
+            lines.append(f"Average sensationalism: {stats.get('avg_sensationalism', '?')}/100")
+        if polarized:
+            lines.append("Most polarized stories this week:")
+            for p in polarized[:3]:
+                lines.append(f"  - {p.get('title', '?')} (divergence score: {p.get('divergence', 0):.0f})")
+        bias_context = "\n".join(lines)
+
+    # --- Tech and sports quick-hit context ---
+    tech_context = ""
+    if tech and isinstance(tech, dict):
+        tech_text = tech.get('text', '')[:300]
+        tech_context = f"TECH STORY: {tech.get('headline', '?')}\n{tech_text}"
+
+    sports_context = ""
+    if sports and isinstance(sports, dict):
+        sports_text = sports.get('text', '')[:300]
+        sports_context = f"SPORTS STORY: {sports.get('headline', '?')}\n{sports_text}"
+
+    # --- Recap stories for "The Week Otherwise" ---
+    recap_context = ""
+    if recap and isinstance(recap, dict):
+        stories = recap.get('stories', [])
+        if stories:
+            recap_lines = []
+            for s in stories[:5]:
+                recap_lines.append(f"- {s.get('headline', '?')}: {s.get('summary', '')[:150]}")
+            recap_context = "OTHER STORIES THIS WEEK:\n" + "\n".join(recap_lines)
+
+    # --- Build the system instruction with week label ---
+    system = AUDIO_SYSTEM.replace("{WEEK_LABEL}", week_label)
+
+    # --- Assemble the user prompt ---
     prompt = (
-        f"Write void --onair WEEKLY for the {edition} edition.\n\n"
-        f"COVER STORIES:\n{cover_context}\n\n"
-        f"OPINIONS:\n{opinion_context}\n\n"
-        f"{tech_context}\n{sports_context}\n\n"
-        f"Generate a 2500-3000 word script."
+        f"Write void --onair WEEKLY for the {edition} edition.\n"
+        f"Week: {week_label}\n\n"
+        f"{'=' * 60}\n"
+        f"COVER STORIES (for deep-dive segments):\n\n{cover_context}\n\n"
+        f"{'=' * 60}\n"
+        f"OPINIONS (for opinion spotlight — pick the most provocative to quote):\n\n{opinion_context}\n\n"
+        f"{'=' * 60}\n"
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=AUDIO_SYSTEM, max_output_tokens=8192)
+    if bias_context:
+        prompt += f"BIAS REPORT (reference selectively — the lean spread or most polarized story):\n{bias_context}\n\n"
+
+    if tech_context or sports_context:
+        prompt += f"QUICK HITS (for 'The Week Otherwise'):\n"
+        if tech_context:
+            prompt += f"{tech_context}\n\n"
+        if sports_context:
+            prompt += f"{sports_context}\n\n"
+
+    if recap_context:
+        prompt += f"{recap_context}\n\n"
+
+    prompt += (
+        f"{'=' * 60}\n"
+        f"Generate the full 2500-3000 word magazine-pace script.\n"
+        f"Remember: longer turns (40-80 words each), paragraph breaks between "
+        f"segments, real dates from the data timelines, and one direct quote "
+        f"from the opinion section."
+    )
+
+    result, gen = _smart_generate(prompt, system_instruction=system, max_output_tokens=8192)
     return result, 1
 
 
@@ -824,20 +1128,32 @@ def generate_weekly_digest(editions=None, week_offset=0):
         recap_count = len(recap.get("stories", [])) if recap else 0
         print(f"    {recap_count} stories")
 
-        # Section 7: Audio
+        # Section 7: Audio — weekly uses fixed voice pair + richer context
         print(f"\n  ── AUDIO ──")
-        audio_result, calls = _generate_audio(covers, opinions, None, None, recap, edition)
+        audio_result, calls = _generate_audio(
+            covers, opinions, tech, sports, recap, bias_data,
+            edition, week_start=week_start, week_end=week_end,
+        )
         total_calls += calls
         audio_script = audio_result.get("script", "") if audio_result else None
 
-        # Produce audio TTS
+        # Produce audio TTS — weekly uses fixed Editor+Correspondent pair
         audio_url = None
         audio_duration = None
         if audio_script and len(audio_script) > 100:
             print(f"    Producing audio ({len(audio_script.split())} words)...")
             try:
-                voices = get_voices_for_today(edition)
-                result = produce_audio(audio_script, voices, edition)
+                # Weekly uses WEEKLY_VOICE_PAIR (fixed) instead of daily rotation
+                # and overrides the TTS preamble for magazine pace
+                weekly_voices = {
+                    "host_a": WEEKLY_VOICE_PAIR["host_a"],
+                    "host_b": WEEKLY_VOICE_PAIR["host_b"],
+                    "opinion": {"id": WEEKLY_VOICE_PAIR["host_a"]["id"]},
+                }
+                result = produce_audio(
+                    audio_script, weekly_voices, edition,
+                    tts_preamble_override=_WEEKLY_TTS_PREAMBLE,
+                )
                 if result and isinstance(result, dict):
                     audio_url = result.get("audio_url")
                     audio_duration = result.get("audio_duration_seconds")
@@ -880,10 +1196,11 @@ def generate_weekly_digest(editions=None, week_offset=0):
             "bias_report_text": bias_text,
             "bias_report_data": json.dumps(bias_data),
             # Tech + Sports (store in cover_text JSON alongside covers)
-            # Audio
+            # Audio (fixed weekly pair: Editor + Correspondent)
             "audio_script": audio_script,
             "audio_url": audio_url,
             "audio_duration_seconds": audio_duration,
+            "audio_voice": f"{WEEKLY_VOICE_PAIR['host_a']['id']}+{WEEKLY_VOICE_PAIR['host_b']['id']}",
             # Stats
             "total_articles": sum(c.get("source_count", 0) for c in clusters),
             "total_clusters": len(clusters),
