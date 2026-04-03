@@ -196,16 +196,93 @@ const SECTION_ANNOTATIONS: Record<string, Annotation[]> = {
   ],
 };
 
-/* ── Annotation renderer ── */
+/* ── Annotation renderer — sparse cycle ──
+   Shows ONE annotation at a time. Each appears, lingers 3.5s, fades out.
+   Next one appears after a 1.5s gap. Cycles through all annotations in the
+   section, then loops. Stops cycling when section exits viewport. */
 function FloatingAnnotations({ sectionLabel }: { sectionLabel: string }) {
   const annotations = SECTION_ANNOTATIONS[sectionLabel];
-  if (!annotations) return null;
+  const [activeIdx, setActiveIdx] = useState(-1);
+  const [visible, setVisible] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isInView = useRef(false);
+
+  /* Called by parent IO via data-annotations-visible attribute.
+     We observe changes via MutationObserver on the parent section. */
+  useEffect(() => {
+    if (!annotations?.length) return;
+    const el = document.querySelector(
+      `.about-section[aria-label="${sectionLabel}"]`
+    );
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let idx = 0;
+
+    const startCycle = () => {
+      if (intervalRef.current) return; // already cycling
+      isInView.current = true;
+      idx = 0;
+
+      const showNext = () => {
+        if (!isInView.current) return;
+        // Show current annotation
+        setActiveIdx(idx);
+        setVisible(true);
+
+        // After 3.5s, fade it out
+        setTimeout(() => {
+          setVisible(false);
+          // After 0.8s fade-out transition, gap of 1.2s, then show next
+          setTimeout(() => {
+            if (!isInView.current) return;
+            idx = (idx + 1) % annotations.length;
+            showNext();
+          }, prefersReduced ? 200 : 2000);
+        }, prefersReduced ? 1500 : 3500);
+      };
+
+      // Initial delay before first annotation (0.8s after section enters)
+      intervalRef.current = setTimeout(showNext, prefersReduced ? 100 : 800);
+    };
+
+    const stopCycle = () => {
+      isInView.current = false;
+      if (intervalRef.current) {
+        clearTimeout(intervalRef.current);
+        intervalRef.current = null;
+      }
+      setActiveIdx(-1);
+      setVisible(false);
+    };
+
+    const mo = new MutationObserver(() => {
+      if (el.hasAttribute("data-annotations-visible")) {
+        startCycle();
+      } else {
+        stopCycle();
+      }
+    });
+    mo.observe(el, { attributes: true, attributeFilter: ["data-annotations-visible"] });
+
+    // Check initial state
+    if (el.hasAttribute("data-annotations-visible")) startCycle();
+
+    return () => {
+      mo.disconnect();
+      stopCycle();
+    };
+  }, [annotations, sectionLabel]);
+
+  if (!annotations?.length) return null;
+
   return (
     <>
       {annotations.map((a, i) => (
         <span
           key={`${sectionLabel}-${i}`}
-          className={`about-annotation about-annotation--${a.side}`}
+          className={`about-annotation about-annotation--${a.side}${i === activeIdx && visible ? " about-annotation--active" : ""}`}
           data-index={i}
           aria-hidden="true"
         >
