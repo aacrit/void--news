@@ -399,12 +399,14 @@
 /* ---- Feature 5b: Lean bar first-load pulse ----------------------------- */
 /* Single one-time warm amber glow to draw attention on first visit */
 
-/* Border-weight swell — printer pressing harder on that line. No glow. */
+/* Border-weight swell — printer pressing harder on that line.
+   Uses box-shadow spread instead of border-bottom-width to avoid
+   layout recalculation (GPU-only compositing). */
 @keyframes leanBarPulse {
-  0%   { border-bottom-width: 1px; }
-  30%  { border-bottom-width: 3px; }
-  60%  { border-bottom-width: 2px; }
-  100% { border-bottom-width: 1px; }
+  0%   { box-shadow: 0 1px 0 0 var(--cin-amber, var(--accent-warm)); }
+  30%  { box-shadow: 0 3px 0 0 var(--cin-amber, var(--accent-warm)); }
+  60%  { box-shadow: 0 2px 0 0 var(--cin-amber, var(--accent-warm)); }
+  100% { box-shadow: 0 1px 0 0 transparent; }
 }
 
 /* ---- Cinematic Keyframes ----------------------------------------------- */

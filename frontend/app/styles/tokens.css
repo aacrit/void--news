@@ -93,6 +93,11 @@
 
   --cin-amber-muted: #B08A40;
 
+  /* ── Audio Console — always-dark broadcast surface ── */
+  --console-bg: #1A1816;
+  --console-bg-deep: #151310;
+  --console-fg: #EDE8E0;
+
   /* ── Cinematic Palette Bridge ── */
   --cinematic-accent: var(--cin-amber);
   --cinematic-shadow-tint: rgba(42, 32, 18, 0.82);

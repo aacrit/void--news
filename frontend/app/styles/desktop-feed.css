@@ -387,7 +387,7 @@
   text-overflow: ellipsis;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .dg-row__headline {
     white-space: normal;
     overflow: visible;

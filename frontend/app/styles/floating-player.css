@@ -106,10 +106,10 @@
   position: relative;
   overflow: hidden;
 
-  /* Fixed dark console surface */
-  background: #1A1816;
+  /* Fixed dark console surface — tokens in tokens.css */
+  background: var(--console-bg);
   border: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 18%, transparent);
-  color: #EDE8E0;
+  color: var(--console-fg);
 
   /* Console shadow */
   box-shadow:
@@ -230,9 +230,9 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
-  background: linear-gradient(180deg, #1A1816 0%, #151310 100%);
+  background: linear-gradient(180deg, var(--console-bg) 0%, var(--console-bg-deep) 100%);
   border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
-  color: #EDE8E0;
+  color: var(--console-fg);
   box-shadow:
     0 -4px 20px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
