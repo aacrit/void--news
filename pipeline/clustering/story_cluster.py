@@ -281,8 +281,8 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
         return "world"
 
     top_section = sections.most_common(1)[0][0]
-    # Map to standard sections — pass through known edition names directly
-    if top_section in ("india", "uk", "canada"):
+    # Pass through standard edition names directly
+    if top_section in ("europe", "south-asia"):
         return top_section
     if any(kw in top_section for kw in ("us", "domestic", "nation", "national", "america")):
         return "us"
