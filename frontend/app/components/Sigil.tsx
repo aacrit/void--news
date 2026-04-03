@@ -92,7 +92,7 @@ function DataMark({ data, size, mounted }: {
   const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
 
   // Source coverage Harvey ball — ring fill proportional to source count
-  const coverage = Math.min(data.sourceCount / 10, 1);
+  const coverage = Math.min(data.sourceCount / 15, 1);
   const ringFill = coverage * CIRC;
   const ringCol = beamCol;
 
@@ -313,7 +313,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
               <circle cx="20" cy="20" r="16" stroke="var(--border-subtle)" strokeWidth="2.5" opacity={0.25} />
               <circle cx="20" cy="20" r="16"
                 stroke={lc} strokeWidth="2.5" strokeLinecap="round"
-                strokeDasharray={`${stage >= 3 ? Math.min(data.sourceCount / 10, 1) * (2 * Math.PI * 16) : 0} ${2 * Math.PI * 16}`}
+                strokeDasharray={`${stage >= 3 ? Math.min(data.sourceCount / 15, 1) * (2 * Math.PI * 16) : 0} ${2 * Math.PI * 16}`}
                 style={{ transform: "rotate(-90deg)", transformOrigin: "20px 20px", transition: "stroke-dasharray 600ms var(--spring)" }}
                 opacity={0.6}
               />
