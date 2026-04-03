@@ -709,15 +709,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
   }, [edition]);
 
   // Separate recap stories into categories
-  const techStory = digest?.recap_stories?.find(
-    (s) => s.section?.toLowerCase() === "tech"
-  );
-  const sportsStory = digest?.recap_stories?.find(
-    (s) => s.section?.toLowerCase() === "sports"
-  );
-  const otherStories = (digest?.recap_stories ?? []).filter(
-    (s) => s.section?.toLowerCase() !== "tech" && s.section?.toLowerCase() !== "sports"
-  );
+  // All recap stories unified (tech/sports sections removed)
 
   return (
     <div className="wk-page">
@@ -767,20 +759,12 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               right={digest.opinion_right}
             />
 
-            {techStory && (
-              <SpecialSection story={techStory} sectionType="tech" />
-            )}
-
-            {sportsStory && (
-              <SpecialSection story={sportsStory} sectionType="sports" />
-            )}
-
             <BiasReport
               text={digest.bias_report_text}
               data={digest.bias_report_data}
             />
 
-            <WeekInBrief stories={otherStories} />
+            <WeekInBrief stories={digest?.recap_stories ?? []} />
 
             {digest.audio_url && (
               <WeeklyAudioPlayer
