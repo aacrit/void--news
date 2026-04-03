@@ -153,7 +153,7 @@ export default function CommandCenter() {
         safe(supabase.from('story_clusters').select('updated_at').order('updated_at', { ascending: false }).limit(1)),
         safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['world']).gte('created_at', t)),
         safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['us']).gte('created_at', t)),
-        safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['india']).gte('created_at', t)),
+        safe(supabase.from('story_clusters').select('id', { count: 'exact', head: true }).contains('sections', ['south-asia']).gte('created_at', t)),
       ]);
       const src = b.data ?? [];
       const multiCount = e.data ? e.data.length : (e.count ?? 0);

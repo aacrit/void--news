@@ -958,51 +958,19 @@
 }
 
 /* ==========================================================================
-   Methodology — "The Scoring Stage"
-   /sources#methodology — visual, data-driven trust anchor.
-   Gradient bridge, six-axis equalizer, live article autopsy,
-   validation stats, curated sources, open source.
+   Methodology — Cinematic Infographic
+   /sources#methodology — single-flow editorial infographic.
+   Alternating L/R scenes with text callouts beside visualizations.
+   Scroll-driven entrance with parallax stagger.
    ========================================================================== */
 
-.meth {
-  margin-top: var(--space-5);
+.meth-infographic {
+  margin-top: var(--space-6);
   padding-top: var(--space-4);
-  /* Clear sticky nav + breathing room on deep-link scroll */
   scroll-margin-top: calc(var(--nav-height) + var(--space-3));
 }
 
-/* ---- Section 0: Gradient Bridge ---- */
-
-.meth__rule {
-  border: none;
-  height: 1px;
-  background: var(--fg-muted);
-  margin-bottom: var(--space-4);
-  transform-origin: left center;
-  transform: scaleX(0);
-}
-
-.meth__rule--gradient {
-  /* Marker class — gradient applied via background above */
-}
-
-.meth__rule--visible {
-  animation: methRuleCurtain var(--dur-reveal) var(--ease-cinematic) both;
-}
-
-@keyframes methRuleCurtain {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
-
-.meth__bridge-line {
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  color: var(--fg-tertiary);
-  margin: 0 0 var(--space-5) 0;
-}
+/* ---- "How we score" skip link ---- */
 
 .meth__skip-link-wrap {
   text-align: right;
@@ -1031,41 +999,72 @@
   border-radius: 2px;
 }
 
-/* ---- Sections: scroll-reveal dolly entrance ---- */
+/* ==========================================================================
+   Scene Layout — alternating L/R callout + visualization
+   ========================================================================== */
 
-.meth__section {
-  padding-bottom: var(--space-5);
-  margin-bottom: var(--space-5);
-  border-bottom: var(--rule-thin);
+.meth-scene {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+  padding: var(--space-6) 0;
+}
+
+.meth-scene--rl {
+  direction: rtl;
+}
+.meth-scene--rl > * {
+  direction: ltr;
+}
+
+.meth-scene--full {
+  grid-template-columns: 1fr;
+  text-align: center;
+}
+
+/* ---- Scroll-driven entrance ---- */
+.meth-scene__callout {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
 }
 
-.meth__section--visible {
-  animation: methSectionDolly var(--dur-reveal) var(--ease-cinematic) var(--meth-stagger-delay, 0ms) both;
+.meth-scene__viz {
+  opacity: 0;
+  transform: translateY(16px);
 }
 
-@keyframes methSectionDolly {
-  from { opacity: 0; transform: translateY(12px); }
+.meth-scene--visible .meth-scene__callout {
+  animation: methCalloutIn var(--dur-reveal) var(--ease-cinematic) both;
+}
+
+.meth-scene--visible .meth-scene__viz {
+  animation: methVizIn var(--dur-reveal) var(--ease-cinematic) 200ms both;
+}
+
+@keyframes methCalloutIn {
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.meth__section--last {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 0;
+@keyframes methVizIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.meth__section-title {
+/* ---- Scene headings ---- */
+.meth-scene__heading {
   font-family: var(--font-editorial);
-  font-size: var(--text-lg);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
   font-weight: 700;
+  font-style: normal;
   color: var(--fg-primary);
-  line-height: 1.3;
-  letter-spacing: -0.005em;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   margin: 0 0 var(--space-3) 0;
 }
 
+/* ---- Body text (shared) ---- */
 .meth__body {
   font-family: var(--font-structural);
   font-size: var(--text-base);
@@ -1080,21 +1079,6 @@
 
 .meth__body:last-child {
   margin-bottom: 0;
-}
-
-.meth__body--code {
-  font-size: var(--text-sm);
-  color: var(--fg-tertiary);
-}
-
-.meth__inline-code {
-  font-family: var(--font-data);
-  font-size: 0.9em;
-  color: var(--fg-primary);
-  background-color: var(--bg-secondary);
-  padding: 0.1em 0.4em;
-  border-radius: var(--radius-sm);
-  word-break: break-all;
 }
 
 /* ==========================================================================

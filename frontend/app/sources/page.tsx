@@ -37,7 +37,7 @@ const EDITIONS: { slug: Edition; label: string }[] = [
   { slug: "world", label: "World" },
   { slug: "us", label: "US" },
   { slug: "europe", label: "Europe" },
-  { slug: "india", label: "India" },
+  { slug: "south-asia", label: "South Asia" },
 ];
 
 const EDITION_COUNTRIES: Record<Edition, string[] | null> = {
@@ -176,30 +176,47 @@ const WORKED_EXAMPLE = {
 };
 
 /* ---------------------------------------------------------------------------
-   Axis Glyph SVGs — inline, 20x20 viewBox, stroke-based
+   Axis Glyph SVGs — inline, 40x40 viewBox, stroke-based
+   Scaled up for the cinematic infographic stamps.
    --------------------------------------------------------------------------- */
 
-function AxisGlyph({ id }: { id: string }) {
+function AxisGlyph({ id, size = 40 }: { id: string; size?: number }) {
+  const props = { width: size, height: size, viewBox: "0 0 20 20", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true as const, className: "meth-dot__glyph" };
+
+  switch (id) {
+    case "lean":
+      return (<svg {...props}><line x1="3" y1="8" x2="17" y2="8" /><polygon points="10,18 7,13 13,13" fill="none" /></svg>);
+    case "sensationalism":
+      return (<svg {...props}><rect x="8" y="3" width="4" height="14" rx="2" /><line x1="10" y1="12" x2="10" y2="10" strokeWidth="2.5" /></svg>);
+    case "opinion":
+      return (<svg {...props}><rect x="3" y="3" width="14" height="14" rx="1" /><line x1="10" y1="4" x2="10" y2="16" strokeDasharray="2 2" /><line x1="5" y1="7" x2="8" y2="7" /><line x1="5" y1="10" x2="8" y2="10" /><path d="M12 7 Q13 6 14 7 Q15 8 16 7" /></svg>);
+    case "rigor":
+      return (<svg {...props}><path d="M6 3 L4 3 L4 17 L6 17" /><line x1="7" y1="7" x2="14" y2="7" /><line x1="7" y1="10" x2="16" y2="10" /><line x1="7" y1="13" x2="12" y2="13" /></svg>);
+    case "framing":
+      return (<svg {...props}><circle cx="9" cy="9" r="5" /><line x1="13" y1="13" x2="17" y2="17" /><path d="M6 9 Q7.5 7 9 9 Q10.5 11 12 9" strokeWidth="1.4" /></svg>);
+    case "tracking":
+      return (<svg {...props}><polyline points="3,14 6,8 9,11 13,5 17,9" /></svg>);
+    default:
+      return null;
+  }
+}
+
+/* Detail panel glyph (smaller, used in expanded detail) */
+function AxisGlyphSmall({ id }: { id: string }) {
   const props = { width: 20, height: 20, viewBox: "0 0 20 20", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true as const, className: "meth-dot-detail__glyph" };
 
   switch (id) {
     case "lean":
-      // Scale beam: horizontal line + fulcrum triangle
       return (<svg {...props}><line x1="3" y1="8" x2="17" y2="8" /><polygon points="10,18 7,13 13,13" fill="none" /></svg>);
     case "sensationalism":
-      // Thermometer: vertical rect with rounded bottom, fill level
       return (<svg {...props}><rect x="8" y="3" width="4" height="14" rx="2" /><line x1="10" y1="12" x2="10" y2="10" strokeWidth="2.5" /></svg>);
     case "opinion":
-      // Split page: rect with vertical dashed line, text lines left, wavy right
       return (<svg {...props}><rect x="3" y="3" width="14" height="14" rx="1" /><line x1="10" y1="4" x2="10" y2="16" strokeDasharray="2 2" /><line x1="5" y1="7" x2="8" y2="7" /><line x1="5" y1="10" x2="8" y2="10" /><path d="M12 7 Q13 6 14 7 Q15 8 16 7" /></svg>);
     case "rigor":
-      // Citation bracket with ticks
       return (<svg {...props}><path d="M6 3 L4 3 L4 17 L6 17" /><line x1="7" y1="7" x2="14" y2="7" /><line x1="7" y1="10" x2="16" y2="10" /><line x1="7" y1="13" x2="12" y2="13" /></svg>);
     case "framing":
-      // Magnifying glass with wavy line inside
       return (<svg {...props}><circle cx="9" cy="9" r="5" /><line x1="13" y1="13" x2="17" y2="17" /><path d="M6 9 Q7.5 7 9 9 Q10.5 11 12 9" strokeWidth="1.4" /></svg>);
     case "tracking":
-      // Sparkline: 5 connected points
       return (<svg {...props}><polyline points="3,14 6,8 9,11 13,5 17,9" /></svg>);
     default:
       return null;
@@ -226,8 +243,9 @@ function getAxisLabel(id: string, score: number | null): string {
 
 
 /* ---------------------------------------------------------------------------
-   AxisDotGrid — compact 3-col dot-scale grid (replaces full-width equalizer)
-   Same 5-dot scale as the Sigil popup. Click a card to expand detail below.
+   AxisDotGrid — 3x2 cluster of large ink-stamp axis cards.
+   Glyph centered inside each stamp. Click to expand detail below.
+   Rack-focus: when one is active, siblings dim and blur.
    --------------------------------------------------------------------------- */
 
 function AxisDotGrid({
@@ -245,7 +263,7 @@ function AxisDotGrid({
 
   return (
     <>
-      <div className="meth-dot-grid" role="group" aria-label="Six-axis bias scores">
+      <div className={`meth-dot-grid${selectedId ? " meth-dot-grid--has-active" : ""}`} role="group" aria-label="Six-axis bias scores">
         {axes.map((axis, i) => {
           const isTracking = axis.id === "tracking";
           const displayScore = scores[i] !== null ? scores[i] : (isTracking ? null : 50);
@@ -261,6 +279,9 @@ function AxisDotGrid({
               aria-expanded={isActive}
               aria-controls={`meth-dot-detail-${axis.id}`}
             >
+              <span className="meth-dot__glyph-wrap">
+                <AxisGlyph id={axis.id} />
+              </span>
               <span className="meth-dot__name">{axis.name}</span>
               <span className="meth-dot__dots" aria-label={`${displayScore ?? 0} out of 100`}>
                 {Array.from({ length: 5 }, (_, di) => (
@@ -273,7 +294,7 @@ function AxisDotGrid({
         })}
       </div>
 
-      {/* Shared detail panel — progressive disclosure */}
+      {/* Shared detail panel below grid */}
       <div
         className={`meth-dot-detail${selectedId ? " meth-dot-detail--open" : ""}`}
         id={selectedId ? `meth-dot-detail-${selectedId}` : undefined}
@@ -284,13 +305,13 @@ function AxisDotGrid({
         {selectedAxis && (
           <div className="meth-dot-detail__inner">
             <div className="meth-dot-detail__head">
-              <AxisGlyph id={selectedAxis.id} />
+              <AxisGlyphSmall id={selectedAxis.id} />
               <span className="meth-dot-detail__name">{selectedAxis.name}</span>
               {selectedScore !== null && (
                 <span className="meth-dot-detail__score">{selectedScore}</span>
               )}
             </div>
-            <p className="meth-axis__what meth-axis__what--italic">{selectedAxis.what}</p>
+            <p className="meth-axis__what">{selectedAxis.what}</p>
             <ul className="meth-axis__signals">
               {selectedAxis.signals.map((s, si) => (
                 <li key={si} className="meth-axis__signal">{s}</li>
@@ -304,27 +325,23 @@ function AxisDotGrid({
 }
 
 /* ---------------------------------------------------------------------------
-   MethSection — scroll-revealed section wrapper.
-   Uses useInView to trigger the dolly entrance animation when the section
-   scrolls into the viewport. Stagger delay is set via CSS custom property.
+   InfographicScene — scroll-revealed scene for the cinematic infographic.
+   Alternating L/R callout+viz layout. Parallax stagger: visualizations
+   enter with a slightly later delay than text callouts.
    --------------------------------------------------------------------------- */
 
-function MethSection({
-  index,
-  className = "",
+function InfographicScene({
+  layout = "lr",
   children,
 }: {
-  index: number;
-  className?: string;
+  layout?: "lr" | "rl" | "full";
   children: React.ReactNode;
 }) {
   const [ref, visible] = useInView<HTMLDivElement>();
-  const staggerDelay = `${index * 80}ms`;
   return (
     <div
       ref={ref}
-      className={`meth__section${visible ? " meth__section--visible" : ""}${className ? ` ${className}` : ""}`}
-      style={{ "--meth-stagger-delay": staggerDelay } as React.CSSProperties}
+      className={`meth-scene meth-scene--${layout}${visible ? " meth-scene--visible" : ""}`}
     >
       {children}
     </div>
@@ -473,13 +490,10 @@ function RationaleTree({ axisId, rationale }: { axisId: string; rationale: Recor
    --------------------------------------------------------------------------- */
 
 function Methodology({ sources }: { sources: SpectrumSource[] }) {
-  /* Rule curtain-pull entrance */
-  const [ruleRef, ruleVisible] = useInView<HTMLDivElement>();
-
-  /* Section 1: Dot grid state */
+  /* Scene 1: Dot grid state */
   const [dotRef, dotVisible] = useInView<HTMLDivElement>();
 
-  /* Section 2: Live articles */
+  /* Scene 2: Live articles */
   const [articles, setArticles] = useState<MethodologyArticle[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   /* Neutral initial scores for dot grid (before article selection) */
@@ -540,156 +554,202 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
     return tiers;
   }, [sources]);
 
+  /* Collect all source favicons for the river (up to 60) */
+  const riverSources = useMemo(() => {
+    const shuffled = [...sources].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 60);
+  }, [sources]);
+
   return (
-    <section id="methodology" className="meth" aria-label="Scoring methodology">
-      {/* ---- Section 0: Gradient Bridge ---- */}
-      <div
-        ref={ruleRef}
-        className={`meth__rule meth__rule--gradient${ruleVisible ? " meth__rule--visible" : ""}`}
-        aria-hidden="true"
-      />
+    <section id="methodology" className="meth meth-infographic" aria-label="Scoring methodology">
       <h2 className="sr-only">Scoring Methodology</h2>
-      <p className="meth__bridge-line">
-        Every article above was scored by 6 independent analyzers. Here is how.
-      </p>
 
-      {/* ---- Section 1: Six-Axis Equalizer ---- */}
-      <MethSection index={0}>
-        <h3 className="meth__section-title">Per-Article, Not Per-Outlet</h3>
-        <p className="meth__body">
-          Most bias tools rate outlets. The New York Times is &ldquo;Lean Left&rdquo;
-          regardless of the article. void --news rejects that premise. Every article
-          is scored independently across six axes. The same text always produces the
-          same scores.
-        </p>
-
-        <div ref={dotRef}>
+      {/* ================================================================
+          Scene 1: "Every Article, Six Lenses"
+          Text LEFT, Visualization RIGHT (giant ink stamps)
+          ================================================================ */}
+      <InfographicScene layout="lr">
+        <div className="meth-scene__callout">
+          <h3 className="meth-scene__heading">Every Article, Six Lenses</h3>
+          <p className="meth__body">
+            Most bias tools assign a single score to an entire outlet.
+            The New York Times is &ldquo;Lean Left&rdquo; regardless of the article.
+            void --news rejects that premise. Every article is scored independently
+            across six axes by rule-based NLP. No LLM calls. The same text always
+            produces the same scores.
+          </p>
+        </div>
+        <div className="meth-scene__viz" ref={dotRef}>
           <AxisDotGrid axes={AXES_DATA} scores={activeScores} visible={dotVisible} />
         </div>
-      </MethSection>
+      </InfographicScene>
 
-      {/* ---- Section 2: Live Article Autopsy (compact picker + inline rationale) ---- */}
-      <MethSection index={1}>
-        <h3 className="meth__section-title">Live Article Autopsy</h3>
-        <p className="meth__body">
-          Select an article to see real scores. The dot grid above updates live.
-        </p>
-
-        {/* Compact article picker — tight rows */}
-        <div className="meth-picker" role="listbox" aria-label="Select an article to analyze">
-          {diverseArticles.length > 0 ? (
-            diverseArticles.map((article, i) => {
-              const isActive = selectedIdx === i;
-              const favicon = article.source?.url ? getFaviconUrlMeth(article.source.url) : "";
-              return (
-                <button
-                  key={article.id}
-                  role="option"
-                  aria-selected={isActive}
-                  className={`meth-picker__row${isActive ? " meth-picker__row--active" : ""}`}
-                  onClick={() => handleSelectArticle(i)}
-                >
-                  <span className="meth-picker__icon">
-                    {favicon ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={favicon} alt="" width={16} height={16} loading="lazy" className="meth-picker__favicon" />
-                    ) : (
-                      <span className="meth-picker__fallback">{article.source?.name?.charAt(0) ?? "?"}</span>
-                    )}
-                  </span>
-                  <span className="meth-picker__source">{article.source?.name ?? "Unknown"}</span>
-                  <span className="meth-picker__headline">{article.title}</span>
-                </button>
-              );
-            })
-          ) : (
-            <button
-              role="option"
-              aria-selected={selectedIdx === 0}
-              className={`meth-picker__row${selectedIdx === 0 ? " meth-picker__row--active" : ""}`}
-              onClick={() => handleSelectArticle(0)}
-            >
-              <span className="meth-picker__icon">
-                <span className="meth-picker__fallback">A</span>
-              </span>
-              <span className="meth-picker__source">{WORKED_EXAMPLE.source}</span>
-              <span className="meth-picker__headline">{WORKED_EXAMPLE.headline}</span>
-            </button>
-          )}
+      {/* ================================================================
+          Scene 2: "Live Autopsy"
+          Visualization LEFT (picker + rationale), Text RIGHT
+          ================================================================ */}
+      <InfographicScene layout="rl">
+        <div className="meth-scene__callout">
+          <h3 className="meth-scene__heading">Live Autopsy</h3>
+          <p className="meth__body">
+            Pick any article. Watch the scores populate in real time.
+            Every number traces back to a signal decomposition&mdash;keyword
+            counts, entity sentiments, attribution density. Nothing is a black box.
+          </p>
         </div>
-
-        {/* Rationale — compact 3-col signal grid */}
-        {selectedIdx !== null && activeRationale && (
-          <div className="meth-rationale-grid">
-            {AXES_DATA.filter(a => a.id !== "tracking").map((axis, i) => {
-              const score = activeScores[i];
-              return (
-                <div key={axis.id} className="meth-rationale-card">
-                  <span className="meth-rationale-card__name">{axis.name}</span>
-                  <span className="meth-rationale-card__score">{score ?? "\u2014"}</span>
-                  <RationaleTree axisId={axis.id} rationale={activeRationale} />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </MethSection>
-
-      {/* ---- Section 3: Validation + Sources + Transparency (merged compact) ---- */}
-      <MethSection index={2} className="meth__section--last">
-        <h3 className="meth__section-title">Validation &amp; Sources</h3>
-
-        {/* Editor's Ink Stamps — circular stat marks */}
-        <div className="meth-stats-strip" role="list" aria-label="Validation statistics">
-          <div className="meth-stats-strip__item" role="listitem">
-            <span className="meth-stats-strip__number">42</span>
-            <span className="meth-stats-strip__label">ground truth</span>
-          </div>
-          <div className="meth-stats-strip__item" role="listitem">
-            <span className="meth-stats-strip__number">9</span>
-            <span className="meth-stats-strip__label">categories</span>
-          </div>
-          <div className="meth-stats-strip__item meth-stats-strip__item--hero" role="listitem">
-            <span className="meth-stats-strip__number">100%</span>
-            <span className="meth-stats-strip__label">accuracy</span>
-          </div>
-          <div className="meth-stats-strip__item" role="listitem">
-            <span className="meth-stats-strip__number">r{"\u2009<\u2009"}0.70</span>
-            <span className="meth-stats-strip__label">cross-axis</span>
-          </div>
-        </div>
-
-        {/* Source tiers — compact 3-col grid */}
-        <div className="meth-tier-grid">
-          {tierCounts.map((tier) => (
-            <div key={tier.tier} className="meth-tier-card">
-              <span className="meth-tier-card__count">{tier.count || tier.total}</span>
-              <span className="meth-tier-card__label">{tier.label}</span>
-              <div className="meth-tier-card__favicons">
-                {tier.sources.slice(0, 5).map((s) => {
-                  const fav = s.url ? getFaviconUrlMeth(s.url) : "";
-                  return (
-                    <span key={s.slug} className="meth__source-fav" title={s.name}>
-                      {fav ? (
+        <div className="meth-scene__viz">
+          {/* Article picker */}
+          <div className="meth-picker" role="listbox" aria-label="Select an article to analyze">
+            {diverseArticles.length > 0 ? (
+              diverseArticles.map((article, i) => {
+                const isActive = selectedIdx === i;
+                const favicon = article.source?.url ? getFaviconUrlMeth(article.source.url) : "";
+                return (
+                  <button
+                    key={article.id}
+                    role="option"
+                    aria-selected={isActive}
+                    className={`meth-picker__row${isActive ? " meth-picker__row--active" : ""}`}
+                    onClick={() => handleSelectArticle(i)}
+                  >
+                    <span className="meth-picker__icon">
+                      {favicon ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={fav} alt="" width={14} height={14} loading="lazy" className="meth__source-fav-img" />
+                        <img src={favicon} alt="" width={16} height={16} loading="lazy" className="meth-picker__favicon" />
                       ) : (
-                        <span className="meth__source-fav-letter">{s.name.charAt(0)}</span>
+                        <span className="meth-picker__fallback">{article.source?.name?.charAt(0) ?? "?"}</span>
                       )}
                     </span>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+                    <span className="meth-picker__source">{article.source?.name ?? "Unknown"}</span>
+                    <span className="meth-picker__headline">{article.title}</span>
+                  </button>
+                );
+              })
+            ) : (
+              <button
+                role="option"
+                aria-selected={selectedIdx === 0}
+                className={`meth-picker__row${selectedIdx === 0 ? " meth-picker__row--active" : ""}`}
+                onClick={() => handleSelectArticle(0)}
+              >
+                <span className="meth-picker__icon">
+                  <span className="meth-picker__fallback">A</span>
+                </span>
+                <span className="meth-picker__source">{WORKED_EXAMPLE.source}</span>
+                <span className="meth-picker__headline">{WORKED_EXAMPLE.headline}</span>
+              </button>
+            )}
+          </div>
 
-        <p className="meth__body">
-          480 hand-curated sources across 7 lean zones, L:R ratio <strong>1.50:1</strong>.
-          Every score is deterministic&mdash;same text, same result. Every score includes
-          a structured rationale. If a score looks wrong, the rationale tells you why.
-        </p>
-      </MethSection>
+          {/* Rationale grid */}
+          {selectedIdx !== null && activeRationale && (
+            <div className="meth-rationale-grid">
+              {AXES_DATA.filter(a => a.id !== "tracking").map((axis, i) => {
+                const score = activeScores[i];
+                return (
+                  <div key={axis.id} className="meth-rationale-card">
+                    <span className="meth-rationale-card__name">{axis.name}</span>
+                    <span className="meth-rationale-card__score">{score ?? "\u2014"}</span>
+                    <RationaleTree axisId={axis.id} rationale={activeRationale} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </InfographicScene>
+
+      {/* ================================================================
+          Scene 3: "Validated. Tested. Proven."
+          Text LEFT, Visualization RIGHT (ink stamp numbers)
+          ================================================================ */}
+      <InfographicScene layout="lr">
+        <div className="meth-scene__callout">
+          <h3 className="meth-scene__heading">Validated. Tested. Proven.</h3>
+          <p className="meth__body">
+            42 ground-truth articles across 9 categories. Each scored by the engine,
+            then verified by hand against editorial consensus. A cross-axis correlation
+            gate ensures no two axes are secretly measuring the same thing.
+          </p>
+        </div>
+        <div className="meth-scene__viz">
+          <div className="meth-stats-strip" role="list" aria-label="Validation statistics">
+            <div className="meth-stats-strip__item" role="listitem">
+              <span className="meth-stats-strip__number">42</span>
+              <span className="meth-stats-strip__label">ground truth</span>
+            </div>
+            <div className="meth-stats-strip__item" role="listitem">
+              <span className="meth-stats-strip__number">9</span>
+              <span className="meth-stats-strip__label">categories</span>
+            </div>
+            <div className="meth-stats-strip__item meth-stats-strip__item--hero" role="listitem">
+              <span className="meth-stats-strip__number">100%</span>
+              <span className="meth-stats-strip__label">accuracy</span>
+            </div>
+            <div className="meth-stats-strip__item" role="listitem">
+              <span className="meth-stats-strip__number">r{"\u2009<\u2009"}0.70</span>
+              <span className="meth-stats-strip__label">cross-axis</span>
+            </div>
+          </div>
+        </div>
+      </InfographicScene>
+
+      {/* ================================================================
+          Scene 4: "Hand-Curated." — Full-width grand finale
+          Big number, source favicon river, tier stamps, closing line
+          ================================================================ */}
+      <InfographicScene layout="full">
+        <div className="meth-finale">
+          {/* Hero count — giant ink circle around source number */}
+          <div className="meth-finale__hero">
+            <span className="meth-finale__count">{sources.length || 480}</span>
+            <span className="meth-finale__subtitle">Hand-Curated Sources</span>
+          </div>
+
+          {/* Favicon river — flowing wrap of source logos */}
+          <div className="meth-river" aria-label="Source logos">
+            <div className="meth-river__flow">
+              {riverSources.map((s, i) => {
+                const fav = s.url ? getFaviconUrlMeth(s.url) : "";
+                const yOffset = [0, -2, 1, -1, 2, 0, -2, 1, 2, -1][i % 10];
+                return (
+                  <span
+                    key={s.slug}
+                    className="meth-river__fav"
+                    title={s.name}
+                    style={{ "--river-y": `${yOffset}px`, "--river-delay": `${i * 20}ms` } as React.CSSProperties}
+                  >
+                    {fav ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={fav} alt="" width={18} height={18} loading="lazy" className="meth-river__fav-img" />
+                    ) : (
+                      <span className="meth-river__fav-letter">{s.name.charAt(0)}</span>
+                    )}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Tier stamps among the flow */}
+          <div className="meth-tier-stamps">
+            {tierCounts.map((tier) => (
+              <div key={tier.tier} className="meth-tier-stamp">
+                <span className="meth-tier-stamp__label">{tier.label}</span>
+                <span className="meth-tier-stamp__count">{tier.count || tier.total}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Closing line */}
+          <p className="meth__body meth-finale__closing">
+            7 lean zones. L:R ratio <strong>1.50:1</strong>.
+            Every score is deterministic&mdash;same text, same result.
+            Every score includes a structured rationale.
+            If a score looks wrong, the rationale tells you why.
+          </p>
+        </div>
+      </InfographicScene>
     </section>
   );
 }

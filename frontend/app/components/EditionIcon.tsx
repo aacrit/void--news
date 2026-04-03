@@ -58,7 +58,7 @@ function EuropeIcon({ size }: { size: number }) {
 export default function EditionIcon({ slug, size }: { slug: Edition; size: number }) {
   if (slug === "world") return <Globe size={size} weight="light" aria-hidden="true" />;
   if (slug === "us") return <Flag size={size} weight="light" aria-hidden="true" />;
-  if (slug === "india") return <IndiaIcon size={size} />;
+  if (slug === "south-asia") return <IndiaIcon size={size} />;
   if (slug === "europe") return <EuropeIcon size={size} />;
   return null;
 }
