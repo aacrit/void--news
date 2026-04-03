@@ -149,6 +149,10 @@ _COUNTRY_EDITION_MAP: dict[str, str] = {
     "HR": "europe", "RS": "europe", "GR": "europe", "HU": "europe",
     "EE": "europe", "LV": "europe", "LT": "europe",
     "UA": "europe", "GE": "europe",
+    "TR": "europe", "XK": "europe",  # Turkey (NATO/EU candidate), Kosovo
+    "AL": "europe", "BA": "europe", "ME": "europe", "MK": "europe",  # Western Balkans
+    "SK": "europe", "SI": "europe", "LU": "europe",  # EU members
+    "CY": "europe", "MT": "europe", "MD": "europe",  # EU/candidate states
     # Canada routes to world — no dedicated Canada edition.
     # Previously "CA": "canada" made Canadian stories invisible to all editions.
 }
