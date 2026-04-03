@@ -207,34 +207,6 @@ const STYLES = `
   animation-delay: 600ms;
 }
 
-/* === V2 brand: void circle only, hide beam apparatus === */
-:root[data-brand="v2"] .si-beam--idle,
-:root[data-brand="v2"] .si-beam--loading,
-:root[data-brand="v2"] .si-beam--hover,
-:root[data-brand="v2"] .si-beam--analyzing,
-:root[data-brand="v2"] .si-beam--balanced,
-:root[data-brand="v2"] .si-draw-beam,
-:root[data-brand="v2"] .si-draw-left-tick,
-:root[data-brand="v2"] .si-draw-right-tick,
-:root[data-brand="v2"] .si-draw-post,
-:root[data-brand="v2"] .si-draw-base {
-  display: none;
-}
-
-/* V2: void circle scales up to fill vacated beam space */
-:root[data-brand="v2"] .si-void,
-:root[data-brand="v2"] .si-draw-void {
-  transform: scale(1.15);
-  transform-origin: 16px 13px;
-}
-
-/* V2: hover pulse still works on the enlarged void circle */
-:root[data-brand="v2"] .si-hoverable:hover .si-void {
-  animation: si-void-pulse 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform: scale(1.15);
-  transform-origin: 16px 13px;
-}
-
 /* === Reduced motion === */
 @media (prefers-reduced-motion: reduce) {
   .si-beam--idle,
