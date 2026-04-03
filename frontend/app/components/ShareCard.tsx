@@ -18,9 +18,9 @@ import { leanLabel, leanLabelAbbr, senseLabel, rigorLabel } from "../lib/biasCol
 const LEAN_COLORS: Record<string, string> = {
   "far-left":     "#4A6FA5",
   "left":         "#6B8DB5",
-  "center-left":  "#8FAAB8",
-  "center":       "#9A9590",
-  "center-right": "#C09A8A",
+  "center-left":  "#5E9CAE",
+  "center":       "#3D9B6A",
+  "center-right": "#B08A6A",
   "right":        "#B07060",
   "far-right":    "#964A3A",
 };
