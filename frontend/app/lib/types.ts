@@ -281,8 +281,11 @@ export interface WeeklyCoverStory {
 }
 
 export interface WeeklyTimelineDay {
-  day: string;
-  note: string;
+  day?: string;      // legacy: "Monday"
+  date?: string;     // new: "Mon Mar 31"
+  note?: string;     // legacy
+  event?: string;    // new: concrete event description
+  development?: string;  // legacy from Gemini v1
 }
 
 export interface WeeklyCoverNumber {

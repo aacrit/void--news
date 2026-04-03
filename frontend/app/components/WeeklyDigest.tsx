@@ -184,13 +184,14 @@ function CoverSection({
               )}
             </div>
             {story.timeline && story.timeline.length > 0 && (
-              <div className="wk-timeline" role="list" aria-label="Timeline">
+              <div className="wk-timeline" role="list" aria-label="Key events">
+                <h4 className="wk-timeline__heading">Key Events</h4>
                 <div className="wk-timeline__track" aria-hidden="true" />
-                {story.timeline.map((day, k) => (
+                {story.timeline.map((entry, k) => (
                   <div key={k} className="wk-timeline__node" role="listitem">
                     <span className="wk-timeline__dot" aria-hidden="true" />
-                    <span className="wk-timeline__day">{day.day}</span>
-                    <span className="wk-timeline__note">{day.note}</span>
+                    <span className="wk-timeline__day">{(entry as Record<string, string>).date || (entry as Record<string, string>).day || ""}</span>
+                    <span className="wk-timeline__note">{(entry as Record<string, string>).event || (entry as Record<string, string>).note || (entry as Record<string, string>).development || ""}</span>
                   </div>
                 ))}
               </div>
