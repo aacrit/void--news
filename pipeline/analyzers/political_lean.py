@@ -470,6 +470,60 @@ BASELINE_MAP: dict[str, int] = {
     "varies": 50,
 }
 
+# ---------------------------------------------------------------------------
+# Option A: Quote/attribution context detection for keyword scoring.
+#
+# Keywords inside quotation marks or near attribution verbs are likely
+# REPORTED speech, not the author's own framing. These hits receive 0.5x
+# weight — an outlet's choice to INCLUDE a quote still reflects editorial
+# selection bias, but weaker than direct authorship.
+#
+# Keywords that ONLY appear in quoted/attributed context count as 0.5
+# distinct types for the sigmoid confidence calculation. This is the
+# critical lever: a reporter quoting one partisan phrase should produce
+# lower confidence than the author using it directly.
+# ---------------------------------------------------------------------------
+_ATTRIBUTION_CONTEXT_VERBS: tuple[str, ...] = (
+    "said", "says", "stated", "told", "according to", "announced",
+    "declared", "wrote", "tweeted", "posted", "argued", "claimed",
+    "contended", "testified", "explained", "noted", "added",
+    "responded", "replied", "insisted", "warned",
+)
+
+_QUOTE_PATTERN = re.compile(
+    r'["\u201c](.*?)["\u201d]|[\'\u2018](.*?)[\'\u2019]',
+    re.DOTALL,
+)
+
+
+def _is_in_quote(text_lower: str, match_start: int, match_end: int) -> bool:
+    """Check if a text span falls inside a quoted passage."""
+    for m in _QUOTE_PATTERN.finditer(text_lower):
+        if match_start >= m.start() and match_end <= m.end():
+            return True
+    return False
+
+
+def _is_near_attribution(text_lower: str, match_start: int, radius: int = 120) -> bool:
+    """Check if position is within `radius` chars of an attribution verb."""
+    ctx_start = max(0, match_start - radius)
+    ctx_end = min(len(text_lower), match_start + radius)
+    context = text_lower[ctx_start:ctx_end]
+    return any(verb in context for verb in _ATTRIBUTION_CONTEXT_VERBS)
+
+
+def _context_discount(text_lower: str, match_start: int, match_end: int) -> float:
+    """
+    Return a discount factor for a keyword hit based on its context.
+    1.0 = author's own voice (full weight)
+    0.5 = inside quotes or near attribution verb (half weight)
+    """
+    if _is_in_quote(text_lower, match_start, match_end):
+        return 0.5
+    if _is_near_attribution(text_lower, match_start):
+        return 0.5
+    return 1.0
+
 
 def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     """Compute keyword-based lean score from 0-100. 50 = neutral.
@@ -510,40 +564,57 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     critic from scoring 100 (pure right).
     """
     text_lower = text.lower()
-    left_total = 0
-    right_total = 0
+    left_total = 0.0
+    right_total = 0.0
     left_distinct = 0
     right_distinct = 0
     left_hits: dict[str, float] = {}
     right_hits: dict[str, float] = {}
+    left_has_unquoted: dict[str, bool] = {}
+    right_has_unquoted: dict[str, bool] = {}
 
+    # Quote-aware keyword counting (Option A).
+    # Each keyword hit is checked for quote/attribution context. Hits inside
+    # quotation marks or within 120 chars of an attribution verb receive 0.5x
+    # weight. Keywords that ONLY appear in quoted context count as 0.5 distinct
+    # types for the sigmoid, reducing confidence for reported speech.
     for phrase, weight in LEFT_KEYWORDS.items():
         if " " not in phrase:
-            count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
+            matches = list(re.finditer(r'\b' + re.escape(phrase) + r'\b', text_lower))
         else:
-            count = text_lower.count(phrase)
-        if count > 0:
-            left_total += count * weight
+            matches = list(re.finditer(re.escape(phrase), text_lower))
+        if matches:
+            has_unquoted = False
+            weighted_count = 0.0
+            for m in matches:
+                discount = _context_discount(text_lower, m.start(), m.end())
+                weighted_count += weight * discount
+                if discount == 1.0:
+                    has_unquoted = True
+            left_total += weighted_count
             left_distinct += 1
-            left_hits[phrase] = count * weight
+            left_hits[phrase] = weighted_count
+            left_has_unquoted[phrase] = has_unquoted
 
     for phrase, weight in RIGHT_KEYWORDS.items():
         if " " not in phrase:
-            count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
+            matches = list(re.finditer(r'\b' + re.escape(phrase) + r'\b', text_lower))
         else:
-            count = text_lower.count(phrase)
-        if count > 0:
-            right_total += count * weight
+            matches = list(re.finditer(re.escape(phrase), text_lower))
+        if matches:
+            has_unquoted = False
+            weighted_count = 0.0
+            for m in matches:
+                discount = _context_discount(text_lower, m.start(), m.end())
+                weighted_count += weight * discount
+                if discount == 1.0:
+                    has_unquoted = True
+            right_total += weighted_count
             right_distinct += 1
-            right_hits[phrase] = count * weight
+            right_hits[phrase] = weighted_count
+            right_has_unquoted[phrase] = has_unquoted
 
-    # NOTE: Supplemental "second amendment" regex removed — it double-counts every
-    # phrase-scoped hit already captured by RIGHT_KEYWORDS ("second amendment rights",
-    # "second amendment protection", "second amendment supporters", "second amendment
-    # advocates"). Those phrase-scoped forms handle all legitimate US gun-rights uses.
-    # (nlp-engineer Fix 1)
-
-    # Top keywords by weighted impact (unchanged)
+    # Top keywords by weighted impact
     top_left = sorted(left_hits, key=left_hits.get, reverse=True)[:5]
     top_right = sorted(right_hits, key=right_hits.get, reverse=True)[:5]
 
@@ -555,14 +626,19 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     # Direction: weighted ratio (high-weight terms count more than low-weight fillers)
     right_ratio = right_total / total_weight
 
-    # Confidence: sigmoid on DISTINCT keyword count (k=0.7, x0=4).
-    # Widened from (k=0.9, x0=3) to improve right-tail discrimination:
-    # outlets with 7+ distinct keyword types (Breitbart, Daily Wire, Newsmax,
-    # Sputnik) previously all saturated at 97.  The gentler slope and higher
-    # midpoint preserve sensitivity for short articles while allowing the
-    # sigmoid to differentiate outlets of different partisan intensity.
+    # Effective distinct count: keywords that ONLY appear in quoted/attributed
+    # context count as 0.5 instead of 1.0 for sigmoid confidence.
+    quoted_only_left = sum(1 for v in left_has_unquoted.values() if not v)
+    quoted_only_right = sum(1 for v in right_has_unquoted.values() if not v)
+    effective_distinct = (
+        (left_distinct - quoted_only_left) + quoted_only_left * 0.5
+        + (right_distinct - quoted_only_right) + quoted_only_right * 0.5
+    )
+
+    # Confidence: sigmoid on EFFECTIVE distinct keyword count (k=0.7, x0=4).
     # (bias-audit 2026-04-01 — lean right-side saturation fix)
-    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.7 * (total_distinct - 4.0)))
+    # (contextual-keyword-scoring 2026-04-03 — effective_distinct for quote-awareness)
+    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.7 * (effective_distinct - 4.0)))
 
     score = 50.0 + (right_ratio - 0.5) * sigmoid_weight * 100.0
     return score, top_left, top_right, total_distinct
@@ -657,6 +733,85 @@ def _entity_sentiment_score(text: str, doc=None) -> tuple[float, dict[str, float
     return max(-15.0, min(15.0, shift)), avg_sentiments
 
 
+def _sentence_direction_score(text: str, doc=None) -> float:
+    """
+    Sentence-level directional analysis (Option B).
+
+    Analyzes partisan keywords IN CONTEXT at the sentence level using TextBlob
+    polarity. When an article uses right-coded keywords with NEGATIVE sentiment,
+    the author is likely criticizing the right (left signal), and vice versa.
+
+    Returns a lean shift from -5 to +5:
+        Negative = shift left (author critical of right / sympathetic to left)
+        Positive = shift right (author critical of left / sympathetic to right)
+
+    Conservative range (±5): a gentle contextual nudge, not a dominant signal.
+    Combined with quote-aware discounting (Option A), provides contextual
+    awareness without overriding the proven keyword + source baseline scoring.
+
+    GATE: Only called when the article has keywords from BOTH sides (see
+    analyze_political_lean). When an article only has one side's keywords,
+    the keyword scorer is already correct and sentence direction would
+    misinterpret attack rhetoric's negative polarity.
+    """
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
+
+    left_kw_set = set(LEFT_KEYWORDS.keys())
+    right_kw_set = set(RIGHT_KEYWORDS.keys())
+
+    right_signal = 0.0
+    left_signal = 0.0
+    scored_sentences = 0
+
+    for sent in doc.sents:
+        sent_lower = sent.text.lower()
+        if len(sent_lower.split()) < 5:
+            continue
+
+        has_left_kw = any(
+            (re.search(r'\b' + re.escape(kw) + r'\b', sent_lower) if " " not in kw else kw in sent_lower)
+            for kw in left_kw_set
+        )
+        has_right_kw = any(
+            (re.search(r'\b' + re.escape(kw) + r'\b', sent_lower) if " " not in kw else kw in sent_lower)
+            for kw in right_kw_set
+        )
+
+        if not has_left_kw and not has_right_kw:
+            continue
+        if has_left_kw and has_right_kw:
+            continue  # both sides in one sentence → balanced, skip
+
+        blob = TextBlob(sent.text)
+        polarity = blob.sentiment.polarity
+
+        if has_right_kw:
+            if polarity > 0.1:
+                right_signal += polarity
+            elif polarity < -0.1:
+                left_signal += abs(polarity)
+        elif has_left_kw:
+            if polarity > 0.1:
+                left_signal += polarity
+            elif polarity < -0.1:
+                right_signal += abs(polarity)
+
+        scored_sentences += 1
+
+    if scored_sentences == 0:
+        return 0.0
+
+    total_signal = right_signal + left_signal
+    if total_signal == 0:
+        return 0.0
+
+    net_right_ratio = right_signal / total_signal
+    shift = (net_right_ratio - 0.5) * 10.0
+    return max(-5.0, min(5.0, shift))
+
+
 def _get_source_baseline(source: dict) -> int:
     """Extract numeric baseline from source dict."""
     baseline_str = source.get("political_lean_baseline", "center")
@@ -738,12 +893,15 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
         return {
             "score": source_baseline,
             "rationale": {"keyword_score": 50, "framing_shift": 0, "entity_shift": 0,
+                          "sentence_direction": 0,
                           "source_baseline": source_baseline, "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
                           "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
         }
 
     # 1. Keyword-based score (0-100) + top keywords + distinct keyword count
+    #    Now quote-aware (Option A): keywords in quoted/attributed context
+    #    receive 0.5x weight and 0.5x distinct count.
     kw_score, top_left, top_right, total_distinct = _keyword_score(combined)
 
     # 2. Framing shift (-15 to +15) + phrases found
@@ -752,8 +910,17 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     # 3. Entity sentiment shift (-15 to +15) + sentiments
     entity_shift, entity_sentiments = _entity_sentiment_score(combined, doc=doc)
 
+    # 4. Sentence-level directional scoring (Option B, ±5).
+    # GATE: Only fires when the article has keywords from BOTH sides.
+    # Prevents misinterpretation of one-sided attack rhetoric.
+    has_both_sides = bool(top_left) and bool(top_right)
+    if _wc >= 150 and has_both_sides:
+        sentence_direction = _sentence_direction_score(combined, doc=doc)
+    else:
+        sentence_direction = 0.0
+
     # Combine text-based score
-    text_score = kw_score + framing_shift + entity_shift
+    text_score = kw_score + framing_shift + entity_shift + sentence_direction
     text_score = max(0.0, min(100.0, text_score))
 
     # Fix 11: Sparsity-weighted baseline blending.
@@ -800,6 +967,7 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
             "keyword_score": round(kw_score, 1),
             "framing_shift": round(framing_shift, 1),
             "entity_shift": round(entity_shift, 1),
+            "sentence_direction": round(sentence_direction, 1),
             "source_baseline": source_baseline,
             "top_left_keywords": top_left,
             "top_right_keywords": top_right,

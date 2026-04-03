@@ -283,40 +283,65 @@ def _connotation_score(text: str, doc=None) -> float:
     return min(100.0, avg_abs_polarity * 250.0)
 
 
+# ---------------------------------------------------------------------------
+# Quote/attribution context detection for framing synonym pairs (Option A).
+# Charged synonyms inside reported speech carry less framing signal than the
+# author's own word choice. Discount quoted/attributed hits to 0.5x intensity.
+# ---------------------------------------------------------------------------
+_FRAMING_ATTRIBUTION_VERBS: tuple[str, ...] = (
+    "said", "says", "stated", "told", "according to", "announced",
+    "declared", "wrote", "tweeted", "posted", "argued", "claimed",
+    "testified", "explained", "noted", "added", "responded",
+)
+
+_FRAMING_QUOTE_PATTERN = re.compile(
+    r'["\u201c](.*?)["\u201d]|[\'\u2018](.*?)[\'\u2019]',
+    re.DOTALL,
+)
+
+
+def _framing_context_discount(text_lower: str, match_start: int, match_end: int) -> float:
+    """Return 0.5 if match is inside quotes or near attribution, else 1.0."""
+    for m in _FRAMING_QUOTE_PATTERN.finditer(text_lower):
+        if match_start >= m.start() and match_end <= m.end():
+            return 0.5
+    ctx_start = max(0, match_start - 120)
+    ctx_end = min(len(text_lower), match_start + 120)
+    context = text_lower[ctx_start:ctx_end]
+    if any(verb in context for verb in _FRAMING_ATTRIBUTION_VERBS):
+        return 0.5
+    return 1.0
+
+
 def _keyword_emphasis_score(text: str) -> float:
     """
     Check for emotionally charged synonyms vs neutral alternatives.
     Returns 0-100.
 
-    Uses word-boundary regex for single-word terms to prevent substring
-    false positives: "killed" in "unskilled", "mob" in "mobilize",
-    "riot" in "patriot", "slam" in "Islam", "radical" in "radicalization".
-    Multi-word phrases use str.count() (cannot be substrings by construction).
+    Quote-aware (Option A): charged terms inside quotation marks or near
+    attribution verbs are discounted to 0.5x intensity. The author's word
+    choice carries full framing signal; reported speech carries half.
     """
     text_lower = text.lower()
     word_count = len(text_lower.split())
     if word_count == 0:
         return 0.0
 
-    charged_score = 0
+    charged_score = 0.0
     total_pairs_found = 0
 
     for pat, charged, neutral, intensity in _SYNONYM_PATTERNS:
         if pat is not None:
-            # Single-word: use word-boundary regex to avoid substring matches
-            charged_count = len(pat.findall(text_lower))
+            matches = list(pat.finditer(text_lower))
         else:
-            # Multi-word phrase: substring search is safe
-            charged_count = text_lower.count(charged)
-        if charged_count > 0:
-            charged_score += charged_count * intensity
-            total_pairs_found += charged_count
+            matches = list(re.finditer(re.escape(charged), text_lower))
+        if matches:
+            for m in matches:
+                discount = _framing_context_discount(text_lower, m.start(), m.end())
+                charged_score += intensity * discount
+                total_pairs_found += 1
 
     if total_pairs_found == 0:
-        # Zero floor: articles with no charged synonyms should score 0 on
-        # this sub-signal.  Previous floors (5.0, then 2.0) compressed
-        # neutral articles into the same band as lightly-framed ones.
-        # (bias-audit 2026-04-01 — framing distribution spread)
         return 0.0
 
     # Normalize by article length
