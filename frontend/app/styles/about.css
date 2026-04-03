@@ -1561,13 +1561,13 @@
     transform: none;
   }
 
-  /* Annotations: no drift, no slide, instant appear */
-  .about-annotation,
-  .about-section[data-annotations-visible="true"] .about-annotation {
-    animation: none;
+  /* Annotations: instant appear/disappear, no slide */
+  .about-annotation {
     transition: none;
     transform: none;
-    opacity: 0.45;
+  }
+  .about-annotation--active {
+    opacity: 0.35;
   }
 }
 
@@ -1643,7 +1643,9 @@
   /* Already position: relative from above — annotations position against this */
 }
 
-/* ── Individual annotation ── */
+/* ── Individual annotation ──
+   Sparse cycling: one annotation visible at a time, appears for 3.5s then
+   fades out. Next appears after a gap. Feels like data trickling through. */
 .about-annotation {
   position: absolute;
   font-family: var(--font-data);
@@ -1655,15 +1657,11 @@
   pointer-events: none;
   user-select: none;
 
-  /* Hidden by default — revealed by IO */
+  /* Hidden by default — only --active class reveals */
   opacity: 0;
   transition:
     opacity 0.8s var(--ease-cinematic),
     transform 0.8s var(--ease-cinematic);
-
-  /* Vertical drift idle animation */
-  animation: aboutAnnotationDrift 6s var(--ease-steadicam) infinite;
-  animation-play-state: paused;
 
   /* Hidden below 1200px (not enough shoulder margin) */
   display: none;
@@ -1671,17 +1669,15 @@
 
 /* ── Side positioning ── */
 .about-annotation--left {
-  /* Left shoulder: outside the content column on the left */
   right: calc(50% + 33ch + 48px);
   text-align: right;
-  transform: translateX(-20px);
+  transform: translateX(-12px);
 }
 
 .about-annotation--right {
-  /* Right shoulder: outside the content column on the right */
   left: calc(50% + 33ch + 48px);
   text-align: left;
-  transform: translateX(20px);
+  transform: translateX(12px);
 }
 
 /* ── Vertical placement per annotation index within section ── */
@@ -1689,34 +1685,17 @@
 .about-annotation[data-index="1"] { top: 45%; }
 .about-annotation[data-index="2"] { top: 65%; }
 
-/* ── Visible state (triggered by parent section IO) ── */
-.about-section[data-annotations-visible="true"] .about-annotation {
-  opacity: 0.45;
-  animation-play-state: running;
+/* ── Active state: one annotation at a time, sparse and ephemeral ── */
+.about-annotation--active {
+  opacity: 0.35;
 }
 
-.about-section[data-annotations-visible="true"] .about-annotation--left {
+.about-annotation--active.about-annotation--left {
   transform: translateX(0);
 }
 
-.about-section[data-annotations-visible="true"] .about-annotation--right {
+.about-annotation--active.about-annotation--right {
   transform: translateX(0);
-}
-
-/* ── Stagger delays ── */
-.about-section[data-annotations-visible="true"] .about-annotation[data-index="0"] {
-  transition-delay: 0.3s;
-  animation-delay: 0s;
-}
-
-.about-section[data-annotations-visible="true"] .about-annotation[data-index="1"] {
-  transition-delay: 0.6s;
-  animation-delay: 2s;
-}
-
-.about-section[data-annotations-visible="true"] .about-annotation[data-index="2"] {
-  transition-delay: 0.9s;
-  animation-delay: 4s;
 }
 
 /* ── Lean dot indicator (tiny colored circle before text) ── */
@@ -1737,15 +1716,8 @@
   margin-right: 4px;
 }
 
-/* ── Keyframes: subtle vertical drift ──
-   2px amplitude over 6s — data floating in liquid nitrogen.
-   Asymmetric: rises slowly, settles faster. Kodak film gate weave. */
-@keyframes aboutAnnotationDrift {
-  0%   { transform: translateY(0); }
-  40%  { transform: translateY(-2px); }
-  70%  { transform: translateY(1px); }
-  100% { transform: translateY(0); }
-}
+/* Annotation drift keyframe removed — sparse cycling is the motion now.
+   Annotations appear/disappear one at a time; no persistent idle drift. */
 
 
 /* ══════════════════════════════════════════════════════════════════════════
