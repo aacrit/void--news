@@ -838,7 +838,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   The Presses Are Warming Up
                 </h2>
                 <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
-                  No stories yet for the {editionMeta.label} edition &mdash; the pipeline is still
+                  No stories yet for the {editionMeta.label} edition. The pipeline is still
                   collecting and analyzing {editionMeta.sourceCount}.
                   The next edition will appear shortly.
                 </p>

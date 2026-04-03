@@ -21,7 +21,7 @@ interface Phase {
   headline: string;
   body: string;
   subtitle?: string;
-  visual: "story" | "beam-ring" | "product" | "product-audio" | "verdict";
+  visual: "story" | "beam-ring" | "verdict";
 }
 
 const PHASES: Phase[] = [
@@ -30,36 +30,22 @@ const PHASES: Phase[] = [
     duration: 10000,
     headline: "void --news",
     subtitle: "See through the void.",
-    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. void --news reads 1,013 sources across six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record \u2014 so you don\u2019t have to.",
+    body: "The same event. Five outlets. Five different realities. One calls it a crackdown. Another calls it restoring order. A third buries it on page six. void --news scores every article across six axes, so the framing becomes visible.",
     visual: "story",
   },
   {
     id: "beam-ring",
     duration: 10000,
     headline: "Beam & Ring",
-    subtitle: "Lean and depth at a glance",
-    body: "The beam tilts toward the lean of the coverage. The ring fills as more sources cover the story. Together, they tell you: where does the weight fall, and how many newsrooms have pressure-tested it?",
+    subtitle: "Every story, measured",
+    body: "The beam tilts toward the lean. The ring fills as more sources cover the story. Together: where does the weight fall, and how many newsrooms have pressure-tested it?",
     visual: "beam-ring",
-  },
-  {
-    id: "products",
-    duration: 10000,
-    headline: "Your daily toolkit",
-    body: "Everything in void is a command \u2014 transparent, no mystery behind the curtain.",
-    visual: "product",
-  },
-  {
-    id: "audio",
-    duration: 9000,
-    headline: "Listen, don\u2019t scroll",
-    body: "Two voices. One delivers the facts, the other asks the questions you\u2019d ask. Five host pairs rotate to keep the perspective fresh. Three minutes, no filler \u2014 just the story and why it matters.",
-    visual: "product-audio",
   },
   {
     id: "verdict",
     duration: 10000,
     headline: "Read with clarity",
-    body: "Lean and depth together. A story reported broadly across the spectrum, from many credible sources \u2014 that\u2019s where confidence lives.",
+    body: "Broad coverage from across the spectrum, grounded in named sources. That\u2019s where confidence lives. Thin coverage from one corner? Scrutinize more.",
     visual: "verdict",
   },
 ];
@@ -369,8 +355,6 @@ function PhaseVisual({ visual, active }: { visual: Phase["visual"]; active: bool
   switch (visual) {
     case "story": return <StoryVisual active={active} />;
     case "beam-ring": return <BeamAndRing active={active} />;
-    case "product": return <ProductFamilyVisual active={active} />;
-    case "product-audio": return <AudioProductVisual active={active} />;
     case "verdict": return <VerdictDisplay active={active} />;
   }
 }
@@ -533,7 +517,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
           {/* Text area */}
           {currentPhase && (
             <div key={currentPhase.id} className="intro__text">
-              <span className="intro__chapter">{["I", "II", "III", "IV", "V"][phase]}</span>
+              <span className="intro__chapter">{["I", "II", "III"][phase]}</span>
               <h2 className="intro__headline">{currentPhase.headline}</h2>
               {currentPhase.subtitle && (
                 <p className="intro__subtitle">{currentPhase.subtitle}</p>
@@ -567,9 +551,14 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
               Skip to end
             </button>
           ) : (
-            <button className="intro__btn intro__btn--primary" onClick={handleComplete} autoFocus>
-              Start reading
-            </button>
+            <>
+              <button className="intro__btn intro__btn--primary" onClick={handleComplete} autoFocus>
+                Start reading
+              </button>
+              <a href="/about" className="intro__manifesto-link" onClick={() => dismiss(onComplete)}>
+                Read the manifesto
+              </a>
+            </>
           )}
         </div>
       </div>

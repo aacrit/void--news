@@ -610,7 +610,7 @@ export default function AboutPage() {
               &ldquo;restoring order.&rdquo; A third doesn&rsquo;t cover it at
               all. The headline says one thing; the article says another. The
               source is &ldquo;officials
-              say&rdquo;&thinsp;&mdash;&thinsp;no name, no title, no
+              say.&rdquo; No name, no title, no
               accountability.
             </p>
           </div>
@@ -621,7 +621,7 @@ export default function AboutPage() {
 
           <div className="about-reveal">
             <p className="about-body about-body--stagger">
-              Not the absence of information&thinsp;&mdash;&thinsp;the opposite.
+              Not the absence of information. The opposite.
               A flood of it, shaped by incentive, refracted through ideology,
               optimized for the click that keeps you inside the bubble you
               didn&rsquo;t choose.
@@ -639,7 +639,7 @@ export default function AboutPage() {
             aria-label="Divergence demo: same event, different headlines"
           >
             <p className="about-divergence__event">
-              Same event &mdash; US-China trade negotiations resume
+              Same event: US-China trade negotiations resume
             </p>
             <div className="about-divergence__list" role="list">
               {DIVERGENCE_HEADLINES.map((h) => (
@@ -1022,7 +1022,7 @@ export default function AboutPage() {
             </div>
             <p className="about-ranking__caption">
               11 signals. Zero engagement metrics. The algorithm decides what
-              matters&thinsp;&mdash;&thinsp;not what gets clicked.
+              matters, not what gets clicked.
             </p>
           </div>
         </div>

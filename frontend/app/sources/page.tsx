@@ -606,7 +606,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           <h3 className="meth-scene__heading">Live Autopsy</h3>
           <p className="meth__body">
             Pick any article. Watch the scores populate in real time.
-            Every number traces back to a signal decomposition&mdash;keyword
+            Every number traces back to a signal decomposition: keyword
             counts, entity sentiments, attribution density. Nothing is a black box.
           </p>
         </div>
@@ -757,7 +757,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           {/* Closing line */}
           <p className="meth__body meth-finale__closing">
             7 lean zones. L:R ratio <strong>{lrRatio}:1</strong>.
-            Every score is deterministic&mdash;same text, same result.
+            Every score is deterministic. Same text, same result.
             Every score includes a structured rationale.
             If a score looks wrong, the rationale tells you why.
           </p>
