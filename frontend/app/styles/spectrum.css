@@ -975,17 +975,8 @@
 
 .meth__rule {
   border: none;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    var(--bias-far-left),
-    var(--bias-left) 14%,
-    var(--bias-center-left) 28%,
-    var(--bias-center) 42%,
-    var(--bias-center-right) 57%,
-    var(--bias-right) 71%,
-    var(--bias-far-right)
-  );
+  height: 1px;
+  background: var(--fg-muted);
   margin-bottom: var(--space-4);
   transform-origin: left center;
   transform: scaleX(0);
@@ -1180,9 +1171,9 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  color: var(--fg-primary);
   min-width: 2.5ch;
   text-align: right;
-  transition: color 400ms var(--ease-cinematic);
 }
 
 .meth-eq__label {
@@ -1233,7 +1224,7 @@
   height: 100%;
   width: 0%;
   border-radius: 3px;
-  background: var(--eq-gradient);
+  background: var(--fg-tertiary);
   transition: width 600ms var(--ease-cinematic);
   transition-delay: var(--eq-delay, 0ms);
 }
@@ -1255,6 +1246,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  background-color: var(--fg-secondary);
   border: 2.5px solid var(--bg-card);
   transform: translate(-50%, -50%) scale(0);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
@@ -1546,6 +1538,7 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  color: var(--fg-primary);
 }
 
 .meth-rationale__axis-label {
@@ -1609,9 +1602,9 @@
 }
 
 @keyframes methPracticalWarmth {
-  0%   { box-shadow: 0 0 0 0 var(--cin-practical-glow-near); }
-  40%  { box-shadow: 0 2px 16px var(--cin-practical-glow-near), 0 0 32px var(--cin-practical-glow-far); }
-  100% { box-shadow: 0 1px 8px var(--cin-practical-glow-far); }
+  0%   { box-shadow: none; }
+  40%  { box-shadow: 0 1px 6px color-mix(in srgb, var(--fg-muted) 8%, transparent); }
+  100% { box-shadow: 0 1px 4px color-mix(in srgb, var(--fg-muted) 5%, transparent); }
 }
 
 .meth__example-header {
@@ -1673,6 +1666,7 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  color: var(--fg-primary);
 }
 
 .meth__score-label {
