@@ -44,7 +44,7 @@ const EDITION_COUNTRIES: Record<Edition, string[] | null> = {
   world: null,
   us: ["US"],
   europe: ["GB", "DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH", "SE", "NO", "DK", "FI", "IE", "PL", "PT", "GR", "CZ", "RO", "HU"],
-  india: ["IN"],
+  "south-asia": ["IN"],
 };
 
 const LEAN_FILTERS: LeanFilter[] = ["Left", "Center", "Right"];

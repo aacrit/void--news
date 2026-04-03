@@ -1082,17 +1082,17 @@
 }
 
 /* ==========================================================================
-   Section 1: "Ink Stamp" Axis Cards — flowing wrap layout
-   Organic hand-drawn ink circle backgrounds, editorial italic names,
-   arc-arranged dot scales. Click to expand shared detail panel.
+   Scene 1: Giant Ink Stamp Axis Cards — 3x2 organic cluster
+   Large ink circles (160x140px) with centered SVG glyphs (40px).
+   Rack-focus: when one is active, siblings dim + blur.
    ========================================================================== */
 
 .meth-dot-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-3);
   justify-content: center;
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
 }
 
 .meth-dot {
@@ -1101,67 +1101,95 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5) var(--space-6);
   background: none;
   border: none;
   cursor: pointer;
   text-align: center;
-  min-width: 120px;
-  min-height: 44px;
+  min-width: 160px;
+  min-height: 140px;
   opacity: 0;
   transform: translateY(4px);
-  transition: transform 150ms var(--ease-out);
+  transition:
+    transform 200ms var(--spring-snappy),
+    opacity 300ms var(--ease-rack),
+    filter 300ms var(--ease-rack);
 }
 
-/* Ink circle background — hand-drawn SVG via pseudo-element */
+/* Ink circle background — large, thicker stroke (2px) */
 .meth-dot::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%2352504A' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%2352504A' stroke-width='2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), filter 200ms var(--ease-out);
   pointer-events: none;
 }
 
-/* Dark mode ink circle */
 :root[data-mode="dark"] .meth-dot::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%239CA3AF' stroke-width='1.2' fill='none' opacity='0.25'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%239CA3AF' stroke-width='2' fill='none' opacity='0.25'/%3E%3C/svg%3E");
 }
 
-/* Rotation variants for visual variety — each card gets a slightly different ink circle angle */
+/* Organic rotation variants */
+.meth-dot:nth-child(1)::before { transform: rotate(-1deg); }
 .meth-dot:nth-child(2)::before { transform: rotate(3deg) scaleX(-1); }
 .meth-dot:nth-child(3)::before { transform: rotate(-2deg); }
 .meth-dot:nth-child(4)::before { transform: rotate(4deg) scaleY(-1); }
 .meth-dot:nth-child(5)::before { transform: rotate(-3deg) scaleX(-1); }
 .meth-dot:nth-child(6)::before { transform: rotate(2deg) scaleX(-1) scaleY(-1); }
 
+/* Staggered entrance */
 .meth-dot--visible {
-  animation: methDotIn 250ms var(--ease-cinematic) var(--dot-delay, 0ms) both;
+  animation: methDotIn 300ms var(--ease-cinematic) var(--dot-delay, 0ms) both;
 }
 
 @keyframes methDotIn {
-  from { opacity: 0; transform: translateY(8px) rotate(-1deg); }
+  from { opacity: 0; transform: translateY(12px) rotate(-1deg); }
   to   { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+/* Hover: lift + warm glow */
+.meth-dot:hover {
+  transform: translateY(-4px) scale(1.03);
 }
 
 .meth-dot:hover::before {
   opacity: 1;
-  filter: drop-shadow(0 0 6px var(--accent-warm));
+  filter: drop-shadow(0 0 8px var(--accent-warm));
 }
 
-.meth-dot:hover {
+/* Click feedback: stamp-down spring */
+.meth-dot:active {
+  transform: scale(0.92);
+  transition-duration: 80ms;
+}
+
+/* Active state: warm accent stroke */
+.meth-dot--active {
   transform: translateY(-2px);
 }
 
 .meth-dot--active::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%23946B15' stroke-width='1.8' fill='none' opacity='0.7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%23946B15' stroke-width='2.5' fill='none' opacity='0.8'/%3E%3C/svg%3E");
+  animation: methStampGlow 2s ease-in-out infinite alternate;
 }
 
 :root[data-mode="dark"] .meth-dot--active::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%23AD7E1E' stroke-width='1.8' fill='none' opacity='0.7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%23AD7E1E' stroke-width='2.5' fill='none' opacity='0.8'/%3E%3C/svg%3E");
+}
+
+@keyframes methStampGlow {
+  from { filter: drop-shadow(0 0 4px var(--cin-amber-ghost)); }
+  to   { filter: drop-shadow(0 0 10px var(--cin-amber-glow)); }
+}
+
+/* ---- Rack Focus: when one stamp is active, dim siblings ---- */
+.meth-dot-grid--has-active .meth-dot:not(.meth-dot--active) {
+  opacity: 0.5;
+  filter: blur(0.5px);
 }
 
 .meth-dot:focus-visible {
@@ -1170,13 +1198,32 @@
   border-radius: 50%;
 }
 
-/* ---- Ink Stamp card content ---- */
+/* ---- Glyph wrapper (centered in stamp) ---- */
+.meth-dot__glyph-wrap {
+  position: relative;
+  z-index: 1;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-1);
+  transition: color 200ms var(--ease-out);
+}
 
+.meth-dot:hover .meth-dot__glyph-wrap,
+.meth-dot--active .meth-dot__glyph-wrap {
+  color: var(--fg-primary);
+}
+
+.meth-dot__glyph {
+  display: block;
+}
+
+/* ---- Stamp card content ---- */
 .meth-dot__name {
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-style: italic;
-  font-weight: 400;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--fg-secondary);
   line-height: 1.2;
   position: relative;
@@ -1185,21 +1232,21 @@
 
 .meth-dot__dots {
   display: inline-flex;
-  gap: 4px;
+  gap: 5px;
   position: relative;
   z-index: 1;
-  /* Slight arc via transform on individual pips */
+  margin-top: var(--space-1);
 }
 
 .meth-dot__pip {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: var(--border-subtle);
   transition: background-color 300ms var(--ease-out), transform 300ms var(--ease-out);
 }
 
-/* Arc arrangement: pips curve slightly upward in the center */
+/* Arc arrangement */
 .meth-dot__pip:nth-child(1) { transform: translateY(2px); }
 .meth-dot__pip:nth-child(2) { transform: translateY(1px); }
 .meth-dot__pip:nth-child(3) { transform: translateY(0px); }
@@ -1210,23 +1257,28 @@
   background-color: var(--fg-secondary);
 }
 
+.meth-dot--active .meth-dot__pip--filled {
+  background-color: var(--accent-warm);
+}
+
 .meth-dot__label {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-muted);
   position: relative;
   z-index: 1;
+  margin-top: 2px;
 }
 
-/* ---- Shared detail panel below grid — ink annotation style ---- */
+/* ---- Shared detail panel below stamps ---- */
 
 .meth-dot-detail {
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 300ms var(--ease-cinematic),
-    opacity 200ms var(--ease-cinematic);
+    grid-template-rows 400ms var(--ease-rack),
+    opacity 300ms var(--ease-rack);
   overflow: hidden;
 }
 
@@ -1239,13 +1291,12 @@
 .meth-dot-detail__inner {
   min-height: 0;
   padding: var(--space-4) 0 var(--space-2);
-  /* Hand-drawn annotation bracket as left border — ink SVG */
   border-left: none;
   padding-left: var(--space-5);
   position: relative;
 }
 
-/* Ink bracket left border — hand-drawn wavy line */
+/* Ink bracket left border */
 .meth-dot-detail__inner::before {
   content: "";
   position: absolute;
@@ -1272,7 +1323,7 @@
 .meth-dot-detail__name {
   font-family: var(--font-editorial);
   font-size: var(--text-base);
-  font-style: italic;
+  font-style: normal;
   font-weight: 700;
   color: var(--fg-primary);
 }
@@ -1292,10 +1343,11 @@
   color: var(--fg-tertiary);
 }
 
-/* Reuse existing axis signal/file styles */
+/* Axis signal list */
 .meth-axis__what {
   font-family: var(--font-structural);
   font-size: var(--text-base);
+  font-style: normal;
   line-height: 1.6;
   color: var(--fg-secondary);
   text-align: justify;
@@ -1303,11 +1355,6 @@
   hyphens: auto;
   max-width: 65ch;
   margin: 0 0 var(--space-3) 0;
-}
-
-.meth-axis__what--italic {
-  font-family: var(--font-editorial);
-  font-style: italic;
 }
 
 .meth-axis__signals {
@@ -1322,6 +1369,7 @@
 .meth-axis__signal {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
+  font-style: normal;
   line-height: 1.5;
   color: var(--fg-tertiary);
   padding-left: var(--space-4);
@@ -1335,28 +1383,15 @@
   color: var(--fg-muted);
 }
 
-.meth-axis__file {
-  margin: 0;
-}
-
-.meth-axis__file code {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  letter-spacing: 0.02em;
-  overflow-wrap: break-word;
-  word-break: break-all;
-}
-
 /* ==========================================================================
-   Section 2: Article Picker
+   Scene 2: Article Picker
    ========================================================================== */
 
 .meth-picker {
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin: var(--space-3) 0 var(--space-4);
+  margin: 0 0 var(--space-4);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -1461,7 +1496,7 @@
 }
 
 /* ==========================================================================
-   Section 2b: Compact Rationale Grid — 3-col signal cards
+   Scene 2b: Compact Rationale Grid — 3-col signal cards
    ========================================================================== */
 
 .meth-rationale-grid {
@@ -1545,17 +1580,17 @@
 }
 
 /* ==========================================================================
-   Section 3: Compact Stats Strip + Tier Grid (merged validation + sources)
+   Scene 3: Validation Stats — large ink stamp numbers
+   100px circles in a loose cluster with rotation variety.
+   100% hero stamp pulses with warm accent glow.
    ========================================================================== */
 
-/* "Editor's Ink Stamps" — circular stamp marks with slight random rotations */
 .meth-stats-strip {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-5);
   justify-content: center;
-  margin: var(--space-4) 0 var(--space-5);
   padding: var(--space-4) 0;
 }
 
@@ -1564,139 +1599,167 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   justify-content: center;
-  border: 2px dashed var(--fg-muted);
-  border-radius: 50%;
-  opacity: 0.7;
-  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+  position: relative;
+  transition: transform 200ms var(--spring-snappy);
+}
+
+/* Ink circle around each stat — dashed, hand-drawn feel */
+.meth-stats-strip__item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%2352504A' stroke-width='2' fill='none' opacity='0.35' stroke-dasharray='6 4'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
+
+:root[data-mode="dark"] .meth-stats-strip__item::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%239CA3AF' stroke-width='2' fill='none' opacity='0.25' stroke-dasharray='6 4'/%3E%3C/svg%3E");
 }
 
 .meth-stats-strip__item:hover {
-  opacity: 1;
+  transform: translateY(-3px) scale(1.04);
 }
 
-/* Hand-placed rotations */
-.meth-stats-strip__item:nth-child(1) { transform: rotate(-2deg); }
-.meth-stats-strip__item:nth-child(3) { transform: rotate(1.5deg); }
-.meth-stats-strip__item:nth-child(5) { transform: rotate(-1deg); }
-.meth-stats-strip__item:nth-child(7) { transform: rotate(2deg); }
+/* Hand-placed rotations — like physically stamped */
+.meth-stats-strip__item:nth-child(1) { transform: rotate(-3deg); }
+.meth-stats-strip__item:nth-child(2) { transform: rotate(2deg); }
+.meth-stats-strip__item:nth-child(3) { transform: rotate(-1deg); }
+.meth-stats-strip__item:nth-child(4) { transform: rotate(3deg); }
 
-/* The hero stat — 100% accuracy — gets accent warm border */
-.meth-stats-strip__item--hero {
-  border-color: var(--accent-warm);
-  opacity: 1;
+/* Hero stat — 100% accuracy — accent warm stroke + glow pulse */
+.meth-stats-strip__item--hero::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23946B15' stroke-width='2.5' fill='none' opacity='0.7' stroke-dasharray='6 4'/%3E%3C/svg%3E");
+  animation: methHeroPulse 2s ease-in-out infinite alternate;
+}
+
+:root[data-mode="dark"] .meth-stats-strip__item--hero::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23AD7E1E' stroke-width='2.5' fill='none' opacity='0.7' stroke-dasharray='6 4'/%3E%3C/svg%3E");
+}
+
+@keyframes methHeroPulse {
+  from { filter: drop-shadow(0 0 2px var(--cin-amber-ghost)); }
+  to   { filter: drop-shadow(0 0 10px var(--cin-amber-glow)); }
 }
 
 .meth-stats-strip__number {
   font-family: var(--font-data);
-  font-size: var(--text-base);
+  font-size: var(--text-xl, 1.5rem);
   font-weight: 700;
   color: var(--fg-primary);
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .meth-stats-strip__item--hero .meth-stats-strip__number {
   color: var(--accent-warm);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
 }
 
 .meth-stats-strip__label {
   font-family: var(--font-meta);
-  font-size: clamp(0.55rem, 1.2vw, 0.65rem);
+  font-size: clamp(0.6rem, 1.3vw, 0.7rem);
   font-weight: 500;
+  font-style: normal;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--fg-muted);
   text-align: center;
   line-height: 1.1;
-  max-width: 60px;
+  max-width: 70px;
+  position: relative;
+  z-index: 1;
 }
 
-.meth-stats-strip__sep {
-  display: none;
-}
+/* ==========================================================================
+   Scene 4: Grand Finale — source count hero + favicon river + tier stamps
+   ========================================================================== */
 
-/* "Ink Tally" Cards — loose wrap layout with hand-drawn underlines */
-.meth-tier-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  justify-content: center;
-  margin-bottom: var(--space-4);
-}
-
-.meth-tier-card {
+.meth-finale {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-4) var(--space-5);
-  min-width: 120px;
-  flex: 1;
-  max-width: 200px;
+  gap: var(--space-5);
 }
 
-.meth-tier-card:last-child {
-  /* no special treatment needed — no borders to remove */
+/* Hero count — giant ink circle */
+.meth-finale__hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6);
 }
 
-.meth-tier-card__count {
+.meth-finale__hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%2352504A' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
+
+:root[data-mode="dark"] .meth-finale__hero::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6' stroke='%239CA3AF' stroke-width='2' fill='none' opacity='0.22'/%3E%3C/svg%3E");
+}
+
+.meth-finale__count {
   font-family: var(--font-data);
-  font-size: var(--text-xl, 1.5rem);
-  font-weight: 600;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
   color: var(--fg-primary);
   font-variant-numeric: tabular-nums;
   line-height: 1;
   position: relative;
-  padding-bottom: var(--space-2);
+  z-index: 1;
 }
 
-/* Ink underline — wavy hand-drawn SVG beneath the count number */
-.meth-tier-card__count::after {
-  content: "";
-  position: absolute;
-  left: -8px;
-  right: -8px;
-  bottom: 0;
-  height: 6px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C10 0 20 6 30 3 C40 0 50 6 60 3 C70 0 80 6 80 3' stroke='%2352504A' stroke-width='1.2' fill='none' opacity='0.4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-:root[data-mode="dark"] .meth-tier-card__count::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C10 0 20 6 30 3 C40 0 50 6 60 3 C70 0 80 6 80 3' stroke='%239CA3AF' stroke-width='1.2' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-
-.meth-tier-card__label {
+.meth-finale__subtitle {
   font-family: var(--font-meta);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 600;
-  letter-spacing: 0.04em;
+  font-style: normal;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--fg-tertiary);
-  margin-top: var(--space-1);
+  position: relative;
+  z-index: 1;
 }
 
-.meth-tier-card__favicons {
+/* ---- Favicon River ---- */
+.meth-river {
+  width: 100%;
+  overflow: hidden;
+  padding: var(--space-3) 0;
+}
+
+.meth-river__flow {
   display: flex;
-  gap: 4px;
-  margin-top: var(--space-2);
-  /* Slight arc arrangement via individual transforms */
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  animation: methRiverSway 3s ease-in-out infinite alternate;
 }
 
-.meth-tier-card__favicons .meth__source-fav:nth-child(1) { transform: translateY(2px); }
-.meth-tier-card__favicons .meth__source-fav:nth-child(2) { transform: translateY(0px); }
-.meth-tier-card__favicons .meth__source-fav:nth-child(3) { transform: translateY(-1px); }
-.meth-tier-card__favicons .meth__source-fav:nth-child(4) { transform: translateY(0px); }
-.meth-tier-card__favicons .meth__source-fav:nth-child(5) { transform: translateY(2px); }
+@keyframes methRiverSway {
+  from { transform: translateX(-2px); }
+  to   { transform: translateX(2px); }
+}
 
-/* Favicon circles — shared between tier grid and old contexts */
-.meth__source-fav {
-  width: 20px;
-  height: 20px;
+.meth-river__fav {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background-color: var(--bg-card);
   border: 1.5px solid var(--border-subtle);
@@ -1705,16 +1768,31 @@
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+  transform: translateY(var(--river-y, 0px));
+  opacity: 0;
+  animation: methRiverFavIn 300ms var(--ease-cinematic) var(--river-delay, 0ms) both;
+  transition: transform 200ms var(--spring-snappy), border-color 200ms var(--ease-out);
 }
 
-.meth__source-fav-img {
-  width: 12px;
-  height: 12px;
+.meth-river__fav:hover {
+  transform: translateY(var(--river-y, 0px)) scale(1.2);
+  border-color: var(--accent-warm);
+  z-index: 1;
+}
+
+@keyframes methRiverFavIn {
+  from { opacity: 0; transform: translateY(calc(var(--river-y, 0px) + 6px)) scale(0.8); }
+  to   { opacity: 0.75; transform: translateY(var(--river-y, 0px)) scale(1); }
+}
+
+.meth-river__fav-img {
+  width: 16px;
+  height: 16px;
   object-fit: contain;
   border-radius: 1px;
 }
 
-.meth__source-fav-letter {
+.meth-river__fav-letter {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
   font-weight: 700;
@@ -1722,7 +1800,74 @@
   text-transform: uppercase;
 }
 
-/* (Source meta and open-source sections removed — merged into compact grid) */
+/* ---- Tier Stamps (among the river) ---- */
+.meth-tier-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  justify-content: center;
+}
+
+.meth-tier-stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+  padding: var(--space-3) var(--space-5);
+}
+
+/* Ink circle around tier stamps */
+.meth-tier-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'%3E%3Cellipse cx='60' cy='40' rx='55' ry='35' stroke='%2352504A' stroke-width='1.8' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
+
+:root[data-mode="dark"] .meth-tier-stamp::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'%3E%3Cellipse cx='60' cy='40' rx='55' ry='35' stroke='%239CA3AF' stroke-width='1.8' fill='none' opacity='0.22'/%3E%3C/svg%3E");
+}
+
+/* Slight rotation variety */
+.meth-tier-stamp:nth-child(1) { transform: rotate(-1deg); }
+.meth-tier-stamp:nth-child(2) { transform: rotate(1.5deg); }
+.meth-tier-stamp:nth-child(3) { transform: rotate(-0.5deg); }
+
+.meth-tier-stamp__label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  position: relative;
+  z-index: 1;
+}
+
+.meth-tier-stamp__count {
+  font-family: var(--font-data);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Closing line */
+.meth-finale__closing {
+  max-width: 60ch;
+  text-align: center;
+  text-align-last: center;
+  margin-top: var(--space-2);
+}
 
 /* ==========================================================================
    Methodology — Desktop (768px+)
@@ -1746,16 +1891,32 @@
   .meth-picker__source {
     max-width: 16ch;
   }
+
+  .meth-dot {
+    min-width: 160px;
+    min-height: 140px;
+  }
 }
 
 /* ==========================================================================
    Methodology — Mobile (< 768px)
+   Single-column stack. Scenes become vertical.
    ========================================================================== */
 
 @media (max-width: 767px) {
-  .meth {
+  .meth-infographic {
     margin-top: var(--space-4);
     padding-top: var(--space-3);
+  }
+
+  /* All scenes stack vertically */
+  .meth-scene {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .meth-scene--rl {
+    direction: ltr;
   }
 
   .meth__body,
@@ -1763,21 +1924,28 @@
     text-align: left;
   }
 
-  .meth__section-title {
-    font-size: var(--text-base);
+  .meth-scene__heading {
+    font-size: var(--text-lg);
   }
 
-  /* Ink stamp grid: tighter on mobile, 2-col min */
+  /* Ink stamps: tighter, 2-col grid on mobile */
   .meth-dot-grid {
     gap: var(--space-2);
   }
 
   .meth-dot {
     min-width: calc(50% - var(--space-2));
+    min-height: 110px;
     padding: var(--space-3) var(--space-3);
   }
 
+  .meth-dot__glyph {
+    width: 28px;
+    height: 28px;
+  }
+
   /* Disable rotation transforms on mobile */
+  .meth-dot:nth-child(1)::before,
   .meth-dot:nth-child(2)::before,
   .meth-dot:nth-child(3)::before,
   .meth-dot:nth-child(4)::before,
@@ -1815,35 +1983,56 @@
     border-bottom: none;
   }
 
-  /* Tier cards: tighter on mobile */
-  .meth-tier-grid {
-    gap: var(--space-2);
-  }
-
-  .meth-tier-card {
-    min-width: 100px;
-    padding: var(--space-3) var(--space-3);
-  }
-
-  .meth-tier-card__count {
-    font-size: var(--text-lg);
-  }
-
   /* Stats stamps: smaller on mobile */
   .meth-stats-strip {
     gap: var(--space-3);
   }
 
   .meth-stats-strip__item {
-    width: 68px;
-    height: 68px;
+    width: 76px;
+    height: 76px;
   }
 
   .meth-stats-strip__item:nth-child(1),
+  .meth-stats-strip__item:nth-child(2),
   .meth-stats-strip__item:nth-child(3),
-  .meth-stats-strip__item:nth-child(5),
-  .meth-stats-strip__item:nth-child(7) {
+  .meth-stats-strip__item:nth-child(4) {
     transform: none;
+  }
+
+  /* Tier stamps: tighter */
+  .meth-tier-stamps {
+    gap: var(--space-3);
+  }
+
+  .meth-tier-stamp {
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .meth-tier-stamp:nth-child(1),
+  .meth-tier-stamp:nth-child(2),
+  .meth-tier-stamp:nth-child(3) {
+    transform: none;
+  }
+
+  /* River favicons: smaller on mobile */
+  .meth-river__fav {
+    width: 24px;
+    height: 24px;
+  }
+
+  .meth-river__fav-img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .meth-finale__count {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+
+  .meth-finale__closing {
+    text-align: left;
+    text-align-last: left;
   }
 }
 
@@ -1852,29 +2041,30 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .meth__section {
+  /* Scene entrance: instant */
+  .meth-scene__callout,
+  .meth-scene__viz {
     opacity: 1;
     transform: none;
   }
 
-  .meth__section--visible {
+  .meth-scene--visible .meth-scene__callout,
+  .meth-scene--visible .meth-scene__viz {
     animation: none;
   }
 
-  .meth__rule {
-    transform: none;
-  }
-
-  .meth__rule--visible {
-    animation: none;
-  }
-
+  /* Stamps: no motion */
   .meth-dot {
     opacity: 1;
     transform: none;
+    transition: none;
   }
 
   .meth-dot:hover {
+    transform: none;
+  }
+
+  .meth-dot:active {
     transform: none;
   }
 
@@ -1882,7 +2072,12 @@
     animation: none;
   }
 
-  /* No ink circle rotations in reduced motion */
+  .meth-dot--active::before {
+    animation: none;
+  }
+
+  /* No ink circle rotations */
+  .meth-dot:nth-child(1)::before,
   .meth-dot:nth-child(2)::before,
   .meth-dot:nth-child(3)::before,
   .meth-dot:nth-child(4)::before,
@@ -1906,11 +2101,11 @@
     transform: none;
   }
 
-  /* No stamp rotations in reduced motion */
+  /* No stamp rotations */
   .meth-stats-strip__item:nth-child(1),
+  .meth-stats-strip__item:nth-child(2),
   .meth-stats-strip__item:nth-child(3),
-  .meth-stats-strip__item:nth-child(5),
-  .meth-stats-strip__item:nth-child(7) {
+  .meth-stats-strip__item:nth-child(4) {
     transform: none;
   }
 
@@ -1918,4 +2113,25 @@
     transition: none;
   }
 
+  /* No hero pulse */
+  .meth-stats-strip__item--hero::before {
+    animation: none;
+  }
+
+  /* No river sway */
+  .meth-river__flow {
+    animation: none;
+  }
+
+  .meth-river__fav {
+    animation: none;
+    opacity: 0.75;
+  }
+
+  /* No tier stamp rotations */
+  .meth-tier-stamp:nth-child(1),
+  .meth-tier-stamp:nth-child(2),
+  .meth-tier-stamp:nth-child(3) {
+    transform: none;
+  }
 }
