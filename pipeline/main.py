@@ -149,7 +149,8 @@ _COUNTRY_EDITION_MAP: dict[str, str] = {
     "HR": "europe", "RS": "europe", "GR": "europe", "HU": "europe",
     "EE": "europe", "LV": "europe", "LT": "europe",
     "UA": "europe", "GE": "europe",
-    "CA": "canada",
+    # Canada routes to world — no dedicated Canada edition.
+    # Previously "CA": "canada" made Canadian stories invisible to all editions.
 }
 
 
