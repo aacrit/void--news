@@ -79,9 +79,9 @@ export function coverageLabel(v: number): string {
 const SSR_FALLBACK: Record<string, string> = {
   "--bias-far-left": "#1D4ED8",
   "--bias-left": "#3B82F6",
-  "--bias-center-left": "#93C5FD",
-  "--bias-center": "#9CA3AF",
-  "--bias-center-right": "#FCA5A5",
+  "--bias-center-left": "#60A5C8",
+  "--bias-center": "#16A34A",
+  "--bias-center-right": "#C87F5A",
   "--bias-right": "#EF4444",
   "--bias-far-right": "#B91C1C",
   "--sense-low": "#22C55E",

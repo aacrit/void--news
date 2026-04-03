@@ -19,7 +19,7 @@ interface OpinionCardProps {
 
 function leanBorderColor(lean: number): string {
   if (lean <= 40) return "var(--bias-left, #3B82F6)";
-  if (lean <= 60) return "var(--bias-center, #9CA3AF)";
+  if (lean <= 60) return "var(--bias-center, #16A34A)";
   return "var(--bias-right, #EF4444)";
 }
 

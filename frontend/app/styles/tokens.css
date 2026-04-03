@@ -472,9 +472,9 @@
      Pulled toward muted slate-blues and dusty reds. */
   --bias-far-left:     #4A6FA5;  /* muted steel blue */
   --bias-left:         #6B8DB5;  /* dusty blue */
-  --bias-center-left:  #8FAAB8;  /* faded blue-gray */
-  --bias-center:       #9A9590;  /* warm gray — ~4.5:1 on #2A2725, WCAG AA compliant */
-  --bias-center-right: #C09A8A;  /* dusty salmon */
+  --bias-center-left:  #5E9CAE;  /* muted teal — blue→green transition */
+  --bias-center:       #3D9B6A;  /* muted sage green — visible on walnut */
+  --bias-center-right: #B08A6A;  /* dusty olive — green→red transition */
   --bias-right:        #B07060;  /* muted terracotta */
   --bias-far-right:    #964A3A;  /* deep brick */
   --type-reporting:    #6B8DB5;
@@ -612,14 +612,14 @@
    Consistent across light/dark. Colors earned through data, not decoration.
    -------------------------------------------------------------------------- */
 :root {
-  /* Political Lean Spectrum — blue → light gray ← red
-     Deep at extremes, fading to neutral gray at center.
-     No orange on right side — pure red shading throughout. */
+  /* Political Lean Spectrum — blue → green ← red
+     Deep at extremes, green at center for traffic-light clarity.
+     Transitions: blue → teal → green → warm olive → red. */
   --bias-far-left:     #1D4ED8;  /* deep blue */
   --bias-left:         #3B82F6;  /* blue */
-  --bias-center-left:  #93C5FD;  /* light blue */
-  --bias-center:       #9CA3AF;  /* medium gray — neutral, visible on cream */
-  --bias-center-right: #FCA5A5;  /* light red / salmon */
+  --bias-center-left:  #60A5C8;  /* teal — blue→green transition */
+  --bias-center:       #16A34A;  /* green — balanced, prominent */
+  --bias-center-right: #C87F5A;  /* warm olive — green→red transition */
   --bias-right:        #EF4444;  /* red */
   --bias-far-right:    #B91C1C;  /* deep red */
 
