@@ -774,7 +774,7 @@
 .lead-story__summary {
   font-family: var(--font-structural);
   font-size: var(--text-base);
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--fg-secondary);
   margin-bottom: var(--space-4);
   display: -webkit-box;
@@ -4368,6 +4368,11 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 .dd-tab:hover {
   color: var(--fg-secondary);
+}
+
+.dd-tab:active {
+  transform: scale(0.96);
+  transition: transform 60ms var(--ease-out);
 }
 
 .dd-tab--active {
