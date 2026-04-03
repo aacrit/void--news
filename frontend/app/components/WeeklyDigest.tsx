@@ -621,7 +621,7 @@ function CoverStoryCard({
             <>
               <div className={`wk-cover__body-wrap${isFirst ? " wk-cold-open--body" : ""}`}>
                 <div className="wk-cover__text">
-                  {story.text.split("\n\n").map((para, j) => (
+                  {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
                     <p key={j}>{para}</p>
                   ))}
                 </div>
@@ -689,7 +689,7 @@ function CoverSection({
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   const [expanded, setExpanded] = useState(false);
   const previewText = op.text.slice(0, 120).replace(/\s+\S*$/, "");
-  const needsTruncation = op.text.length > 140;
+  const needsTruncation = (op.text || "").length > 140;
 
   return (
     <article className="wk-opinion wk-reveal-child">
@@ -707,7 +707,7 @@ function OpinionCard({ op }: { op: WeeklyOpinion }) {
       <h3 className="wk-opinion__headline">{op.headline}</h3>
       <div className={`wk-opinion__text${!expanded && needsTruncation ? " wk-opinion__text--clamped" : ""}`}>
         {expanded ? (
-          op.text.split("\n\n").map((para, j) => (
+          (op.text || "").split("\n\n").filter(Boolean).map((para, j) => (
             <p key={j}>{para}</p>
           ))
         ) : (
@@ -899,7 +899,7 @@ function BiasReport({
 
       {text && (
         <div className="wk-bias__text">
-          {text.split("\n\n").map((para, i) => (
+          {(text || "").split("\n\n").filter(Boolean).map((para, i) => (
             <p key={i}>{para}</p>
           ))}
         </div>
