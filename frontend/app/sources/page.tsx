@@ -180,7 +180,7 @@ const WORKED_EXAMPLE = {
    --------------------------------------------------------------------------- */
 
 function AxisGlyph({ id }: { id: string }) {
-  const props = { width: 20, height: 20, viewBox: "0 0 20 20", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true as const, className: "meth-eq__glyph" };
+  const props = { width: 20, height: 20, viewBox: "0 0 20 20", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true as const, className: "meth-dot-detail__glyph" };
 
   switch (id) {
     case "lean":
@@ -218,7 +218,7 @@ function getAxisLabel(id: string, score: number | null): string {
     case "opinion": return score <= 25 ? "Reporting" : score <= 50 ? "Analysis" : score <= 75 ? "Opinion" : "Editorial";
     case "rigor": return rigorLabel(score);
     case "framing": return score <= 25 ? "Neutral" : score <= 50 ? "Moderate" : score <= 75 ? "Noticeable" : "Heavy";
-    case "tracking": return "EMA";
+    case "tracking": return "\u2014";
     default: return "";
   }
 }
@@ -226,105 +226,80 @@ function getAxisLabel(id: string, score: number | null): string {
 
 
 /* ---------------------------------------------------------------------------
-   EqualizerRow — single axis bar meter with accordion
+   AxisDotGrid — compact 3-col dot-scale grid (replaces full-width equalizer)
+   Same 5-dot scale as the Sigil popup. Click a card to expand detail below.
    --------------------------------------------------------------------------- */
 
-function EqualizerRow({
-  axis,
-  score,
-  index,
+function AxisDotGrid({
+  axes,
+  scores,
   visible,
-  animating,
 }: {
-  axis: typeof AXES_DATA[number];
-  score: number | null;
-  index: number;
+  axes: typeof AXES_DATA;
+  scores: (number | null)[];
   visible: boolean;
-  animating: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  const panelId = `meth-axis-${axis.id}`;
-  const isTracking = axis.id === "tracking";
-  const displayScore = score !== null ? score : (isTracking ? null : 50);
-
-  const barStyle: React.CSSProperties = {
-    "--eq-fill": displayScore !== null ? `${displayScore}%` : "0%",
-    "--eq-delay": `${index * 80}ms`,
-  } as React.CSSProperties;
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selectedAxis = axes.find(a => a.id === selectedId);
+  const selectedScore = selectedId ? scores[axes.findIndex(a => a.id === selectedId)] : null;
 
   return (
-    <div className={`meth-eq${open ? " meth-eq--open" : ""}`}>
-      <button
-        className="meth-eq__trigger"
-        onClick={() => setOpen((prev) => !prev)}
-        aria-expanded={open}
-        aria-controls={panelId}
+    <>
+      <div className="meth-dot-grid" role="group" aria-label="Six-axis bias scores">
+        {axes.map((axis, i) => {
+          const isTracking = axis.id === "tracking";
+          const displayScore = scores[i] !== null ? scores[i] : (isTracking ? null : 50);
+          const dotCount = displayScore !== null ? Math.max(1, Math.round(((displayScore as number) / 100) * 5)) : 0;
+          const isActive = selectedId === axis.id;
+
+          return (
+            <button
+              key={axis.id}
+              className={`meth-dot${isActive ? " meth-dot--active" : ""}${visible ? " meth-dot--visible" : ""}`}
+              style={{ "--dot-delay": `${i * 60}ms` } as React.CSSProperties}
+              onClick={() => setSelectedId(isActive ? null : axis.id)}
+              aria-expanded={isActive}
+              aria-controls={`meth-dot-detail-${axis.id}`}
+            >
+              <span className="meth-dot__name">{axis.name}</span>
+              <span className="meth-dot__dots" aria-label={`${displayScore ?? 0} out of 100`}>
+                {Array.from({ length: 5 }, (_, di) => (
+                  <span key={di} className={`meth-dot__pip${di < dotCount ? " meth-dot__pip--filled" : ""}`} />
+                ))}
+              </span>
+              <span className="meth-dot__label">{getAxisLabel(axis.id, displayScore)}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Shared detail panel — progressive disclosure */}
+      <div
+        className={`meth-dot-detail${selectedId ? " meth-dot-detail--open" : ""}`}
+        id={selectedId ? `meth-dot-detail-${selectedId}` : undefined}
+        role="region"
+        aria-label={selectedAxis ? `${selectedAxis.name} details` : undefined}
+        aria-hidden={!selectedId}
       >
-        <div className="meth-eq__head">
-          <AxisGlyph id={axis.id} />
-          <span className="meth-eq__name">{axis.name}</span>
-          <span className="meth-eq__score">
-            {displayScore !== null ? displayScore : "\u2014"}
-          </span>
-          <span className="meth-eq__label">{getAxisLabel(axis.id, displayScore)}</span>
-          <span className="meth-eq__chevron" aria-hidden="true">{"\u25B8"}</span>
-        </div>
-        {!isTracking ? (
-          <div
-            className={`meth-eq__bar${visible ? " meth-eq__bar--visible" : ""}${animating ? " meth-eq__bar--animating" : ""}`}
-            style={barStyle}
-            role="meter"
-            aria-label={`${axis.name}: ${displayScore ?? 0} out of 100`}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={displayScore ?? 0}
-          >
-            <div className="meth-eq__track">
-              <div className="meth-eq__fill" />
-              <div className="meth-eq__marker" />
+        {selectedAxis && (
+          <div className="meth-dot-detail__inner">
+            <div className="meth-dot-detail__head">
+              <AxisGlyph id={selectedAxis.id} />
+              <span className="meth-dot-detail__name">{selectedAxis.name}</span>
+              {selectedScore !== null && (
+                <span className="meth-dot-detail__score">{selectedScore}</span>
+              )}
             </div>
-            <div className="meth-eq__endpoints">
-              <span>{axis.low}</span>
-              <span>{axis.high}</span>
-            </div>
-          </div>
-        ) : (
-          <div className={`meth-eq__bar meth-eq__bar--tracking${visible ? " meth-eq__bar--visible" : ""}`} style={barStyle}>
-            <svg className="meth-eq__sparkline" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
-              <polyline
-                points="0,16 15,10 30,14 50,6 70,12 85,4 100,10"
-                fill="none"
-                stroke="var(--fg-muted)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <div className="meth-eq__endpoints">
-              <span>{axis.low}</span>
-              <span>{axis.high}</span>
-            </div>
+            <p className="meth-axis__what">{selectedAxis.what}</p>
+            <ul className="meth-axis__signals">
+              {selectedAxis.signals.map((s, si) => (
+                <li key={si} className="meth-axis__signal">{s}</li>
+              ))}
+            </ul>
           </div>
         )}
-      </button>
-
-      <div
-        className="meth-eq__panel"
-        id={panelId}
-        role="region"
-        aria-label={`${axis.name} details`}
-        aria-hidden={!open}
-      >
-        <div className="meth-eq__panel-inner">
-          <p className="meth-axis__what">{axis.what}</p>
-          <ul className="meth-axis__signals">
-            {axis.signals.map((s, i) => (
-              <li key={i} className="meth-axis__signal">{s}</li>
-            ))}
-          </ul>
-        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -561,15 +536,13 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
   /* Rule curtain-pull entrance */
   const [ruleRef, ruleVisible] = useInView<HTMLDivElement>();
 
-  /* Section 1: Equalizer state */
-  const [eqRef, eqVisible] = useInView<HTMLDivElement>();
+  /* Section 1: Dot grid state */
+  const [dotRef, dotVisible] = useInView<HTMLDivElement>();
 
   /* Section 2: Live articles */
   const [articles, setArticles] = useState<MethodologyArticle[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-  const [eqAnimating, setEqAnimating] = useState(false);
-
-  /* Neutral initial scores for equalizer (before article selection) */
+  /* Neutral initial scores for dot grid (before article selection) */
   const neutralScores = useMemo(() => [50, 25, 15, 70, 20, null] as (number | null)[], []);
 
   /* Scores from selected article or neutral defaults */
@@ -599,11 +572,9 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
 
   const diverseArticles = useMemo(() => pickDiverseArticles(articles), [articles]);
 
-  /* Handle article selection with animation trigger */
+  /* Handle article selection */
   const handleSelectArticle = useCallback((idx: number) => {
     setSelectedIdx(idx);
-    setEqAnimating(true);
-    setTimeout(() => setEqAnimating(false), 500);
   }, []);
 
   /* Active rationale for tree decomposition */
@@ -652,17 +623,8 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           same scores.
         </p>
 
-        <div ref={eqRef} className="meth-eq__container" role="group" aria-label="Six-axis bias equalizer">
-          {AXES_DATA.map((axis, i) => (
-            <EqualizerRow
-              key={axis.id}
-              axis={axis}
-              score={activeScores[i]}
-              index={i}
-              visible={eqVisible}
-              animating={eqAnimating}
-            />
-          ))}
+        <div ref={dotRef}>
+          <AxisDotGrid axes={AXES_DATA} scores={activeScores} visible={dotVisible} />
         </div>
       </MethSection>
 
