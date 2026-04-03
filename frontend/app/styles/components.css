@@ -766,6 +766,9 @@
      the headline naturally. On mobile the container is the constraint. */
   overflow-wrap: break-word;
   word-break: break-word;
+  /* Sharpening transition target — text-shadow used for hover weight illusion */
+  text-shadow: 0 0 0 transparent;
+  transition: text-shadow 300ms var(--ease-cinematic);
 }
 
 .lead-story__summary {
@@ -4041,8 +4044,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   /* Rack focus: Deep Dive content defocuses when inspector opens — same
      cinematic principle as feed→DeepDive, now DeepDive→Inspector.
      Blur 6px matches the page-main defocus intensity for visual consistency. */
-  -webkit-backdrop-filter: blur(6px) saturate(0.8);
-  backdrop-filter: blur(6px) saturate(0.8);
+  -webkit-backdrop-filter: var(--focus-modal) saturate(0.8);
+  backdrop-filter: var(--focus-modal) saturate(0.8);
 }
 
 /* ---- Pop-out panel: drawer ---------------------------------------------- */
@@ -7021,9 +7024,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   align-items: center;
   justify-content: center;
   background-color: var(--overlay-backdrop);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  animation: fadeIn var(--dur-fast) var(--ease-out);
+  backdrop-filter: var(--focus-ambient);
+  -webkit-backdrop-filter: var(--focus-ambient);
+  animation: fadeIn var(--dur-fast) var(--ease-cinematic);
 }
 
 .kbd-overlay__panel {
@@ -7034,6 +7037,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   box-shadow: var(--shadow-e3);
   min-width: 280px;
   max-width: 360px;
+  animation: kbdPanelEnter 250ms var(--spring-snappy) both;
+}
+
+@keyframes kbdPanelEnter {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .kbd-overlay__title {
@@ -7641,6 +7650,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
       0 12px 35px -6px var(--rack-shadow-warm),
       inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 50%, transparent);
   }
+
+  /* Lead headline sharpening — Deakins, Sicario: subject emerges from
+     atmospheric haze into razor clarity. Sub-pixel text-shadow increases
+     perceived glyph weight without font-weight change (no layout shift). */
+  .lead-story:hover .lead-story__headline {
+    text-shadow: 0 0 1px color-mix(in srgb, var(--fg-primary) 8%, transparent);
+  }
 }
 
 /* ── Focus Breathing — exposure shift on container ──
@@ -7777,7 +7793,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    Without this, closing Deep Dive while audio plays creates a visible
    filter flash as the audio warmth snaps back. */
 .page-main--audio-playing.page-main--deep-dive-open {
-  filter: blur(6px) saturate(0.7) brightness(0.88) sepia(0.01);
+  filter: var(--focus-modal) saturate(0.7) brightness(0.88) sepia(0.01);
 }
 .page-main--audio-playing.page-main--deep-dive-closing {
   filter: blur(0px) saturate(1) brightness(1) sepia(0.01);

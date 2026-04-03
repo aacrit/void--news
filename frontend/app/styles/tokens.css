@@ -153,6 +153,7 @@
   --focus-sharp:   blur(0);
   --focus-soft:    blur(1.5px);
   --focus-ambient: blur(4px);
+  --focus-modal:   blur(6px);     /* T5.6 — modal-depth defocus (Deep Dive, Inspector) */
   --focus-bokeh:   blur(8px);
   --focus-deep:    blur(12px);
 

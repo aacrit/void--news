@@ -661,7 +661,7 @@
 
 .page-main--deep-dive-open {
   transform: scale(var(--dd-feed-scale, 0.997));
-  filter: blur(6px) saturate(0.7) brightness(0.88);
+  filter: var(--focus-modal) saturate(0.7) brightness(0.88);
   transform-origin: center top;
   transition:
     transform 400ms var(--ease-cinematic),
