@@ -49,7 +49,7 @@ Know what already exists before building:
 | `BiasLens.tsx` | Three Lenses | Beam (lean), Ring (sensationalism), Prism (framing) |
 | `BiasInspector.tsx` | Press Analysis | 4-axis scorecard, collapsible with Gemini reasoning |
 | `Sigil.tsx` | Compact bias sigil | SigilData type |
-| `NavBar.tsx` | Navigation | World/US/India, dateline row, edition badges, regional timestamps |
+| `NavBar.tsx` | Navigation | World/US/Europe/South Asia, dateline row, edition badges, regional timestamps |
 | `FilterBar.tsx` | Category filter | Auto-generated tags |
 | `DailyBrief.tsx` | Daily brief | TL;DR + opinion + "void --onair" audio player |
 | `SpectrumChart.tsx` | /sources spectrum | Gradient bar + 7 lean zone columns, all sources |

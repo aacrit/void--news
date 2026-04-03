@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.0
-**Last updated:** 2026-03-31 (rev 11)
+**Last updated:** 2026-04-02 (rev 12)
 
 ---
 
@@ -173,7 +173,7 @@ Cinematic tokens live in `tokens.css` under `:root` (light) and `[data-mode="dar
 | Whip pan | `--whip-pan-dur` (350ms) | Direction-aware edition switch transition |
 | Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay (numOctaves=4, baseFrequency=0.75, fractalNoise). Light: overlay blend. Dark: soft-light blend. Warm feColorMatrix (R-biased). |
 | Vignette | `--cin-vignette-color` | Edge darkening — subtle light, stronger dark. Z-index: `calc(--z-cinematic + 1)` — above film grain |
-| Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Applied to `.page-main` + `.nav-header` (not `.page-container` — filter creates containing block that breaks position:fixed children). Per-edition overrides (US: warmer sepia, India: boosted saturation). |
+| Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Applied to `.page-main` + `.nav-header` (not `.page-container` — filter creates containing block that breaks position:fixed children). Per-edition overrides (US: warmer sepia, South Asia: boosted saturation, Europe: cooler grade). |
 | Atmospheric haze | `--cin-haze-far` | Depth-of-field fade on distant elements |
 | Z-index | `--z-cinematic` (45) | Film grain layer; vignette at `+1` (above grain) |
 
@@ -486,7 +486,7 @@ Active components in `frontend/app/components/`:
 | `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
-| `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Cold open animation class (`anim-cold-open-nav`). Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
+| `NavBar` | Section navigation (World/US/Europe/South Asia) with logo and theme toggle. Cold open animation class (`anim-cold-open-nav`). Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", Europe → "HH:MM CET", South Asia → "HH:MM IST"). South Asia edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
 | `ThemeToggle` | Light/dark mode toggle. Golden hour pulse on toggle (700ms cinGoldenHourPulse targeting `.page-main`, reduced-motion guarded). | -- |
 | `LoadingSkeleton` | Animated skeleton loading state | -- |
 | `ErrorBoundary` | Error boundary wrapper | -- |
@@ -511,7 +511,7 @@ Active components in `frontend/app/components/`:
 | `CommandCenter` | KPI monitoring dashboard with sparklines and health score | -- |
 | `ComparativeView` | Side-by-side source comparison view | -- |
 | `DivergenceAlerts` | Highlights divergent coverage across sources | -- |
-| `EditionIcon` | Edition-specific icon (US flag, India Ashoka Chakra, etc.) | -- |
+| `EditionIcon` | Edition-specific icon (US flag, South Asia Ashoka Chakra, Europe stars, etc.) | -- |
 | `BiasLensOnboarding` | First-encounter onboarding for BiasLens visualization | -- |
 | `KeyboardShortcuts` | Keyboard shortcut handler and help overlay | -- |
 | `InstallPrompt` | PWA install prompt | -- |

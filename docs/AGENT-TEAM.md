@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-03-31 (rev 15)
+Last updated: 2026-04-02 (rev 16)
 
 ## Philosophy
 
@@ -86,7 +86,7 @@ CEO (Aacrit)
 |-------|---------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 419-source list | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 951-source list | Yes | Source list changes |
 
 ### Cinematic Division
 
@@ -205,7 +205,7 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 419-source curated list (3 tiers: 42 us_major, 181 international, 196 independent); 7-point political lean spectrum
+- 951-source curated list (3 tiers: 43 us_major, 341 international, 567 independent); 7-point political lean spectrum; 155 countries
 - $0 operational cost constraint
 - Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline summarization
 
@@ -235,3 +235,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-03-22 | Gemini TTS migration (replaced edge-tts + GCloud); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
 | 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2 design tokens; source expansion 370→409 |
 | 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
+| 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition (146 sources, 28 countries); 26 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |

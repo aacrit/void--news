@@ -7,10 +7,10 @@
 
 ## Context
 
-The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingesting ~1,200 articles from 419 curated sources and analyzing them through 6-axis NLP bias scoring. The pipeline writes to Supabase PostgreSQL, which serves as the single source of truth for the Next.js frontend (client-side reads only).
+The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingesting ~1,200 articles from 951 curated sources and analyzing them through 6-axis NLP bias scoring. The pipeline writes to Supabase PostgreSQL, which serves as the single source of truth for the Next.js frontend (client-side reads only).
 
 **Current as of 2026-03-31:**
-- Sources: 419 total (42 us_major + 181 international + 196 independent)
+- Sources: 951 total (42 us_major + 181 international + 196 independent)
 - Pipeline runs: 4x daily (00:00, 06:00, 12:00, 18:00 UTC)
 - Bias engine: 5 axes + confidence (Axis 6 = per-topic per-outlet EMA tracking, dormant)
 - Clustering: 2-phase (TF-IDF + entity-overlap merge)
@@ -22,17 +22,17 @@ The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingest
 
 ### 1. Source Coverage — /10
 
-**Requirement:** All 419 sources from `data/sources.json` are present, valid, and properly categorized.
+**Requirement:** All 951 sources from `data/sources.json` are present, valid, and properly categorized.
 
 #### Checks
 | Check | Expected | Query |
 |-------|----------|-------|
-| Total active sources | 419 | `SELECT COUNT(*) FROM sources WHERE is_active = true` |
+| Total active sources | 951 | `SELECT COUNT(*) FROM sources WHERE is_active = true` |
 | us_major tier | 42 | `SELECT COUNT(*) FROM sources WHERE tier='us_major' AND is_active=true` |
 | international tier | 181 | `SELECT COUNT(*) FROM sources WHERE tier='international' AND is_active=true` |
 | independent tier | 196 | `SELECT COUNT(*) FROM sources WHERE tier='independent' AND is_active=true` |
-| All have rss_url | 419 | `SELECT COUNT(*) FROM sources WHERE rss_url IS NOT NULL AND is_active=true` |
-| All have political_lean_baseline | 419 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline IS NOT NULL AND is_active=true` |
+| All have rss_url | 951 | `SELECT COUNT(*) FROM sources WHERE rss_url IS NOT NULL AND is_active=true` |
+| All have political_lean_baseline | 951 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline IS NOT NULL AND is_active=true` |
 | Baseline distribution: center | 204 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='center' AND is_active=true` |
 | Baseline distribution: center-left | 90 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='center-left' AND is_active=true` |
 | Baseline distribution: center-right | 27 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='center-right' AND is_active=true` |
@@ -42,12 +42,12 @@ The void --news platform runs 4x daily (every 6 hours) on GitHub Actions, ingest
 | Baseline distribution: far-right | 8 | `SELECT COUNT(*) FROM sources WHERE political_lean_baseline='far-right' AND is_active=true` |
 
 #### Severity
-- **Critical:** < 419 active sources (> 2.5% missing)
+- **Critical:** < 951 active sources (> 2.5% missing)
 - **Must Have:** Any us_major source missing
 - **Nice to Have:** Distribution skewed > 5% in any direction
 
 #### Scoring
-- 10/10: All 419 active, all tiers present, all baselines set
+- 10/10: All 951 active, all tiers present, all baselines set
 - 9/10: < 5 sources missing
 - 8/10: 5-10 sources missing OR 1 us_major missing
 - 6/10: > 10 missing OR multiple tier coverage gaps
@@ -568,7 +568,7 @@ CRITICAL FINDINGS:
   1. [Finding] — [Impact] — [Remediation]
 
 STATISTICS:
-  Sources: [N] active / 419 expected
+  Sources: [N] active / 951 expected
   Articles: [N] total, [N] with full_text, [N] with published_at
   Bias Scores: [N] total, [N] defaults, confidence distribution
   Clusters: [N] total, [N] single-article, avg [N.N] articles/cluster
@@ -622,7 +622,7 @@ When a specific domain shows degradation:
 ## Known Data Patterns & Thresholds
 
 ### Article Ingestion
-- **4x daily runs:** Expect 200-400 new articles per run (80-120 per source average across 419 sources)
+- **4x daily runs:** Expect 200-400 new articles per run (80-120 per source average across 951 sources)
 - **Duplication rate:** TF-IDF cosine 0.80 threshold removes ~15-20% of raw fetch
 - **Scrape success rate:** 85-95% (some RSS summaries retained as fallback)
 - **Section distribution:** World (60%), US (30%), India (10%)

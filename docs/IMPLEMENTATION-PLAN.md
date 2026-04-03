@@ -1,7 +1,7 @@
 # void --news — Implementation Plan
 
 **Version:** 1.2
-**Last updated:** 2026-03-31 (rev 5)
+**Last updated:** 2026-04-02 (rev 6)
 
 12-week implementation plan across 5 phases. All work is $0 operational cost.
 
@@ -9,9 +9,9 @@
 
 ## Phase 1 — Foundation -- COMPLETE
 
-**Deliverable:** Pipeline runs 4x daily via GitHub Actions, fetching articles from 419 sources into Supabase. Raw articles stored with metadata.
+**Deliverable:** Pipeline runs 4x daily via GitHub Actions, fetching articles from 951 sources into Supabase. Raw articles stored with metadata.
 
-**What was built:** Git scaffolding, 419-source list (`data/sources.json`, 7-point lean spectrum, 3 tiers), Supabase schema (migrations 001-028), RSS fetcher (feedparser), web scraper (BeautifulSoup), Supabase client utility, pipeline orchestrator (`main.py`), GitHub Actions cron.
+**What was built:** Git scaffolding, 951-source list (`data/sources.json`, 7-point lean spectrum, 3 tiers, 155 countries), Supabase schema (migrations 001-029), RSS fetcher (feedparser), web scraper (BeautifulSoup), Supabase client utility, pipeline orchestrator (`main.py`), GitHub Actions cron.
 
 ---
 
@@ -46,7 +46,7 @@
 - BiasLens Three Lenses (Beam, Ring, Prism) — replaces Dot Matrix and BiasStamp (removed)
 - Desktop broadsheet grid + mobile tabloid stack
 - LeadStory (hero) + StoryCard (standard) + "Why This Story" tooltip
-- FilterBar, NavBar (World/US/India with dateline + edition badge pills), ThemeToggle, MobileBottomNav
+- FilterBar, NavBar (World/US/Europe/South Asia with dateline + edition badge pills), ThemeToggle, MobileBottomNav
 - `/sources` page: SpectrumChart + source list with favicons
 - `/paper` and `/paper/[edition]`: e-paper layout; `/command-center`: KPI dashboard
 - HomeContent, PageToggle, Sigil, LogoFull/Icon/Wordmark, ScaleIcon (8 animation states)

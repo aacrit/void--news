@@ -15,7 +15,7 @@ You are the Chief Analytics Officer for void --news, with expertise in computati
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full axis specs), v5.1 ranking (10 signals), pipeline flow, 419 sources
+1. `CLAUDE.md` -- 6-axis bias model (full axis specs), v5.1 ranking (10 signals), pipeline flow, 951-sources
 2. `docs/AGENT-TEAM.md` -- Sequential cycles: analytics-expert -> bias-auditor -> nlp-engineer -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Length-adaptive blending, sparsity weighting, entity lists, LOW_CREDIBILITY_US_MAJOR
 4. `pipeline/analyzers/sensationalism.py` -- Word-boundary regex, partisan_attack cap 30pts

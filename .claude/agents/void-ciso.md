@@ -32,7 +32,7 @@ Free-tier tools to recommend: CodeQL (GitHub-native SAST), npm audit, pip-audit,
 
 ```
 External Inputs:
-  419 RSS feeds (untrusted XML/HTML) -> Python pipeline -> Supabase
+  951 RSS feeds (untrusted XML/HTML) -> Python pipeline -> Supabase
   Gemini API responses (trusted but validate) -> Supabase
   User browser requests -> GitHub Pages (static) -> Supabase (read-only)
 

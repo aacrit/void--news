@@ -26,7 +26,7 @@ Press & Precision v2 (cinematic):
 
 ### What Is Locked vs. What Evolves
 
-**Locked** (CEO approval required to change): 6-axis bias model, Supabase data layer, static export, 419-source list, $0 cost, bias color semantics (7-point lean spectrum, sensationalism scale, opinion/reporting, factual rigor).
+**Locked** (CEO approval required to change): 6-axis bias model, Supabase data layer, static export, 951-source list, $0 cost, bias color semantics (7-point lean spectrum, sensationalism scale, opinion/reporting, factual rigor).
 
 **Evolves with cinematic identity**: Accent colors, texture system (paper grain, film grain, surface materials), overall brand warmth/coolness, the void logo mark (how it adapts to cinematic context), sigil/icon styling, typography weight/tracking refinements for cinematic feel, dark mode color grading. The brand identity is NOT locked -- it is a living system that evolves alongside the cinematic motion redesign.
 

@@ -71,7 +71,7 @@ Synthesize the three reports into a traffic-light dashboard:
 
 | System | Status | Detail |
 |--------|--------|--------|
-| RSS Feeds | [GREEN/YELLOW/RED] | [X]/419 sources active |
+| RSS Feeds | [GREEN/YELLOW/RED] | [X]/951-sources active |
 | Data Freshness | [GREEN/YELLOW/RED] | Latest articles: [age] |
 | Pipeline Run | [GREEN/YELLOW/RED] | Last run: [time], duration: [min] |
 | Bias Scores | [GREEN/YELLOW/RED] | [X]% articles scored |
