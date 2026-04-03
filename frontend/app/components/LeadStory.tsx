@@ -26,6 +26,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
   return (
     <article
       ref={cardRef}
+      data-story-id={story.id}
       className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Stretched link — the invisible button covers the entire article

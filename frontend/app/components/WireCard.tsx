@@ -38,6 +38,7 @@ export default function WireCard({ story, onStoryClick, globalIndex, kbdFocused 
     <article
       ref={cardRef}
       data-story-index={globalIndex}
+      data-story-id={story.id}
       className={`wire-card${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       <button
