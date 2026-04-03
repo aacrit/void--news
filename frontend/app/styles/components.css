@@ -8313,3 +8313,64 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     max-height: min(420px, 60vh);
   }
 }
+
+/* ==========================================================================
+   Brand Version V2 — Void Lens
+   Hide beam/post/base in LogoFull; scale up void circle to fill space.
+   ========================================================================== */
+
+:root[data-brand="v2"] .logo-beam,
+:root[data-brand="v2"] .logo-post,
+:root[data-brand="v2"] .logo-base {
+  display: none;
+}
+
+:root[data-brand="v2"] .logo-void {
+  transform: scale(1.2);
+  transform-origin: 16px 13px;
+}
+
+/* ---- Brand toggle in footer ---- */
+.footer-brand-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  letter-spacing: 0.03em;
+  margin-top: var(--space-2);
+}
+
+.footer-brand-toggle__label {
+  opacity: 0.6;
+}
+
+.footer-brand-toggle__btn {
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color 200ms var(--ease-out), background-color 200ms var(--ease-out);
+  min-height: 28px;
+  min-width: 28px;
+}
+
+.footer-brand-toggle__btn:hover {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+.footer-brand-toggle__btn--active {
+  color: var(--fg-primary);
+  background-color: var(--bg-secondary);
+}
+
+.footer-brand-toggle__btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}

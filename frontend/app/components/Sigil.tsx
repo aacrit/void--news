@@ -9,6 +9,7 @@ import {
   leanLabel,
   lerpColor as lerp,
 } from "../lib/biasColors";
+import { useBrandVersion } from "../lib/brandVersion";
 
 /* ==========================================================================
    Sigil — The Brand Mark AS the Bias Indicator
@@ -172,6 +173,94 @@ function DataMark({ data, size, mounted }: {
         opacity={mounted ? 0.3 : 0.1}
         style={{ transition: "opacity 400ms var(--ease-out) 250ms" }}
       />
+    </svg>
+  );
+}
+
+/* ── V2 DataMark: Void Lens — circle IS the entire mark ──────────────── */
+
+/**
+ * DataMarkV2 — The void circle encodes lean via asymmetric stroke weight.
+ * No beam, post, or base. Left-leaning = thicker left arc, thinner right.
+ * Right-leaning = opposite. Center = uniform weight.
+ * Coverage Harvey ball and source count preserved from V1.
+ */
+function DataMarkV2({ data, size, mounted }: {
+  data: SigilData; size: "sm" | "lg" | "xl"; mounted: boolean;
+}) {
+  const lean = data.politicalLean;
+  const beamCol = leanColor(lean);
+  const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
+
+  // Coverage Harvey ball
+  const coverage = Math.min(data.sourceCount / 10, 1);
+  const ringFill = coverage * CIRC;
+  const ringCol = beamCol;
+
+  // Lean to asymmetric stroke weights
+  // Center (50) = both 1.8. Far left (0) = left 2.8, right 0.8.
+  // Far right (100) = left 0.8, right 2.8.
+  const leanFactor = (lean - 50) / 50; // -1 to +1
+  const leftWeight = 1.8 - leanFactor * 1.0;   // 0.8 to 2.8
+  const rightWeight = 1.8 + leanFactor * 1.0;   // 0.8 to 2.8
+
+  // Split the organic circle into left and right halves
+  // Left half: from top (16,4) through left side to bottom (16,22)
+  const leftArc = "M16 4 C8 3.5 6.5 7.5 7 13 C7.5 18.5 9.5 22 16 22";
+  // Right half: from top (16,4) through right side to bottom (16,22)
+  const rightArc = "M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22";
+
+  return (
+    <svg
+      viewBox="0 0 32 28"
+      width={px} height={Math.round(px * 28 / 32)}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ display: "block", flexShrink: 0 }}
+    >
+      {/* Background ring (faint, full circle) */}
+      <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
+        stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
+      />
+
+      {/* Coverage fill ring */}
+      <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
+        stroke={ringCol} strokeWidth="1.8"
+        strokeDasharray={`${mounted ? ringFill : 0} ${CIRC}`}
+        style={{
+          transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+          transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
+        }}
+        opacity={0.9}
+      />
+
+      {/* Lean indicator: asymmetric weight arcs */}
+      <path d={leftArc}
+        stroke={beamCol}
+        strokeWidth={mounted ? leftWeight : 1.8}
+        opacity={mounted ? 0.7 : 0.2}
+        style={{ transition: "stroke-width 700ms var(--spring) 60ms, stroke 400ms var(--ease-out), opacity 400ms var(--ease-out)" }}
+      />
+      <path d={rightArc}
+        stroke={beamCol}
+        strokeWidth={mounted ? rightWeight : 1.8}
+        opacity={mounted ? 0.7 : 0.2}
+        style={{ transition: "stroke-width 700ms var(--spring) 60ms, stroke 400ms var(--ease-out), opacity 400ms var(--ease-out)" }}
+      />
+
+      {/* Source count inside */}
+      <text x="16" y="13.5" textAnchor="middle" dominantBaseline="central"
+        style={{
+          fontFamily: "var(--font-data)", fontSize: px > 32 ? 8 : 7, fontWeight: 700,
+          fill: "var(--fg-secondary)",
+          opacity: mounted ? 0.85 : 0,
+          transition: "opacity 400ms var(--ease-out) 300ms",
+        }}
+      >
+        {data.sourceCount}
+      </text>
     </svg>
   );
 }
@@ -463,6 +552,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const { open, show, hide, toggle, onKey, keep } = useHover();
   const [mounted, setMounted] = useState(false);
   const tooltipId = `sigil-${useId()}`;
+  const { version } = useBrandVersion();
 
   const ll = leanLabel(data.politicalLean);
   const lc = leanColor(data.politicalLean);
@@ -498,8 +588,11 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
         filter: data.pending ? "grayscale(1)" : "none",
       }}
     >
-      {/* The data-encoded brand mark */}
-      <DataMark data={data} size={size} mounted={mounted} mode={mode} />
+      {/* The data-encoded brand mark — V1 (scale beam) or V2 (void lens) */}
+      {version === "v2"
+        ? <DataMarkV2 data={data} size={size} mounted={mounted} />
+        : <DataMark data={data} size={size} mounted={mounted} mode={mode} />
+      }
 
       {/* Lean label — with optional hand-drawn ink underline for divergence/consensus */}
       <span className="sigil__lean-label" style={{
