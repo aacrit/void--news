@@ -7,7 +7,6 @@ import {
   getColors as gc,
   getLeanColor as leanColor,
   leanLabel,
-  leanLabelAbbr,
   lerpColor as lerp,
 } from "../lib/biasColors";
 
@@ -466,7 +465,6 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const tooltipId = `sigil-${useId()}`;
 
   const ll = leanLabel(data.politicalLean);
-  const lla = leanLabelAbbr(data.politicalLean);
   const lc = leanColor(data.politicalLean);
   const full = isFullDetail(size);
 
@@ -509,7 +507,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
         color: lc,
         opacity: mounted ? 1 : 0,
       }}>
-        {full ? ll : lla}
+        {ll}
         {/* InkUnderline only rendered at full-detail sizes (lg, xl) */}
         {full && data.divergenceFlag === "divergent" && (
           <InkUnderline variant={data.politicalLean % 3} color="var(--sense-high)" />

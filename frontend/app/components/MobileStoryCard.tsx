@@ -63,8 +63,6 @@ export default function MobileStoryCard({
       {/* Meta row */}
       <div className="msc__meta">
         {isHero && <span className="msc__badge">Top Story</span>}
-        <span className="category-tag">{story.category}</span>
-        <span className="dot-separator" aria-hidden="true" />
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>
       </div>
 
@@ -78,19 +76,17 @@ export default function MobileStoryCard({
           </div>
         </>
       ) : (
-        /* Compact layout: headline + 1-line summary + Sigil */
-        <div className="msc__row">
-          <div className="msc__row-text">
-            <h3 className="msc__headline msc__headline--compact">
-              <span>{story.title}</span>
-              <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
-            </h3>
-            {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
-          </div>
-          <div className="msc__sigil">
+        /* Compact layout: headline + summary + Sigil on its own row */
+        <>
+          <h3 className="msc__headline msc__headline--compact">
+            <span>{story.title}</span>
+            <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
+          </h3>
+          {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
+          <div className="msc__sigil-row">
             <Sigil data={story.sigilData} size="sm" instant />
           </div>
-        </div>
+        </>
       )}
     </article>
   );
