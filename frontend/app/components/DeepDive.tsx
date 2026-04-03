@@ -7,7 +7,7 @@ import {
   CaretRight,
   X,
 } from "@phosphor-icons/react";
-import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
+import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
@@ -40,6 +40,55 @@ interface DeepDiveProps {
   storyIndex?: number;
   /** Total stories in filtered list */
   totalStories?: number;
+}
+
+/* --- Six Lenses — ink-stamp 6-axis bias scores --------------------------- */
+
+const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
+  { id: "lean",           name: "Political Lean",  key: "politicalLean" },
+  { id: "sensationalism", name: "Sensationalism",   key: "sensationalism" },
+  { id: "opinion",        name: "Opinion",           key: "opinionFact" },
+  { id: "rigor",          name: "Factual Rigor",     key: "factualRigor" },
+  { id: "framing",        name: "Framing",           key: "framing" },
+  { id: "tracking",       name: "Agreement",         key: "agreement" },
+];
+
+function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
+  const [activeAxis, setActiveAxis] = useState<string | null>(null);
+
+  return (
+    <div className="dd-lenses">
+      <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
+      <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+        {SIX_AXES.map((axis, i) => {
+          const score = sigilData[axis.key] as number;
+          const dotCount = Math.max(1, Math.round((score / 100) * 5));
+          const isActive = activeAxis === axis.id;
+          return (
+            <button
+              key={axis.id}
+              className={`dd-lens${isActive ? " dd-lens--active" : ""}${visible ? " dd-lens--visible" : ""}`}
+              style={{ "--lens-delay": `${450 + i * 50}ms` } as React.CSSProperties}
+              onClick={() => { hapticMicro(); setActiveAxis(isActive ? null : axis.id); }}
+              aria-expanded={isActive}
+              aria-label={`${axis.name}: ${score} out of 100`}
+            >
+              <span className="dd-lens__score">{score}</span>
+              <span className="dd-lens__dots" aria-hidden="true">
+                {Array.from({ length: 5 }, (_, di) => (
+                  <span key={di} className={`dd-lens__pip${di < dotCount ? " dd-lens__pip--filled" : ""}`} />
+                ))}
+              </span>
+              <span className="dd-lens__name">{axis.name}</span>
+            </button>
+          );
+        })}
+      </div>
+      <a href="/void--news/sources/#methodology" className="dd-lenses__link text-meta">
+        How we score
+      </a>
+    </div>
+  );
 }
 
 /* --- Main DeepDive component --------------------------------------------- */
@@ -1088,7 +1137,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               {/* Inline methodology hint near spectrum — surfaces scoring context
                   without scrolling to the bottom (F13: methodology link buried). */}
               <span className="dd-methodology-inline text-meta" style={{ color: "var(--fg-muted)", fontSize: "var(--text-xs)" }}>
-                Scored via 6-axis NLP{" "}
+                Scored across 6 lenses{" "}
                 <a href="/void--news/sources/#methodology"
                   className="dd-methodology-inline__link"
                   style={{ color: "var(--fg-tertiary)", textDecoration: "underline", textUnderlineOffset: "2px" }}
@@ -1126,12 +1175,17 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </section>
           )}
 
-          {/* ---- Methodology link ---- */}
-          <div className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ transitionDelay: "450ms", marginBottom: "var(--space-4)" }}>
-            <a href={`${typeof window !== "undefined" ? "" : ""}/void--news/sources/#methodology`} className="dd-methodology-link text-meta" style={{ textDecoration: "underline", textUnderlineOffset: "3px" }}>
-              How we score — 6-axis methodology
-            </a>
-          </div>
+          {/* ---- Six Lenses — ink stamp bias scores ---- */}
+          {story.sigilData && !story.sigilData.pending && (
+            <section
+              className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ transitionDelay: "450ms", marginBottom: "var(--space-4)" }}
+              aria-label="Six Lenses bias analysis"
+            >
+              <hr style={{ border: "none", borderTop: "var(--rule-thin)", margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
+              <SixLenses sigilData={story.sigilData} visible={contentVisible} />
+            </section>
+          )}
 
           {/* Fetch error — retry UI */}
           {fetchError && !isLoadingData && sources.length === 0 && (
