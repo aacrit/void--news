@@ -6,9 +6,9 @@ import { createPortal } from "react-dom";
 /* ---------------------------------------------------------------------------
    OnboardingSpotlight — Act 2 of unified onboarding
 
-   3-step spotlight tour that highlights real UI elements after the
-   carousel (Act 1) has taught concepts. Teaches: Sigil, lean filters,
-   deep dive.
+   Spotlight tour that highlights real UI elements after the carousel
+   (Act 1) has taught concepts. Walks through the key interactions:
+   sigil, deep dive, on air, topics, lean filter, editions.
 
    Controlled by UnifiedOnboarding orchestrator via visible/onComplete/onSkip.
    --------------------------------------------------------------------------- */
@@ -17,23 +17,42 @@ interface TourStep {
   selector: string;
   title: string;
   body: string;
+  /** Optional: action to perform when this step appears (e.g. scroll element into view) */
+  action?: "click-first" | "scroll-into-view";
 }
 
 const STEPS: TourStep[] = [
   {
     selector: ".sigil",
-    title: "Now see it live",
-    body: "The beam and ring you just learned about \u2014 here they are on a real story. Tap any sigil for the full breakdown.",
+    title: "The bias sigil",
+    body: "Every story carries this hand-drawn mark. The beam tilts with political lean, the ring fills with source coverage. Tap it for the full breakdown.",
   },
   {
-    selector: ".nav-filters__group",
+    selector: ".lead-section, .story-card",
+    title: "Tap to open Deep Dive",
+    body: "Tap any story to open its Deep Dive \u2014 source spectrum, six-axis scores, and where outlets agree or diverge.",
+    action: "scroll-into-view",
+  },
+  {
+    selector: ".skb, .mbp",
+    title: "void --onair",
+    body: "The daily brief lives here. Read the editorial take, or hit play for a two-host audio broadcast.",
+    action: "scroll-into-view",
+  },
+  {
+    selector: ".nav-filters__topics, .nav-filters__topic-trigger",
+    title: "Filter by topic",
+    body: "Focus on what matters. Filter stories by category \u2014 Politics, Economy, Technology, and more.",
+  },
+  {
+    selector: ".nav-filters__group, .lean-filter",
     title: "Filter by perspective",
     body: "See how the same stories look from left, center, or right-leaning sources.",
   },
   {
-    selector: ".lead-section, .story-card",
-    title: "Tap for deep analysis",
-    body: "Every story has a detailed breakdown: source spectrum, bias scores, and where outlets agree or diverge.",
+    selector: ".nav-tabs, .mob-nav__tabs",
+    title: "Switch editions",
+    body: "Four newsrooms, one page. World is the default. Switch to US, Europe, or South Asia for regional focus.",
   },
 ];
 
@@ -160,6 +179,18 @@ export default function OnboardingSpotlight({ visible, onComplete, onSkip }: Onb
     if (!ready) return;
     const currentStep = STEPS[step];
     if (!currentStep) return;
+
+    // Scroll target into view if the step requests it
+    if (currentStep.action === "scroll-into-view") {
+      const parts = currentStep.selector.split(",").map((s) => s.trim());
+      for (const sel of parts) {
+        const el = document.querySelector<HTMLElement>(sel);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          break;
+        }
+      }
+    }
 
     const rect = getTargetRect(currentStep.selector);
     if (!rect) {
