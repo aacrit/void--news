@@ -1171,28 +1171,10 @@
    a standard web application.
    ========================================================================== */
 
-/* ── Deep Dive feed defocus (when panel is open) ──
-   The feed behind the Deep Dive panel scales down and blurs,
-   creating the Deakins chiaroscuro where the Deep Dive panel is the
-   lit subject and the feed recedes into background shadow.
-   Direct filter blur on page-main + backdrop-filter overlay = layered DoF.
-   NOTE: desktop-feed.css overrides these (loaded later). Keep in sync. */
-.page-main--deep-dive-open {
-  transform: scale(var(--dd-feed-scale, 0.997));
-  filter: blur(6px) saturate(0.7) brightness(0.88);
-  transition:
-    transform 500ms var(--spring-bouncy),
-    filter 500ms var(--ease-cinematic);
-}
-
-/* Reverse: feed returns and sharpens when Deep Dive closes */
-.page-main--deep-dive-closing {
-  transform: scale(1);
-  filter: blur(0px) saturate(1) brightness(1);
-  transition:
-    transform 380ms var(--spring-snappy),
-    filter 280ms var(--ease-whip);
-}
+/* ── Deep Dive feed defocus ──
+   Canonical definition lives in desktop-feed.css (loaded later in cascade).
+   Removed duplicate declaration here to avoid conflicting timing/easing values.
+   See desktop-feed.css .page-main--deep-dive-open for the active rule. */
 
 /* ── Backdrop Rack Focus ──
    The Deep Dive backdrop-filter ramps from no blur to full blur (rack-in)
