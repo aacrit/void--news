@@ -78,7 +78,7 @@ function useCountUp(target: number, ms: number, active: boolean): number {
 
 /* ── Constants ─────────────────────────────────────────────────────────── */
 
-const CIRC = 2 * Math.PI * 9; // ~56.55, circle circumference (r=9)
+const CIRC = 57; // organic hand-drawn void circle path length (~57)
 
 /* ── Compact data-mark: the logo encoding live data ───────────────────── */
 
@@ -106,13 +106,13 @@ function DataMark({ data, size, mounted }: {
       aria-hidden="true"
       style={{ display: "block", flexShrink: 0 }}
     >
-      {/* Void circle — coverage ring (facts) or tone arc (oped) */}
+      {/* Void circle — organic hand-drawn path, coverage ring (facts) */}
       {/* Background ring (faint) */}
-      <circle cx="16" cy="13" r="9"
+      <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
         stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
       />
       {/* Fill ring */}
-      <circle cx="16" cy="13" r="9"
+      <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
         stroke={ringCol} strokeWidth="1.8"
         strokeDasharray={`${mounted ? ringFill : 0} ${CIRC}`}
         style={{
@@ -139,20 +139,20 @@ function DataMark({ data, size, mounted }: {
         transform: `rotate(${mounted ? beamAngle : 0}deg)`,
         transition: "transform 700ms var(--spring) 60ms",
       }}>
-        {/* Beam line */}
-        <line x1="4" y1="13" x2="28" y2="13"
+        {/* Beam line — organic S-curve */}
+        <path d="M4 13 C10 12.3 22 13.7 28 13"
           stroke={beamCol} strokeWidth="1.8"
           style={{ transition: "stroke 400ms var(--ease-out)" }}
           opacity={mounted ? 1 : 0.3}
         />
-        {/* Left weight tick */}
-        <line x1="6" y1="11.5" x2="6" y2="14.5"
+        {/* Left weight tick — slight lean */}
+        <line x1="5.8" y1="11.5" x2="6.2" y2="14.5"
           stroke={beamCol} strokeWidth="1.4"
           style={{ transition: "stroke 400ms var(--ease-out)" }}
           opacity={mounted ? 0.85 : 0.2}
         />
-        {/* Right weight tick */}
-        <line x1="26" y1="11.5" x2="26" y2="14.5"
+        {/* Right weight tick — slight lean */}
+        <line x1="26.2" y1="11.5" x2="25.8" y2="14.5"
           stroke={beamCol} strokeWidth="1.4"
           style={{ transition: "stroke 400ms var(--ease-out)" }}
           opacity={mounted ? 0.85 : 0.2}
@@ -166,8 +166,8 @@ function DataMark({ data, size, mounted }: {
         style={{ transition: "opacity 300ms var(--ease-out) 200ms" }}
       />
 
-      {/* Base — neutral stand */}
-      <line x1="12" y1="28.5" x2="20" y2="28.5"
+      {/* Base — organic subtle curve */}
+      <path d="M12 28.5 C14 28.2 18 28.8 20 28.5"
         stroke="var(--fg-tertiary)" strokeWidth="1.8"
         opacity={mounted ? 0.3 : 0.1}
         style={{ transition: "opacity 400ms var(--ease-out) 250ms" }}
