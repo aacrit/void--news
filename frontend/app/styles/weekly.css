@@ -11,19 +11,26 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* Slightly warmer color grade than main feed */
-  filter: contrast(1.02) saturate(0.94) sepia(0.05);
+  /* Match main feed — no extra color grading */
 }
 
 .wk-main {
   flex: 1;
-  max-width: 52rem; /* ~832px — magazine column width */
+  max-width: 1400px; /* Match .page-main width */
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5);
+  padding: 0 var(--space-5);
+  padding-bottom: var(--space-5);
   /* Magazine cold-open: slower, more deliberate entrance */
   animation: wkFadeIn 700ms var(--ease-cinematic) both;
   animation-delay: 200ms;
+}
+
+@media (min-width: 768px) {
+  .wk-main {
+    padding: 0 var(--space-7);
+    padding-bottom: var(--space-7);
+  }
 }
 
 @keyframes wkFadeIn {
@@ -826,7 +833,8 @@
    =========================================================================== */
 @media (max-width: 767px) {
   .wk-main {
-    padding: var(--space-5) var(--space-4);
+    padding: 0 var(--space-4);
+    padding-bottom: var(--space-4);
   }
 
   .wk-masthead__title {
