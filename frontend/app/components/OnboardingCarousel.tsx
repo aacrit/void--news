@@ -29,8 +29,8 @@ const PHASES: Phase[] = [
     id: "origin",
     duration: 10000,
     headline: "void --news",
-    subtitle: "See every side of the story",
-    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. void --news reads 950+ sources across six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record \u2014 so you don\u2019t have to.",
+    subtitle: "See through the void.",
+    body: "You open five tabs. Five outlets, five versions of the same event. One says crisis. Another says routine. A third buries it on page six. void --news reads 951 sources across six axes of measurement \u2014 lean, sensationalism, opinion weight, factual rigor, framing, track record \u2014 so you don\u2019t have to.",
     visual: "story",
   },
   {
@@ -261,7 +261,7 @@ function ProductFamilyVisual({ active }: { active: boolean }) {
     { cmd: "void --tl;dr", label: "Daily Brief", desc: "Top stories, editorially weighed" },
     { cmd: "void --onair", label: "Audio Broadcast", desc: "Two hosts, three minutes" },
     { cmd: "void --opinion", label: "The Board", desc: "Editorial lean rotates daily" },
-    { cmd: "void --sources", label: "Source Spectrum", desc: "950+ sources, one axis" },
+    { cmd: "void --sources", label: "Source Spectrum", desc: "951 sources, one axis" },
     { cmd: "void --deep-dive", label: "Deep Dive", desc: "Every source, every score" },
     { cmd: "void --paper", label: "E-Paper", desc: "The broadsheet front page" },
   ];

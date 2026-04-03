@@ -48,9 +48,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aacrit.github.io"),
-  title: "void --news — See every side of the story",
+  title: "void --news — See through the void.",
   description:
-    "Free news aggregation with per-article bias analysis across 950+ curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+    "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
   keywords: [
     "news",
     "bias analysis",
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "void --news" }],
   openGraph: {
-    title: "void --news — See every side of the story",
+    title: "void --news — See through the void.",
     description:
-      "Free news aggregation with per-article bias analysis across 950+ curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+      "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
     type: "website",
     siteName: "void --news",
     images: [
@@ -79,9 +79,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "void --news — See every side of the story",
+    title: "void --news — See through the void.",
     description:
-      "Free news aggregation with per-article bias analysis across 950+ curated sources.",
+      "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm.",
     images: ["/void--news/twitter-card.svg"],
   },
   icons: {

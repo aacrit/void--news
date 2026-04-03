@@ -11,7 +11,7 @@ import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, Sig
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
-import { generateShareCardImage, generateSquareCardImage } from "../lib/shareCardRenderer";
+import { generateShareCardImage, generateSquareCardImage, generateStoryCardImage } from "../lib/shareCardRenderer";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
@@ -659,15 +659,21 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2400);
     };
 
-    /* 1. Generate Evidence Card — square for mobile (Insta/TikTok), OG for desktop */
+    /* 1. Generate Evidence Card — 9:16 story card (primary), fallback to square/OG */
     const isMobileShare = typeof window !== "undefined" && window.innerWidth < 768;
+    const deepDiveSources = (liveData?.sources ?? story.deepDive?.sources) || [];
     let blob: Blob | null = null;
     try {
-      blob = isMobileShare
-        ? await generateSquareCardImage(story)
-        : await generateShareCardImage(story);
+      blob = await generateStoryCardImage(story, deepDiveSources, url);
     } catch {
-      // Canvas rendering failed — fall back to URL-only sharing below
+      // 9:16 card failed — fall back to legacy formats
+      try {
+        blob = isMobileShare
+          ? await generateSquareCardImage(story)
+          : await generateShareCardImage(story);
+      } catch {
+        // Canvas rendering failed — fall back to URL-only sharing below
+      }
     }
 
     /* 2a. Mobile with file-sharing support: share card image + URL */

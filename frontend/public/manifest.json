@@ -1,7 +1,7 @@
 {
   "name": "void --news",
   "short_name": "void--news",
-  "description": "Free news aggregation with per-article bias analysis across 950+ curated sources.",
+  "description": "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm.",
   "id": "/void--news/",
   "start_url": "/void--news/",
   "scope": "/void--news/",

@@ -7,15 +7,18 @@
  *   - Sigil (the visual bias indicator)
  *   - Brand mark
  *
- * Two formats:
+ * Three formats:
  *   - OG card: 1200x630 (Twitter/LinkedIn)
- *   - Square card: 1080x1080 (Instagram/TikTok)
+ *   - Square card: 1080x1080 (Instagram/feed)
+ *   - Story card: 1080x1920 (9:16 — Stories/TikTok/Reels)
+ *     Two variants: "Split" (divergent headlines) and "Verdict" (6-axis forensic)
  *
- * No npm dependencies. Hardcodes dark-mode palette.
+ * Uses qrcode npm package for QR generation.
  */
 
-import type { Story } from "./types";
+import type { Story, StorySource } from "./types";
 import { leanLabel } from "./biasColors";
+import QRCode from "qrcode";
 
 /* ── Dark-mode palette ────────────────────────────────────────────────── */
 
@@ -358,13 +361,13 @@ export async function generateShareCardImage(story: Story): Promise<Blob> {
 
   ctx.font = `400 13px ${STRUCTURAL}`;
   ctx.fillStyle = FG_TERTIARY;
-  ctx.fillText("See every side of the story", 48, 545);
+  ctx.fillText("See through the void.", 48, 545);
 
   // Right side — key stats
   ctx.textAlign = "right";
   ctx.font = `600 11px ${META}`;
   ctx.fillStyle = FG_FAINT;
-  ctx.fillText("419 CURATED SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1152, 520);
+  ctx.fillText("951 CURATED SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1152, 520);
   ctx.font = `400 12px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
   ctx.fillText("voidnews.app", 1152, 545);
@@ -514,13 +517,13 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
 
   ctx.font = `400 14px ${STRUCTURAL}`;
   ctx.fillStyle = FG_TERTIARY;
-  ctx.fillText("See every side of the story", 56, 990);
+  ctx.fillText("See through the void.", 56, 990);
 
   // Stats right
   ctx.textAlign = "right";
   ctx.font = `600 11px ${META}`;
   ctx.fillStyle = FG_FAINT;
-  ctx.fillText("419 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1024, 958);
+  ctx.fillText("951 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1024, 958);
   ctx.font = `400 13px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
   ctx.fillText("voidnews.app", 1024, 985);
@@ -535,5 +538,404 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
 
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("toBlob failed")), "image/png");
+  });
+}
+
+/* ── QR Code Helper ──────────────────────────────────────────────────── */
+
+async function drawQR(ctx: CanvasRenderingContext2D, url: string, x: number, y: number, size: number): Promise<void> {
+  try {
+    const dataUrl = await QRCode.toDataURL(url, {
+      width: size,
+      margin: 0,
+      color: { dark: "#EDE8E0", light: "#00000000" },
+      errorCorrectionLevel: "M",
+    });
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = reject;
+      img.src = dataUrl;
+    });
+    ctx.drawImage(img, x, y, size, size);
+  } catch {
+    // QR failed — draw placeholder box
+    ctx.strokeStyle = RULE_COLOR;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, size, size);
+    ctx.font = `400 11px ${DATA}`;
+    ctx.fillStyle = FG_MUTED;
+    ctx.textAlign = "center";
+    ctx.fillText("QR", x + size / 2, y + size / 2 + 4);
+    ctx.textAlign = "left";
+  }
+}
+
+/* ── Lean badge color ────────────────────────────────────────────────── */
+
+function leanBadgeColor(v: number): string {
+  if (v <= 35) return "#4A6FA5";  // left-blue
+  if (v <= 65) return "#3D9B6A";  // center-green
+  return "#964A3A";               // right-red
+}
+
+/* ── 9:16 Story Card (1080x1920) — Split & Verdict formats ──────────── */
+
+/**
+ * Generates a 9:16 (1080x1920) share card optimized for Stories/TikTok/Reels.
+ *
+ * Two formats auto-selected:
+ *   - "Split": Two divergent source headlines side-by-side (when sources have
+ *     high lean divergence and available headlines)
+ *   - "Verdict": 6-axis forensic scorecard (fallback)
+ *
+ * Both include a QR code linking to the story's deep dive.
+ */
+export async function generateStoryCardImage(
+  story: Story,
+  sources: StorySource[] = [],
+  storyUrl?: string,
+): Promise<Blob> {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext("2d")!;
+
+  if (typeof document !== "undefined" && document.fonts) {
+    try { await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 500))]); } catch { /* proceed */ }
+  }
+
+  const lean = story.biasScores.politicalLean;
+  const url = storyUrl || (typeof window !== "undefined" ? window.location.href : "https://voidnews.app");
+
+  /* Determine format: Split vs Verdict */
+  const splitPair = pickSplitPair(sources);
+  const useSplit = !!splitPair;
+
+  /* ═══ BACKGROUND ═══ */
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, 1080, 1920);
+
+  /* Outer border */
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0.5, 0.5, 1079, 1919);
+
+  /* ═══ TOP: Brand label ═══ */
+  ctx.textBaseline = "alphabetic";
+  ctx.font = `600 14px ${META}`;
+  ctx.fillStyle = FG_MUTED;
+  ctx.fillText("void --deep-dive", 64, 72);
+
+  /* Category badge (right) */
+  ctx.font = `600 12px ${META}`;
+  ctx.fillStyle = AMBER;
+  ctx.textAlign = "right";
+  ctx.fillText(story.category.toUpperCase(), 1016, 72);
+  ctx.textAlign = "left";
+
+  /* Rule */
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(64, 92); ctx.lineTo(1016, 92); ctx.stroke();
+
+  if (useSplit) {
+    drawSplitFormat(ctx, story, splitPair!, sources.length);
+  } else {
+    drawVerdictFormat(ctx, story);
+  }
+
+  /* ═══ SPECTRUM STRIP (shared) ═══ */
+  const specY = 1380;
+  drawSpectrumWithSources(ctx, 64, specY, 952, 28, lean, story.source.count);
+
+  /* ═══ RULE ═══ */
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(64, 1450); ctx.lineTo(1016, 1450); ctx.stroke();
+
+  /* ═══ PROVOCATION LINE ═══ */
+  ctx.font = `500 18px ${STRUCTURAL}`;
+  ctx.fillStyle = FG_SECONDARY;
+  ctx.textAlign = "center";
+  ctx.fillText(
+    useSplit ? "Same story. Different cut." : "How is your source covering this?",
+    540, 1490,
+  );
+  ctx.textAlign = "left";
+
+  /* ═══ RULE ═══ */
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(64, 1520); ctx.lineTo(1016, 1520); ctx.stroke();
+  ctx.strokeStyle = AMBER;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(64, 1518); ctx.lineTo(250, 1518); ctx.stroke();
+
+  /* ═══ BOTTOM: QR + Brand lockup ═══ */
+  await drawQR(ctx, url, 64, 1560, 140);
+
+  // Brand lockup (right of QR)
+  ctx.font = `700 32px ${EDITORIAL}`;
+  ctx.fillStyle = FG_PRIMARY;
+  ctx.fillText("void", 230, 1600);
+  const bw = ctx.measureText("void").width;
+  ctx.font = `400 32px ${DATA}`;
+  ctx.fillStyle = FG_MUTED;
+  ctx.fillText(" --news", 230 + bw, 1600);
+
+  ctx.font = `400 16px ${DATA}`;
+  ctx.fillStyle = FG_TERTIARY;
+  ctx.fillText("See through the void.", 230, 1635);
+
+  ctx.font = `400 14px ${DATA}`;
+  ctx.fillStyle = FG_MUTED;
+  ctx.fillText("voidnews.app", 230, 1665);
+
+  /* ═══ FOOTER STATS ═══ */
+  ctx.font = `600 12px ${META}`;
+  ctx.fillStyle = FG_FAINT;
+  ctx.textAlign = "center";
+  ctx.fillText("951 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 540, 1760);
+  ctx.textAlign = "left";
+
+  /* ═══ VIGNETTE ═══ */
+  const vig = ctx.createRadialGradient(540, 900, 400, 540, 960, 1000);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.12)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, 1080, 1920);
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("toBlob failed")), "image/png");
+  });
+}
+
+/* ── Split Pair Selection ────────────────────────────────────────────── */
+
+interface SplitPair {
+  left: StorySource;
+  right: StorySource;
+}
+
+function pickSplitPair(sources: StorySource[]): SplitPair | null {
+  if (sources.length < 2) return null;
+
+  // Filter sources that have headlines
+  const withTitles = sources.filter(s => s.articleTitle && s.articleTitle.length > 10);
+  if (withTitles.length < 2) return null;
+
+  // Find the pair with maximum lean divergence
+  let bestPair: SplitPair | null = null;
+  let maxDelta = 0;
+
+  for (let i = 0; i < withTitles.length; i++) {
+    for (let j = i + 1; j < withTitles.length; j++) {
+      const delta = Math.abs(
+        withTitles[i].biasScores.politicalLean - withTitles[j].biasScores.politicalLean
+      );
+      if (delta > maxDelta) {
+        maxDelta = delta;
+        const [a, b] = withTitles[i].biasScores.politicalLean <= withTitles[j].biasScores.politicalLean
+          ? [withTitles[i], withTitles[j]]
+          : [withTitles[j], withTitles[i]];
+        bestPair = { left: a, right: b };
+      }
+    }
+  }
+
+  // Require minimum 20-point lean delta for the Split format
+  if (maxDelta < 20 || !bestPair) return null;
+  return bestPair;
+}
+
+/* ── Split Format Drawing ────────────────────────────────────────────── */
+
+function drawSplitFormat(
+  ctx: CanvasRenderingContext2D,
+  story: Story,
+  pair: SplitPair,
+  totalSources: number,
+): void {
+  let curY = 130;
+
+  /* Source A card */
+  curY = drawSourceCard(ctx, pair.left, curY);
+
+  /* "vs" separator */
+  curY += 32;
+  ctx.font = `400 20px ${DATA}`;
+  ctx.fillStyle = FG_MUTED;
+  ctx.textAlign = "center";
+  ctx.fillText("vs", 540, curY);
+  ctx.textAlign = "left";
+  curY += 32;
+
+  /* Source B card */
+  curY = drawSourceCard(ctx, pair.right, curY);
+
+  /* Stats line */
+  curY += 48;
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(64, curY); ctx.lineTo(1016, curY); ctx.stroke();
+  curY += 36;
+
+  ctx.font = `600 16px ${DATA}`;
+  ctx.fillStyle = FG_TERTIARY;
+  ctx.textAlign = "center";
+  ctx.fillText(`SAME STORY. ${totalSources} SOURCES.`, 540, curY);
+  curY += 30;
+
+  // Count unique framing approaches (approximate from divergence score)
+  const framings = Math.min(totalSources, Math.max(2, Math.ceil(story.divergenceScore / 15)));
+  ctx.fillText(`${framings} DIFFERENT FRAMINGS.`, 540, curY);
+  ctx.textAlign = "left";
+}
+
+function drawSourceCard(
+  ctx: CanvasRenderingContext2D,
+  source: StorySource,
+  y: number,
+): number {
+  const cardX = 64;
+  const cardW = 952;
+  const cardPad = 32;
+  const titleMaxW = cardW - cardPad * 2;
+
+  /* Source name + lean badge */
+  const nameY = y + cardPad + 20;
+  ctx.font = `600 15px ${META}`;
+  ctx.fillStyle = FG_SECONDARY;
+  ctx.fillText(source.name.toUpperCase(), cardX + cardPad, nameY);
+
+  // Lean badge
+  const lean = source.biasScores.politicalLean;
+  const badgeText = leanLabel(lean).toUpperCase();
+  ctx.font = `600 11px ${META}`;
+  const badgeW = ctx.measureText(badgeText).width + 16;
+  const badgeX = 1016 - cardPad - badgeW;
+  const badgeY = nameY - 14;
+
+  roundRect(ctx, badgeX, badgeY, badgeW, 20, 3);
+  ctx.fillStyle = leanBadgeColor(lean);
+  ctx.globalAlpha = 0.15;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = leanBadgeColor(lean);
+  ctx.lineWidth = 1;
+  roundRect(ctx, badgeX, badgeY, badgeW, 20, 3);
+  ctx.stroke();
+  ctx.fillStyle = leanBadgeColor(lean);
+  ctx.textAlign = "center";
+  ctx.fillText(badgeText, badgeX + badgeW / 2, nameY - 1);
+  ctx.textAlign = "left";
+
+  /* Headline */
+  const headY = nameY + 28;
+  ctx.font = `700 30px ${EDITORIAL}`;
+  ctx.fillStyle = FG_PRIMARY;
+  const headLines = wrapText(ctx, source.articleTitle || source.name, titleMaxW);
+  const maxHead = Math.min(headLines.length, 4);
+  headLines.slice(0, maxHead).forEach((line, i) => {
+    const display = i === maxHead - 1 && headLines.length > maxHead ? line.slice(0, -3) + "..." : line;
+    ctx.fillText(display, cardX + cardPad, headY + i * 38);
+  });
+
+  const cardH = cardPad + 20 + 28 + maxHead * 38 + cardPad;
+
+  /* Draw card background (behind everything) */
+  ctx.save();
+  ctx.globalCompositeOperation = "destination-over";
+  roundRect(ctx, cardX, y, cardW, cardH, 12);
+  ctx.fillStyle = BG_ELEVATED;
+  ctx.fill();
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  roundRect(ctx, cardX, y, cardW, cardH, 12);
+  ctx.stroke();
+  ctx.restore();
+
+  return y + cardH;
+}
+
+/* ── Verdict Format Drawing ──────────────────────────────────────────── */
+
+function drawVerdictFormat(
+  ctx: CanvasRenderingContext2D,
+  story: Story,
+): void {
+  let curY = 130;
+
+  /* Headline */
+  ctx.font = `700 38px ${EDITORIAL}`;
+  ctx.fillStyle = FG_PRIMARY;
+  const headLines = wrapText(ctx, story.title, 888);
+  headLines.slice(0, 4).forEach((line, i) => {
+    const display = i === 3 && headLines.length > 4 ? line.slice(0, -3) + "..." : line;
+    ctx.fillText(display, 64, curY + i * 48);
+  });
+  curY += Math.min(headLines.length, 4) * 48 + 24;
+
+  /* Rule */
+  ctx.strokeStyle = RULE_COLOR;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(64, curY); ctx.lineTo(1016, curY); ctx.stroke();
+  curY += 36;
+
+  /* Section label */
+  ctx.font = `600 13px ${META}`;
+  ctx.fillStyle = FG_MUTED;
+  ctx.fillText("THE EVIDENCE", 64, curY);
+  curY += 32;
+
+  /* 6-axis bars */
+  const axes: [string, number, string][] = [
+    ["LEAN", story.biasScores.politicalLean, leanLabel(story.biasScores.politicalLean)],
+    ["RIGOR", story.biasScores.factualRigor, story.biasScores.factualRigor >= 70 ? "Strong" : story.biasScores.factualRigor >= 40 ? "Moderate" : "Weak"],
+    ["TONE", story.biasScores.sensationalism, story.biasScores.sensationalism <= 30 ? "Measured" : story.biasScores.sensationalism <= 60 ? "Elevated" : "Inflammatory"],
+    ["OPINION", story.biasScores.opinionFact, story.biasScores.opinionFact <= 25 ? "Reporting" : story.biasScores.opinionFact <= 50 ? "Analysis" : story.biasScores.opinionFact <= 75 ? "Opinion" : "Editorial"],
+    ["FRAMING", story.biasScores.framing, story.biasScores.framing <= 25 ? "Neutral" : story.biasScores.framing <= 50 ? "Mild" : story.biasScores.framing <= 75 ? "Moderate" : "Heavy"],
+    ["AGREEMENT", 100 - story.divergenceScore, story.divergenceScore > 60 ? "Low" : story.divergenceScore > 30 ? "Mixed" : "High"],
+  ];
+
+  const barX = 64;
+  const barW = 700;
+  const barH = 16;
+
+  axes.forEach(([label, value, desc]) => {
+    /* Label */
+    ctx.font = `600 13px ${META}`;
+    ctx.fillStyle = FG_MUTED;
+    ctx.fillText(label, barX, curY);
+
+    /* Score */
+    ctx.font = `700 20px ${DATA}`;
+    ctx.fillStyle = FG_PRIMARY;
+    ctx.textAlign = "right";
+    ctx.fillText(String(Math.round(value)), 1016, curY);
+    ctx.textAlign = "left";
+
+    curY += 12;
+
+    /* Track background */
+    roundRect(ctx, barX, curY, barW, barH, 4);
+    ctx.fillStyle = RULE_COLOR;
+    ctx.fill();
+
+    /* Fill */
+    const fillW = Math.max(8, (value / 100) * barW);
+    roundRect(ctx, barX, curY, fillW, barH, 4);
+    ctx.fillStyle = label === "LEAN" ? leanColor(value) : AMBER;
+    ctx.globalAlpha = 0.7;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    /* Descriptor */
+    ctx.font = `400 13px ${META}`;
+    ctx.fillStyle = FG_TERTIARY;
+    ctx.fillText(desc, barX + barW + 16, curY + 13);
+
+    curY += barH + 28;
   });
 }
