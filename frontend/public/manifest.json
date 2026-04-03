@@ -1,7 +1,7 @@
 {
   "name": "void --news",
   "short_name": "void--news",
-  "description": "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm.",
+  "description": "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm.",
   "id": "/void--news/",
   "start_url": "/void--news/",
   "scope": "/void--news/",
@@ -28,9 +28,9 @@
       "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "India Edition",
-      "short_name": "India",
-      "url": "/void--news/india/",
+      "name": "South Asia Edition",
+      "short_name": "S. Asia",
+      "url": "/void--news/south-asia/",
       "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
     }
   ],

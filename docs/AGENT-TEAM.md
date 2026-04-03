@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-02 (rev 16)
+Last updated: 2026-04-03 (rev 17)
 
 ## Philosophy
 
@@ -40,14 +40,14 @@ CEO (Aacrit)
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Cinematic ————————— cinematographer, vfx-artist, motion-director
-  ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
+  ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator, linguist
   ├── Audio ———————————— audio-engineer
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
 ```
 
-**Total: 23 agents across 10 divisions**
+**Total: 24 agents across 11 divisions**
 
 ---
 
@@ -86,7 +86,8 @@ CEO (Aacrit)
 |-------|---------|-------------|---------|
 | `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 951-source list | Yes | Source list changes |
+| `source-curator` | Source credibility vetting, RSS/scrape config, 1,013-source list | Yes | Source list changes |
+| `linguist` | Media bias vocabulary research, lexicon expansion, linguistic gap analysis across all 5 bias analyzers | Yes | After bias calibration, lexicon gaps identified |
 
 ### Cinematic Division
 
@@ -180,6 +181,7 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 | Browser testing, click-through QA | `uat-tester` | Frontend |
 | spaCy models, bias scoring algorithms, NER | `nlp-engineer` | Pipeline |
 | Source vetting, RSS config, credibility | `source-curator` | Pipeline |
+| Bias lexicon research, vocabulary gap analysis | `linguist` | Pipeline |
 | Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` | Audio |
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` | Security |
 | Strategic advice, roadmap, priorities | `ceo-advisor` | Product |
@@ -205,7 +207,7 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 951-source curated list (3 tiers: 43 us_major, 341 international, 567 independent); 7-point political lean spectrum; 155 countries
+- 1,013-source curated list (3 tiers: 43 us_major, 373 international, 597 independent); 7-point political lean spectrum; 158 countries
 - $0 operational cost constraint
 - Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline summarization
 
@@ -235,4 +237,5 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-03-22 | Gemini TTS migration (replaced edge-tts + GCloud); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
 | 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2 design tokens; source expansion 370→409 |
 | 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
-| 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition (146 sources, 28 countries); 26 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
+| 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
+| 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7 edition-unique (regional affinity, local-priority, cross-edition demotion); migrations 030-036; linguist agent added; weekly digest; 24 agents, 11 divisions |

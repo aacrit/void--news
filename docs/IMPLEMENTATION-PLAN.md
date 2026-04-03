@@ -1,7 +1,7 @@
 # void --news — Implementation Plan
 
-**Version:** 1.2
-**Last updated:** 2026-04-02 (rev 6)
+**Version:** 1.3
+**Last updated:** 2026-04-03 (rev 7)
 
 12-week implementation plan across 5 phases. All work is $0 operational cost.
 
@@ -9,22 +9,23 @@
 
 ## Phase 1 — Foundation -- COMPLETE
 
-**Deliverable:** Pipeline runs 4x daily via GitHub Actions, fetching articles from 951 sources into Supabase. Raw articles stored with metadata.
+**Deliverable:** Pipeline runs 4x daily via GitHub Actions, fetching articles from 1,013 sources into Supabase. Raw articles stored with metadata.
 
-**What was built:** Git scaffolding, 951-source list (`data/sources.json`, 7-point lean spectrum, 3 tiers, 155 countries), Supabase schema (migrations 001-029), RSS fetcher (feedparser), web scraper (BeautifulSoup), Supabase client utility, pipeline orchestrator (`main.py`), GitHub Actions cron.
+**What was built:** Git scaffolding, 1,013-source list (`data/sources.json`, 7-point lean spectrum, 3 tiers, 158 countries), Supabase schema (migrations 001-036), RSS fetcher (feedparser), web scraper (BeautifulSoup), Supabase client utility, pipeline orchestrator (`main.py`), GitHub Actions cron.
 
 ---
 
 ## Phase 2 — Analysis Engine -- COMPLETE
 
-**Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores (all with rationale JSONB), clustering, ranking v5.4, and Gemini integration.
+**Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores (all with rationale JSONB), clustering, ranking v5.6/v5.7, and Gemini integration.
 
 **What was built:**
 - Content dedup: TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
 - Story clustering: two-phase (TF-IDF agglomerative threshold 0.2 + entity-overlap merge pass)
 - 5-axis bias scoring (all return score + rationale): political_lean, sensationalism, opinion_detector, factual_rigor, framing (cluster-aware)
 - Auto-categorization: 3-article majority vote; article_categories junction table
-- Ranking v5.4: 11 signals (+ lean diversity) + soft confidence curve + Gemini editorial importance (optional 12% weight) + US-only divergence damper + cross-spectrum bonus + tabloid gate + steepened time-decay
+- Ranking v5.6: 11 signals + soft confidence curve + Gemini editorial importance (optional 12% weight) + US-only divergence damper + cross-spectrum bonus + tabloid gate + steepened time-decay
+- Ranking v5.7 (edition-unique): regional affinity boost, local-priority boost, cross-edition demotion, edition-level lead gate (in `main.py` + `rerank.py`)
 - Multi-section cross-listing: sections[] on story_clusters (migration 011, GIN-indexed)
 - Gemini Voice architecture: `_SYSTEM_INSTRUCTION` + `_USER_PROMPT_TEMPLATE` + `_PROHIBITED_TERMS` + `_check_quality()` validator; 250-350 word summaries; real outlet names in attribution
 - Step 6c Gemini reasoning: contextual score adjustments on low-confidence/high-divergence clusters (`gemini_reasoning.py`; 25-call budget)

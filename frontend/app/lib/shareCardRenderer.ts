@@ -367,7 +367,7 @@ export async function generateShareCardImage(story: Story): Promise<Blob> {
   ctx.textAlign = "right";
   ctx.font = `600 11px ${META}`;
   ctx.fillStyle = FG_FAINT;
-  ctx.fillText("951 CURATED SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1152, 520);
+  ctx.fillText("1,013 CURATED SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1152, 520);
   ctx.font = `400 12px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
   ctx.fillText("voidnews.app", 1152, 545);
@@ -523,7 +523,7 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
   ctx.textAlign = "right";
   ctx.font = `600 11px ${META}`;
   ctx.fillStyle = FG_FAINT;
-  ctx.fillText("951 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1024, 958);
+  ctx.fillText("1,013 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 1024, 958);
   ctx.font = `400 13px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
   ctx.fillText("voidnews.app", 1024, 985);
@@ -696,7 +696,7 @@ export async function generateStoryCardImage(
   ctx.font = `600 12px ${META}`;
   ctx.fillStyle = FG_FAINT;
   ctx.textAlign = "center";
-  ctx.fillText("951 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 540, 1760);
+  ctx.fillText("1,013 SOURCES  ·  6-AXIS ANALYSIS  ·  FREE", 540, 1760);
   ctx.textAlign = "left";
 
   /* ═══ VIGNETTE ═══ */

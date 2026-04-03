@@ -593,7 +593,7 @@ export default function ShareCard({
             letterSpacing: "0.12em",
           }}
         >
-          6-axis bias analysis&nbsp;&nbsp;·&nbsp;&nbsp;951 sources across the spectrum
+          6-axis bias analysis&nbsp;&nbsp;·&nbsp;&nbsp;1,013 sources across the spectrum
         </span>
       </div>
     </div>
