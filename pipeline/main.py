@@ -1872,7 +1872,7 @@ def main():
         GLOBAL_SIG_EDITIONS = 3      # edition count threshold
         LOCAL_EXCLUSIVE_BOOST = 1.40  # edition-exclusive stories
         LOCAL_CROSSLIST_BOOST = 1.0   # no boost for cross-listed; affinity handles it
-        AFFINITY_MAX_BOOST = 2.0     # max boost at 100% regional sources
+        AFFINITY_MAX_BOOST = 1.5     # max boost at 100% regional sources (v5.8: capped from 2.0)
         WORLD_MULTI_ED_BOOST = 1.12  # world boost for 3+ edition stories
         _RANK_EDITIONS = ["us", "europe", "south-asia", "world"]  # regional first!
 
@@ -1904,9 +1904,8 @@ def main():
                         affinity = regional_count / total
                         affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
                         # Quality cap: proportional to source count. Prevents
-                        # tabloid stories with 100% regional sources from being
-                        # catapulted to #1 by a 2.0x boost. Graduated scale:
-                        # 1src→1.2x, 2→1.4x, 3→1.6x, 4→1.8x, 5+→full 2.0x.
+                        # thin stories from getting disproportionate boost.
+                        # 1src→1.1x, 2→1.2x, 3→1.3x, 4→1.4x, 5+→full 1.5x.
                         _src_count = c.get("source_count", 0)
                         if _src_count < 5:
                             _cap = 1.0 + (_src_count / 5.0) * (AFFINITY_MAX_BOOST - 1.0)
@@ -1971,6 +1970,39 @@ def main():
             remaining = eligible[_ED_LEAD_SLOTS:] + ineligible
             remaining.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
             pool.extend(remaining)
+
+            # Thin-edition backfill (v5.8): when a regional edition has
+            # fewer than 10 stories with base_rank >= 40 (earned on merit,
+            # not affinity), backfill from world pool. A tabloid story should
+            # never fill a top slot when a better global story exists.
+            # BBC principle: a thin regional desk imports from global, not
+            # lowers the bar.
+            _QUALITY_FLOOR = 40.0
+            _BACKFILL_TARGET = 10
+            if ed != "world":
+                quality_count = sum(
+                    1 for c in pool[:_BACKFILL_TARGET]
+                    if c.get("headline_rank", 0) >= _QUALITY_FLOOR
+                )
+                if quality_count < _BACKFILL_TARGET:
+                    # Find world stories not already in this edition's pool
+                    pool_ids = {c.get("_db_id", str(id(c))) for c in pool}
+                    world_pool = [
+                        c for c in clusters
+                        if "world" in (c.get("sections") or [c.get("section", "world")])
+                        and c.get("_db_id", str(id(c))) not in pool_ids
+                        and c.get("headline_rank", 0) >= _QUALITY_FLOOR
+                        and c.get("source_count", 0) >= 5
+                    ]
+                    world_pool.sort(key=lambda c: c.get("headline_rank", 0), reverse=True)
+                    backfill_needed = _BACKFILL_TARGET - quality_count
+                    for wc in world_pool[:backfill_needed]:
+                        # Insert with world rank (no edition boost) at the quality floor
+                        wc[f"rank_{ed}"] = wc.get("headline_rank", 0)
+                        pool.append(wc)
+                    pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
+                    if world_pool[:backfill_needed]:
+                        print(f"  Thin-edition backfill ({ed}): imported {min(backfill_needed, len(world_pool))} world stories")
 
             # Claim this edition's top stories
             for c in pool[:CROSS_EDITION_TOP]:

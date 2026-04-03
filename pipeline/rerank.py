@@ -465,7 +465,7 @@ def main():
     GLOBAL_SIG_EDITIONS = 3
     LOCAL_EXCLUSIVE_BOOST = 1.40
     LOCAL_CROSSLIST_BOOST = 1.0   # no boost for cross-listed; affinity handles it
-    AFFINITY_MAX_BOOST = 2.0     # max boost at 100% regional sources
+    AFFINITY_MAX_BOOST = 1.5     # max boost at 100% regional sources (v5.8: capped from 2.0)
     WORLD_MULTI_ED_BOOST = 1.12
     EDITIONS = ["us", "europe", "south-asia", "world"]  # regional first!
 
@@ -554,6 +554,34 @@ def main():
         remaining_lead = eligible[_ED_LEAD_SLOTS:] + ineligible
         remaining_lead.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
         pool.extend(remaining_lead)
+
+        # Thin-edition backfill (v5.8): when a regional edition has
+        # fewer than 10 stories with headline_rank >= 40, backfill from
+        # world pool. BBC principle: thin desk imports from global.
+        _QUALITY_FLOOR = 40.0
+        _BACKFILL_TARGET = 10
+        if ed != "world":
+            quality_count = sum(
+                1 for u in pool[:_BACKFILL_TARGET]
+                if u.get("headline_rank", 0) >= _QUALITY_FLOOR
+            )
+            if quality_count < _BACKFILL_TARGET:
+                pool_ids = {u["id"] for u in pool}
+                world_pool = [
+                    u for u in updates
+                    if _cluster_in_section(u["id"], clusters, "world")
+                    and u["id"] not in pool_ids
+                    and u.get("headline_rank", 0) >= _QUALITY_FLOOR
+                    and u.get("source_count", 0) >= 5
+                ]
+                world_pool.sort(key=lambda u: u.get("headline_rank", 0), reverse=True)
+                backfill_needed = _BACKFILL_TARGET - quality_count
+                for wu in world_pool[:backfill_needed]:
+                    wu[f"rank_{ed}"] = wu.get("headline_rank", 0)
+                    pool.append(wu)
+                pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
+                if world_pool[:backfill_needed]:
+                    print(f"  Thin-edition backfill ({ed}): imported {min(backfill_needed, len(world_pool))} world stories")
 
         for u in pool[:CROSS_EDITION_TOP]:
             claimed_ids.add(u["id"])
