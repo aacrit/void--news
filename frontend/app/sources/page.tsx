@@ -290,7 +290,7 @@ function AxisDotGrid({
                 <span className="meth-dot-detail__score">{selectedScore}</span>
               )}
             </div>
-            <p className="meth-axis__what">{selectedAxis.what}</p>
+            <p className="meth-axis__what meth-axis__what--italic">{selectedAxis.what}</p>
             <ul className="meth-axis__signals">
               {selectedAxis.signals.map((s, si) => (
                 <li key={si} className="meth-axis__signal">{s}</li>
@@ -639,26 +639,23 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
       <MethSection index={2} className="meth__section--last">
         <h3 className="meth__section-title">Validation &amp; Sources</h3>
 
-        {/* Inline validation stats strip */}
-        <div className="meth-stats-strip">
-          <div className="meth-stats-strip__item">
+        {/* Editor's Ink Stamps — circular stat marks */}
+        <div className="meth-stats-strip" role="list" aria-label="Validation statistics">
+          <div className="meth-stats-strip__item" role="listitem">
             <span className="meth-stats-strip__number">42</span>
-            <span className="meth-stats-strip__label">ground-truth articles</span>
+            <span className="meth-stats-strip__label">ground truth</span>
           </div>
-          <span className="meth-stats-strip__sep" aria-hidden="true">&middot;</span>
-          <div className="meth-stats-strip__item">
+          <div className="meth-stats-strip__item" role="listitem">
             <span className="meth-stats-strip__number">9</span>
             <span className="meth-stats-strip__label">categories</span>
           </div>
-          <span className="meth-stats-strip__sep" aria-hidden="true">&middot;</span>
-          <div className="meth-stats-strip__item">
+          <div className="meth-stats-strip__item meth-stats-strip__item--hero" role="listitem">
             <span className="meth-stats-strip__number">100%</span>
             <span className="meth-stats-strip__label">accuracy</span>
           </div>
-          <span className="meth-stats-strip__sep" aria-hidden="true">&middot;</span>
-          <div className="meth-stats-strip__item">
+          <div className="meth-stats-strip__item" role="listitem">
             <span className="meth-stats-strip__number">r{"\u2009<\u2009"}0.70</span>
-            <span className="meth-stats-strip__label">cross-axis gate</span>
+            <span className="meth-stats-strip__label">cross-axis</span>
           </div>
         </div>
 
