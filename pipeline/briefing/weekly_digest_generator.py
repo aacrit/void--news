@@ -646,7 +646,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
 
         # Section 7: Audio
         print(f"\n  ── AUDIO ──")
-        audio_result, calls = _generate_audio(covers, opinions, tech, sports, recap, edition)
+        audio_result, calls = _generate_audio(covers, opinions, None, None, recap, edition)
         total_calls += calls
         audio_script = audio_result.get("script", "") if audio_result else None
 
@@ -708,12 +708,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
             "generation_duration_seconds": round(elapsed, 1),
         }
 
-        # Store tech and sports in the recap_stories field as additional entries
         recap_data = recap.get("stories", []) if recap else []
-        if tech:
-            recap_data.insert(0, {"headline": tech.get("headline", ""), "summary": tech.get("text", ""), "section": "tech"})
-        if sports:
-            recap_data.append({"headline": sports.get("headline", ""), "summary": sports.get("text", ""), "section": "sports"})
         row["recap_stories"] = json.dumps(recap_data)
 
         try:
