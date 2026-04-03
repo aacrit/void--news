@@ -49,15 +49,15 @@ function leanBadgeClass(lean: string): string {
 }
 
 function leanBadgeLabel(lean: string): string {
-  // Normalize lean values from data to display labels
+  // Map lean values to editorial voice persona names (matches daily brief pattern)
   const map: Record<string, string> = {
-    "left": "Left",
-    "center-left": "Center-Left",
-    "center": "Center",
-    "center-right": "Center-Right",
-    "right": "Right",
-    "far-left": "Far Left",
-    "far-right": "Far Right",
+    "left": "The Progressive",
+    "center-left": "The Reformist",
+    "center": "The Pragmatist",
+    "center-right": "The Strategist",
+    "right": "The Traditionalist",
+    "far-left": "The Progressive",
+    "far-right": "The Traditionalist",
   };
   return map[lean.toLowerCase()] ?? lean;
 }
@@ -73,6 +73,45 @@ function leanToScore(lean: string): number {
     "far-right": 90,
   };
   return map[lean.toLowerCase()] ?? 50;
+}
+
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
+
+/**
+ * Normalize cover numbers from pipeline data.
+ * Pipeline may send {stat, context} or {value, label} format,
+ * and the data may be a JSON string (double-encoded) or already parsed.
+ */
+function parseCoverNumbers(
+  raw: unknown
+): { value: string; label: string }[] {
+  if (!raw) return [];
+
+  let arr: unknown[] = [];
+
+  // Handle double-encoded JSON strings
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) arr = parsed;
+      else return [];
+    } catch {
+      return [];
+    }
+  } else if (Array.isArray(raw)) {
+    arr = raw;
+  } else {
+    return [];
+  }
+
+  // Normalize each item: accept {stat, context} OR {value, label}
+  return arr
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => ({
+      value: String(item.value ?? item.stat ?? ""),
+      label: String(item.label ?? item.context ?? ""),
+    }))
+    .filter((n) => n.value !== "" && n.label !== "");
 }
 
 /* ── Section Components ──────────────────────────────────────────────────── */
@@ -105,50 +144,63 @@ function Masthead({
   );
 }
 
-function CoverSection({ stories }: { stories: WeeklyCoverStory[] }) {
+function CoverSection({
+  stories,
+  topLevelNumbers,
+}: {
+  stories: WeeklyCoverStory[];
+  topLevelNumbers: unknown;
+}) {
   return (
     <section className="wk-cover" aria-labelledby="wk-cover-heading">
       <h2 className="wk-section-label" id="wk-cover-heading">The Cover</h2>
-      {stories.map((story, i) => (
-        <article key={i} className="wk-cover__story">
-          <h3 className="wk-cover__headline">{story.headline}</h3>
-          <div className="wk-cover__body-wrap">
-            <div className="wk-cover__text">
-              {story.text.split("\n\n").map((para, j) => (
-                <p key={j}>{para}</p>
-              ))}
+      {stories.map((story, i) => {
+        // Prefer numbers embedded in the story; fall back to top-level cover_numbers for the first story
+        const storyNums = parseCoverNumbers(story.numbers);
+        const numbers = storyNums.length > 0
+          ? storyNums
+          : (i === 0 ? parseCoverNumbers(topLevelNumbers) : []);
+        return (
+          <article key={i} className="wk-cover__story">
+            <h3 className="wk-cover__headline">{story.headline}</h3>
+            <div className="wk-cover__body-wrap">
+              <div className="wk-cover__text">
+                {story.text.split("\n\n").map((para, j) => (
+                  <p key={j}>{para}</p>
+                ))}
+              </div>
+              {numbers.length > 0 && (
+                <aside className="wk-cover__numbers" aria-label="This week in numbers">
+                  <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
+                  <dl className="wk-cover__numbers-list">
+                    {numbers.map((n, k) => (
+                      <div key={k} className="wk-cover__number-item">
+                        <dt className="wk-cover__number-value">{n.value}</dt>
+                        <dd className="wk-cover__number-label">{n.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </aside>
+              )}
             </div>
-            {story.numbers && story.numbers.length > 0 && (
-              <aside className="wk-cover__numbers" aria-label="This week in numbers">
-                <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
-                <dl className="wk-cover__numbers-list">
-                  {story.numbers.map((n, k) => (
-                    <div key={k} className="wk-cover__number-item">
-                      <dt className="wk-cover__number-value">{n.value}</dt>
-                      <dd className="wk-cover__number-label">{n.label}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </aside>
+            {story.timeline && story.timeline.length > 0 && (
+              <div className="wk-timeline" role="list" aria-label="Timeline">
+                <div className="wk-timeline__track" aria-hidden="true" />
+                {story.timeline.map((day, k) => (
+                  <div key={k} className="wk-timeline__node" role="listitem">
+                    <span className="wk-timeline__dot" aria-hidden="true" />
+                    <span className="wk-timeline__day">{day.day}</span>
+                    <span className="wk-timeline__note">{day.note}</span>
+                  </div>
+                ))}
+              </div>
             )}
-          </div>
-          {story.timeline && story.timeline.length > 0 && (
-            <div className="wk-timeline" role="list" aria-label="Timeline">
-              <div className="wk-timeline__track" aria-hidden="true" />
-              {story.timeline.map((day, k) => (
-                <div key={k} className="wk-timeline__node" role="listitem">
-                  <span className="wk-timeline__dot" aria-hidden="true" />
-                  <span className="wk-timeline__day">{day.day}</span>
-                  <span className="wk-timeline__note">{day.note}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {i < stories.length - 1 && (
-            <hr className="wk-divider" aria-hidden="true" />
-          )}
-        </article>
-      ))}
+            {i < stories.length - 1 && (
+              <hr className="wk-divider" aria-hidden="true" />
+            )}
+          </article>
+        );
+      })}
     </section>
   );
 }
@@ -531,7 +583,10 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             />
 
             {digest.cover_text && digest.cover_text.length > 0 && (
-              <CoverSection stories={digest.cover_text} />
+              <CoverSection
+                stories={digest.cover_text}
+                topLevelNumbers={digest.cover_numbers}
+              />
             )}
 
             <OpinionsSection
