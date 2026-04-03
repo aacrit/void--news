@@ -214,7 +214,7 @@ export type Category =
   | "Environment"
   | "Culture";
 
-export type Edition = "world" | "us" | "europe" | "india";
+export type Edition = "world" | "us" | "europe" | "south-asia";
 
 // Keep Section as alias for backward compat
 export type Section = Edition;
@@ -251,7 +251,7 @@ export const EDITIONS: EditionMeta[] = [
   { slug: "world", label: "World", country: "Global", sourceCount: "200+ sources", description: "International coverage" },
   { slug: "us", label: "US", country: "United States", sourceCount: "170+ sources", description: "United States coverage" },
   { slug: "europe", label: "Europe", country: "UK & Europe", sourceCount: "110+ sources", description: "UK and European coverage" },
-  { slug: "india", label: "India", country: "India", sourceCount: "35+ sources", description: "Indian news in English" },
+  { slug: "south-asia", label: "South Asia", country: "India & South Asia", sourceCount: "70+ sources", description: "India, Pakistan, Bangladesh, Sri Lanka, Nepal, Afghanistan" },
 ];
 
 /* ---------------------------------------------------------------------------

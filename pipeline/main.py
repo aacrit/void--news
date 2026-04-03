@@ -135,7 +135,10 @@ _US_DOMESTIC_PATTERN = re.compile(
 # ---------------------------------------------------------------------------
 _COUNTRY_EDITION_MAP: dict[str, str] = {
     "US": "us",
-    "IN": "india",
+    # South Asia edition — India + Pakistan + Bangladesh + Sri Lanka + Nepal + Afghanistan + Maldives + Bhutan
+    "IN": "south-asia", "PK": "south-asia", "BD": "south-asia",
+    "LK": "south-asia", "NP": "south-asia", "AF": "south-asia",
+    "MV": "south-asia", "BT": "south-asia",
     # Europe edition — UK + EU + EEA + Balkans + Caucasus + Ukraine
     "GB": "europe", "UK": "europe",
     "FR": "europe", "DE": "europe", "ES": "europe", "IT": "europe",
@@ -166,7 +169,7 @@ def load_sources(editions: list[str] | None = None) -> list[dict]:
     """Load the curated source list from data/sources.json.
 
     Args:
-        editions: Optional list of edition slugs to filter by (e.g., ["india"]).
+        editions: Optional list of edition slugs to filter by (e.g., ["south-asia"]).
                   If None or empty, loads all sources.
     """
     if not SOURCES_PATH.exists():
@@ -828,7 +831,7 @@ def _scrape_single(article_data, source_map):
     source_country = source_info.get("country", "")
 
     if source_country in _COUNTRY_EDITION_MAP:
-        # Country-specific edition: US, India
+        # Country-specific edition: US, South Asia, Europe
         article_data["section"] = _COUNTRY_EDITION_MAP[source_country]
     elif _has_us_domestic_signal(article_data):
         # Content-based override: international sources covering clearly
@@ -848,7 +851,7 @@ def main():
         "--editions",
         type=str,
         default="",
-        help="Comma-separated edition slugs to process (e.g., 'india'). "
+        help="Comma-separated edition slugs to process (e.g., 'south-asia'). "
              "Empty = all sources.",
     )
     args = parser.parse_args()
@@ -1834,14 +1837,14 @@ def main():
                 print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
 
         # ── Per-edition rank computation (v5.4) ──
-        # Compute independent rank_world, rank_us, rank_india so that:
+        # Compute independent rank_world, rank_us, rank_south_asia so that:
         #   1) Daily briefs use edition-specific top stories
         #   2) Frontend orders by the correct per-edition column
         # Cross-edition demotion: stories in one edition's top-5 get 0.92x
         # in other editions, ensuring each edition surfaces unique stories.
         CROSS_EDITION_TOP = 5
         CROSS_DEMOTION = 0.92
-        _RANK_EDITIONS = ["world", "us", "europe", "india"]
+        _RANK_EDITIONS = ["world", "us", "europe", "south-asia"]
 
         # Each cluster starts with its headline_rank as the base for all editions
         for c in clusters:
@@ -1856,7 +1859,7 @@ def main():
         LOCAL_BOOST = 1.20
         for c in clusters:
             sections = c.get("sections") or [c.get("section", "world")]
-            for ed in ("us", "europe", "india"):
+            for ed in ("us", "europe", "south-asia"):
                 if ed in sections and "world" not in sections:
                     c[f"rank_{ed}"] = round(c.get(f"rank_{ed}", 0) * LOCAL_BOOST, 2)
 
@@ -1889,8 +1892,8 @@ def main():
 
         _wu = len(set(_section_top5.get("world", [])) & set(_section_top5.get("us", [])))
         _we = len(set(_section_top5.get("world", [])) & set(_section_top5.get("europe", [])))
-        _wi = len(set(_section_top5.get("world", [])) & set(_section_top5.get("india", [])))
-        print(f"\n  Per-edition ranks computed. Cross-edition overlap: world/us={_wu}/5, world/europe={_we}/5, world/india={_wi}/5")
+        _wi = len(set(_section_top5.get("world", [])) & set(_section_top5.get("south-asia", [])))
+        print(f"\n  Per-edition ranks computed. Cross-edition overlap: world/us={_wu}/5, world/europe={_we}/5, world/south-asia={_wi}/5")
 
         # Print top 10 per edition for diagnostics
         for ed in _RANK_EDITIONS:
@@ -1908,7 +1911,7 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
-                    edition_sections=["world", "us", "europe", "india"],
+                    edition_sections=["world", "us", "europe", "south-asia"],
                 )
 
                 for edition, brief in brief_results.items():
@@ -2076,7 +2079,7 @@ def main():
             # Determine cluster section (edition) from its articles.
             # Strategy: majority vote — whichever edition has the most
             # articles in this cluster determines the cluster's edition.
-            # This works fairly across all 3 editions (world/us/india).
+            # This works fairly across all editions (world/us/europe/south-asia).
             section_counts: dict[str, int] = {}
             for art in cluster_articles_list:
                 sec = art.get("section", "world")
@@ -2085,7 +2088,7 @@ def main():
 
             # Multi-section: list ALL editions that have articles in this cluster.
             # This allows cross-listing — e.g., a global Iran war cluster with
-            # 3 India-source articles appears in both "world" and "india" feeds.
+            # 3 India-source articles appears in both "world" and "south-asia" feeds.
             all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
 
             # Use pre-generated summary from clustering or Gemini step
@@ -2111,7 +2114,7 @@ def main():
                 "rank_world": round(cluster.get("rank_world", cluster.get("headline_rank", 0.0)), 2),
                 "rank_us": round(cluster.get("rank_us", cluster.get("headline_rank", 0.0)), 2),
                 "rank_europe": round(cluster.get("rank_europe", cluster.get("headline_rank", 0.0)), 2),
-                "rank_india": round(cluster.get("rank_india", cluster.get("headline_rank", 0.0)), 2),
+                "rank_south_asia": round(cluster.get("rank_south_asia", cluster.get("headline_rank", 0.0)), 2),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)
@@ -2435,7 +2438,7 @@ def main():
     # Clean old daily briefs (keep only latest per edition)
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
-        for ed in ("world", "us", "europe", "uk", "india", "canada"):
+        for ed in ("world", "us", "europe", "uk", "south-asia", "canada"):
             old = supabase.table("daily_briefs").select("id").eq(
                 "edition", ed
             ).lt("created_at", cutoff).execute()

@@ -75,14 +75,14 @@ export const INDIA_DATELINES: Record<string, string> = {
 
 export function getDateline(story: Story, edition: Edition): string {
   const map =
-    edition === "india"
+    edition === "south-asia"
       ? INDIA_DATELINES
       : edition === "us"
         ? US_DATELINES
         : WORLD_DATELINES;
 
   const fallback =
-    edition === "india"
+    edition === "south-asia"
       ? "NEW DELHI"
       : edition === "us"
         ? "WASHINGTON, D.C."
@@ -196,7 +196,7 @@ export function getSectionConfig(edition: Edition): {
   switch (edition) {
     case "us":
       return { primary: "THE NATION" };
-    case "india":
+    case "south-asia":
       return { primary: "NATIONAL" };
     default:
       return { primary: "WORLD NEWS" };
@@ -256,8 +256,8 @@ export function editionSubtitle(edition: Edition): string | null {
   switch (edition) {
     case "us":
       return "United States Edition";
-    case "india":
-      return "India Edition";
+    case "south-asia":
+      return "South Asia Edition";
     default:
       return null;
   }
