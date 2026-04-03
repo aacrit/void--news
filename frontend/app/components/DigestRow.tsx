@@ -42,6 +42,7 @@ export default function DigestRow({ story, index, onStoryClick, globalIndex, kbd
     <article
       ref={rowRef}
       data-story-index={globalIndex}
+      data-story-id={story.id}
       className={`dg-row anim-typewriter${visible ? " anim-typewriter--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{
         borderLeftColor: borderColor,

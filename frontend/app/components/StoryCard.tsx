@@ -31,6 +31,7 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
     <article
       ref={cardRef}
       data-story-index={globalIndex}
+      data-story-id={story.id}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >

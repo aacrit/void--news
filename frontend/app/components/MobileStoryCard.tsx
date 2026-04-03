@@ -36,6 +36,7 @@ export default function MobileStoryCard({
     <article
       ref={cardRef}
       data-story-index={globalIndex}
+      data-story-id={story.id}
       className={`msc msc--${variant}${isHero ? " anim-cold-open-hero" : " anim-stagger"}${!isHero && visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: isHero ? "0ms" : `${Math.min(index * 40, 200)}ms` }}
     >

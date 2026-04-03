@@ -744,74 +744,70 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     const backdrop = document.querySelector('.deep-dive-backdrop');
     backdrop?.classList.add('deep-dive-backdrop--closing');
 
-    if (originRect && originRect.width > 0 && panelRef.current) {
-      /* ═══ SCENE 5: REVERSE SHOT — Panel collapses back to card ═══
-         Cinematic reference: The reverse shot in conversation editing.
-         After the close-up (Deep Dive), cut back to the wide (feed).
+    /* ═══ SCENE 5: REVERSE SHOT — Panel collapses back into its card ═══
+       Find the actual card in the DOM at close time rather than relying on
+       the stale originRect from open time. This handles arrow-key navigation
+       between stories (story changes but originRect still pointed at the
+       original card) and any layout shifts.
 
-         Asymmetric timing is critical here:
-         - Open: bouncy, dramatic, 500ms (the reveal is the spectacle)
-         - Close: snappy, decisive, 380ms (returning is editorial efficiency)
+       The panel stays fully opaque until the final 80ms — the viewer's eye
+       tracks the panel all the way back into the card, then it vanishes
+       into the card surface like a match cut in reverse. */
 
-         This asymmetry mirrors real film editing: establishing shots are
-         held longer, reaction shots are cut quicker. The viewer has
-         already absorbed the Deep Dive content; the close should feel
-         like a confident editorial decision, not a slow retreat.
+    // Fresh rect: query the DOM for the current story's card element.
+    // Falls back to originRect (still valid when body is position:fixed),
+    // then to null (graceful center-close fallback).
+    const cardEl = document.querySelector(`[data-story-id="${story.id}"]`);
+    const targetRect = cardEl ? cardEl.getBoundingClientRect() : (originRect?.width ? originRect : null);
 
-         Choreography:
-         1. Content fades out (100ms) — J-cut: content exits first
-         2. Panel morphs panel rect → card origin (380ms spring-snappy)
-         3. Panel fades to transparent as it approaches the card
-         4. Backdrop blur fades out at 80ms — L-cut: feed refocuses
-            before panel physically reaches the card. This creates the
-            sensation that the world behind is already sharp by the time
-            the viewer's attention returns to it.
-         5. onClose fires, DOM unmounts */
+    if (targetRect && targetRect.width > 0 && panelRef.current) {
       setTimeout(() => {
         const panel = panelRef.current;
         if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
 
         const currentRect = panel.getBoundingClientRect();
         const MORPH_SCALE_MIN = 0.15;
-        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / currentRect.width);
-        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / currentRect.height);
-        const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
-        const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
+        const scaleX = Math.max(MORPH_SCALE_MIN, targetRect.width / currentRect.width);
+        const scaleY = Math.max(MORPH_SCALE_MIN, targetRect.height / currentRect.height);
+        const dx = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
+        const dy = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
         const isDesktopNow = window.innerWidth >= 1024;
         const closeTransform = isDesktopNow
           ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
           : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
 
-        // Phase 2: Reverse shot morph — spring-snappy for decisive close.
-        // 380ms (vs 500ms open) = 24% faster. The close is a cut-back,
-        // not a reveal. Shadow collapses to nothing (dolly out: receding).
+        // Phase 2: Reverse match cut — the panel physically returns to the card.
+        // 420ms with a smooth deceleration curve: fast departure from center,
+        // gentle arrival at the card (like setting a book down on a table).
+        // Opacity holds at 1 for the first 300ms then fades in the final 120ms,
+        // so the viewer tracks the panel all the way to the card before it
+        // dissolves into the card surface.
         setMorphStyle({
           transform: closeTransform,
           borderRadius: "8px",
           opacity: 0,
-          boxShadow: "none",
+          boxShadow: "var(--shadow-e0)",
           transition: [
-            "transform 380ms var(--spring-snappy)",
-            "border-radius 250ms var(--spring-snappy)",
-            "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1) 150ms",
-            "box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+            "transform 420ms cubic-bezier(0.32, 0.72, 0, 1)",
+            "border-radius 300ms cubic-bezier(0.32, 0.72, 0, 1)",
+            "opacity 120ms cubic-bezier(0.16, 1, 0.3, 1) 300ms",
+            "box-shadow 350ms cubic-bezier(0.32, 0.72, 0, 1)",
           ].join(", "),
         });
 
-        // Phase 3: L-cut — backdrop fades early so the feed is already
-        // sharp before the panel reaches the card. The viewer's peripheral
-        // vision registers the returning world before their foveal attention
-        // leaves the closing panel.
-        setTimeout(() => setIsVisible(false), 80);
+        // Phase 3: L-cut — backdrop fades at 120ms so the feed is sharp
+        // while the panel is still mid-flight. The returning world appears
+        // before the panel lands, creating depth.
+        setTimeout(() => setIsVisible(false), 120);
 
-        // Phase 4: Cleanup — fast dismissal matches editorial pace
+        // Phase 4: Cleanup — after panel has visually merged with the card
         setTimeout(() => {
           pageMain?.classList.remove('page-main--deep-dive-closing');
           previousFocusRef.current?.focus();
           onClose();
-        }, 400);
-      }, 100); // J-cut: content fades 100ms before morph begins
+        }, 450);
+      }, 80); // J-cut: content fades 80ms before morph begins
     } else {
       /* ═══ FALLBACK: fast slide-out ═══ */
       setTimeout(() => {
@@ -823,7 +819,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         }, 400);
       }, 100);
     }
-  }, [onClose, originRect]);
+  }, [onClose, originRect, story.id]);
 
   /* ---- Swipe-to-dismiss touch handlers (mobile only) -------------------- */
 
