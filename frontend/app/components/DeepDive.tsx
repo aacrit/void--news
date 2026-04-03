@@ -473,8 +473,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       setIsVisible(true);
 
       // Step 2: Measure the panel's final position
-      // The panel is already in the DOM at its final CSS position (inset:0 or
-      // right:0 on desktop). We read that rect, then position it at the card.
       requestAnimationFrame(() => {
         const panel = panelRef.current;
         if (!panel) return;
@@ -493,16 +491,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         }
 
         // Compute inverse transform: final → card origin
-        // On desktop, offsets are relative to the centered position (translate(-50%,-50%))
-        // Clamp minimum scale to prevent tiny-card-to-large-panel morphs from
-        // starting at an invisible scale (e.g., a narrow card on mobile).
         const MORPH_SCALE_MIN = 0.15;
         const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / finalRect.width);
         const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / finalRect.height);
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
-        // Desktop: offsets are additive to the centering transform
         const snapTransform = isDesktopNow
           ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
           : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
@@ -510,56 +504,62 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           ? "translate(-50%, -50%) scale(1, 1)"
           : "translate(0, 0) scale(1, 1)";
 
-        // Step 3: Snap panel to card position (no transition)
+        const morphTransition = [
+          "transform 500ms var(--spring-bouncy)",
+          "border-radius 350ms var(--spring-bouncy)",
+          "box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 60ms",
+        ].join(", ");
+
+        /* ═══ SCENE 4: MATCH CUT — Card expands into Deep Dive panel ═══
+           Direct DOM manipulation with forced reflow guarantees the browser
+           registers the snap position at the card BEFORE the spring morph
+           begins. The previous approach used setMorphStyle (React state)
+           for both snap and transition separated by setTimeout(0), but
+           React's batched renders could collapse both into a single frame,
+           causing the panel to fly in from its CSS default position instead
+           of the card. The forced reflow makes this deterministic. */
+
+        // Sync React state to the final morph style — this prevents any
+        // React re-renders (from setIsVisible, setContentVisible, etc.)
+        // from applying the default fallback styles mid-animation.
         setMorphStyle({
-          transform: snapTransform,
-          borderRadius: "8px",
+          transform: finalTransform,
+          borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
           opacity: 1,
-          boxShadow: "var(--shadow-e0)",
-          transition: "none",
+          boxShadow: "var(--shadow-cinematic-lifted)",
+          transition: morphTransition,
         });
 
-        // Step 4: Match cut morph — card position → final panel position.
-        // setTimeout(0) guarantees the snap frame paints before the
-        // transition begins — more reliable than nested rAF on 90/120Hz.
-        //
-        // The spring-bouncy easing (500ms) provides the dramatic overshoot
-        // that makes the panel feel like it has physical mass — it arrives
-        // with momentum, overshoots slightly, then settles into position.
-        // This is the Spielberg "motivated camera" approach: the camera
-        // movement has weight and inertia.
-        //
-        // Shadow ramps from e0 → cinematic-lifted (maximum depth) with
-        // a 60ms delay — shadows lag matter, consistent with the card
-        // hover dolly-in physics throughout the system.
+        // Step 3: Direct DOM — snap panel to card position (no transition)
+        panel.style.transition = "none";
+        panel.style.transform = snapTransform;
+        panel.style.borderRadius = "8px";
+        panel.style.opacity = "1";
+        panel.style.boxShadow = "var(--shadow-e0)";
+
+        // Force reflow — the browser MUST compute and commit the snap
+        // position before we add the transition. Without this, the snap
+        // and transition can collapse into one style change and the panel
+        // flies in from its CSS default position.
+        void panel.offsetHeight;
+
+        // Step 4: Direct DOM — spring morph from card to final position.
+        // The spring-bouncy easing provides dramatic overshoot — the panel
+        // arrives with momentum, overshoots slightly, then settles.
+        // Shadow ramps from e0 → cinematic-lifted with a 60ms lag.
+        panel.style.transition = morphTransition;
+        panel.style.transform = finalTransform;
+        panel.style.borderRadius = isDesktopNow ? "16px" : "16px 16px 0 0";
+        panel.style.boxShadow = "var(--shadow-cinematic-lifted)";
+
+        // L-cut: content cascades in while morph is still settling.
+        setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
+
+        // Clear morph style after spring fully settles
         setTimeout(() => {
-          setMorphStyle({
-            transform: finalTransform,
-            borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
-            opacity: 1,
-            boxShadow: "var(--shadow-cinematic-lifted)",
-            transition: [
-              "transform 500ms var(--spring-bouncy)",
-              "border-radius 350ms var(--spring-bouncy)",
-              "box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 60ms",
-            ].join(", "),
-          });
-
-          // L-cut: content cascades in while morph is still settling.
-          // At 180ms (36% of 500ms morph), the panel is mid-spring —
-          // this overlap creates the cinematic sensation that the content
-          // was always there and the camera merely revealed it.
-          setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
-
-          // Clear morph style after spring fully settles
-          setTimeout(() => {
-            setMorphStyle(null);
-            // Signal CSS that the panel has settled — enables studio
-            // reflection ::before fade-in (the key light catching the
-            // top edge of the panel, like a glass refraction artifact).
-            panelRef.current?.setAttribute('data-settled', '');
-          }, 550);
-        }, 0);
+          setMorphStyle(null);
+          panelRef.current?.setAttribute('data-settled', '');
+        }, 550);
       });
     } else {
       /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
