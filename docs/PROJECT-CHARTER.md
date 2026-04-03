@@ -1,6 +1,6 @@
 # void --news — Project Charter
 
-**Date:** 2026-04-02 (rev 6)
+**Date:** 2026-04-03 (rev 7)
 **Project Owner:** Aacrit (CEO)
 **Status:** Phase 4 In Progress
 
@@ -18,18 +18,18 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 |---------|---------------------|---------------------|
 | Bias is per-outlet, not per-article | Tools label an entire outlet "left" or "right" | Multi-axis NLP on every individual article |
 | Bias features are paywalled | Full insights require subscriptions | All bias data free and central |
-| Aggregators include untrusted sources | Low-credibility outlets mixed in | 951 curated, vetted sources only |
+| Aggregators include untrusted sources | Low-credibility outlets mixed in | 1,013 curated, vetted sources only |
 | Left/right is too simplistic | Single-axis spectrum | 6-axis analysis + 7-point lean spectrum (far-left → far-right) |
 
 ## 3. Scope
 
 ### In Scope (MVP)
 - World, US, Europe, and South Asia editions (4 editions)
-- 951 curated sources across 3 tiers (43 us_major, 341 international, 567 independent); 7-point political lean spectrum; 155 countries
+- 1,013 curated sources across 3 tiers (43 us_major, 373 international, 597 independent); 7-point political lean spectrum; 158 countries
 - 4x daily automated pipeline (GitHub Actions)
 - Rule-based NLP bias engine (6 axes, $0 cost)
 - Gemini Flash: cluster summarization + editorial importance + reasoning (~116 RPD, free tier)
-- Story clustering with v5.4 importance ranking (11 signals + Gemini editorial intelligence)
+- Story clustering with v5.6/v5.7 importance ranking (11 signals + Gemini editorial intelligence + edition-unique ranking)
 - Responsive web app (desktop + mobile)
 - Static site on GitHub Pages, data in Supabase
 
@@ -45,7 +45,7 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 
 | Metric | Target |
 |--------|--------|
-| Sources at launch | 951 (43 us_major + 341 international + 567 independent) |
+| Sources at launch | 1,013 (43 us_major + 373 international + 597 independent) |
 | Pipeline reliability | 95%+ successful runs |
 | Pipeline completion time | < 6 minutes per run |
 | Bias scoring coverage | 100% of articles scored on all 6 axes |
@@ -69,7 +69,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | # | Decision | Choice |
 |---|----------|--------|
 | 1 | Bias model | Per-article, 6-axis, rule-based NLP |
-| 2 | Source strategy | 951 curated (155 countries); 7-point lean spectrum |
+| 2 | Source strategy | 1,013 curated (158 countries); 7-point lean spectrum |
 | 3 | Pipeline frequency | 4x daily (every 6h, all editions each run) |
 | 4 | Frontend | Next.js 16 (static export) + React 19 + TypeScript |
 | 5 | Responsive | One project, two layouts (desktop/mobile) |
@@ -77,7 +77,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | 7 | Design | "Press & Precision" — newspaper aesthetic, modern data density |
 | 8 | Typography | Playfair Display + Inter + Barlow Condensed + IBM Plex Mono |
 | 9 | Bias viz | BiasLens Three Lenses (Beam, Ring, Prism) |
-| 10 | Ranking | v5.4: 11 deterministic signals + optional Gemini editorial intelligence |
+| 10 | Ranking | v5.6/v5.7: 11 deterministic signals + Gemini editorial intelligence + edition-unique ranking |
 | 11 | Color | Light mode (warm paper) + adaptive dark mode |
 | 12 | Hosting | GitHub Pages + Supabase + GitHub Actions |
 
@@ -130,14 +130,14 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 The MVP is complete when:
 
-- [ ] 951 sources actively ingested 4x daily with 95%+ reliability
+- [ ] 1,013 sources actively ingested 4x daily with 95%+ reliability
 - [ ] All 6 bias axes scored on every article
 - [ ] Story clustering groups related articles with 85%+ accuracy
 - [ ] Desktop layout renders newspaper-style multi-column grid
 - [ ] Mobile layout renders single-column feed with bottom navigation
 - [ ] Deep Dive shows unified summary with divergence highlights and source links
 - [ ] BiasLens Three Lenses displays inline on every story card
-- [ ] v5.4 importance ranking active with Gemini editorial intelligence
+- [ ] v5.6/v5.7 importance ranking active with edition-unique ranking
 - [ ] Light and dark modes retain newspaper aesthetic
 - [ ] Lighthouse score 90+ on all categories
 - [ ] WCAG 2.1 AA compliant

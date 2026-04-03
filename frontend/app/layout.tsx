@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://aacrit.github.io"),
   title: "void --news — See through the void.",
   description:
-    "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
+    "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
   keywords: [
     "news",
     "bias analysis",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "void --news — See through the void.",
     description:
-      "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
+      "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
     type: "website",
     siteName: "void --news",
     images: [
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "void --news — See through the void.",
     description:
-      "Free per-article bias analysis across 951 sources. Six axes. No paywall. No algorithm.",
+      "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm.",
     images: ["/void--news/twitter-card.svg"],
   },
   icons: {
