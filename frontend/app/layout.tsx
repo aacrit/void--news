@@ -5,6 +5,7 @@ import {
   IBM_Plex_Mono,
   Barlow_Condensed,
 } from "next/font/google";
+import { BrandVersionProvider } from "./lib/brandVersion";
 import "./globals.css";
 
 /* ---------------------------------------------------------------------------
@@ -140,7 +141,7 @@ export default function RootLayout({
         {/* Status bar integration — matches app chrome to warm paper tones */}
         <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
-        {/* Inline script to set theme before first paint — avoids flash */}
+        {/* Inline script to set theme + brand version before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -152,6 +153,8 @@ export default function RootLayout({
                   } else if (!stored && window.matchMedia('(prefers-color-scheme: light)').matches) {
                     document.documentElement.setAttribute('data-mode', 'light');
                   }
+                  var brand = localStorage.getItem('void-brand-version');
+                  document.documentElement.setAttribute('data-brand', brand === 'v1' ? 'v1' : 'v2');
                 } catch(e) {}
               })();
               if ('serviceWorker' in navigator) {
@@ -173,7 +176,9 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <BrandVersionProvider>
+          {children}
+        </BrandVersionProvider>
       </body>
     </html>
   );

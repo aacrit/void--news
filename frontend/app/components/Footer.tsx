@@ -3,6 +3,7 @@
 import Link from "next/link";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
+import { useBrandVersion } from "../lib/brandVersion";
 
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
@@ -16,6 +17,8 @@ interface FooterProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Footer({ lastUpdated }: FooterProps) {
+  const { version, setVersion } = useBrandVersion();
+
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
@@ -37,6 +40,30 @@ export default function Footer({ lastUpdated }: FooterProps) {
         </div>
 
         <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
+
+        {/* Brand version toggle */}
+        <div className="footer-brand-toggle" role="radiogroup" aria-label="Brand mark version">
+          <span className="footer-brand-toggle__label">Mark:</span>
+          <button
+            className={`footer-brand-toggle__btn${version === "v1" ? " footer-brand-toggle__btn--active" : ""}`}
+            onClick={() => setVersion("v1")}
+            role="radio"
+            aria-checked={version === "v1"}
+            aria-label="Scale beam mark"
+          >
+            V1
+          </button>
+          <button
+            className={`footer-brand-toggle__btn${version === "v2" ? " footer-brand-toggle__btn--active" : ""}`}
+            onClick={() => setVersion("v2")}
+            role="radio"
+            aria-checked={version === "v2"}
+            aria-label="Void lens mark"
+          >
+            V2
+          </button>
+        </div>
+
         <p className="footer-kbd-hint" aria-label="Press question mark for keyboard shortcuts">
           <kbd className="footer-kbd-hint__key">?</kbd> shortcuts
         </p>
