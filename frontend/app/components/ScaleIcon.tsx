@@ -41,12 +41,12 @@ export interface ScaleIconProps {
 }
 
 /* ---- Approximate stroke-dasharray lengths for draw animation ---- */
-// Void circle:      circumference ~= 2 * PI * 9 ~= 57
-// Beam:             ~22 (from x1=5 to x2=27)
+// Void circle:      organic path length ~57
+// Beam:             ~27 (organic S-curve from M3 to 29)
 // Left tick:        ~4
 // Right tick:       ~4
 // Center post:      ~14 (from y1=19 to y2=27)
-// Base:             ~8
+// Base:             ~9 (organic curve)
 
 const STYLES = `
 /* === ScaleIcon keyframes === */
@@ -168,9 +168,9 @@ const STYLES = `
 }
 
 .si-draw-beam {
-  --si-len: 22;
-  stroke-dasharray: 22;
-  stroke-dashoffset: 22;
+  --si-len: 27;
+  stroke-dasharray: 27;
+  stroke-dashoffset: 27;
   animation: si-draw 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 280ms;
 }
@@ -200,9 +200,9 @@ const STYLES = `
 }
 
 .si-draw-base {
-  --si-len: 8;
-  stroke-dasharray: 8;
-  stroke-dashoffset: 8;
+  --si-len: 9;
+  stroke-dasharray: 9;
+  stroke-dashoffset: 9;
   animation: si-draw 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 600ms;
 }
@@ -304,11 +304,11 @@ export function ScaleIcon({
         ...style,
       }}
     >
-      {/* Void circle — the primary mark, the analytical lens, the void.
-          Centered at (16, 13), radius 9. Hollow ring, no fill.
+      {/* Void circle — organic hand-drawn path, the analytical lens, the void.
+          Approximately centered at (16, 13), radius ~9. Hollow ring, no fill.
           This is what you see at favicon size (animation="none"). */}
-      <circle
-        cx="16" cy="13" r="9"
+      <path
+        d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
         className={isDraw ? "si-draw-void" : "si-void"}
       />
 
@@ -317,9 +317,9 @@ export function ScaleIcon({
           {/* Beam group — horizontal beam through the circle + weight ticks.
               The circle is the fulcrum. Pivots around (16, 13). */}
           <g className={beamClass}>
-            {/* Beam — extends beyond circle edges */}
-            <line
-              x1="3" y1="13" x2="29" y2="13"
+            {/* Beam — organic S-curve extending beyond circle edges */}
+            <path
+              d="M3 13 C10 12.2 22 13.8 29 13"
               className={isDraw ? "si-draw-beam" : undefined}
             />
             {/* Left weight tick */}
@@ -340,9 +340,9 @@ export function ScaleIcon({
             className={isDraw ? "si-draw-post" : undefined}
           />
 
-          {/* Base */}
-          <line
-            x1="12" y1="29" x2="20" y2="29"
+          {/* Base — organic subtle curve */}
+          <path
+            d="M12 29 C14 28.7 18 29.3 20 29"
             className={isDraw ? "si-draw-base" : undefined}
           />
         </>
