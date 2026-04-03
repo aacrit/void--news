@@ -648,6 +648,7 @@ def produce_audio(
     edition: str,
     opinion_audio_script: str | None = None,
     opinion_lean: str | None = None,
+    tts_preamble_override: str | None = None,
 ) -> Optional[dict]:
     """
     Synthesize the full broadcast via Gemini Flash TTS.
@@ -665,6 +666,9 @@ def produce_audio(
     Args:
         opinion_lean: The editorial lean ("left"/"center"/"right"). Used to
             look up the opinion host's TTS preamble for voice direction.
+        tts_preamble_override: If provided, replaces the auto-generated TTS
+            preamble entirely. Used by weekly broadcast for magazine-pace
+            direction that differs from the daily bulletin style.
     """
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
@@ -677,25 +681,29 @@ def produce_audio(
     voice_a_name = voices["host_a"]["id"]
     voice_b_name = voices["host_b"]["id"]
 
-    # Build TTS style preamble from host personality data
-    host_a_preamble = voices["host_a"].get("tts_preamble", "")
-    host_b_preamble = voices["host_b"].get("tts_preamble", "")
-    tts_preamble = ""
-    if host_a_preamble or host_b_preamble:
-        tts_preamble = (
-            f"Audio Profile: Two veteran broadcast journalists delivering a live "
-            f"news bulletin. Professional, authoritative, precise.\n\n"
-            f"Scene: A glass-walled broadcast studio, mid-morning. Monitors show "
-            f"live feeds. Both journalists sit across a desk with notes. The energy "
-            f"is focused — they are here to inform, not entertain.\n\n"
-            f"Director's Notes: Measured authority. Clipped delivery. Neither speaker "
-            f"rushes, but neither wastes a syllable. Emphasis lands on names, numbers, "
-            f"and dates — these are the load-bearing words. Em dashes create brief "
-            f"pivot pauses. Paragraph breaks between stories produce a full breath "
-            f"beat. Speaker transitions are clean — no overlapping, no rushing.\n\n"
-            f"Speaker One: {host_a_preamble}\n\n"
-            f"Speaker Two: {host_b_preamble}"
-        )
+    # Build TTS style preamble from host personality data.
+    # Weekly broadcast can override with magazine-pace direction.
+    if tts_preamble_override:
+        tts_preamble = tts_preamble_override
+    else:
+        host_a_preamble = voices["host_a"].get("tts_preamble", "")
+        host_b_preamble = voices["host_b"].get("tts_preamble", "")
+        tts_preamble = ""
+        if host_a_preamble or host_b_preamble:
+            tts_preamble = (
+                f"Audio Profile: Two veteran broadcast journalists delivering a live "
+                f"news bulletin. Professional, authoritative, precise.\n\n"
+                f"Scene: A glass-walled broadcast studio, mid-morning. Monitors show "
+                f"live feeds. Both journalists sit across a desk with notes. The energy "
+                f"is focused — they are here to inform, not entertain.\n\n"
+                f"Director's Notes: Measured authority. Clipped delivery. Neither speaker "
+                f"rushes, but neither wastes a syllable. Emphasis lands on names, numbers, "
+                f"and dates — these are the load-bearing words. Em dashes create brief "
+                f"pivot pauses. Paragraph breaks between stories produce a full breath "
+                f"beat. Speaker transitions are clean — no overlapping, no rushing.\n\n"
+                f"Speaker One: {host_a_preamble}\n\n"
+                f"Speaker Two: {host_b_preamble}"
+            )
 
     # --- Step 1: Synthesize news dialogue (2 speakers) ---
     dialogue = _script_to_dialogue(audio_script)
