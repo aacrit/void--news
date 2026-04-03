@@ -104,9 +104,14 @@ def _check_robots_txt(url: str) -> bool:
     if domain not in _robots_cache:
         rp = urllib.robotparser.RobotFileParser()
         robots_url = f"{domain}/robots.txt"
-        rp.set_url(robots_url)
         try:
-            rp.read()
+            # Use requests with timeout instead of urllib (which has no timeout)
+            resp = requests.get(robots_url, timeout=5, headers={"User-Agent": USER_AGENT})
+            if resp.status_code == 200:
+                rp.parse(resp.text.splitlines())
+            else:
+                _robots_cache[domain] = None
+                return True
         except Exception:
             _robots_cache[domain] = None
             return True
