@@ -36,12 +36,14 @@ type LeanFilter = "All" | "Left" | "Center" | "Right";
 const EDITIONS: { slug: Edition; label: string }[] = [
   { slug: "world", label: "World" },
   { slug: "us", label: "US" },
+  { slug: "europe", label: "Europe" },
   { slug: "india", label: "India" },
 ];
 
 const EDITION_COUNTRIES: Record<Edition, string[] | null> = {
   world: null,
   us: ["US"],
+  europe: ["GB", "DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH", "SE", "NO", "DK", "FI", "IE", "PL", "PT", "GR", "CZ", "RO", "HU"],
   india: ["IN"],
 };
 
@@ -83,10 +85,10 @@ const AXES_DATA: {
     high: "Far Right",
     what: "Where an article lands on the left\u2013right spectrum, independent of its outlet\u2019s reputation.",
     signals: [
-      "Keyword lexicons scored against curated left/right phrase lists",
-      "Named-entity sentiment via NER + polarity analysis",
+      "Keyword frequency against curated left/right phrase lists",
+      "Positive or negative tone around named political figures",
       "Framing phrases that signal ideological perspective",
-      "Length-adaptive + sparsity-weighted source baseline blending",
+      "Length-adaptive scoring blended with each outlet\u2019s historical baseline",
     ],
   },
   {
@@ -98,7 +100,7 @@ const AXES_DATA: {
     what: "How much the article inflates urgency, emotion, or outrage beyond what the facts warrant.",
     signals: [
       "Clickbait headline patterns (questions, listicles, superlatives)",
-      "Superlative density via word-boundary regex",
+      "Superlative density across the text",
       "Emotional extremity score",
       "Partisan attack density (capped at 30 points)",
     ],
@@ -125,7 +127,7 @@ const AXES_DATA: {
     high: "Well-sourced",
     what: "How thoroughly an article cites named sources, data, and direct quotes.",
     signals: [
-      "Named sources detected via NER + attribution verbs",
+      "Named sources identified through attribution verbs",
       "Organizational citations (agencies, institutions)",
       "Data patterns (percentages, dollar figures, dates)",
       "Direct quotes count; vague-source penalty (\u201cofficials say\u201d)",
@@ -151,9 +153,9 @@ const AXES_DATA: {
     range: "Adaptive",
     low: "New outlet",
     high: "Established",
-    what: "A per-topic, per-outlet exponential moving average (EMA) that tracks how each outlet covers each topic over time.",
+    what: "Tracks how each outlet covers each topic over time, weighting recent articles more heavily.",
     signals: [
-      "Adaptive alpha: 0.3 for new outlets, 0.15 for established",
+      "Newer outlets weighted more toward recent articles; established outlets draw on deeper history",
       "Topic-specific tracking (an outlet\u2019s economy coverage vs. its foreign policy coverage)",
       "Smooths single-article noise into a reliable baseline",
     ],
@@ -613,9 +615,9 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
   /* Tier data for source bar visualization */
   const tierCounts = useMemo(() => {
     const tiers = [
-      { tier: "us_major", label: "US Major", count: 0, total: 42, sources: [] as SpectrumSource[] },
-      { tier: "international", label: "International", count: 0, total: 181, sources: [] as SpectrumSource[] },
-      { tier: "independent", label: "Independent", count: 0, total: 196, sources: [] as SpectrumSource[] },
+      { tier: "us_major", label: "US Major", count: 0, total: 43, sources: [] as SpectrumSource[] },
+      { tier: "international", label: "International", count: 0, total: 212, sources: [] as SpectrumSource[] },
+      { tier: "independent", label: "Independent", count: 0, total: 225, sources: [] as SpectrumSource[] },
     ];
     for (const s of sources) {
       const t = tiers.find((t) => t.tier === s.tier);
@@ -646,8 +648,8 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <p className="meth__body">
           Most bias tools rate outlets. The New York Times is &ldquo;Lean Left&rdquo;
           regardless of the article. void --news rejects that premise. Every article
-          passes through six independent NLP analyzers&mdash;no LLMs, no black boxes.
-          The same text produces the same scores every time.
+          is scored independently across six axes. The same text always produces the
+          same scores.
         </p>
 
         <div ref={eqRef} className="meth-eq__container" role="group" aria-label="Six-axis bias equalizer">
@@ -669,7 +671,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <h3 className="meth__section-title">Live Article Autopsy</h3>
         <p className="meth__body">
           Select a recently published article to see how the six axes scored it.
-          The equalizer above animates to real scores from the pipeline.
+          The equalizer above updates to show real scores.
         </p>
 
         {/* Article picker */}
@@ -778,17 +780,14 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           ))}
         </div>
         <p className="meth__body">
-          A CI gate runs the full validation suite on every commit via GitHub Actions.
-          If any axis drifts outside its expected range, the pipeline build fails.
-        </p>
-        <p className="meth__body meth__body--code">
-          The validation suite runs on every commit as a CI gate.
+          Every change to the scoring engine is tested against this corpus. If any axis
+          drifts outside its expected range, the change is rejected.
         </p>
       </MethSection>
 
       {/* ---- Section 4: 419 Curated Sources ---- */}
       <MethSection index={3}>
-        <h3 className="meth__section-title">419 Curated Sources</h3>
+        <h3 className="meth__section-title">480 Curated Sources</h3>
         <p className="meth__body">
           Every source in the spectrum above was added by hand. Each has a tier
           classification, a baseline political lean, a country of origin, and
@@ -804,7 +803,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
               <div className="meth__source-bar-track">
                 <div
                   className="meth__source-bar-fill"
-                  style={{ width: `${((tier.count || tier.total) / 419) * 100}%` }}
+                  style={{ width: `${((tier.count || tier.total) / 480) * 100}%` }}
                 />
               </div>
               <div className="meth__source-favicons">
@@ -828,8 +827,8 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <div className="meth__source-meta">
           <p className="meth__body">
             The lean spectrum uses 7 zones from Far Left to Far Right. The current
-            left-to-right ratio across all 419 sources is <strong>1.54:1</strong>&mdash;a
-            deliberate tilt toward the center with representation from both wings.
+            left-to-right ratio across all 480 sources is <strong>1.50:1</strong>&mdash;representation
+            from both wings with a slight structural lean toward the center.
           </p>
         </div>
       </MethSection>
@@ -838,11 +837,10 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
       <MethSection index={4} className="meth__section--last">
         <h3 className="meth__section-title">Transparency</h3>
         <p className="meth__body">
-          No LLMs. No black-box models. No proprietary data sources. Every score is produced by
-          deterministic rule-based NLP&mdash;the same text always produces the same result. Every score
-          includes a structured rationale explaining the signals that produced it. Every source carries
-          hand-written credibility notes and a documented lean baseline. If a score looks wrong, the
-          rationale tells you exactly why it scored that way.
+          Every score is deterministic&mdash;the same text always produces the same result. Every score
+          includes a structured rationale explaining what produced it. Every source carries hand-written
+          credibility notes and a documented lean baseline. If a score looks wrong, the rationale tells
+          you exactly why.
         </p>
       </MethSection>
     </section>
