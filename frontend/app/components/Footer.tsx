@@ -23,7 +23,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
-        <p className="footer-tagline">951 sources. Six axes. Zero mystery.</p>
+        <p className="footer-tagline">See through the void.</p>
 
         {/* Product family */}
         <div className="footer-products">
@@ -34,6 +34,8 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-products__item" title="The Board">void --opinion</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-products__item" title="Source Spectrum">void --sources</Link>
+          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
+          <Link href="/about" className="footer-products__item" title="About">void --about</Link>
         </div>
 
         <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
