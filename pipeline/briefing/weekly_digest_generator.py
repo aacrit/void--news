@@ -145,8 +145,8 @@ def _fetch_bias_stats(edition, week_start, week_end):
     try:
         result = supabase.table("bias_scores").select(
             "political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
-        ).gte("created_at", week_start.isoformat()).lte(
-            "created_at", week_end.isoformat()
+        ).gte("analyzed_at", week_start.isoformat()).lte(
+            "analyzed_at", week_end.isoformat()
         ).limit(3000).execute()
 
         if not result.data:
@@ -585,14 +585,11 @@ def generate_weekly_digest(editions=None, week_offset=0):
             print(f"    Producing audio ({len(audio_script.split())} words)...")
             try:
                 voices = get_voices_for_today(edition)
-                audio_path, duration = produce_audio(
-                    audio_script, voices, edition,
-                    output_prefix=f"weekly/{edition}/{week_start.strftime('%Y-W%V')}",
-                )
-                if audio_path:
-                    audio_url = audio_path
-                    audio_duration = duration
-                    print(f"    Audio: {duration:.0f}s uploaded")
+                result = produce_audio(audio_script, voices, edition)
+                if result and isinstance(result, dict):
+                    audio_url = result.get("audio_url")
+                    audio_duration = result.get("audio_duration_seconds")
+                    print(f"    Audio: {audio_duration:.0f}s uploaded" if audio_duration else "    Audio: uploaded")
             except Exception as e:
                 print(f"    [warn] Audio failed: {e}")
         else:

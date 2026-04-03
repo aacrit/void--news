@@ -2509,11 +2509,12 @@ def main():
     except Exception as e:
         print(f"  [warn] cluster retention failed: {e}")
 
-    # Article retention: delete articles older than 7 days.
-    # ON DELETE CASCADE automatically removes related bias_scores,
-    # cluster_articles, and article_categories rows.
+    # Article retention: delete articles older than 8 days.
+    # 8 days ensures 7 full days of data exist for weekly digest generation
+    # (runs every Sunday). ON DELETE CASCADE removes bias_scores,
+    # cluster_articles, and article_categories. Daily briefs are PERMANENT.
     try:
-        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
         old_article_ids: list[str] = []
         offset = 0
         while True:
@@ -2538,9 +2539,9 @@ def main():
     except Exception as e:
         print(f"  [warn] article retention failed: {e}")
 
-    # Archive retention: prune archive entries older than 30 days
+    # Archive retention: prune entries older than 10 days (buffer past Sunday weekly digest)
     try:
-        archive_cutoff = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+        archive_cutoff = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
         result = supabase.table("cluster_archive").delete().lt(
             "first_published", archive_cutoff
         ).execute()
