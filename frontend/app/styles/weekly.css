@@ -1882,4 +1882,282 @@
   @keyframes wkTrackPulse {
     from, to { opacity: 1; }
   }
+
+  /* Disable breathing + ambient animations on mobile for GPU budget */
+  .wk-masthead__icon,
+  .wk-flourish,
+  .wk-ink-quote,
+  .wk-ink-border {
+    animation: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   CINEMATIC LIFE LAYER
+   "The page should feel alive and breathing"
+   Scroll-triggered section reveals, generous hover physics, ambient motion.
+   This goes BEYOND the main news feed — Weekly is the one page that breathes.
+   ========================================================================== */
+
+/* ── Ambient Breathing — subtle scale pulse on decorative elements ── */
+
+@keyframes wkBreathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50%      { transform: scale(1.015); opacity: 1; }
+}
+
+@keyframes wkInkShimmer {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.55; }
+}
+
+@keyframes wkGlowPulse {
+  0%, 100% { box-shadow: 0 0 0 transparent; }
+  50%      { box-shadow: 0 0 20px var(--wk-accent-glow); }
+}
+
+@keyframes wkFloatDrift {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+/* Masthead icon breathes — slow, meditative, 8s cycle */
+.wk-masthead__icon {
+  animation: wkBreathe 8s var(--ease-cinematic) infinite;
+}
+
+/* Ink flourish ornaments shimmer subtly */
+.wk-flourish svg {
+  animation: wkInkShimmer 6s var(--ease-cinematic) infinite;
+}
+
+/* Organic ink quote marks drift — gentle float like paper in still air */
+.wk-ink-quote {
+  animation: wkFloatDrift 7s var(--ease-cinematic) infinite;
+}
+
+/* Numbers sidebar border pulses — the data is live */
+.wk-ink-border {
+  animation: wkInkShimmer 5s var(--ease-cinematic) infinite;
+}
+
+/* ── Enhanced Scroll Reveals — sections arrive with personality ── */
+
+/* Cover hero: dolly-in from further back */
+.wk-cover__hero {
+  opacity: 0;
+  transform: scale(0.94) translateY(24px);
+  transition:
+    opacity 900ms var(--ease-cinematic),
+    transform 900ms var(--ease-cinematic);
+}
+
+.wk-reveal--visible .wk-cover__hero,
+.wk-cover__hero.wk-reveal--visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Secondary cover stories: staggered slide from left/right */
+.wk-cover__secondary > :nth-child(odd) {
+  transform: translateX(-20px) translateY(12px);
+}
+.wk-cover__secondary > :nth-child(even) {
+  transform: translateX(20px) translateY(12px);
+}
+.wk-reveal--visible .wk-cover__secondary > .wk-reveal-child,
+.wk-cover__secondary.wk-reveal--visible > .wk-reveal-child {
+  transform: translateX(0) translateY(0);
+}
+
+/* Opinion cards: fan-out with 120ms cascade */
+.wk-opinions__grid > .wk-reveal-child:nth-child(1) { transition-delay: 0ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(2) { transition-delay: 120ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(3) { transition-delay: 240ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(4) { transition-delay: 360ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(5) { transition-delay: 480ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(6) { transition-delay: 600ms; }
+
+/* Timeline nodes: staggered cascade */
+.wk-timeline__node {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 400ms var(--ease-cinematic),
+    transform 400ms var(--spring-snappy, var(--ease-cinematic)),
+    background 200ms var(--ease-cinematic);
+}
+
+.wk-timeline__node:nth-child(2) { transition-delay: 80ms; }
+.wk-timeline__node:nth-child(3) { transition-delay: 160ms; }
+.wk-timeline__node:nth-child(4) { transition-delay: 240ms; }
+.wk-timeline__node:nth-child(5) { transition-delay: 320ms; }
+.wk-timeline__node:nth-child(6) { transition-delay: 400ms; }
+.wk-timeline__node:nth-child(7) { transition-delay: 480ms; }
+.wk-timeline__node:nth-child(8) { transition-delay: 560ms; }
+
+.wk-reveal--visible .wk-timeline__node {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Numbers: spring scale-up with overshoot */
+.wk-cover__number-item {
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--spring-bouncy, var(--ease-dramatic)),
+    background 200ms var(--ease-cinematic);
+}
+
+.wk-reveal--visible .wk-cover__number-item:nth-child(1) { transition-delay: 0ms; }
+.wk-reveal--visible .wk-cover__number-item:nth-child(2) { transition-delay: 150ms; }
+.wk-reveal--visible .wk-cover__number-item:nth-child(3) { transition-delay: 300ms; }
+.wk-reveal--visible .wk-cover__number-item:nth-child(4) { transition-delay: 450ms; }
+.wk-reveal--visible .wk-cover__number-item:nth-child(5) { transition-delay: 600ms; }
+
+.wk-reveal--visible .wk-cover__number-item {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Bias stat cards: fly-in from bottom with spring */
+.wk-bias__stat {
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 600ms var(--spring-bouncy, var(--ease-dramatic));
+}
+.wk-reveal--visible .wk-bias__stat:nth-child(1) { transition-delay: 0ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(2) { transition-delay: 100ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(3) { transition-delay: 200ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(4) { transition-delay: 300ms; }
+
+.wk-reveal--visible .wk-bias__stat {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* InkFlourish: bloom from center with spring */
+.wk-flourish {
+  opacity: 0;
+  transform: scaleX(0.3);
+  transition:
+    opacity 600ms var(--ease-cinematic),
+    transform 800ms var(--spring-bouncy, var(--ease-dramatic));
+}
+
+.wk-reveal--visible .wk-flourish,
+.wk-flourish.wk-reveal--visible {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ── Generous Hover Physics — everything responds to touch ── */
+
+/* Opinion cards: full cinematic dolly-in */
+.wk-opinion:hover {
+  box-shadow: var(--shadow-cinematic-dramatic);
+  transform: translateY(-4px) scale(1.01);
+  border-left-width: 5px;
+}
+
+/* Opinion badge: plum glow on card hover */
+.wk-opinion:hover .wk-opinion__badge {
+  box-shadow: 0 0 12px var(--wk-accent-glow);
+  transform: scale(1.05);
+  transition: all 200ms var(--spring-snappy, var(--ease-cinematic));
+}
+
+/* Number items: warm glow + slide */
+.wk-cover__number-item:hover {
+  background: var(--wk-accent-ghost);
+  transform: translateX(4px);
+  transition: all 250ms var(--spring-snappy, var(--ease-cinematic));
+}
+
+.wk-cover__number-item:hover .wk-cover__number-value {
+  color: var(--wk-accent-bright);
+  text-shadow: 0 0 20px var(--wk-accent-glow);
+}
+
+/* Timeline dot: spring-loaded scale with triple glow ring */
+.wk-timeline__node:hover .wk-timeline__dot {
+  transform: scale(1.6);
+  box-shadow:
+    0 0 8px var(--wk-accent-glow),
+    0 0 20px var(--wk-accent-ghost),
+    0 0 40px color-mix(in srgb, var(--wk-accent) 8%, transparent);
+}
+
+/* Timeline node: slide right + warm bg */
+.wk-timeline__node:hover {
+  background: var(--wk-accent-ghost);
+  padding-left: var(--space-2);
+}
+
+/* Bias stat cards: tilt + glow */
+.wk-bias__stat:hover {
+  transform: translateY(-3px) rotate(-0.5deg);
+  box-shadow: var(--shadow-cinematic-ambient), 0 0 16px var(--wk-accent-glow);
+}
+
+/* Bias bar: brighten on hover */
+.wk-bias__bar-row:hover .wk-bias__bar-fill {
+  filter: brightness(1.15);
+  box-shadow: 0 0 8px var(--wk-accent-glow);
+}
+
+/* Archive items: slide right with plum accent */
+.wk-archive__item:hover {
+  transform: translateX(6px);
+  border-left-color: var(--wk-accent);
+  background: var(--wk-accent-ghost);
+}
+
+/* Section toggle: warm plum on hover */
+.wk-section-toggle:hover .wk-section-label--toggle {
+  color: var(--wk-accent);
+}
+
+.wk-section-toggle:hover .wk-section-toggle__chevron {
+  color: var(--wk-accent);
+  transform: scale(1.2);
+}
+
+/* Pullquote: glow on hover */
+.wk-pullquote:hover {
+  box-shadow: 0 0 24px var(--wk-accent-glow);
+  border-left-color: var(--wk-accent-bright);
+  border-right-color: var(--wk-accent-bright);
+}
+
+/* Cover headline: tracking breathes on hover */
+.wk-cover__headline:hover {
+  letter-spacing: -0.01em;
+  transition: letter-spacing 400ms var(--ease-cinematic);
+}
+
+/* ── prefers-reduced-motion: disable all cinematic life ── */
+@media (prefers-reduced-motion: reduce) {
+  .wk-masthead__icon,
+  .wk-flourish svg,
+  .wk-ink-quote,
+  .wk-ink-border {
+    animation: none;
+  }
+
+  .wk-cover__hero,
+  .wk-cover__secondary > *,
+  .wk-timeline__node,
+  .wk-cover__number-item,
+  .wk-bias__stat,
+  .wk-flourish {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
