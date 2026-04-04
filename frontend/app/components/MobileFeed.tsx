@@ -48,10 +48,7 @@ export default function MobileFeed({
 
   return (
     <div className={["mf", transitionClass].filter(Boolean).join(" ")} key={filterKey}>
-      {/* Brief skybox — promoted above hero, first 2 sentences visible */}
-      <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
-
-      {/* Hero story */}
+      {/* Hero story — Scanner sees headlines first */}
       {hero && (
         <MobileStoryCard
           story={hero}
@@ -62,6 +59,9 @@ export default function MobileFeed({
           kbdFocused={kbdFocusIndex === 0}
         />
       )}
+
+      {/* Brief — below hero, first 2 sentences visible */}
+      <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
 
       {/* Compact story cards */}
       <div className="mf__cards" aria-label="Stories">

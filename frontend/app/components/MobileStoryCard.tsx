@@ -64,6 +64,7 @@ export default function MobileStoryCard({
       {/* Meta row */}
       <div className="msc__meta">
         {isHero && <span className="msc__badge">Top Story</span>}
+        {!isHero && <span className="msc__cat">{story.category}</span>}
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>
       </div>
 
