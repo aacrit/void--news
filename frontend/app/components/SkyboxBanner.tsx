@@ -124,11 +124,18 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
                 </div>
 
+                {/* Organic firewall rule between columns */}
+                {brief.opinion_text && (
+                  <svg className="skb__firewall skb__firewall--vertical" viewBox="0 0 4 600" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M2,0 C0.5,50 3.5,100 2,150 C0.5,200 3,250 2,300 C1,350 3.5,400 2,450 C0.5,500 3,550 2,600" />
+                  </svg>
+                )}
+
                 {/* Opinion column — entire column is clickable to expand */}
                 {brief.opinion_text && (
                   <div
                     ref={expandOpinionRef}
-                    className="skb__compact-col skb__compact-col--opinion"
+                    className={`skb__compact-col skb__compact-col--opinion ${leanMod}`}
                     onClick={() => toggleSection("opinion")}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSection("opinion"); } }}
                     role="button"
@@ -214,7 +221,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               )}
 
               {expandedSection === "opinion" && (
-                <div className="skb__section skb__section--opinion">
+                <div className={`skb__section skb__section--opinion ${leanMod}`}>
                   <div className="skb__section-label">
                     <LogoIcon size={18} animation="idle" />
                     <span className="skb__section-label-human">Editorial</span>
