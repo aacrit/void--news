@@ -30,6 +30,22 @@
   }
 }
 
+/* ---- On-Air Pane — desktop left sidebar pushes canvas right ----------- */
+/* When the broadcast pane is open (data-onair-pane on html), the page
+   container shifts right by the pane width. page-main auto-recenters
+   via margin: 0 auto within the remaining space. */
+@media (min-width: 1024px) {
+  html[data-onair-pane] .page-container {
+    padding-left: clamp(260px, 25vw, 380px);
+    transition: padding-left 420ms var(--ease-cinematic, ease);
+  }
+
+  /* Smooth return when pane closes */
+  .page-container {
+    transition: padding-left 350ms var(--ease-cinematic, ease);
+  }
+}
+
 /* ---- Skybox — editorial brief zone above the news canvas -------------- */
 /*
  * Full-bleed band: TL;DR | Opinion | On Air side by side on desktop.

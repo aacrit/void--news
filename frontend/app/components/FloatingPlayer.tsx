@@ -72,6 +72,16 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   const editionLabel = brief?.edition ? brief.edition.charAt(0).toUpperCase() + brief.edition.slice(1) : "World";
   const episodeDate = brief?.created_at ? formatDate(brief.created_at) : "";
 
+  /* ---- Desktop left-pane: push page canvas right when broadcast is open ---- */
+  useEffect(() => {
+    if (view === "broadcast") {
+      document.documentElement.setAttribute("data-onair-pane", "");
+    } else {
+      document.documentElement.removeAttribute("data-onair-pane");
+    }
+    return () => document.documentElement.removeAttribute("data-onair-pane");
+  }, [view]);
+
   if (!brief || !brief.audio_url || !isPlayerVisible) return null;
 
   const displayDuration = brief.audio_duration_seconds || duration;
