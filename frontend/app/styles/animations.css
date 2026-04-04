@@ -454,21 +454,18 @@
 }
 
 @keyframes coldOpenRackIn {
-  /* Lead story: Rack focus — the subject sharpens from background blur.
-     This is the star of the cold open. The blur-to-sharp transition is
-     the moment the cinematographer says "look HERE."
+  /* Lead story: Rack focus — the subject sharpens from background haze.
      Deakins in Sicario: the convoy emerges from heat haze into clarity.
      The scale shift (0.97->1) creates micro-parallax — the subject
-     feels like it's moving toward the viewer as it sharpens. */
+     feels like it's moving toward the viewer as it sharpens.
+     GPU-compositable: uses only transform + opacity (no filter:blur). */
   from {
     opacity: 0;
     transform: scale(0.97);
-    filter: blur(2px);
   }
   to {
     opacity: 1;
     transform: scale(1);
-    filter: blur(0);
   }
 }
 
@@ -524,28 +521,28 @@
    rather than cut-insert-cut. */
 
 @keyframes whipPanOut {
-  0%   { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
-  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.7; filter: blur(1.5px); }
-  100% { transform: translateX(-12%) scaleX(1); opacity: 0; filter: blur(0); }
+  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
+  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.7; }
+  100% { transform: translateX(-12%) scaleX(1); opacity: 0; }
 }
 
 @keyframes whipPanIn {
-  0%   { transform: translateX(12%) scaleX(1); opacity: 0; filter: blur(0); }
-  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.3; filter: blur(1.5px); }
-  100% { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
+  0%   { transform: translateX(12%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.3; }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; }
 }
 
 /* Direction-aware: rightward exit (switching to an earlier edition) */
 @keyframes whipPanOutRight {
-  0%   { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
-  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.7; filter: blur(1.5px); }
-  100% { transform: translateX(12%) scaleX(1); opacity: 0; filter: blur(0); }
+  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
+  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.7; }
+  100% { transform: translateX(12%) scaleX(1); opacity: 0; }
 }
 
 @keyframes whipPanInLeft {
-  0%   { transform: translateX(-12%) scaleX(1); opacity: 0; filter: blur(0); }
-  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.3; filter: blur(1.5px); }
-  100% { transform: translateX(0) scaleX(1); opacity: 1; filter: blur(0); }
+  0%   { transform: translateX(-12%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.3; }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; }
 }
 
 /* ══ SCENE 8: Golden Hour Pulse — Theme Toggle Dissolve ══

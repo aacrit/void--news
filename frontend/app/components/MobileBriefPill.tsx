@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
@@ -36,25 +36,6 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
 
   const [tldrExpanded, setTldrExpanded] = useState(false);
   const [opinionExpanded, setOpinionExpanded] = useState(false);
-
-  const tldrRef = useRef<HTMLDivElement>(null);
-  const opinionRef = useRef<HTMLDivElement>(null);
-  const [tldrHeight, setTldrHeight] = useState(0);
-  const [opinionHeight, setOpinionHeight] = useState(0);
-
-  useEffect(() => {
-    if (!tldrRef.current) return;
-    const ro = new ResizeObserver(([e]) => setTldrHeight(e.contentRect.height));
-    ro.observe(tldrRef.current);
-    return () => ro.disconnect();
-  }, [tldrExpanded]);
-
-  useEffect(() => {
-    if (!opinionRef.current) return;
-    const ro = new ResizeObserver(([e]) => setOpinionHeight(e.contentRect.height));
-    ro.observe(opinionRef.current);
-    return () => ro.disconnect();
-  }, [opinionExpanded]);
 
   if (!brief) return (
     <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
@@ -114,11 +95,8 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
       {/* TL;DR — first 2 sentences always visible */}
       {brief.tldr_headline && <h3 className="mbp__hl mbp__hl--tldr">{brief.tldr_headline}</h3>}
       <p className="mbp__preview mbp__preview--tldr">{tldrPreview}</p>
-      <div className="mbp__expand" style={{
-        height: tldrExpanded ? tldrHeight : 0,
-        transition: tldrExpanded ? "height 350ms var(--spring-snappy)" : "height 200ms var(--ease-out)",
-      }}>
-        <div ref={tldrRef} className="mbp__expand-inner">
+      <div className={`mbp__expand${tldrExpanded ? " mbp__expand--open" : ""}`}>
+        <div className="mbp__expand-inner">
           <p className="mbp__expand-text mbp__expand-text--tldr">{tldrRest}</p>
         </div>
       </div>
@@ -140,11 +118,8 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           </div>
           {brief.opinion_headline && <h3 className="mbp__hl mbp__hl--opinion">{brief.opinion_headline}</h3>}
           <p className="mbp__preview mbp__preview--opinion">{opinionPreview}</p>
-          <div className="mbp__expand" style={{
-            height: opinionExpanded ? opinionHeight : 0,
-            transition: opinionExpanded ? "height 350ms var(--spring-snappy)" : "height 200ms var(--ease-out)",
-          }}>
-            <div ref={opinionRef} className="mbp__expand-inner">
+          <div className={`mbp__expand${opinionExpanded ? " mbp__expand--open" : ""}`}>
+            <div className="mbp__expand-inner">
               <p className="mbp__expand-text mbp__expand-text--opinion">{opinionRest}</p>
             </div>
           </div>
