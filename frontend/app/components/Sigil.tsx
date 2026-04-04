@@ -188,8 +188,9 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=details
 
   const lean = data.politicalLean;
-  const lc = leanColor(lean);
-  const ll = tiltLabel(lean);
+  const popupUnscored = !!data.unscored;
+  const lc = popupUnscored ? "var(--fg-tertiary)" : leanColor(lean);
+  const ll = popupUnscored ? "Unscored" : tiltLabel(lean);
   const full = isFullDetail(size);
 
   useEffect(() => {
@@ -462,13 +463,16 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const [mounted, setMounted] = useState(false);
   const tooltipId = `sigil-${useId()}`;
 
-  const ll = tiltLabel(data.politicalLean);
-  const lc = leanColor(data.politicalLean);
+  const unscored = !!data.unscored;
+  const ll = unscored ? "\u2014" : tiltLabel(data.politicalLean);
+  const lc = unscored ? "var(--fg-tertiary)" : leanColor(data.politicalLean);
   const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const aria = `Coverage tilt: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
+  const aria = unscored
+    ? `Coverage tilt: Unscored (insufficient signal). ${data.sourceCount} sources. Press Enter for details.`
+    : `Coverage tilt: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
   const ringClass = data.divergenceFlag === "divergent"
     ? " sigil--divergent"

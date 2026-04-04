@@ -111,6 +111,31 @@ export function tiltLabelAbbr(v: number): string {
   return "FR";
 }
 
+/* ── Unscored gate — story lacks analytical signal for tilt label ───────── */
+
+/**
+ * Returns true when a story's lean falls in the balanced range (44-58)
+ * but lacks enough analytical signal to genuinely call it "Balanced."
+ * Three gates, any failure → unscored:
+ *   A: all articles defaulted to 50 (no spread, no range, avg=50)
+ *   B: single-source cluster (one voice isn't balance)
+ *   C: low analytical confidence (<0.4)
+ */
+export function isUnscoredTilt(
+  lean: number,
+  sourceCount: number,
+  leanSpread: number,
+  leanRange: number,
+  aggregateConfidence: number,
+): boolean {
+  if (lean < 44 || lean > 58) return false;
+  const allDefault = lean === 50 && leanSpread === 0 && leanRange === 0;
+  if (allDefault) return true;
+  if (sourceCount < 2) return true;
+  if (aggregateConfidence < 0.4) return true;
+  return false;
+}
+
 /* ── CSS variable cache — single observer ───────────────────────────────── */
 
 const SSR_FALLBACK: Record<string, string> = {
