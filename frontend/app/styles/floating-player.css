@@ -1093,8 +1093,8 @@
   }
 }
 
-/* Tablet (768px+) */
-@media (min-width: 768px) {
+/* Tablet (768–1023px): centered bottom overlay */
+@media (min-width: 768px) and (max-width: 1023px) {
   .fp--broadcast {
     left: 50%;
     right: auto;
@@ -1121,14 +1121,115 @@
   }
 }
 
-/* Desktop (1024px+) */
-@media (min-width: 1024px) {
-  .fp--broadcast { max-width: 640px; }
+/* ---------------------------------------------------------------------------
+   Desktop (1024px+): LEFT PANE — fixed sidebar, pushes canvas right
+   --------------------------------------------------------------------------- */
+
+@keyframes fpPaneSlideIn {
+  from { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Ultra-wide (1440px+) */
-@media (min-width: 1440px) {
-  .fp--broadcast { max-width: 720px; }
+@media (min-width: 1024px) {
+  .fp--broadcast {
+    top: var(--nav-height, 53px);
+    bottom: 0;
+    left: 0;
+    right: auto;
+    width: clamp(260px, 25vw, 380px);
+    animation: fpPaneSlideIn 420ms var(--ease-cinematic, ease) both;
+  }
+
+  .fp__broadcast {
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    border-top: none;
+    border-right: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
+    box-shadow:
+      4px 0 20px rgba(0, 0, 0, 0.2),
+      inset -1px 0 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
+    padding: var(--space-4) var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .fp--playing .fp__broadcast {
+    border-right-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
+    box-shadow:
+      4px 0 20px rgba(0, 0, 0, 0.2),
+      2px 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 8%, transparent),
+      inset -1px 0 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  }
+
+  /* Filament glow — repositioned for vertical pane */
+  .fp__broadcast::after {
+    top: 20px; left: 50%;
+    width: 200px; height: 80px;
+  }
+
+  /* VU arc — smaller in narrow pane */
+  .fp__vu-arc {
+    width: 140px;
+    height: 42px;
+    top: 6px;
+  }
+
+  /* Hide drag indicator on desktop (no swipe gesture) */
+  .fp--broadcast .fp__drag-indicator {
+    display: none;
+  }
+
+  /* Host cards stack vertically in narrow pane */
+  .fp__bcast-hosts {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* Transport: slightly more compact */
+  .fp--broadcast .fp__play-lg {
+    width: 44px; height: 44px;
+  }
+
+  /* Console grain on desktop pane */
+  .fp__broadcast::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.12'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+    opacity: 0.04;
+  }
+
+  .fp__broadcast {
+    position: relative;
+  }
+
+  /* Content cascade — slide from left instead of up */
+  .fp--broadcast .fp__bcast-header {
+    animation-name: fadeInLeft;
+  }
+  .fp--broadcast .fp__bcast-dateline {
+    animation-name: fadeInLeft;
+  }
+  .fp--broadcast .fp__bcast-hosts {
+    animation-name: fadeInLeft;
+  }
+  .fp--broadcast .fp__transport {
+    animation-name: fadeInLeft;
+  }
+  .fp--broadcast .fp__seek {
+    animation-name: fadeInLeft;
+  }
+  .fp--broadcast .fp__bcast-content {
+    animation-name: fadeInLeft;
+  }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ---------------------------------------------------------------------------
@@ -1138,7 +1239,7 @@
 @media (prefers-reduced-motion: reduce) {
   .fp--compact { animation: none; opacity: 1; transform: none; }
   .fp--expanded { animation: none; opacity: 1; transform: none; }
-  .fp--broadcast { animation: none; opacity: 1; transform: none; }
+  .fp--broadcast { animation: none; opacity: 1; transform: none !important; }
   .fp--expanded .fp__bar-header,
   .fp--expanded .fp__waveform,
   .fp--expanded .fp__transport,
