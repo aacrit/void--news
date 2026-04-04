@@ -1976,55 +1976,83 @@
   outline-offset: 3px;
 }
 
-/* ── Row 2: Weekly — Playfair italic, amber spine ── */
+/* ── Row 2: Weekly — Playfair italic, deep crimson magazine accent ──
+   Signals the transition from monochrome news to flamboyant magazine.
+   Hover is more theatrical — organic ink energy, unfold physics. */
 
 .nav-weekly {
+  --wk-crimson: #8B1A1A;
+  --wk-crimson-bright: #A52020;
+  --wk-crimson-glow: rgba(139, 26, 26, 0.15);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   text-decoration: none;
   padding: var(--space-1) var(--space-3);
   position: relative;
-  transition: transform 300ms var(--ease-unfold);
+  border-radius: var(--radius-sm);
+  transition:
+    transform 300ms var(--ease-unfold),
+    background-color 300ms var(--ease-cinematic),
+    box-shadow 300ms var(--ease-cinematic);
 }
 
 .nav-weekly__rule {
-  width: 1px;
+  width: 2px;
   height: 16px;
-  background-color: var(--cin-amber);
-  opacity: 0.4;
+  background-color: var(--wk-crimson);
+  opacity: 0.5;
   flex-shrink: 0;
-  transition: opacity 300ms var(--ease-cinematic), height 300ms var(--ease-unfold);
+  border-radius: 1px;
+  transition:
+    opacity 300ms var(--ease-cinematic),
+    height 400ms var(--ease-unfold),
+    transform 400ms var(--ease-unfold);
 }
 
 .nav-weekly__label {
   font-family: var(--font-editorial);
   font-style: italic;
   font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--cin-amber);
+  font-weight: 500;
+  color: var(--wk-crimson);
   letter-spacing: 0.01em;
   white-space: nowrap;
   transition: color 200ms var(--ease-cinematic);
 }
 
+/* Hover: flamboyant unfold — spine grows, label brightens, glow bleeds */
+.nav-weekly:hover {
+  background-color: var(--wk-crimson-glow);
+  box-shadow: 0 0 12px var(--wk-crimson-glow);
+}
+
 .nav-weekly:hover .nav-weekly__rule {
-  opacity: 0.8;
-  height: 20px;
+  opacity: 1;
+  height: 22px;
+  transform: scaleX(1.5);
 }
 
 .nav-weekly:hover .nav-weekly__label {
-  color: var(--cin-amber-bright, var(--cin-amber));
+  color: var(--wk-crimson-bright);
 }
 
+/* Active: press-in with spring rebound */
 .nav-weekly:active {
-  transform: scale(0.97);
-  transition: transform 80ms var(--ease-out);
+  transform: scale(0.95);
+  transition: transform 60ms var(--ease-out);
 }
 
 .nav-weekly:focus-visible {
-  outline: 2px solid var(--accent-warm);
+  outline: 2px solid var(--wk-crimson);
   outline-offset: 2px;
+}
+
+/* Dark mode: brighter crimson for contrast */
+:root[data-mode="dark"] .nav-weekly {
+  --wk-crimson: #C44040;
+  --wk-crimson-bright: #D45050;
+  --wk-crimson-glow: rgba(196, 64, 64, 0.12);
 }
 
 /* ── Row 2: Separator — thin vertical rule between zones ── */
