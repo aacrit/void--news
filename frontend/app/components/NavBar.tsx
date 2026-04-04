@@ -19,29 +19,31 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
 interface NavBarProps {
   activeEdition: Edition;
   onEditionChange?: (edition: Edition) => void;
-  /** Filter props — when provided, renders the compact filter row */
   activeCategory?: "All" | Category;
   onCategoryChange?: (category: "All" | Category) => void;
   activeLean?: LeanChip;
   onLeanChange?: (lean: LeanChip) => void;
   onSearchClick?: () => void;
-  /** OnAir audio — kept for API compat but no longer rendered in nav */
   hasAudio?: boolean;
   isAudioPlaying?: boolean;
   onOnairClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
-   NavBar — "Depth of Field" CTA Hierarchy
+   NavBar — "Depth of Field" CTA Hierarchy (v2)
 
-   Layer 1 (Sharp Focus): Editions — Playfair typographic tabs, warm underline
-   Layer 2 (Midground):   Filters  — Mono bracket notation, recessive lens
-   Layer 3 (Background):  Pages    — Inter text links, departure arrow
-   Special:               Weekly   — Magazine supplement, italic editorial
-   Ambient:               Utility  — Icon-only, monochrome
+   Row 1 (Chrome — structural, about the app):
+     Logo | dateline · timestamp | Sources Ship About | Theme
 
-   Row 1: Logo | [Editions] | dateline | [Pages Weekly] [🔍 ☀]
-   Row 2: [ topics ▾ ]  [ ·left ·center ·right ]
+   Row 2 (Lens — content-shaping, inset shadow texture):
+     World US Europe South-Asia | Weekly | [ topics ▾ ] [ ·L ·C ·R ] | Search...
+
+   Editions: Playfair typographic tabs (biggest decision)
+   Weekly:   Playfair italic, amber accent (magazine supplement)
+   Filters:  IBM Plex Mono, bracket notation (instrument panel)
+   Search:   Expandable bar, compact→wide on focus
+   Pages:    Inter text links, departure arrow on hover
+   Utility:  Icon-only, monochrome
    --------------------------------------------------------------------------- */
 
 function formatDateCompact(): string {
@@ -63,10 +65,11 @@ export default function NavBar({
 }: NavBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
   const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
+  const [searchFocused, setSearchFocused] = useState(false);
   const topicRef = useRef<HTMLDivElement>(null);
   const topicTriggerRef = useRef<HTMLButtonElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Defer date rendering to client to avoid SSG/client hydration mismatch (#310)
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
   const dateline = mounted ? formatDateCompact() : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
@@ -90,7 +93,17 @@ export default function NavBar({
     topicTriggerRef.current?.focus();
   };
 
-  // Arrow-key navigation for topic dropdown (WAI-ARIA menu pattern)
+  const handleSearchBarClick = () => {
+    onSearchClick?.();
+  };
+
+  const handleSearchBarKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSearchClick?.();
+    }
+  };
+
   const handleTopicPanelKeyDown = (e: React.KeyboardEvent) => {
     const items = ALL_CATEGORIES;
     let nextIdx = topicFocusIdx;
@@ -147,7 +160,7 @@ export default function NavBar({
 
   return (
     <header className="nav-header anim-cold-open-nav">
-      {/* ── Row 1: Masthead ── */}
+      {/* ── Row 1: Chrome — structural, about the app ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
           <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
@@ -159,24 +172,6 @@ export default function NavBar({
             </span>
           </Link>
         </div>
-
-        {/* Layer 1 — Sharp Focus: Edition tabs (desktop only) */}
-        {hasFilters && (
-          <nav className="nav-editions" aria-label="Edition">
-            {EDITIONS.map((ed) => (
-              <button
-                key={ed.slug}
-                type="button"
-                aria-current={activeEdition === ed.slug ? "page" : undefined}
-                className={`nav-ed${activeEdition === ed.slug ? " nav-ed--active" : ""}`}
-                onClick={() => handleEditionTap(ed.slug)}
-              >
-                <EditionIcon slug={ed.slug} size={10} />
-                <span>{ed.label}</span>
-              </button>
-            ))}
-          </nav>
-        )}
 
         <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
           {dateline}
@@ -193,7 +188,7 @@ export default function NavBar({
         </span>
 
         <div className="nav-right">
-          {/* Layer 3 — Background: Page navigation */}
+          {/* Page navigation — destinations */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
             <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
@@ -204,7 +199,31 @@ export default function NavBar({
             </Link>
           </nav>
 
-          {/* Special — Magazine: Weekly */}
+          {/* Utility: Theme */}
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      {/* ── Row 2: Lens — content-shaping controls, inset texture ── */}
+      {hasFilters && (
+        <div className="nav-lens">
+          {/* Edition tabs — Playfair, biggest decision */}
+          <nav className="nav-lens__editions" aria-label="Edition">
+            {EDITIONS.map((ed) => (
+              <button
+                key={ed.slug}
+                type="button"
+                aria-current={activeEdition === ed.slug ? "page" : undefined}
+                className={`nav-ed${activeEdition === ed.slug ? " nav-ed--active" : ""}`}
+                onClick={() => handleEditionTap(ed.slug)}
+              >
+                <EditionIcon slug={ed.slug} size={10} />
+                <span>{ed.label}</span>
+              </button>
+            ))}
+          </nav>
+
+          {/* Weekly — magazine supplement */}
           <Link
             href="/weekly"
             className="nav-weekly"
@@ -215,27 +234,8 @@ export default function NavBar({
             <span className="nav-weekly__label">Weekly</span>
           </Link>
 
-          {/* Ambient — Utility: Search */}
-          {onSearchClick && (
-            <button
-              className="nav-util"
-              onClick={onSearchClick}
-              aria-label="Search stories (Ctrl+K)"
-              title="Search (Ctrl+K)"
-              type="button"
-            >
-              <MagnifyingGlass size={18} weight="light" />
-            </button>
-          )}
+          <div className="nav-lens__sep" aria-hidden="true" />
 
-          {/* Ambient — Utility: Theme */}
-          <ThemeToggle />
-        </div>
-      </nav>
-
-      {/* ── Row 2: Filter Lens (desktop only, feed pages only) ── */}
-      {hasFilters && (
-        <div className="nav-lens">
           {/* Topic dropdown — bracket notation */}
           <div
             ref={topicRef}
@@ -305,6 +305,30 @@ export default function NavBar({
               >
                 &times;
               </button>
+            </div>
+          )}
+
+          {/* Search bar — expandable, right-anchored */}
+          {onSearchClick && (
+            <div
+              className={`nav-lens__search${searchFocused ? " nav-lens__search--focused" : ""}`}
+              onClick={handleSearchBarClick}
+              onKeyDown={handleSearchBarKeyDown}
+              role="search"
+            >
+              <MagnifyingGlass size={14} weight="regular" className="nav-lens__search-icon" aria-hidden="true" />
+              <input
+                ref={searchInputRef}
+                className="nav-lens__search-input"
+                type="text"
+                placeholder="Search stories..."
+                readOnly
+                tabIndex={0}
+                onFocus={() => { setSearchFocused(true); onSearchClick?.(); }}
+                onBlur={() => setSearchFocused(false)}
+                aria-label="Search stories (Ctrl+K)"
+              />
+              <kbd className="nav-lens__search-kbd" aria-hidden="true">&#8984;K</kbd>
             </div>
           )}
         </div>

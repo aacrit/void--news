@@ -1858,67 +1858,20 @@
 }
 
 /* ==========================================================================
-   "Depth of Field" CTA Hierarchy
-   5 visual layers, each with distinct typography, color, and motion.
+   "Depth of Field" CTA Hierarchy (v2)
+
+   Row 1 (Chrome): Logo | dateline | Sources Ship About | Theme
+   Row 2 (Lens):   Editions | Weekly | Filters | Search
+
+   Visual layers preserved within Row 2 via typography contrast:
+   - Editions:  Playfair (editorial voice, warm underline)
+   - Weekly:    Playfair italic (magazine supplement, amber accent)
+   - Filters:   IBM Plex Mono (instrument panel, bracket notation)
+   - Search:    Expandable bar, compact → wide on focus
+   - Pages:     Inter uppercase (departure arrow, Row 1)
    ========================================================================== */
 
-/* ── Layer 1 — Sharp Focus: Edition Tabs ──
-   Playfair Display, typographic, warm underline. The biggest decision on the
-   page — you're picking up a different newspaper. Masthead-level authority. */
-
-.nav-editions {
-  display: none; /* hidden on mobile — MobileBottomNav handles editions */
-  align-items: center;
-  gap: var(--space-1);
-  margin: 0 var(--space-4);
-}
-
-@media (min-width: 768px) {
-  .nav-editions {
-    display: flex;
-  }
-}
-
-.nav-ed {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 400;
-  color: var(--fg-tertiary);
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: var(--space-2) var(--space-3);
-  cursor: pointer;
-  white-space: nowrap;
-  position: relative;
-  transition:
-    color 200ms var(--ease-cinematic),
-    border-color 250ms var(--ease-cinematic),
-    opacity 200ms var(--ease-cinematic);
-}
-
-.nav-ed:hover {
-  color: var(--fg-secondary);
-  border-color: color-mix(in srgb, var(--cin-amber) 30%, transparent);
-}
-
-.nav-ed--active {
-  color: var(--fg-primary);
-  font-weight: 600;
-  border-color: var(--cin-amber);
-}
-
-.nav-ed:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 3px;
-}
-
-/* ── Layer 3 — Background: Page Navigation ──
-   Inter (structural voice), no pills, no icons. Plain text links
-   that signal "exit" with a departure arrow on hover. Quiet. */
+/* ── Row 1: Page Navigation — Inter text, departure arrow ── */
 
 .nav-pages {
   display: none; /* hidden on mobile */
@@ -1979,27 +1932,60 @@
   outline-offset: 2px;
 }
 
-/* ── Special — Magazine: Weekly ──
-   Sunday magazine supplement. Italic Playfair, warm amber accent,
-   vertical rule spine. Distinct from both editions and page links —
-   it's a periodic publication, not a section. */
+/* ── Row 2: Edition Tabs — Playfair, warm underline ── */
+
+.nav-lens__editions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nav-ed {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--fg-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition:
+    color 200ms var(--ease-cinematic),
+    border-color 250ms var(--ease-cinematic);
+}
+
+.nav-ed:hover {
+  color: var(--fg-secondary);
+  border-color: color-mix(in srgb, var(--cin-amber) 30%, transparent);
+}
+
+.nav-ed--active {
+  color: var(--fg-primary);
+  font-weight: 600;
+  border-color: var(--cin-amber);
+}
+
+.nav-ed:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+/* ── Row 2: Weekly — Playfair italic, amber spine ── */
 
 .nav-weekly {
-  display: none; /* hidden on mobile */
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   text-decoration: none;
   padding: var(--space-1) var(--space-3);
-  margin-left: var(--space-1);
   position: relative;
-  transition:
-    transform 300ms var(--ease-unfold);
-}
-
-@media (min-width: 768px) {
-  .nav-weekly {
-    display: inline-flex;
-  }
+  transition: transform 300ms var(--ease-unfold);
 }
 
 .nav-weekly__rule {
@@ -2041,34 +2027,79 @@
   outline-offset: 2px;
 }
 
-/* ── Ambient — Utility: Search, Theme ──
-   Icon-only, monochrome. Background actors on the film set.
-   Smallest elements that still meet 44px touch targets. */
+/* ── Row 2: Separator — thin vertical rule between zones ── */
 
-.nav-util {
+.nav-lens__sep {
+  width: 1px;
+  height: 18px;
+  background-color: var(--border-subtle);
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+/* ── Row 2: Search Bar — expandable, right-anchored ── */
+
+.nav-lens__search {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: none;
-  border: none;
-  color: var(--fg-tertiary);
+  gap: var(--space-2);
+  margin-left: auto; /* push to right edge */
+  padding: var(--space-1) var(--space-3);
+  min-height: 30px;
+  width: 160px;
+  background-color: color-mix(in srgb, var(--fg-primary) 3%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
   cursor: pointer;
-  border-radius: var(--radius-sm);
   transition:
-    color 150ms var(--ease-out),
+    width 250ms var(--ease-cinematic),
+    border-color 150ms var(--ease-out),
     background-color 150ms var(--ease-out);
 }
 
-.nav-util:hover {
-  color: var(--fg-primary);
+.nav-lens__search:hover {
+  border-color: var(--border-strong);
   background-color: color-mix(in srgb, var(--fg-primary) 5%, transparent);
 }
 
-.nav-util:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
+.nav-lens__search--focused {
+  width: 280px;
+  border-color: var(--cin-amber);
+}
+
+.nav-lens__search-icon {
+  flex-shrink: 0;
+  color: var(--fg-tertiary);
+}
+
+.nav-lens__search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.nav-lens__search-input::placeholder {
+  color: var(--fg-tertiary);
+  opacity: 0.6;
+}
+
+.nav-lens__search-kbd {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-tertiary);
+  opacity: 0.4;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: 1px 4px;
+  line-height: 1.2;
+  flex-shrink: 0;
 }
 
 .nav-logo {
@@ -2140,7 +2171,7 @@
   opacity: 0.4;
 }
 
-/* nav-search-btn replaced by .nav-util (ambient layer) */
+/* nav-search-btn replaced by .nav-lens__search (expandable bar in Row 2) */
 /* nav-onair removed — floating player is the single audio entry point */
 @keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
@@ -2165,9 +2196,10 @@
 }
 
 /* ==========================================================================
-   Layer 2 — Midground: Filter Lens
-   IBM Plex Mono, lowercase, bracket notation. The instrument panel.
-   You're adjusting the lens, not changing the scene.
+   Row 2 — Content Lens (inset texture)
+   All content-shaping controls in one row. Editions (Playfair) + Weekly
+   (italic) + Filters (Mono brackets) + Search (expandable). The recessed
+   toolbar — camera lens barrel, adjustable, content-shaping.
    ========================================================================== */
 
 .nav-lens {
@@ -2176,7 +2208,10 @@
   gap: var(--space-3);
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 var(--space-7) var(--space-3);
+  padding: var(--space-2) var(--space-7) var(--space-2);
+  /* Inset shadow — recessed into the page, behind Row 1 chrome */
+  box-shadow: inset 0 1px 3px color-mix(in srgb, var(--cinematic-shadow-tint) 8%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--border-subtle) 50%, transparent);
 }
 
 .nav-lens__bracket {

@@ -50,7 +50,7 @@ const STEPS: TourStep[] = [
     body: "See how the same stories look from left, center, or right-leaning sources.",
   },
   {
-    selector: ".nav-editions, .mob-nav__tabs",
+    selector: ".nav-lens__editions, .mob-nav__tabs",
     title: "Switch editions",
     body: "Four newsrooms, one page. World is the default. Switch to US, Europe, or South Asia for regional focus.",
   },
