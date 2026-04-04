@@ -88,28 +88,6 @@ function InkHorizontalTrack() {
   );
 }
 
-/** Organic ink quotation mark — hand-drawn feel */
-function InkQuoteMark() {
-  return (
-    <svg
-      className="wk-ink-quote"
-      viewBox="0 0 40 32"
-      aria-hidden="true"
-    >
-      <path
-        d="M6 24 C2 20, 1 14, 4 8 C6 4, 10 2, 14 2 C12 6, 10 10, 10 14 C14 14, 17 17, 17 21 C17 25, 14 28, 10 28 C8 28, 6.5 26, 6 24Z"
-        fill="currentColor"
-        opacity="0.5"
-      />
-      <path
-        d="M26 24 C22 20, 21 14, 24 8 C26 4, 30 2, 34 2 C32 6, 30 10, 30 14 C34 14, 37 17, 37 21 C37 25, 34 28, 30 28 C28 28, 26.5 26, 26 24Z"
-        fill="currentColor"
-        opacity="0.5"
-      />
-    </svg>
-  );
-}
-
 /** Organic ink left border — vertical wavey line for sidebar */
 function InkLeftBorder() {
   return (
@@ -218,6 +196,16 @@ function InkCorner({ className = "" }: { className?: string }) {
         opacity="0.4"
       />
     </svg>
+  );
+}
+
+/** Scroll-reveal wrapper for standalone InkFlourish instances between sections */
+function RevealFlourish() {
+  const [ref, visible] = useScrollReveal(0.3);
+  return (
+    <div ref={ref as React.RefObject<HTMLDivElement>} className={`wk-reveal${visible ? " wk-reveal--visible" : ""}`}>
+      <InkFlourish />
+    </div>
   );
 }
 
@@ -583,7 +571,7 @@ function NumbersSidebar({
   return (
     <aside
       ref={sidebarRef as React.RefObject<HTMLElement>}
-      className={`wk-cover__numbers wk-cold-open--numbers`}
+      className={`wk-cover__numbers wk-cold-open--numbers wk-reveal${sidebarVisible ? " wk-reveal--visible" : ""}`}
       aria-label="This week in numbers"
     >
       <InkLeftBorder />
@@ -623,30 +611,31 @@ function TimelineNode({
   const hasDetail = detail.length > 0;
 
   return (
-    <button
-      className={`wk-timeline__node${expanded ? " wk-timeline__node--expanded" : ""}`}
-      onClick={() => hasDetail && setExpanded(!expanded)}
-      role="listitem"
-      aria-expanded={hasDetail ? expanded : undefined}
-      type="button"
-      style={{ "--node-delay": `${index * 80}ms` } as React.CSSProperties}
-    >
-      <span className="wk-timeline__dot" aria-hidden="true" />
-      <span className="wk-timeline__day">{dateText}</span>
-      <span className="wk-timeline__note">{hasDetail ? summary : noteText}</span>
-      {hasDetail && (
-        <>
-          <div className="wk-timeline__detail">
-            <div className="wk-timeline__detail-inner">
-              <p className="wk-timeline__detail-text">{detail}</p>
+    <div role="listitem">
+      <button
+        className={`wk-timeline__node${expanded ? " wk-timeline__node--expanded" : ""}`}
+        onClick={() => hasDetail && setExpanded(!expanded)}
+        aria-expanded={hasDetail ? expanded : undefined}
+        type="button"
+        style={{ "--node-delay": `${index * 80}ms` } as React.CSSProperties}
+      >
+        <span className="wk-timeline__dot" aria-hidden="true" />
+        <span className="wk-timeline__day">{dateText}</span>
+        <span className="wk-timeline__note">{hasDetail ? summary : noteText}</span>
+        {hasDetail && (
+          <>
+            <div className="wk-timeline__detail">
+              <div className="wk-timeline__detail-inner">
+                <p className="wk-timeline__detail-text">{detail}</p>
+              </div>
             </div>
-          </div>
-          <span className="wk-timeline__expand-hint">
-            {expanded ? "Collapse" : "Expand"}
-          </span>
-        </>
-      )}
-    </button>
+            <span className="wk-timeline__expand-hint">
+              {expanded ? "Collapse" : "Expand"}
+            </span>
+          </>
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -795,6 +784,7 @@ function CoverSection({
   stories: WeeklyCoverStory[];
   topLevelNumbers: unknown;
 }) {
+  const [sectionRef, sectionVisible] = useScrollReveal(0.1);
   const firstStory = stories[0];
   const secondaryStories = stories.slice(1);
   const firstNums = parseCoverNumbers(firstStory?.numbers);
@@ -803,7 +793,11 @@ function CoverSection({
     : parseCoverNumbers(topLevelNumbers);
 
   return (
-    <section className="wk-cover" aria-labelledby="wk-cover-heading">
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className={`wk-cover wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-cover-heading"
+    >
       <h2 className="wk-section-label" id="wk-cover-heading" data-prefix="void --">The Cover</h2>
       {firstStory && (
         <CoverStoryCard
@@ -959,34 +953,6 @@ function OpinionsSection({
         </div>
       </CollapsibleSection>
     </div>
-  );
-}
-
-/* ── Special Section ───────────────────────────────────────────────────────── */
-
-function SpecialSection({
-  story,
-  sectionType,
-}: {
-  story: WeeklyRecapStory;
-  sectionType: "tech" | "sports";
-}) {
-  const label = sectionType === "tech" ? "Tech Brief" : "Sports Page";
-  const id = `wk-${sectionType}-heading`;
-  const [ref, visible] = useScrollReveal(0.15);
-
-  return (
-    <section
-      ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-special wk-special--${sectionType} wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby={id}
-    >
-      <h2 className="wk-section-label" id={id} data-prefix="void --">{label}</h2>
-      <article className={`wk-special__card wk-special__card--${sectionType}`}>
-        <h3 className="wk-special__headline">{story.headline}</h3>
-        <p className="wk-special__summary">{story.summary}</p>
-      </article>
-    </section>
   );
 }
 
@@ -1326,7 +1292,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               </>
             )}
 
-            <InkFlourish />
+            <RevealFlourish />
 
             <OpinionsSection
               left={digest.opinion_left}
@@ -1334,7 +1300,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               right={digest.opinion_right}
             />
 
-            <InkFlourish />
+            <RevealFlourish />
 
             <div className="wk-section--cream">
               <BiasReport
