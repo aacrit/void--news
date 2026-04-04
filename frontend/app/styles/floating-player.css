@@ -602,17 +602,10 @@
 
 /* Mobile (< 768px): full-width pill, above bottom nav */
 @media (max-width: 767px) {
-  /* Cinematic pill entrance on mobile (spring overshoot + light bloom) */
+  /* Compact pill hidden on mobile — audio accessed via brief play button
+     and bottom nav OnAir progress bar. Eliminates floating element. */
   .fp--compact {
-    bottom: calc(var(--nav-bottom-height, 52px) + var(--space-2));
-    left: var(--space-3);
-    right: var(--space-3);
-    animation: fpPillEntrance 500ms var(--ease-cinematic, ease) both;
-  }
-
-  .fp--compact .fp__pill {
-    width: 100%;
-    border-radius: 12px;
+    display: none;
   }
 
   .fp--expanded {

@@ -871,8 +871,8 @@
     display: none;
   }
 
-  /* Spectrum: zone labels unreadable at mobile sizes — hide them */
-  .dd-spectrum__zone-label {
+  /* Spectrum: fulcrum hidden on mobile (too tight) */
+  .ink-line__fulcrum {
     display: none;
   }
 

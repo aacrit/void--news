@@ -179,11 +179,6 @@ export default function NavBar({
           <span className="nav-dateline-inline__time">{timestamp}</span>
         </span>
         <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
-          <span className="nav-edition-badge">
-            <EditionIcon slug={activeEdition} size={10} />
-            {EDITIONS.find(e => e.slug === activeEdition)?.label ?? "World"}
-          </span>
-          <span className="nav-dateline-sep">&middot;</span>
           {dateline}
         </span>
 
@@ -203,6 +198,23 @@ export default function NavBar({
           <ThemeToggle />
         </div>
       </nav>
+
+      {/* ── Mobile edition tabs — horizontal scroll, Playfair ── */}
+      {onEditionChange && (
+        <nav className="nav-mob-editions" aria-label="Edition">
+          {EDITIONS.map((ed) => (
+            <button
+              key={ed.slug}
+              type="button"
+              aria-current={activeEdition === ed.slug ? "page" : undefined}
+              className={`nav-mob-ed${activeEdition === ed.slug ? " nav-mob-ed--active" : ""}`}
+              onClick={() => handleEditionTap(ed.slug)}
+            >
+              {ed.label}
+            </button>
+          ))}
+        </nav>
+      )}
 
       {/* ── Row 2: Lens — content-shaping controls, inset texture ── */}
       {hasFilters && (

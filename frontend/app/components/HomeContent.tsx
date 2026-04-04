@@ -843,7 +843,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   The next edition will appear shortly.
                 </p>
                 <p className="edition-meta">
-                  Morning edition: 11:00 AM UTC &middot; Evening edition: 11:00 PM UTC
+                  Editions: 7 AM &middot; 2 PM &middot; 8 PM Chicago
                 </p>
               </div>
             )}
@@ -1001,15 +1001,14 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       )}
       <FloatingPlayer state={dailyBriefState} />
 
-      {/* Mobile bottom nav — single-row filters (thumb-reachable) */}
+      {/* Mobile bottom nav — filter buttons + OnAir progress (editions moved to NavBar tabs) */}
       {isMobile && (
         <MobileBottomNav
-          activeEdition={activeEdition}
-          onEditionChange={(edition) => { setActiveEdition(edition); setVisibleCount(BATCH_SIZE); }}
           activeLean={activeLean}
           onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
           activeCategory={activeCategory}
           onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+          dailyBriefState={dailyBriefState}
         />
       )}
     </div>

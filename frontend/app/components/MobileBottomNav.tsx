@@ -1,53 +1,50 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { Edition, Category, LeanChip } from "../lib/types";
-import { EDITIONS } from "../lib/types";
-import EditionIcon from "./EditionIcon";
-import { hapticMicro, hapticLight } from "../lib/haptics";
+import type { Category, LeanChip } from "../lib/types";
+import type { DailyBriefState } from "./DailyBrief";
+import LogoIcon from "./LogoIcon";
+import { hapticMicro, hapticLight, hapticConfirm } from "../lib/haptics";
 
 interface MobileBottomNavProps {
-  activeEdition: Edition;
-  onEditionChange: (edition: Edition) => void;
   activeLean: LeanChip;
   onLeanChange: (lean: LeanChip) => void;
   activeCategory: "All" | Category;
   onCategoryChange: (cat: "All" | Category) => void;
+  dailyBriefState?: DailyBriefState;
 }
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
   "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
 
-type OpenPanel = null | "edition" | "lean" | "topic";
+type OpenPanel = null | "lean" | "topic";
 
 /* ---------------------------------------------------------------------------
-   MobileBottomNav — 3 expandable CTA buttons at bottom (mobile only).
+   MobileBottomNav — 2 filter buttons + OnAir progress (mobile only).
 
-   [Edition ▾]  [Perspective ▾]  [Topic ▾]
+   [Perspective ▾]  [Topic ▾]
+   ▶ ━━━━━━━━━━━ onair progress ━━━━━━━━━━━
 
-   Each button shows current selection. Tapping expands an upward panel
-   with options. Only one panel open at a time.
+   Editions moved to top NavBar tabs. Bottom nav is filters only.
+   OnAir mini-progress taps to expand FloatingPlayer.
    Hidden on desktop via CSS (display: none above 768px).
    --------------------------------------------------------------------------- */
 
 export default function MobileBottomNav({
-  activeEdition,
-  onEditionChange,
   activeLean,
   onLeanChange,
   activeCategory,
   onCategoryChange,
+  dailyBriefState,
 }: MobileBottomNavProps) {
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const editionPanelRef = useRef<HTMLDivElement>(null);
   const leanPanelRef = useRef<HTMLDivElement>(null);
   const topicPanelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  // Detect reduced-motion preference and keep it in sync
   useEffect(() => {
     const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mql.matches);
@@ -56,7 +53,6 @@ export default function MobileBottomNav({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  // Lock body scroll when a panel is open
   useEffect(() => {
     if (openPanel) {
       document.body.style.overflow = "hidden";
@@ -68,18 +64,8 @@ export default function MobileBottomNav({
 
   const toggle = useCallback((panel: OpenPanel) => {
     hapticLight();
-    setOpenPanel((prev) => {
-      const next = prev === panel ? null : panel;
-      return next;
-    });
+    setOpenPanel((prev) => prev === panel ? null : panel);
   }, []);
-
-  const handleEditionTap = (edition: Edition) => {
-    hapticMicro();
-    onEditionChange(edition);
-    // URL sync handled by HomeContent useEffect — single source of truth
-    setOpenPanel(null);
-  };
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
@@ -93,27 +79,21 @@ export default function MobileBottomNav({
     setOpenPanel(null);
   };
 
-  // Focus management: move focus into panel when opened, return to trigger on close
   useEffect(() => {
     if (openPanel) {
-      // Save the element that triggered the panel open
       triggerRef.current = document.activeElement as HTMLButtonElement | null;
-
       const panelMap: Record<string, React.RefObject<HTMLDivElement | null>> = {
-        edition: editionPanelRef,
         lean: leanPanelRef,
         topic: topicPanelRef,
       };
       const panelEl = panelMap[openPanel]?.current;
       if (panelEl) {
-        // Delay focus until panel transition starts rendering
         requestAnimationFrame(() => {
           const firstInteractive = panelEl.querySelector<HTMLElement>("button, a, input");
           firstInteractive?.focus();
         });
       }
     } else {
-      // Panel closed: return focus to the trigger button
       if (triggerRef.current && typeof triggerRef.current.focus === "function") {
         triggerRef.current.focus();
         triggerRef.current = null;
@@ -121,20 +101,15 @@ export default function MobileBottomNav({
     }
   }, [openPanel]);
 
-  // Close on Escape key — return focus to trigger button
   useEffect(() => {
     if (!openPanel) return;
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setOpenPanel(null);
-      }
+      if (e.key === "Escape") { e.preventDefault(); setOpenPanel(null); }
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [openPanel]);
 
-  // Close on outside tap
   useEffect(() => {
     if (!openPanel) return;
     const close = (e: MouseEvent) => {
@@ -146,58 +121,46 @@ export default function MobileBottomNav({
     return () => document.removeEventListener("mousedown", close);
   }, [openPanel]);
 
-  const editionLabel = EDITIONS.find((e) => e.slug === activeEdition)?.label ?? "World";
   const leanLabel = activeLean === "All" ? "All" : activeLean;
   const topicLabel = activeCategory === "All" ? "All Topics" : activeCategory;
 
+  // OnAir state (optional — pages without daily brief pass no state)
+  const brief = dailyBriefState?.brief;
+  const isPlaying = dailyBriefState?.isPlaying ?? false;
+  const currentTime = dailyBriefState?.currentTime ?? 0;
+  const duration = dailyBriefState?.duration ?? 0;
+  const handlePlayPause = dailyBriefState?.handlePlayPause;
+  const setPlayerVisible = dailyBriefState?.setPlayerVisible;
+  const hasAudio = !!brief?.audio_url;
+  const displayDuration = brief?.audio_duration_seconds || duration;
+  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
+
+  const handleOnairTap = () => {
+    hapticConfirm();
+    setPlayerVisible?.(true);
+    if (!isPlaying) handlePlayPause?.();
+  };
+
+  const panelTransition = (isOpen: boolean) =>
+    prefersReducedMotion
+      ? "none"
+      : isOpen
+        ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
+        : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)";
+
   return (
     <nav className="mob-nav anim-cold-open-nav" aria-label="Mobile navigation" ref={navRef}>
-      {/* Backdrop — fades in when any panel is open */}
+      {/* Backdrop */}
       <div
         className="mob-nav__backdrop"
         style={{
           opacity: openPanel ? 1 : 0,
           pointerEvents: openPanel ? "auto" : "none",
-          transition: prefersReducedMotion
-            ? "none"
-            : openPanel
-              ? "opacity 150ms var(--ease-out)"
-              : "opacity 120ms var(--ease-out)",
+          transition: prefersReducedMotion ? "none" : openPanel ? "opacity 150ms var(--ease-out)" : "opacity 120ms var(--ease-out)",
         }}
         onClick={() => setOpenPanel(null)}
         aria-hidden="true"
       />
-
-      {/* Edition panel */}
-      <div
-        ref={editionPanelRef}
-        className="mob-nav__panel"
-        role="menu"
-        aria-label="Edition"
-        style={{
-          transform: openPanel === "edition" ? "translateY(0)" : "translateY(100%)",
-          opacity: openPanel === "edition" ? 1 : 0,
-          transition: prefersReducedMotion
-            ? "none"
-            : openPanel === "edition"
-              ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
-              : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)",
-          pointerEvents: openPanel === "edition" ? "auto" : "none",
-        }}
-      >
-        {EDITIONS.map((ed) => (
-          <button
-            key={ed.slug}
-            role="menuitem"
-            aria-current={activeEdition === ed.slug ? "page" : undefined}
-            className={`mob-nav__opt${activeEdition === ed.slug ? " mob-nav__opt--active" : ""}`}
-            onClick={() => handleEditionTap(ed.slug)}
-          >
-            <EditionIcon slug={ed.slug} size={12} />
-            {ed.label}
-          </button>
-        ))}
-      </div>
 
       {/* Perspective panel */}
       <div
@@ -208,11 +171,7 @@ export default function MobileBottomNav({
         style={{
           transform: openPanel === "lean" ? "translateY(0)" : "translateY(100%)",
           opacity: openPanel === "lean" ? 1 : 0,
-          transition: prefersReducedMotion
-            ? "none"
-            : openPanel === "lean"
-              ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
-              : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)",
+          transition: panelTransition(openPanel === "lean"),
           pointerEvents: openPanel === "lean" ? "auto" : "none",
         }}
       >
@@ -238,11 +197,7 @@ export default function MobileBottomNav({
         style={{
           transform: openPanel === "topic" ? "translateY(0)" : "translateY(100%)",
           opacity: openPanel === "topic" ? 1 : 0,
-          transition: prefersReducedMotion
-            ? "none"
-            : openPanel === "topic"
-              ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
-              : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)",
+          transition: panelTransition(openPanel === "topic"),
           pointerEvents: openPanel === "topic" ? "auto" : "none",
         }}
       >
@@ -259,20 +214,26 @@ export default function MobileBottomNav({
         ))}
       </div>
 
-      {/* Navigation bar — icon + label vertical stacking (Material 3 pattern) */}
-      <div className="mob-nav__bar">
+      {/* OnAir mini-progress — persistent strip above buttons */}
+      {hasAudio && (
         <button
-          className={`mob-nav__cta mob-nav__cta--edition${openPanel === "edition" ? " mob-nav__cta--open" : ""}`}
-          onClick={() => toggle("edition")}
-          aria-expanded={openPanel === "edition"}
+          className={`mob-nav__onair${isPlaying ? " mob-nav__onair--playing" : ""}`}
+          onClick={handleOnairTap}
           type="button"
+          aria-label={isPlaying ? "Now playing — tap to expand" : "Play broadcast"}
         >
-          <span className="mob-nav__cta-icon" aria-hidden="true">
-            <EditionIcon slug={activeEdition} size={18} />
+          <LogoIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
+          <span className="mob-nav__onair-label">
+            {isPlaying ? "void --onair" : "Listen"}
           </span>
-          <span className="mob-nav__cta-label">{editionLabel}</span>
+          <div className="mob-nav__onair-bar" aria-hidden="true">
+            <div className="mob-nav__onair-fill" style={{ width: `${progress}%` }} />
+          </div>
         </button>
+      )}
 
+      {/* Navigation bar — 2 filter buttons */}
+      <div className="mob-nav__bar">
         <button
           className={`mob-nav__cta mob-nav__cta--lean${openPanel === "lean" ? " mob-nav__cta--open" : ""}`}
           onClick={() => toggle("lean")}
