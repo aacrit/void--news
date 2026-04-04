@@ -215,7 +215,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     >
       {/* ── COMPACT PILL ── */}
       {view === "compact" && (
-        <div className="fp__pill" onClick={toggleExpand}>
+        <div className="fp__pill" onClick={toggleExpand} role="button" tabIndex={0}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleExpand(); } }}>
           <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} className="fp__logo" />
 
           {isPlaying && (
