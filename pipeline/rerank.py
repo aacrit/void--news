@@ -506,9 +506,13 @@ def main():
                         affinity_mult = min(affinity_mult, _cap)
                     u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * affinity_mult, 2)
 
-            # Local-priority boost
-            if "world" not in c_sections:
+            # Local-priority boost — only for clusters with 4+ sources.
+            # Prevents thin junk (1-3 sources) from getting 1.4x boost.
+            _sc = u.get("source_count", 0)
+            if "world" not in c_sections and _sc >= 4:
                 u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_EXCLUSIVE_BOOST, 2)
+            elif "world" not in c_sections:
+                pass  # no boost for thin edition-exclusive clusters
             else:
                 u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_CROSSLIST_BOOST, 2)
 
@@ -538,9 +542,9 @@ def main():
 
         pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
 
-        # Edition-level lead gate: top-10 positions require 3+ sources.
-        # Modifies rank values so the gate persists in final sort order.
-        _ED_LEAD_MIN = 3
+        # Edition-level lead gate: top-10 positions require 5+ sources.
+        # Prevents thin junk clusters from leading editions via affinity boost.
+        _ED_LEAD_MIN = 5
         _ED_LEAD_SLOTS = 10
         eligible = [u for u in pool if u.get("source_count", 0) >= _ED_LEAD_MIN]
         ineligible = [u for u in pool if u.get("source_count", 0) < _ED_LEAD_MIN]
