@@ -337,6 +337,17 @@
 .fp__minimize { font-size: 12px; }
 .fp__dismiss { font-size: 18px; font-weight: 300; }
 
+/* CaretRight arrows — rotated to match SkyboxBanner pattern */
+.fp__caret {
+  display: block;
+  color: currentColor;
+  transition: transform 200ms var(--spring-snappy, ease);
+}
+.fp__caret--down { transform: rotate(90deg); }
+.fp__caret--up { transform: rotate(-90deg); }
+.fp__minimize:hover .fp__caret--down { transform: rotate(90deg) translateX(1px); }
+.fp__episode-btn:hover .fp__caret--up { transform: rotate(-90deg) translateX(-1px); }
+
 /* Waveform — visible when playing, collapses when paused */
 .fp__waveform {
   display: flex;
@@ -752,14 +763,7 @@
   color: var(--accent-warm);
 }
 
-.fp__episode-btn-arrow {
-  font-size: 8px;
-  transition: transform 200ms var(--ease-out);
-}
-
-.fp__episode-btn:hover .fp__episode-btn-arrow {
-  transform: translateY(-1px);
-}
+/* Episode button arrow handled by .fp__caret--up */
 
 /* ---------------------------------------------------------------------------
    BROADCAST PANEL — full episode view (tier 3)

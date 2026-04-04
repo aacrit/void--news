@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import type { DailyBriefState } from "./DailyBrief";
+import { CaretRight } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
 import ScaleIcon from "./ScaleIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
@@ -113,7 +114,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
     if (isDesktop) {
       setClosing(true);
-      setTimeout(() => { setClosing(false); setView("compact"); }, 300);
+      setTimeout(() => { setClosing(false); setView("expanded"); }, 300);
     } else {
       setView("expanded");
     }
@@ -273,7 +274,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
               <button className="fp__speed" onClick={() => { hapticLight(); cycleSpeed(); }}
                 type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
               <button className="fp__minimize" onClick={toggleExpand} type="button" aria-label="Minimize player">
-                <span aria-hidden="true">&#9662;</span>
+                <CaretRight size={14} weight="bold" className="fp__caret fp__caret--down" />
               </button>
               <button className="fp__dismiss" onClick={dismiss} type="button" aria-label="Close player">
                 <span aria-hidden="true">&times;</span>
@@ -304,7 +305,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           {/* Episode details trigger */}
           <button className="fp__episode-btn" onClick={openBroadcast} type="button">
             <span>Episode details</span>
-            <span className="fp__episode-btn-arrow" aria-hidden="true">&#9652;</span>
+            <CaretRight size={12} weight="bold" className="fp__caret fp__caret--up" />
           </button>
         </div>
       )}
@@ -345,8 +346,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             <div className="fp__bar-actions">
               <button className="fp__speed" onClick={() => { hapticLight(); cycleSpeed(); }}
                 type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
-              <button className="fp__minimize" onClick={closeBroadcast} type="button" aria-label="Collapse to console">
-                <span aria-hidden="true">&#9662;</span>
+              <button className="fp__minimize" onClick={closeBroadcast} type="button" aria-label="Collapse to floating player">
+                <CaretRight size={14} weight="bold" className="fp__caret fp__caret--down" />
               </button>
               <button className="fp__dismiss" onClick={dismiss} type="button" aria-label="Close player">
                 <span aria-hidden="true">&times;</span>
