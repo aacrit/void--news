@@ -232,9 +232,8 @@ function formatArchiveRange(start: string, end: string): string {
   return `${s.toLocaleDateString("en-US", { month: "short", day: "numeric" })}\u2013${e.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
-function leanBadgeClass(lean: string): string {
-  const l = (lean || "center").toLowerCase().replace(/\s+/g, "-");
-  return `wk-opinion__badge wk-opinion__badge--${l}`;
+function leanBadgeClass(_lean: string): string {
+  return "wk-opinion__badge";
 }
 
 function leanBadgeLabel(lean: string): string {
@@ -552,9 +551,6 @@ function NumberItem({
         {displayValue}
       </dt>
       <dd className="wk-cover__number-label">{label}</dd>
-      <div className="wk-cover__number-tooltip" role="tooltip">
-        {label}
-      </div>
     </div>
   );
 }
@@ -679,7 +675,6 @@ function CoverStoryCard({
   isFirst: boolean;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const previewText = (story.text || "").slice(0, 200).replace(/\s+\S*$/, "");
   const [parallaxRef, parallaxOffset] = useParallax(0.06);
 
   const inner = (
@@ -691,30 +686,22 @@ function CoverStoryCard({
       >
         {story.headline}
       </h3>
-      <div className={`wk-collapsible${expanded ? " wk-collapsible--open" : ""}`}>
-        <div className="wk-collapsible__inner">
-          {!expanded && (
-            <div className="wk-cover__preview">
-              <p>{previewText}...</p>
-              <div className="wk-cover__preview-fade" aria-hidden="true" />
+      {/* Always render full content — CSS handles collapsed clamp */}
+      <div className={`wk-cover__content${expanded ? " wk-cover__content--open" : ""}`}>
+        <div className="wk-cover__content-inner">
+          <div className={`wk-cover__body-wrap${isFirst ? " wk-cold-open--body" : ""}`}>
+            <div className="wk-cover__text">
+              {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
+                <p key={j}>{para}</p>
+              ))}
             </div>
-          )}
-          {expanded && (
-            <>
-              <div className={`wk-cover__body-wrap${isFirst ? " wk-cold-open--body" : ""}`}>
-                <div className="wk-cover__text">
-                  {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
-                    <p key={j}>{para}</p>
-                  ))}
-                </div>
-                <NumbersSidebar numbers={numbers} />
-              </div>
-              <InteractiveTimeline
-                timeline={story.timeline as Record<string, string>[] ?? []}
-              />
-            </>
-          )}
+            <NumbersSidebar numbers={numbers} />
+          </div>
+          <InteractiveTimeline
+            timeline={story.timeline as Record<string, string>[] ?? []}
+          />
         </div>
+        {!expanded && <div className="wk-cover__content-fade" aria-hidden="true" />}
       </div>
       <button
         className="wk-toggle"
@@ -835,7 +822,6 @@ function CoverSection({
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   const [expanded, setExpanded] = useState(false);
   const safeText = op.text || "";
-  const previewText = safeText.slice(0, 120).replace(/\s+\S*$/, "");
   const needsTruncation = safeText.length > 140;
 
   return (
@@ -853,16 +839,9 @@ function OpinionCard({ op }: { op: WeeklyOpinion }) {
       </div>
       <h3 className="wk-opinion__headline">{op.headline}</h3>
       <div className={`wk-opinion__text${!expanded && needsTruncation ? " wk-opinion__text--clamped" : ""}`}>
-        {expanded ? (
-          (op.text || "").split("\n\n").filter(Boolean).map((para, j) => (
-            <p key={j}>{para}</p>
-          ))
-        ) : (
-          <p>{needsTruncation ? `${previewText}...` : op.text}</p>
-        )}
-        {!expanded && needsTruncation && (
-          <div className="wk-opinion__text-fade" aria-hidden="true" />
-        )}
+        {(op.text || "").split("\n\n").filter(Boolean).map((para, j) => (
+          <p key={j}>{para}</p>
+        ))}
       </div>
       {needsTruncation && (
         <button
@@ -1074,6 +1053,7 @@ function WeeklyAudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(durationSeconds ?? 0);
+  const [audioError, setAudioError] = useState(false);
 
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
@@ -1119,12 +1099,14 @@ function WeeklyAudioPlayer({
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={() => setIsPlaying(false)}
+          onError={() => setAudioError(true)}
         />
         <button
-          className={`wk-audio__play${isPlaying ? " wk-audio__play--active" : ""}`}
+          className={`wk-audio__play${isPlaying ? " wk-audio__play--active" : ""}${audioError ? " wk-audio__play--disabled" : ""}`}
           onClick={handlePlayPause}
-          aria-label={isPlaying ? "Pause" : "Play"}
+          aria-label={audioError ? "Audio unavailable" : isPlaying ? "Pause" : "Play"}
           type="button"
+          disabled={audioError}
         >
           {isPlaying ? (
             <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor" aria-hidden="true">
@@ -1138,20 +1120,26 @@ function WeeklyAudioPlayer({
           )}
         </button>
         <div className="wk-audio__controls">
-          <input
-            type="range"
-            className="wk-audio__scrubber"
-            min={0}
-            max={duration || 1}
-            step={0.1}
-            value={currentTime}
-            onChange={handleSeek}
-            aria-label="Seek"
-          />
-          <div className="wk-audio__time">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
+          {audioError ? (
+            <span className="wk-audio__error">Audio unavailable</span>
+          ) : (
+            <>
+              <input
+                type="range"
+                className="wk-audio__scrubber"
+                min={0}
+                max={duration || 1}
+                step={0.1}
+                value={currentTime}
+                onChange={handleSeek}
+                aria-label="Seek"
+              />
+              <div className="wk-audio__time">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </CollapsibleSection>

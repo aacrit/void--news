@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { CaretRight } from "@phosphor-icons/react";
 import type { DailyBriefState } from "./DailyBrief";
 import LogoIcon from "./LogoIcon";
 import { hapticLight } from "../lib/haptics";
@@ -123,7 +124,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
                   <p className="skb__compact-preview skb__compact-preview--tldr">{String(brief.tldr_text)}</p>
-                  <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
+                  <span className="skb__compact-expand" aria-hidden="true"><CaretRight size={14} weight="bold" /></span>
                 </div>
 
                 {/* Organic firewall rule between columns */}
@@ -153,7 +154,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     </div>
                     {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{String(brief.opinion_headline)}</h3>}
                     <p className="skb__compact-preview skb__compact-preview--opinion">{String(brief.opinion_text)}</p>
-                    <span className="skb__compact-expand" aria-hidden="true">&#9662;</span>
+                    <span className="skb__compact-expand" aria-hidden="true"><CaretRight size={14} weight="bold" /></span>
                   </div>
                 )}
               </div>

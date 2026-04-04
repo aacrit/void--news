@@ -550,26 +550,42 @@
   pointer-events: none;
 }
 
-/* Opinion card text clamp */
-.wk-opinion__text--clamped {
+/* Cover story content — smooth expand/collapse via max-height */
+.wk-cover__content {
   position: relative;
+  max-height: 12rem;  /* ~6 lines collapsed */
+  overflow: hidden;
+  transition: max-height 500ms var(--ease-cinematic);
 }
 
-.wk-opinion__text-fade {
+.wk-cover__content--open {
+  max-height: 5000px;  /* effectively uncapped */
+  transition: max-height 800ms var(--ease-cinematic);
+}
+
+.wk-cover__content-inner {
+  /* No overflow hidden — let content flow naturally */
+}
+
+/* Fade gradient for collapsed state */
+.wk-cover__content-fade {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 2.5rem;
-  background: linear-gradient(to bottom, transparent, var(--bg-card));
+  height: 4rem;
+  background: linear-gradient(to bottom, transparent, var(--bg-primary));
   pointer-events: none;
 }
 
-/* W03 fix: on tinted opinion background, the fade must blend with the ghost-tinted card */
-.wk-section--opinions .wk-opinion__text-fade {
-  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--bg-card) 92%, var(--wk-accent-ghost)));
+/* Opinion card text clamp */
+.wk-opinion__text--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
 }
-
 
 /* Reduced motion — instant toggle */
 @media (prefers-reduced-motion: reduce) {
@@ -851,40 +867,18 @@
   transition: color 200ms var(--ease-cinematic);
 }
 
+/* Active count-up animation glow */
+.wk-number-counting {
+  color: var(--wk-accent-bright);
+  text-shadow: 0 0 12px var(--wk-accent-glow);
+  transition: color 200ms var(--ease-cinematic), text-shadow 200ms var(--ease-cinematic);
+}
+
 .wk-cover__number-label {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
   color: var(--fg-secondary);
   line-height: 1.4;
-}
-
-/* Tooltip on hover — expanded context */
-.wk-cover__number-tooltip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 100%;
-  background: var(--bg-elevated);
-  border: none;
-  border-bottom: 2px dashed var(--wk-accent-ink);
-  padding: var(--space-2) var(--space-3);
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--fg-secondary);
-  line-height: 1.4;
-  box-shadow: var(--shadow-cinematic-ambient);
-  opacity: 0;
-  transform: translateY(4px);
-  pointer-events: none;
-  transition:
-    opacity 200ms var(--ease-cinematic),
-    transform 200ms var(--ease-cinematic);
-  z-index: 10;
-}
-
-.wk-cover__number-item:hover .wk-cover__number-tooltip {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* ===========================================================================
@@ -1177,7 +1171,7 @@
   padding: var(--space-1) var(--space-3);
   background: var(--lean-color, var(--wk-accent));
   border: none;
-  color: var(--wk-cream);
+  color: #FFFFFF;  /* always white for max contrast on any lean color bg */
   white-space: nowrap;
   position: relative;
   overflow: hidden;
@@ -1498,6 +1492,21 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Audio error state */
+.wk-audio__play--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.wk-audio__error {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 /* ===========================================================================
    I. ISSUE ARCHIVE
    =========================================================================== */
@@ -1809,6 +1818,11 @@
   background: var(--wk-cream-deep);
 }
 
+/* Suppress collapsible section ink border inside cream section — already has its own borders */
+.wk-section--cream .wk-collapsible-section::after {
+  display: none;
+}
+
 /* Opinions section gets terracotta ghost tint */
 .wk-section--opinions {
   background: var(--wk-accent-ghost);
@@ -1956,15 +1970,29 @@
   transform: scale(1) translateY(0);
 }
 
-/* Secondary cover stories: staggered slide from left/right */
+/* Secondary cover stories: staggered slide from left/right with opacity */
+.wk-cover__secondary > * {
+  opacity: 0;
+  transition:
+    opacity 600ms var(--ease-cinematic),
+    transform 600ms var(--ease-cinematic);
+}
+
 .wk-cover__secondary > :nth-child(odd) {
   transform: translateX(-20px) translateY(12px);
 }
 .wk-cover__secondary > :nth-child(even) {
   transform: translateX(20px) translateY(12px);
 }
+
 .wk-reveal--visible .wk-cover__secondary > * {
+  opacity: 1;
   transform: translateX(0) translateY(0);
+}
+
+/* Stagger: even items delayed */
+.wk-cover__secondary > :nth-child(even) {
+  transition-delay: 150ms;
 }
 
 /* Opinion cards: fan-out with 120ms cascade */
@@ -1975,7 +2003,7 @@
 .wk-opinions__grid > .wk-reveal-child:nth-child(5) { transition-delay: 480ms; }
 .wk-opinions__grid > .wk-reveal-child:nth-child(6) { transition-delay: 600ms; }
 
-/* Timeline nodes: staggered cascade */
+/* Timeline nodes: staggered cascade via inline --node-delay variable */
 .wk-timeline__node {
   opacity: 0;
   transform: translateY(16px);
@@ -1983,15 +2011,8 @@
     opacity 400ms var(--ease-cinematic),
     transform 400ms var(--spring-snappy, var(--ease-cinematic)),
     background 200ms var(--ease-cinematic);
+  transition-delay: var(--node-delay, 0ms);
 }
-
-.wk-timeline__node:nth-child(2) { transition-delay: 80ms; }
-.wk-timeline__node:nth-child(3) { transition-delay: 160ms; }
-.wk-timeline__node:nth-child(4) { transition-delay: 240ms; }
-.wk-timeline__node:nth-child(5) { transition-delay: 320ms; }
-.wk-timeline__node:nth-child(6) { transition-delay: 400ms; }
-.wk-timeline__node:nth-child(7) { transition-delay: 480ms; }
-.wk-timeline__node:nth-child(8) { transition-delay: 560ms; }
 
 .wk-reveal--visible .wk-timeline__node {
   opacity: 1;
