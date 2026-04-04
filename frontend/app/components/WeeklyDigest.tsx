@@ -130,7 +130,7 @@ function InkLeftBorder() {
   );
 }
 
-/** Ink flourish ornament — crimson diamond with radiating strokes, centered between sections */
+/** Ink flourish ornament — plum diamond with radiating strokes, centered between sections */
 function InkFlourish() {
   return (
     <div className="wk-flourish" aria-hidden="true">
@@ -664,12 +664,14 @@ function InteractiveTimeline({ timeline }: { timeline: Record<string, string>[] 
   if (!timeline || timeline.length === 0) return null;
 
   return (
-    <div className="wk-timeline" role="list" aria-label="Key events">
-      <h4 className="wk-timeline__heading">Key Events</h4>
-      {isDesktop ? <InkHorizontalTrack /> : <InkVerticalTrack />}
-      {timeline.map((entry, k) => (
-        <TimelineNode key={k} entry={entry} index={k} />
-      ))}
+    <div aria-labelledby="wk-timeline-heading">
+      <h4 className="wk-timeline__heading" id="wk-timeline-heading">Key Events</h4>
+      <div className="wk-timeline" role="list" aria-label="Key events">
+        {isDesktop ? <InkHorizontalTrack /> : <InkVerticalTrack />}
+        {timeline.map((entry, k) => (
+          <TimelineNode key={k} entry={entry} index={k} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -762,28 +764,43 @@ function CoverSection({
   stories: WeeklyCoverStory[];
   topLevelNumbers: unknown;
 }) {
+  const firstStory = stories[0];
+  const secondaryStories = stories.slice(1);
+  const firstNums = parseCoverNumbers(firstStory?.numbers);
+  const firstNumbers = firstNums.length > 0
+    ? firstNums
+    : parseCoverNumbers(topLevelNumbers);
+
   return (
     <section className="wk-cover" aria-labelledby="wk-cover-heading">
       <h2 className="wk-section-label" id="wk-cover-heading" data-prefix="void --">The Cover</h2>
-      {stories.map((story, i) => {
-        const storyNums = parseCoverNumbers(story.numbers);
-        const numbers = storyNums.length > 0
-          ? storyNums
-          : (i === 0 ? parseCoverNumbers(topLevelNumbers) : []);
-        return (
-          <div key={i}>
-            <CoverStoryCard
-              story={story}
-              numbers={numbers}
-              defaultExpanded={false}
-              isFirst={i === 0}
-            />
-            {i < stories.length - 1 && (
-              <InkFlourish />
-            )}
+      {firstStory && (
+        <CoverStoryCard
+          story={firstStory}
+          numbers={firstNumbers}
+          defaultExpanded={true}
+          isFirst={true}
+        />
+      )}
+      {secondaryStories.length > 0 && (
+        <>
+          <InkRule />
+          <div className="wk-cover__secondary">
+            {secondaryStories.map((story, i) => {
+              const storyNums = parseCoverNumbers(story.numbers);
+              return (
+                <CoverStoryCard
+                  key={i}
+                  story={story}
+                  numbers={storyNums}
+                  defaultExpanded={false}
+                  isFirst={false}
+                />
+              );
+            })}
           </div>
-        );
-      })}
+        </>
+      )}
     </section>
   );
 }
@@ -970,7 +987,7 @@ function BiasReport({
   );
 
   return (
-    <CollapsibleSection id="wk-bias-heading" label="Bias Report" defaultOpen={false}>
+    <CollapsibleSection id="wk-bias-heading" label="Bias Report" defaultOpen={true}>
       {agg && (
         <div className="wk-bias__aggregate">
           <div className="wk-bias__stat">
@@ -1088,8 +1105,8 @@ function WeeklyAudioPlayer({
   return (
     <CollapsibleSection
       id="wk-audio-heading"
-      label="void --onair Weekly"
-      defaultOpen={false}
+      label="On Air"
+      defaultOpen={true}
     >
       <div className="wk-audio__player">
         <audio
@@ -1239,7 +1256,6 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
         ref={mainRef}
         id="main-content"
         className="wk-main"
-        role="main"
       >
         {loading && (
           <div className="wk-loading" aria-live="polite">
@@ -1290,13 +1306,13 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               />
             </div>
 
-            <InkFlourish />
+            <InkRule />
 
             <WeekInBrief stories={digest?.recap_stories ?? []} />
 
             {digest.audio_url && (
               <>
-                <InkFlourish />
+                <InkRule />
                 <WeeklyAudioPlayer
                   audioUrl={digest.audio_url}
                   durationSeconds={digest.audio_duration_seconds}
@@ -1304,7 +1320,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               </>
             )}
 
-            <InkFlourish />
+            <InkRule />
 
             <IssueArchive
               entries={archive}

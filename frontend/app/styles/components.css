@@ -1976,14 +1976,14 @@
   outline-offset: 3px;
 }
 
-/* ── Row 2: Weekly — Playfair italic, deep crimson magazine accent ──
+/* ── Row 2: Weekly — Playfair italic, deep plum magazine accent ──
    Signals the transition from monochrome news to flamboyant magazine.
    Hover is more theatrical — organic ink energy, unfold physics. */
 
 .nav-weekly {
-  --wk-crimson: #8B1A1A;
-  --wk-crimson-bright: #A52020;
-  --wk-crimson-glow: rgba(139, 26, 26, 0.15);
+  --wk-accent: #7B2D8B;
+  --wk-accent-bright: #9340A5;
+  --wk-accent-glow: rgba(123, 45, 139, 0.15);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -2000,7 +2000,7 @@
 .nav-weekly__rule {
   width: 2px;
   height: 16px;
-  background-color: var(--wk-crimson);
+  background-color: var(--wk-accent);
   opacity: 0.5;
   flex-shrink: 0;
   border-radius: 1px;
@@ -2015,7 +2015,7 @@
   font-style: italic;
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   letter-spacing: 0.01em;
   white-space: nowrap;
   transition: color 200ms var(--ease-cinematic);
@@ -2023,8 +2023,8 @@
 
 /* Hover: flamboyant unfold — spine grows, label brightens, glow bleeds */
 .nav-weekly:hover {
-  background-color: var(--wk-crimson-glow);
-  box-shadow: 0 0 12px var(--wk-crimson-glow);
+  background-color: var(--wk-accent-glow);
+  box-shadow: 0 0 12px var(--wk-accent-glow);
 }
 
 .nav-weekly:hover .nav-weekly__rule {
@@ -2034,7 +2034,7 @@
 }
 
 .nav-weekly:hover .nav-weekly__label {
-  color: var(--wk-crimson-bright);
+  color: var(--wk-accent-bright);
 }
 
 /* Active: press-in with spring rebound */
@@ -2044,15 +2044,15 @@
 }
 
 .nav-weekly:focus-visible {
-  outline: 2px solid var(--wk-crimson);
+  outline: 2px solid var(--wk-accent);
   outline-offset: 2px;
 }
 
-/* Dark mode: brighter crimson for contrast */
+/* Dark mode: brighter plum for contrast */
 :root[data-mode="dark"] .nav-weekly {
-  --wk-crimson: #C44040;
-  --wk-crimson-bright: #D45050;
-  --wk-crimson-glow: rgba(196, 64, 64, 0.12);
+  --wk-accent: #C77DDB;
+  --wk-accent-bright: #D494E8;
+  --wk-accent-glow: rgba(199, 125, 219, 0.12);
 }
 
 /* ── Row 2: Separator — thin vertical rule between zones ── */

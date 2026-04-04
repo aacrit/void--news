@@ -856,7 +856,6 @@
   letter-spacing: 0.12em;
   color: var(--fg-tertiary);
   margin-bottom: var(--space-3);
-  margin-left: calc(-1 * var(--space-5) - var(--space-3));
 }
 
 /* Timeline node — interactive, expandable */
@@ -1697,9 +1696,8 @@
     padding-left: var(--space-4);
   }
 
-  /* Heading pull-back must match mobile timeline padding + margin */
   .wk-timeline__heading {
-    margin-left: calc(-1 * var(--space-4) - var(--space-3));
+    margin-bottom: var(--space-2);
   }
 
   /* Dot position must align with mobile timeline padding */
