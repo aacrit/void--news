@@ -228,8 +228,8 @@ h1, h2, h3 {
     --bg-elevated:   #333028;
     --fg-primary:    #EDE8E0;
     --fg-secondary:  #B8B0A5;
-    --fg-tertiary:   #A09890;  /* synced with tokens.css dark — 5.0:1 on #1C1A17 */
-    --fg-muted:      #9A938B;  /* synced with tokens.css dark — 4.5:1 on #1C1A17 */
+    --fg-tertiary:   #8A8278;
+    --fg-muted:      #5A5550;
     --border-subtle: #3A3530;
     --border-strong: #4A4540;
     --divider:       #403B35;
