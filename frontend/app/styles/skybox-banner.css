@@ -299,15 +299,21 @@
   justify-content: center;
   border: none;
   background: transparent;
-  color: var(--fg-muted);
-  font-size: var(--text-xs);
+  color: var(--accent-warm);
   opacity: 0.4;
   cursor: pointer;
   border-radius: 4px;
-  transition: opacity 200ms var(--ease-out);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--spring-snappy);
 }
+
+/* Rotate CaretRight to point up */
+.skb__collapse-inline svg {
+  transform: rotate(-90deg);
+}
+
 .skb__collapse-inline:hover {
   opacity: 0.7;
+  transform: translateY(-1px);
 }
 .skb__collapse-inline:focus-visible {
   outline: 2px solid var(--accent-warm);
