@@ -86,8 +86,9 @@ function DataMark({ data, size, mounted }: {
   data: SigilData; size: "sm" | "lg" | "xl"; mounted: boolean; mode?: "facts";
 }) {
   const lean = data.politicalLean;
-  const beamAngle = (lean - 50) * 0.30; // ±15° range
-  const beamCol = leanColor(lean);
+  const isUnscored = !!data.unscored;
+  const beamAngle = isUnscored ? 0 : (lean - 50) * 0.30; // ±15° range, level when unscored
+  const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
   const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
 

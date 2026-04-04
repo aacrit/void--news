@@ -168,14 +168,23 @@
 .sigil--lg  { gap: 8px; }
 .sigil--xl  { gap: 12px; }
 
-/* Sigil lean label — extracted from inline (F13) */
+/* Sigil tilt label — tilt vocabulary for story-level lean */
 .sigil__lean-label {
   font-family: var(--font-data);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.02em;
-  transition: opacity 350ms var(--ease-out) 350ms;
+  transition:
+    opacity 350ms var(--ease-out) 350ms,
+    transform 400ms var(--ease-cinematic) 350ms,
+    color 400ms var(--ease-out);
   position: relative;
+  transform: translateY(2px);
+}
+
+/* Settled state — label slides up into place */
+.sigil:not([style*="opacity: 0"]) .sigil__lean-label {
+  transform: translateY(0);
 }
 
 .sigil--sm .sigil__lean-label {
@@ -2412,6 +2421,7 @@
   text-decoration: underline;
   text-decoration-style: dotted;
   text-underline-offset: 3px;
+  text-decoration-color: var(--lean-dot-color, var(--fg-tertiary));
 }
 
 .nav-lens__dot {
@@ -2420,12 +2430,18 @@
   border-radius: 50%;
   flex-shrink: 0;
   opacity: 0.7;
-  transition: opacity 120ms var(--ease-rack);
+  transition: opacity 120ms var(--ease-rack), transform 200ms var(--ease-cinematic);
 }
 
 .nav-lens__lean--active .nav-lens__dot {
   opacity: 1;
+  transform: scale(1.25);
 }
+
+.nav-lens__lean--left   { --lean-dot-color: var(--bias-left); }
+.nav-lens__lean--center,
+.nav-lens__lean--balanced { --lean-dot-color: var(--bias-center); }
+.nav-lens__lean--right  { --lean-dot-color: var(--bias-right); }
 
 .nav-lens__lean--left .nav-lens__dot { background-color: var(--bias-left); }
 .nav-lens__lean--center .nav-lens__dot,
@@ -7611,6 +7627,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     color: var(--fg-primary);
     text-decoration: underline;
     text-decoration-style: dotted;
+    text-decoration-color: var(--lean-dot-color, var(--fg-tertiary));
     text-underline-offset: 3px;
   }
 
@@ -7626,7 +7643,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
   .mob-nav__lean--active .mob-nav__dot {
     opacity: 1;
+    transform: scale(1.25);
   }
+
+  .mob-nav__lean--left   { --lean-dot-color: var(--bias-left); }
+  .mob-nav__lean--center,
+  .mob-nav__lean--balanced { --lean-dot-color: var(--bias-center); }
+  .mob-nav__lean--right  { --lean-dot-color: var(--bias-right); }
 
   .mob-nav__lean--left .mob-nav__dot { background-color: var(--bias-left); }
   .mob-nav__lean--center .mob-nav__dot,
