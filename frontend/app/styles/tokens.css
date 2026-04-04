@@ -856,6 +856,7 @@
   --z-tooltip:  40;
   --z-cinematic: 45;  /* Vignette + film grain layers */
   --z-overlay:  50;
+  --z-player:   60;   /* Floating audio player — above overlays, below modals */
   --z-modal:    100;
   --z-popup:    150;
 }

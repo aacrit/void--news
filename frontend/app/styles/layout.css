@@ -38,6 +38,7 @@
   html[data-onair-pane] .page-container {
     padding-left: clamp(260px, 25vw, 380px);
     transition: padding-left 420ms var(--ease-cinematic, ease);
+    will-change: padding-left;
   }
 
   /* Smooth return when pane closes */
