@@ -424,7 +424,7 @@ function LeanAxis({
   return (
     <AxisRow
       axisId={axisId}
-      label="Political Lean"
+      label="Coverage Tilt"
       score={score}
       color={color}
       scoreLabel={tiltLabel(score)}
@@ -1065,7 +1065,7 @@ export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
         role="region"
         aria-label="Cluster bias scores"
       >
-        {/* Hero: Political Lean with inline confidence badge */}
+        {/* Hero: Coverage Tilt with inline confidence badge */}
         <div className="bi-lean-hero">
           <LeanAxis
             axisId={`${headingId}-lean`}

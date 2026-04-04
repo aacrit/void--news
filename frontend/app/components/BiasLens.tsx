@@ -236,7 +236,7 @@ function LeanNeedle({ value, rationale, size }: {
         onClose={() => hide()}
         onMouseEnter={keepOpen}
         onMouseLeave={hide}
-        title="Political Lean"
+        title="Coverage Tilt"
         id={tooltipId}
       >
         <div className="bias-lens-popup__header">
