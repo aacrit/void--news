@@ -135,27 +135,27 @@ function DataMark({ data, size, mounted }: {
       </text>
 
       {/* Beam group — pivots around circle center, tilts by lean */}
-      <g style={{
+      <g className="sigil__beam-group" style={{
         transformOrigin: "16px 13px",
         transform: `rotate(${mounted ? beamAngle : 0}deg)`,
-        transition: "transform 700ms var(--spring) 60ms",
+        transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
       }}>
-        {/* Beam line — organic S-curve */}
+        {/* Beam line — organic S-curve. Color staggers 200ms behind tilt. */}
         <path d="M4 13 C10 12.3 22 13.7 28 13"
           stroke={beamCol} strokeWidth="1.8"
-          style={{ transition: "stroke 400ms var(--ease-out)" }}
+          style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
           opacity={mounted ? 1 : 0.3}
         />
-        {/* Left weight tick — slight lean */}
+        {/* Left weight tick */}
         <line x1="5.8" y1="11.5" x2="6.2" y2="14.5"
           stroke={beamCol} strokeWidth="1.4"
-          style={{ transition: "stroke 400ms var(--ease-out)" }}
+          style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
           opacity={mounted ? 0.85 : 0.2}
         />
-        {/* Right weight tick — slight lean */}
+        {/* Right weight tick */}
         <line x1="26.2" y1="11.5" x2="25.8" y2="14.5"
           stroke={beamCol} strokeWidth="1.4"
-          style={{ transition: "stroke 400ms var(--ease-out)" }}
+          style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
           opacity={mounted ? 0.85 : 0.2}
         />
       </g>
@@ -490,7 +490,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const sizeClass = ` sigil--${size}`;
 
   return (
-    <div ref={ref} className={`sigil${ringClass}${sizeClass}`} title={ringTitle}
+    <div ref={ref} className={`sigil${ringClass}${sizeClass}${unscored ? " sigil--unscored" : ""}`} title={ringTitle}
       onMouseEnter={show} onFocus={show} onMouseLeave={hide} onBlur={hide}
       onClick={toggle} onKeyDown={onKey}
       tabIndex={0} role="button" aria-expanded={open} aria-label={aria}
