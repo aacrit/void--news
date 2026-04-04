@@ -568,17 +568,17 @@
      Steadicam glide: the lens drifts back with Kubrick inevitability. */
   .df .dg-row {
     transition:
-      filter var(--rack-blur-return-dur, 500ms) var(--ease-steadicam),
-      opacity var(--rack-dim-return-dur, 600ms) var(--ease-steadicam),
-      transform var(--rack-recede-return-dur, 650ms) var(--ease-cinematic),
+      filter var(--rack-blur-return-dur, 250ms) var(--ease-steadicam),
+      opacity var(--rack-dim-return-dur, 300ms) var(--ease-steadicam),
+      transform var(--rack-recede-return-dur, 320ms) var(--ease-cinematic),
       background-color 150ms var(--ease-out);
   }
 
   .df .wire-card {
     transition:
-      filter var(--rack-blur-return-dur, 500ms) var(--ease-steadicam),
-      opacity var(--rack-dim-return-dur, 600ms) var(--ease-steadicam),
-      transform var(--rack-recede-return-dur, 650ms) var(--ease-cinematic),
+      filter var(--rack-blur-return-dur, 250ms) var(--ease-steadicam),
+      opacity var(--rack-dim-return-dur, 300ms) var(--ease-steadicam),
+      transform var(--rack-recede-return-dur, 320ms) var(--ease-cinematic),
       box-shadow 200ms var(--ease-out);
   }
 

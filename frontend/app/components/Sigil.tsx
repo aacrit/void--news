@@ -206,17 +206,15 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       const y = Math.max(8, Math.min(r.top - 60, window.innerHeight - H - 16));
       setPos({ x, y, mobile: false });
     }
-    // Staggered reveal: mark → beam → circle → details
-    // instant mode: skip stagger, show all in one 150ms transition
+    // Compressed 2-stage reveal: mark+beam → circle+details
+    // instant mode: skip stagger, show all in one frame
     if (instant) {
       const t = setTimeout(() => setStage(4), 10);
       return () => clearTimeout(t);
     }
-    const t1 = setTimeout(() => setStage(1), 30);
-    const t2 = setTimeout(() => setStage(2), 180);
-    const t3 = setTimeout(() => setStage(3), 320);
-    const t4 = setTimeout(() => setStage(4), 480);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    const t1 = setTimeout(() => setStage(2), 20);
+    const t2 = setTimeout(() => setStage(4), 120);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [isOpen, triggerRef, full, instant]);
 
   // Outside-click handler: capture-phase listener that closes the popup AND

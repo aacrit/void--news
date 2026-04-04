@@ -230,9 +230,9 @@
 
   /* ── Cold Open — staged reveal timing ── */
   --cold-open-nav:     80ms;
-  --cold-open-skybox: 200ms;
-  --cold-open-lead:   320ms;
-  --cold-open-feed:   480ms;
+  --cold-open-skybox: 160ms;
+  --cold-open-lead:   180ms;
+  --cold-open-feed:   200ms;
   --cold-open-dur:    500ms;
 
   /* ── Rack Focus — neighbor defocus ──
@@ -261,9 +261,9 @@
   --rack-dim-throw-delay: 60ms;
   --rack-recede-throw-dur: 480ms;
   --rack-recede-throw-delay: 90ms;
-  --rack-blur-return-dur: 500ms;
-  --rack-dim-return-dur: 600ms;
-  --rack-recede-return-dur: 650ms;
+  --rack-blur-return-dur: 250ms;
+  --rack-dim-return-dur: 300ms;
+  --rack-recede-return-dur: 320ms;
 
   /* ── Rack Focus — key light boost on focused card ──
      When the lens racks to a subject, the focused plane appears brighter

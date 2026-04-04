@@ -199,9 +199,9 @@ function AnimatedRing({ active }: { active: boolean }) {
         <span className="intro-ring__label text-data">sources</span>
       </div>
       <div className={`intro-ring__tiers${active ? " intro-ring__tiers--visible" : ""}`}>
-        <span className="intro-ring__tier" style={{ transitionDelay: "800ms" }}>US Major: 5</span>
-        <span className="intro-ring__tier" style={{ transitionDelay: "960ms" }}>International: 4</span>
-        <span className="intro-ring__tier" style={{ transitionDelay: "1120ms" }}>Independent: 3</span>
+        <span className="intro-ring__tier" style={{ transitionDelay: "200ms" }}>US Major: 5</span>
+        <span className="intro-ring__tier" style={{ transitionDelay: "300ms" }}>International: 4</span>
+        <span className="intro-ring__tier" style={{ transitionDelay: "400ms" }}>Independent: 3</span>
       </div>
     </div>
   );
@@ -219,7 +219,7 @@ function StoryVisual({ active }: { active: boolean }) {
             className="intro-story-visual__tab"
             style={{
               borderTopColor: color,
-              transitionDelay: `${200 + i * 120}ms`,
+              transitionDelay: `${100 + i * 60}ms`,
             }}
           />
         ))}
@@ -258,7 +258,7 @@ function ProductFamilyVisual({ active }: { active: boolean }) {
         <div
           key={p.cmd}
           className="intro-products__item"
-          style={{ transitionDelay: `${300 + i * 150}ms` }}
+          style={{ transitionDelay: `${120 + i * 60}ms` }}
         >
           <span className="intro-products__cmd text-data">{p.cmd}</span>
           <span className="intro-products__label">{p.label}</span>
@@ -327,19 +327,19 @@ function VerdictDisplay({ active }: { active: boolean }) {
   return (
     <div className={`intro-verdict${active ? " intro-verdict--active" : ""}`} aria-hidden="true">
       <div className="intro-verdict__row">
-        <div className="intro-verdict__card intro-verdict__card--left" style={{ transitionDelay: "200ms" }}>
+        <div className="intro-verdict__card intro-verdict__card--left" style={{ transitionDelay: "100ms" }}>
           <MiniSigil lean={25} leanColor="var(--bias-left)" coverage={0.8} coverageColor="var(--sense-low)" />
           <span className="intro-verdict__label text-data">Left, Broad</span>
           <span className="intro-verdict__sub text-data">Well sourced</span>
         </div>
 
-        <div className="intro-verdict__card intro-verdict__card--center" style={{ transitionDelay: "400ms" }}>
+        <div className="intro-verdict__card intro-verdict__card--center" style={{ transitionDelay: "200ms" }}>
           <MiniSigil lean={50} leanColor="var(--bias-center)" coverage={0.92} coverageColor="var(--sense-low)" />
           <span className="intro-verdict__label text-data">Center, Deep</span>
           <span className="intro-verdict__sub text-data">Most reliable</span>
         </div>
 
-        <div className="intro-verdict__card intro-verdict__card--right" style={{ transitionDelay: "600ms" }}>
+        <div className="intro-verdict__card intro-verdict__card--right" style={{ transitionDelay: "300ms" }}>
           <MiniSigil lean={78} leanColor="var(--bias-right)" coverage={0.25} coverageColor="var(--sense-high)" />
           <span className="intro-verdict__label text-data">Right, Thin</span>
           <span className="intro-verdict__sub text-data">Scrutinize more</span>
