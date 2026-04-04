@@ -16,10 +16,10 @@ import type {
 import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
 import { leanLabel as getLeanLabel, getLeanColor } from "../lib/biasColors";
-import NavBar from "./NavBar";
 import Footer from "./Footer";
 import MobileBottomNav from "./MobileBottomNav";
-import ScaleIcon from "./ScaleIcon";
+import ThemeToggle from "./ThemeToggle";
+import LogoFull from "./LogoFull";
 
 /* ---------------------------------------------------------------------------
    WeeklyDigest — void --weekly
@@ -1008,10 +1008,14 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
   return (
     <div className="wk-page">
-      {/* Subtle back-to-main link */}
-      <Link href="/" className="wk-back" aria-label="Back to void --news">
-        <span aria-hidden="true">&larr;</span> void --news
-      </Link>
+      {/* Top bar: back to main + theme toggle */}
+      <div className="wk-topbar">
+        <Link href="/" className="wk-back" aria-label="Back to void --news">
+          <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
+          <LogoFull height={20} className="wk-back__logo" />
+        </Link>
+        <ThemeToggle />
+      </div>
 
       <main
         ref={mainRef}
