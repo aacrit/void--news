@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import LogoFull from './LogoFull';
+import ThemeToggle from './ThemeToggle';
 import {
   fetchShipRequests,
   submitShipRequest,
@@ -510,9 +511,10 @@ export default function ShipBoard() {
 
   return (
     <main className="ship-page" data-dash-expanded={boardOpen || logOpen || undefined}>
-      {/* ---- Back nav ---- */}
-      <nav className="ship-cold-open-back">
+      {/* ---- Back nav + theme ---- */}
+      <nav className="ship-cold-open-back" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link href="/" className="ship-page__back" aria-label="Back to void --news">&larr; void --news</Link>
+        <ThemeToggle />
       </nav>
 
       {/* ---- Header ---- */}

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass, DotsThree } from "@phosphor-icons/react";
 import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
@@ -66,6 +66,8 @@ export default function NavBar({
   const [topicOpen, setTopicOpen] = useState(false);
   const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const topicRef = useRef<HTMLDivElement>(null);
   const topicTriggerRef = useRef<HTMLButtonElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -156,6 +158,18 @@ export default function NavBar({
     return () => document.removeEventListener("mousedown", close);
   }, [topicOpen]);
 
+  // Close mobile menu on outside tap
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const close = (e: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [mobileMenuOpen]);
+
   const hasFilters = !!onLeanChange;
 
   return (
@@ -205,6 +219,39 @@ export default function NavBar({
 
           {/* Utility: Theme */}
           <ThemeToggle />
+
+          {/* Mobile: search icon (visible only on mobile via CSS) */}
+          {onSearchClick && (
+            <button
+              className="nav-mob-search"
+              onClick={onSearchClick}
+              type="button"
+              aria-label="Search stories"
+            >
+              <MagnifyingGlass size={18} weight="regular" />
+            </button>
+          )}
+
+          {/* Mobile: overflow menu for page links (visible only on mobile via CSS) */}
+          <div className="nav-mob-menu" ref={mobileMenuRef}>
+            <button
+              className="nav-mob-menu__trigger"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              type="button"
+              aria-expanded={mobileMenuOpen}
+              aria-label="More pages"
+            >
+              <DotsThree size={20} weight="bold" />
+            </button>
+            {mobileMenuOpen && (
+              <div className="nav-mob-menu__panel" role="menu">
+                <Link href="/sources" className="nav-mob-menu__link" role="menuitem" onClick={() => setMobileMenuOpen(false)}>Sources</Link>
+                <Link href="/weekly" className="nav-mob-menu__link" role="menuitem" onClick={() => setMobileMenuOpen(false)}>Weekly</Link>
+                <Link href="/ship" className="nav-mob-menu__link" role="menuitem" onClick={() => setMobileMenuOpen(false)}>Ship</Link>
+                <Link href="/about" className="nav-mob-menu__link" role="menuitem" onClick={() => setMobileMenuOpen(false)}>About</Link>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
