@@ -766,9 +766,9 @@
   .nav-ed,
   .nav-lens__lean,
   .nav-lens__trigger,
+  .nav-lens__search,
   .nav-page,
   .nav-weekly,
-  .nav-util,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -807,6 +807,7 @@
   /* Native apps don't allow text selection on buttons / cards */
   .nav-ed,
   .nav-lens__lean,
+  .nav-lens__search,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -833,11 +834,8 @@
 
   /* .ubar__* rules removed — FilterBar deprecated; NavBar owns all filtering */
 
-  /* === NAV LENS + EDITIONS — hide from top bar on mobile (MobileBottomNav handles these) === */
+  /* === NAV LENS — hide entire Row 2 on mobile (MobileBottomNav handles these) === */
   .nav-lens {
-    display: none;
-  }
-  .nav-editions {
     display: none;
   }
 
