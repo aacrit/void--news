@@ -419,6 +419,23 @@
   --cin-grain-seed-editorial: 13;
   --line-height-editorial: 1.65;
 
+  /* ── Laid Paper Texture — Editorial Territory (logo-designer) ──
+     Vergé paper: visible laid lines + chain lines from the papermaking mold.
+     Reference: Crane's Lettra 110lb, Mohawk Via Vellum — the cotton rag stock
+     used for government bonds, formal correspondence, and editorial stationery.
+
+     The page canvas is coated matte (smooth fractalNoise grain).
+     The Daily Brief is laid paper — same color, different weave/finish.
+     Two SVG patterns layered:
+       1. Laid lines — fine horizontal lines (wire mesh), 3px period
+       2. Chain lines — wider vertical lines (support wires), 28px period
+     Plus a linen micro-weave (crosshatch at ~45deg) for cotton fiber texture. */
+  --laid-line-opacity-light: 0.055;
+  --laid-chain-opacity-light: 0.035;
+  --laid-linen-opacity-light: 0.03;
+  --laid-line-color-light: rgba(28, 26, 23, 1);
+  --laid-chain-color-light: rgba(28, 26, 23, 1);
+
   /* ── Dissolve Timing (cinematographer — theme toggle) ── */
   --dissolve-shadow-dur: 400ms;
   --dissolve-surface-dur: 500ms;
@@ -606,6 +623,16 @@
   --cinematic-rim-edge: rgba(212, 165, 116, 0.05);
   --cin-grade-editorial: contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03);
   --cin-vignette-warm: rgba(20, 14, 6, 0.06);
+
+  /* ── Laid Paper Texture — Dark Mode ──
+     On dark walnut surfaces, the laid lines appear as subtle light ridges
+     (paper catching edge light). Lower opacity — dark surfaces need less
+     texture to register because contrast is already higher. */
+  --laid-line-opacity-light: 0.04;
+  --laid-chain-opacity-light: 0.025;
+  --laid-linen-opacity-light: 0.022;
+  --laid-line-color-light: rgba(237, 232, 224, 1);
+  --laid-chain-color-light: rgba(237, 232, 224, 1);
 
   /* ── Methodology Scoring Stage (Dark) ── */
   --meth-bar-track: var(--bg-secondary);
