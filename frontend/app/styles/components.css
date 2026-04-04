@@ -1981,9 +1981,9 @@
    Hover is more theatrical — organic ink energy, unfold physics. */
 
 .nav-weekly {
-  --wk-accent: #7B2D8B;
-  --wk-accent-bright: #9340A5;
-  --wk-accent-glow: rgba(123, 45, 139, 0.15);
+  --wk-accent: #C05A30;
+  --wk-accent-bright: #D4703E;
+  --wk-accent-glow: rgba(192, 90, 48, 0.15);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -2048,11 +2048,11 @@
   outline-offset: 2px;
 }
 
-/* Dark mode: brighter plum for contrast */
+/* Dark mode: brighter terracotta for contrast */
 :root[data-mode="dark"] .nav-weekly {
-  --wk-accent: #C77DDB;
-  --wk-accent-bright: #D494E8;
-  --wk-accent-glow: rgba(199, 125, 219, 0.12);
+  --wk-accent: #E08050;
+  --wk-accent-bright: #ECA070;
+  --wk-accent-glow: rgba(224, 128, 80, 0.12);
 }
 
 /* ── Row 2: Separator — thin vertical rule between zones ── */
