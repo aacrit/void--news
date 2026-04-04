@@ -71,12 +71,16 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   const playerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number>(0);
-  const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const timeDomainRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const freqDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const trailRef = useRef<number[]>([]);
-  const colorsRef = useRef<{ ink: string; paper: string; grid: string; nib: string } | null>(null);
+  const peakRef = useRef<{ level: number; time: number }>({ level: 0, time: 0 });
+  const colorsRef = useRef<{
+    bg: string; trace: string; grid: string; accent: string; hot: string; isDark: boolean;
+  } | null>(null);
 
-  /* ---- Ink needle seismograph: chart recorder with pen nib ---- */
-  const drawSeismograph = useCallback(() => {
+  /* ---- Broadcast Monitor: frequency band + phosphor trace + signal meter ---- */
+  const drawBroadcastMonitor = useCallback(() => {
     const canvas = canvasRef.current;
     const analyser = state.analyserRef?.current;
     if (!canvas || !analyser) return;
@@ -91,128 +95,283 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
-      colorsRef.current = null; // re-read after resize
+      colorsRef.current = null;
     }
 
     const w = rect.width;
     const h = rect.height;
-    const pad = 6; // top/bottom padding so needle never clips
 
-    // Cache CSS colors (expensive to read per frame)
+    // Cache CSS colors
     if (!colorsRef.current) {
       const s = getComputedStyle(canvas);
       const bg = s.getPropertyValue("--console-bg").trim() || "#EBE5D6";
-      const fg = s.getPropertyValue("--console-fg").trim() || "#2A2520";
       const isDark = bg.startsWith("#1") || bg.startsWith("#0") || bg.startsWith("#2");
       colorsRef.current = {
-        paper: bg,
-        ink: isDark ? (s.getPropertyValue("--voice-accent").trim() || "#4DAFA0") : "#775610",
-        grid: isDark ? `rgba(237,232,224,0.06)` : `rgba(42,37,32,0.08)`,
-        nib: s.getPropertyValue("--accent-warm").trim() || "#946B15",
+        bg,
+        trace: isDark ? (s.getPropertyValue("--voice-accent").trim() || "#4DAFA0") : (s.getPropertyValue("--accent-warm").trim() || "#946B15"),
+        grid: isDark ? "rgba(237,232,224,0.06)" : "rgba(42,37,32,0.07)",
+        accent: s.getPropertyValue("--accent-warm").trim() || "#946B15",
+        hot: s.getPropertyValue("--indicator-broadcast").trim() || "#c0392b",
+        isDark,
       };
     }
-    const { ink, paper, grid, nib } = colorsRef.current;
+    const { bg, trace, grid, accent, hot, isDark } = colorsRef.current;
 
-    // Get amplitude: average middle 64 samples for stable reading
-    if (!dataArrayRef.current || dataArrayRef.current.length !== analyser.fftSize) {
-      dataArrayRef.current = new Uint8Array(analyser.fftSize);
+    // Zone layout
+    const eqH = 24;          // frequency band
+    const meterH = 32;       // signal meter
+    const traceY = eqH + 2;  // phosphor trace start
+    const traceH = h - eqH - meterH - 4; // remaining space
+    const meterY = h - meterH;
+
+    // Get audio data
+    if (!timeDomainRef.current || timeDomainRef.current.length !== analyser.fftSize) {
+      timeDomainRef.current = new Uint8Array(analyser.fftSize);
     }
-    analyser.getByteTimeDomainData(dataArrayRef.current);
-    const mid = Math.floor(dataArrayRef.current.length / 2);
-    let sum = 0;
-    for (let i = mid - 32; i < mid + 32; i++) sum += dataArrayRef.current[i];
-    const amplitude = (sum / 64) / 255; // 0-1, 0.5 = center
+    const freqBins = analyser.frequencyBinCount;
+    if (!freqDataRef.current || freqDataRef.current.length !== freqBins) {
+      freqDataRef.current = new Uint8Array(freqBins);
+    }
+    analyser.getByteTimeDomainData(timeDomainRef.current);
+    analyser.getByteFrequencyData(freqDataRef.current);
 
-    // Initialize trail buffer to canvas width
-    const trailLen = Math.floor(w);
+    // RMS amplitude for signal meter
+    let rmsSum = 0;
+    const td = timeDomainRef.current;
+    for (let i = 0; i < td.length; i++) {
+      const v = (td[i] - 128) / 128;
+      rmsSum += v * v;
+    }
+    const rms = Math.sqrt(rmsSum / td.length);
+    const rmsNorm = Math.min(1, rms * 3.5); // scale up for visual range
+
+    // Trail amplitude (center 64 samples)
+    const mid = Math.floor(td.length / 2);
+    let ampSum = 0;
+    for (let i = mid - 32; i < mid + 32; i++) ampSum += td[i];
+    const amplitude = (ampSum / 64) / 255;
+
+    // Trail buffer
+    const trailLen = Math.floor(w - 20); // leave room for dB scale
     if (trailRef.current.length !== trailLen) {
       trailRef.current = new Array(trailLen).fill(0.5);
     }
-
-    // Shift trail left, append new sample
     trailRef.current.shift();
     trailRef.current.push(amplitude);
 
-    // ── Pass 1: Paper background ──
-    ctx.fillStyle = paper;
+    // Peak hold (1.5s decay)
+    const now = performance.now();
+    if (rmsNorm >= peakRef.current.level) {
+      peakRef.current = { level: rmsNorm, time: now };
+    } else if (now - peakRef.current.time > 1500) {
+      peakRef.current.level = Math.max(rmsNorm, peakRef.current.level - 0.02);
+    }
+
+    // ══════════════════════════════════════════════
+    // CLEAR
+    // ══════════════════════════════════════════════
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
 
-    // ── Pass 2: Chart grid lines ──
+    // ══════════════════════════════════════════════
+    // ZONE 1: FREQUENCY BAND (top 24px)
+    // ══════════════════════════════════════════════
+    const numBars = 24;
+    const barGap = 2;
+    const barW = (w - (numBars - 1) * barGap) / numBars;
+    const fd = freqDataRef.current;
+    const binsPerBar = Math.floor(freqBins / numBars);
+
+    for (let b = 0; b < numBars; b++) {
+      // Average frequency bins for this bar (logarithmic-ish: weight lower frequencies)
+      let barSum = 0;
+      const startBin = Math.floor(b * b * freqBins / (numBars * numBars)); // quadratic mapping
+      const endBin = Math.floor((b + 1) * (b + 1) * freqBins / (numBars * numBars));
+      const count = Math.max(1, endBin - startBin);
+      for (let i = startBin; i < endBin && i < freqBins; i++) barSum += fd[i];
+      const barNorm = (barSum / count) / 255;
+
+      const barHeight = barNorm * (eqH - 4);
+      const bx = b * (barW + barGap);
+      const by = eqH - 2 - barHeight;
+
+      ctx.fillStyle = trace;
+      ctx.globalAlpha = 0.6 + barNorm * 0.3;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, barW, barHeight, 1);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Separator line
     ctx.strokeStyle = grid;
     ctx.lineWidth = 1;
-    ctx.setLineDash([3, 4]);
-    for (let i = 1; i <= 3; i++) {
-      const gy = (h * i) / 4;
+    ctx.beginPath();
+    ctx.moveTo(0, eqH);
+    ctx.lineTo(w, eqH);
+    ctx.stroke();
+
+    // ══════════════════════════════════════════════
+    // ZONE 2: PHOSPHOR TRACE (middle)
+    // ══════════════════════════════════════════════
+    const pad = 8;
+    const traceLeft = 18; // room for dB labels
+
+    // Grid lines
+    ctx.strokeStyle = grid;
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([2, 3]);
+    for (let i = 1; i <= 4; i++) {
+      const gy = traceY + (traceH * i) / 5;
       ctx.beginPath();
-      ctx.moveTo(0, gy);
+      ctx.moveTo(traceLeft, gy);
       ctx.lineTo(w, gy);
       ctx.stroke();
     }
-    // Vertical feed ticks
     ctx.setLineDash([]);
-    const tickSpacing = 40;
-    for (let x = tickSpacing; x < w; x += tickSpacing) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, 3);
-      ctx.moveTo(x, h);
-      ctx.lineTo(x, h - 3);
-      ctx.stroke();
-    }
 
-    // ── Pass 3: Ink trail ──
-    ctx.strokeStyle = ink;
-    ctx.lineWidth = 1.5;
+    // dB scale labels (left edge)
+    ctx.fillStyle = trace;
+    ctx.globalAlpha = 0.3;
+    ctx.font = "7px 'IBM Plex Mono', monospace";
+    ctx.textAlign = "right";
+    const dbLabels = ["+3", "0", "-6", "-20"];
+    for (let i = 0; i < dbLabels.length; i++) {
+      const ly = traceY + pad + (i / (dbLabels.length - 1)) * (traceH - pad * 2);
+      ctx.fillText(dbLabels[i], traceLeft - 3, ly + 3);
+    }
+    ctx.globalAlpha = 1;
+
+    // Phosphor trace with persistence decay
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    ctx.globalAlpha = 0.7;
+    const trail = trailRef.current;
+    const fadeStart = Math.floor(trail.length * 0.4); // oldest 40% fades
+
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    for (let i = 0; i < trailRef.current.length; i++) {
-      const y = pad + trailRef.current[i] * (h - pad * 2);
-      if (i === 0) ctx.moveTo(i, y);
-      else ctx.lineTo(i, y);
+    for (let i = 0; i < trail.length; i++) {
+      const x = traceLeft + (i / trail.length) * (w - traceLeft);
+      const y = traceY + pad + trail[i] * (traceH - pad * 2);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
+    // Persistence: draw segments with fading alpha
+    ctx.strokeStyle = trace;
+    ctx.globalAlpha = 0.7;
     ctx.stroke();
 
-    // Ink bleed — subtle shadow under the trail
-    ctx.globalAlpha = 0.06;
-    ctx.lineWidth = 4;
+    // Glow on the newest 30% of trail
+    ctx.save();
+    ctx.beginPath();
+    const glowStart = Math.floor(trail.length * 0.7);
+    for (let i = glowStart; i < trail.length; i++) {
+      const x = traceLeft + (i / trail.length) * (w - traceLeft);
+      const y = traceY + pad + trail[i] * (traceH - pad * 2);
+      if (i === glowStart) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = trace;
+    ctx.globalAlpha = 0.15;
+    ctx.lineWidth = 5;
     ctx.filter = "blur(3px)";
     ctx.stroke();
     ctx.filter = "none";
+    ctx.restore();
     ctx.globalAlpha = 1;
 
-    // ── Pass 4: Needle nib at right edge ──
-    const nibX = w - 2;
-    const nibY = pad + amplitude * (h - pad * 2);
-    const nibW = 8;
-    const nibH = 10;
-
-    // Pivot line
-    ctx.strokeStyle = nib;
-    ctx.lineWidth = 1;
+    // Cursor dot at write position
+    const cursorX = traceLeft + ((trail.length - 1) / trail.length) * (w - traceLeft);
+    const cursorY = traceY + pad + amplitude * (traceH - pad * 2);
+    ctx.fillStyle = trace;
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath();
+    ctx.arc(cursorX, cursorY, 3, 0, Math.PI * 2);
+    ctx.fill();
+    // Cursor glow
     ctx.globalAlpha = 0.3;
     ctx.beginPath();
-    ctx.moveTo(nibX, h / 2);
-    ctx.lineTo(nibX, nibY);
+    ctx.arc(cursorX, cursorY, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Separator
+    ctx.strokeStyle = grid;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, meterY - 2);
+    ctx.lineTo(w, meterY - 2);
     ctx.stroke();
 
-    // Triangular nib pointing left
-    ctx.globalAlpha = 0.85;
-    ctx.fillStyle = nib;
+    // ══════════════════════════════════════════════
+    // ZONE 3: SIGNAL METER (bottom 32px)
+    // ══════════════════════════════════════════════
+    const meterPad = 4;
+    const meterLeft = 18;
+    const meterRight = w - 4;
+    const meterW = meterRight - meterLeft;
+    const numBlocks = 30;
+    const blockGap = 1.5;
+    const blockW = (meterW - (numBlocks - 1) * blockGap) / numBlocks;
+    const blockH = meterH - meterPad * 2 - 8; // leave room for labels
+    const blockY = meterY + meterPad;
+    const threshold = Math.floor(numBlocks * 0.8); // -6dB at 80%
+
+    for (let b = 0; b < numBlocks; b++) {
+      const bx = meterLeft + b * (blockW + blockGap);
+      const filled = (b + 1) / numBlocks <= rmsNorm;
+      const isHot = b >= threshold;
+
+      if (filled) {
+        ctx.fillStyle = isHot ? hot : accent;
+        ctx.globalAlpha = 0.8;
+      } else {
+        ctx.fillStyle = isHot ? hot : accent;
+        ctx.globalAlpha = 0.08;
+      }
+      ctx.fillRect(bx, blockY, blockW, blockH);
+    }
+
+    // Peak hold ghost
+    const peakBlock = Math.min(numBlocks - 1, Math.floor(peakRef.current.level * numBlocks));
+    if (peakBlock > 0) {
+      const px = meterLeft + peakBlock * (blockW + blockGap);
+      ctx.fillStyle = peakBlock >= threshold ? hot : accent;
+      ctx.globalAlpha = 0.5;
+      ctx.fillRect(px, blockY, blockW, blockH);
+    }
+    ctx.globalAlpha = 1;
+
+    // -6dB threshold mark
+    const threshX = meterLeft + threshold * (blockW + blockGap) - blockGap / 2;
+    ctx.strokeStyle = hot;
+    ctx.globalAlpha = 0.25;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 2]);
     ctx.beginPath();
-    ctx.moveTo(nibX - nibW, nibY);
-    ctx.lineTo(nibX, nibY - nibH / 2);
-    ctx.lineTo(nibX, nibY + nibH / 2);
-    ctx.closePath();
-    ctx.fill();
+    ctx.moveTo(threshX, blockY - 1);
+    ctx.lineTo(threshX, blockY + blockH + 1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    // Meter labels
+    ctx.fillStyle = trace;
+    ctx.globalAlpha = 0.3;
+    ctx.font = "7px 'IBM Plex Mono', monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("-20", meterLeft, meterY + meterH - 3);
+    ctx.textAlign = "center";
+    ctx.fillText("-6", threshX, meterY + meterH - 3);
+    ctx.textAlign = "right";
+    ctx.fillText("+3", meterRight, meterY + meterH - 3);
     ctx.globalAlpha = 1;
   }, [state.analyserRef]);
 
   useEffect(() => {
     if (!isPlaying) {
       cancelAnimationFrame(rafRef.current);
-      // Draw static paper + grid + centered needle when paused
+      // Draw powered-down state: dark canvas with faint grid
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext("2d");
@@ -226,19 +385,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           }
           const s = getComputedStyle(canvas);
           const bg = s.getPropertyValue("--console-bg").trim() || "#EBE5D6";
-          const fg = s.getPropertyValue("--console-fg").trim() || "#2A2520";
-          const isDark = bg.startsWith("#1") || bg.startsWith("#0") || bg.startsWith("#2");
-          const grid = isDark ? "rgba(237,232,224,0.06)" : "rgba(42,37,32,0.08)";
-          const w = rect.width, h = rect.height;
           ctx.fillStyle = bg;
-          ctx.fillRect(0, 0, w, h);
-          ctx.strokeStyle = grid;
-          ctx.lineWidth = 1;
-          ctx.setLineDash([3, 4]);
-          for (let i = 1; i <= 3; i++) {
-            ctx.beginPath(); ctx.moveTo(0, h * i / 4); ctx.lineTo(w, h * i / 4); ctx.stroke();
-          }
-          ctx.setLineDash([]);
+          ctx.fillRect(0, 0, rect.width, rect.height);
         }
       }
       return;
@@ -252,13 +400,13 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     const loop = (timestamp: number) => {
       if (timestamp - lastFrame > 33) {
         lastFrame = timestamp;
-        drawSeismograph();
+        drawBroadcastMonitor();
       }
       rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [isPlaying, drawSeismograph]);
+  }, [isPlaying, drawBroadcastMonitor]);
 
   /* ---- Swipe-down gesture ---- */
   const dragYRef = useRef<{ startY: number; current: number } | null>(null);
