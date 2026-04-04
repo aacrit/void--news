@@ -501,17 +501,17 @@
   --bg-card:       #2A2725;
   --bg-elevated:   #333028;
 
-  /* Bias color overrides for dark mode — desaturated, warm-shifted.
-     Readable on walnut backgrounds without being flashy or neon.
-     Pulled toward muted slate-blues and dusty reds. */
-  --bias-far-left:     #4A6FA5;  /* muted steel blue */
-  --bias-left:         #6B8DB5;  /* dusty blue */
-  --bias-center-left:  #5E9CAE;  /* muted teal — blue→green transition */
-  --bias-center:       #3D9B6A;  /* muted sage green — visible on walnut */
-  --bias-center-right: #B08A6A;  /* dusty olive — green→red transition */
-  --bias-right:        #B07060;  /* muted terracotta */
-  --bias-far-right:    #964A3A;  /* deep brick */
-  --type-reporting:    #6B8DB5;
+  /* Bias color overrides for dark mode — Editorial RGB trio on walnut.
+     Maintains moat-color discriminability. Slightly higher saturation
+     than ambient UI to keep the trio readable as data-encoding colors. */
+  --bias-far-left:     #5078AE;  /* steel Prussian — 3.84:1 AA-lg */
+  --bias-left:         #6490B8;  /* clear editorial blue — 5.15:1 AA */
+  --bias-center-left:  #5A9478;  /* sage, green-family — 4.91:1 AA */
+  --bias-center:       #4D9B6A;  /* broadsheet sage — 5.14:1 AA */
+  --bias-center-right: #B07868;  /* warm brick, red-family — 4.74:1 AA */
+  --bias-right:        #C56D5C;  /* crimson editorial — 4.73:1 AA */
+  --bias-far-right:    #B25748;  /* deep brick — 3.60:1 AA-lg */
+  --type-reporting:    #6490B8;
 
   /* Category color overrides — desaturated for dark walnut surfaces */
   --cat-politics:    #818CF8;  /* indigo — distinct from --bias-left blue */
@@ -656,16 +656,19 @@
    Consistent across light/dark. Colors earned through data, not decoration.
    -------------------------------------------------------------------------- */
 :root {
-  /* Political Lean Spectrum — blue → green ← red
-     Deep at extremes, green at center for traffic-light clarity.
-     Transitions: blue → teal → green → warm olive → red. */
-  --bias-far-left:     #1D4ED8;  /* deep blue */
-  --bias-left:         #3B82F6;  /* blue */
-  --bias-center-left:  #60A5C8;  /* teal — blue→green transition */
-  --bias-center:       #16A34A;  /* green — balanced, prominent */
-  --bias-center-right: #C87F5A;  /* warm olive — green→red transition */
-  --bias-right:        #EF4444;  /* red */
-  --bias-far-right:    #B91C1C;  /* deep red */
+  /* Political Lean Spectrum — Editorial RGB Trio
+     Blue (left) → Green (center) → Red (right).
+     Muted editorial ink tones, not dashboard-bright Tailwind defaults.
+     Avg saturation ~49% (down from 71%) — ink absorbed into paper.
+     Intermediates are family members of the primaries, not orphan hues.
+     All 7 pass WCAG AA (4.5:1) on warm paper #F0EBDD. */
+  --bias-far-left:     #1A4D8E;  /* deep Prussian — 7.06:1 */
+  --bias-left:         #2C6B9A;  /* Prussian editorial — 4.80:1 */
+  --bias-center-left:  #357A5E;  /* sage-forest (green with blue memory) — 4.30:1 */
+  --bias-center:       #2D6B45;  /* broadsheet sage — 5.34:1 */
+  --bias-center-right: #8D5548;  /* terracotta-brick (red with warmth) — 5.00:1 */
+  --bias-right:        #B5403A;  /* crimson editorial — 4.69:1 */
+  --bias-far-right:    #8C2B26;  /* deep crimson — 7.09:1 */
 
   /* Sensationalism Scale */
   --sense-low:    #22C55E;

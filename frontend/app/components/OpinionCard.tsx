@@ -18,9 +18,9 @@ interface OpinionCardProps {
 }
 
 function leanBorderColor(lean: number): string {
-  if (lean <= 40) return "var(--bias-left, #3B82F6)";
-  if (lean <= 60) return "var(--bias-center, #16A34A)";
-  return "var(--bias-right, #EF4444)";
+  if (lean <= 40) return "var(--bias-left, #2C6B9A)";
+  if (lean <= 60) return "var(--bias-center, #2D6B45)";
+  return "var(--bias-right, #B5403A)";
 }
 
 function buildSigilData(article: OpinionArticle): SigilData {

@@ -4,25 +4,25 @@
    Logos overlap, fan out on hover. Single expand, scrollable zones.
    ========================================================================== */
 
-/* ---- Spectrum zone tint tokens ----------------------------------------- */
+/* ---- Spectrum zone tint tokens — Editorial RGB trio -------------------- */
 :root {
-  --spectrum-zone-far-left:    rgba(29, 78, 216, 0.12);
-  --spectrum-zone-left:        rgba(59, 130, 246, 0.07);
-  --spectrum-zone-center-left: rgba(147, 197, 253, 0.05);
-  --spectrum-zone-center:      rgba(156, 163, 175, 0.05);
-  --spectrum-zone-center-right:rgba(252, 165, 165, 0.05);
-  --spectrum-zone-right:       rgba(239, 68, 68, 0.07);
-  --spectrum-zone-far-right:   rgba(185, 28, 28, 0.12);
+  --spectrum-zone-far-left:    rgba(26, 77, 142, 0.12);
+  --spectrum-zone-left:        rgba(44, 107, 154, 0.08);
+  --spectrum-zone-center-left: rgba(53, 122, 94, 0.06);
+  --spectrum-zone-center:      rgba(45, 107, 69, 0.06);
+  --spectrum-zone-center-right:rgba(141, 85, 72, 0.06);
+  --spectrum-zone-right:       rgba(181, 64, 58, 0.08);
+  --spectrum-zone-far-right:   rgba(140, 43, 38, 0.12);
 }
 
 :root[data-mode="dark"] {
-  --spectrum-zone-far-left:    rgba(29, 78, 216, 0.16);
-  --spectrum-zone-left:        rgba(59, 130, 246, 0.10);
-  --spectrum-zone-center-left: rgba(147, 197, 253, 0.07);
-  --spectrum-zone-center:      rgba(156, 163, 175, 0.07);
-  --spectrum-zone-center-right:rgba(252, 165, 165, 0.07);
-  --spectrum-zone-right:       rgba(239, 68, 68, 0.10);
-  --spectrum-zone-far-right:   rgba(185, 28, 28, 0.16);
+  --spectrum-zone-far-left:    rgba(80, 120, 174, 0.14);
+  --spectrum-zone-left:        rgba(100, 144, 184, 0.10);
+  --spectrum-zone-center-left: rgba(90, 148, 120, 0.08);
+  --spectrum-zone-center:      rgba(77, 155, 106, 0.08);
+  --spectrum-zone-center-right:rgba(176, 120, 104, 0.08);
+  --spectrum-zone-right:       rgba(197, 109, 92, 0.10);
+  --spectrum-zone-far-right:   rgba(178, 87, 72, 0.14);
 }
 
 /* ---- Sources Page Wrapper ---------------------------------------------- */
