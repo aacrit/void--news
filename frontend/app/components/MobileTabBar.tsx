@@ -41,19 +41,6 @@ function SourcesIcon() {
   );
 }
 
-function WeeklyIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="2" width="14" height="16" rx="2" />
-      <line x1="3" y1="6" x2="17" y2="6" />
-      <line x1="7" y1="2" x2="7" y2="6" />
-      <line x1="13" y1="2" x2="13" y2="6" />
-      <line x1="6" y1="10" x2="14" y2="10" />
-      <line x1="6" y1="13" x2="11" y2="13" />
-    </svg>
-  );
-}
-
 function MoreIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -67,7 +54,6 @@ function MoreIcon() {
 const TABS = [
   { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
   { key: "sources", label: "sources", Icon: SourcesIcon, href: "/sources" },
-  { key: "weekly", label: "weekly", Icon: WeeklyIcon, href: "/weekly" },
   { key: "more", label: "more", Icon: MoreIcon, href: null },
 ] as const;
 
@@ -83,8 +69,6 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
           return p === "/" || p === "" || /^\/(world|us|europe|south-asia)\/?$/.test(p);
         case "sources":
           return p.startsWith("/sources");
-        case "weekly":
-          return p.startsWith("/weekly");
         case "more":
           return moreOpen;
         default:
