@@ -40,17 +40,17 @@ const STEPS: TourStep[] = [
     action: "scroll-into-view",
   },
   {
-    selector: ".nav-filters__topics, .nav-filters__topic-trigger",
+    selector: ".nav-lens__topics, .nav-lens__trigger",
     title: "Filter by topic",
     body: "Focus on what matters. Filter stories by category \u2014 Politics, Economy, Technology, and more.",
   },
   {
-    selector: ".nav-filters__group, .lean-filter",
+    selector: ".nav-lens__group, .lean-filter",
     title: "Filter by perspective",
     body: "See how the same stories look from left, center, or right-leaning sources.",
   },
   {
-    selector: ".nav-tabs, .mob-nav__tabs",
+    selector: ".nav-editions, .mob-nav__tabs",
     title: "Switch editions",
     body: "Four newsrooms, one page. World is the default. Switch to US, Europe, or South Asia for regional focus.",
   },

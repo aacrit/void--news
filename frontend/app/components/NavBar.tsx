@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { MagnifyingGlass, BookOpen, Compass, RocketLaunch } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
@@ -10,7 +10,7 @@ import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import EditionIcon from "./EditionIcon";
 import { getEditionTimestamp } from "../lib/utils";
-import { hapticMicro } from "../lib/haptics";
+import { hapticMicro, hapticConfirm } from "../lib/haptics";
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
   "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
@@ -25,19 +25,23 @@ interface NavBarProps {
   activeLean?: LeanChip;
   onLeanChange?: (lean: LeanChip) => void;
   onSearchClick?: () => void;
-  /** OnAir audio — show broadcast button in nav */
+  /** OnAir audio — kept for API compat but no longer rendered in nav */
   hasAudio?: boolean;
   isAudioPlaying?: boolean;
   onOnairClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
-   NavBar — Newspaper masthead with integrated compact filter row
+   NavBar — "Depth of Field" CTA Hierarchy
 
-   Row 1: Logo | dateline | Sources | Theme
-   Row 2: [World US India] · [L C R] · [Topics ▾] [×badge]
+   Layer 1 (Sharp Focus): Editions — Playfair typographic tabs, warm underline
+   Layer 2 (Midground):   Filters  — Mono bracket notation, recessive lens
+   Layer 3 (Background):  Pages    — Inter text links, departure arrow
+   Special:               Weekly   — Magazine supplement, italic editorial
+   Ambient:               Utility  — Icon-only, monochrome
 
-   Everything in one sticky header. No separate filter bar, no bottom nav.
+   Row 1: Logo | [Editions] | dateline | [Pages Weekly] [🔍 ☀]
+   Row 2: [ topics ▾ ]  [ ·left ·center ·right ]
    --------------------------------------------------------------------------- */
 
 function formatDateCompact(): string {
@@ -48,11 +52,6 @@ function formatDateCompact(): string {
   });
 }
 
-function getEditionHref(slug: Edition): string {
-  if (slug === "world") return "/";
-  return `/${slug}`;
-}
-
 export default function NavBar({
   activeEdition,
   onEditionChange,
@@ -61,9 +60,6 @@ export default function NavBar({
   activeLean = "All",
   onLeanChange,
   onSearchClick,
-  hasAudio,
-  isAudioPlaying,
-  onOnairClick,
 }: NavBarProps) {
   const [topicOpen, setTopicOpen] = useState(false);
   const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
@@ -73,10 +69,13 @@ export default function NavBar({
   // Defer date rendering to client to avoid SSG/client hydration mismatch (#310)
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
-  // Render non-breaking spaces as placeholder during SSR to reserve layout
-  // width and prevent dateline flicker on hydration (F14).
   const dateline = mounted ? formatDateCompact() : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
   const timestamp = mounted ? getEditionTimestamp(activeEdition) : "\u00A0\u00A0\u00A0\u00A0\u00A0";
+
+  const handleEditionTap = (edition: Edition) => {
+    hapticConfirm();
+    onEditionChange?.(edition);
+  };
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
@@ -129,12 +128,10 @@ export default function NavBar({
     buttons?.[nextIdx]?.focus();
   };
 
-  // Reset focus index when dropdown closes
   useEffect(() => {
     if (!topicOpen) setTopicFocusIdx(-1);
   }, [topicOpen]);
 
-  // Close topic dropdown on outside click
   useEffect(() => {
     if (!topicOpen) return;
     const close = (e: MouseEvent) => {
@@ -163,6 +160,24 @@ export default function NavBar({
           </Link>
         </div>
 
+        {/* Layer 1 — Sharp Focus: Edition tabs (desktop only) */}
+        {hasFilters && (
+          <nav className="nav-editions" aria-label="Edition">
+            {EDITIONS.map((ed) => (
+              <button
+                key={ed.slug}
+                type="button"
+                aria-current={activeEdition === ed.slug ? "page" : undefined}
+                className={`nav-ed${activeEdition === ed.slug ? " nav-ed--active" : ""}`}
+                onClick={() => handleEditionTap(ed.slug)}
+              >
+                <EditionIcon slug={ed.slug} size={10} />
+                <span>{ed.label}</span>
+              </button>
+            ))}
+          </nav>
+        )}
+
         <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
           {dateline}
           <span className="nav-dateline-inline__sep">&middot;</span>
@@ -178,9 +193,32 @@ export default function NavBar({
         </span>
 
         <div className="nav-right">
+          {/* Layer 3 — Background: Page navigation */}
+          <nav className="nav-pages" aria-label="Pages">
+            <PageToggle activePage="feed" />
+            <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
+              Ship
+            </Link>
+            <Link href="/about" className="nav-page" aria-label="About void --news" title="void --about">
+              About
+            </Link>
+          </nav>
+
+          {/* Special — Magazine: Weekly */}
+          <Link
+            href="/weekly"
+            className="nav-weekly"
+            aria-label="Go to Weekly digest"
+            title="void --weekly"
+          >
+            <span className="nav-weekly__rule" aria-hidden="true" />
+            <span className="nav-weekly__label">Weekly</span>
+          </Link>
+
+          {/* Ambient — Utility: Search */}
           {onSearchClick && (
             <button
-              className="nav-search-btn"
+              className="nav-util"
               onClick={onSearchClick}
               aria-label="Search stories (Ctrl+K)"
               title="Search (Ctrl+K)"
@@ -189,107 +227,37 @@ export default function NavBar({
               <MagnifyingGlass size={18} weight="light" />
             </button>
           )}
-          {hasAudio && onOnairClick && (
-            <button
-              className={`nav-onair${isAudioPlaying ? " nav-onair--active" : ""}`}
-              onClick={onOnairClick}
-              type="button"
-              aria-label={isAudioPlaying ? "Now playing — open player" : "Listen to broadcast"}
-            >
-              {isAudioPlaying && <span className="nav-onair__dot" aria-hidden="true" />}
-              <span className="nav-onair__label">onair</span>
-            </button>
-          )}
-          <PageToggle activePage="feed" />
-          <Link
-            href="/weekly"
-            className="page-toggle page-toggle--weekly"
-            aria-label="Go to Weekly digest"
-            title="void --weekly"
-          >
-            <BookOpen size={14} weight="regular" aria-hidden="true" />
-            <span className="page-toggle__label">Weekly</span>
-          </Link>
-          <Link
-            href="/ship"
-            className="page-toggle page-toggle--ship"
-            aria-label="void --ship — request features"
-            title="void --ship"
-          >
-            <RocketLaunch size={14} weight="regular" aria-hidden="true" />
-            <span className="page-toggle__label">Ship</span>
-          </Link>
-          <Link
-            href="/about"
-            className="page-toggle page-toggle--about"
-            aria-label="About void --news"
-            title="void --about"
-          >
-            <Compass size={14} weight="regular" aria-hidden="true" />
-            <span className="page-toggle__label">About</span>
-          </Link>
+
+          {/* Ambient — Utility: Theme */}
           <ThemeToggle />
         </div>
       </nav>
 
-      {/* ── Row 2: Compact filters (editions + lean + topic) ── */}
+      {/* ── Row 2: Filter Lens (desktop only, feed pages only) ── */}
       {hasFilters && (
-        <div className="nav-filters">
-          {/* Edition pills */}
-          <nav className="nav-filters__group" aria-label="Edition">
-            {EDITIONS.map((ed) => (
-              <button
-                key={ed.slug}
-                type="button"
-                aria-current={activeEdition === ed.slug ? "page" : undefined}
-                className={`nav-filters__ed${activeEdition === ed.slug ? " nav-filters__ed--active" : ""}`}
-                onClick={() => onEditionChange?.(ed.slug)}
-              >
-                <EditionIcon slug={ed.slug} size={11} />
-                <span>{ed.label}</span>
-              </button>
-            ))}
-          </nav>
-
-          <div className="nav-filters__sep" aria-hidden="true" />
-
-          {/* Lean chips */}
-          <div className="nav-filters__group" role="toolbar" aria-label="Political perspective">
-            {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
-              <button
-                key={lean}
-                aria-pressed={activeLean === lean}
-                onClick={() => handleLeanTap(lean)}
-                className={`nav-filters__lean nav-filters__lean--${lean.toLowerCase()}${activeLean === lean ? " nav-filters__lean--active" : ""}`}
-              >
-                <span className="nav-filters__lean-dot" aria-hidden="true" />
-                {lean}
-              </button>
-            ))}
-          </div>
-
-          <div className="nav-filters__sep" aria-hidden="true" />
-
-          {/* Topic dropdown */}
+        <div className="nav-lens">
+          {/* Topic dropdown — bracket notation */}
           <div
             ref={topicRef}
-            className={`nav-filters__topics${topicOpen ? " nav-filters__topics--open" : ""}`}
+            className={`nav-lens__topics${topicOpen ? " nav-lens__topics--open" : ""}`}
           >
             <button
               ref={topicTriggerRef}
-              className="nav-filters__topic-trigger"
+              className="nav-lens__trigger"
               onClick={() => setTopicOpen((v) => !v)}
               aria-expanded={topicOpen}
               aria-haspopup="menu"
               aria-label="Filter by topic"
             >
-              {activeCategory === "All" ? "Topics" : activeCategory}
-              <span className={`nav-filters__topic-caret${topicOpen ? " nav-filters__topic-caret--open" : ""}`} aria-hidden="true">&#9662;</span>
+              <span className="nav-lens__bracket" aria-hidden="true">[</span>
+              {activeCategory === "All" ? "topics" : activeCategory.toLowerCase()}
+              <span className={`nav-lens__caret${topicOpen ? " nav-lens__caret--open" : ""}`} aria-hidden="true">&#9662;</span>
+              <span className="nav-lens__bracket" aria-hidden="true">]</span>
             </button>
 
             {topicOpen && (
               <div
-                className="nav-filters__topic-panel"
+                className="nav-lens__panel"
                 role="menu"
                 aria-label="Topics"
                 onKeyDown={handleTopicPanelKeyDown}
@@ -300,21 +268,38 @@ export default function NavBar({
                     role="menuitem"
                     aria-current={activeCategory === cat ? "true" : undefined}
                     onClick={() => handleTopicTap(cat)}
-                    className={`nav-filters__topic-opt${activeCategory === cat ? " nav-filters__topic-opt--active" : ""}`}
+                    className={`nav-lens__opt${activeCategory === cat ? " nav-lens__opt--active" : ""}`}
                   >
-                    {cat}
+                    {cat.toLowerCase()}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
+          {/* Lean selector — instrument panel */}
+          <div className="nav-lens__group" role="toolbar" aria-label="Political perspective">
+            <span className="nav-lens__bracket" aria-hidden="true">[</span>
+            {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+              <button
+                key={lean}
+                aria-pressed={activeLean === lean}
+                onClick={() => handleLeanTap(lean)}
+                className={`nav-lens__lean nav-lens__lean--${lean.toLowerCase()}${activeLean === lean ? " nav-lens__lean--active" : ""}`}
+              >
+                <span className="nav-lens__dot" aria-hidden="true" />
+                {lean.toLowerCase()}
+              </button>
+            ))}
+            <span className="nav-lens__bracket" aria-hidden="true">]</span>
+          </div>
+
           {/* Active lean badge */}
           {activeLean !== "All" && (
-            <div className="nav-filters__badge" role="status" aria-live="polite">
-              <span>{activeLean}</span>
+            <div className="nav-lens__badge" role="status" aria-live="polite">
+              <span>{activeLean.toLowerCase()}</span>
               <button
-                className="nav-filters__badge-x"
+                className="nav-lens__badge-x"
                 onClick={() => { hapticMicro(); onLeanChange?.("All"); }}
                 aria-label={`Clear ${activeLean} filter`}
               >
