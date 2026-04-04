@@ -4,13 +4,13 @@
    Logos overlap, fan out on hover. Single expand, scrollable zones.
    ========================================================================== */
 
-/* ---- Spectrum zone tint tokens — Editorial RGB trio -------------------- */
+/* ---- Spectrum zone tint tokens — Green center only, blue left, red right */
 :root {
   --spectrum-zone-far-left:    rgba(26, 77, 142, 0.12);
   --spectrum-zone-left:        rgba(44, 107, 154, 0.08);
-  --spectrum-zone-center-left: rgba(53, 122, 94, 0.06);
+  --spectrum-zone-center-left: rgba(57, 120, 160, 0.06);
   --spectrum-zone-center:      rgba(45, 107, 69, 0.06);
-  --spectrum-zone-center-right:rgba(141, 85, 72, 0.06);
+  --spectrum-zone-center-right:rgba(168, 85, 77, 0.06);
   --spectrum-zone-right:       rgba(181, 64, 58, 0.08);
   --spectrum-zone-far-right:   rgba(140, 43, 38, 0.12);
 }
@@ -18,9 +18,9 @@
 :root[data-mode="dark"] {
   --spectrum-zone-far-left:    rgba(80, 120, 174, 0.14);
   --spectrum-zone-left:        rgba(100, 144, 184, 0.10);
-  --spectrum-zone-center-left: rgba(90, 148, 120, 0.08);
+  --spectrum-zone-center-left: rgba(107, 160, 188, 0.08);
   --spectrum-zone-center:      rgba(77, 155, 106, 0.08);
-  --spectrum-zone-center-right:rgba(176, 120, 104, 0.08);
+  --spectrum-zone-center-right:rgba(192, 122, 106, 0.08);
   --spectrum-zone-right:       rgba(197, 109, 92, 0.10);
   --spectrum-zone-far-right:   rgba(178, 87, 72, 0.14);
 }
