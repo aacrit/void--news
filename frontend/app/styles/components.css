@@ -42,16 +42,22 @@
   --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
-/* Warm tint on hover — paper catching more light, not emitting it.
-   Contained within card bounds (inset: 0). Ink absorbs, paper reflects. */
+/* Warm tint on hover — diffuse ink-wash glow, feathered edges.
+   Extends slightly beyond card bounds for organic bleed.
+   Radial gradient fades to transparent — no hard boundary. */
 .story-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+  inset: -8px;
+  border-radius: 16px;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 45%,
+    color-mix(in srgb, var(--bg-secondary) 50%, transparent) 0%,
+    color-mix(in srgb, var(--bg-secondary) 20%, transparent) 60%,
+    transparent 100%
+  );
   opacity: 0;
-  transition: opacity 200ms var(--ease-out);
+  transition: opacity 250ms var(--ease-cinematic);
   pointer-events: none;
   z-index: 0;
 }
@@ -1976,14 +1982,14 @@
   outline-offset: 3px;
 }
 
-/* ── Row 2: Weekly — Playfair italic, deep plum magazine accent ──
+/* ── Row 2: Weekly — Playfair italic, deep red magazine accent ──
    Signals the transition from monochrome news to flamboyant magazine.
    Hover is more theatrical — organic ink energy, unfold physics. */
 
 .nav-weekly {
-  --wk-accent: #9A4420;
-  --wk-accent-bright: #B55530;
-  --wk-accent-glow: rgba(154, 68, 32, 0.15);
+  --wk-accent: #991B1B;
+  --wk-accent-bright: #B91C1C;
+  --wk-accent-glow: rgba(153, 27, 27, 0.12);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -2048,11 +2054,11 @@
   outline-offset: 2px;
 }
 
-/* Dark mode: brighter terracotta for contrast */
+/* Dark mode: lifted red for contrast */
 :root[data-mode="dark"] .nav-weekly {
-  --wk-accent: #E08050;
-  --wk-accent-bright: #ECA070;
-  --wk-accent-glow: rgba(224, 128, 80, 0.12);
+  --wk-accent: #EF5350;
+  --wk-accent-bright: #F87171;
+  --wk-accent-glow: rgba(239, 83, 80, 0.12);
 }
 
 /* ── Row 2: Separator — thin vertical rule between zones ── */

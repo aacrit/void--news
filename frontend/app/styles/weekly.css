@@ -1,51 +1,45 @@
 /* ===========================================================================
-   void --weekly — Terracotta Magazine Layout
-   "Way more flamboyant." TIME meets The Economist meets art house cinema.
-   Organic ink design elements, interactive timeline, scroll-triggered reveals,
-   parallax depth, film grain + vignette, cold open stagger sequence.
-   Terracotta palette scoped to .wk-page for dramatic visual departure.
+   void --weekly — Deep Red Magazine Layout
+   Dense broadsheet: 2-col / 3-col grids, no collapsibles, full visibility.
+   Deep red palette scoped to .wk-page for dramatic visual departure.
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   Page Container — terracotta palette + cinematic grade + vignette + film grain
+   Page Container — deep red palette + cinematic grade + vignette + film grain
    --------------------------------------------------------------------------- */
 .wk-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  /* Prevent horizontal scroll from InkCorner absolute positioning
-     and sub-pixel rounding in full-bleed negative margins */
   overflow-x: hidden;
 
-  /* ── Terracotta Magazine Palette ── */
-  --wk-accent: #9A4420;
-  --wk-accent-bright: #B55530;
-  --wk-accent-light: #D47050;
-  --wk-accent-dim: #7A3518;
-  --wk-accent-ghost: rgba(154, 68, 32, 0.08);
-  --wk-accent-glow: rgba(154, 68, 32, 0.15);
-  --wk-accent-ink: rgba(154, 68, 32, 0.25);
+  /* ── Deep Red Magazine Palette ── */
+  --wk-accent: #991B1B;
+  --wk-accent-bright: #B91C1C;
+  --wk-accent-light: #DC2626;
+  --wk-accent-dim: #7F1D1D;
+  --wk-accent-ghost: rgba(153, 27, 27, 0.06);
+  --wk-accent-glow: rgba(153, 27, 27, 0.12);
+  --wk-accent-ink: rgba(153, 27, 27, 0.20);
   --wk-cream: #F8F3E8;
   --wk-cream-deep: #EDE5D4;
   --wk-white: #FFFFFF;
 }
 
 :root[data-mode="dark"] .wk-page {
-  /* Terracotta values tuned for WCAG AA contrast (>= 4.5:1 on --bg-primary dark #1C1A17).
-     #E08050 yields 4.5:1+ on bg-primary dark — passes AA. */
-  --wk-accent: #E08050;
-  --wk-accent-bright: #ECA070;
-  --wk-accent-light: #F0B488;
-  --wk-accent-dim: #C06838;
-  --wk-accent-ghost: rgba(224, 128, 80, 0.10);
-  --wk-accent-glow: rgba(224, 128, 80, 0.18);
-  --wk-accent-ink: rgba(224, 128, 80, 0.28);
+  --wk-accent: #EF5350;
+  --wk-accent-bright: #F87171;
+  --wk-accent-light: #FCA5A5;
+  --wk-accent-dim: #DC2626;
+  --wk-accent-ghost: rgba(239, 83, 80, 0.08);
+  --wk-accent-glow: rgba(239, 83, 80, 0.15);
+  --wk-accent-ink: rgba(239, 83, 80, 0.22);
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
 }
 
-/* Film grain overlay — higher opacity for textured magazine feel */
+/* Film grain overlay */
 .wk-page::before {
   content: "";
   position: fixed;
@@ -57,7 +51,7 @@
   mix-blend-mode: multiply;
 }
 
-/* Vignette — subtle edge darkening for cinematic depth */
+/* Vignette */
 .wk-page::after {
   content: "";
   position: fixed;
@@ -73,27 +67,24 @@
 
 .wk-main {
   flex: 1;
-  max-width: 1400px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-5);
+  padding: 0 var(--space-4);
   padding-bottom: var(--space-5);
-  /* Color grade — editorial cinematic filter */
   filter: var(--cin-grade-editorial, var(--cin-grade));
 }
 
 @media (min-width: 768px) {
   .wk-main {
-    padding: 0 var(--space-7);
-    padding-bottom: var(--space-7);
+    padding: 0 var(--space-6);
+    padding-bottom: var(--space-6);
   }
 }
 
 /* ---------------------------------------------------------------------------
    Organic Ink SVG Components — shared inline patterns
    --------------------------------------------------------------------------- */
-
-/* Hand-drawn horizontal rule (replaces straight <hr>) */
 .wk-ink-rule {
   display: block;
   width: 100%;
@@ -107,17 +98,6 @@
   opacity: 0.7;
 }
 
-/* Organic ink quotation mark for pull quotes */
-.wk-ink-quote {
-  display: block;
-  width: 40px;
-  height: 32px;
-  color: var(--wk-accent);
-  opacity: 0.6;
-  flex-shrink: 0;
-}
-
-/* Organic ink sidebar border — replaces straight left border */
 .wk-ink-border {
   position: absolute;
   left: 0;
@@ -130,7 +110,6 @@
 
 /* ---------------------------------------------------------------------------
    Section Label — Barlow Condensed, editorial wayfinding
-   With organic ink underline accent
    --------------------------------------------------------------------------- */
 .wk-section-label {
   font-family: var(--font-meta);
@@ -139,13 +118,11 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--wk-accent);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
   padding-bottom: var(--space-2);
-  border-bottom: none;
   position: relative;
 }
 
-/* Ghosted void prefix via data attribute */
 .wk-section-label[data-prefix]::before {
   content: attr(data-prefix) " ";
   font-family: var(--font-data);
@@ -155,7 +132,6 @@
   letter-spacing: 0.02em;
 }
 
-/* Organic ink underline on section labels — terracotta tinted */
 .wk-section-label::after {
   content: "";
   position: absolute;
@@ -163,66 +139,47 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23991B1B' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-section-label::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23EF5350' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
 }
 
 /* ---------------------------------------------------------------------------
-   Divider — organic ink stroke replaces straight <hr>
+   Divider — organic ink stroke
    --------------------------------------------------------------------------- */
 .wk-divider {
   border: none;
   height: 4px;
-  margin: var(--space-4) 0;
+  margin: var(--space-3) 0;
   background: transparent;
 }
 
 /* ===========================================================================
-   Cold Open Stagger Sequence — dramatic magazine entrance
-   Masthead (100ms) -> Cover headline (300ms) -> Numbers (500ms) -> Body (700ms)
+   Cold Open Stagger Sequence
    =========================================================================== */
 
 @keyframes wkColdOpenFade {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes wkColdOpenScale {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes wkColdOpenSlideRight {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .wk-cold-open--masthead {
   opacity: 0;
   animation: wkColdOpenScale 800ms var(--ease-cinematic) 100ms both;
+}
+
+.wk-cold-open--hero {
+  opacity: 0;
+  animation: wkColdOpenFade 800ms var(--ease-cinematic) 200ms both;
 }
 
 .wk-cold-open--headline {
@@ -232,7 +189,7 @@
 
 .wk-cold-open--numbers {
   opacity: 0;
-  animation: wkColdOpenSlideRight 600ms var(--ease-cinematic) 500ms both;
+  animation: wkColdOpenFade 600ms var(--ease-cinematic) 500ms both;
 }
 
 .wk-cold-open--body {
@@ -247,6 +204,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wk-cold-open--masthead,
+  .wk-cold-open--hero,
   .wk-cold-open--headline,
   .wk-cold-open--numbers,
   .wk-cold-open--body,
@@ -258,7 +216,7 @@
 }
 
 /* ===========================================================================
-   Scroll-Reveal System — IntersectionObserver triggers
+   Scroll-Reveal System
    =========================================================================== */
 
 .wk-reveal {
@@ -274,7 +232,6 @@
   transform: translateY(0);
 }
 
-/* Staggered children within a revealed section */
 .wk-reveal--visible .wk-reveal-child {
   opacity: 1;
   transform: translateY(0);
@@ -289,12 +246,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wk-reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
+  .wk-reveal,
   .wk-reveal-child {
     opacity: 1;
     transform: none;
@@ -303,19 +255,16 @@
 }
 
 /* ===========================================================================
-   A. MASTHEAD — Magazine cover header with void brand mark
-   Scale-in entrance, organic ink rules
+   A. MASTHEAD — compact deep red banner
    =========================================================================== */
 .wk-masthead {
   text-align: center;
-  margin-bottom: var(--space-4);
-  padding: var(--space-6) var(--space-5);
+  padding: var(--space-4) var(--space-4);
   background: var(--wk-accent);
   position: relative;
   overflow: hidden;
 }
 
-/* Organic ink texture overlay on terracotta masthead */
 .wk-masthead::before {
   content: "";
   position: absolute;
@@ -325,7 +274,6 @@
   mix-blend-mode: soft-light;
 }
 
-/* Organic ink rules replace straight border lines */
 .wk-masthead__rule {
   max-width: 32rem;
   margin: 0 auto;
@@ -334,13 +282,12 @@
   opacity: 0.4;
 }
 
-/* Brand lockup: icon + wordmark centered */
 .wk-masthead__brand {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3);
-  margin: var(--space-3) 0 var(--space-2);
+  gap: var(--space-2);
+  margin: var(--space-2) 0 var(--space-1);
   position: relative;
   z-index: 1;
 }
@@ -357,14 +304,14 @@
 
 .wk-masthead__wordmark {
   display: block;
-  height: 32px;
+  height: 28px;
   width: auto;
   color: var(--wk-cream);
 }
 
 .wk-masthead__meta {
   font-family: var(--font-meta);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.10em;
@@ -387,244 +334,140 @@
 }
 
 /* ===========================================================================
-   COLLAPSIBLE SYSTEM — section toggles + inline read-more
+   B. COVER HERO BANNER — typographic treatment (image future-ready)
    =========================================================================== */
+.wk-cover-hero {
+  position: relative;
+  background: var(--wk-accent);
+  margin: 0 calc(-1 * var(--space-4));
+  overflow: hidden;
+}
 
-/* Section-level toggle (heading + chevron) */
-.wk-section-toggle {
+@media (min-width: 768px) {
+  .wk-cover-hero {
+    margin: 0 calc(-1 * var(--space-6));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 280px;
+  }
+}
+
+/* Left panel: image or typographic treatment */
+.wk-cover-hero__visual {
+  position: relative;
+  padding: var(--space-6) var(--space-5);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  text-align: left;
-}
-
-.wk-section-toggle:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.wk-section-label--toggle {
-  margin-bottom: 0;
-  padding-bottom: var(--space-2);
-  border-bottom: none;
-}
-
-.wk-section-label--toggle::after {
-  display: none;
-}
-
-.wk-section-toggle__chevron {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  color: var(--fg-tertiary);
-  flex-shrink: 0;
-  margin-left: var(--space-3);
-  transition: transform 250ms var(--ease-cinematic);
-  line-height: 1;
-}
-
-/* Section body — asymmetric grid-row collapse (open bouncy, close snappy) */
-.wk-section-body {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 300ms var(--ease-whip);
-}
-
-.wk-section-body--open {
-  grid-template-rows: 1fr;
-  transition: grid-template-rows 400ms var(--spring-bouncy, var(--ease-cinematic));
-}
-
-.wk-section-body__inner {
+  justify-content: center;
   overflow: hidden;
+  min-height: 200px;
 }
 
-.wk-collapsible-section {
-  margin-bottom: var(--space-5);
-  border-bottom: none;
-  padding-bottom: var(--space-2);
-  position: relative;
-}
-
-/* Organic ink bottom border on collapsible sections — terracotta*/
-.wk-collapsible-section::after {
+/* Ink texture overlay on visual panel */
+.wk-cover-hero__visual::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  inset: 0;
+  background: var(--paper-texture);
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
-:root[data-mode="dark"] .wk-collapsible-section::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='1' fill='none' opacity='0.20'/%3E%3C/svg%3E");
-}
-
-/* Inline toggle (read more / read less) */
-.wk-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0;
-  margin-top: var(--space-3);
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-tertiary);
-  transition: color 200ms var(--ease-cinematic);
-}
-
-.wk-toggle:hover {
-  color: var(--wk-accent);
-}
-
-.wk-toggle:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.wk-toggle--inline {
-  display: block;
-  margin-top: var(--space-2);
-}
-
-.wk-toggle__chevron {
-  font-size: var(--text-xxs);
+/* Ghosted issue number watermark */
+.wk-cover-hero__issue {
+  font-family: var(--font-editorial);
+  font-size: clamp(5rem, 15vw, 12rem);
+  font-weight: 900;
+  color: var(--wk-cream);
+  opacity: 0.08;
   line-height: 1;
-  transition: transform 200ms var(--ease-cinematic);
-}
-
-/* Inline collapsible — cover story expand/collapse (W01 fix) */
-.wk-collapsible {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 400ms var(--ease-cinematic);
-}
-
-.wk-collapsible--open {
-  grid-template-rows: 1fr;
-}
-
-.wk-collapsible__inner {
-  overflow: hidden;
-}
-
-/* Cover story preview (collapsed) */
-.wk-cover__preview {
-  position: relative;
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  line-height: 1.6;
-  color: var(--fg-secondary);
-  max-width: 65ch;
-}
-
-.wk-cover__preview p {
-  margin: 0;
-}
-
-.wk-cover__preview-fade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2rem;
-  background: linear-gradient(to bottom, transparent, var(--bg-primary));
+  user-select: none;
   pointer-events: none;
 }
 
-/* Cover story content — smooth expand/collapse via max-height */
-.wk-cover__content {
-  position: relative;
-  max-height: 12rem;  /* ~6 lines collapsed */
-  overflow: hidden;
-  transition: max-height 500ms var(--ease-cinematic);
-}
-
-.wk-cover__content--open {
-  max-height: 5000px;  /* effectively uncapped */
-  transition: max-height 800ms var(--ease-cinematic);
-}
-
-.wk-cover__content-inner {
-  /* No overflow hidden — let content flow naturally */
-}
-
-/* Fade gradient for collapsed state */
-.wk-cover__content-fade {
+/* Future image slot */
+.wk-cover-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 4rem;
-  background: linear-gradient(to bottom, transparent, var(--bg-primary));
-  pointer-events: none;
+  inset: 0;
 }
 
-/* Opinion card text clamp */
-.wk-opinion__text--clamped {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Right panel: headline + meta */
+.wk-cover-hero__content {
+  padding: var(--space-5) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
+  z-index: 1;
 }
 
-/* Reduced motion — instant toggle */
-@media (prefers-reduced-motion: reduce) {
-  .wk-section-body {
-    transition: none;
-  }
+.wk-cover-hero__headline {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--wk-cream);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-3);
+}
 
-  .wk-section-toggle__chevron {
-    transition: none;
-  }
+.wk-cover-hero__source-count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--wk-cream);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.wk-cover-hero__rule {
+  width: 60px;
+  height: 3px;
+  margin-top: var(--space-3);
+  overflow: hidden;
+}
+
+.wk-cover-hero__rule svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--wk-cream);
+  opacity: 0.4;
 }
 
 /* ===========================================================================
-   B. THE COVER — Parallax headline + organic ink accents
+   C. COVER BODY — 2-column: text + numbers sidebar
    =========================================================================== */
-.wk-cover {
-  margin-bottom: var(--space-5);
+.wk-cover-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
 }
 
-.wk-cover__story {
-  margin-bottom: var(--space-4);
+@media (min-width: 768px) {
+  .wk-cover-body {
+    grid-template-columns: 1fr clamp(14rem, 12rem + 5vw, 20rem);
+    gap: var(--space-5);
+  }
 }
 
-/* Cover headline — parallax-ready, editorial serif, dramatic scale */
-.wk-cover__headline {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.75rem, 5vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+.wk-cover-body__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  line-height: var(--line-height-editorial, 1.65);
   color: var(--fg-primary);
-  margin-bottom: var(--space-4);
-  /* Parallax transforms applied via inline style */
-  will-change: transform;
-  transition: transform 16ms linear;
+  text-align: justify;
+  hyphens: auto;
 }
 
-/* Drop cap on hero cover body text — traditional placement (W07 fix) */
-.wk-cover__hero .wk-cover__text p:first-child::first-letter {
+/* Drop cap on first paragraph */
+.wk-cover-body__text p:first-child::first-letter {
   font-family: var(--font-editorial);
   font-size: 2.8em;
   font-weight: 900;
@@ -635,266 +478,84 @@
   margin-top: 0.06em;
 }
 
-.wk-cover__body-wrap {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
+.wk-cover-body__text p {
+  margin-bottom: var(--space-3);
 }
 
-@media (min-width: 768px) {
-  .wk-cover__body-wrap {
-    /* Fluid sidebar: 16rem at 768px tablet, up to 22rem on wide desktop.
-       Prevents text column from shrinking below readable width. */
-    grid-template-columns: 1fr clamp(16rem, 14rem + 4vw, 22rem);
-    gap: var(--space-6);
-  }
-}
-
-.wk-cover__text {
-  font-family: var(--font-structural);
-  font-size: var(--text-base);
-  font-weight: 400;
-  line-height: var(--line-height-editorial, 1.65);
-  color: var(--fg-primary);
-  max-width: 65ch;
-  text-align: justify;
-  hyphens: auto;
-}
-
-/* Hero lede treatment — first paragraph in cover hero is larger */
-.wk-cover__hero .wk-cover__text p:first-child {
-  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
-  line-height: 1.6;
-  color: var(--fg-primary);
-}
-
-/* Hero wrapper — organic ink corner flourishes */
-.wk-cover__hero {
-  position: relative;
-  padding: var(--space-5) 0;
-  overflow: hidden;
-}
-
-/* Ink corner flourishes on hero — top-left and bottom-right */
-.wk-cover__hero-corner {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  color: var(--wk-accent);
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-.wk-cover__hero-corner--tl {
-  top: 0;
-  left: calc(-1 * var(--space-3));
-}
-
-.wk-cover__hero-corner--br {
-  bottom: 0;
-  right: calc(-1 * var(--space-3));
-  transform: rotate(180deg);
-}
-
-.wk-cover__text p {
-  margin-bottom: var(--space-4);
-}
-
-.wk-cover__text p:last-child {
+.wk-cover-body__text p:last-child {
   margin-bottom: 0;
 }
 
-/* ===========================================================================
-   COVER HERO BANNER — typographic drama above the cover section
-   Full-bleed terracotta banner with ghosted issue number watermark
-   =========================================================================== */
-.wk-cover__hero-banner {
-  position: relative;
-  background: var(--wk-accent);
-  padding: var(--space-7) var(--space-5);
-  margin: 0 calc(-1 * var(--space-5));
-  margin-bottom: var(--space-4);
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .wk-cover__hero-banner {
-    padding: clamp(2.5rem, 4vw, 4rem) var(--space-7);
-    margin: 0 calc(-1 * var(--space-7));
-    margin-bottom: var(--space-5);
-  }
-}
-
-/* Organic ink texture overlay */
-.wk-cover__hero-banner-texture {
-  position: absolute;
-  inset: 0;
-  background: var(--paper-texture);
-  opacity: 0.12;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-/* Ghosted issue number watermark */
-.wk-cover__hero-banner-issue {
-  position: absolute;
-  right: var(--space-5);
-  bottom: var(--space-3);
-  font-family: var(--font-editorial);
-  font-size: clamp(4rem, 12vw, 10rem);
-  font-weight: 900;
-  color: var(--wk-cream);
-  opacity: 0.08;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-}
-
-.wk-cover__hero-banner-title {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  font-weight: 700;
-  color: var(--wk-cream);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  max-width: 50ch;
-  position: relative;
-  z-index: 1;
-  margin: 0;
-}
-
-.wk-cover__hero-banner-rule {
-  width: 80px;
-  height: 3px;
-  margin-top: var(--space-4);
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-}
-
-/* Organic ink rule inside banner */
-.wk-cover__hero-banner-rule svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  color: var(--wk-cream);
-  opacity: 0.4;
-}
-
-/* Cold open animation for hero banner */
-.wk-cover__hero-banner {
-  opacity: 0;
-  animation: wkColdOpenFade 800ms var(--ease-cinematic) 200ms both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wk-cover__hero-banner {
-    animation: none;
-    opacity: 1;
-  }
-}
-
-/* ===========================================================================
-   "This Week in Numbers" — Interactive sidebar with organic ink border
-   Count-up animation on scroll-into-view, amber data accents
-   =========================================================================== */
-.wk-cover__numbers {
+/* Numbers sidebar */
+.wk-cover-body__numbers {
   background: var(--bg-secondary);
-  border: none;
-  padding: var(--space-5);
+  padding: var(--space-4);
   align-self: start;
   position: relative;
-  overflow: visible;
 }
 
-.wk-cover__numbers-title {
+.wk-cover-body__numbers-title {
   font-family: var(--font-meta);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--fg-primary);
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: none;
-  position: relative;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dashed var(--wk-accent-ink);
 }
 
-/* Organic ink underline on numbers title — terracotta*/
-.wk-cover__numbers-title::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='1' fill='none' opacity='0.30'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-:root[data-mode="dark"] .wk-cover__numbers-title::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
-}
-
-.wk-cover__numbers-list {
+.wk-cover-body__numbers-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
-.wk-cover__number-item {
+.wk-cover-body__number-item {
   display: flex;
   flex-direction: column;
-  position: relative;
-  padding: var(--space-2) 0;
-  cursor: default;
-  transition: background 200ms var(--ease-cinematic);
+  padding: var(--space-1) 0;
 }
 
-.wk-cover__number-item:hover {
-  background: var(--bg-hover);
-}
-
-/* Number value — data voice, terracotta accent */
-.wk-cover__number-value {
+.wk-cover-body__number-value {
   font-family: var(--font-data);
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   font-weight: 400;
   color: var(--wk-accent);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
-  transition: color 200ms var(--ease-cinematic);
 }
 
-/* Active count-up animation glow */
 .wk-number-counting {
   color: var(--wk-accent-bright);
   text-shadow: 0 0 12px var(--wk-accent-glow);
   transition: color 200ms var(--ease-cinematic), text-shadow 200ms var(--ease-cinematic);
 }
 
-.wk-cover__number-label {
+.wk-cover-body__number-label {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--fg-secondary);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 /* ===========================================================================
-   Interactive Timeline — expandable nodes, organic ink track
+   D. TIMELINE — horizontal compact
    =========================================================================== */
+.wk-timeline-section {
+  padding: var(--space-3) 0;
+}
+
 .wk-timeline {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: var(--space-5);
   padding-left: var(--space-5);
-  margin-left: var(--space-3);
+  margin-left: var(--space-2);
 }
 
-/* Organic ink track line — replaces straight border-left */
 .wk-timeline__ink-track {
   position: absolute;
   left: 0;
@@ -906,21 +567,20 @@
 
 .wk-timeline__heading {
   font-family: var(--font-meta);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--fg-tertiary);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
-/* Timeline node — interactive, expandable */
 .wk-timeline__node {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
   cursor: pointer;
   border: none;
   background: none;
@@ -938,39 +598,25 @@
   outline-offset: 2px;
 }
 
-/* Timeline dot — glows amber on hover/active */
 .wk-timeline__dot {
   position: absolute;
   left: calc(-1 * var(--space-5) + var(--space-2));
-  top: calc(var(--space-3) + 4px);
-  width: 9px;
-  height: 9px;
+  top: calc(var(--space-2) + 4px);
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--fg-tertiary);
   border: 2px solid var(--bg-primary);
   z-index: 2;
   transition:
     background 300ms var(--ease-cinematic),
-    box-shadow 300ms var(--ease-cinematic),
-    transform 300ms var(--spring-snappy);
+    box-shadow 300ms var(--ease-cinematic);
 }
 
 .wk-timeline__node:hover .wk-timeline__dot,
 .wk-timeline__node--expanded .wk-timeline__dot {
   background: var(--wk-accent);
-  box-shadow: 0 0 8px var(--wk-accent-glow), 0 0 16px var(--wk-accent-ghost);
-  transform: scale(1.3);
-}
-
-/* Connecting line pulse on hover */
-.wk-timeline__node:hover ~ .wk-timeline__ink-track,
-.wk-timeline__node--expanded ~ .wk-timeline__ink-track {
-  animation: wkTrackPulse 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes wkTrackPulse {
-  from { opacity: 0.7; }
-  to { opacity: 1; }
+  box-shadow: 0 0 8px var(--wk-accent-glow);
 }
 
 .wk-timeline__day {
@@ -980,7 +626,6 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--fg-tertiary);
-  margin-bottom: var(--space-1);
   transition: color 200ms var(--ease-cinematic);
 }
 
@@ -991,7 +636,7 @@
 
 .wk-timeline__note {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--fg-secondary);
   line-height: 1.5;
 }
@@ -1014,16 +659,15 @@
 
 .wk-timeline__detail-text {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--fg-secondary);
   line-height: 1.5;
-  padding-top: var(--space-2);
+  padding-top: var(--space-1);
   border-top: 1px dotted var(--wk-accent-ink);
-  margin-top: var(--space-2);
+  margin-top: var(--space-1);
   opacity: 0.85;
 }
 
-/* Expand indicator */
 .wk-timeline__expand-hint {
   font-family: var(--font-meta);
   font-size: var(--text-xxs);
@@ -1048,7 +692,7 @@
     flex-direction: row;
     gap: 0;
     padding-left: 0;
-    padding-top: var(--space-6);
+    padding-top: var(--space-5);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     margin-left: 0;
@@ -1064,19 +708,14 @@
   }
 
   .wk-timeline__node {
-    min-width: 11rem;
+    min-width: 9rem;
     flex: 1;
-    padding: var(--space-3) var(--space-3) 0;
+    padding: var(--space-2) var(--space-2) 0;
   }
 
   .wk-timeline__dot {
-    left: var(--space-3);
-    top: calc(-1 * var(--space-6) + var(--space-2));
-  }
-
-  .wk-timeline__heading {
-    margin-left: 0;
-    margin-bottom: var(--space-4);
+    left: var(--space-2);
+    top: calc(-1 * var(--space-5) + var(--space-2));
   }
 }
 
@@ -1091,16 +730,20 @@
 }
 
 /* ===========================================================================
-   C. THE OPINIONS — organic ink accents on badges
+   E. OPINIONS — 3-column grid, compact cards, always visible
    =========================================================================== */
+
+.wk-opinions-section {
+  padding: var(--space-4) 0;
+}
 
 .wk-opinions__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-5);
+  gap: var(--space-3);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 600px) {
   .wk-opinions__grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1112,84 +755,46 @@
   }
 }
 
-/* Secondary cover stories: 2-column grid after the full-width hero */
-.wk-cover__secondary {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-5);
-}
-
-@media (max-width: 767px) {
-  .wk-cover__secondary {
-    grid-template-columns: 1fr;
-  }
-}
-
 .wk-opinion {
   background: var(--bg-card);
   background-image: linear-gradient(var(--wk-accent-ghost), var(--wk-accent-ghost));
   border: none;
   border-left: 3px solid var(--lean-color, var(--wk-accent));
-  padding: var(--space-5);
+  padding: var(--space-3) var(--space-4);
   position: relative;
   transition:
-    box-shadow var(--scene-dolly-in, 320ms) var(--ease-cinematic),
-    transform var(--scene-dolly-in, 320ms) var(--spring-snappy);
+    box-shadow 320ms var(--ease-cinematic),
+    transform 320ms var(--spring-snappy);
 }
 
-/* Organic ink bottom border on opinion cards */
-.wk-opinion::after {
-  content: "";
-  position: absolute;
-  left: var(--space-3);
-  right: var(--space-3);
-  bottom: 0;
-  height: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='0.8' fill='none' opacity='0.20'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-:root[data-mode="dark"] .wk-opinion::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='0.8' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+.wk-opinion:hover {
+  box-shadow: inset 2px 0 0 var(--lean-color, var(--wk-accent)), var(--shadow-e2);
+  transform: translateY(-2px);
 }
 
 .wk-opinion__header {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
-/* Opinion lean badge — bold pill with terracotta background */
 .wk-opinion__badge {
   font-family: var(--font-meta);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: var(--space-1) var(--space-3);
+  padding: 2px var(--space-2);
   background: var(--lean-color, var(--wk-accent));
   border: none;
-  color: #FFFFFF;  /* always white for max contrast on any lean color bg */
+  color: #FFFFFF;
   white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Subtle organic ink texture overlay on badge */
-.wk-opinion__badge::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  pointer-events: none;
-  mix-blend-mode: multiply;
 }
 
 .wk-opinion__topic {
   font-family: var(--font-meta);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   font-weight: 400;
   color: var(--fg-tertiary);
   text-transform: uppercase;
@@ -1198,17 +803,17 @@
 
 .wk-opinion__headline {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 700;
   line-height: 1.25;
   color: var(--fg-primary);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
   letter-spacing: -0.005em;
 }
 
 .wk-opinion__text {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   line-height: 1.6;
   color: var(--fg-secondary);
   text-align: justify;
@@ -1216,7 +821,7 @@
 }
 
 .wk-opinion__text p {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 .wk-opinion__text p:last-child {
@@ -1224,14 +829,80 @@
 }
 
 /* ===========================================================================
-   F. BIAS REPORT — cinematic stat cards
+   F. WEEK IN BRIEF — compact 2-column list
    =========================================================================== */
+.wk-brief-section {
+  padding: var(--space-4) 0;
+}
+
+.wk-brief__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .wk-brief__list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 var(--space-5);
+  }
+}
+
+.wk-brief__item {
+  padding: var(--space-3) 0;
+  position: relative;
+}
+
+/* Organic ink bottom border on brief items */
+.wk-brief__item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23991B1B' stroke-width='0.8' fill='none' opacity='0.18'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+:root[data-mode="dark"] .wk-brief__item::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23EF5350' stroke-width='0.8' fill='none' opacity='0.14'/%3E%3C/svg%3E");
+}
+
+.wk-brief__item:last-child::after {
+  display: none;
+}
+
+.wk-brief__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-1);
+  letter-spacing: -0.005em;
+}
+
+.wk-brief__summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+}
+
+/* ===========================================================================
+   G. BIAS REPORT — 4-column stat cards + bars
+   =========================================================================== */
+.wk-bias-section {
+  padding: var(--space-4) 0;
+}
 
 .wk-bias__aggregate {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 @media (min-width: 768px) {
@@ -1242,19 +913,16 @@
 
 .wk-bias__stat {
   text-align: center;
-  padding: var(--space-4);
+  padding: var(--space-3);
   background: var(--bg-secondary);
   border: none;
   border-bottom: 2px dashed var(--wk-accent-ink);
-  transition:
-    box-shadow var(--scene-dolly-in, 320ms) var(--ease-cinematic),
-    transform var(--scene-dolly-in, 320ms) var(--spring-snappy);
 }
 
 .wk-bias__stat-value {
   display: block;
   font-family: var(--font-data);
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   font-weight: 400;
   color: var(--wk-accent);
   font-variant-numeric: tabular-nums;
@@ -1264,7 +932,7 @@
 .wk-bias__stat-label {
   display: block;
   font-family: var(--font-meta);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1275,37 +943,37 @@
 .wk-bias__stat-note {
   display: block;
   font-family: var(--font-structural);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   color: var(--fg-tertiary);
-  margin-top: var(--space-1);
+  margin-top: 2px;
 }
 
 .wk-bias__polarized {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .wk-bias__sub-heading {
   font-family: var(--font-meta);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--fg-tertiary);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 .wk-bias__bar-row {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  margin-bottom: var(--space-3);
+  gap: 2px;
+  margin-bottom: var(--space-2);
 }
 
 .wk-bias__bar-label {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--fg-secondary);
-  line-height: 1.4;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1313,7 +981,7 @@
 
 .wk-bias__bar-track {
   position: relative;
-  height: 6px;
+  height: 5px;
   background: var(--bg-secondary);
   border: none;
   overflow: hidden;
@@ -1327,16 +995,16 @@
 .wk-bias__bar-value {
   position: absolute;
   right: var(--space-2);
-  top: -1.2rem;
+  top: -1rem;
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   color: var(--fg-tertiary);
   font-variant-numeric: tabular-nums;
 }
 
 .wk-bias__text {
   font-family: var(--font-structural);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   line-height: 1.6;
   color: var(--fg-secondary);
   text-align: justify;
@@ -1344,75 +1012,24 @@
 }
 
 .wk-bias__text p {
-  margin-bottom: var(--space-3);
-}
-
-/* ===========================================================================
-   G. WEEK IN BRIEF
-   =========================================================================== */
-
-.wk-brief__list {
-  display: flex;
-  flex-direction: column;
-}
-
-.wk-brief__item {
-  padding: var(--space-4) 0;
-  position: relative;
-}
-
-/* Organic ink bottom border on brief items — terracotta*/
-.wk-brief__item::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='0.8' fill='none' opacity='0.18'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-:root[data-mode="dark"] .wk-brief__item::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='0.8' fill='none' opacity='0.14'/%3E%3C/svg%3E");
-}
-
-.wk-brief__item:last-child::after {
-  display: none;
-}
-
-.wk-brief__headline {
-  font-family: var(--font-editorial);
-  /* Match main page story-card headline scale for visual consistency */
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
-  font-weight: 700;
-  color: var(--fg-primary);
-  line-height: 1.15;
   margin-bottom: var(--space-2);
-  letter-spacing: -0.005em;
-}
-
-.wk-brief__summary {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--fg-secondary);
-  line-height: 1.6;
-  max-width: 65ch;
 }
 
 /* ===========================================================================
-   H. AUDIO PLAYER — cinematic console
+   H. AUDIO PLAYER — simple inline bar
    =========================================================================== */
+.wk-audio-section {
+  padding: var(--space-3) 0;
+}
 
 .wk-audio__player {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   background: var(--bg-secondary);
   border: none;
   border-top: 2px dashed var(--wk-accent-ink);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4);
 }
 
 .wk-audio__play {
@@ -1429,14 +1046,12 @@
   cursor: pointer;
   transition:
     background 200ms var(--ease-cinematic),
-    color 200ms var(--ease-cinematic),
-    box-shadow 200ms var(--ease-cinematic);
+    color 200ms var(--ease-cinematic);
 }
 
 .wk-audio__play:hover {
   background: var(--fg-primary);
   color: var(--bg-primary);
-  box-shadow: 0 0 12px var(--wk-accent-glow);
 }
 
 .wk-audio__play:focus-visible {
@@ -1449,11 +1064,17 @@
   color: var(--bg-primary);
 }
 
+.wk-audio__play--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .wk-audio__controls {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .wk-audio__scrubber {
@@ -1467,16 +1088,16 @@
 
 .wk-audio__scrubber::-webkit-slider-thumb {
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--fg-primary);
   cursor: pointer;
 }
 
 .wk-audio__scrubber::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--fg-primary);
   border: none;
@@ -1487,49 +1108,42 @@
   display: flex;
   justify-content: space-between;
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: var(--text-xxs);
   color: var(--fg-tertiary);
   font-variant-numeric: tabular-nums;
 }
 
-/* Audio error state */
-.wk-audio__play--disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
 .wk-audio__error {
   font-family: var(--font-meta);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--fg-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 /* ===========================================================================
-   I. ISSUE ARCHIVE
+   I. ISSUE ARCHIVE — horizontal compact row
    =========================================================================== */
 .wk-archive {
-  margin-bottom: var(--space-5);
+  padding: var(--space-3) 0;
 }
 
 .wk-archive__list {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .wk-archive__item {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-3);
   background: var(--bg-secondary);
   border: none;
   border-left: 2px dashed var(--wk-accent-ink);
   font-family: var(--font-meta);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--fg-secondary);
 }
 
@@ -1595,7 +1209,7 @@
 
 .wk-empty__text {
   font-family: var(--font-structural);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   color: var(--fg-secondary);
 }
 
@@ -1616,140 +1230,7 @@
 }
 
 /* ===========================================================================
-   RESPONSIVE — MOBILE ADJUSTMENTS
-   =========================================================================== */
-@media (max-width: 767px) {
-  .wk-main {
-    padding: 0 var(--space-4);
-    padding-bottom: var(--space-4);
-  }
-
-  .wk-masthead__brand {
-    gap: var(--space-2);
-  }
-
-  .wk-masthead__wordmark {
-    height: 24px;
-  }
-
-  .wk-masthead {
-    padding: var(--space-5) var(--space-4);
-  }
-
-  .wk-section--cream,
-  .wk-section--opinions {
-    margin-left: calc(-1 * var(--space-4));
-    margin-right: calc(-1 * var(--space-4));
-    padding: var(--space-3) var(--space-4);
-  }
-
-  .wk-cover__hero-banner {
-    margin-left: calc(-1 * var(--space-4));
-    margin-right: calc(-1 * var(--space-4));
-    padding: var(--space-5) var(--space-4);
-  }
-
-  .wk-cover__headline {
-    font-size: clamp(1.25rem, 5vw, 1.75rem);
-  }
-
-  .wk-cover__text {
-    font-size: var(--text-base);
-  }
-
-
-  /* Mobile: numbers sidebar goes above text */
-  .wk-cover__body-wrap {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-
-  /* Vertical timeline on mobile — align padding with .wk-main's --space-4 */
-  .wk-timeline {
-    padding-left: var(--space-4);
-  }
-
-  .wk-timeline__heading {
-    margin-bottom: var(--space-2);
-  }
-
-  /* Dot position must align with mobile timeline padding */
-  .wk-timeline__dot {
-    left: calc(-1 * var(--space-4) + var(--space-2));
-  }
-
-  /* Disable hover transforms on touch — cards "stick" in lifted state */
-  .wk-opinion:hover,
-  .wk-bias__stat:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .wk-opinion:active {
-    transform: scale(0.975);
-    transition: transform 60ms var(--ease-out);
-    box-shadow: none;
-  }
-
-  .wk-bias__stat:active {
-    transform: scale(0.975);
-    transition: transform 60ms var(--ease-out);
-  }
-
-  .wk-bias__aggregate {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* No parallax on mobile (performance) */
-  .wk-cover__headline {
-    will-change: auto;
-  }
-
-  /* Tighter flourish spacing on mobile — preserve content density */
-  .wk-flourish {
-    margin: var(--space-3) 0;
-  }
-
-  /* InkCorner: pull inward on mobile to prevent overflow.
-     At 375px, --space-3 is ~8px. Corner SVGs are 40px wide, so
-     negative offset would extend 32px into padding zone. Zero them. */
-  .wk-cover__hero-corner--tl {
-    left: 0;
-  }
-
-  .wk-cover__hero-corner--br {
-    right: 0;
-  }
-}
-
-/* ===========================================================================
-   Pull Quote — terracotta magazine style, organic ink borders
-   =========================================================================== */
-.wk-pullquote {
-  position: relative;
-  display: flex;
-  gap: var(--space-4);
-  padding: var(--space-5) var(--space-5);
-  margin: var(--space-4) 0;
-  background: var(--wk-cream);
-  border: none;
-  border-left: 3px dashed var(--wk-accent-ink);
-}
-
-:root[data-mode="dark"] .wk-pullquote {
-  background: var(--wk-cream-deep);
-}
-
-.wk-pullquote__text {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.125rem, 2vw, 1.375rem);
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--fg-primary);
-}
-
-/* ===========================================================================
-   Section Divider Flourish — terracotta ink ornament between sections
+   SECTION DIVIDER FLOURISH
    =========================================================================== */
 .wk-flourish {
   display: flex;
@@ -1760,106 +1241,91 @@
 }
 
 .wk-flourish__ornament {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   color: var(--wk-accent);
   opacity: 0.5;
 }
 
 .wk-flourish__line {
   flex: 1;
-  max-width: 80px;
+  max-width: 60px;
   height: 2px;
   color: var(--wk-accent);
   opacity: 0.25;
 }
 
 /* ===========================================================================
-   Alternating Section Backgrounds — cream / white rhythm
+   RESPONSIVE — MOBILE
    =========================================================================== */
-.wk-section--cream {
-  background: var(--wk-cream);
-  margin-left: calc(-1 * var(--space-5));
-  margin-right: calc(-1 * var(--space-5));
-  padding: var(--space-4) var(--space-5);
-  position: relative;
-}
+@media (max-width: 767px) {
+  .wk-main {
+    padding: 0 var(--space-3);
+    padding-bottom: var(--space-4);
+  }
 
-/* Organic ink top/bottom borders on cream section */
-.wk-section--cream::before,
-.wk-section--cream::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='1.2' fill='none' opacity='0.25'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
+  .wk-masthead {
+    padding: var(--space-3) var(--space-3);
+  }
 
-.wk-section--cream::before { top: 0; }
-.wk-section--cream::after { bottom: 0; }
+  .wk-masthead__brand {
+    gap: var(--space-2);
+  }
 
-:root[data-mode="dark"] .wk-section--cream::before,
-:root[data-mode="dark"] .wk-section--cream::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='1.2' fill='none' opacity='0.20'/%3E%3C/svg%3E");
-}
+  .wk-masthead__wordmark {
+    height: 22px;
+  }
 
-@media (min-width: 768px) {
-  .wk-section--cream {
-    margin-left: calc(-1 * var(--space-7));
-    margin-right: calc(-1 * var(--space-7));
-    padding: var(--space-5) var(--space-7);
+  .wk-cover-hero {
+    margin-left: calc(-1 * var(--space-3));
+    margin-right: calc(-1 * var(--space-3));
+  }
+
+  .wk-cover-hero__visual {
+    min-height: 160px;
+    padding: var(--space-4);
+  }
+
+  .wk-cover-hero__headline {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+
+  /* Mobile: numbers sidebar goes above text */
+  .wk-cover-body {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-3);
+  }
+
+  /* Vertical timeline on mobile */
+  .wk-timeline {
+    padding-left: var(--space-4);
+  }
+
+  .wk-timeline__dot {
+    left: calc(-1 * var(--space-4) + var(--space-2));
+  }
+
+  /* Disable hover transforms on touch */
+  .wk-opinion:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .wk-opinion:active {
+    transform: scale(0.975);
+    transition: transform 60ms var(--ease-out);
+    box-shadow: none;
+  }
+
+  /* Tighter flourish spacing on mobile */
+  .wk-flourish {
+    margin: var(--space-2) 0;
   }
 }
-
-:root[data-mode="dark"] .wk-section--cream {
-  background: var(--wk-cream-deep);
-}
-
-/* Suppress collapsible section ink border inside cream section — already has its own borders */
-.wk-section--cream .wk-collapsible-section::after {
-  display: none;
-}
-
-/* Opinions section gets terracotta ghost tint */
-.wk-section--opinions {
-  background: var(--wk-accent-ghost);
-  margin-left: calc(-1 * var(--space-5));
-  margin-right: calc(-1 * var(--space-5));
-  padding: var(--space-4) var(--space-5);
-  position: relative;
-}
-
-/* Organic ink top border on opinions section */
-.wk-section--opinions::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239A4420' stroke-width='1.2' fill='none' opacity='0.30'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-:root[data-mode="dark"] .wk-section--opinions::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23E08050' stroke-width='1.2' fill='none' opacity='0.25'/%3E%3C/svg%3E");
-}
-
-@media (min-width: 768px) {
-  .wk-section--opinions {
-    margin-left: calc(-1 * var(--space-7));
-    margin-right: calc(-1 * var(--space-7));
-    padding: var(--space-5) var(--space-7);
-  }
-}
-
 
 /* ===========================================================================
-   Accessibility — ensure no motion artifacts
+   ACCESSIBILITY
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .wk-page::before,
@@ -1879,39 +1345,22 @@
     transform: none;
   }
 
-  .wk-cover__headline {
-    will-change: auto;
-    transition: none;
-  }
-
   .wk-timeline__node:hover .wk-timeline__dot,
   .wk-timeline__node--expanded .wk-timeline__dot {
     transform: none;
     box-shadow: none;
   }
 
-  @keyframes wkTrackPulse {
-    from, to { opacity: 1; }
-  }
-
-  /* Disable breathing + ambient animations on mobile for GPU budget */
   .wk-masthead__icon,
   .wk-flourish,
-  .wk-ink-quote,
   .wk-ink-border {
-    animation: none !important;
+    animation: none;
   }
 }
 
-
-/* ==========================================================================
-   CINEMATIC LIFE LAYER
-   "The page should feel alive and breathing"
-   Scroll-triggered section reveals, generous hover physics, ambient motion.
-   This goes BEYOND the main news feed — Weekly is the one page that breathes.
-   ========================================================================== */
-
-/* ── Ambient Breathing — subtle scale pulse on decorative elements ── */
+/* ===========================================================================
+   CINEMATIC LIFE LAYER — subtle ambient motion
+   =========================================================================== */
 
 @keyframes wkBreathe {
   0%, 100% { transform: scale(1); opacity: 0.9; }
@@ -1923,87 +1372,26 @@
   50%      { opacity: 0.55; }
 }
 
-@keyframes wkGlowPulse {
-  0%, 100% { box-shadow: 0 0 0 transparent; }
-  50%      { box-shadow: 0 0 20px var(--wk-accent-glow); }
-}
-
-@keyframes wkFloatDrift {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
-}
-
-/* Masthead icon breathes — slow, meditative, 8s cycle */
 .wk-masthead__icon {
   animation: wkBreathe 8s var(--ease-cinematic) infinite;
 }
 
-/* Ink flourish ornaments shimmer subtly */
 .wk-flourish svg {
   animation: wkInkShimmer 6s var(--ease-cinematic) infinite;
 }
 
-/* Organic ink quote marks drift — gentle float like paper in still air */
-.wk-ink-quote {
-  animation: wkFloatDrift 7s var(--ease-cinematic) infinite;
-}
-
-/* Numbers sidebar border pulses — the data is live */
 .wk-ink-border {
   animation: wkInkShimmer 5s var(--ease-cinematic) infinite;
 }
 
-/* ── Enhanced Scroll Reveals — sections arrive with personality ── */
-
-/* Cover hero: dolly-in from further back */
-.wk-cover__hero {
-  opacity: 0;
-  transform: scale(0.94) translateY(24px);
-  transition:
-    opacity 900ms var(--ease-cinematic),
-    transform 900ms var(--ease-cinematic);
-}
-
-.wk-reveal--visible .wk-cover__hero,
-.wk-cover__hero.wk-reveal--visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-/* Secondary cover stories: staggered slide from left/right with opacity */
-.wk-cover__secondary > * {
-  opacity: 0;
-  transition:
-    opacity 600ms var(--ease-cinematic),
-    transform 600ms var(--ease-cinematic);
-}
-
-.wk-cover__secondary > :nth-child(odd) {
-  transform: translateX(-20px) translateY(12px);
-}
-.wk-cover__secondary > :nth-child(even) {
-  transform: translateX(20px) translateY(12px);
-}
-
-.wk-reveal--visible .wk-cover__secondary > * {
-  opacity: 1;
-  transform: translateX(0) translateY(0);
-}
-
-/* Stagger: even items delayed */
-.wk-cover__secondary > :nth-child(even) {
-  transition-delay: 150ms;
-}
-
-/* Opinion cards: fan-out with 120ms cascade */
+/* Staggered scroll reveals */
 .wk-opinions__grid > .wk-reveal-child:nth-child(1) { transition-delay: 0ms; }
-.wk-opinions__grid > .wk-reveal-child:nth-child(2) { transition-delay: 120ms; }
-.wk-opinions__grid > .wk-reveal-child:nth-child(3) { transition-delay: 240ms; }
-.wk-opinions__grid > .wk-reveal-child:nth-child(4) { transition-delay: 360ms; }
-.wk-opinions__grid > .wk-reveal-child:nth-child(5) { transition-delay: 480ms; }
-.wk-opinions__grid > .wk-reveal-child:nth-child(6) { transition-delay: 600ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(2) { transition-delay: 100ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(3) { transition-delay: 200ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(4) { transition-delay: 300ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(5) { transition-delay: 400ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(6) { transition-delay: 500ms; }
 
-/* Timeline nodes: staggered cascade via inline --node-delay variable */
 .wk-timeline__node {
   opacity: 0;
   transform: translateY(16px);
@@ -2019,46 +1407,46 @@
   transform: translateY(0);
 }
 
-/* Numbers: spring scale-up with overshoot */
-.wk-cover__number-item {
+/* Numbers: spring scale-up */
+.wk-cover-body__number-item {
   opacity: 0;
   transform: scale(0.85);
   transition:
     opacity 500ms var(--ease-cinematic),
-    transform 500ms var(--spring-bouncy, var(--ease-dramatic)),
-    background 200ms var(--ease-cinematic);
+    transform 500ms var(--spring-bouncy, var(--ease-dramatic));
 }
 
-.wk-reveal--visible .wk-cover__number-item:nth-child(1) { transition-delay: 0ms; }
-.wk-reveal--visible .wk-cover__number-item:nth-child(2) { transition-delay: 150ms; }
-.wk-reveal--visible .wk-cover__number-item:nth-child(3) { transition-delay: 300ms; }
-.wk-reveal--visible .wk-cover__number-item:nth-child(4) { transition-delay: 450ms; }
-.wk-reveal--visible .wk-cover__number-item:nth-child(5) { transition-delay: 600ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(1) { transition-delay: 0ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(2) { transition-delay: 100ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(3) { transition-delay: 200ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(4) { transition-delay: 300ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(5) { transition-delay: 400ms; }
 
-.wk-reveal--visible .wk-cover__number-item {
+.wk-reveal--visible .wk-cover-body__number-item {
   opacity: 1;
   transform: scale(1);
 }
 
-/* Bias stat cards: fly-in from bottom with spring */
+/* Bias stat cards: fly-in */
 .wk-bias__stat {
   opacity: 0;
-  transform: translateY(20px) scale(0.9);
+  transform: translateY(16px);
   transition:
     opacity 500ms var(--ease-cinematic),
-    transform 600ms var(--spring-bouncy, var(--ease-dramatic));
+    transform 500ms var(--spring-bouncy, var(--ease-dramatic));
 }
+
 .wk-reveal--visible .wk-bias__stat:nth-child(1) { transition-delay: 0ms; }
-.wk-reveal--visible .wk-bias__stat:nth-child(2) { transition-delay: 100ms; }
-.wk-reveal--visible .wk-bias__stat:nth-child(3) { transition-delay: 200ms; }
-.wk-reveal--visible .wk-bias__stat:nth-child(4) { transition-delay: 300ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(2) { transition-delay: 80ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(3) { transition-delay: 160ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(4) { transition-delay: 240ms; }
 
 .wk-reveal--visible .wk-bias__stat {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
-/* InkFlourish: bloom from center with spring */
+/* Flourish: bloom from center */
 .wk-flourish {
   opacity: 0;
   transform: scaleX(0.3);
@@ -2071,101 +1459,4 @@
 .wk-flourish.wk-reveal--visible {
   opacity: 1;
   transform: scaleX(1);
-}
-
-/* ── Generous Hover Physics — everything responds to touch ── */
-
-/* Opinion cards: full cinematic dolly-in */
-.wk-opinion:hover {
-  box-shadow: inset 2px 0 0 var(--lean-color, var(--wk-accent)), var(--shadow-cinematic-dramatic);
-  transform: translateY(-4px) scale(1.01);
-}
-
-/* Opinion badge: terracotta glow on card hover */
-.wk-opinion:hover .wk-opinion__badge {
-  box-shadow: 0 0 12px var(--wk-accent-glow);
-  transform: scale(1.05);
-  transition: all 200ms var(--spring-snappy, var(--ease-cinematic));
-}
-
-/* Number items: warm glow + slide */
-.wk-cover__number-item:hover {
-  background: var(--wk-accent-ghost);
-  transform: translateX(4px);
-  transition: all 250ms var(--spring-snappy, var(--ease-cinematic));
-}
-
-.wk-cover__number-item:hover .wk-cover__number-value {
-  color: var(--wk-accent-bright);
-  text-shadow: 0 0 20px var(--wk-accent-glow);
-}
-
-/* Timeline dot: spring-loaded scale with triple glow ring */
-.wk-timeline__node:hover .wk-timeline__dot {
-  transform: scale(1.6);
-  box-shadow:
-    0 0 8px var(--wk-accent-glow),
-    0 0 20px var(--wk-accent-ghost),
-    0 0 40px color-mix(in srgb, var(--wk-accent) 8%, transparent);
-}
-
-/* Timeline node: warm bg on hover */
-.wk-timeline__node:hover {
-  background: var(--wk-accent-ghost);
-}
-
-/* Bias stat cards: tilt + glow */
-.wk-bias__stat:hover {
-  transform: translateY(-3px) rotate(-0.5deg);
-  box-shadow: var(--shadow-cinematic-ambient), 0 0 16px var(--wk-accent-glow);
-}
-
-/* Bias bar: brighten on hover */
-.wk-bias__bar-row:hover .wk-bias__bar-fill {
-  filter: brightness(1.15);
-  box-shadow: 0 0 8px var(--wk-accent-glow);
-}
-
-/* Section toggle: warm terracotta on hover */
-.wk-section-toggle:hover .wk-section-label--toggle {
-  color: var(--wk-accent);
-}
-
-.wk-section-toggle:hover .wk-section-toggle__chevron {
-  color: var(--wk-accent);
-  transform: scale(1.2);
-}
-
-/* Pullquote: glow on hover */
-.wk-pullquote:hover {
-  box-shadow: 0 0 24px var(--wk-accent-glow);
-  border-left-color: var(--wk-accent-bright);
-  border-right-color: var(--wk-accent-bright);
-}
-
-/* Cover headline: tracking breathes on hover */
-.wk-cover__headline:hover {
-  letter-spacing: -0.01em;
-  transition: letter-spacing 400ms var(--ease-cinematic);
-}
-
-/* ── prefers-reduced-motion: disable all cinematic life ── */
-@media (prefers-reduced-motion: reduce) {
-  .wk-masthead__icon,
-  .wk-flourish svg,
-  .wk-ink-quote,
-  .wk-ink-border {
-    animation: none;
-  }
-
-  .wk-cover__hero,
-  .wk-cover__secondary > *,
-  .wk-timeline__node,
-  .wk-cover__number-item,
-  .wk-bias__stat,
-  .wk-flourish {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
 }
