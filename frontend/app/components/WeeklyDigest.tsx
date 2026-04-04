@@ -2,22 +2,17 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type {
   Edition,
-  LeanChip,
-  Category,
   WeeklyDigestData,
   WeeklyCoverStory,
   WeeklyRecapStory,
   WeeklyOpinion,
-  WeeklyBiasReportData,
 } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
-import { leanLabel as getLeanLabel, getLeanColor } from "../lib/biasColors";
+import { getLeanColor } from "../lib/biasColors";
 import Footer from "./Footer";
-import MobileBottomNav from "./MobileBottomNav";
 import ThemeToggle from "./ThemeToggle";
 import LogoFull from "./LogoFull";
 
@@ -88,25 +83,6 @@ function InkHorizontalTrack() {
   );
 }
 
-function InkLeftBorder() {
-  return (
-    <svg
-      className="wk-ink-border"
-      viewBox="0 0 4 200"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M2 0 C0.5 10, 3.5 20, 2 40 S0.5 80, 2 100 S3.5 140, 2 160 S0.5 190, 2 200"
-        stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        opacity="0.4"
-      />
-    </svg>
-  );
-}
-
 function InkFlourish() {
   return (
     <div className="wk-flourish" aria-hidden="true">
@@ -153,7 +129,7 @@ function InkFlourish() {
 function RevealFlourish() {
   const [ref, visible] = useScrollReveal(0.3);
   return (
-    <div ref={ref as React.RefObject<HTMLDivElement>} className={`wk-reveal${visible ? " wk-reveal--visible" : ""}`}>
+    <div ref={ref as React.RefObject<HTMLDivElement>} className={visible ? "wk-reveal--visible" : ""}>
       <InkFlourish />
     </div>
   );
@@ -208,38 +184,6 @@ function leanToScore(lean: string): number {
   return map[(lean || "center").toLowerCase()] ?? 50;
 }
 
-/* ── Data Parsing ──────────────────────────────────────────────────────────── */
-
-function parseCoverNumbers(
-  raw: unknown
-): { value: string; label: string }[] {
-  if (!raw) return [];
-
-  let arr: unknown[] = [];
-
-  if (typeof raw === "string") {
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) arr = parsed;
-      else return [];
-    } catch {
-      return [];
-    }
-  } else if (Array.isArray(raw)) {
-    arr = raw;
-  } else {
-    return [];
-  }
-
-  return arr
-    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
-    .map((item) => ({
-      value: String(item.value ?? item.stat ?? ""),
-      label: String(item.label ?? item.context ?? ""),
-    }))
-    .filter((n) => n.value !== "" && n.label !== "");
-}
-
 /* ── Scroll-Reveal Hook ────────────────────────────────────────────────────── */
 
 function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>, boolean] {
@@ -271,82 +215,6 @@ function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>
   }, [threshold]);
 
   return [ref, visible];
-}
-
-/* ── Count-Up Animation Hook ───────────────────────────────────────────────── */
-
-function useCountUp(
-  targetStr: string,
-  trigger: boolean,
-  duration = 1200
-): { displayValue: string; isCounting: boolean } {
-  const [displayValue, setDisplayValue] = useState(targetStr);
-  const [isCounting, setIsCounting] = useState(false);
-
-  useEffect(() => {
-    if (!trigger) return;
-
-    const match = targetStr.match(/^([^0-9]*)([\d,.]+)(.*)$/);
-    if (!match) {
-      setDisplayValue(targetStr);
-      return;
-    }
-
-    const prefix = match[1];
-    const numStr = match[2];
-    const suffix = match[3];
-    const targetNum = parseFloat(numStr.replace(/,/g, ""));
-    const hasCommas = numStr.includes(",");
-    const hasDecimal = numStr.includes(".");
-    const decimalPlaces = hasDecimal ? numStr.split(".")[1].length : 0;
-
-    if (isNaN(targetNum) || targetNum === 0) {
-      setDisplayValue(targetStr);
-      return;
-    }
-
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) {
-      setDisplayValue(targetStr);
-      return;
-    }
-
-    setIsCounting(true);
-    const startTime = performance.now();
-
-    function animate(now: number) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = targetNum * eased;
-
-      let formatted: string;
-      if (hasDecimal) {
-        formatted = current.toFixed(decimalPlaces);
-      } else {
-        formatted = Math.round(current).toString();
-      }
-
-      if (hasCommas) {
-        const parts = formatted.split(".");
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        formatted = parts.join(".");
-      }
-
-      setDisplayValue(`${prefix}${formatted}${suffix}`);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setDisplayValue(targetStr);
-        setIsCounting(false);
-      }
-    }
-
-    requestAnimationFrame(animate);
-  }, [trigger, targetStr, duration]);
-
-  return { displayValue, isCounting };
 }
 
 /* ── Section Components ──────────────────────────────────────────────────── */
@@ -426,8 +294,6 @@ function CoverHero({
   headline,
 }: {
   headline: string;
-  issueNumber: number;
-  sourceCount: number | null;
 }) {
   return (
     <div className="wk-cover-hero wk-cold-open--hero">
@@ -448,56 +314,14 @@ function CoverHero({
   );
 }
 
-/* --- C. Cover Body (text + numbers sidebar) --- */
-
-function NumberItem({
-  value,
-  label,
-  visible,
-  delay,
-}: {
-  value: string;
-  label: string;
-  visible: boolean;
-  delay: number;
-}) {
-  const [triggerCount, setTriggerCount] = useState(false);
-  const { displayValue, isCounting } = useCountUp(value, triggerCount, 1200 + delay);
-
-  useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(() => setTriggerCount(true), delay);
-      return () => clearTimeout(timer);
-    }
-  }, [visible, delay]);
-
-  return (
-    <div className="wk-cover-body__number-item">
-      <dt className={`wk-cover-body__number-value${isCounting ? " wk-number-counting" : ""}`}>
-        {displayValue}
-      </dt>
-      <dd className="wk-cover-body__number-label">{label}</dd>
-    </div>
-  );
-}
+/* --- C. Cover Body --- */
 
 function CoverBody({
   stories,
-  topLevelNumbers,
 }: {
   stories: WeeklyCoverStory[];
-  topLevelNumbers: unknown;
 }) {
   const [sectionRef, sectionVisible] = useScrollReveal(0.1);
-
-  // Combine all cover story text
-  const allText = stories
-    .map((s) => s.text || "")
-    .filter(Boolean);
-
-  // Numbers: try first story's numbers, fall back to top-level
-  const firstNums = parseCoverNumbers(stories[0]?.numbers);
-  const numbers = firstNums.length > 0 ? firstNums : parseCoverNumbers(topLevelNumbers);
 
   // Timeline from first story
   const timeline = (stories[0]?.timeline ?? []) as Record<string, string>[];
@@ -521,18 +345,8 @@ function CoverBody({
         </div>
       ))}
 
-      {/* Timeline — horizontal, full canvas width, below cover stories */}
-      {timeline.length > 0 && (
-        <div className="wk-timeline-section" aria-labelledby="wk-timeline-heading">
-          <h3 className="wk-section-label" id="wk-timeline-heading">Timeline</h3>
-          <div className="wk-timeline" role="list" aria-label="Key events">
-            <InkHorizontalTrack />
-            {timeline.map((entry, k) => (
-              <TimelineNode key={k} entry={entry} index={k} />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Timeline — uses TimelineSection which handles desktop/mobile detection */}
+      <TimelineSection timeline={timeline} />
     </section>
   );
 }
@@ -699,97 +513,7 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
   );
 }
 
-/* --- G. Bias Report --- */
-
-function BiasStats({
-  text,
-  data,
-}: {
-  text: string | null;
-  data: WeeklyBiasReportData | null;
-}) {
-  const [ref, visible] = useScrollReveal(0.1);
-  if (!text && !data) return null;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rawData = data as Record<string, any> | null;
-  const agg = rawData?.aggregate ?? rawData?.stats ?? null;
-  const rawPolarized = rawData?.most_polarized ?? [];
-  const polarized = rawPolarized.map(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (item: any) => ({
-      headline: item.headline ?? item.title ?? "",
-      lean_spread: item.lean_spread ?? item.divergence ?? 0,
-      avg_lean: item.avg_lean ?? 50,
-    })
-  );
-
-  return (
-    <section
-      ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-bias-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby="wk-bias-heading"
-    >
-      <h2 className="wk-section-label" id="wk-bias-heading" data-prefix="void --">Bias Report</h2>
-
-      {agg && (
-        <div className="wk-bias__aggregate">
-          <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{agg.total_articles ?? agg.total_scored ?? 0}</span>
-            <span className="wk-bias__stat-label">Articles</span>
-          </div>
-          <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{(agg.avg_lean ?? 0).toFixed(1)}</span>
-            <span className="wk-bias__stat-label">Avg. Lean</span>
-            <span className="wk-bias__stat-note">{getLeanLabel(agg.avg_lean ?? 50)}</span>
-          </div>
-          <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{(agg.avg_rigor ?? 0).toFixed(1)}</span>
-            <span className="wk-bias__stat-label">Avg. Rigor</span>
-          </div>
-          <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{(agg.avg_sensationalism ?? 0).toFixed(1)}</span>
-            <span className="wk-bias__stat-label">Sensationalism</span>
-          </div>
-        </div>
-      )}
-
-      {polarized.length > 0 && (
-        <div className="wk-bias__polarized">
-          <h3 className="wk-bias__sub-heading">Most Polarized Stories</h3>
-          {polarized.map((story: { headline: string; lean_spread: number; avg_lean: number }, i: number) => (
-            <div key={i} className="wk-bias__bar-row">
-              <span className="wk-bias__bar-label">{story.headline}</span>
-              <div className="wk-bias__bar-track">
-                <div
-                  className="wk-bias__bar-fill"
-                  style={{
-                    width: `${Math.min(100, story.lean_spread)}%`,
-                    backgroundColor: getLeanColor(story.avg_lean),
-                  }}
-                  aria-label={`Lean spread: ${story.lean_spread.toFixed(0)}`}
-                />
-                <span className="wk-bias__bar-value">
-                  {story.lean_spread.toFixed(0)}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {text && (
-        <div className="wk-bias__text">
-          {(text || "").split("\n\n").filter(Boolean).map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
-
-/* --- H. Audio Player --- */
+/* --- G. Audio Player --- */
 
 function AudioBar({
   audioUrl,
@@ -946,38 +670,11 @@ interface WeeklyDigestProps {
 }
 
 export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
-  const router = useRouter();
-  const [activeEdition, setActiveEdition] = useState<Edition>(edition);
   const [digest, setDigest] = useState<WeeklyDigestData | null>(null);
   const [archive, setArchive] = useState<ArchiveEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mainRef = useRef<HTMLElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Unused by weekly but required by MobileBottomNav interface
-  const [activeLean, setActiveLean] = useState<LeanChip>("All");
-  const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
-
-  // Sync edition state with prop (route changes re-mount with new prop)
-  useEffect(() => {
-    setActiveEdition(edition);
-  }, [edition]);
-
-  // Detect mobile for bottom nav
-  useEffect(() => {
-    const mql = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
-
-  // Handle edition change from MobileBottomNav
-  const handleEditionChange = useCallback((ed: Edition) => {
-    setActiveEdition(ed);
-    router.push(ed === "world" ? "/weekly" : `/weekly/${ed}`);
-  }, [router]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1051,15 +748,12 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             {/* B. Cover Hero */}
             <CoverHero
               headline={digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")}
-              issueNumber={digest.issue_number}
-              sourceCount={digest.total_articles}
             />
 
-            {/* C. Cover Body + Timeline sidebar */}
+            {/* C. Cover Body + Timeline */}
             {digest.cover_text && digest.cover_text.length > 0 && (
               <CoverBody
                 stories={digest.cover_text}
-                topLevelNumbers={digest.cover_numbers}
               />
             )}
 
@@ -1100,16 +794,6 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
       </main>
 
       <Footer />
-
-      {/* Mobile bottom nav — filter buttons (editions moved to NavBar tabs) */}
-      {isMobile && (
-        <MobileBottomNav
-          activeLean={activeLean}
-          onLeanChange={setActiveLean}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
-      )}
     </div>
   );
 }

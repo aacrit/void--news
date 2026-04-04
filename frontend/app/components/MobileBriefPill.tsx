@@ -61,7 +61,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
       <div className="mbp__header">
         <ScaleIcon size={16} animation="analyzing" />
         <span className="mbp__cmd">void --tl;dr</span>
-        <span className="mbp__pill-label" style={{ opacity: 0.4 }}>Loading&hellip;</span>
+        <span className="mbp__pill-label mbp__pill-label--loading">Loading&hellip;</span>
       </div>
     </div>
   );

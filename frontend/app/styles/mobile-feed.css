@@ -350,6 +350,10 @@
   min-width: 0;
 }
 
+.mbp__pill-label--loading {
+  opacity: 0.4;
+}
+
 .mbp__pill-chevron {
   font-size: var(--text-xs);
   color: var(--fg-muted);
@@ -397,6 +401,15 @@
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-muted);
+}
+
+/* Meta voice label — matches desktop .skb__section-label-human */
+.mbp__label-human {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-secondary);
+  letter-spacing: 0.02em;
 }
 
 /* ── Type voice: headlines ── */
@@ -715,9 +728,10 @@
     position: relative;
   }
 
-  /* Ensure pill content sits above grain */
+  /* Ensure pill content sits above grain — both pill and skybox variants */
   .mbp__pill,
-  .mbp__content-inner {
+  .mbp__content-inner,
+  .mbp--skybox > * {
     position: relative;
     z-index: 1;
   }
