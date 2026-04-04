@@ -3,14 +3,28 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { CaretRight } from "@phosphor-icons/react";
 import type { DailyBriefState } from "./DailyBrief";
+import type { EpisodeMeta } from "./AudioProvider";
 import LogoIcon from "./LogoIcon";
-import { hapticLight } from "../lib/haptics";
+import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 
-type ExpandedSection = null | "tldr" | "opinion";
+type ExpandedSection = null | "tldr" | "opinion" | "episodes";
+
+function formatEpTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+}
+
+function formatEpDay(dateStr: string): string {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
 
 export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
-  const { brief } = state;
+  const { brief, previousEpisodes, loadEpisode, isPlaying } = state;
 
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [announcement, setAnnouncement] = useState("");
@@ -39,13 +53,13 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   // These useCallback hooks were previously below the `if (!brief) return`
   // guard, causing React error #310: "Rendered more hooks than during the
   // previous render" when brief transitioned from null to loaded.
-  const toggleSection = useCallback((section: "tldr" | "opinion") => {
+  const toggleSection = useCallback((section: "tldr" | "opinion" | "episodes") => {
     hapticLight();
     setExpandedSection(prev => {
       const next = prev === section ? null : section;
       if (next) {
         hasExpandedOnce.current = true;
-        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : "editorial opinion"}.`);
+        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : next === "opinion" ? "editorial opinion" : "previous episodes"}.`);
       } else {
         setAnnouncement("Daily brief collapsed.");
       }
@@ -159,6 +173,21 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 )}
               </div>
 
+              {/* Compact previous episodes link */}
+              {previousEpisodes.length > 1 && (
+                <div
+                  className="skb__prev-link"
+                  onClick={() => toggleSection("episodes")}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSection("episodes"); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="View previous episodes"
+                >
+                  <span className="skb__prev-link-text">Previous episodes ({previousEpisodes.length - 1})</span>
+                  <CaretRight size={10} weight="bold" />
+                </div>
+              )}
+
           </div>
         )}
 
@@ -209,6 +238,51 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
                 <div className="skb__section-body skb__section-body--opinion">
                   {String(brief.opinion_text || "").split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
+                </div>
+              </div>
+            )}
+
+            {expandedSection === "episodes" && (
+              <div className="skb__section skb__section--episodes">
+                <div className="skb__section-label">
+                  <LogoIcon size={16} animation="idle" />
+                  <span className="skb__section-label-human">Previous Episodes</span>
+                  <span className="skb__section-label-cmd">void --onair</span>
+                  <button
+                    ref={collapseRef}
+                    className="skb__collapse-inline"
+                    onClick={collapseAll}
+                    type="button"
+                    aria-label="Collapse episodes"
+                  >
+                    <CaretRight size={14} weight="bold" />
+                  </button>
+                </div>
+                <div className="skb__episodes-list">
+                  {previousEpisodes.filter(ep => ep.audio_url).map((ep) => {
+                    const isCurrent = brief.audio_url === ep.audio_url;
+                    const epDuration = ep.audio_duration_seconds ? Math.ceil(ep.audio_duration_seconds / 60) : null;
+                    return (
+                      <button
+                        key={ep.id}
+                        className={`skb__ep-row${isCurrent ? " skb__ep-row--current" : ""}`}
+                        onClick={() => { if (!isCurrent) { hapticConfirm(); loadEpisode(ep); collapseAll(); } }}
+                        type="button"
+                        disabled={isCurrent}
+                      >
+                        <span className="skb__ep-day">{formatEpDay(ep.created_at)}</span>
+                        <span className="skb__ep-time">{formatEpTime(ep.created_at)}</span>
+                        <span className="skb__ep-hl">{ep.tldr_headline || "Daily Brief"}</span>
+                        {ep.opinion_lean && (
+                          <span className={`skb__ep-lean skb__ep-lean--${ep.opinion_lean}`}>
+                            {ep.opinion_lean[0].toUpperCase()}
+                          </span>
+                        )}
+                        {epDuration && <span className="skb__ep-dur">{epDuration}m</span>}
+                        {isCurrent && <span className="skb__ep-badge">Now</span>}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
