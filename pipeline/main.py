@@ -2387,7 +2387,6 @@ def main():
         try:
             from clustering.story_cluster import _title_words
             # Fetch titles of all old clusters still in DB (limit to recent 48h)
-            from datetime import timedelta
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
             old_res = supabase.table("story_clusters").select(
                 "id,title,source_count"
