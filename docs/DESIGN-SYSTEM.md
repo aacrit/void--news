@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.0
-**Last updated:** 2026-04-03 (rev 14)
+**Last updated:** 2026-04-03 (rev 15)
 
 ---
 
@@ -114,7 +114,9 @@ Dark walnut warmth. Retains newspaper character — not terminal black, not pure
 
 Colors are consistent across light/dark modes for instant recognition. Designed for accessibility (min 4.5:1 contrast on both backgrounds).
 
-#### Political Lean Spectrum (7-point)
+#### Political Lean Colors (7-point) — "The Ink Line"
+
+The lean colors exist for tooltips and hover interactions. The primary spectrum visualization ("The Ink Line") uses **monochrome ink marks on a continuous rule** — no gradient bar. Lean colors appear only on interaction (hover/focus).
 
 ```css
 --bias-far-left:     #1D4ED8;  /* Deep blue — far left */
@@ -176,6 +178,7 @@ Cinematic tokens live in `tokens.css` under `:root` (light) and `[data-mode="dar
 | Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Applied to `.page-main` + `.nav-header` (not `.page-container` — filter creates containing block that breaks position:fixed children). Per-edition overrides (US: warmer sepia, South Asia: boosted saturation, Europe: cooler grade). |
 | Atmospheric haze | `--cin-haze-far` | Depth-of-field fade on distant elements |
 | Z-index | `--z-cinematic` (45) | Film grain layer; vignette at `+1` (above grain) |
+| Ink Line | `--ink-rule-color`, `--ink-mark-height/width/color`, `--ink-mark-opacity-major/intl/indie`, `--ink-label-color`, `--ink-tick-color`, `--ink-slug-dur` (280ms), `--ink-slug-stagger` (40ms), `--ink-spread-dur` (500ms), `--ink-rack-dim` (0.3 light / 0.25 dark), `--ink-density-mark-height/width`, `--ink-deboss` | "The Ink Line" spectrum visualization — monochrome source marks on a continuous rule. Tier-differentiated opacity. Rack-focus dim on hover. Keyframes: `inkRuleSpread`, `inkSlugSet`, `inkSlugRemove`. |
 
 All cinematic tokens adapt between light/dark modes. Dark mode: boosted amber brightness, stronger vignette, lower grain, cooler grade.
 
@@ -301,7 +304,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 │  [viewport-responsive height; "Read more" at 600+ chars]│
 │                                                      │
 │  ┌── dd-analysis-row (single flex row) ────────────┐ │
-│  │  [Sigil]  [── gradient track w/ favicons ──]    │ │
+│  │  [Sigil]  [── ink line w/ source marks ──]       │ │
 │  │                             [Press Analysis ▶]  │ │
 │  └─────────────────────────────────────────────────┘ │
 │  ┌── (Press Analysis expanded) ───────────────────┐  │
@@ -325,7 +328,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 └──────────────────────────────────────────────────────┘
 ```
 
-Desktop: 75vw centered modal (max-width 920px, 1080px at 1280px+, 80vh); main feed blurred (6px backdrop blur) when open. FLIP morph animation: card expands into panel via double-rAF (open 500ms bouncy, close 420ms smooth), `data-story-id` attributes on StoryCard/LeadStory/MobileStoryCard enable DOM-based rect lookup for reverse morph on close. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
+Desktop: 75vw centered modal (max-width 920px, 1080px at 1280px+, 80vh); main feed blurred (6px backdrop blur) when open. FLIP morph animation: card expands into panel via double-rAF (open 500ms bouncy, close 420ms smooth), `data-story-id` attributes on StoryCard/LeadStory/MobileStoryCard enable DOM-based rect lookup for reverse morph on close. Analysis row (`dd-analysis-row`) places Sigil + Ink Line (DeepDiveSpectrum) + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
 
 ### Deep Dive — Mobile
 
@@ -455,6 +458,9 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Cold open (skybox) | Page load | coldOpenDollyIn (scale 0.985→1, opacity 0→1) | 500ms, delay 200ms |
 | Edition switch | Click edition tab | Direction-aware whip pan: whipPanOutRight + whipPanInLeft (translateX 8%, blur 2px) | 350ms `--ease-whip` |
 | ScaleIcon idle | Continuous | Gentle beam tipping (rotate 0→2deg→-2deg→0) | 5s, `--ease-cinematic`, infinite |
+| Ink Line rule | Deep Dive open | inkRuleSpread (scaleX 0→1 from center) | `--ink-spread-dur` (500ms) |
+| Ink Line marks | Deep Dive open | inkSlugSet (opacity + translateY, center-out stagger) | `--ink-slug-dur` (280ms), `--ink-slug-stagger` (40ms) per mark |
+| Ink Line rack focus | Mark hover | inkSlugRemove dims non-focused marks to `--ink-rack-dim` | `--ink-rack-dur` (200ms) |
 
 ### Reduced Motion
 
@@ -482,7 +488,7 @@ Active components in `frontend/app/components/`:
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
 | `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
-| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels (smaller font on mobile). Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. No max-height cap. 3-row algorithm for dense source clustering. "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
+| `DeepDiveSpectrum` | "The Ink Line" for Deep Dive panel. Continuous monochrome rule with source ink marks (vertical strokes) at exact `politicalLean` % (0-100). ScaleIcon fulcrum at center. Barlow Condensed zone labels along rule, IBM Plex Mono source names. Monochrome at rest, lean color on interaction (rack-focus hover dims non-focused marks via `--ink-rack-dim`). Staggered center-out entrance animation (`inkSlugSet`). Tier-differentiated opacity (`--ink-mark-opacity-major/intl/indie`). Click mark → article URL. CSS: `.ink-line__*` classes in `spectrum.css`. | -- |
 | `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
@@ -496,7 +502,7 @@ Active components in `frontend/app/components/`:
 | `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
 | `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping — 5s period, 2-degree amplitude, `--ease-cinematic`), `loading` (dramatic tipping — 8-degree), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
 | `PageToggle` | Layer 3 text link toggling Feed/Sources. No pills, no icons — plain `.nav-page` link with departure arrow on hover. | -- |
-| `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
+| `SpectrumChart` | "The Ink Line" for `/sources` page. Same organic rule as DeepDiveSpectrum but for 1,000+ sources. Thin density marks (1px strokes with jitter) at continuous lean positions. Expandable name list with lean-colored dots. ScaleIcon fulcrum at center. Tooltip on hover: source name, lean, tier, country, credibility notes. CSS: `.ink-line__*` classes in `spectrum.css`. | -- |
 | `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. Simplified at sm size (no InkUnderline, compact popup); full detail at lg/xl. | -- |
 | `DailyBrief` | "void --onair" daily brief: TL;DR + opinion + audio player | -- |
 | `SkyboxBanner` | Top-of-page daily brief skybox with TL;DR, opinion, and OnAir sections. Cold open animation class (`anim-cold-open-skybox`). OnAir practical light warmth spread via `:has()` selector. | -- |

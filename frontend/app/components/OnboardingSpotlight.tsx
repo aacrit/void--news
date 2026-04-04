@@ -30,7 +30,7 @@ const STEPS: TourStep[] = [
   {
     selector: ".lead-section, .story-card",
     title: "Tap to open Deep Dive",
-    body: "Tap any story to open its Deep Dive \u2014 source spectrum, six-axis scores, and where outlets agree or diverge.",
+    body: "Tap any story to open its Deep Dive \u2014 the ink line shows where each source sits, six-axis scores reveal framing, and perspectives highlight where outlets agree or diverge.",
     action: "scroll-into-view",
   },
   {
