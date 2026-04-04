@@ -320,6 +320,33 @@
   }
 }
 
+/* ---- Ink Line Spectrum ------------------------------------------------- */
+
+/* Rule draws left-to-right via clip-path wipe from center outward */
+@keyframes inkRuleSpread {
+  from { clip-path: inset(0 50% 0 50%); opacity: 0.6; }
+  to   { clip-path: inset(0 0 0 0);     opacity: 1; }
+}
+
+/* Source mark drops from the rule like a type slug placed into a composing stick */
+@keyframes inkSlugSet {
+  0%   { opacity: 0; transform: translateY(-4px) scale(1.04); }
+  60%  { opacity: 1; transform: translateY(1px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Source mark exits — drops out fast on story switch */
+@keyframes inkSlugRemove {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-line__rule { animation: none !important; clip-path: none !important; }
+  .ink-line__mark,
+  .ink-line__source { animation: none !important; }
+}
+
 /* Legacy fallback — hidden, replaced by inline SVG */
 .sigil--divergent::after,
 .sigil--consensus::after {

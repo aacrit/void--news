@@ -45,7 +45,7 @@ const PHASES: Phase[] = [
     id: "verdict",
     duration: 10000,
     headline: "Read with clarity",
-    body: "Broad coverage from across the spectrum, grounded in named sources. That\u2019s where confidence lives. Thin coverage from one corner? Scrutinize more.",
+    body: "Broad coverage from across the ink line, grounded in named sources. That\u2019s where confidence lives. Thin coverage from one corner? Scrutinize more.",
     visual: "verdict",
   },
 ];
@@ -247,7 +247,7 @@ function ProductFamilyVisual({ active }: { active: boolean }) {
     { cmd: "void --tl;dr", label: "Daily Brief", desc: "Top stories, editorially weighed" },
     { cmd: "void --onair", label: "Audio Broadcast", desc: "Two hosts, three minutes" },
     { cmd: "void --opinion", label: "The Board", desc: "Editorial lean rotates daily" },
-    { cmd: "void --sources", label: "Source Spectrum", desc: "1,013 sources, one axis" },
+    { cmd: "void --sources", label: "The Ink Line", desc: "1,013 sources, one rule" },
     { cmd: "void --deep-dive", label: "Deep Dive", desc: "Every source, every score" },
     { cmd: "void --paper", label: "E-Paper", desc: "The broadsheet front page" },
   ];

@@ -107,7 +107,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     ctx.stroke();
 
     // Waveform — actual time-domain audio signal
-    ctx.globalAlpha = 0.85;
+    ctx.globalAlpha = 0.65;
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
@@ -122,10 +122,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     }
     ctx.stroke();
 
-    // Ambient glow pass
-    ctx.globalAlpha = 0.25;
-    ctx.lineWidth = 4;
-    ctx.filter = "blur(3px)";
+    // Subtle ambient glow — soft, not glaring
+    ctx.globalAlpha = 0.08;
+    ctx.lineWidth = 6;
+    ctx.filter = "blur(4px)";
     ctx.stroke();
     ctx.filter = "none";
     ctx.globalAlpha = 1;
