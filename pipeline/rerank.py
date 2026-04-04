@@ -498,18 +498,20 @@ def main():
                 if total > 0:
                     affinity = regional_count / total
                     affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
-                    # Quality cap: proportional to source count
-                    # 1→1.2x, 2→1.4x, 3→1.6x, 4→1.8x, 5+→full 2.0x
+                    # Quality cap: proportional to source count.
+                    # Full boost only at 10+ sources. Prevents thin regional
+                    # stories from outranking high-source global stories.
+                    # 1→1.05x, 3→1.15x, 5→1.25x, 7→1.35x, 10+→full 1.5x
                     _sc = u.get("source_count", 0)
-                    if _sc < 5:
-                        _cap = 1.0 + (_sc / 5.0) * (AFFINITY_MAX_BOOST - 1.0)
+                    if _sc < 10:
+                        _cap = 1.0 + (_sc / 10.0) * (AFFINITY_MAX_BOOST - 1.0)
                         affinity_mult = min(affinity_mult, _cap)
                     u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * affinity_mult, 2)
 
-            # Local-priority boost — only for clusters with 4+ sources.
-            # Prevents thin junk (1-3 sources) from getting 1.4x boost.
+            # Local-priority boost — only for clusters with 8+ sources.
+            # Prevents thin regional stories from outranking major global stories.
             _sc = u.get("source_count", 0)
-            if "world" not in c_sections and _sc >= 4:
+            if "world" not in c_sections and _sc >= 8:
                 u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_EXCLUSIVE_BOOST, 2)
             elif "world" not in c_sections:
                 pass  # no boost for thin edition-exclusive clusters
