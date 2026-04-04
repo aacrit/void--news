@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type {
   Edition,
+  LeanChip,
+  Category,
   WeeklyDigestData,
   WeeklyCoverStory,
   WeeklyRecapStory,
@@ -15,6 +18,7 @@ import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
 import { leanLabel as getLeanLabel, getLeanColor } from "../lib/biasColors";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import MobileBottomNav from "./MobileBottomNav";
 import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
@@ -956,11 +960,38 @@ interface WeeklyDigestProps {
 }
 
 export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
+  const router = useRouter();
+  const [activeEdition, setActiveEdition] = useState<Edition>(edition);
   const [digest, setDigest] = useState<WeeklyDigestData | null>(null);
   const [archive, setArchive] = useState<ArchiveEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mainRef = useRef<HTMLElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Unused by weekly but required by MobileBottomNav interface
+  const [activeLean, setActiveLean] = useState<LeanChip>("All");
+  const [activeCategory, setActiveCategory] = useState<"All" | Category>("All");
+
+  // Sync edition state with prop (route changes re-mount with new prop)
+  useEffect(() => {
+    setActiveEdition(edition);
+  }, [edition]);
+
+  // Detect mobile for bottom nav
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  // Handle edition change from MobileBottomNav
+  const handleEditionChange = useCallback((ed: Edition) => {
+    setActiveEdition(ed);
+    router.push(ed === "world" ? "/weekly" : `/weekly/${ed}`);
+  }, [router]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1084,6 +1115,18 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
       </main>
 
       <Footer />
+
+      {/* Mobile bottom nav — edition switching (thumb-reachable) */}
+      {isMobile && (
+        <MobileBottomNav
+          activeEdition={activeEdition}
+          onEditionChange={handleEditionChange}
+          activeLean={activeLean}
+          onLeanChange={setActiveLean}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+      )}
     </div>
   );
 }
