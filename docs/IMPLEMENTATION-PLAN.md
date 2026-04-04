@@ -47,7 +47,7 @@
 - BiasLens Three Lenses (Beam, Ring, Prism) — replaces Dot Matrix and BiasStamp (removed)
 - Desktop broadsheet grid + mobile tabloid stack
 - LeadStory (hero) + StoryCard (standard) + "Why This Story" tooltip
-- NavBar (World/US/Europe/South Asia with dateline + edition badge pills), ThemeToggle, MobileBottomNav
+- NavBar ("Depth of Field" CTA hierarchy — edition tabs, filter lens, page links, weekly, utility), ThemeToggle, MobileBottomNav
 - `/sources` page: SpectrumChart + source list with favicons
 - `/paper` and `/paper/[edition]`: e-paper layout; `/command-center`: KPI dashboard
 - HomeContent, PageToggle, Sigil, LogoFull/Icon/Wordmark, ScaleIcon (8 animation states)
