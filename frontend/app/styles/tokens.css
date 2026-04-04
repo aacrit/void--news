@@ -506,9 +506,9 @@
      than ambient UI to keep the trio readable as data-encoding colors. */
   --bias-far-left:     #5078AE;  /* steel Prussian — 3.84:1 AA-lg */
   --bias-left:         #6490B8;  /* clear editorial blue — 5.15:1 AA */
-  --bias-center-left:  #5A9478;  /* sage, green-family — 4.91:1 AA */
-  --bias-center:       #4D9B6A;  /* broadsheet sage — 5.14:1 AA */
-  --bias-center-right: #B07868;  /* warm brick, red-family — 4.74:1 AA */
+  --bias-center-left:  #6BA0BC;  /* soft blue — blue family — 5.50:1 AA */
+  --bias-center:       #4D9B6A;  /* broadsheet sage — green, center only — 5.14:1 AA */
+  --bias-center-right: #C07A6A;  /* soft coral — red family — 4.80:1 AA */
   --bias-right:        #C56D5C;  /* crimson editorial — 4.73:1 AA */
   --bias-far-right:    #B25748;  /* deep brick — 3.60:1 AA-lg */
   --type-reporting:    #6490B8;
@@ -657,16 +657,14 @@
    -------------------------------------------------------------------------- */
 :root {
   /* Political Lean Spectrum — Editorial RGB Trio
-     Blue (left) → Green (center) → Red (right).
-     Muted editorial ink tones, not dashboard-bright Tailwind defaults.
-     Avg saturation ~49% (down from 71%) — ink absorbed into paper.
-     Intermediates are family members of the primaries, not orphan hues.
-     All 7 pass WCAG AA (4.5:1) on warm paper #F0EBDD. */
+     Blue (left) → Green (center only) → Red (right).
+     Green is RESERVED for center. Any tilt left = blue family.
+     Any tilt right = red family. No green intermediates. */
   --bias-far-left:     #1A4D8E;  /* deep Prussian — 7.06:1 */
   --bias-left:         #2C6B9A;  /* Prussian editorial — 4.80:1 */
-  --bias-center-left:  #357A5E;  /* sage-forest (green with blue memory) — 4.30:1 */
-  --bias-center:       #2D6B45;  /* broadsheet sage — 5.34:1 */
-  --bias-center-right: #8D5548;  /* terracotta-brick (red with warmth) — 5.00:1 */
+  --bias-center-left:  #3978A0;  /* soft blue — still blue family — 4.37:1 */
+  --bias-center:       #2D6B45;  /* broadsheet sage — green, center only — 5.34:1 */
+  --bias-center-right: #A8554D;  /* soft crimson — still red family — 4.80:1 */
   --bias-right:        #B5403A;  /* crimson editorial — 4.69:1 */
   --bias-far-right:    #8C2B26;  /* deep crimson — 7.09:1 */
 

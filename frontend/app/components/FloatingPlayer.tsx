@@ -80,6 +80,19 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   const [view, setView] = useState<PlayerView>("compact");
   const [closing, setClosing] = useState(false);
 
+  // Memoize episode grouping — avoids re-running date formatting on every
+  // currentTime tick (~4/s) since previousEpisodes only changes on edition switch.
+  const groupedEpisodes = useMemo(() => {
+    if (previousEpisodes.length <= 1) return null;
+    const grouped = new Map<string, typeof previousEpisodes>();
+    for (const ep of previousEpisodes) {
+      const dayKey = new Date(ep.created_at).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+      if (!grouped.has(dayKey)) grouped.set(dayKey, []);
+      grouped.get(dayKey)!.push(ep);
+    }
+    return grouped;
+  }, [previousEpisodes]);
+
   // On mobile, skip compact pill (hidden via CSS) — open expanded directly
   useEffect(() => {
     if (!isPlayerVisible) return;
@@ -638,22 +651,14 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           </details>
 
           {/* Previous Episodes — playlist with news/opinion separation */}
-          {previousEpisodes.length > 1 && (() => {
-            // Group episodes by date for playlist sections
-            const grouped = new Map<string, typeof previousEpisodes>();
-            for (const ep of previousEpisodes) {
-              const dayKey = new Date(ep.created_at).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-              if (!grouped.has(dayKey)) grouped.set(dayKey, []);
-              grouped.get(dayKey)!.push(ep);
-            }
-            return (
+          {groupedEpisodes && (
               <details className="fp__bcast-details fp__playlist">
                 <summary className="fp__bcast-summary">
                   <span>Previous episodes</span>
                   <CaretRight size={12} weight="bold" className="fp__caret fp__bcast-summary-arrow" />
                 </summary>
                 <div className="fp__playlist-wrap">
-                  {Array.from(grouped.entries()).map(([dayLabel, eps]) => (
+                  {Array.from(groupedEpisodes.entries()).map(([dayLabel, eps]) => (
                     <div key={dayLabel} className="fp__playlist-day">
                       <div className="fp__playlist-day-label">{dayLabel}</div>
                       {eps.map((ep) => {
@@ -716,8 +721,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
                   ))}
                 </div>
               </details>
-            );
-          })()}
+          )}
         </div>
       )}
     </div>

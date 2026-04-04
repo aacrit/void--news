@@ -899,7 +899,7 @@
 }
 
 .mbp__ep-hl {
-  font-family: var(--font-body);
+  font-family: var(--font-structural);
   font-size: var(--text-xs);
   line-height: 1.3;
   color: var(--fg-primary);
