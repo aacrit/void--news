@@ -786,7 +786,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 2px var(--space-2);
-  background: var(--lean-color, var(--wk-accent));
+  background: var(--wk-accent);
   border: none;
   color: #FFFFFF;
   white-space: nowrap;
@@ -1261,7 +1261,7 @@
 @media (max-width: 767px) {
   .wk-main {
     padding: 0 var(--space-3);
-    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--nav-bottom-height, 52px) + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   .wk-masthead {
@@ -1287,8 +1287,12 @@
   }
 
   .wk-cover-hero__visual {
-    min-height: 160px;
-    padding: var(--space-4);
+    min-height: 100px;
+    padding: var(--space-3);
+  }
+
+  .wk-cover-hero__issue {
+    display: none;
   }
 
   .wk-cover-hero__headline {
@@ -1299,10 +1303,10 @@
     padding: var(--space-4) var(--space-3);
   }
 
-  /* Mobile: numbers sidebar goes above text */
+  /* Mobile: text first, numbers below (natural reading order) */
   .wk-cover-body {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-3) 0;
   }
@@ -1310,6 +1314,11 @@
   /* Numbers sidebar: full-width, tighter padding on mobile */
   .wk-cover-body__numbers {
     padding: var(--space-3);
+  }
+
+  /* Left-align body text on mobile to avoid rivers from justification */
+  .wk-cover-body__text {
+    text-align: left;
   }
 
   /* Vertical timeline on mobile */
@@ -1327,6 +1336,11 @@
     padding: var(--space-2) 0 var(--space-2) 0;
   }
 
+  /* Expand hint visible on touch (hover-only is useless) */
+  .wk-timeline__expand-hint {
+    opacity: 0.5;
+  }
+
   /* Disable hover transforms on touch */
   .wk-opinion:hover {
     transform: none;
@@ -1334,8 +1348,7 @@
   }
 
   .wk-opinion:active {
-    transform: scale(0.975);
-    transition: transform 60ms var(--ease-out);
+    transform: none;
     box-shadow: none;
   }
 
@@ -1359,15 +1372,31 @@
     padding: var(--space-2);
   }
 
+  /* Bias bar labels: allow wrapping instead of truncation */
+  .wk-bias__bar-label {
+    white-space: normal;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    overflow: hidden;
+  }
+
+  /* Bias bar value: static position to prevent overlap on narrow bars */
+  .wk-bias__bar-value {
+    position: static;
+    margin-top: var(--space-1);
+  }
+
   /* Audio player: full-width layout, tighter padding */
   .wk-audio__player {
     padding: var(--space-3);
     gap: var(--space-2);
   }
 
-  /* Audio scrubber: taller thumb for touch (20px+) */
+  /* Audio scrubber: 44px touch target, visual track stays thin */
   .wk-audio__scrubber {
-    height: 6px;
+    height: 44px;
+    padding: 18px 0;
   }
 
   .wk-audio__scrubber::-webkit-slider-thumb {
