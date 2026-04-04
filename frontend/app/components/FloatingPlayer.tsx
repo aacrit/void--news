@@ -377,6 +377,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             <div className="fp__bar-brand">
               <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
               <span className="fp__bar-title">void --onair</span>
+              <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
+                <span className="fp__status-dot" />
+                <span className="fp__status-label">{isPlaying ? "ON AIR" : "OFFLINE"}</span>
+              </span>
               {audioError && <span className="fp__bar-error">Unavailable</span>}
             </div>
             <div className="fp__bar-actions">
@@ -431,6 +435,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
                 <span className="fp__bcast-void">void</span>
                 <span className="fp__bcast-cmd">--onair</span>
               </div>
+              <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
+                <span className="fp__status-dot" />
+                <span className="fp__status-label">{isPlaying ? "ON AIR" : "OFFLINE"}</span>
+              </span>
             </div>
             <div className="fp__bar-actions">
               <button className="fp__speed" onClick={() => { hapticLight(); cycleSpeed(); }}
