@@ -42,33 +42,12 @@
   margin: var(--space-2) 0;
 }
 
-/* Desktop: full-bleed warm tint — breaks out of page-main to viewport edges */
+/* Desktop: skybox sits within normal canvas flow — no full-bleed breakout.
+   Texture differentiation on .skb handles the editorial territory signal. */
 @media (min-width: 1024px) {
   .skybox {
     position: relative;
-    z-index: 0; /* Create stacking context but don't elevate above siblings */
-    margin-left: calc(-1 * var(--space-7));
-    margin-right: calc(-1 * var(--space-7));
-    padding: var(--space-3) var(--space-7);
-    background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
-    border-top: 2px solid var(--accent-warm);
-    border-bottom: 1px solid var(--border-subtle);
-    animation: skyboxReveal var(--dur-slow) var(--ease-out) both;
-  }
-
-  /* F14: SkyboxBanner already has its own border-top — prevent doubling */
-  .skybox .skb {
-    border-top: none;
-  }
-}
-
-/* Ultra-wide: extend bleed further */
-@media (min-width: 1440px) {
-  .skybox {
-    margin-left: calc(-1 * var(--space-7) - 40px);
-    margin-right: calc(-1 * var(--space-7) - 40px);
-    padding-left: calc(var(--space-7) + 40px);
-    padding-right: calc(var(--space-7) + 40px);
+    z-index: 0;
   }
 }
 
