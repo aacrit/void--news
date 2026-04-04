@@ -418,8 +418,11 @@ def _source_coverage_score(
         if max_tier_pct > 0.70 and num_tiers < 3:
             weighted_count *= 0.85
 
-    # Diminishing returns: 100 * (1 - e^(-weighted_count/5))
-    return 100.0 * (1.0 - math.exp(-weighted_count / 5.0))
+    # Diminishing returns with extended dynamic range: 100 * (1 - e^(-x/10))
+    # Old curve (/5) flattened at 15 sources — a 40-source story scored only
+    # 1 point more than a 15-source story. New curve (/10) preserves separation:
+    #   5 src → 39.3,  10 → 63.2,  15 → 77.7,  20 → 86.5,  40 → 98.2
+    return 100.0 * (1.0 - math.exp(-weighted_count / 10.0))
 
 
 def _perspective_diversity_score(
