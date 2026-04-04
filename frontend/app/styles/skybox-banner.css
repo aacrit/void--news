@@ -41,6 +41,7 @@
   gap: 0;
   flex: 1;
   min-width: 0;
+  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -89,7 +90,7 @@
 @media (min-width: 768px) {
   .skb__compact-col--tldr {
     border-bottom: none;
-    border-right: 1px solid var(--border-subtle);
+    border-right: none;
     padding-right: var(--space-5);
   }
 
@@ -114,7 +115,8 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--accent-warm);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -123,6 +125,7 @@
   font-size: var(--text-xxs);
   color: var(--fg-muted);
   letter-spacing: 0.02em;
+  opacity: 0.7;
 }
 
 .skb__compact-time {
@@ -149,6 +152,7 @@
   font-size: var(--text-base);
   font-weight: 700;
   color: var(--accent-warm);
+  letter-spacing: -0.01em;
 }
 
 .skb__compact-hl--opinion {
@@ -157,6 +161,7 @@
   font-weight: 700;
   font-style: italic;
   color: var(--fg-primary);
+  letter-spacing: 0.005em;
 }
 
 /* Preview text — 2-3 lines, small */
@@ -233,9 +238,19 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
-  border-bottom: 1px dotted color-mix(in srgb, var(--fg-muted) 20%, transparent);
+  border-bottom: none;
+  position: relative;
   /* F12: No animation on topbar — it persists across section switches.
      Only section content animates via skbSectionIn. */
+}
+.skb__topbar::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: var(--space-4);
+  right: var(--space-4);
+  height: 1px;
+  background: color-mix(in srgb, var(--accent-warm) 20%, transparent);
 }
 
 .skb__topbar-left {
@@ -455,7 +470,8 @@
   font-family: var(--font-editorial);
   font-size: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);
   font-style: italic;
-  line-height: 1.75;
+  line-height: 1.7;
+  letter-spacing: 0.005em;
   color: var(--fg-tertiary);
   text-align: justify;
   text-align-last: left;
@@ -464,6 +480,135 @@
 .skb__section-body--opinion p + p {
   margin-top: var(--space-3);
 }
+
+/* ---------------------------------------------------------------------------
+   Cinematic Uplift — ink washes, drop cap, lean badges, firewall rule
+   --------------------------------------------------------------------------- */
+
+/* A. Drop cap on TL;DR first paragraph */
+.skb__section-body--tldr p:first-child::first-letter {
+  font-family: var(--font-editorial);
+  font-size: clamp(2.5rem, 2rem + 1.5vw, 3.5rem);
+  font-weight: 700;
+  float: left;
+  line-height: 0.8;
+  margin-right: var(--space-2);
+  margin-top: var(--space-1);
+  color: var(--accent-warm);
+}
+
+/* B. Ink wash background for TL;DR (warm amber) */
+.skb__section--tldr {
+  position: relative;
+}
+.skb__section--tldr::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 90% 80% at 50% 30%,
+    color-mix(in srgb, var(--cin-amber, #946B15) 5%, transparent) 0%,
+    transparent 70%
+  );
+  opacity: 0.7;
+  z-index: 0;
+}
+
+/* C. Lean-colored ink wash for Opinion */
+.skb__section--opinion {
+  position: relative;
+}
+.skb__section--opinion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  z-index: 0;
+}
+.skb__section--opinion.skb-lean--left::before {
+  background: radial-gradient(ellipse 90% 80% at 50% 30%, color-mix(in srgb, var(--bias-left) 4%, transparent) 0%, transparent 70%);
+}
+.skb__section--opinion.skb-lean--center::before {
+  background: radial-gradient(ellipse 90% 80% at 50% 30%, color-mix(in srgb, var(--bias-center) 4%, transparent) 0%, transparent 70%);
+}
+.skb__section--opinion.skb-lean--right::before {
+  background: radial-gradient(ellipse 90% 80% at 50% 30%, color-mix(in srgb, var(--bias-right) 4%, transparent) 0%, transparent 70%);
+}
+
+/* D. Lean badge styling */
+.skb__lean-badge {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 1px 8px;
+  border-radius: 2px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.skb__lean-badge.skb-lean--left {
+  color: var(--bias-left);
+  border-color: color-mix(in srgb, var(--bias-left) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-left) 6%, transparent);
+}
+.skb__lean-badge.skb-lean--center {
+  color: var(--bias-center);
+  border-color: color-mix(in srgb, var(--bias-center) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-center) 6%, transparent);
+}
+.skb__lean-badge.skb-lean--right {
+  color: var(--bias-right);
+  border-color: color-mix(in srgb, var(--bias-right) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-right) 6%, transparent);
+}
+
+/* E. Headline hairline rule (amber accent under expanded headlines) */
+.skb__section-hl--tldr::after,
+.skb__section-hl--opinion::after {
+  content: "";
+  display: block;
+  width: clamp(40px, 8vw, 80px);
+  height: 1.5px;
+  background: var(--accent-warm);
+  opacity: 0.3;
+  margin-top: var(--space-2);
+}
+
+/* G. Organic firewall rule SVG (hand-drawn wobble between compact columns) */
+.skb__firewall {
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+.skb__firewall path {
+  stroke: var(--accent-warm);
+  stroke-width: 1;
+  stroke-opacity: 0.25;
+  fill: none;
+  stroke-linecap: round;
+}
+/* Mobile: hidden (border-bottom on tldr col handles separator) */
+.skb__firewall--vertical {
+  display: none;
+}
+/* Desktop: vertical firewall positioned at the center of the 2-col grid */
+@media (min-width: 768px) {
+  .skb__firewall--vertical {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: var(--space-3);
+    bottom: var(--space-3);
+    width: 4px;
+    height: auto;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Cinematic Motion Choreography
    --------------------------------------------------------------------------- */
