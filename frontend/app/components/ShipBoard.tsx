@@ -621,7 +621,7 @@ export default function ShipBoard() {
       <OrganicDivider />
 
       {/* ==== TIER 2: COMPACT DASHBOARD ==== */}
-      {!loading && requests.length > 0 && (
+      {!loading && (
         <section className="ship-dashboard ship-cold-open-column" aria-label="Dashboard summary">
           <div className="ship-dashboard__summary">
             <div className="ship-dashboard__metrics">
@@ -661,11 +661,13 @@ export default function ShipBoard() {
       )}
 
       {/* ---- Recent Activity (always visible) ---- */}
-      {!loading && recentActivity.length > 0 && (
+      {!loading && (
         <section className="ship-recent ship-cold-open-column" aria-label="Recent activity">
           <h2 className="ship-recent__title">Recent</h2>
           <div className="ship-recent__list">
-            {recentActivity.map(r => (
+            {recentActivity.length === 0 ? (
+              <p className="ship-recent__empty">No requests yet. Be the first to submit one above.</p>
+            ) : recentActivity.map(r => (
               <div key={r.id} className={`ship-recent__item ship-recent__item--${r.status}`}>
                 <span className={`ship-recent__status ship-recent__status--${r.status}`}>
                   {STATUS_LABELS[r.status]}
