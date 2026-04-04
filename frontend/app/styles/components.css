@@ -42,40 +42,10 @@
   --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
-/* Warm tint on hover — diffuse ink-wash glow, feathered edges.
-   Extends slightly beyond card bounds for organic bleed.
-   Radial gradient fades to transparent — no hard boundary. */
-.story-card::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 16px;
-  background: radial-gradient(
-    ellipse 80% 70% at 50% 45%,
-    color-mix(in srgb, var(--bg-secondary) 50%, transparent) 0%,
-    color-mix(in srgb, var(--bg-secondary) 20%, transparent) 60%,
-    transparent 100%
-  );
-  opacity: 0;
-  transition: opacity 250ms var(--ease-cinematic);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Ensure card content sits above the glow layer */
-.story-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.story-card:hover::before {
-  opacity: 1;
-}
-
+/* No hover glow or lift — the rack focus blur system handles emphasis.
+   Hovered card stays in place; neighbors defocus around it. */
 .story-card:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
-  will-change: transform;
+  /* No transform, no box-shadow change — clean, quiet */
 }
 
 /* Desktop press — instant compression, spring bounce-back on release.
@@ -481,15 +451,9 @@
   border-radius: var(--radius-sm);
 }
 
-/* Focus-visible: stretched link gets the outline, card gets the lift.
-   :has() delegates visual focus from the button to the card. */
+/* Focus-visible: subtle warm background, no lift */
 .story-card:has(.story-card__stretch-link:focus-visible) {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
-}
-
-.story-card:has(.story-card__stretch-link:focus-visible)::before {
-  opacity: 1;
+  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
 }
 
 /* Fallback for browsers without :has() */
@@ -686,8 +650,7 @@
 }
 
 .lead-story:has(.story-card__stretch-link:focus-visible) {
-  box-shadow: var(--shadow-card-lead-hover);
-  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
 }
 
 .lead-story:has(.story-card__stretch-link:focus-visible)::before {
@@ -695,8 +658,7 @@
 }
 
 .lead-story:focus-within {
-  box-shadow: var(--shadow-card-lead-hover);
-  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
 }
 
 /* Touch-specific active state */
@@ -7662,11 +7624,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
      cinematic ease). The return easing shifts from --ease-rack (mechanical)
      to --ease-steadicam (weightless, long settle) — the lens drifts back
      to neutral with Kubrick inevitability. */
-  .df .story-card,
-  .df .lead-story,
-  .lead-section .lead-story,
-  .grid-medium .story-card,
-  .grid-compact .story-card {
+  .story-card,
+  .lead-story {
     transition:
       filter var(--rack-blur-return-dur, 500ms) var(--ease-steadicam),
       opacity var(--rack-dim-return-dur, 600ms) var(--ease-steadicam),
@@ -7684,12 +7643,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
      defocused siblings — simulating the color shift that occurs when areas
      fall outside the lens's optimal focus plane. Real lenses render OOF areas
      cooler and flatter due to longitudinal chromatic aberration. */
-  .df:has(.story-card:hover) .story-card:not(:hover),
-  .df:has(.lead-story:hover) .story-card:not(:hover),
-  .df:has(.lead-story:hover) .lead-story:not(:hover),
-  .lead-section:has(.lead-story:hover) .lead-story:not(:hover),
-  .grid-medium:has(.story-card:hover) .story-card:not(:hover),
-  .grid-compact:has(.story-card:hover) .story-card:not(:hover) {
+  /* Universal rack focus: ANY container with a hovered card blurs siblings */
+  :has(.story-card:hover) .story-card:not(:hover),
+  :has(.lead-story:hover) .story-card:not(:hover),
+  :has(.lead-story:hover) .lead-story:not(:hover) {
     opacity: var(--rack-dim-neighbor);
     filter: var(--rack-blur-neighbor) var(--rack-neighbor-cool);
     transform: var(--rack-recede-neighbor);
@@ -7699,28 +7656,16 @@ a.footer-products__item:hover { color: var(--accent-warm); }
       transform var(--rack-recede-throw-dur, 480ms) var(--rack-recede-throw-delay, 90ms) var(--ease-cinematic);
   }
 
-  /* Hovered card: sharp focal plane with dolly-in shadow elevation
-     and rim light from the key (top-left).
-
-     VFX addition: warm-tinted spread shadow using --rack-shadow-warm.
-     The key light (amber, top-left motivated) casts colored light onto the
-     surface below the card, not just neutral darkness. This is the Deakins
-     technique of letting the light source's color bleed into shadows. */
-  .story-card:hover {
-    box-shadow:
-      var(--shadow-card-hover),
-      0 8px 25px -4px var(--rack-shadow-warm),
-      inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 60%, transparent),
-      inset -1px -1px 0 0 color-mix(in srgb, var(--cin-ash-warm, #78716C) 4%, transparent);
-  }
-
-  /* Lead story rack focus: larger card warrants stronger shadow depth
-     and proportionally wider warm shadow spread. */
+  /* Hovered card: sharp focal plane with subtle warm ambient lighting.
+     No lift, no heavy shadow. Just a gentle warmth that complements the
+     blur on neighbors — like a reading lamp settling on the page. */
+  .story-card:hover,
   .lead-story:hover {
-    box-shadow:
-      var(--shadow-card-lead-hover),
-      0 12px 35px -6px var(--rack-shadow-warm),
-      inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 50%, transparent);
+    background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
+    transition:
+      background 300ms var(--ease-cinematic),
+      filter 300ms var(--ease-cinematic),
+      opacity 300ms var(--ease-cinematic);
   }
 
   /* Lead headline sharpening — Deakins, Sicario: subject emerges from
