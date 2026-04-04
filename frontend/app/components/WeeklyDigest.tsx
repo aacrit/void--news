@@ -154,7 +154,7 @@ function formatArchiveRange(start: string, end: string): string {
 }
 
 function leanBadgeClass(lean: string): string {
-  const l = lean.toLowerCase().replace(/\s+/g, "-");
+  const l = (lean || "center").toLowerCase().replace(/\s+/g, "-");
   return `wk-opinion__badge wk-opinion__badge--${l}`;
 }
 
@@ -168,7 +168,7 @@ function leanBadgeLabel(lean: string): string {
     "far-left": "The Progressive",
     "far-right": "The Traditionalist",
   };
-  return map[lean.toLowerCase()] ?? lean;
+  return map[(lean || "center").toLowerCase()] ?? lean ?? "center";
 }
 
 function leanToScore(lean: string): number {
@@ -181,7 +181,7 @@ function leanToScore(lean: string): number {
     "right": 73,
     "far-right": 90,
   };
-  return map[lean.toLowerCase()] ?? 50;
+  return map[(lean || "center").toLowerCase()] ?? 50;
 }
 
 /* ── Data Parsing ──────────────────────────────────────────────────────────── */
