@@ -195,12 +195,41 @@ function useIsMobile(breakpoint = 768): boolean {
   return isMobile;
 }
 
-// ---- Organic Divider ----
+// ---- Organic Divider (draw-in on scroll) ----
 function OrganicDivider() {
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.setAttribute('data-visible', 'true'); io.unobserve(el); }
+    }, { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <svg className="ship-divider" viewBox="0 0 600 4" preserveAspectRatio="none" aria-hidden="true">
+    <svg ref={ref} className="ship-divider" viewBox="0 0 600 4" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0,2 C50,0.5 100,3.5 150,2 C200,0.5 250,3 300,2 C350,1 400,3.5 450,2 C500,0.5 550,3 600,2" />
     </svg>
+  );
+}
+
+// ---- InkDroplet (splat on scroll) ----
+function InkDroplet() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.setAttribute('data-visible', 'true'); io.unobserve(el); }
+    }, { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className="ship-ink-droplet" aria-hidden="true">
+      <div className="ship-ink-droplet__dot" />
+    </div>
   );
 }
 
@@ -479,7 +508,7 @@ export default function ShipBoard() {
     : STATUS_ORDER;
 
   return (
-    <main className="ship-page">
+    <main className="ship-page" data-dash-expanded={boardOpen || logOpen || undefined}>
       {/* ---- Back nav ---- */}
       <nav className="ship-cold-open-back">
         <Link href="/" className="ship-page__back" aria-label="Back to void --news">&larr; void --news</Link>
@@ -495,7 +524,7 @@ export default function ShipBoard() {
       </header>
 
       {/* ==== TIER 1: FORM-FIRST CANVAS ==== */}
-      <section className="ship-form-canvas ship-cold-open-metrics" aria-label="Submit a request">
+      <section className="ship-form-canvas ship-hero-form ship-cold-open-metrics" aria-label="Submit a request">
         {formSuccess ? (
           <div className="ship-form-canvas__success">
             <div className="ship-form-canvas__success-icon" aria-hidden="true">&#9998;</div>
@@ -588,6 +617,7 @@ export default function ShipBoard() {
         )}
       </section>
 
+      <InkDroplet />
       <OrganicDivider />
 
       {/* ==== TIER 2: COMPACT DASHBOARD ==== */}
@@ -652,6 +682,7 @@ export default function ShipBoard() {
       )}
 
       <OrganicDivider />
+      <InkDroplet />
 
       {/* ==== TIER 3: EXPANDABLE BOARD ==== */}
       {boardOpen && !loading && (
@@ -798,10 +829,13 @@ function ShipCard({
 
   // Scene 3: vote arrow pop
   const [arrowPop, setArrowPop] = useState(false);
+  const [inkSplash, setInkSplash] = useState(false);
   const handleVoteClick = useCallback(() => {
     onVote(r.id);
     if (!hasVoted) {
       setArrowPop(true);
+      setInkSplash(true);
+      setTimeout(() => setInkSplash(false), 450);
     }
   }, [onVote, r.id, hasVoted]);
 
@@ -918,7 +952,7 @@ function ShipCard({
             </button>
           )}
           <button
-            className={`ship-card__vote${hasVoted ? ' ship-card__vote--voted' : ''}`}
+            className={`ship-card__vote${hasVoted ? ' ship-card__vote--voted' : ''}${inkSplash ? ' ship-card__vote--splashing' : ''}`}
             onClick={handleVoteClick}
             aria-label={hasVoted ? `Voted (${r.votes})` : `Vote (${r.votes})`}
             title={hasVoted ? 'Already voted' : 'Upvote this request'}
@@ -930,6 +964,11 @@ function ShipCard({
               {hasVoted ? '\u25B2' : '\u25B3'}
             </span>
             {r.votes}
+            {/* Ink splash micro-dots */}
+            <span className="ship-card__vote-splash" />
+            <span className="ship-card__vote-splash" />
+            <span className="ship-card__vote-splash" />
+            <span className="ship-card__vote-splash" />
           </button>
         </div>
       </div>

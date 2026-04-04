@@ -344,17 +344,104 @@
 .ship-divider {
   display: block;
   width: 100%;
-  max-width: 60ch;
+  max-width: 620px;
   height: 2px;
   margin: var(--space-6) auto;
   overflow: visible;
 }
 
 .ship-divider path {
-  stroke: var(--accent-warm);
+  stroke: var(--cin-amber, var(--accent-warm));
   stroke-width: 1.5;
-  stroke-opacity: 0.25;
+  stroke-opacity: 0.2;
   fill: none;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  transition: stroke-dashoffset 1.2s var(--ease-cinematic, ease-out);
+}
+
+.ship-divider[data-visible="true"] path {
+  stroke-dashoffset: 0;
+}
+
+/* ---- InkDroplet ---- */
+.ship-ink-droplet {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-3) 0;
+}
+
+.ship-ink-droplet__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cin-amber, var(--accent-warm));
+  opacity: 0;
+  transform: scale(0);
+}
+
+.ship-ink-droplet[data-visible="true"] .ship-ink-droplet__dot {
+  animation: shipInkSplat 0.4s var(--ease-dramatic, ease-out) forwards;
+}
+
+@keyframes shipInkSplat {
+  0%   { opacity: 0; transform: scale(0); }
+  50%  { opacity: 1; transform: scale(1.25); }
+  75%  { opacity: 0.8; transform: scale(0.92); }
+  100% { opacity: 0.6; transform: scale(1); }
+}
+
+/* ---- Rack Focus: dashboard dims when typing in form ---- */
+.ship-hero-form:focus-within ~ .ship-dashboard .ship-dashboard__summary {
+  opacity: 0.75;
+  filter: blur(1.5px);
+  transition: opacity 420ms var(--ease-rack, ease-out), filter 420ms var(--ease-rack, ease-out);
+}
+
+.ship-dashboard .ship-dashboard__summary {
+  transition: opacity 600ms var(--ease-steadicam, ease-out), filter 600ms var(--ease-steadicam, ease-out);
+}
+
+/* ---- Form dolly-out when dashboard expands ---- */
+.ship-page[data-dash-expanded="true"] .ship-hero-form {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-e1);
+  transition: transform 500ms var(--ease-cinematic, ease-out), box-shadow 500ms var(--ease-cinematic, ease-out);
+}
+
+/* ---- Form submission shrink (reverse shot) ---- */
+.ship-hero-form--submitting {
+  transform: scale(0.99);
+  transition: transform 500ms var(--ease-cinematic, ease-out);
+}
+
+/* ---- Vote ink splash micro-dots ---- */
+.ship-card__vote-splash {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--cin-amber, var(--accent-warm));
+  pointer-events: none;
+  opacity: 0;
+}
+
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(1) { animation: shipSplashUp 400ms var(--ease-cinematic, ease-out) forwards; }
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(2) { animation: shipSplashDown 400ms var(--ease-cinematic, ease-out) forwards; }
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(3) { animation: shipSplashLeft 400ms var(--ease-cinematic, ease-out) forwards; }
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(4) { animation: shipSplashRight 400ms var(--ease-cinematic, ease-out) forwards; }
+
+@keyframes shipSplashUp {
+  0% { transform: translateY(0) scale(0); opacity: 0; } 30% { transform: translateY(-8px) scale(1); opacity: 0.8; } 100% { transform: translateY(-14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashDown {
+  0% { transform: translateY(0) scale(0); opacity: 0; } 30% { transform: translateY(8px) scale(1); opacity: 0.8; } 100% { transform: translateY(14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashLeft {
+  0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(-8px) scale(1); opacity: 0.8; } 100% { transform: translateX(-14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashRight {
+  0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(8px) scale(1); opacity: 0.8; } 100% { transform: translateX(-14px) scale(0.3); opacity: 0; }
 }
 
 
@@ -1426,6 +1513,15 @@ a.ship-card__commit:hover {
 @media (max-width: 768px) {
   .ship-page {
     padding: var(--space-4) var(--space-3);
+    --ship-grid-minor-color: transparent;
+    --ship-grid-margin-offset: -100px;
+    --ship-grid-major-color: rgba(100, 116, 139, 0.05);
+  }
+
+  /* Disable rack focus blur on mobile (GPU budget) */
+  .ship-hero-form:focus-within ~ .ship-dashboard .ship-dashboard__summary {
+    opacity: 1;
+    filter: none;
   }
 
   .ship-page__header {
@@ -1571,4 +1667,12 @@ a.ship-card__commit:hover {
   .ship-form-canvas__title-input {
     transition: none;
   }
+
+  /* New organic + cinematic animations */
+  .ship-divider path { transition: none; stroke-dashoffset: 0; }
+  .ship-ink-droplet__dot { animation: none; opacity: 0.6; transform: scale(1); }
+  .ship-hero-form--submitting { transition: none; transform: none; }
+  .ship-page[data-dash-expanded="true"] .ship-hero-form { transition: none; transform: none; }
+  .ship-hero-form:focus-within ~ .ship-dashboard .ship-dashboard__summary { opacity: 1; filter: none; transition: none; }
+  .ship-card__vote--splashing .ship-card__vote-splash { animation: none; }
 }
