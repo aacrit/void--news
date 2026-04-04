@@ -981,3 +981,13 @@
 
 }
 
+/* ---- Standalone PWA (installed to home screen) -------------------------- */
+
+@media (display-mode: standalone) {
+  /* Prevent pull-to-refresh conflicts with in-app scroll */
+  html { overscroll-behavior-y: contain; }
+
+  /* Hide install prompts when already installed */
+  .install-prompt { display: none; }
+}
+
