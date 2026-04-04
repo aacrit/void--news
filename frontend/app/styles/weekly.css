@@ -1,27 +1,51 @@
 /* ===========================================================================
-   void --weekly — Cinematic Magazine Layout
-   "Way more cinematic than the first page."
+   void --weekly — Crimson Magazine Layout
+   "Way more flamboyant." TIME meets The Economist meets art house cinema.
    Organic ink design elements, interactive timeline, scroll-triggered reveals,
    parallax depth, film grain + vignette, cold open stagger sequence.
+   Crimson palette scoped to .wk-page for dramatic visual departure.
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   Page Container — cinematic grade + vignette + film grain
+   Page Container — crimson palette + cinematic grade + vignette + film grain
    --------------------------------------------------------------------------- */
 .wk-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
+
+  /* ── Crimson Magazine Palette ── */
+  --wk-crimson: #8B1A1A;
+  --wk-crimson-bright: #A52020;
+  --wk-crimson-light: #C44040;
+  --wk-crimson-dim: #6B1515;
+  --wk-crimson-ghost: rgba(139, 26, 26, 0.08);
+  --wk-crimson-glow: rgba(139, 26, 26, 0.15);
+  --wk-crimson-ink: rgba(139, 26, 26, 0.25);
+  --wk-cream: #F8F3E8;
+  --wk-cream-deep: #EDE5D4;
 }
 
-/* Film grain overlay — higher opacity than main page for magazine texture */
+:root[data-mode="dark"] .wk-page {
+  --wk-crimson: #B03030;
+  --wk-crimson-bright: #C44040;
+  --wk-crimson-light: #D45050;
+  --wk-crimson-dim: #8B2020;
+  --wk-crimson-ghost: rgba(176, 48, 48, 0.10);
+  --wk-crimson-glow: rgba(176, 48, 48, 0.18);
+  --wk-crimson-ink: rgba(176, 48, 48, 0.28);
+  --wk-cream: #2A2420;
+  --wk-cream-deep: #221E1A;
+}
+
+/* Film grain overlay — higher opacity for textured magazine feel */
 .wk-page::before {
   content: "";
   position: fixed;
   inset: 0;
   background: var(--paper-texture);
-  opacity: calc(var(--cin-grain-opacity) * 1.5);
+  opacity: calc(var(--cin-grain-opacity) * 2);
   pointer-events: none;
   z-index: 100;
   mix-blend-mode: multiply;
@@ -68,12 +92,13 @@
   display: block;
   width: 100%;
   height: 4px;
-  color: var(--fg-tertiary);
-  opacity: 0.3;
+  color: var(--wk-crimson);
+  opacity: 0.4;
 }
 
 .wk-ink-rule--strong {
-  opacity: 0.5;
+  color: var(--wk-crimson);
+  opacity: 0.7;
 }
 
 /* Organic ink quotation mark for pull quotes */
@@ -81,8 +106,8 @@
   display: block;
   width: 40px;
   height: 32px;
-  color: var(--cin-amber);
-  opacity: 0.5;
+  color: var(--wk-crimson);
+  opacity: 0.6;
   flex-shrink: 0;
 }
 
@@ -93,8 +118,8 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  color: var(--fg-tertiary);
-  opacity: 0.4;
+  color: var(--wk-crimson);
+  opacity: 0.5;
 }
 
 /* ---------------------------------------------------------------------------
@@ -107,14 +132,24 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--fg-tertiary);
+  color: var(--wk-crimson);
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-2);
   border-bottom: none;
   position: relative;
 }
 
-/* Organic ink underline on section labels */
+/* Ghosted void prefix via data attribute */
+.wk-section-label[data-prefix]::before {
+  content: attr(data-prefix) " ";
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  opacity: 0.35;
+  letter-spacing: 0.02em;
+}
+
+/* Organic ink underline on section labels — crimson tinted */
 .wk-section-label::after {
   content: "";
   position: absolute;
@@ -122,13 +157,13 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%2352504A' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-section-label::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239CA3AF' stroke-width='1.2' fill='none' opacity='0.25'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
 }
 
 /* ---------------------------------------------------------------------------
@@ -268,7 +303,20 @@
 .wk-masthead {
   text-align: center;
   margin-bottom: var(--space-5);
-  padding-top: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+  background: var(--wk-crimson);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Organic ink texture overlay on crimson masthead */
+.wk-masthead::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: soft-light;
 }
 
 /* Organic ink rules replace straight border lines */
@@ -276,6 +324,8 @@
   max-width: 32rem;
   margin: 0 auto;
   height: 4px;
+  color: var(--wk-cream);
+  opacity: 0.4;
 }
 
 /* Brand lockup: icon + wordmark centered */
@@ -284,11 +334,13 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  margin: var(--space-5) 0 var(--space-3);
+  margin: var(--space-4) 0 var(--space-3);
+  position: relative;
+  z-index: 1;
 }
 
 .wk-masthead__icon {
-  color: var(--fg-primary);
+  color: var(--wk-cream);
   flex-shrink: 0;
 }
 
@@ -299,9 +351,9 @@
 
 .wk-masthead__wordmark {
   display: block;
-  height: 28px;
+  height: 32px;
   width: auto;
-  color: var(--fg-primary);
+  color: var(--wk-cream);
 }
 
 .wk-masthead__meta {
@@ -309,9 +361,12 @@
   font-size: var(--text-sm);
   font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-5);
+  letter-spacing: 0.10em;
+  color: var(--wk-cream);
+  margin-bottom: 0;
+  opacity: 0.85;
+  position: relative;
+  z-index: 1;
 }
 
 .wk-masthead__sep {
@@ -320,8 +375,9 @@
 }
 
 .wk-masthead__edition {
-  font-weight: 500;
-  color: var(--fg-secondary);
+  font-weight: 600;
+  color: var(--wk-cream);
+  opacity: 1;
 }
 
 /* ===========================================================================
@@ -392,7 +448,7 @@
   position: relative;
 }
 
-/* Organic ink bottom border on collapsible sections */
+/* Organic ink bottom border on collapsible sections — crimson */
 .wk-collapsible-section::after {
   content: "";
   position: absolute;
@@ -400,13 +456,13 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-collapsible-section::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='1' fill='none' opacity='0.20'/%3E%3C/svg%3E");
 }
 
 /* Inline toggle (read more / read less) */
@@ -429,7 +485,7 @@
 }
 
 .wk-toggle:hover {
-  color: var(--cin-amber);
+  color: var(--wk-crimson);
 }
 
 .wk-toggle:focus-visible {
@@ -511,18 +567,30 @@
   margin-bottom: var(--space-4);
 }
 
-/* Cover headline — parallax-ready, editorial serif */
+/* Cover headline — parallax-ready, editorial serif, dramatic scale */
 .wk-cover__headline {
   font-family: var(--font-editorial);
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
   color: var(--fg-primary);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
   /* Parallax transforms applied via inline style */
   will-change: transform;
   transition: transform 16ms linear;
+}
+
+/* Drop cap on hero cover headline */
+.wk-cover__hero .wk-cover__headline::first-letter {
+  font-family: var(--font-editorial);
+  font-size: 2.2em;
+  font-weight: 900;
+  color: var(--wk-crimson);
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.06em;
+  margin-top: 0.05em;
 }
 
 .wk-cover__body-wrap {
@@ -547,6 +615,40 @@
   max-width: 65ch;
   text-align: justify;
   hyphens: auto;
+}
+
+/* Hero lede treatment — first paragraph in cover hero is larger */
+.wk-cover__hero .wk-cover__text p:first-child {
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--fg-primary);
+}
+
+/* Hero wrapper — organic ink corner flourishes */
+.wk-cover__hero {
+  position: relative;
+  padding: var(--space-5) 0;
+}
+
+/* Ink corner flourishes on hero — top-left and bottom-right */
+.wk-cover__hero-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  color: var(--wk-crimson);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.wk-cover__hero-corner--tl {
+  top: 0;
+  left: calc(-1 * var(--space-3));
+}
+
+.wk-cover__hero-corner--br {
+  bottom: 0;
+  right: calc(-1 * var(--space-3));
+  transform: rotate(180deg);
 }
 
 .wk-cover__text p {
@@ -585,7 +687,7 @@
   position: relative;
 }
 
-/* Organic ink underline on numbers title */
+/* Organic ink underline on numbers title — crimson */
 .wk-cover__numbers-title::after {
   content: "";
   position: absolute;
@@ -593,13 +695,13 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='1' fill='none' opacity='0.30'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-cover__numbers-title::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
 }
 
 .wk-cover__numbers-list {
@@ -621,12 +723,12 @@
   background: var(--bg-hover);
 }
 
-/* Number value — data voice, cinematic amber accent */
+/* Number value — data voice, crimson accent */
 .wk-cover__number-value {
   font-family: var(--font-data);
   font-size: var(--text-xl);
   font-weight: 400;
-  color: var(--cin-amber);
+  color: var(--wk-crimson);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
   transition: color 200ms var(--ease-cinematic);
@@ -772,8 +874,8 @@
 
 .wk-timeline__node:hover .wk-timeline__dot,
 .wk-timeline__node--expanded .wk-timeline__dot {
-  background: var(--cin-amber);
-  box-shadow: 0 0 8px var(--cin-amber-glow), 0 0 16px var(--cin-amber-ghost);
+  background: var(--wk-crimson);
+  box-shadow: 0 0 8px var(--wk-crimson-glow), 0 0 16px var(--wk-crimson-ghost);
   transform: scale(1.3);
 }
 
@@ -801,7 +903,7 @@
 
 .wk-timeline__node:hover .wk-timeline__day,
 .wk-timeline__node--expanded .wk-timeline__day {
-  color: var(--cin-amber);
+  color: var(--wk-crimson);
 }
 
 .wk-timeline__note {
@@ -923,7 +1025,9 @@
 
 .wk-opinion {
   background: var(--bg-card);
+  background-image: linear-gradient(var(--wk-crimson-ghost), var(--wk-crimson-ghost));
   border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--lean-color, var(--wk-crimson));
   padding: var(--space-5);
   transition:
     box-shadow var(--scene-dolly-in, 320ms) var(--ease-cinematic),
@@ -953,16 +1057,18 @@
   margin-bottom: var(--space-3);
 }
 
-/* Opinion lean badge — organic ink texture background */
+/* Opinion lean badge — bold pill with crimson background */
 .wk-opinion__badge {
   font-family: var(--font-meta);
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--lean-color, var(--fg-tertiary));
-  color: var(--lean-color, var(--fg-tertiary));
+  border-radius: 2px;
+  background: var(--wk-crimson);
+  border: 1px solid var(--wk-crimson);
+  color: var(--wk-cream);
   white-space: nowrap;
   position: relative;
   overflow: hidden;
@@ -1086,9 +1192,9 @@
   border-left: 3px solid var(--fg-tertiary);
 }
 
-/* Sports accent bar — warm amber left border */
+/* Sports accent bar — crimson left border */
 .wk-special__card--sports {
-  border-left: 3px solid var(--cin-amber, var(--fg-tertiary));
+  border-left: 3px solid var(--wk-crimson, var(--fg-tertiary));
 }
 
 /* ===========================================================================
@@ -1133,7 +1239,7 @@
   font-family: var(--font-data);
   font-size: var(--text-xl);
   font-weight: 400;
-  color: var(--cin-amber);
+  color: var(--wk-crimson);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
 }
@@ -1238,7 +1344,7 @@
   position: relative;
 }
 
-/* Organic ink bottom border on brief items */
+/* Organic ink bottom border on brief items — crimson */
 .wk-brief__item::after {
   content: "";
   position: absolute;
@@ -1246,13 +1352,13 @@
   right: 0;
   bottom: 0;
   height: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%2352504A' stroke-width='0.8' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='0.8' fill='none' opacity='0.18'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-brief__item::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%239CA3AF' stroke-width='0.8' fill='none' opacity='0.1'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='0.8' fill='none' opacity='0.14'/%3E%3C/svg%3E");
 }
 
 .wk-brief__item:last-child::after {
@@ -1311,7 +1417,7 @@
 .wk-audio__play:hover {
   background: var(--fg-primary);
   color: var(--bg-primary);
-  box-shadow: 0 0 12px var(--cin-amber-glow);
+  box-shadow: 0 0 12px var(--wk-crimson-glow);
 }
 
 .wk-audio__play:focus-visible {
@@ -1413,8 +1519,9 @@
 }
 
 .wk-archive__item--current {
-  border-color: var(--cin-amber);
+  border-color: var(--wk-crimson);
   color: var(--fg-primary);
+  background: var(--wk-crimson-ghost);
 }
 
 .wk-archive__issue {
@@ -1443,7 +1550,7 @@
 .wk-loading__bar {
   width: 3rem;
   height: 2px;
-  background: var(--cin-amber, var(--border-strong));
+  background: var(--wk-crimson, var(--border-strong));
   animation: wkPulse 1.2s ease-in-out infinite;
 }
 
@@ -1489,7 +1596,7 @@
 }
 
 .wk-empty__link:hover {
-  color: var(--cin-amber);
+  color: var(--wk-crimson);
 }
 
 /* ===========================================================================
@@ -1506,7 +1613,18 @@
   }
 
   .wk-masthead__wordmark {
-    height: 22px;
+    height: 24px;
+  }
+
+  .wk-masthead {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .wk-section--cream,
+  .wk-section--opinions {
+    margin-left: calc(-1 * var(--space-4));
+    margin-right: calc(-1 * var(--space-4));
+    padding: var(--space-4);
   }
 
   .wk-cover__headline {
@@ -1543,23 +1661,95 @@
 }
 
 /* ===========================================================================
-   Pull Quote — organic ink quotation mark accent
+   Pull Quote — crimson magazine style, organic ink borders
    =========================================================================== */
 .wk-pullquote {
   position: relative;
   display: flex;
-  gap: var(--space-3);
-  padding: var(--space-4) 0;
-  margin: var(--space-4) 0;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-5);
+  margin: var(--space-5) 0;
+  background: var(--wk-cream);
+  border-left: 4px solid var(--wk-crimson);
+  border-right: 4px solid var(--wk-crimson);
+}
+
+:root[data-mode="dark"] .wk-pullquote {
+  background: var(--wk-cream-deep);
 }
 
 .wk-pullquote__text {
   font-family: var(--font-editorial);
-  font-size: var(--text-lg);
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
   font-style: italic;
   line-height: 1.5;
   color: var(--fg-primary);
 }
+
+/* ===========================================================================
+   Section Divider Flourish — crimson ink ornament between sections
+   =========================================================================== */
+.wk-flourish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-5) 0;
+  gap: var(--space-3);
+}
+
+.wk-flourish__ornament {
+  width: 20px;
+  height: 20px;
+  color: var(--wk-crimson);
+  opacity: 0.5;
+}
+
+.wk-flourish__line {
+  flex: 1;
+  max-width: 80px;
+  height: 2px;
+  color: var(--wk-crimson);
+  opacity: 0.25;
+}
+
+/* ===========================================================================
+   Alternating Section Backgrounds — cream / white rhythm
+   =========================================================================== */
+.wk-section--cream {
+  background: var(--wk-cream);
+  margin-left: calc(-1 * var(--space-5));
+  margin-right: calc(-1 * var(--space-5));
+  padding: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .wk-section--cream {
+    margin-left: calc(-1 * var(--space-7));
+    margin-right: calc(-1 * var(--space-7));
+    padding: var(--space-6) var(--space-7);
+  }
+}
+
+:root[data-mode="dark"] .wk-section--cream {
+  background: var(--wk-cream-deep);
+}
+
+/* Opinions section gets crimson ghost tint */
+.wk-section--opinions {
+  background: var(--wk-crimson-ghost);
+  margin-left: calc(-1 * var(--space-5));
+  margin-right: calc(-1 * var(--space-5));
+  padding: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .wk-section--opinions {
+    margin-left: calc(-1 * var(--space-7));
+    margin-right: calc(-1 * var(--space-7));
+    padding: var(--space-6) var(--space-7);
+  }
+}
+
 
 /* ===========================================================================
    Accessibility — ensure no motion artifacts
