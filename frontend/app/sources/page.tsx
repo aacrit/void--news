@@ -869,6 +869,10 @@ function SourcesPageInner() {
 
   return (
     <div className="page-container">
+      {/* PWA back nav — visible on mobile */}
+      <Link href="/" className="pwa-back" aria-label="Back to news feed">
+        <span aria-hidden="true">&larr;</span> News Feed
+      </Link>
       {/* ---- Nav header — matches NavBar layout ---- */}
       <header className="nav-header">
         <nav className="nav-inner" aria-label="Main navigation">

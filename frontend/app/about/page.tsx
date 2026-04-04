@@ -580,6 +580,11 @@ export default function AboutPage() {
 
   return (
     <div className="about-page" ref={pageRef}>
+      {/* PWA back nav — visible on mobile, always accessible */}
+      <Link href="/" className="pwa-back" aria-label="Back to news feed">
+        <span aria-hidden="true">&larr;</span> News Feed
+      </Link>
+
       {/* ══════════════════════════════════════════════════════════════════
           ACT I: THE VOID — EMOTIONAL SETUP
           ══════════════════════════════════════════════════════════════════ */}
