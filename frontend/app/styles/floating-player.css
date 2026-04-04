@@ -300,6 +300,12 @@
   min-height: 28px;
   cursor: pointer;
   transition: border-color 150ms var(--ease-out);
+  position: relative;
+}
+
+/* Expand touch target to 44px — WCAG compliance */
+.fp__speed::after {
+  content: ""; position: absolute; inset: -8px;
 }
 
 .fp__speed:hover {
@@ -789,7 +795,7 @@
   top: 0; left: 50%;
   width: 300px; height: 120px;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse, rgba(212, 140, 60, 0.03) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(212, 140, 60, 0.07) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -1130,6 +1136,11 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes fpPaneSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-100%); }
+}
+
 @media (min-width: 1024px) {
   .fp--broadcast {
     top: var(--nav-height, 53px);
@@ -1177,6 +1188,11 @@
   /* Hide drag indicator on desktop (no swipe gesture) */
   .fp--broadcast .fp__drag-indicator {
     display: none;
+  }
+
+  /* Pane exit — slide out left before unmount */
+  .fp--closing.fp--broadcast {
+    animation: fpPaneSlideOut 300ms var(--ease-whip, ease) both;
   }
 
   /* Host cards stack vertically in narrow pane */

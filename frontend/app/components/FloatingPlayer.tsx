@@ -57,6 +57,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   } = state;
 
   const [view, setView] = useState<PlayerView>("compact");
+  const [closing, setClosing] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
 
   const waveformBars = useMemo(() =>
@@ -74,13 +75,13 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
   /* ---- Desktop left-pane: push page canvas right when broadcast is open ---- */
   useEffect(() => {
-    if (view === "broadcast") {
+    if (view === "broadcast" && !closing) {
       document.documentElement.setAttribute("data-onair-pane", "");
     } else {
       document.documentElement.removeAttribute("data-onair-pane");
     }
     return () => document.documentElement.removeAttribute("data-onair-pane");
-  }, [view]);
+  }, [view, closing]);
 
   if (!brief || !brief.audio_url || !isPlayerVisible) return null;
 
@@ -109,13 +110,25 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
   const closeBroadcast = () => {
     hapticLight();
-    setView("expanded");
+    const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
+    if (isDesktop) {
+      setClosing(true);
+      setTimeout(() => { setClosing(false); setView("compact"); }, 300);
+    } else {
+      setView("expanded");
+    }
   };
 
   const dismiss = () => {
     hapticLight();
-    setPlayerVisible(false);
-    setView("compact");
+    const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
+    if (view === "broadcast" && isDesktop) {
+      setClosing(true);
+      setTimeout(() => { setClosing(false); setView("compact"); setPlayerVisible(false); }, 300);
+    } else {
+      setPlayerVisible(false);
+      setView("compact");
+    }
   };
 
   const handleBarTouchStart = (e: React.TouchEvent) => {
@@ -194,6 +207,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
         "fp",
         view === "compact" ? "fp--compact" : view === "expanded" ? "fp--expanded" : "fp--broadcast",
         isPlaying ? "fp--playing" : "",
+        closing ? "fp--closing" : "",
       ].filter(Boolean).join(" ")}
       style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: "none" } : undefined}
       role="region"
