@@ -336,4 +336,30 @@ def categorize_article(article: dict) -> list[str]:
         else:
             break  # sorted, so remaining are lower
 
+    # Title-based hard override (v5.9) — strong title markers force category
+    # regardless of keyword scoring. Catches: "fires AG" → politics (not economy),
+    # "boxing odds" → sports (not environment), "F-15 shot down" → conflict.
+    import re
+    _tl = title_lower
+    _TITLE_OVERRIDES = [
+        # Sports: league names, match-ups, odds, scores
+        (r"\b(nba|nfl|mlb|nhl|mls|ufc|mma|premier league|la liga|bundesliga|serie a)\b", "sports"),
+        (r"\b(boxing|bout|heavyweight|middleweight|lightweight|welterweight)\b", "sports"),
+        (r"\bvs\.?\s", "sports"),  # "X vs Y" pattern
+        (r"\b(odds|prediction|picks|fantasy|draft pick|free agent|trade deadline)\b", "sports"),
+        (r"\b(quarterback|touchdown|home run|slam dunk|hat trick|penalty kick)\b", "sports"),
+        (r"\b(lakers|celtics|yankees|dodgers|cowboys|patriots|warriors|chiefs)\b", "sports"),
+        # Conflict: military hardware, combat actions
+        (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
+        (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),
+        # Politics: appointments, firings, executive actions
+        (r"\b(fires|fired|ousts|ousted|appoints|appointed|nominates|sworn in)\b", "politics"),
+        (r"\b(attorney general|secretary of|chief of staff|executive order)\b", "politics"),
+    ]
+    for pattern, override_cat in _TITLE_OVERRIDES:
+        if re.search(pattern, _tl):
+            if result[0] != override_cat:
+                result = [override_cat] + [c for c in result if c != override_cat]
+            break
+
     return result

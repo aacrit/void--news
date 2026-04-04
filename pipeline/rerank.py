@@ -497,16 +497,21 @@ def main():
                 total = len(articles)
                 if total > 0:
                     affinity = regional_count / total
-                    affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
-                    # Quality cap: proportional to source count.
-                    # Full boost only at 10+ sources. Prevents thin regional
-                    # stories from outranking high-source global stories.
-                    # 1→1.05x, 3→1.15x, 5→1.25x, 7→1.35x, 10+→full 1.5x
-                    _sc = u.get("source_count", 0)
-                    if _sc < 10:
-                        _cap = 1.0 + (_sc / 10.0) * (AFFINITY_MAX_BOOST - 1.0)
-                        affinity_mult = min(affinity_mult, _cap)
-                    u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * affinity_mult, 2)
+
+                    # LOW-AFFINITY DEMOTION: if <10% of articles are from this
+                    # region, the story is a stray (e.g., White Sox in South Asia
+                    # because one Pakistani wire picked it up). Demote 0.65x.
+                    if affinity < 0.10 and regional_count <= 1:
+                        u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * 0.65, 2)
+                    else:
+                        affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
+                        # Quality cap: proportional to source count.
+                        # Full boost only at 10+ sources.
+                        _sc = u.get("source_count", 0)
+                        if _sc < 10:
+                            _cap = 1.0 + (_sc / 10.0) * (AFFINITY_MAX_BOOST - 1.0)
+                            affinity_mult = min(affinity_mult, _cap)
+                        u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * affinity_mult, 2)
 
             # Local-priority boost — only for clusters with 8+ sources.
             # Prevents thin regional stories from outranking major global stories.
@@ -544,22 +549,21 @@ def main():
 
         pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
 
-        # Edition-level lead gate: top-10 positions require 5+ sources.
-        # Prevents thin junk clusters from leading editions via affinity boost.
+        # Edition-level lead gate: ALWAYS push thin clusters (< 5 sources)
+        # below all quality clusters. No exceptions — a 3-source story should
+        # never outrank a 20-source story regardless of affinity boosts.
         _ED_LEAD_MIN = 5
-        _ED_LEAD_SLOTS = 10
         eligible = [u for u in pool if u.get("source_count", 0) >= _ED_LEAD_MIN]
         ineligible = [u for u in pool if u.get("source_count", 0) < _ED_LEAD_MIN]
-        if len(eligible) >= _ED_LEAD_SLOTS and ineligible:
-            floor_rank = eligible[_ED_LEAD_SLOTS - 1].get(f"rank_{ed}", 0) - 0.1
+        if eligible and ineligible:
+            # Floor = lowest eligible rank minus 0.1
+            floor_rank = eligible[-1].get(f"rank_{ed}", 0) - 0.1
             for u in ineligible:
                 if u.get(f"rank_{ed}", 0) > floor_rank:
                     u[f"rank_{ed}"] = round(floor_rank, 2)
                     floor_rank -= 0.1
-        pool[:] = eligible[:_ED_LEAD_SLOTS]
-        remaining_lead = eligible[_ED_LEAD_SLOTS:] + ineligible
-        remaining_lead.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
-        pool.extend(remaining_lead)
+        # Reconstruct pool: all eligible first, then ineligible
+        pool[:] = eligible + sorted(ineligible, key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
 
         # Thin-edition backfill (v5.8): when a regional edition has
         # fewer than 10 stories with headline_rank >= 40, backfill from

@@ -438,8 +438,14 @@ def merge_related_clusters(
                 if spread_hours > max_age_spread_hours:
                     continue
 
-            # Size gate: prevent runaway mega-clusters from transitive merges
-            if group_size[find(i)] + group_size[find(j)] > max_cluster_articles:
+            # Size gate: prevent runaway mega-clusters from transitive merges.
+            # Relaxed for high-source cluster pairs (both 10+ sources) — these
+            # are major stories that SHOULD merge (e.g., Iran F-15 fragments).
+            combined_size = group_size[find(i)] + group_size[find(j)]
+            src_i = len(set(a.get("source_id", "") for a in clusters[i].get("articles", [])))
+            src_j = len(set(a.get("source_id", "") for a in clusters[j].get("articles", [])))
+            size_cap = 200 if (src_i >= 10 and src_j >= 10) else max_cluster_articles
+            if combined_size > size_cap:
                 continue
 
             union(i, j)
