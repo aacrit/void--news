@@ -283,6 +283,53 @@
   color: var(--indicator-broadcast);
 }
 
+/* ON AIR / OFFLINE status indicator */
+.fp__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: var(--space-2);
+  padding: 2px 8px 2px 6px;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--console-fg) 12%, transparent);
+  background: color-mix(in srgb, var(--console-fg) 4%, transparent);
+  transition: border-color 300ms, background 300ms;
+}
+
+.fp__status--live {
+  border-color: color-mix(in srgb, var(--indicator-broadcast) 40%, transparent);
+  background: color-mix(in srgb, var(--indicator-broadcast) 8%, transparent);
+}
+
+.fp__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--console-fg) 25%, transparent);
+  flex-shrink: 0;
+  transition: background 300ms;
+}
+
+.fp__status--live .fp__status-dot {
+  background: var(--indicator-broadcast);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--indicator-broadcast) 50%, transparent);
+  animation: recPulse 1.5s var(--ease-rack) infinite;
+}
+
+.fp__status-label {
+  font-family: var(--font-meta);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--console-fg) 40%, transparent);
+  transition: color 300ms;
+}
+
+.fp__status--live .fp__status-label {
+  color: var(--indicator-broadcast);
+}
+
 .fp__bar-actions {
   display: flex;
   align-items: center;
@@ -1293,6 +1340,7 @@
   .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .fp__pill-eq-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .fp__rec-dot { animation: none; opacity: 1; }
+  .fp__status--live .fp__status-dot { animation: none; opacity: 1; }
   .fp--playing .fp__pill { animation: none; }
 }
 

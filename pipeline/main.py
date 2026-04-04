@@ -2381,6 +2381,61 @@ def main():
         else:
             print(f"  No duplicate clusters found")
 
+        # Title-based cross-run dedup: catch old clusters covering the same
+        # story as new clusters but with ZERO article overlap (different RSS
+        # fetch batches). The article-overlap check above misses these entirely.
+        try:
+            from clustering.story_cluster import _title_words
+            # Fetch titles of all old clusters still in DB (limit to recent 48h)
+            from datetime import timedelta
+            cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+            old_res = supabase.table("story_clusters").select(
+                "id,title,source_count"
+            ).not_.in_("id", list(new_cluster_ids)).gte(
+                "created_at", cutoff
+            ).execute()
+            old_titles = {r["id"]: (_title_words(r.get("title", "")), r.get("source_count", 0))
+                          for r in (old_res.data or []) if r.get("title")}
+
+            # Build title word sets for new clusters
+            new_titles: dict[str, set[str]] = {}
+            for cid in new_cluster_ids:
+                # Find title from the stored clusters
+                for c in all_clusters:
+                    db_id = c.get("_db_id", "")
+                    if db_id == cid:
+                        new_titles[cid] = _title_words(c.get("title", ""))
+                        break
+
+            title_stale: list[str] = []
+            for old_cid, (old_words, old_src) in old_titles.items():
+                if old_cid in stale_ids or not old_words:
+                    continue
+                for new_cid, new_words in new_titles.items():
+                    if not new_words:
+                        continue
+                    intersection = len(old_words & new_words)
+                    union = len(old_words | new_words)
+                    if union > 0 and intersection / union >= 0.40:
+                        title_stale.append(old_cid)
+                        break
+
+            if title_stale:
+                for i in range(0, len(title_stale), 100):
+                    batch = title_stale[i:i + 100]
+                    try:
+                        supabase.table("cluster_articles").delete().in_(
+                            "cluster_id", batch
+                        ).execute()
+                        supabase.table("story_clusters").delete().in_(
+                            "id", batch
+                        ).execute()
+                    except Exception as e:
+                        print(f"  [warn] title dedup delete failed: {e}")
+                print(f"  Title dedup: removed {len(title_stale)} old clusters (>=40% title overlap with new)")
+        except Exception as e:
+            print(f"  [warn] Title-based dedup failed: {e}")
+
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
         print("\n[9a] Updating news memory engine...")

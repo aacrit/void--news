@@ -525,7 +525,7 @@ def _title_words(title: str) -> set[str]:
 def merge_duplicate_title_clusters(
     clusters: list[dict],
     jaccard_threshold: float = 0.45,
-    max_merged_articles: int = 120,
+    max_merged_articles: int = 250,
 ) -> list[dict]:
     """
     Final merge pass: consolidate clusters with near-identical headlines.
@@ -785,7 +785,7 @@ def cluster_stories(
     # Split oversized clusters: re-cluster with a tighter threshold.
     # Prevents 100+ article mega-clusters from TF-IDF over-merging on
     # shared political vocabulary (e.g., "Trump", "war", "Iran").
-    MAX_CLUSTER_SIZE = 50
+    MAX_CLUSTER_SIZE = 80
     split_clusters: list[dict] = []
     for c in clusters:
         if len(c.get("articles", [])) > MAX_CLUSTER_SIZE:
