@@ -9,7 +9,7 @@ News aggregation platform with per-article, 6-axis rule-based NLP bias analysis.
 ## Architecture
 
 ```
-GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
+GitHub Actions (3x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
 ```
 
 No backend server. Python pipeline on Actions, Next.js static export on Pages, Supabase as single data layer.
@@ -68,7 +68,7 @@ World-focused, top 20 clusters. **TL;DR**: 8-12 sentences editorial paragraph (1
 ### Source Curation
 1,013 sources, 3 tiers: us_major (43), international (373), independent (597). 7-point lean spectrum. L:R ratio 1.20:1. 38 wire services, 10 fact-checkers. Editions: world (default), us, europe, south-asia. 158 countries. Source country determines edition via `_COUNTRY_EDITION_MAP` in `main.py`.
 
-## Pipeline Flow (4x Daily)
+## Pipeline Flow (3x Daily — 7 AM / 2 PM / 8 PM Chicago)
 
 ```
  1. LOAD SOURCES → 2. PIPELINE RUN → 3. FETCH RSS → 4. SCRAPE → 4b. DEDUP
@@ -78,7 +78,7 @@ World-focused, top 20 clusters. **TL;DR**: 8-12 sentences editorial paragraph (1
  9. ENRICH → 9a. MEMORY ENGINE → 9b. ARTICLE CATS → 9c. TOPIC TRACK → 10. TRUNCATE + CLEANUP
 ```
 
-Non-audio runs (00:00, 12:00 UTC) carry forward audio fields from previous brief.
+All 3 runs generate audio. TTS budget: 3 runs × ~16 calls = ~48/day (within 100 RPD).
 
 ## Frontend Design
 

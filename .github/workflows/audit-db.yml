@@ -5,10 +5,9 @@ permissions: {}
 on:
   schedule:
     # Run after each pipeline execution (with ~30-min buffer)
-    - cron: '30 0 * * *'      # After 00:00 UTC pipeline
-    - cron: '30 6 * * *'      # After 06:00 UTC pipeline
-    - cron: '30 12 * * *'     # After 12:00 UTC pipeline
-    - cron: '30 18 * * *'     # After 18:00 UTC pipeline
+    - cron: '30 12 * * *'     # After 12:00 UTC pipeline (7:30 AM Chicago)
+    - cron: '30 19 * * *'     # After 19:00 UTC pipeline (2:30 PM Chicago)
+    - cron: '30 1 * * *'      # After 01:00 UTC pipeline (8:30 PM Chicago)
   workflow_dispatch:
     inputs:
       verbose:

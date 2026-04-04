@@ -4,12 +4,11 @@ permissions: {}
 
 on:
   schedule:
-    # 4x daily, every 6 hours — all editions each run.
-    # Covers morning + evening for US, India, and EU simultaneously.
-    - cron: '0 0 * * *'      # 00:00 UTC — US evening (7 PM ET), India morning (5:30 AM IST)
-    - cron: '0 6 * * *'      # 06:00 UTC — EU morning (7 AM CET), India midday (11:30 AM IST)
-    - cron: '0 12 * * *'     # 12:00 UTC — US morning (7 AM ET), India evening (5:30 PM IST)
-    - cron: '0 18 * * *'     # 18:00 UTC — US afternoon (1 PM ET), EU evening (7 PM CET)
+    # 3x daily, anchored to Chicago (CDT = UTC-5).
+    # Covers morning, afternoon, evening across US, India, and EU.
+    - cron: '0 12 * * *'     # 12:00 UTC — 7 AM Chicago, 5:30 PM IST, 2 PM CET
+    - cron: '0 19 * * *'     # 19:00 UTC — 2 PM Chicago, 12:30 AM IST, 9 PM CET
+    - cron: '0 1 * * *'      # 01:00 UTC — 8 PM Chicago, 6:30 AM IST, 2 AM CET
   workflow_dispatch:
     inputs:
       editions:
