@@ -101,13 +101,32 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           <LogoFull height={24} />
         </div>
 
-        {/* Navigation links */}
+        {/* Content destinations */}
         <nav className="msp__links" aria-label="Side navigation">
-          <Link href="/about" className="msp__link" onClick={handleLinkClick}>
-            About
+          <span className="msp__section-label">Read</span>
+          <Link href="/weekly" className="msp__link" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --weekly</span>
+            <span className="msp__link-desc">Weekly digest</span>
           </Link>
+          <Link href="/paper" className="msp__link" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --paper</span>
+            <span className="msp__link-desc">E-paper broadsheet</span>
+          </Link>
+
+          <span className="msp__section-label">Explore</span>
+          <Link href="/sources" className="msp__link" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --sources</span>
+            <span className="msp__link-desc">1,013 curated sources</span>
+          </Link>
+          <Link href="/about" className="msp__link" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --about</span>
+            <span className="msp__link-desc">See through the void</span>
+          </Link>
+
+          <span className="msp__section-label">Participate</span>
           <Link href="/ship" className="msp__link" onClick={handleLinkClick}>
-            Ship
+            <span className="msp__link-cmd">void --ship</span>
+            <span className="msp__link-desc">Request features, report bugs</span>
           </Link>
         </nav>
 
