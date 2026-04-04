@@ -839,15 +839,17 @@
     display: none;
   }
 
-  /* === PAGE MAIN — clear bottom nav + audio player === */
-  /* MobileBottomNav: 52px. AudioPlayer (above nav): 56px. Total fixed = 108px.
-     Plus breathing room (--space-5 ~16px) and iOS safe-area for home indicator. */
+  /* === PAGE MAIN — clear MobileTabBar + MobileMiniPlayer === */
+  /* MobileTabBar: 52px. MobileMiniPlayer (above tab bar, optional): 44px.
+     Total max fixed = 96px + safe-area. The mini-player may not always be
+     visible, but padding must account for worst case to prevent content
+     being hidden behind fixed chrome. */
   .page-main {
-    padding-bottom: calc(var(--nav-bottom-height, 52px) + 60px + var(--space-5) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
-    margin-bottom: calc(var(--nav-bottom-height, 52px) + 60px + var(--space-5) + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   /* === META TAGS — bump readability on mobile === */

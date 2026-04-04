@@ -883,6 +883,16 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
+            {/* Inline filter bar — mobile only, feed-only, bracket notation */}
+            {!isLoading && stories.length > 0 && isMobile && (
+              <MobileBottomNav
+                activeLean={activeLean}
+                onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+                activeCategory={activeCategory}
+                onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+              />
+            )}
+
             {/* News feed — mobile gets MobileFeed, desktop keeps broadsheet */}
             {!isLoading && stories.length > 0 && (
               isMobile ? (
@@ -1003,22 +1013,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Floating audio player — persistent, above all content */}
-      {dailyBriefState.brief?.audio_url && (
-        <audio ref={dailyBriefState.audioCallbackRef} src={dailyBriefState.brief.audio_url} preload="metadata" crossOrigin="anonymous" hidden />
-      )}
+      {/* Floating audio player — persistent, above all content.
+           Audio element now lives in AudioProvider (layout.tsx). */}
       <FloatingPlayer state={dailyBriefState} />
-
-      {/* Mobile bottom nav — filter buttons + OnAir progress (editions moved to NavBar tabs) */}
-      {isMobile && (
-        <MobileBottomNav
-          activeLean={activeLean}
-          onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
-          activeCategory={activeCategory}
-          onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
-          dailyBriefState={dailyBriefState}
-        />
-      )}
     </div>
   );
 }

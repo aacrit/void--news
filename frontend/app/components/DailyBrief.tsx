@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import type { DailyBriefData } from "../lib/types";
-import { fetchDailyBrief } from "../lib/supabase";
-import { hapticLight, hapticTick } from "../lib/haptics";
+import { useAudio, type AudioState } from "./AudioProvider";
 
 /* ---------------------------------------------------------------------------
-   Shared state — call once in HomeContent, pass to DailyBriefText + OnAirButton.
+   DailyBriefState — backward-compatible API surface.
+   useDailyBrief(edition) now delegates to the global AudioProvider.
+   All consumers (HomeContent, FloatingPlayer, SkyboxBanner, etc.) continue
+   to work without modification.
    --------------------------------------------------------------------------- */
 
 export interface DailyBriefState {
@@ -40,210 +42,46 @@ export interface DailyBriefState {
   analyserRef: React.RefObject<AnalyserNode | null>;
 }
 
+/**
+ * Thin bridge hook: syncs edition to the global AudioProvider and returns
+ * the global state shaped as DailyBriefState (backward-compatible).
+ * The <audio> element now lives in AudioProvider (layout.tsx), so playback
+ * persists across page navigation.
+ */
 export function useDailyBrief(edition: string): DailyBriefState {
-  const [brief, setBrief] = useState<DailyBriefData | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [audioError, setAudioError] = useState(false);
-  const [buffered, setBuffered] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(() => {
-    if (typeof window === "undefined") return 1;
-    try { const s = localStorage.getItem("void-onair-speed"); return s ? Number(s) : 1; } catch { return 1; }
-  });
-  const [isPlayerVisible, setPlayerVisible] = useState(false);
-  const [isExpanded, setExpanded] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audio = useAudio();
 
-  /* ---- Web Audio API: real-time analyser for oscilloscope ---- */
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const connectedElements = useRef<WeakSet<HTMLAudioElement>>(new WeakSet());
-
+  // Sync edition to global provider when it changes (edition tabs, URL nav)
   useEffect(() => {
-    let cancelled = false;
+    audio.setEdition(edition);
+  }, [edition]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Pause and detach audio before switching briefs to prevent a race
-    // where audio.play() is still pending when src changes.
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      audio.src = "";
-      audio.load();
-    }
-
-    setBrief(null);
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setDuration(0);
-    setAudioError(false);
-    setBuffered(0);
-    // Fetch edition-specific brief (pipeline generates distinct content per edition)
-    fetchDailyBrief(edition).then((data) => {
-      if (!cancelled) setBrief(data);
-    });
-    return () => { cancelled = true; };
-  }, [edition]);
-
-  // Callback ref — attaches listeners the instant <audio> mounts in the DOM,
-  // regardless of whether brief loaded before or after DailyBriefText renders.
-  const listenerCleanupRef = useRef<(() => void) | null>(null);
-
-  const audioCallbackRef = useCallback((el: HTMLAudioElement | null) => {
-    if (listenerCleanupRef.current) {
-      listenerCleanupRef.current();
-      listenerCleanupRef.current = null;
-    }
-    audioRef.current = el;
-    if (!el) return;
-
-    const onTime = () => setCurrentTime(el.currentTime);
-    const onMeta = () => {
-      if (el.duration && isFinite(el.duration)) setDuration(el.duration);
-    };
-    const onEnd = () => setIsPlaying(false);
-    const onError = () => { setAudioError(true); setIsPlaying(false); };
-    const onProgress = () => {
-      if (el.buffered.length > 0 && el.duration > 0) {
-        setBuffered((el.buffered.end(el.buffered.length - 1) / el.duration) * 100);
-      }
-    };
-
-    el.addEventListener("timeupdate", onTime);
-    el.addEventListener("loadedmetadata", onMeta);
-    el.addEventListener("durationchange", onMeta);
-    el.addEventListener("ended", onEnd);
-    el.addEventListener("error", onError);
-    el.addEventListener("progress", onProgress);
-    if (el.duration && isFinite(el.duration)) setDuration(el.duration);
-
-    // Connect Web Audio API analyser (once per element)
-    if (!connectedElements.current.has(el)) {
-      try {
-        const ctx = audioContextRef.current || new AudioContext();
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 2048; // 1024 time-domain samples — captures 2-3 vocal cycles
-        analyser.smoothingTimeConstant = 0.82; // smoother, less twitchy — elegant not frenetic
-        const source = ctx.createMediaElementSource(el);
-        source.connect(analyser);
-        analyser.connect(ctx.destination);
-        audioContextRef.current = ctx;
-        analyserRef.current = analyser;
-        connectedElements.current.add(el);
-      } catch {
-        // Web Audio API unavailable or CORS blocked — oscilloscope won't render
-      }
-    }
-
-    listenerCleanupRef.current = () => {
-      el.removeEventListener("timeupdate", onTime);
-      el.removeEventListener("loadedmetadata", onMeta);
-      el.removeEventListener("durationchange", onMeta);
-      el.removeEventListener("ended", onEnd);
-      el.removeEventListener("error", onError);
-      el.removeEventListener("progress", onProgress);
-    };
-  }, []);
-
-  // F08: Rely solely on callback ref — no getElementById fallback (avoids duplicate id issues)
-  const getAudio = useCallback((): HTMLAudioElement | null => {
-    return audioRef.current;
-  }, []);
-
-  const handlePlayPause = useCallback(() => {
-    const audio = getAudio();
-    if (!audio) return;
-    // No haptic here — callers provide their own (hapticConfirm on pill, hapticMedium on transport)
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      if (audioError) {
-        setAudioError(false);
-        audio.load();
-      }
-      // Resume AudioContext for iOS Safari (requires user gesture)
-      if (audioContextRef.current?.state === "suspended") {
-        audioContextRef.current.resume();
-      }
-      audio.play().catch(() => {
-        setAudioError(true);
-        setIsPlaying(false);
-      });
-      setIsPlaying(true);
-    }
-  }, [isPlaying, audioError, getAudio]);
-
-  const lastSeekTick = useRef(0);
-  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const audio = getAudio();
-    if (!audio) return;
-    const t = Number(e.target.value);
-    const tick = Math.floor(t / 5);
-    if (tick !== lastSeekTick.current) {
-      lastSeekTick.current = tick;
-      hapticTick();
-    }
-    audio.currentTime = t;
-    setCurrentTime(t);
-  }, [getAudio]);
-
-  const SPEEDS = [1, 1.25, 1.5, 2] as const;
-  const cycleSpeed = useCallback(() => {
-    setPlaybackSpeed((prev) => {
-      const idx = SPEEDS.indexOf(prev as typeof SPEEDS[number]);
-      const next = SPEEDS[(idx + 1) % SPEEDS.length];
-      const audio = audioRef.current;
-      if (audio) audio.playbackRate = next;
-      try { localStorage.setItem("void-onair-speed", String(next)); } catch {}
-      return next;
-    });
-  }, []);
-
-  // Apply saved speed when audio loads
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio && playbackSpeed !== 1) audio.playbackRate = playbackSpeed;
-  }, [brief, playbackSpeed]);
-
-  const skipForward = useCallback(() => {
-    const audio = getAudio();
-    if (!audio) return;
-    hapticTick();
-    audio.currentTime = Math.min(audio.currentTime + 15, audio.duration || Infinity);
-    setCurrentTime(audio.currentTime);
-  }, [getAudio]);
-
-  const skipBackward = useCallback(() => {
-    const audio = getAudio();
-    if (!audio) return;
-    hapticTick();
-    audio.currentTime = Math.max(audio.currentTime - 15, 0);
-    setCurrentTime(audio.currentTime);
-  }, [getAudio]);
-
-  const seekTo = useCallback((seconds: number) => {
-    const audio = getAudio();
-    if (!audio) return;
-    hapticLight();
-    audio.currentTime = seconds;
-    setCurrentTime(seconds);
-    if (!isPlaying) {
-      if (audioError) { setAudioError(false); audio.load(); }
-      audio.play().catch(() => { setAudioError(true); setIsPlaying(false); });
-      setIsPlaying(true);
-    }
-  }, [isPlaying, audioError]);
-
-  // Auto-show player when brief has audio
-  useEffect(() => {
-    if (brief?.audio_url) setPlayerVisible(true);
-  }, [brief]);
+  // No-op callback ref — <audio> is managed by AudioProvider, not here.
+  // Kept in the interface for backward compatibility; existing consumers that
+  // pass audioCallbackRef to an <audio> element will harmlessly no-op.
+  const noopCallbackRef = useCallback((_el: HTMLAudioElement | null) => {}, []);
 
   return {
-    brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef,
-    handlePlayPause, handleSeek, playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
-    isPlayerVisible, setPlayerVisible, isExpanded, setExpanded, analyserRef,
+    brief: audio.brief,
+    isPlaying: audio.isPlaying,
+    currentTime: audio.currentTime,
+    duration: audio.duration,
+    buffered: audio.buffered,
+    audioError: audio.audioError,
+    audioRef: audio.audioRef,
+    audioCallbackRef: noopCallbackRef,
+    handlePlayPause: audio.handlePlayPause,
+    handleSeek: audio.handleSeek,
+    playbackSpeed: audio.playbackSpeed,
+    cycleSpeed: audio.cycleSpeed,
+    skipForward: audio.skipForward,
+    skipBackward: audio.skipBackward,
+    seekTo: audio.seekTo,
+    isPlayerVisible: audio.isPlayerVisible,
+    setPlayerVisible: audio.setPlayerVisible,
+    isExpanded: audio.isExpanded,
+    setExpanded: audio.setExpanded,
+    analyserRef: audio.analyserRef,
   };
 }
 
