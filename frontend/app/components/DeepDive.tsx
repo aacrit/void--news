@@ -526,7 +526,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             opacity: 1,
             boxShadow: "var(--shadow-cinematic-lifted)",
             transition: [
-              "transform 280ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "transform 380ms var(--spring-bouncy)",
               "border-radius 200ms cubic-bezier(0.16, 1, 0.3, 1)",
               "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
               "box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)",

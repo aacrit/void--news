@@ -237,8 +237,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (pullStartRef.current.scrollY > 5 && window.scrollY > 5) return;
     const deltaY = e.touches[0].clientY - pullStartRef.current.y;
     if (deltaY <= 0) { setPullOffset(0); return; }
-    // Rubber-band resistance
-    const offset = Math.min(deltaY * 0.4, 100);
+    // Rubber-band resistance — progressive (native iOS feel)
+    const offset = Math.min(Math.pow(deltaY, 0.7), 100);
     setPullOffset(offset);
     if (!isPulling && offset > 10) setIsPulling(true);
   }, [isRefreshing, isPulling]);
@@ -788,7 +788,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             style={{
               height: `${pullOffset}px`,
               opacity: Math.min(1, pullOffset / PULL_THRESHOLD),
-              transition: isPulling ? "none" : "height 300ms cubic-bezier(0.2, 1, 0.3, 1), opacity 300ms ease-out",
+              transition: isPulling ? "none" : "height 300ms var(--spring-snappy), opacity 300ms ease-out",
             }}
           >
             <div className="pull-to-refresh__spinner">

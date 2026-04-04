@@ -471,11 +471,20 @@
 
 /* ── Per-section inline expand ── */
 
+/* GPU-compositable expand: grid-template-rows 0fr→1fr avoids layout recalc */
 .mbp__expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 350ms var(--spring-snappy);
   overflow: hidden;
 }
 
+.mbp__expand--open {
+  grid-template-rows: 1fr;
+}
+
 .mbp__expand-inner {
+  min-height: 0;
   padding-top: var(--space-2);
 }
 
