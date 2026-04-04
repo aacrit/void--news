@@ -186,6 +186,15 @@ export default function NavBar({
           {/* Page navigation — destinations */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
+            <Link
+              href="/weekly"
+              className="nav-weekly"
+              aria-label="Go to Weekly digest"
+              title="void --weekly"
+            >
+              <span className="nav-weekly__rule" aria-hidden="true" />
+              <span className="nav-weekly__label">Weekly</span>
+            </Link>
             <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
               Ship
             </Link>
@@ -235,18 +244,7 @@ export default function NavBar({
             ))}
           </nav>
 
-          {/* Weekly — magazine supplement */}
-          <Link
-            href="/weekly"
-            className="nav-weekly"
-            aria-label="Go to Weekly digest"
-            title="void --weekly"
-          >
-            <span className="nav-weekly__rule" aria-hidden="true" />
-            <span className="nav-weekly__label">Weekly</span>
-          </Link>
-
-          <div className="nav-lens__sep" aria-hidden="true" />
+          {/* Weekly moved to Row 1 nav-pages */}
 
           {/* Topic dropdown — bracket notation */}
           <div
