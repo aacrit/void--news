@@ -35,8 +35,8 @@ const AMBER        = "#C8A96E";
 /* ── Lean spectrum ────────────────────────────────────────────────────── */
 
 const LEAN_STOPS: [number, string][] = [
-  [0,   "#4A6FA5"], [17,  "#6B8DB5"], [33,  "#5E9CAE"],
-  [50,  "#3D9B6A"], [67,  "#B08A6A"], [83,  "#B07060"], [100, "#964A3A"],
+  [0,   "#5078AE"], [17,  "#6490B8"], [33,  "#5A9478"],
+  [50,  "#4D9B6A"], [67,  "#B07868"], [83,  "#C56D5C"], [100, "#B25748"],
 ];
 
 function lerpHex(a: string, b: string, t: number): string {
@@ -163,10 +163,10 @@ function drawSpectrumWithSources(
 ): void {
   // Gradient bar
   const grad = ctx.createLinearGradient(x, 0, x + w, 0);
-  grad.addColorStop(0, "#4A6FA5"); grad.addColorStop(0.14, "#6B8DB5");
-  grad.addColorStop(0.28, "#5E9CAE"); grad.addColorStop(0.42, "#3D9B6A");
-  grad.addColorStop(0.57, "#B08A6A"); grad.addColorStop(0.71, "#B07060");
-  grad.addColorStop(1, "#964A3A");
+  grad.addColorStop(0, "#5078AE"); grad.addColorStop(0.14, "#6490B8");
+  grad.addColorStop(0.28, "#5A9478"); grad.addColorStop(0.42, "#4D9B6A");
+  grad.addColorStop(0.57, "#B07868"); grad.addColorStop(0.71, "#C56D5C");
+  grad.addColorStop(1, "#B25748");
   ctx.fillStyle = grad;
   roundRect(ctx, x, y, w, h, 4);
   ctx.fill();
@@ -574,9 +574,9 @@ async function drawQR(ctx: CanvasRenderingContext2D, url: string, x: number, y: 
 /* ── Lean badge color ────────────────────────────────────────────────── */
 
 function leanBadgeColor(v: number): string {
-  if (v <= 35) return "#4A6FA5";  // left-blue
-  if (v <= 65) return "#3D9B6A";  // center-green
-  return "#964A3A";               // right-red
+  if (v <= 35) return "#6490B8";  // editorial blue
+  if (v <= 65) return "#4D9B6A";  // broadsheet sage
+  return "#C56D5C";               // crimson editorial
 }
 
 /* ── 9:16 Story Card (1080x1920) — Split & Verdict formats ──────────── */

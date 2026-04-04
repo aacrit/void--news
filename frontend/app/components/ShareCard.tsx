@@ -16,13 +16,13 @@ import { tiltLabel, tiltLabelAbbr, senseLabel, rigorLabel } from "../lib/biasCol
 /* ── Dark-mode bias colors (hardcoded — card always renders dark) ────────── */
 
 const LEAN_COLORS: Record<string, string> = {
-  "far-left":     "#4A6FA5",
-  "left":         "#6B8DB5",
-  "center-left":  "#5E9CAE",
-  "center":       "#3D9B6A",
-  "center-right": "#B08A6A",
-  "right":        "#B07060",
-  "far-right":    "#964A3A",
+  "far-left":     "#5078AE",
+  "left":         "#6490B8",
+  "center-left":  "#5A9478",
+  "center":       "#4D9B6A",
+  "center-right": "#B07868",
+  "right":        "#C56D5C",
+  "far-right":    "#B25748",
 };
 
 const SPECTRUM_GRADIENT = `linear-gradient(to right, ${LEAN_COLORS["far-left"]}, ${LEAN_COLORS["left"]} 14%, ${LEAN_COLORS["center-left"]} 28%, ${LEAN_COLORS["center"]} 42%, ${LEAN_COLORS["center-right"]} 57%, ${LEAN_COLORS["right"]} 71%, ${LEAN_COLORS["far-right"]})`;
@@ -73,7 +73,7 @@ function cardFramingColor(v: number): string {
 
 /** Opinion: reporting=blue, analysis=purple, opinion=orange */
 function cardOpinionColor(v: number): string {
-  if (v <= 33) return lerpHex("#6B8DB5", "#8B5CF6", v / 33);
+  if (v <= 33) return lerpHex("#6490B8", "#8B5CF6", v / 33);
   if (v <= 66) return lerpHex("#8B5CF6", "#F97316", (v - 33) / 33);
   return "#F97316";
 }

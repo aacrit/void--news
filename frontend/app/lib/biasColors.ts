@@ -139,13 +139,13 @@ export function isUnscoredTilt(
 /* ── CSS variable cache — single observer ───────────────────────────────── */
 
 const SSR_FALLBACK: Record<string, string> = {
-  "--bias-far-left": "#1D4ED8",
-  "--bias-left": "#3B82F6",
-  "--bias-center-left": "#60A5C8",
-  "--bias-center": "#16A34A",
-  "--bias-center-right": "#C87F5A",
-  "--bias-right": "#EF4444",
-  "--bias-far-right": "#B91C1C",
+  "--bias-far-left": "#1A4D8E",
+  "--bias-left": "#2C6B9A",
+  "--bias-center-left": "#357A5E",
+  "--bias-center": "#2D6B45",
+  "--bias-center-right": "#8D5548",
+  "--bias-right": "#B5403A",
+  "--bias-far-right": "#8C2B26",
   "--sense-low": "#22C55E",
   "--sense-medium": "#EAB308",
   "--sense-high": "#EF4444",
@@ -201,14 +201,15 @@ export function lerpColor(a: string, b: string, t: number): string {
 
 export function getLeanColor(v: number): string {
   const c = getColors();
-  if (v <= 14) return c["--bias-far-left"];
-  if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
+  // Clean family transitions: blue → green → red. No orphan hues.
+  if (v <= 10) return c["--bias-far-left"];
+  if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 10) / 10);
   if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return c["--bias-center-left"];
+  if (v <= 45) return lerpColor(c["--bias-center-left"], c["--bias-center"], (v - 35) / 10);
   if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return c["--bias-center-right"];
+  if (v <= 65) return lerpColor(c["--bias-center"], c["--bias-center-right"], (v - 55) / 10);
   if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 86) return lerpColor(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
+  if (v <= 90) return lerpColor(c["--bias-right"], c["--bias-far-right"], (v - 80) / 10);
   return c["--bias-far-right"];
 }
 
