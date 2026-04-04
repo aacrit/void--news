@@ -526,20 +526,21 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             opacity: 1,
             boxShadow: "var(--shadow-cinematic-lifted)",
             transition: [
-              "transform 500ms var(--spring-bouncy)",
-              "border-radius 350ms var(--spring-bouncy)",
-              "box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 60ms",
+              "transform 280ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "border-radius 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)",
             ].join(", "),
           });
 
           // L-cut: content cascades in while morph is still settling.
           setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
 
-          // Clear morph style after spring fully settles
+          // Clear morph style after transition settles
           setTimeout(() => {
             setMorphStyle(null);
             panelRef.current?.setAttribute('data-settled', '');
-          }, 550);
+          }, 320);
         });
       });
     } else {
@@ -940,14 +941,14 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         onTouchEnd={handleTouchEnd}
         style={morphStyle ?? {
           /* Default open/close when no FLIP morph is active.
-             Desktop: spring scale + translateY from center.
-             Mobile: spring slide from bottom — bottom sheet. */
+             Desktop: subtle appear in place. Mobile: slide from bottom.
+             Close animation (spring-snappy 350ms) is kept as-is. */
           transform: isVisible
             ? isDesktop
               ? "translate(-50%, -50%) scale(1)"
               : `translateY(${dragOffset}px)`
             : isDesktop
-              ? "translate(-50%, -50%) scale(0.95) translateY(12px)"
+              ? "translate(-50%, -50%) scale(0.98)"
               : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-cinematic-dramatic)" : "none",
@@ -956,7 +957,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             : isDismissing
               ? "transform 280ms cubic-bezier(0.2, 1, 0.3, 1)"
               : isVisible
-                ? "transform 520ms var(--spring-bouncy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1) 60ms"
+                ? "transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)"
                 : "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
