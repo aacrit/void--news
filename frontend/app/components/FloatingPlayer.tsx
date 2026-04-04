@@ -146,6 +146,11 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
       return;
     }
 
+    // Respect reduced motion — draw static center line instead
+    const prefersReduced = typeof window !== "undefined"
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
     let lastFrame = 0;
     const loop = (timestamp: number) => {
       if (timestamp - lastFrame > 33) { // 30fps throttle

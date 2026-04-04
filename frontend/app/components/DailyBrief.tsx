@@ -122,7 +122,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
       try {
         const ctx = audioContextRef.current || new AudioContext();
         const analyser = ctx.createAnalyser();
-        analyser.fftSize = 256;
+        analyser.fftSize = 2048; // 1024 time-domain samples — captures 2-3 vocal cycles
         analyser.smoothingTimeConstant = 0.6;
         const source = ctx.createMediaElementSource(el);
         source.connect(analyser);
