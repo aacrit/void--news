@@ -490,6 +490,14 @@
   height: 48px;
 }
 
+/* Hero oscilloscope — dominant element in broadcast pane */
+.fp__oscilloscope--hero {
+  height: 80px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent-warm) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
 /* Transport */
 .fp__transport {
   display: flex;
@@ -1077,6 +1085,47 @@
   hyphens: auto;
 }
 
+/* Episode notes — collapsible disclosure */
+.fp__bcast-details {
+  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+.fp__bcast-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  list-style: none;
+  transition: color 150ms var(--ease-out);
+}
+
+.fp__bcast-summary::-webkit-details-marker { display: none; }
+.fp__bcast-summary::marker { display: none; content: ""; }
+
+.fp__bcast-summary:hover {
+  color: var(--accent-warm);
+}
+
+.fp__bcast-summary-arrow {
+  transform: rotate(90deg);
+  transition: transform 200ms var(--ease-out);
+}
+
+.fp__bcast-details[open] .fp__bcast-summary-arrow {
+  transform: rotate(-90deg);
+}
+
+.fp__bcast-details[open] .fp__bcast-content {
+  animation: fadeInUp 250ms var(--ease-cinematic, ease) both;
+}
+
 /* Dotted firewall — opinion boundary */
 .fp__bcast-firewall {
   height: 1px;
@@ -1231,7 +1280,7 @@
   .fp__bcast-host-trait { font-size: var(--text-xxs); white-space: normal; }
   .fp__bcast-section-label { font-size: var(--text-xs); }
   .fp__bcast-text { font-size: var(--text-sm); line-height: 1.65; }
-  .fp__oscilloscope--lg { height: 56px; }
+  .fp__oscilloscope--hero { height: 100px; }
 
   .fp--playing .fp__broadcast {
     border-right-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
