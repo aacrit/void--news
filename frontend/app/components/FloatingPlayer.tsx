@@ -506,37 +506,42 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             </div>
           )}
 
-          {/* Oscilloscope — larger in broadcast pane */}
-          <canvas ref={canvasRef} className="fp__oscilloscope fp__oscilloscope--lg" aria-hidden="true" />
+          {/* Oscilloscope — hero element in broadcast pane */}
+          <canvas ref={canvasRef} className="fp__oscilloscope fp__oscilloscope--hero" aria-hidden="true" />
 
           {renderTransport()}
           {renderSeek()}
 
-          {/* Episode content */}
-          <div className="fp__bcast-content">
-            <div className="fp__bcast-section">
-              <span className="fp__bcast-section-label">Episode Summary</span>
-              <p className="fp__bcast-text">{brief.tldr_text}</p>
-            </div>
+          {/* Episode notes — collapsed by default, "Read more" disclosure */}
+          <details className="fp__bcast-details">
+            <summary className="fp__bcast-summary">
+              <span>Episode notes</span>
+              <CaretRight size={12} weight="bold" className="fp__caret fp__bcast-summary-arrow" />
+            </summary>
+            <div className="fp__bcast-content">
+              <div className="fp__bcast-section">
+                <span className="fp__bcast-section-label">Summary</span>
+                <p className="fp__bcast-text">{brief.tldr_text}</p>
+              </div>
 
-            {brief.opinion_text && (
-              <>
-                {/* Dotted firewall — same convention as SkyboxBanner */}
-                <div className="fp__bcast-firewall" aria-hidden="true" />
-                <div className="fp__bcast-section">
-                  <div className="fp__bcast-section-head">
-                    <span className="fp__bcast-section-label">Editorial</span>
-                    {brief.opinion_lean && (
-                      <span className={`fp__bcast-lean fp__bcast-lean--${brief.opinion_lean}`}>
-                        {brief.opinion_lean}
-                      </span>
-                    )}
+              {brief.opinion_text && (
+                <>
+                  <div className="fp__bcast-firewall" aria-hidden="true" />
+                  <div className="fp__bcast-section">
+                    <div className="fp__bcast-section-head">
+                      <span className="fp__bcast-section-label">Editorial</span>
+                      {brief.opinion_lean && (
+                        <span className={`fp__bcast-lean fp__bcast-lean--${brief.opinion_lean}`}>
+                          {brief.opinion_lean}
+                        </span>
+                      )}
+                    </div>
+                    <p className="fp__bcast-text">{brief.opinion_text}</p>
                   </div>
-                  <p className="fp__bcast-text">{brief.opinion_text}</p>
-                </div>
-              </>
-            )}
-          </div>
+                </>
+              )}
+            </div>
+          </details>
         </div>
       )}
     </div>
