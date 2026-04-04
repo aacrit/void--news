@@ -258,11 +258,11 @@ export const EDITIONS: EditionMeta[] = [
 ];
 
 /* ---------------------------------------------------------------------------
-   Lean filter types — used by NavBar, MobileBottomNav, HomeContent, etc.
-   Consolidated here from the deprecated FilterBar component.
+   Tilt filter types — used by NavBar, MobileBottomNav, HomeContent, etc.
+   "Tilt" = story/cluster-level measurement. Source-level uses "lean."
    --------------------------------------------------------------------------- */
 
-export type LeanChip = "All" | "Left" | "Center" | "Right";
+export type LeanChip = "All" | "Left" | "Balanced" | "Right";
 
 /** Lean chip boundaries — used by HomeContent to filter stories by political lean */
 /* ---------------------------------------------------------------------------
@@ -304,11 +304,13 @@ export interface ShipReply {
   created_at: string;
 }
 
+/** Tilt filter boundaries — data-driven from production score distribution.
+ *  Overlapping ranges so edge cases appear in both adjacent filters. */
 export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> = {
   All: null,
-  Left: { min: 0, max: 46 },
-  Center: { min: 35, max: 65 },
-  Right: { min: 54, max: 100 },
+  Left: { min: 0, max: 43 },
+  Balanced: { min: 34, max: 66 },
+  Right: { min: 57, max: 100 },
 };
 
 /* ---------------------------------------------------------------------------

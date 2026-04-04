@@ -287,10 +287,10 @@ export default function NavBar({
             )}
           </div>
 
-          {/* Lean selector — instrument panel */}
-          <div className="nav-lens__group" role="toolbar" aria-label="Political perspective">
+          {/* Tilt selector — instrument panel */}
+          <div className="nav-lens__group" role="toolbar" aria-label="Coverage tilt">
             <span className="nav-lens__bracket" aria-hidden="true">[</span>
-            {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+            {(["Left", "Balanced", "Right"] as LeanChip[]).map((lean) => (
               <button
                 key={lean}
                 aria-pressed={activeLean === lean}
@@ -304,7 +304,7 @@ export default function NavBar({
             <span className="nav-lens__bracket" aria-hidden="true">]</span>
           </div>
 
-          {/* Active lean badge */}
+          {/* Active tilt badge */}
           {activeLean !== "All" && (
             <div className="nav-lens__badge" role="status" aria-live="polite">
               <span>{activeLean.toLowerCase()}</span>

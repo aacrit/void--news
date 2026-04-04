@@ -17,7 +17,7 @@
  */
 
 import type { Story, StorySource } from "./types";
-import { leanLabel } from "./biasColors";
+import { tiltLabel } from "./biasColors";
 import QRCode from "qrcode";
 
 /* ── Dark-mode palette ────────────────────────────────────────────────── */
@@ -281,7 +281,7 @@ export async function generateShareCardImage(story: Story): Promise<Blob> {
   ctx.font = `700 14px ${DATA}`;
   ctx.fillStyle = leanColor(lean);
   ctx.textAlign = "center";
-  ctx.fillText(leanLabel(lean), 130, 245);
+  ctx.fillText(tiltLabel(lean), 130, 245);
   ctx.font = `400 11px ${META}`;
   ctx.fillStyle = FG_MUTED;
   ctx.fillText(`${story.source.count} SOURCES`, 130, 262);
@@ -325,7 +325,7 @@ export async function generateShareCardImage(story: Story): Promise<Blob> {
 
   // Three data points inside the bar
   const dataPoints = [
-    { label: "LEAN", value: leanLabel(lean), color: leanColor(lean) },
+    { label: "LEAN", value: tiltLabel(lean), color: leanColor(lean) },
     { label: "SOURCES", value: String(story.source.count), color: FG_PRIMARY },
     { label: "COVERAGE", value: story.divergenceScore > 60 ? "DIVERGENT" : story.divergenceScore > 30 ? "MIXED" : "CONSENSUS", color: story.divergenceScore > 60 ? "#D4645A" : story.divergenceScore > 30 ? "#EAB308" : "#22C55E" },
   ];
@@ -433,7 +433,7 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
   ctx.font = `700 20px ${DATA}`;
   ctx.fillStyle = leanColor(lean);
   ctx.textAlign = "center";
-  ctx.fillText(leanLabel(lean), 540, 285);
+  ctx.fillText(tiltLabel(lean), 540, 285);
   ctx.font = `500 13px ${META}`;
   ctx.fillStyle = FG_MUTED;
   ctx.fillText(`${story.source.count} SOURCES`, 540, 306);
@@ -485,7 +485,7 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
   ctx.stroke();
 
   const sqData = [
-    { label: "LEAN", value: leanLabel(lean), color: leanColor(lean) },
+    { label: "LEAN", value: tiltLabel(lean), color: leanColor(lean) },
     { label: "SOURCES", value: String(story.source.count), color: FG_PRIMARY },
     { label: "COVERAGE", value: story.divergenceScore > 60 ? "DIVERGENT" : story.divergenceScore > 30 ? "MIXED" : "CONSENSUS", color: story.divergenceScore > 60 ? "#D4645A" : story.divergenceScore > 30 ? "#EAB308" : "#22C55E" },
   ];
@@ -811,7 +811,7 @@ function drawSourceCard(
 
   // Lean badge
   const lean = source.biasScores.politicalLean;
-  const badgeText = leanLabel(lean).toUpperCase();
+  const badgeText = tiltLabel(lean).toUpperCase();
   ctx.font = `600 11px ${META}`;
   const badgeW = ctx.measureText(badgeText).width + 16;
   const badgeX = 1016 - cardPad - badgeW;
@@ -891,7 +891,7 @@ function drawVerdictFormat(
 
   /* 6-axis bars */
   const axes: [string, number, string][] = [
-    ["LEAN", story.biasScores.politicalLean, leanLabel(story.biasScores.politicalLean)],
+    ["LEAN", story.biasScores.politicalLean, tiltLabel(story.biasScores.politicalLean)],
     ["RIGOR", story.biasScores.factualRigor, story.biasScores.factualRigor >= 70 ? "Strong" : story.biasScores.factualRigor >= 40 ? "Moderate" : "Weak"],
     ["TONE", story.biasScores.sensationalism, story.biasScores.sensationalism <= 30 ? "Measured" : story.biasScores.sensationalism <= 60 ? "Elevated" : "Inflammatory"],
     ["OPINION", story.biasScores.opinionFact, story.biasScores.opinionFact <= 25 ? "Reporting" : story.biasScores.opinionFact <= 50 ? "Analysis" : story.biasScores.opinionFact <= 75 ? "Opinion" : "Editorial"],

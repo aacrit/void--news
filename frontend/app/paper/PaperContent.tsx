@@ -211,16 +211,14 @@ function articleByline(
   return `From multiple outlets \u2014 ${sourceCount} sources`;
 }
 
-// --- Lean label from 0-100 score ---
+// --- Tilt label from 0-100 score (story-level, data-driven boundaries) ---
 
 function leanLabel(score: number): string {
-  if (score <= 15) return "Far Left";
-  if (score <= 30) return "Left";
-  if (score <= 42) return "Center-Left";
-  if (score <= 58) return "Center";
-  if (score <= 70) return "Center-Right";
-  if (score <= 85) return "Right";
-  return "Far Right";
+  if (score <= 29) return "Far Left Tilt";
+  if (score <= 43) return "Left Tilt";
+  if (score <= 58) return "Balanced";
+  if (score <= 76) return "Right Tilt";
+  return "Far Right Tilt";
 }
 
 // ===== COMPONENTS =====

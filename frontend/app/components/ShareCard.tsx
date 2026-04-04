@@ -11,7 +11,7 @@
  * strings for portability.
  */
 
-import { leanLabel, leanLabelAbbr, senseLabel, rigorLabel } from "../lib/biasColors";
+import { tiltLabel, tiltLabelAbbr, senseLabel, rigorLabel } from "../lib/biasColors";
 
 /* ── Dark-mode bias colors (hardcoded — card always renders dark) ────────── */
 
@@ -161,7 +161,7 @@ function buildAxes(scores: ShareCardProps["scores"], agreement?: number): AxisCo
       label: "LEAN",
       score: scores.politicalLean,
       color: cardLeanColor(scores.politicalLean),
-      descriptor: leanLabel(scores.politicalLean),
+      descriptor: tiltLabel(scores.politicalLean),
     },
     {
       key: "rigor",
@@ -327,7 +327,7 @@ export default function ShareCard({
           <span>{sourceCount} sources</span>
           <span style={{ color: FG_MUTED }}>·</span>
           <span style={{ color: cardLeanColor(scores.politicalLean) }}>
-            {leanLabel(scores.politicalLean)}
+            {tiltLabel(scores.politicalLean)}
           </span>
           <span style={{ color: FG_MUTED }}>·</span>
           <span

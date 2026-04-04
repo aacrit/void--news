@@ -74,6 +74,43 @@ export function coverageLabel(v: number): string {
   return "Lightly sourced";
 }
 
+/* ── Tilt vocabulary — story/cluster-level lean ────────────────────────────
+   Distinct from source lean labels (leanLabel). "Tilt" describes a
+   measurement of aggregate text lean, not an editorial identity.
+   Boundaries are data-driven from production score distribution:
+   53.6% at 50, 21.6% at 37-38, 9.5% at 62, 6.1% at 75-79.            ── */
+
+export type TiltCategory =
+  | "far-left-tilt"
+  | "left-tilt"
+  | "balanced"
+  | "right-tilt"
+  | "far-right-tilt";
+
+export function tiltToBucket(v: number): TiltCategory {
+  if (v <= 29) return "far-left-tilt";
+  if (v <= 43) return "left-tilt";
+  if (v <= 58) return "balanced";
+  if (v <= 76) return "right-tilt";
+  return "far-right-tilt";
+}
+
+export function tiltLabel(v: number): string {
+  if (v <= 29) return "Far Left Tilt";
+  if (v <= 43) return "Left Tilt";
+  if (v <= 58) return "Balanced";
+  if (v <= 76) return "Right Tilt";
+  return "Far Right Tilt";
+}
+
+export function tiltLabelAbbr(v: number): string {
+  if (v <= 29) return "FL";
+  if (v <= 43) return "LT";
+  if (v <= 58) return "BAL";
+  if (v <= 76) return "RT";
+  return "FR";
+}
+
 /* ── CSS variable cache — single observer ───────────────────────────────── */
 
 const SSR_FALLBACK: Record<string, string> = {
