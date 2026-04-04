@@ -104,7 +104,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
     // Get amber color from CSS custom property
     const style = getComputedStyle(canvas);
-    const amber = style.getPropertyValue("--accent-warm").trim() || "#d4a03c";
+    const amber = style.getPropertyValue("--accent-warm").trim() || "#946B15";
 
     // Center line (faint reference)
     ctx.strokeStyle = amber;
