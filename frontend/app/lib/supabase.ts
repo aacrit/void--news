@@ -317,14 +317,18 @@ export async function submitShipRequest(req: {
   return data as ShipRequest;
 }
 
-/** Vote on a ship request. Returns true if vote counted. */
+/** Vote on a ship request. Returns true if vote counted.
+ *  F07: vote dedup is enforced server-side by unique(request_id, fingerprint)
+ *  on ship_votes. The read-then-write on ship_requests.votes has a minor race
+ *  window under concurrent votes; acceptable at current traffic levels.
+ *  TODO: replace with an RPC (SELECT ... FOR UPDATE) if vote volume grows. */
 export async function voteOnShipRequest(requestId: string, fingerprint: string): Promise<boolean> {
   if (!_client) return false;
   const { error: voteError } = await _client
     .from('ship_votes')
     .insert([{ request_id: requestId, fingerprint }]);
   if (voteError) return false;
-  // Increment vote count
+  // Increment vote count (read-then-write; see F07 note above)
   const { data: current } = await _client
     .from('ship_requests')
     .select('votes')

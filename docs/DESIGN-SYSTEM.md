@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.0
-**Last updated:** 2026-04-03 (rev 13)
+**Last updated:** 2026-04-03 (rev 14)
 
 ---
 
@@ -20,10 +20,10 @@ The newspaper earns trust through restraint. The data layer earns trust through 
 
 | Voice | Font | Weight | Use |
 |-------|------|--------|-----|
-| **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes |
-| **Structural** | Inter | 400, 500, 600 | Body text, navigation, labels, buttons, UI chrome |
+| **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes, nav edition tabs (Layer 1), weekly link |
+| **Structural** | Inter | 400, 500, 600 | Body text, nav page links (Layer 3), labels, buttons, UI chrome |
 | **Meta** | Barlow Condensed | 400, 500, 600 | Category tags, source counts, timestamps, edition metadata; condensed grotesque in Franklin Gothic / News Gothic newspaper tradition; `--font-meta` CSS variable |
-| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels; humanist monospace with institutional warmth (not a coding font) |
+| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels, nav filter lens (Layer 2 bracket notation); humanist monospace with institutional warmth (not a coding font) |
 
 ### Type Scale (Fluid)
 
@@ -229,7 +229,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  void --news              [World] [US]    [◐ Dark]   │ ← Top nav
+│  void --news    World  US  Europe  SA    Sources  🔍 ☀ │ ← Top nav (Depth of Field layers)
 ├──────────────────────────────────────────────────────┤
 │                                                      │
 │  ┌─────────────────────────┐ ┌──────────────────┐   │
@@ -486,7 +486,7 @@ Active components in `frontend/app/components/`:
 | `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
-| `NavBar` | Section navigation (World/US/Europe/South Asia) with logo and theme toggle. Cold open animation class (`anim-cold-open-nav`). Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", Europe → "HH:MM CET", South Asia → "HH:MM IST"). South Asia edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
+| `NavBar` | "Depth of Field" CTA hierarchy with 5 visual layers. Cold open animation class (`anim-cold-open-nav`). **Layer 1 (Sharp Focus)**: Edition tabs (`.nav-editions`, `.nav-ed`) — Playfair Display, warm `--cin-amber` underline, `hapticConfirm`, hidden on mobile. **Layer 2 (Midground)**: Filter Lens (`.nav-lens`, `.nav-lens__*`) — IBM Plex Mono bracket notation `[ topics ]` `[ ·left ·center ·right ]`, dotted underline, `--ease-rack`, `hapticMicro`, hidden on mobile. **Layer 3 (Background)**: Page links (`.nav-pages`, `.nav-page`) — Inter uppercase, departure arrow `→` on hover. **Special**: Weekly (`.nav-weekly`) — Playfair italic, vertical rule spine. **Ambient**: Utility (`.nav-util`) — icon-only search + theme toggle. Row 1: Logo, editions, dateline (`getEditionTimestamp()`), pages, weekly, utility. Row 2: topic + lean filters. Mobile: bottom nav handles editions/filters. | -- |
 | `ThemeToggle` | Light/dark mode toggle. Golden hour pulse on toggle (700ms cinGoldenHourPulse targeting `.page-main`, reduced-motion guarded). | -- |
 | `LoadingSkeleton` | Animated skeleton loading state | -- |
 | `ErrorBoundary` | Error boundary wrapper | -- |
@@ -495,7 +495,7 @@ Active components in `frontend/app/components/`:
 | `LogoIcon` | Icon-only wrapper around `ScaleIcon`. Use in mobile nav, loading indicators, compact contexts. `animation="none"` shows void circle only (favicon mark). | -- |
 | `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
 | `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping — 5s period, 2-degree amplitude, `--ease-cinematic`), `loading` (dramatic tipping — 8-degree), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
-| `PageToggle` | Switches between Feed and Sources views. | -- |
+| `PageToggle` | Layer 3 text link toggling Feed/Sources. No pills, no icons — plain `.nav-page` link with departure arrow on hover. | -- |
 | `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
 | `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. Simplified at sm size (no InkUnderline, compact popup); full detail at lg/xl. | -- |
 | `DailyBrief` | "void --onair" daily brief: TL;DR + opinion + audio player | -- |
@@ -515,8 +515,9 @@ Active components in `frontend/app/components/`:
 | `BiasLensOnboarding` | First-encounter onboarding for BiasLens visualization | -- |
 | `KeyboardShortcuts` | Keyboard shortcut handler and help overlay | -- |
 | `InstallPrompt` | PWA install prompt | -- |
+| `ShipBoard` | Feature request board for `/ship` page | -- |
 
-**38 components total** (38 `.tsx` files). Removed: `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
+**45 components total** (45 `.tsx` files). Removed: `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 

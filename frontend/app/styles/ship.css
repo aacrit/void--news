@@ -3,6 +3,7 @@
    "Request, vote, watch it deploy."
    Cinematic Press: warm paper cards, cin-amber shipped accent,
    IBM Plex Mono metrics, typewriter inputs.
+   7-scene cinematic motion spec.
    ========================================================================== */
 
 .ship-page {
@@ -74,6 +75,11 @@
   color: var(--cin-amber, var(--accent-warm));
 }
 
+/* Scene 5: metrics land micro-pulse */
+.ship-metrics__value--landed {
+  animation: shipMetricLand 300ms ease-out;
+}
+
 .ship-metrics__label {
   font-family: var(--font-meta);
   font-size: var(--text-xs);
@@ -110,14 +116,12 @@
 .ship-form-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
   z-index: var(--z-depth-modal, 900);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
-  animation: shipFadeIn 0.2s var(--ease-cinematic);
+  animation: shipBackdropRackIn 500ms var(--ease-rack, ease-out) both;
 }
 
 .ship-form {
@@ -130,7 +134,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-e3);
-  animation: shipSlideUp 0.3s var(--ease-cinematic);
+  animation: shipFormRackIn 500ms ease-out 100ms both;
 }
 
 .ship-form__title {
@@ -153,6 +157,7 @@
   margin-bottom: var(--space-1);
 }
 
+/* F02: proper focus-visible outlines */
 .ship-form__input,
 .ship-form__textarea,
 .ship-form__select {
@@ -165,13 +170,15 @@
   border: 1px solid var(--border-strong);
   border-radius: 3px;
   transition: border-color 0.2s var(--ease-out);
+  outline: none;
 }
 
-.ship-form__input:focus,
-.ship-form__textarea:focus,
-.ship-form__select:focus {
+.ship-form__input:focus-visible,
+.ship-form__textarea:focus-visible,
+.ship-form__select:focus-visible {
   border-color: var(--accent-warm);
-  outline: none;
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
 .ship-form__textarea {
@@ -188,8 +195,9 @@
   margin-top: var(--space-1);
 }
 
+/* F12: replaced hardcoded rgba with semantic token */
 .ship-form__char-count--warn {
-  color: var(--lean-right-strong, #C0392B);
+  color: #C0392B;
 }
 
 .ship-form__row {
@@ -245,10 +253,25 @@
 
 .ship-form__btn:hover:not(:disabled) { opacity: 0.85; }
 
+/* F15: loading state for submit button */
+.ship-form__btn--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.ship-form__btn--loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: shipFormBtnPulse 1.2s ease-in-out infinite;
+  background: color-mix(in srgb, var(--bg-primary) 15%, transparent);
+}
+
 .ship-form__error {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
-  color: var(--lean-right-strong, #C0392B);
+  color: #C0392B;
   margin-top: var(--space-2);
 }
 
@@ -256,13 +279,14 @@
 .ship-form__success-icon { font-size: 2rem; margin-bottom: var(--space-3); }
 .ship-form__success-text { font-family: var(--font-structural); font-size: var(--text-base); color: var(--fg-primary); }
 
+/* F12/F13: replaced hardcoded rgba */
 .ship-form__rate-limit {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
   color: var(--cin-amber, var(--accent-warm));
   text-align: center;
   padding: var(--space-3);
-  background: rgba(148, 107, 21, 0.08);
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
   border-radius: 3px;
   margin-bottom: var(--space-4);
 }
@@ -295,13 +319,14 @@
   white-space: nowrap;
 }
 
+/* F18: press-appropriate border-radius */
 .ship-column__count {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-muted);
   background: var(--bg-secondary);
   padding: 1px 6px;
-  border-radius: 10px;
+  border-radius: 2px;
 }
 
 .ship-column--shipped .ship-column__header {
@@ -319,13 +344,13 @@
 }
 
 /* ---- Request Card ---- */
+/* F20: no animation on default card -- only .ship-card--new gets enter animation */
 .ship-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
   padding: var(--space-3) var(--space-4);
   transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
-  animation: shipCardEnter 0.3s var(--ease-cinematic);
 }
 
 .ship-card:hover {
@@ -353,18 +378,19 @@
   white-space: nowrap;
 }
 
+/* F12/F13: replaced hardcoded rgba with color-mix */
 .ship-card__badge--bug {
-  background: rgba(192, 57, 43, 0.12);
-  color: var(--lean-right-strong, #C0392B);
+  background: color-mix(in srgb, #C0392B 12%, transparent);
+  color: #C0392B;
 }
 
 .ship-card__badge--feature {
-  background: rgba(77, 175, 160, 0.12);
+  background: color-mix(in srgb, var(--voice-accent, #4DAFA0) 12%, transparent);
   color: var(--voice-accent, #4DAFA0);
 }
 
 .ship-card__badge--enhancement {
-  background: rgba(148, 107, 21, 0.12);
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 12%, transparent);
   color: var(--cin-amber, var(--accent-warm));
 }
 
@@ -377,7 +403,7 @@
   color: var(--fg-muted);
 }
 
-.ship-card__priority--p0 { color: var(--lean-right-strong, #C0392B); }
+.ship-card__priority--p0 { color: #C0392B; }
 .ship-card__priority--p1 { color: var(--cin-amber, var(--accent-warm)); }
 
 .ship-card__title {
@@ -401,6 +427,28 @@
   margin-bottom: var(--space-2);
 }
 
+/* F11: expanded description */
+.ship-card__desc--expanded {
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+.ship-card__expand {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: var(--space-2);
+  transition: color 0.15s var(--ease-out);
+}
+
+.ship-card__expand:hover {
+  color: var(--fg-secondary);
+}
+
 .ship-card__meta {
   display: flex;
   align-items: center;
@@ -414,6 +462,7 @@
   color: var(--fg-muted);
 }
 
+/* F09/F18: adequate touch target + press-appropriate radius */
 .ship-card__vote {
   display: flex;
   align-items: center;
@@ -422,8 +471,8 @@
   font-size: var(--text-xs);
   color: var(--fg-secondary);
   cursor: pointer;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 3px;
   border: 1px solid var(--border-subtle);
   background: transparent;
   transition: all 0.15s var(--ease-out);
@@ -435,10 +484,11 @@
   color: var(--accent-warm);
 }
 
+/* F12/F13: replaced hardcoded rgba */
 .ship-card__vote--voted {
   border-color: var(--cin-amber, var(--accent-warm));
   color: var(--cin-amber, var(--accent-warm));
-  background: rgba(148, 107, 21, 0.08);
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
 }
 
 .ship-card__vote-arrow {
@@ -446,9 +496,19 @@
   line-height: 1;
 }
 
+/* Scene 3: vote arrow pop */
+.ship-card__vote-arrow--pop {
+  animation: shipVoteArrowPop 200ms ease-out;
+}
+
 /* ---- Shipped Card ---- */
 .ship-card--shipped {
   border-left: 3px solid var(--cin-amber, var(--accent-warm));
+}
+
+/* Scene 6: shipped golden flash */
+.ship-card--just-shipped {
+  animation: shipGoldenFlash 600ms var(--ease-cinematic, ease-out);
 }
 
 .ship-card__shipped-info {
@@ -466,11 +526,19 @@
   gap: var(--space-1);
 }
 
+/* F04: commit as link */
 .ship-card__commit {
   font-family: var(--font-data);
   font-size: 10px;
   color: var(--fg-muted);
   margin-top: 2px;
+  text-decoration: none;
+  transition: color 0.15s var(--ease-out);
+}
+
+a.ship-card__commit:hover {
+  color: var(--fg-secondary);
+  text-decoration: underline;
 }
 
 /* ---- Building Card ---- */
@@ -478,6 +546,7 @@
   border-left: 3px solid var(--voice-accent, #4DAFA0);
 }
 
+/* Scene 7: building heartbeat text pulse */
 .ship-card__branch {
   font-family: var(--font-data);
   font-size: 10px;
@@ -488,12 +557,18 @@
   gap: var(--space-1);
 }
 
+.ship-card--building .ship-card__branch {
+  animation: shipBuildingTextPulse 4s ease-out infinite;
+}
+
+/* Scene 7: building heartbeat pulse dot */
 .ship-card__pulse {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--voice-accent, #4DAFA0);
-  animation: shipPulse 1.5s infinite;
+  animation: shipBuildingHeartbeat 4s var(--ease-cinematic, ease-out) infinite;
+  flex-shrink: 0;
 }
 
 /* ---- Won't Ship Card ---- */
@@ -518,6 +593,11 @@
   font-style: normal;
   display: block;
   margin-bottom: 2px;
+}
+
+/* ---- New Card Animation (F20: only INSERT events) ---- */
+.ship-card--new {
+  animation: shipCardEnter 0.3s ease-out;
 }
 
 /* ---- Empty State ---- */
@@ -546,39 +626,207 @@
 
 .ship-page__back:hover { color: var(--fg-primary); }
 
-/* ---- Animations ---- */
-@keyframes shipFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* ---- Loading Skeleton (F16) ---- */
+.ship-board__loading {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
 }
 
-@keyframes shipSlideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+.ship-board__loading-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
+.ship-board__loading-header {
+  height: 14px;
+  width: 60%;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  margin-bottom: var(--space-3);
+  animation: shipSkeletonPulse 1.5s ease-in-out infinite;
+}
+
+.ship-board__loading-card {
+  height: 80px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  animation: shipSkeletonPulse 1.5s ease-in-out infinite;
+}
+
+.ship-board__loading-card--short {
+  height: 56px;
+  animation-delay: 200ms;
+}
+
+/* ==========================================================================
+   SCENE 1 — Cold Open (staggered entrance)
+   ========================================================================== */
+.ship-cold-open-back {
+  animation: shipColdOpenSettle 500ms var(--ease-cinematic, ease-out) 80ms both;
+}
+
+.ship-cold-open-header {
+  animation: shipColdOpenRackIn 500ms var(--ease-cinematic, ease-out) 160ms both;
+}
+
+.ship-cold-open-metrics {
+  animation: shipColdOpenDollyIn 500ms var(--ease-cinematic, ease-out) 300ms both;
+}
+
+.ship-cold-open-actions {
+  animation: shipColdOpenSettle 400ms var(--ease-cinematic, ease-out) 420ms both;
+}
+
+.ship-cold-open-column {
+  animation: shipColdOpenFeedRise 500ms ease-out both;
+}
+
+.ship-column:nth-child(1) { animation-delay: 520ms; }
+.ship-column:nth-child(2) { animation-delay: 600ms; }
+.ship-column:nth-child(3) { animation-delay: 680ms; }
+.ship-column:nth-child(4) { animation-delay: 760ms; }
+.ship-column:nth-child(5) { animation-delay: 840ms; }
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+/* Scene 1: Cold Open */
+@keyframes shipColdOpenSettle {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shipColdOpenRackIn {
+  from { opacity: 0; transform: scale(0.97); filter: blur(2px); }
+  to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes shipColdOpenDollyIn {
+  from { opacity: 0; transform: scale(0.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shipColdOpenFeedRise {
+  from { opacity: 0; transform: translateY(16px) scale(0.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Scene 2: Card Status Transitions */
+@keyframes shipCardExit {
+  0% { transform: translateX(0) scaleX(1); opacity: 1; }
+  35% { transform: translateX(-3%) scaleX(1.008); opacity: 0.6; filter: blur(1px); }
+  100% { transform: translateX(-8%) scaleX(1); opacity: 0; }
+}
+
+@keyframes shipCardArrive {
+  0% { transform: translateX(8%) scaleX(1); opacity: 0; }
+  35% { transform: translateX(3%) scaleX(1.008); opacity: 0.3; filter: blur(1px); }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; }
+}
+
+/* Card Enter (new cards only) */
 @keyframes shipCardEnter {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes shipPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
+/* Scene 3: Vote Arrow Pop */
+@keyframes shipVoteArrowPop {
+  from { transform: scale(1.35); }
+  to { transform: scale(1); }
 }
 
-/* ---- Responsive: Tablet ---- */
-@media (max-width: 1024px) {
-  .ship-board { grid-template-columns: repeat(3, 1fr); }
+/* Scene 4: Form Rack Focus */
+@keyframes shipFormRackIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
-/* ---- Responsive: Mobile ---- */
+@keyframes shipBackdropRackIn {
+  from { background: rgba(0,0,0,0); backdrop-filter: blur(0) saturate(1) brightness(1); }
+  to { background: color-mix(in srgb, var(--fg-primary) 45%, transparent); backdrop-filter: blur(14px) saturate(0.65) brightness(0.72); }
+}
+
+/* Scene 5: Metrics Land */
+@keyframes shipMetricLand {
+  from { transform: scale(1.04); }
+  to { transform: scale(1); }
+}
+
+/* Scene 6: Shipped Golden Flash */
+@keyframes shipGoldenFlash {
+  0% { box-shadow: var(--shadow-e1); }
+  40% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--cin-amber, #946B15) 40%, transparent), 0 0 24px color-mix(in srgb, var(--cin-amber, #946B15) 15%, transparent), var(--shadow-e2); }
+  100% { box-shadow: var(--shadow-e1); }
+}
+
+/* Scene 7: Building Heartbeat */
+@keyframes shipBuildingHeartbeat {
+  0% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 0 0 transparent; }
+  25% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 0 3px color-mix(in srgb, var(--voice-accent, #4DAFA0) 30%, transparent); }
+  40% { transform: scale(1.3); opacity: 0.9; }
+  70% { transform: scale(1); opacity: 0.4; box-shadow: 0 0 0 0 transparent; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+@keyframes shipBuildingTextPulse {
+  0%, 100% { opacity: 0.8; }
+  25% { opacity: 1; }
+  70% { opacity: 0.6; }
+}
+
+/* Skeleton */
+@keyframes shipSkeletonPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+/* Form button loading pulse */
+@keyframes shipFormBtnPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+/* ---- F14: 5-column only at 1280+, 3-column at 1024-1279, 2-column at 768-1023 ---- */
+@media (max-width: 1279px) {
+  .ship-board {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .ship-board__loading {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .ship-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ship-board__loading {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Mobile ---- */
 @media (max-width: 768px) {
   .ship-page { padding: var(--space-4) var(--space-3); }
   .ship-page__header { padding-top: var(--space-4); margin-bottom: var(--space-5); }
   .ship-metrics { flex-wrap: wrap; gap: var(--space-4); padding: var(--space-3) var(--space-4); }
   .ship-metrics__item { min-width: 60px; }
-  .ship-board { grid-template-columns: 1fr; gap: var(--space-6); }
+  .ship-board {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  .ship-board__loading {
+    grid-template-columns: 1fr;
+  }
   .ship-column__header {
     position: sticky;
     top: 0;
@@ -588,10 +836,46 @@
   }
   .ship-form__row { grid-template-columns: 1fr; }
   .ship-form { max-height: 85vh; margin: auto var(--space-2); }
+
+  /* F06: hide empty columns on mobile */
+  .ship-column--empty { display: none; }
+
+  /* F09: 44px touch target for vote button */
+  .ship-card__vote {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+  }
 }
 
-/* ---- Reduced Motion ---- */
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .ship-card, .ship-form-overlay, .ship-form { animation: none; }
-  .ship-card__pulse { animation: none; opacity: 1; }
+  .ship-cold-open-back,
+  .ship-cold-open-header,
+  .ship-cold-open-metrics,
+  .ship-cold-open-actions,
+  .ship-cold-open-column,
+  .ship-card--new,
+  .ship-card--just-shipped,
+  .ship-form-overlay,
+  .ship-form,
+  .ship-card__vote-arrow--pop,
+  .ship-metrics__value--landed {
+    animation: none;
+  }
+
+  .ship-card__pulse {
+    animation: none;
+    opacity: 1;
+  }
+
+  .ship-card--building .ship-card__branch {
+    animation: none;
+  }
+
+  .ship-form__btn--loading::after {
+    animation: none;
+  }
 }

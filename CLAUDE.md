@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-03 (rev 26)
+Last updated: 2026-04-03 (rev 27)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -87,25 +87,32 @@ Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arri
 
 **Four type voices**: Editorial (Playfair Display), Structural (Inter), Meta (Barlow Condensed, `--font-meta`), Data (IBM Plex Mono).
 
+**Navigation — "Depth of Field" CTA Hierarchy**: 5 visual layers, each with unique typography and micro-interactions. **Layer 1 (Sharp Focus)**: Edition tabs (`.nav-editions`, `.nav-ed`) — Playfair Display, warm `--cin-amber` underline, no pills, `hapticConfirm`; hidden on mobile. **Layer 2 (Midground)**: Filter Lens (`.nav-lens`, `.nav-lens__*`) — IBM Plex Mono, bracket notation `[ topics ]` `[ ·left ·center ·right ]`, dotted underline active state, `--ease-rack`, `hapticMicro`; hidden on mobile. **Layer 3 (Background)**: Page links (`.nav-pages`, `.nav-page`) — Inter uppercase, departure arrow `→` on hover; Sources, Ship, About. **Special (Magazine)**: Weekly (`.nav-weekly`) — Playfair italic, `--cin-amber`, vertical rule spine. **Ambient (Utility)**: Icon-only (`.nav-util`) — search + theme toggle, `--fg-tertiary`.
+
+```
+Row 1: [Logo] [World  US  Europe  South Asia] [dateline] [Sources Ship About] [Weekly] [search theme]
+Row 2: [ topics ▾ ]  [ ·left ·center ·right ]
+```
+
 **Responsive**: desktop = multi-column newspaper grid, top nav. Mobile = single-column feed, bottom nav, bottom sheets. Touch targets 44px+. Breakpoints: 375/768/1024/1440px.
 
 ### Homepage
-Importance-ranked feed with category filtering (lean chips in HomeContent). Edition sections: World/US/Europe/South Asia. Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
+Importance-ranked feed with category and lean filtering (bracket notation in NavBar Layer 2 filter lens). Edition sections: World/US/Europe/South Asia (NavBar Layer 1 typographic tabs). Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
 
 ### Deep Dive
 Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). ScoringMethodology ("How we score" collapsible dl/dt/dd, 6 axes). Source Perspectives (agree/diverge grid). FLIP morph animation: double-rAF for open (card rect via `data-story-id` attribute on StoryCard/LeadStory/MobileStoryCard), reverse morph on close (finds source card via DOM query), slide-in fallback when no source rect. Cinematic dramatic shadow, data-settled studio reflection.
 
 ### Animation
-Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
+Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). Layer-specific: edition tabs use `hapticConfirm` on switch, filter lens uses `--ease-rack` timing + `hapticMicro`, page links use CSS departure arrow slide (4px shift), weekly uses unfold ease on hover. ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
 
 ### CSS
-Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → responsive → command-center → weekly → about` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → responsive → command-center → weekly → about → ship` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav layer classes: `.nav-editions`/`.nav-ed` (Layer 1), `.nav-lens`/`.nav-lens__*` (Layer 2), `.nav-pages`/`.nav-page` (Layer 3), `.nav-weekly` (special), `.nav-util` (ambient) — all in `components.css`.
 
 ## Data Model (Supabase)
 
 **Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio).
 
-**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-036).
+**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-037).
 
 Frontend edition filter: `.contains("sections", [edition])`.
 
@@ -151,21 +158,22 @@ void-news/
 │   └── rerank.py          # Standalone re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # 44 components: BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OnboardingCarousel, OnboardingSpotlight, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
+│   │   ├── components/    # 45 components: BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OnboardingCarousel, OnboardingSpotlight, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
 │   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts, shareCardRenderer.ts
-│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, responsive, command-center, weekly, about
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, responsive, command-center, weekly, about, ship
 │   │   ├── sources/       # /sources page
 │   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
 │   │   ├── command-center/ # /command-center KPI dashboard
 │   │   ├── weekly/        # /weekly digest page
 │   │   ├── about/         # /about page
+│   │   ├── ship/          # /ship feature request board
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
 ├── data/sources.json      # 1,013 curated sources
-├── supabase/migrations/   # 001-036
+├── supabase/migrations/   # 001-037
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml, weekly-digest.yml
 ├── .claude/agents/        # 24 agent definitions
-├── .claude/skills/        # pressdesign + prompt-iterate + workflows + 13 workflow skills (16 total)
+├── .claude/skills/        # pressdesign + prompt-iterate + workflows + ship-queue + 13 workflow skills (17 total)
 └── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE, VOICE-BRAND, SOURCE-CURATION-REPORT-2026-04-02
 ```
 
