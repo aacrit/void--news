@@ -755,6 +755,37 @@ function CoverStoryCard({
   return inner;
 }
 
+/* ── Cover Hero Banner ─────────────────────────────────────────────────────── */
+
+/** Full-bleed terracotta hero with ghosted issue number + lead headline */
+function CoverHero({
+  headline,
+  issueNumber,
+}: {
+  headline: string;
+  issueNumber: number;
+}) {
+  return (
+    <div className="wk-cover__hero-banner" aria-label="Issue highlight">
+      <div className="wk-cover__hero-banner-texture" aria-hidden="true" />
+      <span className="wk-cover__hero-banner-issue" aria-hidden="true">
+        #{issueNumber}
+      </span>
+      <h3 className="wk-cover__hero-banner-title">{headline}</h3>
+      <div className="wk-cover__hero-banner-rule" aria-hidden="true">
+        <svg viewBox="0 0 80 4" preserveAspectRatio="none">
+          <path
+            d="M0 2 C10 0.5, 20 3.5, 40 2 S60 0.5, 80 2"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            fill="none"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 /* ── Cover Section ─────────────────────────────────────────────────────────── */
 
 function CoverSection({
@@ -1283,10 +1314,16 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             />
 
             {digest.cover_text && digest.cover_text.length > 0 && (
-              <CoverSection
-                stories={digest.cover_text}
-                topLevelNumbers={digest.cover_numbers}
-              />
+              <>
+                <CoverHero
+                  headline={digest.cover_headline || digest.cover_text[0]?.headline || ""}
+                  issueNumber={digest.issue_number}
+                />
+                <CoverSection
+                  stories={digest.cover_text}
+                  topLevelNumbers={digest.cover_numbers}
+                />
+              </>
             )}
 
             <InkFlourish />
