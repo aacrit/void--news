@@ -2382,6 +2382,58 @@
   background-color: var(--bg-secondary);
 }
 
+/* ── Mobile edition tabs — horizontal scroll strip below logo ── */
+.nav-mob-editions {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 767px) {
+  .nav-mob-editions {
+    display: flex;
+    gap: var(--space-1);
+    padding: 0 var(--space-4);
+    padding-bottom: var(--space-3);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-bottom: var(--rule-thin);
+  }
+  .nav-mob-editions::-webkit-scrollbar { display: none; }
+
+  .nav-mob-ed {
+    font-family: var(--font-editorial);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--fg-tertiary);
+    white-space: nowrap;
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    transition: color 200ms var(--ease-out);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-mob-ed--active {
+    color: var(--fg-primary);
+    font-weight: 700;
+  }
+
+  .nav-mob-ed--active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: var(--space-3);
+    right: var(--space-3);
+    height: 2px;
+    background: var(--accent-warm, var(--cin-amber));
+    border-radius: 1px;
+  }
+}
+
 /* ── Mobile: lens hidden (MobileBottomNav handles filters) ── */
 @media (max-width: 767px) {
   .nav-lens {
@@ -7403,10 +7455,53 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     color: var(--bias-right);
   }
 
-  /* ── Bottom bar with 3 CTA buttons ── */
+  /* ── OnAir mini-progress — persistent strip above filter buttons ── */
+  .mob-nav__onair {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: none;
+    border-bottom: var(--rule-thin);
+    cursor: pointer;
+    min-height: 32px;
+  }
+
+  .mob-nav__onair-label {
+    font-family: var(--font-data);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-tertiary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .mob-nav__onair--playing .mob-nav__onair-label {
+    color: var(--accent-warm, var(--cin-amber));
+  }
+
+  .mob-nav__onair-bar {
+    flex: 1;
+    height: 2px;
+    background: var(--border-subtle);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .mob-nav__onair-fill {
+    height: 100%;
+    background: var(--accent-warm, var(--cin-amber));
+    border-radius: 1px;
+    transition: width 300ms linear;
+  }
+
+  /* ── Bottom bar with 2 CTA buttons ── */
   .mob-nav__bar {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-1);
     background: var(--bg-primary);
     border-top: var(--rule-thin);
