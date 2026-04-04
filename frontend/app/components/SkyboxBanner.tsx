@@ -13,6 +13,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [announcement, setAnnouncement] = useState("");
+  const hasExpandedOnce = useRef(false);
 
   // Focus management refs
   const collapseRef = useRef<HTMLButtonElement>(null);
@@ -42,6 +43,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     setExpandedSection(prev => {
       const next = prev === section ? null : section;
       if (next) {
+        hasExpandedOnce.current = true;
         setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : "editorial opinion"}.`);
       } else {
         setAnnouncement("Daily brief collapsed.");
@@ -84,7 +86,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const rootClass = [
     "skb",
-    "anim-cold-open-skybox",
+    !hasExpandedOnce.current ? "anim-cold-open-skybox" : "",
     isCompact ? "skb--compact" : "skb--section-open",
     expandedSection ? `skb--show-${expandedSection}` : "",
   ].filter(Boolean).join(" ");
