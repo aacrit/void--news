@@ -45,7 +45,7 @@
   position: fixed;
   inset: 0;
   background: var(--paper-texture);
-  opacity: calc(var(--cin-grain-opacity, 0.04) * 2);
+  opacity: calc(var(--cin-grain-opacity, 0.04) * 3);
   pointer-events: none;
   z-index: 100;
   mix-blend-mode: multiply;
@@ -58,7 +58,7 @@
   inset: 0;
   background: radial-gradient(
     ellipse 70% 65% at 50% 45%,
-    transparent 40%,
+    transparent 30%,
     var(--cin-vignette-color) 100%
   );
   pointer-events: none;
@@ -336,21 +336,12 @@
 /* ===========================================================================
    B. COVER HERO BANNER — typographic treatment (image future-ready)
    =========================================================================== */
-/* Cover Hero — deep red full-bleed banner. The headline IS the picture.
-   Economist/TIME inspired — bold red, cream headline, magazine authority. */
+/* Cover Hero — headline as red accent on page background.
+   Only the masthead gets filled red. Cover story is editorial typography. */
 .wk-cover-hero {
   position: relative;
-  background: var(--wk-accent);
-  margin: 0 calc(-1 * var(--space-4));
-  padding: var(--space-6) var(--space-5);
+  padding: var(--space-5) 0;
   overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .wk-cover-hero {
-    margin: 0 calc(-1 * var(--space-6));
-    padding: var(--space-7) var(--space-7);
-  }
 }
 
 /* Ghosted issue number watermark — large, behind headline */
@@ -371,7 +362,7 @@
   font-size: clamp(4rem, 12vw, 10rem);
   font-weight: 900;
   color: var(--wk-accent);
-  opacity: 0.06;
+  opacity: 0.04;
   line-height: 1;
   user-select: none;
   pointer-events: none;
@@ -396,18 +387,17 @@
   font-family: var(--font-editorial);
   font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: 700;
-  color: var(--wk-cream);
+  color: var(--wk-accent);
   line-height: 1.1;
   letter-spacing: -0.02em;
   margin: 0 0 var(--space-3);
-  max-width: 40ch;
+  max-width: 50ch;
 }
 
 .wk-cover-hero__source-count {
   font-family: var(--font-data);
   font-size: var(--text-xs);
-  color: var(--wk-cream);
-  opacity: 0.6;
+  color: var(--fg-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -423,8 +413,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  color: var(--wk-cream);
-  opacity: 0.4;
+  color: var(--wk-accent);
+  opacity: 0.5;
 }
 
 /* ===========================================================================
@@ -437,11 +427,16 @@
   padding: var(--space-4) 0;
 }
 
-@media (min-width: 768px) {
-  .wk-cover-body {
-    grid-template-columns: 1fr clamp(14rem, 12rem + 5vw, 20rem);
-    gap: var(--space-5);
-  }
+/* Single column — full width for cover stories. No sidebar grid. */
+
+.wk-cover-body__subhead {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: var(--wk-accent);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: var(--space-4) 0 var(--space-3);
 }
 
 .wk-cover-body__text {
@@ -794,7 +789,7 @@
 
 .wk-opinion {
   background: var(--bg-card);
-  background-image: linear-gradient(color-mix(in srgb, var(--lean-color, var(--wk-accent)) 6%, transparent), color-mix(in srgb, var(--lean-color, var(--wk-accent)) 6%, transparent));
+  /* No separate bg — inherits page texture */
   border: none;
   border-left: 4px solid var(--lean-color, var(--wk-accent));
   padding: var(--space-4) var(--space-5);

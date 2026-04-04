@@ -514,29 +514,31 @@ function CoverBody({
       className={`wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-cover-heading"
     >
-      <div className="wk-cover-body wk-cold-open--body">
-        <div className="wk-cover-body__text">
-          {allText.map((text, si) => (
-            text.split("\n\n").filter(Boolean).map((para, j) => (
+      {/* Show up to 2 cover stories */}
+      {stories.slice(0, 2).map((story, si) => (
+        <div key={si} className="wk-cover-body wk-cold-open--body">
+          {si > 0 && <InkRule className="wk-ink-rule--strong" />}
+          {si > 0 && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
+          <div className="wk-cover-body__text">
+            {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
               <p key={`${si}-${j}`}>{para}</p>
-            ))
-          ))}
+            ))}
+          </div>
         </div>
+      ))}
 
-        {/* Timeline as sidebar (replaces Week in Numbers) */}
-        {timeline.length > 0 && (
-          <aside className="wk-cover-body__sidebar" aria-label="Key events">
-            <InkLeftBorder />
-            <h4 className="wk-cover-body__sidebar-title">Key Events</h4>
-            <div className="wk-timeline wk-timeline--vertical" role="list" aria-label="Key events">
-              <InkVerticalTrack />
-              {timeline.map((entry, k) => (
-                <TimelineNode key={k} entry={entry} index={k} />
-              ))}
-            </div>
-          </aside>
-        )}
-      </div>
+      {/* Timeline — horizontal, full canvas width, below cover stories */}
+      {timeline.length > 0 && (
+        <div className="wk-timeline-section" aria-labelledby="wk-timeline-heading">
+          <h3 className="wk-section-label" id="wk-timeline-heading">Timeline</h3>
+          <div className="wk-timeline" role="list" aria-label="Key events">
+            <InkHorizontalTrack />
+            {timeline.map((entry, k) => (
+              <TimelineNode key={k} entry={entry} index={k} />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1098,11 +1100,9 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
       <Footer />
 
-      {/* Mobile bottom nav — edition switching (thumb-reachable) */}
+      {/* Mobile bottom nav — filter buttons (editions moved to NavBar tabs) */}
       {isMobile && (
         <MobileBottomNav
-          activeEdition={activeEdition}
-          onEditionChange={handleEditionChange}
           activeLean={activeLean}
           onLeanChange={setActiveLean}
           activeCategory={activeCategory}
