@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
@@ -125,6 +125,8 @@ interface SpectrumChartProps {
 
 export default function SpectrumChart({ sources }: SpectrumChartProps) {
   const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
     source: SpectrumSource;
     x: number;
@@ -144,12 +146,23 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     return map;
   }, [sources]);
 
-  const maxInZone = useMemo(
-    () => Math.max(0, ...Array.from(zones.values()).map((s) => s.length)),
-    [zones]
-  );
-
-  const needsExpand = maxInZone > 4;
+  /* Detect if the body overflows the viewport — show expand only when needed */
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el || expanded) return;
+    const check = () => {
+      const rect = el.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      // Overflows if the bottom of the body extends beyond the viewport
+      // with some padding for the expand button itself (~48px)
+      setOverflows(rect.bottom > viewH - 48);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    window.addEventListener("resize", check);
+    return () => { ro.disconnect(); window.removeEventListener("resize", check); };
+  }, [sources, expanded]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -199,8 +212,9 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
 
       {/* ---- All sources below ---- */}
       <div
+        ref={bodyRef}
         className={`spectrum-body${expanded ? " spectrum-body--expanded" : ""}${
-          needsExpand && !expanded ? " spectrum-body--collapsed" : ""
+          overflows && !expanded ? " spectrum-body--collapsed" : ""
         }`}
       >
         <div className="spectrum-body__grid">
@@ -228,13 +242,13 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
             );
           })}
         </div>
-        {needsExpand && !expanded && (
+        {overflows && !expanded && (
           <div className="spectrum-body__fade" aria-hidden="true" />
         )}
       </div>
 
-      {/* ---- Single expand/collapse ---- */}
-      {needsExpand && (
+      {/* ---- Single expand/collapse — only shown when content overflows viewport ---- */}
+      {(overflows || expanded) && (
         <button
           className="spectrum-expand-btn"
           onClick={() => setExpanded(!expanded)}
