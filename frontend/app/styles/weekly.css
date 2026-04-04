@@ -25,6 +25,11 @@
   --wk-cream: #F8F3E8;
   --wk-cream-deep: #EDE5D4;
   --wk-white: #FFFFFF;
+
+  /* Warmer, thicker-feeling paper — visually distinct from main feed.
+     Main page: #F0EBDD. Weekly: warmer, more matte, like heavy stock. */
+  background-color: #EDE4D0;
+  color: var(--fg-primary);
 }
 
 :root[data-mode="dark"] .wk-page {
@@ -37,6 +42,9 @@
   --wk-accent-ink: rgba(239, 83, 80, 0.22);
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
+
+  /* Dark mode: warmer charcoal than main feed (#151310 → #1E1A16) */
+  background-color: #1E1A16;
 }
 
 /* Film grain overlay */
@@ -63,6 +71,34 @@
   );
   pointer-events: none;
   z-index: 99;
+}
+
+/* Back-to-main link — subtle, top-left, always visible */
+.wk-back {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-4);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-tertiary);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  z-index: 50;
+  opacity: 0.5;
+  transition: opacity 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic);
+}
+
+.wk-back:hover {
+  opacity: 1;
+  color: var(--wk-accent);
+}
+
+@media (max-width: 767px) {
+  .wk-back {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-3);
+  }
 }
 
 .wk-main {
@@ -788,11 +824,10 @@
 }
 
 .wk-opinion {
-  background: var(--bg-card);
-  /* No separate bg — inherits page texture */
+  background: none;
   border: none;
   border-left: 4px solid var(--lean-color, var(--wk-accent));
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4);
   position: relative;
   transition:
     box-shadow 320ms var(--ease-cinematic),

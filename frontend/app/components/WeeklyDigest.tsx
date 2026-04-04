@@ -1008,6 +1008,11 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
   return (
     <div className="wk-page">
+      {/* Subtle back-to-main link */}
+      <Link href="/" className="wk-back" aria-label="Back to void --news">
+        <span aria-hidden="true">&larr;</span> void --news
+      </Link>
+
       <main
         ref={mainRef}
         id="main-content"
