@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import LogoFull from './LogoFull';
 import {
   fetchShipRequests,
   submitShipRequest,
@@ -516,7 +517,12 @@ export default function ShipBoard() {
 
       {/* ---- Header ---- */}
       <header className="ship-page__header ship-cold-open-header">
-        <p className="ship-page__brand">void --ship</p>
+        <div className="ship-page__brand">
+          <Link href="/" aria-label="void --news home" className="ship-page__logo">
+            <LogoFull height={22} />
+          </Link>
+          <span className="ship-page__brand-suffix">--ship</span>
+        </div>
         <h1 className="ship-page__title">Request, vote, watch it deploy.</h1>
         <p className="ship-page__subtitle">
           Submit bugs and features. The ones you vote for get built — often within hours.
