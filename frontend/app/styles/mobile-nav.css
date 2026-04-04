@@ -104,9 +104,11 @@
     inset: 0;
     z-index: calc(var(--z-overlay) - 1);
     background-color: var(--overlay-backdrop);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 250ms var(--ease-cinematic);
+    transition: opacity 300ms var(--ease-cinematic);
   }
 
   .msp__backdrop--open {
@@ -114,7 +116,7 @@
     pointer-events: auto;
   }
 
-  /* Panel */
+  /* Panel — paper-textured surface with cinematic shadow */
   .msp {
     display: flex;
     flex-direction: column;
@@ -127,8 +129,9 @@
     z-index: var(--z-overlay);
     background-color: var(--bg-primary);
     border-left: var(--rule-thin);
-    transform: translateX(100%);
-    transition: transform 250ms var(--ease-cinematic);
+    /* Exit: confident cut — fast, decisive, no lingering */
+    transform: translateX(100%) scale(1.02);
+    transition: transform 220ms var(--ease-whip);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding-top: env(safe-area-inset-top, 0px);
@@ -137,16 +140,52 @@
       -8px 0 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.2)) 15%, transparent);
   }
 
-  .msp--open {
-    transform: translateX(0);
+  /* Paper grain overlay — same material as page canvas */
+  .msp::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--paper-texture);
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 0;
   }
 
-  /* Header with logo */
+  /* Ensure all panel content sits above the grain layer */
+  .msp > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .msp--open {
+    /* Entrance: spring-driven truck reveal with depth settle */
+    transform: translateX(0) scale(1);
+    transition: transform 340ms var(--spring-snappy);
+  }
+
+  /* Header — ScaleIcon brand mark, centered, with ink underline */
   .msp__header {
     display: flex;
     align-items: center;
+    justify-content: center;
+    position: relative;
     padding: var(--space-5) var(--space-5);
-    border-bottom: var(--rule-thin);
+  }
+
+  /* Warm ink mark beneath header — printer's mark, not a border */
+  .msp__header::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 1.5px;
+    background: var(--accent-warm);
+    opacity: 0.3;
+    border-radius: 1px;
   }
 
   /* Navigation links */
@@ -167,6 +206,52 @@
     padding: var(--space-4) var(--space-5) var(--space-1);
   }
 
+  /* Organic ink dividers — hand-drawn wobble paths between section groups.
+     Same visual language as skb__firewall in SkyboxBanner. */
+  .msp__divider {
+    display: block;
+    width: calc(100% - var(--space-5) * 2);
+    height: 4px;
+    margin: var(--space-1) auto;
+    overflow: visible;
+  }
+
+  .msp__divider path {
+    stroke: var(--accent-warm);
+    stroke-width: 1;
+    stroke-opacity: 0.25;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  /* ── Content cascade — L-cut: content arrives while panel still sliding ── */
+
+  [data-msp-cascade] {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .msp:not(.msp--open) [data-msp-cascade] {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: none;
+  }
+
+  .msp--open [data-msp-cascade] {
+    animation: mspCascadeIn 260ms var(--ease-cinematic) both;
+  }
+  .msp--open [data-msp-cascade="1"] { animation-delay: 120ms; }
+  .msp--open [data-msp-cascade="2"] { animation-delay: 180ms; }
+  .msp--open [data-msp-cascade="3"] { animation-delay: 240ms; }
+  .msp--open [data-msp-cascade="4"] { animation-delay: 300ms; }
+  .msp--open [data-msp-cascade="5"] { animation-delay: 360ms; }
+  .msp--open [data-msp-cascade="6"] { animation-delay: 420ms; }
+
+  @keyframes mspCascadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   .msp__link {
     display: flex;
     flex-direction: column;
@@ -177,12 +262,26 @@
     padding: var(--space-3) var(--space-5);
     min-height: 48px;
     text-decoration: none;
-    transition: background-color 120ms var(--ease-out);
+    border-left: 2px solid transparent;
+    transition: background-color 120ms var(--ease-out),
+                transform 80ms var(--ease-out),
+                border-color 120ms var(--ease-out);
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Press: scale + amber rail + dotted underline on cmd text */
   .msp__link:active {
-    background-color: var(--bg-hover);
+    background-color: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+    transform: scale(0.97);
+    border-left-color: var(--accent-warm);
+  }
+
+  .msp__link:active .msp__link-cmd {
+    color: var(--accent-warm);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--accent-warm);
   }
 
   .msp__link-cmd {
@@ -191,6 +290,7 @@
     font-weight: 400;
     letter-spacing: 0.02em;
     color: var(--fg-primary);
+    transition: color 120ms var(--ease-out);
   }
 
   .msp__link-desc {
@@ -217,11 +317,21 @@
     color: var(--fg-secondary);
   }
 
-  /* Footer tagline */
+  /* Footer — dateline, tagline, colophon */
   .msp__footer {
     margin-top: auto;
     padding: var(--space-5);
     border-top: var(--rule-thin);
+  }
+
+  .msp__dateline {
+    display: block;
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    margin-bottom: var(--space-2);
   }
 
   .msp__tagline {
@@ -231,6 +341,14 @@
     letter-spacing: 0.04em;
     color: var(--fg-muted);
     font-style: italic;
+  }
+
+  /* Colophon mark — void circle at whisper opacity, publisher's device */
+  .msp__colophon {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-3);
+    opacity: 0.12;
   }
 }
 
@@ -340,6 +458,14 @@
   }
   .msp__backdrop {
     transition: none;
+  }
+  [data-msp-cascade] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .msp__link:active {
+    transform: none;
   }
   .mtb__tab:active {
     transform: none;
