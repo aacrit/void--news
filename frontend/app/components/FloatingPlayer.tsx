@@ -72,9 +72,11 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number>(0);
   const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const trailRef = useRef<number[]>([]);
+  const colorsRef = useRef<{ ink: string; paper: string; grid: string; nib: string } | null>(null);
 
-  /* ---- Real-time oscilloscope: draws actual audio waveform ---- */
-  const drawOscilloscope = useCallback(() => {
+  /* ---- Ink needle seismograph: chart recorder with pen nib ---- */
+  const drawSeismograph = useCallback(() => {
     const canvas = canvasRef.current;
     const analyser = state.analyserRef?.current;
     if (!canvas || !analyser) return;
@@ -82,95 +84,181 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Match canvas resolution to display size (crisp on HiDPI)
+    // HiDPI scaling
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
+      colorsRef.current = null; // re-read after resize
     }
 
     const w = rect.width;
     const h = rect.height;
+    const pad = 6; // top/bottom padding so needle never clips
 
+    // Cache CSS colors (expensive to read per frame)
+    if (!colorsRef.current) {
+      const s = getComputedStyle(canvas);
+      const bg = s.getPropertyValue("--console-bg").trim() || "#EBE5D6";
+      const fg = s.getPropertyValue("--console-fg").trim() || "#2A2520";
+      const isDark = bg.startsWith("#1") || bg.startsWith("#0") || bg.startsWith("#2");
+      colorsRef.current = {
+        paper: bg,
+        ink: isDark ? (s.getPropertyValue("--voice-accent").trim() || "#4DAFA0") : "#775610",
+        grid: isDark ? `rgba(237,232,224,0.06)` : `rgba(42,37,32,0.08)`,
+        nib: s.getPropertyValue("--accent-warm").trim() || "#946B15",
+      };
+    }
+    const { ink, paper, grid, nib } = colorsRef.current;
+
+    // Get amplitude: average middle 64 samples for stable reading
     if (!dataArrayRef.current || dataArrayRef.current.length !== analyser.fftSize) {
       dataArrayRef.current = new Uint8Array(analyser.fftSize);
     }
     analyser.getByteTimeDomainData(dataArrayRef.current);
-    const data = dataArrayRef.current;
+    const mid = Math.floor(dataArrayRef.current.length / 2);
+    let sum = 0;
+    for (let i = mid - 32; i < mid + 32; i++) sum += dataArrayRef.current[i];
+    const amplitude = (sum / 64) / 255; // 0-1, 0.5 = center
 
-    ctx.clearRect(0, 0, w, h);
+    // Initialize trail buffer to canvas width
+    const trailLen = Math.floor(w);
+    if (trailRef.current.length !== trailLen) {
+      trailRef.current = new Array(trailLen).fill(0.5);
+    }
 
-    // Get amber color from CSS custom property
-    const style = getComputedStyle(canvas);
-    const amber = style.getPropertyValue("--accent-warm").trim() || "#946B15";
+    // Shift trail left, append new sample
+    trailRef.current.shift();
+    trailRef.current.push(amplitude);
 
-    // Center line (faint reference)
-    ctx.strokeStyle = amber;
-    ctx.globalAlpha = 0.12;
+    // ── Pass 1: Paper background ──
+    ctx.fillStyle = paper;
+    ctx.fillRect(0, 0, w, h);
+
+    // ── Pass 2: Chart grid lines ──
+    ctx.strokeStyle = grid;
     ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, h / 2);
-    ctx.lineTo(w, h / 2);
-    ctx.stroke();
+    ctx.setLineDash([3, 4]);
+    for (let i = 1; i <= 3; i++) {
+      const gy = (h * i) / 4;
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(w, gy);
+      ctx.stroke();
+    }
+    // Vertical feed ticks
+    ctx.setLineDash([]);
+    const tickSpacing = 40;
+    for (let x = tickSpacing; x < w; x += tickSpacing) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, 3);
+      ctx.moveTo(x, h);
+      ctx.lineTo(x, h - 3);
+      ctx.stroke();
+    }
 
-    // Waveform — actual time-domain audio signal
-    ctx.globalAlpha = 0.65;
+    // ── Pass 3: Ink trail ──
+    ctx.strokeStyle = ink;
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
+    ctx.globalAlpha = 0.7;
     ctx.beginPath();
-
-    const sliceWidth = w / data.length;
-    for (let i = 0; i < data.length; i++) {
-      const v = data[i] / 128.0; // normalize: 1.0 = center
-      const y = (v * h) / 2;
-      if (i === 0) ctx.moveTo(0, y);
-      else ctx.lineTo(i * sliceWidth, y);
+    for (let i = 0; i < trailRef.current.length; i++) {
+      const y = pad + trailRef.current[i] * (h - pad * 2);
+      if (i === 0) ctx.moveTo(i, y);
+      else ctx.lineTo(i, y);
     }
     ctx.stroke();
 
-    // Subtle ambient glow — soft, not glaring
-    ctx.globalAlpha = 0.08;
-    ctx.lineWidth = 6;
-    ctx.filter = "blur(4px)";
+    // Ink bleed — subtle shadow under the trail
+    ctx.globalAlpha = 0.06;
+    ctx.lineWidth = 4;
+    ctx.filter = "blur(3px)";
     ctx.stroke();
     ctx.filter = "none";
+    ctx.globalAlpha = 1;
+
+    // ── Pass 4: Needle nib at right edge ──
+    const nibX = w - 2;
+    const nibY = pad + amplitude * (h - pad * 2);
+    const nibW = 8;
+    const nibH = 10;
+
+    // Pivot line
+    ctx.strokeStyle = nib;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.moveTo(nibX, h / 2);
+    ctx.lineTo(nibX, nibY);
+    ctx.stroke();
+
+    // Triangular nib pointing left
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = nib;
+    ctx.beginPath();
+    ctx.moveTo(nibX - nibW, nibY);
+    ctx.lineTo(nibX, nibY - nibH / 2);
+    ctx.lineTo(nibX, nibY + nibH / 2);
+    ctx.closePath();
+    ctx.fill();
     ctx.globalAlpha = 1;
   }, [state.analyserRef]);
 
   useEffect(() => {
     if (!isPlaying) {
       cancelAnimationFrame(rafRef.current);
-      // Draw one flat line when paused
+      // Draw static paper + grid + centered needle when paused
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext("2d");
         if (ctx) {
           const rect = canvas.getBoundingClientRect();
-          ctx.clearRect(0, 0, rect.width, rect.height);
+          const dpr = window.devicePixelRatio || 1;
+          if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+          }
+          const s = getComputedStyle(canvas);
+          const bg = s.getPropertyValue("--console-bg").trim() || "#EBE5D6";
+          const fg = s.getPropertyValue("--console-fg").trim() || "#2A2520";
+          const isDark = bg.startsWith("#1") || bg.startsWith("#0") || bg.startsWith("#2");
+          const grid = isDark ? "rgba(237,232,224,0.06)" : "rgba(42,37,32,0.08)";
+          const w = rect.width, h = rect.height;
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, w, h);
+          ctx.strokeStyle = grid;
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 4]);
+          for (let i = 1; i <= 3; i++) {
+            ctx.beginPath(); ctx.moveTo(0, h * i / 4); ctx.lineTo(w, h * i / 4); ctx.stroke();
+          }
+          ctx.setLineDash([]);
         }
       }
       return;
     }
 
-    // Respect reduced motion — draw static center line instead
     const prefersReduced = typeof window !== "undefined"
       && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
     let lastFrame = 0;
     const loop = (timestamp: number) => {
-      if (timestamp - lastFrame > 33) { // 30fps throttle
+      if (timestamp - lastFrame > 33) {
         lastFrame = timestamp;
-        drawOscilloscope();
+        drawSeismograph();
       }
       rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [isPlaying, drawOscilloscope]);
+  }, [isPlaying, drawSeismograph]);
 
   /* ---- Swipe-down gesture ---- */
   const dragYRef = useRef<{ startY: number; current: number } | null>(null);
