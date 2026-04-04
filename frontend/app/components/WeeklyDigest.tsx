@@ -552,7 +552,7 @@ function TimelineNode({
 }) {
   const [expanded, setExpanded] = useState(false);
   const dateText = entry.date || entry.day || "";
-  const noteText = entry.event || entry.note || entry.development || "";
+  const noteText = entry.title || entry.event || entry.note || entry.development || "";
 
   const sentences = noteText.split(/(?<=[.!?])\s+/);
   const summary = sentences[0] || noteText;
