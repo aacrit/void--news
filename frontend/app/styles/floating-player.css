@@ -677,16 +677,478 @@
 }
 
 /* ---------------------------------------------------------------------------
+   METADATA ROW — host pair, edition, duration
+   --------------------------------------------------------------------------- */
+
+.fp__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: color-mix(in srgb, var(--accent-warm) 55%, transparent);
+  letter-spacing: 0.02em;
+  flex-wrap: wrap;
+}
+
+.fp__meta-hosts {
+  font-weight: 500;
+  color: color-mix(in srgb, var(--accent-warm) 75%, transparent);
+}
+
+.fp__meta-sep {
+  width: 1px;
+  height: 10px;
+  background: color-mix(in srgb, var(--accent-warm) 20%, transparent);
+}
+
+.fp__meta-edition {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 9px;
+}
+
+.fp__meta-duration {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   EPISODE DETAILS BUTTON
+   --------------------------------------------------------------------------- */
+
+.fp__episode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) 0;
+  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  cursor: pointer;
+  transition: color 150ms var(--ease-out);
+}
+
+.fp__episode-btn:hover {
+  color: var(--accent-warm);
+}
+
+.fp__episode-btn-arrow {
+  font-size: 8px;
+  transition: transform 200ms var(--ease-out);
+}
+
+.fp__episode-btn:hover .fp__episode-btn-arrow {
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------------------------
+   BROADCAST PANEL — full episode view (tier 3)
+   --------------------------------------------------------------------------- */
+
+.fp--broadcast {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  animation: fpBroadcastIn 420ms var(--ease-unfold, ease) both;
+}
+
+@keyframes fpBroadcastIn {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fp__broadcast {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: linear-gradient(180deg, var(--console-bg) 0%, var(--console-bg-deep) 100%);
+  border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
+  color: var(--console-fg);
+  box-shadow:
+    0 -4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  max-height: 80vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  position: relative;
+}
+
+/* Filament glow — tube-amp warmth bleeding onto console surface */
+.fp__broadcast::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 50%;
+  width: 300px; height: 120px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(212, 140, 60, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fp--playing .fp__broadcast {
+  border-top-color: var(--accent-warm);
+  box-shadow:
+    0 -4px 20px rgba(0, 0, 0, 0.3),
+    0 -2px 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
+}
+
+/* Content cascade — L-cut timing */
+.fp--broadcast .fp__bcast-header {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 80ms both;
+}
+.fp--broadcast .fp__bcast-dateline {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 120ms both;
+}
+.fp--broadcast .fp__bcast-hosts {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 160ms both;
+}
+.fp--broadcast .fp__transport {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 200ms both;
+}
+.fp--broadcast .fp__seek {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 240ms both;
+}
+.fp--broadcast .fp__bcast-content {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 300ms both;
+}
+
+/* All broadcast children above filament glow */
+.fp__broadcast > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* VU arc motif — decorative Braun-style arc behind header */
+.fp__vu-arc {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 60px;
+  color: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Broadcast header */
+.fp__bcast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fp__bcast-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.fp__bcast-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.fp__bcast-void {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--accent-warm);
+}
+
+.fp__bcast-cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--accent-warm);
+  letter-spacing: 0.02em;
+}
+
+/* Episode dateline */
+.fp__bcast-dateline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: color-mix(in srgb, var(--accent-warm) 55%, transparent);
+  letter-spacing: 0.02em;
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+.fp__bcast-edition {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 9px;
+  color: var(--accent-warm);
+}
+
+.fp__bcast-date {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-xs);
+  color: color-mix(in srgb, var(--accent-warm) 65%, transparent);
+}
+
+.fp__bcast-duration {
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+
+/* Host pair card */
+.fp__bcast-hosts {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.fp__bcast-host {
+  flex: 1;
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
+}
+
+.fp__bcast-host-tag {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  color: var(--accent-warm);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 30%, transparent);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.fp__bcast-host-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fp__bcast-host-name {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: color-mix(in srgb, var(--accent-warm) 85%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fp__bcast-host-trait {
+  font-family: var(--font-meta);
+  font-size: 9px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Episode content */
+.fp__bcast-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+.fp__bcast-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fp__bcast-section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.fp__bcast-section-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--accent-warm) 45%, transparent);
+}
+
+.fp__bcast-text {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--console-fg) 85%, transparent);
+  margin: 0;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Dotted firewall — opinion boundary */
+.fp__bcast-firewall {
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent-warm) 25%, transparent) 0 4px,
+    transparent 4px 8px
+  );
+}
+
+/* Lean badge */
+.fp__bcast-lean {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+
+.fp__bcast-lean--left {
+  color: var(--lean-left, #3b82f6);
+  border-color: color-mix(in srgb, var(--lean-left, #3b82f6) 30%, transparent);
+  background: color-mix(in srgb, var(--lean-left, #3b82f6) 6%, transparent);
+}
+
+.fp__bcast-lean--center {
+  color: var(--lean-center, #a3a3a3);
+  border-color: color-mix(in srgb, var(--lean-center, #a3a3a3) 30%, transparent);
+  background: color-mix(in srgb, var(--lean-center, #a3a3a3) 6%, transparent);
+}
+
+.fp__bcast-lean--right {
+  color: var(--lean-right, #ef4444);
+  border-color: color-mix(in srgb, var(--lean-right, #ef4444) 30%, transparent);
+  background: color-mix(in srgb, var(--lean-right, #ef4444) 6%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   BROADCAST PANEL — Responsive
+   --------------------------------------------------------------------------- */
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .fp--broadcast {
+    bottom: var(--nav-bottom-height, 52px);
+  }
+
+  .fp__broadcast {
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    max-height: 85vh;
+  }
+
+  .fp__bcast-hosts {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* Console grain texture */
+  .fp__broadcast::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.12'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+    opacity: 0.04;
+  }
+
+  .fp__broadcast {
+    position: relative;
+  }
+}
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  .fp--broadcast {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: 560px;
+    width: calc(100vw - 48px);
+    bottom: var(--space-4);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .fp__broadcast {
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--accent-warm) 20%, transparent);
+  }
+
+  .fp--playing .fp__broadcast {
+    border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  }
+
+  @keyframes fpBroadcastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .fp--broadcast { max-width: 640px; }
+}
+
+/* Ultra-wide (1440px+) */
+@media (min-width: 1440px) {
+  .fp--broadcast { max-width: 720px; }
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .fp--compact { animation: none; opacity: 1; transform: none; }
   .fp--expanded { animation: none; opacity: 1; transform: none; }
+  .fp--broadcast { animation: none; opacity: 1; transform: none; }
   .fp--expanded .fp__bar-header,
   .fp--expanded .fp__waveform,
   .fp--expanded .fp__transport,
   .fp--expanded .fp__seek { animation: none; opacity: 1; transform: none; }
+  .fp--broadcast .fp__bcast-header,
+  .fp--broadcast .fp__bcast-dateline,
+  .fp--broadcast .fp__bcast-hosts,
+  .fp--broadcast .fp__transport,
+  .fp--broadcast .fp__seek,
+  .fp--broadcast .fp__bcast-content { animation: none; opacity: 1; transform: none; }
   .fp__play--active { animation: none; }
   .fp__play-lg--active { animation: none; }
   .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
@@ -709,4 +1171,5 @@
   .fp__minimize:hover, .fp__dismiss:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); background: none; }
   .fp__skip:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); }
   .fp__speed:hover { border-color: color-mix(in srgb, var(--accent-warm) 25%, transparent); }
+  .fp__episode-btn:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); }
 }
