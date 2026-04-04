@@ -761,7 +761,8 @@
   .filter-chip,
   .nav-tab,
   .nav-tab::after,
-  .page-toggle,
+  .nav-page,
+  .nav-weekly,
   .theme-toggle,
   .theme-toggle__icon,
   .category-tag {
@@ -783,7 +784,7 @@
     transform: none;
   }
 
-  .page-toggle:hover {
+  .nav-page:hover {
     transform: none;
   }
 

@@ -360,7 +360,8 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  .deep-dive-active .page-toggle {
+  .deep-dive-active .nav-page,
+  .deep-dive-active .nav-weekly {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -762,14 +763,16 @@
   /* === TOUCH TARGETS — WCAG 44×44px MINIMUM === */
 
   /* These elements already meet WCAG in most cases; this rule is the safety net */
-  .nav-filters__ed,
-  .nav-filters__lean,
+  .nav-ed,
+  .nav-lens__lean,
+  .nav-lens__trigger,
+  .nav-page,
+  .nav-weekly,
+  .nav-util,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
-  .page-toggle,
   .theme-toggle,
-  .nav-search-btn,
   .deep-dive-close,
   .skb-overlay__close {
     min-height: 44px;
@@ -802,14 +805,15 @@
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
 
   /* Native apps don't allow text selection on buttons / cards */
-  .nav-filters__ed,
-  .nav-filters__lean,
+  .nav-ed,
+  .nav-lens__lean,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
   .story-card,
   .lead-story,
-  .page-toggle,
+  .nav-page,
+  .nav-weekly,
   .theme-toggle {
     -webkit-user-select: none;
     user-select: none;
@@ -817,12 +821,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* === PAGE TOGGLE — GLASS PILL === */
-
-  .page-toggle {
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
+  /* === PAGE NAVIGATION — no glass on mobile (hidden anyway) === */
 
   /* === ACCESSIBILITY === */
 
@@ -834,8 +833,11 @@
 
   /* .ubar__* rules removed — FilterBar deprecated; NavBar owns all filtering */
 
-  /* === NAV FILTERS — hide from top bar on mobile (moved to bottom nav) === */
-  .nav-filters {
+  /* === NAV LENS + EDITIONS — hide from top bar on mobile (MobileBottomNav handles these) === */
+  .nav-lens {
+    display: none;
+  }
+  .nav-editions {
     display: none;
   }
 
