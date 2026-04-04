@@ -1,7 +1,7 @@
 /* ===========================================================================
    Floating Player — void --onair
    Persistent audio pill (bottom-left) + expandable broadcast console.
-   Fixed dark #1A1816 console surface, amber practical light.
+   Console surface adapts to light/dark mode. Amber practical light.
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
@@ -106,14 +106,14 @@
   position: relative;
   overflow: hidden;
 
-  /* Fixed dark console surface — tokens in tokens.css */
+  /* Console surface — adapts to light/dark mode via tokens */
   background: var(--console-bg);
   border: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 18%, transparent);
   color: var(--console-fg);
 
-  /* Console shadow */
+  /* Console shadow — adapts to light/dark via token */
   box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.2),
+    0 2px 12px var(--console-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
 
   transition: box-shadow 300ms var(--ease-cinematic, ease), border-color 200ms;
@@ -122,7 +122,7 @@
 .fp__pill:hover {
   border-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 4px 16px var(--console-shadow-strong),
     0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
 }
@@ -234,14 +234,14 @@
   border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
   color: var(--console-fg);
   box-shadow:
-    0 -4px 20px rgba(0, 0, 0, 0.3),
+    0 -4px 20px var(--console-shadow-strong),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
 .fp--playing .fp__bar {
   border-top-color: var(--accent-warm);
   box-shadow:
-    0 -4px 20px rgba(0, 0, 0, 0.3),
+    0 -4px 20px var(--console-shadow-strong),
     0 -2px 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
   transition: box-shadow 500ms var(--ease-cinematic, ease), border-color 300ms;
@@ -789,7 +789,7 @@
   border-top: 1px solid color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
   color: var(--console-fg);
   box-shadow:
-    0 -4px 20px rgba(0, 0, 0, 0.3),
+    0 -4px 20px var(--console-shadow-strong),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
   max-height: 80vh;
   overflow-y: auto;
@@ -812,7 +812,7 @@
 .fp--playing .fp__broadcast {
   border-top-color: var(--accent-warm);
   box-shadow:
-    0 -4px 20px rgba(0, 0, 0, 0.3),
+    0 -4px 20px var(--console-shadow-strong),
     0 -2px 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
 }
@@ -1169,7 +1169,7 @@
     border-top: none;
     border-right: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
     box-shadow:
-      4px 0 20px rgba(0, 0, 0, 0.2),
+      4px 0 20px var(--console-shadow),
       inset -1px 0 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
     padding: var(--space-5) var(--space-5);
     gap: var(--space-4);
@@ -1189,7 +1189,7 @@
   .fp--playing .fp__broadcast {
     border-right-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
     box-shadow:
-      4px 0 20px rgba(0, 0, 0, 0.2),
+      4px 0 20px var(--console-shadow),
       2px 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 8%, transparent),
       inset -1px 0 0 color-mix(in srgb, var(--accent-warm) 12%, transparent);
   }
@@ -1303,7 +1303,7 @@
 @media (hover: none) {
   .fp__pill:hover {
     border-color: color-mix(in srgb, var(--accent-warm) 18%, transparent);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
+    box-shadow: 0 2px 12px var(--console-shadow), inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
   }
   .fp__play:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); box-shadow: none; }
   .fp__play-lg:hover { background: color-mix(in srgb, var(--accent-warm) 6%, transparent); box-shadow: none; }
