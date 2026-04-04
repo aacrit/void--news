@@ -9,6 +9,7 @@ Uses rule-based NLP (no LLM API calls):
     - Cosine similarity via sklearn
     - Agglomerative clustering with distance threshold (0.3)
     - Entity-overlap merge pass (Phase 2) to consolidate evolving-story fragments
+    - Title-similarity merge pass (Phase 3) to catch near-duplicate split clusters
     - Cluster title generation from most common named entities (spaCy NER)
 """
 
@@ -506,6 +507,145 @@ def merge_related_clusters(
     return merged_clusters
 
 
+# --- Stopwords for title Jaccard comparison ---
+_TITLE_STOPWORDS = frozenset({
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
+    "has", "have", "had", "its", "it", "as", "after", "over", "up", "that",
+    "this", "not", "no", "says", "said", "new", "amid",
+})
+
+
+def _title_words(title: str) -> set[str]:
+    """Extract lowercased content words from a title, stripping punctuation."""
+    words = re.findall(r"[a-z0-9](?:[a-z0-9'-]*[a-z0-9])?", title.lower())
+    return {w for w in words if w not in _TITLE_STOPWORDS and len(w) >= 2}
+
+
+def merge_duplicate_title_clusters(
+    clusters: list[dict],
+    jaccard_threshold: float = 0.55,
+    max_merged_articles: int = 120,
+) -> list[dict]:
+    """
+    Final merge pass: consolidate clusters with near-identical headlines.
+
+    Catches the oversized-split problem where a 76-article story about one
+    event (e.g., "US Fighter Jet Shot Down Over Iran") gets split by the
+    50-article cap into 2-3 sub-clusters with nearly identical titles that
+    the entity merge can't re-merge (due to entity blacklist + size cap).
+
+    Title Jaccard similarity is a much stronger same-story signal than entity
+    overlap — if two clusters have ≥55% title-word overlap, they are almost
+    certainly the same story.
+
+    Args:
+        clusters: List of cluster dicts.
+        jaccard_threshold: Minimum Jaccard similarity of title word-sets
+            to trigger a merge (default 0.55).
+        max_merged_articles: Maximum articles in a merged cluster. Higher
+            than the entity merge cap (50) because title-match is a
+            stronger signal — these are definitively the same story.
+    """
+    if len(clusters) <= 1:
+        return clusters
+
+    n = len(clusters)
+    title_words = [_title_words(c.get("title", "")) for c in clusters]
+
+    # Union-Find
+    parent = list(range(n))
+    group_size = [len(c.get("articles", [])) for c in clusters]
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+            group_size[rb] += group_size[ra]
+
+    for i in range(n):
+        if not title_words[i]:
+            continue
+        for j in range(i + 1, n):
+            if find(i) == find(j):
+                continue
+            if not title_words[j]:
+                continue
+
+            intersection = len(title_words[i] & title_words[j])
+            union_size = len(title_words[i] | title_words[j])
+            if union_size == 0:
+                continue
+            jaccard = intersection / union_size
+            if jaccard < jaccard_threshold:
+                continue
+
+            # Size gate
+            if group_size[find(i)] + group_size[find(j)] > max_merged_articles:
+                continue
+
+            union(i, j)
+
+    # Group and merge (same pattern as merge_related_clusters)
+    groups: dict[int, list[int]] = {}
+    for i in range(n):
+        groups.setdefault(find(i), []).append(i)
+
+    merged = []
+    for root, members in groups.items():
+        if len(members) == 1:
+            merged.append(clusters[root])
+            continue
+
+        all_articles: list[dict] = []
+        all_article_ids: list[str] = []
+        all_source_ids: set[str] = set()
+        all_pub_dates: list[str] = []
+
+        for idx in members:
+            c = clusters[idx]
+            all_articles.extend(c.get("articles", []))
+            all_article_ids.extend(c.get("article_ids", []))
+            all_source_ids.update(c.get("source_ids", []))
+            fp = c.get("first_published", "")
+            if fp:
+                all_pub_dates.append(fp)
+
+        anchor = max(members, key=lambda idx: clusters[idx].get("source_count", 0))
+        anchor_cluster = clusters[anchor]
+        first_published = min(all_pub_dates) if all_pub_dates else ""
+
+        merged_title = _generate_cluster_title(all_articles)
+        merged_summary = _generate_cluster_summary(all_articles)
+        merged_section = _determine_section(
+            all_articles, merged_title, merged_summary
+        )
+
+        merged.append({
+            "title": merged_title,
+            "summary": merged_summary,
+            "article_ids": all_article_ids,
+            "source_ids": list(all_source_ids),
+            "source_count": len(all_source_ids),
+            "section": merged_section,
+            "first_published": first_published,
+            "articles": all_articles,
+            **{
+                k: v for k, v in anchor_cluster.items()
+                if k not in ("title", "summary", "article_ids", "source_ids",
+                             "source_count", "section", "first_published", "articles")
+            },
+        })
+
+    return merged
+
+
 def cluster_stories(
     articles: list[dict],
     similarity_threshold: float = 0.2,
@@ -664,5 +804,13 @@ def cluster_stories(
     # ongoing story (e.g., 20 Iran-war fragments → 3-5 mega-clusters).
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_related_clusters(clusters)
+
+    # Phase 3: title-similarity merge pass
+    # Catches near-duplicate clusters that survived the 50-article split and
+    # entity merge (e.g., 3 clusters all titled "US Fighter Jet Shot Down
+    # Over Iran" with 25/30/21 sources each). Title Jaccard is a stronger
+    # same-story signal than entity overlap, so it uses a higher size cap.
+    if run_merge_pass and len(clusters) > 1:
+        clusters = merge_duplicate_title_clusters(clusters)
 
     return clusters
