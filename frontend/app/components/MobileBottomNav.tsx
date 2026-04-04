@@ -18,16 +18,18 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
   "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
 
-type OpenPanel = null | "lean" | "topic";
-
 /* ---------------------------------------------------------------------------
-   MobileBottomNav — 2 filter buttons + OnAir progress (mobile only).
+   MobileBottomNav — Bracket-notation filter bar (mobile only).
 
-   [Perspective ▾]  [Topic ▾]
-   ▶ ━━━━━━━━━━━ onair progress ━━━━━━━━━━━
+   Matches desktop nav-lens design language exactly:
+   - IBM Plex Mono, lowercase, bracket notation
+   - Colored dots for lean (6px, same as desktop)
+   - Dotted underline active state
+   - Topic dropdown with caret
 
-   Editions moved to top NavBar tabs. Bottom nav is filters only.
-   OnAir mini-progress taps to expand FloatingPlayer.
+   [ ·left  ·center  ·right ]   [ topics ▾ ]
+   ▶ ━━━━━━━━ onair ━━━━━━━━
+
    Hidden on desktop via CSS (display: none above 768px).
    --------------------------------------------------------------------------- */
 
@@ -38,12 +40,11 @@ export default function MobileBottomNav({
   onCategoryChange,
   dailyBriefState,
 }: MobileBottomNavProps) {
-  const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
+  const [topicOpen, setTopicOpen] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const leanPanelRef = useRef<HTMLDivElement>(null);
   const topicPanelRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const topicTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -53,78 +54,50 @@ export default function MobileBottomNav({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
+  // Close on outside tap
   useEffect(() => {
-    if (openPanel) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [openPanel]);
+    if (!topicOpen) return;
+    const close = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setTopicOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [topicOpen]);
 
-  const toggle = useCallback((panel: OpenPanel) => {
-    hapticLight();
-    setOpenPanel((prev) => prev === panel ? null : panel);
-  }, []);
+  // Close on Escape
+  useEffect(() => {
+    if (!topicOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { e.preventDefault(); setTopicOpen(false); topicTriggerRef.current?.focus(); }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [topicOpen]);
+
+  // Focus management
+  useEffect(() => {
+    if (topicOpen && topicPanelRef.current) {
+      requestAnimationFrame(() => {
+        topicPanelRef.current?.querySelector<HTMLElement>("button")?.focus();
+      });
+    }
+  }, [topicOpen]);
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
     onLeanChange(lean === activeLean ? "All" : lean);
-    setOpenPanel(null);
   };
 
   const handleTopicTap = (cat: "All" | Category) => {
     hapticMicro();
     onCategoryChange(cat);
-    setOpenPanel(null);
+    setTopicOpen(false);
+    topicTriggerRef.current?.focus();
   };
 
-  useEffect(() => {
-    if (openPanel) {
-      triggerRef.current = document.activeElement as HTMLButtonElement | null;
-      const panelMap: Record<string, React.RefObject<HTMLDivElement | null>> = {
-        lean: leanPanelRef,
-        topic: topicPanelRef,
-      };
-      const panelEl = panelMap[openPanel]?.current;
-      if (panelEl) {
-        requestAnimationFrame(() => {
-          const firstInteractive = panelEl.querySelector<HTMLElement>("button, a, input");
-          firstInteractive?.focus();
-        });
-      }
-    } else {
-      if (triggerRef.current && typeof triggerRef.current.focus === "function") {
-        triggerRef.current.focus();
-        triggerRef.current = null;
-      }
-    }
-  }, [openPanel]);
-
-  useEffect(() => {
-    if (!openPanel) return;
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); setOpenPanel(null); }
-    };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [openPanel]);
-
-  useEffect(() => {
-    if (!openPanel) return;
-    const close = (e: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setOpenPanel(null);
-      }
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, [openPanel]);
-
-  const leanLabel = activeLean === "All" ? "All" : activeLean;
-  const topicLabel = activeCategory === "All" ? "All Topics" : activeCategory;
-
-  // OnAir state (optional — pages without daily brief pass no state)
+  // OnAir state (optional)
   const brief = dailyBriefState?.brief;
   const isPlaying = dailyBriefState?.isPlaying ?? false;
   const currentTime = dailyBriefState?.currentTime ?? 0;
@@ -141,80 +114,31 @@ export default function MobileBottomNav({
     if (!isPlaying) handlePlayPause?.();
   };
 
-  const panelTransition = (isOpen: boolean) =>
-    prefersReducedMotion
-      ? "none"
-      : isOpen
-        ? "transform 250ms var(--spring-snappy), opacity 200ms var(--ease-out)"
-        : "transform 180ms var(--ease-out), opacity 120ms var(--ease-out)";
-
   return (
-    <nav className="mob-nav anim-cold-open-nav" aria-label="Mobile navigation" ref={navRef}>
-      {/* Backdrop */}
-      <div
-        className="mob-nav__backdrop"
-        style={{
-          opacity: openPanel ? 1 : 0,
-          pointerEvents: openPanel ? "auto" : "none",
-          transition: prefersReducedMotion ? "none" : openPanel ? "opacity 150ms var(--ease-out)" : "opacity 120ms var(--ease-out)",
-        }}
-        onClick={() => setOpenPanel(null)}
-        aria-hidden="true"
-      />
+    <nav className="mob-nav anim-cold-open-nav" aria-label="Mobile filters" ref={navRef}>
+      {/* Topic dropdown panel — slides up */}
+      {topicOpen && (
+        <div
+          ref={topicPanelRef}
+          className="mob-nav__topic-panel"
+          role="menu"
+          aria-label="Topics"
+        >
+          {ALL_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              role="menuitem"
+              aria-current={activeCategory === cat ? "true" : undefined}
+              className={`mob-nav__topic-opt${activeCategory === cat ? " mob-nav__topic-opt--active" : ""}`}
+              onClick={() => handleTopicTap(cat)}
+            >
+              {cat === "All" ? "all topics" : cat.toLowerCase()}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Perspective panel */}
-      <div
-        ref={leanPanelRef}
-        className="mob-nav__panel"
-        role="menu"
-        aria-label="Perspective"
-        style={{
-          transform: openPanel === "lean" ? "translateY(0)" : "translateY(100%)",
-          opacity: openPanel === "lean" ? 1 : 0,
-          transition: panelTransition(openPanel === "lean"),
-          pointerEvents: openPanel === "lean" ? "auto" : "none",
-        }}
-      >
-        {(["All", "Left", "Center", "Right"] as LeanChip[]).map((lean) => (
-          <button
-            key={lean}
-            role="menuitem"
-            aria-current={activeLean === lean ? "true" : undefined}
-            className={`mob-nav__opt mob-nav__opt--lean-${lean.toLowerCase()}${activeLean === lean ? " mob-nav__opt--active" : ""}`}
-            onClick={() => handleLeanTap(lean)}
-          >
-            {lean === "All" ? "All Perspectives" : lean}
-          </button>
-        ))}
-      </div>
-
-      {/* Topic panel */}
-      <div
-        ref={topicPanelRef}
-        className="mob-nav__panel"
-        role="menu"
-        aria-label="Topic"
-        style={{
-          transform: openPanel === "topic" ? "translateY(0)" : "translateY(100%)",
-          opacity: openPanel === "topic" ? 1 : 0,
-          transition: panelTransition(openPanel === "topic"),
-          pointerEvents: openPanel === "topic" ? "auto" : "none",
-        }}
-      >
-        {ALL_CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            role="menuitem"
-            aria-current={activeCategory === cat ? "true" : undefined}
-            className={`mob-nav__opt${activeCategory === cat ? " mob-nav__opt--active" : ""}`}
-            onClick={() => handleTopicTap(cat)}
-          >
-            {cat === "All" ? "All Topics" : cat}
-          </button>
-        ))}
-      </div>
-
-      {/* OnAir mini-progress — persistent strip above buttons */}
+      {/* OnAir mini-progress */}
       {hasAudio && (
         <button
           className={`mob-nav__onair${isPlaying ? " mob-nav__onair--playing" : ""}`}
@@ -232,41 +156,41 @@ export default function MobileBottomNav({
         </button>
       )}
 
-      {/* Navigation bar — 2 filter buttons */}
+      {/* Filter bar — bracket notation matching desktop nav-lens */}
       <div className="mob-nav__bar">
-        <button
-          className={`mob-nav__cta mob-nav__cta--lean${openPanel === "lean" ? " mob-nav__cta--open" : ""}`}
-          onClick={() => toggle("lean")}
-          aria-expanded={openPanel === "lean"}
-          type="button"
-        >
-          <span className="mob-nav__cta-icon" aria-hidden="true">
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
-              <circle cx="3" cy="7" r="2.5" fill="var(--bias-left)" />
-              <circle cx="10" cy="7" r="2.5" fill="var(--bias-center)" />
-              <circle cx="17" cy="7" r="2.5" fill="var(--bias-right)" />
-            </svg>
-          </span>
-          <span className="mob-nav__cta-label">{leanLabel}</span>
-        </button>
+        {/* Lean selector: [ ·left ·center ·right ] */}
+        <div className="mob-nav__lens" role="toolbar" aria-label="Political perspective">
+          <span className="mob-nav__bracket" aria-hidden="true">[</span>
+          {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+            <button
+              key={lean}
+              aria-pressed={activeLean === lean}
+              onClick={() => handleLeanTap(lean)}
+              className={`mob-nav__lean mob-nav__lean--${lean.toLowerCase()}${activeLean === lean ? " mob-nav__lean--active" : ""}`}
+            >
+              <span className="mob-nav__dot" aria-hidden="true" />
+              {lean.toLowerCase()}
+            </button>
+          ))}
+          <span className="mob-nav__bracket" aria-hidden="true">]</span>
+        </div>
 
-        <button
-          className={`mob-nav__cta mob-nav__cta--topic${openPanel === "topic" ? " mob-nav__cta--open" : ""}`}
-          onClick={() => toggle("topic")}
-          aria-expanded={openPanel === "topic"}
-          type="button"
-        >
-          <span className="mob-nav__cta-icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
-              <rect x="1" y="4" width="5" height="5" rx="1" opacity="0.8" />
-              <rect x="7" y="4" width="5" height="5" rx="1" opacity="0.6" />
-              <rect x="13" y="4" width="4" height="5" rx="1" opacity="0.4" />
-              <rect x="1" y="10" width="5" height="4" rx="1" opacity="0.6" />
-              <rect x="7" y="10" width="5" height="4" rx="1" opacity="0.4" />
-            </svg>
-          </span>
-          <span className="mob-nav__cta-label">{topicLabel}</span>
-        </button>
+        {/* Topic dropdown: [ topics ▾ ] */}
+        <div className="mob-nav__topics">
+          <button
+            ref={topicTriggerRef}
+            className="mob-nav__topic-trigger"
+            onClick={() => { hapticLight(); setTopicOpen((v) => !v); }}
+            aria-expanded={topicOpen}
+            aria-haspopup="menu"
+            aria-label="Filter by topic"
+          >
+            <span className="mob-nav__bracket" aria-hidden="true">[</span>
+            {activeCategory === "All" ? "topics" : activeCategory.toLowerCase()}
+            <span className={`mob-nav__caret${topicOpen ? " mob-nav__caret--open" : ""}`} aria-hidden="true">&#9662;</span>
+            <span className="mob-nav__bracket" aria-hidden="true">]</span>
+          </button>
+        </div>
       </div>
     </nav>
   );
