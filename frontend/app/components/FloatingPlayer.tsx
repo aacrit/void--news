@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { CaretRight } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
@@ -60,10 +60,108 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   const [view, setView] = useState<PlayerView>("compact");
   const [closing, setClosing] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const rafRef = useRef<number>(0);
+  const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
 
-  const waveformBars = useMemo(() =>
-    Array.from({ length: 24 }, (_, i) => Math.min(28, 8 + Math.sin(i * 0.6) * 14 + Math.sin(i * 1.4) * 5)),
-  []);
+  /* ---- Real-time oscilloscope: draws actual audio waveform ---- */
+  const drawOscilloscope = useCallback(() => {
+    const canvas = canvasRef.current;
+    const analyser = state.analyserRef?.current;
+    if (!canvas || !analyser) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Match canvas resolution to display size (crisp on HiDPI)
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    }
+
+    const w = rect.width;
+    const h = rect.height;
+
+    if (!dataArrayRef.current || dataArrayRef.current.length !== analyser.fftSize) {
+      dataArrayRef.current = new Uint8Array(analyser.fftSize);
+    }
+    analyser.getByteTimeDomainData(dataArrayRef.current);
+    const data = dataArrayRef.current;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Get amber color from CSS custom property
+    const style = getComputedStyle(canvas);
+    const amber = style.getPropertyValue("--accent-warm").trim() || "#d4a03c";
+
+    // Center line (faint reference)
+    ctx.strokeStyle = amber;
+    ctx.globalAlpha = 0.12;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    // Waveform — actual time-domain audio signal
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.beginPath();
+
+    const sliceWidth = w / data.length;
+    for (let i = 0; i < data.length; i++) {
+      const v = data[i] / 128.0; // normalize: 1.0 = center
+      const y = (v * h) / 2;
+      if (i === 0) ctx.moveTo(0, y);
+      else ctx.lineTo(i * sliceWidth, y);
+    }
+    ctx.stroke();
+
+    // Ambient glow pass
+    ctx.globalAlpha = 0.25;
+    ctx.lineWidth = 4;
+    ctx.filter = "blur(3px)";
+    ctx.stroke();
+    ctx.filter = "none";
+    ctx.globalAlpha = 1;
+  }, [state.analyserRef]);
+
+  useEffect(() => {
+    if (!isPlaying) {
+      cancelAnimationFrame(rafRef.current);
+      // Draw one flat line when paused
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          const rect = canvas.getBoundingClientRect();
+          ctx.clearRect(0, 0, rect.width, rect.height);
+        }
+      }
+      return;
+    }
+
+    // Respect reduced motion — draw static center line instead
+    const prefersReduced = typeof window !== "undefined"
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    let lastFrame = 0;
+    const loop = (timestamp: number) => {
+      if (timestamp - lastFrame > 33) { // 30fps throttle
+        lastFrame = timestamp;
+        drawOscilloscope();
+      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isPlaying, drawOscilloscope]);
 
   /* ---- Swipe-down gesture ---- */
   const dragYRef = useRef<{ startY: number; current: number } | null>(null);
@@ -292,12 +390,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             {durationMin && <span className="fp__meta-duration">{durationMin} min</span>}
           </div>
 
-          {/* Waveform */}
-          <div className={`fp__waveform${isPlaying ? " fp__waveform--active" : ""}`} aria-hidden="true">
-            {waveformBars.map((h, i) => (
-              <div key={i} className="fp__waveform-bar" style={{ height: `${h}px`, animationDelay: `${i * 50}ms` }} />
-            ))}
-          </div>
+          {/* Oscilloscope — real-time audio waveform */}
+          <canvas ref={canvasRef} className="fp__oscilloscope" aria-hidden="true" />
 
           {renderTransport()}
           {renderSeek()}
@@ -376,6 +470,9 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
               ))}
             </div>
           )}
+
+          {/* Oscilloscope — larger in broadcast pane */}
+          <canvas ref={canvasRef} className="fp__oscilloscope fp__oscilloscope--lg" aria-hidden="true" />
 
           {renderTransport()}
           {renderSeek()}

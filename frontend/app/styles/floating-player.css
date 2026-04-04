@@ -415,6 +415,19 @@
 .fp__pill-eq-bar:nth-child(3) { animation-name: vuBar-mid; animation-delay: 160ms; }
 .fp__pill-eq-bar:nth-child(4) { animation-name: vuBar-short; animation-delay: 240ms; }
 
+/* Oscilloscope — real-time audio waveform canvas */
+.fp__oscilloscope {
+  width: 100%;
+  height: 32px;
+  display: block;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+}
+
+.fp__oscilloscope--lg {
+  height: 48px;
+}
+
 /* Transport */
 .fp__transport {
   display: flex;

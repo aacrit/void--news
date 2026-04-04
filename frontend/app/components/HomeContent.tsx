@@ -997,7 +997,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       {/* Floating audio player — persistent, above all content */}
       {dailyBriefState.brief?.audio_url && (
-        <audio ref={dailyBriefState.audioCallbackRef} src={dailyBriefState.brief.audio_url} preload="metadata" hidden />
+        <audio ref={dailyBriefState.audioCallbackRef} src={dailyBriefState.brief.audio_url} preload="metadata" crossOrigin="anonymous" hidden />
       )}
       <FloatingPlayer state={dailyBriefState} />
 
