@@ -159,83 +159,57 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
           </div>
         )}
 
-        {/* ── EXPANDED MODE ── */}
+        {/* ── EXPANDED MODE — expands in place, no topbar/tabs ── */}
         {!isCompact && (
-          <>
-            <div className="skb__topbar">
-              <div className="skb__topbar-right">
-                {expandedSection === "tldr" && brief.opinion_text && (
+          <div className="skb__section-content">
+            {expandedSection === "tldr" && (
+              <div className="skb__section skb__section--tldr">
+                <div className="skb__section-label">
+                  <LogoIcon size={16} animation="idle" />
+                  <span className="skb__section-label-human">News Brief</span>
+                  <span className="skb__section-label-cmd">void --tl;dr</span>
+                  {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   <button
-                    className="skb__topbar-chip"
-                    onClick={() => toggleSection("opinion")}
+                    ref={collapseRef}
+                    className="skb__collapse-inline"
+                    onClick={collapseAll}
                     type="button"
-                    aria-label="Switch to editorial"
+                    aria-label="Collapse news brief"
                   >
-                    <LogoIcon size={12} animation="none" className="skb__topbar-chip-logo" />
-                    <span className="skb__topbar-chip-human">Editorial</span>
-                    <span className="skb__topbar-chip-cmd">void --opinion</span>
-                    {brief.opinion_lean && <span className={`skb__lean-badge skb__lean-badge--sm ${leanMod}`}>{leanLabel}</span>}
-                    <span className="skb__topbar-chip-caret" aria-hidden="true">&#9662;</span>
+                    <span aria-hidden="true">&#9652;</span>
                   </button>
-                )}
-                {expandedSection === "opinion" && (
-                  <button
-                    className="skb__topbar-chip"
-                    onClick={() => toggleSection("tldr")}
-                    type="button"
-                    aria-label="Switch to news brief"
-                  >
-                    <LogoIcon size={12} animation="none" className="skb__topbar-chip-logo" />
-                    <span className="skb__topbar-chip-human">News Brief</span>
-                    <span className="skb__topbar-chip-cmd">void --tl;dr</span>
-                    <span className="skb__topbar-chip-caret" aria-hidden="true">&#9662;</span>
-                  </button>
-                )}
-
-                <button
-                  ref={collapseRef}
-                  className="skb__topbar-collapse"
-                  onClick={collapseAll}
-                  type="button"
-                  aria-label="Collapse daily brief"
-                >
-                  <span aria-hidden="true">&#9652;</span>
-                </button>
+                </div>
+                {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
+                <div className="skb__section-body skb__section-body--tldr">
+                  {String(brief.tldr_text).split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="skb__section-content">
-              {expandedSection === "tldr" && (
-                <div className="skb__section skb__section--tldr">
-                  <div className="skb__section-label">
-                    <LogoIcon size={18} animation="idle" />
-                    <span className="skb__section-label-human">News Brief</span>
-                    <span className="skb__section-label-cmd">void --tl;dr</span>
-                    {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
-                  </div>
-                  {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
-                  <div className="skb__section-body skb__section-body--tldr">
-                    {String(brief.tldr_text).split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
-                  </div>
+            {expandedSection === "opinion" && (
+              <div className={`skb__section skb__section--opinion ${leanMod}`}>
+                <div className="skb__section-label">
+                  <LogoIcon size={16} animation="idle" />
+                  <span className="skb__section-label-human">Editorial</span>
+                  <span className="skb__section-label-cmd">void --opinion</span>
+                  {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
+                  <button
+                    ref={collapseRef}
+                    className="skb__collapse-inline"
+                    onClick={collapseAll}
+                    type="button"
+                    aria-label="Collapse editorial"
+                  >
+                    <span aria-hidden="true">&#9652;</span>
+                  </button>
                 </div>
-              )}
-
-              {expandedSection === "opinion" && (
-                <div className={`skb__section skb__section--opinion ${leanMod}`}>
-                  <div className="skb__section-label">
-                    <LogoIcon size={18} animation="idle" />
-                    <span className="skb__section-label-human">Editorial</span>
-                    <span className="skb__section-label-cmd">void --opinion</span>
-                    {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
-                  </div>
-                  {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
-                  <div className="skb__section-body skb__section-body--opinion">
-                    {String(brief.opinion_text || "").split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
-                  </div>
+                {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
+                <div className="skb__section-body skb__section-body--opinion">
+                  {String(brief.opinion_text || "").split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
                 </div>
-              )}
-            </div>
-          </>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </>
