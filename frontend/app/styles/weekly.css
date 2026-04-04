@@ -1261,7 +1261,7 @@
 @media (max-width: 767px) {
   .wk-main {
     padding: 0 var(--space-3);
-    padding-bottom: var(--space-4);
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
   }
 
   .wk-masthead {
@@ -1274,6 +1274,11 @@
 
   .wk-masthead__wordmark {
     height: 22px;
+  }
+
+  /* Masthead meta: wrap gracefully on narrow screens */
+  .wk-masthead__meta {
+    line-height: 1.6;
   }
 
   .wk-cover-hero {
@@ -1290,11 +1295,21 @@
     font-size: clamp(1.25rem, 5vw, 1.75rem);
   }
 
+  .wk-cover-hero__content {
+    padding: var(--space-4) var(--space-3);
+  }
+
   /* Mobile: numbers sidebar goes above text */
   .wk-cover-body {
     display: flex;
     flex-direction: column-reverse;
     gap: var(--space-3);
+    padding: var(--space-3) 0;
+  }
+
+  /* Numbers sidebar: full-width, tighter padding on mobile */
+  .wk-cover-body__numbers {
+    padding: var(--space-3);
   }
 
   /* Vertical timeline on mobile */
@@ -1304,6 +1319,12 @@
 
   .wk-timeline__dot {
     left: calc(-1 * var(--space-4) + var(--space-2));
+  }
+
+  /* Timeline nodes: ensure touch target + simpler transition */
+  .wk-timeline__node {
+    min-height: 44px;
+    padding: var(--space-2) 0 var(--space-2) 0;
   }
 
   /* Disable hover transforms on touch */
@@ -1318,9 +1339,175 @@
     box-shadow: none;
   }
 
+  /* Opinion cards: tighter padding */
+  .wk-opinion {
+    padding: var(--space-3);
+  }
+
+  /* Section labels: slightly tighter */
+  .wk-section-label {
+    margin-bottom: var(--space-2);
+  }
+
+  /* Brief items: tighter vertical spacing */
+  .wk-brief__item {
+    padding: var(--space-2) 0;
+  }
+
+  /* Bias stats: tighter cell padding */
+  .wk-bias__stat {
+    padding: var(--space-2);
+  }
+
+  /* Audio player: full-width layout, tighter padding */
+  .wk-audio__player {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+
+  /* Audio scrubber: taller thumb for touch (20px+) */
+  .wk-audio__scrubber {
+    height: 6px;
+  }
+
+  .wk-audio__scrubber::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  .wk-audio__scrubber::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Archive items: 44px touch targets */
+  .wk-archive__item {
+    min-height: 44px;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+  }
+
   /* Tighter flourish spacing on mobile */
   .wk-flourish {
     margin: var(--space-2) 0;
+  }
+
+  /* Tighter section padding on mobile */
+  .wk-opinions-section,
+  .wk-brief-section,
+  .wk-bias-section,
+  .wk-audio-section,
+  .wk-archive {
+    padding: var(--space-3) 0;
+  }
+
+  .wk-divider {
+    margin: var(--space-2) 0;
+  }
+
+  /* === PERFORMANCE — DISABLE AMBIENT ANIMATIONS ON MOBILE ===
+     GPU budget: wkBreathe + wkInkShimmer run infinite transforms on mobile.
+     Imperceptible on 5-6" screens, measurable GPU cost. Disable. */
+  .wk-masthead__icon {
+    animation: none;
+  }
+
+  .wk-flourish svg {
+    animation: none;
+  }
+
+  .wk-ink-border {
+    animation: none;
+  }
+
+  /* Film grain: reduce opacity on mobile (0.04 vs desktop 0.08) */
+  .wk-page::before {
+    opacity: var(--cin-grain-opacity, 0.04);
+  }
+
+  /* Vignette: reduce to 50% on mobile */
+  .wk-page::after {
+    opacity: 0.5;
+  }
+
+  /* Cold open: simpler ease-out instead of spring on mobile */
+  .wk-cold-open--masthead {
+    animation-duration: 500ms;
+    animation-timing-function: var(--ease-cinematic);
+  }
+
+  .wk-cold-open--hero,
+  .wk-cold-open--headline,
+  .wk-cold-open--numbers,
+  .wk-cold-open--body,
+  .wk-cold-open--section {
+    animation-timing-function: var(--ease-cinematic);
+  }
+
+  /* Scroll reveal: simpler, faster on mobile */
+  .wk-reveal {
+    transform: translateY(12px);
+    transition:
+      opacity 500ms var(--ease-cinematic),
+      transform 500ms var(--ease-cinematic);
+  }
+
+  .wk-reveal-child {
+    transform: translateY(8px);
+    transition:
+      opacity 350ms var(--ease-cinematic),
+      transform 350ms var(--ease-cinematic);
+  }
+
+  /* Timeline nodes: ease-out, no spring */
+  .wk-timeline__node {
+    transition:
+      opacity 300ms ease-out,
+      transform 300ms ease-out,
+      background 200ms ease-out;
+  }
+
+  /* Number items: ease-out, no spring */
+  .wk-cover-body__number-item {
+    transition:
+      opacity 400ms ease-out,
+      transform 400ms ease-out;
+  }
+
+  /* Bias stat cards: ease-out, no spring */
+  .wk-bias__stat {
+    transition:
+      opacity 400ms ease-out,
+      transform 400ms ease-out;
+  }
+
+  /* Flourish bloom: ease-out, no spring */
+  .wk-flourish {
+    transition:
+      opacity 400ms ease-out,
+      transform 500ms ease-out;
+  }
+
+  /* Disable text selection on interactive elements */
+  .wk-timeline__node,
+  .wk-audio__play,
+  .wk-archive__item {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Break long words in headlines to prevent overflow */
+  .wk-cover-hero__headline,
+  .wk-opinion__headline,
+  .wk-brief__headline {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* Cinematic grade: disabled on mobile (scroll performance) */
+  .wk-main {
+    filter: none;
   }
 }
 
