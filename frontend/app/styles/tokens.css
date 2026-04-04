@@ -93,10 +93,14 @@
 
   --cin-amber-muted: #B08A40;
 
-  /* ── Audio Console — always-dark broadcast surface ── */
-  --console-bg: #1A1816;
-  --console-bg-deep: #151310;
-  --console-fg: #EDE8E0;
+  /* ── Audio Console — adapts to light/dark mode ──
+     Light: warm parchment tones, organic with the newspaper page.
+     Dark: walnut broadcast surface (overridden in [data-mode="dark"]). */
+  --console-bg: #EBE5D6;
+  --console-bg-deep: #E3DDD0;
+  --console-fg: #2A2520;
+  --console-shadow: rgba(42, 37, 32, 0.08);
+  --console-shadow-strong: rgba(42, 37, 32, 0.12);
 
   /* ── Cinematic Palette Bridge ── */
   --cinematic-accent: var(--cin-amber);
@@ -478,7 +482,14 @@
   --thumb-border:        var(--bg-secondary);
   --indicator-broadcast: #DC2626;
 
-  /* ── Voice Accent — scoped to always-dark radio console (same both modes) ── */
+  /* ── Audio Console — dark walnut broadcast surface ── */
+  --console-bg: #1A1816;
+  --console-bg-deep: #151310;
+  --console-fg: #EDE8E0;
+  --console-shadow: rgba(0, 0, 0, 0.25);
+  --console-shadow-strong: rgba(0, 0, 0, 0.35);
+
+  /* ── Voice Accent — scoped to radio console ── */
   --voice-accent:       #4DAFA0;
   --voice-accent-dim:   #3D9A8C;
   --voice-accent-ghost: rgba(77, 175, 160, 0.08);
