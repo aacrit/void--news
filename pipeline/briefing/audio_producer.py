@@ -27,6 +27,10 @@ from typing import Optional
 GEMINI_TTS_AVAILABLE = False
 PYDUB_AVAILABLE = False
 
+# Fail-fast flag: set True on first 429 RESOURCE_EXHAUSTED to skip all
+# remaining TTS calls for this pipeline run. Saves ~20 min of retries.
+_tts_quota_exhausted = False
+
 try:
     from google import genai
     from google.genai import types
@@ -187,7 +191,13 @@ def _synthesize_single_chunk(
             if hasattr(part, "inline_data") and part.inline_data:
                 return part.inline_data.data
     except Exception as e:
-        print(f"  [warn][audio] Gemini TTS chunk failed: {e}")
+        global _tts_quota_exhausted
+        err_str = str(e)
+        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+            _tts_quota_exhausted = True
+            print(f"  [warn][audio] TTS quota exhausted — skipping all remaining TTS this run")
+        else:
+            print(f"  [warn][audio] Gemini TTS chunk failed: {e}")
 
     return None
 
@@ -214,6 +224,10 @@ def _synthesize_gemini_tts(
     if not GEMINI_TTS_AVAILABLE:
         return None
 
+    if _tts_quota_exhausted:
+        print("  [warn][audio] TTS quota exhausted — skipping (fail-fast)")
+        return None
+
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         print("  [warn][audio] GEMINI_API_KEY not set")
@@ -234,6 +248,8 @@ def _synthesize_gemini_tts(
         preamble = tts_preamble
         pcm = None
         for attempt in range(3):
+            if _tts_quota_exhausted:
+                break
             if attempt > 0:
                 wait = 20 * attempt
                 print(f"  [audio] Chunk {i+1}/{len(chunks)} retry {attempt+1}/3 after {wait}s...")
@@ -242,7 +258,8 @@ def _synthesize_gemini_tts(
             if pcm is not None:
                 break
         if pcm is None:
-            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed after 3 attempts — aborting")
+            reason = "quota exhausted" if _tts_quota_exhausted else "3 attempts failed"
+            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed ({reason}) — aborting")
             return None
         all_pcm.extend(pcm)
         chunk_dur = len(pcm) / (24000 * 2)
