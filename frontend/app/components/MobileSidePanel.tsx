@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import LogoFull from "./LogoFull";
+import ScaleIcon from "./ScaleIcon";
 import ThemeToggle from "./ThemeToggle";
 import { hapticLight } from "../lib/haptics";
 
@@ -21,6 +21,8 @@ interface MobileSidePanelProps {
 export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<{ x: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   // Close on Escape
   useEffect(() => {
@@ -96,49 +98,72 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Logo header */}
-        <div className="msp__header">
-          <LogoFull height={24} />
+        {/* Header — ScaleIcon brand mark with ink underline */}
+        <div className="msp__header" data-msp-cascade="1">
+          <ScaleIcon size={28} animation="idle" />
         </div>
 
         {/* Content destinations */}
         <nav className="msp__links" aria-label="Side navigation">
-          <span className="msp__section-label">Read</span>
-          <Link href="/weekly" className="msp__link" onClick={handleLinkClick}>
+          <span className="msp__section-label" data-msp-cascade="2">Read</span>
+          <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --weekly</span>
             <span className="msp__link-desc">Weekly digest</span>
           </Link>
-          <Link href="/paper" className="msp__link" onClick={handleLinkClick}>
+          <Link href="/paper" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --paper</span>
             <span className="msp__link-desc">E-paper broadsheet</span>
           </Link>
 
-          <span className="msp__section-label">Explore</span>
-          <Link href="/sources" className="msp__link" onClick={handleLinkClick}>
+          {/* Organic ink divider */}
+          <svg className="msp__divider" data-msp-cascade="3" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,2 C25,0.5 50,3.5 75,2 C100,0.5 125,3 150,2 C175,1 200,3 200,2" />
+          </svg>
+
+          <span className="msp__section-label" data-msp-cascade="3">Explore</span>
+          <Link href="/sources" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --sources</span>
             <span className="msp__link-desc">1,013 curated sources</span>
           </Link>
-          <Link href="/about" className="msp__link" onClick={handleLinkClick}>
+          <Link href="/about" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --about</span>
             <span className="msp__link-desc">See through the void</span>
           </Link>
 
-          <span className="msp__section-label">Participate</span>
-          <Link href="/ship" className="msp__link" onClick={handleLinkClick}>
+          {/* Organic ink divider */}
+          <svg className="msp__divider" data-msp-cascade="4" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,2 C30,3.2 55,0.8 80,2 C105,3.2 130,0.8 160,2 C180,3 200,1.5 200,2" />
+          </svg>
+
+          <span className="msp__section-label" data-msp-cascade="4">Participate</span>
+          <Link href="/ship" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --ship</span>
             <span className="msp__link-desc">Request features, report bugs</span>
           </Link>
         </nav>
 
         {/* Theme toggle row */}
-        <div className="msp__theme-row">
+        <div className="msp__theme-row" data-msp-cascade="5">
           <span className="msp__theme-label">Theme</span>
           <ThemeToggle />
         </div>
 
-        {/* Footer tagline */}
-        <div className="msp__footer">
+        {/* Footer — dateline, tagline, colophon mark */}
+        <div className="msp__footer" data-msp-cascade="6">
+          <time className="msp__dateline" suppressHydrationWarning>
+            {mounted
+              ? new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : "\u00A0"}
+          </time>
           <span className="msp__tagline">See through the void.</span>
+          <div className="msp__colophon" aria-hidden="true">
+            <ScaleIcon size={16} animation="none" />
+          </div>
         </div>
       </div>
     </>
