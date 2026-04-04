@@ -523,6 +523,28 @@ def main():
             else:
                 u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_CROSSLIST_BOOST, 2)
 
+    # Regional content boost: stories ABOUT a region get an extra bump
+    # in that region's edition. Keyword-based (title + summary).
+    _REGIONAL_KEYWORDS = {
+        "us": {"congress", "senate", "white house", "capitol", "supreme court",
+               "fbi", "cia", "pentagon", "doj", "irs", "fda", "epa", "cdc",
+               "american", "americans", "democrat", "republican", "gop"},
+        "europe": {"eu", "european union", "brussels", "nato", "ecb",
+                   "eurozone", "brexit", "uk", "britain", "germany", "france",
+                   "spain", "italy", "poland", "ukraine", "parliament"},
+        "south-asia": {"india", "indian", "modi", "delhi", "mumbai", "bjp",
+                       "pakistan", "pakistani", "islamabad", "bangladesh", "dhaka",
+                       "nepal", "sri lanka", "colombo", "kashmir", "rupee",
+                       "lok sabha", "rajya sabha"},
+    }
+    _cluster_titles = {c["id"]: (c.get("title", "") or "").lower() for c in clusters}
+    for u in updates:
+        title_lower = _cluster_titles.get(u["id"], "")
+        for ed, keywords in _REGIONAL_KEYWORDS.items():
+            if any(kw in title_lower for kw in keywords):
+                current = u.get(f"rank_{ed}", u.get("base_rank", 0))
+                u[f"rank_{ed}"] = round(current * 1.15, 2)  # 15% bump
+
     # World edition: boost truly global stories (3+ editions)
     for u in updates:
         c_sections = _cluster_sections.get(u["id"], ["world"])
@@ -568,8 +590,8 @@ def main():
         # Thin-edition backfill (v5.8): when a regional edition has
         # fewer than 10 stories with headline_rank >= 40, backfill from
         # world pool. BBC principle: thin desk imports from global.
-        _QUALITY_FLOOR = 40.0
-        _BACKFILL_TARGET = 10
+        _QUALITY_FLOOR = 25.0
+        _BACKFILL_TARGET = 15
         if ed != "world":
             quality_count = sum(
                 1 for u in pool[:_BACKFILL_TARGET]
