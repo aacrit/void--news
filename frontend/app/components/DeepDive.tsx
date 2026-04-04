@@ -748,63 +748,54 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     const targetRect = cardEl ? cardEl.getBoundingClientRect() : (originRect?.width ? originRect : null);
 
     if (targetRect && targetRect.width > 0 && panelRef.current) {
+      const panel = panelRef.current;
+      if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
+
+      const currentRect = panel.getBoundingClientRect();
+      const MORPH_SCALE_MIN = 0.15;
+      const scaleX = Math.max(MORPH_SCALE_MIN, targetRect.width / currentRect.width);
+      const scaleY = Math.max(MORPH_SCALE_MIN, targetRect.height / currentRect.height);
+      const dx = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
+      const dy = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
+
+      const isDesktopNow = window.innerWidth >= 1024;
+      const closeTransform = isDesktopNow
+        ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
+        : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+
+      // Reverse match cut — panel physically returns to the card.
+      // 320ms with smooth deceleration: fast departure, gentle arrival.
+      // Opacity holds for first 220ms then fades in final 100ms.
+      setMorphStyle({
+        transform: closeTransform,
+        borderRadius: "8px",
+        opacity: 0,
+        boxShadow: "var(--shadow-e0)",
+        transition: [
+          "transform 320ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "border-radius 240ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "opacity 100ms cubic-bezier(0.16, 1, 0.3, 1) 220ms",
+          "box-shadow 280ms cubic-bezier(0.32, 0.72, 0, 1)",
+        ].join(", "),
+      });
+
+      // L-cut — backdrop fades early so feed sharpens while panel mid-flight
+      setTimeout(() => setIsVisible(false), 100);
+
+      // Cleanup — after panel has visually merged with the card
       setTimeout(() => {
-        const panel = panelRef.current;
-        if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
-
-        const currentRect = panel.getBoundingClientRect();
-        const MORPH_SCALE_MIN = 0.15;
-        const scaleX = Math.max(MORPH_SCALE_MIN, targetRect.width / currentRect.width);
-        const scaleY = Math.max(MORPH_SCALE_MIN, targetRect.height / currentRect.height);
-        const dx = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
-        const dy = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
-
-        const isDesktopNow = window.innerWidth >= 1024;
-        const closeTransform = isDesktopNow
-          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
-          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-
-        // Phase 2: Reverse match cut — the panel physically returns to the card.
-        // 420ms with a smooth deceleration curve: fast departure from center,
-        // gentle arrival at the card (like setting a book down on a table).
-        // Opacity holds at 1 for the first 300ms then fades in the final 120ms,
-        // so the viewer tracks the panel all the way to the card before it
-        // dissolves into the card surface.
-        setMorphStyle({
-          transform: closeTransform,
-          borderRadius: "8px",
-          opacity: 0,
-          boxShadow: "var(--shadow-e0)",
-          transition: [
-            "transform 420ms cubic-bezier(0.32, 0.72, 0, 1)",
-            "border-radius 300ms cubic-bezier(0.32, 0.72, 0, 1)",
-            "opacity 120ms cubic-bezier(0.16, 1, 0.3, 1) 300ms",
-            "box-shadow 350ms cubic-bezier(0.32, 0.72, 0, 1)",
-          ].join(", "),
-        });
-
-        // Phase 3: L-cut — backdrop fades at 120ms so the feed is sharp
-        // while the panel is still mid-flight. The returning world appears
-        // before the panel lands, creating depth.
-        setTimeout(() => setIsVisible(false), 120);
-
-        // Phase 4: Cleanup — after panel has visually merged with the card
-        setTimeout(() => {
-          pageMain?.classList.remove('page-main--deep-dive-closing');
-          previousFocusRef.current?.focus();
-          onClose();
-        }, 450);
-      }, 80); // J-cut: content fades 80ms before morph begins
+        pageMain?.classList.remove('page-main--deep-dive-closing');
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 350);
     } else {
       /* ═══ FALLBACK: fast slide-out ═══ */
+      setIsVisible(false);
       setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(() => {
-          pageMain?.classList.remove('page-main--deep-dive-closing');
-          previousFocusRef.current?.focus();
-          onClose();
-        }, 400);
-      }, 100);
+        pageMain?.classList.remove('page-main--deep-dive-closing');
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 300);
     }
   }, [onClose, originRect, story.id]);
 
@@ -1110,7 +1101,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
               className={`dd-analysis-block anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "150ms" }}
+              style={{ marginBottom: "var(--space-4)", transitionDelay: "60ms" }}
             >
               {story.sigilData && (
                 <div className="dd-analysis-block__sigil">
@@ -1127,7 +1118,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
 
           {/* ---- Summary ---- */}
-          <section className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "250ms" }}>
+          <section className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "120ms" }}>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
               <div className="dd-collapsible__inner" ref={summaryInnerRef}>
                 <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
@@ -1142,7 +1133,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
           {/* ---- Source Perspectives ---- */}
           {hasCrossLeanSources && (
-            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "350ms" }}>
+            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "180ms" }}>
               <hr style={{ border: "none", borderTop: "var(--rule-thin)", margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
               <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
               <ComparativeView
@@ -1157,7 +1148,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {story.sigilData && !story.sigilData.pending && (
             <section
               className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ transitionDelay: "450ms", marginBottom: "var(--space-4)" }}
+              style={{ transitionDelay: "240ms", marginBottom: "var(--space-4)" }}
               aria-label="Six Lenses bias analysis"
             >
               <hr style={{ border: "none", borderTop: "var(--rule-thin)", margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
