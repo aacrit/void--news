@@ -1,0 +1,329 @@
+/* ===========================================================================
+   Mobile Navigation — MobileTabBar, MobileSidePanel, MobileMiniPlayer
+   Hidden on desktop. Mobile-only (<768px).
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   MobileTabBar (.mtb)
+   Persistent bottom tab bar. 4 tabs: Feed, Sources, Weekly, More.
+   --------------------------------------------------------------------------- */
+
+.mtb {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mtb {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    background-color: var(--bg-primary);
+    border-top: var(--rule-thin);
+    min-height: 52px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Prevent tap-through to content behind */
+    pointer-events: auto;
+    /* No backdrop-filter on tab bar — saves GPU compositing budget */
+  }
+
+  .mtb__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    min-height: 52px;
+    min-width: 44px;
+    padding: var(--space-1) 0;
+    color: var(--fg-tertiary);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 120ms var(--ease-rack);
+  }
+
+  .mtb__tab:active {
+    transform: scale(0.92);
+    transition: transform 50ms var(--ease-out);
+  }
+
+  .mtb__tab--active {
+    color: var(--fg-primary);
+  }
+
+  /* Dotted underline on active — matches filter bar design language */
+  .mtb__tab--active .mtb__label {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--accent-warm);
+  }
+
+  .mtb__label {
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    line-height: 1;
+  }
+
+  /* Icon color follows parent */
+  .mtb__tab svg {
+    flex-shrink: 0;
+  }
+
+  .mtb__tab--active svg {
+    color: var(--accent-warm);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MobileSidePanel (.msp)
+   Slides from right edge. Backdrop overlay.
+   --------------------------------------------------------------------------- */
+
+.msp,
+.msp__backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  /* Backdrop overlay */
+  .msp__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-overlay) - 1);
+    background-color: var(--overlay-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms var(--ease-cinematic);
+  }
+
+  .msp__backdrop--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Panel */
+  .msp {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 80vw;
+    z-index: var(--z-overlay);
+    background-color: var(--bg-primary);
+    border-left: var(--rule-thin);
+    transform: translateX(100%);
+    transition: transform 250ms var(--ease-cinematic);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow:
+      -8px 0 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.2)) 15%, transparent);
+  }
+
+  .msp--open {
+    transform: translateX(0);
+  }
+
+  /* Header with logo */
+  .msp__header {
+    display: flex;
+    align-items: center;
+    padding: var(--space-5) var(--space-5);
+    border-bottom: var(--rule-thin);
+  }
+
+  /* Navigation links */
+  .msp__links {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3) 0;
+  }
+
+  .msp__link {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-structural);
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--fg-primary);
+    padding: var(--space-3) var(--space-5);
+    min-height: 52px;
+    text-decoration: none;
+    transition: background-color 120ms var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .msp__link:active {
+    background-color: var(--bg-hover);
+  }
+
+  /* Theme toggle row */
+  .msp__theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-5);
+    min-height: 52px;
+    border-top: var(--rule-thin);
+    border-bottom: var(--rule-thin);
+  }
+
+  .msp__theme-label {
+    font-family: var(--font-structural);
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--fg-secondary);
+  }
+
+  /* Footer tagline */
+  .msp__footer {
+    margin-top: auto;
+    padding: var(--space-5);
+    border-top: var(--rule-thin);
+  }
+
+  .msp__tagline {
+    font-family: var(--font-data);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    font-style: italic;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MobileMiniPlayer (.mmp)
+   Persistent strip above MobileTabBar when audio is playing/paused.
+   --------------------------------------------------------------------------- */
+
+.mmp {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mmp {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    /* Sits above tab bar: 52px tab + safe-area */
+    bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    height: 44px;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-subtle);
+    padding: 0 var(--space-3);
+    gap: var(--space-2);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mmp__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .mmp__label {
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-tertiary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .mmp__spacer {
+    flex: 1;
+  }
+
+  .mmp__play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    color: var(--fg-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mmp__play:active {
+    transform: scale(0.9);
+    transition: transform 50ms var(--ease-out);
+  }
+
+  /* Progress bar — thin accent-warm strip at the bottom of the mini-player */
+  .mmp__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border-subtle);
+  }
+
+  .mmp__progress-fill {
+    height: 100%;
+    background: var(--accent-warm);
+    transition: width 300ms linear;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hide NavBar chrome on mobile — replaced by MobileTabBar + MobileSidePanel
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  /* ThemeToggle in NavBar hidden — available in MobileSidePanel instead */
+  .nav-right > .theme-toggle {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced Motion — disable all new animations
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .msp {
+    transition: none;
+  }
+  .msp__backdrop {
+    transition: none;
+  }
+  .mtb__tab:active {
+    transform: none;
+    transition: none;
+  }
+  .mmp__play:active {
+    transform: none;
+    transition: none;
+  }
+}

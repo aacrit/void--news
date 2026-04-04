@@ -2,16 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { Category, LeanChip } from "../lib/types";
-import type { DailyBriefState } from "./DailyBrief";
-import LogoIcon from "./LogoIcon";
-import { hapticMicro, hapticLight, hapticConfirm } from "../lib/haptics";
+import { hapticMicro, hapticLight } from "../lib/haptics";
 
 interface MobileBottomNavProps {
   activeLean: LeanChip;
   onLeanChange: (lean: LeanChip) => void;
   activeCategory: "All" | Category;
   onCategoryChange: (cat: "All" | Category) => void;
-  dailyBriefState?: DailyBriefState;
 }
 
 const ALL_CATEGORIES: ("All" | Category)[] = [
@@ -19,7 +16,9 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
 ];
 
 /* ---------------------------------------------------------------------------
-   MobileBottomNav — Bracket-notation filter bar (mobile only).
+   MobileBottomNav — Now an INLINE bracket-notation filter bar (feed-only).
+   Renders in the content flow below edition tabs, above the feed.
+   No longer fixed-bottom. MobileTabBar handles global navigation.
 
    Matches desktop nav-lens design language exactly:
    - IBM Plex Mono, lowercase, bracket notation
@@ -28,7 +27,6 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
    - Topic dropdown with caret
 
    [ ·left  ·center  ·right ]   [ topics ▾ ]
-   ▶ ━━━━━━━━ onair ━━━━━━━━
 
    Hidden on desktop via CSS (display: none above 768px).
    --------------------------------------------------------------------------- */
@@ -38,21 +36,11 @@ export default function MobileBottomNav({
   onLeanChange,
   activeCategory,
   onCategoryChange,
-  dailyBriefState,
 }: MobileBottomNavProps) {
   const [topicOpen, setTopicOpen] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const topicPanelRef = useRef<HTMLDivElement>(null);
   const topicTriggerRef = useRef<HTMLButtonElement | null>(null);
-
-  useEffect(() => {
-    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mql.matches);
-    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, []);
 
   // Close on outside tap
   useEffect(() => {
@@ -97,25 +85,8 @@ export default function MobileBottomNav({
     topicTriggerRef.current?.focus();
   };
 
-  // OnAir state (optional)
-  const brief = dailyBriefState?.brief;
-  const isPlaying = dailyBriefState?.isPlaying ?? false;
-  const currentTime = dailyBriefState?.currentTime ?? 0;
-  const duration = dailyBriefState?.duration ?? 0;
-  const handlePlayPause = dailyBriefState?.handlePlayPause;
-  const setPlayerVisible = dailyBriefState?.setPlayerVisible;
-  const hasAudio = !!brief?.audio_url;
-  const displayDuration = brief?.audio_duration_seconds || duration;
-  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
-
-  const handleOnairTap = () => {
-    hapticConfirm();
-    setPlayerVisible?.(true);
-    if (!isPlaying) handlePlayPause?.();
-  };
-
   return (
-    <nav className="mob-nav anim-cold-open-nav" aria-label="Mobile filters" ref={navRef}>
+    <nav className="mob-nav mob-nav--inline" aria-label="Feed filters" ref={navRef}>
       {/* Topic dropdown panel — slides up */}
       {topicOpen && (
         <div
@@ -136,24 +107,6 @@ export default function MobileBottomNav({
             </button>
           ))}
         </div>
-      )}
-
-      {/* OnAir mini-progress */}
-      {hasAudio && (
-        <button
-          className={`mob-nav__onair${isPlaying ? " mob-nav__onair--playing" : ""}`}
-          onClick={handleOnairTap}
-          type="button"
-          aria-label={isPlaying ? "Now playing — tap to expand" : "Play broadcast"}
-        >
-          <LogoIcon size={12} animation={isPlaying ? "analyzing" : "idle"} />
-          <span className="mob-nav__onair-label">
-            {isPlaying ? "void --onair" : "Listen"}
-          </span>
-          <div className="mob-nav__onair-bar" aria-hidden="true">
-            <div className="mob-nav__onair-fill" style={{ width: `${progress}%` }} />
-          </div>
-        </button>
       )}
 
       {/* Filter bar — bracket notation matching desktop nav-lens */}

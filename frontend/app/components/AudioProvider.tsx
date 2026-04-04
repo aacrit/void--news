@@ -1,0 +1,379 @@
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from "react";
+import type { DailyBriefData, Edition } from "../lib/types";
+import { fetchDailyBrief } from "../lib/supabase";
+import { hapticLight, hapticTick } from "../lib/haptics";
+
+/* ---------------------------------------------------------------------------
+   AudioProvider — Global audio context for void --onair.
+   Wraps layout.tsx so <audio> survives page navigation.
+   Any component can consume playback state via useAudio().
+
+   Design:
+   - The <audio> element lives here, not in any page component.
+   - Brief data fetching also lives here (coupled to edition).
+   - Navigator.mediaSession for iOS lock screen / notification controls.
+   --------------------------------------------------------------------------- */
+
+export interface AudioState {
+  brief: DailyBriefData | null;
+  edition: string;
+  setEdition: (ed: string) => void;
+  isPlaying: boolean;
+  currentTime: number;
+  duration: number;
+  buffered: number;
+  audioError: boolean;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
+  handlePlayPause: () => void;
+  handleSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  playbackSpeed: number;
+  cycleSpeed: () => void;
+  skipForward: () => void;
+  skipBackward: () => void;
+  seekTo: (seconds: number) => void;
+  isPlayerVisible: boolean;
+  setPlayerVisible: (v: boolean) => void;
+  isExpanded: boolean;
+  setExpanded: (v: boolean) => void;
+  analyserRef: React.RefObject<AnalyserNode | null>;
+  /** Whether audio has ever been started (for mini-player visibility) */
+  hasEverPlayed: boolean;
+}
+
+const AudioContext = createContext<AudioState | null>(null);
+
+export function useAudio(): AudioState {
+  const ctx = useContext(AudioContext);
+  if (!ctx) throw new Error("useAudio must be used inside <AudioProvider>");
+  return ctx;
+}
+
+export default function AudioProvider({ children }: { children: ReactNode }) {
+  const [edition, setEdition] = useState<string>("world");
+  const [brief, setBrief] = useState<DailyBriefData | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [audioError, setAudioError] = useState(false);
+  const [buffered, setBuffered] = useState(0);
+  const [playbackSpeed, setPlaybackSpeed] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    try {
+      const s = localStorage.getItem("void-onair-speed");
+      return s ? Number(s) : 1;
+    } catch {
+      return 1;
+    }
+  });
+  const [isPlayerVisible, setPlayerVisible] = useState(false);
+  const [isExpanded, setExpanded] = useState(false);
+  const [hasEverPlayed, setHasEverPlayed] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  /* ---- Web Audio API: real-time analyser for oscilloscope ---- */
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const connectedElements = useRef<WeakSet<HTMLAudioElement>>(new WeakSet());
+
+  /* ---- Fetch brief when edition changes ---- */
+  useEffect(() => {
+    let cancelled = false;
+
+    // Pause and detach audio before switching briefs
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.src = "";
+      audio.load();
+    }
+
+    setBrief(null);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    setAudioError(false);
+    setBuffered(0);
+
+    fetchDailyBrief(edition).then((data) => {
+      if (!cancelled) setBrief(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [edition]);
+
+  /* ---- Callback ref — attaches listeners when <audio> mounts ---- */
+  const listenerCleanupRef = useRef<(() => void) | null>(null);
+
+  const audioCallbackRef = useCallback((el: HTMLAudioElement | null) => {
+    if (listenerCleanupRef.current) {
+      listenerCleanupRef.current();
+      listenerCleanupRef.current = null;
+    }
+    audioRef.current = el;
+    if (!el) return;
+
+    const onTime = () => setCurrentTime(el.currentTime);
+    const onMeta = () => {
+      if (el.duration && isFinite(el.duration)) setDuration(el.duration);
+    };
+    const onEnd = () => setIsPlaying(false);
+    const onError = () => {
+      setAudioError(true);
+      setIsPlaying(false);
+    };
+    const onProgress = () => {
+      if (el.buffered.length > 0 && el.duration > 0) {
+        setBuffered(
+          (el.buffered.end(el.buffered.length - 1) / el.duration) * 100
+        );
+      }
+    };
+
+    el.addEventListener("timeupdate", onTime);
+    el.addEventListener("loadedmetadata", onMeta);
+    el.addEventListener("durationchange", onMeta);
+    el.addEventListener("ended", onEnd);
+    el.addEventListener("error", onError);
+    el.addEventListener("progress", onProgress);
+    if (el.duration && isFinite(el.duration)) setDuration(el.duration);
+
+    // Connect Web Audio API analyser (once per element)
+    if (!connectedElements.current.has(el)) {
+      try {
+        const ctx =
+          audioContextRef.current ||
+          new (window.AudioContext ||
+            (window as unknown as { webkitAudioContext: typeof AudioContext })
+              .webkitAudioContext)();
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.82;
+        const source = ctx.createMediaElementSource(el);
+        source.connect(analyser);
+        analyser.connect(ctx.destination);
+        audioContextRef.current = ctx;
+        analyserRef.current = analyser;
+        connectedElements.current.add(el);
+      } catch {
+        // Web Audio API unavailable or CORS blocked
+      }
+    }
+
+    listenerCleanupRef.current = () => {
+      el.removeEventListener("timeupdate", onTime);
+      el.removeEventListener("loadedmetadata", onMeta);
+      el.removeEventListener("durationchange", onMeta);
+      el.removeEventListener("ended", onEnd);
+      el.removeEventListener("error", onError);
+      el.removeEventListener("progress", onProgress);
+    };
+  }, []);
+
+  const getAudio = useCallback((): HTMLAudioElement | null => {
+    return audioRef.current;
+  }, []);
+
+  const handlePlayPause = useCallback(() => {
+    const audio = getAudio();
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      if (audioError) {
+        setAudioError(false);
+        audio.load();
+      }
+      // Resume AudioContext for iOS Safari
+      if (audioContextRef.current?.state === "suspended") {
+        audioContextRef.current.resume();
+      }
+      audio
+        .play()
+        .catch(() => {
+          setAudioError(true);
+          setIsPlaying(false);
+        });
+      setIsPlaying(true);
+      setHasEverPlayed(true);
+    }
+  }, [isPlaying, audioError, getAudio]);
+
+  const lastSeekTick = useRef(0);
+  const handleSeek = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const audio = getAudio();
+      if (!audio) return;
+      const t = Number(e.target.value);
+      const tick = Math.floor(t / 5);
+      if (tick !== lastSeekTick.current) {
+        lastSeekTick.current = tick;
+        hapticTick();
+      }
+      audio.currentTime = t;
+      setCurrentTime(t);
+    },
+    [getAudio]
+  );
+
+  const SPEEDS = [1, 1.25, 1.5, 2] as const;
+  const cycleSpeed = useCallback(() => {
+    setPlaybackSpeed((prev) => {
+      const idx = SPEEDS.indexOf(prev as (typeof SPEEDS)[number]);
+      const next = SPEEDS[(idx + 1) % SPEEDS.length];
+      const audio = audioRef.current;
+      if (audio) audio.playbackRate = next;
+      try {
+        localStorage.setItem("void-onair-speed", String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  // Apply saved speed when audio loads
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && playbackSpeed !== 1) audio.playbackRate = playbackSpeed;
+  }, [brief, playbackSpeed]);
+
+  const skipForward = useCallback(() => {
+    const audio = getAudio();
+    if (!audio) return;
+    hapticTick();
+    audio.currentTime = Math.min(
+      audio.currentTime + 15,
+      audio.duration || Infinity
+    );
+    setCurrentTime(audio.currentTime);
+  }, [getAudio]);
+
+  const skipBackward = useCallback(() => {
+    const audio = getAudio();
+    if (!audio) return;
+    hapticTick();
+    audio.currentTime = Math.max(audio.currentTime - 15, 0);
+    setCurrentTime(audio.currentTime);
+  }, [getAudio]);
+
+  const seekTo = useCallback(
+    (seconds: number) => {
+      const audio = getAudio();
+      if (!audio) return;
+      hapticLight();
+      audio.currentTime = seconds;
+      setCurrentTime(seconds);
+      if (!isPlaying) {
+        if (audioError) {
+          setAudioError(false);
+          audio.load();
+        }
+        audio.play().catch(() => {
+          setAudioError(true);
+          setIsPlaying(false);
+        });
+        setIsPlaying(true);
+        setHasEverPlayed(true);
+      }
+    },
+    [isPlaying, audioError]
+  );
+
+  // Auto-show player when brief has audio
+  useEffect(() => {
+    if (brief?.audio_url) setPlayerVisible(true);
+  }, [brief]);
+
+  /* ---- Media Session API — iOS lock screen + notification controls ---- */
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator))
+      return;
+
+    const editionLabels: Record<string, string> = {
+      world: "World",
+      us: "US",
+      europe: "Europe",
+      "south-asia": "South Asia",
+    };
+    const editionLabel = editionLabels[edition] || "World";
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: "void --onair",
+      artist: "void --news",
+      album: editionLabel + " Edition",
+    });
+
+    navigator.mediaSession.setActionHandler("play", () => {
+      if (!isPlaying) handlePlayPause();
+    });
+    navigator.mediaSession.setActionHandler("pause", () => {
+      if (isPlaying) handlePlayPause();
+    });
+    navigator.mediaSession.setActionHandler("seekbackward", () => {
+      skipBackward();
+    });
+    navigator.mediaSession.setActionHandler("seekforward", () => {
+      skipForward();
+    });
+
+    return () => {
+      try {
+        navigator.mediaSession.setActionHandler("play", null);
+        navigator.mediaSession.setActionHandler("pause", null);
+        navigator.mediaSession.setActionHandler("seekbackward", null);
+        navigator.mediaSession.setActionHandler("seekforward", null);
+      } catch {}
+    };
+  }, [edition, isPlaying, handlePlayPause, skipForward, skipBackward]);
+
+  const value: AudioState = {
+    brief,
+    edition,
+    setEdition,
+    isPlaying,
+    currentTime,
+    duration,
+    buffered,
+    audioError,
+    audioRef,
+    handlePlayPause,
+    handleSeek,
+    playbackSpeed,
+    cycleSpeed,
+    skipForward,
+    skipBackward,
+    seekTo,
+    isPlayerVisible,
+    setPlayerVisible,
+    isExpanded,
+    setExpanded,
+    analyserRef,
+    hasEverPlayed,
+  };
+
+  return (
+    <AudioContext.Provider value={value}>
+      {children}
+      {/* Global <audio> element — survives page navigation */}
+      {brief?.audio_url && (
+        <audio
+          ref={audioCallbackRef}
+          src={brief.audio_url}
+          preload="metadata"
+          crossOrigin="anonymous"
+          hidden
+        />
+      )}
+    </AudioContext.Provider>
+  );
+}

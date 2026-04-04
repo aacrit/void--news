@@ -6,6 +6,8 @@ import {
   Barlow_Condensed,
 } from "next/font/google";
 import "./globals.css";
+import AudioProvider from "./components/AudioProvider";
+import MobileNav from "./components/MobileNav";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -182,7 +184,10 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <AudioProvider>
+          {children}
+          <MobileNav />
+        </AudioProvider>
       </body>
     </html>
   );

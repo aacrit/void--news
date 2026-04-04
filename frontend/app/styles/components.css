@@ -7670,6 +7670,27 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     transform: rotate(180deg);
   }
 
+  /* ── Inline variant — used in feed content flow, NOT fixed-bottom ── */
+  .mob-nav--inline {
+    position: relative;
+    z-index: auto;
+  }
+
+  .mob-nav--inline .mob-nav__bar {
+    box-shadow: none;
+    border-top: none;
+    border-bottom: var(--rule-thin);
+    padding-bottom: var(--space-1);
+  }
+
+  .mob-nav--inline .mob-nav__topic-panel {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+  }
+
   @keyframes mob-nav-up {
     from {
       opacity: 0;
