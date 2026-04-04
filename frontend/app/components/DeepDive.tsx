@@ -9,7 +9,7 @@ import {
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
-import { timeAgo } from "../lib/utils";
+import { timeAgo, BASE_PATH } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import { generateShareCardImage, generateSquareCardImage, generateStoryCardImage } from "../lib/shareCardRenderer";
 import Sigil from "./Sigil";
@@ -84,7 +84,7 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
           );
         })}
       </div>
-      <a href="/void--news/sources/#methodology" className="dd-lenses__link text-meta">
+      <a href={`${BASE_PATH}/sources/#methodology`} className="dd-lenses__link text-meta">
         How we score
       </a>
     </div>
