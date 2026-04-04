@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, Fragment } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import { CaretRight } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
@@ -59,6 +59,15 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
   const [view, setView] = useState<PlayerView>("compact");
   const [closing, setClosing] = useState(false);
+
+  // On mobile, skip compact pill (hidden via CSS) — open expanded directly
+  useEffect(() => {
+    if (!isPlayerVisible) return;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile && view === "compact") {
+      setView("expanded");
+    }
+  }, [isPlayerVisible, view]);
   const playerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number>(0);
@@ -227,7 +236,13 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
   const closeFloating = () => {
     hapticLight();
-    setView("compact");
+    const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile) {
+      // On mobile, compact is hidden — dismiss player entirely
+      setPlayerVisible(false);
+    } else {
+      setView("compact");
+    }
   };
 
   const dismiss = () => {
@@ -262,7 +277,17 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     setDragOffset(0);
     if (dy > 80) {
       hapticLight();
-      setView("compact");
+      if (view === "broadcast") {
+        setView("expanded");
+      } else {
+        // On mobile, dismiss entirely; on desktop, go to compact
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        if (isMobile) {
+          setPlayerVisible(false);
+        } else {
+          setView("compact");
+        }
+      }
     }
   };
 
