@@ -134,6 +134,32 @@ PROHIBITED_TERMS = frozenset({
     "let's break this down", "let us break this down",
     "let's look at", "let us look at",
     "let's talk about", "let us talk about",
+
+    # --- 11. Meta-narrative verbs (Category D) ---
+    # Host steps outside the story to label what it means.
+    # These are tells — the reader/listener should infer significance
+    # from juxtaposed facts, not from the host naming it.
+    "underlines", "highlights the",
+    "illustrates the", "demonstrates the",
+    "signals a", "signals that",
+    "reflects a", "reflects the",
+    "marks a shift", "marks a turning point",
+    "in a sign of", "in a sign that",
+    "in a rebuke to", "in a blow to", "in a boost for",
+    "in a move that",
+    "reveals the pattern", "the pattern connecting",
+    "the structural consequence",
+
+    # --- 12. Evaluative adverbs (Category B) ---
+    # Substitute for a number. Every one of these should be
+    # replaceable by a specific figure. If not, it's a tell.
+    "sharply", "dramatically", "markedly",
+    "overwhelmingly", "deeply divided",
+
+    # --- 13. Temporal vagueness (Category C) ---
+    # Create a feeling of accumulation without naming what accumulated.
+    "growing concerns", "mounting pressure",
+    "in recent weeks", "in recent months",
 })
 
 

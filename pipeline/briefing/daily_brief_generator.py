@@ -115,8 +115,9 @@ alone. That juxtaposition is your primary tool. Every sentence pays rent or \
 gets evicted.
 
 Your instinct: lead with the fact, the name, or the number. Never announce \
-what you are about to say. Be opinionated about significance, neutral on \
-partisanship. Active voice. Present tense. Concrete nouns.
+what you are about to say. Never label the pattern — place two facts adjacent \
+and the reader sees it. Never assert significance — demonstrate it through \
+mechanism and juxtaposition. Active voice. Present tense. Concrete nouns.
 
 Attribute facts to institutions, officials, and documents — not to media outlets. \
 "The Pentagon confirmed" is reporting. "Reuters reported" is meta-coverage. \
@@ -203,14 +204,26 @@ Put one sentence per line, separated by \\n (literal newline). \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
-Start mid-action with the hardest fact. End on the consequence the reader \
-must now reckon with. The density of an Economist leaders column. The authority \
-of a morning editorial. The reader knows the news — give them the pattern \
-that connects it.
+Start mid-action with the hardest fact. End on the single fact the reader \
+will still be thinking about tomorrow — not what it means, what it IS.
 
-NEVER use these (output containing them is REJECTED): "amid," "significant," \
-"notable," "unprecedented," "robust," "comprehensive," "pivotal," "nuanced," \
-"landscape," "delve," "the bigger picture," "the takeaway."
+SHOW, DON'T TELL — THE CARDINAL RULE:
+Reveal the pattern through SEQUENCING. Place two facts adjacent and the reader \
+sees the connection. Never label the pattern. Never write "The pattern is..." \
+or "What connects these is..." or "This marks a shift in..." or "The consequence \
+is structural." The reader infers significance from juxtaposition — that is \
+your only instrument. Every evaluative adverb ("sharply," "dramatically," \
+"increasingly," "deeply") must be replaceable by a specific number. If it \
+cannot be, delete it and use the number instead.
+
+BANNED CONSTRUCTIONS (output containing these is REJECTED):
+"which means" (when followed by interpretation, not fact), "the pattern \
+connecting," "the consequence is," "the structural consequence," "reveals \
+the pattern," "this is about more than," "the bill for," "three pillars," \
+"no institutional buffer," "institutional competence," "institutional loyalty." \
+Also: "amid," "significant," "notable," "unprecedented," "robust," \
+"comprehensive," "pivotal," "nuanced," "landscape," "delve," "the bigger \
+picture," "the takeaway."
 
 ---
 
@@ -235,10 +248,13 @@ HOST B leads Story [2] — reports core facts, establishes what changed.
 Story [3] is briefer — either host.
 Stories [4]+ are context — mention at most one in passing.
 
-On each story, the NON-LEAD HOST adds the second dimension: a new fact, \
-counter-data, historical parallel, or structural context the lead did not \
-provide. The second dimension is not reaction — it is reporting from a \
-different angle on the same story.
+SECOND-DIMENSION RULE: On each story, the NON-LEAD HOST adds a second \
+dimension — but the dimension MUST contain a NEW FACT: a name, number, date, \
+or quoted statement the lead did not provide. Counter-data, historical \
+parallel, or structural context from a different angle on the same story. \
+"But that contradicts the Q3 numbers — 2.1% contraction" is a second \
+dimension. "Which tells you something about the administration's priorities" \
+is a TELL — banned. The listener infers priorities from the contradiction.
 
 Each host's EDITORIAL INSTINCT shapes what facts they gravitate toward — \
 what costs they cite, what patterns they notice, what data they surface. \
@@ -256,8 +272,10 @@ Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
 B enters IMMEDIATELY after the headline rundown with a NEW FACT or counter-data \
 — not a reaction, not a framing comment. The listener must hear both voices \
-in the first 20 seconds. Close with the consequence that connects the stories, \
-then "This was void news." No summary, no sign-off commentary.
+in the first 20 seconds. Close with the single FACT the listener will still \
+be thinking about tomorrow — not what it means, not a meta-narrative summary, \
+not "these are not separate stories." A concrete fact: a name, a number, an \
+unresolved outcome. Then "This was void news."
 
 WRITING FOR THE EAR:
 - Em dashes (—) for pivots and before key numbers. These create natural breath points.
@@ -283,6 +301,16 @@ into two exchanges. The pace should feel like a volley, not a monologue.
 "Worth noting...", "The important thing..."  \
 Instead, start every line with the FACT: the name, the number, the place, \
 the date, or the institution. The story speaks for itself.
+
+SHOW, DON'T TELL — AUDIO RULE:
+Connective words that point to FACTS are fine: "three days before the vote," \
+"at half the cost," "the same clause that blocked the 2024 bill." \
+Connective words that point to FEELINGS are tells — cut them: "worryingly," \
+"tellingly," "encouragingly," "the structural consequence is." \
+Never close a story segment with a meta-narrative label ("these are three \
+readings of the same instrument," "the accountability architecture is thin," \
+"the consequences of all three are still open"). Close with the unresolved \
+fact. The listener provides their own conclusion.
 
 NEVER use as standalone lines: "Mm.", "Right.", "Indeed.", "Good point.", \
 "Absolutely.", "Interesting.", "Exactly.", "Great question."
@@ -554,6 +582,12 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
         "is being underread", "is being overlooked",
         "is doing a lot of work",
         "is doing enormous work",
+        # Show-don't-tell meta-narrative closes
+        "these are not separate stories",
+        "these are three readings",
+        "the accountability architecture",
+        "is the fact that lands",
+        "tell you something about",
     ]
     found_lecture = []
     if script.strip():
@@ -566,6 +600,103 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["lecture_patterns_found"] = found_lecture
+
+    # --- SHOW/TELL QUALITY SCORE ---
+    # Measures factual density vs. evaluative language. 0-100 scale.
+    # Three signals: specificity density, meta-narrative, causal attribution.
+    show_tell_score = 100
+
+    # 1. Specificity density — numbers + capitalized proper nouns per 100 words.
+    #    High density = physically no room for tells. Target: 6+ per 100 words.
+    specificity_hits = len(re.findall(r'\b\d[\d,.]*\b', all_text))  # numbers
+    # Proper nouns: capitalized words not at sentence start (rough heuristic)
+    proper_nouns = 0
+    for sent in re.split(r'[.!?]\s+', f"{tldr} {script}"):
+        words = sent.split()
+        for w in words[1:]:  # skip sentence-initial word
+            if w and w[0].isupper() and w.isalpha() and len(w) > 1:
+                proper_nouns += 1
+    total_words = len(all_text.split()) or 1
+    specificity_per_100 = round((specificity_hits + proper_nouns) / total_words * 100, 1)
+    report["metrics"]["specificity_per_100"] = specificity_per_100
+    if specificity_per_100 < 4:
+        show_tell_score -= 30
+        msg = f"Show/Tell: specificity critically low ({specificity_per_100}/100 words, want 6+)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    elif specificity_per_100 < 6:
+        show_tell_score -= 15
+        msg = f"Show/Tell: specificity low ({specificity_per_100}/100 words, want 6+)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+
+    # 2. Meta-narrative detector — host labeling what the story means
+    #    instead of letting facts speak.
+    _META_NARRATIVE_PATTERNS = [
+        "which means",  # when followed by interpretation
+        "the consequence is", "the structural consequence",
+        "the pattern connecting", "reveals the pattern",
+        "the accountability architecture",
+        "these are not separate stories",
+        "these are three readings",
+        "the bill for",  # when used as meta-framing
+        "three pillars", "three institutions absorbing",
+        "no institutional buffer",
+        "is the fact that lands",
+        "the telling detail is",
+        "that's the story", "that is the story",
+    ]
+    found_meta = []
+    combined_lower = f"{tldr} {script}".lower()
+    for pattern in _META_NARRATIVE_PATTERNS:
+        if pattern in combined_lower:
+            found_meta.append(pattern)
+    report["metrics"]["meta_narrative_found"] = found_meta
+    if found_meta:
+        penalty = min(len(found_meta) * 8, 30)
+        show_tell_score -= penalty
+        msg = f"Show/Tell: meta-narrative patterns ({len(found_meta)}): {found_meta[:5]}"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+
+    # 3. Causal attribution check — unattributed causation verbs.
+    #    "prompted," "fueled," "triggered" need a named source nearby.
+    _CAUSAL_VERBS = [
+        "prompted", "fueled", "triggered", "aimed at",
+        "designed to", "intended to", "was seen as", "was interpreted as",
+    ]
+    _ATTRIBUTION_MARKERS = [
+        "according to", "said", "confirmed", "reported", "announced",
+        "told", "stated", "described",
+    ]
+    unattributed_causal = 0
+    for sent in re.split(r'[.!?]\s+', combined_lower):
+        has_causal = any(cv in sent for cv in _CAUSAL_VERBS)
+        has_attribution = any(am in sent for am in _ATTRIBUTION_MARKERS)
+        if has_causal and not has_attribution:
+            unattributed_causal += 1
+    report["metrics"]["unattributed_causal"] = unattributed_causal
+    if unattributed_causal > 0:
+        penalty = min(unattributed_causal * 5, 20)
+        show_tell_score -= penalty
+        if unattributed_causal >= 3:
+            msg = f"Show/Tell: {unattributed_causal} unattributed causal assertions"
+            report["warnings"].append(msg)
+            print(f"  [quality][brief:{edition}] {msg}")
+
+    show_tell_score = max(0, show_tell_score)
+    report["metrics"]["show_tell_score"] = show_tell_score
+    if show_tell_score < 50:
+        msg = f"Show/Tell score critically low: {show_tell_score}/100 (hard floor 50)"
+        report["failures"].append(msg)
+        found.append(f"show_tell({show_tell_score})")
+        print(f"  [quality][brief:{edition}] {msg}")
+    elif show_tell_score < 70:
+        msg = f"Show/Tell score: {show_tell_score}/100 (want 70+)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    else:
+        print(f"  [quality][brief:{edition}] Show/Tell score: {show_tell_score}/100 ✓")
 
     passed = not bool(found)
     report["passed"] = passed
@@ -824,10 +955,15 @@ take a politician's side. Reason from underlying values — what kind of \
 society this decision builds, what tradeoffs it accepts.
 
 CRAFT:
-Open with the most striking fact. Build the case with evidence — names, numbers, \
+Open with the most striking fact. Front-load evidence for 60-70% of the piece. \
+The thesis statement arrives no earlier than the third paragraph. By then, the \
+evidence has made the argument inescapable — the reader should feel the \
+conclusion forming before you state it. Build the case with names, numbers, \
 dates. Include a genuine turn: the counterargument you take seriously. Close on \
-tension, not summary. The reader should feel the temperature change between your \
-opening and your close.
+tension, not summary — the reader should feel the temperature change between \
+your opening and your close. Never announce what you are about to argue. \
+Every evaluative word must be replaceable by a specific number or mechanism. \
+If it cannot be, delete it and show the evidence instead.
 
 Standards:
 - 300-500 words. Single story. No meta-commentary about media or coverage.
@@ -1176,6 +1312,19 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
             )
         elif "too short" in failure.lower():
             parts.append("- SCRIPT TOO SHORT: Minimum 800 words. Expand the 3 stories in depth.")
+        elif "show_tell" in failure.lower():
+            parts.append(
+                "- SHOW/TELL SCORE TOO LOW: Replace every evaluative adverb with a specific "
+                "number. Replace every meta-narrative label ('the consequence is,' 'which means,' "
+                "'these are not separate stories') with a concrete fact. The reader infers "
+                "significance from juxtaposition — never label the pattern."
+            )
+    # Always add show-don't-tell reinforcement on retry
+    parts.append(
+        "- REMINDER: Every sentence must contain a FACT (name, number, date, action). "
+        "Never label patterns or assert significance. Place facts adjacent — the reader "
+        "sees the connection."
+    )
     return "\n".join(parts)
 
 
@@ -1184,8 +1333,10 @@ def _build_opinion_retry_suffix(found_terms: list[str]) -> str:
     parts = [
         "\n\nCRITICAL RETRY — your previous attempt failed:",
         f"- Prohibited terms found: {found_terms}. Do NOT use ANY of these.",
+        "- Replace every evaluative adverb with a specific number or mechanism.",
         "- Start every sentence with a FACT or ARGUMENT.",
         "- Never reference outlet names, coverage patterns, or media.",
+        "- Front-load evidence. Thesis arrives no earlier than third paragraph.",
         "- Opinion audio MUST open with: Now, void opinion.",
         "- Opinion audio MUST close with: This was void opinion.",
     ]
