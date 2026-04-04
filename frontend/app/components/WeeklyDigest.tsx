@@ -367,29 +367,36 @@ function Masthead({
   const editionLabel = EDITIONS.find((e) => e.slug === edition)?.label ?? "World";
   return (
     <header className="wk-masthead wk-cold-open--masthead">
-      <InkRule className="wk-ink-rule--strong" />
-      <div className="wk-masthead__brand">
-        <ScaleIcon size={28} animation="idle" className="wk-masthead__icon" />
-        <h1 className="wk-masthead__title">
+      <Link href="/" className="wk-masthead__home" aria-label="Return to void --news">
+        <div className="wk-masthead__brand">
+          {/* Full void logo with icon + "--weekly" wordmark */}
           <svg
-            className="wk-masthead__wordmark"
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 360 40"
+            viewBox="0 0 380 40"
             fill="currentColor"
             role="img"
             aria-label="void --weekly"
+            className="wk-masthead__logo"
           >
-            <g transform="translate(0,2)">
+            {/* Icon — void circle + scale beam */}
+            <g transform="translate(2,4) scale(0.83)" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4" className="si-void" />
+              <g className="si-beam--idle">
+                <path d="M3 13 C10 12.2 22 13.8 29 13" />
+                <line x1="5" y1="11" x2="5" y2="15" />
+                <line x1="27" y1="11" x2="27" y2="15" />
+              </g>
+              <line x1="16" y1="22" x2="16" y2="29" />
+              <path d="M12 29 C14 28.7 18 29.3 20 29" />
+            </g>
+            {/* "void" — bold serif */}
+            <g transform="translate(36,2)">
               <polygon points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36" />
-              <path
-                d="M48 3.5 C61 3 62 10 61.5 20 C61 30 58 37 48 36.5 C38 37 35 30 34.5 20 C34 10 35 3 48 3.5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-              />
+              <path d="M48 3.5 C61 3 62 10 61.5 20 C61 30 58 37 48 36.5 C38 37 35 30 34.5 20 C34 10 35 3 48 3.5" fill="none" stroke="currentColor" strokeWidth="2.2" />
               <rect x="69" y="2" width="5" height="5" rx="0.8" />
               <rect x="69.5" y="11" width="4" height="25" rx="0.5" />
               <path d="M82,20C82,10.5 87,3 94,3C97,3 100,4.5 102,7.5L102,0L107,0L107,36L102,36L102,32.5C100,35.5 97,37 94,37C87,37 82,29.5 82,20ZM88,20C88,27.5 90.8,32 95,32C98,32 100.5,29.5 102,26L102,14C100.5,10.5 98,8 95,8C90.8,8 88,12.5 88,20Z" />
+              {/* "--weekly" — monospace letterforms */}
               <rect x="122" y="17.5" width="10" height="3" rx="0.5" />
               <rect x="134" y="17.5" width="10" height="3" rx="0.5" />
               <path d="M156,12L159.5,12L164,29L168.5,14L171.5,14L176,29L180.5,12L184,12L177.5,36L174,36L169.5,21L165,36L161.5,36Z" />
@@ -400,16 +407,15 @@ function Masthead({
               <path d="M276,12L279.5,12L284.5,28L289.5,12L293,12L285,36L282.5,36L276.5,20Z" />
             </g>
           </svg>
-        </h1>
-      </div>
+        </div>
+      </Link>
       <p className="wk-masthead__meta">
         Issue #{issueNumber}
-        <span className="wk-masthead__sep">&mdash;</span>
+        <span className="wk-masthead__sep">&middot;</span>
         {formatWeekRange(weekStart, weekEnd)}
-        <span className="wk-masthead__sep">&mdash;</span>
-        <span className="wk-masthead__edition">{editionLabel} Edition</span>
+        <span className="wk-masthead__sep">&middot;</span>
+        <span className="wk-masthead__edition">{editionLabel}</span>
       </p>
-      <InkRule className="wk-ink-rule--strong" />
     </header>
   );
 }
@@ -418,27 +424,15 @@ function Masthead({
 
 function CoverHero({
   headline,
-  issueNumber,
-  sourceCount,
 }: {
   headline: string;
   issueNumber: number;
   sourceCount: number | null;
 }) {
   return (
-    <div className="wk-cover-hero wk-cold-open--hero" aria-label="Issue highlight">
-      <div className="wk-cover-hero__visual">
-        <span className="wk-cover-hero__issue" aria-hidden="true">
-          #{issueNumber}
-        </span>
-      </div>
+    <div className="wk-cover-hero wk-cold-open--hero">
       <div className="wk-cover-hero__content">
         <h2 className="wk-cover-hero__headline">{headline}</h2>
-        {sourceCount != null && sourceCount > 0 && (
-          <span className="wk-cover-hero__source-count">
-            {sourceCount} articles analyzed
-          </span>
-        )}
         <div className="wk-cover-hero__rule" aria-hidden="true">
           <svg viewBox="0 0 80 4" preserveAspectRatio="none">
             <path
@@ -1014,8 +1008,6 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
   return (
     <div className="wk-page">
-      <NavBar activeEdition={edition} />
-
       <main
         ref={mainRef}
         id="main-content"

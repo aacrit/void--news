@@ -282,31 +282,31 @@
   opacity: 0.4;
 }
 
+.wk-masthead__home {
+  text-decoration: none;
+  display: block;
+}
+
 .wk-masthead__brand {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
   margin: var(--space-2) 0 var(--space-1);
   position: relative;
   z-index: 1;
 }
 
-.wk-masthead__icon {
-  color: var(--wk-cream);
-  flex-shrink: 0;
-}
-
-.wk-masthead__title {
-  line-height: 1;
-  margin: 0;
-}
-
-.wk-masthead__wordmark {
-  display: block;
-  height: 28px;
+.wk-masthead__logo {
+  height: 32px;
   width: auto;
+  display: block;
   color: var(--wk-cream);
+}
+
+@media (min-width: 768px) {
+  .wk-masthead__logo {
+    height: 36px;
+  }
 }
 
 .wk-masthead__meta {
