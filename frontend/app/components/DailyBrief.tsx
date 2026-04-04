@@ -36,6 +36,8 @@ export interface DailyBriefState {
   /** Whether the player is expanded (full panel) */
   isExpanded: boolean;
   setExpanded: (v: boolean) => void;
+  /** Web Audio API analyser for real-time waveform visualization */
+  analyserRef: React.RefObject<AnalyserNode | null>;
 }
 
 export function useDailyBrief(edition: string): DailyBriefState {
@@ -52,6 +54,11 @@ export function useDailyBrief(edition: string): DailyBriefState {
   const [isPlayerVisible, setPlayerVisible] = useState(false);
   const [isExpanded, setExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  /* ---- Web Audio API: real-time analyser for oscilloscope ---- */
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const connectedElements = useRef<WeakSet<HTMLAudioElement>>(new WeakSet());
 
   useEffect(() => {
     let cancelled = false;
@@ -110,6 +117,24 @@ export function useDailyBrief(edition: string): DailyBriefState {
     el.addEventListener("progress", onProgress);
     if (el.duration && isFinite(el.duration)) setDuration(el.duration);
 
+    // Connect Web Audio API analyser (once per element)
+    if (!connectedElements.current.has(el)) {
+      try {
+        const ctx = audioContextRef.current || new AudioContext();
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.6;
+        const source = ctx.createMediaElementSource(el);
+        source.connect(analyser);
+        analyser.connect(ctx.destination);
+        audioContextRef.current = ctx;
+        analyserRef.current = analyser;
+        connectedElements.current.add(el);
+      } catch {
+        // Web Audio API unavailable or CORS blocked — oscilloscope won't render
+      }
+    }
+
     listenerCleanupRef.current = () => {
       el.removeEventListener("timeupdate", onTime);
       el.removeEventListener("loadedmetadata", onMeta);
@@ -136,6 +161,10 @@ export function useDailyBrief(edition: string): DailyBriefState {
       if (audioError) {
         setAudioError(false);
         audio.load();
+      }
+      // Resume AudioContext for iOS Safari (requires user gesture)
+      if (audioContextRef.current?.state === "suspended") {
+        audioContextRef.current.resume();
       }
       audio.play().catch(() => {
         setAudioError(true);
@@ -214,7 +243,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
   return {
     brief, isPlaying, currentTime, duration, buffered, audioError, audioRef, audioCallbackRef,
     handlePlayPause, handleSeek, playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
-    isPlayerVisible, setPlayerVisible, isExpanded, setExpanded,
+    isPlayerVisible, setPlayerVisible, isExpanded, setExpanded, analyserRef,
   };
 }
 
