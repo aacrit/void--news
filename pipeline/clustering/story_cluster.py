@@ -782,6 +782,60 @@ def cluster_stories(
             "articles": cluster_articles,
         })
 
+    # Cluster purity check: eject articles that don't belong.
+    # If an article's max similarity to any other article in the cluster
+    # is below 0.08, it was merged by shared stopwords or source proximity,
+    # not content. Eject it into a singleton cluster.
+    purified: list[dict] = []
+    ejected_articles: list[dict] = []
+    for c in clusters:
+        arts = c.get("articles", [])
+        if len(arts) <= 3:
+            purified.append(c)
+            continue
+        # Re-vectorize this cluster's articles
+        docs = [_build_document(a) for a in arts]
+        try:
+            vec = TfidfVectorizer(max_features=3000, stop_words="english", min_df=1, max_df=0.95)
+            mat = vec.fit_transform(docs)
+            sims = cosine_similarity(mat)
+            keep_idx = []
+            eject_idx = []
+            for i in range(len(arts)):
+                # Max similarity to any OTHER article in the cluster
+                row = sims[i].copy()
+                row[i] = 0.0  # exclude self
+                max_sim = row.max()
+                if max_sim < 0.08:
+                    eject_idx.append(i)
+                else:
+                    keep_idx.append(i)
+            if eject_idx and keep_idx:
+                # Rebuild the cluster without outliers
+                kept = [arts[i] for i in keep_idx]
+                c["articles"] = kept
+                c["article_ids"] = [a.get("id", "") for a in kept]
+                c["source_ids"] = list({a.get("source_id", "") for a in kept})
+                c["source_count"] = len(c["source_ids"])
+                ejected_articles.extend(arts[i] for i in eject_idx)
+            purified.append(c)
+        except Exception:
+            purified.append(c)  # on any error, keep the original
+    clusters = purified
+    # Ejected articles become singleton clusters (they'll be filtered out
+    # by the 2+ source requirement downstream, or form their own micro-clusters).
+    for a in ejected_articles:
+        clusters.append({
+            "title": a.get("title") or "Developing Story",
+            "summary": a.get("summary", ""),
+            "article_ids": [a.get("id", "")],
+            "source_ids": [a.get("source_id", "")],
+            "source_count": 1,
+            "section": _determine_section([a]),
+            "first_published": a.get("published_at", ""),
+            "articles": [a],
+        })
+
     # Split oversized clusters: re-cluster with a tighter threshold.
     # Prevents 100+ article mega-clusters from TF-IDF over-merging on
     # shared political vocabulary (e.g., "Trump", "war", "Iran").
