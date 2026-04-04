@@ -18,9 +18,9 @@ import { tiltLabel, tiltLabelAbbr, senseLabel, rigorLabel } from "../lib/biasCol
 const LEAN_COLORS: Record<string, string> = {
   "far-left":     "#5078AE",
   "left":         "#6490B8",
-  "center-left":  "#5A9478",
+  "center-left":  "#6BA0BC",
   "center":       "#4D9B6A",
-  "center-right": "#B07868",
+  "center-right": "#C07A6A",
   "right":        "#C56D5C",
   "far-right":    "#B25748",
 };

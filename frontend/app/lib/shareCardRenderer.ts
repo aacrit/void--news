@@ -35,8 +35,8 @@ const AMBER        = "#C8A96E";
 /* ── Lean spectrum ────────────────────────────────────────────────────── */
 
 const LEAN_STOPS: [number, string][] = [
-  [0,   "#5078AE"], [17,  "#6490B8"], [33,  "#5A9478"],
-  [50,  "#4D9B6A"], [67,  "#B07868"], [83,  "#C56D5C"], [100, "#B25748"],
+  [0,   "#5078AE"], [17,  "#6490B8"], [33,  "#6BA0BC"],
+  [50,  "#4D9B6A"], [67,  "#C07A6A"], [83,  "#C56D5C"], [100, "#B25748"],
 ];
 
 function lerpHex(a: string, b: string, t: number): string {
@@ -164,8 +164,8 @@ function drawSpectrumWithSources(
   // Gradient bar
   const grad = ctx.createLinearGradient(x, 0, x + w, 0);
   grad.addColorStop(0, "#5078AE"); grad.addColorStop(0.14, "#6490B8");
-  grad.addColorStop(0.28, "#5A9478"); grad.addColorStop(0.42, "#4D9B6A");
-  grad.addColorStop(0.57, "#B07868"); grad.addColorStop(0.71, "#C56D5C");
+  grad.addColorStop(0.28, "#6BA0BC"); grad.addColorStop(0.42, "#4D9B6A");
+  grad.addColorStop(0.57, "#C07A6A"); grad.addColorStop(0.71, "#C56D5C");
   grad.addColorStop(1, "#B25748");
   ctx.fillStyle = grad;
   roundRect(ctx, x, y, w, h, 4);

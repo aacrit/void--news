@@ -141,9 +141,9 @@ export function isUnscoredTilt(
 const SSR_FALLBACK: Record<string, string> = {
   "--bias-far-left": "#1A4D8E",
   "--bias-left": "#2C6B9A",
-  "--bias-center-left": "#357A5E",
+  "--bias-center-left": "#3978A0",
   "--bias-center": "#2D6B45",
-  "--bias-center-right": "#8D5548",
+  "--bias-center-right": "#A8554D",
   "--bias-right": "#B5403A",
   "--bias-far-right": "#8C2B26",
   "--sense-low": "#22C55E",
@@ -201,7 +201,8 @@ export function lerpColor(a: string, b: string, t: number): string {
 
 export function getLeanColor(v: number): string {
   const c = getColors();
-  // Clean family transitions: blue → green → red. No orphan hues.
+  // Green reserved for center only. Left of center = blue family, right = red family.
+  // Narrow green band at 46-54. Sharp transition to blue/red outside that.
   if (v <= 10) return c["--bias-far-left"];
   if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 10) / 10);
   if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);

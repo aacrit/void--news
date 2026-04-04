@@ -340,14 +340,16 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     if (brief?.audio_url) setPlayerVisible(true);
   }, [brief]);
 
-  /** Load a previous episode — swap audio source and reset playback state */
+  /** Load a previous episode — swap audio source and reset playback state.
+   *  We only pause the current element here; the actual source swap happens
+   *  when React reconciles the <audio> element with the new brief.audio_url.
+   *  Setting audio.src imperatively would trigger a wasted HTTP request on
+   *  the old element that gets unmounted moments later. */
   const loadEpisode = useCallback((episode: EpisodeMeta) => {
     if (!episode.audio_url) return;
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
-      audio.src = episode.audio_url;
-      audio.load();
     }
     // Create DailyBriefData from episode metadata
     setBrief((prev) => ({

@@ -1074,7 +1074,7 @@
 }
 
 .fp__bcast-text {
-  font-family: var(--font-body);
+  font-family: var(--font-structural);
   font-size: var(--text-xs);
   line-height: 1.6;
   color: color-mix(in srgb, var(--console-fg) 85%, transparent);
@@ -1416,6 +1416,7 @@
   color: inherit;
   text-align: left;
   width: 100%;
+  min-height: 44px;
   transition: background 150ms var(--ease-out);
   position: relative;
 }
@@ -1490,6 +1491,7 @@
   align-items: baseline;
   gap: var(--space-2);
   min-width: 0;
+  overflow: hidden;
 }
 
 .fp__track-row--opinion {
@@ -1508,7 +1510,7 @@
 }
 
 .fp__track-hl {
-  font-family: var(--font-body);
+  font-family: var(--font-structural);
   font-size: var(--text-xs);
   line-height: 1.4;
   color: color-mix(in srgb, var(--console-fg) 85%, transparent);
