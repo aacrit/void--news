@@ -28,6 +28,12 @@
       "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
     },
     {
+      "name": "Europe Edition",
+      "short_name": "Europe",
+      "url": "/void--news/europe/",
+      "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
+    },
+    {
       "name": "South Asia Edition",
       "short_name": "S. Asia",
       "url": "/void--news/south-asia/",
