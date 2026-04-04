@@ -19,14 +19,12 @@ import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    WeeklyDigest — void --weekly
-   Cinematic magazine-scroll layout. Single column, long-form reading.
-   Slower, warmer, more editorial than the daily feed.
-   Interactive timeline, count-up numbers, organic ink design, parallax.
+   Dense broadsheet layout: 2-col / 3-col grids, no collapsibles.
+   Deep red magazine palette. Everything visible, no "read more" toggles.
    --------------------------------------------------------------------------- */
 
 /* ── Organic Ink SVG Components ────────────────────────────────────────────── */
 
-/** Hand-drawn horizontal rule — organic ink stroke with slight waviness */
 function InkRule({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -46,7 +44,6 @@ function InkRule({ className = "" }: { className?: string }) {
   );
 }
 
-/** Organic ink vertical track for timeline — slightly irregular vertical path */
 function InkVerticalTrack() {
   return (
     <svg
@@ -67,7 +64,6 @@ function InkVerticalTrack() {
   );
 }
 
-/** Organic ink horizontal track for desktop timeline */
 function InkHorizontalTrack() {
   return (
     <svg
@@ -88,7 +84,6 @@ function InkHorizontalTrack() {
   );
 }
 
-/** Organic ink left border — vertical wavey line for sidebar */
 function InkLeftBorder() {
   return (
     <svg
@@ -108,7 +103,6 @@ function InkLeftBorder() {
   );
 }
 
-/** Ink flourish ornament — plum diamond with radiating strokes, centered between sections */
 function InkFlourish() {
   return (
     <div className="wk-flourish" aria-hidden="true">
@@ -133,20 +127,6 @@ function InkFlourish() {
           fill="currentColor"
           opacity="0.6"
         />
-        <path
-          d="M2 10 C4 8, 6 9, 10 10 M10 10 C14 11, 16 12, 18 10"
-          stroke="currentColor"
-          strokeWidth="0.8"
-          fill="none"
-          opacity="0.35"
-        />
-        <path
-          d="M10 2 C11 4, 9 6, 10 10 M10 10 C11 14, 9 16, 10 18"
-          stroke="currentColor"
-          strokeWidth="0.8"
-          fill="none"
-          opacity="0.35"
-        />
       </svg>
       <svg
         className="wk-flourish__line"
@@ -164,42 +144,8 @@ function InkFlourish() {
   );
 }
 
-/** Ink corner decoration — L-shaped organic brush strokes for hero section */
-function InkCorner({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={`wk-cover__hero-corner ${className}`}
-      viewBox="0 0 40 40"
-      aria-hidden="true"
-    >
-      <path
-        d="M2 38 C2 20, 3 10, 2 2"
-        stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <path
-        d="M2 2 C12 2, 22 3, 38 2"
-        stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <circle
-        cx="2"
-        cy="2"
-        r="2.5"
-        fill="currentColor"
-        opacity="0.4"
-      />
-    </svg>
-  );
-}
+/* ── Scroll-reveal wrapper for standalone InkFlourish ── */
 
-/** Scroll-reveal wrapper for standalone InkFlourish instances between sections */
 function RevealFlourish() {
   const [ref, visible] = useScrollReveal(0.3);
   return (
@@ -230,10 +176,6 @@ function formatArchiveRange(start: string, end: string): string {
   const s = new Date(start + "T00:00:00");
   const e = new Date(end + "T00:00:00");
   return `${s.toLocaleDateString("en-US", { month: "short", day: "numeric" })}\u2013${e.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
-}
-
-function leanBadgeClass(_lean: string): string {
-  return "wk-opinion__badge";
 }
 
 function leanBadgeLabel(lean: string): string {
@@ -296,10 +238,6 @@ function parseCoverNumbers(
 
 /* ── Scroll-Reveal Hook ────────────────────────────────────────────────────── */
 
-/**
- * IntersectionObserver hook for scroll-triggered reveal animations.
- * Returns a ref to attach to the element and a boolean for visibility.
- */
 function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>, boolean] {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -308,7 +246,6 @@ function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>
     const el = ref.current;
     if (!el) return;
 
-    // Check prefers-reduced-motion
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       setVisible(true);
@@ -334,10 +271,6 @@ function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>
 
 /* ── Count-Up Animation Hook ───────────────────────────────────────────────── */
 
-/**
- * Animates a number counting up from 0 to the target value when triggered.
- * Returns the current display value as a string.
- */
 function useCountUp(
   targetStr: string,
   trigger: boolean,
@@ -349,7 +282,6 @@ function useCountUp(
   useEffect(() => {
     if (!trigger) return;
 
-    // Extract numeric part from the value string
     const match = targetStr.match(/^([^0-9]*)([\d,.]+)(.*)$/);
     if (!match) {
       setDisplayValue(targetStr);
@@ -369,7 +301,6 @@ function useCountUp(
       return;
     }
 
-    // Check prefers-reduced-motion
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       setDisplayValue(targetStr);
@@ -382,7 +313,6 @@ function useCountUp(
     function animate(now: number) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out: fast start, slow end
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = targetNum * eased;
 
@@ -415,51 +345,9 @@ function useCountUp(
   return { displayValue, isCounting };
 }
 
-/* ── Parallax Hook ─────────────────────────────────────────────────────────── */
-
-/**
- * Subtle parallax effect on scroll. Returns a ref and current transform offset.
- * Rate: how many pixels of offset per pixel of scroll (0.1 = subtle).
- */
-function useParallax(rate = 0.08): [React.RefObject<HTMLElement | null>, number] {
-  const ref = useRef<HTMLElement | null>(null);
-  const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    // Check prefers-reduced-motion
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
-
-    // No parallax on mobile (performance)
-    if (window.innerWidth < 768) return;
-
-    let rafId: number;
-    const handleScroll = () => {
-      rafId = requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        const viewportCenter = window.innerHeight / 2;
-        const elementCenter = rect.top + rect.height / 2;
-        const delta = (elementCenter - viewportCenter) * rate;
-        setOffset(delta);
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(rafId);
-    };
-  }, [rate]);
-
-  return [ref, offset];
-}
-
 /* ── Section Components ──────────────────────────────────────────────────── */
+
+/* --- A. Masthead --- */
 
 function Masthead({
   issueNumber,
@@ -477,7 +365,7 @@ function Masthead({
     <header className="wk-masthead wk-cold-open--masthead">
       <InkRule className="wk-ink-rule--strong" />
       <div className="wk-masthead__brand">
-        <ScaleIcon size={36} animation="idle" className="wk-masthead__icon" />
+        <ScaleIcon size={28} animation="idle" className="wk-masthead__icon" />
         <h1 className="wk-masthead__title">
           <svg
             className="wk-masthead__wordmark"
@@ -522,7 +410,47 @@ function Masthead({
   );
 }
 
-/* ── Interactive Numbers Sidebar ───────────────────────────────────────────── */
+/* --- B. Cover Hero --- */
+
+function CoverHero({
+  headline,
+  issueNumber,
+  sourceCount,
+}: {
+  headline: string;
+  issueNumber: number;
+  sourceCount: number | null;
+}) {
+  return (
+    <div className="wk-cover-hero wk-cold-open--hero" aria-label="Issue highlight">
+      <div className="wk-cover-hero__visual">
+        <span className="wk-cover-hero__issue" aria-hidden="true">
+          #{issueNumber}
+        </span>
+      </div>
+      <div className="wk-cover-hero__content">
+        <h2 className="wk-cover-hero__headline">{headline}</h2>
+        {sourceCount != null && sourceCount > 0 && (
+          <span className="wk-cover-hero__source-count">
+            {sourceCount} articles analyzed
+          </span>
+        )}
+        <div className="wk-cover-hero__rule" aria-hidden="true">
+          <svg viewBox="0 0 80 4" preserveAspectRatio="none">
+            <path
+              d="M0 2 C10 0.5, 20 3.5, 40 2 S60 0.5, 80 2"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              fill="none"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* --- C. Cover Body (text + numbers sidebar) --- */
 
 function NumberItem({
   value,
@@ -546,48 +474,80 @@ function NumberItem({
   }, [visible, delay]);
 
   return (
-    <div className="wk-cover__number-item">
-      <dt className={`wk-cover__number-value${isCounting ? " wk-number-counting" : ""}`}>
+    <div className="wk-cover-body__number-item">
+      <dt className={`wk-cover-body__number-value${isCounting ? " wk-number-counting" : ""}`}>
         {displayValue}
       </dt>
-      <dd className="wk-cover__number-label">{label}</dd>
+      <dd className="wk-cover-body__number-label">{label}</dd>
     </div>
   );
 }
 
-function NumbersSidebar({
-  numbers,
+function CoverBody({
+  stories,
+  topLevelNumbers,
 }: {
-  numbers: { value: string; label: string }[];
+  stories: WeeklyCoverStory[];
+  topLevelNumbers: unknown;
 }) {
-  const [sidebarRef, sidebarVisible] = useScrollReveal(0.3);
+  const [sectionRef, sectionVisible] = useScrollReveal(0.1);
 
-  if (numbers.length === 0) return null;
+  // Combine all cover story text
+  const allText = stories
+    .map((s) => s.text || "")
+    .filter(Boolean);
+
+  // Numbers: try first story's numbers, fall back to top-level
+  const firstNums = parseCoverNumbers(stories[0]?.numbers);
+  const numbers = firstNums.length > 0 ? firstNums : parseCoverNumbers(topLevelNumbers);
+
+  // Timeline from first story
+  const timeline = (stories[0]?.timeline ?? []) as Record<string, string>[];
 
   return (
-    <aside
-      ref={sidebarRef as React.RefObject<HTMLElement>}
-      className={`wk-cover__numbers wk-cold-open--numbers wk-reveal${sidebarVisible ? " wk-reveal--visible" : ""}`}
-      aria-label="This week in numbers"
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className={`wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-cover-heading"
     >
-      <InkLeftBorder />
-      <h4 className="wk-cover__numbers-title">This Week in Numbers</h4>
-      <dl className="wk-cover__numbers-list">
-        {numbers.map((n, k) => (
-          <NumberItem
-            key={k}
-            value={n.value}
-            label={n.label}
-            visible={sidebarVisible}
-            delay={k * 150}
-          />
-        ))}
-      </dl>
-    </aside>
+      <h2 className="wk-section-label wk-cold-open--headline" id="wk-cover-heading" data-prefix="void --">The Cover</h2>
+
+      <div className="wk-cover-body wk-cold-open--body">
+        <div className="wk-cover-body__text">
+          {allText.map((text, si) => (
+            text.split("\n\n").filter(Boolean).map((para, j) => (
+              <p key={`${si}-${j}`}>{para}</p>
+            ))
+          ))}
+        </div>
+
+        {numbers.length > 0 && (
+          <aside className="wk-cover-body__numbers wk-cold-open--numbers" aria-label="This week in numbers">
+            <InkLeftBorder />
+            <h4 className="wk-cover-body__numbers-title">Week in Numbers</h4>
+            <dl className="wk-cover-body__numbers-list">
+              {numbers.map((n, k) => (
+                <NumberItem
+                  key={k}
+                  value={n.value}
+                  label={n.label}
+                  visible={sectionVisible}
+                  delay={k * 150}
+                />
+              ))}
+            </dl>
+          </aside>
+        )}
+      </div>
+
+      {timeline.length > 0 && (
+        <TimelineSection timeline={timeline} />
+      )}
+    </section>
   );
 }
 
-/* ── Interactive Timeline ──────────────────────────────────────────────────── */
+/* --- D. Timeline --- */
 
 function TimelineNode({
   entry,
@@ -600,7 +560,6 @@ function TimelineNode({
   const dateText = entry.date || entry.day || "";
   const noteText = entry.event || entry.note || entry.development || "";
 
-  // For expandable detail: show first sentence as summary, rest as detail
   const sentences = noteText.split(/(?<=[.!?])\s+/);
   const summary = sentences[0] || noteText;
   const detail = sentences.length > 1 ? sentences.slice(1).join(" ") : "";
@@ -635,8 +594,9 @@ function TimelineNode({
   );
 }
 
-function InteractiveTimeline({ timeline }: { timeline: Record<string, string>[] }) {
+function TimelineSection({ timeline }: { timeline: Record<string, string>[] }) {
   const [isDesktop, setIsDesktop] = useState(false);
+  const [ref, visible] = useScrollReveal(0.15);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -649,8 +609,12 @@ function InteractiveTimeline({ timeline }: { timeline: Record<string, string>[] 
   if (!timeline || timeline.length === 0) return null;
 
   return (
-    <div aria-labelledby="wk-timeline-heading">
-      <h4 className="wk-timeline__heading" id="wk-timeline-heading">Key Events</h4>
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className={`wk-timeline-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-timeline-heading"
+    >
+      <h3 className="wk-section-label" id="wk-timeline-heading" data-prefix="void --">Timeline</h3>
       <div className="wk-timeline" role="list" aria-label="Key events">
         {isDesktop ? <InkHorizontalTrack /> : <InkVerticalTrack />}
         {timeline.map((entry, k) => (
@@ -661,174 +625,14 @@ function InteractiveTimeline({ timeline }: { timeline: Record<string, string>[] 
   );
 }
 
-/* ── Cover Story Card ──────────────────────────────────────────────────────── */
-
-function CoverStoryCard({
-  story,
-  numbers,
-  defaultExpanded,
-  isFirst,
-}: {
-  story: WeeklyCoverStory;
-  numbers: { value: string; label: string }[];
-  defaultExpanded: boolean;
-  isFirst: boolean;
-}) {
-  const [expanded, setExpanded] = useState(defaultExpanded);
-  const [parallaxRef, parallaxOffset] = useParallax(0.06);
-
-  const inner = (
-    <article className="wk-cover__story">
-      <h3
-        ref={isFirst ? (parallaxRef as React.RefObject<HTMLHeadingElement>) : undefined}
-        className={`wk-cover__headline${isFirst ? " wk-cold-open--headline" : ""}`}
-        style={isFirst ? { transform: `translateY(${parallaxOffset}px)` } : undefined}
-      >
-        {story.headline}
-      </h3>
-      {/* Always render full content — CSS handles collapsed clamp */}
-      <div className={`wk-cover__content${expanded ? " wk-cover__content--open" : ""}`}>
-        <div className="wk-cover__content-inner">
-          <div className={`wk-cover__body-wrap${isFirst ? " wk-cold-open--body" : ""}`}>
-            <div className="wk-cover__text">
-              {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
-                <p key={j}>{para}</p>
-              ))}
-            </div>
-            <NumbersSidebar numbers={numbers} />
-          </div>
-          <InteractiveTimeline
-            timeline={story.timeline as Record<string, string>[] ?? []}
-          />
-        </div>
-        {!expanded && <div className="wk-cover__content-fade" aria-hidden="true" />}
-      </div>
-      <button
-        className="wk-toggle"
-        onClick={() => setExpanded(!expanded)}
-        aria-expanded={expanded}
-        type="button"
-      >
-        {expanded ? "Read less" : "Read more"}{" "}
-        <span className="wk-toggle__chevron" aria-hidden="true">
-          {expanded ? "\u25B2" : "\u25BC"}
-        </span>
-      </button>
-    </article>
-  );
-
-  /* Wrap the first cover story in a hero treatment with ink corner flourishes */
-  if (isFirst) {
-    return (
-      <div className="wk-cover__hero">
-        <InkCorner className="wk-cover__hero-corner--tl" />
-        <InkCorner className="wk-cover__hero-corner--br" />
-        {inner}
-      </div>
-    );
-  }
-
-  return inner;
-}
-
-/* ── Cover Hero Banner ─────────────────────────────────────────────────────── */
-
-/** Full-bleed terracotta hero with ghosted issue number + lead headline */
-function CoverHero({
-  headline,
-  issueNumber,
-}: {
-  headline: string;
-  issueNumber: number;
-}) {
-  return (
-    <div className="wk-cover__hero-banner" aria-label="Issue highlight">
-      <div className="wk-cover__hero-banner-texture" aria-hidden="true" />
-      <span className="wk-cover__hero-banner-issue" aria-hidden="true">
-        #{issueNumber}
-      </span>
-      <h3 className="wk-cover__hero-banner-title">{headline}</h3>
-      <div className="wk-cover__hero-banner-rule" aria-hidden="true">
-        <svg viewBox="0 0 80 4" preserveAspectRatio="none">
-          <path
-            d="M0 2 C10 0.5, 20 3.5, 40 2 S60 0.5, 80 2"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            fill="none"
-          />
-        </svg>
-      </div>
-    </div>
-  );
-}
-
-/* ── Cover Section ─────────────────────────────────────────────────────────── */
-
-function CoverSection({
-  stories,
-  topLevelNumbers,
-}: {
-  stories: WeeklyCoverStory[];
-  topLevelNumbers: unknown;
-}) {
-  const [sectionRef, sectionVisible] = useScrollReveal(0.1);
-  const firstStory = stories[0];
-  const secondaryStories = stories.slice(1);
-  const firstNums = parseCoverNumbers(firstStory?.numbers);
-  const firstNumbers = firstNums.length > 0
-    ? firstNums
-    : parseCoverNumbers(topLevelNumbers);
-
-  return (
-    <section
-      ref={sectionRef as React.RefObject<HTMLElement>}
-      className={`wk-cover wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby="wk-cover-heading"
-    >
-      <h2 className="wk-section-label" id="wk-cover-heading" data-prefix="void --">The Cover</h2>
-      {firstStory && (
-        <CoverStoryCard
-          story={firstStory}
-          numbers={firstNumbers}
-          defaultExpanded={true}
-          isFirst={true}
-        />
-      )}
-      {secondaryStories.length > 0 && (
-        <>
-          <InkRule />
-          <div className="wk-cover__secondary">
-            {secondaryStories.map((story, i) => {
-              const storyNums = parseCoverNumbers(story.numbers);
-              return (
-                <CoverStoryCard
-                  key={i}
-                  story={story}
-                  numbers={storyNums}
-                  defaultExpanded={false}
-                  isFirst={false}
-                />
-              );
-            })}
-          </div>
-        </>
-      )}
-    </section>
-  );
-}
-
-/* ── Opinion Card ──────────────────────────────────────────────────────────── */
+/* --- E. Opinions --- */
 
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
-  const [expanded, setExpanded] = useState(false);
-  const safeText = op.text || "";
-  const needsTruncation = safeText.length > 140;
-
   return (
     <article className="wk-opinion wk-reveal-child">
       <div className="wk-opinion__header">
         <span
-          className={leanBadgeClass(op.lean)}
+          className="wk-opinion__badge"
           style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
         >
           {leanBadgeLabel(op.lean)}
@@ -838,73 +642,14 @@ function OpinionCard({ op }: { op: WeeklyOpinion }) {
         )}
       </div>
       <h3 className="wk-opinion__headline">{op.headline}</h3>
-      <div className={`wk-opinion__text${!expanded && needsTruncation ? " wk-opinion__text--clamped" : ""}`}>
+      <div className="wk-opinion__text">
         {(op.text || "").split("\n\n").filter(Boolean).map((para, j) => (
           <p key={j}>{para}</p>
         ))}
       </div>
-      {needsTruncation && (
-        <button
-          className="wk-toggle wk-toggle--inline"
-          onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-          type="button"
-        >
-          {expanded ? "Read less" : "Read more"}{" "}
-          <span className="wk-toggle__chevron" aria-hidden="true">
-            {expanded ? "\u25B2" : "\u25BC"}
-          </span>
-        </button>
-      )}
     </article>
   );
 }
-
-/* ── Collapsible Section with Scroll Reveal ────────────────────────────────── */
-
-function CollapsibleSection({
-  id,
-  label,
-  defaultOpen,
-  children,
-}: {
-  id: string;
-  label: string;
-  defaultOpen: boolean;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  const [sectionRef, sectionVisible] = useScrollReveal(0.1);
-
-  return (
-    <section
-      ref={sectionRef as React.RefObject<HTMLElement>}
-      className={`wk-collapsible-section wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby={id}
-    >
-      <button
-        className="wk-section-toggle"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        type="button"
-      >
-        <h2 className="wk-section-label wk-section-label--toggle" id={id} data-prefix="void --">
-          {label}
-        </h2>
-        <span className="wk-section-toggle__chevron" aria-hidden="true">
-          {open ? "\u25B2" : "\u25BC"}
-        </span>
-      </button>
-      <div className={`wk-section-body${open ? " wk-section-body--open" : ""}`}>
-        <div className="wk-section-body__inner">
-          {children}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── Opinions Section ──────────────────────────────────────────────────────── */
 
 function OpinionsSection({
   left,
@@ -915,6 +660,7 @@ function OpinionsSection({
   center: WeeklyOpinion[] | null;
   right: WeeklyOpinion[] | null;
 }) {
+  const [ref, visible] = useScrollReveal(0.1);
   const all = [
     ...(left ?? []),
     ...(center ?? []),
@@ -923,36 +669,62 @@ function OpinionsSection({
   if (all.length === 0) return null;
 
   return (
-    <div className="wk-section--opinions">
-      <CollapsibleSection id="wk-opinions-heading" label="The Opinions" defaultOpen={true}>
-        <div className="wk-opinions__grid">
-          {all.map((op, i) => (
-            <OpinionCard key={i} op={op} />
-          ))}
-        </div>
-      </CollapsibleSection>
-    </div>
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-opinions-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-opinions-heading"
+    >
+      <h2 className="wk-section-label" id="wk-opinions-heading" data-prefix="void --">The Opinions</h2>
+      <div className="wk-opinions__grid">
+        {all.map((op, i) => (
+          <OpinionCard key={i} op={op} />
+        ))}
+      </div>
+    </section>
   );
 }
 
-/* ── Bias Report ───────────────────────────────────────────────────────────── */
+/* --- F. Week in Brief --- */
 
-function BiasReport({
+function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
+  const [ref, visible] = useScrollReveal(0.1);
+  if (stories.length === 0) return null;
+
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-brief-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-brief-heading"
+    >
+      <h2 className="wk-section-label" id="wk-brief-heading" data-prefix="void --">Week in Brief</h2>
+      <div className="wk-brief__list">
+        {stories.map((story, i) => (
+          <article key={i} className="wk-brief__item">
+            <h3 className="wk-brief__headline">{story.headline}</h3>
+            <p className="wk-brief__summary">{story.summary}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* --- G. Bias Report --- */
+
+function BiasStats({
   text,
   data,
 }: {
   text: string | null;
   data: WeeklyBiasReportData | null;
 }) {
+  const [ref, visible] = useScrollReveal(0.1);
   if (!text && !data) return null;
 
-  // Pipeline stores aggregate stats under "stats"; type expects "aggregate".
-  // Normalize field names defensively so both shapes work.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawData = data as Record<string, any> | null;
   const agg = rawData?.aggregate ?? rawData?.stats ?? null;
   const rawPolarized = rawData?.most_polarized ?? [];
-  // Pipeline items use { title, divergence }; type expects { headline, lean_spread, avg_lean }.
   const polarized = rawPolarized.map(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (item: any) => ({
@@ -963,12 +735,18 @@ function BiasReport({
   );
 
   return (
-    <CollapsibleSection id="wk-bias-heading" label="Bias Report" defaultOpen={true}>
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-bias-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-bias-heading"
+    >
+      <h2 className="wk-section-label" id="wk-bias-heading" data-prefix="void --">Bias Report</h2>
+
       {agg && (
         <div className="wk-bias__aggregate">
           <div className="wk-bias__stat">
             <span className="wk-bias__stat-value">{agg.total_articles ?? agg.total_scored ?? 0}</span>
-            <span className="wk-bias__stat-label">Articles Analyzed</span>
+            <span className="wk-bias__stat-label">Articles</span>
           </div>
           <div className="wk-bias__stat">
             <span className="wk-bias__stat-value">{(agg.avg_lean ?? 0).toFixed(1)}</span>
@@ -981,7 +759,7 @@ function BiasReport({
           </div>
           <div className="wk-bias__stat">
             <span className="wk-bias__stat-value">{(agg.avg_sensationalism ?? 0).toFixed(1)}</span>
-            <span className="wk-bias__stat-label">Avg. Sensationalism</span>
+            <span className="wk-bias__stat-label">Sensationalism</span>
           </div>
         </div>
       )}
@@ -1017,32 +795,13 @@ function BiasReport({
           ))}
         </div>
       )}
-    </CollapsibleSection>
+    </section>
   );
 }
 
-/* ── Week in Brief ─────────────────────────────────────────────────────────── */
+/* --- H. Audio Player --- */
 
-function WeekInBrief({ stories }: { stories: WeeklyRecapStory[] }) {
-  if (stories.length === 0) return null;
-
-  return (
-    <CollapsibleSection id="wk-brief-heading" label="Week in Brief" defaultOpen={true}>
-      <div className="wk-brief__list">
-        {stories.map((story, i) => (
-          <article key={i} className="wk-brief__item">
-            <h3 className="wk-brief__headline">{story.headline}</h3>
-            <p className="wk-brief__summary">{story.summary}</p>
-          </article>
-        ))}
-      </div>
-    </CollapsibleSection>
-  );
-}
-
-/* ── Audio Player ──────────────────────────────────────────────────────────── */
-
-function WeeklyAudioPlayer({
+function AudioBar({
   audioUrl,
   durationSeconds,
 }: {
@@ -1080,11 +839,8 @@ function WeeklyAudioPlayer({
   };
 
   return (
-    <CollapsibleSection
-      id="wk-audio-heading"
-      label="On Air"
-      defaultOpen={true}
-    >
+    <section className="wk-audio-section" aria-labelledby="wk-audio-heading">
+      <h2 className="wk-section-label" id="wk-audio-heading" data-prefix="void --">On Air</h2>
       <div className="wk-audio__player">
         <audio
           ref={audioRef}
@@ -1142,11 +898,11 @@ function WeeklyAudioPlayer({
           )}
         </div>
       </div>
-    </CollapsibleSection>
+    </section>
   );
 }
 
-/* ── Issue Archive ─────────────────────────────────────────────────────────── */
+/* --- I. Issue Archive --- */
 
 interface ArchiveEntry {
   id: string;
@@ -1182,7 +938,7 @@ function IssueArchive({
             key={entry.id}
             className={`wk-archive__item${entry.id === currentId ? " wk-archive__item--current" : ""}`}
           >
-            <span className="wk-archive__issue">Issue #{entry.issue_number}</span>
+            <span className="wk-archive__issue">#{entry.issue_number}</span>
             <span className="wk-archive__range">
               {formatArchiveRange(entry.week_start, entry.week_end)}
             </span>
@@ -1260,6 +1016,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
         {digest && !loading && (
           <>
+            {/* A. Masthead */}
             <Masthead
               issueNumber={digest.issue_number}
               weekStart={digest.week_start}
@@ -1267,21 +1024,24 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               edition={digest.edition}
             />
 
+            {/* B. Cover Hero */}
+            <CoverHero
+              headline={digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")}
+              issueNumber={digest.issue_number}
+              sourceCount={digest.total_articles}
+            />
+
+            {/* C. Cover Body + Numbers + Timeline */}
             {digest.cover_text && digest.cover_text.length > 0 && (
-              <>
-                <CoverHero
-                  headline={digest.cover_headline || digest.cover_text[0]?.headline || ""}
-                  issueNumber={digest.issue_number}
-                />
-                <CoverSection
-                  stories={digest.cover_text}
-                  topLevelNumbers={digest.cover_numbers}
-                />
-              </>
+              <CoverBody
+                stories={digest.cover_text}
+                topLevelNumbers={digest.cover_numbers}
+              />
             )}
 
             <RevealFlourish />
 
+            {/* D. Opinions */}
             <OpinionsSection
               left={digest.opinion_left}
               center={digest.opinion_center}
@@ -1290,21 +1050,22 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
             <RevealFlourish />
 
-            <div className="wk-section--cream">
-              <BiasReport
-                text={digest.bias_report_text}
-                data={digest.bias_report_data}
-              />
-            </div>
+            {/* E. Week in Brief */}
+            <BriefList stories={digest?.recap_stories ?? []} />
 
             <InkRule />
 
-            <WeekInBrief stories={digest?.recap_stories ?? []} />
+            {/* F. Bias Report */}
+            <BiasStats
+              text={digest.bias_report_text}
+              data={digest.bias_report_data}
+            />
 
+            {/* G. Audio */}
             {digest.audio_url && (
               <>
                 <InkRule />
-                <WeeklyAudioPlayer
+                <AudioBar
                   audioUrl={digest.audio_url}
                   durationSeconds={digest.audio_duration_seconds}
                 />
@@ -1313,6 +1074,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
             <InkRule />
 
+            {/* H. Archive */}
             <IssueArchive
               entries={archive}
               currentId={digest.id}
