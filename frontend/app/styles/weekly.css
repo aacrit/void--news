@@ -73,32 +73,57 @@
   z-index: 99;
 }
 
-/* Back-to-main link — subtle, top-left, always visible */
-.wk-back {
-  position: fixed;
-  top: var(--space-3);
-  left: var(--space-4);
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: var(--fg-tertiary);
-  text-decoration: none;
-  letter-spacing: 0.04em;
+/* Top bar — back link + theme toggle, sticky */
+.wk-topbar {
+  position: sticky;
+  top: 0;
   z-index: 50;
-  opacity: 0.5;
-  transition: opacity 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background-color: color-mix(in srgb, #EDE4D0 85%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+:root[data-mode="dark"] .wk-topbar {
+  background-color: color-mix(in srgb, #1E1A16 85%, transparent);
+}
+
+@media (min-width: 768px) {
+  .wk-topbar {
+    padding: var(--space-2) var(--space-6);
+  }
+}
+
+/* Back link — arrow + real void logo */
+.wk-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--fg-secondary);
+  transition: color 200ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
 }
 
 .wk-back:hover {
-  opacity: 1;
   color: var(--wk-accent);
+  transform: translateX(-2px);
 }
 
-@media (max-width: 767px) {
-  .wk-back {
-    position: absolute;
-    top: var(--space-2);
-    left: var(--space-3);
-  }
+.wk-back__arrow {
+  font-size: var(--text-base);
+  line-height: 1;
+}
+
+.wk-back__logo {
+  color: var(--fg-secondary);
+  transition: color 200ms var(--ease-cinematic);
+}
+
+.wk-back:hover .wk-back__logo {
+  color: var(--fg-primary);
 }
 
 .wk-main {
