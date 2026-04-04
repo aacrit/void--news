@@ -297,8 +297,8 @@ _OVERLY_COMMON_ENTITIES = frozenset({
     "us", "u.s.", "united states", "america", "american",
     "trump", "donald trump", "president trump",
     "biden", "joe biden", "president biden",
-    "china", "russia", "iran", "israel",
-    "congress", "senate", "pentagon", "white house",
+    "china", "russia",
+    "congress", "senate", "white house",
     "the united states", "the us", "washington",
     "republicans", "democrats", "gop",
     # v5.6: Added to prevent false merges at lower entity threshold (3→2).
@@ -342,7 +342,7 @@ def merge_related_clusters(
     clusters: list[dict],
     min_shared_entities: int = 2,
     max_age_spread_hours: float = 48.0,
-    max_cluster_articles: int = 50,
+    max_cluster_articles: int = 75,
 ) -> list[dict]:
     """
     Post-clustering merge pass: consolidate micro-clusters that belong to the
@@ -524,7 +524,7 @@ def _title_words(title: str) -> set[str]:
 
 def merge_duplicate_title_clusters(
     clusters: list[dict],
-    jaccard_threshold: float = 0.55,
+    jaccard_threshold: float = 0.45,
     max_merged_articles: int = 120,
 ) -> list[dict]:
     """

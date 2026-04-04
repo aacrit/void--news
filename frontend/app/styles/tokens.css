@@ -93,14 +93,10 @@
 
   --cin-amber-muted: #B08A40;
 
-  /* ── Audio Console — adapts to light/dark mode ──
-     Light: warm parchment tones, organic with the newspaper page.
-     Dark: walnut broadcast surface (overridden below). */
-  --console-bg: #EBE5D6;
-  --console-bg-deep: #E3DDD0;
-  --console-fg: #2A2520;
-  --console-shadow: rgba(42, 37, 32, 0.08);
-  --console-shadow-strong: rgba(42, 37, 32, 0.12);
+  /* ── Audio Console — always-dark broadcast surface ── */
+  --console-bg: #1A1816;
+  --console-bg-deep: #151310;
+  --console-fg: #EDE8E0;
 
   /* ── Cinematic Palette Bridge ── */
   --cinematic-accent: var(--cin-amber);
@@ -440,32 +436,6 @@
   --laid-line-color-light: rgba(28, 26, 23, 1);
   --laid-chain-color-light: rgba(28, 26, 23, 1);
 
-  /* ── Ink Line Spectrum (logo-designer × cinematographer) ──
-     The Ink Line replaces the gradient spectrum bar.
-     A single organic rule with source marks at continuous lean positions.
-     Monochrome with lean color on interaction only. */
-  --ink-rule-color: var(--fg-primary);
-  --ink-rule-thickness: 1.5px;
-  --ink-mark-height: 10px;
-  --ink-mark-width: 2px;
-  --ink-mark-color: var(--fg-primary);
-  --ink-mark-opacity-major: 1;
-  --ink-mark-opacity-intl: 0.8;
-  --ink-mark-opacity-indie: 0.55;
-  --ink-label-color: var(--fg-muted);
-  --ink-tick-color: color-mix(in srgb, var(--cin-amber) 40%, var(--fg-tertiary));
-  --ink-tick-height: 6px;
-  --ink-slug-dur: 280ms;
-  --ink-slug-stagger: 40ms;
-  --ink-spread-dur: 500ms;
-  --ink-wave-gap: 60ms;
-  --ink-exit-dur: 180ms;
-  --ink-deboss: inset 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent);
-  --ink-rack-dim: 0.3;
-  --ink-rack-dur: 200ms;
-  --ink-density-mark-height: 8px;
-  --ink-density-mark-width: 1px;
-
   /* ── Dissolve Timing (cinematographer — theme toggle) ── */
   --dissolve-shadow-dur: 400ms;
   --dissolve-surface-dur: 500ms;
@@ -508,14 +478,7 @@
   --thumb-border:        var(--bg-secondary);
   --indicator-broadcast: #DC2626;
 
-  /* ── Audio Console — dark walnut broadcast surface ── */
-  --console-bg: #1A1816;
-  --console-bg-deep: #151310;
-  --console-fg: #EDE8E0;
-  --console-shadow: rgba(0, 0, 0, 0.25);
-  --console-shadow-strong: rgba(0, 0, 0, 0.35);
-
-  /* ── Voice Accent — scoped to radio console ── */
+  /* ── Voice Accent — scoped to always-dark radio console (same both modes) ── */
   --voice-accent:       #4DAFA0;
   --voice-accent-dim:   #3D9A8C;
   --voice-accent-ghost: rgba(77, 175, 160, 0.08);
@@ -670,17 +633,6 @@
   --laid-linen-opacity-light: 0.022;
   --laid-line-color-light: rgba(237, 232, 224, 1);
   --laid-chain-color-light: rgba(237, 232, 224, 1);
-
-  /* ── Ink Line Spectrum — Dark Mode ── */
-  --ink-rule-color: var(--fg-primary);
-  --ink-mark-color: var(--fg-primary);
-  --ink-mark-opacity-major: 1;
-  --ink-mark-opacity-intl: 0.75;
-  --ink-mark-opacity-indie: 0.5;
-  --ink-label-color: var(--fg-muted);
-  --ink-tick-color: color-mix(in srgb, var(--cin-amber) 50%, var(--fg-tertiary));
-  --ink-deboss: inset 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 15%, transparent);
-  --ink-rack-dim: 0.25;
 
   /* ── Methodology Scoring Stage (Dark) ── */
   --meth-bar-track: var(--bg-secondary);

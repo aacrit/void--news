@@ -22,8 +22,9 @@ import { useInView } from "../lib/sharedObserver";
 
 /* ---------------------------------------------------------------------------
    Sources Page — /sources
-   Visualizes all curated news sources on "The Ink Line" — a continuous
-   monochrome rule with density marks at each source's lean position.
+   Visualizes all curated news sources on a political lean spectrum.
+   Desktop: horizontal spectrum bar with logos above/below.
+   Mobile: horizontal swipeable card strip with scroll-snap.
    --------------------------------------------------------------------------- */
 
 type LeanCategory =

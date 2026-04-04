@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { ScaleIcon } from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
-   SpectrumChart — "The Ink Line" (Sources Page)
-
-   Same organic rule as DeepDiveSpectrum but for 1,000+ sources.
-   Sources rendered as thin density marks at their lean position.
-   Expanded mode reveals a name list with lean dots.
-   Click → tooltip only (source homepage accessible from name list).
+   SpectrumChart — Political lean spectrum visualization
+   Bar on top, all sources plotted below in 7 lean zones.
+   Logos overlap and fan out on zone hover.
+   Collapsed to ~4 rows; single expand button reveals all.
+   Each zone scrollable when expanded.
    --------------------------------------------------------------------------- */
 
 export interface SpectrumSource {
@@ -41,19 +39,15 @@ export function normalizeLean(raw: string | null): LeanCategory {
   return valid.includes(s as LeanCategory) ? (s as LeanCategory) : "center";
 }
 
-/** Map lean category to a 0-100 position for continuous placement */
-function leanToPosition(lean: LeanCategory): number {
-  const map: Record<LeanCategory, number> = {
-    "far-left": 10,
-    "left": 28,
-    "center-left": 40,
-    "center": 50,
-    "center-right": 60,
-    "right": 72,
-    "far-right": 90,
-  };
-  return map[lean];
-}
+const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
+  { key: "far-left", label: "Far Left", shortLabel: "Far L" },
+  { key: "left", label: "Left", shortLabel: "Left" },
+  { key: "center-left", label: "Center Left", shortLabel: "Ctr L" },
+  { key: "center", label: "Center", shortLabel: "Ctr" },
+  { key: "center-right", label: "Center Right", shortLabel: "Ctr R" },
+  { key: "right", label: "Right", shortLabel: "Right" },
+  { key: "far-right", label: "Far Right", shortLabel: "Far R" },
+];
 
 function tierLabel(tier: string): string {
   if (tier === "us_major") return "US Major";
@@ -61,21 +55,70 @@ function tierLabel(tier: string): string {
   return "Independent";
 }
 
-const ZONE_LABELS: { label: string; shortLabel: string }[] = [
-  { label: "Far Left", shortLabel: "FL" },
-  { label: "Left", shortLabel: "L" },
-  { label: "Ctr-Left", shortLabel: "CL" },
-  { label: "Center", shortLabel: "C" },
-  { label: "Ctr-Right", shortLabel: "CR" },
-  { label: "Right", shortLabel: "R" },
-  { label: "Far Right", shortLabel: "FR" },
-];
+function getFaviconUrl(sourceUrl: string): string {
+  if (!sourceUrl) return "";
+  try {
+    const domain = new URL(
+      sourceUrl.startsWith("http") ? sourceUrl : `https://${sourceUrl}`
+    ).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+  } catch {
+    return "";
+  }
+}
 
-const LEAN_ORDER: LeanCategory[] = [
-  "far-left", "left", "center-left", "center",
-  "center-right", "right", "far-right",
-];
+/* ---------------------------------------------------------------------------
+   SourceLogo — favicon circle with overlap + fan-out on zone hover
+   --------------------------------------------------------------------------- */
+function SourceLogo({
+  source,
+  onTooltip,
+}: {
+  source: SpectrumSource;
+  onTooltip: (source: SpectrumSource | null, el: HTMLElement | null) => void;
+}) {
+  const favicon = source.url ? getFaviconUrl(source.url) : "";
 
+  return (
+    <button
+      className="spectrum-logo"
+      aria-label={`${source.name} — ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
+      onPointerEnter={(e) => onTooltip(source, e.currentTarget)}
+      onPointerLeave={() => onTooltip(null, null)}
+      onFocus={(e) => onTooltip(source, e.currentTarget)}
+      onBlur={() => onTooltip(null, null)}
+    >
+      {favicon ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={favicon}
+            alt=""
+            width={20}
+            height={20}
+            className="spectrum-logo__img"
+            loading="lazy"
+            onError={(e) => {
+              const t = e.currentTarget;
+              t.style.display = "none";
+              const fb = t.nextElementSibling as HTMLElement | null;
+              if (fb) fb.style.display = "flex";
+            }}
+          />
+          <span className="spectrum-logo__fallback" style={{ display: "none" }}>
+            {source.name.charAt(0)}
+          </span>
+        </>
+      ) : (
+        <span className="spectrum-logo__fallback">{source.name.charAt(0)}</span>
+      )}
+    </button>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   SpectrumChart — main component
+   --------------------------------------------------------------------------- */
 interface SpectrumChartProps {
   sources: SpectrumSource[];
 }
@@ -88,31 +131,25 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     y: number;
   } | null>(null);
 
-  /* Group sources by lean, compute positions + zone counts */
-  const { marks, zoneCounts, sortedSources } = useMemo(() => {
-    const counts = new Map<LeanCategory, number>();
-    for (const lc of LEAN_ORDER) counts.set(lc, 0);
-
-    const items: { source: SpectrumSource; position: number; lean: LeanCategory }[] = [];
+  /* Group all sources by lean zone, sorted alphabetically */
+  const zones = useMemo(() => {
+    const map = new Map<LeanCategory, SpectrumSource[]>();
+    for (const zone of LEAN_ZONES) map.set(zone.key, []);
     for (const s of sources) {
       const lean = normalizeLean(s.political_lean_baseline);
-      counts.set(lean, (counts.get(lean) || 0) + 1);
-      // Add small jitter within the zone to spread marks
-      const basePos = leanToPosition(lean);
-      const jitter = (Math.random() - 0.5) * 8; // ±4% spread within zone
-      const position = Math.max(1, Math.min(99, basePos + jitter));
-      items.push({ source: s, position, lean });
+      map.get(lean)!.push(s);
     }
-
-    // Sort for the expanded name list: by lean position then name
-    const sorted = [...items].sort((a, b) => {
-      const ld = a.position - b.position;
-      if (Math.abs(ld) > 5) return ld;
-      return a.source.name.localeCompare(b.source.name);
-    });
-
-    return { marks: items, zoneCounts: counts, sortedSources: sorted };
+    for (const [, srcs] of map)
+      srcs.sort((a, b) => a.name.localeCompare(b.name));
+    return map;
   }, [sources]);
+
+  const maxInZone = useMemo(
+    () => Math.max(0, ...Array.from(zones.values()).map((s) => s.length)),
+    [zones]
+  );
+
+  const needsExpand = maxInZone > 4;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -122,11 +159,18 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const handleMarkHover = useCallback(
+  const handleTooltip = useCallback(
     (source: SpectrumSource | null, el: HTMLElement | null) => {
-      if (!source || !el) { setTooltip(null); return; }
+      if (!source || !el) {
+        setTooltip(null);
+        return;
+      }
       const rect = el.getBoundingClientRect();
-      setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
+      setTooltip({
+        source,
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      });
     },
     []
   );
@@ -137,104 +181,80 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
       role="img"
       aria-label="Political lean spectrum showing all curated news sources"
     >
-      {/* Ink Line: labels + rule + density marks */}
-      <div className="ink-line">
-        {/* Zone labels */}
-        <div className="ink-line__labels" aria-hidden="true">
-          {ZONE_LABELS.map((z) => (
-            <span key={z.label} className="ink-line__label">{z.shortLabel}</span>
-          ))}
-        </div>
-
-        {/* The rule */}
-        <div className="ink-line__rule-wrap">
-          <div className="ink-line__rule" />
-          <div className="ink-line__ticks" aria-hidden="true">
-            <span className="ink-line__tick" />
-            <span className="ink-line__tick" />
-            <span className="ink-line__tick" />
-            <span className="ink-line__tick" />
-            <span className="ink-line__tick" />
-            <span className="ink-line__tick" />
-          </div>
-          <span className="ink-line__fulcrum" aria-hidden="true">
-            <ScaleIcon size={16} animation="idle" />
-          </span>
-        </div>
-
-        {/* Density marks */}
-        <div className="spectrum-density">
-          {marks.map((m, i) => (
-            <button
-              key={`${m.source.slug}-${i}`}
-              className="spectrum-density__mark"
-              data-tier={m.source.tier}
-              aria-label={`${m.source.name} — ${m.lean.replace(/-/g, " ")}`}
-              style={{
-                left: `${m.position}%`,
-                "--lean-color": `var(--bias-${m.lean})`,
-              } as React.CSSProperties}
-              onPointerEnter={(e) => handleMarkHover(m.source, e.currentTarget)}
-              onPointerLeave={() => handleMarkHover(null, null)}
-              onFocus={(e) => handleMarkHover(m.source, e.currentTarget)}
-              onBlur={() => handleMarkHover(null, null)}
-            />
-          ))}
-        </div>
-
-        {/* Zone counts */}
-        <div className="spectrum-counts" aria-hidden="true">
-          {LEAN_ORDER.map((lc) => (
-            <span key={lc} className="spectrum-counts__zone">
-              {zoneCounts.get(lc) || 0}
+      {/* ---- Spectrum Bar ---- */}
+      <div className="spectrum-bar" aria-hidden="true">
+        {LEAN_ZONES.map((zone) => (
+          <div
+            key={zone.key}
+            className="spectrum-bar__zone"
+            data-lean={zone.key}
+          >
+            <span className="spectrum-bar__label">{zone.label}</span>
+            <span className="spectrum-bar__label--short">
+              {zone.shortLabel}
             </span>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      {/* Expanded name list */}
-      {expanded && (
-        <div className="spectrum-names">
-          {sortedSources.map((m, i) => (
-            <button
-              key={`${m.source.slug}-name-${i}`}
-              className="spectrum-names__item"
-              onPointerEnter={(e) => handleMarkHover(m.source, e.currentTarget)}
-              onPointerLeave={() => handleMarkHover(null, null)}
-              onFocus={(e) => handleMarkHover(m.source, e.currentTarget)}
-              onBlur={() => handleMarkHover(null, null)}
-            >
-              <span
-                className="spectrum-names__dot"
-                data-lean={m.lean}
-                aria-hidden="true"
-              />
-              {m.source.name}
-            </button>
-          ))}
+      {/* ---- All sources below ---- */}
+      <div
+        className={`spectrum-body${expanded ? " spectrum-body--expanded" : ""}${
+          needsExpand && !expanded ? " spectrum-body--collapsed" : ""
+        }`}
+      >
+        <div className="spectrum-body__grid">
+          {LEAN_ZONES.map((zone) => {
+            const srcs = zones.get(zone.key) || [];
+            return (
+              <div
+                key={zone.key}
+                className={`spectrum-zone${expanded ? " spectrum-zone--scrollable" : ""}`}
+                data-lean={zone.key}
+              >
+                <div className="spectrum-zone__logos">
+                  {srcs.map((s) => (
+                    <SourceLogo
+                      key={s.slug}
+                      source={s}
+                      onTooltip={handleTooltip}
+                    />
+                  ))}
+                </div>
+                {srcs.length > 0 && (
+                  <span className="spectrum-zone__count">{srcs.length}</span>
+                )}
+              </div>
+            );
+          })}
         </div>
+        {needsExpand && !expanded && (
+          <div className="spectrum-body__fade" aria-hidden="true" />
+        )}
+      </div>
+
+      {/* ---- Single expand/collapse ---- */}
+      {needsExpand && (
+        <button
+          className="spectrum-expand-btn"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+        >
+          {expanded ? "Show fewer" : `Show all ${sources.length}`}
+        </button>
       )}
 
-      {/* Expand / Collapse */}
-      <button
-        className="spectrum-expand-btn"
-        onClick={() => setExpanded(!expanded)}
-        aria-expanded={expanded}
-      >
-        {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
-      </button>
-
-      {/* Tooltip */}
+      {/* ---- Tooltip ---- */}
       {tooltip && (
         <div
-          className="ink-line__tooltip"
+          className="spectrum-tooltip"
           style={{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }}
           role="tooltip"
         >
-          <p className="ink-line__tooltip-name">{tooltip.source.name}</p>
-          <p className="ink-line__tooltip-lean">
+          <p className="spectrum-tooltip__name">{tooltip.source.name}</p>
+          <p className="spectrum-tooltip__lean">
             <span
-              className="ink-line__tooltip-dot"
+              className="spectrum-tooltip__lean-dot"
               data-lean={normalizeLean(tooltip.source.political_lean_baseline)}
               aria-hidden="true"
             />
@@ -242,16 +262,16 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
               .replace(/-/g, " ")
               .replace(/\b\w/g, (c) => c.toUpperCase())}
           </p>
-          <p className="ink-line__tooltip-tier">
+          <p className="spectrum-tooltip__tier">
             {tierLabel(tooltip.source.tier)}
           </p>
           {tooltip.source.country && (
-            <p style={{ fontFamily: "var(--font-structural)", fontSize: "var(--text-xs)", color: "var(--fg-muted)", marginBottom: "2px" }}>
+            <p className="spectrum-tooltip__country">
               {tooltip.source.country}
             </p>
           )}
           {tooltip.source.credibility_notes && (
-            <p style={{ fontFamily: "var(--font-structural)", fontSize: "var(--text-xs)", color: "var(--fg-tertiary)", lineHeight: 1.5, borderTop: "1px solid var(--divider)", marginTop: "var(--space-2)", paddingTop: "var(--space-2)" }}>
+            <p className="spectrum-tooltip__notes">
               {tooltip.source.credibility_notes}
             </p>
           )}
