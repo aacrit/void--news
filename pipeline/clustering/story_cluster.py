@@ -518,7 +518,11 @@ _TITLE_STOPWORDS = frozenset({
     "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
     "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
     "has", "have", "had", "its", "it", "as", "after", "over", "up", "that",
-    "this", "not", "no", "says", "said", "new", "amid",
+    "this", "not", "no", "says", "said", "new", "amid", "more", "than",
+    "about", "how", "what", "why", "who", "when", "where", "which",
+    "will", "would", "could", "should", "may", "might", "can",
+    "reports", "report", "sources", "according", "also", "first",
+    "two", "one", "three", "us", "announces", "amid", "while",
 })
 
 
@@ -589,7 +593,16 @@ def merge_duplicate_title_clusters(
             if union_size == 0:
                 continue
             jaccard = intersection / union_size
-            if jaccard < jaccard_threshold:
+
+            # Relaxed threshold for high-source cluster pairs: both 10+ sources
+            # are almost certainly sub-events of the same mega-story.
+            # "Iran Air Defense System" + "US F-15 Shot Down Over Iran" share
+            # only "iran" in title words (Jaccard ~0.15) but are the same story.
+            src_i = clusters[i].get("source_count", 0)
+            src_j = clusters[j].get("source_count", 0)
+            effective_threshold = 0.30 if (src_i >= 10 and src_j >= 10) else jaccard_threshold
+
+            if jaccard < effective_threshold:
                 continue
 
             # Size gate
