@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient, type RealtimeChannel } from '@supabase/supabase-js';
-import type { Edition, ShipRequest } from './types';
+import type { Edition, ShipRequest, ShipReply } from './types';
 
 // Supabase project credentials — must be set via environment variables.
 // Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
@@ -377,4 +377,44 @@ export async function fetchShipStats(): Promise<Record<string, number>> {
     counts[row.status] = (counts[row.status] || 0) + 1;
   }
   return counts;
+}
+
+/** Fetch replies for a ship request */
+export async function fetchShipReplies(requestId: string): Promise<ShipReply[]> {
+  if (!_client) return [];
+  const { data, error } = await _client
+    .from('ship_replies')
+    .select('*')
+    .eq('request_id', requestId)
+    .order('created_at', { ascending: true });
+  if (error || !data) return [];
+  return data as ShipReply[];
+}
+
+/** Submit a reply to a ship request */
+export async function submitShipReply(requestId: string, body: string, fingerprint: string): Promise<ShipReply | null> {
+  if (!_client) return null;
+  const { data, error } = await _client
+    .from('ship_replies')
+    .insert([{ request_id: requestId, body, fingerprint }])
+    .select()
+    .single();
+  if (error || !data) return null;
+  return data as ShipReply;
+}
+
+/** Subscribe to realtime changes on ship_replies */
+export function subscribeToShipReplies(
+  onInsert: (reply: ShipReply) => void
+): (() => void) {
+  if (!_client) return () => {};
+  const channel: RealtimeChannel = _client
+    .channel('ship-replies-realtime')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'ship_replies' },
+      (payload) => { onInsert(payload.new as ShipReply); }
+    )
+    .subscribe();
+  return () => { channel.unsubscribe(); };
 }

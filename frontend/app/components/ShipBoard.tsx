@@ -1,20 +1,29 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import {
   fetchShipRequests,
   submitShipRequest,
   voteOnShipRequest,
   subscribeToShipRequests,
+  fetchShipReplies,
+  submitShipReply,
+  subscribeToShipReplies,
   generateFingerprint,
 } from '../lib/supabase';
-import type { ShipRequest, ShipStatus, ShipCategory, Edition } from '../lib/types';
+import type { ShipRequest, ShipReply, ShipStatus, ShipCategory, Edition } from '../lib/types';
 
 /* ==========================================================================
-   void --ship — "Request, vote, watch it deploy."
-   Public Kanban board for bugs/features. Realtime via Supabase.
-   7-scene cinematic motion. Full accessibility (focus trap, ARIA).
+   void --ship v2 — "Form-first canvas. Graph paper. Extremely dynamic."
+
+   Tier 1 (Hero):   Submit form always visible on canvas, graph-paper bg,
+                     category pill toggle, request templates.
+   Tier 2 (Compact): Summary line + Pulse Graph sparkline, ship clock.
+   Tier 3 (Expand):  Kanban board + void --log (collapsed by default),
+                     thread replies, ship diff summaries.
+
+   All 7 cinematic scenes preserved. 5 new features added.
    ========================================================================== */
 
 const STATUS_ORDER: ShipStatus[] = ['submitted', 'triaged', 'building', 'shipped', 'wontship'];
@@ -33,10 +42,18 @@ const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
 
 const EDITION_SLUGS: Edition[] = ['world', 'us', 'europe', 'south-asia'];
 
+// ---- Templates ----
+const BUG_TEMPLATE = `## What happened\n\n## What I expected\n\n## Steps to reproduce\n1. \n2. \n`;
+const FEATURE_TEMPLATE = `## What I want\n\n## Why it matters\n\n`;
+
 // ---- Rate limit: max 5 submissions per hour ----
 const RATE_LIMIT_KEY = 'void-ship-submissions';
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 3600000;
+
+// ---- Reply rate limit: max 3 replies per hour ----
+const REPLY_RATE_LIMIT_KEY = 'void-ship-replies';
+const REPLY_RATE_LIMIT_MAX = 3;
 
 function checkRateLimit(): boolean {
   try {
@@ -55,6 +72,26 @@ function recordSubmission(): void {
     timestamps.push(Date.now());
     const recent = timestamps.filter(t => Date.now() - t < RATE_LIMIT_WINDOW);
     localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(recent));
+  } catch { /* noop */ }
+}
+
+function checkReplyRateLimit(): boolean {
+  try {
+    const raw = localStorage.getItem(REPLY_RATE_LIMIT_KEY);
+    if (!raw) return true;
+    const timestamps: number[] = JSON.parse(raw);
+    const now = Date.now();
+    return timestamps.filter(t => now - t < RATE_LIMIT_WINDOW).length < REPLY_RATE_LIMIT_MAX;
+  } catch { return true; }
+}
+
+function recordReply(): void {
+  try {
+    const raw = localStorage.getItem(REPLY_RATE_LIMIT_KEY);
+    const timestamps: number[] = raw ? JSON.parse(raw) : [];
+    timestamps.push(Date.now());
+    const recent = timestamps.filter(t => Date.now() - t < RATE_LIMIT_WINDOW);
+    localStorage.setItem(REPLY_RATE_LIMIT_KEY, JSON.stringify(recent));
   } catch { /* noop */ }
 }
 
@@ -99,6 +136,16 @@ function shipDuration(created: string, shipped: string): string {
   return `${days}d ${hours % 24}h`;
 }
 
+function elapsedTimer(created: string): string {
+  const diff = Date.now() - new Date(created).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ${mins % 60}m`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ${hours % 24}h`;
+}
+
 function computeMetrics(requests: ShipRequest[]) {
   const shipped = requests.filter(r => r.status === 'shipped');
   const open = requests.filter(r => ['submitted', 'triaged', 'building'].includes(r.status));
@@ -114,14 +161,12 @@ function computeMetrics(requests: ShipRequest[]) {
   return { totalShipped: shipped.length, openCount: open.length, totalRequests: requests.length, avgShipTimeHours: avgShipTime };
 }
 
-// ---- Edition auto-detect (F21) ----
+// ---- Edition auto-detect ----
 function detectEdition(): Edition | null {
   if (typeof window === 'undefined') return null;
-  // Check URL search params
   const params = new URLSearchParams(window.location.search);
   const fromParam = params.get('edition');
   if (fromParam && EDITION_SLUGS.includes(fromParam as Edition)) return fromParam as Edition;
-  // Check referrer for edition slug
   try {
     const ref = document.referrer;
     if (ref) {
@@ -150,6 +195,68 @@ function useIsMobile(breakpoint = 768): boolean {
   return isMobile;
 }
 
+// ---- Organic Divider ----
+function OrganicDivider() {
+  return (
+    <svg className="ship-divider" viewBox="0 0 600 4" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,2 C50,0.5 100,3.5 150,2 C200,0.5 250,3 300,2 C350,1 400,3.5 450,2 C500,0.5 550,3 600,2" />
+    </svg>
+  );
+}
+
+// ---- Pulse Graph (Feature #3) ----
+function PulseGraph({ requests }: { requests: ShipRequest[] }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const { submittedPath, shippedPath } = useMemo(() => {
+    const now = Date.now();
+    const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+    const dayBins: { submitted: number[]; shipped: number[] } = { submitted: Array(30).fill(0), shipped: Array(30).fill(0) };
+
+    for (const r of requests) {
+      const createdMs = new Date(r.created_at).getTime();
+      if (createdMs >= thirtyDaysAgo) {
+        const dayIdx = Math.min(29, Math.floor((createdMs - thirtyDaysAgo) / (24 * 60 * 60 * 1000)));
+        dayBins.submitted[dayIdx]++;
+      }
+      if (r.shipped_at) {
+        const shippedMs = new Date(r.shipped_at).getTime();
+        if (shippedMs >= thirtyDaysAgo) {
+          const dayIdx = Math.min(29, Math.floor((shippedMs - thirtyDaysAgo) / (24 * 60 * 60 * 1000)));
+          dayBins.shipped[dayIdx]++;
+        }
+      }
+    }
+
+    const maxVal = Math.max(1, ...dayBins.submitted, ...dayBins.shipped);
+    const toPath = (bins: number[]) => {
+      const points = bins.map((v, i) => {
+        const x = (i / 29) * 280;
+        const y = 34 - (v / maxVal) * 30;
+        return `${x},${y}`;
+      });
+      return `M${points.join(' L')}`;
+    };
+
+    return { submittedPath: toPath(dayBins.submitted), shippedPath: toPath(dayBins.shipped) };
+  }, [requests]);
+
+  return (
+    <svg
+      ref={svgRef}
+      className="ship-pulse-graph"
+      viewBox="0 0 280 36"
+      preserveAspectRatio="none"
+      aria-label="Request activity over the last 30 days"
+      role="img"
+    >
+      <path className="ship-pulse-graph__submitted" d={submittedPath} />
+      <path className="ship-pulse-graph__shipped" d={shippedPath} />
+    </svg>
+  );
+}
+
+
 /* ===========================================================================
    MAIN COMPONENT
    =========================================================================== */
@@ -157,11 +264,13 @@ function useIsMobile(breakpoint = 768): boolean {
 export default function ShipBoard() {
   const [requests, setRequests] = useState<ShipRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
   const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
   const fingerprintRef = useRef<string>('');
-  const submitBtnRef = useRef<HTMLButtonElement>(null);
   const isMobile = useIsMobile();
+
+  // Expandable sections
+  const [boardOpen, setBoardOpen] = useState(false);
+  const [logOpen, setLogOpen] = useState(false);
 
   // F20: track IDs that arrived via INSERT (not UPDATE)
   const newIdsRef = useRef<Set<string>>(new Set());
@@ -175,8 +284,24 @@ export default function ShipBoard() {
   const [metricsLanded, setMetricsLanded] = useState(false);
   const metricsAnimatedRef = useRef(false);
 
+  // Form state (inline, not modal)
+  const [formTitle, setFormTitle] = useState('');
+  const [formDesc, setFormDesc] = useState('');
+  const [formCategory, setFormCategory] = useState<ShipCategory>('feature');
+  const [formHoneypot, setFormHoneypot] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState(false);
+  const userHasTypedRef = useRef(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const editionRef = useRef<Edition | null>(null);
+
+  // Reply realtime subscription
+  const [replyMap, setReplyMap] = useState<Record<string, ShipReply[]>>({});
+
   useEffect(() => {
     fingerprintRef.current = generateFingerprint();
+    editionRef.current = detectEdition();
     setVotedIds(getVotedIds());
     fetchShipRequests().then(data => {
       setRequests(data);
@@ -185,12 +310,10 @@ export default function ShipBoard() {
     const unsub = subscribeToShipRequests((payload) => {
       setRequests(prev => {
         if (payload.eventType === 'INSERT') {
-          // F20: track new inserts for animation
           newIdsRef.current.add(payload.new.id);
           return [payload.new, ...prev];
         }
         if (payload.eventType === 'UPDATE') {
-          // Scene 6: detect shipped transitions
           if (payload.new.status === 'shipped' && payload.old.status !== 'shipped') {
             setJustShippedIds(s => new Set([...s, payload.new.id]));
             setTimeout(() => {
@@ -207,7 +330,16 @@ export default function ShipBoard() {
         return prev;
       });
     });
-    return unsub;
+
+    // Subscribe to reply realtime
+    const unsubReplies = subscribeToShipReplies((reply: ShipReply) => {
+      setReplyMap(prev => ({
+        ...prev,
+        [reply.request_id]: [...(prev[reply.request_id] || []), reply],
+      }));
+    });
+
+    return () => { unsub(); unsubReplies(); };
   }, []);
 
   // Scene 5: countup animation after data loads
@@ -248,7 +380,6 @@ export default function ShipBoard() {
     return () => cancelAnimationFrame(raf);
   }, [loading, requests]);
 
-  // When metrics change after initial animation, update instantly
   const liveMetrics = computeMetrics(requests);
   const displayMetrics = animatedMetrics && !metricsLanded ? animatedMetrics : liveMetrics;
 
@@ -263,6 +394,66 @@ export default function ShipBoard() {
     }
   }, [votedIds]);
 
+  // ---- Category toggle with template injection ----
+  const handleCategoryChange = useCallback((cat: ShipCategory) => {
+    setFormCategory(cat);
+    if (!userHasTypedRef.current && formDesc.trim() === '') {
+      setFormDesc(cat === 'bug' ? BUG_TEMPLATE : FEATURE_TEMPLATE);
+    }
+  }, [formDesc]);
+
+  // Track user typing
+  const handleDescChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormDesc(e.target.value);
+    if (e.target.value.trim() !== '' &&
+        e.target.value !== BUG_TEMPLATE &&
+        e.target.value !== FEATURE_TEMPLATE) {
+      userHasTypedRef.current = true;
+    }
+    if (e.target.value.trim() === '') {
+      userHasTypedRef.current = false;
+    }
+  }, []);
+
+  // ---- Form submit ----
+  const canSubmit = formTitle.trim().length >= 5 && formDesc.trim().length >= 10 && !formSubmitting;
+  const rateLimited = !checkRateLimit();
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit || rateLimited) return;
+    if (formHoneypot) { setFormSuccess(true); return; }
+    setFormSubmitting(true);
+    setFormError('');
+    const deviceInfo = typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 180) : null;
+    const result = await submitShipRequest({
+      title: formTitle.trim(),
+      description: formDesc.trim(),
+      category: formCategory,
+      area: 'other',
+      edition_context: editionRef.current,
+      device_info: deviceInfo,
+      ip_hash: fingerprintRef.current,
+    });
+    if (result) {
+      recordSubmission();
+      setFormSuccess(true);
+    } else {
+      setFormError('Failed to submit. Please try again.');
+    }
+    setFormSubmitting(false);
+  };
+
+  const resetForm = useCallback(() => {
+    setFormTitle('');
+    setFormDesc('');
+    setFormCategory('feature');
+    setFormSuccess(false);
+    setFormError('');
+    userHasTypedRef.current = false;
+    titleInputRef.current?.focus();
+  }, []);
+
   // Group by status
   const grouped: Record<ShipStatus, ShipRequest[]> = { submitted: [], triaged: [], building: [], shipped: [], wontship: [] };
   for (const r of requests) { if (grouped[r.status]) grouped[r.status].push(r); }
@@ -274,107 +465,258 @@ export default function ShipBoard() {
     }
   }
 
-  // F06: on mobile, hide empty columns (except submitted which always shows)
+  // Recent activity (5 most recent)
+  const recentActivity = useMemo(() =>
+    requests
+      .slice()
+      .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+      .slice(0, 5),
+    [requests]
+  );
+
   const visibleStatuses = isMobile
     ? STATUS_ORDER.filter(s => grouped[s].length > 0 || s === 'submitted')
     : STATUS_ORDER;
 
   return (
     <main className="ship-page">
+      {/* ---- Back nav ---- */}
       <nav className="ship-cold-open-back">
         <Link href="/" className="ship-page__back" aria-label="Back to void --news">&larr; void --news</Link>
       </nav>
 
+      {/* ---- Header ---- */}
       <header className="ship-page__header ship-cold-open-header">
         <p className="ship-page__brand">void --ship</p>
         <h1 className="ship-page__title">Request, vote, watch it deploy.</h1>
         <p className="ship-page__subtitle">
           Submit bugs and features. The ones you vote for get built — often within hours.
-          Every shipped item links to its commit.
         </p>
-        <button
-          ref={submitBtnRef}
-          className="ship-actions__submit-btn"
-          onClick={() => setShowForm(true)}
-        >
-          + Submit Request
-        </button>
       </header>
 
-      <div className="ship-metrics ship-cold-open-metrics">
-        <div className="ship-metrics__item">
-          <span className={`ship-metrics__value ship-metrics__value--gold${metricsLanded ? ' ship-metrics__value--landed' : ''}`}>
-            {displayMetrics.totalShipped}
-          </span>
-          <span className="ship-metrics__label">Shipped</span>
-        </div>
-        <div className="ship-metrics__item">
-          <span className={`ship-metrics__value${metricsLanded ? ' ship-metrics__value--landed' : ''}`}>
-            {displayMetrics.openCount}
-          </span>
-          <span className="ship-metrics__label">Open</span>
-        </div>
-        <div className="ship-metrics__item">
-          <span className={`ship-metrics__value${metricsLanded ? ' ship-metrics__value--landed' : ''}`}>
-            {displayMetrics.totalRequests}
-          </span>
-          <span className="ship-metrics__label">Total</span>
-        </div>
-        <div className="ship-metrics__item">
-          <span className={`ship-metrics__value ship-metrics__value--gold${metricsLanded ? ' ship-metrics__value--landed' : ''}`}>
-            {displayMetrics.avgShipTimeHours > 0 ? `${displayMetrics.avgShipTimeHours.toFixed(1)}h` : '\u2014'}
-          </span>
-          <span className="ship-metrics__label">Avg Ship Time</span>
-        </div>
-      </div>
+      {/* ==== TIER 1: FORM-FIRST CANVAS ==== */}
+      <section className="ship-form-canvas ship-cold-open-metrics" aria-label="Submit a request">
+        {formSuccess ? (
+          <div className="ship-form-canvas__success">
+            <div className="ship-form-canvas__success-icon" aria-hidden="true">&#9998;</div>
+            <p className="ship-form-canvas__success-text">Request submitted. It will appear on the board momentarily.</p>
+            <button type="button" className="ship-form-canvas__reset-btn" onClick={resetForm}>
+              Submit another
+            </button>
+          </div>
+        ) : (
+          <form className="ship-form-canvas__form" onSubmit={handleFormSubmit}>
+            {rateLimited && (
+              <div className="ship-form-canvas__rate-limit" role="alert">
+                Slow down — max {RATE_LIMIT_MAX} requests per hour.
+              </div>
+            )}
 
-      {loading ? (
-        <div className="ship-board__loading" aria-label="Loading requests">
-          {STATUS_ORDER.map(status => (
-            <div key={status} className="ship-board__loading-col">
-              <div className="ship-board__loading-header" />
-              <div className="ship-board__loading-card" />
-              <div className="ship-board__loading-card ship-board__loading-card--short" />
+            {/* Honeypot */}
+            <div className="ship-form__honeypot" aria-hidden="true">
+              <label htmlFor="ship-website">Website</label>
+              <input id="ship-website" type="text" value={formHoneypot} onChange={(e) => setFormHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="ship-board" role="region" aria-label="Ship request board">
-          {visibleStatuses.map(status => (
-            <section
-              key={status}
-              className={`ship-column ship-column--${status} ship-cold-open-column${!isMobile && grouped[status].length === 0 ? '' : ''}`}
-              aria-label={`${STATUS_LABELS[status]} requests`}
+
+            {/* Category pill toggle */}
+            <div className="ship-category-toggle" role="radiogroup" aria-label="Request type">
+              {CATEGORY_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={formCategory === opt.value}
+                  className={`ship-category-toggle__pill${formCategory === opt.value ? ' ship-category-toggle__pill--active' : ''} ship-category-toggle__pill--${opt.value}`}
+                  onClick={() => handleCategoryChange(opt.value)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+              <div
+                className="ship-category-toggle__indicator"
+                style={{ transform: formCategory === 'bug' ? 'translateX(0)' : 'translateX(100%)' }}
+                aria-hidden="true"
+              />
+            </div>
+
+            {/* Title */}
+            <div className="ship-form-canvas__field">
+              <input
+                ref={titleInputRef}
+                id="ship-title"
+                className="ship-form-canvas__title-input"
+                type="text"
+                maxLength={120}
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="Title your request"
+                required
+                aria-label="Request title"
+              />
+              <div className="ship-form-canvas__char-count">
+                <span className={formTitle.length > 100 ? 'ship-form-canvas__char-count--warn' : ''}>{formTitle.length}/120</span>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="ship-form-canvas__field">
+              <textarea
+                id="ship-desc"
+                className="ship-form-canvas__desc-input"
+                maxLength={2000}
+                value={formDesc}
+                onChange={handleDescChange}
+                placeholder={formCategory === 'bug' ? 'Describe the bug...' : 'Describe the feature...'}
+                required
+                aria-label="Request description"
+              />
+              <div className="ship-form-canvas__char-count">
+                <span className={formDesc.length > 1800 ? 'ship-form-canvas__char-count--warn' : ''}>{formDesc.length}/2000</span>
+              </div>
+            </div>
+
+            {formError && <p className="ship-form-canvas__error" role="alert">{formError}</p>}
+
+            <button
+              type="submit"
+              className={`ship-form-canvas__submit${formSubmitting ? ' ship-form-canvas__submit--loading' : ''}`}
+              disabled={!canSubmit || rateLimited}
             >
-              <div className="ship-column__header">
-                <span className="ship-column__title">{STATUS_LABELS[status]}</span>
-                <span className="ship-column__count">{grouped[status].length}</span>
-              </div>
-              <div className="ship-column__cards">
-                {grouped[status].length === 0 ? (
-                  <div className="ship-column__empty">
-                    {status === 'submitted' ? 'No requests yet' : status === 'shipped' ? 'Nothing shipped yet' : 'Empty'}
-                  </div>
-                ) : grouped[status].map(req => (
-                  <ShipCard
-                    key={req.id}
-                    request={req}
-                    hasVoted={votedIds.has(req.id)}
-                    onVote={handleVote}
-                    isNew={newIdsRef.current.has(req.id)}
-                    onAnimationEnd={() => newIdsRef.current.delete(req.id)}
-                    isJustShipped={justShippedIds.has(req.id)}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+              {formSubmitting ? 'Submitting...' : 'Submit Request'}
+            </button>
+          </form>
+        )}
+      </section>
+
+      <OrganicDivider />
+
+      {/* ==== TIER 2: COMPACT DASHBOARD ==== */}
+      {!loading && requests.length > 0 && (
+        <section className="ship-dashboard ship-cold-open-column" aria-label="Dashboard summary">
+          <div className="ship-dashboard__summary">
+            <div className="ship-dashboard__metrics">
+              <span className={`ship-dashboard__metric ship-dashboard__metric--gold${metricsLanded ? ' ship-dashboard__metric--landed' : ''}`}>
+                {displayMetrics.totalShipped} shipped
+              </span>
+              <span className="ship-dashboard__sep" aria-hidden="true">&middot;</span>
+              <span className={`ship-dashboard__metric${metricsLanded ? ' ship-dashboard__metric--landed' : ''}`}>
+                {displayMetrics.openCount} open
+              </span>
+              <span className="ship-dashboard__sep" aria-hidden="true">&middot;</span>
+              <span className={`ship-dashboard__metric ship-dashboard__metric--gold${metricsLanded ? ' ship-dashboard__metric--landed' : ''}`}>
+                avg {displayMetrics.avgShipTimeHours > 0 ? `${displayMetrics.avgShipTimeHours.toFixed(1)}h` : '\u2014'}
+              </span>
+            </div>
+            <PulseGraph requests={requests} />
+          </div>
+          <div className="ship-dashboard__actions">
+            <button
+              className={`ship-dashboard__toggle${boardOpen ? ' ship-dashboard__toggle--open' : ''}`}
+              onClick={() => setBoardOpen(v => !v)}
+              aria-expanded={boardOpen}
+              aria-controls="ship-board-section"
+            >
+              {boardOpen ? '\u25B4 Hide Board' : '\u25BE View Board'}
+            </button>
+            <button
+              className={`ship-dashboard__toggle${logOpen ? ' ship-dashboard__toggle--open' : ''}`}
+              onClick={() => setLogOpen(v => !v)}
+              aria-expanded={logOpen}
+              aria-controls="ship-log-section"
+            >
+              {logOpen ? '\u25B4 Hide Log' : '\u25BE View Log'}
+            </button>
+          </div>
+        </section>
       )}
 
-      {/* void --log: full activity feed */}
-      {!loading && requests.length > 0 && (
-        <section className="ship-log ship-cold-open-column" aria-label="void --log activity feed">
+      {/* ---- Recent Activity (always visible) ---- */}
+      {!loading && recentActivity.length > 0 && (
+        <section className="ship-recent ship-cold-open-column" aria-label="Recent activity">
+          <h2 className="ship-recent__title">Recent</h2>
+          <div className="ship-recent__list">
+            {recentActivity.map(r => (
+              <div key={r.id} className={`ship-recent__item ship-recent__item--${r.status}`}>
+                <span className={`ship-recent__status ship-recent__status--${r.status}`}>
+                  {STATUS_LABELS[r.status]}
+                </span>
+                <span className="ship-recent__item-title">{r.title}</span>
+                <span className="ship-recent__time">{timeAgo(r.updated_at || r.created_at)}</span>
+                {['submitted', 'triaged', 'building'].includes(r.status) && (
+                  <span className="ship-recent__clock">{elapsedTimer(r.created_at)}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <OrganicDivider />
+
+      {/* ==== TIER 3: EXPANDABLE BOARD ==== */}
+      {boardOpen && !loading && (
+        <section
+          id="ship-board-section"
+          className="ship-board-section ship-board-section--open"
+          aria-label="Ship request board"
+        >
+          {/* Loading skeleton */}
+          {loading ? (
+            <div className="ship-board__loading" aria-label="Loading requests">
+              {STATUS_ORDER.map(status => (
+                <div key={status} className="ship-board__loading-col">
+                  <div className="ship-board__loading-header" />
+                  <div className="ship-board__loading-card" />
+                  <div className="ship-board__loading-card ship-board__loading-card--short" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="ship-board" role="region" aria-label="Kanban board">
+              {visibleStatuses.map(status => (
+                <section
+                  key={status}
+                  className={`ship-column ship-column--${status}`}
+                  aria-label={`${STATUS_LABELS[status]} requests`}
+                >
+                  <div className="ship-column__header">
+                    <span className="ship-column__title">{STATUS_LABELS[status]}</span>
+                    <span className="ship-column__count">{grouped[status].length}</span>
+                  </div>
+                  <div className="ship-column__cards">
+                    {grouped[status].length === 0 ? (
+                      <div className="ship-column__empty">
+                        {status === 'submitted' ? 'No requests yet' : status === 'shipped' ? 'Nothing shipped yet' : 'Empty'}
+                      </div>
+                    ) : grouped[status].map(req => (
+                      <ShipCard
+                        key={req.id}
+                        request={req}
+                        hasVoted={votedIds.has(req.id)}
+                        onVote={handleVote}
+                        isNew={newIdsRef.current.has(req.id)}
+                        onAnimationEnd={() => newIdsRef.current.delete(req.id)}
+                        isJustShipped={justShippedIds.has(req.id)}
+                        fingerprint={fingerprintRef.current}
+                        replies={replyMap[req.id] || []}
+                        onRepliesLoaded={(id, replies) => setReplyMap(prev => ({ ...prev, [id]: replies }))}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ==== TIER 3: EXPANDABLE LOG ==== */}
+      {logOpen && !loading && requests.length > 0 && (
+        <section
+          id="ship-log-section"
+          className="ship-log ship-board-section--open"
+          aria-label="void --log activity feed"
+        >
           <h2 className="ship-log__title">void --log</h2>
           <div className="ship-log__entries">
             {requests
@@ -408,22 +750,12 @@ export default function ShipBoard() {
           </div>
         </section>
       )}
-
-      {showForm && (
-        <SubmitForm
-          onClose={() => {
-            setShowForm(false);
-            submitBtnRef.current?.focus();
-          }}
-          fingerprint={fingerprintRef.current}
-        />
-      )}
     </main>
   );
 }
 
 /* ===========================================================================
-   SHIP CARD
+   SHIP CARD (with Ship Clock, Ship Diff, Thread Replies)
    =========================================================================== */
 
 function ShipCard({
@@ -433,6 +765,9 @@ function ShipCard({
   isNew,
   onAnimationEnd,
   isJustShipped,
+  fingerprint,
+  replies,
+  onRepliesLoaded,
 }: {
   request: ShipRequest;
   hasVoted: boolean;
@@ -440,11 +775,15 @@ function ShipCard({
   isNew: boolean;
   onAnimationEnd: () => void;
   isJustShipped: boolean;
+  fingerprint: string;
+  replies: ShipReply[];
+  onRepliesLoaded: (id: string, replies: ShipReply[]) => void;
 }) {
   const r = request;
   const isShipped = r.status === 'shipped';
   const isBuilding = r.status === 'building';
   const isWontShip = r.status === 'wontship';
+  const isOpen = ['submitted', 'triaged', 'building'].includes(r.status);
 
   // F11: expandable descriptions
   const [expanded, setExpanded] = useState(false);
@@ -454,7 +793,6 @@ function ShipCard({
   useEffect(() => {
     const el = descRef.current;
     if (!el) return;
-    // Check if text is actually clamped
     setIsClamped(el.scrollHeight > el.clientHeight + 1);
   }, [r.description]);
 
@@ -466,6 +804,65 @@ function ShipCard({
       setArrowPop(true);
     }
   }, [onVote, r.id, hasVoted]);
+
+  // Ship Clock (Feature #1): live timer, updates every 60s
+  const [clockValue, setClockValue] = useState(() => isOpen ? elapsedTimer(r.created_at) : '');
+  const [clockFrozen, setClockFrozen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const interval = setInterval(() => {
+      setClockValue(elapsedTimer(r.created_at));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [isOpen, r.created_at]);
+
+  // Freeze clock when shipped via realtime
+  useEffect(() => {
+    if (isJustShipped && r.shipped_at) {
+      setClockValue(shipDuration(r.created_at, r.shipped_at));
+      setClockFrozen(true);
+    }
+  }, [isJustShipped, r.shipped_at, r.created_at]);
+
+  // Ship Diff (Feature #4)
+  const [diffOpen, setDiffOpen] = useState(false);
+
+  // Thread Replies (Feature #5)
+  const [threadOpen, setThreadOpen] = useState(false);
+  const [replyBody, setReplyBody] = useState('');
+  const [repliesLoaded, setRepliesLoaded] = useState(false);
+  const [replySubmitting, setReplySubmitting] = useState(false);
+
+  const handleThreadToggle = useCallback(async () => {
+    if (!threadOpen && !repliesLoaded) {
+      const fetched = await fetchShipReplies(r.id);
+      onRepliesLoaded(r.id, fetched);
+      setRepliesLoaded(true);
+    }
+    setThreadOpen(v => !v);
+  }, [threadOpen, repliesLoaded, r.id, onRepliesLoaded]);
+
+  const handleReplySubmit = useCallback(async () => {
+    if (!replyBody.trim() || replySubmitting) return;
+    if (!checkReplyRateLimit()) return;
+    setReplySubmitting(true);
+    const result = await submitShipReply(r.id, replyBody.trim(), fingerprint);
+    if (result) {
+      recordReply();
+      setReplyBody('');
+    }
+    setReplySubmitting(false);
+  }, [replyBody, replySubmitting, r.id, fingerprint]);
+
+  const handleReplyKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleReplySubmit();
+    }
+  }, [handleReplySubmit]);
+
+  const replyCount = replies.length;
 
   const classes = [
     'ship-card',
@@ -494,40 +891,49 @@ function ShipCard({
         {r.description}
       </p>
       {isClamped && !expanded && (
-        <button
-          className="ship-card__expand"
-          onClick={() => setExpanded(true)}
-          aria-label="Show full description"
-        >
-          more
-        </button>
+        <button className="ship-card__expand" onClick={() => setExpanded(true)} aria-label="Show full description">more</button>
       )}
       {expanded && (
-        <button
-          className="ship-card__expand"
-          onClick={() => setExpanded(false)}
-          aria-label="Collapse description"
-        >
-          less
-        </button>
+        <button className="ship-card__expand" onClick={() => setExpanded(false)} aria-label="Collapse description">less</button>
       )}
+
+      {/* Ship Clock (Feature #1) */}
+      {(isOpen || clockFrozen) && (
+        <div className={`ship-card__clock${clockFrozen ? ' ship-card__clock--frozen' : ''}`} aria-label={`Elapsed time: ${clockValue}`}>
+          {clockValue}
+        </div>
+      )}
+
       <div className="ship-card__meta">
         <span className="ship-card__time">{timeAgo(r.created_at)}</span>
-        <button
-          className={`ship-card__vote${hasVoted ? ' ship-card__vote--voted' : ''}`}
-          onClick={handleVoteClick}
-          aria-label={hasVoted ? `Voted (${r.votes})` : `Vote (${r.votes})`}
-          title={hasVoted ? 'Already voted' : 'Upvote this request'}
-        >
-          <span
-            className={`ship-card__vote-arrow${arrowPop ? ' ship-card__vote-arrow--pop' : ''}`}
-            onAnimationEnd={() => setArrowPop(false)}
+        <div className="ship-card__meta-right">
+          {replyCount > 0 && (
+            <button className="ship-card__reply-count" onClick={handleThreadToggle} aria-label={`${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}`}>
+              {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+            </button>
+          )}
+          {replyCount === 0 && (
+            <button className="ship-card__reply-count" onClick={handleThreadToggle} aria-label="Add a reply">
+              reply
+            </button>
+          )}
+          <button
+            className={`ship-card__vote${hasVoted ? ' ship-card__vote--voted' : ''}`}
+            onClick={handleVoteClick}
+            aria-label={hasVoted ? `Voted (${r.votes})` : `Vote (${r.votes})`}
+            title={hasVoted ? 'Already voted' : 'Upvote this request'}
           >
-            {hasVoted ? '\u25B2' : '\u25B3'}
-          </span>
-          {r.votes}
-        </button>
+            <span
+              className={`ship-card__vote-arrow${arrowPop ? ' ship-card__vote-arrow--pop' : ''}`}
+              onAnimationEnd={() => setArrowPop(false)}
+            >
+              {hasVoted ? '\u25B2' : '\u25B3'}
+            </span>
+            {r.votes}
+          </button>
+        </div>
       </div>
+
       {isBuilding && r.claude_branch && (
         <div className="ship-card__branch">
           <span className="ship-card__pulse" aria-hidden="true" />
@@ -535,175 +941,71 @@ function ShipCard({
           {r.claude_branch}
         </div>
       )}
+
       {isShipped && (
         <div className="ship-card__shipped-info">
           {r.shipped_at && <div className="ship-card__ship-time">Shipped in {shipDuration(r.created_at, r.shipped_at)}</div>}
           {r.shipped_commit && (
-            <a
-              className="ship-card__commit"
-              href={`https://github.com/aacrit/void--news/commit/${r.shipped_commit}`}
-              target="_blank"
-              rel="noopener"
-            >
+            <a className="ship-card__commit" href={`https://github.com/aacrit/void--news/commit/${r.shipped_commit}`} target="_blank" rel="noopener">
               {r.shipped_commit.slice(0, 7)}
             </a>
           )}
         </div>
       )}
+
+      {/* Ship Diff (Feature #4) */}
+      {isShipped && r.shipped_diff_summary && (
+        <div className="ship-card__diff">
+          <button className="ship-card__diff-toggle" onClick={() => setDiffOpen(v => !v)} aria-expanded={diffOpen}>
+            {diffOpen ? '\u25B4 Hide changes' : '\u25BE View changes'}
+          </button>
+          {diffOpen && (
+            <div className="ship-card__diff-content">{r.shipped_diff_summary}</div>
+          )}
+        </div>
+      )}
+
       {isWontShip && r.ceo_response && (
         <div className="ship-card__ceo-response"><span className="ship-card__ceo-label">CEO Response</span>{r.ceo_response}</div>
       )}
       {r.status === 'triaged' && r.ceo_response && (
         <div className="ship-card__ceo-response"><span className="ship-card__ceo-label">Response</span>{r.ceo_response}</div>
       )}
-    </article>
-  );
-}
 
-/* ===========================================================================
-   SUBMIT FORM
-   =========================================================================== */
-
-function SubmitForm({ onClose, fingerprint }: { onClose: () => void; fingerprint: string }) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<ShipCategory>('feature');
-  const [honeypot, setHoneypot] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const titleRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  // F21: auto-detect edition context
-  const editionRef = useRef<Edition | null>(detectEdition());
-
-  useEffect(() => { titleRef.current?.focus(); }, []);
-
-  const canSubmit = title.trim().length >= 5 && description.trim().length >= 10 && !submitting;
-  const rateLimited = !checkRateLimit();
-
-  // F10: unsaved changes guard
-  const hasUnsavedChanges = title.trim().length > 0 || description.trim().length > 0;
-
-  const guardedClose = useCallback(() => {
-    if (hasUnsavedChanges && !success) {
-      if (!confirm('Discard unsaved changes?')) return;
-    }
-    onClose();
-  }, [hasUnsavedChanges, success, onClose]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit || rateLimited) return;
-    // Honeypot: if filled by bot, silently "succeed"
-    if (honeypot) { setSuccess(true); return; }
-    setSubmitting(true);
-    setError('');
-    const deviceInfo = typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 180) : null;
-    const result = await submitShipRequest({
-      title: title.trim(),
-      description: description.trim(),
-      category,
-      area: 'other',
-      edition_context: editionRef.current,
-      device_info: deviceInfo,
-      ip_hash: fingerprint,
-    });
-    if (result) { recordSubmission(); setSuccess(true); } else { setError('Failed to submit. Please try again.'); }
-    setSubmitting(false);
-  };
-
-  // F01: focus trap + Escape with unsaved guard
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        guardedClose();
-        return;
-      }
-      // Focus trap: cycle Tab within form
-      if (e.key === 'Tab' && formRef.current) {
-        const focusable = formRef.current.querySelectorAll<HTMLElement>(
-          'input:not([tabindex="-1"]), textarea, select, button:not([disabled])'
-        );
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [guardedClose]);
-
-  return (
-    <div
-      className="ship-form-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Submit a request"
-      onClick={(e) => { if (e.target === e.currentTarget) guardedClose(); }}
-    >
-      <form ref={formRef} className="ship-form" onSubmit={handleSubmit}>
-        {success ? (
-          <div className="ship-form__success">
-            <div className="ship-form__success-icon" aria-hidden="true">&#9998;</div>
-            <p className="ship-form__success-text">Request submitted. It will appear on the board momentarily.</p>
-            <div className="ship-form__footer" style={{ justifyContent: 'center', marginTop: 'var(--space-4)' }}>
-              <button type="button" className="ship-form__btn ship-form__btn--cancel" onClick={onClose}>Close</button>
+      {/* Thread Replies (Feature #5) */}
+      {threadOpen && (
+        <div className="ship-card__thread">
+          {replies.length === 0 && repliesLoaded && (
+            <p className="ship-card__thread-empty">No replies yet</p>
+          )}
+          {replies.map(reply => (
+            <div key={reply.id} className="ship-card__thread-reply">
+              <span className="ship-card__thread-time">{timeAgo(reply.created_at)}</span>
+              <span className="ship-card__thread-body">{reply.body}</span>
             </div>
+          ))}
+          <div className="ship-card__thread-input-row">
+            <input
+              className="ship-card__thread-input"
+              type="text"
+              maxLength={280}
+              value={replyBody}
+              onChange={(e) => setReplyBody(e.target.value)}
+              onKeyDown={handleReplyKeyDown}
+              placeholder="Reply..."
+              aria-label="Reply to this request"
+            />
+            <button
+              className="ship-card__thread-send"
+              onClick={handleReplySubmit}
+              disabled={!replyBody.trim() || replySubmitting}
+              aria-label="Send reply"
+            >
+              &rarr;
+            </button>
           </div>
-        ) : (
-          <>
-            <h2 className="ship-form__title">Submit a Request</h2>
-            {rateLimited && <div className="ship-form__rate-limit">Slow down — max {RATE_LIMIT_MAX} requests per hour.</div>}
-
-            {/* Honeypot */}
-            <div className="ship-form__honeypot" aria-hidden="true">
-              <label htmlFor="ship-website">Website</label>
-              <input id="ship-website" type="text" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" />
-            </div>
-
-            <div className="ship-form__group">
-              <label className="ship-form__label" htmlFor="ship-title">Title</label>
-              <input ref={titleRef} id="ship-title" className="ship-form__input" type="text" maxLength={120} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Brief description of the bug or feature" required />
-              <div className="ship-form__char-count"><span className={title.length > 100 ? 'ship-form__char-count--warn' : ''}>{title.length}/120</span></div>
-            </div>
-
-            <div className="ship-form__group">
-              <label className="ship-form__label" htmlFor="ship-desc">Description</label>
-              <textarea id="ship-desc" className="ship-form__textarea" maxLength={2000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What should happen? What happens instead? Steps to reproduce?" required />
-              <div className="ship-form__char-count"><span className={description.length > 1800 ? 'ship-form__char-count--warn' : ''}>{description.length}/2000</span></div>
-            </div>
-
-            <div className="ship-form__group">
-              <label className="ship-form__label" htmlFor="ship-category">Type</label>
-              <select id="ship-category" className="ship-form__select" value={category} onChange={(e) => setCategory(e.target.value as ShipCategory)}>
-                {CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-
-            {error && <p className="ship-form__error" role="alert">{error}</p>}
-
-            <div className="ship-form__footer">
-              <button type="button" className="ship-form__btn ship-form__btn--cancel" onClick={guardedClose}>Cancel</button>
-              <button
-                type="submit"
-                className={`ship-form__btn ship-form__btn--submit${submitting ? ' ship-form__btn--loading' : ''}`}
-                disabled={!canSubmit || rateLimited}
-              >
-                {submitting ? 'Submitting...' : 'Submit'}
-              </button>
-            </div>
-          </>
-        )}
-      </form>
-    </div>
+        </div>
+      )}
+    </article>
   );
 }

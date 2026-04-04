@@ -1,21 +1,36 @@
 /* ==========================================================================
-   void --ship — Feature/Bug Tracker
-   "Request, vote, watch it deploy."
-   Cinematic Press: warm paper cards, cin-amber shipped accent,
-   IBM Plex Mono metrics, typewriter inputs.
-   7-scene cinematic motion spec.
+   void --ship v2 — Form-First Canvas
+   Graph paper background, form-first layout, compact expanding dashboard,
+   5 new features (Ship Clock, Templates, Pulse Graph, Ship Diff, Threads).
+   7 cinematic scenes preserved. Organic ink dividers.
    ========================================================================== */
 
+/* ---- Graph Paper Tokens ---- */
+:root,
+:root[data-mode="light"] {
+  --ship-grid-color: rgba(148, 107, 21, 0.06);
+}
+
+:root[data-mode="dark"] {
+  --ship-grid-color: rgba(77, 175, 160, 0.06);
+}
+
+/* ---- Graph Paper Background ---- */
 .ship-page {
   min-height: 100vh;
   padding: var(--space-6) var(--space-4);
   max-width: 1440px;
   margin: 0 auto;
+  background-image:
+    linear-gradient(var(--ship-grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ship-grid-color) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
+/* ---- Header ---- */
 .ship-page__header {
   text-align: center;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
   padding-top: var(--space-6);
 }
 
@@ -45,58 +60,187 @@
   margin: 0 auto;
 }
 
-/* ---- Metrics Bar ---- */
-.ship-metrics {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-6);
-  margin-bottom: var(--space-8);
-  padding: var(--space-4) var(--space-5);
+/* ---- Back Link ---- */
+.ship-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-4);
+  transition: color 0.15s var(--ease-out);
+}
+
+.ship-page__back:hover { color: var(--fg-primary); }
+
+
+/* ==========================================================================
+   TIER 1: FORM-FIRST CANVAS
+   ========================================================================== */
+
+.ship-form-canvas {
+  max-width: 600px;
+  margin: 0 auto var(--space-6);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
-  max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
+  padding: var(--space-6);
+  box-shadow: var(--shadow-e2);
 }
 
-.ship-metrics__item { text-align: center; }
-
-.ship-metrics__value {
-  font-family: var(--font-data);
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  font-weight: 600;
-  color: var(--fg-primary);
-  line-height: 1;
-  display: block;
+.ship-form-canvas__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.ship-metrics__value--gold {
-  color: var(--cin-amber, var(--accent-warm));
+/* ---- Category Pill Toggle ---- */
+.ship-category-toggle {
+  display: flex;
+  position: relative;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  padding: 2px;
+  width: fit-content;
+  margin: 0 auto var(--space-2);
 }
 
-/* Scene 5: metrics land micro-pulse */
-.ship-metrics__value--landed {
-  animation: shipMetricLand 300ms ease-out;
-}
-
-.ship-metrics__label {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  margin-top: var(--space-1);
-  display: block;
-}
-
-/* ---- Submit Button (in header) ---- */
-.ship-actions__submit-btn {
-  margin-top: var(--space-5);
+.ship-category-toggle__pill {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-data);
   font-size: var(--text-sm);
   letter-spacing: 0.04em;
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-2) var(--space-5);
+  background: transparent;
+  border: none;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: color 0.2s var(--ease-out);
+  border-radius: 2px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.ship-category-toggle__pill--active {
+  color: var(--fg-primary);
+  font-weight: 600;
+}
+
+.ship-category-toggle__indicator {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  height: calc(100% - 4px);
+  background: var(--bg-card);
+  border-radius: 2px;
+  box-shadow: var(--shadow-e1);
+  transition: transform 0.25s var(--ease-cinematic);
+  pointer-events: none;
+}
+
+/* ---- Title Input (underline style) ---- */
+.ship-form-canvas__field {
+  position: relative;
+}
+
+.ship-form-canvas__title-input {
+  width: 100%;
+  padding: var(--space-3) 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  font-weight: 600;
+  color: var(--fg-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border-subtle);
+  outline: none;
+  transition: border-color 0.3s var(--ease-out);
+}
+
+.ship-form-canvas__title-input:focus {
+  border-bottom-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-form-canvas__title-input:focus-visible {
+  outline: none;
+}
+
+.ship-form-canvas__title-input::placeholder {
+  color: var(--fg-muted);
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+/* Focus underline animation: extends from center */
+.ship-form-canvas__title-input {
+  background-image: linear-gradient(var(--cin-amber, var(--accent-warm)), var(--cin-amber, var(--accent-warm)));
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  transition: background-size 0.3s var(--ease-cinematic), border-color 0.3s var(--ease-out);
+}
+
+.ship-form-canvas__title-input:focus {
+  background-size: 100% 2px;
+  border-bottom-color: transparent;
+}
+
+/* ---- Description Textarea ---- */
+.ship-form-canvas__desc-input {
+  width: 100%;
+  min-height: 200px;
+  padding: var(--space-3);
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.ship-form-canvas__desc-input:focus {
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-form-canvas__desc-input:focus-visible {
+  outline: 2px solid var(--cin-amber, var(--accent-warm));
+  outline-offset: 2px;
+}
+
+.ship-form-canvas__desc-input::placeholder {
+  color: var(--fg-muted);
+  opacity: 0.5;
+}
+
+/* ---- Char Count ---- */
+.ship-form-canvas__char-count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-align: right;
+  margin-top: var(--space-1);
+}
+
+.ship-form-canvas__char-count--warn {
+  color: #C0392B;
+}
+
+/* ---- Submit Button ---- */
+.ship-form-canvas__submit {
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
   background: var(--fg-primary);
   color: var(--bg-primary);
   border: none;
@@ -105,102 +249,46 @@
   transition: opacity 0.2s var(--ease-out);
 }
 
-.ship-actions__submit-btn:hover { opacity: 0.85; }
+.ship-form-canvas__submit:hover:not(:disabled) { opacity: 0.85; }
 
-/* ---- Submission Form Modal ---- */
-.ship-form-overlay {
-  position: fixed;
+.ship-form-canvas__submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ship-form-canvas__submit--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.ship-form-canvas__submit--loading::after {
+  content: '';
+  position: absolute;
   inset: 0;
-  z-index: var(--z-depth-modal, 900);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  animation: shipBackdropRackIn 500ms var(--ease-rack, ease-out) both;
+  border-radius: inherit;
+  animation: shipFormBtnPulse 1.2s ease-in-out infinite;
+  background: color-mix(in srgb, var(--bg-primary) 15%, transparent);
 }
 
-.ship-form {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  padding: var(--space-6);
-  max-width: 540px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-e3);
-  animation: shipFormRackIn 500ms ease-out 100ms both;
-}
-
-.ship-form__title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  margin-bottom: var(--space-5);
-  color: var(--fg-primary);
-}
-
-.ship-form__group { margin-bottom: var(--space-4); }
-
-.ship-form__label {
-  display: block;
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-secondary);
-  margin-bottom: var(--space-1);
-}
-
-/* F02: proper focus-visible outlines */
-.ship-form__input,
-.ship-form__textarea,
-.ship-form__select {
-  width: 100%;
-  padding: var(--space-3);
-  font-family: var(--font-data);
+/* ---- Rate Limit ---- */
+.ship-form-canvas__rate-limit {
+  font-family: var(--font-structural);
   font-size: var(--text-sm);
-  color: var(--fg-primary);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-strong);
+  color: var(--cin-amber, var(--accent-warm));
+  text-align: center;
+  padding: var(--space-3);
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
   border-radius: 3px;
-  transition: border-color 0.2s var(--ease-out);
-  outline: none;
 }
 
-.ship-form__input:focus-visible,
-.ship-form__textarea:focus-visible,
-.ship-form__select:focus-visible {
-  border-color: var(--accent-warm);
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.ship-form__textarea {
-  min-height: 100px;
-  resize: vertical;
-  line-height: 1.5;
-}
-
-.ship-form__char-count {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  text-align: right;
-  margin-top: var(--space-1);
-}
-
-/* F12: replaced hardcoded rgba with semantic token */
-.ship-form__char-count--warn {
+/* ---- Error ---- */
+.ship-form-canvas__error {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
   color: #C0392B;
 }
 
-.ship-form__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-}
-
+/* ---- Honeypot (keep from original) ---- */
 .ship-form__honeypot {
   position: absolute;
   left: -9999px;
@@ -212,79 +300,278 @@
   pointer-events: none;
 }
 
-.ship-form__footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-5);
+/* ---- Success State ---- */
+.ship-form-canvas__success {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
 }
 
-.ship-form__btn {
+.ship-form-canvas__success-icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-3);
+}
+
+.ship-form-canvas__success-text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+  margin-bottom: var(--space-4);
+}
+
+.ship-form-canvas__reset-btn {
   font-family: var(--font-data);
   font-size: var(--text-sm);
   letter-spacing: 0.04em;
   padding: var(--space-2) var(--space-5);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: opacity 0.2s var(--ease-out);
-}
-
-.ship-form__btn--cancel {
   background: transparent;
   color: var(--fg-secondary);
   border: 1px solid var(--border-strong);
-}
-
-.ship-form__btn--submit {
-  background: var(--fg-primary);
-  color: var(--bg-primary);
-  border: 1px solid transparent;
-}
-
-.ship-form__btn--submit:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.ship-form__btn:hover:not(:disabled) { opacity: 0.85; }
-
-/* F15: loading state for submit button */
-.ship-form__btn--loading {
-  position: relative;
-  pointer-events: none;
-}
-
-.ship-form__btn--loading::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  animation: shipFormBtnPulse 1.2s ease-in-out infinite;
-  background: color-mix(in srgb, var(--bg-primary) 15%, transparent);
-}
-
-.ship-form__error {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: #C0392B;
-  margin-top: var(--space-2);
-}
-
-.ship-form__success { text-align: center; padding: var(--space-8) var(--space-4); }
-.ship-form__success-icon { font-size: 2rem; margin-bottom: var(--space-3); }
-.ship-form__success-text { font-family: var(--font-structural); font-size: var(--text-base); color: var(--fg-primary); }
-
-/* F12/F13: replaced hardcoded rgba */
-.ship-form__rate-limit {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--cin-amber, var(--accent-warm));
-  text-align: center;
-  padding: var(--space-3);
-  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
   border-radius: 3px;
-  margin-bottom: var(--space-4);
+  cursor: pointer;
+  transition: all 0.15s var(--ease-out);
 }
+
+.ship-form-canvas__reset-btn:hover {
+  border-color: var(--fg-primary);
+  color: var(--fg-primary);
+}
+
+
+/* ==========================================================================
+   ORGANIC DIVIDER
+   ========================================================================== */
+
+.ship-divider {
+  display: block;
+  width: 100%;
+  max-width: 60ch;
+  height: 2px;
+  margin: var(--space-6) auto;
+  overflow: visible;
+}
+
+.ship-divider path {
+  stroke: var(--accent-warm);
+  stroke-width: 1.5;
+  stroke-opacity: 0.25;
+  fill: none;
+}
+
+
+/* ==========================================================================
+   TIER 2: COMPACT DASHBOARD
+   ========================================================================== */
+
+.ship-dashboard {
+  max-width: 720px;
+  margin: 0 auto var(--space-4);
+}
+
+.ship-dashboard__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+}
+
+.ship-dashboard__metrics {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ship-dashboard__metric {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.ship-dashboard__metric--gold {
+  color: var(--cin-amber, var(--accent-warm));
+  font-weight: 600;
+}
+
+/* Scene 5: metrics land micro-pulse */
+.ship-dashboard__metric--landed {
+  animation: shipMetricLand 300ms ease-out;
+}
+
+.ship-dashboard__sep {
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+}
+
+.ship-dashboard__actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  justify-content: center;
+}
+
+.ship-dashboard__toggle {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: all 0.15s var(--ease-out);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.ship-dashboard__toggle:hover {
+  border-color: var(--border-strong);
+  color: var(--fg-secondary);
+}
+
+.ship-dashboard__toggle--open {
+  border-color: var(--cin-amber, var(--accent-warm));
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+
+/* ==========================================================================
+   PULSE GRAPH (Feature #3)
+   ========================================================================== */
+
+.ship-pulse-graph {
+  width: 140px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.ship-pulse-graph__submitted {
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: shipPulseGraphDraw 1.2s var(--ease-cinematic) 0.6s forwards;
+}
+
+.ship-pulse-graph__shipped {
+  fill: none;
+  stroke: var(--cin-amber, var(--accent-warm));
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: shipPulseGraphDraw 1.2s var(--ease-cinematic) 0.8s forwards;
+}
+
+
+/* ==========================================================================
+   RECENT ACTIVITY (Tier 2)
+   ========================================================================== */
+
+.ship-recent {
+  max-width: 720px;
+  margin: 0 auto var(--space-4);
+}
+
+.ship-recent__title {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-3);
+}
+
+.ship-recent__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ship-recent__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  transition: border-color 0.15s var(--ease-out);
+}
+
+.ship-recent__item:hover {
+  border-color: var(--border-strong);
+}
+
+.ship-recent__status {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  flex-shrink: 0;
+  min-width: 56px;
+}
+
+.ship-recent__status--shipped {
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-recent__status--building {
+  color: var(--voice-accent, #4DAFA0);
+}
+
+.ship-recent__item-title {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ship-recent__time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+}
+
+/* Ship Clock in recent items */
+.ship-recent__clock {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+
+/* ==========================================================================
+   TIER 3: EXPANDABLE SECTIONS
+   ========================================================================== */
+
+.ship-board-section {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.ship-board-section--open {
+  animation: shipSectionExpand 400ms var(--ease-cinematic) both;
+}
+
 
 /* ---- Kanban Board ---- */
 .ship-board {
@@ -314,7 +601,6 @@
   white-space: nowrap;
 }
 
-/* F18: press-appropriate border-radius */
 .ship-column__count {
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -338,8 +624,11 @@
   gap: var(--space-3);
 }
 
-/* ---- Request Card ---- */
-/* F20: no animation on default card -- only .ship-card--new gets enter animation */
+
+/* ==========================================================================
+   REQUEST CARD
+   ========================================================================== */
+
 .ship-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -373,7 +662,6 @@
   white-space: nowrap;
 }
 
-/* F12/F13: replaced hardcoded rgba with color-mix */
 .ship-card__badge--bug {
   background: color-mix(in srgb, #C0392B 12%, transparent);
   color: #C0392B;
@@ -422,7 +710,6 @@
   margin-bottom: var(--space-2);
 }
 
-/* F11: expanded description */
 .ship-card__desc--expanded {
   -webkit-line-clamp: unset;
   display: block;
@@ -444,10 +731,33 @@
   color: var(--fg-secondary);
 }
 
+
+/* ---- Ship Clock (Feature #1) ---- */
+.ship-card__clock {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.02em;
+}
+
+.ship-card__clock--frozen {
+  color: var(--cin-amber, var(--accent-warm));
+  transition: color 0.4s var(--ease-cinematic);
+}
+
+
+/* ---- Meta row ---- */
 .ship-card__meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ship-card__meta-right {
+  display: flex;
+  align-items: center;
   gap: var(--space-2);
 }
 
@@ -457,7 +767,22 @@
   color: var(--fg-muted);
 }
 
-/* F09/F18: adequate touch target + press-appropriate radius */
+.ship-card__reply-count {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  transition: color 0.15s var(--ease-out);
+}
+
+.ship-card__reply-count:hover {
+  color: var(--fg-secondary);
+}
+
+/* ---- Vote button ---- */
 .ship-card__vote {
   display: flex;
   align-items: center;
@@ -479,7 +804,6 @@
   color: var(--accent-warm);
 }
 
-/* F12/F13: replaced hardcoded rgba */
 .ship-card__vote--voted {
   border-color: var(--cin-amber, var(--accent-warm));
   color: var(--cin-amber, var(--accent-warm));
@@ -491,17 +815,16 @@
   line-height: 1;
 }
 
-/* Scene 3: vote arrow pop */
 .ship-card__vote-arrow--pop {
   animation: shipVoteArrowPop 200ms ease-out;
 }
+
 
 /* ---- Shipped Card ---- */
 .ship-card--shipped {
   border-left: 3px solid var(--cin-amber, var(--accent-warm));
 }
 
-/* Scene 6: shipped golden flash */
 .ship-card--just-shipped {
   animation: shipGoldenFlash 600ms var(--ease-cinematic, ease-out);
 }
@@ -521,7 +844,6 @@
   gap: var(--space-1);
 }
 
-/* F04: commit as link */
 .ship-card__commit {
   font-family: var(--font-data);
   font-size: 10px;
@@ -536,12 +858,46 @@ a.ship-card__commit:hover {
   text-decoration: underline;
 }
 
+
+/* ---- Ship Diff (Feature #4) ---- */
+.ship-card__diff {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.ship-card__diff-toggle {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s var(--ease-out);
+}
+
+.ship-card__diff-toggle:hover {
+  color: var(--fg-secondary);
+}
+
+.ship-card__diff-content {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+  margin-top: var(--space-2);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--cin-amber, var(--accent-warm));
+  white-space: pre-wrap;
+}
+
+
 /* ---- Building Card ---- */
 .ship-card--building {
   border-left: 3px solid var(--voice-accent, #4DAFA0);
 }
 
-/* Scene 7: building heartbeat text pulse */
 .ship-card__branch {
   font-family: var(--font-data);
   font-size: 10px;
@@ -556,7 +912,6 @@ a.ship-card__commit:hover {
   animation: shipBuildingTextPulse 4s ease-out infinite;
 }
 
-/* Scene 7: building heartbeat pulse dot */
 .ship-card__pulse {
   width: 6px;
   height: 6px;
@@ -565,6 +920,7 @@ a.ship-card__commit:hover {
   animation: shipBuildingHeartbeat 4s var(--ease-cinematic, ease-out) infinite;
   flex-shrink: 0;
 }
+
 
 /* ---- Won't Ship Card ---- */
 .ship-card--wontship { opacity: 0.7; }
@@ -590,6 +946,102 @@ a.ship-card__commit:hover {
   margin-bottom: 2px;
 }
 
+
+/* ---- Thread Replies (Feature #5) ---- */
+.ship-card__thread {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: shipThreadExpand 300ms var(--ease-cinematic) both;
+}
+
+.ship-card__thread-empty {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.ship-card__thread-reply {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.ship-card__thread-time {
+  font-family: var(--font-data);
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.ship-card__thread-body {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.4;
+}
+
+.ship-card__thread-input-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.ship-card__thread-input {
+  flex: 1;
+  padding: var(--space-2);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.15s var(--ease-out);
+}
+
+.ship-card__thread-input:focus {
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-card__thread-input:focus-visible {
+  outline: 2px solid var(--cin-amber, var(--accent-warm));
+  outline-offset: 1px;
+}
+
+.ship-card__thread-send {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s var(--ease-out);
+}
+
+.ship-card__thread-send:hover:not(:disabled) {
+  border-color: var(--cin-amber, var(--accent-warm));
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-card__thread-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
 /* ---- New Card Animation (F20: only INSERT events) ---- */
 .ship-card--new {
   animation: shipCardEnter 0.3s ease-out;
@@ -606,9 +1058,13 @@ a.ship-card__commit:hover {
   border-radius: 4px;
 }
 
-/* ---- void --log: Activity Feed ---- */
+
+/* ==========================================================================
+   void --log: Activity Feed
+   ========================================================================== */
+
 .ship-log {
-  margin-top: var(--space-8);
+  margin-top: var(--space-4);
   border-top: 1px solid var(--border-subtle);
   padding-top: var(--space-6);
   max-width: 720px;
@@ -632,7 +1088,6 @@ a.ship-card__commit:hover {
   position: relative;
 }
 
-/* Vertical timeline line */
 .ship-log__entries::before {
   content: '';
   position: absolute;
@@ -779,22 +1234,8 @@ a.ship-card__commit:hover {
   margin-top: var(--space-1);
 }
 
-/* ---- Back Link ---- */
-.ship-page__back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  color: var(--fg-muted);
-  margin-bottom: var(--space-4);
-  transition: color 0.15s var(--ease-out);
-}
 
-.ship-page__back:hover { color: var(--fg-primary); }
-
-/* ---- Loading Skeleton (F16) ---- */
+/* ---- Loading Skeleton ---- */
 .ship-board__loading {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -829,9 +1270,11 @@ a.ship-card__commit:hover {
   animation-delay: 200ms;
 }
 
+
 /* ==========================================================================
    SCENE 1 — Cold Open (staggered entrance)
    ========================================================================== */
+
 .ship-cold-open-back {
   animation: shipColdOpenSettle 500ms var(--ease-cinematic, ease-out) 80ms both;
 }
@@ -846,13 +1289,9 @@ a.ship-card__commit:hover {
 
 .ship-cold-open-column {
   animation: shipColdOpenFeedRise 500ms ease-out both;
+  animation-delay: 520ms;
 }
 
-.ship-column:nth-child(1) { animation-delay: 520ms; }
-.ship-column:nth-child(2) { animation-delay: 600ms; }
-.ship-column:nth-child(3) { animation-delay: 680ms; }
-.ship-column:nth-child(4) { animation-delay: 760ms; }
-.ship-column:nth-child(5) { animation-delay: 840ms; }
 
 /* ==========================================================================
    KEYFRAMES
@@ -904,17 +1343,6 @@ a.ship-card__commit:hover {
   to { transform: scale(1); }
 }
 
-/* Scene 4: Form Rack Focus */
-@keyframes shipFormRackIn {
-  from { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(2px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-}
-
-@keyframes shipBackdropRackIn {
-  from { background: rgba(0,0,0,0); backdrop-filter: blur(0) saturate(1) brightness(1); }
-  to { background: color-mix(in srgb, var(--fg-primary) 45%, transparent); backdrop-filter: blur(14px) saturate(0.65) brightness(0.72); }
-}
-
 /* Scene 5: Metrics Land */
 @keyframes shipMetricLand {
   from { transform: scale(1.04); }
@@ -955,11 +1383,28 @@ a.ship-card__commit:hover {
   50% { opacity: 1; }
 }
 
+/* NEW: Section expand (spring-like) */
+@keyframes shipSectionExpand {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* NEW: Pulse Graph draw-on */
+@keyframes shipPulseGraphDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* NEW: Thread expand */
+@keyframes shipThreadExpand {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 
-/* ---- F14: 5-column only at 1280+, 3-column at 1024-1279, 2-column at 768-1023 ---- */
 @media (max-width: 1279px) {
   .ship-board {
     grid-template-columns: repeat(3, 1fr);
@@ -978,19 +1423,66 @@ a.ship-card__commit:hover {
   }
 }
 
-/* ---- Mobile ---- */
 @media (max-width: 768px) {
-  .ship-page { padding: var(--space-4) var(--space-3); }
-  .ship-page__header { padding-top: var(--space-4); margin-bottom: var(--space-5); }
-  .ship-metrics { flex-wrap: wrap; gap: var(--space-4); padding: var(--space-3) var(--space-4); }
-  .ship-metrics__item { min-width: 60px; }
+  .ship-page {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .ship-page__header {
+    padding-top: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .ship-form-canvas {
+    padding: var(--space-4);
+  }
+
+  .ship-form-canvas__title-input {
+    font-size: clamp(1rem, 4vw, 1.25rem);
+  }
+
+  .ship-form-canvas__desc-input {
+    min-height: 160px;
+  }
+
+  .ship-dashboard__summary {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .ship-dashboard__metrics {
+    justify-content: center;
+  }
+
+  .ship-pulse-graph {
+    width: 100%;
+    height: 28px;
+  }
+
+  .ship-dashboard__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ship-dashboard__toggle {
+    justify-content: center;
+  }
+
+  .ship-recent__item {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
   .ship-board {
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
+
   .ship-board__loading {
     grid-template-columns: 1fr;
   }
+
   .ship-column__header {
     position: sticky;
     top: 0;
@@ -998,8 +1490,6 @@ a.ship-card__commit:hover {
     z-index: 2;
     padding-top: var(--space-2);
   }
-  .ship-form__row { grid-template-columns: 1fr; }
-  .ship-form { max-height: 85vh; margin: auto var(--space-2); }
 
   /* F06: hide empty columns on mobile */
   .ship-column--empty { display: none; }
@@ -1010,11 +1500,31 @@ a.ship-card__commit:hover {
     min-width: 44px;
     justify-content: center;
   }
+
+  .ship-card__reply-count {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ship-card__thread-send {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .ship-category-toggle__pill {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
+
 
 /* ==========================================================================
    REDUCED MOTION
    ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
   .ship-cold-open-back,
   .ship-cold-open-header,
@@ -1022,10 +1532,12 @@ a.ship-card__commit:hover {
   .ship-cold-open-column,
   .ship-card--new,
   .ship-card--just-shipped,
-  .ship-form-overlay,
-  .ship-form,
-  .ship-card__vote-arrow--pop,
-  .ship-metrics__value--landed {
+  .ship-dashboard__metric--landed,
+  .ship-board-section--open {
+    animation: none;
+  }
+
+  .ship-card__vote-arrow--pop {
     animation: none;
   }
 
@@ -1038,7 +1550,25 @@ a.ship-card__commit:hover {
     animation: none;
   }
 
-  .ship-form__btn--loading::after {
+  .ship-form-canvas__submit--loading::after {
     animation: none;
+  }
+
+  .ship-pulse-graph__submitted,
+  .ship-pulse-graph__shipped {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .ship-card__thread {
+    animation: none;
+  }
+
+  .ship-category-toggle__indicator {
+    transition: none;
+  }
+
+  .ship-form-canvas__title-input {
+    transition: none;
   }
 }

@@ -1,40 +1,45 @@
 /* ===========================================================================
-   void --weekly — Crimson Magazine Layout
+   void --weekly — Plum Magazine Layout
    "Way more flamboyant." TIME meets The Economist meets art house cinema.
    Organic ink design elements, interactive timeline, scroll-triggered reveals,
    parallax depth, film grain + vignette, cold open stagger sequence.
-   Crimson palette scoped to .wk-page for dramatic visual departure.
+   Plum palette scoped to .wk-page for dramatic visual departure.
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   Page Container — crimson palette + cinematic grade + vignette + film grain
+   Page Container — plum palette + cinematic grade + vignette + film grain
    --------------------------------------------------------------------------- */
 .wk-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
+  /* Prevent horizontal scroll from InkCorner absolute positioning
+     and sub-pixel rounding in full-bleed negative margins */
+  overflow-x: hidden;
 
-  /* ── Crimson Magazine Palette ── */
-  --wk-crimson: #8B1A1A;
-  --wk-crimson-bright: #A52020;
-  --wk-crimson-light: #C44040;
-  --wk-crimson-dim: #6B1515;
-  --wk-crimson-ghost: rgba(139, 26, 26, 0.08);
-  --wk-crimson-glow: rgba(139, 26, 26, 0.15);
-  --wk-crimson-ink: rgba(139, 26, 26, 0.25);
+  /* ── Plum Magazine Palette ── */
+  --wk-accent: #7B2D8B;
+  --wk-accent-bright: #9340A5;
+  --wk-accent-light: #A855C0;
+  --wk-accent-dim: #5E2268;
+  --wk-accent-ghost: rgba(123, 45, 139, 0.08);
+  --wk-accent-glow: rgba(123, 45, 139, 0.15);
+  --wk-accent-ink: rgba(123, 45, 139, 0.25);
   --wk-cream: #F8F3E8;
   --wk-cream-deep: #EDE5D4;
 }
 
 :root[data-mode="dark"] .wk-page {
-  --wk-crimson: #B03030;
-  --wk-crimson-bright: #C44040;
-  --wk-crimson-light: #D45050;
-  --wk-crimson-dim: #8B2020;
-  --wk-crimson-ghost: rgba(176, 48, 48, 0.10);
-  --wk-crimson-glow: rgba(176, 48, 48, 0.18);
-  --wk-crimson-ink: rgba(176, 48, 48, 0.28);
+  /* Plum values tuned for WCAG AA contrast (>= 4.5:1 on --bg-primary dark #1C1A17).
+     #C77DDB yields 5.24:1 on bg-primary dark — passes AA comfortably. */
+  --wk-accent: #C77DDB;
+  --wk-accent-bright: #D494E8;
+  --wk-accent-light: #DDA8F0;
+  --wk-accent-dim: #9B50B0;
+  --wk-accent-ghost: rgba(199, 125, 219, 0.10);
+  --wk-accent-glow: rgba(199, 125, 219, 0.18);
+  --wk-accent-ink: rgba(199, 125, 219, 0.28);
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
 }
@@ -45,7 +50,7 @@
   position: fixed;
   inset: 0;
   background: var(--paper-texture);
-  opacity: calc(var(--cin-grain-opacity) * 2);
+  opacity: calc(var(--cin-grain-opacity, 0.04) * 2);
   pointer-events: none;
   z-index: 100;
   mix-blend-mode: multiply;
@@ -92,12 +97,12 @@
   display: block;
   width: 100%;
   height: 4px;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.4;
 }
 
 .wk-ink-rule--strong {
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.7;
 }
 
@@ -106,7 +111,7 @@
   display: block;
   width: 40px;
   height: 32px;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.6;
   flex-shrink: 0;
 }
@@ -118,7 +123,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.5;
 }
 
@@ -132,7 +137,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-2);
   border-bottom: none;
@@ -149,7 +154,7 @@
   letter-spacing: 0.02em;
 }
 
-/* Organic ink underline on section labels — crimson tinted */
+/* Organic ink underline on section labels — plum tinted */
 .wk-section-label::after {
   content: "";
   position: absolute;
@@ -157,13 +162,13 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%237B2D8B' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-section-label::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23C77DDB' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
 }
 
 /* ---------------------------------------------------------------------------
@@ -304,12 +309,12 @@
   text-align: center;
   margin-bottom: var(--space-5);
   padding: var(--space-6) var(--space-5);
-  background: var(--wk-crimson);
+  background: var(--wk-accent);
   position: relative;
   overflow: hidden;
 }
 
-/* Organic ink texture overlay on crimson masthead */
+/* Organic ink texture overlay on plum masthead */
 .wk-masthead::before {
   content: "";
   position: absolute;
@@ -364,7 +369,7 @@
   letter-spacing: 0.10em;
   color: var(--wk-cream);
   margin-bottom: 0;
-  opacity: 0.85;
+  opacity: 0.95;
   position: relative;
   z-index: 1;
 }
@@ -448,7 +453,7 @@
   position: relative;
 }
 
-/* Organic ink bottom border on collapsible sections — crimson */
+/* Organic ink bottom border on collapsible sections — plum */
 .wk-collapsible-section::after {
   content: "";
   position: absolute;
@@ -456,13 +461,13 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%237B2D8B' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-collapsible-section::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='1' fill='none' opacity='0.20'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23C77DDB' stroke-width='1' fill='none' opacity='0.20'/%3E%3C/svg%3E");
 }
 
 /* Inline toggle (read more / read less) */
@@ -485,7 +490,7 @@
 }
 
 .wk-toggle:hover {
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
 }
 
 .wk-toggle:focus-visible {
@@ -504,11 +509,26 @@
   transition: transform 200ms var(--ease-cinematic);
 }
 
+/* Inline collapsible — cover story expand/collapse (W01 fix) */
+.wk-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 400ms var(--ease-cinematic);
+}
+
+.wk-collapsible--open {
+  grid-template-rows: 1fr;
+}
+
+.wk-collapsible__inner {
+  overflow: hidden;
+}
+
 /* Cover story preview (collapsed) */
 .wk-cover__preview {
   position: relative;
   font-family: var(--font-structural);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 400;
   line-height: 1.6;
   color: var(--fg-secondary);
@@ -539,9 +559,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 1.5rem;
+  height: 2.5rem;
   background: linear-gradient(to bottom, transparent, var(--bg-card));
   pointer-events: none;
+}
+
+/* W03 fix: on tinted opinion background, the fade must blend with the ghost-tinted card */
+.wk-section--opinions .wk-opinion__text-fade {
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--bg-card) 92%, var(--wk-accent-ghost)));
 }
 
 
@@ -581,16 +606,16 @@
   transition: transform 16ms linear;
 }
 
-/* Drop cap on hero cover headline */
-.wk-cover__hero .wk-cover__headline::first-letter {
+/* Drop cap on hero cover body text — traditional placement (W07 fix) */
+.wk-cover__hero .wk-cover__text p:first-child::first-letter {
   font-family: var(--font-editorial);
-  font-size: 2.2em;
+  font-size: 2.8em;
   font-weight: 900;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   float: left;
   line-height: 0.8;
-  margin-right: 0.06em;
-  margin-top: 0.05em;
+  margin-right: 0.08em;
+  margin-top: 0.06em;
 }
 
 .wk-cover__body-wrap {
@@ -601,14 +626,16 @@
 
 @media (min-width: 768px) {
   .wk-cover__body-wrap {
-    grid-template-columns: 1fr 22rem;
+    /* Fluid sidebar: 16rem at 768px tablet, up to 22rem on wide desktop.
+       Prevents text column from shrinking below readable width. */
+    grid-template-columns: 1fr clamp(16rem, 14rem + 4vw, 22rem);
     gap: var(--space-6);
   }
 }
 
 .wk-cover__text {
   font-family: var(--font-structural);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: var(--line-height-editorial, 1.65);
   color: var(--fg-primary);
@@ -628,6 +655,7 @@
 .wk-cover__hero {
   position: relative;
   padding: var(--space-5) 0;
+  overflow: hidden;
 }
 
 /* Ink corner flourishes on hero — top-left and bottom-right */
@@ -635,7 +663,7 @@
   position: absolute;
   width: 40px;
   height: 40px;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.35;
   pointer-events: none;
 }
@@ -687,7 +715,7 @@
   position: relative;
 }
 
-/* Organic ink underline on numbers title — crimson */
+/* Organic ink underline on numbers title — plum */
 .wk-cover__numbers-title::after {
   content: "";
   position: absolute;
@@ -695,13 +723,13 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='1' fill='none' opacity='0.30'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%237B2D8B' stroke-width='1' fill='none' opacity='0.30'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-cover__numbers-title::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23C77DDB' stroke-width='1' fill='none' opacity='0.25'/%3E%3C/svg%3E");
 }
 
 .wk-cover__numbers-list {
@@ -723,12 +751,12 @@
   background: var(--bg-hover);
 }
 
-/* Number value — data voice, crimson accent */
+/* Number value — data voice, plum accent */
 .wk-cover__number-value {
   font-family: var(--font-data);
   font-size: var(--text-xl);
   font-weight: 400;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
   transition: color 200ms var(--ease-cinematic);
@@ -874,8 +902,8 @@
 
 .wk-timeline__node:hover .wk-timeline__dot,
 .wk-timeline__node--expanded .wk-timeline__dot {
-  background: var(--wk-crimson);
-  box-shadow: 0 0 8px var(--wk-crimson-glow), 0 0 16px var(--wk-crimson-ghost);
+  background: var(--wk-accent);
+  box-shadow: 0 0 8px var(--wk-accent-glow), 0 0 16px var(--wk-accent-ghost);
   transform: scale(1.3);
 }
 
@@ -903,12 +931,12 @@
 
 .wk-timeline__node:hover .wk-timeline__day,
 .wk-timeline__node--expanded .wk-timeline__day {
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
 }
 
 .wk-timeline__note {
   font-family: var(--font-structural);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   color: var(--fg-secondary);
   line-height: 1.5;
 }
@@ -1019,15 +1047,34 @@
 
 @media (min-width: 768px) {
   .wk-opinions__grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .wk-opinions__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Secondary cover stories: 2-column grid after the full-width hero */
+.wk-cover__secondary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 767px) {
+  .wk-cover__secondary {
+    grid-template-columns: 1fr;
   }
 }
 
 .wk-opinion {
   background: var(--bg-card);
-  background-image: linear-gradient(var(--wk-crimson-ghost), var(--wk-crimson-ghost));
+  background-image: linear-gradient(var(--wk-accent-ghost), var(--wk-accent-ghost));
   border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--lean-color, var(--wk-crimson));
+  border-left: 3px solid var(--lean-color, var(--wk-accent));
   padding: var(--space-5);
   transition:
     box-shadow var(--scene-dolly-in, 320ms) var(--ease-cinematic),
@@ -1057,7 +1104,7 @@
   margin-bottom: var(--space-3);
 }
 
-/* Opinion lean badge — bold pill with crimson background */
+/* Opinion lean badge — bold pill with plum background */
 .wk-opinion__badge {
   font-family: var(--font-meta);
   font-size: var(--text-xs);
@@ -1066,8 +1113,8 @@
   letter-spacing: 0.06em;
   padding: var(--space-1) var(--space-3);
   border-radius: 2px;
-  background: var(--wk-crimson);
-  border: 1px solid var(--wk-crimson);
+  background: var(--wk-accent);
+  border: 1px solid var(--wk-accent);
   color: var(--wk-cream);
   white-space: nowrap;
   position: relative;
@@ -1095,7 +1142,7 @@
 
 .wk-opinion__headline {
   font-family: var(--font-editorial);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 700;
   line-height: 1.25;
   color: var(--fg-primary);
@@ -1105,7 +1152,7 @@
 
 .wk-opinion__text {
   font-family: var(--font-structural);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--fg-secondary);
   text-align: justify;
@@ -1180,7 +1227,7 @@
 
 .wk-special__summary {
   font-family: var(--font-structural);
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--fg-secondary);
   text-align: justify;
@@ -1192,9 +1239,9 @@
   border-left: 3px solid var(--fg-tertiary);
 }
 
-/* Sports accent bar — crimson left border */
+/* Sports accent bar — plum left border */
 .wk-special__card--sports {
-  border-left: 3px solid var(--wk-crimson, var(--fg-tertiary));
+  border-left: 3px solid var(--wk-accent, var(--fg-tertiary));
 }
 
 /* ===========================================================================
@@ -1239,7 +1286,7 @@
   font-family: var(--font-data);
   font-size: var(--text-xl);
   font-weight: 400;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
 }
@@ -1319,7 +1366,7 @@
 
 .wk-bias__text {
   font-family: var(--font-structural);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--fg-secondary);
   text-align: justify;
@@ -1344,7 +1391,7 @@
   position: relative;
 }
 
-/* Organic ink bottom border on brief items — crimson */
+/* Organic ink bottom border on brief items — plum */
 .wk-brief__item::after {
   content: "";
   position: absolute;
@@ -1352,13 +1399,13 @@
   right: 0;
   bottom: 0;
   height: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%238B1A1A' stroke-width='0.8' fill='none' opacity='0.18'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%237B2D8B' stroke-width='0.8' fill='none' opacity='0.18'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 :root[data-mode="dark"] .wk-brief__item::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23B03030' stroke-width='0.8' fill='none' opacity='0.14'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23C77DDB' stroke-width='0.8' fill='none' opacity='0.14'/%3E%3C/svg%3E");
 }
 
 .wk-brief__item:last-child::after {
@@ -1378,7 +1425,7 @@
 
 .wk-brief__summary {
   font-family: var(--font-structural);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   color: var(--fg-secondary);
   line-height: 1.6;
   max-width: 65ch;
@@ -1417,7 +1464,7 @@
 .wk-audio__play:hover {
   background: var(--fg-primary);
   color: var(--bg-primary);
-  box-shadow: 0 0 12px var(--wk-crimson-glow);
+  box-shadow: 0 0 12px var(--wk-accent-glow);
 }
 
 .wk-audio__play:focus-visible {
@@ -1519,9 +1566,9 @@
 }
 
 .wk-archive__item--current {
-  border-color: var(--wk-crimson);
+  border-color: var(--wk-accent);
   color: var(--fg-primary);
-  background: var(--wk-crimson-ghost);
+  background: var(--wk-accent-ghost);
 }
 
 .wk-archive__issue {
@@ -1550,7 +1597,7 @@
 .wk-loading__bar {
   width: 3rem;
   height: 2px;
-  background: var(--wk-crimson, var(--border-strong));
+  background: var(--wk-accent, var(--border-strong));
   animation: wkPulse 1.2s ease-in-out infinite;
 }
 
@@ -1596,7 +1643,7 @@
 }
 
 .wk-empty__link:hover {
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
 }
 
 /* ===========================================================================
@@ -1645,9 +1692,41 @@
     flex-direction: column-reverse;
   }
 
-  /* Horizontal timeline scrolls on mobile */
+  /* Vertical timeline on mobile — align padding with .wk-main's --space-4 */
   .wk-timeline {
     padding-left: var(--space-4);
+  }
+
+  /* Heading pull-back must match mobile timeline padding + margin */
+  .wk-timeline__heading {
+    margin-left: calc(-1 * var(--space-4) - var(--space-3));
+  }
+
+  /* Dot position must align with mobile timeline padding */
+  .wk-timeline__dot {
+    left: calc(-1 * var(--space-4) + var(--space-2));
+  }
+
+  /* Disable hover transforms on touch — cards "stick" in lifted state */
+  .wk-opinion:hover,
+  .wk-special__card:hover,
+  .wk-bias__stat:hover,
+  .wk-archive__item:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .wk-opinion:active,
+  .wk-special__card:active {
+    transform: scale(0.975);
+    transition: transform 60ms var(--ease-out);
+    box-shadow: none;
+  }
+
+  .wk-bias__stat:active,
+  .wk-archive__item:active {
+    transform: scale(0.975);
+    transition: transform 60ms var(--ease-out);
   }
 
   .wk-bias__aggregate {
@@ -1658,10 +1737,26 @@
   .wk-cover__headline {
     will-change: auto;
   }
+
+  /* Tighter flourish spacing on mobile — preserve content density */
+  .wk-flourish {
+    margin: var(--space-3) 0;
+  }
+
+  /* InkCorner: pull inward on mobile to prevent overflow.
+     At 375px, --space-3 is ~8px. Corner SVGs are 40px wide, so
+     negative offset would extend 32px into padding zone. Zero them. */
+  .wk-cover__hero-corner--tl {
+    left: 0;
+  }
+
+  .wk-cover__hero-corner--br {
+    right: 0;
+  }
 }
 
 /* ===========================================================================
-   Pull Quote — crimson magazine style, organic ink borders
+   Pull Quote — plum magazine style, organic ink borders
    =========================================================================== */
 .wk-pullquote {
   position: relative;
@@ -1670,8 +1765,8 @@
   padding: var(--space-5) var(--space-5);
   margin: var(--space-5) 0;
   background: var(--wk-cream);
-  border-left: 4px solid var(--wk-crimson);
-  border-right: 4px solid var(--wk-crimson);
+  border-left: 4px solid var(--wk-accent);
+  border-right: 4px solid var(--wk-accent);
 }
 
 :root[data-mode="dark"] .wk-pullquote {
@@ -1687,7 +1782,7 @@
 }
 
 /* ===========================================================================
-   Section Divider Flourish — crimson ink ornament between sections
+   Section Divider Flourish — plum ink ornament between sections
    =========================================================================== */
 .wk-flourish {
   display: flex;
@@ -1700,7 +1795,7 @@
 .wk-flourish__ornament {
   width: 20px;
   height: 20px;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.5;
 }
 
@@ -1708,7 +1803,7 @@
   flex: 1;
   max-width: 80px;
   height: 2px;
-  color: var(--wk-crimson);
+  color: var(--wk-accent);
   opacity: 0.25;
 }
 
@@ -1734,9 +1829,9 @@
   background: var(--wk-cream-deep);
 }
 
-/* Opinions section gets crimson ghost tint */
+/* Opinions section gets plum ghost tint */
 .wk-section--opinions {
-  background: var(--wk-crimson-ghost);
+  background: var(--wk-accent-ghost);
   margin-left: calc(-1 * var(--space-5));
   margin-right: calc(-1 * var(--space-5));
   padding: var(--space-5);
