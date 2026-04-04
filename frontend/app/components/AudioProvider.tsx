@@ -46,6 +46,8 @@ export interface AudioState {
   isExpanded: boolean;
   setExpanded: (v: boolean) => void;
   analyserRef: React.RefObject<AnalyserNode | null>;
+  /** Lazily connect Web Audio API analyser — call when viz becomes visible */
+  connectAnalyser: () => void;
   /** Whether audio has ever been started (for mini-player visibility) */
   hasEverPlayed: boolean;
 }
@@ -148,27 +150,10 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     el.addEventListener("progress", onProgress);
     if (el.duration && isFinite(el.duration)) setDuration(el.duration);
 
-    // Connect Web Audio API analyser (once per element)
-    if (!connectedElements.current.has(el)) {
-      try {
-        const ctx =
-          audioContextRef.current ||
-          new (window.AudioContext ||
-            (window as unknown as { webkitAudioContext: typeof AudioContext })
-              .webkitAudioContext)();
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 2048;
-        analyser.smoothingTimeConstant = 0.82;
-        const source = ctx.createMediaElementSource(el);
-        source.connect(analyser);
-        analyser.connect(ctx.destination);
-        audioContextRef.current = ctx;
-        analyserRef.current = analyser;
-        connectedElements.current.add(el);
-      } catch {
-        // Web Audio API unavailable or CORS blocked
-      }
-    }
+    // Web Audio API analyser: LAZY connection — only when visualization is
+    // first needed. Connecting immediately causes iOS to route audio through
+    // AudioContext, which gets suspended in background and kills playback.
+    // The analyser is connected on first play when isExpanded/broadcast is open.
 
     listenerCleanupRef.current = () => {
       el.removeEventListener("timeupdate", onTime);
@@ -182,6 +167,41 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
 
   const getAudio = useCallback((): HTMLAudioElement | null => {
     return audioRef.current;
+  }, []);
+
+  /* ---- Lazy analyser connection — called from FloatingPlayer when viz opens ---- */
+  const connectAnalyser = useCallback(() => {
+    const el = audioRef.current;
+    if (!el || connectedElements.current.has(el)) return;
+    try {
+      const ctx =
+        audioContextRef.current ||
+        new (window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof window.AudioContext })
+            .webkitAudioContext)();
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.82;
+      const source = ctx.createMediaElementSource(el);
+      source.connect(analyser);
+      analyser.connect(ctx.destination);
+      audioContextRef.current = ctx;
+      analyserRef.current = analyser;
+      connectedElements.current.add(el);
+    } catch {
+      // Web Audio API unavailable or CORS blocked
+    }
+  }, []);
+
+  /* ---- Resume AudioContext when returning from background (iOS) ---- */
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible" && audioContextRef.current?.state === "suspended") {
+        audioContextRef.current.resume();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
   const handlePlayPause = useCallback(() => {
@@ -358,6 +378,7 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     isExpanded,
     setExpanded,
     analyserRef,
+    connectAnalyser,
     hasEverPlayed,
   };
 

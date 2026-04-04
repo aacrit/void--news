@@ -40,6 +40,8 @@ export interface DailyBriefState {
   setExpanded: (v: boolean) => void;
   /** Web Audio API analyser for real-time waveform visualization */
   analyserRef: React.RefObject<AnalyserNode | null>;
+  /** Lazily connect Web Audio API analyser — call when viz becomes visible */
+  connectAnalyser: () => void;
 }
 
 /**
@@ -82,6 +84,7 @@ export function useDailyBrief(edition: string): DailyBriefState {
     isExpanded: audio.isExpanded,
     setExpanded: audio.setExpanded,
     analyserRef: audio.analyserRef,
+    connectAnalyser: audio.connectAnalyser,
   };
 }
 
