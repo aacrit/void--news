@@ -31,6 +31,7 @@ export type ScaleAnimation =
   | "balanced"
   | "pulse"
   | "draw"
+  | "broadcast"
   | "none";
 
 export interface ScaleIconProps {
@@ -93,6 +94,15 @@ const STYLES = `
   100% { transform: rotate(0deg); }
 }
 
+/* broadcast — VU meter needle oscillation, asymmetric amplitude */
+@keyframes si-broadcast {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(4deg); }
+  35% { transform: rotate(-3deg); }
+  55% { transform: rotate(3.5deg); }
+  75% { transform: rotate(-2deg); }
+}
+
 /* pulse — whole-icon scale pulse */
 @keyframes si-pulse {
   0% { transform: scale(1); }
@@ -141,6 +151,11 @@ const STYLES = `
 .si-beam--balanced {
   transform-origin: 16px 13px;
   animation: si-balanced 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.si-beam--broadcast {
+  transform-origin: 16px 13px;
+  animation: si-broadcast 2.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-root--pulse {
@@ -214,6 +229,7 @@ const STYLES = `
   .si-beam--hover,
   .si-beam--analyzing,
   .si-beam--balanced,
+  .si-beam--broadcast,
   .si-root--pulse,
   .si-void,
   .si-draw-void,
@@ -274,7 +290,9 @@ export function ScaleIcon({
             ? "si-beam--analyzing"
             : animation === "balanced"
               ? "si-beam--balanced"
-              : undefined;
+              : animation === "broadcast"
+                ? "si-beam--broadcast"
+                : undefined;
 
   const rootClass = animation === "pulse" ? "si-root--pulse" : undefined;
   const isDraw = animation === "draw";
