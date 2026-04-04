@@ -38,7 +38,7 @@ const PHASES: Phase[] = [
     duration: 10000,
     headline: "Beam & Ring",
     subtitle: "Every story, measured",
-    body: "The beam tilts toward the lean. The ring fills as more sources cover the story. Together: where does the weight fall, and how many newsrooms have pressure-tested it?",
+    body: "The beam tilts to show coverage tilt \u2014 measured per-story, not per-outlet. The ring fills as more sources weigh in. When we lack signal, you\u2019ll see a dashed beam: honest uncertainty over false precision.",
     visual: "beam-ring",
   },
   {

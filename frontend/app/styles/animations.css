@@ -320,6 +320,39 @@
   }
 }
 
+/* ---- Tilt system motion (cinematographer) ----------------------------- */
+
+/* Unscored beam idle: instrument awaiting signal.
+   Slow opacity pulse (6s period) — "not reading" vs "reads zero."
+   Amplitude 0.3→0.5, matches resting respiration. */
+@keyframes beamUnscoredIdle {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.5; }
+}
+
+/* Tilt label ink stamp: editorial label arrives like a rubber press.
+   Micro-scale from 1.06 → 1.0 with spring settle. Delay synced to
+   beam spring primary oscillation (~400ms into 800ms settle). */
+@keyframes tiltLabelStamp {
+  from { opacity: 0; transform: scale(1.06) translateY(-1px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Lean dot activation pulse: practical light flare on filter chip select */
+@keyframes leanDotPulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  35%  { transform: scale(1.6); opacity: 1; }
+  70%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sigil--unscored .sigil__beam-group { animation: none !important; opacity: 0.35; }
+  .sigil__lean-label { animation: none !important; }
+  .nav-lens__lean--active .nav-lens__dot,
+  .mob-nav__lean--active .mob-nav__dot { animation: none !important; }
+}
+
 /* Legacy fallback — hidden, replaced by inline SVG */
 .sigil--divergent::after,
 .sigil--consensus::after {

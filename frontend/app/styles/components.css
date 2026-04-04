@@ -168,23 +168,26 @@
 .sigil--lg  { gap: 8px; }
 .sigil--xl  { gap: 12px; }
 
-/* Sigil tilt label — tilt vocabulary for story-level lean */
+/* Sigil tilt label — tilt vocabulary for story-level lean.
+   Stamp entrance: beam settles → label appears (L-cut timing). */
 .sigil__lean-label {
   font-family: var(--font-data);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.02em;
-  transition:
-    opacity 350ms var(--ease-out) 350ms,
-    transform 400ms var(--ease-cinematic) 350ms,
-    color 400ms var(--ease-out);
   position: relative;
-  transform: translateY(2px);
+  animation: tiltLabelStamp 350ms var(--spring-snappy) 450ms both;
+  transition: color 400ms var(--ease-out);
 }
 
-/* Settled state — label slides up into place */
-.sigil:not([style*="opacity: 0"]) .sigil__lean-label {
-  transform: translateY(0);
+/* Unscored beam: dashed stroke + idle pulse */
+.sigil--unscored .sigil__beam-group {
+  animation: beamUnscoredIdle 6s var(--ease-rack) infinite;
+}
+
+.sigil--unscored .sigil__beam-group path,
+.sigil--unscored .sigil__beam-group line {
+  stroke-dasharray: 3 3;
 }
 
 .sigil--sm .sigil__lean-label {
@@ -2416,6 +2419,11 @@
   color: var(--fg-secondary);
 }
 
+.nav-lens__lean:active {
+  transform: scale(0.96);
+  transition: transform 80ms var(--ease-out);
+}
+
 .nav-lens__lean--active {
   color: var(--fg-primary);
   text-decoration: underline;
@@ -2434,8 +2442,7 @@
 }
 
 .nav-lens__lean--active .nav-lens__dot {
-  opacity: 1;
-  transform: scale(1.25);
+  animation: leanDotPulse 350ms var(--spring-snappy) both;
 }
 
 .nav-lens__lean--left   { --lean-dot-color: var(--bias-left); }
@@ -7642,8 +7649,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 
   .mob-nav__lean--active .mob-nav__dot {
-    opacity: 1;
-    transform: scale(1.25);
+    animation: leanDotPulse 350ms var(--spring-snappy) both;
   }
 
   .mob-nav__lean--left   { --lean-dot-color: var(--bias-left); }
