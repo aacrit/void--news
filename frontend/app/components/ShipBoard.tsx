@@ -9,7 +9,7 @@ import {
   subscribeToShipRequests,
   generateFingerprint,
 } from '../lib/supabase';
-import type { ShipRequest, ShipStatus, ShipCategory, ShipArea, Edition } from '../lib/types';
+import type { ShipRequest, ShipStatus, ShipCategory, Edition } from '../lib/types';
 
 /* ==========================================================================
    void --ship — "Request, vote, watch it deploy."
@@ -29,16 +29,6 @@ const STATUS_LABELS: Record<ShipStatus, string> = {
 const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
   { value: 'bug', label: 'Bug' },
   { value: 'feature', label: 'Feature' },
-  { value: 'enhancement', label: 'Enhancement' },
-];
-
-const AREA_OPTIONS: { value: ShipArea; label: string }[] = [
-  { value: 'frontend', label: 'Frontend' },
-  { value: 'pipeline', label: 'Pipeline' },
-  { value: 'bias', label: 'Bias Engine' },
-  { value: 'audio', label: 'Audio' },
-  { value: 'design', label: 'Design' },
-  { value: 'other', label: 'Other' },
 ];
 
 const EDITION_SLUGS: Edition[] = ['world', 'us', 'europe', 'south-asia'];
@@ -302,6 +292,13 @@ export default function ShipBoard() {
           Submit bugs and features. The ones you vote for get built — often within hours.
           Every shipped item links to its commit.
         </p>
+        <button
+          ref={submitBtnRef}
+          className="ship-actions__submit-btn"
+          onClick={() => setShowForm(true)}
+        >
+          + Submit Request
+        </button>
       </header>
 
       <div className="ship-metrics ship-cold-open-metrics">
@@ -329,16 +326,6 @@ export default function ShipBoard() {
           </span>
           <span className="ship-metrics__label">Avg Ship Time</span>
         </div>
-      </div>
-
-      <div className="ship-actions ship-cold-open-actions">
-        <button
-          ref={submitBtnRef}
-          className="ship-actions__submit-btn"
-          onClick={() => setShowForm(true)}
-        >
-          + Submit Request
-        </button>
       </div>
 
       {loading ? (
@@ -383,6 +370,43 @@ export default function ShipBoard() {
             </section>
           ))}
         </div>
+      )}
+
+      {/* void --log: full activity feed */}
+      {!loading && requests.length > 0 && (
+        <section className="ship-log ship-cold-open-column" aria-label="void --log activity feed">
+          <h2 className="ship-log__title">void --log</h2>
+          <div className="ship-log__entries">
+            {requests
+              .slice()
+              .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+              .map(r => (
+                <div key={r.id} className={`ship-log__entry ship-log__entry--${r.status}`}>
+                  <div className="ship-log__dot" />
+                  <div className="ship-log__content">
+                    <div className="ship-log__header">
+                      <span className={`ship-log__status ship-log__status--${r.status}`}>{STATUS_LABELS[r.status]}</span>
+                      <span className="ship-log__time">{timeAgo(r.updated_at || r.created_at)}</span>
+                    </div>
+                    <p className="ship-log__request-title">{r.title}</p>
+                    <div className="ship-log__meta">
+                      <span className={`ship-log__badge ship-log__badge--${r.category}`}>{r.category}</span>
+                      {r.votes > 0 && <span className="ship-log__votes">{r.votes} vote{r.votes !== 1 ? 's' : ''}</span>}
+                      {r.shipped_at && r.status === 'shipped' && (
+                        <span className="ship-log__ship-time">shipped in {shipDuration(r.created_at, r.shipped_at)}</span>
+                      )}
+                      {r.shipped_commit && (
+                        <a className="ship-log__commit" href={`https://github.com/aacrit/void--news/commit/${r.shipped_commit}`} target="_blank" rel="noopener">
+                          {r.shipped_commit.slice(0, 7)}
+                        </a>
+                      )}
+                    </div>
+                    {r.ceo_response && <p className="ship-log__response">{r.ceo_response}</p>}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </section>
       )}
 
       {showForm && (
@@ -544,7 +568,6 @@ function SubmitForm({ onClose, fingerprint }: { onClose: () => void; fingerprint
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<ShipCategory>('feature');
-  const [area, setArea] = useState<ShipArea>('other');
   const [honeypot, setHoneypot] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -582,7 +605,7 @@ function SubmitForm({ onClose, fingerprint }: { onClose: () => void; fingerprint
       title: title.trim(),
       description: description.trim(),
       category,
-      area,
+      area: 'other',
       edition_context: editionRef.current,
       device_info: deviceInfo,
       ip_hash: fingerprint,
@@ -659,19 +682,11 @@ function SubmitForm({ onClose, fingerprint }: { onClose: () => void; fingerprint
               <div className="ship-form__char-count"><span className={description.length > 1800 ? 'ship-form__char-count--warn' : ''}>{description.length}/2000</span></div>
             </div>
 
-            <div className="ship-form__row">
-              <div className="ship-form__group">
-                <label className="ship-form__label" htmlFor="ship-category">Type</label>
-                <select id="ship-category" className="ship-form__select" value={category} onChange={(e) => setCategory(e.target.value as ShipCategory)}>
-                  {CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="ship-form__group">
-                <label className="ship-form__label" htmlFor="ship-area">Area</label>
-                <select id="ship-area" className="ship-form__select" value={area} onChange={(e) => setArea(e.target.value as ShipArea)}>
-                  {AREA_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+            <div className="ship-form__group">
+              <label className="ship-form__label" htmlFor="ship-category">Type</label>
+              <select id="ship-category" className="ship-form__select" value={category} onChange={(e) => setCategory(e.target.value as ShipCategory)}>
+                {CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
             </div>
 
             {error && <p className="ship-form__error" role="alert">{error}</p>}
