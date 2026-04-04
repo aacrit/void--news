@@ -8,7 +8,7 @@ import {
   getLeanColor,
   getCoverageColor,
   lerpColor,
-  leanLabel as getLeanLabel,
+  tiltLabel as getLeanLabel,
   coverageLabel as getCoverageLabel,
 } from "../lib/biasColors";
 

@@ -187,7 +187,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (typeof window === "undefined") return "All";
     const params = new URLSearchParams(window.location.search);
     const lean = params.get("lean");
-    if (lean && ["Left", "Center", "Right"].includes(lean)) return lean as LeanChip;
+    if (lean && ["Left", "Balanced", "Right"].includes(lean)) return lean as LeanChip;
     return "All";
   });
 
@@ -804,7 +804,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {/* Live region for screen readers — announces filter changes and story count */}
             <div aria-live="polite" className="sr-only">
               {!isLoading && filteredStories.length > 0 &&
-                `${filteredStories.length} stories loaded for ${activeEdition} edition${activeCategory !== "All" ? `, filtered by ${activeCategory}` : ""}${activeLean !== "All" ? `, ${activeLean} perspective` : ""}. Press ? for keyboard shortcuts.`}
+                `${filteredStories.length} stories loaded for ${activeEdition} edition${activeCategory !== "All" ? `, filtered by ${activeCategory}` : ""}${activeLean !== "All" ? `, ${activeLean.toLowerCase()} tilt` : ""}. Press ? for keyboard shortcuts.`}
               {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
                 "No stories match the current filter. Try clearing your filters."}
             </div>

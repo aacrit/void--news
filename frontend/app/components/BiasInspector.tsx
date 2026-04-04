@@ -15,7 +15,7 @@ import {
   getSenseColor,
   getRigorColor,
   getFramingColor,
-  leanLabel,
+  tiltLabel,
   senseLabel,
   rigorLabel,
 } from "../lib/biasColors";
@@ -427,7 +427,7 @@ function LeanAxis({
       label="Political Lean"
       score={score}
       color={color}
-      scoreLabel={leanLabel(score)}
+      scoreLabel={tiltLabel(score)}
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}

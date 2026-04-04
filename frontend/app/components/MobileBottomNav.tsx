@@ -158,10 +158,10 @@ export default function MobileBottomNav({
 
       {/* Filter bar — bracket notation matching desktop nav-lens */}
       <div className="mob-nav__bar">
-        {/* Lean selector: [ ·left ·center ·right ] */}
-        <div className="mob-nav__lens" role="toolbar" aria-label="Political perspective">
+        {/* Tilt selector: [ ·left ·balanced ·right ] */}
+        <div className="mob-nav__lens" role="toolbar" aria-label="Coverage tilt">
           <span className="mob-nav__bracket" aria-hidden="true">[</span>
-          {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
+          {(["Left", "Balanced", "Right"] as LeanChip[]).map((lean) => (
             <button
               key={lean}
               aria-pressed={activeLean === lean}

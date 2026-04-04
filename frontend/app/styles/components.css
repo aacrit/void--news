@@ -2344,7 +2344,8 @@
 }
 
 .nav-lens__lean--left .nav-lens__dot { background-color: var(--bias-left); }
-.nav-lens__lean--center .nav-lens__dot { background-color: var(--bias-center); }
+.nav-lens__lean--center .nav-lens__dot,
+.nav-lens__lean--balanced .nav-lens__dot { background-color: var(--bias-center); }
 .nav-lens__lean--right .nav-lens__dot { background-color: var(--bias-right); }
 
 /* ── Active lean badge ── */
@@ -7544,7 +7545,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 
   .mob-nav__lean--left .mob-nav__dot { background-color: var(--bias-left); }
-  .mob-nav__lean--center .mob-nav__dot { background-color: var(--bias-center); }
+  .mob-nav__lean--center .mob-nav__dot,
+  .mob-nav__lean--balanced .mob-nav__dot { background-color: var(--bias-center); }
   .mob-nav__lean--right .mob-nav__dot { background-color: var(--bias-right); }
 
   /* Topic dropdown trigger: [ topics ▾ ] */

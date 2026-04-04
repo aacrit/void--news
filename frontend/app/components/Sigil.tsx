@@ -6,7 +6,7 @@ import type { SigilData } from "../lib/types";
 import {
   getColors as gc,
   getLeanColor as leanColor,
-  leanLabel,
+  tiltLabel,
   lerpColor as lerp,
 } from "../lib/biasColors";
 
@@ -189,7 +189,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
   const lean = data.politicalLean;
   const lc = leanColor(lean);
-  const ll = leanLabel(lean);
+  const ll = tiltLabel(lean);
   const full = isFullDetail(size);
 
   useEffect(() => {
@@ -462,13 +462,13 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const [mounted, setMounted] = useState(false);
   const tooltipId = `sigil-${useId()}`;
 
-  const ll = leanLabel(data.politicalLean);
+  const ll = tiltLabel(data.politicalLean);
   const lc = leanColor(data.politicalLean);
   const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const aria = `Political lean: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
+  const aria = `Coverage tilt: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
   const ringClass = data.divergenceFlag === "divergent"
     ? " sigil--divergent"
