@@ -597,7 +597,7 @@ function CoverStoryCard({
   isFirst: boolean;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const previewText = story.text.slice(0, 200).replace(/\s+\S*$/, "");
+  const previewText = (story.text || "").slice(0, 200).replace(/\s+\S*$/, "");
   const [parallaxRef, parallaxOffset] = useParallax(0.06);
 
   return (
@@ -688,8 +688,9 @@ function CoverSection({
 
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   const [expanded, setExpanded] = useState(false);
-  const previewText = op.text.slice(0, 120).replace(/\s+\S*$/, "");
-  const needsTruncation = (op.text || "").length > 140;
+  const safeText = op.text || "";
+  const previewText = safeText.slice(0, 120).replace(/\s+\S*$/, "");
+  const needsTruncation = safeText.length > 140;
 
   return (
     <article className="wk-opinion wk-reveal-child">
@@ -846,28 +847,41 @@ function BiasReport({
 }) {
   if (!text && !data) return null;
 
-  const agg = data?.aggregate;
-  const polarized = data?.most_polarized ?? [];
+  // Pipeline stores aggregate stats under "stats"; type expects "aggregate".
+  // Normalize field names defensively so both shapes work.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawData = data as Record<string, any> | null;
+  const agg = rawData?.aggregate ?? rawData?.stats ?? null;
+  const rawPolarized = rawData?.most_polarized ?? [];
+  // Pipeline items use { title, divergence }; type expects { headline, lean_spread, avg_lean }.
+  const polarized = rawPolarized.map(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (item: any) => ({
+      headline: item.headline ?? item.title ?? "",
+      lean_spread: item.lean_spread ?? item.divergence ?? 0,
+      avg_lean: item.avg_lean ?? 50,
+    })
+  );
 
   return (
     <CollapsibleSection id="wk-bias-heading" label="Bias Report" defaultOpen={false}>
       {agg && (
         <div className="wk-bias__aggregate">
           <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{agg.total_articles}</span>
+            <span className="wk-bias__stat-value">{agg.total_articles ?? agg.total_scored ?? 0}</span>
             <span className="wk-bias__stat-label">Articles Analyzed</span>
           </div>
           <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{agg.avg_lean.toFixed(1)}</span>
+            <span className="wk-bias__stat-value">{(agg.avg_lean ?? 0).toFixed(1)}</span>
             <span className="wk-bias__stat-label">Avg. Lean</span>
-            <span className="wk-bias__stat-note">{getLeanLabel(agg.avg_lean)}</span>
+            <span className="wk-bias__stat-note">{getLeanLabel(agg.avg_lean ?? 50)}</span>
           </div>
           <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{agg.avg_rigor.toFixed(1)}</span>
+            <span className="wk-bias__stat-value">{(agg.avg_rigor ?? 0).toFixed(1)}</span>
             <span className="wk-bias__stat-label">Avg. Rigor</span>
           </div>
           <div className="wk-bias__stat">
-            <span className="wk-bias__stat-value">{agg.avg_sensationalism.toFixed(1)}</span>
+            <span className="wk-bias__stat-value">{(agg.avg_sensationalism ?? 0).toFixed(1)}</span>
             <span className="wk-bias__stat-label">Avg. Sensationalism</span>
           </div>
         </div>
@@ -876,7 +890,7 @@ function BiasReport({
       {polarized.length > 0 && (
         <div className="wk-bias__polarized">
           <h3 className="wk-bias__sub-heading">Most Polarized Stories</h3>
-          {polarized.map((story, i) => (
+          {polarized.map((story: { headline: string; lean_spread: number; avg_lean: number }, i: number) => (
             <div key={i} className="wk-bias__bar-row">
               <span className="wk-bias__bar-label">{story.headline}</span>
               <div className="wk-bias__bar-track">
