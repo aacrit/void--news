@@ -290,6 +290,15 @@ export interface ShipRequest {
   triaged_at: string | null;
   shipped_at: string | null;
   updated_at: string;
+  shipped_diff_summary: string | null;
+}
+
+export interface ShipReply {
+  id: string;
+  request_id: string;
+  body: string;
+  fingerprint: string;
+  created_at: string;
 }
 
 export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> = {
