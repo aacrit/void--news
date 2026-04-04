@@ -192,6 +192,28 @@ export async function fetchDailyBrief(edition: string): Promise<any | null> {
   return d;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function fetchPreviousEpisodes(edition: string, limit = 9): Promise<any[]> {
+  if (!_client) return [];
+
+  const cols = 'id, edition, tldr_headline, tldr_text, opinion_headline, opinion_text, opinion_lean, audio_url, audio_duration_seconds, opinion_start_seconds, audio_voice_label, audio_voice, created_at';
+
+  // Fetch last 3 days: up to `limit` briefs with audio for this edition
+  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await _client
+    .from('daily_briefs')
+    .select(cols)
+    .eq('edition', edition)
+    .not('audio_url', 'is', null)
+    .gte('created_at', threeDaysAgo)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error || !data) return [];
+  return data;
+}
+
 /* ---------------------------------------------------------------------------
    Weekly Digest — void --weekly
    --------------------------------------------------------------------------- */

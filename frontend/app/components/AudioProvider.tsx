@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { DailyBriefData, Edition } from "../lib/types";
-import { fetchDailyBrief } from "../lib/supabase";
+import { fetchDailyBrief, fetchPreviousEpisodes } from "../lib/supabase";
 import { hapticLight, hapticTick } from "../lib/haptics";
 
 /* ---------------------------------------------------------------------------
@@ -23,6 +23,23 @@ import { hapticLight, hapticTick } from "../lib/haptics";
    - Brief data fetching also lives here (coupled to edition).
    - Navigator.mediaSession for iOS lock screen / notification controls.
    --------------------------------------------------------------------------- */
+
+/** Episode metadata for the "Previous Episodes" playlist */
+export interface EpisodeMeta {
+  id: string;
+  edition: string;
+  tldr_headline: string | null;
+  tldr_text: string | null;
+  opinion_headline: string | null;
+  opinion_text: string | null;
+  opinion_lean: string | null;
+  audio_url: string | null;
+  audio_duration_seconds: number | null;
+  opinion_start_seconds: number | null;
+  audio_voice_label: string | null;
+  audio_voice: string | null;
+  created_at: string;
+}
 
 export interface AudioState {
   brief: DailyBriefData | null;
@@ -50,6 +67,10 @@ export interface AudioState {
   connectAnalyser: () => void;
   /** Whether audio has ever been started (for mini-player visibility) */
   hasEverPlayed: boolean;
+  /** Previous episodes (last 3 days) for current edition */
+  previousEpisodes: EpisodeMeta[];
+  /** Load and play a specific episode by its audio URL */
+  loadEpisode: (episode: EpisodeMeta) => void;
 }
 
 const AudioContext = createContext<AudioState | null>(null);
@@ -80,6 +101,7 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
   const [isPlayerVisible, setPlayerVisible] = useState(false);
   const [isExpanded, setExpanded] = useState(false);
   const [hasEverPlayed, setHasEverPlayed] = useState(false);
+  const [previousEpisodes, setPreviousEpisodes] = useState<EpisodeMeta[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /* ---- Web Audio API: real-time analyser for oscilloscope ---- */
@@ -105,9 +127,13 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     setDuration(0);
     setAudioError(false);
     setBuffered(0);
+    setPreviousEpisodes([]);
 
     fetchDailyBrief(edition).then((data) => {
       if (!cancelled) setBrief(data);
+    });
+    fetchPreviousEpisodes(edition).then((data) => {
+      if (!cancelled) setPreviousEpisodes(data);
     });
     return () => {
       cancelled = true;
@@ -314,6 +340,41 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     if (brief?.audio_url) setPlayerVisible(true);
   }, [brief]);
 
+  /** Load a previous episode — swap audio source and reset playback state */
+  const loadEpisode = useCallback((episode: EpisodeMeta) => {
+    if (!episode.audio_url) return;
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.src = episode.audio_url;
+      audio.load();
+    }
+    // Create DailyBriefData from episode metadata
+    setBrief((prev) => ({
+      ...(prev || {} as DailyBriefData),
+      id: episode.id,
+      edition: episode.edition as DailyBriefData["edition"],
+      tldr_headline: episode.tldr_headline,
+      tldr_text: episode.tldr_text || "",
+      opinion_headline: episode.opinion_headline,
+      opinion_text: episode.opinion_text || null,
+      opinion_lean: episode.opinion_lean as DailyBriefData["opinion_lean"],
+      audio_url: episode.audio_url,
+      audio_duration_seconds: episode.audio_duration_seconds,
+      opinion_start_seconds: episode.opinion_start_seconds,
+      audio_voice_label: episode.audio_voice_label,
+      audio_voice: episode.audio_voice,
+      created_at: episode.created_at,
+    }));
+    setCurrentTime(0);
+    setDuration(episode.audio_duration_seconds || 0);
+    setAudioError(false);
+    setBuffered(0);
+    setIsPlaying(false);
+    setPlayerVisible(true);
+    hapticLight();
+  }, []);
+
   /* ---- Media Session API — iOS lock screen + notification controls ---- */
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator))
@@ -380,6 +441,8 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     analyserRef,
     connectAnalyser,
     hasEverPlayed,
+    previousEpisodes,
+    loadEpisode,
   };
 
   return (

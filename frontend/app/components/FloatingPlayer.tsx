@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback, Fragment } from "react";
 import type { DailyBriefState } from "./DailyBrief";
+import type { EpisodeMeta } from "./AudioProvider";
 import { CaretRight } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
 import ScaleIcon from "./ScaleIcon";
@@ -47,6 +48,24 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
+function formatEpisodeDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function formatEpisodeTime(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+}
+
 type PlayerView = "compact" | "expanded" | "broadcast";
 
 export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
@@ -55,6 +74,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     handlePlayPause, handleSeek,
     playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
     isPlayerVisible, setPlayerVisible,
+    previousEpisodes, loadEpisode,
   } = state;
 
   const [view, setView] = useState<PlayerView>("compact");
@@ -616,6 +636,88 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
               )}
             </div>
           </details>
+
+          {/* Previous Episodes — playlist with news/opinion separation */}
+          {previousEpisodes.length > 1 && (() => {
+            // Group episodes by date for playlist sections
+            const grouped = new Map<string, typeof previousEpisodes>();
+            for (const ep of previousEpisodes) {
+              const dayKey = new Date(ep.created_at).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+              if (!grouped.has(dayKey)) grouped.set(dayKey, []);
+              grouped.get(dayKey)!.push(ep);
+            }
+            return (
+              <details className="fp__bcast-details fp__playlist">
+                <summary className="fp__bcast-summary">
+                  <span>Previous episodes</span>
+                  <CaretRight size={12} weight="bold" className="fp__caret fp__bcast-summary-arrow" />
+                </summary>
+                <div className="fp__playlist-wrap">
+                  {Array.from(grouped.entries()).map(([dayLabel, eps]) => (
+                    <div key={dayLabel} className="fp__playlist-day">
+                      <div className="fp__playlist-day-label">{dayLabel}</div>
+                      {eps.map((ep) => {
+                        const isCurrent = brief.audio_url === ep.audio_url;
+                        const epDuration = ep.audio_duration_seconds ? Math.ceil(ep.audio_duration_seconds / 60) : null;
+                        const epHosts = parseHosts(ep.audio_voice);
+                        const timeStr = formatEpisodeTime(ep.created_at);
+                        const hasOpinion = !!ep.opinion_text;
+                        return (
+                          <button
+                            key={ep.id}
+                            className={`fp__track${isCurrent ? " fp__track--current" : ""}`}
+                            onClick={() => { if (!isCurrent) { hapticConfirm(); loadEpisode(ep); } }}
+                            type="button"
+                            aria-current={isCurrent ? "true" : undefined}
+                            disabled={isCurrent}
+                          >
+                            <div className="fp__track-num" aria-hidden="true">
+                              {isCurrent && isPlaying ? (
+                                <span className="fp__track-eq">
+                                  <span /><span /><span />
+                                </span>
+                              ) : (
+                                <PlayIcon />
+                              )}
+                            </div>
+                            <div className="fp__track-body">
+                              <div className="fp__track-row">
+                                <span className="fp__track-label">News</span>
+                                <span className="fp__track-hl">
+                                  {ep.tldr_headline || "Daily Brief"}
+                                </span>
+                              </div>
+                              {hasOpinion && (
+                                <div className="fp__track-row fp__track-row--opinion">
+                                  <span className="fp__track-label">Opinion</span>
+                                  <span className="fp__track-hl">
+                                    {ep.opinion_headline || "Editorial"}
+                                  </span>
+                                  {ep.opinion_lean && (
+                                    <span className={`fp__track-lean fp__track-lean--${ep.opinion_lean}`}>
+                                      {ep.opinion_lean[0].toUpperCase()}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                              <div className="fp__track-sub">
+                                <span>{timeStr}</span>
+                                {epDuration && <span>{epDuration} min</span>}
+                                {epHosts.length > 0 && (
+                                  <span>{epHosts.map(h => h.name).join(" & ")}</span>
+                                )}
+                              </div>
+                            </div>
+                            {isCurrent && <span className="fp__track-badge">Now playing</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </details>
+            );
+          })()}
         </div>
       )}
     </div>
