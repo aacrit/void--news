@@ -179,7 +179,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     type="button"
                     aria-label="Collapse news brief"
                   >
-                    <span aria-hidden="true">&#9652;</span>
+                    <CaretRight size={14} weight="bold" />
                   </button>
                 </div>
                 {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
@@ -203,7 +203,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     type="button"
                     aria-label="Collapse editorial"
                   >
-                    <span aria-hidden="true">&#9652;</span>
+                    <CaretRight size={14} weight="bold" />
                   </button>
                 </div>
                 {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
