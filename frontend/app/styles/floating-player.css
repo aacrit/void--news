@@ -346,7 +346,22 @@
 .fp__caret--down { transform: rotate(90deg); }
 .fp__caret--up { transform: rotate(-90deg); }
 .fp__minimize:hover .fp__caret--down { transform: rotate(90deg) translateX(1px); }
-.fp__episode-btn:hover .fp__caret--up { transform: rotate(-90deg) translateX(-1px); }
+
+/* Detach-to-floating button */
+.fp__detach {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  cursor: pointer;
+  transition: color 150ms var(--ease-out), background 150ms var(--ease-out);
+  position: relative;
+}
+.fp__detach::after { content: ""; position: absolute; inset: -6px; }
+.fp__detach:hover {
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
 
 /* Waveform — visible when playing, collapses when paused */
 .fp__waveform {
@@ -754,29 +769,7 @@
    EPISODE DETAILS BUTTON
    --------------------------------------------------------------------------- */
 
-.fp__episode-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-2) 0;
-  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 10%, transparent);
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
-  cursor: pointer;
-  transition: color 150ms var(--ease-out);
-}
-
-.fp__episode-btn:hover {
-  color: var(--accent-warm);
-}
-
-/* Episode button arrow handled by .fp__caret--up */
+/* Episode button removed — pill goes direct to pane */
 
 /* ---------------------------------------------------------------------------
    BROADCAST PANEL — full episode view (tier 3)
@@ -1170,7 +1163,9 @@
     bottom: 0;
     left: 0;
     right: auto;
-    width: clamp(260px, 25vw, 380px);
+    /* Resolution-relative: take available space beyond the 1400px canvas + 80px padding.
+       Floor at 320px (minimum readable), ceiling at 480px (generous). */
+    width: clamp(320px, calc(100vw - 1400px - 80px), 480px);
     animation: fpPaneSlideIn 420ms var(--ease-cinematic, ease) both;
   }
 
@@ -1183,9 +1178,20 @@
     box-shadow:
       4px 0 20px rgba(0, 0, 0, 0.2),
       inset -1px 0 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
-    padding: var(--space-4) var(--space-4);
-    gap: var(--space-3);
+    padding: var(--space-5) var(--space-5);
+    gap: var(--space-4);
   }
+
+  /* Larger typography in wider pane */
+  .fp__bcast-void { font-size: var(--text-lg); }
+  .fp__bcast-cmd { font-size: var(--text-base); }
+  .fp__bcast-date { font-size: var(--text-sm); }
+  .fp__bcast-edition { font-size: 10px; }
+  .fp__bcast-host-name { font-size: var(--text-sm); }
+  .fp__bcast-host-trait { font-size: var(--text-xxs); white-space: normal; }
+  .fp__bcast-section-label { font-size: var(--text-xs); }
+  .fp__bcast-text { font-size: var(--text-sm); line-height: 1.65; }
+  .fp__oscilloscope--lg { height: 56px; }
 
   .fp--playing .fp__broadcast {
     border-right-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);

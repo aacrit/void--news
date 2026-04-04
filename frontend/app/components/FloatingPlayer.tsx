@@ -197,17 +197,24 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     : hasOpinionSection ? 60 : 100;
   const inOpinion = hasOpinionSection && effectiveOpinionStart !== null && currentTime >= effectiveOpinionStart;
 
-  const toggleExpand = () => {
-    hapticLight();
-    setView(v => v === "compact" ? "expanded" : "compact");
-  };
-
-  const openBroadcast = () => {
+  /* Flow: pill → pane (direct). Floating is an option from pane. */
+  const openPane = () => {
     hapticLight();
     setView("broadcast");
   };
 
-  const closeBroadcast = () => {
+  const closePane = () => {
+    hapticLight();
+    const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
+    if (isDesktop) {
+      setClosing(true);
+      setTimeout(() => { setClosing(false); setView("compact"); }, 300);
+    } else {
+      setView("compact");
+    }
+  };
+
+  const detachToFloating = () => {
     hapticLight();
     const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
     if (isDesktop) {
@@ -216,6 +223,11 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     } else {
       setView("expanded");
     }
+  };
+
+  const closeFloating = () => {
+    hapticLight();
+    setView("compact");
   };
 
   const dismiss = () => {
@@ -250,8 +262,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     setDragOffset(0);
     if (dy > 80) {
       hapticLight();
-      if (view === "broadcast") setView("expanded");
-      else setView("compact");
+      setView("compact");
     }
   };
 
@@ -314,8 +325,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     >
       {/* ── COMPACT PILL ── */}
       {view === "compact" && (
-        <div className="fp__pill" onClick={toggleExpand} role="button" tabIndex={0}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleExpand(); } }}>
+        <div className="fp__pill" onClick={openPane} role="button" tabIndex={0}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPane(); } }}>
           <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} className="fp__logo" />
 
           {isPlaying && (
@@ -371,7 +382,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             <div className="fp__bar-actions">
               <button className="fp__speed" onClick={() => { hapticLight(); cycleSpeed(); }}
                 type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
-              <button className="fp__minimize" onClick={toggleExpand} type="button" aria-label="Minimize player">
+              <button className="fp__minimize" onClick={closeFloating} type="button" aria-label="Minimize player">
                 <CaretRight size={14} weight="bold" className="fp__caret fp__caret--down" />
               </button>
               <button className="fp__dismiss" onClick={dismiss} type="button" aria-label="Close player">
@@ -380,27 +391,11 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             </div>
           </div>
 
-          {/* Metadata row */}
-          <div className="fp__meta">
-            {hosts.length > 0 && (
-              <span className="fp__meta-hosts">{hosts.slice(0, 2).map(h => h.name).join(" + ")}</span>
-            )}
-            <span className="fp__meta-sep" aria-hidden="true" />
-            <span className="fp__meta-edition">{editionLabel}</span>
-            {durationMin && <span className="fp__meta-duration">{durationMin} min</span>}
-          </div>
-
           {/* Oscilloscope — real-time audio waveform */}
           <canvas ref={canvasRef} className="fp__oscilloscope" aria-hidden="true" />
 
           {renderTransport()}
           {renderSeek()}
-
-          {/* Episode details trigger */}
-          <button className="fp__episode-btn" onClick={openBroadcast} type="button">
-            <span>Episode details</span>
-            <CaretRight size={12} weight="bold" className="fp__caret fp__caret--up" />
-          </button>
         </div>
       )}
 
@@ -440,7 +435,14 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             <div className="fp__bar-actions">
               <button className="fp__speed" onClick={() => { hapticLight(); cycleSpeed(); }}
                 type="button" aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
-              <button className="fp__minimize" onClick={closeBroadcast} type="button" aria-label="Collapse to floating player">
+              <button className="fp__detach" onClick={detachToFloating} type="button" aria-label="Detach to floating player"
+                title="Floating player">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                  <rect x="1" y="5" width="8" height="8" rx="1.5" />
+                  <path d="M5 5V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H9" />
+                </svg>
+              </button>
+              <button className="fp__minimize" onClick={closePane} type="button" aria-label="Minimize to pill">
                 <CaretRight size={14} weight="bold" className="fp__caret fp__caret--down" />
               </button>
               <button className="fp__dismiss" onClick={dismiss} type="button" aria-label="Close player">

@@ -36,7 +36,7 @@
    via margin: 0 auto within the remaining space. */
 @media (min-width: 1024px) {
   html[data-onair-pane] .page-container {
-    padding-left: clamp(260px, 25vw, 380px);
+    padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
     transition: padding-left 420ms var(--ease-cinematic, ease);
     will-change: padding-left;
   }
