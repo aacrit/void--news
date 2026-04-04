@@ -514,8 +514,6 @@ function CoverBody({
       className={`wk-reveal${sectionVisible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-cover-heading"
     >
-      <h2 className="wk-section-label wk-cold-open--headline" id="wk-cover-heading" data-prefix="void --">The Cover</h2>
-
       <div className="wk-cover-body wk-cold-open--body">
         <div className="wk-cover-body__text">
           {allText.map((text, si) => (
@@ -525,28 +523,20 @@ function CoverBody({
           ))}
         </div>
 
-        {numbers.length > 0 && (
-          <aside className="wk-cover-body__numbers wk-cold-open--numbers" aria-label="This week in numbers">
+        {/* Timeline as sidebar (replaces Week in Numbers) */}
+        {timeline.length > 0 && (
+          <aside className="wk-cover-body__sidebar" aria-label="Key events">
             <InkLeftBorder />
-            <h4 className="wk-cover-body__numbers-title">Week in Numbers</h4>
-            <dl className="wk-cover-body__numbers-list">
-              {numbers.map((n, k) => (
-                <NumberItem
-                  key={k}
-                  value={n.value}
-                  label={n.label}
-                  visible={sectionVisible}
-                  delay={k * 150}
-                />
+            <h4 className="wk-cover-body__sidebar-title">Key Events</h4>
+            <div className="wk-timeline wk-timeline--vertical" role="list" aria-label="Key events">
+              <InkVerticalTrack />
+              {timeline.map((entry, k) => (
+                <TimelineNode key={k} entry={entry} index={k} />
               ))}
-            </dl>
+            </div>
           </aside>
         )}
       </div>
-
-      {timeline.length > 0 && (
-        <TimelineSection timeline={timeline} />
-      )}
     </section>
   );
 }
@@ -633,12 +623,12 @@ function TimelineSection({ timeline }: { timeline: Record<string, string>[] }) {
 
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   return (
-    <article className="wk-opinion wk-reveal-child">
+    <article
+      className="wk-opinion wk-reveal-child"
+      style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
+    >
       <div className="wk-opinion__header">
-        <span
-          className="wk-opinion__badge"
-          style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
-        >
+        <span className="wk-opinion__badge">
           {leanBadgeLabel(op.lean)}
         </span>
         {op.topic && (
@@ -665,12 +655,12 @@ function OpinionsSection({
   right: WeeklyOpinion[] | null;
 }) {
   const [ref, visible] = useScrollReveal(0.1);
-  const all = [
-    ...(left ?? []),
-    ...(center ?? []),
-    ...(right ?? []),
-  ];
-  if (all.length === 0) return null;
+  // One per lean — pick the first from each bucket
+  const picks: WeeklyOpinion[] = [];
+  if (left && left.length > 0) picks.push(left[0]);
+  if (center && center.length > 0) picks.push(center[0]);
+  if (right && right.length > 0) picks.push(right[0]);
+  if (picks.length === 0) return null;
 
   return (
     <section
@@ -678,9 +668,9 @@ function OpinionsSection({
       className={`wk-opinions-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-opinions-heading"
     >
-      <h2 className="wk-section-label" id="wk-opinions-heading" data-prefix="void --">The Opinions</h2>
+      <h2 className="wk-section-label" id="wk-opinions-heading" data-prefix="void --">Perspectives</h2>
       <div className="wk-opinions__grid">
-        {all.map((op, i) => (
+        {picks.map((op, i) => (
           <OpinionCard key={i} op={op} />
         ))}
       </div>
@@ -1062,7 +1052,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               sourceCount={digest.total_articles}
             />
 
-            {/* C. Cover Body + Numbers + Timeline */}
+            {/* C. Cover Body + Timeline sidebar */}
             {digest.cover_text && digest.cover_text.length > 0 && (
               <CoverBody
                 stories={digest.cover_text}
@@ -1072,7 +1062,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
             <RevealFlourish />
 
-            {/* D. Opinions */}
+            {/* D. Opinions (1 per lean) */}
             <OpinionsSection
               left={digest.opinion_left}
               center={digest.opinion_center}
@@ -1084,15 +1074,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             {/* E. Week in Brief */}
             <BriefList stories={digest?.recap_stories ?? []} />
 
-            <InkRule />
-
-            {/* F. Bias Report */}
-            <BiasStats
-              text={digest.bias_report_text}
-              data={digest.bias_report_data}
-            />
-
-            {/* G. Audio */}
+            {/* F. Audio */}
             {digest.audio_url && (
               <>
                 <InkRule />
@@ -1105,7 +1087,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
             <InkRule />
 
-            {/* H. Archive */}
+            {/* G. Archive */}
             <IssueArchive
               entries={archive}
               currentId={digest.id}
