@@ -42,6 +42,10 @@ export interface DailyBriefState {
   analyserRef: React.RefObject<AnalyserNode | null>;
   /** Lazily connect Web Audio API analyser — call when viz becomes visible */
   connectAnalyser: () => void;
+  /** Previous episodes (last 3 days) for current edition */
+  previousEpisodes: import("./AudioProvider").EpisodeMeta[];
+  /** Load and play a specific episode */
+  loadEpisode: (episode: import("./AudioProvider").EpisodeMeta) => void;
 }
 
 /**
@@ -85,6 +89,8 @@ export function useDailyBrief(edition: string): DailyBriefState {
     setExpanded: audio.setExpanded,
     analyserRef: audio.analyserRef,
     connectAnalyser: audio.connectAnalyser,
+    previousEpisodes: audio.previousEpisodes,
+    loadEpisode: audio.loadEpisode,
   };
 }
 

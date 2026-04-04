@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { DailyBriefState } from "./DailyBrief";
+import type { EpisodeMeta } from "./AudioProvider";
 import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
@@ -28,14 +29,26 @@ const PauseIcon = () => (
    OnAir play button integrated directly.
    --------------------------------------------------------------------------- */
 
+function formatMobileEpTime(dateStr: string): string {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+  const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  if (diffDays === 0) return time;
+  if (diffDays === 1) return `Yesterday ${time}`;
+  return d.toLocaleDateString("en-US", { weekday: "short" }) + " " + time;
+}
+
 export default function MobileBriefPill({ state, className }: { state: DailyBriefState; className?: string }) {
   const {
     brief, isPlaying, handlePlayPause,
     isPlayerVisible, setPlayerVisible,
+    previousEpisodes, loadEpisode,
   } = state;
 
   const [tldrExpanded, setTldrExpanded] = useState(false);
   const [opinionExpanded, setOpinionExpanded] = useState(false);
+  const [episodesExpanded, setEpisodesExpanded] = useState(false);
 
   if (!brief) return (
     <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
@@ -128,6 +141,46 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
               type="button" aria-expanded={opinionExpanded}>{opinionExpanded ? "Less" : "Read more"}</button>
           )}
         </section>
+      )}
+
+      {/* Previous episodes — compact expandable */}
+      {previousEpisodes.length > 1 && (
+        <>
+          <hr className="mbp__rule" />
+          <button
+            className="mbp__prev-toggle"
+            onClick={() => { hapticLight(); setEpisodesExpanded(v => !v); }}
+            type="button"
+            aria-expanded={episodesExpanded}
+          >
+            <span className="mbp__prev-label">Previous episodes ({previousEpisodes.length - 1})</span>
+            <span className={`mbp__prev-arrow${episodesExpanded ? " mbp__prev-arrow--open" : ""}`}>&#9656;</span>
+          </button>
+          <div className={`mbp__expand${episodesExpanded ? " mbp__expand--open" : ""}`}>
+            <div className="mbp__expand-inner">
+              <div className="mbp__episodes">
+                {previousEpisodes.filter(ep => ep.audio_url).map((ep) => {
+                  const isCurrent = brief?.audio_url === ep.audio_url;
+                  const dur = ep.audio_duration_seconds ? Math.ceil(ep.audio_duration_seconds / 60) : null;
+                  return (
+                    <button
+                      key={ep.id}
+                      className={`mbp__ep${isCurrent ? " mbp__ep--current" : ""}`}
+                      onClick={() => { if (!isCurrent) { hapticConfirm(); loadEpisode(ep); } }}
+                      type="button"
+                      disabled={isCurrent}
+                    >
+                      <span className="mbp__ep-time">{formatMobileEpTime(ep.created_at)}</span>
+                      <span className="mbp__ep-hl">{ep.tldr_headline || "Daily Brief"}</span>
+                      {dur && <span className="mbp__ep-dur">{dur}m</span>}
+                      {isCurrent && <span className="mbp__ep-badge">Now</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
