@@ -60,7 +60,7 @@ const SIX_AXES: {
 }[] = [
   {
     name: "Political Lean",
-    brief: "Where the article falls on the ink line.",
+    brief: "Where the article falls on the spectrum.",
     score: 42,
     signals:
       "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending.",
@@ -127,7 +127,7 @@ const PRODUCT_FAMILY = [
   { cli: "void --tl;dr", desc: "Daily Brief", href: "/" },
   { cli: "void --onair", desc: "Audio Broadcast", href: "/" },
   { cli: "void --paper", desc: "E-Paper Edition", href: "/paper" },
-  { cli: "void --sources", desc: "The Ink Line", href: "/sources" },
+  { cli: "void --sources", desc: "Source Spectrum", href: "/sources" },
   { cli: "void --deep-dive", desc: "Deep Dive Analysis", href: "/" },
   { cli: "void --ship", desc: "Feature Forge", href: "/ship" },
 ];
@@ -181,10 +181,10 @@ const SECTION_ANNOTATIONS: Record<string, Annotation[]> = {
     { side: "left", text: "median rigor: 67", accentMark: true },
     { side: "right", text: "12,847 named sources detected", accentMark: true },
   ],
-  "The Ink Line": [
-    { side: "left", text: "Continuous positioning — no buckets", accentMark: true },
-    { side: "right", text: "Position is the data", accentMark: true },
-    { side: "left", text: "Monochrome — lean color on interaction", accentMark: true },
+  "The Source Spectrum": [
+    { side: "left", text: "43 US Major", accentMark: true },
+    { side: "right", text: "373 International", accentMark: true },
+    { side: "left", text: "597 Independent", accentMark: true },
   ],
   "The Ranking": [
     { side: "right", text: "#1 EU Trade Deal \u00B7 14 sources", accentMark: true },
@@ -774,17 +774,17 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Section 5: The Ink Line ── */}
+      {/* ── Section 5: The Source Spectrum ── */}
       <section
         className="about-section about-section--act2"
-        aria-label="The Ink Line"
+        aria-label="The Source Spectrum"
         data-has-annotations
       >
-        <FloatingAnnotations sectionLabel="The Ink Line" />
+        <FloatingAnnotations sectionLabel="The Source Spectrum" />
         <div className="about-section__inner">
           <div className="about-reveal">
             <p className="about-body about-body--lead">
-              1,013 sources. 158 countries. One ink line.
+              1,013 sources. 158 countries. One spectrum.
             </p>
           </div>
 
@@ -796,14 +796,12 @@ export default function AboutPage() {
               aria-label="Political lean spectrum from far-left to far-right"
             />
             <p className="about-spectrum__stats">
-              Every source is placed at its exact lean position on a single
-              continuous rule. No buckets. No color-coding.
-              Position is the data.
+              1,013 sources &middot; 158 countries &middot; 43 US major &middot;
+              373 international &middot; 597 independent
             </p>
             <p className="about-spectrum__stats-secondary">
-              1,013 sources &middot; 158 countries &middot; 43 US major &middot;
-              373 international &middot; 597 independent &middot;
-              L:R ratio 1.23:1
+              Left:Right ratio 1.23:1 &middot; 38 wire services &middot; 10
+              fact-checkers
             </p>
           </div>
         </div>
