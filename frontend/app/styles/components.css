@@ -74,7 +74,7 @@
 
 .story-card:hover {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px) scale(1.005);
+  transform: translateY(-1px);
   will-change: transform;
 }
 
@@ -485,7 +485,7 @@
    :has() delegates visual focus from the button to the card. */
 .story-card:has(.story-card__stretch-link:focus-visible) {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .story-card:has(.story-card__stretch-link:focus-visible)::before {

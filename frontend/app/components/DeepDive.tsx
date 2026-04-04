@@ -956,9 +956,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             ? "none"
             : isDismissing
               ? "transform 280ms cubic-bezier(0.2, 1, 0.3, 1)"
-              : isVisible
-                ? "transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)"
-                : "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)",
+              : !isVisible
+                ? "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)"
+                : contentVisible
+                  ? "none"
+                  : "transform 220ms ease-out, opacity 180ms ease-out, box-shadow 220ms ease-out",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
