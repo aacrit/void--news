@@ -267,7 +267,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           opacity: stage >= 1 ? 1 : 0, transform: stage >= 1 ? "scale(1) translateY(0)" : "scale(0.94) translateY(6px)",
         }}
       >
-      {/* ═══ SECTION 1: Beam → Lean Spectrum ═══ */}
+      {/* ═══ SECTION 1: Beam → Coverage Tilt ═══ */}
       <div className="sigil-popup__section" style={{
         opacity: stage >= 2 ? 1 : 0, transform: stage >= 2 ? "translateY(0)" : "translateY(-8px)",
         transition: "opacity 300ms var(--ease-out), transform 350ms var(--spring)",
