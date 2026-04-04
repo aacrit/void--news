@@ -1122,17 +1122,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
-              {/* Inline methodology hint near spectrum — surfaces scoring context
-                  without scrolling to the bottom (F13: methodology link buried). */}
-              <span className="dd-methodology-inline text-meta" style={{ color: "var(--fg-muted)", fontSize: "var(--text-xs)" }}>
-                Scored across 6 lenses{" "}
-                <a href="/void--news/sources/#methodology"
-                  className="dd-methodology-inline__link"
-                  style={{ color: "var(--fg-tertiary)", textDecoration: "underline", textUnderlineOffset: "2px" }}
-                >
-                  learn more
-                </a>
-              </span>
+              {/* Methodology hint removed — duplicate of ScoringMethodology section below */}
             </div>
           )}
 
