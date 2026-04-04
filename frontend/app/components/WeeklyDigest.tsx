@@ -130,6 +130,97 @@ function InkLeftBorder() {
   );
 }
 
+/** Ink flourish ornament — crimson diamond with radiating strokes, centered between sections */
+function InkFlourish() {
+  return (
+    <div className="wk-flourish" aria-hidden="true">
+      <svg
+        className="wk-flourish__line"
+        viewBox="0 0 80 2"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M0 1 C10 0.3, 20 1.7, 40 1 S60 0.3, 80 1"
+          stroke="currentColor"
+          strokeWidth="1"
+          fill="none"
+        />
+      </svg>
+      <svg
+        className="wk-flourish__ornament"
+        viewBox="0 0 20 20"
+      >
+        <path
+          d="M10 2 L14 10 L10 18 L6 10 Z"
+          fill="currentColor"
+          opacity="0.6"
+        />
+        <path
+          d="M2 10 C4 8, 6 9, 10 10 M10 10 C14 11, 16 12, 18 10"
+          stroke="currentColor"
+          strokeWidth="0.8"
+          fill="none"
+          opacity="0.35"
+        />
+        <path
+          d="M10 2 C11 4, 9 6, 10 10 M10 10 C11 14, 9 16, 10 18"
+          stroke="currentColor"
+          strokeWidth="0.8"
+          fill="none"
+          opacity="0.35"
+        />
+      </svg>
+      <svg
+        className="wk-flourish__line"
+        viewBox="0 0 80 2"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M0 1 C10 0.3, 20 1.7, 40 1 S60 0.3, 80 1"
+          stroke="currentColor"
+          strokeWidth="1"
+          fill="none"
+        />
+      </svg>
+    </div>
+  );
+}
+
+/** Ink corner decoration — L-shaped organic brush strokes for hero section */
+function InkCorner({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`wk-cover__hero-corner ${className}`}
+      viewBox="0 0 40 40"
+      aria-hidden="true"
+    >
+      <path
+        d="M2 38 C2 20, 3 10, 2 2"
+        stroke="currentColor"
+        strokeWidth="2"
+        fill="none"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+      <path
+        d="M2 2 C12 2, 22 3, 38 2"
+        stroke="currentColor"
+        strokeWidth="2"
+        fill="none"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+      <circle
+        cx="2"
+        cy="2"
+        r="2.5"
+        fill="currentColor"
+        opacity="0.4"
+      />
+    </svg>
+  );
+}
+
 /* ── Formatting Helpers ────────────────────────────────────────────────────── */
 
 function formatWeekRange(start: string, end: string): string {
@@ -600,7 +691,7 @@ function CoverStoryCard({
   const previewText = (story.text || "").slice(0, 200).replace(/\s+\S*$/, "");
   const [parallaxRef, parallaxOffset] = useParallax(0.06);
 
-  return (
+  const inner = (
     <article className="wk-cover__story">
       <h3
         ref={isFirst ? (parallaxRef as React.RefObject<HTMLHeadingElement>) : undefined}
@@ -647,6 +738,19 @@ function CoverStoryCard({
       </button>
     </article>
   );
+
+  /* Wrap the first cover story in a hero treatment with ink corner flourishes */
+  if (isFirst) {
+    return (
+      <div className="wk-cover__hero">
+        <InkCorner className="wk-cover__hero-corner--tl" />
+        <InkCorner className="wk-cover__hero-corner--br" />
+        {inner}
+      </div>
+    );
+  }
+
+  return inner;
 }
 
 /* ── Cover Section ─────────────────────────────────────────────────────────── */
@@ -660,7 +764,7 @@ function CoverSection({
 }) {
   return (
     <section className="wk-cover" aria-labelledby="wk-cover-heading">
-      <h2 className="wk-section-label" id="wk-cover-heading">The Cover</h2>
+      <h2 className="wk-section-label" id="wk-cover-heading" data-prefix="void --">The Cover</h2>
       {stories.map((story, i) => {
         const storyNums = parseCoverNumbers(story.numbers);
         const numbers = storyNums.length > 0
@@ -675,7 +779,7 @@ function CoverSection({
               isFirst={i === 0}
             />
             {i < stories.length - 1 && (
-              <InkRule />
+              <InkFlourish />
             )}
           </div>
         );
@@ -763,7 +867,7 @@ function CollapsibleSection({
         aria-expanded={open}
         type="button"
       >
-        <h2 className="wk-section-label wk-section-label--toggle" id={id}>
+        <h2 className="wk-section-label wk-section-label--toggle" id={id} data-prefix="void --">
           {label}
         </h2>
         <span className="wk-section-toggle__chevron" aria-hidden="true">
@@ -798,13 +902,15 @@ function OpinionsSection({
   if (all.length === 0) return null;
 
   return (
-    <CollapsibleSection id="wk-opinions-heading" label="The Opinions" defaultOpen={true}>
-      <div className="wk-opinions__grid">
-        {all.map((op, i) => (
-          <OpinionCard key={i} op={op} />
-        ))}
-      </div>
-    </CollapsibleSection>
+    <div className="wk-section--opinions">
+      <CollapsibleSection id="wk-opinions-heading" label="The Opinions" defaultOpen={true}>
+        <div className="wk-opinions__grid">
+          {all.map((op, i) => (
+            <OpinionCard key={i} op={op} />
+          ))}
+        </div>
+      </CollapsibleSection>
+    </div>
   );
 }
 
@@ -827,7 +933,7 @@ function SpecialSection({
       className={`wk-special wk-special--${sectionType} wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby={id}
     >
-      <h2 className="wk-section-label" id={id}>{label}</h2>
+      <h2 className="wk-section-label" id={id} data-prefix="void --">{label}</h2>
       <article className={`wk-special__card wk-special__card--${sectionType}`}>
         <h3 className="wk-special__headline">{story.headline}</h3>
         <p className="wk-special__summary">{story.summary}</p>
@@ -1067,7 +1173,7 @@ function IssueArchive({
       className={`wk-archive wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-archive-heading"
     >
-      <h2 className="wk-section-label" id="wk-archive-heading">Issue Archive</h2>
+      <h2 className="wk-section-label" id="wk-archive-heading" data-prefix="void --">Issue Archive</h2>
       <div className="wk-archive__list">
         {entries.map((entry) => (
           <div
@@ -1167,25 +1273,38 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               />
             )}
 
+            <InkFlourish />
+
             <OpinionsSection
               left={digest.opinion_left}
               center={digest.opinion_center}
               right={digest.opinion_right}
             />
 
-            <BiasReport
-              text={digest.bias_report_text}
-              data={digest.bias_report_data}
-            />
+            <InkFlourish />
+
+            <div className="wk-section--cream">
+              <BiasReport
+                text={digest.bias_report_text}
+                data={digest.bias_report_data}
+              />
+            </div>
+
+            <InkFlourish />
 
             <WeekInBrief stories={digest?.recap_stories ?? []} />
 
             {digest.audio_url && (
-              <WeeklyAudioPlayer
-                audioUrl={digest.audio_url}
-                durationSeconds={digest.audio_duration_seconds}
-              />
+              <>
+                <InkFlourish />
+                <WeeklyAudioPlayer
+                  audioUrl={digest.audio_url}
+                  durationSeconds={digest.audio_duration_seconds}
+                />
+              </>
             )}
+
+            <InkFlourish />
 
             <IssueArchive
               entries={archive}
