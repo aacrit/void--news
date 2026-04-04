@@ -92,7 +92,7 @@ except ImportError:
 # Budget: TL;DR+audio (1) + opinion (1) + retry buffer (1) per edition.
 # These are charged against a separate budget (count_call=False) so they
 # do not consume the 25-call cluster summarization budget.
-# At 4 runs/day this is 36 RPD — 2.4% of the 1500 RPD free tier.
+# At 3 runs/day this is 27 RPD — 1.8% of the 1500 RPD free tier.
 # ---------------------------------------------------------------------------
 _MAX_BRIEF_CALLS: int = 9
 _brief_call_count: int = 0
