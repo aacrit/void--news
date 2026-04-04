@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef, Component, ty
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
 import { EDITIONS, LEAN_RANGES } from "../lib/types";
+import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError } from "../lib/supabase";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
@@ -556,6 +557,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               tierBreakdown: bd ? safeTierBreakdown(bd) : undefined,
               biasSpread,
               pending: !hasBiasData,
+              unscored: hasBiasData && isUnscoredTilt(
+                biasScores.politicalLean,
+                sourceCount,
+                biasSpread?.leanSpread ?? 0,
+                biasSpread?.leanRange ?? 0,
+                biasSpread?.aggregateConfidence ?? 0,
+              ),
               opinionLabel,
             };
 

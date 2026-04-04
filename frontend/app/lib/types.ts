@@ -162,6 +162,8 @@ export interface SigilData {
   biasSpread?: BiasSpread;
   /** True when bias scores are fallback placeholders */
   pending?: boolean;
+  /** True when lean is in balanced range but lacks analytical signal */
+  unscored?: boolean;
   /** Opinion classification label */
   opinionLabel: OpinionLabel;
   /** Percentile-based divergence flag: "divergent" (top 10%), "consensus" (bottom 10%), or null */
