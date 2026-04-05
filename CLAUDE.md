@@ -18,13 +18,21 @@ No backend server. Python pipeline on Actions, Next.js static export on Pages, S
 
 ## Core Principles
 
-### Show, Don't Tell — The Cardinal Rule
-All generated text MUST embody show-don't-tell. Never assert significance — juxtapose concrete facts so the reader sees the pattern. Never use "notable," "significant," "it should be noted," "interestingly," "crucially." Use specific numbers, names, dates, actions.
+### Show, Don't Tell — The Cardinal Rule (Fiction Writing)
+All generated text MUST embody show-don't-tell. Never assert significance — juxtapose concrete facts so the reader sees the pattern. Never use "notable," "significant," "it should be noted," "interestingly," "crucially." Use specific numbers, names, dates, actions. Present evidence. Let the reader conclude.
 
 **BAD:** "It is worth noting that tensions are rising significantly between the two nations."
 **GOOD:** "Both countries recalled their ambassadors within 48 hours. Neither has done that since 1979."
 
-Applies to: `cluster_summarizer.py`, `daily_brief_generator.py`, `claude_brief_generator.py` prompts, and all future content generation.
+Applies to: all generated text — `cluster_summarizer.py`, `daily_brief_generator.py`, `claude_brief_generator.py`, void --history perspectives, CTAs, and all future content.
+
+### Arrive Late, Leave Early — The Screenplay Rule
+Enter every scene at the last possible moment. Exit before the conclusion is spelled out. Don't set up context before the action — drop the reader INTO the action. Don't summarize at the end — cut when the point lands. The user's brain completes the story.
+
+**BAD:** "The Partition of India was a complex historical process that began with British colonial rule and eventually led to the creation of two nations in 1947, resulting in massive displacement."
+**GOOD:** "A lawyer who'd never been to India drew the border in five weeks. 15 million crossed it."
+
+Applies to: void --history event pages (start with the crack, not the background), daily briefs (lead with the action), CTAs (pose the contradiction, don't promise the answer), audio scripts (open mid-scene). These two rules together — Show Not Tell + Arrive Late Leave Early — create the cognitive gap where understanding happens. The user doesn't receive a conclusion. They arrive at one.
 
 ### Product Family Branding
 CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void --onair` (audio), `void --opinion` (editorial), `void --sources` (spectrum), `void --deep-dive` (analysis), `void --paper` (e-paper), `void --weekly` (magazine digest), `void --history` (the archive). Subtitles show on first encounter (sessionStorage) then fade.
