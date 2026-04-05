@@ -292,11 +292,35 @@ function Masthead({
 
 function CoverHero({
   headline,
+  imageUrl,
+  imageAttribution,
 }: {
   headline: string;
+  imageUrl?: string | null;
+  imageAttribution?: string | null;
 }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
   return (
-    <div className="wk-cover-hero wk-cold-open--hero">
+    <div className={`wk-cover-hero wk-cold-open--hero${imageUrl && !imgError ? " wk-cover-hero--has-image" : ""}`}>
+      {imageUrl && !imgError && (
+        <div className="wk-cover-hero__image-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl}
+            alt=""
+            className={`wk-cover-hero__image${imgLoaded ? " wk-cover-hero__image--loaded" : ""}`}
+            loading="eager"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+          />
+          <div className="wk-cover-hero__image-overlay" aria-hidden="true" />
+          {imageAttribution && (
+            <span className="wk-cover-hero__image-credit">{imageAttribution}</span>
+          )}
+        </div>
+      )}
       <div className="wk-cover-hero__content">
         <h2 className="wk-cover-hero__headline">{headline}</h2>
         <div className="wk-cover-hero__rule" aria-hidden="true">
@@ -748,6 +772,8 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             {/* B. Cover Hero */}
             <CoverHero
               headline={digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")}
+              imageUrl={digest.cover_image_url}
+              imageAttribution={digest.cover_image_attribution}
             />
 
             {/* C. Cover Body + Timeline */}
