@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-04 (rev 29)
+Last updated: 2026-04-04 (rev 30)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -27,7 +27,7 @@ All generated text MUST embody show-don't-tell. Never assert significance — ju
 Applies to: `cluster_summarizer.py`, `daily_brief_generator.py`, `claude_brief_generator.py` prompts, and all future content generation.
 
 ### Product Family Branding
-CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void --onair` (audio), `void --opinion` (editorial), `void --sources` (spectrum), `void --deep-dive` (analysis), `void --paper` (e-paper), `void --weekly` (magazine digest). Subtitles show on first encounter (sessionStorage) then fade.
+CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void --onair` (audio), `void --opinion` (editorial), `void --sources` (spectrum), `void --deep-dive` (analysis), `void --paper` (e-paper), `void --weekly` (magazine digest), `void --history` (the archive). Subtitles show on first encounter (sessionStorage) then fade.
 
 ### No Personalization — The Newspaper Principle
 void --news is a newspaper, not a feed. Every reader sees the same stories in the same order. The engine decides what is shown based on editorial importance, not user behavior. No reading history tracking, no recommendation algorithms, no "for you" logic, no user accounts. This is a locked architectural decision. Features that adapt content to individual consumption patterns violate the platform's core philosophy.
@@ -108,23 +108,26 @@ Magazine-style weekly digest at `/weekly`. **No NavBar** — uses its own sticky
 ### Film System — Shared Cinematic Scenes (`frontend/app/film/`)
 Unified component library powering both the onboarding prologue and the about manifesto. 6 chapters (~90s prologue, scroll-driven manifesto). Content constants in `data.ts` (CHAPTERS, DIVERGENT_HEADLINES, SIX_AXES, FIRST_PRINCIPLES, PRODUCT_FAMILY, RANKING_SIGNALS, NUMBERS, LANDSCAPE, COMPARISON_SCORES, SIGIL_PARTS, SWEEP_POSITIONS). SVG paths, spring easings, and timing tokens in `constants.ts`. Shared `useReducedMotion.ts` hook. 6 scene components in `film/scenes/`: `SigilBreakdown` (centerpiece: 6-stage animated exploded Sigil view — draw, separate, label, reassemble, activate, hold), `DivergentHeadlines`, `SourceEngine`, `ArticleDifference`, `ProductWorlds`, `TheVerdict`. Each scene accepts `mode: "prologue" | "manifesto"` + `active: boolean`. Styles: `film.css` (`.film-*` namespace, mode-specific overrides via `--prologue`/`--manifesto` suffixes). `OnboardingCarousel.tsx` is a thin wrapper (modal overlay, auto-advance, keyboard nav) importing scenes with `mode="prologue"`. `/about` page is a thin wrapper (scroll-driven IO reveals) importing scenes with `mode="manifesto"` — no forced dark mode. `OnboardingSpotlight.tsx` deleted (dead code).
 
+### History — "void --history" (`frontend/app/history/`)
+Multi-perspective historical events platform ("The Archive"). Routes: `/history` (landing), `/history/[slug]` (event detail), `/history/era/[era]`, `/history/region/[region]`. **No NavBar** — uses its own sticky topbar (`.hist-topbar`) with back link + ThemeToggle (mirrors Weekly pattern). "Archival Cinema" design in `history.css` (~2000 lines, `.hist-page` namespace): burnt umber `#5C4033` + aged brass `#9B7A2F`, foxed vellum `#F2EDE0`, Ken Burns parallax, lectern page-turn transitions. 5-lens historiographic framework: Geographic/National, Social Position, Temporal Frame, Causal Emphasis, Evidentiary Base. Viewpoint types: victor, vanquished, bystander, academic, revisionist, indigenous. 18 components in `history/components/`: HistoryTopbar, HistoryLanding, EventCard, EventDetail, PerspectiveSelector, PerspectiveView, PerspectiveComparison, PrimarySourceBlock, OmissionsPanel, MediaGallery, Lightbox, HistoryTimeline, CompactTimeline, MapView, KeyFacts, EraDrawer, RedactedDossier, HistoryFooter. Data layer: `data.ts` (Supabase fetch), `mockData.ts` (3 events + 7 stubs), `types.ts`. Supabase tables: `history_events`, `history_perspectives`, `history_media`, `history_connections` (migration 039). Pipeline loader: `pipeline/history/content_loader.py` (YAML to Supabase batch). Content: 3 real events in `data/history/events/` (Partition of India, Hiroshima, Rwanda). No MobileBottomNav.
+
 ### Animation
 Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). Layer-specific: edition tabs (Row 2) use `hapticConfirm` on switch, filter lens uses `--ease-rack` timing + `hapticMicro`, page links (Row 1) use CSS departure arrow slide (4px shift), weekly (Row 1) uses spine rule glow + unfold physics on hover, search bar expands 160px to 280px on focus. ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
 
 ### CSS
-Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → mobile-nav → responsive → command-center → weekly → film → about → ship` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav classes: `.nav-pages`/`.nav-page` (Row 1 pages), `.nav-weekly` (Row 1 magazine link, deep red accent), `.nav-lens__editions`/`.nav-ed` (Row 2 edition tabs), `.nav-lens`/`.nav-lens__*` (Row 2 filters), `.nav-lens__search` (Row 2 expandable search bar) — all in `components.css`.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → mobile-nav → responsive → command-center → weekly → film → about → ship → history` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav classes: `.nav-pages`/`.nav-page` (Row 1 pages), `.nav-weekly` (Row 1 magazine link, deep red accent), `.nav-lens__editions`/`.nav-ed` (Row 2 edition tabs), `.nav-lens`/`.nav-lens__*` (Row 2 filters), `.nav-lens__search` (Row 2 expandable search bar) — all in `components.css`.
 
 ## Data Model (Supabase)
 
-**Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio).
+**Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio), `history_events`, `history_perspectives`, `history_media`, `history_connections`.
 
-**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-037).
+**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-039).
 
 Frontend edition filter: `.contains("sections", [edition])`.
 
 ## Agent Team & Workflows
 
-24 agents, 11 divisions. Full details: `docs/AGENT-TEAM.md`. Agent definitions: `.claude/agents/`.
+32 agents, 13 divisions. Full details: `docs/AGENT-TEAM.md`. Agent definitions: `.claude/agents/`.
 
 | Command | Pattern | When |
 |---------|---------|------|
@@ -141,6 +144,12 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/rank-optimize` | benchmark → tune → validate → audit | Ranking engine tuning |
 | `/frontend-review-fix` | audit → CEO prioritize → fix → build → retest | CEO-in-the-loop UI quality |
 | `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
+| `/history-research` | history-curator → perspective-analyst + media-archaeologist → auditor → narrative-engineer | New event onboarding |
+| `/history-audit` | historiographic-auditor → perspective-analyst → re-validate | Perspective balance check |
+| `/history-publish` | narrative-engineer → auditor → cinematic trio → visual-historian → build → test | Content publishing |
+| `/history-media` | media-archaeologist → auditor → visual-historian | Visual asset curation |
+| `/history-timeline` | history-curator → timeline-architect → visual-historian → archive-cartographer | Timeline & connections |
+| `/history-qa` | parallel audit + content check → perspective-analyst → auditor → uat-tester | History quality gate |
 
 ### Locked Decisions (CEO Approval Required)
 Cinematic Press design, 6-axis bias model, Supabase data layer, static export, 1,013-source list (3 tiers, 7-point lean), $0 cost, no user personalization (newspaper principle), Claude Max CLI only.
@@ -165,9 +174,10 @@ void-news/
 ├── frontend/
 │   ├── app/
 │   │   ├── components/    # 49 components: AudioProvider, BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileMiniPlayer, MobileNav, MobileSidePanel, MobileStoryCard, MobileTabBar, NavBar, OnboardingCarousel, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
+│   │   ├── history/       # /history routes + 18 components: HistoryTopbar, HistoryLanding, EventCard, EventDetail, PerspectiveSelector, PerspectiveView, PerspectiveComparison, PrimarySourceBlock, OmissionsPanel, MediaGallery, Lightbox, HistoryTimeline, CompactTimeline, MapView, KeyFacts, EraDrawer, RedactedDossier, HistoryFooter + data.ts, mockData.ts, types.ts
 │   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts, shareCardRenderer.ts
 │   │   ├── film/           # Shared cinematic scenes: data.ts, constants.ts, useReducedMotion.ts, scenes/{SigilBreakdown,DivergentHeadlines,SourceEngine,ArticleDifference,ProductWorlds,TheVerdict}.tsx
-│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, mobile-nav, responsive, command-center, weekly, film, about, ship
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, mobile-nav, responsive, command-center, weekly, film, about, ship, history
 │   │   ├── sources/       # /sources page
 │   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
 │   │   ├── command-center/ # /command-center KPI dashboard
