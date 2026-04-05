@@ -687,6 +687,10 @@ def produce_audio(
             preamble entirely. Used by weekly broadcast for magazine-pace
             direction that differs from the daily bulletin style.
     """
+    if os.getenv("DISABLE_AUDIO", "").strip().lower() in ("1", "true", "yes"):
+        print("  [audio] DISABLE_AUDIO is set — skipping TTS to avoid billing")
+        return None
+
     if not GEMINI_TTS_AVAILABLE:
         print("  [audio] google-genai SDK not installed — skipping")
         return None
