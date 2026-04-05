@@ -1814,13 +1814,50 @@
 /* Landing Hero — REMOVED (dead code, Round 7 cleanup) */
 
 /* ---------------------------------------------------------------------------
-   Dossier Grid — Primary landing layout
-   Simple classified tiles. Clean on arrival, pull you in.
+   Mission Brief — Self-marketing header
+   Classified briefing document: Plex Mono, tight, matter-of-fact.
+   --------------------------------------------------------------------------- */
+.hist-brief {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-5) 0 var(--space-4);
+  border-bottom: 1px solid var(--hist-border-subtle);
+  margin-bottom: var(--space-4);
+  opacity: 0;
+  animation: histBriefIn 800ms var(--ease-document-settle) 100ms both;
+}
+
+@keyframes histBriefIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hist-brief__title {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--hist-accent);
+  margin: 0 0 var(--space-2);
+}
+
+.hist-brief__line {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-secondary);
+  line-height: 1.6;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+   Dossier Grid — Organic tile layout
+   Campaign-select grid. Published tiles expand, classified tiles flip.
    --------------------------------------------------------------------------- */
 .hist-dossier-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: var(--space-5);
   max-width: 1100px;
   margin: 0 auto;
   padding: var(--space-4) 0;
@@ -1839,60 +1876,35 @@
   .hist-dossier-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ── Individual Dossier Tile — Clean Document Card ── */
-.hist-dossier {
+/* ===========================================================================
+   Tile Base — Shared foundation for published + classified
+   =========================================================================== */
+.hist-tile {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
   padding: var(--space-4) var(--space-4) var(--space-3);
   background: var(--hist-bg-card);
-  border: none;
-  border-left: 3px solid transparent;
-  border-radius: 2px;
-  position: relative;
-  overflow: visible;
+  overflow: hidden;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
-  transition:
-    box-shadow 300ms var(--ease-cinematic),
-    transform 300ms var(--ease-cinematic);
-  animation: histDossierIn 700ms var(--ease-document-settle) both;
+  min-height: 200px;
   box-shadow: var(--hist-doc-edge);
+  opacity: 0;
+  animation: histTileIn 700ms var(--ease-document-settle) both;
 }
 
-/* Severity as subtle border-left color */
-.hist-dossier--severity-catastrophic { border-left-color: #8B0000; }
-.hist-dossier--severity-critical     { border-left-color: #B44C00; }
-.hist-dossier--severity-major        { border-left-color: var(--hist-brass); }
-
-:root[data-mode="dark"] .hist-dossier--severity-catastrophic { border-left-color: #E04040; }
-:root[data-mode="dark"] .hist-dossier--severity-critical     { border-left-color: #D47030; }
-
-/* Simplified hover: translateY(-2px) + shadow only */
-.hist-dossier:hover,
-.hist-dossier:focus-visible {
-  box-shadow: var(--hist-doc-edge-hover);
-  transform: translateY(-2px);
-}
-
-.hist-dossier:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 4px;
-}
-
-/* Rack focus on dossier grid — REMOVED (Round 2: no sibling blur) */
-
-/* ── Cinematic Dossier Entry ── */
-@keyframes histDossierIn {
+/* ── Tile entrance — scale + fade + slight blur ── */
+@keyframes histTileIn {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.96);
-    filter: blur(4px);
+    transform: translateY(20px) scale(0.97);
+    filter: blur(3px);
   }
-  60% {
+  70% {
     opacity: 1;
-    transform: translateY(-2px) scale(1.005);
+    transform: translateY(-1px) scale(1.003);
     filter: blur(0);
   }
   to {
@@ -1902,170 +1914,434 @@
   }
 }
 
-/* Dossier header — REMOVED (dead code, Round 7 cleanup) */
-
-.hist-dossier__classification {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-accent);
-  padding: 2px 8px;
-  border: 1px solid var(--hist-accent);
-  opacity: 0.7;
+/* ===========================================================================
+   Published Tile — Living dossier, organic, interactive
+   =========================================================================== */
+.hist-tile--published {
+  transition:
+    box-shadow 400ms var(--ease-cinematic),
+    transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid var(--hist-border-subtle);
 }
 
-.hist-dossier__classification--classified {
-  color: var(--hist-ink-muted);
-  border-color: var(--hist-ink-muted);
+/* Severity accent — top-left organic mark */
+.hist-tile__accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 48px;
+  border-radius: 0 0 4px 0;
+  transition: height 400ms var(--ease-cinematic);
 }
 
-.hist-dossier__date {
+.hist-tile--severity-catastrophic .hist-tile__accent { background: #8B0000; }
+.hist-tile--severity-critical .hist-tile__accent     { background: #B44C00; }
+.hist-tile--severity-major .hist-tile__accent         { background: var(--hist-brass); }
+
+:root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__accent { background: #E04040; }
+:root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__accent     { background: #D47030; }
+
+/* Accent grows on expand */
+.hist-tile--expanded .hist-tile__accent {
+  height: 100%;
+}
+
+/* ── Hero image — archival texture background ── */
+.hist-tile__hero {
+  position: absolute;
+  inset: -10px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.08;
+  filter: contrast(1.1) saturate(0.3) sepia(0.25);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 200ms ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hist-tile--expanded .hist-tile__hero {
+  opacity: 0.14;
+}
+
+/* ── Hover/focus lift ── */
+.hist-tile--published:hover,
+.hist-tile--published:focus-visible {
+  box-shadow: var(--hist-doc-edge-hover);
+  transform: translateY(-3px);
+}
+
+.hist-tile--published:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 4px;
+}
+
+.hist-tile--published:active {
+  transform: scale(0.985) translateY(-1px);
+  transition: transform 80ms ease-out;
+}
+
+/* ── Compact section — always visible ── */
+.hist-tile__compact {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.hist-tile__date {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--hist-brass);
   letter-spacing: 0.04em;
 }
 
-/* Title */
-.hist-dossier__title {
+.hist-tile__title {
   font-family: var(--font-editorial);
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.4rem);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.22;
   color: var(--hist-ink);
   margin: 0;
 }
 
-.hist-dossier__title--redacted {
+.hist-tile__blurb {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-secondary);
+  line-height: 1.5;
+  margin: var(--space-1) 0 var(--space-2);
+}
+
+/* ── Meta row: perspective dots + count ── */
+.hist-tile__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.hist-tile__dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.hist-tile__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-tile--expanded .hist-tile__dot {
+  transform: scale(1.3);
+}
+
+.hist-tile__persp-count {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
   color: var(--hist-ink-muted);
 }
 
-.hist-dossier__redacted-text {
+/* ===========================================================================
+   Expanded Section — Smooth grid-rows reveal
+   Desktop: hover-expand. Mobile: always expanded.
+   =========================================================================== */
+.hist-tile__expand {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Single wrapper child — the only direct child that collapses/expands */
+.hist-tile__expand-inner {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hist-tile--expanded .hist-tile__expand {
+  grid-template-rows: 1fr;
+}
+
+/* Inner wrapper for expanded content — opacity stagger */
+.hist-tile__perspectives,
+.hist-tile__divergence-teaser,
+.hist-tile__intel,
+.hist-tile__stark,
+.hist-tile__cta {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 350ms var(--ease-cinematic),
+    transform 350ms var(--ease-cinematic);
+}
+
+.hist-tile--expanded .hist-tile__perspectives {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 80ms;
+}
+
+.hist-tile--expanded .hist-tile__divergence-teaser {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 140ms;
+}
+
+.hist-tile--expanded .hist-tile__intel {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 200ms;
+}
+
+.hist-tile--expanded .hist-tile__stark {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 260ms;
+}
+
+.hist-tile--expanded .hist-tile__cta {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 320ms;
+}
+
+/* ── Perspective names — horizontal list with staggered reveal ── */
+.hist-tile__perspectives {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.hist-tile__persp-name {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 300ms var(--ease-cinematic),
+    transform 300ms var(--ease-cinematic);
+}
+
+/* Each name has its own stagger delay (set via inline style) */
+.hist-tile--expanded .hist-tile__persp-name {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Dot separator between perspective names */
+.hist-tile__persp-name + .hist-tile__persp-name::before {
+  content: "\00B7";
+  margin-right: var(--space-1);
+  color: var(--hist-ink-muted);
+  opacity: 0.5;
+}
+
+/* ── Divergence teaser — italic clash line ── */
+.hist-tile__divergence-teaser {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-style: italic;
+  color: var(--hist-ink-secondary);
+  line-height: 1.5;
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--hist-accent-ghost);
+}
+
+/* ── Intel row — mission metadata ── */
+.hist-tile__intel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.hist-tile__intel-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hist-tile__intel-label {
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--hist-ink-muted);
+}
+
+.hist-tile__intel-value {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--hist-ink);
+  letter-spacing: 0.02em;
+}
+
+.hist-tile__intel-value--high { color: #8B0000; }
+.hist-tile__intel-value--moderate { color: var(--hist-brass); }
+.hist-tile__intel-value--low { color: var(--hist-persp-c); }
+
+:root[data-mode="dark"] .hist-tile__intel-value--high { color: #E04040; }
+
+/* ── Stark data — death toll / displaced ── */
+.hist-tile__stark {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.hist-tile__stark-figure {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--hist-ink-secondary);
+  letter-spacing: 0.01em;
+}
+
+/* ── CTA — "Enter the dossier" ── */
+.hist-tile__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--hist-accent);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  padding: var(--space-1) 0;
+  align-self: flex-start;
+  transition: color 200ms var(--ease-cinematic);
+}
+
+.hist-tile__cta:hover {
+  color: var(--hist-accent-bright);
+}
+
+.hist-tile__cta-arrow {
+  display: inline-block;
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-tile__cta:hover .hist-tile__cta-arrow {
+  transform: translateX(4px);
+}
+
+/* ── "START HERE" pulse badge ── */
+.hist-tile__start {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--hist-accent);
+  padding: 2px 8px;
+  border: 1px solid var(--hist-accent);
+  border-radius: 2px;
+  z-index: 2;
+  animation: histStartPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes histStartPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* ===========================================================================
+   Classified Tile — Locked, desaturated, dashed border
+   =========================================================================== */
+.hist-tile--classified {
+  background: var(--hist-bg-card);
+  border: 1.5px dashed var(--hist-border);
+  opacity: 0.60;
+  cursor: pointer;
+  perspective: 800px;
+  transition:
+    opacity 300ms var(--ease-cinematic),
+    border-color 300ms var(--ease-cinematic);
+  min-height: auto;
+}
+
+.hist-tile--classified:hover {
+  opacity: 0.75;
+}
+
+.hist-tile--classified:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 4px;
+}
+
+/* Click-revealed state */
+.hist-tile--classified.hist-tile--revealed {
+  opacity: 1;
+  border-style: solid;
+  border-color: var(--hist-accent);
+}
+
+.hist-tile__title--redacted {
+  color: var(--hist-ink-muted);
+}
+
+.hist-tile__redacted-chars {
   opacity: 0.12;
   letter-spacing: -0.02em;
 }
 
-/* Subtitle */
-.hist-dossier__subtitle {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-secondary);
-  line-height: 1.4;
-  margin: 0;
-}
-
-/* Severity + perspectives */
-.hist-dossier__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.hist-dossier__severity {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 1px 6px;
-}
-
-.hist-dossier__severity--catastrophic {
-  color: #8B0000;
-  border: 1px solid rgba(139, 0, 0, 0.3);
-}
-
-.hist-dossier__severity--critical {
-  color: #B44C00;
-  border: 1px solid rgba(180, 76, 0, 0.3);
-}
-
-.hist-dossier__severity--major {
-  color: var(--hist-brass);
-  border: 1px solid rgba(155, 122, 47, 0.3);
-}
-
-/* Dark mode: lighten severity for WCAG AA contrast */
-:root[data-mode="dark"] .hist-dossier__severity--catastrophic {
-  color: #E04040;
-  border-color: rgba(224, 64, 64, 0.3);
-}
-
-:root[data-mode="dark"] .hist-dossier__severity--critical {
-  color: #D47030;
-  border-color: rgba(212, 112, 48, 0.3);
-}
-
-.hist-dossier__perspectives {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-}
-
-/* Dossier teaser, bars — REMOVED (dead code, Round 7 cleanup) */
-
-/* ── Classified / Coming dossier variant — disabled look ── */
-.hist-dossier--classified {
-  background: var(--hist-bg-card);
-  outline: 1.5px dashed var(--hist-border);
-  outline-offset: -4px;
-  opacity: 0.70;
-  cursor: pointer;
-  border-color: transparent;
-}
-
-.hist-dossier--classified:hover {
-  opacity: 0.85;
-  border-color: transparent;
-  box-shadow: none;
-  transform: none;
-}
-
-/* Click-revealed state: full color, full opacity */
-.hist-dossier--classified.hist-dossier--revealed {
-  opacity: 1;
-  filter: saturate(1) contrast(1);
-  outline-style: solid;
-  outline-color: var(--hist-accent);
-  border-color: var(--hist-accent);
-}
-
-.hist-dossier__quote {
+/* ── Contradictory quotes ── */
+.hist-tile__quote {
   font-family: var(--font-data);
   font-size: var(--text-sm);
   font-style: italic;
   color: var(--hist-ink-secondary);
   line-height: 1.45;
-  margin: 0;
+  margin: var(--space-1) 0 0;
   padding-left: var(--space-3);
   border-left: 2px solid var(--hist-border);
 }
 
-.hist-dossier__quote--b {
+.hist-tile__quote--b {
   border-left-color: var(--hist-accent);
   color: var(--hist-ink);
 }
 
-.hist-dossier__stamp {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
+/* ── Classified badge ── */
+.hist-tile__badge {
+  font-family: var(--font-data);
+  font-size: 0.6rem;
   font-weight: 600;
-  text-transform: uppercase;
   letter-spacing: 0.12em;
+  padding: 1px 6px;
+  border: 1px solid var(--hist-ink-muted);
   color: var(--hist-ink-muted);
-  opacity: 0.5;
-  align-self: flex-end;
-  margin-top: auto;
 }
 
-/* Reveal overlay for classified tiles — card-flip on click */
-.hist-dossier--classified {
-  perspective: 800px;
+.hist-tile__badge--classified {
+  opacity: 0.6;
 }
 
-.hist-dossier__reveal {
+/* ── Flip reveal overlay ── */
+.hist-tile__reveal {
   position: absolute;
   inset: 0;
   display: flex;
@@ -2077,17 +2353,19 @@
   border: 1px solid var(--hist-accent);
   opacity: 0;
   transform: rotateY(90deg);
-  transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    opacity 0.35s ease,
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
+  z-index: 3;
 }
 
-/* Click-only reveal — flip to answer on click */
-.hist-dossier--revealed .hist-dossier__reveal {
+.hist-tile--revealed .hist-tile__reveal {
   opacity: 1;
   transform: rotateY(0deg);
 }
 
-.hist-dossier__reveal-title {
+.hist-tile__reveal-title {
   font-family: var(--font-editorial);
   font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
   font-weight: 700;
@@ -2096,27 +2374,130 @@
   padding: var(--space-4);
 }
 
-/* Reduced motion */
+.hist-tile__reveal-hint {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.08em;
+}
+
+/* ===========================================================================
+   Mobile — Tiles start expanded (no hover available)
+   =========================================================================== */
+@media (max-width: 767px) {
+  /* Published tiles are always expanded on mobile */
+  .hist-tile--published .hist-tile__expand {
+    grid-template-rows: 1fr;
+    transition: none;
+  }
+
+  .hist-tile--published .hist-tile__expand-inner {
+    overflow: visible;
+  }
+
+  .hist-tile--published .hist-tile__perspectives,
+  .hist-tile--published .hist-tile__divergence-teaser,
+  .hist-tile--published .hist-tile__intel,
+  .hist-tile--published .hist-tile__stark,
+  .hist-tile--published .hist-tile__cta {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hist-tile--published .hist-tile__persp-name {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hist-tile--published .hist-tile__hero {
+    opacity: 0.12;
+  }
+
+  .hist-tile--published .hist-tile__accent {
+    height: 100%;
+  }
+
+  .hist-tile__start {
+    display: none;
+  }
+}
+
+/* ===========================================================================
+   Reduced Motion — All tiles visible, no animations
+   =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-dossier {
+  .hist-brief {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+
+  .hist-tile {
     animation: none;
     opacity: 1;
     filter: none;
     transform: none;
   }
-  .hist-dossier:hover {
+
+  .hist-tile--published:hover,
+  .hist-tile--published:active {
     transform: none;
-    filter: none;
-  }
-  .hist-dossier__reveal {
     transition: none;
   }
-  .hist-dossier-grid:hover .hist-dossier:not(:hover):not(:focus-within) {
-    filter: none;
+
+  /* Show expanded content by default */
+  .hist-tile--published .hist-tile__expand {
+    grid-template-rows: 1fr;
+    transition: none;
   }
-  .hist-persp-tabs:has(.hist-persp-tab--active) .hist-persp-tab:not(.hist-persp-tab--active) {
-    filter: none;
+
+  .hist-tile--published .hist-tile__expand-inner {
+    overflow: visible;
+  }
+
+  .hist-tile--published .hist-tile__perspectives,
+  .hist-tile--published .hist-tile__divergence-teaser,
+  .hist-tile--published .hist-tile__intel,
+  .hist-tile--published .hist-tile__stark,
+  .hist-tile--published .hist-tile__cta {
     opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hist-tile--published .hist-tile__persp-name {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hist-tile__reveal {
+    transition: none;
+  }
+
+  .hist-tile__dot {
+    transition: none;
+  }
+
+  .hist-tile__cta-arrow {
+    transition: none;
+  }
+
+  .hist-tile__start {
+    animation: none;
+    opacity: 1;
+  }
+
+  .hist-tile__hero {
+    transition: none;
+    opacity: 0.08;
+  }
+
+  .hist-tile__accent {
+    transition: none;
+    height: 100%;
   }
 }
 
@@ -2414,7 +2795,7 @@
     filter: none;
   }
 
-  .hist-dossier-grid:hover .hist-dossier:not(:hover):not(:focus-within) {
+  .hist-dossier-grid:hover .hist-tile:not(:hover):not(:focus-within) {
     filter: none;
   }
 
@@ -2464,12 +2845,12 @@
 .hist-hero__title,
 .hist-event-card__title,
 .hist-redacted__title,
-.hist-dossier__title,
+.hist-tile__title,
 .hist-persp-tab__name,
 .hist-comparison__header,
 .hist-connection__title,
 .hist-compact-timeline__title,
-.hist-dossier__reveal-title {
+.hist-tile__reveal-title {
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -2607,11 +2988,11 @@
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   1. DOSSIER TILES — Simple hover + click press only
+   1. DOSSIER TILES — Expansion + click press (now .hist-tile)
    --------------------------------------------------------------------------- */
 
-/* Click press: scale feedback on genuinely interactive elements */
-.hist-dossier:active {
+/* Click press on classified tiles */
+.hist-tile--classified:active {
   transform: scale(0.97);
   transition: transform 80ms ease-out;
 }
@@ -2808,9 +3189,9 @@
    REDUCED MOTION — Override remaining interactions
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-dossier,
-  .hist-dossier:hover,
-  .hist-dossier:active {
+  .hist-tile--classified,
+  .hist-tile--classified:hover,
+  .hist-tile--classified:active {
     transform: none;
     transition: none;
     animation: none;
