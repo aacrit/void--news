@@ -1783,14 +1783,271 @@
   margin-bottom: var(--space-3);
 }
 
-.hist-landing-hero__attribution {
+.hist-landing-hero__sub {
   font-family: var(--font-data);
   font-size: var(--text-sm);
   color: var(--hist-ink-muted);
+  letter-spacing: 0.04em;
 }
 
 /* ---------------------------------------------------------------------------
-   Featured Events Section
+   Dossier Grid — Primary landing layout
+   Simple classified tiles. Clean on arrival, pull you in.
+   --------------------------------------------------------------------------- */
+.hist-dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+}
+
+@media (min-width: 640px) {
+  .hist-dossier-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .hist-dossier-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── Individual Dossier Tile ── */
+.hist-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  background: var(--hist-bg-card);
+  border: 1px solid var(--hist-border);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  animation: histDossierIn 0.5s var(--ease-cinematic) both;
+}
+
+.hist-dossier:hover,
+.hist-dossier:focus-visible {
+  border-color: var(--hist-accent);
+  box-shadow: 0 2px 16px rgba(92, 64, 51, 0.08);
+}
+
+.hist-dossier:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+@keyframes histDossierIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header strip — classification + date */
+.hist-dossier__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1);
+}
+
+.hist-dossier__classification {
+  font-family: var(--font-meta);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-accent);
+  padding: 2px 8px;
+  border: 1px solid var(--hist-accent);
+  opacity: 0.7;
+}
+
+.hist-dossier__classification--classified {
+  color: var(--hist-ink-muted);
+  border-color: var(--hist-ink-muted);
+}
+
+.hist-dossier__date {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-brass);
+  letter-spacing: 0.04em;
+}
+
+/* Title */
+.hist-dossier__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--hist-ink);
+  margin: 0;
+}
+
+.hist-dossier__title--redacted {
+  color: var(--hist-ink-muted);
+}
+
+.hist-dossier__redacted-text {
+  opacity: 0.12;
+  letter-spacing: -0.02em;
+}
+
+/* Subtitle */
+.hist-dossier__subtitle {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Severity + perspectives */
+.hist-dossier__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.hist-dossier__severity {
+  font-family: var(--font-meta);
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1px 6px;
+}
+
+.hist-dossier__severity--catastrophic {
+  color: #8B0000;
+  border: 1px solid rgba(139, 0, 0, 0.3);
+}
+
+.hist-dossier__severity--critical {
+  color: #B44C00;
+  border: 1px solid rgba(180, 76, 0, 0.3);
+}
+
+.hist-dossier__severity--major {
+  color: var(--hist-brass);
+  border: 1px solid rgba(155, 122, 47, 0.3);
+}
+
+.hist-dossier__perspectives {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+}
+
+/* Teaser text */
+.hist-dossier__teaser {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-muted);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Texture bars */
+.hist-dossier__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.hist-dossier__bar {
+  height: 2px;
+  background: var(--hist-border);
+  width: 100%;
+  opacity: 0.4;
+}
+
+.hist-dossier__bar--short {
+  width: 60%;
+}
+
+/* ── Classified / Coming dossier variant ── */
+.hist-dossier--classified {
+  border-style: dashed;
+  background: var(--hist-bg-inset, var(--hist-bg-secondary));
+}
+
+.hist-dossier__quote {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--hist-ink-secondary);
+  line-height: 1.45;
+  margin: 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--hist-border);
+}
+
+.hist-dossier__quote--b {
+  border-left-color: var(--hist-accent);
+  color: var(--hist-ink);
+}
+
+.hist-dossier__stamp {
+  font-family: var(--font-meta);
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-ink-muted);
+  opacity: 0.5;
+  align-self: flex-end;
+  margin-top: auto;
+}
+
+/* Reveal overlay for classified tiles */
+.hist-dossier__reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--hist-bg-card);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.hist-dossier--classified:hover .hist-dossier__reveal,
+.hist-dossier--revealed .hist-dossier__reveal {
+  opacity: 1;
+}
+
+.hist-dossier__reveal-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--hist-accent);
+  text-align: center;
+  padding: var(--space-4);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hist-dossier {
+    animation: none;
+    opacity: 1;
+  }
+  .hist-dossier__reveal {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Featured Events Section (secondary — kept but demoted)
    --------------------------------------------------------------------------- */
 .hist-featured {
   margin: var(--space-6) 0;

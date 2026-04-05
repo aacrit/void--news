@@ -1,18 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
-import type { HistoricalEvent, RedactedEvent, HistoryRegion } from "../types";
-import { ERAS, REGIONS } from "../types";
-import EventCard from "./EventCard";
-import EraDrawer from "./EraDrawer";
-import RedactedDossier from "./RedactedDossier";
-import HistoryTimeline from "./HistoryTimeline";
-import MapView from "./MapView";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import type { HistoricalEvent, RedactedEvent } from "../types";
 
 /* ===========================================================================
-   HistoryLanding — Main landing page for void --history
-   Hero pull quote, timeline, era drawers, region pills, featured events,
-   redacted dossier cards, map view.
+   HistoryLanding — Dossier-first landing for void --history
+   Simple classified dossier tiles as primary entry. Everything else secondary.
    =========================================================================== */
 
 interface HistoryLandingProps {
@@ -20,52 +14,8 @@ interface HistoryLandingProps {
   redacted: RedactedEvent[];
 }
 
-/* ── Organic Ink Divider ── */
-function InkRule() {
-  return (
-    <svg
-      className="hist-ink-rule"
-      viewBox="0 0 400 4"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        fill="none"
-        opacity="0.35"
-      />
-    </svg>
-  );
-}
-
 export default function HistoryLanding({ events, redacted }: HistoryLandingProps) {
-  const [activeRegion, setActiveRegion] = useState<HistoryRegion | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-
-  /* Filter events by region */
-  const filteredEvents = useMemo(() => {
-    if (!activeRegion) return events;
-    return events.filter((e) => e.regions.includes(activeRegion));
-  }, [events, activeRegion]);
-
-  /* Group events by era */
-  const eventsByEra = useMemo(() => {
-    const map = new Map<string, HistoricalEvent[]>();
-    ERAS.forEach((era) => map.set(era.id, []));
-    filteredEvents.forEach((event) => {
-      const list = map.get(event.era);
-      if (list) list.push(event);
-    });
-    return map;
-  }, [filteredEvents]);
-
-  /* Featured events (first 3) */
-  const featured = useMemo(
-    () => filteredEvents.slice(0, 3),
-    [filteredEvents]
-  );
 
   /* Scroll reveal */
   useEffect(() => {
@@ -79,12 +29,10 @@ export default function HistoryLanding({ events, redacted }: HistoryLandingProps
       },
       { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
     );
-
     const sections = contentRef.current?.querySelectorAll(".hist-reveal");
     sections?.forEach((el) => observer.observe(el));
-
     return () => observer.disconnect();
-  }, [filteredEvents]);
+  }, [events]);
 
   return (
     <div ref={contentRef}>
@@ -93,116 +41,116 @@ export default function HistoryLanding({ events, redacted }: HistoryLandingProps
         <blockquote className="hist-landing-hero__quote">
           &ldquo;History is not what happened. It is who told the story.&rdquo;
         </blockquote>
-        <p className="hist-landing-hero__attribution">
-          &mdash; The same event, told by the victor, the vanquished, and the bystander,
-          becomes three different truths.
+        <p className="hist-landing-hero__sub">
+          {events.length} events. Multiple perspectives. Every side.
         </p>
       </section>
 
       <div className="hist-main hist-grade">
-        {/* ── Timeline Hero ── */}
-        <div className="hist-reveal">
-          <HistoryTimeline events={events} />
-        </div>
-
-        <InkRule />
-
-        {/* ── Map View ── */}
-        <div className="hist-reveal">
-          <h2 className="hist-section-label">Geographic Scope</h2>
-          <MapView
-            events={filteredEvents}
-            activeRegion={activeRegion ?? undefined}
-            onRegionClick={(region) => {
-              setActiveRegion(region === activeRegion ? null : region);
-            }}
-          />
-        </div>
-
-        {/* ── Region Pills ── */}
-        <div className="hist-reveal">
-          <div className="hist-region-pills" role="group" aria-label="Filter by region">
-            <button
-              className={`hist-region-pill ${!activeRegion ? "hist-region-pill--active" : ""}`}
-              onClick={() => setActiveRegion(null)}
-              aria-pressed={!activeRegion}
-            >
-              All Regions
-            </button>
-            {REGIONS.filter((r) => r.id !== "global").map((region) => {
-              const count = events.filter((e) => e.regions.includes(region.id)).length;
-              if (count === 0) return null;
-              return (
-                <button
-                  key={region.id}
-                  className={`hist-region-pill ${activeRegion === region.id ? "hist-region-pill--active" : ""}`}
-                  onClick={() =>
-                    setActiveRegion(region.id === activeRegion ? null : region.id)
-                  }
-                  aria-pressed={activeRegion === region.id}
-                >
-                  {region.label} ({count})
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <InkRule />
-
-        {/* ── Featured Events ── */}
-        {featured.length > 0 && (
-          <section className="hist-reveal hist-featured" aria-label="Featured events">
-            <h2 className="hist-section-label">Featured Events</h2>
-            <div className="hist-card-grid">
-              {featured.map((event) => (
-                <EventCard key={event.slug} event={event} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <InkRule />
-
-        {/* ── Era Drawers ── */}
-        <section className="hist-reveal" aria-label="Browse by era">
-          <h2 className="hist-section-label">Browse by Era</h2>
-          {ERAS.map((era) => {
-            const eraEvents = eventsByEra.get(era.id) ?? [];
-            return (
-              <EraDrawer
-                key={era.id}
-                era={era}
-                events={eraEvents}
-                defaultOpen={eraEvents.length > 0}
-              />
-            );
-          })}
+        {/* ── Primary: Dossier Grid ── */}
+        <section className="hist-reveal hist-dossier-grid" aria-label="Historical events">
+          {events.map((event, i) => (
+            <DossierTile key={event.slug} event={event} index={i} />
+          ))}
+          {redacted.map((event, i) => (
+            <RedactedTile key={event.slug} event={event} index={events.length + i} />
+          ))}
         </section>
+      </div>
+    </div>
+  );
+}
 
-        <InkRule />
+/* ── Dossier Tile: Published Event ── */
+function DossierTile({ event, index }: { event: HistoricalEvent; index: number }) {
+  return (
+    <Link
+      href={`/history/${event.slug}`}
+      className="hist-dossier"
+      style={{ animationDelay: `${80 + index * 60}ms` }}
+      aria-label={`${event.title} — ${event.datePrimary}`}
+    >
+      {/* Classified header strip */}
+      <div className="hist-dossier__header">
+        <span className="hist-dossier__classification">
+          Declassified
+        </span>
+        <span className="hist-dossier__date">{event.datePrimary}</span>
+      </div>
 
-        {/* ── Redacted Dossiers: Coming ── */}
-        {redacted.length > 0 && (
-          <section className="hist-reveal" aria-label="Coming events">
-            <h2 className="hist-section-label">Classified Dossiers</h2>
-            <p style={{
-              fontFamily: "var(--font-structural)",
-              fontSize: "var(--text-sm)",
-              color: "var(--hist-ink-muted)",
-              marginBottom: "var(--space-4)",
-              maxWidth: "600px",
-            }}>
-              These events are being researched and documented. Each will present
-              the contradictory perspectives that history has recorded.
-            </p>
-            <div className="hist-card-grid">
-              {redacted.map((event) => (
-                <RedactedDossier key={event.slug} event={event} />
-              ))}
-            </div>
-          </section>
-        )}
+      {/* Title block */}
+      <h3 className="hist-dossier__title">{event.title}</h3>
+
+      {/* Subtitle / hook */}
+      {event.subtitle && (
+        <p className="hist-dossier__subtitle">{event.subtitle}</p>
+      )}
+
+      {/* Severity + perspectives count */}
+      <div className="hist-dossier__meta">
+        <span className={`hist-dossier__severity hist-dossier__severity--${event.severity}`}>
+          {event.severity}
+        </span>
+        <span className="hist-dossier__perspectives">
+          {event.perspectives.length} perspective{event.perspectives.length !== 1 ? "s" : ""}
+        </span>
+      </div>
+
+      {/* Teaser: one line from the context */}
+      <p className="hist-dossier__teaser">
+        {event.contextNarrative.split(". ").slice(0, 2).join(". ")}.
+      </p>
+
+      {/* Redaction bars for texture */}
+      <div className="hist-dossier__bars" aria-hidden="true">
+        <span className="hist-dossier__bar" />
+        <span className="hist-dossier__bar hist-dossier__bar--short" />
+      </div>
+    </Link>
+  );
+}
+
+/* ── Redacted Tile: Coming Event ── */
+function RedactedTile({ event, index }: { event: RedactedEvent; index: number }) {
+  const [revealed, setRevealed] = useState(false);
+
+  return (
+    <div
+      className={`hist-dossier hist-dossier--classified ${revealed ? "hist-dossier--revealed" : ""}`}
+      style={{ animationDelay: `${80 + index * 60}ms` }}
+      onClick={() => setRevealed((p) => !p)}
+      aria-label={`Coming: ${event.title}`}
+    >
+      {/* Classified header strip */}
+      <div className="hist-dossier__header">
+        <span className="hist-dossier__classification hist-dossier__classification--classified">
+          Classified
+        </span>
+        <span className="hist-dossier__date">{event.dateHint}</span>
+      </div>
+
+      {/* Redacted title */}
+      <h3 className="hist-dossier__title hist-dossier__title--redacted">
+        {event.title.split(" ")[0]}{" "}
+        <span className="hist-dossier__redacted-text">
+          {event.title.split(" ").slice(1).map((w) => "\u2588".repeat(w.length)).join(" ")}
+        </span>
+      </h3>
+
+      {/* Contradictory quotes */}
+      {event.quoteA && (
+        <p className="hist-dossier__quote">&ldquo;{event.quoteA}&rdquo;</p>
+      )}
+      {event.quoteB && (
+        <p className="hist-dossier__quote hist-dossier__quote--b">&ldquo;{event.quoteB}&rdquo;</p>
+      )}
+
+      {/* Stamp */}
+      <span className="hist-dossier__stamp">[Declassified: Coming]</span>
+
+      {/* Reveal overlay */}
+      <div className="hist-dossier__reveal">
+        <span className="hist-dossier__reveal-title">{event.title}</span>
       </div>
     </div>
   );
