@@ -97,22 +97,26 @@ try:
 except ImportError:
     pass
 
-# void --verify: Claim Consensus engine — optional (requires spaCy + sklearn)
+# void --verify: Claim Consensus engine — adhoc only (set VOID_VERIFY=1 to enable)
+# Historical claims don't change, so extraction runs on-demand, not every pipeline run.
 CLAIMS_AVAILABLE = False
-try:
-    from analyzers.claim_extractor import extract_claims_batch
-    from analyzers.claim_verifier import verify_all_clusters
-    CLAIMS_AVAILABLE = True
-except ImportError as e:
-    print(f"[warn] Claim extraction not available ({e}). Skipping void --verify.")
+if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
+    try:
+        from analyzers.claim_extractor import extract_claims_batch
+        from analyzers.claim_verifier import verify_all_clusters
+        CLAIMS_AVAILABLE = True
+        print("[verify] Claim extraction ENABLED (VOID_VERIFY=1)")
+    except ImportError as e:
+        print(f"[warn] Claim extraction not available ({e}). Skipping void --verify.")
 
-# void --verify Phase 2: Source track record — optional
+# void --verify Phase 2: Source track record — adhoc only (same gate)
 TRACK_RECORD_AVAILABLE = False
-try:
-    from analyzers.source_track_record import update_source_track_record
-    TRACK_RECORD_AVAILABLE = True
-except ImportError:
-    pass
+if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
+    try:
+        from analyzers.source_track_record import update_source_track_record
+        TRACK_RECORD_AVAILABLE = True
+    except ImportError:
+        pass
 
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
