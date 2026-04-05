@@ -17,15 +17,16 @@
 
 ## Phase 2 — Analysis Engine -- COMPLETE
 
-**Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores (all with rationale JSONB), clustering, ranking v5.6/v5.7/v5.8, and Gemini integration.
+**Deliverable:** Pipeline produces fully analyzed articles with 6-axis bias scores (all with rationale JSONB), clustering, ranking v6.0, and Gemini integration.
 
 **What was built:**
 - Content dedup: TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
 - Story clustering: two-phase (TF-IDF agglomerative threshold 0.2 + entity-overlap merge pass)
 - 5-axis bias scoring (all return score + rationale): political_lean, sensationalism, opinion_detector, factual_rigor, framing (cluster-aware)
 - Auto-categorization: 3-article majority vote; article_categories junction table
-- Ranking v5.6: 11 signals + soft confidence curve + Gemini editorial importance (optional 12% weight) + US-only divergence damper + cross-spectrum bonus + tabloid gate + steepened time-decay
-- Ranking v5.7/v5.8 (edition-unique): regional affinity boost (up to 1.5x), local-priority boost (1.40x), cross-edition demotion (0.70x/0.88x), world multi-edition boost (1.12x), thin-edition backfill, edition-level lead gate (in `main.py` + `rerank.py`)
+- Ranking v6.0: 10 signals + soft confidence curve + Gemini editorial importance (optional 12% weight) + US-only divergence damper + cross-spectrum bonus + tabloid gate + steepened time-decay + high-authority consequentiality floor
+- Edition-unique ranking (extracted to `pipeline/ranker/edition_ranker.py`): regional affinity boost (up to 1.5x), local-priority boost (1.40x), cross-edition demotion (0.70x/0.88x), world multi-edition boost (1.12x), thin-edition backfill, edition-level lead gate, same-event cap, story-type gates, regional keyword boost
+- Holistic re-rank (step 8c): `rerank_all_clusters()` in `rerank.py`, called by pipeline after storing new clusters to re-score all clusters with current engine
 - Multi-section cross-listing: sections[] on story_clusters (migration 011, GIN-indexed)
 - Gemini Voice architecture: `_SYSTEM_INSTRUCTION` + `_USER_PROMPT_TEMPLATE` + `_PROHIBITED_TERMS` + `_check_quality()` validator; 250-350 word summaries; real outlet names in attribution
 - Step 6c Gemini reasoning: contextual score adjustments on low-confidence/high-divergence clusters (`gemini_reasoning.py`; 25-call budget)

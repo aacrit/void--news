@@ -29,7 +29,7 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 - 4x daily automated pipeline (GitHub Actions)
 - Rule-based NLP bias engine (6 axes, $0 cost)
 - Gemini Flash: cluster summarization + editorial importance + reasoning (~116 RPD, free tier)
-- Story clustering with v5.6/v5.7 importance ranking (11 signals + Gemini editorial intelligence + edition-unique ranking)
+- Story clustering with v6.0 importance ranking (10 signals + Gemini editorial intelligence + edition-unique ranking)
 - Responsive web app (desktop + mobile)
 - Static site on GitHub Pages, data in Supabase
 
@@ -77,7 +77,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | 7 | Design | "Press & Precision" — newspaper aesthetic, modern data density |
 | 8 | Typography | Playfair Display + Inter + Barlow Condensed + IBM Plex Mono |
 | 9 | Bias viz | BiasLens Three Lenses (Beam, Ring, Prism) |
-| 10 | Ranking | v5.6/v5.7: 11 deterministic signals + Gemini editorial intelligence + edition-unique ranking |
+| 10 | Ranking | v6.0: 10 deterministic signals + Gemini editorial intelligence + edition-unique ranking |
 | 11 | Color | Light mode (warm paper) + adaptive dark mode |
 | 12 | Hosting | GitHub Pages + Supabase + GitHub Actions |
 
@@ -106,7 +106,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | Phase | Status | Deliverable |
 |-------|--------|-------------|
 | Phase 1 — Foundation | COMPLETE | Pipeline, source list, Supabase schema, fetchers, GitHub Actions |
-| Phase 2 — Analysis Engine | COMPLETE | 6-axis bias engine, clustering, ranking v5.4, Gemini integration |
+| Phase 2 — Analysis Engine | COMPLETE | 6-axis bias engine, clustering, ranking v6.0, Gemini integration |
 | Phase 3 — Frontend MVP | COMPLETE | Desktop + mobile layouts, news feed, BiasLens, deploy pending |
 | Phase 4 — Deep Dive | IN PROGRESS | Dashboard, source comparison, bias viz, framing analysis |
 | Phase 5 — Polish & Launch | PENDING | Accessibility, performance, animation polish, cross-browser |
@@ -137,7 +137,7 @@ The MVP is complete when:
 - [ ] Mobile layout renders single-column feed with bottom navigation
 - [ ] Deep Dive shows unified summary with divergence highlights and source links
 - [ ] BiasLens Three Lenses displays inline on every story card
-- [ ] v5.6/v5.7 importance ranking active with edition-unique ranking
+- [ ] v6.0 importance ranking active with edition-unique ranking
 - [ ] Light and dark modes retain newspaper aesthetic
 - [ ] Lighthouse score 90+ on all categories
 - [ ] WCAG 2.1 AA compliant

@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-04 (rev 30)
+Last updated: 2026-04-05 (rev 31)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -54,10 +54,10 @@ python pipeline/validation/runner.py --verbose    # Per-signal decomposition
 python pipeline/validation/runner.py --update-snapshot  # Refresh regression baseline
 ```
 
-### Importance Ranking — v5.6 + v5.7/v5.8 Edition-Unique
-**BIAS-BLIND.** 11-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0): source breadth 20%, maturity 16%, tier diversity 13%, consequentiality 10%, institutional authority 8%, factual density 8%, divergence 7%, perspective diversity 6%, geographic impact 6%, velocity 3%, lean diversity 3%. Plus Gemini editorial importance additive adjustment, gates (confidence, consequentiality, soft-news, tabloid, factual rigor, lead eligibility), topic diversity re-rank, same-event cap, steepened time-decay.
+### Importance Ranking — v6.0 + Edition-Unique
+**BIAS-BLIND.** 10-signal formula in `pipeline/ranker/importance_ranker.py` (weights sum to 1.0): source breadth 20%, maturity 16%, tier diversity 13%, consequentiality 10%, institutional authority 8%, factual density 8%, divergence 7%, perspective diversity 9%, geographic impact 6%, velocity 3%. Plus Gemini editorial importance additive adjustment, gates (confidence, consequentiality, soft-news, tabloid, factual rigor, lead eligibility), topic diversity re-rank, same-event cap, steepened time-decay. v6.0 changes: lean_diversity (3%) merged into perspective_diversity (6%->9%), divergence purified to framing (62.5%) + sensationalism (37.5%) only (lean-range removed), high-authority consequentiality floor (authority >= 80 + consequentiality < 5 -> floor 30), thin cluster gate removed from base ranker.
 
-**v5.7/v5.8 edition-unique ranking** (in `pipeline/main.py` + `pipeline/rerank.py`): regional affinity boost (up to 1.5x, quality-capped for <5 sources), local-priority boost (1.40x edition-exclusive), cross-edition demotion (0.70x, milder 0.88x for globally significant 20+ source/3+ edition stories), world multi-edition boost (1.12x for 3+ edition stories), edition-level lead gate (3+ sources for top 10), thin-edition backfill (imports from world when <10 quality stories). Processing order: regional first (us -> europe -> south-asia), then world.
+**Edition-unique ranking** (in `pipeline/ranker/edition_ranker.py`, imported by both `main.py` and `rerank.py`): regional affinity boost (up to 1.5x, quality-capped for <5 sources), local-priority boost (1.40x edition-exclusive), cross-edition demotion (0.70x, milder 0.88x for globally significant 20+ source/3+ edition stories), world multi-edition boost (1.12x for 3+ edition stories), edition-level lead gate (3+ sources for top 10), thin-edition backfill (imports from world when <10 quality stories), same-event cap, story-type gates, regional keyword boost. Processing order: regional first (us -> europe -> south-asia), then world.
 
 ### Cluster Summarization
 3+-source clusters, 25-call Gemini cap/run, 250-350 words. Falls back to rule-based. Op-eds (opinion_fact > 50): single-article, no Gemini.
@@ -75,6 +75,7 @@ World-focused, top 20 clusters. **TL;DR**: 8-12 sentences editorial paragraph (1
  5. ANALYZE (5-axis) → 6. CLUSTER (TF-IDF + entity merge) → 6b. RE-FRAME
  6c. GEMINI REASON → 7b. SUMMARIZE → 7. CATEGORIZE & RANK → 7c. EDITORIAL TRIAGE
  7d. DAILY BRIEF (TL;DR + audio) → 8. STORE → 8b. DEDUP CLUSTERS
+ 8c. HOLISTIC RE-RANK (all clusters, v6.0 engine)
  9. ENRICH → 9a. MEMORY ENGINE → 9b. ARTICLE CATS → 9c. TOPIC TRACK → 10. TRUNCATE + CLEANUP
 ```
 
@@ -165,13 +166,13 @@ void-news/
 │   ├── summarizer/        # gemini_client.py, cluster_summarizer.py
 │   ├── briefing/          # daily_brief_generator, audio_producer, claude_brief_generator, voice_rotation, generate_assets, podcast_feed_generator, weekly_digest_generator, compare_generators
 │   ├── categorizer/       # auto_categorize.py
-│   ├── ranker/            # importance_ranker.py
+│   ├── ranker/            # importance_ranker.py, edition_ranker.py
 │   ├── validation/        # fixtures, signal_tracker, source_profiles, runner, snapshot
 │   ├── memory/            # memory_orchestrator.py, live_poller.py (story memory engine)
 │   ├── history/           # content_loader.py (YAML to Supabase batch loader)
 │   ├── utils/             # supabase client, nlp_shared, prohibited_terms
 │   ├── main.py            # Orchestrator
-│   └── rerank.py          # Standalone re-ranker
+│   └── rerank.py          # Re-ranker CLI + rerank_all_clusters() shared function
 ├── frontend/
 │   ├── app/
 │   │   ├── components/    # 49 components: AudioProvider, BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileMiniPlayer, MobileNav, MobileSidePanel, MobileStoryCard, MobileTabBar, NavBar, OnboardingCarousel, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
@@ -198,7 +199,7 @@ void-news/
 
 ## Status
 
-**Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.6/v5.7/v5.8, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (3 events, 18 components, 5-lens historiographic framework).
+**Complete**: Pipeline (all 12 steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (3 events, 18 components, 5-lens historiographic framework).
 **In progress**: Deep Dive framing comparison, source credibility panels, void --history content expansion (additional events).
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
