@@ -115,7 +115,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Prop
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") { handleSkip(); return; }
-      if (e.key === "ArrowRight" || e.key === " ") {
+      if (e.key === "ArrowRight" || (e.key === " " && !(e.target instanceof HTMLButtonElement))) {
         e.preventDefault();
         if (phase < CHAPTERS.length - 1) {
           if (timerRef.current) clearTimeout(timerRef.current);

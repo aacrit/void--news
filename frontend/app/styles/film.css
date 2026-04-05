@@ -420,4 +420,11 @@
     transform: none !important;
     stroke-dashoffset: 0 !important;
   }
+  /* SVG draw animations within Sigil breakdown */
+  .film-sigil path,
+  .film-sigil line {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
 }

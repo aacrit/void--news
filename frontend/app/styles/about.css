@@ -1401,9 +1401,7 @@
   stroke-width: 1.5;
   stroke-opacity: 0.25;
   fill: none;
-  stroke-dasharray: var(--divider-len, 600);
-  stroke-dashoffset: var(--divider-len, 600);
-  transition: stroke-dashoffset 1.2s var(--ease-cinematic);
+  /* Visible by default — no draw animation (IO not wired to dividers) */
 }
 
 .about-divider[data-visible="true"] path {

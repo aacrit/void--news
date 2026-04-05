@@ -5,9 +5,7 @@ import Link from "next/link";
 import LogoIcon from "../components/LogoIcon";
 import LogoWordmark from "../components/LogoWordmark";
 import {
-  CHAPTERS, DIVERGENT_HEADLINES, SIX_AXES, FIRST_PRINCIPLES,
-  PRODUCT_FAMILY, RANKING_SIGNALS, NUMBERS, LANDSCAPE,
-  COMPARISON_SCORES,
+  CHAPTERS, SIX_AXES, FIRST_PRINCIPLES,
 } from "../film/data";
 import DivergentHeadlines from "../film/scenes/DivergentHeadlines";
 import SigilBreakdown from "../film/scenes/SigilBreakdown";
@@ -127,9 +125,7 @@ export default function AboutPage() {
           </blockquote>
 
           {/* Shared scene: divergent headlines */}
-          <div data-film-section="void-headlines">
-            <DivergentHeadlines mode={MODE} active={isVisible("void")} />
-          </div>
+          <DivergentHeadlines mode={MODE} active={isVisible("void")} />
         </div>
       </section>
 
@@ -229,6 +225,7 @@ export default function AboutPage() {
           ══════════════════════════════════════════════════════════════════ */}
       <section id="the-difference" className="about-section about-section--act2" aria-label="The Difference" data-film-section="difference">
         <div className="about-section__inner">
+          <p className="about-section-label">{CHAPTERS[3].roman}</p>
           <div className="about-reveal" data-visible={isVisible("difference") || undefined}>
             <p className="about-body about-body--lead">
               They rate the outlet.<br />We read the article.
