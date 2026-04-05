@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { HistoricalEvent, RedactedEvent } from "../types";
+import LogoIcon from "../../components/LogoIcon";
 
 /* ===========================================================================
    HistoryLanding — Dossier-first landing for void --history
@@ -36,8 +37,35 @@ export default function HistoryLanding({ events, redacted }: HistoryLandingProps
 
   return (
     <div ref={contentRef}>
+      {/* ── SVG Defs: Organic Clip-Path Shapes ──
+          4 hand-drawn document edge shapes for dossier tiles.
+          Each mimics torn/foxed/weathered manuscript edges. */}
+      <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
+        <defs>
+          {/* Shape 1: Slightly ragged left + bottom edges */}
+          <clipPath id="hist-organic-edge-1" clipPathUnits="objectBoundingBox">
+            <path d="M0.01,0.005 L0.98,0 C0.99,0 1,0.01 0.995,0.03 L1,0.97 C1,0.99 0.985,1 0.97,0.995 L0.03,1 C0.015,1 0.005,0.99 0,0.97 L0.005,0.04 C0.002,0.02 0,0.01 0.01,0.005Z" />
+          </clipPath>
+          {/* Shape 2: Torn top-right corner */}
+          <clipPath id="hist-organic-edge-2" clipPathUnits="objectBoundingBox">
+            <path d="M0.005,0.01 L0.93,0 C0.95,0.005 0.97,0.008 0.985,0.02 C1,0.03 0.995,0.04 1,0.06 L0.995,0.96 C0.998,0.98 0.99,0.995 0.97,1 L0.02,0.995 C0.01,0.998 0,0.985 0,0.97 L0.008,0.03 C0.003,0.02 0,0.01 0.005,0.01Z" />
+          </clipPath>
+          {/* Shape 3: Soft wavy bottom edge */}
+          <clipPath id="hist-organic-edge-3" clipPathUnits="objectBoundingBox">
+            <path d="M0.008,0 L0.99,0.005 C0.995,0.005 1,0.02 1,0.03 L0.995,0.94 C0.99,0.96 0.97,0.99 0.94,0.995 C0.85,1 0.72,0.985 0.6,0.995 C0.48,1 0.35,0.985 0.22,0.998 C0.12,0.99 0.04,1 0.02,0.995 C0.005,0.99 0,0.97 0,0.95 L0.005,0.03 C0.003,0.01 0.005,0 0.008,0Z" />
+          </clipPath>
+          {/* Shape 4: Irregular left edge, pinched corners */}
+          <clipPath id="hist-organic-edge-4" clipPathUnits="objectBoundingBox">
+            <path d="M0.02,0.008 L0.975,0 C0.99,0.003 1,0.015 0.998,0.03 L1,0.965 C0.998,0.985 0.985,1 0.965,0.998 L0.03,1 C0.015,0.995 0.008,0.985 0.005,0.965 C0,0.85 0.01,0.7 0.005,0.55 C0,0.4 0.01,0.25 0.005,0.12 C0.003,0.06 0,0.03 0.02,0.008Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* ── Hero: Pull Quote ── */}
       <section className="hist-landing-hero hist-cold-open--hero" aria-label="Introduction">
+        <div className="hist-landing-hero__logo" aria-hidden="true">
+          <LogoIcon size={32} animation="idle" />
+        </div>
         <blockquote className="hist-landing-hero__quote">
           &ldquo;History is not what happened. It is who told the story.&rdquo;
         </blockquote>

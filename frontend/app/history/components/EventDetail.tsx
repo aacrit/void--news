@@ -43,6 +43,11 @@ function InkRule() {
   );
 }
 
+/* ── Atmospheric Haze — Depth separator between content layers ── */
+function SectionHaze() {
+  return <div className="hist-section-haze" aria-hidden="true" />;
+}
+
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
   const [activePerspectiveId, setActivePerspectiveId] = useState(
     event.perspectives[0]?.id ?? ""
@@ -142,6 +147,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           <KeyFacts event={event} />
         </div>
 
+        <SectionHaze />
         <InkRule />
 
         {/* ── Perspectives ── */}
@@ -234,6 +240,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           ) : null}
         </section>
 
+        <SectionHaze />
         <InkRule />
 
         {/* ── Media Gallery ── */}
@@ -277,6 +284,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           </section>
         )}
 
+        <SectionHaze />
         <InkRule />
 
         {/* ── Compact Timeline: Prev / Next ── */}
