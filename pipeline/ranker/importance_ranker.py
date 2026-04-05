@@ -598,12 +598,13 @@ def _story_maturity_score(
     """
     recency = _recency_score(timestamps, source_count)
 
-    # Cap source count to prevent wire roundup inflation
-    effective_sources = min(source_count, 20)
+    # v6.0: Cap raised from 20 to 40. A 60-source story should get more
+    # depth credit than a 20-source story. log2 diminishing returns still
+    # prevent runaway: 20src=4.39, 30src=4.95, 40src=5.36 (vs max 5.36).
+    effective_sources = min(source_count, 40)
 
     # Depth multiplier: log curve with diminishing returns
-    # log2(1+1)=1.0, log2(1+3)=2.0, log2(1+7)=3.0, log2(1+15)=4.0
-    max_depth = math.log2(1 + 15)  # ≈ 4.0
+    max_depth = math.log2(1 + 40)  # ≈ 5.36
     depth_mult = math.log2(1 + effective_sources) / max_depth
 
     # Combined: recency weighted by depth
@@ -939,13 +940,14 @@ def compute_coverage_velocity(
     return len(recent_sources)
 
 
-def _longevity_penalty(timestamps: list[datetime]) -> float:
+def _longevity_penalty(
+    timestamps: list[datetime],
+    source_count: int = 1,
+) -> float:
     """
     v5.4: Steepened time-decay penalty for old stories.
-
-    With 4x daily pipeline runs, stories >24h old were dominating the
-    top 10 (8/10 top stories were >24h in analytics benchmark). The old
-    curve only applied ~2.5% penalty at 36h, which was far too gentle.
+    v6.0: Source-count floor — mega-stories (30+ sources) decay slower.
+          A 60-source geopolitical crisis is still front-page after 36h.
 
     New curve (v5.4):
         0-6h:   no penalty (1.0) — breaking news window
@@ -954,6 +956,10 @@ def _longevity_penalty(timestamps: list[datetime]) -> float:
         24-36h: significant decay (0.85 → 0.70) — aging out
         36-48h: heavy decay (0.70 → 0.55) — stale unless major
         48h+:   floor at 0.50 — old news, hard cap
+
+    v6.0 source-count floors:
+        30+ sources: floor 0.75 (major international story)
+        15+ sources: floor 0.65 (significant multi-source story)
 
     Returns multiplier 0.50-1.0.
     """
@@ -965,21 +971,25 @@ def _longevity_penalty(timestamps: list[datetime]) -> float:
     hours_old = max(0, (now - most_recent).total_seconds() / 3600.0)
 
     if hours_old < 6:
-        return 1.0
+        decay = 1.0
     elif hours_old < 12:
-        # Mild decay: 1.0 → 0.95 over 6-12h
-        return 1.0 - 0.05 * ((hours_old - 6) / 6)
+        decay = 1.0 - 0.05 * ((hours_old - 6) / 6)
     elif hours_old < 24:
-        # Moderate decay: 0.95 → 0.85 over 12-24h
-        return 0.95 - 0.10 * ((hours_old - 12) / 12)
+        decay = 0.95 - 0.10 * ((hours_old - 12) / 12)
     elif hours_old < 36:
-        # Significant decay: 0.85 → 0.70 over 24-36h
-        return 0.85 - 0.15 * ((hours_old - 24) / 12)
+        decay = 0.85 - 0.15 * ((hours_old - 24) / 12)
     elif hours_old < 48:
-        # Heavy decay: 0.70 → 0.55 over 36-48h
-        return 0.70 - 0.15 * ((hours_old - 36) / 12)
+        decay = 0.70 - 0.15 * ((hours_old - 36) / 12)
     else:
-        return 0.50
+        decay = 0.50
+
+    # v6.0: Source-count floor — mega-stories resist decay
+    if source_count >= 30:
+        decay = max(decay, 0.75)
+    elif source_count >= 15:
+        decay = max(decay, 0.65)
+
+    return decay
 
 
 def _lean_diversity_score(
@@ -1104,7 +1114,7 @@ def rank_importance(
     consequentiality = _consequentiality_score(cluster_articles)
     authority = _institutional_authority_score(cluster_articles)
     maturity = _story_maturity_score(timestamps, source_count)
-    longevity_mult = _longevity_penalty(timestamps)
+    longevity_mult = _longevity_penalty(timestamps, source_count)
 
     # v6.0 P5: High-authority consequentiality floor — "Fed holds rates steady"
     # has zero action verbs but is front-page news. When institutional authority
@@ -1209,15 +1219,23 @@ def rank_importance(
     # from drowning out breaking news. Applied after confidence but before gates.
     headline_rank *= longevity_mult
 
+    # v6.0.1: Capture pre-gate score for compound gate floor
+    pre_gate_rank = headline_rank
+
     # Gate 1: Consequentiality gate — stories with zero consequentiality
     # score have no outcome/action verbs. Apply 0.82x multiplier.
     if consequentiality < 5.0:
         headline_rank *= 0.82
 
-    # v6.0: Thin cluster gate (v5.9) REMOVED. The 0.08-0.35x multipliers
-    # were solving an edition-layer problem (affinity boost inflation) in the
-    # base scorer, burying legitimate 2-4 source breaking news stories.
-    # Thin-story demotion is now handled by lead gates in the edition ranker.
+    # v6.0.1: Gentle thin-cluster dampening. The v5.9 gate (0.08-0.35x) was
+    # too aggressive, burying breaking news. But removing it entirely (v6.0)
+    # let 2-source clusters dominate the top 30 (40% in benchmark). This
+    # lighter version prevents 2-source inflation without crushing 3-4 source
+    # breaking stories. 5+ source clusters are unaffected.
+    if source_count == 2:
+        headline_rank *= 0.85
+    elif source_count <= 4:
+        headline_rank *= 0.92
 
     # Gate 2: Soft-news category gate (v4.0) — sports/entertainment/culture
     # stories get demoted. This is belt-and-suspenders with the
@@ -1275,6 +1293,13 @@ def rank_importance(
             headline_rank *= 0.75  # investigative exclusive exemption
         else:
             headline_rank *= 0.65
+
+    # v6.0.1: Compound gate floor — no story should be mathematically
+    # invisible after surviving 1,013-source RSS ingestion + clustering.
+    # The worst-case gate stack could produce 0.006x (9 gates multiplied).
+    # Floor at 40% of pre-gate score ensures every clustered story has a
+    # non-trivial rank, even if every quality gate fires.
+    headline_rank = max(headline_rank, pre_gate_rank * 0.40)
 
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
 

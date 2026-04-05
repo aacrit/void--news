@@ -293,6 +293,22 @@ def run_bias_analysis(
     }
     rationale = {}
 
+    # v6.0.1: Word-count gate — articles with < 150 words of text are
+    # scrape failures (stubs, paywalls, redirects). Scoring them produces
+    # garbage (3/5 axes compress to floor). Return baseline scores with
+    # low confidence so they get minimal weight in cluster aggregation.
+    full_text_raw = article.get("full_text", "") or ""
+    word_count = len(full_text_raw.split())
+    if word_count < 150:
+        # Use source baseline for political_lean if available
+        baseline = str(source.get("political_lean_baseline", "center")).lower()
+        lean_map = {"far-left": 15, "left": 25, "center-left": 38,
+                    "center": 50, "center-right": 62, "right": 75,
+                    "far-right": 85, "varies": 50}
+        scores["political_lean"] = lean_map.get(baseline, 50)
+        scores["confidence"] = max(0.15, word_count / 500.0)
+        return scores
+
     # Pre-parse spaCy doc once and share across analyzers that need NER.
     # Saves 2 redundant parses per article (~200-400ms each).
     full_text = article.get("full_text", "") or ""
