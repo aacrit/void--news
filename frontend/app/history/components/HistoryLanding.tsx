@@ -177,6 +177,14 @@ function DossierTile({
   const divergence = computeDivergence(event);
   const sourceCount = countSources(event);
 
+  /* Polygon clip-path for organic irregular edges — same pattern as classified tiles */
+  const polygonVariants = [
+    "polygon(1% 0%, 98% 1%, 100% 2%, 99% 97%, 97% 100%, 2% 99%, 0% 98%, 0.5% 3%)",
+    "polygon(2% 1%, 99% 0%, 100% 3%, 98% 98%, 100% 100%, 1% 99%, 0% 97%, 1% 2%)",
+    "polygon(0% 2%, 97% 0%, 99% 1%, 100% 99%, 98% 100%, 3% 98%, 0% 100%, 1% 1%)",
+  ];
+  const clipPath = polygonVariants[index % polygonVariants.length];
+
   /* Desktop: hover expand. Mobile: tap toggle. */
   const handleMouseEnter = useCallback(() => {
     if (opening) return;
@@ -242,6 +250,7 @@ function DossierTile({
         .join(" ")}
       style={{
         animationDelay: `${100 + index * 80}ms`,
+        clipPath: expanded || opening ? "none" : clipPath,
       } as React.CSSProperties}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -362,6 +371,9 @@ function DossierTile({
               alt=""
               loading="lazy"
               className="hist-tile__cover-img"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
             />
           </div>
         )}
