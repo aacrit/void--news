@@ -57,14 +57,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
       <h2 className="lead-story__headline">
         <span className="lead-story__headline-text">{story.title}</span>
         <Sigil data={story.sigilData} size="lg" />
-        {story.deepDive?.claimConsensus && (
-          <ConsensusBadge
-            ratio={story.deepDive.claimConsensus.consensus_ratio}
-            disputed={story.deepDive.claimConsensus.disputed}
-            total={story.deepDive.claimConsensus.total_claims}
-            corroborated={story.deepDive.claimConsensus.corroborated}
-          />
-        )}
         <CaretRight
           size={16}
           weight="bold"
