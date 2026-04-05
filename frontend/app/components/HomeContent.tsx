@@ -682,7 +682,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   }, [activeLean, activeCategory]);
 
   const filteredStories = useMemo(() => {
-    let filtered = stories;
+    // Quality floor: hide clusters with fewer than 3 sources.
+    // Single-source wire regurgitations and 2-source duds are low-signal.
+    // Three sources = minimum 2 independent editorial decisions to cover a story.
+    let filtered = stories.filter((s) => (s.sigilData?.sourceCount ?? 0) >= 3);
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
