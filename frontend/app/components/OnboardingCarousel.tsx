@@ -681,7 +681,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
               <button className="intro__btn intro__btn--primary" onClick={handleComplete} autoFocus>
                 Start reading
               </button>
-              <a href="/about" className="intro__manifesto-link" onClick={() => dismiss(onComplete)}>
+              <a href="/void--news/about" className="intro__manifesto-link" onClick={() => dismiss(onComplete)}>
                 Read the manifesto
               </a>
             </>
