@@ -1,157 +1,268 @@
 /* ===========================================================================
    void --history — Data Fetching
    Supabase queries with mock data fallback.
+   Fetches from 4 tables: history_events, history_perspectives,
+   history_media, history_connections.
    =========================================================================== */
 
 import { supabase } from "../lib/supabase";
-import type { HistoricalEvent, RedactedEvent } from "./types";
+import type {
+  HistoricalEvent,
+  Perspective,
+  MediaItem,
+  EventConnection,
+  RedactedEvent,
+  PerspectiveColor,
+  ViewpointType,
+  HistoryEra,
+  HistoryRegion,
+  HistoryCategory,
+  Severity,
+} from "./types";
 import { MOCK_EVENTS, REDACTED_EVENTS } from "./mockData";
 
-/**
- * Fetch all published historical events.
- * Falls back to mock data when Supabase is unavailable or empty.
- */
+/* ── Perspective color assignment ── */
+const COLORS: PerspectiveColor[] = ["a", "b", "c", "d", "e"];
+
+/* ── Fetch all published events (for landing, era, region pages) ── */
 export async function fetchHistoryEvents(): Promise<HistoricalEvent[]> {
   if (!supabase) return MOCK_EVENTS;
 
-  const { data, error } = await supabase
-    .from("historical_events")
+  const { data: events, error } = await supabase
+    .from("history_events")
     .select("*")
-    .eq("published", true)
+    .eq("is_published", true)
     .order("date_sort", { ascending: true });
 
-  if (error || !data || data.length === 0) return MOCK_EVENTS;
+  if (error || !events || events.length === 0) return MOCK_EVENTS;
 
-  return data.map(mapDbEventToType);
+  /* Batch-fetch perspectives for all events */
+  const eventIds = events.map((e) => e.id);
+  const { data: allPerspectives } = await supabase
+    .from("history_perspectives")
+    .select("*")
+    .in("event_id", eventIds)
+    .order("display_order", { ascending: true });
+
+  const { data: allMedia } = await supabase
+    .from("history_media")
+    .select("*")
+    .in("event_id", eventIds)
+    .order("display_order", { ascending: true });
+
+  const { data: allConnections } = await supabase
+    .from("history_connections")
+    .select("*, target:event_b_id(slug, title)")
+    .in("event_a_id", eventIds);
+
+  /* Also get reverse connections */
+  const { data: reverseConnections } = await supabase
+    .from("history_connections")
+    .select("*, source:event_a_id(slug, title)")
+    .in("event_b_id", eventIds);
+
+  return events.map((row) => mapEventWithRelations(
+    row,
+    (allPerspectives ?? []).filter((p) => p.event_id === row.id),
+    (allMedia ?? []).filter((m) => m.event_id === row.id),
+    [
+      ...((allConnections ?? []).filter((c) => c.event_a_id === row.id)),
+      ...((reverseConnections ?? []).filter((c) => c.event_b_id === row.id)),
+    ],
+    events,
+  ));
 }
 
-/**
- * Fetch a single historical event by slug.
- * Falls back to mock data when Supabase is unavailable or not found.
- */
+/* ── Fetch single event by slug (for event detail page) ── */
 export async function fetchHistoryEvent(slug: string): Promise<HistoricalEvent | null> {
   if (!supabase) {
     return MOCK_EVENTS.find((e) => e.slug === slug) ?? null;
   }
 
-  const { data, error } = await supabase
-    .from("historical_events")
+  const { data: event, error } = await supabase
+    .from("history_events")
     .select("*")
     .eq("slug", slug)
-    .eq("published", true)
+    .eq("is_published", true)
     .limit(1)
     .single();
 
-  if (error || !data) {
+  if (error || !event) {
     return MOCK_EVENTS.find((e) => e.slug === slug) ?? null;
   }
 
-  return mapDbEventToType(data);
+  const [{ data: perspectives }, { data: media }, { data: fwdConn }, { data: revConn }] =
+    await Promise.all([
+      supabase
+        .from("history_perspectives")
+        .select("*")
+        .eq("event_id", event.id)
+        .order("display_order", { ascending: true }),
+      supabase
+        .from("history_media")
+        .select("*")
+        .eq("event_id", event.id)
+        .order("display_order", { ascending: true }),
+      supabase
+        .from("history_connections")
+        .select("*, target:event_b_id(slug, title)")
+        .eq("event_a_id", event.id),
+      supabase
+        .from("history_connections")
+        .select("*, source:event_a_id(slug, title)")
+        .eq("event_b_id", event.id),
+    ]);
+
+  /* Need all events for connection title lookups */
+  const { data: allEvents } = await supabase
+    .from("history_events")
+    .select("id, slug, title")
+    .eq("is_published", true);
+
+  return mapEventWithRelations(
+    event,
+    perspectives ?? [],
+    media ?? [],
+    [...(fwdConn ?? []), ...(revConn ?? [])],
+    allEvents ?? [],
+  );
 }
 
-/**
- * Fetch historical events filtered by era.
- * Falls back to mock data filtered by era.
- */
+/* ── Fetch by era ── */
 export async function fetchHistoryEventsByEra(era: string): Promise<HistoricalEvent[]> {
-  if (!supabase) {
-    return MOCK_EVENTS.filter((e) => e.era === era);
-  }
+  if (!supabase) return MOCK_EVENTS.filter((e) => e.era === era);
 
   const { data, error } = await supabase
-    .from("historical_events")
+    .from("history_events")
     .select("*")
     .eq("era", era)
-    .eq("published", true)
+    .eq("is_published", true)
     .order("date_sort", { ascending: true });
 
   if (error || !data || data.length === 0) {
     return MOCK_EVENTS.filter((e) => e.era === era);
   }
 
-  return data.map(mapDbEventToType);
+  /* For listing pages, skip full relation fetch — use summary data */
+  return data.map((row) => mapEventWithRelations(row, [], [], [], []));
 }
 
-/**
- * Fetch historical events filtered by region.
- * Falls back to mock data filtered by region.
- */
+/* ── Fetch by region ── */
 export async function fetchHistoryEventsByRegion(region: string): Promise<HistoricalEvent[]> {
   if (!supabase) {
-    return MOCK_EVENTS.filter((e) => e.regions.includes(region as HistoricalEvent["regions"][number]));
+    return MOCK_EVENTS.filter((e) => e.regions.includes(region as HistoryRegion));
   }
 
   const { data, error } = await supabase
-    .from("historical_events")
+    .from("history_events")
     .select("*")
-    .contains("regions", [region])
-    .eq("published", true)
+    .eq("region", region)
+    .eq("is_published", true)
     .order("date_sort", { ascending: true });
 
   if (error || !data || data.length === 0) {
-    return MOCK_EVENTS.filter((e) => e.regions.includes(region as HistoricalEvent["regions"][number]));
+    return MOCK_EVENTS.filter((e) => e.regions.includes(region as HistoryRegion));
   }
 
-  return data.map(mapDbEventToType);
+  return data.map((row) => mapEventWithRelations(row, [], [], [], []));
 }
 
-/**
- * Fetch redacted (coming-soon) event stubs.
- */
+/* ── Fetch redacted (coming-soon) stubs ── */
 export async function fetchRedactedEvents(): Promise<RedactedEvent[]> {
-  if (!supabase) return REDACTED_EVENTS;
+  /* Redacted events always come from mock data — they need curated quotes */
+  return REDACTED_EVENTS;
+}
 
-  const { data, error } = await supabase
-    .from("historical_events")
-    .select("id, slug, title, era, regions, date_hint")
-    .eq("published", false)
-    .order("date_sort", { ascending: true });
+/* ── DB → TypeScript mapper ── */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapEventWithRelations(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  row: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbPerspectives: any[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbMedia: any[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbConnections: any[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  allEvents: any[],
+): HistoricalEvent {
+  const perspectives: Perspective[] = dbPerspectives.map((p, i) => ({
+    id: p.id,
+    viewpointName: p.viewpoint,
+    viewpointType: p.viewpoint_type as ViewpointType,
+    color: COLORS[i % COLORS.length],
+    temporalAnchor: p.region_origin ?? "",
+    geographicAnchor: p.region_origin ?? "",
+    narrative: p.narrative,
+    keyNarratives: Array.isArray(p.emphasized) ? p.emphasized : [],
+    omissions: Array.isArray(p.omitted) ? p.omitted : [],
+    disputed: [],
+    primarySources: Array.isArray(p.notable_quotes)
+      ? p.notable_quotes.map((q: { text: string; speaker: string; context: string }) => ({
+          text: q.text,
+          author: q.speaker,
+          work: q.context ?? "",
+          date: "",
+        }))
+      : [],
+  }));
 
-  if (error || !data || data.length === 0) return REDACTED_EVENTS;
+  const media: MediaItem[] = dbMedia.map((m) => ({
+    id: m.id,
+    type: m.media_type === "photograph" ? "image" : m.media_type,
+    url: m.source_url,
+    caption: m.description ?? m.title,
+    attribution: m.attribution,
+    year: m.creation_date ?? undefined,
+  }));
 
-  /* Map unpublished events to redacted stubs (quotes are in mock data only) */
-  return data.map((row) => {
-    const mock = REDACTED_EVENTS.find((r) => r.slug === row.slug);
+  const connections: EventConnection[] = dbConnections.map((c) => {
+    /* Handle both forward and reverse connections */
+    const isForward = !!c.target;
+    const linked = isForward ? c.target : c.source;
+    const targetSlug = linked?.slug ?? "";
+    const targetTitle = linked?.title ?? allEvents.find(
+      (e) => e.id === (isForward ? c.event_b_id : c.event_a_id)
+    )?.title ?? "Unknown Event";
+
     return {
-      id: row.id,
-      slug: row.slug,
-      title: row.title,
-      era: row.era,
-      regions: row.regions ?? [],
-      quoteA: mock?.quoteA ?? "",
-      quoteB: mock?.quoteB ?? "",
-      dateHint: row.date_hint ?? "",
+      targetSlug,
+      targetTitle,
+      type: c.connection_type,
+      description: c.description ?? "",
     };
   });
-}
 
-/* ── DB Row → TypeScript type mapper ── */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapDbEventToType(row: any): HistoricalEvent {
+  /* Parse key_figures JSONB */
+  const keyFigures = Array.isArray(row.key_figures)
+    ? row.key_figures
+    : [];
+
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     subtitle: row.subtitle ?? "",
-    era: row.era,
-    regions: row.regions ?? [],
-    categories: row.categories ?? [],
-    severity: row.severity ?? "major",
-    datePrimary: row.date_primary ?? "",
-    dateSort: row.date_sort ?? 0,
-    dateRange: row.date_range ?? "",
-    location: row.location ?? "",
-    heroImage: row.hero_image ?? undefined,
-    heroCaption: row.hero_caption ?? undefined,
-    heroAttribution: row.hero_attribution ?? undefined,
-    contextNarrative: row.context_narrative ?? "",
-    keyFigures: row.key_figures ?? [],
+    era: row.era as HistoryEra,
+    regions: [row.region as HistoryRegion],
+    categories: [row.category as HistoryCategory],
+    severity: row.severity as Severity,
+    datePrimary: row.date_display,
+    dateSort: row.date_sort,
+    dateRange: row.duration ?? row.date_display,
+    location: row.country ?? "",
+    heroImage: row.hero_image_url ?? undefined,
+    heroCaption: row.subtitle ?? undefined,
+    heroAttribution: row.hero_image_attribution ?? undefined,
+    contextNarrative: row.summary,
+    keyFigures,
     deathToll: row.death_toll ?? undefined,
-    displaced: row.displaced ?? undefined,
+    displaced: row.affected_population ?? undefined,
     duration: row.duration ?? undefined,
-    perspectives: row.perspectives ?? [],
-    media: row.media ?? [],
-    connections: row.connections ?? [],
-    published: row.published ?? false,
+    perspectives,
+    media,
+    connections,
+    published: row.is_published ?? false,
   };
 }
