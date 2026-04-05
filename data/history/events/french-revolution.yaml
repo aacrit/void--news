@@ -1,0 +1,307 @@
+slug: french-revolution
+title: "The French Revolution"
+subtitle: "Liberty, equality, fraternity — and the guillotine that followed"
+date_display: "1789-1799"
+date_sort: 1789
+date_precision: year
+era: modern
+region: europe
+country: France
+category: revolution
+severity: catastrophic
+death_toll: "~40,000 executed during the Terror; 170,000-250,000 in the Vendee civil war; total revolutionary period deaths estimated 600,000-1,000,000 including war"
+affected_population: "28 million French citizens; revolutionary wars affected much of Europe"
+duration: "1789-1799 (Bastille to Napoleon's coup of 18 Brumaire)"
+hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/5/5d/Prise_de_la_Bastille.jpg"
+hero_image_attribution: "Jean-Pierre Houel, 1789, public domain via Wikimedia Commons"
+
+summary: |
+  On July 14, 1789, a crowd of approximately 1,000 Parisians stormed the Bastille, a royal fortress and prison in eastern Paris. The garrison of 82 invalides (retired soldiers) and 32 Swiss Guards surrendered after four hours. The crowd killed the governor, Bernard-Rene de Launay, and paraded his head on a pike through the streets. The Bastille held only seven prisoners — four forgers, two lunatics, and a dissolute young nobleman — but its fall became the revolution's founding act: the moment when the people of Paris physically dismantled the architecture of royal authority.
+
+  The revolution had been building for years. France's participation in the American Revolution had bankrupted the treasury. The national debt stood at 4.5 billion livres. A decade of poor harvests had pushed bread prices to a 30-year high; by 1789, a Parisian laborer spent 88% of his wages on bread. Louis XVI, advised by finance minister Jacques Necker, convened the Estates-General on May 5, 1789 — the first time the body had met since 1614. The Third Estate (commoners, 98% of the population) demanded voting by head rather than by estate, which would have given them a majority. When the king refused, the Third Estate declared itself the National Assembly on June 17 and swore the Tennis Court Oath on June 20, pledging not to disband until France had a constitution.
+
+  The revolution moved through phases of escalating radicalism. The Constituent Assembly (1789-1791) abolished feudal privileges, issued the Declaration of the Rights of Man and of the Citizen, confiscated Church property, and established a constitutional monarchy. The Legislative Assembly (1791-1792) declared war on Austria in April 1792, beginning a cycle of revolutionary wars that would last 23 years. The National Convention (1792-1795) abolished the monarchy on September 21, 1792, tried Louis XVI for treason, and executed him by guillotine on January 21, 1793. Marie Antoinette followed on October 16.
+
+  The Terror, directed by the Committee of Public Safety under Maximilien Robespierre, lasted from September 1793 to July 1794. The Revolutionary Tribunal executed an estimated 16,594 people by guillotine, including political rivals (Danton, Hebert, the Girondins), aristocrats, priests, and thousands of ordinary citizens denounced by neighbors. In the Vendee region of western France, royalist and Catholic peasants rose against the republic; the republican response — the "colonnes infernales" under General Turreau — killed an estimated 170,000-250,000 people through mass drownings (noyades) in the Loire, mass shootings, and deliberate destruction of villages and crops. Some historians classify the Vendee campaign as genocide.
+
+  Robespierre himself was arrested on 9 Thermidor (July 27, 1794) and guillotined the following day, ending the Terror. The Directory (1795-1799) governed an exhausted republic until Napoleon Bonaparte's coup of 18 Brumaire (November 9, 1799) established the Consulate and, eventually, the Empire. The revolution that began with a declaration of human rights ended with a military dictatorship.
+
+significance: |
+  The French Revolution destroyed the ancien regime — the feudal, monarchical, and clerical order that had governed France for centuries — and replaced it with the principles of popular sovereignty, legal equality, and secularism that define modern liberal democracy. The Declaration of the Rights of Man (1789) became the template for the United Nations Universal Declaration of Human Rights (1948). The Civil Code drafted under Napoleon (1804) spread revolutionary legal principles across Europe and Latin America. The revolution also demonstrated that popular sovereignty could produce the Terror: the tension between liberty and revolutionary violence became the defining question of modern politics. Its ideas directly inspired the Haitian Revolution (1791-1804), the revolutions of 1848, and the Russian Revolution (1917). Its vocabulary — left and right (from the seating arrangement of the National Assembly), citizen, republic, nation — became the language of political modernity.
+
+key_figures:
+  - name: "Maximilien Robespierre"
+    role: "Leader of the Committee of Public Safety, architect of the Terror, executed July 28, 1794"
+  - name: "Louis XVI"
+    role: "King of France, executed January 21, 1793"
+  - name: "Marie Antoinette"
+    role: "Queen of France, executed October 16, 1793"
+  - name: "Georges Danton"
+    role: "Revolutionary leader, first president of the Committee of Public Safety, executed April 5, 1794"
+  - name: "Napoleon Bonaparte"
+    role: "Military commander who ended the revolution with the coup of 18 Brumaire, November 9, 1799"
+  - name: "Olympe de Gouges"
+    role: "Author of the Declaration of the Rights of Woman and of the Female Citizen (1791), guillotined November 3, 1793"
+
+legacy_points:
+  - "Destroyed the feudal and monarchical order that had governed France for over a millennium"
+  - "Declaration of the Rights of Man (1789) became the foundation for modern human rights law"
+  - "Introduced the political vocabulary of modernity: left/right, citizen, republic, nation"
+  - "The Terror demonstrated that revolutionary liberty can produce systematic state violence — a tension that defined the 19th and 20th centuries"
+  - "Directly inspired the Haitian Revolution (1791-1804), the first successful slave revolution in history"
+
+primary_source_excerpts:
+  - text: "Men are born and remain free and equal in rights. Social distinctions may be based only upon general usefulness."
+    author: "National Assembly of France"
+    work: "Declaration of the Rights of Man and of the Citizen, Article 1"
+    date: "August 26, 1789"
+  - text: "If the basis of popular government in peacetime is virtue, the basis of popular government during a revolution is both virtue and terror."
+    author: "Maximilien Robespierre"
+    work: "Speech to the National Convention, 'On the Principles of Political Morality'"
+    date: "February 5, 1794"
+  - text: "It is with regret that I pronounce the fatal truth: Louis must die so that the country may live."
+    author: "Maximilien Robespierre"
+    work: "Speech to the National Convention on the trial of Louis XVI"
+    date: "December 3, 1792"
+  - text: "O liberty! What crimes are committed in thy name!"
+    author: "Madame Roland (Manon Roland)"
+    work: "Spoken on the scaffold before her execution"
+    date: "November 8, 1793"
+
+coordinates:
+  lat: 48.8532
+  lng: 2.3694
+
+related_event_slugs:
+  - transatlantic-slave-trade
+  - fall-of-berlin-wall
+  - creation-of-israel-nakba
+
+perspectives:
+  - viewpoint: "Revolutionary / Republican"
+    viewpoint_type: victor
+    region_origin: europe
+    narrative: |
+      The republican tradition claims the revolution as the birth of modern democracy. In this reading, 1789 was the moment when the principle of popular sovereignty replaced divine right — not as an abstract idea but as an act: the people of France, through their elected representatives, declared that authority derived from the nation, not from God or the king. The Declaration of the Rights of Man and of the Citizen, adopted on August 26, 1789, established that "the principle of all sovereignty resides essentially in the nation." This was not a modification of the old order. It was its annihilation.
+
+      The republican narrative acknowledges the Terror but frames it as a response to existential threat rather than an inherent outcome of the revolution. By the summer of 1793, France was at war with Austria, Prussia, Britain, Spain, and the Dutch Republic simultaneously. The Vendee was in royalist revolt. Federalist rebellions had erupted in Lyon, Marseille, and Toulon. Inflation was destroying the currency. In this context, the Committee of Public Safety's emergency measures — price controls (the Maximum), mass conscription (the levee en masse), and the Revolutionary Tribunal — are presented as the instruments of national survival. The levee en masse, decreed on August 23, 1793, mobilized 750,000 soldiers and created the largest army Europe had seen since the Roman Empire. It saved the republic from invasion.
+
+      Robespierre's speech of February 5, 1794, articulated the logic explicitly: "If the basis of popular government in peacetime is virtue, the basis of popular government during a revolution is both virtue and terror — virtue, without which terror is destructive; terror, without which virtue is impotent." The republican tradition has debated this formulation for two centuries. The Jacobin left defends Robespierre as a democrat who used extreme measures under extreme circumstances; the moderate republican tradition (from Benjamin Constant to Francois Furet) argues that the Terror revealed the dangers inherent in unlimited popular sovereignty.
+
+      The revolution's legislative achievements are often overshadowed by the guillotine. The abolition of feudal privileges on the night of August 4, 1789 — when nobles voluntarily renounced their manorial rights in a session that lasted until dawn — eliminated in hours a system of privilege that had structured French society for centuries. The Civil Constitution of the Clergy (1790) brought the Catholic Church under state control. The metric system, proposed by the Academy of Sciences and adopted in 1795, rationalized measurement. The abolition of slavery in French colonies, decreed on February 4, 1794 (16 Pluviose An II), made France the first colonial power to outlaw the institution — though Napoleon reinstated it in 1802.
+
+      Jules Michelet's History of the French Revolution (1847-1853) — the foundational text of republican historiography — framed the revolution as the awakening of the French people: "The revolution is nothing but the belated reaction of justice against the government of favoritism and the religion of grace." For the republican tradition, the revolution's violence is a stain on an essentially noble project — not its essence.
+    key_arguments:
+      - "The revolution established popular sovereignty as the basis of legitimate government"
+      - "The Terror was a response to existential military threat, not an inherent outcome of the revolution"
+      - "Legislative achievements — abolition of feudalism, metric system, first abolition of slavery — transformed society"
+      - "The levee en masse saved the republic from invasion and created the citizen-soldier"
+    sources:
+      - title: "History of the French Revolution (7 volumes)"
+        author: "Jules Michelet"
+        year: "1847-1853"
+        type: book
+      - title: "Citizens: A Chronicle of the French Revolution"
+        author: "Simon Schama"
+        year: "1989"
+        type: book
+      - title: "The French Revolution: A Very Short Introduction"
+        author: "William Doyle"
+        year: "2001"
+        type: book
+    notable_quotes:
+      - text: "Men are born and remain free and equal in rights."
+        speaker: "National Assembly"
+        context: "Declaration of the Rights of Man and of the Citizen, Article 1, August 26, 1789"
+      - text: "The revolution is nothing but the belated reaction of justice against the government of favoritism and the religion of grace."
+        speaker: "Jules Michelet"
+        context: "History of the French Revolution, 1847"
+    emphasized:
+      - "Popular sovereignty as a break from divine right"
+      - "Legislative transformation of French society"
+      - "Terror as emergency response to invasion and civil war"
+    omitted:
+      - "The Terror's targeting of ordinary citizens, not just aristocrats and counter-revolutionaries"
+      - "Vendee massacres as a stain on the republican project"
+      - "The revolution's failure to extend rights to women and the execution of feminist voices like Olympe de Gouges"
+
+  - viewpoint: "Royalist / Aristocratic"
+    viewpoint_type: vanquished
+    region_origin: europe
+    narrative: |
+      Edmund Burke published Reflections on the Revolution in France on November 1, 1790 — before the Terror, before the execution of the king, before the revolutionary wars. He predicted all of it. Burke argued that the revolution's abstract rationalism — its attempt to rebuild society from first principles rather than reform it through tradition — would inevitably produce tyranny. "By hating vices too much, they came to love men too little." The revolution's insistence on total equality, Burke wrote, would destroy the institutions — church, aristocracy, monarchy, guilds, provinces — that mediated between the state and the individual, leaving citizens exposed to the unlimited power of the sovereign assembly.
+
+      Burke was writing as a Whig, not a Tory — a defender of the English constitutional tradition of 1688, not an absolutist. His argument was not that the ancien regime was perfect but that its institutions had evolved over centuries to accommodate the competing interests of a complex society. The revolution did not reform these institutions; it annihilated them. On the night of August 4, 1789, the National Assembly abolished feudal privileges, tithes, manorial courts, and provincial privileges in a single session. Burke saw this not as liberation but as destruction: the elimination of the organic social bonds that gave French life its structure.
+
+      The emigre experience confirmed Burke's fears. Between 1789 and 1792, approximately 150,000 French nobles, clergy, and their families fled France — to Koblenz, London, Vienna, and across Europe. Their property was confiscated and sold to finance the revolution. The confiscation of Church property — estimated at 10% of all French land — was decreed on November 2, 1789, and the proceeds used to back a new paper currency, the assignat, which hyperinflated to near-worthlessness by 1795. The emigres watched from abroad as their houses were looted, their churches desecrated, and their relatives guillotined.
+
+      The execution of Louis XVI on January 21, 1793, in the Place de la Revolution (now Place de la Concorde) shocked the royal houses of Europe. Louis had been tried by the Convention, found guilty of "conspiracy against the public liberty and general safety," and condemned to death by a vote of 387 to 334 (with 72 favoring conditional sentence). The margin was narrow; the act was irreversible. Marie Antoinette's execution on October 16 — after a trial in which she was accused of incest with her son, a charge the prosecution itself struggled to sustain — exemplified the revolutionary tribunal's descent into cruelty dressed as justice.
+
+      The conservative tradition, from Burke through Joseph de Maistre to Alexis de Tocqueville, has debated the revolution's legacy ever since. Tocqueville's The Old Regime and the Revolution (1856) argued that the revolution did not destroy the centralized French state — it completed its centuries-long construction. The Bourbon monarchy had already crushed aristocratic independence, provincial autonomy, and guild power; the revolution merely finished the job and transferred the concentrated power to new hands. In this reading, the revolution's great crime was not that it changed France but that it convinced the French — and the world — that violent rupture was the path to liberty, when in fact it produced only a new form of despotism: Napoleon.
+    key_arguments:
+      - "Abstract rationalism, applied to society, produces tyranny — Burke predicted the Terror before it happened"
+      - "The revolution destroyed organic social institutions, leaving individuals exposed to unlimited state power"
+      - "The execution of Louis XVI was a narrow vote (387-334) that shocked Europe"
+      - "The revolution's endpoint — Napoleon's dictatorship — proved that violent rupture produces despotism, not liberty"
+    sources:
+      - title: "Reflections on the Revolution in France"
+        author: "Edmund Burke"
+        year: "1790"
+        type: book
+      - title: "The Old Regime and the Revolution"
+        author: "Alexis de Tocqueville"
+        year: "1856"
+        type: book
+      - title: "Considerations on France"
+        author: "Joseph de Maistre"
+        year: "1797"
+        type: book
+    notable_quotes:
+      - text: "By hating vices too much, they came to love men too little."
+        speaker: "Edmund Burke"
+        context: "Reflections on the Revolution in France, 1790"
+      - text: "I die innocent. I pardon my enemies, and I pray that my blood will be useful to the French."
+        speaker: "Louis XVI"
+        context: "Spoken on the scaffold, January 21, 1793"
+    emphasized:
+      - "Burke's prescient critique of revolutionary rationalism"
+      - "Destruction of intermediate institutions between state and individual"
+      - "The emigre experience: exile, confiscation, and loss"
+    omitted:
+      - "The ancien regime's genuine oppressions — feudal obligations, tax exemptions for the privileged, lettres de cachet"
+      - "The fiscal crisis caused by royal extravagance and war spending"
+      - "Popular anger driven by real hunger — bread prices consumed 88% of a laborer's wages"
+
+  - viewpoint: "Haitian Impact / Enslaved Peoples"
+    viewpoint_type: revisionist
+    region_origin: americas
+    narrative: |
+      The French Revolution's universalist language — "Men are born and remain free and equal in rights" — was tested immediately in France's Caribbean colony of Saint-Domingue, the world's most profitable slave colony. In 1789, Saint-Domingue produced 40% of the world's sugar and 60% of its coffee, generated by the labor of approximately 500,000 enslaved Africans. The colony's 40,000 white colonists and 30,000 free people of color (gens de couleur libres) debated whether the Declaration of the Rights of Man applied to them, to free blacks, or to the enslaved. The enslaved themselves provided the answer.
+
+      On August 22, 1791, a coordinated uprising of enslaved people in the northern plain of Saint-Domingue — organized in part at the Bois Caiman ceremony under the leadership of Dutty Boukman — launched what became the Haitian Revolution. Within weeks, 1,000 plantations were burning. The insurgents killed approximately 1,000 whites and destroyed the colony's economic infrastructure. The revolution in Paris — which was debating the rights of free people of color but had not contemplated the abolition of slavery — was forced to confront the logical conclusion of its own principles.
+
+      The relationship between the two revolutions was direct and reciprocal. The Societe des Amis des Noirs (Society of Friends of the Blacks), which included Brissot, Condorcet, and Lafayette, advocated for the rights of free people of color and eventually for abolition. But their advocacy was contested: the colonial lobby in Paris was powerful, and the profits of the slave trade financed much of the French economy. When the revolutionary government finally abolished slavery on February 4, 1794, it was less an act of principle than a military necessity — the enslaved insurgents in Saint-Domingue, now allied with Spain and Britain, could only be won back by offering freedom.
+
+      Toussaint Louverture, the formerly enslaved man who emerged as the leader of the revolution, rebuilt Saint-Domingue as an autonomous territory within the French Republic. He defeated Spanish and British invasions, issued a constitution in 1801 that made him governor for life, and maintained a functioning economy using paid labor on former plantations. Napoleon, who had reinstated slavery in Guadeloupe in 1802, sent General Leclerc with 20,000 troops to restore French authority and slavery in Saint-Domingue. Toussaint was captured under a flag of truce and deported to Fort de Joux in the Jura mountains, where he died of pneumonia and neglect on April 7, 1803. His successor, Jean-Jacques Dessalines, defeated the French at the Battle of Vertieres on November 18, 1803, and declared Haitian independence on January 1, 1804.
+
+      C.L.R. James's The Black Jacobins (1938) — one of the 20th century's most influential works of history — argued that the Haitian Revolution was not a footnote to the French Revolution but its fulfillment. The enslaved people of Saint-Domingue took the revolution's universal claims seriously when the revolutionaries themselves would not. "Liberty, Equality, Fraternity" was realized not in Paris but in Port-au-Prince — by the people whom the revolution's architects had excluded from its promises. The Haitian Revolution was the only slave revolution in history to produce an independent state; its success terrified slaveholders across the Americas and accelerated the abolition movement while simultaneously provoking a racist backlash that isolated Haiti diplomatically and economically for decades.
+    key_arguments:
+      - "The French Revolution's universalist claims were tested and fulfilled by the enslaved people of Saint-Domingue"
+      - "Abolition of slavery (1794) was a military necessity, not a principled act"
+      - "The Haitian Revolution was the only successful slave revolution in history"
+      - "Napoleon's attempt to restore slavery revealed the limits of revolutionary universalism"
+    sources:
+      - title: "The Black Jacobins: Toussaint L'Ouverture and the San Domingo Revolution"
+        author: "C.L.R. James"
+        year: "1938"
+        type: book
+      - title: "Avengers of the New World: The Story of the Haitian Revolution"
+        author: "Laurent Dubois"
+        year: "2004"
+        type: book
+      - title: "A Colony of Citizens: Revolution and Slave Emancipation in the French Caribbean, 1787-1804"
+        author: "Laurent Dubois"
+        year: "2004"
+        type: book
+    notable_quotes:
+      - text: "In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue. It will spring back from the roots, for they are numerous and deep."
+        speaker: "Toussaint Louverture"
+        context: "Spoken to his French captors upon arrest, June 1802"
+      - text: "The slaves of San Domingo took the revolutionary slogans — liberty, equality, fraternity — and gave them a meaning that the makers of the slogans never dreamed of."
+        speaker: "C.L.R. James"
+        context: "The Black Jacobins, 1938"
+    emphasized:
+      - "The Haitian Revolution as the French Revolution's logical fulfillment"
+      - "Enslaved people's agency in taking universalist claims at face value"
+      - "Napoleon's betrayal — reinstating slavery after the revolution abolished it"
+    omitted:
+      - "Internal French political complexity during the revolutionary period"
+      - "Haitian Revolution's own violence and post-independence political instability"
+      - "Economic and diplomatic isolation imposed on Haiti after independence"
+
+  - viewpoint: "Modern Academic / Comparative"
+    viewpoint_type: academic
+    region_origin: global
+    narrative: |
+      The French Revolution has generated more scholarly debate than any event in modern history. The historiographical schools — Marxist, revisionist, cultural, feminist, postcolonial — each illuminate different dimensions of the same decade. Taken together, they reveal a revolution that was simultaneously a social transformation, a political experiment, a cultural rupture, and a global event.
+
+      The Marxist interpretation, dominant from 1920 to 1970, read the revolution as a class struggle: the bourgeoisie overthrew the feudal aristocracy to establish capitalist property relations. Georges Lefebvre's The Coming of the French Revolution (1939) and Albert Soboul's The Sans-Culottes (1958) documented the role of popular classes — artisans, shopkeepers, wage workers — in driving the revolution beyond its bourgeois origins. Soboul showed that the sans-culottes (literally "without knee-breeches," meaning ordinary working Parisians) were not passive followers of middle-class leaders but autonomous political actors with their own demands: price controls, direct democracy, economic equality.
+
+      The revisionist school, led by Francois Furet's Interpreting the French Revolution (1978), rejected the class analysis. Furet argued that the revolution was primarily a political and cultural event — a crisis of political representation that escalated because the new ideology of popular sovereignty had no institutional mechanism for managing disagreement. When the National Assembly claimed to embody the "general will," any opposition became treason against the people. The Terror, in Furet's reading, was not a response to external threat but an inherent product of the revolution's political logic: unlimited sovereignty required unlimited vigilance against its enemies, and the category of "enemy" expanded continuously.
+
+      The feminist critique has exposed the revolution's most conspicuous failure. Olympe de Gouges published her Declaration of the Rights of Woman and of the Female Citizen in 1791, explicitly paralleling the 1789 Declaration and demanding that the revolutionary principles be extended to women. She was guillotined in November 1793. The Convention explicitly excluded women from political citizenship and closed women's political clubs in October 1793. Joan Landes's Women and the Public Sphere in the Age of the French Revolution (1988) argued that the revolution's very concept of citizenship was gendered: the "citizen" was male, rational, public; women were relegated to the domestic sphere. Revolutionary universalism was universal only for men.
+
+      The global comparative perspective places the French Revolution within a larger "Age of Revolution" spanning 1776 to 1848 — from the American Revolution through the Haitian Revolution, the Latin American independence movements, and the European revolutions of 1848. R.R. Palmer's The Age of the Democratic Revolution (1959-1964) traced the spread of revolutionary ideas across the Atlantic world. The French Revolution was the central event in this arc — the most radical, the most violent, and the most consequential. Its ideas traveled faster than its armies: the Declaration of the Rights of Man was translated into dozens of languages within years of its publication. Simón Bolivar, liberator of South America, studied the revolution in Paris. The Decembrist revolt in Russia (1825) was organized by officers who had marched through Paris in 1814.
+    key_arguments:
+      - "Multiple historiographical schools illuminate different dimensions of the same revolution"
+      - "Furet's revisionist thesis: the Terror was inherent in the logic of unlimited popular sovereignty"
+      - "The revolution excluded women from citizenship while proclaiming universal rights"
+      - "The revolution was the central event in a global Age of Revolution (1776-1848)"
+    sources:
+      - title: "Interpreting the French Revolution"
+        author: "Francois Furet"
+        year: "1978"
+        type: book
+      - title: "The Age of the Democratic Revolution (2 volumes)"
+        author: "R.R. Palmer"
+        year: "1959-1964"
+        type: book
+      - title: "Women and the Public Sphere in the Age of the French Revolution"
+        author: "Joan Landes"
+        year: "1988"
+        type: book
+    notable_quotes:
+      - text: "The French Revolution is over."
+        speaker: "Francois Furet"
+        context: "Opening line of Interpreting the French Revolution, 1978"
+      - text: "Woman has the right to mount the scaffold; she must equally have the right to mount the rostrum."
+        speaker: "Olympe de Gouges"
+        context: "Declaration of the Rights of Woman and of the Female Citizen, Article X, 1791"
+    emphasized:
+      - "Historiographical debate as revealing as the events themselves"
+      - "The Terror's relationship to revolutionary ideology, not just external threats"
+      - "Exclusion of women as the revolution's defining internal contradiction"
+      - "Global transmission of revolutionary ideas beyond France"
+    omitted:
+      - "The revolution's emotional and experiential dimensions — crowd psychology, fear, hope"
+      - "Regional variation within France — the revolution was experienced differently in Paris, the provinces, and the colonies"
+      - "The material conditions of daily life that drove popular participation"
+
+media:
+  - media_type: painting
+    title: "The Storming of the Bastille, July 14, 1789"
+    description: "Painting by Jean-Pierre Houel depicting the storming of the Bastille fortress and prison in Paris on July 14, 1789. The Bastille held only seven prisoners but its fall became the revolution's founding act."
+    source_url: "https://commons.wikimedia.org/wiki/File:Prise_de_la_Bastille.jpg"
+    attribution: "Jean-Pierre Houel, 1789, public domain"
+    license: public-domain
+    creator: "Jean-Pierre Houel"
+    creation_date: "1789"
+
+  - media_type: painting
+    title: "Execution of Louis XVI, January 21, 1793"
+    description: "Contemporary engraving of the execution of Louis XVI at the Place de la Revolution (now Place de la Concorde) in Paris. The king was guillotined after being convicted of 'conspiracy against the public liberty.'"
+    source_url: "https://commons.wikimedia.org/wiki/File:Execution_of_Louis_XVI.jpg"
+    attribution: "Georg Heinrich Sieveking, 1793, public domain"
+    license: public-domain
+    creator: "Georg Heinrich Sieveking"
+    creation_date: "1793"
+
+  - media_type: document
+    title: "Declaration of the Rights of Man and of the Citizen, 1789"
+    description: "Painting by Jean-Jacques-Francois Le Barbier depicting the Declaration of the Rights of Man, adopted by the National Assembly on August 26, 1789. The text established that 'men are born and remain free and equal in rights.'"
+    source_url: "https://commons.wikimedia.org/wiki/File:Declaration_of_the_Rights_of_Man_and_of_the_Citizen_in_1789.jpg"
+    attribution: "Jean-Jacques-Francois Le Barbier, 1789, public domain"
+    license: public-domain
+    creator: "Jean-Jacques-Francois Le Barbier"
+    creation_date: "1789"
+
+connections:
+  - target_slug: transatlantic-slave-trade
+    connection_type: influenced
+    description: "The revolution's universalist language directly inspired the Haitian Revolution (1791-1804), the only successful slave revolution in history; France first abolished then reinstated slavery"
+  - target_slug: fall-of-berlin-wall
+    connection_type: influenced
+    description: "The revolution established the vocabulary and principles — popular sovereignty, citizens' rights, political left and right — that shaped every subsequent revolutionary moment including 1989"
+  - target_slug: creation-of-israel-nakba
+    connection_type: influenced
+    description: "Revolutionary principles of national self-determination influenced both Zionist and Arab nationalist movements in the 20th century"

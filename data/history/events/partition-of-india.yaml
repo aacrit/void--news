@@ -73,7 +73,7 @@ coordinates:
   lng: 77.2090
 
 related_event_slugs:
-  - creation-of-israel
+  - creation-of-israel-nakba
   - rwandan-genocide
   - hiroshima-nagasaki
 
@@ -318,7 +318,7 @@ media:
     creation_date: "August 14, 1947"
 
 connections:
-  - target_slug: creation-of-israel
+  - target_slug: creation-of-israel-nakba
     connection_type: parallel
     description: "Both events involved British withdrawal and partition along religious/ethnic lines in 1947-48, with mass displacement and unresolved territorial disputes persisting decades later"
   - target_slug: rwandan-genocide
