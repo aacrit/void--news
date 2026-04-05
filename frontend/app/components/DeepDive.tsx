@@ -101,6 +101,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [fetchError, setFetchError] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [summaryOverflows, setSummaryOverflows] = useState(false);
   const summaryInnerRef = useRef<HTMLDivElement>(null);
   // Tabs removed — Deep Dive is now a single continuous scroll view
@@ -1103,8 +1104,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {/* ---- Sigil (stacked: icon above, lean+underline below) + full-width Spectrum ---- */}
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
-              className={`dd-analysis-block anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "60ms" }}
+              className={`dd-analysis-block anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-6)" }}
             >
               {story.sigilData && (
                 <div className="dd-analysis-block__sigil">
@@ -1116,12 +1117,14 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
-              {/* Methodology hint removed — duplicate of ScoringMethodology section below */}
             </div>
           )}
 
+          <hr className="ink-rule" style={{ margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
+
           {/* ---- Summary ---- */}
-          <section className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "120ms" }}>
+          <section className={`anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
+            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
               <div className="dd-collapsible__inner" ref={summaryInnerRef}>
                 <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
@@ -1134,10 +1137,20 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             )}
           </section>
 
-          {/* ---- Source Perspectives ---- */}
-          {hasCrossLeanSources && (
-            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "180ms" }}>
-              <hr style={{ border: "none", borderTop: "var(--rule-thin)", margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
+          {/* ---- Progressive disclosure trigger ---- */}
+          {(hasCrossLeanSources || (story.sigilData && !story.sigilData.pending)) && !analysisExpanded && (
+            <button
+              className={`dd-read-more dd-analysis-trigger anim-dd-section dd-cascade-trigger${contentVisible ? " anim-dd-section--visible" : ""}`}
+              onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
+            >
+              Show full analysis
+            </button>
+          )}
+
+          {/* ---- Source Perspectives (collapsed by default) ---- */}
+          {analysisExpanded && hasCrossLeanSources && (
+            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
               <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
               <ComparativeView
                 sources={sources}
@@ -1147,14 +1160,14 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </section>
           )}
 
-          {/* ---- Six Lenses — ink stamp bias scores ---- */}
-          {story.sigilData && !story.sigilData.pending && (
+          {/* ---- Six Lenses — ink stamp bias scores (collapsed by default) ---- */}
+          {analysisExpanded && story.sigilData && !story.sigilData.pending && (
             <section
-              className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ transitionDelay: "240ms", marginBottom: "var(--space-4)" }}
+              className={`anim-dd-section dd-cascade-4${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-4)" }}
               aria-label="Six Lenses bias analysis"
             >
-              <hr style={{ border: "none", borderTop: "var(--rule-thin)", margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
               <SixLenses sigilData={story.sigilData} visible={contentVisible} />
             </section>
           )}

@@ -614,13 +614,6 @@
 }
 
 
-.story-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
 .story-card__byline,
 .lead-story__byline {
   display: flex;
@@ -813,13 +806,6 @@
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
-}
-
-.lead-story__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
 }
 
 /* ---- Filter Bar — collapsible wrapper ---------------------------------- */
@@ -3110,6 +3096,22 @@
 .dd-read-more:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
+}
+
+/* Progressive disclosure trigger — "Show full analysis" button */
+.dd-analysis-trigger {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+/* Deep Dive section labels — Barlow Condensed meta voice */
+.dd-section-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-tertiary);
 }
 
 /* ---- Footer ------------------------------------------------------------ */
