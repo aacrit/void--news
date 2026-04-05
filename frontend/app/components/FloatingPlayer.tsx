@@ -539,17 +539,13 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             {durationMin && <span className="fp__bcast-duration">{durationMin} min</span>}
           </div>
 
-          {/* Host pair card */}
+          {/* Host pair — subdued inline */}
           {hosts.length > 0 && (
             <div className="fp__bcast-hosts">
               {hosts.slice(0, 2).map((host, i) => (
-                <div key={i} className="fp__bcast-host">
-                  <span className="fp__bcast-host-tag">{i === 0 ? "A" : "B"}</span>
-                  <div className="fp__bcast-host-info">
-                    <span className="fp__bcast-host-name">{host.name}</span>
-                    <span className="fp__bcast-host-trait">{host.trait}</span>
-                  </div>
-                </div>
+                <span key={i} className="fp__bcast-host-inline">
+                  {host.name}
+                </span>
               ))}
             </div>
           )}
