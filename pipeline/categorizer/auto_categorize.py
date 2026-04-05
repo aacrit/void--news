@@ -321,9 +321,9 @@ def categorize_article(article: dict) -> list[str]:
     # Minimum score threshold: if the best score is very low, the article
     # couldn't be confidently classified — return "general" rather than
     # a misleading label based on a single weak keyword match.
-    # Threshold of 1.5 requires at least one moderate keyword hit (weight 2
-    # appearing once in a 100-word article, or multiple weight-1 hits).
-    MIN_SCORE_THRESHOLD = 1.5
+    # Threshold of 1.0 requires at least one weak keyword hit. Lowered from
+    # 1.5 to reduce "general" catch-all assignments (was 20% of clusters).
+    MIN_SCORE_THRESHOLD = 1.0
     if primary_score < MIN_SCORE_THRESHOLD:
         return ["general"]
 

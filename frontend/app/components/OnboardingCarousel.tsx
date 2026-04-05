@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 
 /* ---------------------------------------------------------------------------
@@ -120,9 +120,16 @@ const SWEEP = [
 function InstrumentVisual({ active }: { active: boolean }) {
   const [step, setStep] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const prefersReduced = useRef(false);
+
+  useEffect(() => {
+    prefersReduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
 
   useEffect(() => {
     if (!active) { setStep(0); return; }
+    // Under reduced motion, jump to final state immediately
+    if (prefersReduced.current) { setStep(SWEEP.length - 1); return; }
     let i = 0;
     intervalRef.current = setInterval(() => {
       i++;
@@ -337,17 +344,24 @@ function PaperPreview() {
   );
 }
 
+/* Deterministic pseudo-random positions — stable across re-renders */
+const SRC_DOTS = Array.from({ length: 12 }, (_, i) => ({
+  left: `${8 + ((i * 37 + 13) % 84)}%`,
+  top: `${20 + ((i * 23 + 7) % 40)}%`,
+  opacity: 0.3 + ((i * 17 + 5) % 50) / 100,
+}));
+
+const WAVE_HEIGHTS = Array.from({ length: 16 }, (_, i) =>
+  `${20 + Math.sin(i * 0.7) * 40 + ((i * 13 + 3) % 15)}%`
+);
+
 function SourcesPreview() {
   return (
     <div className="pro-preview pro-preview--sources">
       <div className="pro-preview__spectrum-bar" />
       <div className="pro-preview__dots">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="pro-preview__src-dot" style={{
-            left: `${8 + Math.random() * 84}%`,
-            top: `${20 + Math.random() * 40}%`,
-            opacity: 0.3 + Math.random() * 0.5,
-          }} />
+        {SRC_DOTS.map((d, i) => (
+          <div key={i} className="pro-preview__src-dot" style={d} />
         ))}
       </div>
     </div>
@@ -358,10 +372,8 @@ function OnairPreview() {
   return (
     <div className="pro-preview pro-preview--onair">
       <div className="pro-preview__waveform">
-        {Array.from({ length: 16 }).map((_, i) => (
-          <div key={i} className="pro-preview__wave-bar" style={{
-            height: `${20 + Math.sin(i * 0.7) * 40 + Math.random() * 15}%`,
-          }} />
+        {WAVE_HEIGHTS.map((h, i) => (
+          <div key={i} className="pro-preview__wave-bar" style={{ height: h }} />
         ))}
       </div>
       <div className="pro-preview__hosts">
@@ -492,6 +504,14 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
     reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }, []);
 
+  // Body scroll lock — prevent feed scrolling behind the modal
+  useEffect(() => {
+    if (!visible || !mounted) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [visible, mounted]);
+
   useEffect(() => {
     if (!mounted || !visible) return;
     const delay = reducedMotion.current ? 0 : 600;
@@ -499,10 +519,10 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
     return () => clearTimeout(timer);
   }, [mounted, visible]);
 
-  // Auto-advance phases
+  // Auto-advance phases — gated by exiting to prevent race conditions
   useEffect(() => {
     if (phase < 0 || phase >= PHASES.length - 1) return;
-    if (reducedMotion.current) return;
+    if (reducedMotion.current || exiting) return;
     if (paused) {
       if (timerRef.current) clearTimeout(timerRef.current);
       return;
@@ -511,7 +531,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
       setPhase((p) => p + 1);
     }, PHASES[phase].duration);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [phase, paused]);
+  }, [phase, paused, exiting]);
 
   const pauseAutoAdvance = useCallback(() => setPaused(true), []);
   const resumeAutoAdvance = useCallback(() => setPaused(false), []);
@@ -618,9 +638,9 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
             {currentPhase && <PhaseVisual visual={currentPhase.visual} active />}
           </div>
 
-          {/* Text area */}
+          {/* Text area — aria-live announces phase changes to screen readers */}
           {currentPhase && (
-            <div key={currentPhase.id} className="intro__text">
+            <div key={currentPhase.id} className="intro__text" aria-live="polite" aria-atomic="true">
               <span className="intro__chapter">{["I", "II", "III", "IV"][phase]}</span>
               <h2 className="intro__headline">{currentPhase.headline}</h2>
               {currentPhase.subtitle && (

@@ -1349,6 +1349,30 @@
   outline-offset: 2px;
 }
 
+.about-cta__tour {
+  display: block;
+  margin: var(--space-3) auto 0;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  min-height: 44px;
+  transition: color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+}
+.about-cta__tour:hover {
+  color: var(--accent-warm);
+  border-bottom-color: var(--accent-warm);
+}
+.about-cta__tour:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
 .about-cta__sub {
   font-family: var(--font-data);
   font-size: var(--text-xs);

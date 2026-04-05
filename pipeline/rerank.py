@@ -332,13 +332,15 @@ def main():
         # 0.92x rank decay so they don't cluster at positions 11-20
         # (benchmark found 11/20 world stories were Iran variants).
         MAX_SAME_EVENT = 2
-        EVENT_DECAY = 0.92  # rank multiplier for deferred same-event stories
+        EVENT_DECAY = 0.80  # rank multiplier for deferred same-event stories
         _EVENT_KEYWORDS = {
-            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth", "isfahan"},
+            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth", "isfahan", "f-15", "f-35", "warplane", "fighter jet"},
             "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky", "donbas", "crimea"},
-            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf", "hezbollah"},
+            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf", "hezbollah", "israeli protest"},
             "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
-            "us_scotus": {"supreme court", "scotus", "constitutional"},
+            "us_scotus": {"supreme court", "scotus", "constitutional", "alito", "justice"},
+            "bondi_ag": {"bondi", "attorney general", "doj"},
+            "trump_exec": {"executive order", "trump signs", "trump fires", "trump removes"},
         }
 
         def _detect_event(title: str) -> str | None:
@@ -478,6 +480,25 @@ def main():
     for u in updates:
         for ed in EDITIONS:
             u[f"rank_{ed}"] = u["base_rank"]
+
+    # Freshness decay: stories age out gracefully so fresh content rises.
+    # 0-8h = 1.0x, 8-16h = 0.93x, 16-24h = 0.86x, 24-32h = 0.80x, 32h+ = 0.74x
+    _FRESHNESS_DECAY_PER_8H = 0.93
+    _now = datetime.now(timezone.utc)
+    _cluster_created = {c["id"]: c.get("created_at") or c.get("first_published", "") for c in clusters}
+    for u in updates:
+        created_str = _cluster_created.get(u["id"], "")
+        if created_str:
+            try:
+                created = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+                age_hours = (_now - created).total_seconds() / 3600.0
+                decay_steps = int(age_hours / 8.0)
+                if decay_steps > 0:
+                    decay = _FRESHNESS_DECAY_PER_8H ** min(decay_steps, 5)
+                    for ed in EDITIONS:
+                        u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * decay, 2)
+            except (ValueError, TypeError):
+                pass
 
     # Source depth bonus: high-source clusters get a multiplicative boost
     # to ensure they decisively outrank mid-tier stories. The base ranker's

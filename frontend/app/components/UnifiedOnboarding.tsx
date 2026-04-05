@@ -127,6 +127,12 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
         return;
       }
 
+      // Deferred this session — skip but allow next visit
+      if (sessionStorage.getItem(STORAGE_KEY + "-deferred")) {
+        setState("complete");
+        return;
+      }
+
       // Migrate from old keys
       if (
         localStorage.getItem(OLD_CAROUSEL_KEY) ||
@@ -189,14 +195,22 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
     setState("complete");
   }, []);
 
+  // Deferred dismiss — hide for this session only, re-show on next visit
+  const deferOnboarding = useCallback(() => {
+    try { sessionStorage.setItem(STORAGE_KEY + "-deferred", "1"); } catch { /* ignore */ }
+    setState("complete");
+  }, []);
+
   const handleAcceptInvitation = useCallback(() => {
     setState("prologue");
   }, []);
 
+  // Invitation dismissed (auto-dismiss or "Not now") — defer, don't permanently complete
   const handleDismissInvitation = useCallback(() => {
-    markComplete();
-  }, [markComplete]);
+    deferOnboarding();
+  }, [deferOnboarding]);
 
+  // Prologue finished or explicitly skipped — permanently complete
   const handlePrologueComplete = useCallback(() => {
     markComplete();
   }, [markComplete]);
