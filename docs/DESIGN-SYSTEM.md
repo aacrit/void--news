@@ -495,7 +495,7 @@ Each scene accepts `mode: "prologue" | "manifesto"` and `active: boolean`.
 |-------|---------|-------------|
 | `DivergentHeadlines` | I: The Void | 5 outlets, same event, different headlines. Cards stagger in with spring physics. |
 | `SigilBreakdown` | II: The Instrument | **Centerpiece.** 6-stage animated exploded Sigil view: (0) draw — stroke-dashoffset reveals parts, (1) separate — components translate apart, (2) label — labels fade in beside each part, (3) reassemble — spring back to center, (4) activate — beam sweeps spectrum + ring fills, (5) hold — settled state. Prologue: auto-advance via setTimeout. Manifesto: IO-triggered + six-axis accordion. |
-| `SourceEngine` | III: The Engine | 1,013 sources, 158 countries, 11 ranking signals visualization. |
+| `SourceEngine` | III: The Engine | 1,013 sources, 158 countries, 10 ranking signals visualization. |
 | `ArticleDifference` | IV: The Difference | Per-article vs. per-outlet scoring comparison morph. |
 | `ProductWorlds` | V: The Worlds | Product family showcase (6 products with CLI names + descriptions). |
 | `TheVerdict` | VI: Read with clarity | Key numbers counter + closing statement. |

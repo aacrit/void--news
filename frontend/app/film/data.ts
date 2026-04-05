@@ -240,7 +240,7 @@ export const CHAPTERS: Chapter[] = [
     roman: "III",
     headline: "The Engine",
     subtitle: "Importance, not popularity",
-    prologueBody: "1,013 sources. 158 countries. 11 ranking signals. Zero engagement metrics. The algorithm decides what matters \u2014 not what gets clicked.",
+    prologueBody: "1,013 sources. 158 countries. 10 ranking signals. Zero engagement metrics. The algorithm decides what matters \u2014 not what gets clicked.",
     duration: 15_000,
   },
   {
