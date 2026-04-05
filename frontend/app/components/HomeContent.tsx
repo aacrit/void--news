@@ -686,12 +686,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
-    // Lean chip filter — uses lensData.lean (cluster-level average political lean)
+    // Tilt chip filter — uses lensData.lean (cluster-level average political lean).
+    // "Balanced" excludes unscored stories UNLESS they have genuine importance
+    // (5+ sources = real coverage even without lean signal).
     const leanRange = LEAN_RANGES[activeLean];
     if (leanRange) {
-      filtered = filtered.filter(
-        (s) => s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max,
-      );
+      filtered = filtered.filter((s) => {
+        const inRange = s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max;
+        if (!inRange) return false;
+        if (activeLean === "Balanced" && s.sigilData?.unscored && s.sigilData.sourceCount < 5) return false;
+        return true;
+      });
     }
     return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
   }, [stories, activeCategory, activeLean]);

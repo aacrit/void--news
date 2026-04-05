@@ -111,6 +111,21 @@ export function tiltLabelAbbr(v: number): string {
   return "FR";
 }
 
+/** Human-readable descriptor for the Sigil popup — explains what the score means */
+export function tiltDescriptor(v: number): string {
+  if (v <= 15) return "Strong left lean in coverage language";
+  if (v <= 29) return "Clear left lean in coverage framing";
+  if (v <= 36) return "Moderate left lean detected";
+  if (v <= 43) return "Slight left lean in text analysis";
+  if (v <= 47) return "Near-center, leaning slightly left";
+  if (v <= 53) return "Balanced coverage from multiple perspectives";
+  if (v <= 58) return "Near-center, leaning slightly right";
+  if (v <= 65) return "Slight right lean in text analysis";
+  if (v <= 76) return "Moderate right lean detected";
+  if (v <= 85) return "Clear right lean in coverage framing";
+  return "Strong right lean in coverage language";
+}
+
 /* ── Unscored gate — story lacks analytical signal for tilt label ───────── */
 
 /**
