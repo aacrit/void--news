@@ -37,6 +37,21 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "arrested": 2, "arrest": 2, "detained": 2, "indicted": 3,
         "charged": 2, "convicted": 2, "sentenced": 2, "extradited": 3,
         "prime minister": 3, "minister": 2, "sworn in": 3,
+        # Crime & justice — governance/judicial system
+        "crime": 2, "criminal": 2, "murder": 2, "homicide": 3,
+        "robbery": 2, "theft": 1, "fraud": 2, "corruption": 3,
+        "trial": 2, "verdict": 3, "jury": 2, "plaintiff": 2,
+        "prosecution": 3, "prosecutor": 3, "defendant": 2,
+        "lawsuit": 2, "litigation": 2, "ruling": 2,
+        "prison": 2, "inmate": 2, "parole": 2, "probation": 2,
+        "death penalty": 3, "execution": 2, "death row": 3,
+        "shooting": 1, "gun violence": 3, "mass shooting": 3,
+        "fbi": 3, "doj": 3, "department of justice": 3,
+        # Immigration — policy/governance
+        "immigration": 3, "immigrant": 2, "deportation": 3,
+        "border": 2, "asylum": 2, "visa": 2, "refugee": 2,
+        "migrant": 2, "migration": 2, "citizenship": 2,
+        "ice": 2, "customs": 1, "undocumented": 2,
     },
     "economy": {
         "gdp": 3, "inflation": 3, "market": 2, "stock": 2,
@@ -85,6 +100,13 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         # Big tech companies
         "google": 2, "apple": 2, "meta platforms": 3, "amazon web services": 3,
         "microsoft azure": 3, "cloud computing": 3, "tech startup": 3,
+        # AI-specific terms (often categorized as "general" without these)
+        "ai": 2, "chatbot": 3, "llm": 3, "gpt": 3, "anthropic": 3,
+        "copilot": 2, "deepfake": 3, "neural network": 3,
+        "training data": 3, "foundation model": 3, "transformer": 2,
+        "tech regulation": 3, "antitrust": 2, "data privacy": 3,
+        "social media": 2, "algorithm": 2, "encryption": 2,
+        "startup": 1, "unicorn": 2,
     },
     "health": {
         "vaccine": 3, "vaccination": 3, "disease": 2, "hospital": 2,
@@ -183,6 +205,21 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         # health/politics when the subject is a public figure
         "dui": 2, "mugshot": 2, "rehab": 2, "tabloid": 2,
         "paparazzi": 2, "red carpet": 2, "memoir": 2,
+        # Religion — maps to culture desk (no standalone religion category)
+        "pope": 3, "vatican": 3, "catholic": 2, "church": 1,
+        "easter": 2, "christmas": 2, "ramadan": 2, "eid": 2,
+        "mosque": 2, "synagogue": 2, "temple": 1, "rabbi": 2,
+        "imam": 2, "bishop": 2, "cardinal": 2, "archbishop": 3,
+        "evangelical": 2, "protestant": 2, "orthodox": 1,
+        "buddhist": 2, "hindu": 2, "muslim": 1, "christian": 1,
+        "prayer": 1, "worship": 2, "congregation": 2,
+        "religious": 2, "faith": 1, "clergy": 2, "sermon": 2,
+        "pilgrimage": 2, "holy": 1, "sacred": 1, "scripture": 2,
+        # Education — maps to culture desk
+        "university": 1, "college": 1, "school": 1, "student": 1,
+        "professor": 2, "campus": 2, "graduation": 2, "tuition": 2,
+        "scholarship": 2, "academic": 1, "curriculum": 2,
+        "school board": 3, "teacher": 1, "principal": 1,
     },
     "sports": {
         "game": 1, "championship": 3, "player": 2, "team": 1,
@@ -366,6 +403,8 @@ def categorize_article(article: dict) -> list[str]:
         # Politics: appointments, firings, executive actions
         (r"\b(fires|fired|ousts|ousted|appoints|appointed|nominates|sworn in)\b", "politics"),
         (r"\b(attorney general|secretary of|chief of staff|executive order)\b", "politics"),
+        # Culture/Religion: strong religious markers
+        (r"\b(pope|vatican|easter|ramadan|eid al|dalai lama)\b", "culture"),
     ]
     for pattern, override_cat in _TITLE_OVERRIDES:
         if re.search(pattern, _tl):
