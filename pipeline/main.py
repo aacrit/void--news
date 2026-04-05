@@ -334,7 +334,7 @@ def run_bias_analysis(
         print(f"    [warn] Political lean failed: {e}")
 
     try:
-        result = analyze_sensationalism(article)
+        result = analyze_sensationalism(article, source)
         if isinstance(result, dict):
             scores["sensationalism"] = result["score"]
             rationale["sensationalism"] = result["rationale"]
@@ -344,7 +344,7 @@ def run_bias_analysis(
         print(f"    [warn] Sensationalism failed: {e}")
 
     try:
-        result = analyze_opinion(article)
+        result = analyze_opinion(article, source)
         if isinstance(result, dict):
             scores["opinion_fact"] = result["score"]
             rationale["opinion"] = result["rationale"]
@@ -364,7 +364,7 @@ def run_bias_analysis(
         print(f"    [warn] Factual rigor failed: {e}")
 
     try:
-        result = analyze_framing(article, cluster_articles=cluster_articles, doc=doc)
+        result = analyze_framing(article, cluster_articles=cluster_articles, doc=doc, source=source)
         if isinstance(result, dict):
             scores["framing"] = result["score"]
             rationale["framing"] = result["rationale"]

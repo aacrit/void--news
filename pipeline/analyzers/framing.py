@@ -498,11 +498,20 @@ def _passive_voice_score(text: str, doc=None) -> float:
     return min(100.0, evasive_score + ratio_score)
 
 
+FRAMING_TIER_BASELINES: dict[str, float] = {
+    "us_major": 18.0,
+    "international": 20.0,
+    "independent": 25.0,
+}
+_FRAMING_DEFAULT_BASELINE = 20.0
+
+
 def analyze_framing(
     article: dict,
     cluster_articles: list[dict] | None = None,
     doc=None,
     cluster_entity_cache: set[str] | None = None,
+    source: dict | None = None,
 ) -> dict:
     """
     Score the framing bias of an article.
@@ -515,6 +524,8 @@ def analyze_framing(
             when called from step 6b re-framing).
         cluster_entity_cache: Pre-computed entity set from all cluster articles
             (avoids O(N*M) spaCy calls during step 6b).
+        source: Optional source dict with "tier" field.  Used for
+                tier-baseline blending on short-text articles.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -582,7 +593,21 @@ def analyze_framing(
         + passive * 0.10
     )
 
-    score = max(0, min(100, int(round(weighted))))
+    raw_score = max(0.0, min(100.0, weighted))
+
+    # Tier-baseline blending: lifts near-zero scores on short stubs using
+    # source reputation.  Uses max() so the baseline acts as a FLOOR, never
+    # pulling down legitimately high framing scores (e.g. state-media
+    # articles with strong charged-synonym signals despite short text).
+    word_count = len((full_text or "").split())
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = FRAMING_TIER_BASELINES.get(tier, _FRAMING_DEFAULT_BASELINE)
+        text_weight = min(1.0, word_count / 500.0)
+        blended = text_weight * raw_score + (1.0 - text_weight) * tier_baseline
+        raw_score = max(raw_score, blended)
+
+    score = max(0, min(100, int(round(raw_score))))
 
     return {
         "score": score,
