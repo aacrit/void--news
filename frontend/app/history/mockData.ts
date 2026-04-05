@@ -71,7 +71,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "persp-partition-indian",
         viewpointName: "Indian Nationalist View",
-        viewpointType: "vanquished",
+        viewpointType: "victor",
         color: "b",
         temporalAnchor: "1947, New Delhi",
         geographicAnchor: "New Delhi, India",
@@ -108,7 +108,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "persp-partition-pakistani",
         viewpointName: "Pakistani Founding Narrative",
-        viewpointType: "vanquished",
+        viewpointType: "victor",
         color: "c",
         temporalAnchor: "1947, Karachi",
         geographicAnchor: "Karachi, Pakistan",
@@ -193,16 +193,16 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     ],
     connections: [
       {
-        targetSlug: "kashmir-conflict",
-        targetTitle: "Kashmir Conflict",
-        type: "caused",
-        description: "The incomplete partition of princely states led directly to the first Indo-Pakistani war over Kashmir in October 1947",
+        targetSlug: "creation-of-israel-nakba",
+        targetTitle: "Creation of Israel / Nakba",
+        type: "parallel",
+        description: "Both events involved British withdrawal and partition along religious/ethnic lines in 1947-48, with mass displacement and unresolved territorial disputes persisting decades later",
       },
       {
-        targetSlug: "bangladesh-liberation-1971",
-        targetTitle: "Bangladesh Liberation War",
-        type: "consequence",
-        description: "East Pakistan's linguistic and cultural distance from West Pakistan, a structural flaw of partition, led to the 1971 war",
+        targetSlug: "rwandan-genocide",
+        targetTitle: "Rwandan Genocide",
+        type: "influenced",
+        description: "Partition demonstrated how colonial-era identity categories (Hindu/Muslim, Hutu/Tutsi) could be weaponized during rapid political transitions",
       },
     ],
     published: true,
@@ -214,7 +214,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     slug: "hiroshima-nagasaki",
     title: "The Atomic Bombings of Hiroshima and Nagasaki",
     subtitle: "The first use of nuclear weapons in warfare",
-    era: "modern",
+    era: "contemporary",
     regions: ["east-asia", "americas"],
     categories: ["war", "disaster", "scientific"],
     severity: "catastrophic",
@@ -325,6 +325,37 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
           },
         ],
       },
+      {
+        id: "persp-hiroshima-scientific",
+        viewpointName: "International / Scientific",
+        viewpointType: "bystander",
+        color: "d",
+        temporalAnchor: "1945-present",
+        geographicAnchor: "Global",
+        narrative: "The scientific community that built the bomb was among the first to grasp its implications. The Franck Report, drafted in June 1945 by Manhattan Project scientists at the University of Chicago, recommended a demonstration on an uninhabited island before any use against a city. The report warned a surprise attack would trigger an arms race. Stimson's Interim Committee rejected the proposal. Within weeks of Hiroshima, Leo Szilard circulated a petition signed by 70 scientists urging restraint. Oppenheimer told Truman in October 1945: \"Mr. President, I feel I have blood on my hands.\" His subsequent opposition to the hydrogen bomb led to his security clearance revocation in 1954. The Soviet Union tested its first bomb in August 1949, accelerating an arms race that peaked at roughly 70,000 warheads. The Bulletin of the Atomic Scientists introduced the Doomsday Clock in 1947. Nine nations now possess approximately 12,500 nuclear warheads. The scientific-international perspective frames Hiroshima and Nagasaki as a species-level inflection point: before August 6, 1945, humanity lacked the capacity for self-annihilation. After it, the capacity existed and proliferated.",
+        keyNarratives: [
+          "Manhattan Project scientists warned against surprise use — the Franck Report of June 1945",
+          "The bombings triggered an arms race that produced 70,000 warheads at peak",
+          "Nuclear proliferation transformed existential risk into a permanent feature of geopolitics",
+          "Scientific community organized against its own creation within weeks",
+        ],
+        omissions: [
+          "Wartime context that drove the decision under extreme time pressure",
+          "Japan's military atrocities that shaped Allied attitudes",
+          "Technical constraints that made a 'demonstration' impractical",
+        ],
+        disputed: [
+          "Whether a demonstration bombing could have compelled surrender without civilian casualties",
+        ],
+        primarySources: [
+          {
+            text: "Mr. President, I feel I have blood on my hands.",
+            author: "J. Robert Oppenheimer",
+            work: "Meeting with President Truman",
+            date: "October 1945",
+          },
+        ],
+      },
     ],
     media: [
       {
@@ -354,16 +385,16 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     ],
     connections: [
       {
-        targetSlug: "nagasaki-1945",
-        targetTitle: "Atomic Bombing of Nagasaki",
-        type: "caused",
-        description: "Three days after Hiroshima, a plutonium bomb was dropped on Nagasaki, killing 70,000 by year's end",
+        targetSlug: "partition-of-india",
+        targetTitle: "Partition of India",
+        type: "parallel",
+        description: "Both occurred in the immediate postwar period of 1945-1947 as empires dissolved and new nations formed amid mass civilian casualties",
       },
       {
-        targetSlug: "cold-war-arms-race",
-        targetTitle: "Cold War Nuclear Arms Race",
-        type: "caused",
-        description: "Hiroshima inaugurated the nuclear age; the Soviet Union tested its first bomb in 1949",
+        targetSlug: "rwandan-genocide",
+        targetTitle: "Rwandan Genocide",
+        type: "influenced",
+        description: "The post-Hiroshima 'never again' framework shaped international humanitarian law and the obligation to intervene — a framework that failed in Rwanda in 1994",
       },
     ],
     published: true,
@@ -486,6 +517,38 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
           },
         ],
       },
+      {
+        id: "persp-rwanda-panafricanist",
+        viewpointName: "Pan-African / Postcolonial",
+        viewpointType: "revisionist",
+        color: "e",
+        temporalAnchor: "1894-present",
+        geographicAnchor: "Africa / Global",
+        narrative: "The Rwandan genocide did not begin on April 6, 1994. It began in 1894, when Germany's Count Gustav Adolf von Gotzen reached the Rwandan royal court, and accelerated in 1916 when Belgium assumed control. The Belgians did not invent Hutu and Tutsi — these were fluid social designations related to cattle ownership — but they fixed them. In the 1930s, identity cards classified every Rwandan as Hutu (85%), Tutsi (14%), or Twa (1%) based on physical measurements and cattle counts. The categories became hereditary and immutable. Belgium elevated Tutsis as a ruling class using the Hamitic hypothesis, a European racial theory. When independence movements gained force, Belgium reversed allegiance, supporting the 1959 Hutu revolution that killed 20,000 Tutsis and drove 150,000 into exile. The RTLM propaganda drew directly on colonial racial science. The contrast between Western intervention in Bosnia (NATO airstrikes, 1994-95) and Rwanda's abandonment reflects a racial calculus. France maintained a military alliance with the Habyarimana regime, supplying weapons even after the genocide began. The 2021 Duclert Commission found France bore \"heavy and overwhelming responsibilities.\" The genocide was not an African aberration. It was a modern event organized through a state bureaucracy built by Europeans, using identity categories created by Europeans, executed with weapons supplied by Europeans.",
+        keyNarratives: [
+          "Belgian colonial administration created the fixed ethnic categories used to sort victims",
+          "The Hamitic hypothesis — a European racial theory — provided the ideological framework",
+          "Western non-intervention reflected a racial calculus that devalued African lives",
+          "France maintained military alliance with the genocidal regime before and during the killing",
+        ],
+        omissions: [
+          "Agency of Rwandan political actors in planning and executing the genocide",
+          "Precolonial Hutu-Tutsi relations and their complexities",
+          "Post-genocide RPF governance and its authoritarian dimensions",
+        ],
+        disputed: [
+          "Whether colonial categories alone explain the depth of the violence",
+          "The extent of France's direct complicity versus structural responsibility",
+        ],
+        primarySources: [
+          {
+            text: "The life of an African is worth less in the corridors of international power than the life of a European. Rwanda proved it.",
+            author: "Wole Soyinka",
+            work: "The Burden of Memory, the Muse of Forgiveness",
+            date: "1999",
+          },
+        ],
+      },
     ],
     media: [
       {
@@ -515,23 +578,23 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     ],
     connections: [
       {
-        targetSlug: "congo-wars",
-        targetTitle: "Congo Wars (1996-2003)",
-        type: "caused",
-        description: "Hutu militia fled to eastern Congo, triggering two wars that killed 5.4 million",
+        targetSlug: "partition-of-india",
+        targetTitle: "Partition of India",
+        type: "parallel",
+        description: "Both events demonstrated how colonial-era identity categories (Hindu/Muslim, Hutu/Tutsi) could be weaponized during rapid political transitions, producing mass displacement and communal killing",
       },
       {
-        targetSlug: "un-reform-peacekeeping",
-        targetTitle: "UN Peacekeeping Reform",
-        type: "consequence",
-        description: "The Brahimi Report of 2000 restructured UN peacekeeping doctrine in direct response to Rwanda and Srebrenica",
+        targetSlug: "hiroshima-nagasaki",
+        targetTitle: "Atomic Bombings of Hiroshima and Nagasaki",
+        type: "influenced",
+        description: "The post-Hiroshima 'never again' consensus — enshrined in the 1948 Genocide Convention — proved hollow in Rwanda; the UN's failure contributed directly to the Responsibility to Protect doctrine",
       },
     ],
     published: true,
   },
 ];
 
-/* ── Redacted Dossier Stubs — 7 coming-soon events ── */
+/* ── Redacted Dossier Stubs — 5 coming-soon events ── */
 export const REDACTED_EVENTS: RedactedEvent[] = [
   {
     id: "redacted-armenian",
@@ -553,16 +616,7 @@ export const REDACTED_EVENTS: RedactedEvent[] = [
     quoteB: "\"They cut off my hands because I did not bring enough rubber. My children watched.\" — Testimony collected by E.D. Morel",
     dateHint: "1885-1908",
   },
-  {
-    id: "redacted-trail-of-tears",
-    slug: "trail-of-tears",
-    title: "Trail of Tears",
-    era: "modern",
-    regions: ["americas"],
-    quoteA: "\"The removal policy was undertaken with the utmost humanity and kindness.\" — Andrew Jackson, Message to Congress",
-    quoteB: "\"The Cherokees are nearly all prisoners. They have been dragged from their houses and encamped at the forts and in the military posts.\" — Private John G. Burnett, U.S. Army",
-    dateHint: "1830-1850",
-  },
+  /* Trail of Tears removed — now a published event, not redacted */
   {
     id: "redacted-tiananmen",
     slug: "tiananmen-square-1989",
