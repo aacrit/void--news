@@ -2161,6 +2161,100 @@
   --wk-accent-glow: rgba(239, 83, 80, 0.12);
 }
 
+/* ── Spinoff Editions container — Weekly + History, center-left ── */
+.nav-spinoffs {
+  display: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+@media (min-width: 768px) {
+  .nav-spinoffs {
+    display: inline-flex;
+  }
+}
+
+/* ── History Link — burnt umber archival accent ── */
+.nav-history {
+  --hist-nav-accent: #5C4033;
+  --hist-nav-accent-bright: #7A5B47;
+  --hist-nav-accent-glow: rgba(92, 64, 51, 0.12);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  position: relative;
+  border-radius: var(--radius-sm);
+  transition:
+    transform 300ms var(--ease-unfold),
+    background-color 300ms var(--ease-cinematic),
+    box-shadow 300ms var(--ease-cinematic);
+}
+
+.nav-history__rule {
+  width: 2px;
+  height: 16px;
+  background-color: var(--hist-nav-accent);
+  opacity: 0.5;
+  flex-shrink: 0;
+  border-radius: 1px;
+  transition:
+    opacity 300ms var(--ease-cinematic),
+    height 400ms var(--ease-unfold),
+    transform 400ms var(--ease-unfold);
+}
+
+.nav-history__label {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--hist-nav-accent);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: color 200ms var(--ease-cinematic);
+}
+
+.nav-history:hover {
+  background-color: var(--hist-nav-accent-glow);
+  box-shadow: 0 0 12px var(--hist-nav-accent-glow);
+}
+
+.nav-history:hover .nav-history__rule {
+  opacity: 1;
+  height: 22px;
+  transform: scaleX(1.5);
+}
+
+.nav-history:hover .nav-history__label {
+  color: var(--hist-nav-accent-bright);
+}
+
+.nav-history:active {
+  transform: scale(0.95);
+  transition: transform 60ms var(--ease-out);
+}
+
+.nav-history:focus-visible {
+  outline: 2px solid var(--hist-nav-accent);
+  outline-offset: 2px;
+}
+
+:root[data-mode="dark"] .nav-history {
+  --hist-nav-accent: #8B7355;
+  --hist-nav-accent-bright: #B8972F;
+  --hist-nav-accent-glow: rgba(139, 115, 85, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-history,
+  .nav-history__rule,
+  .nav-history__label {
+    transition: none;
+  }
+}
+
 /* ── Row 2: Separator — thin vertical rule between zones ── */
 
 .nav-lens__sep {
