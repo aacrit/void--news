@@ -2386,15 +2386,27 @@ def main():
         # fetch batches). The article-overlap check above misses these entirely.
         try:
             from clustering.story_cluster import _title_words
-            # Fetch titles of all old clusters still in DB (limit to recent 48h)
+            # Fetch titles of old clusters in DB (recent 48h).
+            # Paginated to avoid payload size limits on large cluster sets.
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
-            old_res = supabase.table("story_clusters").select(
-                "id,title,source_count"
-            ).not_.in_("id", list(new_cluster_ids)).gte(
-                "created_at", cutoff
-            ).execute()
-            old_titles = {r["id"]: (_title_words(r.get("title", "")), r.get("source_count", 0))
-                          for r in (old_res.data or []) if r.get("title")}
+            old_titles: dict[str, tuple[set[str], int]] = {}
+            _page_size = 500
+            _offset = 0
+            while True:
+                old_res = supabase.table("story_clusters").select(
+                    "id,title,source_count"
+                ).gte("created_at", cutoff).range(
+                    _offset, _offset + _page_size - 1
+                ).execute()
+                if not old_res.data:
+                    break
+                for r in old_res.data:
+                    rid = r.get("id", "")
+                    if rid and rid not in new_cluster_ids and r.get("title"):
+                        old_titles[rid] = (_title_words(r["title"]), r.get("source_count", 0))
+                if len(old_res.data) < _page_size:
+                    break
+                _offset += _page_size
 
             # Build title word sets for new clusters
             new_titles: dict[str, set[str]] = {}

@@ -444,7 +444,12 @@ def merge_related_clusters(
             combined_size = group_size[find(i)] + group_size[find(j)]
             src_i = len(set(a.get("source_id", "") for a in clusters[i].get("articles", [])))
             src_j = len(set(a.get("source_id", "") for a in clusters[j].get("articles", [])))
-            size_cap = 200 if (src_i >= 10 and src_j >= 10) else max_cluster_articles
+            if src_i >= 10 and src_j >= 10:
+                size_cap = 200
+            elif src_i >= 5 and src_j >= 5:
+                size_cap = 150
+            else:
+                size_cap = max_cluster_articles
             if combined_size > size_cap:
                 continue
 
@@ -600,7 +605,14 @@ def merge_duplicate_title_clusters(
             # only "iran" in title words (Jaccard ~0.15) but are the same story.
             src_i = clusters[i].get("source_count", 0)
             src_j = clusters[j].get("source_count", 0)
-            effective_threshold = 0.30 if (src_i >= 10 and src_j >= 10) else jaccard_threshold
+            # Relaxed for quality pairs: both 5+ sources are likely sub-events
+            # of the same story. 10+ src pairs get even more relaxed threshold.
+            if src_i >= 10 and src_j >= 10:
+                effective_threshold = 0.25
+            elif src_i >= 5 and src_j >= 5:
+                effective_threshold = 0.35
+            else:
+                effective_threshold = jaccard_threshold
 
             if jaccard < effective_threshold:
                 continue
@@ -809,7 +821,7 @@ def cluster_stories(
     ejected_articles: list[dict] = []
     for c in clusters:
         arts = c.get("articles", [])
-        if len(arts) <= 3:
+        if len(arts) <= 5:
             purified.append(c)
             continue
         # Re-vectorize this cluster's articles
@@ -885,5 +897,13 @@ def cluster_stories(
     # same-story signal than entity overlap, so it uses a higher size cap.
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_duplicate_title_clusters(clusters)
+
+    # Final pass: recount source_count from actual articles.
+    # Merges can leave stale counts when source_ids lists are concatenated
+    # but not deduped, or when articles are ejected by the purity check.
+    for c in clusters:
+        actual_sources = {a.get("source_id", "") for a in c.get("articles", []) if a.get("source_id")}
+        c["source_ids"] = list(actual_sources)
+        c["source_count"] = len(actual_sources)
 
     return clusters

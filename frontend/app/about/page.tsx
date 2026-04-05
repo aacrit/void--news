@@ -1115,6 +1115,18 @@ export default function AboutPage() {
             <Link href="/" className="about-cta__button">
               Read today&rsquo;s edition
             </Link>
+            <button
+              className="about-cta__tour"
+              onClick={() => {
+                try {
+                  localStorage.removeItem("void-news-onboarding");
+                  sessionStorage.removeItem("void-news-onboarding-deferred");
+                } catch { /* ignore */ }
+                window.location.href = "/";
+              }}
+            >
+              Take the 60-second tour
+            </button>
             <p className="about-cta__sub">
               No signup. No paywall. No tracking.
             </p>

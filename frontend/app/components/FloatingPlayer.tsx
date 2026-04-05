@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import type { EpisodeMeta } from "./AudioProvider";
 import { CaretRight } from "@phosphor-icons/react";
@@ -103,9 +103,93 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
   }, [isPlayerVisible, view]);
   const playerRef = useRef<HTMLDivElement>(null);
 
-  /* ---- VU Meter: 16 bars, CSS-driven, scales via height ---- */
+  /* ---- VU Meter: 16 bars, audio-reactive via Web Audio + CSS fallback ---- */
   const VU_BARS = 16;
   const vuBars = useMemo(() => Array.from({ length: VU_BARS }, (_, i) => i), []);
+  const vuRef = useRef<HTMLDivElement>(null);
+  const vuHeroRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const freqRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const [vuLive, setVuLive] = useState(false);
+
+  /* Drive bar heights from Web Audio frequency data in real-time */
+  const updateVuBars = useCallback(() => {
+    const analyser = state.analyserRef?.current;
+    if (!analyser) return;
+
+    if (!freqRef.current || freqRef.current.length !== analyser.frequencyBinCount) {
+      freqRef.current = new Uint8Array(analyser.frequencyBinCount);
+    }
+    analyser.getByteFrequencyData(freqRef.current);
+
+    // Sample 16 bins spread across the useful voice range (0-4kHz ≈ bins 0-180 at 44.1kHz/2048 fftSize)
+    const bins = freqRef.current;
+    const usefulBins = Math.min(bins.length, 180);
+    const step = usefulBins / VU_BARS;
+
+    const applyToContainer = (container: HTMLDivElement | null) => {
+      if (!container) return;
+      const bars = container.children;
+      for (let i = 0; i < VU_BARS && i < bars.length; i++) {
+        const binIdx = Math.floor(i * step);
+        const val = bins[binIdx] / 255; // 0-1
+        // Apply smoothed height: min 8%, max 95%, with slight emphasis on mid-range
+        const height = 8 + val * 87;
+        const opacity = 0.3 + val * 0.7;
+        (bars[i] as HTMLElement).style.height = `${height}%`;
+        (bars[i] as HTMLElement).style.opacity = String(opacity);
+      }
+    };
+
+    applyToContainer(vuRef.current);
+    applyToContainer(vuHeroRef.current);
+  }, [state.analyserRef]);
+
+  useEffect(() => {
+    if (!isPlaying) {
+      cancelAnimationFrame(rafRef.current);
+      setVuLive(false);
+      // Reset bar styles to let CSS take over
+      [vuRef.current, vuHeroRef.current].forEach(container => {
+        if (!container) return;
+        for (const bar of Array.from(container.children)) {
+          (bar as HTMLElement).style.height = "";
+          (bar as HTMLElement).style.opacity = "";
+        }
+      });
+      return;
+    }
+
+    const prefersReduced = typeof window !== "undefined"
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    // Lazily connect Web Audio analyser
+    if (state.connectAnalyser) {
+      state.connectAnalyser();
+    }
+
+    // Small delay to let analyser connect, then check if it's available
+    const checkTimer = setTimeout(() => {
+      if (state.analyserRef?.current) {
+        setVuLive(true);
+        let lastFrame = 0;
+        const loop = (timestamp: number) => {
+          if (timestamp - lastFrame > 33) { // ~30fps
+            lastFrame = timestamp;
+            updateVuBars();
+          }
+          rafRef.current = requestAnimationFrame(loop);
+        };
+        rafRef.current = requestAnimationFrame(loop);
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(checkTimer);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [isPlaying, updateVuBars, state.connectAnalyser, state.analyserRef]);
 
   /* ---- Swipe-down gesture ---- */
   const dragYRef = useRef<{ startY: number; current: number } | null>(null);
@@ -380,8 +464,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             </div>
           </div>
 
-          {/* VU meter — CSS-driven audio visualization */}
-          <div className={`fp__vu${isPlaying ? " fp__vu--active" : ""}`} aria-hidden="true">
+          {/* VU meter — audio-reactive when analyser connected, CSS fallback */}
+          <div ref={vuRef} className={`fp__vu${isPlaying ? " fp__vu--active" : ""}${vuLive ? " fp__vu--live" : ""}`} aria-hidden="true">
             {vuBars.map(i => <span key={i} className="fp__vu-bar" style={{ animationDelay: `${i * 60}ms` }} />)}
           </div>
 
@@ -471,7 +555,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           )}
 
           {/* VU meter — hero element in broadcast pane */}
-          <div className={`fp__vu fp__vu--hero${isPlaying ? " fp__vu--active" : ""}`} aria-hidden="true">
+          <div ref={vuHeroRef} className={`fp__vu fp__vu--hero${isPlaying ? " fp__vu--active" : ""}${vuLive ? " fp__vu--live" : ""}`} aria-hidden="true">
             {vuBars.map(i => <span key={i} className="fp__vu-bar" style={{ animationDelay: `${i * 60}ms` }} />)}
           </div>
 
