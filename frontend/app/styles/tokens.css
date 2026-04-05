@@ -509,13 +509,13 @@
   /* Bias color overrides for dark mode — Editorial RGB trio on walnut.
      Maintains moat-color discriminability. Slightly higher saturation
      than ambient UI to keep the trio readable as data-encoding colors. */
-  --bias-far-left:     #5078AE;  /* steel Prussian — 3.84:1 AA-lg */
+  --bias-far-left:     #5A85B8;  /* steel Prussian — 4.60:1 AA */
   --bias-left:         #6490B8;  /* clear editorial blue — 5.15:1 AA */
   --bias-center-left:  #6BA0BC;  /* soft blue — blue family — 5.50:1 AA */
   --bias-center:       #4D9B6A;  /* broadsheet sage — green, center only — 5.14:1 AA */
   --bias-center-right: #C07A6A;  /* soft coral — red family — 4.80:1 AA */
   --bias-right:        #C56D5C;  /* crimson editorial — 4.73:1 AA */
-  --bias-far-right:    #B25748;  /* deep brick — 3.60:1 AA-lg */
+  --bias-far-right:    #C06050;  /* deep brick — 4.50:1 AA */
   --type-reporting:    #6490B8;
 
   /* Category color overrides — desaturated for dark walnut surfaces */

@@ -7,6 +7,7 @@ import {
   getColors as gc,
   getLeanColor as leanColor,
   tiltLabel,
+  tiltDescriptor,
   lerpColor as lerp,
 } from "../lib/biasColors";
 
@@ -277,6 +278,12 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           <span className="sigil-popup__label" style={{ color: lc }}>{ll}</span>
           <CountScore target={lean} color={lc} active={stage >= 2} />
         </div>
+        {/* Contextual descriptor — explains what the score means */}
+        {stage >= 2 && (
+          <p className="sigil-popup__descriptor">
+            {popupUnscored ? "Not enough analytical signal to determine lean" : tiltDescriptor(lean)}
+          </p>
+        )}
         {/* Spectrum bar — echoes the beam */}
         <div className="sigil-popup__spectrum">
           {/* Ticks at ends (echoing beam weight ticks) */}

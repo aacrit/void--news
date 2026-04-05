@@ -16,13 +16,13 @@ import { tiltLabel, tiltLabelAbbr, senseLabel, rigorLabel } from "../lib/biasCol
 /* ── Dark-mode bias colors (hardcoded — card always renders dark) ────────── */
 
 const LEAN_COLORS: Record<string, string> = {
-  "far-left":     "#5078AE",
+  "far-left":     "#5A85B8",
   "left":         "#6490B8",
   "center-left":  "#6BA0BC",
   "center":       "#4D9B6A",
   "center-right": "#C07A6A",
   "right":        "#C56D5C",
-  "far-right":    "#B25748",
+  "far-right":    "#C06050",
 };
 
 const SPECTRUM_GRADIENT = `linear-gradient(to right, ${LEAN_COLORS["far-left"]}, ${LEAN_COLORS["left"]} 14%, ${LEAN_COLORS["center-left"]} 28%, ${LEAN_COLORS["center"]} 42%, ${LEAN_COLORS["center-right"]} 57%, ${LEAN_COLORS["right"]} 71%, ${LEAN_COLORS["far-right"]})`;

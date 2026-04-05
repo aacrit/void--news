@@ -35,8 +35,8 @@ const AMBER        = "#C8A96E";
 /* ── Lean spectrum ────────────────────────────────────────────────────── */
 
 const LEAN_STOPS: [number, string][] = [
-  [0,   "#5078AE"], [17,  "#6490B8"], [33,  "#6BA0BC"],
-  [50,  "#4D9B6A"], [67,  "#C07A6A"], [83,  "#C56D5C"], [100, "#B25748"],
+  [0,   "#5A85B8"], [17,  "#6490B8"], [33,  "#6BA0BC"],
+  [50,  "#4D9B6A"], [67,  "#C07A6A"], [83,  "#C56D5C"], [100, "#C06050"],
 ];
 
 function lerpHex(a: string, b: string, t: number): string {

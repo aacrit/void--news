@@ -353,7 +353,20 @@
   .mob-nav__lean--active .mob-nav__dot { animation: none !important; }
 }
 
-/* Legacy fallback — hidden, replaced by inline SVG */
+/* Divergence/consensus ring glow — visible in feed (sm) and Deep Dive.
+   Divergent stories (top 10% disagreement) get a warm ring glow.
+   Consensus stories (bottom 10%) get a cool ring glow. */
+.sigil--divergent {
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--bias-right) 30%, transparent);
+  border-radius: 4px;
+}
+
+.sigil--consensus {
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--bias-center) 22%, transparent);
+  border-radius: 4px;
+}
+
+/* Legacy pseudo-element — replaced by box-shadow above */
 .sigil--divergent::after,
 .sigil--consensus::after {
   content: none;
