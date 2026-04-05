@@ -163,6 +163,7 @@ export const PRODUCT_FAMILY: ProductWorld[] = [
   { cli: "void --sources", name: "The Spectrum", desc: "1,013 sources on one axis", href: "/sources", palette: "sources" },
   { cli: "void --onair", name: "The Studio", desc: "Two-host audio broadcast", href: "/", palette: "onair" },
   { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
+  { cli: "void --history", name: "The Archive", desc: "Multi-perspective historical events", href: "/history", palette: "archive" },
 ];
 
 /* ── Key Numbers — Scene VI: "The Verdict" ── */
