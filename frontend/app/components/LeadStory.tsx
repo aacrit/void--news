@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo } from "../lib/utils";
+import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 
@@ -50,25 +50,19 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
           }
         }}
       />
-      {/* Meta: badge + byline (left) | Sigil (right) */}
-      <div className="lead-story__meta">
-        <div className="lead-story__byline">
-          {rank === 0 && <span className="lead-story__badge">Top Story</span>}
-          <span className="category-tag">{story.category}</span>
-          <span className="dot-separator" aria-hidden="true" />
-          <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-          {story.source && story.source.count > 1 && (
-            <>
-              <span className="dot-separator" aria-hidden="true" />
-              <span className="source-count">{story.source.count} sources</span>
-            </>
-          )}
-        </div>
-        <Sigil data={story.sigilData} size="lg" />
-      </div>
+      {rank === 0 && <span className="lead-story__badge">Top Story</span>}
 
-      {/* Hero headline */}
-      <h2 className="lead-story__headline">{story.title}</h2>
+      {/* Hero headline + inline Sigil + caret */}
+      <h2 className="lead-story__headline">
+        <span className="lead-story__headline-text">{story.title}</span>
+        <Sigil data={story.sigilData} size="lg" />
+        <CaretRight
+          size={16}
+          weight="bold"
+          aria-hidden="true"
+          className="story-card__headline-icon"
+        />
+      </h2>
 
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>

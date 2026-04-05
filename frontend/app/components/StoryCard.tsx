@@ -1,7 +1,6 @@
 "use client";
 
 import type { Story } from "../lib/types";
-import { timeAgo } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
@@ -56,21 +55,10 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
           }
         }}
       />
-      {/* Meta: category · time · sources (left) | Sigil (right) */}
-      <div className="story-card__meta">
-        <div className="story-card__byline">
-          <span className="category-tag">{story.category}</span>
-          <span className="dot-separator" aria-hidden="true" />
-          <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-          <span className="dot-separator" aria-hidden="true" />
-          <span className="time-tag">{story.source.count} source{story.source.count !== 1 ? "s" : ""}</span>
-        </div>
-        <Sigil data={story.sigilData} size="sm" />
-      </div>
-
-      {/* Headline */}
+      {/* Headline + inline Sigil + caret */}
       <h3 className="story-card__headline">
         <span className="story-card__headline-text">{story.title}</span>
+        <Sigil data={story.sigilData} size="sm" />
         <CaretRight
           size={14}
           weight="bold"
