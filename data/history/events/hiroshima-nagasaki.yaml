@@ -1,0 +1,322 @@
+slug: hiroshima-nagasaki
+title: "The Atomic Bombings of Hiroshima and Nagasaki"
+subtitle: "Two cities, three days, and the dawn of the nuclear age"
+date_display: "August 6-9, 1945"
+date_sort: 1945
+date_precision: day
+era: contemporary
+region: east-asia
+country: Japan
+category: war
+severity: catastrophic
+death_toll: "110,000-210,000 by end of 1945"
+affected_population: "Over 500,000 residents of both cities; hibakusha survivors and descendants numbering in the hundreds of thousands"
+duration: "August 6-9, 1945 (bombings); radiation effects ongoing"
+hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Nagasakibomb.jpg"
+hero_image_attribution: "Charles Levy, U.S. Army Air Forces, public domain via Wikimedia Commons"
+
+summary: |
+  At 8:15 a.m. on August 6, 1945, the B-29 Superfortress Enola Gay, piloted by Colonel Paul Tibbets, released a uranium-235 gun-type bomb codenamed "Little Boy" over the city of Hiroshima. The weapon detonated at approximately 1,900 feet above Shima Surgical Clinic, 800 feet southeast of the intended aiming point, the Aioi Bridge. The yield was approximately 15 kilotons of TNT. The fireball reached temperatures exceeding 1 million degrees Celsius at its center. Within one second, everything within a half-mile radius was vaporized or carbonized. The blast wave, traveling at 984 feet per second, leveled 69% of Hiroshima's buildings. Of the city's 350,000 residents and military personnel, between 70,000 and 80,000 died instantly. By December 1945, the total reached an estimated 140,000.
+
+  Three days later, on August 9, the B-29 Bockscar, piloted by Major Charles Sweeney, dropped a plutonium implosion bomb codenamed "Fat Man" on Nagasaki. The primary target had been Kokura, but cloud cover diverted the mission. Fat Man detonated at 1,650 feet above Nagasaki's Urakami Valley at 11:02 a.m. The yield was approximately 21 kilotons — more powerful than Little Boy — but Nagasaki's hilly terrain contained the blast. Between 40,000 and 70,000 people died by the end of 1945. Nagasaki's Urakami Cathedral, the largest Christian church in East Asia, was destroyed with its congregation; roughly a third of Nagasaki's 12,000 Catholics died.
+
+  The immediate aftermath defied medical understanding. Survivors who appeared uninjured collapsed days later from acute radiation syndrome — bleeding gums, hair loss, hemorrhaging, organ failure. Dr. Michihiko Hachiya, director of the Hiroshima Communications Hospital, recorded the first systematic observations in his Hiroshima Diary: patients who had seemed healthy at triage died within two weeks. "Black rain" — radioactive fallout mixed with condensation — fell across both cities for hours after the blasts, contaminating water supplies and exposed skin.
+
+  Japan announced its acceptance of the Potsdam Declaration on August 15, 1945, six days after Nagasaki. Emperor Hirohito's recorded radio address — the first time most Japanese citizens heard his voice — cited "a new and most cruel bomb" as the reason for surrender. The formal instrument of surrender was signed aboard the USS Missouri on September 2, 1945.
+
+  By 1950, the combined death toll from both bombings, including radiation-related illnesses, reached an estimated 340,000. Japan's Atomic Bomb Casualty Commission (later the Radiation Effects Research Foundation) has tracked survivors — hibakusha — ever since. As of 2024, approximately 106,000 hibakusha were still alive, their average age above 85.
+
+significance: |
+  Hiroshima and Nagasaki ended World War II in the Pacific and inaugurated the nuclear age. The bombings triggered the Cold War arms race: the Soviet Union tested its first atomic bomb in August 1949, and by the 1980s global arsenals peaked at roughly 70,000 warheads. The doctrine of Mutual Assured Destruction — premised on the demonstrated reality of what a single weapon could do to a city — shaped geopolitics for the next 80 years. Japan's postwar constitution, Article 9, renounced war and became the template for nuclear pacifism. The hibakusha movement produced the 2017 Treaty on the Prohibition of Nuclear Weapons and the Nobel Peace Prize for the International Campaign to Abolish Nuclear Weapons (ICAN). The ethical debate — whether the bombings were militarily necessary, morally justified, or a war crime — remains among the most contested questions in modern history.
+
+key_figures:
+  - name: "Harry S. Truman"
+    role: "U.S. President, authorized the atomic bombings"
+  - name: "J. Robert Oppenheimer"
+    role: "Scientific Director of the Manhattan Project"
+  - name: "Colonel Paul Tibbets"
+    role: "Pilot of the Enola Gay, dropped the Hiroshima bomb"
+  - name: "Emperor Hirohito"
+    role: "Emperor of Japan, announced surrender on August 15, 1945"
+  - name: "Secretary Henry Stimson"
+    role: "U.S. Secretary of War, chaired the Interim Committee that recommended use"
+  - name: "Dr. Michihiko Hachiya"
+    role: "Director of Hiroshima Communications Hospital, author of Hiroshima Diary"
+
+legacy_points:
+  - "Inaugurated the nuclear age and the Cold War arms race, peaking at ~70,000 warheads globally"
+  - "Japan's Article 9 constitution — renunciation of war — became the template for nuclear pacifism"
+  - "Hibakusha testimony drove the 2017 Treaty on the Prohibition of Nuclear Weapons"
+  - "Radiation Effects Research Foundation has tracked survivor health for 80 years, shaping global radiation science"
+  - "The Hiroshima Peace Memorial (Genbaku Dome) became a UNESCO World Heritage Site in 1996"
+
+primary_source_excerpts:
+  - text: "If they do not now accept our terms, they may expect a rain of ruin from the air, the like of which has never been seen on this earth."
+    author: "Harry S. Truman"
+    work: "Radio address after Hiroshima bombing"
+    date: "August 6, 1945"
+  - text: "Now I am become Death, the destroyer of worlds."
+    author: "J. Robert Oppenheimer"
+    work: "Quoting the Bhagavad Gita, recollection of the Trinity test"
+    date: "July 16, 1945 (recalled in 1965 interview)"
+  - text: "Those who were in the stone building came out with blood streaming from their heads, their faces completely altered, burning and blackened, with ragged clothes."
+    author: "Dr. Michihiko Hachiya"
+    work: "Hiroshima Diary"
+    date: "August 6, 1945"
+  - text: "The enemy has begun to employ a new and most cruel bomb, the power of which to do damage is, indeed, incalculable."
+    author: "Emperor Hirohito"
+    work: "Gyokuon-hoso (Jewel Voice Broadcast)"
+    date: "August 15, 1945"
+
+coordinates:
+  lat: 34.3955
+  lng: 132.4536
+
+related_event_slugs:
+  - partition-of-india
+  - rwandan-genocide
+
+perspectives:
+  - viewpoint: "American Military/Strategic"
+    viewpoint_type: victor
+    region_origin: americas
+    narrative: |
+      The decision to use atomic weapons against Japan followed a logic rooted in the projected costs of invasion. Operation Downfall — the planned two-phase invasion of the Japanese home islands — was scheduled for November 1945 (Kyushu, Operation Olympic) and March 1946 (Honshu, Operation Coronet). U.S. military planners estimated American casualties between 250,000 and 1 million, depending on assumptions about Japanese defensive strength. Japanese military casualties were projected in the millions. Secretary of War Henry Stimson's Interim Committee, which met in May-June 1945, concluded that the bomb should be used against a military-industrial target without prior warning.
+
+      Truman learned of the bomb's existence only after becoming president on April 12, 1945. At the Potsdam Conference in July, he received word of the successful Trinity test on July 16 — the world's first nuclear detonation, in the New Mexico desert. The Potsdam Declaration, issued July 26, demanded Japan's unconditional surrender and warned of "prompt and utter destruction." Japan's Prime Minister Kantaro Suzuki responded with the word "mokusatsu," translated at the time as "treat with silent contempt," though the term's ambiguity — it can also mean "withhold comment" — remains a point of historical debate.
+
+      The military rationale rested on three pillars. First, Japan's military leadership showed no sign of surrendering despite the firebombing campaign that had already destroyed 67 Japanese cities. The March 9-10, 1945 firebombing of Tokyo killed an estimated 100,000 people — more immediate deaths than either atomic bomb — yet Japan's Supreme War Council had not moved toward capitulation. Second, the Soviet Union was about to enter the Pacific War (it declared war on August 8), and American strategists wanted to end the conflict before Soviet forces could advance into Manchuria, Korea, and potentially Hokkaido. Third, the bomb had cost $2 billion (approximately $30 billion in 2024 dollars) and employed 125,000 people at its peak; there was institutional momentum to demonstrate its capability.
+
+      Truman's diary entry for July 25, 1945 reads: "We have discovered the most terrible bomb in the history of the world." He authorized its use the same day. After Hiroshima, Truman issued a public statement framing the bomb as retribution for Pearl Harbor and a means to save "hundreds of thousands of American lives." He maintained this position for the rest of his life, telling reporters in 1958: "I never lost any sleep over it."
+
+      The American strategic narrative acknowledges the horror but insists on the counterfactual: without the bombs, the war would have continued for months or years, with total casualties — Japanese and Allied — far exceeding those of Hiroshima and Nagasaki combined. General George Marshall estimated that Olympic alone could produce 500,000 American casualties in the first 30 days. The argument is that the bombs, terrible as they were, ended the war and saved net lives.
+    key_arguments:
+      - "Operation Downfall projected 250,000 to 1 million American casualties"
+      - "Japan's military leadership showed no intent to surrender despite the destruction of 67 cities"
+      - "Soviet entry into the Pacific War created urgency to end the conflict under American terms"
+      - "The bombs ended the war within days, preventing a prolonged invasion"
+    sources:
+      - title: "Prompt and Utter Destruction: Truman and the Use of Atomic Bombs Against Japan"
+        author: "J. Samuel Walker"
+        year: "2004"
+        type: book
+      - title: "Memoirs by Harry S. Truman, Volume 1: Year of Decisions"
+        author: "Harry S. Truman"
+        year: "1955"
+        type: book
+      - title: "The Decision to Use the Atomic Bomb"
+        author: "Gar Alperovitz"
+        year: "1995"
+        type: book
+    notable_quotes:
+      - text: "The Japanese began the war from the air at Pearl Harbor. They have been repaid many fold."
+        speaker: "Harry S. Truman"
+        context: "Radio address, August 6, 1945"
+      - text: "I never lost any sleep over it."
+        speaker: "Harry S. Truman"
+        context: "Interview, 1958"
+    emphasized:
+      - "Projected invasion casualties in the hundreds of thousands to millions"
+      - "Japan's refusal to surrender despite conventional strategic bombing"
+      - "Net lives saved by shortening the war"
+    omitted:
+      - "Civilian targeting as deliberate strategy, not incidental"
+      - "Emerging evidence that Japan's Supreme War Council was split and moving toward conditional surrender"
+      - "Racial dimensions of the decision (firebombing of Japanese cities vs. restraint in European theater)"
+
+  - viewpoint: "Japanese Civilian / Hibakusha"
+    viewpoint_type: vanquished
+    region_origin: east-asia
+    narrative: |
+      At 8:15 a.m. on August 6, 1945, Sunao Tsuboi was a 20-year-old engineering student walking to class at Hiroshima University of Literature and Science, 1.2 kilometers from the hypocenter. The flash came first — a white light that turned everything to negative, like a photographic plate. Then the heat: his exposed skin bubbled and peeled. Then the blast wave threw him 10 meters. When he stood, the city was gone. Where buildings had been, there was flatness. People walked past him with their skin hanging in sheets from their arms. A woman carried a headless infant. The river was full of bodies.
+
+      John Hersey's Hiroshima (1946), published as the entire issue of The New Yorker on August 31, 1946, introduced the Western world to six survivors' accounts. Hersey followed a clerk, two doctors, a minister, a seamstress, and a Jesuit priest through the hours and months after the blast. The account was deliberately understated — clinical, precise, refusing to editorialize — and its effect was seismic. It sold out immediately and remains in print 80 years later.
+
+      The hibakusha — literally "explosion-affected people" — number approximately 650,000 by the Japanese government's registry. They experienced not one catastrophe but a series: the blast itself, the fires that burned for days, the "black rain" that contaminated water and soil, and then the radiation sickness that killed people who had appeared unhurt. Acute radiation syndrome killed 20% of initial survivors within weeks. Leukemia rates among hibakusha rose tenfold in the first five years. Thyroid cancer, breast cancer, and lung cancer followed in subsequent decades.
+
+      Beyond the physical toll, hibakusha faced social stigma in postwar Japan. Radiation exposure was poorly understood; many Japanese feared it was contagious or hereditary. Hibakusha — especially women — were rejected as marriage partners. Families concealed their hibakusha status. The Japanese government did not pass the Atomic Bomb Survivors Relief Law until 1957, 12 years after the bombings. Recognition of "black rain" survivors as hibakusha was not extended until a 2021 court ruling, 76 years after the event.
+
+      The hibakusha testimony tradition — speaking publicly about the experience to prevent recurrence — became a global movement. Setsuko Thurlow, who was 13 years old in Hiroshima and dug herself out of a collapsed building, spent seven decades speaking at the United Nations and in schools. She accepted the 2017 Nobel Peace Prize on behalf of ICAN, telling the audience in Oslo: "Each warhead has the power to obliterate a city. They are not weapons of war. They are instruments of extinction."
+
+      Nagasaki's hibakusha carry an additional burden: the perception that their city was a secondary target, an afterthought. Kokura was the primary target that morning; Nagasaki was bombed because the clouds parted. Sumiteru Taniguchi, who was 16 years old and delivering mail on his bicycle 1.8 kilometers from the Nagasaki hypocenter, survived with burns covering his entire back. His photograph — lying face-down on a treatment table, his back a single wound — became one of the most widely reproduced images of the nuclear age. He testified before the United Nations in 2010: "I want you to understand that it is not merely a picture. It is my body."
+
+      The hibakusha perspective does not engage with the military calculus of whether the bombs "saved lives." It asks a different question: whether any strategic objective can justify the deliberate incineration of a civilian population. The answer, for those who walked through the ruins, has always been no.
+    key_arguments:
+      - "Civilians — not military targets — bore the overwhelming cost of the bombings"
+      - "Radiation effects extended suffering decades beyond the initial blasts"
+      - "Hibakusha faced social stigma and delayed government recognition in Japan"
+      - "No strategic calculation justifies the deliberate destruction of a civilian population"
+    sources:
+      - title: "Hiroshima"
+        author: "John Hersey"
+        year: "1946"
+        type: book
+      - title: "Hiroshima Diary: The Journal of a Japanese Physician"
+        author: "Dr. Michihiko Hachiya"
+        year: "1955"
+        type: book
+      - title: "Nagasaki: Life After Nuclear War"
+        author: "Susan Southard"
+        year: "2015"
+        type: book
+    notable_quotes:
+      - text: "I want you to understand that it is not merely a picture. It is my body."
+        speaker: "Sumiteru Taniguchi"
+        context: "Testimony at the United Nations, 2010"
+      - text: "Each warhead has the power to obliterate a city. They are not weapons of war. They are instruments of extinction."
+        speaker: "Setsuko Thurlow"
+        context: "Nobel Peace Prize acceptance speech, Oslo, 2017"
+    emphasized:
+      - "Individual human experience of nuclear destruction"
+      - "Long-term radiation effects on bodies and communities"
+      - "Moral question of targeting civilians as instruments of strategy"
+    omitted:
+      - "Japan's own wartime atrocities (Nanjing, Manila, comfort women, Unit 731)"
+      - "Military context and the projected costs of continued war"
+      - "Japan's military leadership's resistance to surrender even after Nagasaki"
+
+  - viewpoint: "International / Scientific"
+    viewpoint_type: bystander
+    region_origin: global
+    narrative: |
+      The scientific community that built the bomb was among the first to grasp its implications. Within weeks of Hiroshima, many Manhattan Project scientists began organizing against the weapon they had created. In September 1945, Leo Szilard — the physicist whose 1939 letter to Einstein had initiated U.S. atomic research — circulated a petition signed by 70 scientists urging Truman not to use the bomb on Japan without first offering a demonstration. The petition reached Truman's desk after Nagasaki.
+
+      The Franck Report, drafted in June 1945 by a committee of Manhattan Project scientists led by James Franck at the University of Chicago's Metallurgical Laboratory, recommended a demonstration of the bomb on an uninhabited island before any use against a city. The report warned that a surprise attack on Japan would "sacrifice public support" and trigger an arms race. Stimson's Interim Committee considered and rejected the proposal, arguing that a failed demonstration would strengthen Japanese resolve and that no test could replicate the shock effect needed to compel surrender.
+
+      Oppenheimer's response to the bombing was layered. In October 1945, he told Truman: "Mr. President, I feel I have blood on my hands." Truman later told Dean Acheson: "I don't want to see that son of a bitch in this office ever again." Oppenheimer's subsequent opposition to the hydrogen bomb — and his security clearance revocation in 1954 during the McCarthy era — became a parable about the tension between scientific innovation and moral responsibility.
+
+      The international response was shaped by the geopolitical context. The Soviet Union, which had been racing to develop its own atomic capability since 1942, accelerated its program. Igor Kurchatov's team, aided by intelligence from Klaus Fuchs and other spies within the Manhattan Project, detonated "First Lightning" (Joe-1) on August 29, 1949. The arms race was underway. By 1952, the U.S. tested the first thermonuclear weapon (hydrogen bomb), with a yield of 10.4 megatons — 700 times more powerful than Little Boy.
+
+      The Bulletin of the Atomic Scientists, founded in December 1945 by Manhattan Project veterans including Hyman Goldsmith and Eugene Rabinowitch, introduced the Doomsday Clock in 1947 at 7 minutes to midnight. It has served as a scientific consensus indicator of existential risk ever since. In 2023, the clock stood at 90 seconds to midnight — the closest it has ever been.
+
+      The scientific-international perspective frames Hiroshima and Nagasaki as a species-level inflection point. Before August 6, 1945, humanity lacked the capacity for self-annihilation. After it, the capacity existed and proliferated. Nine nations now possess approximately 12,500 nuclear warheads. The Non-Proliferation Treaty (1968), the Comprehensive Test Ban Treaty (1996, not yet in force), and the Treaty on the Prohibition of Nuclear Weapons (2017, rejected by all nuclear states) represent successive attempts to contain a technology whose use was demonstrated, with full public documentation, on two civilian populations in three days.
+    key_arguments:
+      - "Manhattan Project scientists warned against surprise use — the Franck Report of June 1945"
+      - "The bombings triggered an arms race that produced 70,000 warheads at peak"
+      - "Nuclear proliferation transformed existential risk into a permanent feature of geopolitics"
+      - "Scientific community organized against its own creation within weeks"
+    sources:
+      - title: "The Making of the Atomic Bomb"
+        author: "Richard Rhodes"
+        year: "1986"
+        type: book
+      - title: "The Franck Report"
+        author: "James Franck et al."
+        year: "June 11, 1945"
+        type: document
+      - title: "American Prometheus: The Triumph and Tragedy of J. Robert Oppenheimer"
+        author: "Kai Bird and Martin J. Sherwin"
+        year: "2005"
+        type: book
+    notable_quotes:
+      - text: "Mr. President, I feel I have blood on my hands."
+        speaker: "J. Robert Oppenheimer"
+        context: "Meeting with President Truman, October 1945"
+      - text: "If atomic bombs are to be added as new weapons to the arsenals of a warring world, then the time will come when mankind will curse the names of Los Alamos and Hiroshima."
+        speaker: "James Franck et al."
+        context: "The Franck Report, June 11, 1945"
+    emphasized:
+      - "Scientists' prescient warnings about arms race and proliferation"
+      - "Species-level existential risk introduced on a specific date"
+      - "Failure of international governance to contain nuclear technology"
+    omitted:
+      - "Wartime context that drove the decision under extreme time pressure"
+      - "Japan's military atrocities that shaped Allied attitudes"
+      - "Technical constraints that made a 'demonstration' impractical"
+
+  - viewpoint: "Modern Revisionist"
+    viewpoint_type: revisionist
+    region_origin: global
+    narrative: |
+      The revisionist school, consolidated by Gar Alperovitz's Atomic Diplomacy (1965) and expanded in his The Decision to Use the Atomic Bomb (1995), argues that Japan was already on the verge of surrender and that the primary motivation for the bombings was not to end the war with Japan but to demonstrate American power to the Soviet Union.
+
+      The evidence: by July 1945, Japan's Supreme War Council was deeply divided. Foreign Minister Shigenori Togo had approached the Soviet Union through Ambassador Naotake Sato in Moscow, seeking Soviet mediation for a negotiated peace. The intercepted "Magic" cables — decoded Japanese diplomatic traffic that Truman received daily — showed that elements of the Japanese government were exploring surrender terms, though the military faction insisted on conditions (no occupation, no war crimes trials, no disarmament, preservation of the imperial institution). Truman and his advisors knew this.
+
+      The Potsdam Declaration of July 26 demanded "unconditional surrender" — a phrase that hardened Japanese resistance because it appeared to threaten the emperor. Revisionist historians note that the final terms accepted on August 15 did preserve the imperial institution, precisely the condition Japan had been exploring. Had the U.S. offered this assurance earlier, revisionists argue, surrender might have come without either the bombs or an invasion.
+
+      The Soviet dimension is central to the revisionist case. Stalin had committed at the Yalta Conference (February 1945) to enter the Pacific War within three months of Germany's surrender. Germany surrendered on May 8; the Soviet Union declared war on Japan on August 8, exactly three months later, launching a massive offensive into Manchuria. Tsuyoshi Hasegawa's Racing the Enemy (2005) argues that it was the Soviet declaration of war — not the atomic bombs — that tipped the balance in the Supreme War Council. The military faction had been counting on Soviet neutrality to negotiate terms; when that collapsed, surrender became inevitable.
+
+      Revisionists also challenge the casualty projections used to justify the bombings. The oft-cited figure of "500,000 to 1 million American lives saved" was not produced by any wartime planning document. Barton Bernstein's research found that the Joint War Plans Committee estimated 46,000 American dead in the first phase (Kyushu) — a figure far below the postwar claims. Truman's memoir figure of "half a million" appeared only in 1955 and has no documented wartime origin.
+
+      The revisionist perspective does not exonerate Japan. It acknowledges the atrocities of Japanese militarism — the Rape of Nanjing, the Manila massacre, the Burma Railway, Unit 731's biological weapons experiments, the sexual enslavement of "comfort women." But it argues that moral accounting does not work by offset: Japanese war crimes do not retroactively justify the incineration of Hiroshima's civilian population. The question is not whether Japan deserved defeat — it did — but whether the specific method chosen was necessary, or whether it served purposes beyond ending the Pacific War.
+
+      The atomic diplomacy thesis holds that Truman used the bombs partly to strengthen America's postwar negotiating position with the Soviet Union. Stimson's diary entry for September 4, 1945 records a discussion about using the bomb as a diplomatic "master card." James Byrnes, who became Secretary of State on July 3, 1945, told Leo Szilard that the bomb's use would "make Russia more manageable in Europe." Whether this was the primary motivation or a secondary benefit remains debated, but the revisionist school insists it was a factor — and that the traditional narrative's silence on this point is itself a form of historical distortion.
+    key_arguments:
+      - "Japan's Supreme War Council was already moving toward conditional surrender"
+      - "Soviet entry into the war, not the bombs, tipped the balance toward Japanese capitulation"
+      - "Postwar casualty projections (500,000-1 million) have no documented wartime origin"
+      - "Atomic diplomacy aimed partly at strengthening U.S. leverage over the Soviet Union"
+    sources:
+      - title: "The Decision to Use the Atomic Bomb"
+        author: "Gar Alperovitz"
+        year: "1995"
+        type: book
+      - title: "Racing the Enemy: Stalin, Truman, and the Surrender of Japan"
+        author: "Tsuyoshi Hasegawa"
+        year: "2005"
+        type: book
+      - title: "Reconsidering the Decision to Drop the Atomic Bomb (Diplomatic History)"
+        author: "Barton J. Bernstein"
+        year: "1991"
+        type: journal
+    notable_quotes:
+      - text: "The bomb might well put us in a position to dictate our own terms at the end of the war."
+        speaker: "James Byrnes"
+        context: "Conversation with Leo Szilard, May 1945, recounted in Szilard's memoirs"
+      - text: "Japan was already defeated and dropping the bomb was completely unnecessary."
+        speaker: "Dwight D. Eisenhower"
+        context: "Mandate for Change (memoir), 1963"
+    emphasized:
+      - "Japanese diplomatic moves toward conditional surrender before August 6"
+      - "Soviet declaration of war as the decisive factor in Japanese capitulation"
+      - "Inflated casualty projections constructed retroactively"
+      - "Geopolitical motivations beyond ending the Pacific War"
+    omitted:
+      - "Japan's military faction's genuine resistance to any surrender"
+      - "The attempted coup of August 14-15, 1945, by officers who opposed even post-bomb surrender"
+      - "Practical difficulties of a demonstration bombing on an uninhabited target"
+
+media:
+  - media_type: photograph
+    title: "Mushroom cloud over Nagasaki, August 9, 1945"
+    description: "The mushroom cloud from the Fat Man bomb, photographed by Charles Levy from a B-29 observation aircraft at approximately 60,000 feet. The cloud rose to 45,000 feet within minutes."
+    source_url: "https://commons.wikimedia.org/wiki/File:Nagasakibomb.jpg"
+    attribution: "Charles Levy, U.S. Army Air Forces, public domain"
+    license: public-domain
+    creator: "Charles Levy"
+    creation_date: "August 9, 1945"
+
+  - media_type: photograph
+    title: "Hiroshima aftermath — Genbaku Dome and surrounding devastation"
+    description: "The Hiroshima Prefectural Industrial Promotion Hall (now the Genbaku Dome / Atomic Bomb Dome) stands amid the flattened city. Located 160 meters from the hypocenter, its steel frame survived while everything around it was destroyed."
+    source_url: "https://commons.wikimedia.org/wiki/File:AtomicEffects-Hiroshima.jpg"
+    attribution: "U.S. Army, public domain"
+    license: public-domain
+    creator: "U.S. Army photographer"
+    creation_date: "October 1945"
+
+  - media_type: photograph
+    title: "Watch stopped at 8:15 a.m. — the moment of the Hiroshima blast"
+    description: "A pocket watch recovered from the ruins of Hiroshima, its hands frozen at 8:15, the precise moment of the detonation. Now displayed at the Hiroshima Peace Memorial Museum."
+    source_url: "https://commons.wikimedia.org/wiki/File:Stopped_watch_in_Hiroshima.jpg"
+    attribution: "Hiroshima Peace Memorial Museum, public domain"
+    license: public-domain
+    creator: "Unknown"
+    creation_date: "1945"
+
+  - media_type: map
+    title: "Damage zones of the Hiroshima bombing"
+    description: "U.S. Strategic Bombing Survey map showing concentric zones of destruction around the Hiroshima hypocenter: total destruction within 1 mile, severe damage to 2 miles, light damage to 3 miles."
+    source_url: "https://commons.wikimedia.org/wiki/File:Hiroshima_damage_map.png"
+    attribution: "U.S. Strategic Bombing Survey, 1946, public domain"
+    license: public-domain
+    creator: "U.S. Strategic Bombing Survey"
+    creation_date: "1946"
+
+connections:
+  - target_slug: partition-of-india
+    connection_type: parallel
+    description: "Both occurred in the immediate postwar period of 1945-1947 as empires dissolved and new nations formed amid mass civilian casualties"
+  - target_slug: rwandan-genocide
+    connection_type: influenced
+    description: "The post-Hiroshima 'never again' framework shaped international humanitarian law and the obligation to intervene — a framework that failed in Rwanda in 1994"
