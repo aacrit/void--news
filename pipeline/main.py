@@ -2264,6 +2264,18 @@ def main():
         except Exception as e:
             print(f"  [warn] Title-based dedup failed: {e}")
 
+    # Step 8c: Holistic re-rank — re-score ALL clusters in DB with the
+    # current ranking engine so old and new clusters compete on equal footing.
+    # Without this, old clusters keep stale scores from previous pipeline runs
+    # while new clusters are scored with the current engine, causing rank drift.
+    if ANALYSIS_AVAILABLE:
+        print("\n[8c] Holistic re-rank (all clusters, v6.0 engine)...")
+        try:
+            from rerank import rerank_all_clusters
+            rerank_all_clusters(sources)
+        except Exception as e:
+            print(f"  [warn] Holistic re-rank failed: {e}")
+
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
         print("\n[9a] Updating news memory engine...")
