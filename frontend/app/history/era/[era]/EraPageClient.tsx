@@ -40,21 +40,9 @@ export default function EraPageClient({ eraPromise }: EraPageClientProps) {
 
   if (!eraInfo) {
     return (
-      <div className="hist-main" style={{ paddingTop: "var(--space-7)", textAlign: "center" }}>
-        <h1 style={{
-          fontFamily: "var(--font-editorial)",
-          fontSize: "var(--text-xl)",
-          fontWeight: 700,
-          color: "var(--hist-ink)",
-          marginBottom: "var(--space-3)",
-        }}>
-          Era Not Found
-        </h1>
-        <Link href="/history" style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-brass)",
-        }}>
+      <div className="hist-main hist-not-found">
+        <h1>Era Not Found</h1>
+        <Link href="/history" className="hist-breadcrumb">
           &larr; Back to archive
         </Link>
       </div>
@@ -64,54 +52,24 @@ export default function EraPageClient({ eraPromise }: EraPageClientProps) {
   return (
     <div className="hist-main hist-grade">
       {/* Era header */}
-      <section style={{ padding: "var(--space-6) 0 var(--space-4)" }}>
-        <Link href="/history" style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-xs)",
-          color: "var(--hist-ink-muted)",
-          textDecoration: "none",
-          display: "inline-block",
-          marginBottom: "var(--space-3)",
-        }}>
+      <section className="hist-browse-header">
+        <Link href="/history" className="hist-breadcrumb">
           &larr; All eras
         </Link>
-        <h1 style={{
-          fontFamily: "var(--font-editorial)",
-          fontSize: "clamp(1.5rem, 1.2rem + 1.2vw, 2.5rem)",
-          fontWeight: 700,
-          color: "var(--hist-ink)",
-          marginBottom: "var(--space-2)",
-        }}>
+        <h1 className="hist-browse-title">
           {eraInfo.label}
         </h1>
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-          marginBottom: "var(--space-1)",
-        }}>
+        <p className="hist-breadcrumb" style={{ marginBottom: "var(--space-1)" }}>
           {eraInfo.dateRange}
         </p>
-        <p style={{
-          fontFamily: "var(--font-structural)",
-          fontSize: "var(--text-base)",
-          color: "var(--hist-ink-secondary)",
-          maxWidth: "600px",
-        }}>
+        <p className="hist-browse-description">
           {eraInfo.description}
         </p>
       </section>
 
       {/* Events */}
       {loading ? (
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-          fontStyle: "italic",
-          textAlign: "center",
-          padding: "var(--space-6) 0",
-        }}>
+        <p className="hist-empty-state">
           Searching the archive...
         </p>
       ) : events.length > 0 ? (
@@ -121,24 +79,14 @@ export default function EraPageClient({ eraPromise }: EraPageClientProps) {
           ))}
         </div>
       ) : (
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-          fontStyle: "italic",
-          textAlign: "center",
-          padding: "var(--space-6) 0",
-        }}>
+        <p className="hist-empty-state">
           No events documented for this era yet.
         </p>
       )}
 
       {/* Era navigation */}
-      <nav style={{
-        display: "flex",
+      <nav className="hist-compare-selector" style={{
         justifyContent: "center",
-        gap: "var(--space-3)",
-        flexWrap: "wrap",
         paddingTop: "var(--space-6)",
         borderTop: "1px solid var(--hist-border-subtle)",
         marginTop: "var(--space-6)",
@@ -147,16 +95,7 @@ export default function EraPageClient({ eraPromise }: EraPageClientProps) {
           <Link
             key={e.id}
             href={`/history/era/${e.id}`}
-            style={{
-              fontFamily: "var(--font-meta)",
-              fontSize: "var(--text-xs)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              color: e.id === era ? "var(--hist-accent)" : "var(--hist-ink-muted)",
-              textDecoration: e.id === era ? "underline" : "none",
-              textUnderlineOffset: "3px",
-              padding: "var(--space-1) var(--space-2)",
-            }}
+            className={`hist-compare-option ${e.id === era ? "hist-compare-option--active" : ""}`}
             aria-current={e.id === era ? "page" : undefined}
           >
             {e.label}

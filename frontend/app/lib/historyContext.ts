@@ -34,55 +34,13 @@ const HISTORY_CONTEXT_MAP: {
     keywords: ["hiroshima", "nagasaki", "atomic bomb", "nuclear weapon"],
     slug: "hiroshima-nagasaki",
     title: "Hiroshima & Nagasaki",
-    perspectiveCount: 4,
+    perspectiveCount: 3,
   },
   {
     keywords: ["rwandan genocide", "rwanda genocide", "tutsi", "hutu"],
     slug: "rwandan-genocide",
     title: "The Rwandan Genocide",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["israel", "palestine", "nakba", "zionist"],
-    slug: "creation-of-israel-nakba",
-    title: "The Creation of Israel & the Nakba",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["berlin wall", "german reunification", "east germany"],
-    slug: "fall-of-berlin-wall",
-    title: "The Fall of the Berlin Wall",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["french revolution", "bastille", "robespierre"],
-    slug: "french-revolution",
-    title: "The French Revolution",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["opium war", "china trade", "lin zexu"],
-    slug: "opium-wars",
-    title: "The Opium Wars",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["scramble for africa", "berlin conference", "colonial africa"],
-    slug: "scramble-for-africa",
-    title: "The Scramble for Africa",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["trail of tears", "native american removal", "cherokee removal"],
-    slug: "trail-of-tears",
-    title: "The Trail of Tears",
-    perspectiveCount: 4,
-  },
-  {
-    keywords: ["slave trade", "transatlantic slave", "slavery abolition"],
-    slug: "transatlantic-slave-trade",
-    title: "The Transatlantic Slave Trade",
-    perspectiveCount: 4,
+    perspectiveCount: 3,
   },
 ];
 

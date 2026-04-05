@@ -108,7 +108,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
   /* Split context into sentences for collapsible display */
   const contextParagraphs = event.contextNarrative.split("\n");
   const firstParaText = contextParagraphs[0] || "";
-  const firstSentences = firstParaText.split(/(?<=\.)\s+/).slice(0, 3).join(" ");
+  const firstSentences = firstParaText.split(/(?<=[.!?])\s+(?=[A-Z])/).slice(0, 3).join(" ");
   const hasMoreContext = firstParaText.length > firstSentences.length || contextParagraphs.length > 1;
 
   return (
@@ -125,13 +125,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
             }}
           />
         ) : (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: `linear-gradient(135deg, var(--hist-paper-deep) 0%, var(--hist-bg) 50%, var(--hist-paper-deep) 100%)`,
-            }}
-          />
+          <div className="hist-hero__fallback" />
         )}
         <div className="hist-hero__overlay" />
         <div className="hist-hero__content">
@@ -190,15 +184,8 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
 
           {/* Comparison selector for second perspective */}
           {comparisonMode && (
-            <div style={{ marginBottom: "var(--space-4)" }}>
-              <span style={{
-                fontFamily: "var(--font-meta)",
-                fontSize: "var(--text-xs)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                color: "var(--hist-ink-muted)",
-                marginRight: "var(--space-2)",
-              }}>
+            <div className="hist-compare-selector">
+              <span className="hist-compare-label">
                 Compare with:
               </span>
               {event.perspectives
@@ -207,20 +194,11 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
                   <button
                     key={p.id}
                     onClick={() => setComparisonPerspId(p.id)}
-                    style={{
-                      fontFamily: "var(--font-meta)",
-                      fontSize: "var(--text-xs)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      padding: "var(--space-1) var(--space-3)",
-                      marginRight: "var(--space-2)",
-                      border: `1px solid ${p.id === comparisonPerspId ? `var(--hist-persp-${p.color})` : "var(--hist-border)"}`,
-                      borderRadius: "2px",
-                      cursor: "pointer",
-                      background: p.id === comparisonPerspId ? `var(--hist-persp-${p.color})` : "transparent",
-                      color: p.id === comparisonPerspId ? "var(--hist-paper)" : "var(--hist-ink-secondary)",
-                      transition: "all 200ms",
-                    }}
+                    className={`hist-compare-option ${p.id === comparisonPerspId ? "hist-compare-option--active" : ""}`}
+                    style={p.id === comparisonPerspId ? {
+                      background: `var(--hist-persp-${p.color})`,
+                      borderColor: `var(--hist-persp-${p.color})`,
+                    } : {}}
                   >
                     {p.viewpointName}
                   </button>
@@ -297,7 +275,10 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
                 <div key={i} className="hist-connection" style={{ cursor: "default" }}>
                   <span className="hist-connection__type">{conn.type}</span>
                   <div className="hist-connection__body">
-                    <span className="hist-connection__title">{conn.targetTitle}</span>
+                    <span className="hist-connection__title">
+                      {conn.targetTitle}
+                      <span className="hist-connection__coming">(coming)</span>
+                    </span>
                     <span className="hist-connection__desc">{conn.description}</span>
                   </div>
                 </div>

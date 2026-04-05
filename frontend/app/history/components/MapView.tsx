@@ -1,3 +1,4 @@
+/* DEFERRED: Not rendered in current version. Preserved for Phase 2. */
 "use client";
 
 import type { HistoryRegion, HistoricalEvent } from "../types";

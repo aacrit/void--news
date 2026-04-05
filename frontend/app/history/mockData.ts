@@ -120,7 +120,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
           "India immediately undermined Pakistan's viability by withholding assets",
         ],
         omissions: [
-          "Significant Muslim populations that chose to remain in India",
+          "35 million Muslims who chose to remain in India after Partition",
           "The Muslim League's relatively recent mass support (post-1940)",
           "Ethnic and linguistic diversity within the new Pakistan that complicated unity",
         ],
@@ -212,7 +212,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
   {
     id: "evt-hiroshima",
     slug: "hiroshima-nagasaki",
-    title: "Atomic Bombing of Hiroshima",
+    title: "The Atomic Bombings of Hiroshima and Nagasaki",
     subtitle: "The first use of nuclear weapons in warfare",
     era: "modern",
     regions: ["east-asia", "americas"],
