@@ -56,29 +56,36 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
     return sources
 
 
-def main():
+def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
+    """
+    Re-rank ALL clusters in Supabase with the current ranking engine.
+
+    Fetches all clusters, articles, and bias scores from DB, runs
+    rank_importance() + apply_edition_ranking() on each, and writes
+    back updated scores. This ensures all clusters compete on equal
+    footing with the same engine version.
+
+    Called by:
+      - main.py after storing new clusters (holistic ranking)
+      - rerank.py CLI for manual re-ranking
+
+    Args:
+        sources: Full sources list with id, db_id, tier, etc.
+        dry_run: If True, compute scores but don't write to DB.
+
+    Returns:
+        Number of clusters re-ranked.
+    """
     start = time.time()
-    print("=" * 60)
-    print(f"void --news re-ranker v5.7 {'(DRY RUN)' if DRY_RUN else ''}")
-    print("=" * 60)
+    print(f"\n  Re-ranking all clusters {'(DRY RUN)' if dry_run else ''}...")
 
-    # 1. Load sources with DB IDs
-    print("\n[1/4] Loading sources...")
-    sources = load_sources()
-    sources = sync_source_ids(sources)
-    matched = sum(1 for s in sources if s.get("db_id"))
-    print(f"  {len(sources)} sources loaded, {matched} matched to DB")
-
-    # 2. Fetch all clusters
-    print("\n[2/4] Fetching clusters from Supabase...")
-    # Try fetching with v5.0 editorial columns; fall back without them
+    # Fetch all clusters
     try:
         clusters_res = supabase.table("story_clusters").select(
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
             "editorial_importance,story_type"
         ).execute()
     except Exception:
-        # editorial columns may not exist yet (migration 013 not applied)
         clusters_res = supabase.table("story_clusters").select(
             "id,title,category,section,sections,content_type,headline_rank,source_count"
         ).execute()
@@ -86,8 +93,8 @@ def main():
     print(f"  {len(clusters)} clusters found")
 
     if not clusters:
-        print("No clusters to re-rank.")
-        return
+        print("  No clusters to re-rank.")
+        return 0
 
     # 3. Bulk-fetch all cluster_articles, articles, and bias_scores upfront.
     # Previously: 3 queries per cluster = 25,941 HTTP calls for 8,647 clusters.
@@ -283,9 +290,9 @@ def main():
             )[:60]
             print(f"  {j+1:2}. [{u.get(f'rank_{ed}', 0):5.1f}] {u['source_count']:2}src {u.get('category',''):12} {title}")
 
-    if DRY_RUN:
+    if dry_run:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")
-        return
+        return len(updates)
 
     # 4. Write back to Supabase in batches (16 concurrent workers).
     print(f"\n[4/4] Writing {len(updates)} updates to Supabase (batched, 16 workers)...")
@@ -342,7 +349,22 @@ def main():
     elapsed = time.time() - start
     print(f"\n  Done. {written} clusters re-ranked in {elapsed:.1f}s"
           + (f" ({write_errors} write errors)" if write_errors else ""))
-    print("  Refresh the frontend to see new rankings.")
+    return written
+
+
+def main():
+    """CLI entry point — loads sources and runs full re-rank."""
+    print("=" * 60)
+    print(f"void --news re-ranker v6.0 {'(DRY RUN)' if DRY_RUN else ''}")
+    print("=" * 60)
+
+    print("\n[1/4] Loading sources...")
+    sources = load_sources()
+    sources = sync_source_ids(sources)
+    matched = sum(1 for s in sources if s.get("db_id"))
+    print(f"  {len(sources)} sources loaded, {matched} matched to DB")
+
+    rerank_all_clusters(sources, dry_run=DRY_RUN)
 
 
 if __name__ == "__main__":
