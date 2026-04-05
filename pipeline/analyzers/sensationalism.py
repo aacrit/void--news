@@ -76,8 +76,13 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
     # Previous regex used "(need|should) to know" — "should to know" is ungrammatical
     # and unreachable in real text. Fixed to capture both grammatical constructions.
     (re.compile(r"what (you|we) (need to know|should know)", re.I), 5.0),
-    # BREAKING / EXCLUSIVE / URGENT prefix patterns
-    (re.compile(r"^(BREAKING|EXCLUSIVE|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
+    # BREAKING / URGENT / ALERT prefix patterns (genuinely sensational)
+    (re.compile(r"^(BREAKING|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
+    # EXCLUSIVE prefix: reduced from 7.0 to 2.0.  "Exclusive:" is standard
+    # journalistic practice at Reuters, AP, Bloomberg, and investigative outlets
+    # to signal original sourcing, not clickbait.  It should contribute a mild
+    # signal (2.0) rather than the full 7.0 that BREAKING/URGENT carry.
+    (re.compile(r"^EXCLUSIVE\s*[:\-\u2014]", re.I), 2.0),
     (re.compile(r"\.\.\.\s*$"), 5.0),
     # NOTE: bare \b[A-Z]{3,}\b removed — replaced by _caps_score() which
     # excludes COMMON_ACRONYMS (CIA, FBI, NATO, GOP, etc.) to avoid false
@@ -498,12 +503,23 @@ def _body_score(text: str) -> float:
     return max(0.0, min(100.0, score))
 
 
-def analyze_sensationalism(article: dict) -> dict:
+SENSATIONALISM_TIER_BASELINES: dict[str, float] = {
+    "us_major": 15.0,
+    "international": 20.0,
+    "independent": 25.0,
+}
+_SENSATIONALISM_DEFAULT_BASELINE = 20.0
+
+
+def analyze_sensationalism(article: dict, source: dict | None = None) -> dict:
     """
     Score the sensationalism level of an article.
 
     Args:
         article: Dict with keys: full_text, title, summary.
+        source:  Optional source dict with "tier" field.  Used for
+                 tier-baseline blending on short-text articles so that
+                 scores are not all compressed to 5-10.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -511,10 +527,6 @@ def analyze_sensationalism(article: dict) -> dict:
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""
 
-    # If no text at all, return low default.
-    # Score 5 (below the content floor of 8) to reflect that no-text articles carry
-    # less signal than real-text articles, not more. Previously this returned 10,
-    # which was paradoxically higher than the 8-floor for articles with actual content.
     if not title.strip() and not full_text.strip():
         return {
             "score": 5,
@@ -529,39 +541,36 @@ def analyze_sensationalism(article: dict) -> dict:
     h_score = _headline_score(title)
     b_score = _body_score(full_text)
 
-    # Weighted combination: 50% headline, 50% body
-    # Headline is the strongest discriminator between wire copy and tabloid
     combined = 0.5 * h_score + 0.5 * b_score
 
-    # Apply a floor-stretch to spread the compressed low range wider.
-    # Steeper low-end curve (2.0x for combined <= 25) pushes articles with
-    # moderate signals (combined 4-8) above the floor of 8, creating more
-    # separation between truly neutral wire copy and articles with mild
-    # sensationalism signals.  The breakpoint at 25 (was 30) ensures that
-    # the high-end mapping (50+ scores for tabloid content) remains stable.
-    # (nlp-engineer — sensationalism distribution spread)
     if combined <= 25:
         stretched = combined * 2.0
     else:
         stretched = 50.0 + (combined - 25.0) * (50.0 / 75.0)
 
-    # Minimum floor for articles with actual text content.
-    # Heavy attribution-language in wire copy pushes body_score to 0 via the
-    # measured_density inverse signal, which correctly reduces the body score
-    # but can produce a combined=0 → stretched=0 → score=0 outcome.  A score
-    # of 0 is unreachable by any real journalism — even the most neutral wire
-    # story carries some baseline subjectivity.  Floor of 8 preserves the
-    # intent (AP ≈ 10-20, tabloid ≈ 50-80) without clamping genuine low-end
-    # reporting to zero. (Priority H2 fix — sensationalism floor for real text)
     has_content = bool(title.strip() or full_text.strip())
     floor = 3 if has_content else 0
-    score = max(floor, min(100, int(round(stretched))))
+    raw_score = max(floor, min(100.0, stretched))
 
-    # Compute sub-signal rationale
+    # Tier-baseline blending: lifts near-zero scores on short stubs using
+    # source reputation.  Uses max() so the baseline acts as a FLOOR, never
+    # pulling down legitimately high sensationalism scores.
+    word_count = len((full_text or "").split())
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = SENSATIONALISM_TIER_BASELINES.get(
+            tier, _SENSATIONALISM_DEFAULT_BASELINE
+        )
+        text_weight = min(1.0, word_count / 500.0)
+        blended = text_weight * raw_score + (1.0 - text_weight) * tier_baseline
+        raw_score = max(raw_score, blended)
+
+    score = max(0, min(100, int(round(raw_score))))
+
     text_lower = (full_text or "").lower()
     words = text_lower.split()
-    word_count = len(words)
-    per_100 = max(word_count / 100, 1)
+    word_count_body = len(words)
+    per_100 = max(word_count_body / 100, 1)
 
     clickbait_signals = sum(1 for p, _ in CLICKBAIT_PATTERNS if p.search(title))
     sup_count = len(_SUPERLATIVE_PATTERN.findall(text_lower))

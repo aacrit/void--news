@@ -530,12 +530,23 @@ def _value_judgment_score(text: str) -> float:
     return min(100.0, ratio * 500.0)
 
 
-def analyze_opinion(article: dict) -> dict:
+OPINION_TIER_BASELINES: dict[str, float] = {
+    "us_major": 15.0,
+    "international": 18.0,
+    "independent": 22.0,
+}
+_OPINION_DEFAULT_BASELINE = 18.0
+
+
+def analyze_opinion(article: dict, source: dict | None = None) -> dict:
     """
     Score where an article falls on the opinion-fact spectrum.
 
     Args:
         article: Dict with keys: full_text, title, summary, section, url.
+        source:  Optional source dict with "tier" field.  Used for
+                 tier-baseline blending on short-text articles so that
+                 scores are not all compressed to a single low bucket.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -609,7 +620,22 @@ def analyze_opinion(article: dict) -> dict:
         # Blog/personal essay → floor at 35
         weighted = max(weighted, 35.0)
 
-    score = max(0, min(100, int(round(weighted))))
+    raw_score = max(0.0, min(100.0, weighted))
+
+    # Tier-baseline blending: lifts near-zero scores on short stubs using
+    # source reputation.  Uses max() so the baseline acts as a FLOOR, never
+    # pulling down legitimately high opinion scores (e.g. opinion pieces with
+    # metadata floors from URL/section markers).
+    full_text = article.get("full_text", "") or ""
+    word_count = len((full_text or "").split())
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = OPINION_TIER_BASELINES.get(tier, _OPINION_DEFAULT_BASELINE)
+        text_weight = min(1.0, word_count / 500.0)
+        blended = text_weight * raw_score + (1.0 - text_weight) * tier_baseline
+        raw_score = max(raw_score, blended)
+
+    score = max(0, min(100, int(round(raw_score))))
 
     # Derive classification label
     if score <= 25:

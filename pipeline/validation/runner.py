@@ -419,10 +419,10 @@ def run_validation(
 
         # Run all 5 analyzers
         lean_result    = analyze_political_lean(article, src_dict)
-        sens_result    = analyze_sensationalism(article)
-        opinion_result = analyze_opinion(article)
+        sens_result    = analyze_sensationalism(article, src_dict)
+        opinion_result = analyze_opinion(article, src_dict)
         rigor_result   = analyze_factual_rigor(article, src_dict)
-        framing_result = analyze_framing(article)
+        framing_result = analyze_framing(article, source=src_dict)
 
         scores = {
             "lean":    lean_result["score"],
