@@ -3,6 +3,7 @@
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
+import ConsensusBadge from "./ConsensusBadge";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 
@@ -68,6 +69,14 @@ export default function MobileStoryCard({
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
             <Sigil data={story.sigilData} size="sm" instant />
+            {story.deepDive?.claimConsensus && (
+              <ConsensusBadge
+                ratio={story.deepDive.claimConsensus.consensus_ratio}
+                disputed={story.deepDive.claimConsensus.disputed}
+                total={story.deepDive.claimConsensus.total_claims}
+                corroborated={story.deepDive.claimConsensus.corroborated}
+              />
+            )}
             <CaretRight size={14} weight="bold" aria-hidden="true" className="msc__caret" />
           </h2>
           <p className="msc__summary">{story.summary}</p>
@@ -78,6 +87,14 @@ export default function MobileStoryCard({
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
             <Sigil data={story.sigilData} size="sm" instant />
+            {story.deepDive?.claimConsensus && (
+              <ConsensusBadge
+                ratio={story.deepDive.claimConsensus.consensus_ratio}
+                disputed={story.deepDive.claimConsensus.disputed}
+                total={story.deepDive.claimConsensus.total_claims}
+                corroborated={story.deepDive.claimConsensus.corroborated}
+              />
+            )}
             <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
           </h3>
           {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}

@@ -412,6 +412,12 @@ export interface WeeklyBiasReportData {
   };
 }
 
+export interface WeeklyContestedStory {
+  id: string;
+  title: string;
+  claim_consensus: ClaimConsensus;
+}
+
 export interface WeeklyDigestData {
   id: string;
   edition: string;
@@ -436,5 +442,6 @@ export interface WeeklyDigestData {
   audio_duration_seconds: number | null;
   total_articles: number | null;
   total_clusters: number | null;
+  contested_stories?: WeeklyContestedStory[] | null;
   created_at: string;
 }
