@@ -305,14 +305,14 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--console-fg) 25%, transparent);
+  background: color-mix(in srgb, var(--console-fg) 18%, transparent);
   flex-shrink: 0;
-  transition: background 300ms;
+  transition: background 300ms, box-shadow 300ms;
 }
 
 .fp__status--live .fp__status-dot {
   background: var(--indicator-broadcast);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--indicator-broadcast) 50%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--indicator-broadcast) 60%, transparent);
   animation: recPulse 1.5s var(--ease-rack) infinite;
 }
 
@@ -440,10 +440,10 @@
   background: var(--accent-warm);
   animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate;
 }
-.fp__pill-eq-bar:nth-child(1) { animation-name: vuBar-short; animation-delay: 0ms; }
-.fp__pill-eq-bar:nth-child(2) { animation-name: vuBar-tall; animation-delay: 80ms; }
-.fp__pill-eq-bar:nth-child(3) { animation-name: vuBar-mid; animation-delay: 160ms; }
-.fp__pill-eq-bar:nth-child(4) { animation-name: vuBar-short; animation-delay: 240ms; }
+.fp__pill-eq-bar:nth-child(1) { animation: vuBar-short 1.0s var(--ease-rack) infinite alternate; }
+.fp__pill-eq-bar:nth-child(2) { animation: vuBar-tall 1.3s var(--ease-rack) infinite alternate 80ms; }
+.fp__pill-eq-bar:nth-child(3) { animation: vuBar-mid 1.15s var(--ease-rack) infinite alternate 160ms; }
+.fp__pill-eq-bar:nth-child(4) { animation: vuBar-short 0.85s var(--ease-rack) infinite alternate 240ms; }
 
 /* VU Meter — CSS-driven audio visualization (replaces canvas) */
 .fp__vu {
@@ -466,11 +466,15 @@
   transition: height 400ms var(--ease-cinematic, ease), background 300ms;
 }
 
-/* Active — bars animate with staggered VU keyframes */
+/* Active — bars animate with staggered VU keyframes.
+   Coprime durations per keyframe type prevent lockstep cycling. */
 .fp__vu--active .fp__vu-bar {
   background: var(--accent-warm);
   animation: fpVuPulse 1.8s var(--ease-rack, ease-in-out) infinite alternate;
 }
+.fp__vu--active .fp__vu-bar:nth-child(odd)  { animation-duration: 1.65s; }
+.fp__vu--active .fp__vu-bar:nth-child(even) { animation-duration: 2.1s; }
+.fp__vu--active .fp__vu-bar:nth-child(3n)   { animation-duration: 1.4s; }
 
 /* Distribute bar heights naturally — middle bars taller */
 .fp__vu--active .fp__vu-bar:nth-child(1)  { animation-name: fpVuLo;  }
@@ -631,9 +635,10 @@
   position: absolute;
   top: 50%; left: 0; right: 0;
   height: 4px;
-  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
   border-radius: 2px;
   transform: translateY(-50%);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, var(--accent-warm) 6%, transparent);
 }
 
 .fp__seek-buffer {
@@ -661,9 +666,10 @@
 
 .fp__seek-mark {
   position: absolute;
-  top: 50%; width: 1px; height: 12px;
+  top: 50%; width: 1.5px; height: 10px;
   transform: translateY(-50%);
-  background: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 45%, transparent);
+  border-radius: 0.75px;
   z-index: 1;
 }
 
@@ -897,7 +903,7 @@
   top: 0; left: 50%;
   width: 300px; height: 120px;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse, rgba(212, 140, 60, 0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--cin-amber-bright, #AD7E1E) 7%, transparent) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -954,7 +960,7 @@
   transform: translateX(-50%);
   width: 200px;
   height: 60px;
-  color: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 12%, transparent);
+  color: color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 16%, transparent);
   pointer-events: none;
   z-index: 0;
 }
@@ -1003,7 +1009,13 @@
   color: color-mix(in srgb, var(--accent-warm) 55%, transparent);
   letter-spacing: 0.02em;
   padding-bottom: var(--space-1);
-  border-bottom: 1px solid color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-warm) 12%, transparent);
+}
+
+.fp__bcast-dateline > span + span::before {
+  content: "\00B7";
+  margin-right: var(--space-3);
+  color: color-mix(in srgb, var(--accent-warm) 25%, transparent);
 }
 
 .fp__bcast-edition {
@@ -1039,9 +1051,9 @@
   display: flex;
   gap: var(--space-2);
   padding: var(--space-2);
-  border: 1px solid color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 18%, transparent);
   border-radius: 6px;
-  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 5%, transparent);
 }
 
 .fp__bcast-host-tag {
@@ -1080,11 +1092,21 @@
   font-family: var(--font-meta);
   font-size: 9px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Left accent bar on host cards — newspaper pull-quote convention */
+.fp__bcast-host::before {
+  content: "";
+  width: 2px;
+  align-self: stretch;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  flex-shrink: 0;
 }
 
 /* Episode content */
@@ -1478,8 +1500,13 @@
 }
 
 .fp__track--current {
-  background: color-mix(in srgb, var(--accent-warm) 5%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 7%, transparent);
   cursor: default;
+}
+
+/* Hairline separator between tracks */
+.fp__track + .fp__track {
+  border-top: 1px solid color-mix(in srgb, var(--accent-warm) 6%, transparent);
 }
 
 /* Play icon / equalizer column */
@@ -1514,15 +1541,15 @@
 
 .fp__track-eq span:nth-child(1) {
   height: 8px;
-  animation: vuBar-short 1.2s var(--ease-rack) infinite alternate;
+  animation: vuBar-short 1.1s var(--ease-rack) infinite alternate;
 }
 .fp__track-eq span:nth-child(2) {
   height: 12px;
-  animation: vuBar-tall 1.2s var(--ease-rack) infinite alternate 100ms;
+  animation: vuBar-tall 1.4s var(--ease-rack) infinite alternate 100ms;
 }
 .fp__track-eq span:nth-child(3) {
   height: 6px;
-  animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate 200ms;
+  animation: vuBar-mid 0.9s var(--ease-rack) infinite alternate 200ms;
 }
 
 /* Track body */
@@ -1542,8 +1569,9 @@
   overflow: hidden;
 }
 
-.fp__track-row--opinion {
-  opacity: 0.7;
+.fp__track-row--opinion .fp__track-hl {
+  color: color-mix(in srgb, var(--console-fg) 60%, transparent);
+  font-style: italic;
 }
 
 .fp__track-label {
@@ -1633,9 +1661,27 @@
   background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
 }
 
-/* L-cut cascade for playlist items */
+/* Playlist stagger entrance — vinyl-from-shelf */
+@keyframes fpTrackSlideOut {
+  from { opacity: 0; transform: translateX(-8px) scale(0.98); }
+  60%  { opacity: 1; transform: translateX(1px) scale(1.005); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
 .fp__bcast-details[open] .fp__playlist-wrap {
-  animation: fadeInUp 250ms var(--ease-cinematic, ease) both;
+  animation: fadeInUp 200ms var(--ease-cinematic, ease) both;
+}
+
+.fp__bcast-details[open] .fp__playlist-day-label {
+  opacity: 0;
+  animation: fpTrackSlideOut 280ms var(--ease-cinematic, ease) both;
+  animation-delay: calc(var(--fp-track-i, 0) * 50ms);
+}
+
+.fp__bcast-details[open] .fp__track {
+  opacity: 0;
+  animation: fpTrackSlideOut 300ms var(--ease-cinematic, ease) both;
+  animation-delay: calc(var(--fp-track-i, 0) * 50ms + 80ms);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1664,6 +1710,9 @@
   .fp__rec-dot { animation: none; opacity: 1; }
   .fp__status--live .fp__status-dot { animation: none; opacity: 1; }
   .fp--playing .fp__pill { animation: none; }
+  .fp__bcast-details[open] .fp__playlist-day-label,
+  .fp__bcast-details[open] .fp__track { animation: none; opacity: 1; transform: none; }
+  .fp__track-eq span { animation: none !important; }
 }
 
 /* ---------------------------------------------------------------------------

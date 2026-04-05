@@ -375,16 +375,18 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
         >
           <div className="fp__drag-indicator" aria-hidden="true" />
 
-          {/* VU arc motif — decorative 120° arc behind header */}
+          {/* VU arc motif — decorative broadcast gauge behind header */}
           <svg className="fp__vu-arc" viewBox="0 0 200 60" aria-hidden="true">
             <path d="M30 55 A70 70 0 0 1 170 55" fill="none" stroke="currentColor" strokeWidth="1.5" />
-            {/* Frequency hash marks */}
+            <path d="M45 55 A55 55 0 0 1 155 55" fill="none" stroke="currentColor" strokeWidth="0.75" opacity="0.5" />
+            {/* Graduated hash marks — longer at extremes and center */}
             {Array.from({ length: 9 }, (_, i) => {
               const angle = Math.PI - (Math.PI * (i + 1)) / 10;
               const cx = 100 + 70 * Math.cos(angle);
               const cy = 55 - 70 * Math.sin(angle);
-              const dx = 4 * Math.cos(angle);
-              const dy = -4 * Math.sin(angle);
+              const len = (i === 0 || i === 4 || i === 8) ? 6 : 4;
+              const dx = len * Math.cos(angle);
+              const dy = -len * Math.sin(angle);
               return <line key={i} x1={cx} y1={cy} x2={cx + dx} y2={cy + dy} stroke="currentColor" strokeWidth="1" />;
             })}
           </svg>
@@ -490,9 +492,9 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
                   <CaretRight size={12} weight="bold" className="fp__caret fp__bcast-summary-arrow" />
                 </summary>
                 <div className="fp__playlist-wrap">
-                  {Array.from(groupedEpisodes.entries()).map(([dayLabel, eps]) => (
+                  {(() => { let ti = 0; return Array.from(groupedEpisodes.entries()).map(([dayLabel, eps]) => (
                     <div key={dayLabel} className="fp__playlist-day">
-                      <div className="fp__playlist-day-label">{dayLabel}</div>
+                      <div className="fp__playlist-day-label" style={{ '--fp-track-i': ti++ } as React.CSSProperties}>{dayLabel}</div>
                       {eps.map((ep) => {
                         const isCurrent = brief.audio_url === ep.audio_url;
                         const epDuration = ep.audio_duration_seconds ? Math.ceil(ep.audio_duration_seconds / 60) : null;
@@ -503,6 +505,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
                           <button
                             key={ep.id}
                             className={`fp__track${isCurrent ? " fp__track--current" : ""}`}
+                            style={{ '--fp-track-i': ti++ } as React.CSSProperties}
                             onClick={() => { if (!isCurrent) { hapticConfirm(); loadEpisode(ep); } }}
                             type="button"
                             aria-current={isCurrent ? "true" : undefined}
@@ -550,7 +553,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
                         );
                       })}
                     </div>
-                  ))}
+                  )); })()}
                 </div>
               </details>
           )}
