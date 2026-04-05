@@ -58,6 +58,7 @@ export default function ConsensusBadge({
     <span
       ref={badgeRef}
       className="consensus-badge"
+      data-entered={hasEntered ? "true" : undefined}
       aria-label={`${corroborated} of ${total} claims corroborated${hasDisputed ? `, ${disputed} disputed` : ""}`}
     >
       <span className="consensus-badge__ratio">
@@ -69,7 +70,9 @@ export default function ConsensusBadge({
           aria-label={`${disputed} disputed claim${disputed !== 1 ? "s" : ""}`}
         >
           <span className="consensus-badge__mark" aria-hidden="true">
-            &#x26A1;
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 1.5L3.5 9H8L7 14.5L12.5 7H8L9 1.5Z" />
+            </svg>
           </span>
           <span className="consensus-badge__count">{disputed}</span>
         </span>

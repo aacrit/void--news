@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useId } from "react";
 import type { DisputedClaim } from "../lib/types";
 
 /* ===========================================================================
@@ -22,32 +22,14 @@ interface ClaimMarkProps {
 export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   const [focused, setFocused] = useState(false);
   const markRef = useRef<HTMLSpanElement>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  // Position the popover above the mark
-  const [popoverPos, setPopoverPos] = useState<{
-    left: number;
-    bottom: number;
-  } | null>(null);
-
-  const updatePosition = useCallback(() => {
-    if (!markRef.current) return;
-    const rect = markRef.current.getBoundingClientRect();
-    setPopoverPos({
-      left: rect.left + rect.width / 2,
-      bottom: window.innerHeight - rect.top + 8,
-    });
-  }, []);
+  const popoverId = useId();
 
   // Close on outside click
   useEffect(() => {
     if (!focused) return;
     const handler = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (
-        !markRef.current?.contains(target) &&
-        !popoverRef.current?.contains(target)
-      ) {
+      if (!markRef.current?.contains(target)) {
         setFocused(false);
       }
     };
@@ -66,11 +48,8 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   }, [focused]);
 
   const handleToggle = useCallback(() => {
-    setFocused((prev) => {
-      if (!prev) updatePosition();
-      return !prev;
-    });
-  }, [updatePosition]);
+    setFocused((prev) => !prev);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -83,29 +62,32 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   );
 
   return (
-    <>
+    <span
+      ref={markRef}
+      className={`claim-mark${focused ? " claim-mark--focused" : ""}`}
+      style={{ position: "relative" }}
+    >
       <span
-        ref={markRef}
-        className={`claim-mark${focused ? " claim-mark--focused" : ""}`}
         role="button"
         tabIndex={0}
         aria-label={`Disputed claim: sources disagree about ${disputed.topic}`}
-        aria-expanded={focused}
+        aria-describedby={focused ? popoverId : undefined}
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
       >
         {text}
       </span>
 
-      {focused && popoverPos && (
+      {focused && (
         <div
-          ref={popoverRef}
+          id={popoverId}
           className="claim-mark__popover"
-          role="tooltip"
+          role="status"
+          aria-live="polite"
           style={{
-            position: "fixed",
-            left: `${popoverPos.left}px`,
-            bottom: `${popoverPos.bottom}px`,
+            position: "absolute",
+            bottom: "calc(100% + 8px)",
+            left: "50%",
             transform: "translateX(-50%)",
           }}
         >
@@ -130,6 +112,6 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
           </div>
         </div>
       )}
-    </>
+    </span>
   );
 }
