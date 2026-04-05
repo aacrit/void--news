@@ -216,6 +216,53 @@
   will-change: filter, transform, opacity;
 }
 
+/* Hero CTAs — two paths: play film or scroll */
+.about-hero__ctas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  opacity: 0;
+  animation: aboutDissolveIn 0.8s var(--ease-cinematic) 0.8s forwards;
+}
+
+.about-hero__play {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--bg-primary);
+  background: var(--accent);
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: 100px;
+  min-height: 48px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.3)) 12%, transparent);
+  transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+.about-hero__play:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.3)) 18%, transparent);
+}
+.about-hero__play:active { transform: scale(0.97); }
+.about-hero__play:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.about-hero__or {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
 /* Scroll chevron */
 .about-hero__scroll {
   position: absolute;
