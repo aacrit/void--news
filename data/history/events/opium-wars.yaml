@@ -1,0 +1,306 @@
+slug: opium-wars
+title: "The Opium Wars"
+subtitle: "Britain went to war twice to force a sovereign nation to buy drugs"
+date_display: "1839-1860"
+date_sort: 1839
+date_precision: year
+era: modern
+region: east-asia
+country: China
+category: war
+severity: critical
+death_toll: "~20,000 Chinese military; ~3,000 British/allied; civilian toll unknown but extensive"
+affected_population: "Qing China's population of ~400 million affected by treaty port system, opium epidemic, and territorial losses"
+duration: "First Opium War (1839-1842), Second Opium War (1856-1860)"
+hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/9/95/Destroying_Chinese_war_junks%2C_by_E._Duncan_%281843%29.jpg"
+hero_image_attribution: "Edward Duncan, 1843, public domain via Wikimedia Commons"
+
+summary: |
+  By the 1830s, the British East India Company had built a supply chain that ran opium from Bengal to Canton (Guangzhou), the only Chinese port open to Western trade. British merchants bought tea, silk, and porcelain from China; China had little interest in British manufactured goods. The result was a trade deficit that drained silver from Britain. Opium reversed the flow. Indian-grown opium, processed in Patna and Benares and auctioned in Calcutta, was shipped to Canton by private traders operating under East India Company licenses. By 1838, an estimated 4-12 million Chinese were addicted. The Qing court received reports of soldiers too debilitated to drill, officials spending their salaries on opium, and silver flowing out of China to pay for the drug.
+
+  In March 1839, Emperor Daoguang appointed Lin Zexu as Imperial Commissioner in Canton with orders to end the opium trade. Lin demanded that foreign merchants surrender their opium stocks. When they refused, he blockaded the foreign factories (trading posts) in Canton and detained 350 foreign traders, including the British Superintendent of Trade, Charles Elliot. The traders surrendered 20,283 chests of opium — approximately 1,400 tons — which Lin destroyed by dissolving it in trenches of lime and salt water over 23 days, from June 3 to June 25, 1839.
+
+  Lord Palmerston, the British Foreign Secretary, dispatched an expeditionary force of 44 warships and 4,000 troops. The First Opium War (1839-1842) was less a war than a series of one-sided naval engagements. British iron-hulled steamships — particularly the Nemesis, the first iron warship to see action — devastated the Qing wooden war junks. British forces seized Canton, Amoy, Ningbo, and Shanghai before threatening Nanjing. The Qing sued for peace.
+
+  The Treaty of Nanjing, signed on August 29, 1842, was the first of what Chinese historiography calls the "Unequal Treaties." China ceded Hong Kong Island to Britain in perpetuity, opened five treaty ports (Canton, Amoy, Fuzhou, Ningbo, Shanghai), paid an indemnity of 21 million silver dollars, and abolished the Canton trade monopoly system. The treaty said nothing about opium — the drug that had caused the war. British opium imports into China continued and grew.
+
+  The Second Opium War (1856-1860), triggered by the Arrow Incident — the boarding of a nominally British-registered Chinese ship — escalated when France joined Britain after the execution of a French missionary in Guangxi. The war culminated in the burning of the Old Summer Palace (Yuanmingyuan) in Beijing on October 18-19, 1860, ordered by Lord Elgin as retaliation for the torture and killing of captured negotiators. The palace, which contained irreplaceable art, libraries, and gardens accumulated over 150 years, was looted and then destroyed by 3,500 British and French soldiers over two days. Victor Hugo, writing to Captain Butler, called it "two bandits entering a museum... one pillaged, the other set fire."
+
+  The Convention of Peking (1860) forced China to open additional ports, cede Kowloon Peninsula to Britain, legalize opium trade, permit Christian missionary activity, and pay further indemnities. By the 1880s, China was importing over 6,000 tons of opium annually.
+
+significance: |
+  The Opium Wars opened China to Western imperial penetration and inaugurated what Chinese historiography calls the "Century of Humiliation" (1839-1949) — a period that frames Chinese national identity and foreign policy into the 2020s. The treaty port system created extraterritorial zones where Western law superseded Chinese sovereignty, a model replicated across Asia. Hong Kong remained under British control until 1997. The wars weakened the Qing dynasty, contributing to the Taiping Rebellion (1850-1864, 20-30 million dead), the fall of the dynasty in 1912, and the ideological foundations of both Nationalist and Communist movements. The destruction of the Yuanmingyuan remains a live political grievance — China has demanded the return of looted artifacts from auction houses and museums worldwide. The Opium Wars also established the template for gunboat diplomacy: the use of overwhelming naval force to impose trade terms on weaker states, a pattern repeated across Africa, the Middle East, and Southeast Asia throughout the 19th century.
+
+key_figures:
+  - name: "Lin Zexu"
+    role: "Qing Imperial Commissioner, confiscated and destroyed 20,283 chests of British opium in Canton"
+  - name: "Lord Palmerston"
+    role: "British Foreign Secretary, authorized the First Opium War expedition"
+  - name: "Queen Victoria"
+    role: "British monarch during both wars; Lin Zexu wrote her an undelivered letter appealing to morality"
+  - name: "Emperor Daoguang"
+    role: "Qing Emperor who ordered the opium suppression campaign"
+  - name: "Lord Elgin"
+    role: "British High Commissioner who ordered the burning of the Yuanmingyuan (Old Summer Palace)"
+  - name: "Charles Elliot"
+    role: "British Superintendent of Trade in Canton, negotiated initial terms"
+
+legacy_points:
+  - "Inaugurated the 'Century of Humiliation' (1839-1949) — the foundational narrative of modern Chinese nationalism"
+  - "Treaty of Nanjing (1842) was the first 'Unequal Treaty,' creating the model for Western extraterritorial rights across Asia"
+  - "Hong Kong ceded to Britain for 155 years (1842-1997)"
+  - "Destruction of the Yuanmingyuan remains an active cultural grievance; looted artifacts contested worldwide"
+  - "Weakened the Qing dynasty, contributing to the Taiping Rebellion (20-30 million dead) and eventual dynastic collapse"
+
+primary_source_excerpts:
+  - text: "We find that your country is sixty or seventy thousand li from China. Yet there are barbarian ships that strive to come here for trade for the purpose of making a great profit. The wealth of China is used to profit the barbarians."
+    author: "Lin Zexu"
+    work: "Letter to Queen Victoria (never delivered)"
+    date: "1839"
+  - text: "Two bandits entering a museum, devastating, looting and burning... one of the two victors filled his pockets, the other his coffers; and they returned to Europe arm in arm, laughing."
+    author: "Victor Hugo"
+    work: "Letter to Captain Butler on the destruction of the Yuanmingyuan"
+    date: "November 25, 1861"
+  - text: "The Chinese must learn and be made to feel that they are a conquered people."
+    author: "Lord Elgin"
+    work: "Dispatch justifying the burning of the Summer Palace"
+    date: "October 1860"
+
+coordinates:
+  lat: 23.1291
+  lng: 113.2644
+
+related_event_slugs:
+  - scramble-for-africa
+  - transatlantic-slave-trade
+
+perspectives:
+  - viewpoint: "British Imperial"
+    viewpoint_type: victor
+    region_origin: europe
+    narrative: |
+      The British case for war rested not on the opium trade but on sovereignty, free trade, and the protection of British subjects. Lord Palmerston, in his instructions to the expeditionary force, framed the conflict as a response to Lin Zexu's illegal detention of British traders and the confiscation of British property without due process. The opium, in this telling, was incidental — the issue was China's refusal to engage in normal diplomatic relations and its treatment of foreign merchants under a legal system that offered no protections to non-Chinese.
+
+      The Canton System, which confined Western trade to a single port under the supervision of Chinese merchants (the Cohong), had frustrated British commercial ambitions for decades. British merchants wanted access to the Chinese interior market, equal diplomatic standing, and the protections of international law. The Qing court, which viewed all foreign states as tributaries of the Celestial Empire, refused to receive a British ambassador as an equal. Lord Macartney's embassy of 1793 had been rebuffed when he refused to perform the kowtow before Emperor Qianlong. Lord Amherst's 1816 mission was turned away at the gates. The British concluded that China could not be engaged through diplomacy — only through force.
+
+      Palmerston's parliamentary case survived serious opposition. William Gladstone, then a young Tory MP, called the war "a war more unjust in its origin, a war more calculated in its progress to cover this country with permanent disgrace." The motion to censure the government over the war failed by just nine votes in the House of Commons on April 9, 1840. Palmerston countered that Britain was not fighting for opium but for the principle that a sovereign nation could not imprison foreign nationals and confiscate their property without legal process.
+
+      The strategic dimension was commercial. Britain consumed over 30 million pounds of Chinese tea annually by the 1830s. The trade imbalance — China accepted only silver for tea — was unsustainable. Opium was the only commodity that reversed the silver flow. The East India Company's opium revenues from Bengal contributed approximately 15% of British Indian government revenue by 1838. The financial incentive to maintain the trade was systemic, not incidental.
+
+      British historiography long treated the Opium Wars as an unfortunate but necessary stage in China's integration into the global trading system. John King Fairbank's The Great Chinese Revolution (1986) argued that the treaty port system, while coercive, opened China to modernizing influences that the Qing dynasty had resisted. This "impact-response" model — in which Western contact catalyzed Chinese reform — has been largely abandoned by modern historians but shaped a century of English-language scholarship.
+    key_arguments:
+      - "The war was fought over diplomatic principles and the treatment of British subjects, not opium per se"
+      - "China's refusal to engage in equal diplomatic relations left no alternative to military pressure"
+      - "The Canton System was an untenable restriction on free trade"
+      - "The trade imbalance and East India Company revenue created systemic incentives"
+    sources:
+      - title: "The Opium War: Drugs, Dreams, and the Making of Modern China"
+        author: "Julia Lovell"
+        year: "2011"
+        type: book
+      - title: "The Great Chinese Revolution, 1800-1985"
+        author: "John King Fairbank"
+        year: "1986"
+        type: book
+      - title: "Imperial Twilight: The Opium War and the End of China's Last Golden Age"
+        author: "Stephen R. Platt"
+        year: "2018"
+        type: book
+    notable_quotes:
+      - text: "A war more unjust in its origin, a war more calculated in its progress to cover this country with permanent disgrace, I do not know."
+        speaker: "William Gladstone"
+        context: "Speech in the House of Commons opposing the Opium War, April 8, 1840"
+      - text: "The Chinese must learn and be made to feel that they are a conquered people."
+        speaker: "Lord Elgin"
+        context: "Justification for burning the Yuanmingyuan, October 1860"
+    emphasized:
+      - "Diplomatic insult and detention of British subjects as casus belli"
+      - "Free trade principles and commercial necessity"
+      - "Parliamentary debate and opposition to the war within Britain"
+    omitted:
+      - "Britain was the world's largest narcotics trafficker, profiting from mass addiction"
+      - "The military asymmetry that made the wars a slaughter rather than a contest"
+      - "The long-term devastation of Chinese society by opium addiction"
+
+  - viewpoint: "Qing Chinese"
+    viewpoint_type: vanquished
+    region_origin: east-asia
+    narrative: |
+      Lin Zexu's letter to Queen Victoria — written in 1839 but never delivered — laid out the Chinese position with moral clarity. He asked whether Britain would tolerate a foreign power flooding British cities with an addictive poison for profit. "Suppose there were people from another country who carried opium for sale to England and seduced your people into buying and smoking it. Certainly your honorable ruler would deeply hate it and be bitterly aroused." The letter received no answer. Britain sent warships instead.
+
+      The Qing court's decision to suppress the opium trade was a public health measure. Emperor Daoguang's 1838 edict described opium as a poison that was draining China of silver, enfeebling its military, and corrupting its officials. The court debate between "legalization" advocates (who argued that regulated trade would at least capture revenue) and "suppression" advocates (who argued that the drug's effects demanded prohibition) was resolved in favor of Lin Zexu's hard line. Lin's campaign in Canton was thorough: he demanded that foreign merchants sign bonds pledging to stop importing opium, on pain of death. He confiscated and destroyed 20,283 chests — roughly 1,400 tons — in a process witnessed by foreign observers.
+
+      The military disparity was devastating. The Qing navy consisted of wooden war junks designed for coastal patrol and anti-piracy operations. Against the Nemesis — a 660-ton iron-hulled steamer armed with 32-pound guns and Congreve rockets — they were helpless. At the Battle of Chuenpi (January 7, 1841), four British warships destroyed 29 Chinese junks and shore batteries in an afternoon. The Qing army, armed with matchlock muskets (technology two centuries behind the British percussion cap rifle), suffered similar asymmetries on land. At Zhenjiang, in July 1842, Manchu bannermen fought hand-to-hand rather than surrender; 1,500 were killed.
+
+      The Treaty of Nanjing was experienced as national humiliation. The cession of Hong Kong — a territory of the Chinese empire — to a foreign power was unprecedented in Qing history. The indemnity of 21 million silver dollars was punitive. The extraterritorial rights granted to British subjects in the treaty ports meant that British citizens in China were subject to British law, not Chinese law — a legal arrangement that Chinese officials correctly recognized as an assertion of racial superiority. Most-favored-nation clauses in subsequent treaties with the United States and France meant that every concession extracted by one Western power automatically extended to all others.
+
+      The Second Opium War's destruction of the Yuanmingyuan — the Old Summer Palace — produced a wound that has never healed. The palace complex, covering 860 acres northwest of Beijing, contained some of the most treasured artifacts of Chinese civilization: bronzes, jades, silk scrolls, and a library of 10,000 volumes. Lord Elgin ordered its destruction specifically to humiliate the emperor. Chinese soldiers and officials who witnessed the burning described it as the desecration of their civilization's heart. The twelve bronze zodiac fountain heads looted from the palace have been the subject of international legal disputes; some have been repatriated, others remain in private and museum collections worldwide.
+
+      In Chinese historical memory, the Opium Wars mark the beginning of the "Century of Humiliation" — a narrative arc that runs from Lin Zexu's defeat in 1842 through the Taiping Rebellion, the Boxer Uprising, the fall of the Qing dynasty, the warlord era, the Japanese invasion, and the Chinese Civil War, ending only with the founding of the People's Republic in 1949. This narrative is not merely academic — it is taught in schools, embedded in state media, and invoked by Chinese leaders in diplomatic contexts. When Xi Jinping speaks of "national rejuvenation," the starting point of the humiliation from which China is rejuvenating is 1839.
+    key_arguments:
+      - "China's opium suppression campaign was a legitimate public health measure"
+      - "Britain waged war to force a sovereign nation to accept a narcotic trade"
+      - "Military asymmetry made the wars a one-sided slaughter, not a contest between equals"
+      - "The destruction of the Yuanmingyuan was a deliberate act of cultural vandalism"
+    sources:
+      - title: "The Search for Modern China"
+        author: "Jonathan D. Spence"
+        year: "1990"
+        type: book
+      - title: "Lin Zexu's Letter to Queen Victoria (1839)"
+        author: "Lin Zexu"
+        year: "1839"
+        type: document
+      - title: "Autumn in the Heavenly Kingdom: China, the West, and the Epic Story of the Taiping Civil War"
+        author: "Stephen R. Platt"
+        year: "2012"
+        type: book
+    notable_quotes:
+      - text: "Suppose there were people from another country who carried opium for sale to England and seduced your people into buying and smoking it. Certainly your honorable ruler would deeply hate it and be bitterly aroused."
+        speaker: "Lin Zexu"
+        context: "Letter to Queen Victoria, 1839"
+      - text: "After this China was bled by a million wounds."
+        speaker: "Sun Yat-sen"
+        context: "Reflecting on the Treaty of Nanjing in The Three Principles of the People, 1924"
+    emphasized:
+      - "Moral clarity of the anti-opium campaign"
+      - "Military technological asymmetry and the injustice of the outcome"
+      - "Destruction of the Yuanmingyuan as cultural crime"
+      - "The Century of Humiliation as foundational national narrative"
+    omitted:
+      - "Qing court dysfunction and internal corruption that weakened the state"
+      - "Chinese merchants who profited from the opium trade"
+      - "The Canton System's own restrictions on free exchange"
+
+  - viewpoint: "Modern Chinese Nationalist"
+    viewpoint_type: revisionist
+    region_origin: east-asia
+    narrative: |
+      The Opium Wars occupy a central position in the historiography of the People's Republic. The "Century of Humiliation" (bainian guochi) is not simply a historical period — it is the origin story of modern China. The Communist Party's legitimacy rests in part on its claim to have ended the humiliation: Mao Zedong's declaration on October 1, 1949 — "The Chinese people have stood up" — was a direct answer to the Opium Wars, the Unequal Treaties, and the century of foreign domination that followed.
+
+      Chinese nationalist historiography emphasizes three dimensions that Western accounts tend to minimize. First, the scale of the opium crisis. By the 1880s, China had an estimated 15 million opium users, with rates of addiction particularly high among soldiers, officials, and laborers in treaty port cities. The drug drained silver, distorted the economy, and created a public health catastrophe that persisted until the Communist government's aggressive suppression campaigns of the 1950s, which eliminated opium production through methods ranging from agricultural reform to execution of dealers.
+
+      Second, the systematic nature of Western imperialism that the Opium Wars inaugurated. The Treaty of Nanjing was followed by the Treaty of Wanghia with the United States (1844), the Treaty of Whampoa with France (1844), and dozens of subsequent treaties with various Western powers and Japan. Each extracted additional concessions: more treaty ports, more territory, more indemnities, more extraterritorial rights. By 1900, China had been carved into spheres of influence — British in the Yangtze Valley, French in the south, German in Shandong, Japanese in Manchuria, Russian in the northeast. The Boxer Protocol of 1901, imposed after the Eight-Nation Alliance suppressed the Boxer Uprising, demanded an indemnity of 450 million taels of silver — more than the Qing government's annual revenue — payable over 39 years at 4% interest.
+
+      Third, the connection between the Opium Wars and the Chinese revolution. Sun Yat-sen, the founder of the Republic of China, traced China's humiliation directly to the Nanjing Treaty. Mao's essay "The Chinese People Have Stood Up" (1949) invoked the century of foreign domination as the condition from which revolution was the only escape. The narrative arc — from Lin Zexu's righteous resistance to the Communist victory — is taught in every Chinese school. Lin Zexu is honored as a national hero; a 25-meter statue of him stands in Fuzhou. The ruins of the Yuanmingyuan are maintained as a "patriotic education base," left unrestored as a permanent reminder.
+
+      The nationalist perspective frames the current international order through the lens of the Opium Wars. Chinese state media invoke the Century of Humiliation when Western governments criticize Chinese trade practices, human rights policies, or territorial claims. The argument is structural: the West's current rules-based order was built on the same gunboat diplomacy that forced opium on China. The claim to sovereignty — over Hong Kong, over Taiwan, over the South China Sea — is presented as the completion of a process that began with Lin Zexu's stand against foreign narcotics in 1839.
+    key_arguments:
+      - "The Opium Wars inaugurated a century of systematic Western exploitation of China"
+      - "The Communist revolution's legitimacy derives from ending the Century of Humiliation"
+      - "Western 'rules-based order' was itself built on coercion and unequal treaties"
+      - "The ruins of the Yuanmingyuan are maintained as a permanent reminder of foreign aggression"
+    sources:
+      - title: "The Opium War: Drugs, Dreams, and the Making of Modern China"
+        author: "Julia Lovell"
+        year: "2011"
+        type: book
+      - title: "The Discourse of Race in Modern China"
+        author: "Frank Dikotter"
+        year: "1992"
+        type: book
+      - title: "China's War with Japan, 1937-1945: The Struggle for Survival"
+        author: "Rana Mitter"
+        year: "2013"
+        type: book
+    notable_quotes:
+      - text: "The Chinese people have stood up."
+        speaker: "Mao Zedong"
+        context: "Proclamation of the People's Republic of China, October 1, 1949"
+      - text: "Never forget national humiliation."
+        speaker: "Chinese patriotic education slogan"
+        context: "Displayed at the ruins of the Yuanmingyuan and in national curriculum materials"
+    emphasized:
+      - "Century of Humiliation as foundational national narrative"
+      - "Connection between Opium Wars and revolutionary legitimacy"
+      - "Systematic nature of Western imperial exploitation"
+    omitted:
+      - "Internal Qing failures that preceded and enabled Western penetration"
+      - "Communist Party's own policies that caused mass suffering (Great Leap Forward, Cultural Revolution)"
+      - "Chinese participation in the opium trade and domestic opium cultivation"
+
+  - viewpoint: "Economic History / Global Trade"
+    viewpoint_type: academic
+    region_origin: global
+    narrative: |
+      The Opium Wars sit at the intersection of three global economic systems: the British Empire's colonial trade network, the Qing Empire's silver-based economy, and the emerging industrial capitalism that was reshaping global power relations in the mid-19th century. The academic perspective analyzes the wars not as a moral parable but as a structural consequence of economic forces operating across three continents.
+
+      Kenneth Pomeranz's The Great Divergence (2000) reframed the question. European economic supremacy over China was not a millennium-old given — as late as 1750, the Yangtze Delta and the English Midlands had comparable standards of living, agricultural productivity, and commercial sophistication. The "great divergence" accelerated only after 1800, driven by Britain's access to New World resources (cotton, sugar, silver) and coal deposits suitable for steam power. The Opium Wars were a product of this divergence, not its cause — but they widened it catastrophically.
+
+      The opium trade's economics were triangular. Britain purchased tea from China, paying with silver. To reverse the silver drain, the East India Company grew opium in Bengal, auctioned it in Calcutta, and allowed private traders (known as "country traders") to ship it to Canton. The opium revenue in British India rose from 1 million rupees in 1773 to 22 million rupees by 1838 — roughly one-seventh of British Indian government revenue. The system was, in modern terms, a state-sponsored narcotics cartel operating through the legal fiction of private enterprise.
+
+      Carl Trocki's Opium, Empire and the Global Political Economy (1999) argued that opium was not an aberration in the British imperial system but its core commodity — the product that financed the expansion of the British Empire in Asia. Without opium revenue, the British Indian government could not have maintained its military establishment, administered its territories, or financed the railroad construction that integrated India into the global economy. The East India Company's opium monopoly was the financial engine of British Asia.
+
+      The treaty port system created after the wars produced what historians call "semi-colonialism" — a condition in which China retained nominal sovereignty while foreign powers exercised real control over trade, law, and territory within designated zones. Shanghai's International Settlement, governed by a Municipal Council elected by foreign ratepayers, had its own police force, courts, and taxes. Chinese residents — the majority population — had no vote. The model was replicated across 80 treaty ports by 1900.
+
+      The long-term economic consequences were transformative. Opium imports drained an estimated 100 million taels of silver from China between 1800 and 1856. The resulting monetary contraction — less silver in circulation meant deflation — increased the real tax burden on Chinese peasants, who earned copper coins but paid taxes assessed in silver. This fiscal crisis contributed directly to the Taiping Rebellion (1850-1864), which killed an estimated 20-30 million people and devastated the Yangtze Valley — the economic heartland of the empire. The Opium Wars' toll extends far beyond the battlefield casualties; their economic aftershocks reshaped a continent.
+    key_arguments:
+      - "The opium trade was a state-sponsored narcotics operation that financed the British Empire in Asia"
+      - "The 'great divergence' between Europe and China accelerated after 1800, driven by structural factors"
+      - "The treaty port system created 'semi-colonialism' — nominal sovereignty with foreign control"
+      - "Silver drain from opium contributed to the fiscal crisis that fueled the Taiping Rebellion (20-30 million dead)"
+    sources:
+      - title: "The Great Divergence: China, Europe, and the Making of the Modern World Economy"
+        author: "Kenneth Pomeranz"
+        year: "2000"
+        type: book
+      - title: "Opium, Empire and the Global Political Economy"
+        author: "Carl A. Trocki"
+        year: "1999"
+        type: book
+      - title: "The Scramble for China: Foreign Devils in the Qing Empire, 1832-1914"
+        author: "Robert Bickers"
+        year: "2011"
+        type: book
+    notable_quotes:
+      - text: "Two bandits entering a museum, devastating, looting and burning... One of the two victors filled his pockets, the other his coffers."
+        speaker: "Victor Hugo"
+        context: "Letter to Captain Butler on the destruction of the Yuanmingyuan, November 25, 1861"
+      - text: "Opium was the tool of empire."
+        speaker: "Carl Trocki"
+        context: "Opium, Empire and the Global Political Economy, 1999"
+    emphasized:
+      - "Structural economic forces driving the opium trade"
+      - "East India Company's opium revenue as imperial financing mechanism"
+      - "Silver drain and its contribution to the Taiping Rebellion"
+      - "Treaty port system as a model of semi-colonialism"
+    omitted:
+      - "Individual moral dimensions of drug trafficking"
+      - "Chinese cultural and intellectual responses to the crisis"
+      - "The human experience of opium addiction at the individual level"
+
+media:
+  - media_type: painting
+    title: "Destroying Chinese War Junks, by Edward Duncan (1843)"
+    description: "Painting depicting the East India Company steamer Nemesis and other British vessels destroying Chinese war junks during the First Opium War, 1841. The technological asymmetry between iron-hulled steamships and wooden junks determined the war's outcome."
+    source_url: "https://commons.wikimedia.org/wiki/File:Destroying_Chinese_war_junks%2C_by_E._Duncan_%281843%29.jpg"
+    attribution: "Edward Duncan, 1843, public domain"
+    license: public-domain
+    creator: "Edward Duncan"
+    creation_date: "1843"
+
+  - media_type: photograph
+    title: "Ruins of the Yuanmingyuan (Old Summer Palace)"
+    description: "Remains of the European-style palaces at the Yuanmingyuan in Beijing, burned by British and French forces on October 18-19, 1860. The ruins are maintained as a 'patriotic education base' and left unrestored as a reminder of the destruction."
+    source_url: "https://commons.wikimedia.org/wiki/File:Yuanmingyuan_ruins.jpg"
+    attribution: "Wikimedia Commons, CC BY-SA 3.0"
+    license: cc-by-sa
+    creator: "Wikimedia contributors"
+    creation_date: "2006"
+
+  - media_type: painting
+    title: "Signing of the Treaty of Nanjing, 1842"
+    description: "Captain John Platt's painting of the signing of the Treaty of Nanjing aboard HMS Cornwallis on August 29, 1842. China ceded Hong Kong, opened five treaty ports, and paid 21 million silver dollars in indemnity."
+    source_url: "https://commons.wikimedia.org/wiki/File:The_Signing_of_the_Treaty_of_Nanking.jpg"
+    attribution: "Captain John Platt, c. 1846, public domain"
+    license: public-domain
+    creator: "John Platt"
+    creation_date: "c. 1846"
+
+connections:
+  - target_slug: scramble-for-africa
+    connection_type: parallel
+    description: "Both were exercises in imperial power projection using overwhelming military force to extract economic concessions from non-European societies, establishing the template for 19th-century colonialism"
+  - target_slug: transatlantic-slave-trade
+    connection_type: parallel
+    description: "Both involved European powers profiting from the forced trade of commodities that devastated non-European populations — enslaved people in one case, narcotics in the other"
