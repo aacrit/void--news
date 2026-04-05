@@ -186,19 +186,32 @@ export default function NavBar({
           {dateline}
         </span>
 
+        {/* Spinoff editions — center-left, before dateline */}
+        <nav className="nav-spinoffs" aria-label="Spinoff editions">
+          <Link
+            href="/weekly"
+            className="nav-weekly"
+            aria-label="Go to Weekly digest"
+            title="void --weekly"
+          >
+            <span className="nav-weekly__rule" aria-hidden="true" />
+            <span className="nav-weekly__label">Weekly</span>
+          </Link>
+          <Link
+            href="/history"
+            className="nav-history"
+            aria-label="Go to History archive"
+            title="void --history"
+          >
+            <span className="nav-history__rule" aria-hidden="true" />
+            <span className="nav-history__label">History</span>
+          </Link>
+        </nav>
+
         <div className="nav-right">
           {/* Page navigation — destinations */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            <Link
-              href="/weekly"
-              className="nav-weekly"
-              aria-label="Go to Weekly digest"
-              title="void --weekly"
-            >
-              <span className="nav-weekly__rule" aria-hidden="true" />
-              <span className="nav-weekly__label">Weekly</span>
-            </Link>
             <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
               Ship
             </Link>
