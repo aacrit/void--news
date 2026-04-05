@@ -1837,7 +1837,7 @@
    Classified briefing document: Plex Mono, tight, matter-of-fact.
    --------------------------------------------------------------------------- */
 .hist-brief {
-  max-width: 1100px;
+  max-width: 800px;
   margin: 0 auto;
   padding: var(--space-5) 0 var(--space-4);
   border-bottom: none;
@@ -1892,280 +1892,276 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Dossier Grid — Organic tile layout
-   Campaign-select grid. Published tiles expand, classified tiles flip.
+   Event Feed — Single-column, full-width vertical sections
    --------------------------------------------------------------------------- */
-.hist-dossier-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-5);
-  max-width: 1100px;
+.hist-event-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 800px;
   margin: 0 auto;
   padding: var(--space-4) 0;
 }
 
-/* Prevent grid blowout from long content */
-.hist-dossier-grid > * {
-  min-width: 0;
-}
-
-@media (min-width: 768px) {
-  .hist-dossier-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 1024px) {
-  .hist-dossier-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
 /* ===========================================================================
-   Tile Base — Shared foundation for published + classified
+   Event Tile — Full-width vertical section (P3: flat, generous)
    =========================================================================== */
-.hist-tile {
+.hist-event-tile {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-4) var(--space-4) var(--space-3);
-  background: var(--hist-bg-card);
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  min-height: 200px;
-  box-shadow: var(--hist-doc-edge);
-  opacity: 0;
-  animation: histTileIn 700ms var(--ease-document-settle) both;
-}
-
-/* ── Tile entrance — scale + fade + slight blur ── */
-@keyframes histTileIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.97);
-    filter: blur(3px);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(-1px) scale(1.003);
-    filter: blur(0);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-/* ===========================================================================
-   Published Tile — BOOK Architecture
-   =========================================================================== */
-.hist-tile--published.hist-tile--book {
-  border: 1px solid var(--hist-border-subtle);
-  perspective: 1200px;
-  transform-style: preserve-3d;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 0;
-  overflow: visible;
-  transform: rotateY(-2deg);
-  box-shadow:
-    4px 2px 12px rgba(0, 0, 0, 0.12),
-    1px 1px 3px rgba(0, 0, 0, 0.08);
-  transition:
-    transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 400ms var(--ease-cinematic),
-    filter 300ms var(--ease-cinematic),
-    clip-path 300ms var(--ease-cinematic);
+  background: var(--hist-bg-card);
+  box-shadow: var(--hist-doc-edge);
+  overflow: hidden;
+  transition: filter 400ms var(--ease-cinematic), transform 300ms var(--ease-cinematic);
 }
 
-/* ── Spine — left edge, severity colored ── */
-.hist-tile__spine {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 6px;
-  background: var(--hist-accent);
-  border-radius: 3px 0 0 3px;
-  box-shadow: inset -1px 0 3px rgba(0, 0, 0, 0.25);
-  z-index: 4;
-  transition: box-shadow 400ms var(--ease-cinematic);
+/* Rack focus on scroll — active tile sharp, others soften (P3) */
+.hist-event-tile--blurred {
+  filter: blur(1px) brightness(0.92);
+  transform: scale(0.98);
 }
 
-.hist-tile--severity-catastrophic .hist-tile__spine { background: #8B0000; }
-.hist-tile--severity-critical .hist-tile__spine     { background: #B44C00; }
-.hist-tile--severity-major .hist-tile__spine         { background: var(--hist-brass); }
-:root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__spine { background: #E04040; }
-:root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__spine     { background: #D47030; }
-
-/* ── Page edge — right side, stacked page lines ── */
-.hist-tile__page-edge {
-  position: absolute;
-  right: -3px;
-  top: 4px;
-  bottom: 4px;
-  width: 3px;
-  background: repeating-linear-gradient(
-    180deg,
-    var(--hist-paper-fixed) 0px,
-    var(--hist-paper-fixed) 1px,
-    var(--hist-border) 1px,
-    var(--hist-border) 1.5px
-  );
-  border-radius: 0 1px 1px 0;
-  opacity: 0.6;
-  z-index: 1;
-  transition: opacity 400ms var(--ease-cinematic);
-}
-
-/* ── Cover art — full-width header band, archival filter ── */
-.hist-tile__cover-art {
+/* ── Photo — full width, archival grade ── */
+.hist-event-tile__photo {
   width: 100%;
-  height: 110px;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   position: relative;
-  border-bottom: 1px solid var(--hist-border-subtle);
-  /* Fallback gradient when image fails to load or is loading */
-  background:
-    linear-gradient(
-      135deg,
-      var(--hist-paper-deep) 0%,
-      var(--hist-bg-secondary) 40%,
-      var(--hist-border-subtle) 70%,
-      var(--hist-paper-deep) 100%
-    );
+  background: var(--hist-paper-deep);
 }
 
-.hist-tile__cover-img {
+.hist-event-tile__photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: sepia(0.2) saturate(0.4) contrast(1.1) brightness(0.9);
-  transition: filter 400ms var(--ease-cinematic);
+  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
+  transition: transform 8s linear;
 }
 
-/* ── Front Cover — hinges on left spine ── */
-.hist-tile__cover {
-  position: relative;
-  z-index: 2;
-  background: var(--hist-bg-card);
-  transform-origin: left center;
-  backface-visibility: hidden;
-  transition: transform 650ms cubic-bezier(0.42, 0, 0.12, 1.15);
+/* Ken Burns slow zoom when tile is in viewport */
+.hist-event-tile:not(.hist-event-tile--blurred) .hist-event-tile__photo img {
+  transform: scale(1.04);
+}
+
+.hist-event-tile__photo-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--hist-paper-deep) 0%, var(--hist-bg-secondary) 50%, var(--hist-paper-deep) 100%);
+}
+
+/* ── Body — below photo ── */
+.hist-event-tile__body {
+  padding: var(--space-4) var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .hist-event-tile__body {
+    padding: var(--space-5) var(--space-6);
+  }
+}
+
+/* ── Date ── */
+.hist-event-tile__date {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--hist-brass);
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-1);
+}
+
+/* ── Title ── */
+.hist-event-tile__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-1);
+}
+
+/* ── Subtitle ── */
+.hist-event-tile__subtitle {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--hist-ink-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+/* ── DIVERGENCE TEASER — THE LARGEST TEXT, the hook (P4) ── */
+.hist-event-tile__divergence {
+  font-family: var(--font-structural);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--hist-ink);
+  border-left: 3px solid var(--hist-accent);
+  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  margin: var(--space-3) 0;
+  quotes: none;
+}
+
+/* ── Blurb — punchy context paragraph ── */
+.hist-event-tile__blurb {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-3);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Perspectives — dot + name row ── */
+.hist-event-tile__perspectives {
   display: flex;
-  flex-direction: column;
-  min-height: 200px;
-  border-left: 6px solid transparent;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
-/* ── Pages behind the cover ── */
-.hist-tile__pages {
-  position: absolute;
-  inset: 0;
-  background: var(--hist-bg-card);
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(0, 0, 0, 0.02) 3px,
-    rgba(0, 0, 0, 0.02) 4px
-  );
-  border-left: 6px solid var(--hist-accent);
-  z-index: 1;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 300ms var(--ease-cinematic);
+.hist-event-tile__persp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--hist-ink-secondary);
+  letter-spacing: 0.02em;
 }
 
-.hist-tile--severity-catastrophic .hist-tile__pages { border-left-color: #8B0000; }
-.hist-tile--severity-critical .hist-tile__pages     { border-left-color: #B44C00; }
-.hist-tile--severity-major .hist-tile__pages         { border-left-color: var(--hist-brass); }
-:root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__pages { border-left-color: #E04040; }
-:root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__pages     { border-left-color: #D47030; }
+.hist-event-tile__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 
-.hist-tile__pages-content {
+/* ── Stark data — death toll / displaced ── */
+.hist-event-tile__stark {
   display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: var(--space-4) var(--space-4) var(--space-3);
-  padding-left: calc(var(--space-4) + 2px);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
-/* ── Severity accent label — inline in meta row ── */
-.hist-tile--book .hist-tile__accent-label {
+.hist-event-tile__stark-figure {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── CTA — specific, prominent, full-width ── */
+.hist-event-tile__cta {
+  display: block;
+  width: 100%;
   font-family: var(--font-meta);
-  font-size: 0.55rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-ink-muted);
-  white-space: nowrap;
-  opacity: 0.7;
+  letter-spacing: 0.10em;
+  text-align: center;
+  color: var(--hist-paper-fixed, #F2EDE0);
+  background: var(--hist-accent);
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 200ms ease;
 }
 
-/* ── HOVER — Book lifts off the table ── */
-.hist-tile--published.hist-tile--book:hover,
-.hist-tile--published.hist-tile--book:focus-visible {
-  transform: translateY(-4px) rotateY(-4deg);
-  box-shadow:
-    6px 4px 20px rgba(0, 0, 0, 0.18),
-    2px 2px 6px rgba(0, 0, 0, 0.10);
-  z-index: 3;
+.hist-event-tile__cta:hover {
+  background: var(--hist-accent-bright, #7A5B47);
 }
 
-.hist-tile--published.hist-tile--book:hover .hist-tile__page-edge {
-  opacity: 1;
-}
-
-.hist-tile--published.hist-tile--book:hover .hist-tile__spine {
-  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.35);
-}
-
-.hist-tile--published.hist-tile--book:hover .hist-tile__cover-img {
-  filter: sepia(0.15) saturate(0.5) contrast(1.1) brightness(0.95);
-}
-
-.hist-tile--published.hist-tile--book:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 4px;
-}
-
-.hist-tile--published.hist-tile--book:active:not(.hist-tile--opening) {
-  transform: translateY(-2px) rotateY(-3deg);
+.hist-event-tile__cta:active {
+  transform: scale(0.98);
   transition: transform 80ms ease-out;
 }
 
-/* ── EXPANDED (hover) — Cover peels open to reveal pages ── */
-.hist-tile--expanded .hist-tile__cover {
-  transform: perspective(1200px) rotateY(-60deg);
+.hist-event-tile__cta:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
 }
 
-/* ── OPENING (click) — Cover swings fully open on spine hinge ── */
-.hist-tile--opening .hist-tile__cover {
-  transform: perspective(1200px) rotateY(-130deg);
+/* ===========================================================================
+   Story Overlay — Full-screen with FLIP morph (P2: one surface)
+   =========================================================================== */
+.hist-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--hist-bg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  animation: histOverlayIn 300ms var(--ease-cinematic) both;
 }
 
-.hist-tile--expanded .hist-tile__pages {
+.hist-overlay--instant {
+  animation: none;
+}
+
+@keyframes histOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Close button — top-left, fixed */
+.hist-overlay__close {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 101;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--hist-bg) 80%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--hist-border-subtle);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--hist-ink-secondary);
+  transition: color 200ms, background 200ms;
+}
+
+.hist-overlay__close:hover {
+  color: var(--hist-accent);
+  background: color-mix(in srgb, var(--hist-bg) 95%, transparent);
+}
+
+.hist-overlay__close:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* Content — L-cut stagger after FLIP morph.
+   Morph targets EventDetail's .hist-hero__image via DOM query. */
+.hist-overlay__content {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 500ms var(--ease-cinematic), transform 500ms var(--ease-cinematic);
+}
+
+.hist-overlay__content--visible {
   opacity: 1;
+  transform: translateY(0);
 }
 
-.hist-tile--opening .hist-tile__pages {
+.hist-overlay--instant .hist-overlay__content {
   opacity: 1;
-}
-
-.hist-tile--opening.hist-tile--published.hist-tile--book {
-  transform: translateY(-6px) rotateY(0deg);
-  box-shadow:
-    8px 6px 28px rgba(0, 0, 0, 0.22),
-    2px 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-/* ── Rack focus — camera pulls focus to hovered book ── */
-.hist-dossier-grid:hover .hist-tile--published.hist-tile--book:not(:hover):not(:focus-within) {
-  filter: blur(1.5px) brightness(0.92);
-  transform: scale(0.97) rotateY(-2deg);
-}
-
-/* Legacy accent bar — hidden on book tiles */
-.hist-tile--book .hist-tile__accent {
-  display: none;
+  transform: none;
+  transition: none;
 }
 
 /* ── Classified section divider ── */
@@ -2174,7 +2170,7 @@
   align-items: center;
   gap: var(--space-3);
   margin: var(--space-6) 0 var(--space-4);
-  max-width: 1100px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -2196,385 +2192,79 @@
   white-space: nowrap;
 }
 
-/* Classified grid — smaller tiles */
-.hist-dossier-grid--classified {
+/* ===========================================================================
+   Classified Feed — Grid for redacted tiles
+   =========================================================================== */
+.hist-classified-feed {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-3);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-4) 0;
 }
 
-@media (min-width: 1024px) {
-  .hist-dossier-grid--classified {
-    grid-template-columns: repeat(4, 1fr);
+@media (min-width: 768px) {
+  .hist-classified-feed {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Legacy severity accent colors (for non-book tiles) */
-.hist-tile--severity-catastrophic .hist-tile__accent { background: #8B0000; }
-.hist-tile--severity-critical .hist-tile__accent     { background: #B44C00; }
-.hist-tile--severity-major .hist-tile__accent         { background: var(--hist-brass); }
-:root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__accent { background: #E04040; }
-:root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__accent     { background: #D47030; }
+@media (min-width: 1024px) {
+  .hist-classified-feed {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 
-/* ── Compact section — always visible ── */
-.hist-tile__compact {
+/* ===========================================================================
+   Classified Tile — Desaturated, redacted, no navigation (P5: texture)
+   =========================================================================== */
+.hist-classified-tile {
   position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--hist-bg-card);
+  border: 1.5px dashed var(--hist-border);
+  filter: grayscale(0.8) opacity(0.5);
+  cursor: pointer;
+  transition:
+    filter 300ms var(--ease-cinematic),
+    border-color 300ms var(--ease-cinematic);
+  overflow: hidden;
 }
 
-/* Book cover compact — padded below cover art */
-.hist-tile--book .hist-tile__compact {
-  padding: var(--space-3) var(--space-4) var(--space-3);
-  padding-left: calc(var(--space-4) + 4px);
-  flex: 1;
-  justify-content: space-between;
+.hist-classified-tile:hover {
+  filter: grayscale(0.6) opacity(0.65);
 }
 
-.hist-tile__date {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-brass);
-  letter-spacing: 0.04em;
+.hist-classified-tile:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
 }
 
-.hist-tile__title {
+/* Click-revealed state */
+.hist-classified-tile--revealed {
+  filter: grayscale(0) opacity(1);
+  border-style: solid;
+  border-color: var(--hist-accent);
+}
+
+.hist-classified-tile__title {
   font-family: var(--font-editorial);
   font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.4rem);
   font-weight: 700;
   line-height: 1.22;
   color: var(--hist-ink);
-  margin: 0;
-}
-
-.hist-tile__blurb {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-secondary);
-  line-height: 1.5;
-  margin: var(--space-1) 0 var(--space-2);
-}
-
-/* ── Meta row: perspective dots + count ── */
-.hist-tile__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
-.hist-tile__dots {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.hist-tile__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.hist-tile--expanded .hist-tile__dot {
-  transform: scale(1.3);
-}
-
-.hist-tile__persp-count {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--hist-ink-muted);
-}
-
-/* ===========================================================================
-   Expanded Section — Smooth grid-rows reveal
-   Desktop: hover-expand. Mobile: always expanded.
-   =========================================================================== */
-.hist-tile__expand {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Single wrapper child — the only direct child that collapses/expands */
-.hist-tile__expand-inner {
-  overflow: hidden;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.hist-tile--expanded .hist-tile__expand {
-  grid-template-rows: 1fr;
-}
-
-/* Inner wrapper for expanded content — opacity stagger */
-.hist-tile__perspectives,
-.hist-tile__divergence-teaser,
-.hist-tile__intel,
-.hist-tile__stark,
-.hist-tile__cta {
-  opacity: 0;
-  transform: translateY(6px);
-  transition:
-    opacity 350ms var(--ease-cinematic),
-    transform 350ms var(--ease-cinematic);
-}
-
-.hist-tile--expanded .hist-tile__perspectives {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 80ms;
-}
-
-.hist-tile--expanded .hist-tile__divergence-teaser {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 140ms;
-}
-
-.hist-tile--expanded .hist-tile__intel {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 200ms;
-}
-
-.hist-tile--expanded .hist-tile__stark {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 260ms;
-}
-
-.hist-tile--expanded .hist-tile__cta {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 320ms;
-}
-
-/* Book tiles: old expand panel is not used, content lives in __pages */
-.hist-tile--book .hist-tile__expand {
-  display: none;
-}
-
-/* ── Perspective names — horizontal list with staggered reveal ── */
-.hist-tile__perspectives {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  padding-top: var(--space-3);
-  margin-bottom: var(--space-2);
-}
-
-.hist-tile__persp-name {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  opacity: 0;
-  transform: translateX(-4px);
-  transition:
-    opacity 300ms var(--ease-cinematic),
-    transform 300ms var(--ease-cinematic);
-}
-
-/* Each name has its own stagger delay (set via inline style) */
-.hist-tile--expanded .hist-tile__persp-name {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Dot separator between perspective names */
-.hist-tile__persp-name + .hist-tile__persp-name::before {
-  content: "\00B7";
-  margin-right: var(--space-1);
-  color: var(--hist-ink-muted);
-  opacity: 0.5;
-}
-
-/* ── Divergence teaser — italic clash line ── */
-.hist-tile__divergence-teaser {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-style: italic;
-  color: var(--hist-ink-secondary);
-  line-height: 1.5;
   margin: 0 0 var(--space-2);
-  padding-left: var(--space-3);
-  border-left: 2px solid var(--hist-accent-ghost);
 }
 
-/* ── Intel row — mission metadata ── */
-.hist-tile__intel {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-}
-
-.hist-tile__intel-item {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.hist-tile__intel-label {
-  font-family: var(--font-data);
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--hist-ink-muted);
-}
-
-.hist-tile__intel-value {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--hist-ink);
-  letter-spacing: 0.02em;
-}
-
-.hist-tile__intel-value--high { color: #8B0000; }
-.hist-tile__intel-value--moderate { color: var(--hist-brass); }
-.hist-tile__intel-value--low { color: var(--hist-persp-c); }
-
-:root[data-mode="dark"] .hist-tile__intel-value--high { color: #E04040; }
-
-/* ── Stark data — death toll / displaced ── */
-.hist-tile__stark {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-}
-
-.hist-tile__stark-figure {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  color: var(--hist-ink-secondary);
-  letter-spacing: 0.01em;
-}
-
-/* ── CTA — "Enter the dossier" ── */
-/* CTA — prominent button. This IS the action we want. */
-.hist-tile__cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-paper-fixed, #F2EDE0);
-  background: var(--hist-accent);
-  text-decoration: none;
-  padding: var(--space-3) var(--space-4);
-  margin-top: var(--space-2);
-  border: none;
-  min-height: 44px;
-  transition:
-    background 200ms ease,
-    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.hist-tile__cta:hover {
-  background: var(--hist-accent-bright, #7A5B47);
-  transform: translateX(2px);
-}
-
-.hist-tile__cta:active {
-  transform: scale(0.97);
-}
-
-.hist-tile__cta:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-tile__cta-arrow {
-  display: inline-block;
-  font-size: 1.1em;
-  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.hist-tile__cta:hover .hist-tile__cta-arrow {
-  transform: translateX(6px);
-}
-
-/* ── "START HERE" focus pull — blur resolves to sharp ── */
-.hist-tile__start {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  font-family: var(--font-data);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: var(--hist-accent);
-  padding: 2px 8px;
-  border: 1px solid var(--hist-accent);
-  border-radius: 2px;
-  z-index: 2;
-  animation: histStartFocusPull 2s var(--ease-cinematic) both;
-}
-
-@keyframes histStartFocusPull {
-  0%   { filter: blur(2px); opacity: 0; }
-  40%  { filter: blur(1px); opacity: 0.6; }
-  100% { filter: blur(0);   opacity: 1; }
-}
-
-/* ===========================================================================
-   Classified Tile — Locked, desaturated, dashed border
-   =========================================================================== */
-.hist-tile--classified {
-  background: var(--hist-bg-card);
-  border: 1.5px dashed var(--hist-border);
-  opacity: 0.60;
-  cursor: pointer;
-  perspective: 800px;
-  transition:
-    opacity 300ms var(--ease-cinematic),
-    border-color 300ms var(--ease-cinematic);
-  min-height: auto;
-}
-
-.hist-tile--classified:hover {
-  opacity: 0.75;
-}
-
-.hist-tile--classified:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 4px;
-}
-
-/* Click-revealed state */
-.hist-tile--classified.hist-tile--revealed {
-  opacity: 1;
-  border-style: solid;
-  border-color: var(--hist-accent);
-}
-
-.hist-tile__title--redacted {
-  color: var(--hist-ink-muted);
-}
-
-.hist-tile__redacted-chars {
+.hist-classified-tile__redacted {
   opacity: 0.12;
   letter-spacing: -0.02em;
 }
 
-/* ── Contradictory quotes ── */
-.hist-tile__quote {
+.hist-classified-tile__quote {
   font-family: var(--font-data);
   font-size: var(--text-sm);
   font-style: italic;
@@ -2585,28 +2275,40 @@
   border-left: 2px solid var(--hist-border);
 }
 
-.hist-tile__quote--b {
+.hist-classified-tile__quote--b {
   border-left-color: var(--hist-accent);
   color: var(--hist-ink);
 }
 
-/* ── Classified badge ── */
-.hist-tile__badge {
+.hist-classified-tile__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.hist-classified-tile__date {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.04em;
+}
+
+.hist-classified-tile__badge {
   font-family: var(--font-data);
   font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   padding: 1px 6px;
-  border: 1px solid var(--hist-ink-muted);
-  color: var(--hist-ink-muted);
+  border: 1px solid var(--hist-brass);
+  color: var(--hist-brass);
+  opacity: 0.7;
+  transform: rotate(-2deg);
 }
 
-.hist-tile__badge--classified {
-  opacity: 0.6;
-}
-
-/* ── Flip reveal overlay ── */
-.hist-tile__reveal {
+/* Flip reveal overlay */
+.hist-classified-tile__reveal {
   position: absolute;
   inset: 0;
   display: flex;
@@ -2625,12 +2327,12 @@
   z-index: 3;
 }
 
-.hist-tile--revealed .hist-tile__reveal {
+.hist-classified-tile--revealed .hist-classified-tile__reveal {
   opacity: 1;
   transform: rotateY(0deg);
 }
 
-.hist-tile__reveal-title {
+.hist-classified-tile__reveal-title {
   font-family: var(--font-editorial);
   font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
   font-weight: 700;
@@ -2639,7 +2341,7 @@
   padding: var(--space-4);
 }
 
-.hist-tile__reveal-hint {
+.hist-classified-tile__reveal-hint {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
   color: var(--hist-ink-muted);
@@ -2647,203 +2349,68 @@
 }
 
 /* ===========================================================================
-   Mobile — Tiles start expanded (no hover available)
+   Mobile — Tiles always visible (no hover)
    =========================================================================== */
 @media (max-width: 767px) {
-  /* Published tiles are always expanded on mobile */
-  .hist-tile--published .hist-tile__expand {
-    grid-template-rows: 1fr;
-    transition: none;
-  }
-
-  .hist-tile--published .hist-tile__expand-inner {
-    overflow: visible;
-  }
-
-  .hist-tile--published .hist-tile__perspectives,
-  .hist-tile--published .hist-tile__divergence-teaser,
-  .hist-tile--published .hist-tile__intel,
-  .hist-tile--published .hist-tile__stark,
-  .hist-tile--published .hist-tile__cta {
-    opacity: 1;
+  .hist-event-tile--blurred {
+    filter: none;
     transform: none;
-    transition: none;
   }
 
-  .hist-tile--published .hist-tile__persp-name {
-    opacity: 1;
+  .hist-classified-tile__badge {
     transform: none;
-    transition: none;
-  }
-
-  .hist-tile--published .hist-tile__hero {
-    opacity: 0.12;
-  }
-
-  .hist-tile--published .hist-tile__accent {
-    height: 100%;
-  }
-
-  .hist-tile__start {
-    display: none;
-  }
-
-  /* Book tiles on mobile: faster opening, remove rest angle for touch */
-  .hist-tile--published.hist-tile--book {
-    transform: rotateY(0deg);
-  }
-
-  .hist-tile--published.hist-tile--book:hover,
-  .hist-tile--published.hist-tile--book:focus-visible {
-    transform: translateY(-2px) rotateY(0deg);
-  }
-
-  /* Expanded (first tap) — cover peels to reveal pages */
-  .hist-tile--expanded .hist-tile__cover {
-    transform: perspective(1200px) rotateY(-50deg);
-    transition-duration: 400ms;
-  }
-
-  .hist-tile--opening .hist-tile__cover {
-    transition-duration: 350ms;
-  }
-
-  .hist-tile--opening.hist-tile--published.hist-tile--book {
-    transform: translateY(-4px) rotateY(0deg);
-  }
-
-  /* Cover art shorter on mobile */
-  .hist-tile__cover-art {
-    height: 90px;
   }
 }
 
 /* ===========================================================================
-   Reduced Motion — All tiles visible, no animations
+   Reduced Motion — Event tiles, overlay, classified
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-brief {
-    opacity: 1;
-    animation: none;
-    transform: none;
+  .hist-event-tile {
+    transition: none;
   }
 
-  .hist-tile {
-    animation: none;
-    opacity: 1;
+  .hist-event-tile--blurred {
     filter: none;
     transform: none;
   }
 
-  .hist-tile--published:hover,
-  .hist-tile--published:active {
-    transform: none;
-    filter: none;
+  .hist-event-tile__photo img {
     transition: none;
-  }
-
-  /* Disable rack focus on tiles */
-  .hist-dossier-grid:hover .hist-tile--published:not(:hover):not(:focus-within) {
-    filter: none;
     transform: none;
   }
 
-  /* Show expanded content by default */
-  .hist-tile--published .hist-tile__expand {
-    grid-template-rows: 1fr;
+  .hist-event-tile__cta,
+  .hist-event-tile__cta:hover,
+  .hist-event-tile__cta:active {
     transition: none;
-  }
-
-  .hist-tile--published .hist-tile__expand-inner {
-    overflow: visible;
-  }
-
-  .hist-tile--published .hist-tile__perspectives,
-  .hist-tile--published .hist-tile__divergence-teaser,
-  .hist-tile--published .hist-tile__intel,
-  .hist-tile--published .hist-tile__stark,
-  .hist-tile--published .hist-tile__cta {
-    opacity: 1;
     transform: none;
-    transition: none;
   }
 
-  .hist-tile--published .hist-tile__persp-name {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  .hist-tile__reveal {
-    transition: none;
-  }
-
-  .hist-tile__dot {
-    transition: none;
-  }
-
-  .hist-tile__cta-arrow {
-    transition: none;
-  }
-
-  .hist-tile__start {
+  .hist-overlay {
     animation: none;
     opacity: 1;
-    filter: none;
   }
 
-  .hist-tile__hero {
-    transition: none;
-    opacity: 0.08;
-  }
-
-  .hist-tile__accent {
-    transition: none;
-    height: 100%;
-  }
-
-  /* Book tiles: no 3D transforms, no opening animation */
-  .hist-tile--published.hist-tile--book {
-    transform: none;
-    transition: none;
-  }
-
-  .hist-tile--published.hist-tile--book:hover,
-  .hist-tile--published.hist-tile--book:focus-visible {
-    transform: none;
-  }
-
-  .hist-tile__cover {
-    transition: none;
-  }
-
-  .hist-tile--expanded .hist-tile__cover,
-  .hist-tile--opening .hist-tile__cover {
-    transform: none;
-  }
-
-  /* Pages visible immediately when expanded or opening */
-  .hist-tile--expanded .hist-tile__pages,
-  .hist-tile--opening .hist-tile__pages {
+  .hist-overlay__content {
     opacity: 1;
+    transform: none;
     transition: none;
   }
 
-  .hist-tile__spine,
-  .hist-tile__page-edge {
+  .hist-classified-tile {
     transition: none;
   }
 
-  .hist-tile__cover-img {
+  .hist-classified-tile__reveal {
     transition: none;
   }
 
-  .hist-tile__pages {
-    transition: none;
+  .hist-classified-tile:active {
+    transform: none;
   }
 }
 
-/* Featured Events — REMOVED (dead code, Round 7 cleanup) */
 
 /* ---------------------------------------------------------------------------
    Connected Events — Link list
@@ -3147,8 +2714,8 @@
     transform: none;
   }
 
-  /* Disable rack focus on dossier tiles */
-  .hist-dossier-grid:hover .hist-tile:not(:hover):not(:focus-within) {
+  /* Disable rack focus on event tiles */
+  .hist-event-tile--blurred {
     filter: none;
     transform: none;
   }
@@ -3219,13 +2786,13 @@
 /* Word-wrap safety on all headline elements */
 .hist-hero__title,
 .hist-event-card__title,
-.hist-redacted__title,
-.hist-tile__title,
+.hist-event-tile__title,
+.hist-classified-tile__title,
 .hist-persp-tab__name,
 .hist-comparison__header,
 .hist-connection__title,
 .hist-compact-timeline__title,
-.hist-tile__reveal-title {
+.hist-classified-tile__reveal-title {
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -3363,11 +2930,11 @@
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   1. DOSSIER TILES — Expansion + click press (now .hist-tile)
+   1. TILES — Click press feedback
    --------------------------------------------------------------------------- */
 
 /* Click press on classified tiles */
-.hist-tile--classified:active {
+.hist-classified-tile:active {
   transform: scale(0.97);
   transition: transform 80ms ease-out;
 }
@@ -3564,12 +3131,13 @@
    REDUCED MOTION — Override remaining interactions
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-tile--classified,
-  .hist-tile--classified:hover,
-  .hist-tile--classified:active {
+  .hist-classified-tile,
+  .hist-classified-tile:hover,
+  .hist-classified-tile:active {
     transform: none;
     transition: none;
     animation: none;
+    filter: none;
   }
 
   .hist-persp-tab,
@@ -3632,14 +3200,8 @@
     transition: none;
   }
 
-  .hist-tile__cta,
-  .hist-tile__cta:hover {
-    transition: none;
-    transform: none;
-  }
-
-  .hist-tile__cta-arrow,
-  .hist-tile__cta:hover .hist-tile__cta-arrow {
+  .hist-event-tile__cta,
+  .hist-event-tile__cta:hover {
     transition: none;
     transform: none;
   }
