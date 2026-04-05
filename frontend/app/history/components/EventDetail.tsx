@@ -71,6 +71,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
   const [comparisonPerspId, setComparisonPerspId] = useState<string | null>(null);
   const [contextExpanded, setContextExpanded] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   const eraInfo = ERAS.find((e) => e.id === event.era);
   const activePerspective = event.perspectives.find((p) => p.id === activePerspectiveId);
@@ -102,6 +103,24 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
     return () => observer.disconnect();
   }, []);
 
+  /* Hero depth — recedes as content scrolls into view */
+  useEffect(() => {
+    const heroEl = heroRef.current;
+    if (!heroEl) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          heroEl.classList.add("hist-hero--receded");
+        } else {
+          heroEl.classList.remove("hist-hero--receded");
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(heroEl);
+    return () => observer.disconnect();
+  }, []);
+
   const comparisonPersp = comparisonPerspId
     ? event.perspectives.find((p) => p.id === comparisonPerspId)
     : null;
@@ -114,8 +133,8 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
 
   return (
     <div ref={contentRef}>
-      {/* ── Hero (static, no Ken Burns) ── */}
-      <div className="hist-hero hist-hero--static hist-cold-open--hero">
+      {/* ── Hero (static, depth on scroll) ── */}
+      <div ref={heroRef} className="hist-hero hist-hero--static hist-cold-open--hero">
         {event.heroImage ? (
           <img
             src={event.heroImage}
