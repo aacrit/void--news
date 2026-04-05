@@ -686,6 +686,22 @@
   outline-offset: 2px;
 }
 
+/* Focus-visible — keyboard accessibility for all player controls */
+.fp__pill:focus-visible,
+.fp__play:focus-visible,
+.fp__play-lg:focus-visible,
+.fp__skip:focus-visible,
+.fp__speed:focus-visible,
+.fp__minimize:focus-visible,
+.fp__dismiss:focus-visible,
+.fp__detach:focus-visible,
+.fp__seek-sec:focus-visible,
+.fp__track:focus-visible,
+.fp__bcast-summary:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
 .fp__seek-time {
   display: flex;
   justify-content: space-between;
@@ -1213,21 +1229,21 @@
 }
 
 .fp__bcast-lean--left {
-  color: var(--lean-left, #3b82f6);
-  border-color: color-mix(in srgb, var(--lean-left, #3b82f6) 30%, transparent);
-  background: color-mix(in srgb, var(--lean-left, #3b82f6) 6%, transparent);
+  color: var(--bias-left);
+  border-color: color-mix(in srgb, var(--bias-left) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-left) 6%, transparent);
 }
 
 .fp__bcast-lean--center {
-  color: var(--lean-center, #a3a3a3);
-  border-color: color-mix(in srgb, var(--lean-center, #a3a3a3) 30%, transparent);
-  background: color-mix(in srgb, var(--lean-center, #a3a3a3) 6%, transparent);
+  color: var(--bias-center);
+  border-color: color-mix(in srgb, var(--bias-center) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-center) 6%, transparent);
 }
 
 .fp__bcast-lean--right {
-  color: var(--lean-right, #ef4444);
-  border-color: color-mix(in srgb, var(--lean-right, #ef4444) 30%, transparent);
-  background: color-mix(in srgb, var(--lean-right, #ef4444) 6%, transparent);
+  color: var(--bias-right);
+  border-color: color-mix(in srgb, var(--bias-right) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-right) 6%, transparent);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1616,16 +1632,16 @@
 }
 
 .fp__track-lean--left {
-  color: var(--lean-left, #3b82f6);
-  background: color-mix(in srgb, var(--lean-left, #3b82f6) 10%, transparent);
+  color: var(--bias-left);
+  background: color-mix(in srgb, var(--bias-left) 10%, transparent);
 }
 .fp__track-lean--center {
-  color: var(--lean-center, #a3a3a3);
-  background: color-mix(in srgb, var(--lean-center, #a3a3a3) 10%, transparent);
+  color: var(--bias-center);
+  background: color-mix(in srgb, var(--bias-center) 10%, transparent);
 }
 .fp__track-lean--right {
-  color: var(--lean-right, #ef4444);
-  background: color-mix(in srgb, var(--lean-right, #ef4444) 10%, transparent);
+  color: var(--bias-right);
+  background: color-mix(in srgb, var(--bias-right) 10%, transparent);
 }
 
 /* Sub-meta: time, duration, hosts */

@@ -301,7 +301,8 @@
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  min-height: 32px;
+  min-height: 44px;
+  min-width: 44px;
   transition: border-color 150ms var(--ease-out), color 150ms var(--ease-out);
 }
 
@@ -934,4 +935,13 @@
   border: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
   border-radius: 2px;
   flex-shrink: 0;
+}
+
+/* Focus-visible — keyboard accessibility for mobile brief controls */
+.mbp__play:focus-visible,
+.mbp__more:focus-visible,
+.mbp__prev-toggle:focus-visible,
+.mbp__ep:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }

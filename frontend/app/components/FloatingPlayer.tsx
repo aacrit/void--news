@@ -126,6 +126,31 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     return () => document.documentElement.removeAttribute("data-onair-pane");
   }, [view, closing]);
 
+  /* ---- Escape key dismisses expanded/broadcast views ---- */
+  useEffect(() => {
+    if (view === "compact") return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (view === "broadcast") {
+          const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+          if (isDesktop) {
+            setClosing(true);
+            setTimeout(() => { setClosing(false); setView("compact"); }, 300);
+          } else {
+            setView("compact");
+          }
+        } else {
+          const isMobile = window.matchMedia("(max-width: 767px)").matches;
+          if (isMobile) setPlayerVisible(false);
+          else setView("compact");
+        }
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [view, setPlayerVisible]);
+
   if (!brief || !brief.audio_url || !isPlayerVisible) return null;
 
   const displayDuration = brief.audio_duration_seconds || duration;
