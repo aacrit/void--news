@@ -8,14 +8,13 @@ import KeyFacts from "./KeyFacts";
 import PerspectiveSelector from "./PerspectiveSelector";
 import PerspectiveView from "./PerspectiveView";
 import PerspectiveComparison from "./PerspectiveComparison";
-import MediaGallery from "./MediaGallery";
 import CompactTimeline from "./CompactTimeline";
 
 /* ===========================================================================
    EventDetail — The core event detail component
-   Full-bleed hero with Ken Burns + archival grade. Title card overlay.
-   Context panel, KeyFacts, PerspectiveSelector, active PerspectiveView,
-   comparison mode, media gallery, connected events, timeline context.
+   Static hero with archival grade. Title card overlay.
+   Perspectives (THE PRODUCT) immediately after hero.
+   Collapsible context, KeyFacts, connected events, compact timeline.
    =========================================================================== */
 
 interface EventDetailProps {
@@ -63,17 +62,13 @@ function InkRule() {
   );
 }
 
-/* ── Atmospheric Haze — Depth separator between content layers ── */
-function SectionHaze() {
-  return <div className="hist-section-haze" aria-hidden="true" />;
-}
-
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
   const [activePerspectiveId, setActivePerspectiveId] = useState(
     event.perspectives[0]?.id ?? ""
   );
   const [comparisonMode, setComparisonMode] = useState(false);
   const [comparisonPerspId, setComparisonPerspId] = useState<string | null>(null);
+  const [contextExpanded, setContextExpanded] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const eraInfo = ERAS.find((e) => e.id === event.era);
@@ -110,15 +105,21 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
     ? event.perspectives.find((p) => p.id === comparisonPerspId)
     : null;
 
+  /* Split context into sentences for collapsible display */
+  const contextParagraphs = event.contextNarrative.split("\n");
+  const firstParaText = contextParagraphs[0] || "";
+  const firstSentences = firstParaText.split(/(?<=\.)\s+/).slice(0, 3).join(" ");
+  const hasMoreContext = firstParaText.length > firstSentences.length || contextParagraphs.length > 1;
+
   return (
     <div ref={contentRef}>
-      {/* ── Hero ── */}
-      <div className="hist-hero hist-cold-open--hero">
+      {/* ── Hero (static, no Ken Burns) ── */}
+      <div className="hist-hero hist-hero--static hist-cold-open--hero">
         {event.heroImage ? (
           <img
             src={event.heroImage}
             alt={event.heroCaption ?? event.title}
-            className="hist-hero__image"
+            className="hist-hero__image hist-hero__image--static"
             onError={(e) => {
               e.currentTarget.style.display = "none";
             }}
@@ -152,26 +153,8 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
 
       {/* ── Main Content ── */}
       <div className="hist-main hist-grade">
-        {/* Context: What Happened */}
-        <section className="hist-reveal hist-cold-open--content" aria-label="What happened">
-          <h2 className="hist-section-label">What Happened</h2>
-          <div className="hist-context">
-            {event.contextNarrative.split("\n").map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
-        </section>
-
-        {/* Key Facts */}
-        <div className="hist-reveal">
-          <KeyFacts event={event} />
-        </div>
-
-        <SectionHaze />
-        <InkRule />
-
-        {/* ── Perspectives ── */}
-        <section className="hist-reveal" aria-label="Perspectives">
+        {/* 1. PERSPECTIVES — THE PRODUCT (immediately after hero) */}
+        <section className="hist-reveal hist-cold-open--content" aria-label="Perspectives">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
             <h2 className="hist-section-label" style={{ marginBottom: 0 }}>
               Perspectives
@@ -196,7 +179,6 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
             activeId={activePerspectiveId}
             onSelect={(id) => {
               setActivePerspectiveId(id);
-              /* In comparison mode, rotate the comparison perspective */
               if (comparisonMode && id === comparisonPerspId) {
                 const other = event.perspectives.find(
                   (p) => p.id !== id && p.id !== comparisonPerspId
@@ -260,17 +242,37 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           ) : null}
         </section>
 
-        <SectionHaze />
         <InkRule />
 
-        {/* ── Media Gallery ── */}
-        {event.media.length > 0 && (
-          <div className="hist-reveal">
-            <MediaGallery media={event.media} />
+        {/* 2. Context: What Happened (collapsible) */}
+        <section className="hist-reveal" aria-label="What happened">
+          <h2 className="hist-section-label">What Happened</h2>
+          <div className="hist-context">
+            {contextExpanded ? (
+              contextParagraphs.map((para, i) => (
+                <p key={i}>{para}</p>
+              ))
+            ) : (
+              <p>{firstSentences}</p>
+            )}
           </div>
-        )}
+          {hasMoreContext && (
+            <button
+              className="hist-context-toggle"
+              onClick={() => setContextExpanded(!contextExpanded)}
+              aria-expanded={contextExpanded}
+            >
+              {contextExpanded ? "Show less" : "Read more"}
+            </button>
+          )}
+        </section>
 
-        {/* ── Connected Events ── */}
+        {/* 3. Key Facts (compact) */}
+        <div className="hist-reveal">
+          <KeyFacts event={event} />
+        </div>
+
+        {/* 4. Connected Events */}
         {event.connections.length > 0 && (
           <section className="hist-reveal hist-connections" aria-label="Connected events">
             <h2 className="hist-section-label">Connected Events</h2>
@@ -304,10 +306,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           </section>
         )}
 
-        <SectionHaze />
-        <InkRule />
-
-        {/* ── Compact Timeline: Prev / Next ── */}
+        {/* 5. Compact Timeline: Prev / Next */}
         <div className="hist-reveal">
           <CompactTimeline events={allEvents} currentSlug={event.slug} />
         </div>
