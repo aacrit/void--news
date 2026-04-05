@@ -549,16 +549,7 @@ export const REDACTED_EVENTS: RedactedEvent[] = [
     quoteB: "\"I saw the tanks. I saw the bodies. Then the internet went dark and the textbooks were rewritten.\" — Anonymous student protester, 2019 interview",
     dateHint: "1989",
   },
-  {
-    id: "redacted-transatlantic-slave",
-    slug: "transatlantic-slave-trade",
-    title: "Transatlantic Slave Trade",
-    era: "early-modern",
-    regions: ["africa", "americas", "europe"],
-    quoteA: "\"The trade in Negro slaves is sanctioned by the laws of God and man.\" — Edward Long, History of Jamaica, 1774",
-    quoteB: "\"I was born at Dukandarra, in Guinea. I belonged to a large family. I was kidnapped.\" — Venture Smith, 1798",
-    dateHint: "1526-1867",
-  },
+  /* Transatlantic Slave Trade removed — now a published event, not redacted */
   {
     id: "redacted-holodomor",
     slug: "holodomor-1932",
