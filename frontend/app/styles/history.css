@@ -504,11 +504,8 @@
   }
 }
 
-/* ---------------------------------------------------------------------------
-   Lectern Turn Keyframes — Y-axis rotation, 4deg, 450ms with beat
-   Page-turn feeling, as if turning a heavy archival document on a lectern.
-   --------------------------------------------------------------------------- */
-@keyframes histLecternTurn {
+/* histLecternTurn — REMOVED (dead code after book tile rewrite)
+@keyframes histLecternTurn_DEAD {
   0% {
     transform: perspective(800px) rotateY(4deg) scale(0.98);
     opacity: 0;
@@ -1976,7 +1973,7 @@
 /* ── Title ── */
 .hist-event-tile__title {
   font-family: var(--font-editorial);
-  font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
   font-weight: 700;
   line-height: 1.15;
   color: var(--hist-ink);
@@ -1996,7 +1993,7 @@
 /* ── DIVERGENCE TEASER — THE LARGEST TEXT, the hook (P4) ── */
 .hist-event-tile__divergence {
   font-family: var(--font-structural);
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-size: clamp(1.15rem, 1rem + 0.7vw, 1.5rem);
   font-style: italic;
   line-height: 1.5;
   color: var(--hist-ink);
