@@ -295,6 +295,7 @@
 .film-world--sources { border-left: 3px solid var(--bias-center); }
 .film-world--onair   { border-left: 3px solid var(--voice-accent, #4DAFA0); }
 .film-world--ship    { border-left: 3px solid var(--accent-warm); }
+.film-world--archive { border-left: 3px solid var(--cin-ash-warm, #78716C); }
 
 .film-worlds__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .film-worlds__cli {
@@ -345,6 +346,10 @@
 .film-preview__wave-bar { flex: 1; border-radius: 1px; background: var(--voice-accent, #4DAFA0); opacity: 0.6; }
 .film-preview__hosts { display: flex; justify-content: center; gap: 6px; font-family: var(--font-data); font-size: 7px; font-weight: 700; color: var(--voice-accent, #4DAFA0); opacity: 0.5; }
 .film-preview--ship { background: var(--bg-primary); }
+.film-preview--archive { background: var(--bg-secondary); position: relative; }
+.film-preview__timeline { position: absolute; left: 16px; top: 6px; bottom: 6px; }
+.film-preview__timeline-line { position: absolute; left: 2px; top: 0; bottom: 0; width: 1px; background: var(--cin-ash-warm, #78716C); opacity: 0.4; }
+.film-preview__timeline-dot { position: absolute; left: 0; width: 5px; height: 5px; border-radius: 50%; background: var(--cin-ash-warm, #78716C); opacity: 0.6; }
 .film-preview__kanban { display: flex; gap: 2px; padding: 4px; height: 100%; }
 .film-preview__kanban-col { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .film-preview__kanban-card { flex: 1; min-height: 8px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 1px; }
