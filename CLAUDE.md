@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-03 (rev 27)
+Last updated: 2026-04-04 (rev 29)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -27,7 +27,7 @@ All generated text MUST embody show-don't-tell. Never assert significance — ju
 Applies to: `cluster_summarizer.py`, `daily_brief_generator.py`, `claude_brief_generator.py` prompts, and all future content generation.
 
 ### Product Family Branding
-CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void --onair` (audio), `void --opinion` (editorial), `void --sources` (spectrum), `void --deep-dive` (analysis), `void --paper` (e-paper). Subtitles show on first encounter (sessionStorage) then fade.
+CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void --onair` (audio), `void --opinion` (editorial), `void --sources` (spectrum), `void --deep-dive` (analysis), `void --paper` (e-paper), `void --weekly` (magazine digest). Subtitles show on first encounter (sessionStorage) then fade.
 
 ### No Personalization — The Newspaper Principle
 void --news is a newspaper, not a feed. Every reader sees the same stories in the same order. The engine decides what is shown based on editorial importance, not user behavior. No reading history tracking, no recommendation algorithms, no "for you" logic, no user accounts. This is a locked architectural decision. Features that adapt content to individual consumption patterns violate the platform's core philosophy.
@@ -87,26 +87,32 @@ Editorial authority + cinematic depth, light, focus, atmosphere. **Clean on arri
 
 **Four type voices**: Editorial (Playfair Display), Structural (Inter), Meta (Barlow Condensed, `--font-meta`), Data (IBM Plex Mono).
 
-**Navigation — "Depth of Field" CTA Hierarchy**: 5 visual layers, each with unique typography and micro-interactions. **Layer 1 (Sharp Focus)**: Edition tabs (`.nav-editions`, `.nav-ed`) — Playfair Display, warm `--cin-amber` underline, no pills, `hapticConfirm`; hidden on mobile. **Layer 2 (Midground)**: Filter Lens (`.nav-lens`, `.nav-lens__*`) — IBM Plex Mono, bracket notation `[ topics ]` `[ ·left ·center ·right ]`, dotted underline active state, `--ease-rack`, `hapticMicro`; hidden on mobile. **Layer 3 (Background)**: Page links (`.nav-pages`, `.nav-page`) — Inter uppercase, departure arrow `→` on hover; Sources, Ship, About. **Special (Magazine)**: Weekly (`.nav-weekly`) — Playfair italic, `--cin-amber`, vertical rule spine. **Ambient (Utility)**: Icon-only (`.nav-util`) — search + theme toggle, `--fg-tertiary`.
+**Navigation — "Depth of Field" CTA Hierarchy (v2)**: Two-row structure with 5 visual layers. **Row 1 (Chrome)**: Logo, dateline + timestamp, page links (`.nav-pages`, `.nav-page`) — Inter uppercase, departure arrow `→` on hover (Sources, Ship, About), **Weekly** (`.nav-weekly`) — Playfair italic, deep red accent (`#B91C1C` light / `#EF5350` dark), vertical rule spine glow + unfold physics on hover, ThemeToggle. **Row 2 (Lens)**: Edition tabs (`.nav-lens__editions`, `.nav-ed`) — Playfair Display, warm `--cin-amber` underline, `hapticConfirm`; hidden on mobile. Filter Lens (`.nav-lens`, `.nav-lens__*`) — IBM Plex Mono, bracket notation `[ topics ]` `[ ·left ·center ·right ]`, dotted underline active state, `--ease-rack`, `hapticMicro`; hidden on mobile. Search bar (`.nav-lens__search`) — expandable (160px compact, 280px on focus), `Cmd+K` kbd hint, opens SearchOverlay. Row 2 has inset shadow texture (recessed behind Row 1). Nav onair button removed (floating player is single audio entry point).
 
 ```
-Row 1: [Logo] [World  US  Europe  South Asia] [dateline] [Sources Ship About] [Weekly] [search theme]
-Row 2: [ topics ▾ ]  [ ·left ·center ·right ]
+Row 1 (Chrome): [Logo] [dateline] [Sources Ship About] [Weekly] [Theme]
+Row 2 (Lens):   [World US Europe South-Asia] [ topics ▾ ] [ ·L ·C ·R ] [Search...]
 ```
 
 **Responsive**: desktop = multi-column newspaper grid, top nav. Mobile = single-column feed, bottom nav, bottom sheets. Touch targets 44px+. Breakpoints: 375/768/1024/1440px.
 
 ### Homepage
-Importance-ranked feed with category and lean filtering (bracket notation in NavBar Layer 2 filter lens). Edition sections: World/US/Europe/South Asia (NavBar Layer 1 typographic tabs). Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
+Importance-ranked feed with category and lean filtering (bracket notation in NavBar Row 2 filter lens). Edition sections: World/US/Europe/South Asia (NavBar Row 2 typographic tabs). Expandable search bar in Row 2 (160px compact, 280px on focus, Cmd+K hint). Daily Brief between nav and Lead Section (blockquote left-border, justified, opinion behind dotted firewall rule). "void --onair" persistent bottom audio player + progress bar.
 
 ### Deep Dive
 Centered popup (desktop 75vw, 80vh; mobile full-screen bottom sheet). Summary as lede (ResizeObserver overflow). Analysis row: Sigil + DeepDiveSpectrum (7-zone gradient, logos at exact lean %) + Press Analysis trigger. BiasInspectorInline (4-axis scorecard). ScoringMethodology ("How we score" collapsible dl/dt/dd, 6 axes). Source Perspectives (agree/diverge grid). FLIP morph animation: double-rAF for open (card rect via `data-story-id` attribute on StoryCard/LeadStory/MobileStoryCard), reverse morph on close (finds source card via DOM query), slide-in fallback when no source rect. Cinematic dramatic shadow, data-settled studio reflection.
 
+### Weekly Page — "void --weekly"
+Magazine-style weekly digest at `/weekly`. **No NavBar** — uses its own sticky topbar (`.wk-topbar`) with `<- [LogoFull]` back link + ThemeToggle (glass blur background). Deep red magazine palette: `--wk-accent: #B91C1C` light / `#EF5350` dark (Economist/TIME inspired). Warmer matte paper background: `#EDE4D0` light (vs main feed `#F0EBDD`), `#1E1A16` dark (vs `#151310`). Film grain at 3x base opacity, tighter vignette (30% start). Sections: red masthead banner (full void logo in cream), cover hero (headline in red accent on page background, organic ink rule, up to 2 stories with drop cap + justified text), timeline (horizontal desktop / vertical mobile with media detection), opinions (3-column grid by lean: left/center/right, lean-colored left borders, no card backgrounds), week in brief (2-column compact story list), inline audio player, archive (issue list with current highlighted), footer. No MobileBottomNav. No collapsible sections. Component: `WeeklyDigest.tsx` (~700 lines TSX), styles: `weekly.css` (~650 lines).
+
+### Film System — Shared Cinematic Scenes (`frontend/app/film/`)
+Unified component library powering both the onboarding prologue and the about manifesto. 6 chapters (~90s prologue, scroll-driven manifesto). Content constants in `data.ts` (CHAPTERS, DIVERGENT_HEADLINES, SIX_AXES, FIRST_PRINCIPLES, PRODUCT_FAMILY, RANKING_SIGNALS, NUMBERS, LANDSCAPE, COMPARISON_SCORES, SIGIL_PARTS, SWEEP_POSITIONS). SVG paths, spring easings, and timing tokens in `constants.ts`. Shared `useReducedMotion.ts` hook. 6 scene components in `film/scenes/`: `SigilBreakdown` (centerpiece: 6-stage animated exploded Sigil view — draw, separate, label, reassemble, activate, hold), `DivergentHeadlines`, `SourceEngine`, `ArticleDifference`, `ProductWorlds`, `TheVerdict`. Each scene accepts `mode: "prologue" | "manifesto"` + `active: boolean`. Styles: `film.css` (`.film-*` namespace, mode-specific overrides via `--prologue`/`--manifesto` suffixes). `OnboardingCarousel.tsx` is a thin wrapper (modal overlay, auto-advance, keyboard nav) importing scenes with `mode="prologue"`. `/about` page is a thin wrapper (scroll-driven IO reveals) importing scenes with `mode="manifesto"` — no forced dark mode. `OnboardingSpotlight.tsx` deleted (dead code).
+
 ### Animation
-Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). Layer-specific: edition tabs use `hapticConfirm` on switch, filter lens uses `--ease-rack` timing + `hapticMicro`, page links use CSS departure arrow slide (4px shift), weekly uses unfold ease on hover. ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
+Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). Layer-specific: edition tabs (Row 2) use `hapticConfirm` on switch, filter lens uses `--ease-rack` timing + `hapticMicro`, page links (Row 1) use CSS departure arrow slide (4px shift), weekly (Row 1) uses spine rule glow + unfold physics on hover, search bar expands 160px to 280px on focus. ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
 
 ### CSS
-Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → responsive → command-center → weekly → about → ship` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav layer classes: `.nav-editions`/`.nav-ed` (Layer 1), `.nav-lens`/`.nav-lens__*` (Layer 2), `.nav-pages`/`.nav-page` (Layer 3), `.nav-weekly` (special), `.nav-util` (ambient) — all in `components.css`.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → mobile-nav → responsive → command-center → weekly → film → about → ship` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav classes: `.nav-pages`/`.nav-page` (Row 1 pages), `.nav-weekly` (Row 1 magazine link, deep red accent), `.nav-lens__editions`/`.nav-ed` (Row 2 edition tabs), `.nav-lens`/`.nav-lens__*` (Row 2 filters), `.nav-lens__search` (Row 2 expandable search bar) — all in `components.css`.
 
 ## Data Model (Supabase)
 
@@ -158,9 +164,10 @@ void-news/
 │   └── rerank.py          # Standalone re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # 45 components: BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileStoryCard, NavBar, OnboardingCarousel, OnboardingSpotlight, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
+│   │   ├── components/    # 49 components: AudioProvider, BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileMiniPlayer, MobileNav, MobileSidePanel, MobileStoryCard, MobileTabBar, NavBar, OnboardingCarousel, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
 │   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts, shareCardRenderer.ts
-│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, responsive, command-center, weekly, about, ship
+│   │   ├── film/           # Shared cinematic scenes: data.ts, constants.ts, useReducedMotion.ts, scenes/{SigilBreakdown,DivergentHeadlines,SourceEngine,ArticleDifference,ProductWorlds,TheVerdict}.tsx
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, mobile-nav, responsive, command-center, weekly, film, about, ship
 │   │   ├── sources/       # /sources page
 │   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
 │   │   ├── command-center/ # /command-center KPI dashboard
