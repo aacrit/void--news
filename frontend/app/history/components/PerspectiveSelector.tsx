@@ -75,7 +75,7 @@ export default function PerspectiveSelector({
             <span className="hist-persp-tab__name">{p.viewpointName}</span>
             <span className="hist-persp-tab__type">{p.viewpointType}</span>
             <span className="hist-persp-tab__anchor">
-              {p.temporalAnchor} &middot; {p.geographicAnchor}
+              {p.geographicAnchor}
             </span>
           </button>
         );
