@@ -6,7 +6,7 @@ import type { MediaItem } from "../types";
 /* ===========================================================================
    Lightbox — Full-screen media viewer
    Dark backdrop, centered image, caption + attribution, prev/next arrows,
-   close button, keyboard navigation.
+   close button, keyboard navigation. Focus-trapped modal with return focus.
    =========================================================================== */
 
 interface LightboxProps {
@@ -23,10 +23,13 @@ export default function Lightbox({
   onNavigate,
 }: LightboxProps) {
   const backdropRef = useRef<HTMLDivElement>(null);
+  /* Store the element that had focus before the lightbox opened */
+  const triggerRef = useRef<HTMLElement | null>(null);
   const current = media[currentIndex];
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < media.length - 1;
 
+  /* Focus trap: Tab wraps within the lightbox */
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       switch (e.key) {
@@ -39,19 +42,50 @@ export default function Lightbox({
         case "ArrowRight":
           if (hasNext) onNavigate(currentIndex + 1);
           break;
+        case "Tab": {
+          const container = backdropRef.current;
+          if (!container) break;
+          const focusable = container.querySelectorAll<HTMLElement>(
+            'button, [href], [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusable.length === 0) break;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+          break;
+        }
       }
     },
     [onClose, onNavigate, currentIndex, hasPrev, hasNext]
   );
 
   useEffect(() => {
+    /* Capture the trigger element on mount */
+    triggerRef.current = document.activeElement as HTMLElement | null;
+
     document.addEventListener("keydown", handleKeyDown);
     /* Prevent background scroll */
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    /* Auto-focus the dialog container */
+    backdropRef.current?.focus();
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = prev;
+      /* Return focus to the element that opened the lightbox */
+      triggerRef.current?.focus();
     };
   }, [handleKeyDown]);
 
@@ -71,6 +105,7 @@ export default function Lightbox({
       role="dialog"
       aria-modal="true"
       aria-label={`Viewing: ${current.caption}`}
+      tabIndex={-1}
     >
       {/* Close button */}
       <button

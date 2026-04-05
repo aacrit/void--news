@@ -64,7 +64,10 @@ export default function HistoryTimeline({ events, activeSlug }: HistoryTimelineP
 
   return (
     <nav className="hist-timeline" aria-label="Event timeline">
-      <InkTrack />
+      {/* Horizontal track: hidden on mobile where timeline is vertical */}
+      <div className="hist-timeline__track-horizontal">
+        <InkTrack orientation="horizontal" />
+      </div>
       <div className="hist-timeline__events">
         {sorted.map((event) => {
           const isActive = event.slug === activeSlug;

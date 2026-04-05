@@ -247,19 +247,33 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         {event.connections.length > 0 && (
           <section className="hist-reveal hist-connections" aria-label="Connected events">
             <h2 className="hist-section-label">Connected Events</h2>
-            {event.connections.map((conn, i) => (
-              <Link
-                key={i}
-                href={`/history/${conn.targetSlug}`}
-                className="hist-connection"
-              >
-                <span className="hist-connection__type">{conn.type}</span>
-                <div className="hist-connection__body">
-                  <span className="hist-connection__title">{conn.targetTitle}</span>
-                  <span className="hist-connection__desc">{conn.description}</span>
+            {event.connections.map((conn, i) => {
+              const targetExists = allEvents.some((e) => e.slug === conn.targetSlug);
+              if (targetExists) {
+                return (
+                  <Link
+                    key={i}
+                    href={`/history/${conn.targetSlug}`}
+                    className="hist-connection"
+                  >
+                    <span className="hist-connection__type">{conn.type}</span>
+                    <div className="hist-connection__body">
+                      <span className="hist-connection__title">{conn.targetTitle}</span>
+                      <span className="hist-connection__desc">{conn.description}</span>
+                    </div>
+                  </Link>
+                );
+              }
+              return (
+                <div key={i} className="hist-connection" style={{ cursor: "default" }}>
+                  <span className="hist-connection__type">{conn.type}</span>
+                  <div className="hist-connection__body">
+                    <span className="hist-connection__title">{conn.targetTitle}</span>
+                    <span className="hist-connection__desc">{conn.description}</span>
+                  </div>
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </section>
         )}
 

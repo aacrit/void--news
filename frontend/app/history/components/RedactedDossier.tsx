@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import type { RedactedEvent } from "../types";
 
 /* ===========================================================================
    RedactedDossier — "Coming" card for unpopulated events
    Foxing texture, redaction bars, two contradictory perspective quotes,
    "[DECLASSIFIED: COMING]" stamp. Hover reveals event title behind
-   lifting redaction.
+   lifting redaction. Click toggles reveal on touch devices.
    =========================================================================== */
 
 interface RedactedDossierProps {
@@ -14,8 +15,14 @@ interface RedactedDossierProps {
 }
 
 export default function RedactedDossier({ event }: RedactedDossierProps) {
+  const [touchRevealed, setTouchRevealed] = useState(false);
+
   return (
-    <div className="hist-redacted" aria-label={`Coming: ${event.title}`}>
+    <div
+      className={`hist-redacted ${touchRevealed ? "hist-redacted--revealed" : ""}`}
+      aria-label={`Coming: ${event.title}`}
+      onClick={() => setTouchRevealed((prev) => !prev)}
+    >
       {/* Title */}
       <h3 className="hist-redacted__title">
         {/* Partially redacted title — show first word, redact rest */}
@@ -50,7 +57,7 @@ export default function RedactedDossier({ event }: RedactedDossierProps) {
       {/* Stamp */}
       <span className="hist-redacted__stamp">[Declassified: Coming]</span>
 
-      {/* Hover reveal */}
+      {/* Hover reveal (desktop) + click reveal (touch) */}
       <div className="hist-redacted__reveal" aria-hidden="true">
         <span className="hist-redacted__reveal-title">{event.title}</span>
       </div>
