@@ -1416,11 +1416,21 @@ def main():
                     if art_id in article_bias_map:
                         article_bias_map[art_id]["framing"] = new_framing
 
-                    # Build update row for batch
-                    update_data: dict = {"article_id": art_id, "framing": new_framing}
+                    # Build update row for batch — include ALL bias axes so the
+                    # upsert does not null-out columns that aren't in the dict.
+                    # (Fix F7: partial upsert was setting 4/5 axes to NULL)
+                    existing = article_bias_map.get(art_id, {})
+                    update_data: dict = {
+                        "article_id": art_id,
+                        "political_lean": existing.get("political_lean", 50),
+                        "sensationalism": existing.get("sensationalism", 10),
+                        "opinion_fact": existing.get("opinion_fact", 25),
+                        "factual_rigor": existing.get("factual_rigor", 50),
+                        "framing": new_framing,
+                        "confidence": existing.get("confidence", 0.7),
+                    }
                     # Merge new framing rationale into existing rationale
                     if new_rationale:
-                        existing = article_bias_map.get(art_id, {})
                         existing_rationale_str = existing.get("rationale")
                         if existing_rationale_str and isinstance(existing_rationale_str, str):
                             try:
