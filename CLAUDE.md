@@ -127,7 +127,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 
 ## Agent Team & Workflows
 
-32 agents, 13 divisions. Full details: `docs/AGENT-TEAM.md`. Agent definitions: `.claude/agents/`.
+34 agents, 13 divisions. Full details: `docs/AGENT-TEAM.md`. Agent definitions: `.claude/agents/`.
 
 | Command | Pattern | When |
 |---------|---------|------|
@@ -143,7 +143,7 @@ Frontend edition filter: `.contains("sections", [edition])`.
 | `/security-sweep` | audit → fix → re-verify | Security + perf |
 | `/rank-optimize` | benchmark → tune → validate → audit | Ranking engine tuning |
 | `/frontend-review-fix` | audit → CEO prioritize → fix → build → retest | CEO-in-the-loop UI quality |
-| `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → build → validate → QA | Cinematic motion/VFX design evolution |
+| `/cinematic-overhaul` | cinematographer → motion-director → vfx-artist → color-grader → build → validate → QA | Cinematic motion/VFX design evolution |
 | `/history-research` | history-curator → perspective-analyst + media-archaeologist → auditor → narrative-engineer | New event onboarding |
 | `/history-audit` | historiographic-auditor → perspective-analyst → re-validate | Perspective balance check |
 | `/history-publish` | narrative-engineer → auditor → cinematic trio → visual-historian → build → test | Content publishing |
@@ -191,7 +191,7 @@ void-news/
 ├── data/history/events/   # YAML event files (Partition of India, Hiroshima, Rwanda)
 ├── supabase/migrations/   # 001-039
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml, weekly-digest.yml
-├── .claude/agents/        # 32 agent definitions
+├── .claude/agents/        # 34 agent definitions
 ├── .claude/skills/        # pressdesign + prompt-iterate + workflows + ship-queue + 19 workflow skills (23 total)
 └── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE, VOICE-BRAND, SOURCE-CURATION-REPORT-2026-04-02
 ```

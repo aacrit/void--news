@@ -49,7 +49,7 @@ CEO (Aacrit)
   └── Branding ————————— logo-designer
 ```
 
-**Total: 33 agents across 13 divisions**
+**Total: 34 agents across 13 divisions**
 
 Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows.
 
@@ -101,6 +101,7 @@ Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) a
 | `cinematographer` | Camera language design — depth of field, rack focus, parallax, camera movements, scene compositions, cinematic design tokens | Yes | Cinematic overhaul, motion design tasks |
 | `vfx-artist` | Post-processing — film grain, color grading, vignettes, lens effects, atmospheric lighting, texture via CSS filters and SVG | Yes | After cinematographer, cinematic polish |
 | `motion-director` | Scroll-driven choreography — scene timelines, gesture physics, transition sequencing, L-cut/match-cut timing, scroll-timeline API | Yes | After cinematographer, interaction choreography |
+| `color-grader` | Per-image CSS color grading — external source normalization, page-specific filter pipelines (weekly magazine warmth, history archival sepia, feed cinematic amber), grain/vignette compositing on image containers | Yes | After media-curator + vfx-artist, image visual consistency |
 
 ### History Division
 
@@ -175,7 +176,7 @@ audio-engineer → pipeline-tester → bug-fixer
 
 **Cinematic Overhaul Cycle:**
 ```
-[logo-designer + cinematographer] (parallel) → motion-director → vfx-artist → frontend-builder → [responsive-specialist + perf-optimizer] (parallel) → uat-tester → frontend-fixer
+[logo-designer + cinematographer] (parallel) → motion-director → vfx-artist → color-grader → frontend-builder → [responsive-specialist + perf-optimizer] (parallel) → uat-tester → frontend-fixer
 ```
 
 **Full Pipeline Dev Cycle:**
@@ -237,6 +238,7 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 | Camera movement, depth of field, parallax, cinematic scene composition | `cinematographer` | Cinematic |
 | Film grain, color grading, vignette, lens effects, atmospheric post-processing | `vfx-artist` | Cinematic |
 | Scroll-driven choreography, scene timelines, gesture physics, transition sequencing | `motion-director` | Cinematic |
+| Per-image color grading, CSS filter pipelines for external images, page-specific media grades | `color-grader` | Cinematic |
 | Agent audit, optimization, new agent design, prompt engineering | `agent-architect` | Agent Engineering |
 | Historical event research, YAML content, era/region taxonomy | `history-curator` | History |
 | Multi-perspective balance, historiographic framework, viewpoint gaps | `perspective-analyst` | History |
@@ -297,3 +299,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
 | 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
 | 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 18 components, 5-lens historiographic framework, 3 events (Partition of India, Hiroshima, Rwanda), migration 039 (4 history tables), pipeline/history content loader, 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
+| 2026-04-05 | color-grader + media-curator agents added to Cinematic Division; per-image CSS filter grading pipeline for external media (Weekly cover, History archival, Deep Dive); cinematic overhaul cycle updated; 34 agents, 13 divisions |
