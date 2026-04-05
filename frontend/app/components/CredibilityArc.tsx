@@ -42,7 +42,8 @@ export default function CredibilityArc({ accuracy }: CredibilityArcProps) {
   const total = accuracy.total_unique_claims;
   const corrobPct = (accuracy.later_corroborated / total) * 100;
   const contradPct = (accuracy.later_contradicted / total) * 100;
-  const unverPct = (accuracy.still_unverified / total) * 100;
+  /* [V14] Last segment as remainder to guarantee sum = 100% */
+  const unverPct = 100 - corrobPct - contradPct;
   const rateDisplay = Math.round(accuracy.accuracy_rate * 100);
 
   return (

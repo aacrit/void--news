@@ -3,6 +3,7 @@
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
+import ConsensusBadge from "./ConsensusBadge";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 
@@ -71,9 +72,18 @@ export default function MobileStoryCard({
             <CaretRight size={14} weight="bold" aria-hidden="true" className="msc__caret" />
           </h2>
           <p className="msc__summary">{story.summary}</p>
+          {/* [V05] ConsensusBadge in data row, hero variant only */}
+          {story.deepDive?.claimConsensus && (
+            <ConsensusBadge
+              ratio={story.deepDive.claimConsensus.consensus_ratio}
+              disputed={story.deepDive.claimConsensus.disputed}
+              total={story.deepDive.claimConsensus.total_claims}
+              corroborated={story.deepDive.claimConsensus.corroborated}
+            />
+          )}
         </>
       ) : (
-        /* Compact layout: headline + inline Sigil + caret */
+        /* Compact layout: headline + inline Sigil + caret — badge hidden */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
