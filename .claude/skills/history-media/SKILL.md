@@ -13,14 +13,20 @@ You orchestrate visual asset sourcing and integration for void --history events.
 ## Workflow
 
 ```
-media-archaeologist → historiographic-auditor (visual bias check) → visual-historian (integration)
+media-archaeologist → media-curator (supplemental) → historiographic-auditor (visual bias check) → visual-historian (integration)
 ```
 
-### Stage 1 -- Source
+### Stage 1 -- Archival Source
 Launch **media-archaeologist** to:
 - Source 5-10 public domain images, maps, documents per event
 - Complete Context Protocol for each (what/when/where/who/source/rights/perspective/not-shown)
 - Verify licensing (public domain, CC0, CC-BY, CC-BY-SA)
+
+### Stage 1b -- Modern Supplemental
+Launch **media-curator** to:
+- Search Wikimedia Commons, Unsplash, Pexels for present-day photos of historical sites
+- Fill visual gaps the archaeologist doesn't cover (modern context, location photos)
+- Output in history_media YAML format matching existing schema
 
 ### Stage 2 -- Visual Bias Audit
 Launch **historiographic-auditor** to check:

@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-04 (rev 19)
+Last updated: 2026-04-05 (rev 20)
 
 ## Philosophy
 
@@ -39,7 +39,7 @@ CEO (Aacrit)
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
-  ├── Cinematic ————————— cinematographer, vfx-artist, motion-director
+  ├── Cinematic ————————— cinematographer, vfx-artist, motion-director, color-grader
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator, linguist
   ├── History —————————— history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer
   ├── History Visual ——— visual-historian, archive-cartographer
@@ -49,7 +49,7 @@ CEO (Aacrit)
   └── Branding ————————— logo-designer
 ```
 
-**Total: 32 agents across 13 divisions**
+**Total: 34 agents across 13 divisions**
 
 Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows.
 
@@ -92,6 +92,7 @@ Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) a
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
 | `source-curator` | Source credibility vetting, RSS/scrape config, 1,013-source list | Yes | Source list changes |
 | `linguist` | Media bias vocabulary research, lexicon expansion, linguistic gap analysis across all 5 bias analyzers | Yes | After bias calibration, lexicon gaps identified |
+| `media-curator` | Free-API image sourcing for weekly cover + history supplemental (Wikimedia, Unsplash, Pexels, Pixabay) | Yes | Weekly digest generation, history media enrichment |
 
 ### Cinematic Division
 
@@ -100,6 +101,7 @@ Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) a
 | `cinematographer` | Camera language design — depth of field, rack focus, parallax, camera movements, scene compositions, cinematic design tokens | Yes | Cinematic overhaul, motion design tasks |
 | `vfx-artist` | Post-processing — film grain, color grading, vignettes, lens effects, atmospheric lighting, texture via CSS filters and SVG | Yes | After cinematographer, cinematic polish |
 | `motion-director` | Scroll-driven choreography — scene timelines, gesture physics, transition sequencing, L-cut/match-cut timing, scroll-timeline API | Yes | After cinematographer, interaction choreography |
+| `color-grader` | Per-image CSS color grading — external source normalization, page-specific filter pipelines (weekly magazine warmth, history archival sepia, feed cinematic amber), grain/vignette compositing on image containers | Yes | After media-curator + vfx-artist, image visual consistency |
 
 ### History Division
 
@@ -174,12 +176,22 @@ audio-engineer → pipeline-tester → bug-fixer
 
 **Cinematic Overhaul Cycle:**
 ```
-[logo-designer + cinematographer] (parallel) → motion-director → vfx-artist → frontend-builder → [responsive-specialist + perf-optimizer] (parallel) → uat-tester → frontend-fixer
+[logo-designer + cinematographer] (parallel) → motion-director → vfx-artist → color-grader → frontend-builder → [responsive-specialist + perf-optimizer] (parallel) → uat-tester → frontend-fixer
 ```
 
 **Full Pipeline Dev Cycle:**
 ```
 feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipeline-tester
+```
+
+**Weekly Media Cycle:**
+```
+weekly_digest_generator (cover stories selected) → media-curator (source cover image) → frontend-builder (render in WeeklyDigest.tsx)
+```
+
+**History Media Cycle (updated):**
+```
+media-archaeologist (archival) → media-curator (modern supplemental) → historiographic-auditor (visual bias) → visual-historian (integration)
 ```
 
 **History Research Cycle:**
@@ -226,11 +238,13 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 | Camera movement, depth of field, parallax, cinematic scene composition | `cinematographer` | Cinematic |
 | Film grain, color grading, vignette, lens effects, atmospheric post-processing | `vfx-artist` | Cinematic |
 | Scroll-driven choreography, scene timelines, gesture physics, transition sequencing | `motion-director` | Cinematic |
+| Per-image color grading, CSS filter pipelines for external images, page-specific media grades | `color-grader` | Cinematic |
 | Agent audit, optimization, new agent design, prompt engineering | `agent-architect` | Agent Engineering |
 | Historical event research, YAML content, era/region taxonomy | `history-curator` | History |
 | Multi-perspective balance, historiographic framework, viewpoint gaps | `perspective-analyst` | History |
 | Historical accuracy validation, source verification, narrative bias | `historiographic-auditor` | History |
 | Primary source discovery, historical media, rights/provenance | `media-archaeologist` | History |
+| Free-API image sourcing for weekly/history (Wikimedia, Unsplash, Pexels) | `media-curator` | Pipeline |
 | Event connections, timeline data, chronological accuracy | `timeline-architect` | History |
 | Narrative polish, show-don't-tell, multi-perspective coherence | `narrative-engineer` | History |
 | Archival Cinema UI, Ken Burns effects, history page layouts | `visual-historian` | History Visual |
@@ -285,3 +299,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
 | 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
 | 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 18 components, 5-lens historiographic framework, 3 events (Partition of India, Hiroshima, Rwanda), migration 039 (4 history tables), pipeline/history content loader, 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
+| 2026-04-05 | color-grader + media-curator agents added to Cinematic Division; per-image CSS filter grading pipeline for external media (Weekly cover, History archival, Deep Dive); cinematic overhaul cycle updated; 34 agents, 13 divisions |

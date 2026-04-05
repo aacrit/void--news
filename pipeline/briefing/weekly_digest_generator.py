@@ -58,6 +58,7 @@ try:
 except ImportError:
     _SKLEARN_AVAILABLE = False
 from briefing.audio_producer import produce_audio
+from media.image_search import find_cover_image_for_cluster
 
 # ---------------------------------------------------------------------------
 EDITIONS = ["world", "us", "europe", "south-asia"]
@@ -1112,6 +1113,20 @@ def generate_weekly_digest(editions=None, week_offset=0):
             if c.get("cluster_id"):
                 used_ids.add(c["cluster_id"])
 
+        # Cover image: try og:image from lead cover story, fallback to free APIs
+        cover_image = None
+        if covers and covers[0].get("cluster_id"):
+            print(f"\n  ── COVER IMAGE ──")
+            cover_image = find_cover_image_for_cluster(
+                covers[0]["cluster_id"],
+                covers[0].get("headline", ""),
+                supabase_client=supabase,
+            )
+            if cover_image:
+                print(f"    ✓ {cover_image['source']}: {cover_image['url'][:80]}...")
+            else:
+                print(f"    No suitable cover image found")
+
         # Section 2: Opinions (5-6 topics × rotating leans)
         print(f"\n  ── THE OPINIONS ──")
         opinions, calls = _generate_opinions(top_threads, threads, edition)
@@ -1229,6 +1244,10 @@ def generate_weekly_digest(editions=None, week_offset=0):
             "audio_url": audio_url,
             "audio_duration_seconds": audio_duration,
             "audio_file_size": audio_size,
+            # Cover image
+            "cover_image_url": cover_image["url"] if cover_image else None,
+            "cover_image_attribution": cover_image["attribution"] if cover_image else None,
+            "cover_image_source": cover_image["source"] if cover_image else None,
             # Stats
             "total_articles": sum(c.get("source_count", 0) for c in clusters),
             "total_clusters": len(clusters),
