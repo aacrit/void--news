@@ -50,7 +50,6 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Prop
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState(-1);
   const [exiting, setExiting] = useState(false);
-  const [paused, setPaused] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,22 +74,19 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Prop
     return () => clearTimeout(timer);
   }, [mounted, visible, reducedMotion]);
 
-  // Auto-advance — gated by exiting
+  // Auto-advance — runs continuously, gated only by exiting
   useEffect(() => {
     if (phase < 0 || phase >= CHAPTERS.length - 1) return;
     if (reducedMotion.current || exiting) return;
-    if (paused) {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      return;
-    }
     timerRef.current = setTimeout(() => {
       setPhase((p) => p + 1);
     }, CHAPTERS[phase].duration);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [phase, paused, exiting, reducedMotion]);
+  }, [phase, exiting, reducedMotion]);
 
-  const pauseAutoAdvance = useCallback(() => setPaused(true), []);
-  const resumeAutoAdvance = useCallback(() => setPaused(false), []);
+  // Pause/resume available for manual navigation (dot clicks restart timer)
+  // Auto-advance runs continuously — no hover-pause (cursor is already inside
+  // the dialog on open, which would immediately pause and never resume)
 
   const dismiss = useCallback((callback: () => void) => {
     if (exiting) return;
@@ -174,18 +170,9 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Prop
           Skip
         </button>
 
-        {/* Content area */}
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-        <div
-          onMouseEnter={pauseAutoAdvance}
-          onMouseLeave={resumeAutoAdvance}
-          onTouchStart={pauseAutoAdvance}
-          onTouchEnd={resumeAutoAdvance}
-          onFocus={pauseAutoAdvance}
-          onBlur={(e) => {
-            if (!dialogRef.current?.contains(e.relatedTarget as Node)) resumeAutoAdvance();
-          }}
-        >
+        {/* Content area — auto-advance runs continuously; pauses only on
+             explicit navigation (dot click, arrow key, Next button) */}
+        <div>
           {/* Visual */}
           <div className="intro__visual">
             {chapter && <SceneVisual chapterId={chapter.id} active />}

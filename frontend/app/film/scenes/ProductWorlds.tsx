@@ -106,9 +106,23 @@ function ShipPreview() {
   );
 }
 
+function ArchivePreview() {
+  return (
+    <div className="film-preview film-preview--archive">
+      <div className="film-preview__timeline">
+        <div className="film-preview__timeline-line" />
+        <div className="film-preview__timeline-dot" style={{ top: "20%" }} />
+        <div className="film-preview__timeline-dot" style={{ top: "50%" }} />
+        <div className="film-preview__timeline-dot" style={{ top: "80%" }} />
+      </div>
+    </div>
+  );
+}
+
 const PREVIEW_MAP: Record<string, React.FC> = {
   feed: FeedPreview, weekly: WeeklyPreview, paper: PaperPreview,
   sources: SourcesPreview, onair: OnairPreview, ship: ShipPreview,
+  archive: ArchivePreview,
 };
 
 export default function ProductWorlds({ mode, active }: Props) {
