@@ -80,6 +80,7 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISABLE_AUDIO: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
@@ -98,6 +99,7 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISABLE_AUDIO: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           if [ -n "$EDITIONS" ]; then
