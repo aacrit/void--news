@@ -2280,32 +2280,50 @@
 }
 
 /* ── CTA — "Enter the dossier" ── */
+/* CTA — prominent button. This IS the action we want. */
 .hist-tile__cta {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-1);
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--hist-accent);
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-paper-fixed, #F2EDE0);
+  background: var(--hist-accent);
   text-decoration: none;
-  letter-spacing: 0.04em;
-  padding: var(--space-1) 0;
-  align-self: flex-start;
-  transition: color 200ms var(--ease-cinematic);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-2);
+  border: none;
+  min-height: 44px;
+  transition: background 200ms ease, transform 150ms ease;
 }
 
 .hist-tile__cta:hover {
-  color: var(--hist-accent-bright);
+  background: var(--hist-accent-bright, #7A5B47);
+  transform: scale(1.02);
+}
+
+.hist-tile__cta:active {
+  transform: scale(0.97);
+}
+
+.hist-tile__cta:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
 }
 
 .hist-tile__cta-arrow {
   display: inline-block;
+  font-size: 1.1em;
   transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .hist-tile__cta:hover .hist-tile__cta-arrow {
-  transform: translateX(4px);
+  transform: translateX(6px);
 }
 
 /* ── "START HERE" pulse badge ── */

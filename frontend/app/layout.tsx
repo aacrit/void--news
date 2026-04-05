@@ -131,7 +131,7 @@ export default function RootLayout({
         {/* CSP: restrict script/connect/style/font/img sources */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; media-src 'self' https://*.supabase.co; img-src 'self' data: https://*.google.com https://*.googleapis.com https://*.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; media-src 'self' https://*.supabase.co; img-src 'self' data: https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.wikimedia.org https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
