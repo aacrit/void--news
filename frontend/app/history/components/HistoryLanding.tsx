@@ -107,11 +107,11 @@ export default function HistoryLanding({
           </p>
         </header>
 
-        {/* ── Dossier Grid ── */}
+        {/* ── Declassified Dossiers ── */}
         <section
           ref={gridRef}
           className="hist-dossier-grid"
-          aria-label="Historical event dossiers"
+          aria-label="Declassified event dossiers"
         >
           {events.map((event, i) => (
             <DossierTile
@@ -121,14 +121,32 @@ export default function HistoryLanding({
               isFirst={i === 0}
             />
           ))}
-          {redacted.map((event, i) => (
-            <RedactedTile
-              key={event.slug}
-              event={event}
-              index={events.length + i}
-            />
-          ))}
         </section>
+
+        {/* ── Section Divider ── */}
+        {redacted.length > 0 && (
+          <div className="hist-classified-divider">
+            <span className="hist-classified-divider__line" aria-hidden="true" />
+            <span className="hist-classified-divider__label">CLASSIFIED — PENDING DECLASSIFICATION</span>
+            <span className="hist-classified-divider__line" aria-hidden="true" />
+          </div>
+        )}
+
+        {/* ── Classified Dossiers ── */}
+        {redacted.length > 0 && (
+          <section
+            className="hist-dossier-grid hist-dossier-grid--classified"
+            aria-label="Classified upcoming event dossiers"
+          >
+            {redacted.map((event, i) => (
+              <RedactedTile
+                key={event.slug}
+                event={event}
+                index={i}
+              />
+            ))}
+          </section>
+        )}
       </div>
     </div>
   );
@@ -188,13 +206,13 @@ function DossierTile({
     if (!hasInteracted) setHasInteracted(true);
   }, [hasInteracted]);
 
-  /* nth-child organic border radius variety */
-  const radiusVariants = [
-    "3px 10px 5px 14px",
-    "10px 4px 12px 5px",
-    "6px 12px 3px 8px",
+  /* Hand-drawn polygon clip-paths — irregular organic shapes */
+  const polygonVariants = [
+    "polygon(1% 0%, 98% 1%, 100% 2%, 99% 97%, 97% 100%, 2% 99%, 0% 98%, 0.5% 3%)",
+    "polygon(2% 1%, 99% 0%, 100% 3%, 98% 98%, 100% 100%, 1% 99%, 0% 97%, 1% 2%)",
+    "polygon(0% 2%, 97% 0%, 99% 1%, 100% 99%, 98% 100%, 3% 98%, 0% 100%, 1% 1%)",
   ];
-  const organicRadius = radiusVariants[index % radiusVariants.length];
+  const clipPath = polygonVariants[index % polygonVariants.length];
 
   /* Hero image parallax transform */
   const parallaxX = (mousePos.x - 0.5) * 8;
@@ -214,7 +232,7 @@ function DossierTile({
         .join(" ")}
       style={{
         animationDelay: `${100 + index * 80}ms`,
-        borderRadius: organicRadius,
+        clipPath,
         "--parallax-x": `${parallaxX}px`,
         "--parallax-y": `${parallaxY}px`,
       } as React.CSSProperties}
@@ -252,21 +270,19 @@ function DossierTile({
         />
       )}
 
-      {/* Severity accent line */}
-      <div className="hist-tile__accent" aria-hidden="true" />
+      {/* Severity accent line with label */}
+      <div
+        className="hist-tile__accent"
+        aria-hidden="true"
+        title={event.severity}
+      >
+        <span className="hist-tile__accent-label">{event.severity}</span>
+      </div>
 
-      {/* ── Compact content (always visible) ── */}
+      {/* ── Compact content (always visible) — minimal: title + date + dots ── */}
       <div className="hist-tile__compact">
-        {/* Date */}
         <span className="hist-tile__date">{event.datePrimary}</span>
-
-        {/* Title */}
         <h3 className="hist-tile__title">{event.title}</h3>
-
-        {/* Void voice blurb */}
-        <p className="hist-tile__blurb">{blurb}</p>
-
-        {/* Meta row: perspective dots + divergence */}
         <div className="hist-tile__meta">
           <div className="hist-tile__dots" aria-label={`${event.perspectives.length} perspectives`}>
             {event.perspectives.map((p) => (
@@ -278,15 +294,20 @@ function DossierTile({
               />
             ))}
           </div>
-          <span className="hist-tile__persp-count">
-            {event.perspectives.length} PERSPECTIVES
-          </span>
         </div>
       </div>
 
       {/* ── Expanded content (revealed on hover/tap) ── */}
       <div className="hist-tile__expand" aria-hidden={!expanded}>
         <div className="hist-tile__expand-inner">
+          {/* Void voice blurb — the hook */}
+          <p className="hist-tile__blurb">{blurb}</p>
+
+          {/* Perspective count label */}
+          <span className="hist-tile__persp-count">
+            {event.perspectives.length} PERSPECTIVES
+          </span>
+
           {/* Perspective names — staggered reveal */}
           <div className="hist-tile__perspectives">
             {event.perspectives.map((p, pi) => (
@@ -384,16 +405,14 @@ function RedactedTile({
 }) {
   const [revealed, setRevealed] = useState(false);
 
-  /* Organic radius — dashed variant */
-  const radiusVariants = [
-    "8px 3px 10px 4px",
-    "4px 10px 3px 8px",
-    "6px 4px 8px 12px",
-    "3px 8px 6px 4px",
-    "10px 5px 4px 8px",
-    "5px 12px 8px 3px",
+  /* More irregular polygons for classified — rougher edges */
+  const polygonVariants = [
+    "polygon(2% 1%, 96% 0%, 99% 3%, 97% 96%, 100% 99%, 3% 98%, 0% 95%, 1% 2%)",
+    "polygon(0% 3%, 98% 1%, 100% 4%, 99% 97%, 97% 100%, 1% 97%, 0% 99%, 2% 1%)",
+    "polygon(1% 0%, 97% 2%, 100% 1%, 98% 100%, 96% 98%, 2% 100%, 0% 97%, 0.5% 3%)",
+    "polygon(3% 2%, 99% 0%, 97% 3%, 100% 98%, 98% 100%, 0% 97%, 1% 100%, 0% 1%)",
   ];
-  const organicRadius = radiusVariants[index % radiusVariants.length];
+  const clipPath = polygonVariants[index % polygonVariants.length];
 
   return (
     <div
@@ -406,7 +425,7 @@ function RedactedTile({
         .join(" ")}
       style={{
         animationDelay: `${100 + index * 80}ms`,
-        borderRadius: organicRadius,
+        clipPath,
       }}
       role="button"
       tabIndex={0}
