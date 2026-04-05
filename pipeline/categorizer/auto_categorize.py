@@ -197,9 +197,18 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "tennis": 2, "golf": 2, "soccer": 2, "football": 2,
         "basketball": 2, "baseball": 2, "hockey": 2,
         "boxing": 2, "mma": 3, "ufc": 3, "wrestling": 2,
+        # Combat sports — "fighter" often miscategorized as conflict
+        "fighter": 2, "fight": 1, "bout": 2, "knockout": 3,
+        "heavyweight": 3, "middleweight": 3, "lightweight": 3,
+        "welterweight": 3, "featherweight": 3, "bantamweight": 3,
+        "title fight": 3, "undercard": 3, "ringside": 3,
+        "round": 1, "ko": 2, "tko": 3, "decision": 1,
         "medal": 2, "record-breaking": 2, "season": 1,
         "injury": 1, "suspension": 2, "contract": 1,
         "espn": 3, "sporting": 2, "match": 1, "race": 1,
+        # Additional sports
+        "cricket": 2, "rugby": 2, "f1": 3, "formula 1": 3,
+        "grand prix": 3, "marathon": 2, "triathlon": 2,
     },
 }
 
@@ -344,11 +353,13 @@ def categorize_article(article: dict) -> list[str]:
     _TITLE_OVERRIDES = [
         # Sports: league names, match-ups, odds, scores
         (r"\b(nba|nfl|mlb|nhl|mls|ufc|mma|premier league|la liga|bundesliga|serie a)\b", "sports"),
-        (r"\b(boxing|bout|heavyweight|middleweight|lightweight|welterweight)\b", "sports"),
+        (r"\b(boxing|bout|heavyweight|middleweight|lightweight|welterweight|knockout|ko|tko)\b", "sports"),
+        (r"\b(fighter|fight night|title fight|ringside|undercard)\b", "sports"),
         (r"\bvs\.?\s", "sports"),  # "X vs Y" pattern
         (r"\b(odds|prediction|picks|fantasy|draft pick|free agent|trade deadline)\b", "sports"),
         (r"\b(quarterback|touchdown|home run|slam dunk|hat trick|penalty kick)\b", "sports"),
         (r"\b(lakers|celtics|yankees|dodgers|cowboys|patriots|warriors|chiefs)\b", "sports"),
+        (r"\b(cricket|rugby|f1|formula 1|grand prix|marathon|triathlon)\b", "sports"),
         # Conflict: military hardware, combat actions
         (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
         (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),
