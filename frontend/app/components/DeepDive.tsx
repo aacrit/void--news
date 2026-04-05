@@ -12,6 +12,7 @@ import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo, BASE_PATH } from "../lib/utils";
 import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
 import { generateShareCardImage, generateSquareCardImage, generateStoryCardImage } from "../lib/shareCardRenderer";
+import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
@@ -86,6 +87,33 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
       </div>
       <a href={`${BASE_PATH}/sources/#methodology`} className="dd-lenses__link text-meta">
         How we score
+      </a>
+    </div>
+  );
+}
+
+/* --- History Context Link — subtle archival cross-link -------------------- */
+
+function HistoryContextLink({ title, summary, visible }: { title: string; summary: string; visible: boolean }) {
+  const match = findHistoryContext(title, summary);
+  if (!match) return null;
+
+  const perspText = match.perspectiveCount > 0
+    ? `See how this event is told from ${match.perspectiveCount} perspectives`
+    : "Explore this event in the archive";
+
+  return (
+    <div className={`dd-history-context anim-dd-section dd-cascade-5${visible ? " anim-dd-section--visible" : ""}`}>
+      <hr className="ink-rule" style={{ margin: "0 0 var(--space-3) 0" }} aria-hidden="true" />
+      <span className="dd-history-context__label text-meta" aria-hidden="true">Historical Context</span>
+      <a
+        href={match.href}
+        className="dd-history-context__link"
+        aria-label={`Historical context: ${match.title}`}
+      >
+        <span className="dd-history-context__arrow" aria-hidden="true">&rarr;</span>
+        <span className="dd-history-context__title">{match.title}</span>
+        <span className="dd-history-context__desc">{perspText}</span>
       </a>
     </div>
   );
@@ -1171,6 +1199,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               <SixLenses sigilData={story.sigilData} visible={contentVisible} />
             </section>
           )}
+
+          {/* ---- Historical Context cross-link (only when keyword matches) ---- */}
+          <HistoryContextLink title={story.title} summary={story.summary} visible={contentVisible} />
 
           {/* Fetch error — retry UI */}
           {fetchError && !isLoadingData && sources.length === 0 && (
