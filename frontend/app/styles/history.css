@@ -2863,3 +2863,1363 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* ===========================================================================
+   MICRO-INTERACTIONS — Snappy & Fun
+   Every element alive. Spring overshoot, tactile feedback, breathing glows.
+   =========================================================================== */
+
+/* ── Spring easing shorthand ── */
+/* bounce overshoot: cubic-bezier(0.34, 1.56, 0.64, 1) */
+/* snappy settle:    cubic-bezier(0.22, 1.4, 0.36, 1) — var(--ease-archive-snap) */
+
+/* ---------------------------------------------------------------------------
+   1. DOSSIER TILES — Lift, glow, stamp press, redaction shimmer
+   --------------------------------------------------------------------------- */
+
+/* Enhanced hover: spring lift + shadow expand + border glow */
+.hist-dossier:hover,
+.hist-dossier:focus-visible {
+  box-shadow: var(--hist-doc-edge-lifted);
+  transform: translateY(-6px) rotate(-0.3deg);
+  transition:
+    box-shadow 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 350ms var(--ease-cinematic);
+}
+
+/* Click press: spring squash then bounce back */
+.hist-dossier:active {
+  transform: translateY(-2px) scale(0.97) rotate(-0.3deg);
+  transition:
+    transform 80ms ease-out;
+}
+
+/* Classification stamp: rotate on hover */
+.hist-dossier__classification {
+  display: inline-block;
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    letter-spacing 250ms var(--ease-cinematic),
+    opacity 200ms;
+}
+
+.hist-dossier:hover .hist-dossier__classification {
+  transform: rotate(-1.5deg);
+  opacity: 0.9;
+}
+
+/* "Declassified"/"Classified" label: letter-spacing widen on hover */
+.hist-dossier:hover .hist-dossier__classification {
+  letter-spacing: 0.16em;
+}
+
+/* Redaction bars: shimmer sweep on hover */
+@keyframes histRedactionShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.hist-dossier__bar {
+  transition: opacity 300ms var(--ease-cinematic);
+}
+
+.hist-dossier:hover .hist-dossier__bar {
+  opacity: 0.55;
+  background-size: 200% 100%;
+  animation: histRedactionShimmer 1.6s ease-in-out infinite;
+}
+
+/* Stamp press on classified tiles */
+.hist-dossier__stamp {
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 200ms;
+}
+
+.hist-dossier:hover .hist-dossier__stamp {
+  transform: rotate(-3deg) scale(1.05);
+  opacity: 0.7;
+}
+
+/* Severity badge: subtle scale on hover */
+.hist-dossier__severity {
+  transition:
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-dossier:hover .hist-dossier__severity {
+  transform: scale(1.08);
+}
+
+/* ---------------------------------------------------------------------------
+   2. PERSPECTIVE TABS — Tilt, active glow, type badge underline
+   --------------------------------------------------------------------------- */
+
+/* Enhanced hover: tilt + lift */
+.hist-persp-tab:hover {
+  box-shadow: var(--hist-doc-edge-hover);
+  transform: translateY(-3px) rotate(-0.5deg);
+  transition:
+    box-shadow 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 250ms var(--ease-cinematic),
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Active tab: breathing glow pulse */
+@keyframes histPerspGlow {
+  0%, 100% { box-shadow: var(--hist-doc-edge-lifted), 0 0 0 0 var(--hist-persp-active, var(--hist-accent)); }
+  50%      { box-shadow: var(--hist-doc-edge-lifted), 0 0 8px 1px var(--hist-persp-active, var(--hist-accent)); }
+}
+
+.hist-persp-tab--active {
+  animation: histPerspGlow 2.4s ease-in-out infinite;
+  transform: translateY(-2px);
+}
+
+/* Tab type badge: underline slides in from left on hover */
+.hist-persp-tab__type {
+  position: relative;
+  display: inline-block;
+}
+
+.hist-persp-tab__type::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: var(--hist-persp-active, var(--hist-ink-muted));
+  transition: width 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-persp-tab:hover .hist-persp-tab__type::after {
+  width: 100%;
+}
+
+/* Tab click: quick press */
+.hist-persp-tab:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 60ms ease-out;
+}
+
+/* Perspective view: crossfade entrance with scale */
+@keyframes histPerspEnterMicro {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hist-persp-view {
+  animation: histPerspEnterMicro 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ---------------------------------------------------------------------------
+   3. PRIMARY SOURCE BLOCKS — Texture, quotation mark, citation underline
+   --------------------------------------------------------------------------- */
+
+/* Paper texture intensifies on hover */
+.hist-source-block {
+  transition:
+    box-shadow 300ms var(--ease-cinematic),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-source-block:hover {
+  box-shadow: var(--hist-doc-edge-hover);
+  transform: translateY(-2px);
+}
+
+/* Opening quotation mark: scale up on hover */
+.hist-source-block__text::first-letter {
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Citation: underline slides in from left on hover */
+.hist-source-block__citation {
+  position: relative;
+  display: inline-block;
+}
+
+.hist-source-block__citation::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--hist-brass);
+  transition: width 200ms var(--ease-cinematic);
+}
+
+.hist-source-block:hover .hist-source-block__citation::after {
+  width: 100%;
+}
+
+/* Brass border brightens on hover */
+.hist-source-block {
+  border-left-color: var(--hist-brass);
+  transition:
+    box-shadow 300ms var(--ease-cinematic),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-left-color 200ms;
+}
+
+.hist-source-block:hover {
+  border-left-color: var(--hist-brass-bright);
+}
+
+/* ---------------------------------------------------------------------------
+   4. OMISSIONS PANEL — Bullet scale, strikethrough slide, row indent
+   --------------------------------------------------------------------------- */
+
+/* Emphasized bullets: scale up on row hover */
+.hist-omission-bullet--filled {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-omission-item:hover .hist-omission-bullet--filled {
+  transform: scale(1.3);
+}
+
+/* Disputed bullets: scale up too */
+.hist-omission-bullet--disputed {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-omission-item:hover .hist-omission-bullet--disputed {
+  transform: scale(1.2);
+}
+
+/* Omitted text: strikethrough that slides in from left */
+.hist-omission-text--omitted {
+  text-decoration: none;
+  position: relative;
+}
+
+.hist-omission-text--omitted::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 1.5px;
+  background: var(--hist-ink-muted);
+  transition: width 300ms var(--ease-cinematic);
+}
+
+/* Start the strikethrough visually present (matching the original) */
+.hist-omission-text--omitted::after {
+  width: 100%;
+}
+
+/* On row hover, redraw the strikethrough with a flash */
+@keyframes histStrikeSlide {
+  0%   { width: 0; }
+  100% { width: 100%; }
+}
+
+.hist-omission-item:hover .hist-omission-text--omitted::after {
+  animation: histStrikeSlide 300ms var(--ease-cinematic) both;
+}
+
+/* Row hover: slight indent spring */
+.hist-omission-item {
+  transition:
+    padding-left 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 200ms;
+  border-radius: 2px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+.hist-omission-item:hover {
+  padding-left: 8px;
+  background: var(--hist-accent-ghost);
+}
+
+/* ---------------------------------------------------------------------------
+   5. KEY FACTS — Row hover tint, label tighten
+   --------------------------------------------------------------------------- */
+
+.hist-key-fact {
+  transition:
+    background 200ms var(--ease-cinematic),
+    padding-left 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 2px;
+  padding: var(--space-2);
+  margin: calc(-1 * var(--space-2));
+}
+
+.hist-key-fact:hover {
+  background: var(--hist-accent-ghost);
+  padding-left: calc(var(--space-2) + 4px);
+}
+
+/* Label: letter-spacing tightens on hover */
+.hist-key-fact__label {
+  transition: letter-spacing 200ms var(--ease-cinematic);
+}
+
+.hist-key-fact:hover .hist-key-fact__label {
+  letter-spacing: 0.06em;
+}
+
+/* Value: subtle scale in from monospace data feel */
+.hist-key-fact__value {
+  transition:
+    color 200ms,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+  transform-origin: left center;
+}
+
+.hist-key-fact:hover .hist-key-fact__value {
+  color: var(--hist-accent);
+  transform: scale(1.02);
+}
+
+/* Key facts container: gentle lift */
+.hist-key-facts {
+  transition:
+    box-shadow 300ms var(--ease-cinematic),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-key-facts:hover {
+  box-shadow: var(--hist-doc-edge-hover);
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------------------------
+   6. MEDIA GALLERY — Ken Burns zoom, archival intensify, click press
+   --------------------------------------------------------------------------- */
+
+/* Image hover: Ken Burns zoom */
+.hist-gallery__image {
+  transition:
+    filter 300ms var(--ease-cinematic),
+    transform 300ms var(--ease-cinematic);
+}
+
+.hist-gallery__item:hover .hist-gallery__image {
+  transform: scale(1.04);
+  filter: contrast(1.06) saturate(0.82) sepia(0.18);
+}
+
+/* Click: quick press before lightbox */
+.hist-gallery__item:active .hist-gallery__image {
+  transform: scale(0.96);
+  transition: transform 80ms ease-out;
+}
+
+/* Gallery item: enhanced lift */
+.hist-gallery__item {
+  transition:
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-gallery__item:hover {
+  transform: translateY(-4px);
+}
+
+/* Caption: slide-in on hover */
+.hist-gallery__caption {
+  transition:
+    color 200ms,
+    transform 200ms var(--ease-cinematic);
+}
+
+.hist-gallery__item:hover .hist-gallery__caption {
+  color: var(--hist-ink);
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------------------------
+   7. LIGHTBOX — Scale-up entrance, nav slide, close rotate, float
+   --------------------------------------------------------------------------- */
+
+/* Enhanced entrance: scale up from slightly small */
+@keyframes histLightboxEnter {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+.hist-lightbox {
+  animation: histLightboxEnter 300ms var(--ease-cinematic) both;
+}
+
+/* Image: zoom in entrance */
+@keyframes histLightboxImageIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hist-lightbox__image {
+  animation: histLightboxImageIn 350ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms both;
+}
+
+/* Subtle floating animation — document held in air */
+@keyframes histLightboxFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+.hist-lightbox__image {
+  animation:
+    histLightboxImageIn 350ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms both,
+    histLightboxFloat 4s ease-in-out 500ms infinite;
+}
+
+/* Nav arrows: slide in on hover direction */
+.hist-lightbox__nav {
+  transition:
+    color 200ms,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-lightbox__nav--prev:hover {
+  transform: translateY(-50%) translateX(-4px);
+  color: var(--hist-paper-fixed);
+}
+
+.hist-lightbox__nav--next:hover {
+  transform: translateY(-50%) translateX(4px);
+  color: var(--hist-paper-fixed);
+}
+
+/* Close button: rotate on hover */
+.hist-lightbox__close {
+  transition:
+    color 200ms,
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-lightbox__close:hover {
+  color: var(--hist-paper-fixed);
+  transform: rotate(90deg);
+}
+
+/* ---------------------------------------------------------------------------
+   8. COMPARISON MODE — Toggle flip, divider pulse, vocab stagger
+   --------------------------------------------------------------------------- */
+
+/* Compare toggle: icon flip on activation */
+.hist-compare-toggle {
+  transition:
+    background 200ms,
+    border-color 200ms,
+    color 200ms,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-compare-toggle:hover {
+  border-color: var(--hist-accent);
+  color: var(--hist-accent);
+  transform: scale(1.03);
+}
+
+.hist-compare-toggle:active {
+  transform: scale(0.97);
+  transition: transform 60ms ease-out;
+}
+
+/* Active state: subtle bounce in */
+.hist-compare-toggle--active {
+  animation: histToggleBounce 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes histToggleBounce {
+  0%   { transform: scale(0.95); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Divider handle: brass pulse on hover */
+@keyframes histDividerPulse {
+  0%, 100% { opacity: 0.5; box-shadow: none; }
+  50%      { opacity: 1; box-shadow: 0 0 8px var(--hist-brass-glow); }
+}
+
+@media (min-width: 768px) {
+  .hist-comparison__divider:hover .hist-comparison__divider-handle {
+    animation: histDividerPulse 1.2s ease-in-out infinite;
+  }
+}
+
+/* Vocabulary highlights: staggered fade-in */
+@keyframes histVocabHighlight {
+  from { background-color: transparent; }
+  to   { background-color: var(--hist-accent-ghost); }
+}
+
+.hist-vocab-unique {
+  transition:
+    text-decoration-color 300ms,
+    background-color 300ms;
+  border-radius: 1px;
+  padding: 0 1px;
+}
+
+.hist-vocab-unique:hover {
+  background-color: var(--hist-accent-ghost);
+}
+
+/* Stagger: fade-in + underline draw for each unique word */
+@keyframes histVocabFadeIn {
+  from {
+    opacity: 0.3;
+    text-decoration-color: transparent;
+  }
+  to {
+    opacity: 1;
+    text-decoration-color: var(--hist-persp-active, var(--hist-accent));
+  }
+}
+
+.hist-vocab-stagger {
+  animation: histVocabFadeIn 400ms var(--ease-cinematic) both;
+}
+
+/* ---------------------------------------------------------------------------
+   9. CONNECTED EVENTS — Arrow slide, badge scale, underline from left
+   --------------------------------------------------------------------------- */
+
+/* Connection link: arrow slides right on hover */
+.hist-connection {
+  transition:
+    color 200ms,
+    padding-left 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 300ms var(--ease-cinematic);
+}
+
+a.hist-connection:hover {
+  padding-left: var(--space-2);
+}
+
+/* Connection type badge: scale up on hover */
+.hist-connection__type {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-connection:hover .hist-connection__type {
+  transform: scale(1.05);
+}
+
+/* Connection title: underline slides from left */
+.hist-connection__title {
+  position: relative;
+  display: inline;
+}
+
+.hist-connection__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: var(--hist-accent);
+  transition: width 250ms var(--ease-cinematic);
+}
+
+a.hist-connection:hover .hist-connection__title::after {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   10. COMPACT TIMELINE — Arrow bounce, current dot glow, line dash
+   --------------------------------------------------------------------------- */
+
+/* Prev/next arrows: bounce on hover */
+.hist-compact-timeline__link {
+  transition:
+    color 200ms,
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-compact-timeline__link:hover {
+  color: var(--hist-accent);
+  transform: scale(1.03);
+}
+
+/* Arrow character: directional bounce */
+.hist-compact-timeline__arrow {
+  display: inline-block;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-compact-timeline__link:first-child:hover .hist-compact-timeline__arrow {
+  transform: translateX(-3px);
+}
+
+.hist-compact-timeline__link:last-child:hover .hist-compact-timeline__arrow {
+  transform: translateX(3px);
+}
+
+/* Click press */
+.hist-compact-timeline__link:active {
+  transform: scale(0.97);
+  transition: transform 60ms ease-out;
+}
+
+/* Current event dot: breathing glow */
+@keyframes histCurrentDotGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(155, 122, 47, 0.3); }
+  50%      { box-shadow: 0 0 14px rgba(155, 122, 47, 0.5), 0 0 4px rgba(155, 122, 47, 0.2); }
+}
+
+.hist-compact-timeline__current-dot {
+  animation: histCurrentDotGlow 2.4s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   11. TOPBAR — Logo scale, label spacing, arrow spring
+   --------------------------------------------------------------------------- */
+
+/* Logo: hover scale up */
+.hist-topbar__logo {
+  transition:
+    color 200ms var(--ease-cinematic),
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-topbar__back:hover .hist-topbar__logo {
+  transform: scale(1.08);
+}
+
+/* "history" label: letter-spacing widens on hover */
+.hist-topbar__section {
+  transition:
+    letter-spacing 250ms var(--ease-cinematic),
+    color 200ms;
+}
+
+.hist-topbar__back:hover .hist-topbar__section {
+  letter-spacing: 0.08em;
+  color: var(--hist-accent);
+}
+
+/* "The Archive" subtitle: slight reveal on hover */
+.hist-topbar__subtitle {
+  transition:
+    letter-spacing 250ms var(--ease-cinematic),
+    opacity 200ms;
+  opacity: 0.7;
+}
+
+.hist-topbar__back:hover .hist-topbar__subtitle {
+  letter-spacing: 0.10em;
+  opacity: 1;
+}
+
+/* Back arrow: spring slide left on hover */
+.hist-topbar__arrow {
+  display: inline-block;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-topbar__back:hover .hist-topbar__arrow {
+  transform: translateX(-4px);
+}
+
+/* Ink dot separator: pulse on hover */
+.hist-topbar__dot {
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 200ms;
+}
+
+.hist-topbar__back:hover .hist-topbar__dot {
+  transform: scale(1.4);
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------------------
+   12. FOOTER — Logo parallax (CSS-only), links underline from center
+   --------------------------------------------------------------------------- */
+
+/* Footer logo: gentle hover lift */
+.hist-footer__logo {
+  transition:
+    opacity 200ms,
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-footer__logo:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Footer section label: widen on hover */
+.hist-footer__section {
+  transition: letter-spacing 250ms var(--ease-cinematic);
+}
+
+.hist-footer:hover .hist-footer__section {
+  letter-spacing: 0.08em;
+}
+
+/* Footer link: underline slides from center */
+.hist-footer__link {
+  position: relative;
+  display: inline-block;
+}
+
+.hist-footer__link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--hist-accent);
+  transition: width 250ms var(--ease-cinematic), left 250ms var(--ease-cinematic);
+}
+
+.hist-footer__link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   13. SECTION LABELS — Ink rule draw-in, text slide
+   --------------------------------------------------------------------------- */
+
+/* Ink rule SVG: draw-in on scroll reveal */
+.hist-ink-rule path {
+  stroke-dasharray: 800;
+  stroke-dashoffset: 800;
+  transition: stroke-dashoffset 1.2s var(--ease-cinematic);
+}
+
+.hist-reveal--visible .hist-ink-rule path,
+.hist-ink-rule.hist-micro-drawn path {
+  stroke-dashoffset: 0;
+}
+
+/* Section label: slide in with blur clear */
+.hist-section-label {
+  transition:
+    transform 500ms var(--ease-cinematic),
+    filter 400ms var(--ease-cinematic),
+    opacity 500ms var(--ease-cinematic);
+}
+
+/* Section labels inside reveal containers get the slide */
+.hist-reveal .hist-section-label {
+  transform: translateX(-16px);
+  filter: blur(2px);
+  opacity: 0;
+}
+
+.hist-reveal--visible .hist-section-label {
+  transform: translateX(0);
+  filter: blur(0);
+  opacity: 1;
+}
+
+/* Section label underline: draw from left */
+.hist-section-label::after {
+  transition: width 600ms var(--ease-cinematic) 200ms;
+  width: 0;
+}
+
+.hist-reveal--visible .hist-section-label::after {
+  width: 80%;
+}
+
+/* ---------------------------------------------------------------------------
+   14. ERA/REGION PAGES — Region pill snap, era drawer arrow
+   --------------------------------------------------------------------------- */
+
+/* Region pills: snap bounce on click */
+.hist-region-pill {
+  transition:
+    background 200ms,
+    border-color 200ms,
+    color 200ms,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-region-pill:hover {
+  border-color: var(--hist-accent);
+  color: var(--hist-accent);
+  transform: scale(1.04);
+}
+
+.hist-region-pill:active {
+  transform: scale(0.96);
+  transition: transform 60ms ease-out;
+}
+
+/* Active pill: fill animates from center outward */
+@keyframes histPillFill {
+  0%   { background-size: 0% 100%; }
+  100% { background-size: 100% 100%; }
+}
+
+.hist-region-pill--active {
+  background-image: linear-gradient(var(--hist-accent), var(--hist-accent));
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: histPillFill 250ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Era drawer chevron: smooth rotation (already in base CSS, enhanced here) */
+.hist-era-drawer__chevron {
+  display: inline-block;
+  transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Era drawer header: scale press on click */
+.hist-era-drawer__header {
+  transition:
+    background 200ms,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-era-drawer__header:active {
+  transform: scale(0.99);
+  transition: transform 60ms ease-out;
+}
+
+/* Era drawer name: letter-spacing on hover */
+.hist-era-drawer__name {
+  transition: letter-spacing 200ms var(--ease-cinematic);
+}
+
+.hist-era-drawer__header:hover .hist-era-drawer__name {
+  letter-spacing: 0.01em;
+}
+
+/* Era drawer count: brass brightens on hover */
+.hist-era-drawer__count {
+  transition: color 200ms;
+}
+
+.hist-era-drawer__header:hover .hist-era-drawer__count {
+  color: var(--hist-brass-bright);
+}
+
+/* ---------------------------------------------------------------------------
+   15. EVENT CARD — Enhanced hover with spring physics
+   --------------------------------------------------------------------------- */
+
+.hist-event-card {
+  transition:
+    box-shadow 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-event-card:hover {
+  box-shadow: var(--hist-doc-edge-lifted);
+  transform: translateY(-4px);
+}
+
+.hist-event-card:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: transform 80ms ease-out;
+}
+
+/* Event card image: Ken Burns on hover */
+.hist-event-card__image img {
+  transition:
+    transform 400ms var(--ease-cinematic),
+    filter 300ms;
+}
+
+.hist-event-card:hover .hist-event-card__image img {
+  transform: scale(1.06);
+  filter: contrast(1.05) saturate(0.78) sepia(0.06);
+}
+
+/* Severity badge: pop on hover */
+.hist-event-card__severity {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-event-card:hover .hist-event-card__severity {
+  transform: scale(1.06);
+}
+
+/* ---------------------------------------------------------------------------
+   16. HERO SECTION — Title reveal shimmer
+   --------------------------------------------------------------------------- */
+
+/* Hero title: subtle text-shadow glow settle */
+.hist-hero__title {
+  transition: text-shadow 1s var(--ease-cinematic);
+}
+
+/* Era badge: letter-spacing settle */
+.hist-hero__era {
+  transition: letter-spacing 500ms var(--ease-cinematic);
+}
+
+/* ---------------------------------------------------------------------------
+   17. LANDING HERO — Quote breathe, sub counter
+   --------------------------------------------------------------------------- */
+
+/* Pull quote: subtle italic sway */
+@keyframes histQuoteSway {
+  0%, 100% { transform: rotate(-0.2deg); }
+  50%      { transform: rotate(0.2deg); }
+}
+
+.hist-landing-hero__quote {
+  animation: histQuoteSway 6s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+/* Sub text: letter spacing breathe */
+.hist-landing-hero__sub {
+  transition: letter-spacing 300ms var(--ease-cinematic);
+}
+
+.hist-landing-hero:hover .hist-landing-hero__sub {
+  letter-spacing: 0.06em;
+}
+
+/* Landing logo icon: hover lift */
+.hist-landing-hero__logo {
+  transition:
+    opacity 200ms,
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-landing-hero:hover .hist-landing-hero__logo {
+  opacity: 0.7;
+  transform: scale(1.08);
+}
+
+/* ---------------------------------------------------------------------------
+   18. PERSPECTIVE SECTION HEADING — Hover accent
+   --------------------------------------------------------------------------- */
+
+.hist-persp-section-heading {
+  transition:
+    color 200ms,
+    letter-spacing 200ms var(--ease-cinematic);
+}
+
+.hist-persp-section-heading:hover {
+  color: var(--hist-accent-bright);
+  letter-spacing: 0.10em;
+}
+
+/* ---------------------------------------------------------------------------
+   19. REDACTED DOSSIER — Enhanced interactions for redacted cards
+   --------------------------------------------------------------------------- */
+
+/* Redacted stamp: press + rotate on hover */
+.hist-redacted__stamp {
+  transition:
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 200ms;
+}
+
+.hist-redacted:hover .hist-redacted__stamp {
+  transform: rotate(-4deg) scale(1.08);
+  opacity: 1;
+}
+
+/* Redacted bars: shimmer */
+.hist-redacted__bar {
+  transition: opacity 300ms;
+}
+
+.hist-redacted:hover .hist-redacted__bar {
+  opacity: 0.18;
+  background-size: 200% 100%;
+  animation: histRedactionShimmer 1.6s ease-in-out infinite;
+}
+
+/* Redacted title blocks: flicker on hover */
+.hist-redacted__title {
+  transition: opacity 200ms;
+}
+
+.hist-redacted:hover .hist-redacted__title {
+  opacity: 0.85;
+}
+
+/* ---------------------------------------------------------------------------
+   20. MAP PINS — Bounce on hover
+   --------------------------------------------------------------------------- */
+
+.hist-map__pin {
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    fill 200ms;
+}
+
+.hist-map__pin:hover {
+  transform: scale(1.3) translateY(-2px);
+  fill: var(--hist-accent-bright);
+}
+
+/* ---------------------------------------------------------------------------
+   21. CONTEXT PANEL — First paragraph drop cap feel
+   --------------------------------------------------------------------------- */
+
+.hist-context p:first-child::first-letter {
+  font-family: var(--font-editorial);
+  font-size: 2.2em;
+  float: left;
+  line-height: 0.85;
+  margin-right: 4px;
+  margin-top: 4px;
+  color: var(--hist-accent);
+}
+
+/* ---------------------------------------------------------------------------
+   22. TIMELINE DOTS — Enhanced hover spring
+   --------------------------------------------------------------------------- */
+
+.hist-timeline__dot {
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hist-timeline__dot:hover {
+  transform: translateY(-4px);
+}
+
+.hist-timeline__dot:active {
+  transform: translateY(0) scale(0.97);
+  transition: transform 60ms ease-out;
+}
+
+/* Active dot circle: breathing glow */
+.hist-timeline__dot--active .hist-timeline__dot-circle {
+  animation: histCurrentDotGlow 2.4s ease-in-out infinite;
+}
+
+/* ===========================================================================
+   REDUCED MOTION — Override ALL micro-interactions
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  /* Kill all new animations */
+  .hist-dossier:hover,
+  .hist-dossier:active,
+  .hist-dossier:focus-visible {
+    transform: none;
+    transition: none;
+  }
+
+  .hist-dossier__classification,
+  .hist-dossier__stamp,
+  .hist-dossier__severity,
+  .hist-dossier__bar {
+    transition: none;
+    animation: none;
+  }
+
+  .hist-dossier:hover .hist-dossier__classification,
+  .hist-dossier:hover .hist-dossier__stamp,
+  .hist-dossier:hover .hist-dossier__severity {
+    transform: none;
+    letter-spacing: 0.12em;
+  }
+
+  .hist-dossier:hover .hist-dossier__bar {
+    animation: none;
+  }
+
+  .hist-persp-tab:hover,
+  .hist-persp-tab:active,
+  .hist-persp-tab--active {
+    transform: none;
+    animation: none;
+    transition: none;
+  }
+
+  .hist-persp-tab__type::after {
+    transition: none;
+  }
+
+  .hist-persp-view {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hist-source-block,
+  .hist-source-block:hover {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-source-block__citation::after {
+    transition: none;
+  }
+
+  .hist-omission-bullet--filled,
+  .hist-omission-bullet--disputed {
+    transition: none;
+  }
+
+  .hist-omission-item {
+    transition: none;
+  }
+
+  .hist-omission-item:hover {
+    padding-left: 4px;
+  }
+
+  .hist-omission-item:hover .hist-omission-text--omitted::after {
+    animation: none;
+  }
+
+  .hist-key-fact,
+  .hist-key-fact:hover {
+    transition: none;
+  }
+
+  .hist-key-fact__value,
+  .hist-key-fact__label {
+    transition: none;
+  }
+
+  .hist-key-facts,
+  .hist-key-facts:hover {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-gallery__image,
+  .hist-gallery__item {
+    transition: none;
+  }
+
+  .hist-gallery__item:hover,
+  .hist-gallery__item:active {
+    transform: none;
+  }
+
+  .hist-gallery__item:hover .hist-gallery__image {
+    transform: none;
+  }
+
+  .hist-gallery__caption {
+    transition: none;
+  }
+
+  .hist-lightbox {
+    animation: none;
+    opacity: 1;
+  }
+
+  .hist-lightbox__image {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hist-lightbox__nav,
+  .hist-lightbox__close {
+    transition: none;
+  }
+
+  .hist-lightbox__nav--prev:hover,
+  .hist-lightbox__nav--next:hover {
+    transform: translateY(-50%);
+  }
+
+  .hist-lightbox__close:hover {
+    transform: none;
+  }
+
+  .hist-compare-toggle,
+  .hist-compare-toggle:hover,
+  .hist-compare-toggle:active,
+  .hist-compare-toggle--active {
+    transition: none;
+    animation: none;
+    transform: none;
+  }
+
+  .hist-comparison__divider:hover .hist-comparison__divider-handle {
+    animation: none;
+  }
+
+  .hist-connection,
+  .hist-connection:hover {
+    transition: none;
+    padding-left: 0;
+  }
+
+  .hist-connection__type,
+  .hist-connection__title::after {
+    transition: none;
+  }
+
+  .hist-compact-timeline__link,
+  .hist-compact-timeline__link:hover,
+  .hist-compact-timeline__link:active {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-compact-timeline__arrow {
+    transition: none;
+  }
+
+  .hist-compact-timeline__link:hover .hist-compact-timeline__arrow {
+    transform: none;
+  }
+
+  .hist-compact-timeline__current-dot {
+    animation: none;
+  }
+
+  .hist-topbar__logo,
+  .hist-topbar__section,
+  .hist-topbar__subtitle,
+  .hist-topbar__arrow,
+  .hist-topbar__dot {
+    transition: none;
+  }
+
+  .hist-topbar__back:hover .hist-topbar__logo,
+  .hist-topbar__back:hover .hist-topbar__arrow,
+  .hist-topbar__back:hover .hist-topbar__dot {
+    transform: none;
+  }
+
+  .hist-footer__logo,
+  .hist-footer__section {
+    transition: none;
+  }
+
+  .hist-footer__link::after {
+    transition: none;
+  }
+
+  .hist-ink-rule path {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+
+  .hist-reveal .hist-section-label {
+    transform: none;
+    filter: none;
+    opacity: 1;
+    transition: none;
+  }
+
+  .hist-section-label::after {
+    transition: none;
+    width: 80%;
+  }
+
+  .hist-region-pill,
+  .hist-region-pill:hover,
+  .hist-region-pill:active {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-region-pill--active {
+    animation: none;
+  }
+
+  .hist-era-drawer__header,
+  .hist-era-drawer__header:active {
+    transition: background 200ms;
+  }
+
+  .hist-era-drawer__name,
+  .hist-era-drawer__count {
+    transition: none;
+  }
+
+  .hist-event-card,
+  .hist-event-card:hover,
+  .hist-event-card:active {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-event-card__image img {
+    transition: none;
+  }
+
+  .hist-event-card:hover .hist-event-card__image img {
+    transform: none;
+  }
+
+  .hist-event-card__severity {
+    transition: none;
+  }
+
+  .hist-landing-hero__quote {
+    animation: none;
+    transform: none;
+  }
+
+  .hist-landing-hero__sub {
+    transition: none;
+  }
+
+  .hist-landing-hero__logo {
+    transition: none;
+  }
+
+  .hist-persp-section-heading {
+    transition: none;
+  }
+
+  .hist-redacted__stamp,
+  .hist-redacted__bar,
+  .hist-redacted__title {
+    transition: none;
+    animation: none;
+  }
+
+  .hist-redacted:hover .hist-redacted__stamp {
+    transform: rotate(-2deg);
+  }
+
+  .hist-map__pin {
+    transition: none;
+  }
+
+  .hist-timeline__dot,
+  .hist-timeline__dot:hover,
+  .hist-timeline__dot:active {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-timeline__dot--active .hist-timeline__dot-circle {
+    animation: none;
+  }
+
+  .hist-vocab-unique,
+  .hist-vocab-stagger {
+    transition: none;
+    animation: none;
+    opacity: 1;
+  }
+}

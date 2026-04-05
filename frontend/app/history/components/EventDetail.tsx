@@ -25,8 +25,28 @@ interface EventDetailProps {
 
 /* ── Organic Ink Divider ── */
 function InkRule() {
+  const ref = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.classList.add("hist-micro-drawn");
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <svg
+      ref={ref}
       className="hist-ink-rule"
       viewBox="0 0 400 4"
       preserveAspectRatio="none"
