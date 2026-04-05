@@ -1,5 +1,5 @@
 """
-Re-rank existing clusters using the v4.0 ranking engine.
+Re-rank existing clusters using the v6.0 ranking engine.
 
 Reads clusters + articles + bias scores from Supabase, runs rank_importance()
 on each, and writes back updated headline_rank + divergence_score +
@@ -21,18 +21,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from utils.supabase_client import supabase
 from ranker.importance_ranker import rank_importance
+from ranker.edition_ranker import apply_edition_ranking, EDITIONS
 from categorizer.auto_categorize import categorize_article, map_to_desk
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 DRY_RUN = "--dry-run" in sys.argv
-
-
-def _get_section(cluster_id: str, clusters: list[dict]) -> str:
-    """Look up the primary section (world/us) for a cluster by ID."""
-    for c in clusters:
-        if c["id"] == cluster_id:
-            return c.get("section", "world")
-    return "world"
 
 
 def _cluster_in_section(cluster_id: str, clusters: list[dict], section: str) -> bool:
@@ -44,26 +37,6 @@ def _cluster_in_section(cluster_id: str, clusters: list[dict], section: str) -> 
             sections = c.get("sections") or [c.get("section", "world")]
             return section in sections
     return section == "world"
-
-
-def _get_cluster_tier_info(articles: list[dict], sources: list[dict]) -> dict:
-    """Get tier breakdown and independent factual rigor for lead gate exemptions."""
-    source_map = {}
-    for s in sources:
-        if s.get("db_id"):
-            source_map[s["db_id"]] = s
-        if s.get("id"):
-            source_map[s["id"]] = s
-
-    tiers = set()
-    for a in articles:
-        sid = a.get("source_id", "")
-        src = source_map.get(sid, {})
-        tier = src.get("tier", "")
-        if tier:
-            tiers.add(tier)
-
-    return {"tiers": tiers}
 
 
 def load_sources() -> list[dict]:
@@ -272,410 +245,33 @@ def main():
 
     print(f"\n  Scored {len(updates)} clusters, {errors} errors")
 
-    # Per-section lead gate + topic diversity (v4.0)
-    # Both gates run PER SECTION so each section's top 10 is independently curated.
-    LEAD_MIN_SOURCES = 3
-    LEAD_SLOTS = 10
-    _SOFT_CATS = {"sports", "entertainment", "culture", "lifestyle",
-                  "celebrity", "music", "film", "television", "gaming"}
-    MAX_SAME_CAT_DEFAULT = 2
-    MAX_SAME_CAT_SOFT = 1
-    TOP_N = 10
-
     updates.sort(key=lambda u: u["headline_rank"], reverse=True)
 
-    for section_val in ("world", "us", "europe", "south-asia"):
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, section_val)]
-        if not pool:
-            continue
-
-        # --- Lead gate: top LEAD_SLOTS positions require 3+ sources ---
-        # Exception: independent-tier stories with factual_rigor > 70
-        # Strategy: separate eligible vs ineligible, rebuild the pool
-        # with eligible stories first (up to LEAD_SLOTS), then backfill.
-        def _is_lead_exempt(u: dict) -> bool:
-            """Check if a low-source story qualifies for lead gate exemption."""
-            tier_info = _get_cluster_tier_info(u.get("_articles", []), sources)
-            avg_rigor = 0.0
-            bs_list = u.get("_bias_scores", [])
-            if bs_list:
-                rigor_vals = [bs.get("factual_rigor", 0) for bs in bs_list if bs.get("factual_rigor") is not None]
-                avg_rigor = sum(rigor_vals) / len(rigor_vals) if rigor_vals else 0.0
-            return "independent" in tier_info["tiers"] and avg_rigor > 70
-
-        lead_eligible = []
-        lead_deferred = []
-        for u in pool:
-            if u["source_count"] >= LEAD_MIN_SOURCES or _is_lead_exempt(u):
-                lead_eligible.append(u)
+    # ── Per-edition rank computation (v6.0 — shared edition_ranker) ──
+    # Normalize update dicts for the shared module: needs "articles", "title", "sections"
+    _cluster_lookup = {c["id"]: c for c in clusters}
+    for u in updates:
+        if "articles" not in u:
+            u["articles"] = u.get("_articles", [])
+        if "title" not in u:
+            cl = _cluster_lookup.get(u["id"])
+            u["title"] = cl["title"] if cl else ""
+        if "sections" not in u:
+            cl = _cluster_lookup.get(u["id"])
+            if cl:
+                u["sections"] = cl.get("sections") or [cl.get("section", "world")]
             else:
-                lead_deferred.append(u)
+                u["sections"] = ["world"]
 
-        # Rebuild: eligible stories fill the top, ineligible go after
-        if lead_eligible and lead_deferred:
-            new_pool = lead_eligible[:LEAD_SLOTS]
-            # Backfill remaining slots with deferred if not enough eligible
-            remaining_eligible = lead_eligible[LEAD_SLOTS:]
-            # Merge remaining eligible + deferred by score
-            overflow = remaining_eligible + lead_deferred
-            overflow.sort(key=lambda u: u["headline_rank"], reverse=True)
-            new_pool.extend(overflow)
-            demoted = len(pool) - len(new_pool)  # should be 0
-            if len(new_pool) == len(pool):
-                pool[:] = new_pool
-                print(f"  Lead gate ({section_val}): enforced 3+ sources in top-{LEAD_SLOTS} ({len(lead_deferred)} stories deferred)")
+    apply_edition_ranking(
+        updates, sources, get_article_edition="source_lookup"
+    )
 
-        # --- Same-event cap (v5.1, strengthened v5.6) ---
-        # Detects event clusters by keyword overlap in titles.
-        # "Iran war" stories all share keywords like iran/tehran/hormuz.
-        # v5.6: Reduced from 3 to 2 in top pool. Deferred stories get
-        # 0.92x rank decay so they don't cluster at positions 11-20
-        # (benchmark found 11/20 world stories were Iran variants).
-        MAX_SAME_EVENT = 2
-        EVENT_DECAY = 0.80  # rank multiplier for deferred same-event stories
-        _EVENT_KEYWORDS = {
-            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth", "isfahan", "f-15", "f-35", "warplane", "fighter jet"},
-            "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky", "donbas", "crimea"},
-            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf", "hezbollah", "israeli protest"},
-            "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
-            "us_scotus": {"supreme court", "scotus", "constitutional", "alito", "justice"},
-            "bondi_ag": {"bondi", "attorney general", "doj"},
-            "trump_exec": {"executive order", "trump signs", "trump fires", "trump removes"},
-        }
-
-        def _detect_event(title: str) -> str | None:
-            """Return event key if title matches a known event, else None."""
-            t = title.lower()
-            for event_key, keywords in _EVENT_KEYWORDS.items():
-                if any(kw in t for kw in keywords):
-                    return event_key
-            return None
-
-        if len(pool) > TOP_N:
-            event_counts: dict[str, int] = {}
-            event_promoted: list[dict] = []
-            event_deferred: list[dict] = []
-
-            for u in pool:
-                title = next((c["title"] for c in clusters if c["id"] == u["id"]), "")
-                event = _detect_event(title)
-                if event and event_counts.get(event, 0) >= MAX_SAME_EVENT:
-                    event_deferred.append(u)
-                else:
-                    event_promoted.append(u)
-                    if event:
-                        event_counts[event] = event_counts.get(event, 0) + 1
-
-            # v5.6: Apply rank decay to deferred same-event stories.
-            # Without decay, deferred stories keep their original rank and
-            # cluster at positions 11-20 (e.g., 8 Iran stories in a row).
-            # Each deferred story gets 0.92x, making them spread out and
-            # allowing non-event stories to interleave naturally.
-            for u in event_deferred:
-                u["headline_rank"] = round(u["headline_rank"] * EVENT_DECAY, 2)
-
-            # Merge: promoted first, deferred after
-            pool[:] = event_promoted + event_deferred
-
-            event_demoted = len(event_deferred)
-            if event_demoted:
-                print(f"  Event diversity ({section_val}): demoted {event_demoted} stories exceeding same-event cap (max {MAX_SAME_EVENT})")
-
-        # --- Topic diversity: soft-news max 1 slot, others max 2 ---
-        if len(pool) > TOP_N:
-            promoted: list[dict] = []
-            deferred: list[dict] = []
-            cat_counts: dict[str, int] = {}
-
-            for u in pool:
-                if len(promoted) >= TOP_N:
-                    deferred.append(u)
-                    continue
-                cat = u.get("category", "general")
-                cat_limit = MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
-                if cat_counts.get(cat, 0) < cat_limit:
-                    promoted.append(u)
-                    cat_counts[cat] = cat_counts.get(cat, 0) + 1
-                else:
-                    deferred.append(u)
-
-            while len(promoted) < TOP_N and deferred:
-                promoted.append(deferred.pop(0))
-
-            final_order = promoted + deferred
-            if final_order and len(promoted) >= 2:
-                # Use 0.1pt spacing: enough to avoid false ties (0.01 made
-                # 22src Paris bomb = 6src strike) without distorting ranks
-                # (0.5 pushed a 57pt airstrike down to 48.5).
-                for j in range(1, len(promoted)):
-                    if promoted[j]["headline_rank"] >= promoted[j-1]["headline_rank"]:
-                        promoted[j]["headline_rank"] = round(promoted[j-1]["headline_rank"] - 0.1, 2)
-
-            demoted_count = sum(1 for d in deferred if d not in pool[TOP_N:])
-            if demoted_count:
-                print(f"  Topic diversity ({section_val}): demoted {demoted_count} stories exceeding category cap")
-
-    updates.sort(key=lambda u: u["headline_rank"], reverse=True)
-
-    # --- Per-edition rank computation (v5.7 — edition-unique) ---
-    # Mirrors main.py's v5.7 logic. Regional affinity computed from source
-    # country since DB-fetched articles don't carry the section field.
+    # REMOVED: old per-section lead gate, same-event cap, topic diversity,
+    # edition ranking (v5.7), freshness decay, source depth bonus.
+    # All now handled by edition_ranker.py (single source of truth).
     #
-    # Three mechanisms:
-    # 1. Regional affinity boost (up to 1.50x per source-country match)
-    # 2. Local-priority boost (1.40x exclusive, 1.15x cross-listed)
-    # 3. Cross-edition demotion (0.70x, milder 0.88x for global events)
-    # Processing order: regional first, world last.
-
-    _COUNTRY_EDITION = {
-        "US": "us",
-        "IN": "south-asia", "PK": "south-asia", "BD": "south-asia",
-        "LK": "south-asia", "NP": "south-asia", "AF": "south-asia",
-        "MV": "south-asia", "BT": "south-asia",
-        "GB": "europe", "UK": "europe",
-        "FR": "europe", "DE": "europe", "ES": "europe", "IT": "europe",
-        "NL": "europe", "BE": "europe", "PT": "europe", "AT": "europe",
-        "CH": "europe", "IE": "europe", "SE": "europe", "DK": "europe",
-        "NO": "europe", "FI": "europe", "IS": "europe",
-        "PL": "europe", "CZ": "europe", "RO": "europe", "BG": "europe",
-        "HR": "europe", "RS": "europe", "GR": "europe", "HU": "europe",
-        "EE": "europe", "LV": "europe", "LT": "europe",
-        "UA": "europe", "GE": "europe",
-    }
-
-    # Build source_id → edition lookup from sources list
-    _src_edition: dict[str, str] = {}
-    for s in sources:
-        country = (s.get("country", "") or "").upper()
-        ed_val = _COUNTRY_EDITION.get(country, "world")
-        db_id = s.get("db_id", "")
-        slug = s.get("id", "")
-        if db_id:
-            _src_edition[db_id] = ed_val
-        if slug:
-            _src_edition[slug] = ed_val
-
-    # Build cluster_id → sections lookup for efficiency
-    _cluster_sections: dict[str, list[str]] = {}
-    for c in clusters:
-        _cluster_sections[c["id"]] = c.get("sections") or [c.get("section", "world")]
-
-    CROSS_EDITION_TOP = 8
-    CROSS_DEMOTION = 0.70
-    GLOBAL_SIG_DEMOTION = 0.88
-    GLOBAL_SIG_SOURCES = 20
-    GLOBAL_SIG_EDITIONS = 3
-    LOCAL_EXCLUSIVE_BOOST = 1.40
-    LOCAL_CROSSLIST_BOOST = 1.0   # no boost for cross-listed; affinity handles it
-    AFFINITY_MAX_BOOST = 1.5     # max boost at 100% regional sources (v5.8: capped from 2.0)
-    WORLD_MULTI_ED_BOOST = 1.12
-    EDITIONS = ["us", "europe", "south-asia", "world"]  # regional first!
-
-    # Store base importance for each update
-    for u in updates:
-        if "base_rank" not in u:
-            u["base_rank"] = u["importance_score"]
-
-    # Initialize edition ranks from base
-    for u in updates:
-        for ed in EDITIONS:
-            u[f"rank_{ed}"] = u["base_rank"]
-
-    # Freshness decay: stories age out gracefully so fresh content rises.
-    # 0-8h = 1.0x, 8-16h = 0.93x, 16-24h = 0.86x, 24-32h = 0.80x, 32h+ = 0.74x
-    _FRESHNESS_DECAY_PER_8H = 0.93
-    _now = datetime.now(timezone.utc)
-    _cluster_created = {c["id"]: c.get("created_at") or c.get("first_published", "") for c in clusters}
-    for u in updates:
-        created_str = _cluster_created.get(u["id"], "")
-        if created_str:
-            try:
-                created = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
-                age_hours = (_now - created).total_seconds() / 3600.0
-                decay_steps = int(age_hours / 8.0)
-                if decay_steps > 0:
-                    decay = _FRESHNESS_DECAY_PER_8H ** min(decay_steps, 5)
-                    for ed in EDITIONS:
-                        u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * decay, 2)
-            except (ValueError, TypeError):
-                pass
-
-    # Source depth bonus: high-source clusters get a multiplicative boost
-    # to ensure they decisively outrank mid-tier stories. The base ranker's
-    # coverage curve may have been computed with an old formula — this
-    # compensates and guarantees source count → ranking priority.
-    for u in updates:
-        sc = u.get("source_count", 0)
-        if sc >= 30:
-            depth_mult = 1.25
-        elif sc >= 15:
-            depth_mult = 1.12
-        elif sc >= 10:
-            depth_mult = 1.05
-        else:
-            depth_mult = 1.0
-        for ed in EDITIONS:
-            u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * depth_mult, 2)
-
-    # Apply regional affinity + local-priority boost
-    for u in updates:
-        c_sections = _cluster_sections.get(u["id"], ["world"])
-        articles = u.get("_articles", [])
-
-        for ed in ("us", "europe", "south-asia"):
-            if ed not in c_sections:
-                continue
-
-            # Regional affinity: % of articles from this edition's sources
-            if articles:
-                regional_count = sum(
-                    1 for a in articles
-                    if _src_edition.get(a.get("source_id", ""), "world") == ed
-                )
-                total = len(articles)
-                if total > 0:
-                    affinity = regional_count / total
-
-                    # LOW-AFFINITY DEMOTION: if <10% of articles are from this
-                    # region, the story is a stray (e.g., White Sox in South Asia
-                    # because one Pakistani wire picked it up). Demote 0.65x.
-                    if affinity < 0.10 and regional_count <= 1:
-                        u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * 0.65, 2)
-                    else:
-                        affinity_mult = 1.0 + (AFFINITY_MAX_BOOST - 1.0) * affinity
-                        # Quality cap: proportional to source count.
-                        # Full boost only at 10+ sources.
-                        _sc = u.get("source_count", 0)
-                        if _sc < 10:
-                            _cap = 1.0 + (_sc / 10.0) * (AFFINITY_MAX_BOOST - 1.0)
-                            affinity_mult = min(affinity_mult, _cap)
-                        u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * affinity_mult, 2)
-
-            # Local-priority boost — only for clusters with 8+ sources.
-            # Prevents thin regional stories from outranking major global stories.
-            _sc = u.get("source_count", 0)
-            if "world" not in c_sections and _sc >= 8:
-                u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_EXCLUSIVE_BOOST, 2)
-            elif "world" not in c_sections:
-                pass  # no boost for thin edition-exclusive clusters
-            else:
-                u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * LOCAL_CROSSLIST_BOOST, 2)
-
-    # Regional content boost: stories ABOUT a region get an extra bump
-    # in that region's edition. Keyword-based (title + summary).
-    _REGIONAL_KEYWORDS = {
-        "us": {"congress", "senate", "white house", "capitol", "supreme court",
-               "fbi", "cia", "pentagon", "doj", "irs", "fda", "epa", "cdc",
-               "american", "americans", "democrat", "republican", "gop"},
-        "europe": {"eu", "european union", "brussels", "nato", "ecb",
-                   "eurozone", "brexit", "uk", "britain", "germany", "france",
-                   "spain", "italy", "poland", "ukraine", "parliament"},
-        "south-asia": {"india", "indian", "modi", "delhi", "mumbai", "bjp",
-                       "pakistan", "pakistani", "islamabad", "bangladesh", "dhaka",
-                       "nepal", "sri lanka", "colombo", "kashmir", "rupee",
-                       "lok sabha", "rajya sabha"},
-    }
-    _cluster_titles = {c["id"]: (c.get("title", "") or "").lower() for c in clusters}
-    for u in updates:
-        title_lower = _cluster_titles.get(u["id"], "")
-        for ed, keywords in _REGIONAL_KEYWORDS.items():
-            if any(kw in title_lower for kw in keywords):
-                current = u.get(f"rank_{ed}", u.get("base_rank", 0))
-                u[f"rank_{ed}"] = round(current * 1.15, 2)  # 15% bump
-
-    # World edition: boost truly global stories (3+ editions)
-    for u in updates:
-        c_sections = _cluster_sections.get(u["id"], ["world"])
-        if "world" in c_sections:
-            edition_count = sum(1 for ed in EDITIONS if ed in c_sections)
-            if edition_count >= 3:
-                u["rank_world"] = round(u["rank_world"] * WORLD_MULTI_ED_BOOST, 2)
-
-    # Cross-edition demotion: regional first, world last
-    claimed_ids: set[str] = set()
-    for ed in EDITIONS:
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
-
-        for u in pool:
-            if u["id"] in claimed_ids:
-                c_sections = _cluster_sections.get(u["id"], ["world"])
-                edition_count = sum(1 for e in EDITIONS if e in c_sections)
-                src_count = u.get("source_count", 0)
-
-                if src_count >= GLOBAL_SIG_SOURCES and edition_count >= GLOBAL_SIG_EDITIONS:
-                    u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * GLOBAL_SIG_DEMOTION, 2)
-                else:
-                    u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * CROSS_DEMOTION, 2)
-
-        pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
-
-        # Edition-level lead gate: ALWAYS push thin clusters (< 5 sources)
-        # below all quality clusters. No exceptions — a 3-source story should
-        # never outrank a 20-source story regardless of affinity boosts.
-        _ED_LEAD_MIN = 5
-        eligible = [u for u in pool if u.get("source_count", 0) >= _ED_LEAD_MIN]
-        ineligible = [u for u in pool if u.get("source_count", 0) < _ED_LEAD_MIN]
-        if eligible and ineligible:
-            # Floor = lowest eligible rank minus 0.1
-            floor_rank = eligible[-1].get(f"rank_{ed}", 0) - 0.1
-            for u in ineligible:
-                if u.get(f"rank_{ed}", 0) > floor_rank:
-                    u[f"rank_{ed}"] = round(floor_rank, 2)
-                    floor_rank -= 0.1
-        # Reconstruct pool: all eligible first, then ineligible
-        pool[:] = eligible + sorted(ineligible, key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
-
-        # Thin-edition backfill (v5.8): when a regional edition has
-        # fewer than 10 stories with headline_rank >= 40, backfill from
-        # world pool. BBC principle: thin desk imports from global.
-        _QUALITY_FLOOR = 25.0
-        _BACKFILL_TARGET = 15
-        if ed != "world":
-            quality_count = sum(
-                1 for u in pool[:_BACKFILL_TARGET]
-                if u.get("headline_rank", 0) >= _QUALITY_FLOOR
-            )
-            if quality_count < _BACKFILL_TARGET:
-                pool_ids = {u["id"] for u in pool}
-                world_pool = [
-                    u for u in updates
-                    if _cluster_in_section(u["id"], clusters, "world")
-                    and u["id"] not in pool_ids
-                    and u.get("headline_rank", 0) >= _QUALITY_FLOOR
-                    and u.get("source_count", 0) >= 5
-                ]
-                world_pool.sort(key=lambda u: u.get("headline_rank", 0), reverse=True)
-                backfill_needed = _BACKFILL_TARGET - quality_count
-                for wu in world_pool[:backfill_needed]:
-                    wu[f"rank_{ed}"] = wu.get("headline_rank", 0)
-                    pool.append(wu)
-                pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
-                if world_pool[:backfill_needed]:
-                    print(f"  Thin-edition backfill ({ed}): imported {min(backfill_needed, len(world_pool))} world stories")
-
-        for u in pool[:CROSS_EDITION_TOP]:
-            claimed_ids.add(u["id"])
-
-    # Report overlap
-    _section_top: dict[str, list[str]] = {}
-    for ed in EDITIONS:
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
-        pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
-        _section_top[ed] = [u["id"] for u in pool[:10]]
-
-    def _overlap(a: str, b: str, n: int) -> int:
-        return len(set(_section_top.get(a, [])[:n]) & set(_section_top.get(b, [])[:n]))
-
-    print(f"\n  Edition-unique ranks (v5.7).")
-    print(f"  Top-5 overlap: world/us={_overlap('world','us',5)}, "
-          f"world/eu={_overlap('world','europe',5)}, "
-          f"world/sa={_overlap('world','south-asia',5)}, "
-          f"us/eu={_overlap('us','europe',5)}, "
-          f"us/sa={_overlap('us','south-asia',5)}, "
-          f"eu/sa={_overlap('europe','south-asia',5)}")
-
-    updates.sort(key=lambda u: u["headline_rank"], reverse=True)
-
+    # Dummy block to satisfy the remaining code flow:
     # Print top 15 per edition
     for ed in EDITIONS:
         pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
@@ -685,7 +281,7 @@ def main():
             title = next(
                 (c["title"] for c in clusters if c["id"] == u["id"]), "?"
             )[:60]
-            print(f"  {j+1:2}. [{u.get(f'rank_{ed}', 0):5.1f}] {u['source_count']:2}src {u['category']:12} {title}")
+            print(f"  {j+1:2}. [{u.get(f'rank_{ed}', 0):5.1f}] {u['source_count']:2}src {u.get('category',''):12} {title}")
 
     if DRY_RUN:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")
