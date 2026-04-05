@@ -153,9 +153,9 @@ export default function HistoryLanding({
 }
 
 /* ===========================================================================
-   DossierTile — Published event: organic, expanding, alive
-   Compact on arrival. Expands on hover (desktop) / tap (mobile).
-   Structured like a mission-select campaign card.
+   DossierTile — Published event as a BOOK
+   Closed book on arrival. Lifts on hover. Opens with spine-hinge on click
+   to reveal expanded content ("pages") before navigating to the story.
    =========================================================================== */
 function DossierTile({
   event,
@@ -168,55 +168,63 @@ function DossierTile({
 }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
+  const [opening, setOpening] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const tileRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
 
   const blurb = BLURBS[event.slug] || event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
   const divergenceTeaser = DIVERGENCE_TEASERS[event.slug] || "";
   const divergence = computeDivergence(event);
   const sourceCount = countSources(event);
 
-  /* Mouse parallax for hero image */
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!tileRef.current) return;
-      const rect = tileRef.current.getBoundingClientRect();
-      setMousePos({
-        x: (e.clientX - rect.left) / rect.width,
-        y: (e.clientY - rect.top) / rect.height,
-      });
-    },
-    []
-  );
-
   /* Desktop: hover expand. Mobile: tap toggle. */
   const handleMouseEnter = useCallback(() => {
+    if (opening) return;
     setExpanded(true);
     if (!hasInteracted) setHasInteracted(true);
-  }, [hasInteracted]);
+  }, [hasInteracted, opening]);
 
   const handleMouseLeave = useCallback(() => {
+    if (opening) return;
     setExpanded(false);
-  }, []);
+  }, [opening]);
 
-  const handleTap = useCallback(() => {
-    /* On touch devices, toggle expansion; on second tap when expanded, navigate */
-    setExpanded((prev) => !prev);
+  /* Click → Open book → Navigate after animation */
+  const handleNavigate = useCallback(() => {
+    if (opening) return;
+
+    /* Check prefers-reduced-motion — skip animation */
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      router.push(`/history/${event.slug}`);
+      return;
+    }
+
+    /* Trigger the book-opening animation */
+    setOpening(true);
+    setExpanded(true);
+
+    /* Mobile gets faster animation */
+    const isMobile = window.innerWidth < 768;
+    const delay = isMobile ? 350 : 650;
+
+    setTimeout(() => {
+      router.push(`/history/${event.slug}`);
+    }, delay);
+  }, [router, event.slug, opening]);
+
+  const handleClick = useCallback(() => {
     if (!hasInteracted) setHasInteracted(true);
-  }, [hasInteracted]);
 
-  /* Hand-drawn polygon clip-paths — irregular organic shapes */
-  const polygonVariants = [
-    "polygon(1% 0%, 98% 1%, 100% 2%, 99% 97%, 97% 100%, 2% 99%, 0% 98%, 0.5% 3%)",
-    "polygon(2% 1%, 99% 0%, 100% 3%, 98% 98%, 100% 100%, 1% 99%, 0% 97%, 1% 2%)",
-    "polygon(0% 2%, 97% 0%, 99% 1%, 100% 99%, 98% 100%, 3% 98%, 0% 100%, 1% 1%)",
-  ];
-  const clipPath = polygonVariants[index % polygonVariants.length];
+    /* Mobile: first tap expands, second tap navigates */
+    const isTouchDevice = window.matchMedia("(hover: none)").matches;
+    if (isTouchDevice && !expanded) {
+      setExpanded(true);
+      return;
+    }
 
-  /* Hero image parallax transform */
-  const parallaxX = (mousePos.x - 0.5) * 8;
-  const parallaxY = (mousePos.y - 0.5) * 6;
+    handleNavigate();
+  }, [hasInteracted, expanded, handleNavigate]);
 
   return (
     <div
@@ -224,22 +232,20 @@ function DossierTile({
       className={[
         "hist-tile",
         "hist-tile--published",
+        "hist-tile--book",
         `hist-tile--severity-${event.severity}`,
         expanded ? "hist-tile--expanded" : "",
-        isFirst && !hasInteracted ? "hist-tile--pulse" : "",
+        opening ? "hist-tile--opening" : "",
+        isFirst && !hasInteracted ? "hist-tile--first" : "",
       ]
         .filter(Boolean)
         .join(" ")}
       style={{
         animationDelay: `${100 + index * 80}ms`,
-        clipPath,
-        "--parallax-x": `${parallaxX}px`,
-        "--parallax-y": `${parallaxY}px`,
       } as React.CSSProperties}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
-      onClick={handleTap}
+      onClick={handleClick}
       role="article"
       aria-label={`${event.title} \u2014 ${event.datePrimary}`}
       tabIndex={0}
@@ -247,68 +253,26 @@ function DossierTile({
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           if (expanded) {
-            /* Navigate on Enter when expanded */
-            router.push(`/history/${event.slug}`);
+            handleNavigate();
           } else {
             setExpanded(true);
           }
         }
         if (e.key === "Escape") setExpanded(false);
       }}
-      onFocus={() => setExpanded(true)}
-      onBlur={() => setExpanded(false)}
+      onFocus={() => { if (!opening) setExpanded(true); }}
+      onBlur={() => { if (!opening) setExpanded(false); }}
     >
-      {/* Hero image as background texture */}
-      {event.heroImage && (
-        <div
-          className="hist-tile__hero"
-          style={{
-            backgroundImage: `url(${event.heroImage})`,
-            transform: `translate(${parallaxX}px, ${parallaxY}px) scale(1.15)`,
-          }}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Severity accent line with label */}
-      <div
-        className="hist-tile__accent"
-        aria-hidden="true"
-        title={event.severity}
-      >
-        <span className="hist-tile__accent-label">{event.severity}</span>
-      </div>
-
-      {/* ── Compact content (always visible) — minimal: title + date + dots ── */}
-      <div className="hist-tile__compact">
-        <span className="hist-tile__date">{event.datePrimary}</span>
-        <h3 className="hist-tile__title">{event.title}</h3>
-        <div className="hist-tile__meta">
-          <div className="hist-tile__dots" aria-label={`${event.perspectives.length} perspectives`}>
-            {event.perspectives.map((p) => (
-              <span
-                key={p.id}
-                className="hist-tile__dot"
-                style={{ backgroundColor: PERSP_COLORS[p.color] || PERSP_COLORS.a }}
-                title={p.viewpointName}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Expanded content (revealed on hover/tap) ── */}
-      <div className="hist-tile__expand" aria-hidden={!expanded}>
-        <div className="hist-tile__expand-inner">
-          {/* Void voice blurb — the hook */}
+      {/* Pages behind cover — visible when book opens */}
+      <div className="hist-tile__pages" aria-hidden="true">
+        <div className="hist-tile__pages-content">
+          {/* Blurb as first page content */}
           <p className="hist-tile__blurb">{blurb}</p>
 
-          {/* Perspective count label */}
+          {/* Perspective names */}
           <span className="hist-tile__persp-count">
             {event.perspectives.length} PERSPECTIVES
           </span>
-
-          {/* Perspective names — staggered reveal */}
           <div className="hist-tile__perspectives">
             {event.perspectives.map((p, pi) => (
               <span
@@ -329,7 +293,7 @@ function DossierTile({
             <p className="hist-tile__divergence-teaser">{divergenceTeaser}</p>
           )}
 
-          {/* Mission intel row */}
+          {/* Intel row */}
           <div className="hist-tile__intel">
             <div className="hist-tile__intel-item">
               <span className="hist-tile__intel-label">DIVERGENCE</span>
@@ -369,7 +333,7 @@ function DossierTile({
             </div>
           )}
 
-          {/* CTA */}
+          {/* CTA on the pages */}
           <Link
             href={`/history/${event.slug}`}
             className="hist-tile__cta"
@@ -377,17 +341,57 @@ function DossierTile({
             tabIndex={expanded ? 0 : -1}
           >
             Enter the dossier
-            <span className="hist-tile__cta-arrow" aria-hidden="true">\u2192</span>
+            <span className="hist-tile__cta-arrow" aria-hidden="true">{"\u2192"}</span>
           </Link>
         </div>
       </div>
 
-      {/* First tile pulse indicator */}
-      {isFirst && !hasInteracted && (
-        <div className="hist-tile__start" aria-hidden="true">
-          START HERE
+      {/* Front Cover — the book face */}
+      <div className="hist-tile__cover">
+        {/* Spine (left edge) */}
+        <div className="hist-tile__spine" aria-hidden="true" />
+
+        {/* Page edge (right side) */}
+        <div className="hist-tile__page-edge" aria-hidden="true" />
+
+        {/* Cover art — header band at top, no text overlay */}
+        {event.heroImage && (
+          <div className="hist-tile__cover-art">
+            <img
+              src={event.heroImage}
+              alt=""
+              loading="lazy"
+              className="hist-tile__cover-img"
+            />
+          </div>
+        )}
+
+        {/* Title block — below the cover art */}
+        <div className="hist-tile__compact">
+          <h3 className="hist-tile__title">{event.title}</h3>
+          <span className="hist-tile__date">{event.datePrimary}</span>
+          <div className="hist-tile__meta">
+            <div className="hist-tile__dots" aria-label={`${event.perspectives.length} perspectives`}>
+              {event.perspectives.map((p) => (
+                <span
+                  key={p.id}
+                  className="hist-tile__dot"
+                  style={{ backgroundColor: PERSP_COLORS[p.color] || PERSP_COLORS.a }}
+                  title={p.viewpointName}
+                />
+              ))}
+            </div>
+            <span className="hist-tile__accent-label">{event.severity}</span>
+          </div>
         </div>
-      )}
+
+        {/* "START HERE" badge on first book */}
+        {isFirst && !hasInteracted && (
+          <div className="hist-tile__start" aria-hidden="true">
+            START HERE
+          </div>
+        )}
+      </div>
     </div>
   );
 }

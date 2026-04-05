@@ -20,14 +20,14 @@
   --hist-accent-bright: #6D4E3F;
   --hist-accent-dim: #4A3328;
   --hist-accent-ghost: rgba(92, 64, 51, 0.06);
-  --hist-accent-glow: rgba(92, 64, 51, 0.14);
+  --hist-accent-wash: rgba(92, 64, 51, 0.14);
   --hist-accent-ink: rgba(92, 64, 51, 0.22);
 
   --hist-brass: #9B7A2F;
   --hist-brass-bright: #B08D3A;
   --hist-brass-dim: #836722;
   --hist-brass-ghost: rgba(155, 122, 47, 0.08);
-  --hist-brass-glow: rgba(155, 122, 47, 0.15);
+  --hist-brass-wash: rgba(155, 122, 47, 0.15);
 
   --hist-paper: #F2EDE0;
   --hist-paper-deep: #E8E0CF;
@@ -58,20 +58,19 @@
   --hist-divider: #CCC3B2;
   --hist-shadow-tint: rgba(44, 36, 24, 0.12);
 
-  /* Document edge shadow — foxed manuscript edge */
+  /* Document edge shadow — key light from top-left, directional */
   --hist-doc-edge:
     inset 0 0 0 1px rgba(92, 64, 51, 0.06),
-    0 1px 3px rgba(44, 36, 24, 0.06),
-    0 4px 12px rgba(44, 36, 24, 0.04);
+    2px 3px 6px rgba(44, 36, 24, 0.06),
+    3px 5px 12px rgba(44, 36, 24, 0.04);
   --hist-doc-edge-hover:
     inset 0 0 0 1px rgba(92, 64, 51, 0.10),
-    0 2px 6px rgba(44, 36, 24, 0.08),
-    0 8px 24px rgba(44, 36, 24, 0.06);
+    3px 5px 10px rgba(44, 36, 24, 0.08),
+    4px 8px 20px rgba(44, 36, 24, 0.06);
   --hist-doc-edge-lifted:
     inset 0 0 0 1px rgba(92, 64, 51, 0.08),
-    -2px 4px 12px rgba(44, 36, 24, 0.10),
-    -4px 8px 32px rgba(44, 36, 24, 0.08),
-    0 1px 2px rgba(44, 36, 24, 0.04);
+    4px 6px 16px rgba(44, 36, 24, 0.12),
+    6px 10px 32px rgba(44, 36, 24, 0.08);
 
   /* Spring presets (CSS approximations) */
   --ease-archive-snap: cubic-bezier(0.22, 1.4, 0.36, 1);
@@ -89,14 +88,14 @@
   --hist-accent-bright: #A37A66;
   --hist-accent-dim: #6D5040;
   --hist-accent-ghost: rgba(142, 106, 86, 0.08);
-  --hist-accent-glow: rgba(142, 106, 86, 0.18);
+  --hist-accent-wash: rgba(142, 106, 86, 0.18);
   --hist-accent-ink: rgba(142, 106, 86, 0.25);
 
   --hist-brass: #C4A04A;
   --hist-brass-bright: #D4B05A;
   --hist-brass-dim: #A88A3A;
   --hist-brass-ghost: rgba(196, 160, 74, 0.08);
-  --hist-brass-glow: rgba(196, 160, 74, 0.15);
+  --hist-brass-wash: rgba(196, 160, 74, 0.15);
 
   --hist-paper: #1A1612;
   --hist-paper-deep: #14110E;
@@ -123,17 +122,16 @@
 
   --hist-doc-edge:
     inset 0 0 0 1px rgba(142, 106, 86, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.20),
-    0 4px 12px rgba(0, 0, 0, 0.16);
+    2px 3px 6px rgba(0, 0, 0, 0.20),
+    3px 5px 12px rgba(0, 0, 0, 0.16);
   --hist-doc-edge-hover:
     inset 0 0 0 1px rgba(142, 106, 86, 0.14),
-    0 2px 6px rgba(0, 0, 0, 0.24),
-    0 8px 24px rgba(0, 0, 0, 0.20);
+    3px 5px 10px rgba(0, 0, 0, 0.24),
+    4px 8px 20px rgba(0, 0, 0, 0.20);
   --hist-doc-edge-lifted:
     inset 0 0 0 1px rgba(142, 106, 86, 0.10),
-    -2px 4px 12px rgba(0, 0, 0, 0.24),
-    -4px 8px 32px rgba(0, 0, 0, 0.20),
-    0 1px 2px rgba(0, 0, 0, 0.16);
+    4px 6px 16px rgba(0, 0, 0, 0.24),
+    6px 10px 32px rgba(0, 0, 0, 0.20);
 
   background-color: var(--hist-bg);
   color: var(--hist-ink);
@@ -376,6 +374,16 @@
   transform: none;
 }
 
+/* Hero depth — recedes as user scrolls past into content */
+.hist-hero {
+  transition: filter 600ms var(--ease-cinematic);
+}
+
+.hist-hero--receded .hist-hero__image {
+  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.72);
+  transition: filter 600ms var(--ease-cinematic);
+}
+
 .hist-hero__overlay {
   position: absolute;
   inset: 0;
@@ -597,13 +605,13 @@
   overflow: hidden;
   cursor: pointer;
   transition:
-    box-shadow 300ms var(--ease-cinematic),
-    transform 300ms var(--ease-cinematic);
+    filter 300ms var(--ease-cinematic),
+    transform 300ms var(--ease-cinematic),
+    box-shadow 300ms var(--ease-cinematic);
 }
 
 .hist-event-card:hover {
   box-shadow: var(--hist-doc-edge-hover);
-  transform: translateY(-2px);
 }
 
 .hist-event-card:focus-visible {
@@ -861,27 +869,33 @@
   border-radius: 2px;
   cursor: pointer;
   transition:
-    box-shadow 250ms var(--ease-cinematic),
+    filter 250ms var(--ease-cinematic),
+    opacity 250ms var(--ease-cinematic),
     border-color 250ms var(--ease-cinematic),
-    transform 250ms var(--ease-cinematic);
+    transform 250ms var(--ease-cinematic),
+    box-shadow 250ms var(--ease-cinematic);
   flex-shrink: 0;
 }
 
 .hist-persp-tab:hover {
-  box-shadow: var(--hist-doc-edge-hover);
+  filter: brightness(1.03);
   transform: translateY(-1px);
+  box-shadow: var(--hist-doc-edge-hover);
 }
 
+/* Spotlight lighting — active tab is lit, siblings fall into shadow */
 .hist-persp-tab--active {
-  box-shadow: var(--hist-doc-edge-lifted);
   border-left-color: var(--hist-persp-active, var(--hist-accent));
   background: var(--hist-bg-elevated);
-  transform: translateY(-2px);
-  filter: none;
+  filter: brightness(1.05);
+  box-shadow: var(--hist-doc-edge-lifted);
   z-index: 2;
 }
 
-/* Rack focus on perspective tabs — REMOVED (Round 2: no sibling blur) */
+.hist-persp-tabs:has(.hist-persp-tab--active) .hist-persp-tab:not(.hist-persp-tab--active):not(:hover) {
+  opacity: 0.6;
+  filter: brightness(0.9);
+}
 
 .hist-persp-tab--color-a { --hist-persp-active: var(--hist-persp-a); }
 .hist-persp-tab--color-b { --hist-persp-active: var(--hist-persp-b); }
@@ -1447,12 +1461,18 @@
   background: var(--hist-accent);
   border: 2px solid var(--hist-bg);
   box-shadow: 0 0 0 2px var(--hist-accent);
-  transition: background 200ms, box-shadow 200ms;
+  transition: background 200ms, box-shadow 200ms, transform 200ms;
 }
 
 .hist-timeline__dot--active .hist-timeline__dot-circle {
   background: var(--hist-brass);
-  box-shadow: 0 0 0 3px var(--hist-brass), 0 0 12px rgba(155, 122, 47, 0.3);
+  box-shadow: 0 0 0 3px var(--hist-brass);
+  animation: histDotBreathe 3s ease-in-out infinite;
+}
+
+@keyframes histDotBreathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15); }
 }
 
 .hist-timeline__dot-label {
@@ -1554,11 +1574,10 @@
 }
 
 .hist-compact-timeline__current-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--hist-brass);
-  box-shadow: 0 0 8px rgba(155, 122, 47, 0.3);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1915,47 +1934,197 @@
 }
 
 /* ===========================================================================
-   Published Tile — Living dossier, organic, interactive
+   Published Tile — BOOK Architecture
    =========================================================================== */
-.hist-tile--published {
-  transition:
-    box-shadow 400ms var(--ease-cinematic),
-    transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+.hist-tile--published.hist-tile--book {
   border: 1px solid var(--hist-border-subtle);
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  padding: 0;
+  overflow: visible;
+  transform: rotateY(-2deg);
+  box-shadow:
+    4px 2px 12px rgba(0, 0, 0, 0.12),
+    1px 1px 3px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 400ms var(--ease-cinematic),
+    filter 300ms var(--ease-cinematic);
 }
 
-/* Severity accent — top-left organic mark */
-.hist-tile__accent {
+/* ── Spine — left edge, severity colored ── */
+.hist-tile__spine {
   position: absolute;
-  top: 0;
   left: 0;
-  width: 4px;
-  height: 48px;
-  border-radius: 0 0 4px 0;
-  transition: height 400ms var(--ease-cinematic);
-  overflow: hidden;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--hist-accent);
+  border-radius: 3px 0 0 3px;
+  box-shadow: inset -1px 0 3px rgba(0, 0, 0, 0.25);
+  z-index: 4;
+  transition: box-shadow 400ms var(--ease-cinematic);
 }
 
-/* Severity label — rotated vertically inside accent bar */
-.hist-tile__accent-label {
+.hist-tile--severity-catastrophic .hist-tile__spine { background: #8B0000; }
+.hist-tile--severity-critical .hist-tile__spine     { background: #B44C00; }
+.hist-tile--severity-major .hist-tile__spine         { background: var(--hist-brass); }
+:root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__spine { background: #E04040; }
+:root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__spine     { background: #D47030; }
+
+/* ── Page edge — right side, stacked page lines ── */
+.hist-tile__page-edge {
   position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-90deg);
-  transform-origin: center;
+  right: -3px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--hist-paper-fixed) 0px,
+    var(--hist-paper-fixed) 1px,
+    var(--hist-border) 1px,
+    var(--hist-border) 1.5px
+  );
+  border-radius: 0 1px 1px 0;
+  opacity: 0.6;
+  z-index: 1;
+  transition: opacity 400ms var(--ease-cinematic);
+}
+
+/* ── Cover art — full-width header band, archival filter ── */
+.hist-tile__cover-art {
+  width: 100%;
+  height: 110px;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-tile__cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.2) saturate(0.4) contrast(1.1) brightness(0.9);
+  transition: filter 400ms var(--ease-cinematic);
+}
+
+/* ── Front Cover — hinges on left spine ── */
+.hist-tile__cover {
+  position: relative;
+  z-index: 2;
+  background: var(--hist-bg-card);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  transition: transform 650ms cubic-bezier(0.42, 0, 0.12, 1.15);
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  border-left: 6px solid transparent;
+}
+
+/* ── Pages behind the cover ── */
+.hist-tile__pages {
+  position: absolute;
+  inset: 0;
+  background: var(--hist-bg-card);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.02) 3px,
+    rgba(0, 0, 0, 0.02) 4px
+  );
+  border-left: 6px solid var(--hist-accent);
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-cinematic);
+}
+
+.hist-tile--severity-catastrophic .hist-tile__pages { border-left-color: #8B0000; }
+.hist-tile--severity-critical .hist-tile__pages     { border-left-color: #B44C00; }
+.hist-tile--severity-major .hist-tile__pages         { border-left-color: var(--hist-brass); }
+:root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__pages { border-left-color: #E04040; }
+:root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__pages     { border-left-color: #D47030; }
+
+.hist-tile__pages-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  padding-left: calc(var(--space-4) + 2px);
+}
+
+/* ── Severity accent label — inline in meta row ── */
+.hist-tile--book .hist-tile__accent-label {
   font-family: var(--font-meta);
-  font-size: 0.5rem;
+  font-size: 0.55rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--hist-paper-fixed, #F2EDE0);
+  letter-spacing: 0.12em;
+  color: var(--hist-ink-muted);
   white-space: nowrap;
-  opacity: 0;
-  transition: opacity 300ms ease;
+  opacity: 0.7;
 }
 
-.hist-tile--expanded .hist-tile__accent-label {
+/* ── HOVER — Book lifts off the table ── */
+.hist-tile--published.hist-tile--book:hover,
+.hist-tile--published.hist-tile--book:focus-visible {
+  transform: translateY(-4px) rotateY(-4deg);
+  box-shadow:
+    6px 4px 20px rgba(0, 0, 0, 0.18),
+    2px 2px 6px rgba(0, 0, 0, 0.10);
+  z-index: 3;
+}
+
+.hist-tile--published.hist-tile--book:hover .hist-tile__page-edge {
   opacity: 1;
+}
+
+.hist-tile--published.hist-tile--book:hover .hist-tile__spine {
+  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.35);
+}
+
+.hist-tile--published.hist-tile--book:hover .hist-tile__cover-img {
+  filter: sepia(0.15) saturate(0.5) contrast(1.1) brightness(0.95);
+}
+
+.hist-tile--published.hist-tile--book:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 4px;
+}
+
+.hist-tile--published.hist-tile--book:active:not(.hist-tile--opening) {
+  transform: translateY(-2px) rotateY(-3deg);
+  transition: transform 80ms ease-out;
+}
+
+/* ── OPENING — Cover swings open on spine hinge ── */
+.hist-tile--opening .hist-tile__cover {
+  transform: perspective(1200px) rotateY(-130deg);
+}
+
+.hist-tile--opening .hist-tile__pages {
+  opacity: 1;
+}
+
+.hist-tile--opening.hist-tile--published.hist-tile--book {
+  transform: translateY(-6px) rotateY(0deg);
+  box-shadow:
+    8px 6px 28px rgba(0, 0, 0, 0.22),
+    2px 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Rack focus — camera pulls focus to hovered book ── */
+.hist-dossier-grid:hover .hist-tile--published.hist-tile--book:not(:hover):not(:focus-within) {
+  filter: blur(1.5px) brightness(0.92);
+  transform: scale(0.97) rotateY(-2deg);
+}
+
+/* Legacy accent bar — hidden on book tiles */
+.hist-tile--book .hist-tile__accent {
+  display: none;
 }
 
 /* ── Classified section divider ── */
@@ -1997,53 +2166,12 @@
   }
 }
 
+/* Legacy severity accent colors (for non-book tiles) */
 .hist-tile--severity-catastrophic .hist-tile__accent { background: #8B0000; }
 .hist-tile--severity-critical .hist-tile__accent     { background: #B44C00; }
 .hist-tile--severity-major .hist-tile__accent         { background: var(--hist-brass); }
-
 :root[data-mode="dark"] .hist-tile--severity-catastrophic .hist-tile__accent { background: #E04040; }
 :root[data-mode="dark"] .hist-tile--severity-critical .hist-tile__accent     { background: #D47030; }
-
-/* Accent grows on expand */
-.hist-tile--expanded .hist-tile__accent {
-  height: 100%;
-}
-
-/* ── Hero image — archival texture background ── */
-.hist-tile__hero {
-  position: absolute;
-  inset: -10px;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.08;
-  filter: contrast(1.1) saturate(0.3) sepia(0.25);
-  transition:
-    opacity 500ms var(--ease-cinematic),
-    transform 200ms ease-out;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.hist-tile--expanded .hist-tile__hero {
-  opacity: 0.14;
-}
-
-/* ── Hover/focus lift ── */
-.hist-tile--published:hover,
-.hist-tile--published:focus-visible {
-  box-shadow: var(--hist-doc-edge-hover);
-  transform: translateY(-3px);
-}
-
-.hist-tile--published:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 4px;
-}
-
-.hist-tile--published:active {
-  transform: scale(0.985) translateY(-1px);
-  transition: transform 80ms ease-out;
-}
 
 /* ── Compact section — always visible ── */
 .hist-tile__compact {
@@ -2052,6 +2180,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+}
+
+/* Book cover compact — padded below cover art */
+.hist-tile--book .hist-tile__compact {
+  padding: var(--space-3) var(--space-4) var(--space-3);
+  padding-left: calc(var(--space-4) + 4px);
+  flex: 1;
+  justify-content: space-between;
 }
 
 .hist-tile__date {
@@ -2180,6 +2316,11 @@
   transition-delay: 320ms;
 }
 
+/* Book tiles: old expand panel is not used, content lives in __pages */
+.hist-tile--book .hist-tile__expand {
+  display: none;
+}
+
 /* ── Perspective names — horizontal list with staggered reveal ── */
 .hist-tile__perspectives {
   display: flex;
@@ -2299,12 +2440,14 @@
   margin-top: var(--space-2);
   border: none;
   min-height: 44px;
-  transition: background 200ms ease, transform 150ms ease;
+  transition:
+    background 200ms ease,
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .hist-tile__cta:hover {
   background: var(--hist-accent-bright, #7A5B47);
-  transform: scale(1.02);
+  transform: translateX(2px);
 }
 
 .hist-tile__cta:active {
@@ -2326,7 +2469,7 @@
   transform: translateX(6px);
 }
 
-/* ── "START HERE" pulse badge ── */
+/* ── "START HERE" focus pull — blur resolves to sharp ── */
 .hist-tile__start {
   position: absolute;
   top: var(--space-2);
@@ -2340,12 +2483,13 @@
   border: 1px solid var(--hist-accent);
   border-radius: 2px;
   z-index: 2;
-  animation: histStartPulse 2.5s ease-in-out infinite;
+  animation: histStartFocusPull 2s var(--ease-cinematic) both;
 }
 
-@keyframes histStartPulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.4; }
+@keyframes histStartFocusPull {
+  0%   { filter: blur(2px); opacity: 0; }
+  40%  { filter: blur(1px); opacity: 0.6; }
+  100% { filter: blur(0);   opacity: 1; }
 }
 
 /* ===========================================================================
@@ -2502,6 +2646,29 @@
   .hist-tile__start {
     display: none;
   }
+
+  /* Book tiles on mobile: faster opening, remove rest angle for touch */
+  .hist-tile--published.hist-tile--book {
+    transform: rotateY(0deg);
+  }
+
+  .hist-tile--published.hist-tile--book:hover,
+  .hist-tile--published.hist-tile--book:focus-visible {
+    transform: translateY(-2px) rotateY(0deg);
+  }
+
+  .hist-tile--opening .hist-tile__cover {
+    transition-duration: 350ms;
+  }
+
+  .hist-tile--opening.hist-tile--published.hist-tile--book {
+    transform: translateY(-4px) rotateY(0deg);
+  }
+
+  /* Cover art shorter on mobile */
+  .hist-tile__cover-art {
+    height: 90px;
+  }
 }
 
 /* ===========================================================================
@@ -2524,7 +2691,14 @@
   .hist-tile--published:hover,
   .hist-tile--published:active {
     transform: none;
+    filter: none;
     transition: none;
+  }
+
+  /* Disable rack focus on tiles */
+  .hist-dossier-grid:hover .hist-tile--published:not(:hover):not(:focus-within) {
+    filter: none;
+    transform: none;
   }
 
   /* Show expanded content by default */
@@ -2568,6 +2742,7 @@
   .hist-tile__start {
     animation: none;
     opacity: 1;
+    filter: none;
   }
 
   .hist-tile__hero {
@@ -2578,6 +2753,38 @@
   .hist-tile__accent {
     transition: none;
     height: 100%;
+  }
+
+  /* Book tiles: no 3D transforms, no opening animation */
+  .hist-tile--published.hist-tile--book {
+    transform: none;
+    transition: none;
+  }
+
+  .hist-tile--published.hist-tile--book:hover,
+  .hist-tile--published.hist-tile--book:focus-visible {
+    transform: none;
+  }
+
+  .hist-tile__cover {
+    transition: none;
+  }
+
+  .hist-tile--opening .hist-tile__cover {
+    transform: none;
+  }
+
+  .hist-tile__spine,
+  .hist-tile__page-edge {
+    transition: none;
+  }
+
+  .hist-tile__cover-img {
+    transition: none;
+  }
+
+  .hist-tile__pages {
+    transition: none;
   }
 }
 
@@ -2803,15 +3010,18 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Rack Focus — Depth-of-field effect for cards
+   Rack Focus — Depth-of-field effect for event cards
    --------------------------------------------------------------------------- */
 .hist-card-grid:hover .hist-event-card:not(:hover) {
-  filter: blur(0.8px) brightness(0.98);
-  transition: filter 350ms var(--ease-cinematic);
+  filter: blur(1.5px) brightness(0.92);
+  transform: scale(0.98);
+  transition: filter 300ms var(--ease-cinematic), transform 300ms var(--ease-cinematic);
 }
 
 .hist-card-grid:hover .hist-event-card:hover {
-  filter: brightness(1.01) contrast(1.01);
+  filter: none;
+  transform: scale(1.02);
+  z-index: 2;
 }
 
 /* Atmospheric Haze, Parallax — REMOVED (dead code, Round 7 cleanup) */
@@ -2871,12 +3081,42 @@
     transition: none;
   }
 
+  /* Disable rack focus on event cards */
   .hist-card-grid:hover .hist-event-card:not(:hover) {
+    filter: none;
+    transform: none;
+  }
+
+  .hist-card-grid:hover .hist-event-card:hover {
+    filter: none;
+    transform: none;
+  }
+
+  /* Disable rack focus on dossier tiles */
+  .hist-dossier-grid:hover .hist-tile:not(:hover):not(:focus-within) {
+    filter: none;
+    transform: none;
+  }
+
+  /* Disable hero depth transition */
+  .hist-hero {
+    transition: none;
+  }
+
+  .hist-hero--receded .hist-hero__image {
+    filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
+    transition: none;
+  }
+
+  /* Disable spotlight on perspective tabs */
+  .hist-persp-tabs:has(.hist-persp-tab--active) .hist-persp-tab:not(.hist-persp-tab--active):not(:hover) {
+    opacity: 1;
     filter: none;
   }
 
-  .hist-dossier-grid:hover .hist-tile:not(:hover):not(:focus-within) {
-    filter: none;
+  /* Disable timeline dot breathing */
+  .hist-timeline__dot--active .hist-timeline__dot-circle {
+    animation: none;
   }
 
   .hist-redacted:hover .hist-redacted__reveal {
@@ -3042,9 +3282,9 @@
     min-width: 200px;
   }
 
-  /* Rack focus on cards: wider blur radius */
+  /* Rack focus on cards: deeper blur at wider viewport */
   .hist-card-grid:hover .hist-event-card:not(:hover) {
-    filter: blur(1px) brightness(0.97);
+    filter: blur(2px) brightness(0.90);
   }
 }
 
@@ -3078,13 +3318,13 @@
 }
 
 /* ---------------------------------------------------------------------------
-   2. PERSPECTIVE TABS — Simple hover lift + click press only
+   2. PERSPECTIVE TABS — Spotlight lighting model
    --------------------------------------------------------------------------- */
 
-/* Simplified hover: just a lift, no tilt */
+/* Hover: subtle brightness lift */
 .hist-persp-tab:hover {
-  box-shadow: var(--hist-doc-edge-hover);
-  transform: translateY(-2px);
+  filter: brightness(1.03);
+  transform: translateY(-1px);
 }
 
 /* Tab click: quick press */
@@ -3282,6 +3522,8 @@
   .hist-persp-tab:active {
     transform: none;
     transition: none;
+    filter: none;
+    opacity: 1;
   }
 
   .hist-persp-view {
@@ -3333,6 +3575,18 @@
 
   .hist-vocab-unique {
     transition: none;
+  }
+
+  .hist-tile__cta,
+  .hist-tile__cta:hover {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-tile__cta-arrow,
+  .hist-tile__cta:hover .hist-tile__cta-arrow {
+    transition: none;
+    transform: none;
   }
 }
 
