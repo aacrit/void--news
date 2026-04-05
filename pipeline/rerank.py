@@ -479,6 +479,23 @@ def main():
         for ed in EDITIONS:
             u[f"rank_{ed}"] = u["base_rank"]
 
+    # Source depth bonus: high-source clusters get a multiplicative boost
+    # to ensure they decisively outrank mid-tier stories. The base ranker's
+    # coverage curve may have been computed with an old formula — this
+    # compensates and guarantees source count → ranking priority.
+    for u in updates:
+        sc = u.get("source_count", 0)
+        if sc >= 30:
+            depth_mult = 1.25
+        elif sc >= 15:
+            depth_mult = 1.12
+        elif sc >= 10:
+            depth_mult = 1.05
+        else:
+            depth_mult = 1.0
+        for ed in EDITIONS:
+            u[f"rank_{ed}"] = round(u[f"rank_{ed}"] * depth_mult, 2)
+
     # Apply regional affinity + local-priority boost
     for u in updates:
         c_sections = _cluster_sections.get(u["id"], ["world"])
