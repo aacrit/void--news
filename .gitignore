@@ -40,6 +40,9 @@ build/
 # Supabase temp
 supabase/.temp/
 
+# History enrichment results (ephemeral, not committed)
+data/history/enrichment/
+
 # Agent report artifacts
 AUDIT_*.txt
 AUDIT_*.md
