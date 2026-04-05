@@ -122,14 +122,19 @@ const RANKING_SIGNALS = [
   { name: "Institutional Authority", weight: 8 },
 ];
 
-const PRODUCT_FAMILY = [
-  { cli: "void --news", desc: "The Feed", href: "/" },
-  { cli: "void --tl;dr", desc: "Daily Brief", href: "/" },
-  { cli: "void --onair", desc: "Audio Broadcast", href: "/" },
-  { cli: "void --paper", desc: "E-Paper Edition", href: "/paper" },
-  { cli: "void --sources", desc: "Source Spectrum", href: "/sources" },
-  { cli: "void --deep-dive", desc: "Deep Dive Analysis", href: "/" },
-  { cli: "void --ship", desc: "Feature Forge", href: "/ship" },
+const PRODUCT_FAMILY: {
+  cli: string;
+  name: string;
+  desc: string;
+  href: string;
+  palette: string;
+}[] = [
+  { cli: "void --news", name: "The Feed", desc: "Importance-ranked, bias-analyzed", href: "/", palette: "feed" },
+  { cli: "void --weekly", name: "The Magazine", desc: "Economist-style weekly digest", href: "/weekly", palette: "weekly" },
+  { cli: "void --paper", name: "The Broadsheet", desc: "E-paper front page", href: "/paper", palette: "paper" },
+  { cli: "void --sources", name: "The Spectrum", desc: "1,013 sources on one axis", href: "/sources", palette: "sources" },
+  { cli: "void --onair", name: "The Studio", desc: "Two-host audio broadcast", href: "/", palette: "onair" },
+  { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
 ];
 
 const NUMBERS = [
@@ -960,7 +965,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Section 8: Product Family Grid ── */}
+      {/* ── Section 8: Product Family Grid — "The Worlds" ── */}
       <section
         className="about-section about-section--act3"
         aria-label="Product Family"
@@ -968,6 +973,10 @@ export default function AboutPage() {
         <div className="about-section__inner" style={{ maxWidth: "72ch" }}>
           <div className="about-reveal">
             <p className="about-body about-body--lead">The void suite.</p>
+            <p className="about-body about-body--stagger">
+              One platform. Six distinct experiences. Each built for a different
+              way of reading the news.
+            </p>
           </div>
 
           <div className="about-family-grid" role="list">
@@ -975,10 +984,11 @@ export default function AboutPage() {
               <Link
                 key={p.cli}
                 href={p.href}
-                className="about-family-card"
+                className={`about-family-card about-family-card--${p.palette}`}
                 role="listitem"
               >
-                <p className="about-family-card__name">{p.cli}</p>
+                <p className="about-family-card__cli">{p.cli}</p>
+                <p className="about-family-card__name">{p.name}</p>
                 <p className="about-family-card__desc">{p.desc}</p>
               </Link>
             ))}

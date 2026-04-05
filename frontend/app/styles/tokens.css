@@ -93,6 +93,11 @@
 
   --cin-amber-muted: #B08A40;
 
+  /* ── Product World Palette — accent colors for product family previews ── */
+  --palette-weekly: #B91C1C;
+  --palette-weekly-paper: #EDE4D0;
+  --palette-onair-surface: #1A1816;
+
   /* ── Audio Console — adapts to light/dark mode ──
      Light: warm parchment tones, organic with the newspaper page.
      Dark: walnut broadcast surface (overridden in [data-mode="dark"]). */
@@ -576,6 +581,12 @@
   --cin-ash-warm: #A8A29E;
   --cin-ash-cool: #94A3B8;
   --cin-amber-muted: #9E8568;
+
+  /* ── Product World Palette (Dark) ── */
+  --palette-weekly: #EF5350;
+  --palette-weekly-paper: #1E1A16;
+  --palette-onair-surface: #1A1816;
+
   --cin-shadow-color: rgba(20, 16, 10, 1);
   --cinematic-shadow-tint: rgba(12, 8, 2, 0.92);
   --cinematic-rim-light: var(--cin-amber-glow);
