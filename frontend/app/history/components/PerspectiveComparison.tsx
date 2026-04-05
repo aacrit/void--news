@@ -71,7 +71,8 @@ function findUniqueWords(textA: string, textB: string): Set<string> {
   return new Set(candidates.slice(0, 10).map(([w]) => w));
 }
 
-/** Highlight unique words in a text, wrapping them in spans. */
+/** Highlight unique words in a text, wrapping them in spans.
+ *  Stagger delay on each unique word for cascading highlight reveal. */
 function highlightText(
   text: string,
   uniqueWords: Set<string>,
@@ -79,11 +80,18 @@ function highlightText(
 ): React.ReactNode[] {
   // Split on word boundaries but keep the separators
   const parts = text.split(/(\s+)/);
+  let uniqueIdx = 0;
   return parts.map((part, i) => {
     const clean = part.toLowerCase().replace(/[^a-z'-]/g, "");
     if (uniqueWords.has(clean)) {
+      const delay = uniqueIdx * 30;
+      uniqueIdx++;
       return (
-        <span key={i} className={`hist-vocab-unique ${colorClass}`}>
+        <span
+          key={i}
+          className={`hist-vocab-unique hist-vocab-stagger ${colorClass}`}
+          style={{ animationDelay: `${delay}ms` }}
+        >
           {part}
         </span>
       );
