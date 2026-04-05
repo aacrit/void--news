@@ -1,601 +1,103 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import LogoIcon from "../components/LogoIcon";
 import LogoWordmark from "../components/LogoWordmark";
+import {
+  CHAPTERS, DIVERGENT_HEADLINES, SIX_AXES, FIRST_PRINCIPLES,
+  PRODUCT_FAMILY, RANKING_SIGNALS, NUMBERS, LANDSCAPE,
+  COMPARISON_SCORES,
+} from "../film/data";
+import DivergentHeadlines from "../film/scenes/DivergentHeadlines";
+import SigilBreakdown from "../film/scenes/SigilBreakdown";
+import SourceEngine from "../film/scenes/SourceEngine";
+import ArticleDifference from "../film/scenes/ArticleDifference";
+import ProductWorlds from "../film/scenes/ProductWorlds";
+import TheVerdict from "../film/scenes/TheVerdict";
 
 /* ===========================================================================
-   /about — "See through the void." Cinematic Mission Manifesto
-   12-section, 4-act page. Always dark mode. Film grain elevated.
-   Scroll-driven cinematic reveals. Organic ink elements. Interactive demos.
+   /about — "The Film: Director's Cut"
+
+   Unified manifesto page. Same 6 chapters as the prologue (onboarding),
+   rendered in manifesto mode with extended content, interactive demos,
+   and scroll-driven IO reveals.
+
+   Content data: film/data.ts (single source of truth).
+   Scene visuals: film/scenes/*.tsx (shared with prologue).
    =========================================================================== */
 
-/* ── Hardcoded Data ── */
+const MODE = "manifesto" as const;
 
-const DIVERGENCE_HEADLINES = [
-  {
-    outlet: "Reuters",
-    lean: "Center",
-    leanScore: 48,
-    headline:
-      "\u201CUS and China resume trade talks amid tariff tensions\u201D",
-  },
-  {
-    outlet: "Fox News",
-    lean: "Right",
-    leanScore: 72,
-    headline:
-      "\u201CTrump administration takes hard line as China trade talks restart\u201D",
-  },
-  {
-    outlet: "The Guardian",
-    lean: "Center-Left",
-    leanScore: 38,
-    headline:
-      "\u201CTrade war uncertainty looms as US-China negotiations resume\u201D",
-  },
-  {
-    outlet: "Al Jazeera",
-    lean: "Center-Left",
-    leanScore: 35,
-    headline:
-      "\u201CGlobal markets brace as superpowers return to negotiating table\u201D",
-  },
-  {
-    outlet: "New York Post",
-    lean: "Right",
-    leanScore: 74,
-    headline:
-      "\u201CBiden caves to China pressure, agrees to new round of trade talks\u201D",
-  },
-];
-
-const SIX_AXES: {
-  name: string;
-  brief: string;
-  score: number;
-  signals: string;
-  sample: string;
-}[] = [
-  {
-    name: "Political Lean",
-    brief: "Where the article falls on the spectrum.",
-    score: 42,
-    signals:
-      "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending.",
-    sample:
-      "The <mark>administration</mark> defended the <mark>crackdown</mark> as necessary to <mark>restore order</mark>.",
-  },
-  {
-    name: "Sensationalism",
-    brief: "How much urgency is inflated beyond the facts.",
-    score: 28,
-    signals:
-      "Clickbait patterns, superlative density, TextBlob extremity, partisan attack density (capped 30 pts).",
-    sample:
-      "The <mark>unprecedented</mark> move sent <mark>shockwaves</mark> through the <mark>entire</mark> industry.",
-  },
-  {
-    name: "Opinion vs. Reporting",
-    brief: "Whether it reports facts or argues a position.",
-    score: 15,
-    signals:
-      "First-person pronouns, subjectivity score, attribution density (24 investigative patterns), value judgments, rhetorical questions.",
-    sample:
-      "<mark>I believe</mark> the decision <mark>should have been</mark> made earlier. <mark>Don\u2019t you agree?</mark>",
-  },
-  {
-    name: "Factual Rigor",
-    brief: "How thoroughly it cites named sources and data.",
-    score: 78,
-    signals:
-      "Named sources via NER + attribution verbs, org citations, data patterns, direct quotes, vague-source penalty.",
-    sample:
-      "<mark>Treasury Secretary Janet Yellen</mark> told reporters at the <mark>G7 summit</mark> that <mark>2.3% GDP growth</mark> was expected.",
-  },
-  {
-    name: "Framing",
-    brief: "Whether word choices nudge the reader.",
-    score: 31,
-    signals:
-      "50+ charged synonym pairs, cluster-aware omission detection, headline-body divergence, passive voice (capped 30).",
-    sample:
-      "Protestors <mark>clashed with</mark> police vs. Police <mark>dispersed</mark> the crowd.",
-  },
-  {
-    name: "Outlet Tracking",
-    brief: "How each outlet covers each topic over time.",
-    score: 55,
-    signals:
-      "Per-topic per-outlet EMA with adaptive alpha (0.3 new / 0.15 established). Stored across pipeline runs.",
-    sample:
-      "Fox News on immigration: <mark>lean 68 avg</mark> over 30 days (12 articles). CNN: <mark>lean 35 avg</mark>.",
-  },
-];
-
-const RANKING_SIGNALS = [
-  { name: "Source Breadth", weight: 20 },
-  { name: "Maturity", weight: 16 },
-  { name: "Tier Diversity", weight: 13 },
-  { name: "Consequentiality", weight: 10 },
-  { name: "Institutional Authority", weight: 8 },
-];
-
-const PRODUCT_FAMILY: {
-  cli: string;
-  name: string;
-  desc: string;
-  href: string;
-  palette: string;
-}[] = [
-  { cli: "void --news", name: "The Feed", desc: "Importance-ranked, bias-analyzed", href: "/", palette: "feed" },
-  { cli: "void --weekly", name: "The Magazine", desc: "Economist-style weekly digest", href: "/weekly", palette: "weekly" },
-  { cli: "void --paper", name: "The Broadsheet", desc: "E-paper front page", href: "/paper", palette: "paper" },
-  { cli: "void --sources", name: "The Spectrum", desc: "1,013 sources on one axis", href: "/sources", palette: "sources" },
-  { cli: "void --onair", name: "The Studio", desc: "Two-host audio broadcast", href: "/", palette: "onair" },
-  { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
-];
-
-const NUMBERS = [
-  { value: "1,013", label: "sources" },
-  { value: "6", label: "axes" },
-  { value: "4", label: "editions" },
-  { value: "$0", label: "cost" },
-  { value: "4\u00D7", label: "daily" },
-  { value: "0", label: "accounts required" },
-];
-
-const LANDSCAPE = [
-  {
-    them: "AllSides rates the outlet.",
-    us: "void --news reads the article.",
-  },
-  {
-    them: "Ground News tracks metadata.",
-    us: "void --news analyzes the text.",
-  },
-  {
-    them: "NewsGuard scores once.",
-    us: "void --news scores every article, every day.",
-  },
-];
-
-/* ── Floating Data Annotations ──
-   Marginalia evidence: data fragments that float into the page shoulders.
-   Each group maps to a section aria-label for IntersectionObserver matching.
-   Values are hardcoded but pipeline-realistic. */
-
-interface Annotation {
-  side: "left" | "right";
-  text: string;
-  /** CSS color for the lean dot (omit for non-lean annotations) */
-  dotColor?: string;
-  /** Use amber accent mark instead of lean dot */
-  accentMark?: boolean;
-}
-
-const SECTION_ANNOTATIONS: Record<string, Annotation[]> = {
-  "The Problem": [
-    { side: "left", text: "Reuters \u00B7 Lean 48", dotColor: "var(--bias-center)" },
-    { side: "right", text: "Fox News \u00B7 Lean 72", dotColor: "var(--bias-right)" },
-    { side: "left", text: "5 outlets, 5 framings", accentMark: true },
-  ],
-  "The Six Axes": [
-    { side: "right", text: "avg lean: 49.2", accentMark: true },
-    { side: "left", text: "median rigor: 67", accentMark: true },
-    { side: "right", text: "12,847 named sources detected", accentMark: true },
-  ],
-  "The Source Spectrum": [
-    { side: "left", text: "43 US Major", accentMark: true },
-    { side: "right", text: "373 International", accentMark: true },
-    { side: "left", text: "597 Independent", accentMark: true },
-  ],
-  "The Ranking": [
-    { side: "right", text: "#1 EU Trade Deal \u00B7 14 sources", accentMark: true },
-    { side: "left", text: "breadth: 0.82 \u00B7 maturity: 0.71", accentMark: true },
-  ],
-  "The Numbers": [
-    { side: "right", text: "last run: 2h ago", accentMark: true },
-    { side: "left", text: "4,200+ articles today", accentMark: true },
-  ],
-};
-
-/* ── Annotation renderer — sparse cycle ──
-   Shows ONE annotation at a time. Each appears, lingers 3.5s, fades out.
-   Next one appears after a 1.5s gap. Cycles through all annotations in the
-   section, then loops. Stops cycling when section exits viewport. */
-function FloatingAnnotations({ sectionLabel }: { sectionLabel: string }) {
-  const annotations = SECTION_ANNOTATIONS[sectionLabel];
-  const [activeIdx, setActiveIdx] = useState(-1);
-  const [visible, setVisible] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isInView = useRef(false);
-
-  /* Called by parent IO via data-annotations-visible attribute.
-     We observe changes via MutationObserver on the parent section. */
-  useEffect(() => {
-    if (!annotations?.length) return;
-    const el = document.querySelector(
-      `.about-section[aria-label="${sectionLabel}"]`
-    );
-    if (!el) return;
-
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    let idx = 0;
-
-    const startCycle = () => {
-      if (intervalRef.current) return; // already cycling
-      isInView.current = true;
-      idx = 0;
-
-      const showNext = () => {
-        if (!isInView.current) return;
-        // Show current annotation
-        setActiveIdx(idx);
-        setVisible(true);
-
-        // After 3.5s, fade it out
-        setTimeout(() => {
-          setVisible(false);
-          // After 0.8s fade-out transition, gap of 1.2s, then show next
-          setTimeout(() => {
-            if (!isInView.current) return;
-            idx = (idx + 1) % annotations.length;
-            showNext();
-          }, prefersReduced ? 200 : 2000);
-        }, prefersReduced ? 1500 : 3500);
-      };
-
-      // Initial delay before first annotation (0.8s after section enters)
-      intervalRef.current = setTimeout(showNext, prefersReduced ? 100 : 800);
-    };
-
-    const stopCycle = () => {
-      isInView.current = false;
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
-        intervalRef.current = null;
-      }
-      setActiveIdx(-1);
-      setVisible(false);
-    };
-
-    const mo = new MutationObserver(() => {
-      if (el.hasAttribute("data-annotations-visible")) {
-        startCycle();
-      } else {
-        stopCycle();
-      }
-    });
-    mo.observe(el, { attributes: true, attributeFilter: ["data-annotations-visible"] });
-
-    // Check initial state
-    if (el.hasAttribute("data-annotations-visible")) startCycle();
-
-    return () => {
-      mo.disconnect();
-      stopCycle();
-    };
-  }, [annotations, sectionLabel]);
-
-  if (!annotations?.length) return null;
-
-  return (
-    <>
-      {annotations.map((a, i) => (
-        <span
-          key={`${sectionLabel}-${i}`}
-          className={`about-annotation about-annotation--${a.side}${i === activeIdx && visible ? " about-annotation--active" : ""}`}
-          data-index={i}
-          aria-hidden="true"
-        >
-          {a.dotColor && (
-            <span
-              className="about-annotation__dot"
-              style={{ background: a.dotColor }}
-            />
-          )}
-          {a.accentMark && <span className="about-annotation__mark">//</span>}
-          {a.text}
-        </span>
-      ))}
-    </>
-  );
-}
-
-/* ── Organic Divider SVG (hand-drawn wobble path) ── */
+/* ── Organic Divider ── */
 function OrganicDivider() {
   return (
-    <svg
-      className="about-divider"
-      viewBox="0 0 600 4"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      style={{ "--divider-len": 600 } as React.CSSProperties}
-    >
+    <svg className="about-divider" viewBox="0 0 600 4" preserveAspectRatio="none" aria-hidden="true"
+      style={{ "--divider-len": 600 } as React.CSSProperties}>
       <path d="M0,2 C50,0.5 100,3.5 150,2 C200,0.5 250,3 300,2 C350,1 400,3.5 450,2 C500,0.5 550,3 600,2" />
     </svg>
   );
 }
 
-/* ── Ink Droplet ── */
-function InkDroplet() {
-  return (
-    <div className="about-ink-droplet">
-      <div className="about-ink-droplet__dot" />
-    </div>
-  );
-}
-
-/* ── Source Density SVG (subtle height-map above spectrum bar) ── */
-function SourceDensitySVG() {
-  return (
-    <svg
-      className="about-spectrum__density"
-      viewBox="0 0 400 32"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      style={{ width: "100%" }}
-    >
-      <path
-        d="M0,32 L0,28 C30,26 60,22 80,18 C100,14 120,16 140,12 C160,8 180,4 200,2 C220,4 240,8 260,12 C280,16 300,14 320,18 C340,22 360,26 380,28 L400,30 L400,32 Z"
-        fill="currentColor"
-        opacity="0.08"
-      />
-    </svg>
-  );
-}
-
-/* ===========================================================================
-   PAGE COMPONENT
-   =========================================================================== */
-
 export default function AboutPage() {
   const pageRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLElement>(null);
   const [activeAxis, setActiveAxis] = useState<number | null>(null);
-  const [morphed, setMorphed] = useState(false);
-  const comparisonMorphedRef = useRef(false);
-  const morphTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [sectionsVisible, setSectionsVisible] = useState<Set<string>>(new Set());
 
-  /* ── Force dark mode ── */
-  useEffect(() => {
-    const html = document.documentElement;
-    const prev = html.getAttribute("data-mode");
-    html.setAttribute("data-mode", "dark");
-    return () => {
-      if (prev) html.setAttribute("data-mode", prev);
-    };
-  }, []);
+  /* ── Mark section visible (IO triggers) ── */
+  const markVisible = (id: string) => {
+    setSectionsVisible((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
-  /* ── Reduced motion check ── */
-  const prefersReducedMotion = useCallback(() => {
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-
-  /* ── Intersection Observer Architecture ── */
+  /* ── Intersection Observer — one-shot reveals ── */
   useEffect(() => {
     const page = pageRef.current;
     if (!page) return;
 
-    const cleanups: (() => void)[] = [];
-
-    /* If reduced motion, set everything visible immediately */
-    if (prefersReducedMotion()) {
-      page
-        .querySelectorAll<HTMLElement>(
-          ".about-reveal, .about-pullquote, .about-data, .about-divergence, .about-principles, .about-axes, .about-spectrum, .about-deepdive-preview, .about-family-grid, .about-ranking__bars, .about-landscape, .about-numbers, .about-divider, .about-ink-droplet"
-        )
-        .forEach((el) => el.setAttribute("data-visible", "true"));
-      /* Annotations: mark all annotated sections visible */
-      page
-        .querySelectorAll<HTMLElement>(".about-section[data-has-annotations]")
-        .forEach((el) => el.setAttribute("data-annotations-visible", "true"));
-      setMorphed(true);
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      // Show everything immediately
+      page.querySelectorAll<HTMLElement>("[data-film-section]").forEach((el) => {
+        markVisible(el.dataset.filmSection!);
+      });
       return;
     }
 
-    /* Observer 1: Hero scroll parallax (desktop only, multi-threshold) */
-    const heroEl = heroRef.current;
-    if (heroEl) {
-      const heroIO = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (window.innerWidth <= 768) return;
-            const ratio = e.intersectionRatio;
-            const scale = 0.92 + 0.08 * ratio;
-            const opacity = 0.3 + 0.7 * ratio;
-            heroEl.style.transform = `scale(${scale})`;
-            heroEl.style.opacity = String(opacity);
-            heroEl.setAttribute("data-parallax", "");
-          });
-        },
-        { threshold: [0, 0.25, 0.5, 0.75, 1] }
-      );
-      heroIO.observe(heroEl);
-      cleanups.push(() => heroIO.disconnect());
-    }
-
-    /* Observer 2: Section reveals — one-shot data-visible="true" */
-    const revealEls = page.querySelectorAll<HTMLElement>(
-      ".about-reveal, .about-divergence, .about-principles, .about-spectrum, .about-deepdive-preview, .about-family-grid, .about-ranking__bars, .about-landscape, .about-numbers"
-    );
-    const revealIO = new IntersectionObserver(
-      (entries, obs) => {
+    const io = new IntersectionObserver(
+      (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            (e.target as HTMLElement).setAttribute("data-visible", "true");
-            obs.unobserve(e.target);
+            const id = (e.target as HTMLElement).dataset.filmSection;
+            if (id) markVisible(id);
+            io.unobserve(e.target);
           }
         });
       },
       { threshold: 0.2 }
     );
-    revealEls.forEach((el) => revealIO.observe(el));
-    cleanups.push(() => revealIO.disconnect());
 
-    /* Observer 3: Axes cascade */
-    const axesEl = page.querySelector<HTMLElement>(".about-axes");
-    if (axesEl) {
-      const axesIO = new IntersectionObserver(
-        (entries, obs) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              axesEl.setAttribute("data-visible", "true");
-              obs.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-      axesIO.observe(axesEl);
-      cleanups.push(() => axesIO.disconnect());
-    }
+    page.querySelectorAll<HTMLElement>("[data-film-section]").forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
-    /* Observer 4: Comparison morph — threshold 0.5, 1.5s delay */
-    const compEl = page.querySelector<HTMLElement>(".about-comparison");
-    if (compEl) {
-      const compIO = new IntersectionObserver(
-        (entries, obs) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting && !comparisonMorphedRef.current) {
-              comparisonMorphedRef.current = true;
-              morphTimerRef.current = setTimeout(() => {
-                setMorphed(true);
-              }, 1500);
-              obs.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.5 }
-      );
-      compIO.observe(compEl);
-      cleanups.push(() => compIO.disconnect());
-    }
-
-    /* Observer 5: Pullquote smash cut */
-    const pullquotes = page.querySelectorAll<HTMLElement>(".about-pullquote");
-    if (pullquotes.length) {
-      const pullIO = new IntersectionObserver(
-        (entries, obs) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              (e.target as HTMLElement).setAttribute("data-visible", "true");
-              obs.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.4 }
-      );
-      pullquotes.forEach((el) => pullIO.observe(el));
-      cleanups.push(() => pullIO.disconnect());
-    }
-
-    /* Observer 6: Data lines wipe */
-    const dataLines = page.querySelectorAll<HTMLElement>(".about-data");
-    if (dataLines.length) {
-      const dataIO = new IntersectionObserver(
-        (entries, obs) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              (e.target as HTMLElement).setAttribute("data-visible", "true");
-              obs.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.5 }
-      );
-      dataLines.forEach((el) => dataIO.observe(el));
-      cleanups.push(() => dataIO.disconnect());
-    }
-
-    /* Observer 7: Organic dividers + ink droplets */
-    const organicEls = page.querySelectorAll<HTMLElement>(
-      ".about-divider, .about-ink-droplet"
-    );
-    if (organicEls.length) {
-      const organicIO = new IntersectionObserver(
-        (entries, obs) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              (e.target as HTMLElement).setAttribute("data-visible", "true");
-              obs.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.5 }
-      );
-      organicEls.forEach((el) => organicIO.observe(el));
-      cleanups.push(() => organicIO.disconnect());
-    }
-
-    /* Observer 8: Deep Dive preview */
-    const ddPreview = page.querySelector<HTMLElement>(
-      ".about-deepdive-preview"
-    );
-    if (ddPreview) {
-      const ddIO = new IntersectionObserver(
-        (entries, obs) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              (e.target as HTMLElement).setAttribute("data-visible", "true");
-              obs.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.3 }
-      );
-      ddIO.observe(ddPreview);
-      cleanups.push(() => ddIO.disconnect());
-    }
-
-    /* Observer 9: Floating data annotations — bidirectional visibility
-       Unlike one-shot reveals, annotations enter AND exit. When the section
-       scrolls out of view, annotations fade back out so they never pile up.
-       Uses threshold 0.15 for early trigger (annotations are in the margins,
-       should appear before the section is fully centered). */
-    const annotatedSections = page.querySelectorAll<HTMLElement>(
-      ".about-section[data-has-annotations]"
-    );
-    if (annotatedSections.length) {
-      const annotIO = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            const el = e.target as HTMLElement;
-            if (e.isIntersecting) {
-              el.setAttribute("data-annotations-visible", "true");
-            } else {
-              el.removeAttribute("data-annotations-visible");
-            }
-          });
-        },
-        { threshold: 0.15 }
-      );
-      annotatedSections.forEach((el) => annotIO.observe(el));
-      cleanups.push(() => annotIO.disconnect());
-    }
-
-    return () => {
-      cleanups.forEach((fn) => fn());
-      if (morphTimerRef.current) clearTimeout(morphTimerRef.current);
-    };
-  }, [prefersReducedMotion]);
+  const isVisible = (id: string) => sectionsVisible.has(id);
 
   return (
     <div className="about-page" ref={pageRef}>
-      {/* PWA back nav — visible on mobile, always accessible */}
+      {/* Back nav */}
       <Link href="/" className="pwa-back" aria-label="Back to news feed">
         <span aria-hidden="true">&larr;</span> News Feed
       </Link>
 
       {/* ══════════════════════════════════════════════════════════════════
-          ACT I: THE VOID — EMOTIONAL SETUP
+          COLD OPEN — Hero
           ══════════════════════════════════════════════════════════════════ */}
-
-      {/* ── Section 1: Cold Open (Hero) ── */}
-      <section className="about-hero" ref={heroRef} aria-label="Hero">
+      <section className="about-hero" aria-label="Hero">
         <div className="about-hero__halo" aria-hidden="true" />
         <div className="about-hero__glow" aria-hidden="true" />
         <div className="about-hero__mark">
@@ -607,95 +109,39 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Section 2: The Problem ── */}
-      <section className="about-section" aria-label="The Problem" data-has-annotations>
-        <FloatingAnnotations sectionLabel="The Problem" />
+      {/* ══════════════════════════════════════════════════════════════════
+          CHAPTER I — The Void
+          ══════════════════════════════════════════════════════════════════ */}
+      <section id="the-void" className="about-section" aria-label="The Void" data-film-section="void">
         <div className="about-section__inner">
-          <div className="about-reveal">
-            <p className="about-body about-body--lead about-body--stagger">
-              The same event. Five outlets. Five different realities.
-            </p>
-            <p className="about-body about-body--stagger">
-              One calls it a &ldquo;crackdown.&rdquo; Another calls it
-              &ldquo;restoring order.&rdquo; A third doesn&rsquo;t cover it at
-              all. The headline says one thing; the article says another. The
-              source is &ldquo;officials
-              say.&rdquo; No name, no title, no
-              accountability.
-            </p>
+          <p className="about-section-label">{CHAPTERS[0].roman}</p>
+          <div className="about-reveal" data-visible={isVisible("void") || undefined}>
+            <p className="about-body about-body--lead">{CHAPTERS[0].prologueBody}</p>
+            {CHAPTERS[0].manifestoLead && (
+              <p className="about-body about-body--stagger">{CHAPTERS[0].manifestoLead}</p>
+            )}
           </div>
 
-          <blockquote className="about-pullquote">This is the void.</blockquote>
+          <blockquote className="about-pullquote" data-visible={isVisible("void") || undefined}>
+            This is the void.
+          </blockquote>
 
-          <InkDroplet />
-
-          <div className="about-reveal">
-            <p className="about-body about-body--stagger">
-              Not the absence of information. The opposite.
-              A flood of it, shaped by incentive, refracted through ideology,
-              optimized for the click that keeps you inside the bubble you
-              didn&rsquo;t choose.
-            </p>
-            <p className="about-body about-body--stagger">
-              You already know it&rsquo;s there. You feel it every time you read
-              a headline and wonder: who decided this was the story? What am I
-              not seeing?
-            </p>
-          </div>
-
-          {/* Live Divergence Demo */}
-          <div
-            className="about-divergence"
-            aria-label="Divergence demo: same event, different headlines"
-          >
-            <p className="about-divergence__event">
-              Same event: US-China trade negotiations resume
-            </p>
-            <div className="about-divergence__list" role="list">
-              {DIVERGENCE_HEADLINES.map((h) => (
-                <div
-                  key={h.outlet}
-                  className="about-divergence__card"
-                  role="listitem"
-                >
-                  <div className="about-divergence__source">
-                    <span className="about-divergence__outlet">
-                      {h.outlet}
-                    </span>
-                    <span className="about-divergence__lean-badge">
-                      {h.lean} &middot; {h.leanScore}
-                    </span>
-                  </div>
-                  <p className="about-divergence__headline">{h.headline}</p>
-                </div>
-              ))}
-            </div>
+          {/* Shared scene: divergent headlines */}
+          <div data-film-section="void-headlines">
+            <DivergentHeadlines mode={MODE} active={isVisible("void")} />
           </div>
         </div>
       </section>
 
-      <OrganicDivider />
-
-      {/* ── Section 3: First Principles ── */}
-      <section className="about-section" aria-label="First Principles">
+      {/* First Principles */}
+      <section className="about-section" aria-label="First Principles" data-film-section="principles">
         <div className="about-section__inner">
-          <div className="about-principles" role="list">
-            <div className="about-principle" role="listitem">
-              <p className="about-principle__text">
-                Every reader sees the same stories in the same order.
-              </p>
-            </div>
-            <div className="about-principle" role="listitem">
-              <p className="about-principle__text">
-                Every score traces to specific words in the text.
-              </p>
-            </div>
-            <div className="about-principle" role="listitem">
-              <p className="about-principle__text">
-                Every feature is free. There is no premium tier. There never
-                will be.
-              </p>
-            </div>
+          <div className="about-principles" role="list" data-visible={isVisible("principles") || undefined}>
+            {FIRST_PRINCIPLES.map((p) => (
+              <div key={p} className="about-principle" role="listitem">
+                <p className="about-principle__text">{p}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -703,26 +149,20 @@ export default function AboutPage() {
       <OrganicDivider />
 
       {/* ══════════════════════════════════════════════════════════════════
-          ACT II: THE INSTRUMENT — PRODUCT SHOWCASE
+          CHAPTER II — The Instrument
           ══════════════════════════════════════════════════════════════════ */}
-
-      {/* ── Section 4: The Six Axes — Interactive ── */}
-      <section
-        id="methodology"
-        className="about-section about-section--act2"
-        aria-label="The Six Axes"
-        data-has-annotations
-      >
-        <FloatingAnnotations sectionLabel="The Six Axes" />
+      <section id="the-instrument" className="about-section about-section--act2" aria-label="The Instrument" data-film-section="instrument">
         <div className="about-section__inner">
-          <p className="about-section-label">The Instrument</p>
-          <div className="about-reveal">
-            <p className="about-body about-body--lead">
-              Six dimensions. Zero black boxes.
-            </p>
+          <p className="about-section-label">{CHAPTERS[1].roman}</p>
+          <div className="about-reveal" data-visible={isVisible("instrument") || undefined}>
+            <p className="about-body about-body--lead">{CHAPTERS[1].prologueBody}</p>
           </div>
 
-          <div className="about-axes" role="list">
+          {/* Shared scene: Sigil exploded-view breakdown */}
+          <SigilBreakdown mode={MODE} active={isVisible("instrument")} />
+
+          {/* Manifesto extension: Six Axes interactive accordion */}
+          <div className="about-axes" role="list" data-film-section="axes" data-visible={isVisible("axes") || undefined}>
             {SIX_AXES.map((axis, i) => {
               const isActive = activeAxis === i;
               return (
@@ -743,33 +183,19 @@ export default function AboutPage() {
                   <div className="about-axis__header">
                     <span className="about-axis__name">{axis.name}</span>
                   </div>
-                  {!isActive && (
-                    <p className="about-axis__brief">{axis.brief}</p>
-                  )}
+                  {!isActive && <p className="about-axis__brief">{axis.brief}</p>}
                   {isActive && (
                     <div className="about-axis__detail">
                       <div className="about-axis__score-label">
                         <span>0</span>
-                        <span className="about-axis__score-value">
-                          {axis.score}/100
-                        </span>
+                        <span className="about-axis__score-value">{axis.score}/100</span>
                         <span>100</span>
                       </div>
                       <div className="about-axis__score-bar">
-                        <div
-                          className="about-axis__score-fill"
-                          style={
-                            {
-                              "--bar-fill": axis.score / 100,
-                            } as React.CSSProperties
-                          }
-                        />
+                        <div className="about-axis__score-fill" style={{ "--bar-fill": axis.score / 100 } as React.CSSProperties} />
                       </div>
                       <p className="about-axis__signals">{axis.signals}</p>
-                      <p
-                        className="about-axis__sample"
-                        dangerouslySetInnerHTML={{ __html: axis.sample }}
-                      />
+                      <p className="about-axis__sample" dangerouslySetInnerHTML={{ __html: axis.sample }} />
                     </div>
                   )}
                 </div>
@@ -779,107 +205,40 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Section 5: The Source Spectrum ── */}
-      <section
-        className="about-section about-section--act2"
-        aria-label="The Source Spectrum"
-        data-has-annotations
-      >
-        <FloatingAnnotations sectionLabel="The Source Spectrum" />
+      <OrganicDivider />
+
+      {/* ══════════════════════════════════════════════════════════════════
+          CHAPTER III — The Engine
+          ══════════════════════════════════════════════════════════════════ */}
+      <section id="the-engine" className="about-section about-section--act2" aria-label="The Engine" data-film-section="engine">
         <div className="about-section__inner">
-          <div className="about-reveal">
-            <p className="about-body about-body--lead">
-              1,013 sources. 158 countries. One spectrum.
-            </p>
+          <p className="about-section-label">{CHAPTERS[2].roman}</p>
+          <div className="about-reveal" data-visible={isVisible("engine") || undefined}>
+            <p className="about-body about-body--lead">{CHAPTERS[2].subtitle}</p>
           </div>
 
-          <div className="about-spectrum">
-            <SourceDensitySVG />
-            <div
-              className="about-spectrum__bar"
-              role="img"
-              aria-label="Political lean spectrum from far-left to far-right"
-            />
-            <p className="about-spectrum__stats">
-              1,013 sources &middot; 158 countries &middot; 43 US major &middot;
-              373 international &middot; 597 independent
-            </p>
-            <p className="about-spectrum__stats-secondary">
-              Left:Right ratio 1.23:1 &middot; 38 wire services &middot; 10
-              fact-checkers
-            </p>
-          </div>
+          {/* Shared scene: ranking + source spectrum */}
+          <SourceEngine mode={MODE} active={isVisible("engine")} />
         </div>
       </section>
 
-      <InkDroplet />
+      <OrganicDivider />
 
-      {/* ── Section 6: The Difference — Interactive Morph ── */}
-      <section
-        className="about-section about-section--act2"
-        aria-label="The Difference"
-      >
+      {/* ══════════════════════════════════════════════════════════════════
+          CHAPTER IV — The Difference
+          ══════════════════════════════════════════════════════════════════ */}
+      <section id="the-difference" className="about-section about-section--act2" aria-label="The Difference" data-film-section="difference">
         <div className="about-section__inner">
-          <div className="about-reveal">
+          <div className="about-reveal" data-visible={isVisible("difference") || undefined}>
             <p className="about-body about-body--lead">
-              Other tools label the outlet.
-              <br />
-              We read the article.
+              They rate the outlet.<br />We read the article.
             </p>
           </div>
 
-          <div
-            className={`about-comparison${morphed ? " about-comparison--morphed" : ""}`}
-            aria-label="Comparison: outlet label versus per-article scoring"
-          >
-            <div className="about-comparison__them">
-              <span className="about-comparison__label">Outlet label</span>
-              <span className="about-comparison__value--them">
-                &ldquo;Left&rdquo;
-              </span>
-            </div>
-            <div className="about-comparison__vs" aria-hidden="true">
-              vs
-            </div>
-            <div className="about-comparison__us">
-              <span className="about-comparison__label">Per-article score</span>
-              <div className="about-comparison__scores">
-                {[
-                  { name: "Lean", value: 42 },
-                  { name: "Rigor", value: 78 },
-                  { name: "Tone", value: 18 },
-                  { name: "Framing", value: 31 },
-                ].map((s) => (
-                  <div key={s.name} className="about-comparison__score-row">
-                    <span className="about-comparison__score-name">
-                      {s.name}
-                    </span>
-                    <div className="about-comparison__score-bar-track">
-                      <div
-                        className="about-comparison__score-bar-fill"
-                        style={
-                          {
-                            "--bar-fill": s.value / 100,
-                          } as React.CSSProperties
-                        }
-                      />
-                    </div>
-                    <span className="about-comparison__score-num">
-                      {s.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* Shared scene: comparison morph + competitive landscape */}
+          <ArticleDifference mode={MODE} active={isVisible("difference")} />
 
-          <div className="about-reveal">
-            <p className="about-body about-body--small">
-              An outlet rated &ldquo;Left&rdquo; published this article with a
-              center-right lean, high factual rigor, and minimal framing. The
-              outlet label would have told you to distrust it. The article itself
-              earned that trust back.
-            </p>
+          <div className="about-reveal" data-visible={isVisible("difference") || undefined}>
             <p className="about-body about-body--emphasis">
               Per article. Not per outlet. That is the difference.
             </p>
@@ -890,221 +249,39 @@ export default function AboutPage() {
       <OrganicDivider />
 
       {/* ══════════════════════════════════════════════════════════════════
-          ACT III: THE EXPERIENCE — FEATURE TOUR
+          CHAPTER V — The Worlds
           ══════════════════════════════════════════════════════════════════ */}
-
-      {/* ── Section 7: Deep Dive Preview ── */}
-      <section
-        className="about-section about-section--act3"
-        aria-label="The Deep Dive"
-      >
-        <div className="about-section__inner">
-          <p className="about-section-label">The Deep Dive</p>
-          <div className="about-reveal">
-            <p className="about-body about-body--lead">
-              Click any story. See every angle.
-            </p>
-          </div>
-
-          <div
-            className="about-deepdive-preview"
-            aria-label="Deep Dive preview mockup"
-          >
-            <p className="about-deepdive-preview__headline">
-              US-China trade negotiations resume after six-month pause
-            </p>
-            <div className="about-deepdive-preview__spectrum">
-              <div
-                className="about-deepdive-preview__dot"
-                style={{ left: "35%" }}
-                aria-label="Source at center-left position"
-              />
-              <div
-                className="about-deepdive-preview__dot"
-                style={{ left: "48%" }}
-                aria-label="Source at center position"
-              />
-              <div
-                className="about-deepdive-preview__dot"
-                style={{ left: "62%" }}
-                aria-label="Source at center-right position"
-              />
-              <div
-                className="about-deepdive-preview__dot"
-                style={{ left: "72%" }}
-                aria-label="Source at right position"
-              />
-              <div
-                className="about-deepdive-preview__dot"
-                style={{ left: "38%" }}
-                aria-label="Source at center-left position"
-              />
-            </div>
-            <div className="about-deepdive-preview__scores">
-              {[
-                { label: "Lean", value: "42" },
-                { label: "Rigor", value: "78" },
-                { label: "Tone", value: "18" },
-                { label: "Framing", value: "31" },
-              ].map((s) => (
-                <div key={s.label} className="about-deepdive-preview__score">
-                  <span className="about-deepdive-preview__score-label">
-                    {s.label}
-                  </span>
-                  <span className="about-deepdive-preview__score-value">
-                    {s.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <p className="about-deepdive-preview__caption">
-              How five outlets frame the same event. Where they agree. Where they
-              diverge.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Section 8: Product Family Grid — "The Worlds" ── */}
-      <section
-        className="about-section about-section--act3"
-        aria-label="Product Family"
-      >
+      <section id="the-worlds" className="about-section about-section--act3" aria-label="The Worlds" data-film-section="worlds">
         <div className="about-section__inner" style={{ maxWidth: "72ch" }}>
-          <div className="about-reveal">
+          <p className="about-section-label">{CHAPTERS[4].roman}</p>
+          <div className="about-reveal" data-visible={isVisible("worlds") || undefined}>
             <p className="about-body about-body--lead">The void suite.</p>
-            <p className="about-body about-body--stagger">
-              One platform. Six distinct experiences. Each built for a different
-              way of reading the news.
-            </p>
+            <p className="about-body about-body--stagger">{CHAPTERS[4].prologueBody}</p>
           </div>
 
-          <div className="about-family-grid" role="list">
-            {PRODUCT_FAMILY.map((p) => (
-              <Link
-                key={p.cli}
-                href={p.href}
-                className={`about-family-card about-family-card--${p.palette}`}
-                role="listitem"
-              >
-                <p className="about-family-card__cli">{p.cli}</p>
-                <p className="about-family-card__name">{p.name}</p>
-                <p className="about-family-card__desc">{p.desc}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <InkDroplet />
-
-      {/* ── Section 9: The Ranking ── */}
-      <section
-        className="about-section about-section--act3"
-        aria-label="The Ranking"
-        data-has-annotations
-      >
-        <FloatingAnnotations sectionLabel="The Ranking" />
-        <div className="about-section__inner">
-          <div className="about-reveal">
-            <p className="about-body about-body--lead">
-              Importance, not popularity.
-            </p>
-          </div>
-
-          <div className="about-ranking">
-            <div className="about-ranking__bars" role="list">
-              {RANKING_SIGNALS.map((s) => (
-                <div
-                  key={s.name}
-                  className="about-ranking__row"
-                  role="listitem"
-                >
-                  <span className="about-ranking__signal">{s.name}</span>
-                  <div className="about-ranking__bar-track">
-                    <div
-                      className="about-ranking__bar-fill"
-                      style={
-                        {
-                          "--bar-fill": s.weight / 20,
-                        } as React.CSSProperties
-                      }
-                    />
-                  </div>
-                  <span className="about-ranking__weight">{s.weight}%</span>
-                </div>
-              ))}
-            </div>
-            <p className="about-ranking__caption">
-              11 signals. Zero engagement metrics. The algorithm decides what
-              matters, not what gets clicked.
-            </p>
-          </div>
+          {/* Shared scene: product family grid */}
+          <ProductWorlds mode={MODE} active={isVisible("worlds")} />
         </div>
       </section>
 
       <OrganicDivider />
 
       {/* ══════════════════════════════════════════════════════════════════
-          ACT IV: THE INVITATION
+          CHAPTER VI — The Verdict
           ══════════════════════════════════════════════════════════════════ */}
-
-      {/* ── Section 10: The Landscape (Competitive) ── */}
-      <section
-        className="about-section about-section--act4"
-        aria-label="The Landscape"
-      >
+      <section id="the-verdict" className="about-section about-section--act4 about-cta" aria-label="The Verdict" data-film-section="verdict">
         <div className="about-section__inner">
-          <div className="about-landscape" role="list">
-            {LANDSCAPE.map((l) => (
-              <div
-                key={l.them}
-                className="about-landscape__pair"
-                role="listitem"
-              >
-                <p className="about-landscape__them">{l.them}</p>
-                <p className="about-landscape__us">{l.us}</p>
-              </div>
-            ))}
+          <div className="about-reveal" data-visible={isVisible("verdict") || undefined} style={{ textAlign: "center" }}>
+            <p className="about-section-label">{CHAPTERS[5].roman}</p>
+            <p className="about-body about-body--lead">{CHAPTERS[5].headline}</p>
+            <p className="about-body">{CHAPTERS[5].prologueBody}</p>
           </div>
-        </div>
-      </section>
 
-      {/* ── Section 11: The Numbers ── */}
-      <section
-        className="about-section about-section--act4"
-        aria-label="The Numbers"
-        data-has-annotations
-      >
-        <FloatingAnnotations sectionLabel="The Numbers" />
-        <div className="about-section__inner" style={{ maxWidth: "72ch" }}>
-          <div className="about-numbers" role="list">
-            {NUMBERS.map((n, i) => (
-              <span
-                key={n.label}
-                className="about-numbers__item"
-                role="listitem"
-              >
-                <span className="about-numbers__value">{n.value}</span>{" "}
-                {n.label}
-                {i < NUMBERS.length - 1 && (
-                  <span className="about-numbers__sep" aria-hidden="true">
-                    &middot;
-                  </span>
-                )}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* Shared scene: 3 Sigils + numbers */}
+          <TheVerdict mode={MODE} active={isVisible("verdict")} />
 
-      {/* ── Section 12: CTA ── */}
-      <section
-        className="about-section about-section--act4 about-cta"
-        aria-label="Call to action"
-      >
-        <div className="about-section__inner">
-          <div className="about-reveal" style={{ textAlign: "center" }}>
+          {/* CTA */}
+          <div className="about-reveal" data-visible={isVisible("verdict") || undefined} style={{ textAlign: "center", marginTop: "var(--space-6)" }}>
             <div className="about-cta__mark">
               <LogoIcon size={56} animation="idle" />
             </div>
@@ -1115,18 +292,6 @@ export default function AboutPage() {
             <Link href="/" className="about-cta__button">
               Read today&rsquo;s edition
             </Link>
-            <button
-              className="about-cta__tour"
-              onClick={() => {
-                try {
-                  localStorage.removeItem("void-news-onboarding");
-                  sessionStorage.removeItem("void-news-onboarding-deferred");
-                } catch { /* ignore */ }
-                window.location.href = "/void--news/";
-              }}
-            >
-              Take the 60-second tour
-            </button>
             <p className="about-cta__sub">
               No signup. No paywall. No tracking.
             </p>
