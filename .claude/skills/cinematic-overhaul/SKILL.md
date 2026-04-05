@@ -61,6 +61,7 @@ Every change in this overhaul must trace back to a real cinematography principle
 | `cinematographer` | Camera language, depth planes, lighting design | 1 (1a) | logo-designer |
 | `motion-director` | Scene choreography, scroll timelines, gesture physics | 1 (1b) | -- |
 | `vfx-artist` | Post-processing, grain, color grading, lens effects | 1 (1c) | -- |
+| `color-grader` | Per-image media color grading, page-specific filter pipelines | 1 (1d) | -- |
 | `frontend-builder` | Token + CSS + component implementation | 2 | -- |
 | `responsive-specialist` | Breakpoint validation | 3 | perf-optimizer |
 | `perf-optimizer` | Lighthouse + GPU audit | 3 | responsive-specialist |
@@ -103,6 +104,15 @@ Every change in this overhaul must trace back to a real cinematography principle
  │    texture system for grain character and color grading values.    │
  │    Output: VFX layer specs + CSS filter values + SVG filter       │
  │    definitions.                                                   │
+ │                                                                   │
+ │  STAGE 1d — Color Grader: Media Asset Color Grading               │
+ │    Define per-image CSS filter pipelines for external media        │
+ │    (Weekly cover images, History archival photos, og:image).       │
+ │    Page-specific grades: weekly = magazine warmth, history =       │
+ │    archival sepia, feed = cinematic amber, deep dive = studio.    │
+ │    Verify compound interaction with page-level grade from          │
+ │    vfx-artist. Output: --img-grade-* tokens + grain/vignette     │
+ │    pseudo-element specs per image context.                         │
  └───────────────────────────────────────────────────────────────────┘
 
  PHASE 2 ── IMPLEMENT (write)
@@ -259,6 +269,14 @@ Provide logo-designer + cinematographer + motion-director outputs, then brief:
 > - **Light interaction**: OnAir glow propagation using the logo-designer's accent color, card hover rim light using the palette.
 >
 > Every effect must be subliminal -- felt, not seen. The logo-designer's palette is your LUT. The cinematographer's depth planes are your compositing layers. Layer them.
+
+**Stage 1d: Launch `color-grader`**
+
+Provide vfx-artist output (page-level grade values). Brief:
+
+> Apply per-image color grading to all media assets across void --news. The vfx-artist has set the page-level grade (`--cin-grade` on `.page-main`). Your job is to define the image-specific filter chains that compound correctly with the page grade.
+>
+> Define `--img-grade-*` tokens for each context: feed (cinematic amber), weekly (magazine warmth), history (archival sepia), history-card (lighter archival), deep-dive (studio editorial). Replace any hardcoded filter values on image elements with token references. Add grain/vignette pseudo-elements on image containers where the context calls for it. Verify compound filter values stay within bounds (contrast 1.04-1.12, saturation 0.70-0.90, sepia 0.06-0.16).
 
 ### Phase 2: Implement (Sequential)
 
