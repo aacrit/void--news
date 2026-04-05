@@ -2175,13 +2175,32 @@
   width: 60%;
 }
 
-/* ── Classified / Coming dossier variant ── */
+/* ── Classified / Coming dossier variant — disabled look ── */
 .hist-dossier--classified {
-  background: var(--hist-bg-inset, var(--hist-bg-card));
-  /* Dashed ink border effect via repeating SVG pattern */
+  background: var(--hist-bg-inset, var(--hist-bg-secondary));
   outline: 1.5px dashed var(--hist-border);
   outline-offset: -4px;
-  opacity: 0.85;
+  opacity: 0.55;
+  filter: saturate(0.3) contrast(0.92);
+  cursor: pointer;
+  border-color: transparent;
+}
+
+.hist-dossier--classified:hover {
+  opacity: 0.7;
+  filter: saturate(0.5) contrast(0.95);
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Click-revealed state: full color, full opacity */
+.hist-dossier--classified.hist-dossier--revealed {
+  opacity: 1;
+  filter: saturate(1) contrast(1);
+  outline-style: solid;
+  outline-color: var(--hist-accent);
+  border-color: var(--hist-accent);
 }
 
 .hist-dossier__quote {
@@ -2212,22 +2231,31 @@
   margin-top: auto;
 }
 
-/* Reveal overlay for classified tiles */
+/* Reveal overlay for classified tiles — card-flip on click */
+.hist-dossier--classified {
+  perspective: 800px;
+}
+
 .hist-dossier__reveal {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: var(--space-2);
   background: var(--hist-bg-card);
+  border: 1px solid var(--hist-accent);
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transform: rotateY(90deg);
+  transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
 }
 
-.hist-dossier--classified:hover .hist-dossier__reveal,
+/* Click-only reveal — flip to answer on click */
 .hist-dossier--revealed .hist-dossier__reveal {
   opacity: 1;
+  transform: rotateY(0deg);
 }
 
 .hist-dossier__reveal-title {
