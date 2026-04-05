@@ -157,7 +157,7 @@
 .fp__play:active { transform: scale(0.92); transition-duration: 60ms; }
 
 .fp__play--active {
-  box-shadow: 0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 20%, transparent);
+  box-shadow: 0 0 12px var(--voice-accent-glow, rgba(77, 175, 160, 0.15));
 }
 
 /* Track info */
@@ -199,25 +199,25 @@
   font-family: var(--font-data);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--accent-warm) 60%, transparent);
+  color: color-mix(in srgb, var(--voice-accent) 65%, transparent);
   white-space: nowrap;
   min-width: 28px;
   text-align: right;
 }
 
-/* Mini progress bar — bottom edge */
+/* Mini progress bar — bottom edge (signal: teal) */
 .fp__mini-progress {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 2px;
-  background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 12%, transparent);
   border-radius: 0 0 22px 22px;
   overflow: hidden;
 }
 
 .fp__mini-progress-fill {
   height: 100%;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   transition: width 100ms linear;
 }
 
@@ -437,7 +437,7 @@
 .fp__pill-eq-bar {
   width: 2px;
   border-radius: 1px;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate;
 }
 .fp__pill-eq-bar:nth-child(1) { animation: vuBar-short 1.0s var(--ease-rack) infinite alternate; }
@@ -462,14 +462,14 @@
   max-width: 6px;
   height: 15%;
   border-radius: 1.5px;
-  background: color-mix(in srgb, var(--accent-warm) 18%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 20%, transparent);
   transition: height 400ms var(--ease-cinematic, ease), background 300ms;
 }
 
 /* Active — bars animate with staggered VU keyframes.
    Coprime durations per keyframe type prevent lockstep cycling. */
 .fp__vu--active .fp__vu-bar {
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   animation: fpVuPulse 1.8s var(--ease-rack, ease-in-out) infinite alternate;
 }
 .fp__vu--active .fp__vu-bar:nth-child(odd)  { animation-duration: 1.65s; }
@@ -520,10 +520,10 @@
   100% { height: 25%; opacity: 0.5; }
 }
 
-/* Active glow — subtle amber ambient when playing */
+/* Active glow — teal phosphor when signal is flowing */
 .fp__vu--active {
-  box-shadow: inset 0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent);
-  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  box-shadow: inset 0 0 12px var(--voice-accent-glow, rgba(77, 175, 160, 0.15));
+  background: var(--voice-accent-ghost, rgba(77, 175, 160, 0.08));
   transition: box-shadow 500ms var(--ease-cinematic, ease), background 300ms;
 }
 
@@ -591,7 +591,7 @@
 .fp__play-lg:active { transform: scale(0.92); transition-duration: 60ms; }
 
 .fp__play-lg--active {
-  box-shadow: 0 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 20%, transparent);
+  box-shadow: 0 0 16px var(--voice-accent-glow, rgba(77, 175, 160, 0.15));
 }
 
 /* Seek bar */
@@ -628,9 +628,9 @@
 }
 
 .fp__seek-sec--active {
-  color: var(--accent-warm);
-  border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
-  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  color: var(--voice-accent);
+  border-color: color-mix(in srgb, var(--voice-accent) 40%, transparent);
+  background: var(--voice-accent-ghost, rgba(77, 175, 160, 0.08));
 }
 
 .fp__seek-bar-wrap {
@@ -642,22 +642,22 @@
   position: absolute;
   top: 50%; left: 0; right: 0;
   height: 4px;
-  background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 14%, transparent);
   border-radius: 2px;
   transform: translateY(-50%);
-  box-shadow: inset 0 1px 1px color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, var(--voice-accent) 6%, transparent);
 }
 
 .fp__seek-buffer {
   position: absolute; top: 0; left: 0; height: 100%;
-  background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 18%, transparent);
   border-radius: 2px;
   transition: width 300ms linear;
 }
 
 .fp__seek-fill {
   position: absolute; top: 0; left: 0; height: 100%;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   border-radius: 2px;
   transition: width 100ms linear;
 }
@@ -667,7 +667,7 @@
   position: absolute;
   right: -1px; top: -4px;
   width: 2px; height: 12px;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
   border-radius: 1px;
 }
 
@@ -675,7 +675,7 @@
   position: absolute;
   top: 50%; width: 1.5px; height: 10px;
   transform: translateY(-50%);
-  background: color-mix(in srgb, var(--accent-warm) 45%, transparent);
+  background: color-mix(in srgb, var(--voice-accent) 45%, transparent);
   border-radius: 0.75px;
   z-index: 1;
 }
@@ -689,7 +689,7 @@
 
 .fp__seek-input:focus-visible {
   opacity: 1;
-  outline: 2px solid var(--accent-warm);
+  outline: 2px solid var(--voice-accent);
   outline-offset: 2px;
 }
 
@@ -715,7 +715,7 @@
   font-family: var(--font-data);
   font-size: var(--text-xxs);
   font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  color: color-mix(in srgb, var(--voice-accent) 55%, transparent);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1559,7 +1559,7 @@
 .fp__track-eq span {
   width: 2px;
   border-radius: 1px;
-  background: var(--accent-warm);
+  background: var(--voice-accent);
 }
 
 .fp__track-eq span:nth-child(1) {
