@@ -134,10 +134,56 @@ export interface StorySource {
   articleSummary?: string;
 }
 
+/* ---------------------------------------------------------------------------
+   void --verify types — cross-source factual verification
+   --------------------------------------------------------------------------- */
+
+export interface ClaimConsensus {
+  total_claims: number;
+  corroborated: number;
+  single_source: number;
+  disputed: number;
+  consensus_ratio: number;
+  consensus_summary: string;
+  highlighted_claims: VerifiedClaim[];
+  disputed_details: DisputedClaim[];
+}
+
+export interface VerifiedClaim {
+  text: string;
+  status: 'corroborated' | 'single_source' | 'disputed';
+  source_count: number;
+  sources: string[];
+  highlight: boolean;
+}
+
+export interface DisputedClaim {
+  topic: string;
+  version_a: string;
+  version_a_sources: string[];
+  version_b: string;
+  version_b_sources: string[];
+  contradiction_type: 'negation' | 'numeric' | 'entity_swap';
+}
+
+export interface SourceAccuracy {
+  source_slug: string;
+  source_name: string;
+  total_unique_claims: number;
+  later_corroborated: number;
+  later_contradicted: number;
+  still_unverified: number;
+  accuracy_rate: number;
+  accuracy_30d: number | null;
+  accuracy_90d: number | null;
+  trend: 'improving' | 'stable' | 'declining';
+}
+
 export interface DeepDiveData {
   consensus: string[];
   divergence: string[];
   sources: StorySource[];
+  claimConsensus?: ClaimConsensus;
 }
 
 /** Data model for the Sigil — unified 6-axis bias indicator */
