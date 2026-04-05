@@ -436,16 +436,20 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
 
 
 def _build_claims_block(claims_consensus) -> str:
-    """Format NLP-extracted claims for the Gemini prompt."""
+    """
+    Format NLP-extracted claims for the Gemini prompt.
+
+    Produces a readable list with unicode status markers.
+    """
     if claims_consensus is None:
         return ""
 
+    lines = ["", "CLAIM EXTRACTION (NLP — void --verify):"]
     claims = getattr(claims_consensus, "claims", [])
     if not claims:
         return ""
 
-    lines = ["", "CLAIM EXTRACTION (NLP — void --verify):"]
-    for vc in claims[:20]:
+    for vc in claims[:20]:  # Cap at 20 to stay within token limits
         status = getattr(vc, "status", "unverified")
         text = getattr(vc, "claim_text", "")
         count = getattr(vc, "source_count", 1)
@@ -453,6 +457,7 @@ def _build_claims_block(claims_consensus) -> str:
         total = getattr(claims_consensus, "total_claims", 0) or len(claims)
 
         if status == "corroborated":
+            src_str = ", ".join(sources[:5]) if sources else ""
             lines.append(f"✓ CORROBORATED ({count}/{total} sources): \"{text}\"")
         elif status == "disputed":
             lines.append(f"⚠ DISPUTED: \"{text}\"")
@@ -460,7 +465,9 @@ def _build_claims_block(claims_consensus) -> str:
             src = sources[0] if sources else "unknown"
             lines.append(f"○ SINGLE SOURCE (only: {src}): \"{text}\"")
 
-    for dd in getattr(claims_consensus, "disputed_details", [])[:5]:
+    # Add disputed details
+    disputed_details = getattr(claims_consensus, "disputed_details", [])
+    for dd in disputed_details[:5]:
         va = getattr(dd, "version_a", "")
         vb = getattr(dd, "version_b", "")
         va_src = ", ".join(getattr(dd, "version_a_sources", []))
@@ -470,6 +477,7 @@ def _build_claims_block(claims_consensus) -> str:
     return "\n".join(lines) + "\n"
 
 
+# Claims deduplication task template (appended when claims data is available)
 _CLAIMS_TASK_TEMPLATE = """
 ---
 
@@ -477,7 +485,8 @@ TASK 8 — claims (array of objects), consensus_ratio (float), consensus_summary
 You are given NLP-extracted factual claims from articles in this cluster with their verification status.
 
 Your job:
-1. Deduplicate semantically equivalent claims (NLP may extract "GDP grew 3.2%" and "the economy expanded by 3.2%" as separate claims — merge them)
+1. Deduplicate semantically equivalent claims (NLP may extract "GDP grew 3.2%"
+   and "the economy expanded by 3.2%" as separate claims — merge them)
 2. Write a canonical version of each unique claim (clear, concise)
 3. Preserve source counts and contradiction details
 4. Select the 3-5 most newsworthy claims to highlight
@@ -508,6 +517,7 @@ def summarize_cluster(articles: list[dict],
     source_names_line = _build_source_names_line(articles)
     articles_block = _build_articles_block(articles)
 
+    # Build claims context if available
     claims_block = _build_claims_block(claims_consensus) if claims_consensus else ""
 
     prompt = _USER_PROMPT_TEMPLATE.format(
@@ -518,6 +528,7 @@ def summarize_cluster(articles: list[dict],
 
     # Inject claims task before the final "Return JSON only" line
     if claims_block:
+        # Replace field count and add claims task
         prompt = prompt.replace(
             "exactly seven \\\nfields: headline, summary, consensus, divergence, "
             "editorial_importance, story_type, has_binding_consequences.",
@@ -525,11 +536,13 @@ def summarize_cluster(articles: list[dict],
             "editorial_importance, story_type, has_binding_consequences, "
             "claims, consensus_ratio, consensus_summary.",
         )
+        # Insert claims block and task before "Return JSON only"
         prompt = prompt.replace(
             "Return JSON only. No markdown fences.",
             claims_block + _CLAIMS_TASK_TEMPLATE
             + "\n---\n\nReturn JSON only. No markdown fences.",
         )
+        # Update the JSON example at the end
         prompt = prompt.replace(
             '"has_binding_consequences": true/false}',
             '"has_binding_consequences": true/false, '
@@ -663,7 +676,10 @@ def summarize_clusters_batch(clusters: list[dict],
             break
 
         articles = clusters[idx].get("articles", [])
-        cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
+        # Pass claims consensus if available for this cluster
+        cc = None
+        if cluster_consensus:
+            cc = cluster_consensus.get(str(idx))
         result = summarize_cluster(articles, claims_consensus=cc)
         if result:
             results[idx] = result

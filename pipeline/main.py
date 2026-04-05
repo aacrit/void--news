@@ -97,6 +97,23 @@ try:
 except ImportError:
     pass
 
+# void --verify: Claim Consensus engine — optional (requires spaCy + sklearn)
+CLAIMS_AVAILABLE = False
+try:
+    from analyzers.claim_extractor import extract_claims_batch
+    from analyzers.claim_verifier import verify_all_clusters
+    CLAIMS_AVAILABLE = True
+except ImportError as e:
+    print(f"[warn] Claim extraction not available ({e}). Skipping void --verify.")
+
+# void --verify Phase 2: Source track record — optional
+TRACK_RECORD_AVAILABLE = False
+try:
+    from analyzers.source_track_record import update_source_track_record
+    TRACK_RECORD_AVAILABLE = True
+except ImportError:
+    pass
+
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
@@ -1466,6 +1483,64 @@ def main():
         else:
             print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
 
+        # Step 6a: Extract claims (void --verify)
+        # Uses spaCy dependency parsing to extract factual claims (SVO triples
+        # anchored by named entities or quantitative data patterns).
+        all_article_claims: dict[str, list] = {}
+        cluster_consensus: dict[str, object] = {}
+        if CLAIMS_AVAILABLE and clusters:
+            print("\n[6a] Extracting claims (void --verify)...")
+            start_6a = time.time()
+            try:
+                all_article_claims = extract_claims_batch(stored_articles)
+                elapsed_6a = time.time() - start_6a
+                total_claims = sum(len(v) for v in all_article_claims.values())
+                print(f"  Claims: {total_claims} from {len(all_article_claims)} articles ({elapsed_6a:.1f}s)")
+            except Exception as e:
+                print(f"  [warn] Claim extraction failed: {e}")
+
+            # Step 6a-ii: Verify claims across sources
+            # Groups claims by cluster, then uses TF-IDF cosine similarity
+            # to find corroborated, single-source, and disputed claims.
+            if all_article_claims:
+                print("\n[6a-ii] Verifying claims across sources...")
+                start_6a2 = time.time()
+                try:
+                    # Build article_id -> cluster_index mapping
+                    article_to_cluster: dict[str, int] = {}
+                    for ci, cluster in enumerate(clusters):
+                        for art_id in cluster.get("article_ids", []):
+                            article_to_cluster[art_id] = ci
+
+                    # Group claims by cluster index
+                    claims_by_cluster: dict[str, dict[str, list]] = {}
+                    for art_id, claims in all_article_claims.items():
+                        ci = article_to_cluster.get(art_id)
+                        if ci is not None:
+                            ckey = str(ci)
+                            claims_by_cluster.setdefault(ckey, {})[art_id] = claims
+
+                    # Build source name lookup
+                    source_name_map = {
+                        s.get("id", ""): s.get("name", "")
+                        for s in source_map.values()
+                    }
+
+                    cluster_consensus = verify_all_clusters(
+                        claims_by_cluster, source_info=source_name_map
+                    )
+                    elapsed_6a2 = time.time() - start_6a2
+                    total_corr = sum(c.corroborated for c in cluster_consensus.values())
+                    total_disp = sum(c.disputed for c in cluster_consensus.values())
+                    print(f"  Verified {len(cluster_consensus)} clusters: "
+                          f"{total_corr} corroborated, {total_disp} disputed ({elapsed_6a2:.1f}s)")
+                except Exception as e:
+                    print(f"  [warn] Claim verification failed: {e}")
+        elif CLAIMS_AVAILABLE:
+            print("\n[6a] Skipping claim extraction (no clusters)")
+        else:
+            print("\n[6a] Skipping claim extraction (modules not available)")
+
         # Step 6c: Gemini bias reasoning (contextual score adjustments)
         # Uses a separate call budget (_MAX_REASONING_CALLS = 25) that does
         # not draw from the summarization cap. Prioritises low-confidence,
@@ -1502,7 +1577,9 @@ def main():
         if SUMMARIZER_AVAILABLE and gemini_is_available():
             print("\n[7b] Summarizing clusters with Gemini Flash...")
             try:
-                gemini_results = summarize_clusters_batch(clusters)
+                gemini_results = summarize_clusters_batch(
+                    clusters, cluster_consensus=cluster_consensus,
+                )
                 for idx, result in gemini_results.items():
                     clusters[idx]["title"] = result["headline"]
                     clusters[idx]["summary"] = result["summary"]
@@ -1516,6 +1593,13 @@ def main():
                         clusters[idx]["story_type"] = result["story_type"]
                     if result.get("has_binding_consequences") is not None:
                         clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
+                    # void --verify: Gemini-deduplicated claims
+                    if result.get("claims"):
+                        clusters[idx]["_gemini_claims"] = result["claims"]
+                    if result.get("consensus_ratio") is not None:
+                        clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
+                    if result.get("consensus_summary"):
+                        clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
             except Exception as e:
                 print(f"  [warn] Gemini summarization failed: {e}")
         elif SUMMARIZER_AVAILABLE:
@@ -2121,6 +2205,59 @@ def main():
                 cluster_row["consensus_points"] = cluster.get("consensus_points", [])
                 cluster_row["divergence_points"] = cluster.get("divergence_points", [])
 
+            # void --verify: claim_consensus JSONB
+            # Prefer Gemini-deduplicated claims; fall back to NLP-only
+            ci_key = str(ci)
+            nlp_consensus = cluster_consensus.get(ci_key)
+            if cluster.get("_gemini_claims") or nlp_consensus:
+                cc_data: dict = {}
+                if nlp_consensus:
+                    cc_data = {
+                        "total_claims": nlp_consensus.total_claims,
+                        "corroborated": nlp_consensus.corroborated,
+                        "single_source": nlp_consensus.single_source,
+                        "disputed": nlp_consensus.disputed,
+                        "consensus_ratio": nlp_consensus.consensus_ratio,
+                    }
+                # Overlay Gemini deduplication if available
+                if cluster.get("_gemini_claims"):
+                    cc_data["highlighted_claims"] = cluster["_gemini_claims"]
+                elif nlp_consensus and nlp_consensus.claims:
+                    cc_data["highlighted_claims"] = [
+                        {
+                            "text": vc.claim_text,
+                            "status": vc.status,
+                            "source_count": vc.source_count,
+                            "sources": vc.source_names,
+                            "highlight": vc.highlight,
+                        }
+                        for vc in nlp_consensus.claims
+                        if vc.highlight or vc.status == "disputed"
+                    ][:10]
+                if cluster.get("_gemini_consensus_ratio") is not None:
+                    cc_data["consensus_ratio"] = cluster["_gemini_consensus_ratio"]
+                if cluster.get("_gemini_consensus_summary"):
+                    cc_data["consensus_summary"] = cluster["_gemini_consensus_summary"]
+                elif nlp_consensus and nlp_consensus.disputed_details:
+                    cc_data["consensus_summary"] = (
+                        f"{nlp_consensus.corroborated} claims corroborated, "
+                        f"{nlp_consensus.disputed} disputed across sources"
+                    )
+                if nlp_consensus and nlp_consensus.disputed_details:
+                    cc_data["disputed_details"] = [
+                        {
+                            "topic": dd.topic,
+                            "version_a": dd.version_a,
+                            "version_a_sources": dd.version_a_sources,
+                            "version_b": dd.version_b,
+                            "version_b_sources": dd.version_b_sources,
+                            "contradiction_type": dd.contradiction_type,
+                        }
+                        for dd in nlp_consensus.disputed_details
+                    ][:5]
+                if cc_data:
+                    cluster_row["claim_consensus"] = cc_data
+
             result = insert_cluster(cluster_row)
             if result:
                 clusters_created += 1
@@ -2142,6 +2279,59 @@ def main():
                 "cluster_articles", all_cluster_article_links, chunk_size=200,
                 on_conflict="cluster_id,article_id",
             )
+
+        # void --verify: Batch-insert article_claims to Supabase
+        if CLAIMS_AVAILABLE and all_article_claims and cluster_ids_to_enrich:
+            print("  Storing article claims (void --verify)...")
+            try:
+                # Build cluster_id mapping: cluster index -> DB cluster_id
+                ci_to_db_id: dict[int, str] = {}
+                for ci_idx, cid in enumerate(cluster_ids_to_enrich):
+                    ci_to_db_id[ci_idx] = cid
+
+                article_to_ci: dict[str, int] = {}
+                for ci_idx, cluster in enumerate(clusters):
+                    if ci_idx < len(cluster_ids_to_enrich):
+                        for art_id in cluster.get("article_ids", []):
+                            article_to_ci[art_id] = ci_idx
+
+                claim_rows: list[dict] = []
+                for art_id, claims in all_article_claims.items():
+                    ci_idx = article_to_ci.get(art_id)
+                    db_cluster_id = ci_to_db_id.get(ci_idx) if ci_idx is not None else None
+
+                    # Get verification status from cluster_consensus
+                    ci_key = str(ci_idx) if ci_idx is not None else None
+                    nlp_cons = cluster_consensus.get(ci_key) if ci_key else None
+                    verified_statuses: dict[str, str] = {}
+                    if nlp_cons:
+                        for vc in nlp_cons.claims:
+                            verified_statuses[vc.claim_text] = vc.status
+
+                    for claim in claims:
+                        status = verified_statuses.get(claim.claim_text, "unverified")
+                        claim_rows.append({
+                            "article_id": art_id,
+                            "cluster_id": db_cluster_id,
+                            "claim_text": claim.claim_text[:2000],
+                            "source_sentence": (claim.source_sentence or "")[:2000],
+                            "subject_entity": claim.subject_entity or None,
+                            "subject_entity_type": claim.subject_entity_type or None,
+                            "claim_type": claim.claim_type,
+                            "has_quantitative": claim.has_quantitative,
+                            "status": status,
+                            "corroboration_count": 0,
+                            "corroborating_sources": [claim.source_slug] if claim.source_slug else [],
+                        })
+
+                if claim_rows:
+                    inserted = _batch_upsert(
+                        "article_claims", claim_rows, chunk_size=200,
+                        on_conflict="id",
+                    )
+                    print(f"  Article claims stored: {inserted}")
+            except Exception as e:
+                print(f"  [warn] Article claims storage failed: {e}")
 
         # Enrich clusters with aggregated bias data (Step 9)
         # For Gemini-enriched clusters, only run numeric aggregation (RPC),
@@ -2410,6 +2600,19 @@ def main():
                 print("  No articles with scores + categories to track")
         except Exception as e:
             print(f"  [warn] Source-topic tracking failed: {e}")
+
+    # Step 9d: Update source track record (void --verify Phase 2)
+    # Longitudinal tracking: how often a source's single-source claims get
+    # confirmed or contradicted by other sources in subsequent runs.
+    if TRACK_RECORD_AVAILABLE:
+        print("\n[9d] Updating source track record (void --verify)...")
+        try:
+            track_stats = update_source_track_record(supabase)
+            print(f"  Track record: {track_stats}")
+        except Exception as e:
+            print(f"  [warn] Source track record update failed: {e}")
+    else:
+        print("\n[9d] Skipping source track record (module not available)")
 
     # Step 10: Truncate full_text for IP compliance
     # Full article text is used only for NLP analysis (transformative use).

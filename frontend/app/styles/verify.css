@@ -623,6 +623,65 @@
 }
 
 /* --------------------------------------------------------------------------
+   Weekly Contested Section — wk-contested-*
+   -------------------------------------------------------------------------- */
+
+.wk-contested-section {
+  margin-bottom: var(--space-5);
+}
+
+.wk-contested__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.wk-contested__item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--wk-accent, var(--cin-amber));
+  border-radius: 0 4px 4px 0;
+  background: color-mix(in srgb, var(--wk-accent, var(--cin-amber)) 3%, transparent);
+}
+
+.wk-contested__mark {
+  font-size: var(--text-base);
+  line-height: 1.4;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.wk-contested__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.wk-contested__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-1);
+}
+
+.wk-contested__stat {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-1);
+}
+
+.wk-contested__summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
    Animations
    -------------------------------------------------------------------------- */
 
