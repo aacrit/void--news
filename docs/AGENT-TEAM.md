@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-04 (rev 19)
+Last updated: 2026-04-05 (rev 20)
 
 ## Philosophy
 
@@ -39,7 +39,7 @@ CEO (Aacrit)
   ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
   ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
-  ├── Cinematic ————————— cinematographer, vfx-artist, motion-director
+  ├── Cinematic ————————— cinematographer, vfx-artist, motion-director, color-grader
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator, linguist
   ├── History —————————— history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer
   ├── History Visual ——— visual-historian, archive-cartographer
@@ -49,7 +49,7 @@ CEO (Aacrit)
   └── Branding ————————— logo-designer
 ```
 
-**Total: 32 agents across 13 divisions**
+**Total: 33 agents across 13 divisions**
 
 Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows.
 
@@ -92,6 +92,7 @@ Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) a
 | `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
 | `source-curator` | Source credibility vetting, RSS/scrape config, 1,013-source list | Yes | Source list changes |
 | `linguist` | Media bias vocabulary research, lexicon expansion, linguistic gap analysis across all 5 bias analyzers | Yes | After bias calibration, lexicon gaps identified |
+| `media-curator` | Free-API image sourcing for weekly cover + history supplemental (Wikimedia, Unsplash, Pexels, Pixabay) | Yes | Weekly digest generation, history media enrichment |
 
 ### Cinematic Division
 
@@ -182,6 +183,16 @@ audio-engineer → pipeline-tester → bug-fixer
 feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipeline-tester
 ```
 
+**Weekly Media Cycle:**
+```
+weekly_digest_generator (cover stories selected) → media-curator (source cover image) → frontend-builder (render in WeeklyDigest.tsx)
+```
+
+**History Media Cycle (updated):**
+```
+media-archaeologist (archival) → media-curator (modern supplemental) → historiographic-auditor (visual bias) → visual-historian (integration)
+```
+
 **History Research Cycle:**
 ```
 history-curator → [perspective-analyst + media-archaeologist] (parallel) → historiographic-auditor → narrative-engineer
@@ -231,6 +242,7 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 | Multi-perspective balance, historiographic framework, viewpoint gaps | `perspective-analyst` | History |
 | Historical accuracy validation, source verification, narrative bias | `historiographic-auditor` | History |
 | Primary source discovery, historical media, rights/provenance | `media-archaeologist` | History |
+| Free-API image sourcing for weekly/history (Wikimedia, Unsplash, Pexels) | `media-curator` | Pipeline |
 | Event connections, timeline data, chronological accuracy | `timeline-architect` | History |
 | Narrative polish, show-don't-tell, multi-perspective coherence | `narrative-engineer` | History |
 | Archival Cinema UI, Ken Burns effects, history page layouts | `visual-historian` | History Visual |
