@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { HistoricalEvent } from "../types";
 import { ERAS, REGIONS } from "../types";
 import KeyFacts from "./KeyFacts";
+import MediaGallery from "./MediaGallery";
 import PerspectiveSelector from "./PerspectiveSelector";
 import PerspectiveView from "./PerspectiveView";
 import PerspectiveComparison from "./PerspectiveComparison";
@@ -245,12 +246,19 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           )}
         </section>
 
-        {/* 3. Key Facts (compact) */}
+        {/* 3. Archival Media Gallery */}
+        {event.media && event.media.length > 0 && (
+          <div className="hist-reveal">
+            <MediaGallery media={event.media} />
+          </div>
+        )}
+
+        {/* 4. Key Facts (compact) */}
         <div className="hist-reveal">
           <KeyFacts event={event} />
         </div>
 
-        {/* 4. Connected Events */}
+        {/* 5. Connected Events */}
         {event.connections.length > 0 && (
           <section className="hist-reveal hist-connections" aria-label="Connected events">
             <h2 className="hist-section-label">Connected Events</h2>
@@ -287,7 +295,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           </section>
         )}
 
-        {/* 5. Compact Timeline: Prev / Next */}
+        {/* 6. Compact Timeline: Prev / Next */}
         <div className="hist-reveal">
           <CompactTimeline events={allEvents} currentSlug={event.slug} />
         </div>
