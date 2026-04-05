@@ -112,6 +112,31 @@
   line-height: 1.18;
   color: var(--fg-primary);
   margin-bottom: var(--space-2);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.msc__headline--hero span {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Sigil stacks vertically in mobile headlines */
+.msc__headline--hero .sigil,
+.msc__headline--compact .sigil {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: auto;
+  flex-shrink: 0;
+}
+
+.msc__headline--hero .sigil__lean-label,
+.msc__headline--compact .sigil__lean-label {
+  font-size: 7px;
+  opacity: 0.5;
+  letter-spacing: 0.04em;
 }
 
 .msc__summary {
@@ -185,7 +210,7 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: var(--space-1);
 }
 

@@ -513,7 +513,6 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
       {/* Lean label — with optional hand-drawn ink underline for divergence/consensus */}
       <span className="sigil__lean-label" style={{
-        fontSize: size === "xl" ? "var(--text-sm)" : size === "lg" ? "var(--text-sm)" : "var(--text-xs)",
         color: lc,
         opacity: mounted ? 1 : 0,
       }}>

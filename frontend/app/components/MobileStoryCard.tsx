@@ -1,7 +1,6 @@
 "use client";
 
 import type { Story } from "../lib/types";
-import { timeAgo } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
@@ -61,25 +60,24 @@ export default function MobileStoryCard({
         }}
       />
 
-      {/* Meta row: badge/category + time (left) | Sigil (right) */}
-      <div className="msc__meta">
-        {isHero && <span className="msc__badge">Top Story</span>}
-        {!isHero && <span className="msc__cat">{story.category}</span>}
-        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-        <Sigil data={story.sigilData} size="sm" instant />
-      </div>
+      {isHero && <span className="msc__badge">Top Story</span>}
 
       {isHero ? (
-        /* Hero layout: headline + summary */
+        /* Hero layout: headline + inline Sigil + caret */
         <>
-          <h2 className="msc__headline msc__headline--hero">{story.title}</h2>
+          <h2 className="msc__headline msc__headline--hero">
+            <span>{story.title}</span>
+            <Sigil data={story.sigilData} size="sm" instant />
+            <CaretRight size={14} weight="bold" aria-hidden="true" className="msc__caret" />
+          </h2>
           <p className="msc__summary">{story.summary}</p>
         </>
       ) : (
-        /* Compact layout: headline + summary */
+        /* Compact layout: headline + inline Sigil + caret */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
+            <Sigil data={story.sigilData} size="sm" instant />
             <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
           </h3>
           {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
