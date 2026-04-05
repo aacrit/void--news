@@ -14,10 +14,17 @@ Extraction strategies (both tiers):
 - Broader CSS selectors for major news sites
 - Meta description fallback
 - Better paragraph aggregation
+
+Quality gates:
+- Paywall/cookie/JS-required content detection and stripping
+- Title-as-body detection (redirect captures)
+- Minimum word-count threshold with RSS summary fallback
+- Single retry on transient failures (timeout, 5xx)
 """
 
 import json
 import re
+import time
 import urllib.robotparser
 from urllib.parse import urlparse
 
@@ -82,12 +89,126 @@ def _strip_image_credits(text: str) -> str:
     return stripped
 
 
-# Use a browser-like User-Agent — many news sites block bot-like agents
+# ---------------------------------------------------------------------------
+# Paywall / garbage content detection
+# Patterns that indicate extracted text is a paywall wall, cookie consent,
+# JS-required notice, or redirect stub rather than actual article content.
+# When detected, the text is discarded so the RSS summary fallback can
+# provide usable content for NLP analysis.
+# ---------------------------------------------------------------------------
+_PAYWALL_INDICATORS = [
+    # Paywall / subscription gates
+    re.compile(r"subscribe\s+(?:to\s+)?(?:continue|read|unlock|access)", re.I),
+    re.compile(r"(?:sign|log)\s*in\s+to\s+(?:continue|read|access|view)", re.I),
+    re.compile(r"(?:create|need)\s+(?:a\s+)?(?:free\s+)?account\s+to", re.I),
+    re.compile(r"already\s+a\s+(?:subscriber|member)\s*\?", re.I),
+    re.compile(r"this\s+(?:article|content|story)\s+is\s+(?:for|available\s+to)\s+(?:subscribers|members|premium)", re.I),
+    re.compile(r"unlimited\s+(?:digital\s+)?access", re.I),
+    re.compile(r"start\s+your\s+(?:free\s+)?(?:trial|subscription)", re.I),
+    # Cookie consent
+    re.compile(r"we\s+use\s+cookies\s+to", re.I),
+    re.compile(r"cookie\s+(?:consent|policy|preferences|settings)", re.I),
+    re.compile(r"(?:accept|manage)\s+(?:all\s+)?cookies", re.I),
+    re.compile(r"by\s+(?:continuing|using)\s+(?:this|our)\s+(?:site|website)\s*,?\s*you\s+(?:agree|consent)", re.I),
+    # JavaScript required
+    re.compile(r"javascript\s+(?:is\s+)?(?:required|disabled|not\s+enabled|must\s+be\s+enabled)", re.I),
+    re.compile(r"please\s+enable\s+javascript", re.I),
+    re.compile(r"this\s+(?:page|site)\s+requires\s+javascript", re.I),
+    re.compile(r"you\s+need\s+to\s+enable\s+javascript", re.I),
+    # Redirect / error stubs
+    re.compile(r"you\s+are\s+being\s+redirected", re.I),
+    re.compile(r"if\s+you\s+are\s+not\s+redirected", re.I),
+    re.compile(r"click\s+here\s+(?:to\s+)?(?:continue|proceed|be\s+redirected)", re.I),
+    re.compile(r"page\s+(?:not\s+found|has\s+(?:moved|been\s+removed))", re.I),
+    # Access denied / geo-block
+    re.compile(r"access\s+(?:denied|restricted|blocked)", re.I),
+    re.compile(r"(?:not\s+)?available\s+in\s+your\s+(?:region|country|area)", re.I),
+    re.compile(r"4(?:03|51)\s+(?:forbidden|unavailable)", re.I),
+]
+
+# Minimum fraction of text that must survive paywall stripping to be usable
+_MIN_QUALITY_WORDS = 80
+
+
+def _detect_paywall_garbage(text: str) -> bool:
+    """
+    Return True if the text appears to be paywall, cookie consent, JS notice,
+    or redirect stub rather than real article content.
+
+    Only flags short texts (< 500 words) where paywall indicators make up a
+    significant fraction. Long texts may legitimately mention cookies in a
+    footer paragraph — we don't want to discard a 2000-word article because
+    it has a cookie notice at the bottom.
+    """
+    if not text:
+        return True
+
+    words = text.split()
+    word_count = len(words)
+
+    # Long articles are almost certainly real content even if they mention
+    # cookies or subscriptions somewhere in the body
+    if word_count > 500:
+        return False
+
+    # For short texts, check how many paywall indicators fire
+    hits = sum(1 for pat in _PAYWALL_INDICATORS if pat.search(text))
+
+    # 2+ indicators in a short text = very likely garbage
+    if hits >= 2:
+        return True
+
+    # Single indicator in very short text (< 100 words) = likely garbage
+    if hits >= 1 and word_count < 100:
+        return True
+
+    return False
+
+
+def _is_title_echo(text: str, title: str) -> bool:
+    """
+    Return True if the extracted text is just the title repeated or a trivial
+    variation (redirect capture, RSS stub).
+
+    Catches patterns like:
+    - "- assign.handelsblatt.com"
+    - "CTVNews - CTV News"
+    - Title repeated 2-3 times with minor additions
+    """
+    if not text or not title:
+        return False
+
+    text_clean = re.sub(r'\s+', ' ', text.strip().lower())
+    title_clean = re.sub(r'\s+', ' ', title.strip().lower())
+
+    # Exact match or text is substring of title
+    if text_clean == title_clean or text_clean in title_clean:
+        return True
+
+    # Title is the majority of the text (> 80% overlap by length)
+    if len(title_clean) > 10 and len(text_clean) < len(title_clean) * 2.5:
+        # Check if title appears in the text
+        if title_clean in text_clean:
+            return True
+
+    # Text is very short and starts with or ends with title
+    if len(text.split()) < 30 and (
+        text_clean.startswith(title_clean) or text_clean.endswith(title_clean)
+    ):
+        return True
+
+    return False
+
+
+# Use a realistic browser User-Agent — news sites commonly block identifiable
+# bot UAs. The scraper respects robots.txt and rate-limits regardless.
 USER_AGENT = (
-    "Mozilla/5.0 (compatible; VoidNews/1.0; "
-    "+https://github.com/aacrit/void--news)"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/131.0.0.0 Safari/537.36"
 )
-REQUEST_TIMEOUT = 8  # seconds — reduced from 15 to avoid blocking on slow/dead URLs
+REQUEST_TIMEOUT = 12  # seconds — balanced: 8s was too aggressive for CDN-heavy sites
+MAX_RETRIES = 1  # single retry on transient failures (timeout, 5xx)
 
 # Cache for robots.txt parsers (keyed by domain)
 _robots_cache: dict[str, urllib.robotparser.RobotFileParser] = {}
@@ -366,20 +487,78 @@ def _scrape_with_playwright(url: str) -> str:
         return ""
 
 
-def scrape_article(url: str) -> dict:
+def _fetch_page(url: str) -> requests.Response | None:
+    """
+    Fetch a page with retry on transient failures (timeout, 5xx).
+
+    Returns the Response on success, None on failure.
+    Retries once after a 2-second pause for timeout or 5xx errors.
+    """
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate",
+        "DNT": "1",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        # Sec-Fetch headers mimic a real browser navigation
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+    }
+
+    last_exc = None
+    for attempt in range(1 + MAX_RETRIES):
+        try:
+            response = requests.get(
+                url,
+                headers=headers,
+                timeout=REQUEST_TIMEOUT,
+                allow_redirects=True,
+            )
+            # Retry on 5xx server errors (transient)
+            if response.status_code >= 500 and attempt < MAX_RETRIES:
+                time.sleep(2)
+                continue
+            response.raise_for_status()
+            return response
+        except requests.exceptions.Timeout:
+            last_exc = "timeout"
+            if attempt < MAX_RETRIES:
+                time.sleep(2)
+                continue
+        except requests.RequestException:
+            # 4xx, connection refused, DNS failure — don't retry
+            return None
+
+    return None
+
+
+def scrape_article(url: str, title: str = "", rss_summary: str = "") -> dict:
     """
     Scrape an article page to extract full text, word count, and image URL.
 
-    Two-tier: tries requests+BeautifulSoup first (fast). If text < 500 chars,
-    retries with Playwright headless browser (handles JS-rendered sites).
-    Checks robots.txt before scraping.
+    Three-tier extraction with quality gates:
+      Tier 1: requests + BeautifulSoup (fast, ~0.5s)
+      Tier 2: Playwright headless browser (JS rendering, ~3s)
+      Tier 3: RSS summary fallback (if scrape produces garbage)
+
+    Quality gates applied after extraction:
+      - Paywall/cookie/JS-required content detection
+      - Title-as-body echo detection (redirect captures)
+      - Minimum word count threshold
+
+    Args:
+        url: Article URL to scrape.
+        title: Article title (for title-echo detection). Optional.
+        rss_summary: RSS feed summary/description text. Used as fallback
+            when scraping fails or produces garbage. Optional.
 
     Returns:
         Dict with keys: full_text, word_count, image_url, canonical_url.
-        canonical_url is the final URL after any redirects (e.g., Google News
-        RSS links redirect to the original article). Callers should use
-        canonical_url as the stored article URL when it differs from the
-        input URL to ensure proper deduplication across pipeline runs.
+        canonical_url is the final URL after any redirects.
     """
     result = {
         "full_text": "",
@@ -390,25 +569,18 @@ def scrape_article(url: str) -> dict:
 
     # Check robots.txt
     if not _check_robots_txt(url):
+        # Even if robots.txt blocks us, we can still use the RSS summary
+        if rss_summary and len(rss_summary) > 50:
+            result["full_text"] = rss_summary
+            result["word_count"] = len(rss_summary.split())
         return result
 
-    try:
-        response = requests.get(
-            url,
-            headers={
-                "User-Agent": USER_AGENT,
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Accept-Encoding": "gzip, deflate",
-                "DNT": "1",
-                "Connection": "keep-alive",
-                "Upgrade-Insecure-Requests": "1",
-            },
-            timeout=REQUEST_TIMEOUT,
-            allow_redirects=True,
-        )
-        response.raise_for_status()
-    except requests.RequestException:
+    response = _fetch_page(url)
+    if response is None:
+        # Scrape failed entirely — fall back to RSS summary
+        if rss_summary and len(rss_summary) > 50:
+            result["full_text"] = rss_summary
+            result["word_count"] = len(rss_summary.split())
         return result
 
     # Capture canonical URL: final URL after following redirects.
@@ -423,6 +595,9 @@ def scrape_article(url: str) -> dict:
     # Ensure we got HTML
     content_type = response.headers.get("Content-Type", "")
     if "html" not in content_type.lower() and "xml" not in content_type.lower():
+        if rss_summary and len(rss_summary) > 50:
+            result["full_text"] = rss_summary
+            result["word_count"] = len(rss_summary.split())
         return result
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -439,8 +614,35 @@ def scrape_article(url: str) -> dict:
         if len(pw_text) > len(full_text):
             full_text = _strip_image_credits(pw_text)
 
+    # --- Quality gates ---
+
+    # Gate 1: Paywall / garbage content detection
+    # If the extracted text is a paywall wall, cookie consent, JS notice,
+    # or redirect stub, discard it entirely.
+    if _detect_paywall_garbage(full_text):
+        full_text = ""
+
+    # Gate 2: Title-echo detection
+    # If the text is just the title repeated (redirect capture, RSS stub),
+    # discard it — the RSS summary will be more informative.
+    if full_text and title and _is_title_echo(full_text, title):
+        full_text = ""
+
+    # Gate 3: Minimum quality threshold with RSS fallback
+    # If scraped text is below the quality threshold and we have a decent
+    # RSS summary, prefer the RSS summary. A 100-word RSS summary with real
+    # content is far better for NLP than a 30-word cookie notice.
+    word_count = len(full_text.split()) if full_text else 0
+    rss_word_count = len(rss_summary.split()) if rss_summary else 0
+
+    if word_count < _MIN_QUALITY_WORDS and rss_summary and len(rss_summary) > 50:
+        # RSS summary is better than garbage scrape
+        if rss_word_count > word_count:
+            full_text = rss_summary
+            word_count = rss_word_count
+
     result["full_text"] = full_text
-    result["word_count"] = len(full_text.split()) if full_text else 0
+    result["word_count"] = word_count
 
     # Extract image
     result["image_url"] = _extract_image_url(soup, url)

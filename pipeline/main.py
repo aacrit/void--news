@@ -822,8 +822,15 @@ def _scrape_single(article_data, source_map):
     url = article_data.get("url", "")
     if not url:
         return None
+
+    title = article_data.get("title", "") or ""
+    rss_summary = article_data.get("summary", "") or ""
+
     try:
-        scraped = scrape_article(url)
+        # Pass title + RSS summary to scraper for quality gates and fallback.
+        # The scraper uses title for echo detection (redirect captures) and
+        # rss_summary as Tier 3 fallback when scrape produces garbage.
+        scraped = scrape_article(url, title=title, rss_summary=rss_summary)
         article_data["full_text"] = scraped.get("full_text", "")
         article_data["word_count"] = scraped.get("word_count", 0)
         article_data["image_url"] = scraped.get("image_url")
@@ -837,13 +844,12 @@ def _scrape_single(article_data, source_map):
     except Exception:
         pass  # Article proceeds with empty full_text
 
-    # RSS summary fallback: if scraper got no text, use the RSS summary
-    # A 200-word summary is far better than empty for NLP analysis
+    # Final RSS summary fallback: if scraper still got no text (e.g., exception
+    # path above), use the RSS summary. A 100-word summary is far better than
+    # empty for NLP analysis.
     if not article_data.get("full_text"):
-        summary = article_data.get("summary", "") or ""
-        title = article_data.get("title", "") or ""
-        if summary and len(summary) > 50:
-            article_data["full_text"] = f"{title}\n\n{summary}"
+        if rss_summary and len(rss_summary) > 50:
+            article_data["full_text"] = f"{title}\n\n{rss_summary}" if title else rss_summary
             article_data["word_count"] = len(article_data["full_text"].split())
 
     # Determine section (edition) — route by source country first,
