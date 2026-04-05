@@ -56,8 +56,12 @@ export default function SigilBreakdown({ mode, active }: Props) {
     if (!active) {
       setStage(0);
       setSweepStep(0);
+      if (sweepInterval.current) { clearInterval(sweepInterval.current); sweepInterval.current = null; }
       return;
     }
+
+    // Clear any stale sweep from previous activation
+    if (sweepInterval.current) { clearInterval(sweepInterval.current); sweepInterval.current = null; }
 
     // Reduced motion: skip to final state
     if (reducedMotion.current) {
