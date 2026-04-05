@@ -1933,6 +1933,68 @@
   height: 48px;
   border-radius: 0 0 4px 0;
   transition: height 400ms var(--ease-cinematic);
+  overflow: hidden;
+}
+
+/* Severity label — rotated vertically inside accent bar */
+.hist-tile__accent-label {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center;
+  font-family: var(--font-meta);
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--hist-paper-fixed, #F2EDE0);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.hist-tile--expanded .hist-tile__accent-label {
+  opacity: 1;
+}
+
+/* ── Classified section divider ── */
+.hist-classified-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 var(--space-4);
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hist-classified-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--hist-border);
+  opacity: 0.5;
+}
+
+.hist-classified-divider__label {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--hist-ink-muted);
+  white-space: nowrap;
+}
+
+/* Classified grid — smaller tiles */
+.hist-dossier-grid--classified {
+  gap: var(--space-3);
+}
+
+@media (min-width: 1024px) {
+  .hist-dossier-grid--classified {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .hist-tile--severity-catastrophic .hist-tile__accent { background: #8B0000; }
