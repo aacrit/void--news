@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-03 (rev 18)
+Last updated: 2026-04-04 (rev 19)
 
 ## Philosophy
 
@@ -41,13 +41,17 @@ CEO (Aacrit)
   ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
   ├── Cinematic ————————— cinematographer, vfx-artist, motion-director
   ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator, linguist
+  ├── History —————————— history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer
+  ├── History Visual ——— visual-historian, archive-cartographer
   ├── Audio ———————————— audio-engineer
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
 ```
 
-**Total: 24 agents across 11 divisions**
+**Total: 32 agents across 13 divisions**
+
+Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows.
 
 ---
 
@@ -96,6 +100,24 @@ CEO (Aacrit)
 | `cinematographer` | Camera language design — depth of field, rack focus, parallax, camera movements, scene compositions, cinematic design tokens | Yes | Cinematic overhaul, motion design tasks |
 | `vfx-artist` | Post-processing — film grain, color grading, vignettes, lens effects, atmospheric lighting, texture via CSS filters and SVG | Yes | After cinematographer, cinematic polish |
 | `motion-director` | Scroll-driven choreography — scene timelines, gesture physics, transition sequencing, L-cut/match-cut timing, scroll-timeline API | Yes | After cinematographer, interaction choreography |
+
+### History Division
+
+| Agent | Purpose | Write Access | Trigger |
+|-------|---------|-------------|---------|
+| `history-curator` | Event selection, research coordination, YAML content authoring, era/region taxonomy | Yes | New event onboarding, content expansion |
+| `perspective-analyst` | Multi-perspective balance, 5-lens historiographic framework (Geographic/National, Social Position, Temporal Frame, Causal Emphasis, Evidentiary Base), viewpoint gap analysis | Yes | After event draft, perspective audit |
+| `historiographic-auditor` | Accuracy validation, source verification, bias detection in historical narratives, visual bias checks | No | Before publishing, CEO spot-check |
+| `media-archaeologist` | Primary source discovery, historical media curation, rights verification, provenance tracking | Yes | Visual asset curation, new event media |
+| `timeline-architect` | Event connection mapping, chronological accuracy, timeline data structure, cross-event relationships | Yes | Timeline construction, connection discovery |
+| `narrative-engineer` | Prose polish, show-don't-tell enforcement, narrative flow, multi-perspective coherence | Yes | Final content polish before publish |
+
+### History Visual Division
+
+| Agent | Purpose | Write Access | Trigger |
+|-------|---------|-------------|---------|
+| `visual-historian` | Archival Cinema design implementation, Ken Burns effects, page layouts, component styling | Yes | After cinematographer, UI implementation |
+| `archive-cartographer` | Geographic visualization, map layers, region/era spatial data, MapView component | Yes | Map features, geographic context |
 
 ### Agent Engineering Division
 
@@ -160,6 +182,21 @@ audio-engineer → pipeline-tester → bug-fixer
 feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipeline-tester
 ```
 
+**History Research Cycle:**
+```
+history-curator → [perspective-analyst + media-archaeologist] (parallel) → historiographic-auditor → narrative-engineer
+```
+
+**History Publishing Cycle:**
+```
+narrative-engineer → historiographic-auditor → [cinematographer + motion-director + vfx-artist] (cinematic trio) → visual-historian → frontend-builder → uat-tester
+```
+
+**History QA Cycle:**
+```
+[historiographic-auditor + perspective-analyst] (parallel audit) → perspective-analyst (fixes) → historiographic-auditor (re-validate) → uat-tester
+```
+
 ---
 
 ## Agent Routing Rules
@@ -190,12 +227,20 @@ feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipelin
 | Film grain, color grading, vignette, lens effects, atmospheric post-processing | `vfx-artist` | Cinematic |
 | Scroll-driven choreography, scene timelines, gesture physics, transition sequencing | `motion-director` | Cinematic |
 | Agent audit, optimization, new agent design, prompt engineering | `agent-architect` | Agent Engineering |
+| Historical event research, YAML content, era/region taxonomy | `history-curator` | History |
+| Multi-perspective balance, historiographic framework, viewpoint gaps | `perspective-analyst` | History |
+| Historical accuracy validation, source verification, narrative bias | `historiographic-auditor` | History |
+| Primary source discovery, historical media, rights/provenance | `media-archaeologist` | History |
+| Event connections, timeline data, chronological accuracy | `timeline-architect` | History |
+| Narrative polish, show-don't-tell, multi-perspective coherence | `narrative-engineer` | History |
+| Archival Cinema UI, Ken Burns effects, history page layouts | `visual-historian` | History Visual |
+| Geographic visualization, map layers, region/era spatial data | `archive-cartographer` | History Visual |
 
 ---
 
 ## Parallel Safety
 
-**Can run simultaneously (read-only):** `pipeline-tester`, `db-reviewer`, `void-ciso`, `ceo-advisor`, `uat-tester`
+**Can run simultaneously (read-only):** `pipeline-tester`, `db-reviewer`, `void-ciso`, `ceo-advisor`, `uat-tester`, `historiographic-auditor`
 
 **Never run simultaneously:** Two write agents on overlapping files; `bug-fixer` + `pipeline-tester`; `frontend-builder` + `frontend-fixer`.
 
@@ -239,3 +284,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
 | 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
 | 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
+| 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 18 components, 5-lens historiographic framework, 3 events (Partition of India, Hiroshima, Rwanda), migration 039 (4 history tables), pipeline/history content loader, 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
