@@ -168,6 +168,7 @@ void-news/
 │   ├── ranker/            # importance_ranker.py
 │   ├── validation/        # fixtures, signal_tracker, source_profiles, runner, snapshot
 │   ├── memory/            # memory_orchestrator.py, live_poller.py (story memory engine)
+│   ├── history/           # content_loader.py (YAML to Supabase batch loader)
 │   ├── utils/             # supabase client, nlp_shared, prohibited_terms
 │   ├── main.py            # Orchestrator
 │   └── rerank.py          # Standalone re-ranker
@@ -187,17 +188,18 @@ void-news/
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
 ├── data/sources.json      # 1,013 curated sources
-├── supabase/migrations/   # 001-037
+├── data/history/events/   # YAML event files (Partition of India, Hiroshima, Rwanda)
+├── supabase/migrations/   # 001-039
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml, weekly-digest.yml
-├── .claude/agents/        # 24 agent definitions
-├── .claude/skills/        # pressdesign + prompt-iterate + workflows + ship-queue + 13 workflow skills (17 total)
+├── .claude/agents/        # 32 agent definitions
+├── .claude/skills/        # pressdesign + prompt-iterate + workflows + ship-queue + 19 workflow skills (23 total)
 └── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE, VOICE-BRAND, SOURCE-CURATION-REPORT-2026-04-02
 ```
 
 ## Status
 
-**Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.6/v5.7/v5.8, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center).
-**In progress**: Deep Dive framing comparison, source credibility panels.
+**Complete**: Pipeline (all 12 steps + cleanup + memory engine), 6-axis bias engine, ranking v5.6/v5.7/v5.8, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (3 events, 18 components, 5-lens historiographic framework).
+**In progress**: Deep Dive framing comparison, source credibility panels, void --history content expansion (additional events).
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
 
