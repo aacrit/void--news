@@ -1122,7 +1122,7 @@ export default function AboutPage() {
                   localStorage.removeItem("void-news-onboarding");
                   sessionStorage.removeItem("void-news-onboarding-deferred");
                 } catch { /* ignore */ }
-                window.location.href = "/";
+                window.location.href = "/void--news/";
               }}
             >
               Take the 60-second tour
