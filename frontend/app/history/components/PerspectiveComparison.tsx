@@ -14,25 +14,61 @@ interface PerspectiveComparisonProps {
   perspectiveB: Perspective;
 }
 
-/** Extract a set of unique words (lowercased, 4+ characters) from text. */
-function extractWords(text: string): Set<string> {
+/** Common English stop words to exclude from vocabulary highlighting. */
+const STOP_WORDS = new Set([
+  "about", "after", "again", "against", "almost", "along", "already", "also",
+  "always", "among", "another", "around", "because", "become", "before",
+  "began", "begin", "behind", "being", "below", "between", "beyond", "both",
+  "bring", "brought", "called", "change", "could", "different", "does",
+  "doing", "during", "each", "early", "either", "enough", "even", "every",
+  "example", "first", "follow", "found", "from", "further", "given", "going",
+  "great", "have", "having", "here", "however", "include", "including",
+  "into", "just", "keep", "known", "large", "last", "later", "least",
+  "leave", "left", "less", "like", "likely", "little", "long", "made",
+  "make", "making", "many", "might", "more", "most", "much", "must",
+  "need", "never", "next", "number", "often", "once", "only", "open",
+  "order", "other", "over", "part", "people", "place", "point", "possible",
+  "rather", "right", "said", "same", "several", "should", "show", "side",
+  "since", "small", "some", "something", "still", "such", "take", "taken",
+  "than", "that", "their", "them", "then", "there", "these", "they",
+  "thing", "this", "those", "though", "thought", "three", "through",
+  "time", "together", "under", "until", "upon", "used", "using", "very",
+  "want", "well", "were", "what", "when", "where", "which", "while",
+  "whole", "will", "with", "within", "without", "would", "year", "years",
+]);
+
+/** Extract a map of words (lowercased, 6+ characters, no stop words) to
+ *  their frequency in the text. */
+function extractWordCounts(text: string): Map<string, number> {
+  const counts = new Map<string, number>();
   const words = text
     .toLowerCase()
     .replace(/[^a-z\s'-]/g, "")
     .split(/\s+/)
-    .filter((w) => w.length >= 4);
-  return new Set(words);
+    .filter((w) => w.length >= 6 && !STOP_WORDS.has(w));
+  for (const w of words) {
+    counts.set(w, (counts.get(w) ?? 0) + 1);
+  }
+  return counts;
 }
 
-/** Find words unique to textA that are absent from textB. */
+/** Find at most 10 distinctive words in textA that are absent from textB,
+ *  ranked by frequency in textA (most repeated = most characteristic). */
 function findUniqueWords(textA: string, textB: string): Set<string> {
-  const wordsA = extractWords(textA);
-  const wordsB = extractWords(textB);
-  const unique = new Set<string>();
-  wordsA.forEach((w) => {
-    if (!wordsB.has(w)) unique.add(w);
+  const countsA = extractWordCounts(textA);
+  const wordsB = new Set(
+    textB
+      .toLowerCase()
+      .replace(/[^a-z\s'-]/g, "")
+      .split(/\s+/)
+  );
+  const candidates: [string, number][] = [];
+  countsA.forEach((count, word) => {
+    if (!wordsB.has(word)) candidates.push([word, count]);
   });
-  return unique;
+  /* Sort by frequency descending, then alphabetically for stability */
+  candidates.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  return new Set(candidates.slice(0, 10).map(([w]) => w));
 }
 
 /** Highlight unique words in a text, wrapping them in spans. */

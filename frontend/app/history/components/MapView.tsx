@@ -60,6 +60,20 @@ const REGION_PATHS: Record<HistoryRegion, { d: string; cx: number; cy: number }>
   },
 };
 
+/* Human-readable capitalized region names for accessibility */
+const REGION_LABELS: Record<HistoryRegion, string> = {
+  africa: "Africa",
+  europe: "Europe",
+  americas: "Americas",
+  "east-asia": "East Asia",
+  "south-asia": "South Asia",
+  "southeast-asia": "Southeast Asia",
+  "middle-east": "Middle East",
+  oceania: "Oceania",
+  "central-asia": "Central Asia",
+  global: "Global",
+};
+
 /* Pin positions based on first region */
 function getEventPosition(event: HistoricalEvent): { x: number; y: number } | null {
   const region = event.regions[0];
@@ -117,7 +131,7 @@ export default function MapView({ events, activeRegion, onRegionClick }: MapView
               className={`hist-map__region ${activeRegion === id ? "hist-map__region--active" : ""}`}
               onClick={() => onRegionClick?.(id)}
               role="button"
-              aria-label={id.replace("-", " ")}
+              aria-label={REGION_LABELS[id] ?? id}
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {

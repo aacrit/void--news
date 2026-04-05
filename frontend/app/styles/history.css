@@ -35,6 +35,9 @@
   --hist-ink-secondary: #544A3A;
   --hist-ink-muted: #7A7060;
 
+  /* Fixed light paper — does not flip in dark mode, used on forced-dark backdrops */
+  --hist-paper-fixed: #F2EDE0;
+
   /* Perspective colors */
   --hist-persp-a: #3D6B8E;
   --hist-persp-b: #8E5A3D;
@@ -387,7 +390,7 @@
   justify-content: flex-end;
   min-height: 50vh;
   padding: var(--space-6) var(--space-4);
-  color: #F2EDE0;
+  color: var(--hist-paper-fixed);
 }
 
 @media (min-width: 768px) {
@@ -623,7 +626,7 @@
   padding: 2px 6px;
   border-radius: 1px;
   background: rgba(44, 36, 24, 0.75);
-  color: #F2EDE0;
+  color: var(--hist-paper-fixed);
   backdrop-filter: blur(4px);
 }
 
@@ -689,6 +692,11 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-5);
+}
+
+/* Prevent grid blowout from long content */
+.hist-card-grid > * {
+  min-width: 0;
 }
 
 @media (min-width: 768px) {
@@ -926,7 +934,7 @@
     width: 20px;
     margin: 0 -10px;
     z-index: 2;
-    cursor: col-resize;
+    cursor: default;
   }
 
   .hist-comparison__divider-handle {
@@ -1130,6 +1138,18 @@
   scroll-snap-align: start;
   cursor: pointer;
   transition: transform 300ms var(--ease-cinematic);
+  /* Button reset — these are semantic <button> elements */
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+
+.hist-gallery__item:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
 }
 
 @media (min-width: 768px) {
@@ -1235,7 +1255,7 @@
 }
 
 .hist-lightbox__close:hover {
-  color: #F2EDE0;
+  color: var(--hist-paper-fixed);
 }
 
 .hist-lightbox__nav {
@@ -1253,11 +1273,17 @@
 }
 
 .hist-lightbox__nav:hover {
-  color: #F2EDE0;
+  color: var(--hist-paper-fixed);
 }
 
 .hist-lightbox__nav--prev { left: var(--space-4); }
 .hist-lightbox__nav--next { right: var(--space-4); }
+
+.hist-lightbox__close:focus-visible,
+.hist-lightbox__nav:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
 
 /* ---------------------------------------------------------------------------
    Timeline — Full horizontal / vertical
@@ -1276,27 +1302,58 @@
   opacity: 0.3;
 }
 
+/* Horizontal track: hidden on mobile where timeline is vertical */
+.hist-timeline__track-horizontal {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hist-timeline__track-horizontal {
+    display: block;
+  }
+}
+
 .hist-timeline__events {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
-  overflow-x: auto;
+  overflow-x: visible;
   padding: var(--space-4) 0;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+  padding-left: var(--space-5);
   scrollbar-width: none;
+}
+
+/* Vertical connector line for mobile */
+.hist-timeline__events::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: 1px;
+  background: var(--hist-accent);
+  opacity: 0.2;
 }
 
 .hist-timeline__events::-webkit-scrollbar {
   display: none;
 }
 
-/* Mobile: vertical timeline */
-@media (max-width: 767px) {
+/* Tablet+: horizontal timeline with scroll-snap */
+@media (min-width: 768px) {
   .hist-timeline__events {
-    flex-direction: column;
-    overflow-x: visible;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-left: 0;
+  }
+
+  /* Hide vertical connector on desktop */
+  .hist-timeline__events::before {
+    display: none;
   }
 }
 
@@ -1693,7 +1750,8 @@
   pointer-events: none;
 }
 
-.hist-redacted:hover .hist-redacted__reveal {
+.hist-redacted:hover .hist-redacted__reveal,
+.hist-redacted--revealed .hist-redacted__reveal {
   opacity: 1;
 }
 
@@ -1874,6 +1932,11 @@
   border-color: var(--hist-accent);
 }
 
+.hist-compare-toggle:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------------------
    Rack Focus — Depth-of-field effect for cards
    --------------------------------------------------------------------------- */
@@ -1960,21 +2023,145 @@
   .hist-redacted:hover .hist-redacted__reveal {
     transition: none;
   }
-}
 
-/* ---------------------------------------------------------------------------
-   Responsive — 375 / 768 / 1024 / 1440
-   --------------------------------------------------------------------------- */
+  .hist-topbar__back {
+    transition: none;
+  }
 
-/* Small mobile refinements */
-@media (max-width: 374px) {
   .hist-persp-tab {
-    min-width: 140px;
-    padding: var(--space-2) var(--space-3);
+    transition: none;
+  }
+
+  .hist-compare-toggle {
+    transition: none;
+  }
+
+  .hist-map__region,
+  .hist-map__pin {
+    transition: none;
+  }
+
+  .hist-connection {
+    transition: none;
+  }
+
+  .hist-gallery__image {
+    transition: none;
   }
 }
 
-/* Tablet */
+/* ---------------------------------------------------------------------------
+   Responsive — 375 / 768 / 1024 / 1440 (Mobile-First)
+   --------------------------------------------------------------------------- */
+
+/* ── Base Mobile (375px) ──
+   All base styles above already target mobile. Additional mobile hardening: */
+
+/* Prevent horizontal overflow from any child */
+.hist-page {
+  overflow-x: hidden;
+}
+
+/* Word-wrap safety on all headline elements */
+.hist-hero__title,
+.hist-event-card__title,
+.hist-redacted__title,
+.hist-persp-tab__name,
+.hist-comparison__header,
+.hist-connection__title,
+.hist-compact-timeline__title {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Touch target enforcement — 44x44px minimum on all interactive elements */
+.hist-region-pill {
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.hist-timeline__dot {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.hist-compare-toggle {
+  min-height: 44px;
+}
+
+.hist-era-drawer__header {
+  min-height: 56px; /* already >= 44px */
+}
+
+.hist-compact-timeline__link {
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+}
+
+.hist-topbar__back {
+  min-height: 44px;
+  padding: var(--space-1) 0;
+}
+
+/* Gallery items: add left peek for horizontal scroll hint on mobile */
+.hist-gallery {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+}
+
+/* Region pills: horizontal scroll on mobile for many regions */
+.hist-region-pills {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: var(--space-2);
+  position: relative;
+}
+
+/* Fade gradient on right edge to hint at scrollable content (mobile) */
+.hist-region-pills::after {
+  content: "";
+  position: sticky;
+  right: 0;
+  flex-shrink: 0;
+  width: 40px;
+  min-height: 100%;
+  background: linear-gradient(90deg, transparent, var(--hist-bg));
+  pointer-events: none;
+}
+
+.hist-region-pills::-webkit-scrollbar {
+  display: none;
+}
+
+/* Map: maintain usability on small screens — constrain aspect ratio */
+.hist-map {
+  min-height: 160px;
+}
+
+/* Compact timeline: stack on narrow mobile */
+.hist-compact-timeline {
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Perspective tabs: enforce scroll hint with left padding */
+.hist-persp-tabs {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Source block: tighter padding on mobile */
+.hist-source-block {
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ── Tablet (768px+) ── */
 @media (min-width: 768px) {
   .hist-landing-hero {
     padding: var(--space-7) var(--space-6);
@@ -1983,9 +2170,38 @@
   .hist-persp-tab {
     min-width: 180px;
   }
+
+  /* Region pills: wrap instead of scroll on wider screens */
+  .hist-region-pills {
+    overflow-x: visible;
+    flex-wrap: wrap;
+  }
+
+  .hist-region-pills::after {
+    display: none;
+  }
+
+  /* Gallery: remove bleed at tablet+ */
+  .hist-gallery {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Compact timeline: row layout */
+  .hist-compact-timeline {
+    flex-wrap: nowrap;
+    gap: var(--space-4);
+  }
+
+  /* Source block: restore padding */
+  .hist-source-block {
+    padding: var(--space-4) var(--space-5);
+  }
 }
 
-/* Desktop */
+/* ── Desktop (1024px+) ── */
 @media (min-width: 1024px) {
   .hist-main {
     padding: 0 var(--space-7);
@@ -2006,9 +2222,14 @@
   }
 }
 
-/* Wide desktop */
+/* ── Wide Desktop (1440px+) ── */
 @media (min-width: 1440px) {
   .hist-main {
     max-width: 1320px;
+  }
+
+  /* Card grid: 4 columns at very wide viewports */
+  .hist-card-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
