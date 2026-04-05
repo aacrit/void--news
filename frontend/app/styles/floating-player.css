@@ -527,6 +527,13 @@
   transition: box-shadow 500ms var(--ease-cinematic, ease), background 300ms;
 }
 
+/* Live — Web Audio analyser driving bar heights via JS.
+   Disable CSS keyframe animation, use smooth transition for JS-driven values. */
+.fp__vu--live .fp__vu-bar {
+  animation: none !important;
+  transition: height 80ms ease-out, opacity 80ms ease-out;
+}
+
 /* Hero — taller for broadcast pane */
 .fp__vu--hero {
   height: 80px;
