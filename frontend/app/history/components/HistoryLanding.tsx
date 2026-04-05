@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { HistoricalEvent, RedactedEvent } from "../types";
 
@@ -147,6 +148,7 @@ function DossierTile({
   index: number;
   isFirst: boolean;
 }) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const tileRef = useRef<HTMLDivElement>(null);
@@ -228,7 +230,7 @@ function DossierTile({
           e.preventDefault();
           if (expanded) {
             /* Navigate on Enter when expanded */
-            window.location.href = `/history/${event.slug}`;
+            router.push(`/history/${event.slug}`);
           } else {
             setExpanded(true);
           }
