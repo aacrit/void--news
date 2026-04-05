@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import LogoIcon from "../components/LogoIcon";
 import LogoWordmark from "../components/LogoWordmark";
+
+const OnboardingCarousel = dynamic(() => import("../components/OnboardingCarousel"), { ssr: false });
 import {
   CHAPTERS, SIX_AXES, FIRST_PRINCIPLES,
 } from "../film/data";
@@ -41,6 +44,10 @@ export default function AboutPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeAxis, setActiveAxis] = useState<number | null>(null);
   const [sectionsVisible, setSectionsVisible] = useState<Set<string>>(new Set());
+  const [filmPlaying, setFilmPlaying] = useState(false);
+
+  const playFilm = useCallback(() => setFilmPlaying(true), []);
+  const closeFilm = useCallback(() => setFilmPlaying(false), []);
 
   /* ── Mark section visible (IO triggers) ── */
   const markVisible = (id: string) => {
@@ -102,10 +109,28 @@ export default function AboutPage() {
           <LogoIcon size={120} animation="idle" />
         </div>
         <h1 className="about-hero__tagline">See through the void.</h1>
+
+        {/* Two paths: interactive film or scroll manifesto */}
+        <div className="about-hero__ctas">
+          <button className="about-hero__play" onClick={playFilm}>
+            Play the 90-second tour
+          </button>
+          <span className="about-hero__or">or scroll to explore</span>
+        </div>
+
         <div className="about-hero__scroll" aria-hidden="true">
           <span className="about-hero__chevron" />
         </div>
       </section>
+
+      {/* Interactive Film overlay — same prologue as onboarding */}
+      {filmPlaying && (
+        <OnboardingCarousel
+          visible={filmPlaying}
+          onComplete={closeFilm}
+          onSkip={closeFilm}
+        />
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════
           CHAPTER I — The Void
