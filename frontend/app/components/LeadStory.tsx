@@ -75,6 +75,16 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
 
       {/* Extended summary */}
       <p className="lead-story__summary">{story.summary}</p>
+
+      {/* [V05] ConsensusBadge in data row below headline, not inside it */}
+      {story.deepDive?.claimConsensus && (
+        <ConsensusBadge
+          ratio={story.deepDive.claimConsensus.consensus_ratio}
+          disputed={story.deepDive.claimConsensus.disputed}
+          total={story.deepDive.claimConsensus.total_claims}
+          corroborated={story.deepDive.claimConsensus.corroborated}
+        />
+      )}
     </article>
   );
 }

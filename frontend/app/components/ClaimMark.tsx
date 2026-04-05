@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useId } from "react";
 import type { DisputedClaim } from "../lib/types";
 
 /* ===========================================================================
@@ -10,8 +10,10 @@ import type { DisputedClaim } from "../lib/types";
    Wraps disputed text in a <span> with wavy underline. On hover/tap, a
    popover reveals both versions with source attribution.
 
-   Cinematic: dormant = haze filter + muted wavy underline.
-   Focused = sharp focus, amber background gradient, rack-focus popover.
+   [V02] Popover uses position: absolute relative to container (scrolls with text).
+   [V03] Mobile: popover clamped to viewport bounds.
+   [V04] ARIA: role="status" + aria-live="polite" + aria-describedby.
+   [V12] Unique popover ID via useId().
    =========================================================================== */
 
 interface ClaimMarkProps {
@@ -23,21 +25,26 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   const [focused, setFocused] = useState(false);
   const markRef = useRef<HTMLSpanElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const reactId = useId();
+  const popoverId = `claim-popover-${reactId.replace(/:/g, "")}`;
 
-  // Position the popover above the mark
-  const [popoverPos, setPopoverPos] = useState<{
-    left: number;
-    bottom: number;
-  } | null>(null);
+  // [V03] Clamp popover within viewport on mobile
+  useEffect(() => {
+    if (!focused || !popoverRef.current || !markRef.current) return;
+    const popover = popoverRef.current;
+    const rect = popover.getBoundingClientRect();
 
-  const updatePosition = useCallback(() => {
-    if (!markRef.current) return;
-    const rect = markRef.current.getBoundingClientRect();
-    setPopoverPos({
-      left: rect.left + rect.width / 2,
-      bottom: window.innerHeight - rect.top + 8,
-    });
-  }, []);
+    // Clamp horizontal: keep popover within viewport
+    if (rect.left < 8) {
+      popover.style.left = "0";
+      popover.style.right = "auto";
+      popover.style.transform = "none";
+    } else if (rect.right > window.innerWidth - 8) {
+      popover.style.left = "auto";
+      popover.style.right = "0";
+      popover.style.transform = "none";
+    }
+  }, [focused]);
 
   // Close on outside click
   useEffect(() => {
@@ -66,11 +73,8 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   }, [focused]);
 
   const handleToggle = useCallback(() => {
-    setFocused((prev) => {
-      if (!prev) updatePosition();
-      return !prev;
-    });
-  }, [updatePosition]);
+    setFocused((prev) => !prev);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -83,29 +87,31 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   );
 
   return (
-    <>
-      <span
-        ref={markRef}
-        className={`claim-mark${focused ? " claim-mark--focused" : ""}`}
-        role="button"
-        tabIndex={0}
-        aria-label={`Disputed claim: sources disagree about ${disputed.topic}`}
-        aria-expanded={focused}
-        onClick={handleToggle}
-        onKeyDown={handleKeyDown}
-      >
-        {text}
-      </span>
+    <span
+      ref={markRef}
+      className={`claim-mark${focused ? " claim-mark--focused" : ""}`}
+      role="button"
+      tabIndex={0}
+      aria-label={`Disputed claim: sources disagree about ${disputed.topic}`}
+      aria-expanded={focused}
+      aria-describedby={focused ? popoverId : undefined}
+      onClick={handleToggle}
+      onKeyDown={handleKeyDown}
+    >
+      {text}
 
-      {focused && popoverPos && (
+      {/* [V02] Popover positioned absolutely within the .claim-mark container */}
+      {focused && (
         <div
           ref={popoverRef}
+          id={popoverId}
           className="claim-mark__popover"
-          role="tooltip"
+          role="status"
+          aria-live="polite"
           style={{
-            position: "fixed",
-            left: `${popoverPos.left}px`,
-            bottom: `${popoverPos.bottom}px`,
+            position: "absolute",
+            bottom: "calc(100% + 8px)",
+            left: "50%",
             transform: "translateX(-50%)",
           }}
         >
@@ -130,6 +136,6 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
           </div>
         </div>
       )}
-    </>
+    </span>
   );
 }

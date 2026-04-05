@@ -1,15 +1,17 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { Lightning } from "@phosphor-icons/react";
 
 /* ===========================================================================
    ConsensusBadge — void --verify
    Compact claim consensus indicator shown on story cards next to the Sigil.
    Displays corroborated/total ratio in data voice (IBM Plex Mono).
-   Disputed claims marked with a lightning mark in warm amber.
+   Disputed claims marked with a lightning icon in warm amber.
 
-   Dormant: muted amber, haze filter. Hover: full opacity, sharp focus.
-   Lightning mark pulses once on first viewport entry (IntersectionObserver).
+   [V11] Lightning emoji replaced with Phosphor Lightning icon.
+   [C-P1] data-entered attribute drives viewport entrance animation.
+   [C-P3] Lightning icon uses lightningFlare animation class.
    =========================================================================== */
 
 interface ConsensusBadgeProps {
@@ -31,7 +33,7 @@ export default function ConsensusBadge({
   // One-shot IntersectionObserver for lightning pulse on first viewport entry
   useEffect(() => {
     const el = badgeRef.current;
-    if (!el || !disputed || disputed <= 0) return;
+    if (!el) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -47,7 +49,7 @@ export default function ConsensusBadge({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [disputed]);
+  }, []);
 
   // Hidden when no data or insufficient claims
   if (!total || total < 3 || corroborated == null) return null;
@@ -58,6 +60,7 @@ export default function ConsensusBadge({
     <span
       ref={badgeRef}
       className="consensus-badge"
+      data-entered={hasEntered ? "true" : undefined}
       aria-label={`${corroborated} of ${total} claims corroborated${hasDisputed ? `, ${disputed} disputed` : ""}`}
     >
       <span className="consensus-badge__ratio">
@@ -68,8 +71,8 @@ export default function ConsensusBadge({
           className={`consensus-badge__disputed${hasEntered ? " consensus-badge__disputed--entered" : ""}`}
           aria-label={`${disputed} disputed claim${disputed !== 1 ? "s" : ""}`}
         >
-          <span className="consensus-badge__mark" aria-hidden="true">
-            &#x26A1;
+          <span className="consensus-badge__mark consensus-badge__lightning-icon" aria-hidden="true">
+            <Lightning size={12} weight="bold" />
           </span>
           <span className="consensus-badge__count">{disputed}</span>
         </span>

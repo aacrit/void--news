@@ -78,6 +78,16 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
 
       {/* Summary */}
       <p className="story-card__summary">{story.summary}</p>
+
+      {/* [V05] ConsensusBadge in data row below headline, not inside it */}
+      {story.deepDive?.claimConsensus && (
+        <ConsensusBadge
+          ratio={story.deepDive.claimConsensus.consensus_ratio}
+          disputed={story.deepDive.claimConsensus.disputed}
+          total={story.deepDive.claimConsensus.total_claims}
+          corroborated={story.deepDive.claimConsensus.corroborated}
+        />
+      )}
     </article>
   );
 }

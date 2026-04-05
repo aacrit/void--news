@@ -212,7 +212,7 @@ export default function ClaimConsensusSection({
           <h4 className="cc-claims__heading">Corroborated</h4>
           <ul className="cc-claims__list">
             {corroboratedClaims.map((claim, i) => (
-              <ClaimRow key={i} claim={claim} index={i} />
+              <ClaimRow key={`corr-${claim.text.slice(0, 50)}`} claim={claim} index={i} />
             ))}
           </ul>
         </div>
@@ -226,7 +226,7 @@ export default function ClaimConsensusSection({
           </h4>
           <ul className="cc-claims__list">
             {disputedClaims.map((dispute, i) => (
-              <DisputeRow key={i} dispute={dispute} index={i} />
+              <DisputeRow key={`disp-${dispute.topic.slice(0, 50)}`} dispute={dispute} index={i} />
             ))}
           </ul>
         </div>
@@ -257,7 +257,7 @@ export default function ClaimConsensusSection({
             className={`cc-claims__list cc-claims__list--collapsible${singleExpanded ? " cc-claims__list--expanded" : ""}`}
           >
             {singleSourceClaims.map((claim, i) => (
-              <ClaimRow key={i} claim={claim} index={i} />
+              <ClaimRow key={`single-${claim.text.slice(0, 50)}`} claim={claim} index={i} />
             ))}
           </ul>
         </div>
