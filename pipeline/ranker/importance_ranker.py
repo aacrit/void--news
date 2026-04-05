@@ -1,5 +1,5 @@
 """
-Importance/impact ranker v5.6 for the void --news pipeline.
+Importance/impact ranker v6.0 for the void --news pipeline.
 
 Scores story clusters by importance for feed ordering on the homepage.
 Higher scores appear first in the news feed.
@@ -63,6 +63,21 @@ v5.5 calibration changes (2026-03-31):
 v5.6 calibration changes (2026-04-01):
     - FIX: Confidence floor quality gate — requires factual_rigor > 40.
       Without this, tabloid clusters at 16+ sources got unintended boost.
+
+v6.0 ranking engine audit (2026-04-05):
+    - REMOVE: Thin cluster gate (v5.9 Gate 1b). The 0.08-0.35x multipliers
+      solved an edition-layer problem in the base scorer, burying 2-4 source
+      breaking stories. Lead gates in the edition ranker handle this.
+    - MERGE: lean_diversity (3%) absorbed into perspective_diversity (6%→9%).
+      Reduces redundant lean-spread signals from 4 to 3. Weights still sum 1.0.
+    - PURIFY: Divergence signal no longer includes lean-range component (was 20%
+      of divergence). Now pure framing (62.5%) + sensationalism (37.5%).
+      Combined lean-spread influence: ~18% → ~12%.
+    - ADD: Consequentiality floor for high-authority stories. When institutional
+      authority >= 80 and consequentiality < 5, floor set to 30. Fixes "Fed holds
+      rates steady" scoring zero consequentiality + getting 0.82x gate penalty.
+    - EXTRACT: Edition ranking (v5.7/v5.8) into shared edition_ranker.py.
+      Eliminates parameter drift between main.py and rerank.py.
 
 v3.1 optimizations (retained):
     - Source map built once, shared across all sub-functions
@@ -525,8 +540,10 @@ def _divergence_score(
     framing_score = min(100.0, (_stddev(framing_values) / 25.0) * 100.0) if len(framing_values) >= 2 else 0.0
     sens_score = min(100.0, (_stddev(sens_values) / 20.0) * 100.0) if len(sens_values) >= 2 else 0.0
 
-    # Framing-heavy weighting to reduce overlap with spectrum signal
-    return range_score * 0.20 + framing_score * 0.50 + sens_score * 0.30
+    # v6.0: Pure framing + sensationalism divergence. Lean-range component
+    # removed — lean spread is fully captured by perspective_diversity (9%).
+    # Renormalized: framing 62.5% + sensationalism 37.5%.
+    return framing_score * 0.625 + sens_score * 0.375
 
 
 def _recency_score(
@@ -1087,8 +1104,14 @@ def rank_importance(
     consequentiality = _consequentiality_score(cluster_articles)
     authority = _institutional_authority_score(cluster_articles)
     maturity = _story_maturity_score(timestamps, source_count)
-    lean_diversity = _lean_diversity_score(bias_scores, source_count)
     longevity_mult = _longevity_penalty(timestamps)
+
+    # v6.0 P5: High-authority consequentiality floor — "Fed holds rates steady"
+    # has zero action verbs but is front-page news. When institutional authority
+    # is tier-1 (>= 80) and consequentiality is near zero, grant a floor of 30
+    # so the 0.82x gate doesn't fire and the 10% signal contributes.
+    if authority >= 80.0 and consequentiality < 5.0:
+        consequentiality = 30.0
 
     # Gemini editorial importance: normalize 1-10 to 0-100
     editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
@@ -1109,12 +1132,10 @@ def rank_importance(
     )
     effective_divergence = divergence * (0.85 if _is_us_only else 1.0)
 
-    # v5.3 weighted combination
-    # Deterministic base score (always computed, sum = 1.00)
-    # v5.3 changes: +lean_diversity (3% from velocity 6%→3%, coverage preserved at 20%)
-    # Velocity reduced because it already overlaps with maturity signal.
-    # lean_diversity partially overlaps with perspective_diversity and cross-spectrum
-    # bonus but targets a distinct dimension: whether left+right BOTH cover the story.
+    # v6.0 weighted combination (sum = 1.00)
+    # v6.0 changes: lean_diversity (3%) merged into perspective_diversity (6%→9%).
+    # Divergence purified to framing+sensationalism only (lean component removed).
+    # Reduces hidden lean-spread influence from ~18% to ~12%.
     headline_rank = (
         coverage * 0.20
         + maturity * 0.16
@@ -1123,10 +1144,9 @@ def rank_importance(
         + authority * 0.08
         + factual * 0.08
         + effective_divergence * 0.07
-        + spectrum * 0.06
+        + spectrum * 0.09
         + geographic * 0.06
         + velocity * 0.03
-        + lean_diversity * 0.03
     )
 
     # v5.4: Cross-spectrum interest bonus (raised from +2.5 to +4.0).
@@ -1194,18 +1214,10 @@ def rank_importance(
     if consequentiality < 5.0:
         headline_rank *= 0.82
 
-    # Gate 1b: Thin cluster gate (v5.9) — clusters with ≤4 sources get
-    # crushed. A thin story should score near zero so it never competes
-    # with quality clusters regardless of keyword score or affinity boost.
-    _src_count = len({a.get("source_id", "") for a in cluster_articles})
-    if _src_count <= 1:
-        headline_rank *= 0.08
-    elif _src_count <= 2:
-        headline_rank *= 0.12
-    elif _src_count <= 3:
-        headline_rank *= 0.20
-    elif _src_count <= 4:
-        headline_rank *= 0.35
+    # v6.0: Thin cluster gate (v5.9) REMOVED. The 0.08-0.35x multipliers
+    # were solving an edition-layer problem (affinity boost inflation) in the
+    # base scorer, burying legitimate 2-4 source breaking news stories.
+    # Thin-story demotion is now handled by lead gates in the edition ranker.
 
     # Gate 2: Soft-news category gate (v4.0) — sports/entertainment/culture
     # stories get demoted. This is belt-and-suspenders with the
@@ -1282,7 +1294,6 @@ def rank_importance(
             "velocity": round(velocity, 2),
             "consequentiality": round(consequentiality, 2),
             "authority": round(authority, 2),
-            "lean_diversity": round(lean_diversity, 2),
             "longevity_mult": round(longevity_mult, 2),
         },
     }
