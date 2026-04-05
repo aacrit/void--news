@@ -2297,10 +2297,17 @@ def main():
     if ANALYSIS_AVAILABLE:
         print("\n[8c] Holistic re-rank (all clusters, v6.0 engine)...")
         try:
+            import sys as _sys
+            from pathlib import Path as _Path
+            _pipeline_dir = str(_Path(__file__).parent)
+            if _pipeline_dir not in _sys.path:
+                _sys.path.insert(0, _pipeline_dir)
             from rerank import rerank_all_clusters
             rerank_all_clusters(sources)
         except Exception as e:
+            import traceback
             print(f"  [warn] Holistic re-rank failed: {e}")
+            traceback.print_exc()
 
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:

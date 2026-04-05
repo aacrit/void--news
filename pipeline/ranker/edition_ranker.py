@@ -45,9 +45,9 @@ ED_LEAD_MIN = 3
 ED_LEAD_SLOTS = 10
 
 # Backfill: import from world when regional edition is thin
-BACKFILL_QUALITY_FLOOR = 40.0
-BACKFILL_TARGET = 10
-BACKFILL_SOURCE_MIN = 5
+BACKFILL_QUALITY_FLOOR = 30.0  # lowered from 40 — thin editions (SA, EU) need more content
+BACKFILL_TARGET = 15  # raised from 10 — fill more slots for thin editions
+BACKFILL_SOURCE_MIN = 3  # lowered from 5 — 3-source stories are quality enough for backfill
 
 # Same-event cap (from rerank.py — prevents feed dominated by one event)
 MAX_SAME_EVENT = 2
@@ -108,10 +108,14 @@ REGIONAL_KEYWORDS: dict[str, set[str]] = {
         "spain", "italy", "poland", "ukraine", "parliament",
     },
     "south-asia": {
-        "india", "indian", "modi", "delhi", "mumbai", "bjp",
-        "pakistan", "pakistani", "islamabad", "bangladesh", "dhaka",
-        "nepal", "sri lanka", "colombo", "kashmir", "rupee",
-        "lok sabha", "rajya sabha",
+        "india", "indian", "modi", "delhi", "mumbai", "bjp", "congress",
+        "pakistan", "pakistani", "islamabad", "karachi", "lahore",
+        "bangladesh", "dhaka", "nepal", "kathmandu",
+        "sri lanka", "colombo", "kashmir", "rupee", "taliban",
+        "lok sabha", "rajya sabha", "bsf", "ipl", "cricket",
+        "hindu", "muslim", "sikh", "temple", "mosque",
+        "chennai", "kolkata", "hyderabad", "bengaluru", "pune",
+        "afghan", "afghanistan", "balochistan", "sindh", "punjab",
     },
 }
 
