@@ -1,0 +1,423 @@
+/* ==========================================================================
+   film.css — Unified cinematic scene styles for "The Film"
+
+   Shared by both prologue (onboarding carousel) and manifesto (about page).
+   Each scene uses .film-* namespace. Mode-specific overrides via
+   .film-*--prologue and .film-*--manifesto.
+   ========================================================================== */
+
+/* ── Keyframes ── */
+@keyframes filmDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes filmFadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes filmSpectrumGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE I: The Void — Divergent Headlines
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.film-void { width: 100%; max-width: 420px; margin: 0 auto; }
+.film-void__event {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-3);
+  text-align: center;
+}
+.film-void__headlines { display: flex; flex-direction: column; gap: 6px; }
+.film-void__card {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  opacity: 0; transform: translateX(-16px);
+  transition: opacity 300ms var(--ease-out), transform 400ms var(--spring-snappy, var(--spring));
+}
+.film-void__card--in { opacity: 1; transform: translateX(0); }
+.film-void__source { display: flex; align-items: center; gap: var(--space-2); }
+.film-void__outlet {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs); font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+.film-void__lean-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.film-void__lean-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); color: var(--fg-muted);
+}
+.film-void__headline {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm); color: var(--fg-primary);
+  line-height: 1.4; margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE II: The Instrument — Sigil Breakdown
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.film-sigil {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+  width: 100%; max-width: 420px; margin: 0 auto;
+}
+.film-sigil__canvas {
+  position: relative;
+  width: 200px; height: 200px;
+  display: flex; align-items: center; justify-content: center;
+}
+.film-sigil--manifesto .film-sigil__canvas { width: 280px; height: 280px; }
+.film-sigil__svg {
+  width: 100%; height: 100%;
+  color: var(--fg-primary);
+}
+
+/* Labels — positioned around the SVG */
+.film-sigil__labels {
+  position: absolute; inset: -60px -80px;
+  pointer-events: none;
+}
+.film-sigil__label {
+  position: absolute;
+  display: flex; flex-direction: column; gap: 1px;
+  max-width: 120px;
+}
+.film-sigil__label-name {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs); font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--cin-amber, var(--accent-warm));
+}
+.film-sigil__label-desc {
+  font-family: var(--font-structural);
+  font-size: 11px; color: var(--fg-muted);
+  line-height: 1.3;
+}
+
+/* Label positions for exploded view */
+.film-sigil__label--circle { top: -8px; left: 50%; transform: translateX(-50%); text-align: center; }
+.film-sigil__label--beam   { top: 40%; right: -75px; text-align: left; }
+.film-sigil__label--ticks  { top: 25%; left: -75px; text-align: right; }
+.film-sigil__label--post   { bottom: 30%; left: 50%; transform: translateX(-50%); text-align: center; }
+.film-sigil__label--base   { bottom: -8px; left: 50%; transform: translateX(-50%); text-align: center; }
+
+/* Spectrum bar */
+.film-sigil__spectrum {
+  width: 200px; height: 4px; border-radius: 4px;
+  position: relative; overflow: visible;
+}
+.film-sigil__spectrum-fill {
+  position: absolute; inset: 0; border-radius: 4px;
+  background: linear-gradient(to right, var(--bias-far-left), var(--bias-left) 20%, var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right) 80%, var(--bias-far-right));
+}
+.film-sigil__spectrum-dot {
+  position: absolute; top: 50%; width: 10px; height: 10px;
+  border-radius: 50%; border: 2px solid var(--bg-card);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+}
+.film-sigil__spectrum-labels {
+  display: flex; justify-content: space-between; width: 200px;
+  font-family: var(--font-data); font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE III: The Engine — Ranking + Sources
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.film-engine { width: 100%; max-width: 380px; margin: 0 auto; }
+.film-engine__bars { display: flex; flex-direction: column; gap: 8px; }
+.film-engine__row { display: flex; align-items: center; gap: var(--space-3); }
+.film-engine__signal {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-secondary);
+  min-width: 120px;
+}
+.film-engine__bar-track {
+  flex: 1; height: 6px;
+  background: var(--bg-secondary);
+  border-radius: 3px; overflow: hidden;
+}
+.film-engine__bar-fill {
+  height: 100%; border-radius: 3px;
+  background: var(--cin-amber, var(--accent-warm));
+  transform-origin: left center;
+  transition: transform 800ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.film-engine__weight {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); font-weight: 600;
+  color: var(--fg-muted);
+  min-width: 32px; text-align: right;
+}
+.film-engine__caption {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  margin-top: var(--space-3);
+  text-align: center;
+}
+.film-engine__spectrum { margin-top: var(--space-4); text-align: center; }
+.film-engine__spectrum-bar {
+  height: 4px; border-radius: 4px;
+  background: linear-gradient(to right, var(--bias-far-left), var(--bias-left) 20%, var(--bias-center-left) 35%, var(--bias-center) 50%, var(--bias-center-right) 65%, var(--bias-right) 80%, var(--bias-far-right));
+  transform-origin: center;
+  transition: transform 1200ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.film-engine__spectrum-stats {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); color: var(--fg-muted);
+  margin-top: var(--space-2);
+  letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE IV: The Difference — Comparison Morph
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.film-diff { width: 100%; max-width: 420px; margin: 0 auto; }
+.film-diff__comparison {
+  display: flex; align-items: center; gap: var(--space-4);
+  justify-content: center; flex-wrap: wrap;
+}
+.film-diff__them, .film-diff__us {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  min-width: 140px;
+}
+.film-diff__label {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+}
+.film-diff__value-them {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 700;
+  color: var(--fg-primary);
+}
+.film-diff__vs {
+  font-family: var(--font-data);
+  font-size: var(--text-sm); font-weight: 600;
+  color: var(--fg-muted);
+  transition: transform 600ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1)), color 400ms ease;
+}
+.film-diff__comparison--morphed .film-diff__vs {
+  color: var(--cin-amber, var(--accent-warm));
+}
+.film-diff__scores { display: flex; flex-direction: column; gap: 6px; }
+.film-diff__score-row { display: flex; align-items: center; gap: var(--space-2); }
+.film-diff__score-name {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs); font-weight: 500;
+  color: var(--fg-secondary); min-width: 48px;
+}
+.film-diff__score-track {
+  flex: 1; height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px; overflow: hidden;
+}
+.film-diff__score-fill {
+  height: 100%; border-radius: 2px;
+  background: var(--cin-amber, var(--accent-warm));
+  transform-origin: left center;
+  transition: transform 600ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.film-diff__score-num {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); font-weight: 600;
+  color: var(--fg-muted); min-width: 24px; text-align: right;
+}
+
+/* Competitive landscape (manifesto only) */
+.film-diff__landscape {
+  margin-top: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+.film-diff__pair { display: flex; flex-direction: column; gap: 2px; }
+.film-diff__pair-them {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm); color: var(--fg-muted);
+  text-decoration: line-through; text-decoration-color: var(--border-subtle);
+}
+.film-diff__pair-us {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm); font-weight: 600;
+  color: var(--fg-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE V: The Worlds — Product Family
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.film-worlds { width: 100%; max-width: 420px; margin: 0 auto; }
+.film-worlds--manifesto { max-width: 72ch; }
+.film-worlds__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.film-worlds--manifesto .film-worlds__grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 768px) { .film-worlds--manifesto .film-worlds__grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 479px) { .film-worlds__grid { grid-template-columns: 1fr; gap: 8px; } }
+
+.film-world {
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  text-decoration: none; color: inherit;
+  opacity: 0; transform: translateY(12px) scale(0.95);
+  transition: opacity 350ms var(--ease-out), transform 450ms var(--spring-snappy, var(--spring));
+}
+.film-world--in { opacity: 1; transform: translateY(0) scale(1); }
+
+/* Per-world accent borders */
+.film-world--feed    { border-left: 3px solid var(--cin-amber, #C8A96E); }
+.film-world--weekly  { border-left: 3px solid var(--palette-weekly, #B91C1C); }
+.film-world--paper   { border-left: 3px solid var(--fg-tertiary); }
+.film-world--sources { border-left: 3px solid var(--bias-center); }
+.film-world--onair   { border-left: 3px solid var(--voice-accent, #4DAFA0); }
+.film-world--ship    { border-left: 3px solid var(--accent-warm); }
+
+.film-worlds__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.film-worlds__cli {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); font-weight: 600;
+  letter-spacing: -0.02em; color: var(--fg-muted);
+}
+.film-worlds__name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm); font-weight: 700;
+  color: var(--fg-primary); line-height: 1.2;
+}
+.film-worlds__desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs); color: var(--fg-tertiary);
+  line-height: 1.3;
+}
+
+/* ── Mini preview thumbnails ── */
+.film-preview { width: 52px; height: 52px; flex-shrink: 0; border-radius: var(--radius-sm); overflow: hidden; position: relative; }
+.film-preview--feed { background: var(--bg-primary); }
+.film-preview__cols { display: flex; gap: 2px; padding: 4px; height: 100%; }
+.film-preview__col--lead { flex: 2; display: flex; flex-direction: column; gap: 2px; }
+.film-preview__col--side { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.film-preview__headline-bar { height: 4px; background: var(--fg-tertiary); border-radius: 1px; opacity: 0.4; }
+.film-preview__text-lines { display: flex; flex-direction: column; gap: 1px; }
+.film-preview__text-lines > div { height: 2px; background: var(--fg-tertiary); border-radius: 1px; opacity: 0.2; }
+.film-preview__sigil { width: 12px; height: 12px; color: var(--cin-amber, #C8A96E); margin-top: auto; }
+.film-preview__card-mini { flex: 1; background: var(--bg-card); border-radius: 1px; border: 1px solid var(--border-subtle); }
+.film-preview--weekly { background: var(--palette-weekly-paper, #EDE4D0); }
+.film-preview__masthead { height: 6px; background: var(--palette-weekly, #B91C1C); margin: 4px 4px 3px; border-radius: 1px; }
+.film-preview__cover-hl { height: 3px; width: 60%; background: var(--palette-weekly, #B91C1C); opacity: 0.7; margin: 0 auto 2px; border-radius: 1px; }
+.film-preview__cover-sub { height: 2px; width: 40%; background: var(--fg-tertiary); opacity: 0.3; margin: 0 auto 3px; border-radius: 1px; }
+.film-preview__mag-cols { display: flex; gap: 2px; padding: 0 4px; }
+.film-preview__mag-cols > div { flex: 1; height: 18px; background: var(--fg-tertiary); opacity: 0.1; border-radius: 1px; }
+.film-preview--paper { background: var(--bg-primary); }
+.film-preview__broadsheet-hdr { height: 4px; background: var(--fg-primary); opacity: 0.6; margin: 4px 4px 2px; border-radius: 1px; }
+.film-preview__broadsheet-rule { height: 1px; background: var(--fg-tertiary); opacity: 0.3; margin: 0 4px 2px; }
+.film-preview__broadsheet-hl { height: 3px; width: 70%; background: var(--fg-primary); opacity: 0.4; margin: 0 auto 3px; border-radius: 1px; }
+.film-preview__broadsheet-cols { display: flex; gap: 1px; padding: 0 4px; }
+.film-preview__broadsheet-cols > div { flex: 1; height: 20px; background: var(--fg-tertiary); opacity: 0.08; border-radius: 1px; }
+.film-preview--sources { background: var(--bg-secondary); }
+.film-preview__spectrum-bar { height: 3px; margin: 22px 4px 0; background: linear-gradient(to right, var(--bias-far-left), var(--bias-left) 20%, var(--bias-center) 50%, var(--bias-right) 80%, var(--bias-far-right)); border-radius: 2px; }
+.film-preview__dots { position: absolute; inset: 0; }
+.film-preview__src-dot { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--fg-tertiary); }
+.film-preview--onair { background: var(--palette-onair-surface, #1A1816); }
+.film-preview__waveform { display: flex; align-items: center; gap: 1px; height: 38px; padding: 8px 4px; }
+.film-preview__wave-bar { flex: 1; border-radius: 1px; background: var(--voice-accent, #4DAFA0); opacity: 0.6; }
+.film-preview__hosts { display: flex; justify-content: center; gap: 6px; font-family: var(--font-data); font-size: 7px; font-weight: 700; color: var(--voice-accent, #4DAFA0); opacity: 0.5; }
+.film-preview--ship { background: var(--bg-primary); }
+.film-preview__kanban { display: flex; gap: 2px; padding: 4px; height: 100%; }
+.film-preview__kanban-col { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.film-preview__kanban-card { flex: 1; min-height: 8px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 1px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE VI: The Verdict
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.film-verdict { width: 100%; max-width: 420px; margin: 0 auto; text-align: center; }
+.film-verdict__row { display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap; }
+.film-verdict__card {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  min-width: 100px;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-e1);
+  opacity: 0; transform: translateY(16px) scale(0.95);
+  transition: opacity 400ms var(--ease-out), transform 500ms var(--spring-snappy, var(--spring));
+}
+.film-verdict__row--in .film-verdict__card { opacity: 1; transform: translateY(0) scale(1); }
+.film-verdict__label {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--fg-secondary);
+}
+.film-verdict__sub { font-size: var(--text-xs); color: var(--fg-muted); }
+
+/* Numbers strip */
+.film-verdict__numbers {
+  margin-top: var(--space-4);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2);
+}
+.film-verdict__num {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); color: var(--fg-muted);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 300ms var(--ease-out), transform 400ms var(--spring-gentle, var(--spring));
+}
+.film-verdict__numbers--in .film-verdict__num { opacity: 1; transform: translateY(0); }
+.film-verdict__num-value {
+  font-weight: 700; color: var(--fg-secondary);
+}
+.film-verdict__num-sep { margin: 0 2px; color: var(--border-strong); }
+
+.film-verdict__sub-msg {
+  font-family: var(--font-data);
+  font-size: var(--text-xs); color: var(--fg-muted);
+  margin-top: var(--space-3);
+  opacity: 0; transition: opacity 400ms var(--ease-out) 800ms;
+}
+.film-verdict__sub-msg--in { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .film-void__card,
+  .film-world,
+  .film-verdict__card,
+  .film-verdict__num,
+  .film-verdict__sub-msg,
+  .film-sigil__label,
+  .film-engine__bar-fill,
+  .film-engine__spectrum-bar,
+  .film-diff__score-fill,
+  .film-diff__vs,
+  .film-sigil__spectrum-dot {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
