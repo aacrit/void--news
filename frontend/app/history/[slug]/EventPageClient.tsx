@@ -47,38 +47,17 @@ export default function EventPageClient({ slugPromise }: EventPageClientProps) {
 
   if (loading) {
     return (
-      <div className="hist-main" style={{ paddingTop: "var(--space-7)", textAlign: "center" }}>
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-          fontStyle: "italic",
-        }}>
-          Retrieving archival record...
-        </p>
+      <div className="hist-main hist-loading-state">
+        <p>Retrieving archival record...</p>
       </div>
     );
   }
 
   if (notFound || !event) {
     return (
-      <div className="hist-main" style={{ paddingTop: "var(--space-7)", textAlign: "center" }}>
-        <h1 style={{
-          fontFamily: "var(--font-editorial)",
-          fontSize: "var(--text-xl)",
-          fontWeight: 700,
-          color: "var(--hist-ink)",
-          marginBottom: "var(--space-3)",
-        }}>
-          Record Not Found
-        </h1>
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-        }}>
-          This archival record has not been declassified or does not exist.
-        </p>
+      <div className="hist-main hist-not-found">
+        <h1>Record Not Found</h1>
+        <p>This archival record has not been declassified or does not exist.</p>
       </div>
     );
   }

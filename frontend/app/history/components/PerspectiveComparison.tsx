@@ -84,13 +84,11 @@ function highlightText(
   return parts.map((part, i) => {
     const clean = part.toLowerCase().replace(/[^a-z'-]/g, "");
     if (uniqueWords.has(clean)) {
-      const delay = uniqueIdx * 30;
       uniqueIdx++;
       return (
         <span
           key={i}
-          className={`hist-vocab-unique hist-vocab-stagger ${colorClass}`}
-          style={{ animationDelay: `${delay}ms` }}
+          className={`hist-vocab-unique ${colorClass}`}
         >
           {part}
         </span>

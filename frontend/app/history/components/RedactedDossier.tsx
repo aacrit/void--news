@@ -1,3 +1,4 @@
+/* DEFERRED: Not rendered in current version. Preserved for Phase 2. */
 "use client";
 
 import { useState } from "react";
@@ -21,7 +22,15 @@ export default function RedactedDossier({ event }: RedactedDossierProps) {
     <div
       className={`hist-redacted ${touchRevealed ? "hist-redacted--revealed" : ""}`}
       aria-label={`Coming: ${event.title}`}
+      role="button"
+      tabIndex={0}
       onClick={() => setTouchRevealed((prev) => !prev)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setTouchRevealed((prev) => !prev);
+        }
+      }}
     >
       {/* Title */}
       <h3 className="hist-redacted__title">
