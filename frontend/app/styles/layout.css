@@ -104,6 +104,20 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
+/* Reusable organic ink rule — horizontal wavy SVG stroke */
+.ink-rule {
+  border: none;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  margin: 0;
+}
+
+:root[data-mode="dark"] .ink-rule {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
 .section-header__title {
   font-family: var(--font-editorial);
   font-size: var(--text-lg);
@@ -290,9 +304,23 @@
   position: sticky;
   top: 0;
   background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: none;
   z-index: 2;
   padding: var(--space-4) var(--space-5);
+}
+
+.deep-dive-panel__header::after {
+  content: "";
+  display: block;
+  height: 6px;
+  margin-top: var(--space-2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+:root[data-mode="dark"] .deep-dive-panel__header::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 .deep-dive-panel__content {

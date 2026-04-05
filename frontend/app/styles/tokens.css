@@ -239,9 +239,9 @@
 
   /* ── Cold Open — staged reveal timing ── */
   --cold-open-nav:     80ms;
-  --cold-open-skybox: 160ms;
-  --cold-open-lead:   180ms;
-  --cold-open-feed:   200ms;
+  --cold-open-skybox: 200ms;
+  --cold-open-lead:   320ms;
+  --cold-open-feed:   480ms;
   --cold-open-dur:    500ms;
 
   /* ── Rack Focus — neighbor defocus ──

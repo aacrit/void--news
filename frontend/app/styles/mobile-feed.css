@@ -71,6 +71,11 @@
   margin-bottom: var(--space-2);
 }
 
+/* Push Sigil to right edge of meta row */
+.msc__meta .sigil {
+  margin-left: auto;
+}
+
 .msc__badge {
   position: relative;
   font-family: var(--font-meta);
@@ -173,7 +178,7 @@
 
 .msc__headline--compact {
   font-family: var(--font-editorial);
-  font-size: clamp(0.875rem, 2.5vw, 0.9375rem);
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.35;
   color: var(--fg-primary);

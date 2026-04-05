@@ -61,33 +61,28 @@ export default function MobileStoryCard({
         }}
       />
 
-      {/* Meta row */}
+      {/* Meta row: badge/category + time (left) | Sigil (right) */}
       <div className="msc__meta">
         {isHero && <span className="msc__badge">Top Story</span>}
         {!isHero && <span className="msc__cat">{story.category}</span>}
         <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+        <Sigil data={story.sigilData} size="sm" instant />
       </div>
 
       {isHero ? (
-        /* Hero layout: headline + summary + Sigil footer */
+        /* Hero layout: headline + summary */
         <>
           <h2 className="msc__headline msc__headline--hero">{story.title}</h2>
           <p className="msc__summary">{story.summary}</p>
-          <div className="msc__footer">
-            <Sigil data={story.sigilData} size="lg" instant />
-          </div>
         </>
       ) : (
-        /* Compact layout: headline + summary + Sigil on its own row */
+        /* Compact layout: headline + summary */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
             <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
           </h3>
           {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
-          <div className="msc__sigil-row">
-            <Sigil data={story.sigilData} size="sm" instant />
-          </div>
         </>
       )}
     </article>

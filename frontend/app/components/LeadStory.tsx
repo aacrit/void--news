@@ -50,22 +50,10 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
           }
         }}
       />
-      {/* Badge (lead only) */}
-      {rank === 0 && (
-        <div className="lead-story__meta">
-          <span className="lead-story__badge">Top Story</span>
-        </div>
-      )}
-
-      {/* Hero headline */}
-      <h2 className="lead-story__headline">{story.title}</h2>
-
-      {/* Extended summary */}
-      <p className="lead-story__summary">{story.summary}</p>
-
-      {/* Footer: category · time (left) | Sigil (right) */}
-      <div className="lead-story__footer">
+      {/* Meta: badge + byline (left) | Sigil (right) */}
+      <div className="lead-story__meta">
         <div className="lead-story__byline">
+          {rank === 0 && <span className="lead-story__badge">Top Story</span>}
           <span className="category-tag">{story.category}</span>
           <span className="dot-separator" aria-hidden="true" />
           <span className="time-tag">{timeAgo(story.publishedAt)}</span>
@@ -78,6 +66,12 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
         </div>
         <Sigil data={story.sigilData} size="lg" />
       </div>
+
+      {/* Hero headline */}
+      <h2 className="lead-story__headline">{story.title}</h2>
+
+      {/* Extended summary */}
+      <p className="lead-story__summary">{story.summary}</p>
     </article>
   );
 }

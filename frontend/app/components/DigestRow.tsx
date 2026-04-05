@@ -6,17 +6,6 @@ import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 
-/* Category → left-border color mapping (CSS custom properties from tokens.css) */
-const CAT_COLORS: Record<string, string> = {
-  Politics: "var(--cat-politics)",
-  Conflict: "var(--cat-conflict)",
-  Economy: "var(--accent-warm)",
-  Science: "var(--cat-science)",
-  Health: "var(--cat-health)",
-  Environment: "var(--cat-environment)",
-  Culture: "var(--cat-culture)",
-};
-
 interface DigestRowProps {
   story: Story;
   index: number;
@@ -36,8 +25,6 @@ interface DigestRowProps {
 export default function DigestRow({ story, index, onStoryClick, globalIndex, kbdFocused }: DigestRowProps) {
   const [rowRef, visible] = useInView<HTMLElement>();
 
-  const borderColor = CAT_COLORS[story.category] || "var(--fg-muted)";
-
   return (
     <article
       ref={rowRef}
@@ -45,7 +32,6 @@ export default function DigestRow({ story, index, onStoryClick, globalIndex, kbd
       data-story-id={story.id}
       className={`dg-row anim-typewriter${visible ? " anim-typewriter--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{
-        borderLeftColor: borderColor,
         animationDelay: `${Math.round(30 * index)}ms`,
       }}
     >

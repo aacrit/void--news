@@ -334,7 +334,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-3);
-  border-left: 4px solid transparent;
+  border-left: 4px solid var(--border-strong);
   cursor: pointer;
   transition: background-color 150ms var(--ease-out);
 }
@@ -495,7 +495,7 @@
 }
 
 .wire-card__headline {
-  font-family: var(--font-structural);
+  font-family: var(--font-editorial);
   font-size: var(--text-base);
   font-weight: 600;
   line-height: 1.35;

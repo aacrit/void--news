@@ -409,12 +409,6 @@
     line-height: 1.45;
   }
 
-  /* [CRITICAL-5] Reserve space for Sigil to prevent layout shift */
-  .story-card__footer {
-    min-height: 32px;
-    margin-top: var(--space-1);
-  }
-
   /* === SECTION HEADERS === */
 
   /* Native iOS section header pattern: sticky, frosted, edge-to-edge.
