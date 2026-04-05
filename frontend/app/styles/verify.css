@@ -9,10 +9,13 @@
      CredibilityArc  (.cred-arc)
    ========================================================================== */
 
-/* ── Verification color tokens (NOT bias colors) ─────────────────────────── */
+/* --------------------------------------------------------------------------
+   Verify Palette — NOT bias colors (Dot Matrix Rule)
+   -------------------------------------------------------------------------- */
+
 :root {
   --verify-corroborated: #4A9B6E;
-  --verify-disputed: var(--cin-amber-warm, #D4A853);
+  --verify-disputed: var(--cin-amber);
   --verify-single: var(--fg-tertiary);
   --verify-contradicted: #C75B5B;
 }
@@ -34,7 +37,8 @@
   font-size: var(--text-xs);
   line-height: 1;
   color: var(--cin-amber-muted);
-  opacity: 0.7;
+  opacity: 0;
+  transform: translateY(3px);
   filter: var(--cin-haze-mid);
   transition:
     opacity var(--rack-focus-dur) var(--rack-focus-ease),
@@ -42,6 +46,11 @@
   cursor: default;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* [C-P1] Viewport entrance — subtle translateY fade-in */
+.consensus-badge[data-entered="true"] {
+  animation: badgeReveal 300ms var(--ease-cinematic) forwards;
 }
 
 .consensus-badge:hover {
@@ -62,7 +71,6 @@
 }
 
 .consensus-badge__mark {
-  font-size: 0.85em;
   line-height: 1;
   opacity: 0;
   transform: scale(0.6);
@@ -100,6 +108,7 @@
     background-color var(--rack-focus-dur) var(--rack-focus-ease);
   border-radius: 2px;
   padding: 0 1px;
+  position: relative;
 }
 
 .claim-mark:hover,
@@ -119,6 +128,18 @@
   outline-offset: 2px;
 }
 
+/* [C-P0] Rack focus pull — sibling text dims when a mark is focused */
+.dd-summary__text:has(.claim-mark--focused) {
+  color: var(--fg-tertiary);
+  transition: color var(--rack-focus-dur) var(--ease-rack);
+}
+
+.claim-mark--focused {
+  color: var(--fg-primary);
+  position: relative;
+  z-index: 1;
+}
+
 /* ── ClaimMark Popover ──────────────────────────────────────────────────── */
 
 .claim-mark__popover {
@@ -127,10 +148,13 @@
   padding: var(--space-3) var(--space-4);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
+  /* [V06] border-radius 8px -> 2px */
   border-radius: 2px;
+  /* [C-P0] Practical amber glow + cinematic dramatic shadow */
   box-shadow: 0 0 20px color-mix(in srgb, var(--cin-amber) 15%, transparent),
               var(--shadow-cinematic-dramatic);
-  animation: claimReveal 350ms var(--ease-cinematic) both;
+  /* [V17] Spring physics approximation with overshoot */
+  animation: claimReveal 400ms ease-out both;
 }
 
 .claim-mark__label {
@@ -181,9 +205,24 @@
    ClaimConsensusSection — full breakdown in Deep Dive
    -------------------------------------------------------------------------- */
 
+/* [V16] Section dolly-in entrance stagger */
 .cc-section {
   padding-top: var(--space-3);
 }
+
+.cc-section > * {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: ccSectionReveal 400ms var(--ease-cinematic) forwards;
+}
+
+.cc-section > :nth-child(1) { animation-delay: 0ms; }
+.cc-section > :nth-child(2) { animation-delay: 80ms; }
+.cc-section > :nth-child(3) { animation-delay: 160ms; }
+.cc-section > :nth-child(4) { animation-delay: 240ms; }
+.cc-section > :nth-child(5) { animation-delay: 320ms; }
+.cc-section > :nth-child(6) { animation-delay: 400ms; }
+.cc-section > :nth-child(7) { animation-delay: 480ms; }
 
 .cc-header {
   display: flex;
@@ -223,8 +262,11 @@
 .cc-bar__segment {
   height: 100%;
   transition: width 800ms var(--ease-cinematic);
+  /* [C-P1] ConsensusBar light emission — amber glow on fill */
+  box-shadow: inset 0 0 4px color-mix(in srgb, var(--cin-amber) 10%, transparent);
 }
 
+/* [V07] --sense-low replaced with --verify-corroborated */
 .cc-bar__segment--corroborated {
   background: var(--verify-corroborated);
   opacity: 0.8;
@@ -236,7 +278,7 @@
 }
 
 .cc-bar__segment--single {
-  background: var(--fg-tertiary);
+  background: var(--verify-single);
   opacity: 0.3;
 }
 
@@ -256,6 +298,7 @@
   gap: var(--space-1);
 }
 
+/* [V15] Legend dots -> small squares (remove border-radius: 50%) */
 .cc-bar__legend-item::before {
   content: "";
   display: inline-block;
@@ -265,6 +308,7 @@
   flex-shrink: 0;
 }
 
+/* [V07] Legend uses verify palette */
 .cc-bar__legend-item--corroborated::before {
   background: var(--verify-corroborated);
   opacity: 0.8;
@@ -276,7 +320,7 @@
 }
 
 .cc-bar__legend-item--single::before {
-  background: var(--fg-tertiary);
+  background: var(--verify-single);
   opacity: 0.3;
 }
 
@@ -328,6 +372,7 @@
     opacity 300ms var(--ease-rack);
 }
 
+/* [V09] max-height 600px -> 2000px to prevent clipping */
 .cc-claims__list--expanded {
   max-height: 2000px;
   opacity: 1;
@@ -341,6 +386,7 @@
   border-radius: 0 4px 4px 0;
 }
 
+/* [V07] --sense-low replaced with --verify-corroborated */
 .cc-claim--corroborated {
   border-left-color: var(--verify-corroborated);
   background: color-mix(in srgb, var(--verify-corroborated) 4%, transparent);
@@ -513,6 +559,7 @@
   flex-shrink: 0;
 }
 
+/* [V07] --sense-low/--sense-high replaced with verify palette */
 .cred-arc__trend--improving {
   color: var(--verify-corroborated);
 }
@@ -544,6 +591,7 @@
   transition: width 1200ms var(--ease-cinematic);
 }
 
+/* [V07] verify palette */
 .cred-arc__bar-segment--corroborated {
   background: var(--verify-corroborated);
   opacity: 0.8;
@@ -575,6 +623,65 @@
 }
 
 /* --------------------------------------------------------------------------
+   Weekly Contested Section — wk-contested-*
+   -------------------------------------------------------------------------- */
+
+.wk-contested-section {
+  margin-bottom: var(--space-5);
+}
+
+.wk-contested__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.wk-contested__item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--wk-accent, var(--cin-amber));
+  border-radius: 0 4px 4px 0;
+  background: color-mix(in srgb, var(--wk-accent, var(--cin-amber)) 3%, transparent);
+}
+
+.wk-contested__mark {
+  font-size: var(--text-base);
+  line-height: 1.4;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.wk-contested__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.wk-contested__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-1);
+}
+
+.wk-contested__stat {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-1);
+}
+
+.wk-contested__summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
    Animations
    -------------------------------------------------------------------------- */
 
@@ -584,6 +691,8 @@
   100% { transform: scale(1);   opacity: 1; }
 }
 
+/* [V10] filter: blur() removed — GPU-only (transform + opacity)
+   [V17] Spring physics approximation with overshoot */
 @keyframes claimReveal {
   0%  { opacity: 0; transform: translateY(6px) scale(0.97); }
   70% { opacity: 1; transform: translateY(-2px) scale(1.01); }
@@ -592,6 +701,28 @@
 
 @keyframes consensusBarFill {
   from { width: 0%; }
+}
+
+/* [C-P1] ConsensusBadge viewport entrance */
+@keyframes badgeReveal {
+  to { opacity: 0.7; transform: translateY(0); }
+}
+
+/* [V16] Section dolly-in entrance stagger */
+@keyframes ccSectionReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* [C-P3] Lightning spring flare — glow on pulse */
+@keyframes lightningFlare {
+  0%   { filter: drop-shadow(0 0 0 transparent); }
+  40%  { filter: drop-shadow(0 0 4px var(--cin-amber-glow)); }
+  100% { filter: drop-shadow(0 0 0 transparent); }
+}
+
+.consensus-badge__disputed--entered .consensus-badge__lightning-icon {
+  animation: lightningFlare 600ms var(--ease-cinematic) 100ms 1;
 }
 
 /* --------------------------------------------------------------------------
@@ -622,6 +753,7 @@
   border-color: var(--border-strong);
 }
 
+/* [V07] verify palette in dark mode */
 :root[data-mode="dark"] .cc-claim--corroborated {
   background: color-mix(in srgb, var(--verify-corroborated) 6%, transparent);
 }
@@ -632,72 +764,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Cinematic: Rack Focus Pull — siblings dim when ClaimMark focused
-   -------------------------------------------------------------------------- */
-
-.dd-summary__text:has(.claim-mark--focused) {
-  color: var(--fg-tertiary);
-  transition: color var(--rack-focus-dur) var(--rack-focus-ease);
-}
-
-.claim-mark--focused {
-  color: var(--fg-primary);
-  position: relative;
-  z-index: 1;
-}
-
-/* --------------------------------------------------------------------------
-   Cinematic: ConsensusBadge Viewport Entrance
-   -------------------------------------------------------------------------- */
-
-.consensus-badge {
-  opacity: 0;
-  transform: translateY(3px);
-}
-
-.consensus-badge[data-entered="true"] {
-  animation: badgeReveal 300ms var(--ease-cinematic) forwards;
-}
-
-@keyframes badgeReveal {
-  to { opacity: 0.7; transform: translateY(0); }
-}
-
-/* --------------------------------------------------------------------------
-   Cinematic: ConsensusBar Light Emission
-   -------------------------------------------------------------------------- */
-
-.cc-bar__segment {
-  box-shadow: inset 0 0 4px color-mix(in srgb, var(--cin-amber) 10%, transparent);
-}
-
-/* --------------------------------------------------------------------------
-   Cinematic: Lightning Spring Flare
-   -------------------------------------------------------------------------- */
-
-@keyframes lightningFlare {
-  0%   { transform: scale(1);   filter: drop-shadow(0 0 0 transparent); }
-  40%  { transform: scale(1.4); filter: drop-shadow(0 0 6px var(--cin-amber)); }
-  100% { transform: scale(1);   filter: drop-shadow(0 0 0 transparent); }
-}
-
-/* --------------------------------------------------------------------------
-   Cinematic: Section Dolly-In Entrance Stagger
-   -------------------------------------------------------------------------- */
-
-@keyframes ccSectionReveal {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.cc-section > *:nth-child(1) { animation: ccSectionReveal 400ms var(--ease-cinematic) 0ms both; }
-.cc-section > *:nth-child(2) { animation: ccSectionReveal 400ms var(--ease-cinematic) 80ms both; }
-.cc-section > *:nth-child(3) { animation: ccSectionReveal 400ms var(--ease-cinematic) 160ms both; }
-.cc-section > *:nth-child(4) { animation: ccSectionReveal 400ms var(--ease-cinematic) 240ms both; }
-.cc-section > *:nth-child(5) { animation: ccSectionReveal 400ms var(--ease-cinematic) 320ms both; }
-
-/* --------------------------------------------------------------------------
-   Responsive — Mobile (< 768px)
+   Responsive — [V08]
    -------------------------------------------------------------------------- */
 
 @media (max-width: 767px) {
@@ -708,67 +775,22 @@
   }
 
   .claim-mark__popover {
-    width: calc(100vw - 2rem);
+    width: calc(100vw - 2rem) !important;
     left: 1rem !important;
-    right: 1rem !important;
     transform: none !important;
   }
 
   .cc-bar__legend {
     flex-wrap: wrap;
-    gap: var(--space-2);
   }
 
   .cred-arc__stats {
     flex-wrap: wrap;
-    gap: var(--space-1);
   }
 
   .consensus-badge {
-    font-size: 0.625rem;
+    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.625rem);
   }
-}
-
-/* --------------------------------------------------------------------------
-   Weekly — Most Contested Section
-   -------------------------------------------------------------------------- */
-
-.wk-contested {
-  margin-bottom: var(--space-6, 1.5rem);
-}
-
-.wk-contested__item {
-  display: flex;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border-subtle);
-  align-items: flex-start;
-}
-
-.wk-contested__mark {
-  flex-shrink: 0;
-  font-size: var(--text-lg);
-  line-height: 1;
-}
-
-.wk-contested__headline {
-  font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  color: var(--fg-primary);
-  margin-bottom: var(--space-1);
-}
-
-.wk-contested__stat {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--wk-accent, var(--cin-amber));
-}
-
-.wk-contested__summary {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--fg-secondary);
-  margin-top: var(--space-1);
 }
 
 /* --------------------------------------------------------------------------
@@ -778,6 +800,13 @@
 @media (prefers-reduced-motion: reduce) {
   .consensus-badge {
     transition-duration: 0ms;
+    opacity: 0.7;
+    transform: none;
+  }
+
+  .consensus-badge[data-entered="true"] {
+    animation: none;
+    opacity: 0.7;
   }
 
   .consensus-badge__mark {
@@ -790,6 +819,10 @@
     transform: scale(1);
   }
 
+  .consensus-badge__disputed--entered .consensus-badge__lightning-icon {
+    animation: none;
+  }
+
   .claim-mark {
     transition-duration: 0ms;
   }
@@ -799,20 +832,14 @@
     opacity: 1;
   }
 
-  .consensus-badge {
-    opacity: 0.7;
-    transform: none;
-    animation: none;
+  .cc-bar__segment {
+    transition-duration: 0ms;
   }
 
   .cc-section > * {
     animation: none;
     opacity: 1;
     transform: none;
-  }
-
-  .cc-bar__segment {
-    transition-duration: 0ms;
   }
 
   .cc-claims__list--collapsible {

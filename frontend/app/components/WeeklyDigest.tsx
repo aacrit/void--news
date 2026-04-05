@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import type {
   Edition,
@@ -8,6 +8,7 @@ import type {
   WeeklyCoverStory,
   WeeklyRecapStory,
   WeeklyOpinion,
+  WeeklyContestedStory,
 } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
@@ -537,7 +538,49 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
   );
 }
 
-/* --- G. Audio Player --- */
+/* --- G. Most Contested This Week --- */
+
+function ContestedSection({ stories }: { stories: WeeklyContestedStory[] }) {
+  const [ref, visible] = useScrollReveal(0.1);
+
+  const contestedStories = useMemo(() => {
+    return [...stories]
+      .filter((s) => s.claim_consensus && s.claim_consensus.disputed > 0)
+      .sort((a, b) => a.claim_consensus.consensus_ratio - b.claim_consensus.consensus_ratio)
+      .slice(0, 5);
+  }, [stories]);
+
+  if (contestedStories.length === 0) return null;
+
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-contested-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-contested-heading"
+    >
+      <h2 className="wk-section-label" id="wk-contested-heading" data-prefix="void --">Most Contested</h2>
+      <div className="wk-contested__list">
+        {contestedStories.map((story) => (
+          <article key={story.id} className="wk-contested__item">
+            <span className="wk-contested__mark" aria-hidden="true">&#x26A1;</span>
+            <div className="wk-contested__body">
+              <h3 className="wk-contested__headline">{story.title}</h3>
+              <p className="wk-contested__stat">
+                Sources agreed: {story.claim_consensus.corroborated}/{story.claim_consensus.total_claims}
+                {" "}({Math.round(story.claim_consensus.consensus_ratio * 100)}%)
+              </p>
+              {story.claim_consensus.consensus_summary && (
+                <p className="wk-contested__summary">{story.claim_consensus.consensus_summary}</p>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* --- H. Audio Player --- */
 
 function AudioBar({
   audioUrl,
@@ -797,7 +840,15 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             {/* E. Week in Brief */}
             <BriefList stories={digest?.recap_stories ?? []} />
 
-            {/* F. Audio */}
+            {/* F. Most Contested */}
+            {digest.contested_stories && digest.contested_stories.length > 0 && (
+              <>
+                <RevealFlourish />
+                <ContestedSection stories={digest.contested_stories} />
+              </>
+            )}
+
+            {/* G. Audio */}
             {digest.audio_url && (
               <>
                 <InkRule />

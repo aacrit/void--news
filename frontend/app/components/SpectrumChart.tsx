@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import type { SourceAccuracy } from "../lib/types";
+import CredibilityArc from "./CredibilityArc";
 
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
@@ -18,6 +20,7 @@ export interface SpectrumSource {
   country: string;
   political_lean_baseline: string | null;
   credibility_notes: string | null;
+  claim_accuracy?: SourceAccuracy | null;
 }
 
 type LeanCategory =
@@ -288,6 +291,9 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
             <p className="spectrum-tooltip__notes">
               {tooltip.source.credibility_notes}
             </p>
+          )}
+          {tooltip.source.claim_accuracy && (
+            <CredibilityArc accuracy={tooltip.source.claim_accuracy} />
           )}
         </div>
       )}

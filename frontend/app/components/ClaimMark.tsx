@@ -10,8 +10,10 @@ import type { DisputedClaim } from "../lib/types";
    Wraps disputed text in a <span> with wavy underline. On hover/tap, a
    popover reveals both versions with source attribution.
 
-   Cinematic: dormant = haze filter + muted wavy underline.
-   Focused = sharp focus, amber background gradient, rack-focus popover.
+   [V02] Popover uses position: absolute relative to container (scrolls with text).
+   [V03] Mobile: popover clamped to viewport bounds.
+   [V04] ARIA: role="status" + aria-live="polite" + aria-describedby.
+   [V12] Unique popover ID via useId().
    =========================================================================== */
 
 interface ClaimMarkProps {
@@ -22,14 +24,37 @@ interface ClaimMarkProps {
 export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
   const [focused, setFocused] = useState(false);
   const markRef = useRef<HTMLSpanElement>(null);
-  const popoverId = useId();
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const reactId = useId();
+  const popoverId = `claim-popover-${reactId.replace(/:/g, "")}`;
+
+  // [V03] Clamp popover within viewport on mobile
+  useEffect(() => {
+    if (!focused || !popoverRef.current || !markRef.current) return;
+    const popover = popoverRef.current;
+    const rect = popover.getBoundingClientRect();
+
+    // Clamp horizontal: keep popover within viewport
+    if (rect.left < 8) {
+      popover.style.left = "0";
+      popover.style.right = "auto";
+      popover.style.transform = "none";
+    } else if (rect.right > window.innerWidth - 8) {
+      popover.style.left = "auto";
+      popover.style.right = "0";
+      popover.style.transform = "none";
+    }
+  }, [focused]);
 
   // Close on outside click
   useEffect(() => {
     if (!focused) return;
     const handler = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (!markRef.current?.contains(target)) {
+      if (
+        !markRef.current?.contains(target) &&
+        !popoverRef.current?.contains(target)
+      ) {
         setFocused(false);
       }
     };
@@ -65,21 +90,20 @@ export default function ClaimMark({ text, disputed }: ClaimMarkProps) {
     <span
       ref={markRef}
       className={`claim-mark${focused ? " claim-mark--focused" : ""}`}
-      style={{ position: "relative" }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Disputed claim: sources disagree about ${disputed.topic}`}
+      aria-expanded={focused}
+      aria-describedby={focused ? popoverId : undefined}
+      onClick={handleToggle}
+      onKeyDown={handleKeyDown}
     >
-      <span
-        role="button"
-        tabIndex={0}
-        aria-label={`Disputed claim: sources disagree about ${disputed.topic}`}
-        aria-describedby={focused ? popoverId : undefined}
-        onClick={handleToggle}
-        onKeyDown={handleKeyDown}
-      >
-        {text}
-      </span>
+      {text}
 
+      {/* [V02] Popover positioned absolutely within the .claim-mark container */}
       {focused && (
         <div
+          ref={popoverRef}
           id={popoverId}
           className="claim-mark__popover"
           role="status"
