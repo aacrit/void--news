@@ -612,7 +612,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     claimConsensus: cluster.claim_consensus || undefined,
                   }
                 : undefined,
-              claim_consensus: cluster.claim_consensus || undefined,
             };
           }
         );

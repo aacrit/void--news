@@ -129,7 +129,7 @@
 }
 
 /* [C-P0] Rack focus pull — sibling text dims when a mark is focused */
-.dd-summary__text:has(.claim-mark--focused) {
+.dd-summary-text:has(.claim-mark--focused) {
   color: var(--fg-tertiary);
   transition: color var(--rack-focus-dur) var(--ease-rack);
 }
