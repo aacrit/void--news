@@ -21,7 +21,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     dateSort: 19470815,
     dateRange: "June 1947 - January 1948",
     location: "British India (present-day India and Pakistan)",
-    heroImage: "https://upload.wikimedia.org/wikipedia/commons/3/39/Emergency_trains_crowded_with_desperate_refugees.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Emergency_trains_crowded_with_desperate_refugees.jpg/800px-Emergency_trains_crowded_with_desperate_refugees.jpg",
     heroCaption: "Refugees crowd a train departing Amritsar, September 1947",
     heroAttribution: "Margaret Bourke-White / LIFE Magazine",
     contextNarrative: "On August 15, 1947, British India ceased to exist. In its place stood two nations: India and Pakistan. The boundary line, drawn by British lawyer Cyril Radcliffe in five weeks using outdated maps and census data, split Punjab and Bengal along religious lines. Radcliffe had never visited India before his appointment. The announcement came two days after independence, leaving millions on the wrong side of borders they had not chosen. Between 10 and 20 million people crossed in both directions. Trains arrived at stations carrying only corpses. Conservative estimates place the death toll between 200,000 and 2 million.",
@@ -169,7 +169,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-partition-1",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/3/37/A_refugee_train%2C_Punjab%2C_1947.jpg",
+        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/A_refugee_train%2C_Punjab%2C_1947.jpg/800px-A_refugee_train%2C_Punjab%2C_1947.jpg",
         caption: "A refugee train arrives in Punjab, 1947",
         attribution: "Unknown photographer / Public Domain",
         year: "1947",
@@ -491,7 +491,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-rwanda-1",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Kigali_Genocide_Memorial.jpg",
+        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Kigali_Genocide_Memorial.jpg/800px-Kigali_Genocide_Memorial.jpg",
         caption: "Kigali Genocide Memorial, where over 250,000 are interred",
         attribution: "Wikimedia Commons / CC BY-SA 3.0",
         year: "2004",

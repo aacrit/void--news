@@ -1840,10 +1840,32 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: var(--space-5) 0 var(--space-4);
-  border-bottom: 1px solid var(--hist-border-subtle);
+  border-bottom: none;
   margin-bottom: var(--space-4);
   opacity: 0;
   animation: histBriefIn 800ms var(--ease-document-settle) 100ms both;
+}
+
+.hist-brief::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin-top: var(--space-4);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--hist-border) 8%,
+    var(--hist-accent) 20%,
+    var(--hist-border) 45%,
+    transparent 55%,
+    var(--hist-border) 70%,
+    var(--hist-accent) 85%,
+    var(--hist-border) 95%,
+    transparent 100%
+  );
+  opacity: 0.4;
+  border-radius: 1px;
 }
 
 @keyframes histBriefIn {
