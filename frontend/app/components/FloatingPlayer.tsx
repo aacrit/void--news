@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useCallback, Fragment } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { DailyBriefState } from "./DailyBrief";
 import type { EpisodeMeta } from "./AudioProvider";
 import { CaretRight } from "@phosphor-icons/react";
@@ -102,182 +102,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
     }
   }, [isPlayerVisible, view]);
   const playerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rafRef = useRef<number>(0);
-  const timeDomainRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
-  const trailRef = useRef<number[]>([]);
-  const colorsRef = useRef<{ bg: string; stroke: string; glow: string } | null>(null);
 
-  /* ---- The Void Circle: scale beam traces voice waveform ---- */
-  const drawVoidCircle = useCallback(() => {
-    const canvas = canvasRef.current;
-    const analyser = state.analyserRef?.current;
-    if (!canvas || !analyser) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // HiDPI scaling
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-      colorsRef.current = null;
-    }
-
-    const w = rect.width;
-    const h = rect.height;
-
-    // Cache CSS colors
-    if (!colorsRef.current) {
-      const s = getComputedStyle(canvas);
-      const bg = s.getPropertyValue("--console-bg").trim() || "#EBE5D6";
-      const isDark = bg.startsWith("#1") || bg.startsWith("#0") || bg.startsWith("#2");
-      colorsRef.current = {
-        bg,
-        stroke: isDark ? (s.getPropertyValue("--voice-accent").trim() || "#4DAFA0") : (s.getPropertyValue("--accent-warm").trim() || "#946B15"),
-        glow: isDark ? "rgba(77,175,160,0.15)" : "rgba(148,107,21,0.1)",
-      };
-    }
-    const { bg, stroke, glow } = colorsRef.current;
-
-    // Get time-domain data — one amplitude sample per frame
-    if (!timeDomainRef.current || timeDomainRef.current.length !== analyser.fftSize) {
-      timeDomainRef.current = new Uint8Array(analyser.fftSize);
-    }
-    analyser.getByteTimeDomainData(timeDomainRef.current);
-    const td = timeDomainRef.current;
-    const mid = Math.floor(td.length / 2);
-    let ampSum = 0;
-    for (let i = mid - 32; i < mid + 32; i++) ampSum += td[i];
-    const amplitude = (ampSum / 64 - 128) / 128; // -1 to 1, 0 = silence
-
-    // Trail buffer — scrolling waveform history
-    const trailLen = Math.floor(w);
-    if (trailRef.current.length !== trailLen) {
-      trailRef.current = new Array(trailLen).fill(0);
-    }
-    trailRef.current.shift();
-    trailRef.current.push(amplitude);
-
-    // Circle geometry — centered, sized to fit height
-    const cx = w / 2;
-    const cy = h / 2;
-    const r = Math.min(w, h) * 0.28;
-    const beamY = cy; // beam runs through circle center
-
-    // ── Clear ──
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, w, h);
-
-    // ── Void circle — the fulcrum ──
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = 0.2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-
-    // ── Scale beam as waveform — the voice is the weight ──
-    const maxDeflection = h * 0.35; // how far the beam swings
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 1.5;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.globalAlpha = 0.7;
-    ctx.beginPath();
-    for (let i = 0; i < trailRef.current.length; i++) {
-      const x = i;
-      const deflection = trailRef.current[i] * maxDeflection;
-      const y = beamY + deflection;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-
-    // ── Glow on newest 25% ──
-    ctx.globalAlpha = 0.12;
-    ctx.lineWidth = 5;
-    ctx.filter = "blur(3px)";
-    const glowStart = Math.floor(trailRef.current.length * 0.75);
-    ctx.beginPath();
-    for (let i = glowStart; i < trailRef.current.length; i++) {
-      const x = i;
-      const y = beamY + trailRef.current[i] * maxDeflection;
-      if (i === glowStart) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.filter = "none";
-    ctx.globalAlpha = 1;
-  }, [state.analyserRef]);
-
-  useEffect(() => {
-    if (!isPlaying) {
-      cancelAnimationFrame(rafRef.current);
-      // Draw static void circle with flat beam — powered-down state
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          const rect = canvas.getBoundingClientRect();
-          const dpr = window.devicePixelRatio || 1;
-          if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-          }
-          const s = getComputedStyle(canvas);
-          const bg = s.getPropertyValue("--console-bg").trim() || "#EBE5D6";
-          const isDark = bg.startsWith("#1") || bg.startsWith("#0") || bg.startsWith("#2");
-          const stroke = isDark ? (s.getPropertyValue("--voice-accent").trim() || "#4DAFA0") : (s.getPropertyValue("--accent-warm").trim() || "#946B15");
-          const w = rect.width, h = rect.height;
-          const cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.28;
-          ctx.fillStyle = bg;
-          ctx.fillRect(0, 0, w, h);
-          // Static circle
-          ctx.strokeStyle = stroke;
-          ctx.lineWidth = 2;
-          ctx.globalAlpha = 0.15;
-          ctx.beginPath();
-          ctx.arc(cx, cy, r, 0, Math.PI * 2);
-          ctx.stroke();
-          // Static flat beam
-          ctx.globalAlpha = 0.2;
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(0, cy);
-          ctx.lineTo(w, cy);
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-      }
-      return;
-    }
-
-    const prefersReduced = typeof window !== "undefined"
-      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
-
-    // Lazily connect Web Audio analyser when viz is first needed
-    if (canvasRef.current && state.connectAnalyser) {
-      state.connectAnalyser();
-    }
-
-    let lastFrame = 0;
-    const loop = (timestamp: number) => {
-      if (timestamp - lastFrame > 33) {
-        lastFrame = timestamp;
-        drawVoidCircle();
-      }
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [isPlaying, drawVoidCircle]);
+  /* ---- VU Meter: 16 bars, CSS-driven, scales via height ---- */
+  const VU_BARS = 16;
+  const vuBars = useMemo(() => Array.from({ length: VU_BARS }, (_, i) => i), []);
 
   /* ---- Swipe-down gesture ---- */
   const dragYRef = useRef<{ startY: number; current: number } | null>(null);
@@ -527,8 +355,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             </div>
           </div>
 
-          {/* Oscilloscope — real-time audio waveform */}
-          <canvas ref={canvasRef} className="fp__oscilloscope" aria-hidden="true" />
+          {/* VU meter — CSS-driven audio visualization */}
+          <div className={`fp__vu${isPlaying ? " fp__vu--active" : ""}`} aria-hidden="true">
+            {vuBars.map(i => <span key={i} className="fp__vu-bar" style={{ animationDelay: `${i * 60}ms` }} />)}
+          </div>
 
           {renderTransport()}
           {renderSeek()}
@@ -613,8 +443,10 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
             </div>
           )}
 
-          {/* Oscilloscope — hero element in broadcast pane */}
-          <canvas ref={canvasRef} className="fp__oscilloscope fp__oscilloscope--hero" aria-hidden="true" />
+          {/* VU meter — hero element in broadcast pane */}
+          <div className={`fp__vu fp__vu--hero${isPlaying ? " fp__vu--active" : ""}`} aria-hidden="true">
+            {vuBars.map(i => <span key={i} className="fp__vu-bar" style={{ animationDelay: `${i * 60}ms` }} />)}
+          </div>
 
           {renderTransport()}
           {renderSeek()}

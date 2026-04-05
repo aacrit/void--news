@@ -1194,19 +1194,18 @@ def rank_importance(
     if consequentiality < 5.0:
         headline_rank *= 0.82
 
-    # Gate 1b: Thin cluster gate (v5.9) — clusters with ≤3 sources get
-    # a hard penalty. A 3-source story should never outrank a 20-source story.
-    # Aggressive multipliers ensure thin stories can't compete with quality
-    # clusters even if they have high keyword scores.
+    # Gate 1b: Thin cluster gate (v5.9) — clusters with ≤4 sources get
+    # crushed. A thin story should score near zero so it never competes
+    # with quality clusters regardless of keyword score or affinity boost.
     _src_count = len({a.get("source_id", "") for a in cluster_articles})
     if _src_count <= 1:
-        headline_rank *= 0.25
+        headline_rank *= 0.08
     elif _src_count <= 2:
-        headline_rank *= 0.35
+        headline_rank *= 0.12
     elif _src_count <= 3:
-        headline_rank *= 0.50
+        headline_rank *= 0.20
     elif _src_count <= 4:
-        headline_rank *= 0.70
+        headline_rank *= 0.35
 
     # Gate 2: Soft-news category gate (v4.0) — sports/entertainment/culture
     # stories get demoted. This is belt-and-suspenders with the
