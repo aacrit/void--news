@@ -442,7 +442,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         // Use per-edition rank column for ordering (cross-edition differentiation)
@@ -604,13 +604,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               divergenceScore: cluster.divergence_score || 0,
               headlineRank: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
               coverageVelocity: cluster.coverage_velocity || 0,
-              deepDive: consensusPoints.length > 0 || divergencePoints.length > 0
+              deepDive: consensusPoints.length > 0 || divergencePoints.length > 0 || cluster.claim_consensus
                 ? {
                     consensus: consensusPoints,
                     divergence: divergencePoints,
                     sources: [],
+                    claimConsensus: cluster.claim_consensus || undefined,
                   }
                 : undefined,
+              claim_consensus: cluster.claim_consensus || undefined,
             };
           }
         );
