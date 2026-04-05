@@ -15,7 +15,7 @@
   overflow-x: hidden;
 
   /* ── Magazine Red — Economist/TIME inspired ── */
-  --wk-accent: #B91C1C;
+  --wk-accent: var(--palette-weekly);
   --wk-accent-bright: #D41920;
   --wk-accent-light: #E4252C;
   --wk-accent-dim: #991717;
@@ -33,7 +33,7 @@
 }
 
 :root[data-mode="dark"] .wk-page {
-  --wk-accent: #EF5350;
+  --wk-accent: var(--palette-weekly);
   --wk-accent-bright: #F87171;
   --wk-accent-light: #FCA5A5;
   --wk-accent-dim: #DC2626;

@@ -1,38 +1,120 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 
 /* ---------------------------------------------------------------------------
-   UnifiedOnboarding — Orchestrator for two-act onboarding flow
+   UnifiedOnboarding — Orchestrator for "The Prologue"
 
-   Act 1: OnboardingCarousel (modal) — teaches concepts (beam, ring, products)
-   Act 2: OnboardingSpotlight (spotlight tour) — grounds concepts in real UI
+   Three-phase flow:
+   1. Silent exploration: user browses freely for ~2 minutes
+   2. Invitation card: subtle bottom card offers a 60-second tour
+   3. Prologue: full cinematic introduction (if user opts in)
 
-   State machine: idle → carousel → transitioning → spotlight → complete
+   Triggers: 120s elapsed OR 3+ story card interactions (whichever first).
+   Skip always available. Never forced. Re-discoverable via /about.
+
+   State machine: idle → invitation → prologue → complete
    Single localStorage key with migration from old keys.
    --------------------------------------------------------------------------- */
 
 const OnboardingCarousel = dynamic(() => import("./OnboardingCarousel"), { ssr: false });
-const OnboardingSpotlight = dynamic(() => import("./OnboardingSpotlight"), { ssr: false });
 
 const STORAGE_KEY = "void-news-onboarding";
 const OLD_CAROUSEL_KEY = "void-news-intro-seen";
 const OLD_VISITS_KEY = "void-news-visit-count";
 const OLD_TOUR_KEY = "void-tour-complete";
-const TRIGGER_DELAY = 1500;
-const TRANSITION_DELAY = 600; // 500ms exit animation + 100ms breath
 
-type State = "idle" | "carousel" | "transitioning" | "spotlight" | "complete";
+const EXPLORE_DELAY = 120_000;   // 2 minutes of exploration before invitation
+const INTERACTION_THRESHOLD = 3;  // OR 3 story interactions
+const INVITATION_LINGER = 15_000; // Auto-dismiss invitation after 15s if no action
+
+type State = "idle" | "invitation" | "prologue" | "complete";
 
 interface UnifiedOnboardingProps {
   active: boolean;
 }
 
+/* ── Invitation Card — subtle bottom CTA ──────────────────────────────── */
+
+function InvitationCard({ onAccept, onDismiss }: { onAccept: () => void; onDismiss: () => void }) {
+  const [show, setShow] = useState(false);
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const goRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    // Stagger entrance
+    const t = setTimeout(() => {
+      setShow(true);
+      // Focus the CTA after entrance animation
+      setTimeout(() => goRef.current?.focus(), 400);
+    }, 50);
+    // Auto-dismiss after linger period
+    dismissTimer.current = setTimeout(() => {
+      onDismiss();
+    }, INVITATION_LINGER);
+    return () => {
+      clearTimeout(t);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    };
+  }, [onDismiss]);
+
+  const handleAccept = useCallback(() => {
+    if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    onAccept();
+  }, [onAccept]);
+
+  const handleDismiss = useCallback(() => {
+    if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    setShow(false);
+    setTimeout(onDismiss, 300);
+  }, [onDismiss]);
+
+  // Escape key dismisses
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleDismiss();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [handleDismiss]);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      className={`onb-invite${show ? " onb-invite--visible" : ""}`}
+      role="status"
+      aria-live="polite"
+      aria-label="Product tour invitation"
+    >
+      <div className="onb-invite__grain" aria-hidden="true" />
+      <div className="onb-invite__content">
+        <p className="onb-invite__text">
+          There&rsquo;s more to every story.
+        </p>
+        <div className="onb-invite__actions">
+          <button ref={goRef} className="onb-invite__btn onb-invite__btn--go" onClick={handleAccept}>
+            60-second tour
+          </button>
+          <button className="onb-invite__btn onb-invite__btn--skip" onClick={handleDismiss}>
+            Not now
+          </button>
+        </div>
+      </div>
+      <button className="onb-invite__close" onClick={handleDismiss} aria-label="Dismiss">
+        &times;
+      </button>
+    </div>,
+    document.body,
+  );
+}
+
 export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
   const [state, setState] = useState<State>("idle");
-  const triggerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const transitionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exploreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const interactionCountRef = useRef(0);
   const reducedMotion = useRef(false);
 
   // Check storage on mount — skip if already completed or migrated
@@ -51,7 +133,6 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
         sessionStorage.getItem(OLD_TOUR_KEY)
       ) {
         localStorage.setItem(STORAGE_KEY, "complete");
-        // Clean up old keys
         localStorage.removeItem(OLD_CAROUSEL_KEY);
         localStorage.removeItem(OLD_VISITS_KEY);
         try { sessionStorage.removeItem(OLD_TOUR_KEY); } catch { /* ignore */ }
@@ -59,39 +140,48 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
         return;
       }
     } catch {
-      // Storage blocked — skip onboarding entirely
       setState("complete");
     }
   }, []);
 
-  // Trigger carousel when content is ready
+  // Track story card interactions (clicks on .story-card, .lead-section, .msc)
   useEffect(() => {
     if (state !== "idle" || !active) return;
 
-    triggerRef.current = setTimeout(() => {
-      setState("carousel");
-    }, TRIGGER_DELAY);
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.closest(".story-card") ||
+        target.closest(".lead-section") ||
+        target.closest(".msc")
+      ) {
+        interactionCountRef.current++;
+        if (interactionCountRef.current >= INTERACTION_THRESHOLD) {
+          showInvitation();
+        }
+      }
+    };
+
+    document.addEventListener("click", handler, { passive: true });
+    return () => document.removeEventListener("click", handler);
+  }, [state, active]);
+
+  // Time-based trigger
+  useEffect(() => {
+    if (state !== "idle" || !active) return;
+
+    exploreTimerRef.current = setTimeout(() => {
+      showInvitation();
+    }, EXPLORE_DELAY);
 
     return () => {
-      if (triggerRef.current) clearTimeout(triggerRef.current);
+      if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
     };
   }, [state, active]);
 
-  const handleCarouselDone = useCallback(() => {
-    setState("transitioning");
-    const delay = reducedMotion.current ? 0 : TRANSITION_DELAY;
-    transitionRef.current = setTimeout(() => {
-      setState("spotlight");
-    }, delay);
-  }, []);
-
-  // Skip carousel but still show spotlight
-  const handleCarouselSkip = useCallback(() => {
-    setState("transitioning");
-    const delay = reducedMotion.current ? 0 : TRANSITION_DELAY;
-    transitionRef.current = setTimeout(() => {
-      setState("spotlight");
-    }, delay);
+  const showInvitation = useCallback(() => {
+    if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
+    setState((prev) => prev === "idle" ? "invitation" : prev);
   }, []);
 
   const markComplete = useCallback(() => {
@@ -99,19 +189,26 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
     setState("complete");
   }, []);
 
-  const handleSpotlightDone = useCallback(() => {
+  const handleAcceptInvitation = useCallback(() => {
+    setState("prologue");
+  }, []);
+
+  const handleDismissInvitation = useCallback(() => {
     markComplete();
   }, [markComplete]);
 
-  const handleSpotlightSkip = useCallback(() => {
+  const handlePrologueComplete = useCallback(() => {
     markComplete();
   }, [markComplete]);
 
-  // Cleanup on unmount
+  const handlePrologueSkip = useCallback(() => {
+    markComplete();
+  }, [markComplete]);
+
+  // Cleanup
   useEffect(() => {
     return () => {
-      if (triggerRef.current) clearTimeout(triggerRef.current);
-      if (transitionRef.current) clearTimeout(transitionRef.current);
+      if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
     };
   }, []);
 
@@ -119,15 +216,16 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
 
   return (
     <>
+      {state === "invitation" && (
+        <InvitationCard
+          onAccept={handleAcceptInvitation}
+          onDismiss={handleDismissInvitation}
+        />
+      )}
       <OnboardingCarousel
-        visible={state === "carousel"}
-        onComplete={handleCarouselDone}
-        onSkip={handleCarouselSkip}
-      />
-      <OnboardingSpotlight
-        visible={state === "spotlight"}
-        onComplete={handleSpotlightDone}
-        onSkip={handleSpotlightSkip}
+        visible={state === "prologue"}
+        onComplete={handlePrologueComplete}
+        onSkip={handlePrologueSkip}
       />
     </>
   );

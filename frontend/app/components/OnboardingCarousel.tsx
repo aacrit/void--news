@@ -4,14 +4,25 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 
 /* ---------------------------------------------------------------------------
-   OnboardingCarousel — Act 1 of unified onboarding
+   OnboardingCarousel — "The Prologue"
 
-   5-phase modal carousel: origin story, beam & ring, product family,
-   audio broadcast, verdict. Teaches concepts abstractly before the
-   spotlight tour (Act 2) grounds them in real UI.
+   4-scene cinematic product introduction:
+   Scene 1: "The Void" — divergent headlines reveal the problem
+   Scene 2: "The Instrument" — organic Sigil draws itself, beam sweeps
+   Scene 3: "The Worlds" — 6 product pages in native design language
+   Scene 4: "The Verdict" — read with clarity
 
-   Controlled by UnifiedOnboarding orchestrator via visible/onComplete/onSkip.
+   All SVGs use organic bezier paths matching ScaleIcon/Sigil production marks.
+   No perfect circles — hand-drawn ink aesthetic throughout.
+
+   Controlled by UnifiedOnboarding via visible/onComplete/onSkip.
    --------------------------------------------------------------------------- */
+
+/* ── Organic SVG path constants (matching ScaleIcon/Sigil production) ── */
+const VOID_CIRCLE = "M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4";
+const BEAM_CURVE = "M3 13 C10 12.2 22 13.8 29 13";
+const BASE_CURVE = "M12 29 C14 28.7 18 29.3 20 29";
+const VOID_CIRC_LEN = 57;
 
 /* ── Phase definitions ─────────────────────────────────────────────────── */
 
@@ -21,30 +32,37 @@ interface Phase {
   headline: string;
   body: string;
   subtitle?: string;
-  visual: "story" | "beam-ring" | "verdict";
+  visual: "void" | "instrument" | "worlds" | "verdict";
 }
 
 const PHASES: Phase[] = [
   {
-    id: "origin",
-    duration: 10000,
-    headline: "void --news",
-    subtitle: "See through the void.",
-    body: "The same event. Five outlets. Five different realities. One calls it a crackdown. Another calls it restoring order. A third buries it on page six. void --news scores every article across six axes, so the framing becomes visible.",
-    visual: "story",
+    id: "void",
+    duration: 9000,
+    headline: "The Void",
+    body: "One event. Five outlets. Five different realities. One calls it a crackdown. Another calls it restoring order. A third buries it on page six.",
+    visual: "void",
   },
   {
-    id: "beam-ring",
+    id: "instrument",
     duration: 10000,
-    headline: "Beam & Ring",
+    headline: "The Instrument",
     subtitle: "Every story, measured",
-    body: "The beam tilts to show coverage tilt \u2014 measured per-story, not per-outlet. The ring fills as more sources weigh in. When we lack signal, you\u2019ll see a dashed beam: honest uncertainty over false precision.",
-    visual: "beam-ring",
+    body: "Six axes. Zero black boxes. The beam tilts with coverage lean \u2014 per story, not per outlet. The ring fills as sources weigh in. Sparse signal? Honest uncertainty over false precision.",
+    visual: "instrument",
+  },
+  {
+    id: "worlds",
+    duration: 14000,
+    headline: "The Worlds",
+    subtitle: "One platform, six experiences",
+    body: "Each built for a different way of reading.",
+    visual: "worlds",
   },
   {
     id: "verdict",
-    duration: 10000,
-    headline: "Read with clarity",
+    duration: 8000,
+    headline: "Read with clarity.",
     body: "Broad coverage from across the spectrum, grounded in named sources. That\u2019s where confidence lives. Thin coverage from one corner? Scrutinize more.",
     visual: "verdict",
   },
@@ -53,296 +71,386 @@ const PHASES: Phase[] = [
 /* ── Spring easing (CSS linear() approximation of damped spring) ────── */
 const SPRING = "linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 15.5%, 0.938 20.7%, 1.017 24.3%, 1.061 27.7%, 1.085 32%, 1.078 36.3%, 1.042 44.4%, 1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1)";
 
-/* ── Animated Beam SVG ─────────────────────────────────────────────────── */
+/* ── Divergent Headlines Data ─────────────────────────────────────────── */
 
-function AnimatedBeam({ active }: { active: boolean }) {
+const DIVERGENT = [
+  { outlet: "Reuters", lean: 48, color: "var(--bias-center)", headline: "\u201CUS and China resume trade talks amid tariff tensions\u201D" },
+  { outlet: "Fox News", lean: 72, color: "var(--bias-right)", headline: "\u201CTrump administration takes hard line as China talks restart\u201D" },
+  { outlet: "The Guardian", lean: 38, color: "var(--bias-left)", headline: "\u201CTrade war uncertainty looms as negotiations resume\u201D" },
+  { outlet: "Al Jazeera", lean: 35, color: "var(--bias-left)", headline: "\u201CGlobal markets brace as superpowers return to table\u201D" },
+  { outlet: "New York Post", lean: 74, color: "var(--bias-right)", headline: "\u201CBiden caves to China pressure, agrees to new talks\u201D" },
+];
+
+/* ── Scene 1: "The Void" — Divergent headlines ─────────────────────── */
+
+function VoidVisual({ active }: { active: boolean }) {
+  return (
+    <div className="pro-void" aria-hidden="true">
+      <p className="pro-void__event">Same event: US-China trade talks resume</p>
+      <div className="pro-void__headlines">
+        {DIVERGENT.map((h, i) => (
+          <div
+            key={h.outlet}
+            className={`pro-void__card${active ? " pro-void__card--in" : ""}`}
+            style={{ transitionDelay: `${200 + i * 120}ms` }}
+          >
+            <div className="pro-void__source">
+              <span className="pro-void__outlet">{h.outlet}</span>
+              <span className="pro-void__lean-dot" style={{ backgroundColor: h.color }} />
+            </div>
+            <p className="pro-void__headline">{h.headline}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Scene 2: "The Instrument" — Organic Sigil draws + beam sweep ──── */
+
+const SWEEP = [
+  { lean: 10, color: "var(--bias-far-left)", label: "Far Left" },
+  { lean: 30, color: "var(--bias-left)", label: "Left" },
+  { lean: 50, color: "var(--bias-center)", label: "Center" },
+  { lean: 70, color: "var(--bias-right)", label: "Right" },
+  { lean: 90, color: "var(--bias-far-right)", label: "Far Right" },
+  { lean: 50, color: "var(--bias-center)", label: "Center" },
+];
+
+function InstrumentVisual({ active }: { active: boolean }) {
   const [step, setStep] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const SWEEP_VALUES = [10, 25, 50, 75, 90, 50];
-  const SWEEP_COLORS = [
-    "var(--bias-far-left)", "var(--bias-left)", "var(--bias-center)",
-    "var(--bias-right)", "var(--bias-far-right)", "var(--bias-center)",
-  ];
 
   useEffect(() => {
     if (!active) { setStep(0); return; }
     let i = 0;
     intervalRef.current = setInterval(() => {
       i++;
-      if (i >= SWEEP_VALUES.length) {
+      if (i >= SWEEP.length) {
         if (intervalRef.current) clearInterval(intervalRef.current);
         return;
       }
       setStep(i);
-    }, 500);
+    }, 600);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [active]);
 
-  const value = SWEEP_VALUES[step];
-  const color = SWEEP_COLORS[step];
-  const beamAngle = (value - 50) * 0.30;
+  const { lean, color } = SWEEP[step];
+  const beamAngle = (lean - 50) * 0.30;
+  const coverage = active ? Math.min(step + 1, 5) / 6 : 0;
+  const ringFill = coverage * VOID_CIRC_LEN;
 
   return (
-    <div className="intro-beam" aria-hidden="true">
-      <svg width="200" height="160" viewBox="0 0 32 32" fill="none"
-        strokeLinecap="round" strokeLinejoin="round"
-        className="intro-beam__svg"
-      >
-        <circle cx="16" cy="13" r="9"
-          stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
-        />
-        <circle cx="16" cy="13" r="9"
-          stroke={color} strokeWidth="1.8" strokeLinecap="round"
-          strokeDasharray={`${active ? 0.7 * 2 * Math.PI * 9 : 0} ${2 * Math.PI * 9}`}
-          style={{
-            transform: "rotate(-90deg)", transformOrigin: "16px 13px",
-            transition: `stroke-dasharray 700ms ${SPRING} 120ms, stroke 400ms ease`,
-          }}
-          opacity={0.9}
-        />
-        <g style={{
-          transformOrigin: "16px 13px",
-          transform: `rotate(${active ? beamAngle : 0}deg)`,
-          transition: `transform 500ms ${SPRING}`,
-        }}>
-          <line x1="4" y1="13" x2="28" y2="13"
+    <div className="pro-instrument" aria-hidden="true">
+      <div className="pro-instrument__sigil">
+        <svg width="160" height="160" viewBox="0 0 32 32" fill="none"
+          strokeLinecap="round" strokeLinejoin="round"
+        >
+          {/* Void circle — organic hand-drawn path (background ring) */}
+          <path d={VOID_CIRCLE}
+            stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
+          />
+          {/* Coverage ring fill */}
+          <path d={VOID_CIRCLE}
             stroke={color} strokeWidth="1.8"
-            style={{ transition: "stroke 400ms ease" }}
-          />
-          <line x1="6" y1="11.5" x2="6" y2="14.5"
-            stroke={color} strokeWidth="1.4"
-            style={{ transition: "stroke 400ms ease" }}
-            opacity={0.85}
-          />
-          <line x1="26" y1="11.5" x2="26" y2="14.5"
-            stroke={color} strokeWidth="1.4"
-            style={{ transition: "stroke 400ms ease" }}
-            opacity={0.85}
-          />
-        </g>
-        <line x1="16" y1="22" x2="16" y2="28"
-          stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4}
-        />
-        <line x1="12" y1="28.5" x2="20" y2="28.5"
-          stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3}
-        />
-      </svg>
-      <div className="intro-beam__spectrum">
-        <div className="intro-beam__spectrum-fill" />
-      </div>
-      <div className="intro-beam__labels">
-        <span className="intro-beam__label" style={{ color: "var(--bias-left)" }}>Left</span>
-        <span className="intro-beam__label" style={{ color: "var(--fg-muted)" }}>Center</span>
-        <span className="intro-beam__label" style={{ color: "var(--bias-right)" }}>Right</span>
-      </div>
-      <div className="intro-beam__readout text-data" style={{ color }}>
-        {value}
-      </div>
-    </div>
-  );
-}
-
-/* ── Animated Ring SVG ─────────────────────────────────────────────────── */
-
-function AnimatedRing({ active }: { active: boolean }) {
-  const [fill, setFill] = useState(0);
-  const [count, setCount] = useState(0);
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!active) { setFill(0); setCount(0); return; }
-    const start = performance.now();
-    const duration = 2400;
-    const targetFill = 82;
-    const targetCount = 12;
-
-    function tick(now: number) {
-      const elapsed = now - start;
-      const t = Math.min(1, elapsed / duration);
-      const spring = t < 0.6
-        ? t / 0.6 * 1.12
-        : 1.12 - 0.12 * ((t - 0.6) / 0.4);
-      const clampedSpring = Math.max(0, Math.min(1.12, spring));
-
-      setFill(Math.round(targetFill * Math.min(1, clampedSpring)));
-      setCount(Math.min(targetCount, Math.round(targetCount * t)));
-
-      if (t < 1) rafRef.current = requestAnimationFrame(tick);
-    }
-    rafRef.current = requestAnimationFrame(tick);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [active]);
-
-  const r = 52;
-  const circ = 2 * Math.PI * r;
-  const dashLen = (fill / 100) * circ;
-  const ringColor = fill >= 60 ? "var(--sense-low)" : fill >= 30 ? "var(--sense-medium)" : "var(--sense-high)";
-
-  return (
-    <div className="intro-ring" aria-hidden="true">
-      <svg width="140" height="140" viewBox="0 0 140 140" className="intro-ring__svg">
-        <circle cx="70" cy="70" r={r} fill="none" stroke="var(--border-subtle)" strokeWidth="5" opacity="0.3" />
-        <circle
-          cx="70" cy="70" r={r}
-          fill="none"
-          stroke={ringColor}
-          strokeWidth="5"
-          strokeLinecap="round"
-          strokeDasharray={`${dashLen} ${circ}`}
-          transform="rotate(-90 70 70)"
-          style={{ transition: "stroke 300ms ease" }}
-        />
-      </svg>
-      <div className="intro-ring__center">
-        <span className="intro-ring__count text-data">{count}</span>
-        <span className="intro-ring__label text-data">sources</span>
-      </div>
-      <div className={`intro-ring__tiers${active ? " intro-ring__tiers--visible" : ""}`}>
-        <span className="intro-ring__tier" style={{ transitionDelay: "200ms" }}>US Major: 5</span>
-        <span className="intro-ring__tier" style={{ transitionDelay: "300ms" }}>International: 4</span>
-        <span className="intro-ring__tier" style={{ transitionDelay: "400ms" }}>Independent: 3</span>
-      </div>
-    </div>
-  );
-}
-
-/* ── Story Visual — abstract "five tabs" illustration ──────────────────── */
-
-function StoryVisual({ active }: { active: boolean }) {
-  return (
-    <div className={`intro-story-visual${active ? " intro-story-visual--active" : ""}`} aria-hidden="true">
-      <div className="intro-story-visual__tabs">
-        {["var(--bias-far-left)", "var(--bias-left)", "var(--bias-center)", "var(--bias-right)", "var(--bias-far-right)"].map((color, i) => (
-          <div
-            key={i}
-            className="intro-story-visual__tab"
+            strokeDasharray={`${ringFill} ${VOID_CIRC_LEN}`}
             style={{
-              borderTopColor: color,
-              transitionDelay: `${100 + i * 60}ms`,
+              transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+              transition: `stroke-dasharray 700ms ${SPRING} 120ms, stroke 400ms ease`,
             }}
+            opacity={0.9}
           />
+          {/* Source count */}
+          <text x="16" y="13.5" textAnchor="middle" dominantBaseline="central"
+            style={{
+              fontFamily: "var(--font-data)", fontSize: 8, fontWeight: 700,
+              fill: "var(--fg-secondary)",
+              opacity: active ? 0.85 : 0,
+              transition: "opacity 400ms ease 300ms",
+            }}
+          >
+            {active ? Math.min(step + 1, 5) * 3 : 0}
+          </text>
+          {/* Beam group — tilts with lean */}
+          <g style={{
+            transformOrigin: "16px 13px",
+            transform: `rotate(${active ? beamAngle : 0}deg)`,
+            transition: `transform 500ms ${SPRING}`,
+          }}>
+            <path d={BEAM_CURVE}
+              stroke={color} strokeWidth="1.8"
+              style={{ transition: "stroke 400ms ease" }}
+            />
+            <line x1="5" y1="11" x2="5" y2="15"
+              stroke={color} strokeWidth="1.4"
+              style={{ transition: "stroke 400ms ease" }}
+              opacity={0.85}
+            />
+            <line x1="27" y1="11" x2="27" y2="15"
+              stroke={color} strokeWidth="1.4"
+              style={{ transition: "stroke 400ms ease" }}
+              opacity={0.85}
+            />
+          </g>
+          {/* Center post */}
+          <line x1="16" y1="22" x2="16" y2="29"
+            stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4}
+          />
+          {/* Base — organic curve */}
+          <path d={BASE_CURVE}
+            stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3}
+          />
+        </svg>
+      </div>
+      {/* Spectrum bar */}
+      <div className="pro-instrument__spectrum">
+        <div className="pro-instrument__spectrum-fill" />
+        <div className="pro-instrument__spectrum-dot" style={{
+          left: `${lean}%`,
+          backgroundColor: color,
+          transition: `left 500ms ${SPRING}, background-color 400ms ease`,
+        }} />
+      </div>
+      <div className="pro-instrument__labels">
+        <span style={{ color: "var(--bias-left)" }}>Left</span>
+        <span style={{ color: "var(--fg-muted)" }}>Center</span>
+        <span style={{ color: "var(--bias-right)" }}>Right</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Scene 3: "The Worlds" — 6 product pages in native design ──────── */
+
+const WORLDS = [
+  {
+    cli: "void --news",
+    name: "The Feed",
+    desc: "Importance-ranked, bias-analyzed",
+    palette: "feed",
+  },
+  {
+    cli: "void --weekly",
+    name: "The Magazine",
+    desc: "Economist-style weekly digest",
+    palette: "weekly",
+  },
+  {
+    cli: "void --paper",
+    name: "The Broadsheet",
+    desc: "E-paper front page",
+    palette: "paper",
+  },
+  {
+    cli: "void --sources",
+    name: "The Spectrum",
+    desc: "1,013 sources on one axis",
+    palette: "sources",
+  },
+  {
+    cli: "void --onair",
+    name: "The Studio",
+    desc: "Two-host audio broadcast",
+    palette: "onair",
+  },
+  {
+    cli: "void --ship",
+    name: "The Forge",
+    desc: "Feature request board",
+    palette: "ship",
+  },
+];
+
+function WorldCard({ world, index, active }: { world: typeof WORLDS[0]; index: number; active: boolean }) {
+  return (
+    <div
+      className={`pro-world pro-world--${world.palette}${active ? " pro-world--in" : ""}`}
+      style={{ transitionDelay: `${300 + index * 180}ms` }}
+    >
+      <div className="pro-world__preview">
+        {world.palette === "feed" && <FeedPreview />}
+        {world.palette === "weekly" && <WeeklyPreview />}
+        {world.palette === "paper" && <PaperPreview />}
+        {world.palette === "sources" && <SourcesPreview />}
+        {world.palette === "onair" && <OnairPreview />}
+        {world.palette === "ship" && <ShipPreview />}
+      </div>
+      <div className="pro-world__text">
+        <span className="pro-world__cli">{world.cli}</span>
+        <span className="pro-world__name">{world.name}</span>
+        <span className="pro-world__desc">{world.desc}</span>
+      </div>
+    </div>
+  );
+}
+
+/* Mini preview components — CSS-rendered, no images */
+
+function FeedPreview() {
+  return (
+    <div className="pro-preview pro-preview--feed">
+      <div className="pro-preview__cols">
+        <div className="pro-preview__col pro-preview__col--lead">
+          <div className="pro-preview__headline-bar" />
+          <div className="pro-preview__text-lines">
+            <div /><div /><div />
+          </div>
+          {/* Tiny organic Sigil */}
+          <svg viewBox="0 0 32 32" className="pro-preview__sigil" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d={VOID_CIRCLE} stroke="currentColor" strokeWidth="2.5" opacity={0.5} />
+            <path d={BEAM_CURVE} stroke="currentColor" strokeWidth="2.5" opacity={0.7} />
+          </svg>
+        </div>
+        <div className="pro-preview__col pro-preview__col--side">
+          <div className="pro-preview__card-mini" />
+          <div className="pro-preview__card-mini" />
+          <div className="pro-preview__card-mini" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WeeklyPreview() {
+  return (
+    <div className="pro-preview pro-preview--weekly">
+      <div className="pro-preview__masthead" />
+      <div className="pro-preview__cover-hl" />
+      <div className="pro-preview__cover-sub" />
+      <div className="pro-preview__mag-cols">
+        <div /><div /><div />
+      </div>
+    </div>
+  );
+}
+
+function PaperPreview() {
+  return (
+    <div className="pro-preview pro-preview--paper">
+      <div className="pro-preview__broadsheet-hdr" />
+      <div className="pro-preview__broadsheet-rule" />
+      <div className="pro-preview__broadsheet-hl" />
+      <div className="pro-preview__broadsheet-cols">
+        <div /><div /><div /><div />
+      </div>
+    </div>
+  );
+}
+
+function SourcesPreview() {
+  return (
+    <div className="pro-preview pro-preview--sources">
+      <div className="pro-preview__spectrum-bar" />
+      <div className="pro-preview__dots">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="pro-preview__src-dot" style={{
+            left: `${8 + Math.random() * 84}%`,
+            top: `${20 + Math.random() * 40}%`,
+            opacity: 0.3 + Math.random() * 0.5,
+          }} />
         ))}
       </div>
-      <div className="intro-story-visual__void-line" />
     </div>
   );
 }
 
-/* ── Beam & Ring Combined Visual ──────────────────────────────────────── */
-
-function BeamAndRing({ active }: { active: boolean }) {
+function OnairPreview() {
   return (
-    <div className="intro-beam-ring" aria-hidden="true">
-      <AnimatedBeam active={active} />
-      <AnimatedRing active={active} />
+    <div className="pro-preview pro-preview--onair">
+      <div className="pro-preview__waveform">
+        {Array.from({ length: 16 }).map((_, i) => (
+          <div key={i} className="pro-preview__wave-bar" style={{
+            height: `${20 + Math.sin(i * 0.7) * 40 + Math.random() * 15}%`,
+          }} />
+        ))}
+      </div>
+      <div className="pro-preview__hosts">
+        <span>A</span><span>B</span>
+      </div>
     </div>
   );
 }
 
-/* ── Product Family Visual ─────────────────────────────────────────────── */
-
-function ProductFamilyVisual({ active }: { active: boolean }) {
-  const products = [
-    { cmd: "void --tl;dr", label: "Daily Brief", desc: "Top stories, editorially weighed" },
-    { cmd: "void --onair", label: "Audio Broadcast", desc: "Two hosts, three minutes" },
-    { cmd: "void --opinion", label: "The Board", desc: "Editorial lean rotates daily" },
-    { cmd: "void --sources", label: "Source Spectrum", desc: "1,013 sources, one axis" },
-    { cmd: "void --deep-dive", label: "Deep Dive", desc: "Every source, every score" },
-    { cmd: "void --paper", label: "E-Paper", desc: "The broadsheet front page" },
-  ];
-
+function ShipPreview() {
   return (
-    <div className={`intro-products${active ? " intro-products--active" : ""}`} aria-hidden="true">
-      {products.map((p, i) => (
-        <div
-          key={p.cmd}
-          className="intro-products__item"
-          style={{ transitionDelay: `${120 + i * 60}ms` }}
-        >
-          <span className="intro-products__cmd text-data">{p.cmd}</span>
-          <span className="intro-products__label">{p.label}</span>
-          <span className="intro-products__desc">{p.desc}</span>
+    <div className="pro-preview pro-preview--ship">
+      <div className="pro-preview__kanban">
+        <div className="pro-preview__kanban-col">
+          <div className="pro-preview__kanban-card" />
+          <div className="pro-preview__kanban-card" />
         </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Audio Product Visual ──────────────────────────────────────────────── */
-
-function AudioProductVisual({ active }: { active: boolean }) {
-  return (
-    <div className={`intro-audio${active ? " intro-audio--active" : ""}`} aria-hidden="true">
-      <div className="intro-audio__card">
-        <span className="intro-audio__cmd text-data">void --onair</span>
-        <span className="intro-audio__label">Audio Broadcast</span>
-        <div className="intro-audio__waveform">
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div
-              key={i}
-              className="intro-audio__bar"
-              style={{
-                height: `${12 + Math.sin(i * 0.6) * 18 + Math.random() * 8}px`,
-                animationDelay: `${i * 60}ms`,
-              }}
-            />
-          ))}
+        <div className="pro-preview__kanban-col">
+          <div className="pro-preview__kanban-card" />
         </div>
-        <div className="intro-audio__voices">
-          <span>Host A: the facts</span>
-          <span>Host B: the questions</span>
+        <div className="pro-preview__kanban-col">
+          <div className="pro-preview__kanban-card" />
+          <div className="pro-preview__kanban-card" />
+          <div className="pro-preview__kanban-card" />
         </div>
       </div>
     </div>
   );
 }
 
-/* ── Verdict Combined Display ──────────────────────────────────────────── */
+function WorldsVisual({ active }: { active: boolean }) {
+  return (
+    <div className="pro-worlds" aria-hidden="true">
+      <div className="pro-worlds__grid">
+        {WORLDS.map((w, i) => (
+          <WorldCard key={w.cli} world={w} index={i} active={active} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-function MiniSigil({ lean, leanColor: lc, coverage, coverageColor }: {
+/* ── Scene 4: "The Verdict" — Three organic Sigils ─────────────────── */
+
+function MiniOrganicSigil({ lean, leanColor: lc, coverage, coverageColor }: {
   lean: number; leanColor: string; coverage: number; coverageColor: string;
 }) {
   const beamAngle = (lean - 50) * 0.30;
-  const r = 9;
-  const circ = 2 * Math.PI * r;
+  const ringFill = coverage * VOID_CIRC_LEN;
   return (
     <svg width="48" height="48" viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="16" cy="13" r={r} stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} />
-      <circle cx="16" cy="13" r={r} stroke={coverageColor} strokeWidth="1.8"
-        strokeDasharray={`${coverage * circ} ${circ}`}
-        transform="rotate(-90 16 13)" opacity={0.9} />
+      {/* Organic void circle */}
+      <path d={VOID_CIRCLE} stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} />
+      <path d={VOID_CIRCLE} stroke={coverageColor} strokeWidth="1.8"
+        strokeDasharray={`${ringFill} ${VOID_CIRC_LEN}`}
+        style={{ transform: "rotate(-90deg)", transformOrigin: "16px 13px" }}
+        opacity={0.9}
+      />
+      {/* Beam group */}
       <g style={{ transformOrigin: "16px 13px", transform: `rotate(${beamAngle}deg)` }}>
-        <line x1="4" y1="13" x2="28" y2="13" stroke={lc} strokeWidth="1.8" />
-        <line x1="6" y1="11.5" x2="6" y2="14.5" stroke={lc} strokeWidth="1.4" opacity={0.85} />
-        <line x1="26" y1="11.5" x2="26" y2="14.5" stroke={lc} strokeWidth="1.4" opacity={0.85} />
+        <path d={BEAM_CURVE} stroke={lc} strokeWidth="1.8" />
+        <line x1="5" y1="11" x2="5" y2="15" stroke={lc} strokeWidth="1.4" opacity={0.85} />
+        <line x1="27" y1="11" x2="27" y2="15" stroke={lc} strokeWidth="1.4" opacity={0.85} />
       </g>
-      <line x1="16" y1="22" x2="16" y2="28" stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4} />
-      <line x1="12" y1="28.5" x2="20" y2="28.5" stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3} />
+      {/* Post + base */}
+      <line x1="16" y1="22" x2="16" y2="29" stroke="var(--fg-tertiary)" strokeWidth="1.4" opacity={0.4} />
+      <path d={BASE_CURVE} stroke="var(--fg-tertiary)" strokeWidth="1.8" opacity={0.3} />
     </svg>
   );
 }
 
-function VerdictDisplay({ active }: { active: boolean }) {
+function VerdictVisual({ active }: { active: boolean }) {
   return (
-    <div className={`intro-verdict${active ? " intro-verdict--active" : ""}`} aria-hidden="true">
-      <div className="intro-verdict__row">
-        <div className="intro-verdict__card intro-verdict__card--left" style={{ transitionDelay: "100ms" }}>
-          <MiniSigil lean={25} leanColor="var(--bias-left)" coverage={0.8} coverageColor="var(--sense-low)" />
-          <span className="intro-verdict__label text-data">Left, Broad</span>
-          <span className="intro-verdict__sub text-data">Well sourced</span>
+    <div className={`pro-verdict${active ? " pro-verdict--active" : ""}`} aria-hidden="true">
+      <div className="pro-verdict__row">
+        <div className="pro-verdict__card" style={{ transitionDelay: "200ms" }}>
+          <MiniOrganicSigil lean={25} leanColor="var(--bias-left)" coverage={0.8} coverageColor="var(--sense-low)" />
+          <span className="pro-verdict__label">Left, Broad</span>
+          <span className="pro-verdict__sub">Well sourced</span>
         </div>
-
-        <div className="intro-verdict__card intro-verdict__card--center" style={{ transitionDelay: "200ms" }}>
-          <MiniSigil lean={50} leanColor="var(--bias-center)" coverage={0.92} coverageColor="var(--sense-low)" />
-          <span className="intro-verdict__label text-data">Center, Deep</span>
-          <span className="intro-verdict__sub text-data">Most reliable</span>
+        <div className="pro-verdict__card" style={{ transitionDelay: "350ms" }}>
+          <MiniOrganicSigil lean={50} leanColor="var(--bias-center)" coverage={0.92} coverageColor="var(--sense-low)" />
+          <span className="pro-verdict__label">Center, Deep</span>
+          <span className="pro-verdict__sub">Most reliable</span>
         </div>
-
-        <div className="intro-verdict__card intro-verdict__card--right" style={{ transitionDelay: "300ms" }}>
-          <MiniSigil lean={78} leanColor="var(--bias-right)" coverage={0.25} coverageColor="var(--sense-high)" />
-          <span className="intro-verdict__label text-data">Right, Thin</span>
-          <span className="intro-verdict__sub text-data">Scrutinize more</span>
+        <div className="pro-verdict__card" style={{ transitionDelay: "500ms" }}>
+          <MiniOrganicSigil lean={78} leanColor="var(--bias-right)" coverage={0.25} coverageColor="var(--sense-high)" />
+          <span className="pro-verdict__label">Right, Thin</span>
+          <span className="pro-verdict__sub">Scrutinize more</span>
         </div>
       </div>
     </div>
@@ -353,9 +461,10 @@ function VerdictDisplay({ active }: { active: boolean }) {
 
 function PhaseVisual({ visual, active }: { visual: Phase["visual"]; active: boolean }) {
   switch (visual) {
-    case "story": return <StoryVisual active={active} />;
-    case "beam-ring": return <BeamAndRing active={active} />;
-    case "verdict": return <VerdictDisplay active={active} />;
+    case "void": return <VoidVisual active={active} />;
+    case "instrument": return <InstrumentVisual active={active} />;
+    case "worlds": return <WorldsVisual active={active} />;
+    case "verdict": return <VerdictVisual active={active} />;
   }
 }
 
@@ -383,7 +492,6 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
     reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }, []);
 
-  // Start phase 0 when visible becomes true
   useEffect(() => {
     if (!mounted || !visible) return;
     const delay = reducedMotion.current ? 0 : 600;
@@ -413,17 +521,13 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
     setExiting(true);
     exitCallbackRef.current = callback;
     setTimeout(() => {
+      previousFocusRef.current?.focus();
       callback();
     }, reducedMotion.current ? 0 : 500);
   }, [exiting]);
 
   const handleSkip = useCallback(() => dismiss(onSkip), [dismiss, onSkip]);
   const handleComplete = useCallback(() => dismiss(onComplete), [dismiss, onComplete]);
-
-  const skipToEnd = useCallback(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setPhase(PHASES.length - 1);
-  }, []);
 
   // Focus trap + keyboard
   useEffect(() => {
@@ -452,7 +556,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
       }
       if (e.key === "Tab" && dialogRef.current) {
         const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
         );
         if (focusable.length === 0) return;
         const first = focusable[0];
@@ -490,7 +594,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
           <div className="intro__progress-fill" style={{ width: `${progress}%` }} />
         </div>
 
-        {/* Skip */}
+        {/* Skip — always visible */}
         <button className="intro__skip" onClick={handleSkip} aria-label="Skip introduction">
           Skip
         </button>
@@ -509,7 +613,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
             }
           }}
         >
-          {/* Illustration area */}
+          {/* Visual area */}
           <div className="intro__visual">
             {currentPhase && <PhaseVisual visual={currentPhase.visual} active />}
           </div>
@@ -517,7 +621,7 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
           {/* Text area */}
           {currentPhase && (
             <div key={currentPhase.id} className="intro__text">
-              <span className="intro__chapter">{["I", "II", "III"][phase]}</span>
+              <span className="intro__chapter">{["I", "II", "III", "IV"][phase]}</span>
               <h2 className="intro__headline">{currentPhase.headline}</h2>
               {currentPhase.subtitle && (
                 <p className="intro__subtitle">{currentPhase.subtitle}</p>
@@ -527,14 +631,13 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
           )}
         </div>
 
-        {/* Phase dots */}
-        <div className="intro__dots" role="tablist" aria-label="Guide sections">
+        {/* Phase dots — stepper pattern, not tabs */}
+        <div className="intro__dots" aria-label="Guide sections">
           {PHASES.map((p, i) => (
             <button
               key={p.id}
-              role="tab"
-              aria-selected={i === phase}
-              aria-label={`Section ${i + 1}: ${p.headline}`}
+              aria-label={`Go to section ${i + 1}: ${p.headline}`}
+              aria-current={i === phase ? "step" : undefined}
               className={`intro__dot${i === phase ? " intro__dot--active" : ""}${i < phase ? " intro__dot--done" : ""}`}
               onClick={() => {
                 if (timerRef.current) clearTimeout(timerRef.current);
@@ -547,8 +650,11 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Onbo
         {/* Action buttons */}
         <div className="intro__actions">
           {!isLastPhase ? (
-            <button className="intro__btn intro__btn--next" onClick={skipToEnd}>
-              Skip to end
+            <button className="intro__btn intro__btn--next" onClick={() => {
+              if (timerRef.current) clearTimeout(timerRef.current);
+              setPhase((p) => Math.min(PHASES.length - 1, p + 1));
+            }}>
+              Next
             </button>
           ) : (
             <>

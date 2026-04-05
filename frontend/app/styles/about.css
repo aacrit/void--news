@@ -1080,12 +1080,30 @@
   outline-offset: 2px;
 }
 
-.about-family-card__name {
+/* Per-world accent borders — native design language */
+.about-family-card--feed    { border-left: 4px solid var(--cin-amber, #C8A96E); }
+.about-family-card--weekly  { border-left: 4px solid var(--palette-weekly); }
+.about-family-card--paper   { border-left: 4px solid var(--fg-tertiary); }
+.about-family-card--sources { border-left: 4px solid var(--bias-center); }
+.about-family-card--onair   { border-left: 4px solid var(--voice-accent, #4DAFA0); }
+.about-family-card--ship    { border-left: 4px solid var(--accent-warm); }
+
+.about-family-card__cli {
   font-family: var(--font-data);
-  font-size: var(--text-sm);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg-muted);
+  margin-bottom: 2px;
+}
+
+.about-family-card__name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
   font-weight: 700;
-  color: var(--accent-warm);
+  color: var(--fg-primary);
   margin-bottom: var(--space-1);
+  line-height: 1.2;
 }
 
 .about-family-card__desc {
