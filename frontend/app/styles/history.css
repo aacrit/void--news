@@ -98,7 +98,7 @@
   --hist-paper-deep: #14110E;
   --hist-ink: #D9CFC0;
   --hist-ink-secondary: #B0A898;
-  --hist-ink-muted: #7A7268;
+  --hist-ink-muted: #908880;
 
   --hist-persp-a: #5A9AC4;
   --hist-persp-b: #C47A5A;
@@ -2115,6 +2115,17 @@
 .hist-dossier__severity--major {
   color: var(--hist-brass);
   border: 1px solid rgba(155, 122, 47, 0.3);
+}
+
+/* Dark mode: lighten severity for WCAG AA contrast */
+:root[data-mode="dark"] .hist-dossier__severity--catastrophic {
+  color: #E04040;
+  border-color: rgba(224, 64, 64, 0.3);
+}
+
+:root[data-mode="dark"] .hist-dossier__severity--critical {
+  color: #D47030;
+  border-color: rgba(212, 112, 48, 0.3);
 }
 
 .hist-dossier__perspectives {

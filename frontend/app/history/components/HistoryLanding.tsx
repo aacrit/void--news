@@ -146,8 +146,12 @@ function RedactedTile({ event, index }: { event: RedactedEvent; index: number })
     <div
       className={`hist-dossier hist-dossier--classified ${revealed ? "hist-dossier--revealed" : ""}`}
       style={{ animationDelay: `${80 + index * 60}ms` }}
+      role="button"
+      tabIndex={0}
       onClick={() => setRevealed((p) => !p)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setRevealed((p) => !p); } }}
       aria-label={`Coming: ${event.title}`}
+      aria-pressed={revealed}
     >
       {/* Classified header strip */}
       <div className="hist-dossier__header">
