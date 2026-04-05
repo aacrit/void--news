@@ -56,7 +56,7 @@
   animation: fadeInUp 280ms var(--ease-cinematic, ease) 80ms both;
 }
 
-.fp--expanded .fp__waveform {
+.fp--expanded .fp__vu {
   opacity: 0;
   animation: fadeInUp 280ms var(--ease-cinematic, ease) 120ms both;
 }
@@ -410,39 +410,7 @@
   background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
-/* Waveform — visible when playing, collapses when paused */
-.fp__waveform {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 3px;
-  height: 0;
-  overflow: hidden;
-  transition: height 220ms var(--ease-refold, ease);
-}
-
-.fp__waveform--active {
-  height: 28px;
-  transition: height 350ms var(--ease-unfold, ease);
-}
-
-.fp__waveform-bar {
-  width: 3px;
-  border-radius: 1.5px;
-  background: color-mix(in srgb, var(--accent-warm) 20%, transparent);
-  transform: scaleY(0.5);
-  opacity: 0.4;
-  transition: transform 400ms var(--ease-cinematic), opacity 400ms var(--ease-cinematic);
-}
-
-.fp__waveform--active .fp__waveform-bar {
-  background: var(--accent-warm);
-  animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate;
-}
-
-.fp__waveform--active .fp__waveform-bar:nth-child(3n)   { animation-name: vuBar-short; }
-.fp__waveform--active .fp__waveform-bar:nth-child(3n+1) { animation-name: vuBar-mid; }
-.fp__waveform--active .fp__waveform-bar:nth-child(3n+2) { animation-name: vuBar-tall; }
+/* (Old waveform bars removed — replaced by .fp__vu meter) */
 
 /* VU meter bar keyframes — matches intro-audio waveform style */
 @keyframes vuBar-short {
@@ -477,23 +445,95 @@
 .fp__pill-eq-bar:nth-child(3) { animation-name: vuBar-mid; animation-delay: 160ms; }
 .fp__pill-eq-bar:nth-child(4) { animation-name: vuBar-short; animation-delay: 240ms; }
 
-/* Oscilloscope — real-time audio waveform canvas */
-.fp__oscilloscope {
-  width: 100%;
+/* VU Meter — CSS-driven audio visualization (replaces canvas) */
+.fp__vu {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
   height: 32px;
-  display: block;
+  padding: 0 var(--space-2);
   border-radius: 4px;
   background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
 }
 
-.fp__oscilloscope--lg {
-  height: 48px;
+.fp__vu-bar {
+  flex: 1;
+  max-width: 6px;
+  height: 15%;
+  border-radius: 1.5px;
+  background: color-mix(in srgb, var(--accent-warm) 18%, transparent);
+  transition: height 400ms var(--ease-cinematic, ease), background 300ms;
 }
 
-/* Void Circle — brand-native audio visualization */
-.fp__oscilloscope--hero {
-  height: 140px;
-  border-radius: 4px;
+/* Active — bars animate with staggered VU keyframes */
+.fp__vu--active .fp__vu-bar {
+  background: var(--accent-warm);
+  animation: fpVuPulse 1.8s var(--ease-rack, ease-in-out) infinite alternate;
+}
+
+/* Distribute bar heights naturally — middle bars taller */
+.fp__vu--active .fp__vu-bar:nth-child(1)  { animation-name: fpVuLo;  }
+.fp__vu--active .fp__vu-bar:nth-child(2)  { animation-name: fpVuMid; }
+.fp__vu--active .fp__vu-bar:nth-child(3)  { animation-name: fpVuHi;  }
+.fp__vu--active .fp__vu-bar:nth-child(4)  { animation-name: fpVuMid; }
+.fp__vu--active .fp__vu-bar:nth-child(5)  { animation-name: fpVuHi;  }
+.fp__vu--active .fp__vu-bar:nth-child(6)  { animation-name: fpVuPk;  }
+.fp__vu--active .fp__vu-bar:nth-child(7)  { animation-name: fpVuHi;  }
+.fp__vu--active .fp__vu-bar:nth-child(8)  { animation-name: fpVuPk;  }
+.fp__vu--active .fp__vu-bar:nth-child(9)  { animation-name: fpVuPk;  }
+.fp__vu--active .fp__vu-bar:nth-child(10) { animation-name: fpVuHi;  }
+.fp__vu--active .fp__vu-bar:nth-child(11) { animation-name: fpVuPk;  }
+.fp__vu--active .fp__vu-bar:nth-child(12) { animation-name: fpVuHi;  }
+.fp__vu--active .fp__vu-bar:nth-child(13) { animation-name: fpVuMid; }
+.fp__vu--active .fp__vu-bar:nth-child(14) { animation-name: fpVuHi;  }
+.fp__vu--active .fp__vu-bar:nth-child(15) { animation-name: fpVuMid; }
+.fp__vu--active .fp__vu-bar:nth-child(16) { animation-name: fpVuLo;  }
+
+@keyframes fpVuLo {
+  0%   { height: 10%; opacity: 0.3; }
+  50%  { height: 30%; opacity: 0.6; }
+  100% { height: 15%; opacity: 0.4; }
+}
+@keyframes fpVuMid {
+  0%   { height: 15%; opacity: 0.4; }
+  50%  { height: 55%; opacity: 0.7; }
+  100% { height: 25%; opacity: 0.5; }
+}
+@keyframes fpVuHi {
+  0%   { height: 25%; opacity: 0.5; }
+  50%  { height: 75%; opacity: 0.8; }
+  100% { height: 35%; opacity: 0.6; }
+}
+@keyframes fpVuPk {
+  0%   { height: 30%; opacity: 0.5; }
+  50%  { height: 90%; opacity: 0.9; }
+  100% { height: 40%; opacity: 0.6; }
+}
+@keyframes fpVuPulse {
+  0%   { height: 20%; opacity: 0.4; }
+  50%  { height: 65%; opacity: 0.7; }
+  100% { height: 25%; opacity: 0.5; }
+}
+
+/* Active glow — subtle amber ambient when playing */
+.fp__vu--active {
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  transition: box-shadow 500ms var(--ease-cinematic, ease), background 300ms;
+}
+
+/* Hero — taller for broadcast pane */
+.fp__vu--hero {
+  height: 80px;
+  gap: 4px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 6px;
+}
+
+.fp__vu--hero .fp__vu-bar {
+  max-width: 8px;
+  border-radius: 2px;
 }
 
 /* Transport */
@@ -703,7 +743,7 @@
   /* Bar content above grain */
   .fp__bar-header,
   .fp__drag-indicator,
-  .fp__waveform,
+  .fp__vu,
   .fp__transport,
   .fp__seek {
     position: relative;
@@ -883,9 +923,13 @@
   opacity: 0;
   animation: fadeInUp 280ms var(--ease-cinematic, ease) 160ms both;
 }
+.fp--broadcast .fp__vu {
+  opacity: 0;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 180ms both;
+}
 .fp--broadcast .fp__transport {
   opacity: 0;
-  animation: fadeInUp 280ms var(--ease-cinematic, ease) 200ms both;
+  animation: fadeInUp 280ms var(--ease-cinematic, ease) 220ms both;
 }
 .fp--broadcast .fp__seek {
   opacity: 0;
@@ -1185,8 +1229,9 @@
     gap: var(--space-2);
   }
 
-  .fp__oscilloscope--hero {
-    height: 100px;
+  .fp__vu--hero {
+    height: 56px;
+    gap: 3px;
   }
 
   /* Episode notes disclosure: 44px touch target */
@@ -1288,7 +1333,7 @@
   .fp__bcast-host-trait { font-size: var(--text-xxs); white-space: normal; }
   .fp__bcast-section-label { font-size: var(--text-xs); }
   .fp__bcast-text { font-size: var(--text-sm); line-height: 1.65; }
-  .fp__oscilloscope--hero { height: 160px; }
+  .fp__vu--hero { height: 96px; gap: 5px; }
 
   .fp--playing .fp__broadcast {
     border-right-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
@@ -1356,6 +1401,9 @@
     animation-name: fadeInLeft;
   }
   .fp--broadcast .fp__bcast-hosts {
+    animation-name: fadeInLeft;
+  }
+  .fp--broadcast .fp__vu {
     animation-name: fadeInLeft;
   }
   .fp--broadcast .fp__transport {
@@ -1599,18 +1647,19 @@
   .fp--expanded { animation: none; opacity: 1; transform: none; }
   .fp--broadcast { animation: none; opacity: 1; transform: none !important; }
   .fp--expanded .fp__bar-header,
-  .fp--expanded .fp__waveform,
+  .fp--expanded .fp__vu,
   .fp--expanded .fp__transport,
   .fp--expanded .fp__seek { animation: none; opacity: 1; transform: none; }
   .fp--broadcast .fp__bcast-header,
   .fp--broadcast .fp__bcast-dateline,
   .fp--broadcast .fp__bcast-hosts,
+  .fp--broadcast .fp__vu,
   .fp--broadcast .fp__transport,
   .fp--broadcast .fp__seek,
   .fp--broadcast .fp__bcast-content { animation: none; opacity: 1; transform: none; }
   .fp__play--active { animation: none; }
   .fp__play-lg--active { animation: none; }
-  .fp__waveform--active .fp__waveform-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
+  .fp__vu--active .fp__vu-bar { animation: none !important; height: 30%; opacity: 0.5; }
   .fp__pill-eq-bar { animation: none !important; transform: scaleY(0.6); opacity: 0.5; }
   .fp__rec-dot { animation: none; opacity: 1; }
   .fp__status--live .fp__status-dot { animation: none; opacity: 1; }
