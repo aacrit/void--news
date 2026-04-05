@@ -10,7 +10,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
   /* ── 1. Partition of India, 1947 ── */
   {
     id: "evt-partition-india",
-    slug: "partition-of-india-1947",
+    slug: "partition-of-india",
     title: "Partition of India",
     subtitle: "The largest mass migration in human history",
     era: "contemporary",
@@ -211,7 +211,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
   /* ── 2. Hiroshima, 1945 ── */
   {
     id: "evt-hiroshima",
-    slug: "hiroshima-1945",
+    slug: "hiroshima-nagasaki",
     title: "Atomic Bombing of Hiroshima",
     subtitle: "The first use of nuclear weapons in warfare",
     era: "modern",
@@ -364,7 +364,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
   /* ── 3. Rwandan Genocide, 1994 ── */
   {
     id: "evt-rwanda",
-    slug: "rwandan-genocide-1994",
+    slug: "rwandan-genocide",
     title: "Rwandan Genocide",
     subtitle: "800,000 killed in 100 days",
     era: "contemporary",
@@ -531,7 +531,7 @@ export const REDACTED_EVENTS: RedactedEvent[] = [
   },
   {
     id: "redacted-trail-of-tears",
-    slug: "trail-of-tears-1838",
+    slug: "trail-of-tears",
     title: "Trail of Tears",
     era: "modern",
     regions: ["americas"],
