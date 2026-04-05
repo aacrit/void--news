@@ -3,6 +3,7 @@
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
+import ConsensusBadge from "./ConsensusBadge";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 
@@ -59,6 +60,14 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       <h3 className="story-card__headline">
         <span className="story-card__headline-text">{story.title}</span>
         <Sigil data={story.sigilData} size="sm" />
+        {story.deepDive?.claimConsensus && (
+          <ConsensusBadge
+            ratio={story.deepDive.claimConsensus.consensus_ratio}
+            disputed={story.deepDive.claimConsensus.disputed}
+            total={story.deepDive.claimConsensus.total_claims}
+            corroborated={story.deepDive.claimConsensus.corroborated}
+          />
+        )}
         <CaretRight
           size={14}
           weight="bold"
