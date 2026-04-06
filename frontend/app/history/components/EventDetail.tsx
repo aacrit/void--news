@@ -75,7 +75,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
   /* The crack — hook text */
   const hook =
     HOOKS[event.slug] ||
-    event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
+    (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
 
   /* ── Scroll reveal observer for all .hist-reveal elements ── */
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--context">
         <div className="hist-context__body hist-reveal">
-          {event.contextNarrative.split("\n").filter(Boolean).map((para, i) => (
+          {(event.contextNarrative || "").split("\n").filter(Boolean).map((para, i) => (
             <Fragment key={i}>
               <p>{para}</p>
               {/* Insert context image after first paragraph */}
@@ -443,7 +443,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
             )}
             {/* Hook teaser — the crack of the next story */}
             <p className="hist-next__hook">
-              {HOOKS[nextEvent.slug] || nextEvent.contextNarrative.split(". ").slice(0, 2).join(". ") + "."}
+              {HOOKS[nextEvent.slug] || (nextEvent.contextNarrative || nextEvent.title).split(". ").slice(0, 2).join(". ") + "."}
             </p>
             <p className="hist-next__prompt">Now read:</p>
             <button

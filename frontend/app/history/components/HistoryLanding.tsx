@@ -1391,7 +1391,7 @@ function TimelineCard({
 }) {
   const hook =
     HOOKS[event.slug] ||
-    event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
+    (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
 
   const cta =
     CTAS[event.slug] ||
