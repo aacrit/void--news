@@ -1917,10 +1917,10 @@
   height: 100%;
 }
 
-/* ── Organic SVG ink track at vertical center — thick anchor line ── */
+/* ── Organic SVG ink track — shifted down to clear fixed top zone ── */
 .hist-tl-full__track {
   position: absolute;
-  top: 50%;
+  top: 58%;
   left: 0;
   width: 100%;
   height: 8px;
@@ -1975,7 +1975,7 @@
 /* ── Station — absolute positioned container for dot + stem + card ── */
 .hist-tl-full__station {
   position: absolute;
-  top: 50%;
+  top: 58%; /* Shifted down to clear fixed top zone (era header + year ribbon + pills) */
   transform: translateX(-50%);
   z-index: 3;
 }
