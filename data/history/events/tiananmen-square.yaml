@@ -37,7 +37,9 @@ key_figures:
   - name: "Wang Dan"
     role: "Student leader, top of the government's most-wanted list; served two prison terms totaling 11 years before exile"
   - name: "Chai Ling"
-    role: "Commander-in-chief of the Tiananmen Square student headquarters; fled China via Operation Yellowbird"
+    role: "Commander-in-chief of the Tiananmen Square student headquarters at age 23 — the highest operational role in the movement; fled China via Operation Yellowbird"
+  - name: "Ding Zilin"
+    role: "Founder of the Tiananmen Mothers; documented 203 victims by name after her 17-year-old son Jiang Jielian was shot on June 3, 1989"
   - name: "Liu Xiaobo"
     role: "Literary critic who joined the hunger strike on June 2; later drafted Charter 08 and won the 2010 Nobel Peace Prize while imprisoned; died in custody in 2017"
   - name: "Jeff Widener"
@@ -133,11 +135,13 @@ perspectives:
     narrative: |
       The students who gathered in Tiananmen Square in April 1989 did not begin by demanding the overthrow of the Communist Party. Their initial demands were modest: recognition of Hu Yaobang's contributions, freedom of the press, disclosure of leaders' incomes, increased funding for education, and the right to demonstrate. The movement radicalized over seven weeks as the government refused dialogue and escalated from editorial condemnation (the April 26 People's Daily editorial, which branded the protests "turmoil" — dongluan) to martial law to military assault.
 
-      Wang Dan, a 20-year-old history student at Peking University, emerged as the movement's most prominent intellectual voice. His Democracy Salon had been meeting on campus since 1988, discussing political reform, press freedom, and the rule of law. Chai Ling, a psychology graduate student, became commander-in-chief of the Tiananmen Square headquarters in late May. Wuer Kaixi, a Uyghur student at Beijing Normal University, confronted Premier Li Peng on live television on May 18 in a meeting broadcast nationally — wearing pajamas, having come directly from the hospital where he was being treated for the effects of the hunger strike. He interrupted Li Peng mid-sentence. For millions of Chinese viewers, it was the first time they had seen anyone talk back to a senior leader.
+      Wang Dan, a 20-year-old history student at Peking University, emerged as the movement's most prominent intellectual voice. His Democracy Salon had been meeting on campus since 1988, discussing political reform, press freedom, and the rule of law. Chai Ling, a 23-year-old psychology graduate student, became commander-in-chief of the Tiananmen Square headquarters in late May — the highest operational role in the movement, held by a woman in a leadership structure otherwise dominated by men. She drafted the hunger strike declaration, organized logistics for thousands of strikers, and made the final decisions about whether to hold or evacuate the Square. Wuer Kaixi, a Uyghur student at Beijing Normal University, confronted Premier Li Peng on live television on May 18 in a meeting broadcast nationally — wearing pajamas, having come directly from the hospital where he was being treated for the effects of the hunger strike. He interrupted Li Peng mid-sentence. For millions of Chinese viewers, it was the first time they had seen anyone talk back to a senior leader.
 
       The hunger strike, which began on May 13, transformed the movement from a student petition into a mass mobilization. The strikers' declaration, drafted by Chai Ling and read aloud in the Square, said: "We do not want to die. We love life. We love our motherland and the Chinese people. We will use our lives to seek truth." Ambulances carried weakened students to hospitals; crowds lined the streets, weeping and cheering. By May 17, between one and two million people marched through Beijing in support. The hunger strike forced a moral crisis the government could not manage through propaganda.
 
-      After June 4, the state issued a most-wanted list of 21 student leaders. Seven were captured and imprisoned. Wang Dan served a total of 11 years in prison across two sentences before being exiled to the United States in 1998. Chai Ling escaped through Operation Yellowbird, a network of Hong Kong smugglers, Triad members, and sympathetic officials who spirited roughly 400 dissidents out of China through Hong Kong, at a time when Hong Kong was still a British colony. Wuer Kaixi also escaped; as of the 2020s, he lived in Taiwan. Wang Weilin — if that was Tank Man's real name — was never seen again. Ding Zilin's son, Jiang Jielian, was 17 when he was shot running toward the sound of gunfire on the night of June 3. "He wanted to see what was happening," Ding later said. "That was his crime."
+      After June 4, the state issued a most-wanted list of 21 student leaders. Seven were captured and imprisoned. Wang Dan served a total of 11 years in prison across two sentences before being exiled to the United States in 1998. Chai Ling escaped through Operation Yellowbird, a network of Hong Kong smugglers, Triad members, and sympathetic officials who spirited roughly 400 dissidents out of China through Hong Kong, at a time when Hong Kong was still a British colony. Wuer Kaixi also escaped; as of the 2020s, he lived in Taiwan. Wang Weilin — if that was Tank Man's real name — was never seen again. Ding Zilin's son, Jiang Jielian, was 17 when he was shot running toward the sound of gunfire on the night of June 3. "He wanted to see what was happening," Ding later said. "That was his crime." Ding, a philosophy professor at People's University, spent the next 35 years documenting the dead. The Tiananmen Mothers, the group she founded, is led entirely by women — mothers, wives, sisters — who have identified 203 victims by name. The Chinese government has placed Ding under house arrest during every June anniversary since 1989.
+
+      The workers who died remain the least documented. The Beijing Workers' Autonomous Federation included women factory workers among its members, and three workers — not students — were the first people executed after June 4. The movement's memory gravitates toward the student leaders who escaped and the intellectuals who were imprisoned; the women and men who staffed the barricades at Muxidi and Xidan left fewer records.
 
       The diaspora community has maintained memory through annual commemorations in Hong Kong's Victoria Park (until they were banned in 2020 under the National Security Law), in Taipei, and in overseas Chinese communities worldwide. The movement's legacy inside China is defined by its absence: a generation of young Chinese raised with no knowledge of what happened. The students who survived describe a double trauma — the massacre itself, and the erasure of the massacre from collective memory.
     key_arguments:
@@ -174,6 +178,7 @@ perspectives:
       - "Internal divisions among student leaders over strategy and whether to leave the Square"
       - "Isolated violence by some protesters against soldiers on June 3-4"
       - "The movement's limited engagement with workers' demands and rural China"
+      - "Women workers in the Beijing Workers' Autonomous Federation — their roles and fates remain largely undocumented"
 
   - viewpoint: "Foreign Journalist / Witness"
     viewpoint_type: bystander
@@ -232,9 +237,11 @@ perspectives:
 
       Zhao Ziyang's own memoir, secretly recorded on cassette tapes during his 15 years of house arrest and smuggled out of China after his death in 2005, was published in 2009 as Prisoner of the State. Zhao did not recant. He argued that the Party could have reformed — that political liberalization and economic growth were not incompatible, and that the choice to use force foreclosed the possibility of a Chinese path to constitutional government. "A China that embraces reform and modernization needs the rule of law," he recorded. "I hope that this day will come."
 
-      Academic revisionism has also challenged the protest movement itself. Sociologist Zhao Dingxin, in The Power of Tiananmen (2001), argued that the movement lacked organizational structure, clear demands, or a strategy for negotiation — that its escalation from mourning to hunger strike to occupation was driven by media dynamics and internal competition among student leaders rather than a coherent political program. Chai Ling's controversial interview with Philip Cunningham on May 28, in which she said she hoped for bloodshed because "only when the Square is awash with blood will the people of China open their eyes," provoked criticism that some leaders prioritized martyrdom over their followers' lives.
+      Academic revisionism has also challenged the protest movement itself. Sociologist Zhao Dingxin, in The Power of Tiananmen (2001), argued that the movement lacked organizational structure, clear demands, or a strategy for negotiation — that its escalation from mourning to hunger strike to occupation was driven by media dynamics and internal competition among student leaders rather than a coherent political program. Chai Ling's controversial interview with Philip Cunningham on May 28, in which she said she hoped for bloodshed because "only when the Square is awash with blood will the people of China open their eyes," provoked criticism that some leaders prioritized martyrdom over their followers' lives. The interview shaped Chai Ling's legacy in ways that the male student leaders' comparable misjudgments did not — a pattern scholars like Louisa Lim have observed, in which the movement's only woman commander attracted disproportionate scrutiny for decisions that the male-dominated leadership structure collectively produced.
 
       The question of where the killing happened has been refined by subsequent research. Historian Timothy Brook, in Quelling the People (1992, revised 1998), established that the bulk of civilian casualties occurred on the western approach roads — Muxidi, Fuxingmen, Xidan — not in the Square itself. The PLA cleared the Square largely through negotiation with the remaining students in the pre-dawn hours of June 4; the singer Hou Dejian and three other intellectuals mediated the withdrawal. The concentration of killing on the approach roads, where ordinary Beijing residents — not students — bore the brunt, shifts the event from a student massacre to a broader urban assault. The workers who died at Muxidi were not demanding abstract democracy; they were angry about inflation running at 28% in 1988, about corruption among Party officials' children (the "princelings"), and about an economic reform process that was enriching cadres while eroding the social safety net.
+
+      The most sustained act of post-Tiananmen documentation has come from Ding Zilin and the Tiananmen Mothers. Since 1989, Ding and fellow bereaved mothers Zhang Xianling and Huang Jinping have conducted a victim-by-victim investigation that the state has refused to perform: visiting families, recording names, ages, and circumstances of death, compiling the list that reached 203 by 2024. Their work is illegal in China — they have been detained, surveilled, and barred from travel — yet it constitutes the most complete record of June 4 casualties in existence. Louisa Lim's The People's Republic of Amnesia (2014) draws heavily on the Mothers' archive.
 
       The deepest revisionist challenge concerns the aftermath. Wang Hui, a literary scholar who was in the Square and later became one of China's leading intellectuals, argued in China's New Order (2003) that the post-Tiananmen settlement — economic liberalization without political reform — was not the opposite of what the students wanted but a selective fulfillment. The protesters had demanded both democracy AND an end to corruption and inequality. The state delivered rapid growth while deepening the corruption and inequality the students had protested. The irony, Wang argued, is that the market reforms the Party accelerated after 1992 created precisely the conditions the 1989 movement had opposed — but without any mechanism for dissent.
     key_arguments:
@@ -259,6 +266,10 @@ perspectives:
         author: "Zhao Dingxin"
         year: "2001"
         type: book
+      - title: "The People's Republic of Amnesia: Tiananmen Revisited"
+        author: "Louisa Lim"
+        year: "2014"
+        type: book
     notable_quotes:
       - text: "A China that embraces reform and modernization needs the rule of law."
         speaker: "Zhao Ziyang"
@@ -273,8 +284,9 @@ perspectives:
       - "The post-1989 economic settlement as a selective, ironic fulfillment of protester demands"
     omitted:
       - "The emotional power of the movement — revisionist analysis can flatten the moral clarity of unarmed people facing tanks"
-      - "The ongoing courage of the Tiananmen Mothers and other activists inside China"
+      - "The ongoing courage of the Tiananmen Mothers — a women-led documentation movement operating under state surveillance since 1989"
       - "The perspective of ordinary soldiers, many of them rural conscripts, ordered to fire on civilians"
+      - "Gendered scrutiny of Chai Ling versus comparable failures of male student leaders"
 
 media:
   - media_type: photograph
