@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import type { HistoricalEvent, Perspective } from "../types";
 
 /* ===========================================================================
@@ -162,12 +162,76 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       </section>
 
       {/* ═══════════════════════════════════════════
+          Stage 2.5 — THE FULL STORY (Context Narrative)
+          The crack hooks them. Now the full story grounds them.
+          No title — content speaks for itself (arrive late).
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--context">
+        <div className="hist-context__body hist-reveal">
+          {event.contextNarrative}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          Key Facts — Compact reference panel
+          Date, location, key figures, death toll, displaced, duration.
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--keyfacts">
+        <div className="hist-keyfacts hist-reveal">
+          <div className="hist-keyfacts__grid">
+            <div className="hist-keyfacts__item">
+              <span className="hist-keyfacts__label">Date</span>
+              <span className="hist-keyfacts__value">{event.dateRange || event.datePrimary}</span>
+            </div>
+            <div className="hist-keyfacts__item">
+              <span className="hist-keyfacts__label">Location</span>
+              <span className="hist-keyfacts__value">{event.location}</span>
+            </div>
+            {event.deathToll && (
+              <div className="hist-keyfacts__item">
+                <span className="hist-keyfacts__label">Death toll</span>
+                <span className="hist-keyfacts__value hist-keyfacts__value--figure">{event.deathToll}</span>
+              </div>
+            )}
+            {event.displaced && (
+              <div className="hist-keyfacts__item">
+                <span className="hist-keyfacts__label">Displaced</span>
+                <span className="hist-keyfacts__value hist-keyfacts__value--figure">{event.displaced}</span>
+              </div>
+            )}
+            {event.duration && (
+              <div className="hist-keyfacts__item">
+                <span className="hist-keyfacts__label">Duration</span>
+                <span className="hist-keyfacts__value">{event.duration}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Key Figures */}
+          {event.keyFigures.length > 0 && (
+            <div className="hist-keyfacts__figures">
+              <span className="hist-keyfacts__label">Key figures</span>
+              <div className="hist-keyfacts__figures-list">
+                {event.keyFigures.map((fig, i) => (
+                  <span key={i} className="hist-keyfacts__figure">
+                    <strong className="hist-keyfacts__figure-name">{fig.name}</strong>
+                    <span className="hist-keyfacts__figure-role">{fig.role}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
           Stage 3 — THE PERSPECTIVES (The Conversation)
           Each perspective enters as a "witness."
           Alternating left/right on desktop, stacked on mobile.
+          Interactive: expandable full narrative, all quotes, all key narratives.
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--perspectives">
-        <h2 className="hist-stage__label hist-reveal">THE PERSPECTIVES</h2>
+        <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE PERSPECTIVES</h2>
 
         {event.perspectives.map((perspective, i) => (
           <WitnessBlock
@@ -183,7 +247,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           Two panels: "What They Stress" vs "What They Leave Out"
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--omissions">
-        <h2 className="hist-stage__label hist-reveal">WHAT THEY LEFT OUT</h2>
+        <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">WHAT THEY LEFT OUT</h2>
 
         <div className="hist-omissions-split">
           <div className="hist-omissions-split__panel hist-omissions-split__panel--emphasized hist-reveal">
@@ -239,7 +303,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           Stark numbers + archival images.
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--evidence">
-        <h2 className="hist-stage__label hist-reveal">THE EVIDENCE</h2>
+        <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE EVIDENCE</h2>
 
         {/* Stark numbers */}
         {(event.deathToll || event.displaced || event.duration) && (
@@ -324,9 +388,9 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
 }
 
 /* ===========================================================================
-   WitnessBlock — A single perspective "witness"
-   Identity (dot + name + type), key argument blockquote,
-   one primary source quote if available.
+   WitnessBlock — A single perspective "witness" (interactive v2)
+   Identity (dot + name + type), ALL key arguments, ALL primary source quotes,
+   expandable full narrative.
    =========================================================================== */
 function WitnessBlock({
   perspective,
@@ -336,6 +400,11 @@ function WitnessBlock({
   index: number;
 }) {
   const side = index % 2 === 0 ? "left" : "right";
+  const [expanded, setExpanded] = useState(false);
+
+  const toggleExpand = useCallback(() => {
+    setExpanded((prev) => !prev);
+  }, []);
 
   return (
     <div
@@ -355,23 +424,60 @@ function WitnessBlock({
         <span className="hist-witness__type">{perspective.viewpointType}</span>
       </div>
 
-      {/* Key argument — strongest claim from this side */}
-      {perspective.keyNarratives[0] && (
-        <blockquote className="hist-witness__argument">
-          {perspective.keyNarratives[0]}
-        </blockquote>
+      {/* Key arguments — ALL items, not just first. Prominent (Playfair italic). */}
+      {perspective.keyNarratives.length > 0 && (
+        <div className="hist-witness__arguments">
+          {perspective.keyNarratives.map((narrative, ni) => (
+            <blockquote key={ni} className="hist-witness__argument">
+              {narrative}
+            </blockquote>
+          ))}
+        </div>
       )}
 
-      {/* One primary source quote if available */}
-      {perspective.primarySources[0] && (
-        <div className="hist-witness__source">
+      {/* ALL primary source quotes — archival treatment */}
+      {perspective.primarySources.map((source, si) => (
+        <div key={si} className="hist-witness__source">
           <p className="hist-witness__quote">
-            &ldquo;{perspective.primarySources[0].text}&rdquo;
+            &ldquo;{source.text}&rdquo;
           </p>
           <cite className="hist-witness__cite">
-            &mdash; {perspective.primarySources[0].author},{" "}
-            {perspective.primarySources[0].date}
+            &mdash; {source.author}, <em>{source.work}</em>, {source.date}
           </cite>
+        </div>
+      ))}
+
+      {/* Expand toggle — read full perspective narrative */}
+      <button
+        className="hist-witness__expand"
+        type="button"
+        onClick={toggleExpand}
+        aria-expanded={expanded}
+      >
+        {expanded ? "Collapse perspective" : "Read full perspective"}
+        <span className={`hist-witness__expand-arrow ${expanded ? "hist-witness__expand-arrow--open" : ""}`} aria-hidden="true">
+          &#9662;
+        </span>
+      </button>
+
+      {/* Full narrative — progressive disclosure */}
+      {expanded && (
+        <div className="hist-witness__full-narrative">
+          <p className="hist-witness__narrative-text">
+            {perspective.narrative}
+          </p>
+
+          {/* Disputed claims */}
+          {perspective.disputed.length > 0 && (
+            <div className="hist-witness__disputed">
+              <span className="hist-witness__disputed-label">Disputed</span>
+              <ul className="hist-witness__disputed-list">
+                {perspective.disputed.map((d, di) => (
+                  <li key={di}>{d}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
