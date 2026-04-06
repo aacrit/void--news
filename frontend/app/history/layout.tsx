@@ -15,6 +15,10 @@ export default function HistoryLayout({
 }) {
   return (
     <div className="hist-page hist-page--clean">
+      {/* Progressive enhancement: if JS fails, reveal all content */}
+      <noscript>
+        <style>{`.hist-reveal { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }`}</style>
+      </noscript>
       {/* Desk-lamp vignette overlay (halved opacity via hist-page--clean) */}
       <div className="hist-vignette" aria-hidden="true" />
       <HistoryTopbar />

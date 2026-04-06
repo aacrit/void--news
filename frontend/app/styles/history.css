@@ -3220,6 +3220,12 @@
     transform: none;
   }
 
+  .hist-brief {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
   .hist-reveal {
     opacity: 1;
     transform: none;

@@ -46,9 +46,11 @@ const PERSP_COLORS: Record<string, string> = {
 interface EventDetailProps {
   event: HistoricalEvent;
   allEvents: HistoricalEvent[];
+  onNavigateToEvent?: (event: HistoricalEvent) => void;
+  onClose?: () => void;
 }
 
-export default function EventDetail({ event, allEvents }: EventDetailProps) {
+export default function EventDetail({ event, allEvents, onNavigateToEvent, onClose }: EventDetailProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   /* Determine next event for Stage 6 navigation */
@@ -298,24 +300,20 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         {nextEvent ? (
           <>
             <p className="hist-next__prompt">Now read:</p>
-            <a
+            <button
               className="hist-next__cta"
-              href={`/history/${nextEvent.slug}`}
-              onClick={(e) => {
-                e.preventDefault();
-                /* Navigate to next event page directly */
-                window.location.href = `/history/${nextEvent.slug}`;
-              }}
+              type="button"
+              onClick={() => onNavigateToEvent?.(nextEvent)}
             >
               {CTAS[nextEvent.slug] ||
                 `Explore ${nextEvent.perspectives.length} accounts of ${nextEvent.title}`}
-            </a>
+            </button>
           </>
         ) : (
           <button
             className="hist-next__cta"
             type="button"
-            onClick={() => window.history.back()}
+            onClick={() => onClose?.()}
           >
             Return to The Archive
           </button>
