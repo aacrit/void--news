@@ -42,12 +42,12 @@
   --hist-bg-secondary: #E9E3D4;
   --hist-bg-inset: #EDE8D8;
 
-  /* Perspective colors */
-  --hist-persp-a: #3D6B8E;
-  --hist-persp-b: #8E5A3D;
-  --hist-persp-c: #5A7A4A;
-  --hist-persp-d: #7A5A7A;
-  --hist-persp-e: #8E7A3D;
+  /* Perspective colors — warmed to belong in the archival palette */
+  --hist-persp-a: #4A6E85;
+  --hist-persp-b: #8E5B42;
+  --hist-persp-c: #5D7748;
+  --hist-persp-d: #7D5A6E;
+  --hist-persp-e: #8B7638;
 
   /* Surfaces */
   --hist-bg: #F2EDE0;
@@ -103,11 +103,11 @@
   --hist-ink-secondary: #B0A898;
   --hist-ink-muted: #A09888;
 
-  --hist-persp-a: #5A9AC4;
-  --hist-persp-b: #C47A5A;
-  --hist-persp-c: #7AA06A;
-  --hist-persp-d: #A07AA0;
-  --hist-persp-e: #C4A85A;
+  --hist-persp-a: #6498B8;
+  --hist-persp-b: #C47D5E;
+  --hist-persp-c: #7A9E62;
+  --hist-persp-d: #A07A90;
+  --hist-persp-e: #C4A554;
 
   --hist-bg-secondary: #232018;
   --hist-bg-inset: #1E1A14;
@@ -1944,7 +1944,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  opacity: 0.04;
+  opacity: 0.08;
 }
 
 .hist-tl-full__era-band--ancient { background: linear-gradient(180deg, #8B6F47 0%, transparent 100%); }
@@ -2777,6 +2777,28 @@
 }
 
 /* ── Inline story container ── */
+/* ── FLIP Morph Overlay — card → full-screen hero transition ── */
+.hist-flip-morph {
+  will-change: top, left, width, height, opacity;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* L-cut: EventDetail content fades in during morph, slightly delayed */
+.hist-inline-story-wrap {
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+
+.hist-inline-story-wrap--entering {
+  opacity: 0;
+  animation: histLCutFadeIn 400ms ease 300ms forwards;
+}
+
+@keyframes histLCutFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .hist-inline-story {
   min-height: calc(100vh - 56px);
   min-height: calc(100dvh - 56px);
@@ -3853,13 +3875,66 @@
   padding-top: var(--space-6);
   padding-bottom: var(--space-7);
   text-align: center;
+  /* Darkened band for visual closure */
+  background: linear-gradient(180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--hist-paper-deep, #D6CFBC) 40%, transparent) 30%,
+    color-mix(in srgb, var(--hist-paper-deep, #D6CFBC) 60%, transparent) 70%,
+    transparent 100%
+  );
+}
+
+:root[data-mode="dark"] .hist-stage--next {
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 30%,
+    rgba(0, 0, 0, 0.2) 70%,
+    transparent 100%
+  );
+}
+
+.hist-next__cliffhanger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hist-next__thumb-wrap {
+  width: 120px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 2px;
+  opacity: 0.7;
+  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  box-shadow: var(--hist-doc-edge);
+}
+
+.hist-next__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hist-next__hook {
+  font-family: var(--font-editorial);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--hist-ink);
+  max-width: 500px;
+  margin: 0;
+  opacity: 0.8;
 }
 
 .hist-next__prompt {
   font-family: var(--font-data);
   font-size: var(--text-sm);
   color: var(--hist-ink-muted);
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-2);
   letter-spacing: 0.02em;
 }
 
@@ -5509,8 +5584,8 @@
    --------------------------------------------------------------------------- */
 .hist-tl-arc-lane {
   position: absolute;
-  top: calc(50% + 40px);
-  height: 32px;
+  top: calc(50% + 28px);
+  height: 36px;
   z-index: 3;
 }
 
@@ -5519,26 +5594,19 @@
   top: 50%;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 1.5px;
   background: var(--arc-color, #B44C00);
-  opacity: 0.35;
+  opacity: 0.30;
   transform: translateY(-50%);
-  /* Organic dash pattern */
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--arc-color, #B44C00) 0px,
-    var(--arc-color, #B44C00) 12px,
-    transparent 12px,
-    transparent 16px
-  );
-  background-size: 16px 2px;
-  background-repeat: repeat-x;
-  background-color: transparent;
+  /* Organic ink feel: slight waviness via clip-path wouldn't work,
+     so use a softer continuous line with glow instead of dashes */
+  filter: blur(0.3px);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--arc-color, #B44C00) 20%, transparent);
 }
 
 .hist-tl-arc-lane__label {
   position: absolute;
-  top: -18px;
+  top: -20px;
   left: 0;
   display: flex;
   flex-direction: column;
@@ -5546,20 +5614,20 @@
 }
 
 .hist-tl-arc-lane__title {
-  font-family: var(--font-meta);
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-family: var(--font-editorial);
+  font-size: 0.65rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.02em;
   color: var(--arc-color, #B44C00);
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 .hist-tl-arc-lane__subtitle {
   font-family: var(--font-data);
   font-size: 0.5rem;
   color: var(--hist-ink-muted);
-  opacity: 0.5;
+  opacity: 0.4;
   margin-top: 1px;
 }
 
@@ -5567,38 +5635,40 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .hist-tl-arc-lane__node-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--arc-color, #B44C00);
-  opacity: 0.5;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--arc-color, #B44C00) 30%, transparent);
-  transition: transform 200ms ease, opacity 200ms ease;
+  opacity: 0.45;
+  border: 1px solid var(--hist-bg);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--arc-color, #B44C00) 35%, transparent);
+  transition: transform 200ms var(--ease-archive-snap), opacity 200ms ease, box-shadow 200ms ease;
 }
 
 .hist-tl-arc-lane__node:hover .hist-tl-arc-lane__node-dot {
-  transform: scale(1.6);
+  transform: scale(1.5);
   opacity: 0.8;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--arc-color, #B44C00) 50%, transparent);
 }
 
 :root[data-mode="dark"] .hist-tl-arc-lane__thread {
-  opacity: 0.25;
+  opacity: 0.20;
 }
 
 :root[data-mode="dark"] .hist-tl-arc-lane__node-dot {
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 :root[data-mode="dark"] .hist-tl-arc-lane__title {
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 /* ---------------------------------------------------------------------------
