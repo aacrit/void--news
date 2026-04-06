@@ -150,6 +150,18 @@ function DataMark({ data, size, mounted }: {
         />
       </g>
 
+      {/* Source count — below beam, in lower half of circle */}
+      <text x="16" y="18" textAnchor="middle" dominantBaseline="central"
+        style={{
+          fontFamily: "var(--font-data)", fontSize: px > 32 ? 8 : 7, fontWeight: 700,
+          fill: "var(--fg-secondary)",
+          opacity: mounted ? 0.8 : 0,
+          transition: "opacity 400ms var(--ease-out) 300ms",
+        }}
+      >
+        {data.sourceCount}
+      </text>
+
       {/* Center post */}
       <line x1="16" y1="22" x2="16" y2="28"
         stroke="var(--fg-tertiary)" strokeWidth="1.4"
@@ -514,14 +526,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
         )}
       </span>
 
-      {/* Consensus ratio — compact corroborated/total below lean label */}
-      {data.consensusTotal && data.consensusTotal >= 3 && data.consensusCorroborated != null && (
-        <span className="sigil__consensus" style={{
-          opacity: mounted ? 0.7 : 0,
-        }}>
-          {data.consensusCorroborated}/{data.consensusTotal}
-        </span>
-      )}
+      {/* Consensus X/Y stays in deep dive (void --verify) where it has context */}
 
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
