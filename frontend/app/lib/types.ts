@@ -360,9 +360,9 @@ export interface ShipReply {
  *  Overlapping ranges so edge cases appear in both adjacent filters. */
 export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> = {
   All: null,
-  Left: { min: 0, max: 43 },
-  Balanced: { min: 34, max: 66 },
-  Right: { min: 57, max: 100 },
+  Left: { min: 0, max: 46 },
+  Balanced: { min: 38, max: 62 },
+  Right: { min: 54, max: 100 },
 };
 
 /* ---------------------------------------------------------------------------
