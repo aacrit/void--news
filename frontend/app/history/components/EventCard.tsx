@@ -69,9 +69,11 @@ export default function EventCard({ event }: EventCardProps) {
         <h3 className="hist-event-card__title">{event.title}</h3>
         <span className="hist-event-card__date">{event.datePrimary}</span>
         <div className="hist-event-card__meta">
-          <span className="hist-event-card__perspectives">
-            {event.perspectives.length} perspective{event.perspectives.length !== 1 ? "s" : ""}
-          </span>
+          {event.perspectives.length > 0 && (
+            <span className="hist-event-card__perspectives">
+              {event.perspectives.length} perspective{event.perspectives.length !== 1 ? "s" : ""}
+            </span>
+          )}
           {eraInfo && (
             <span className="hist-event-card__date">{eraInfo.label}</span>
           )}

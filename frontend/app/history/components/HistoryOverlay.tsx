@@ -116,14 +116,46 @@ export default function HistoryOverlay({
     };
   }, [event.slug, onClose]);
 
-  /* ── Close handler ── */
+  /* ── Close handler with reverse-morph ── */
   const handleClose = useCallback(() => {
     if (closingRef.current) return;
     closingRef.current = true;
 
-    /* Go back in history to restore the /history URL */
+    /* Attempt reverse-morph animation back to source card */
+    if (!reducedMotion) {
+      const heroEl = overlayRef.current?.querySelector<HTMLElement>(".hist-stage__hero");
+      const sourceCard = document.querySelector<HTMLElement>(`[data-slug="${event.slug}"]`);
+      const sourcePhoto = sourceCard?.querySelector<HTMLElement>(".hist-tl-card__photo");
+
+      if (heroEl && sourcePhoto) {
+        const heroRect = heroEl.getBoundingClientRect();
+        const targetRect = sourcePhoto.getBoundingClientRect();
+
+        if (heroRect.width > 0 && targetRect.width > 0) {
+          const dx = targetRect.left - heroRect.left;
+          const dy = targetRect.top - heroRect.top;
+          const sx = targetRect.width / heroRect.width;
+          const sy = targetRect.height / heroRect.height;
+
+          const animation = heroEl.animate(
+            [
+              { transform: "translate(0, 0) scale(1, 1)", opacity: "1" },
+              { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, opacity: "0.4" },
+            ],
+            { duration: 380, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
+          );
+
+          animation.onfinish = () => {
+            window.history.back();
+          };
+          return;
+        }
+      }
+    }
+
+    /* Fallback: close instantly */
     window.history.back();
-  }, []);
+  }, [event.slug, reducedMotion]);
 
   /* ── Keyboard: Escape to close + focus trap ── */
   useEffect(() => {

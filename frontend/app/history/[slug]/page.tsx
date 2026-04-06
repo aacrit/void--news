@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { MOCK_EVENTS } from "../mockData";
+import { HOOKS } from "../hooks";
 import EventPageClient from "./EventPageClient";
 
 /* ===========================================================================
@@ -39,6 +41,17 @@ export function generateStaticParams() {
   const mockSlugs = MOCK_EVENTS.map((e) => e.slug);
   const allSlugs = [...new Set([...mockSlugs, ...YAML_SLUGS])];
   return allSlugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const event = MOCK_EVENTS.find((e) => e.slug === slug);
+  const title = event?.title ?? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const description = HOOKS[slug] ?? event?.subtitle ?? `One event. Every side. Decide for yourself.`;
+  return {
+    title: `${title} — void --history`,
+    description,
+  };
 }
 
 export default function EventPage({ params }: { params: Promise<{ slug: string }> }) {
