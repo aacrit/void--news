@@ -35,6 +35,10 @@ _MIN_INTERVAL: float = 1.0  # Claude API is more generous than Gemini free tier
 _MAX_CALLS_PER_RUN: int = 15
 _call_count: int = 0
 
+# Persistent failure flag — set on billing/credit errors to skip all
+# subsequent calls in the same run.
+_persistent_failure: bool = False
+
 _client: object = None
 
 
@@ -83,7 +87,10 @@ def generate_json(
 
     Returns parsed JSON dict, or None on failure.
     """
-    global _call_count
+    global _call_count, _persistent_failure
+
+    if _persistent_failure:
+        return None
 
     client = _get_client()
     if client is None:
@@ -95,19 +102,18 @@ def generate_json(
     # Build messages
     messages = [{"role": "user", "content": prompt}]
 
+    # Increment call count ONCE before the retry loop — failed retries should
+    # not burn additional budget.
+    if count_call:
+        _call_count += 1
+
     for attempt in range(max_retries + 1):
         try:
             _rate_limit()
-            if count_call:
-                _call_count += 1
-
-            # Cap max_tokens to 4096 for brief generation — keeps responses
-            # focused and avoids the streaming requirement for long operations.
-            effective_max = min(max_output_tokens, 4096)
 
             kwargs = {
                 "model": _MODEL,
-                "max_tokens": effective_max,
+                "max_tokens": max_output_tokens,
                 "messages": messages,
                 "temperature": 0.3,
             }
@@ -155,6 +161,11 @@ def generate_json(
             return None
         except Exception as e:
             error_str = str(e).lower()
+            # Detect persistent billing/credit errors — no point retrying
+            if "credit" in error_str or "balance" in error_str or "billing" in error_str:
+                _persistent_failure = True
+                print(f"  [error] Claude persistent billing failure — disabling for this run: {e}")
+                return None
             if "429" in error_str or "rate" in error_str:
                 print(f"  [warn] Claude rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
@@ -168,7 +179,9 @@ def generate_json(
 
 
 def is_available() -> bool:
-    """Check if Claude is configured and the SDK is installed."""
+    """Check if Claude is configured, the SDK is installed, and no persistent failure."""
+    if _persistent_failure:
+        return False
     if not CLAUDE_AVAILABLE:
         return False
     api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()

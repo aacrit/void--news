@@ -150,6 +150,14 @@ _EDITION_FOCUS = {
     "CANADA": "Canadian lens. Lead with what matters most to someone in Canada. "
               "Domestic politics, economy, US-Canada relations come first. "
               "Write as if for The Globe and Mail — measured, North American context.",
+    "EUROPE": "European lens. Lead with what matters most to someone living in Europe. "
+              "EU policy, trade, energy security, migration, ECB, NATO come first. "
+              "International stories only when they directly affect the continent. "
+              "Write as if for the editorial page of Le Monde or FAZ — continental depth, institutional perspective.",
+    "SOUTH-ASIA": "South Asian lens. Lead with what matters most to someone in the subcontinent. "
+                  "India-Pakistan dynamics, regional economics, SAARC, climate, tech sector come first. "
+                  "Global stories only when they directly affect the region. "
+                  "Write as if for The Hindu or Dawn — subcontinental depth, regional stakes.",
 }
 
 
