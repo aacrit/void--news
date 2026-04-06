@@ -1896,6 +1896,7 @@
   display: flex;
   align-items: center;
   scrollbar-width: none;
+  position: relative;
 
   /* Padding so first/last cards can center */
   padding-left: calc(50vw - var(--tl-card-w, 520px) / 2);
@@ -2383,7 +2384,7 @@
   flex-wrap: wrap;
 }
 
-.hist-tl-era-btn {
+.hist-tl-era {
   font-family: var(--font-meta);
   font-size: 0.6rem;
   font-weight: 500;
@@ -2400,18 +2401,18 @@
   min-height: 28px;
 }
 
-.hist-tl-era-btn:hover {
+.hist-tl-era:hover {
   color: var(--hist-accent);
   border-color: var(--hist-accent);
 }
 
-.hist-tl-era-btn--active {
+.hist-tl-era--active {
   color: var(--hist-paper-fixed, #F2EDE0);
   background: var(--hist-accent);
   border-color: var(--hist-accent);
 }
 
-.hist-tl-era-btn:focus-visible {
+.hist-tl-era:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
 }
