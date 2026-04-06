@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import type { HistoricalEvent, RedactedEvent, HistoryEra, HistoryRegion } from "../types";
+import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
 import { ERAS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import EventDetail from "./EventDetail";
-import CartographerStrip from "./CartographerStrip";
+/* CartographerStrip deferred — removed from timeline view, kept as component for future arc/map pages */
 
 /* ===========================================================================
    HistoryLanding — Organic Ink Timeline
@@ -363,8 +363,7 @@ export default function HistoryLanding({
   const flipRectRef = useRef<DOMRect | null>(null);
   const flipImageRef = useRef<string | null>(null);
   const [flipAnimating, setFlipAnimating] = useState(false);
-  const [mapActive, setMapActive] = useState(false);
-  const [activeRegion, setActiveRegion] = useState<HistoryRegion | null>(null);
+  /* Globe view removed — kept simple */
 
   /* ── Detect vertical (mobile) timeline mode ── */
   useEffect(() => {
@@ -955,18 +954,6 @@ export default function HistoryLanding({
               </button>
             );
           })}
-          {/* Globe toggle at end of era pills */}
-          <button
-            className="hist-tl-view-toggle"
-            onClick={() => {
-              setMapActive((prev) => !prev);
-              if (mapActive) setActiveRegion(null);
-            }}
-            type="button"
-            aria-label={mapActive ? "Close world map" : "Show world map"}
-          >
-            [ {mapActive ? "close" : "globe"} ]
-          </button>
         </nav>
       </div>
 
@@ -982,24 +969,6 @@ export default function HistoryLanding({
           {isMobileVertical ? "scroll through time" : "\u2190 scroll through time \u2192"}
         </span>
       </div>
-
-      {/* CartographerStrip — overlay panel, opens on [globe] toggle */}
-      {mapActive && (
-        <CartographerStrip
-          events={sortedEvents}
-          focusedIndex={focusedIndex}
-          activeRegion={activeRegion}
-          currentEra={currentEra}
-          onRegionClick={(region) => {
-            setActiveRegion((prev) => prev === region ? null : region);
-          }}
-          onEventClick={(event) => {
-            setMapActive(false);
-            openStory(event);
-          }}
-          onClose={() => setMapActive(false)}
-        />
-      )}
 
       {/* Full timeline -- horizontal scroll */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
@@ -1078,13 +1047,12 @@ export default function HistoryLanding({
             const side = sides[i];
             const pct = positions[i] * 100;
             const isFocused = i === focusedIndex;
-            const isGhosted = activeRegion && !event.regions.includes(activeRegion);
 
             return (
               <div
                 key={event.slug}
                 ref={(el) => { stationRefs.current[i] = el; }}
-                className={`hist-tl-full__station${isGhosted ? " hist-tl-full__station--ghosted" : ""}`}
+                className="hist-tl-full__station"
                 style={{ left: `${pct}%` }}
               >
                 {/* Dot on track */}
