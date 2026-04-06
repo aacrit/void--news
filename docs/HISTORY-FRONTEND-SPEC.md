@@ -150,7 +150,71 @@ python3 pipeline/history/source_enricher.py --list-apis     # see what's availab
 
 ---
 
-## 6. Files Reference
+## 6. Frontend Audit Findings (2026-04-05)
+
+From 5 parallel audits: frontend-ship, UAT, history-qa, perspective-audit, cinematic-overhaul.
+
+### Already Fixed (by frontend-ship agent)
+
+- [slug]/page.tsx expanded from 10 to 25 slugs in generateStaticParams
+- 4 missing HOOKS/CTAS added (ashoka, fall-of-rome, mali-empire, crusades)
+- REDACTED_EVENTS cleared (all 5 stubs now published)
+
+### Priority Fixes for historyUI Session
+
+**P1 — CRITICAL**
+
+| ID | Issue | File | Fix |
+|----|-------|------|-----|
+| H17 | "Now read:" CTA at end of event detail does **nothing** — `onNavigateToEvent` passed to EventDetail but never wired from HistoryLanding | `HistoryOverlay.tsx:185`, `HistoryLanding.tsx:287` | Wire handler: close current overlay, open next event |
+| H03 | EventDetail HOOKS has only 3 entries (vs 25 in HistoryLanding) — 22 events lose editorial punch in Stage 2 | `EventDetail.tsx:19-27` | Extract shared HOOKS to `hooks.ts`, import in both |
+| H02 | 25 full-width posters = ~50 viewport heights with no wayfinding | `HistoryLanding.tsx` | Add era-grouped sections with sticky headers, or activate deferred EraDrawer/MapView |
+
+**P2 — SIGNIFICANT**
+
+| ID | Issue | File | Fix |
+|----|-------|------|-----|
+| H06 | Region filter uses single `region` column — events spanning multiple regions only appear under primary region | `data.ts:159` | Short-term: document. Long-term: TEXT[] column |
+| H07 | Direct URL event pages: topbar scrolls away on mobile behind sticky hero | `EventDetail.tsx` | Add fixed back button to standalone EventDetail |
+| H09 | Overlay focus not moved to close button on mount (WCAG) | `HistoryOverlay.tsx:150` | Add autoFocus to close button or useEffect focus |
+| H18 | Era/region listing pages show "0 perspectives" — empty arrays passed | `data.ts:147` | Fetch perspective count or denormalize |
+| H15 | No `<title>` or metadata on history pages | `layout.tsx` | Add metadata export + generateMetadata in [slug]/page.tsx |
+
+**P3 — POLISH**
+
+| ID | Issue | Fix |
+|----|-------|-----|
+| H08 | Duplicate `histPerspEnterSimple` keyframe (lines 937 + 3985) | Remove first occurrence |
+| H16 | contextNarrative rendered as single text blob (no paragraph splits) | Split on "\n" like PerspectiveView does |
+| H11 | PosterImage re-renders on every fallback error | Use useRef for index, only setState on final |
+| H12 | No preloading of adjacent lightbox images | `new Image().src` on prev/next |
+
+### Cinematic Enhancements (3 highest impact)
+
+| Priority | What | Effort | File |
+|----------|------|--------|------|
+| 1 | **Film grain** — history pages have ZERO texture (removed in cleanup) | 5 lines CSS | `history.css` — add `::before` pseudo with `--paper-texture` SVG at 0.06-0.08 opacity |
+| 2 | **Perspective tab cross-dissolve** — currently just `translateY(8px)` fade, no exit animation | ~30 lines CSS | Resurrect `--ease-lectern-turn`, add `rotateY(2deg)` page-turn feeling |
+| 3 | **Overlay close reverse-morph** — open has FLIP morph but close is abrupt disappear | ~20 lines JS | Capture hero rect, animate back to poster via `[data-slug]`, 380ms |
+
+### Content Quality Grades (from historiographic + perspective audits)
+
+| Dimension | Grade | Remaining Gap |
+|-----------|-------|---------------|
+| Chronological breadth | A- | Was C+ — massive improvement |
+| Geographic diversity | A | All 10 regions covered |
+| Perspective balance | A | 100 perspectives, all viewpoint types used |
+| Source credibility | A | Multilingual, 12+ source languages |
+| Causal diversity | A | All events multicausal |
+| Evidentiary base | A | Every evidence type represented |
+| Western centrality | A- | Ashoka, Mali, Mongol Baghdad are autonomous |
+| Gender inclusion | B | **6 events have zero women's content** (Trail of Tears, Fall of Rome, Peloponnesian War, Tiananmen, Opium Wars, Scramble for Africa) |
+| Indigenous viewpoints | A- | 5 events use indigenous type correctly |
+| Show-don't-tell | A | Zero violations across 25 events |
+
+---
+
+## 7. Files Reference
 
 | Path | What |
 |------|------|
