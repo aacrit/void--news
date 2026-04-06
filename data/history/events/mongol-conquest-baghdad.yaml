@@ -85,6 +85,12 @@ key_figures:
   wikipedia: https://en.wikipedia.org/wiki/Genghis_Khan
 - name: Sultan Qutuz
   role: Mamluk sultan of Egypt who defeated the Mongols at Ain Jalut (1260), halting Mongol expansion into Africa and preserving Islamic political authority
+- name: Doquz Khatun
+  role: Hulagu Khan's principal wife, protected Christians in Baghdad during the sack
+  wikidata: Q2606271
+  born: 1220
+  died: 1265
+  wikipedia: https://en.wikipedia.org/wiki/Doquz_Khatun
 legacy_points:
 - Ended the Abbasid Caliphate after 508 years; no universally recognized Sunni caliphate has existed since
 - The House of Wisdom's destruction eliminated the largest repository of translated Greek, Persian, and Indian scientific texts in the world

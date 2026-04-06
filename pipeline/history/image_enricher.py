@@ -170,6 +170,66 @@ EVENT_QUERIES = {
         "unsplash": ["Haiti Citadelle fortress", "Port au Prince historic", "Caribbean colonial historic"],
         "pexels": ["Citadelle Laferriere Haiti", "Port au Prince Haiti"],
     },
+    "alexanders-conquests": {
+        "unsplash": ["Alexander the Great mosaic", "Persepolis ruins Iran", "ancient Macedonia Greece"],
+        "pexels": ["Persepolis ruins Iran", "ancient Greek sculpture"],
+    },
+    "apartheid": {
+        "unsplash": ["Soweto South Africa", "Robben Island prison", "South Africa freedom memorial"],
+        "pexels": ["Soweto South Africa", "Cape Town South Africa landmark"],
+    },
+    "assassination-of-caesar": {
+        "unsplash": ["Roman Forum ruins", "ancient Rome Senate", "Julius Caesar bust"],
+        "pexels": ["Roman Forum Italy ruins", "ancient Rome ruins"],
+    },
+    "black-death": {
+        "unsplash": ["medieval Europe plague", "medieval cathedral Gothic", "European medieval village"],
+        "pexels": ["medieval European architecture", "Gothic cathedral Europe"],
+    },
+    "chinese-cultural-revolution": {
+        "unsplash": ["Tiananmen Gate Beijing", "China propaganda poster art", "Beijing historic"],
+        "pexels": ["Tiananmen Gate Beijing China", "Beijing China historic"],
+    },
+    "civil-rights-movement": {
+        "unsplash": ["Martin Luther King memorial", "civil rights march Washington", "Selma Alabama bridge"],
+        "pexels": ["Martin Luther King memorial Washington", "civil rights memorial"],
+    },
+    "cuban-missile-crisis": {
+        "unsplash": ["Cuba Havana historic", "Cold War memorial", "Kennedy White House"],
+        "pexels": ["Havana Cuba historic", "White House Washington DC"],
+    },
+    "fall-of-tenochtitlan": {
+        "unsplash": ["Aztec ruins Mexico City", "Templo Mayor Mexico", "Mexico City Zocalo historic"],
+        "pexels": ["Templo Mayor Mexico City", "Aztec ruins Mexico"],
+    },
+    "gutenberg-printing-press": {
+        "unsplash": ["Gutenberg Bible printing", "medieval printing press", "Mainz Germany historic"],
+        "pexels": ["antique printing press", "Mainz Germany cathedral"],
+    },
+    "indian-independence-movement": {
+        "unsplash": ["India Gate New Delhi", "Salt March Gandhi", "India independence memorial"],
+        "pexels": ["India Gate New Delhi", "Gandhi memorial India"],
+    },
+    "mongol-empire": {
+        "unsplash": ["Mongolia steppe landscape", "Genghis Khan statue Mongolia", "Central Asia Silk Road"],
+        "pexels": ["Mongolia steppe horses", "Genghis Khan statue Mongolia"],
+    },
+    "russian-revolution": {
+        "unsplash": ["Winter Palace St Petersburg", "Red Square Moscow historic", "Russian Revolution memorial"],
+        "pexels": ["Winter Palace St Petersburg Russia", "Red Square Moscow"],
+    },
+    "september-11-attacks": {
+        "unsplash": ["9/11 memorial New York", "World Trade Center memorial", "Ground Zero memorial"],
+        "pexels": ["9/11 memorial New York", "One World Trade Center"],
+    },
+    "silk-road": {
+        "unsplash": ["Silk Road Samarkand", "Dunhuang caves China", "Central Asia caravan route"],
+        "pexels": ["Samarkand Registan Uzbekistan", "Dunhuang caves China"],
+    },
+    "the-holocaust": {
+        "unsplash": ["Auschwitz memorial", "Holocaust memorial Berlin", "concentration camp memorial"],
+        "pexels": ["Holocaust memorial Berlin", "Auschwitz memorial Poland"],
+    },
 }
 
 

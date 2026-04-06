@@ -9,43 +9,58 @@ region: europe
 country: Multiple
 category: disaster
 severity: catastrophic
-death_toll: '75-200 million across Eurasia and North Africa (estimates vary; recent DNA studies suggest the higher end)'
-affected_population: 'Killed 30-60% of Europe''s population; devastated the Middle East, Central Asia, and North Africa along trade routes'
-duration: 'Peak pandemic 1346-1353; recurrent outbreaks every 10-15 years through the 18th century'
-summary: 'In October 1347, twelve Genoese trading ships docked at the Sicilian port of Messina. Most of the sailors were dead. Those still alive were covered in black boils that oozed blood and pus. The
-  harbor authorities ordered the ships out, but it was too late. Within six months, the plague had reached Genoa, Venice, and Marseilles. By December 1348, it had crossed the Alps. By 1349, it was in
-  England, Germany, and Scandinavia. By 1351, it had reached Moscow. The bacterium — Yersinia pestis, confirmed by DNA analysis of mass grave remains in 2011 — traveled in the guts of fleas that lived
-  on black rats that lived on ships that moved along the trade routes of the medieval world.
+death_toll: 75-200 million across Eurasia and North Africa (estimates vary; recent DNA studies suggest the higher end)
+affected_population: Killed 30-60% of Europe's population; devastated the Middle East, Central Asia, and North Africa along
+  trade routes
+duration: Peak pandemic 1346-1353; recurrent outbreaks every 10-15 years through the 18th century
+summary: 'In October 1347, twelve Genoese trading ships docked at the Sicilian port of Messina. Most of the sailors were dead.
+  Those still alive were covered in black boils that oozed blood and pus. The harbor authorities ordered the ships out, but
+  it was too late. Within six months, the plague had reached Genoa, Venice, and Marseilles. By December 1348, it had crossed
+  the Alps. By 1349, it was in England, Germany, and Scandinavia. By 1351, it had reached Moscow. The bacterium — Yersinia
+  pestis, confirmed by DNA analysis of mass grave remains in 2011 — traveled in the guts of fleas that lived on black rats
+  that lived on ships that moved along the trade routes of the medieval world.
 
 
-  The disease presented in three forms. Bubonic plague produced swollen lymph nodes — buboes — in the groin, armpit, or neck, followed by fever, chills, and death within a week. Pneumonic plague attacked
-  the lungs and spread through airborne droplets; it killed in two to three days. Septicemic plague entered the bloodstream directly and could kill within hours, before symptoms appeared. Giovanni
-  Boccaccio, who survived the plague in Florence, wrote in the preface to the Decameron that the sick "ate lunch with their friends and dinner with their ancestors in paradise."
+  The disease presented in three forms. Bubonic plague produced swollen lymph nodes — buboes — in the groin, armpit, or neck,
+  followed by fever, chills, and death within a week. Pneumonic plague attacked the lungs and spread through airborne droplets;
+  it killed in two to three days. Septicemic plague entered the bloodstream directly and could kill within hours, before symptoms
+  appeared. Giovanni Boccaccio, who survived the plague in Florence, wrote in the preface to the Decameron that the sick "ate
+  lunch with their friends and dinner with their ancestors in paradise."
 
 
-  The death toll defies precise accounting. Before the plague, Europe''s population was approximately 75 million. By 1353, it had fallen to between 30 and 50 million. In England, tax records and manorial
-  court rolls allow granular estimates: the population dropped from roughly 6 million to 2.5 million. In Florence, the city''s population fell from 120,000 to 50,000. In Cairo, the Mamluk historian
-  al-Maqrizi recorded that at the peak, between 10,000 and 20,000 people died per day. In Avignon, seat of the papacy, Pope Clement VI consecrated the Rhone river so that corpses could be thrown into
-  it, the cemeteries having overflowed.
+  The death toll defies precise accounting. Before the plague, Europe''s population was approximately 75 million. By 1353,
+  it had fallen to between 30 and 50 million. In England, tax records and manorial court rolls allow granular estimates: the
+  population dropped from roughly 6 million to 2.5 million. In Florence, the city''s population fell from 120,000 to 50,000.
+  In Cairo, the Mamluk historian al-Maqrizi recorded that at the peak, between 10,000 and 20,000 people died per day. In Avignon,
+  seat of the papacy, Pope Clement VI consecrated the Rhone river so that corpses could be thrown into it, the cemeteries
+  having overflowed.
 
 
-  The plague reached Europe via the Mongol trade network. In 1346, the Mongol army besieging the Genoese trading post of Caffa (modern Feodosia, Crimea) catapulted plague-infected corpses over the city
-  walls — an event recorded by the notary Gabriele de'' Mussi, though modern historians debate whether this constituted effective biological warfare or whether the plague entered Caffa through its rat
-  population independently. The besieged Genoese fled by ship to Constantinople, Messina, and Genoa, carrying the disease westward.
+  The plague reached Europe via the Mongol trade network. In 1346, the Mongol army besieging the Genoese trading post of Caffa
+  (modern Feodosia, Crimea) catapulted plague-infected corpses over the city walls — an event recorded by the notary Gabriele
+  de'' Mussi, though modern historians debate whether this constituted effective biological warfare or whether the plague
+  entered Caffa through its rat population independently. The besieged Genoese fled by ship to Constantinople, Messina, and
+  Genoa, carrying the disease westward.
 
 
-  Yersinia pestis originated in Central Asia. Genetic studies of ancient DNA from the Issyk-Kul region of modern Kyrgyzstan, published in Nature in 2022, identified plague strains from 1338-1339
-  burial sites as the ancestral source of the pandemic. The bacterium traveled the Silk Road, reaching the Black Sea ports by 1346. It moved along the same routes that carried silk, spices, and silver
-  — routes that the Mongol Empire''s Pax Mongolica had made safer and faster than at any point in history.
+  Yersinia pestis originated in Central Asia. Genetic studies of ancient DNA from the Issyk-Kul region of modern Kyrgyzstan,
+  published in Nature in 2022, identified plague strains from 1338-1339 burial sites as the ancestral source of the pandemic.
+  The bacterium traveled the Silk Road, reaching the Black Sea ports by 1346. It moved along the same routes that carried
+  silk, spices, and silver — routes that the Mongol Empire''s Pax Mongolica had made safer and faster than at any point in
+  history.
 
   '
-significance: 'The Black Death restructured European civilization. Labor scarcity gave surviving peasants bargaining power they had never possessed. In England, wages for agricultural workers doubled
-  between 1350 and 1370. Parliament responded with the Statute of Laborers in 1351, freezing wages at pre-plague levels and criminalizing labor mobility. The law was unenforceable. By 1381,
-  accumulated resentment over wage suppression, poll taxes, and serfdom erupted in the English Peasants'' Revolt — the largest popular uprising in English history before the Civil War. Serfdom
-  declined across Western Europe within a century of the plague; in Eastern Europe, landlords tightened restrictions, deepening the "second serfdom" that would persist until the 19th century. The
-  plague accelerated the transition from feudal agriculture to a wage economy in the West, collapsed land rents, shifted the balance of power from landowners to laborers, and — by making human life
-  scarce — made it more expensive. The demographic recovery took 150 years. England did not regain its pre-plague population until the 16th century. The recurrent outbreaks that followed — roughly
-  every decade through the 17th century — prevented any sustained recovery and kept the memory of mass death embedded in European culture, law, and theology for generations.
+significance: 'The Black Death restructured European civilization. Labor scarcity gave surviving peasants bargaining power
+  they had never possessed. In England, wages for agricultural workers doubled between 1350 and 1370. Parliament responded
+  with the Statute of Laborers in 1351, freezing wages at pre-plague levels and criminalizing labor mobility. The law was
+  unenforceable. By 1381, accumulated resentment over wage suppression, poll taxes, and serfdom erupted in the English Peasants''
+  Revolt — the largest popular uprising in English history before the Civil War. Serfdom declined across Western Europe within
+  a century of the plague; in Eastern Europe, landlords tightened restrictions, deepening the "second serfdom" that would
+  persist until the 19th century. The plague accelerated the transition from feudal agriculture to a wage economy in the West,
+  collapsed land rents, shifted the balance of power from landowners to laborers, and — by making human life scarce — made
+  it more expensive. The demographic recovery took 150 years. England did not regain its pre-plague population until the 16th
+  century. The recurrent outbreaks that followed — roughly every decade through the 17th century — prevented any sustained
+  recovery and kept the memory of mass death embedded in European culture, law, and theology for generations.
 
   '
 key_figures:
@@ -92,18 +107,20 @@ legacy_points:
 - Catalyzed the worst wave of antisemitic violence in Europe before the 20th century, with massacres in over 200 communities
 - Islamic physicians in al-Andalus identified contagion 500 years before germ theory
 primary_source_excerpts:
-- text: 'How many valiant men, how many fair ladies, took breakfast with their kinfolk and that same night supped with their ancestors in the other world!'
+- text: How many valiant men, how many fair ladies, took breakfast with their kinfolk and that same night supped with their
+    ancestors in the other world!
   author: Giovanni Boccaccio
   work: The Decameron, Introduction to the First Day
   date: '1353'
-- text: 'The plague penetrated the seas through Crimea and killed most of the people there. It then crossed into Sicily, Sardinia, and the rest of Europe, covering it all.'
+- text: The plague penetrated the seas through Crimea and killed most of the people there. It then crossed into Sicily, Sardinia,
+    and the rest of Europe, covering it all.
   author: Ibn Khaldun
   work: Muqaddimah
   date: '1377'
-- text: 'There was no one who wept for any death, for all awaited death.'
+- text: There was no one who wept for any death, for all awaited death.
   author: Agnolo di Tura
   work: Sienese Chronicle
-  date: 'c. 1348'
+  date: c. 1348
 coordinates:
   lat: 45.4408
   lng: 12.3155
@@ -116,26 +133,35 @@ perspectives:
 - viewpoint: European Christian — Divine Punishment
   viewpoint_type: bystander
   region_origin: europe
-  narrative: 'The dying began before anyone could name the disease. In Siena, Agnolo di Tura buried five of his own children with his hands because no gravedigger would come. "There was no one who wept
-    for any death," he wrote, "for all awaited death." In Avignon, Guy de Chauliac, physician to Pope Clement VI, recorded that at the peak of mortality in early 1348, the pope sat between two enormous
-    fires — his doctors believed heat purified the corrupted air. Clement survived. Two-thirds of the College of Cardinals did not.
+  narrative: 'The dying began before anyone could name the disease. In Siena, Agnolo di Tura buried five of his own children
+    with his hands because no gravedigger would come. "There was no one who wept for any death," he wrote, "for all awaited
+    death." In Avignon, Guy de Chauliac, physician to Pope Clement VI, recorded that at the peak of mortality in early 1348,
+    the pope sat between two enormous fires — his doctors believed heat purified the corrupted air. Clement survived. Two-thirds
+    of the College of Cardinals did not.
 
 
-    The dominant explanation was theological. The Faculty of Medicine at the University of Paris, commissioned by King Philip VI to explain the pestilence, issued its report in October 1348: a conjunction
-    of Saturn, Jupiter, and Mars in the sign of Aquarius on March 20, 1345, had drawn up noxious vapors from land and sea. Behind the astrology lay the conviction that God had sent the plague as
-    punishment for human sin. Flagellant processions — groups of men who marched through towns whipping themselves bloody in public penance — swept through Germany, the Low Countries, and Hungary. The
-    movement peaked in 1349 with processions of 200 to 300 flagellants entering cities, performing their ritual for 33 days (one for each year of Christ''s life), and moving on. Clement VI initially
-    tolerated the movement, then condemned it in a papal bull of October 1349 when flagellant groups began attacking clergy and Jews.
+    The dominant explanation was theological. The Faculty of Medicine at the University of Paris, commissioned by King Philip
+    VI to explain the pestilence, issued its report in October 1348: a conjunction of Saturn, Jupiter, and Mars in the sign
+    of Aquarius on March 20, 1345, had drawn up noxious vapors from land and sea. Behind the astrology lay the conviction
+    that God had sent the plague as punishment for human sin. Flagellant processions — groups of men who marched through towns
+    whipping themselves bloody in public penance — swept through Germany, the Low Countries, and Hungary. The movement peaked
+    in 1349 with processions of 200 to 300 flagellants entering cities, performing their ritual for 33 days (one for each
+    year of Christ''s life), and moving on. Clement VI initially tolerated the movement, then condemned it in a papal bull
+    of October 1349 when flagellant groups began attacking clergy and Jews.
 
 
-    The plague shattered institutional authority. Priests who administered last rites died in enormous numbers — parish records in England show clergy mortality rates of 40 to 50 percent, higher than
-    the general population because of their obligation to attend the dying. Monasteries were devastated. The resulting shortage of educated clergy led to rapid ordination of poorly trained replacements,
-    feeding a crisis of clerical credibility that historians trace forward to John Wycliffe''s challenge to Church authority in the 1370s and, ultimately, to the Reformation.
+    The plague shattered institutional authority. Priests who administered last rites died in enormous numbers — parish records
+    in England show clergy mortality rates of 40 to 50 percent, higher than the general population because of their obligation
+    to attend the dying. Monasteries were devastated. The resulting shortage of educated clergy led to rapid ordination of
+    poorly trained replacements, feeding a crisis of clerical credibility that historians trace forward to John Wycliffe''s
+    challenge to Church authority in the 1370s and, ultimately, to the Reformation.
 
 
-    Boccaccio framed the moral collapse in the Decameron''s introduction: laws human and divine dissolved together. The sick were abandoned by family. Bodies lay unburied in streets and houses. Property
-    changed hands not by inheritance but by proximity. Some responded with extreme piety; others, as Boccaccio observed, with extreme indulgence — "drinking excessively, enjoying life to the full, going
-    about singing and merrymaking." The plague did not create atheism, but it created space for questioning whether the institutional Church could explain or prevent suffering on this scale.
+    Boccaccio framed the moral collapse in the Decameron''s introduction: laws human and divine dissolved together. The sick
+    were abandoned by family. Bodies lay unburied in streets and houses. Property changed hands not by inheritance but by
+    proximity. Some responded with extreme piety; others, as Boccaccio observed, with extreme indulgence — "drinking excessively,
+    enjoying life to the full, going about singing and merrymaking." The plague did not create atheism, but it created space
+    for questioning whether the institutional Church could explain or prevent suffering on this scale.
 
     '
   key_arguments:
@@ -157,10 +183,12 @@ perspectives:
     year: '2001'
     type: book
   notable_quotes:
-  - text: 'How many valiant men, how many fair ladies, took breakfast with their kinfolk and that same night supped with their ancestors in the other world!'
+  - text: How many valiant men, how many fair ladies, took breakfast with their kinfolk and that same night supped with their
+      ancestors in the other world!
     speaker: Giovanni Boccaccio
     context: The Decameron, Introduction, describing Florence in 1348
-  - text: 'And I, Agnolo di Tura, buried my five children with my own hands. And there were also those who were so sparsely covered with earth that the dogs dragged them forth.'
+  - text: And I, Agnolo di Tura, buried my five children with my own hands. And there were also those who were so sparsely
+      covered with earth that the dogs dragged them forth.
     speaker: Agnolo di Tura
     context: Sienese Chronicle, 1348
   emphasized:
@@ -173,32 +201,40 @@ perspectives:
   - Economic consequences and labor market transformation
   - Persecution of Jews as a social response to the crisis
   - Plague's origins in Central Asia and its movement along trade routes
-
 - viewpoint: Islamic Medical — Contagion Before Germ Theory
   viewpoint_type: academic
   region_origin: middle-east
-  narrative: 'In 1349, while European physicians debated whether the plague spread through corrupted air (miasma) or astrological conjunction, Ibn Khatima of Almeria wrote that the disease was caused by
-    "minute bodies" that entered the human body and produced infection. His contemporary, Ibn al-Khatib of Granada, went further: in his treatise Muqni''at al-Sa''il, he argued that the evidence for
-    contagion was empirical and undeniable. People who had contact with the sick fell ill. People who isolated themselves survived. Those who handled the clothing of the dead contracted the disease. The
-    miasma theory could not explain why plague struck one household and spared the one next door.
+  narrative: 'In 1349, while European physicians debated whether the plague spread through corrupted air (miasma) or astrological
+    conjunction, Ibn Khatima of Almeria wrote that the disease was caused by "minute bodies" that entered the human body and
+    produced infection. His contemporary, Ibn al-Khatib of Granada, went further: in his treatise Muqni''at al-Sa''il, he
+    argued that the evidence for contagion was empirical and undeniable. People who had contact with the sick fell ill. People
+    who isolated themselves survived. Those who handled the clothing of the dead contracted the disease. The miasma theory
+    could not explain why plague struck one household and spared the one next door.
 
 
-    Ibn al-Khatib was explicit: "The existence of contagion is established by experience, investigation, the evidence of the senses, and trustworthy reports." He knew this contradicted Islamic orthodoxy.
-    A hadith attributed to the Prophet Muhammad stated that there was no contagion — "la adwa" — and that disease came from God alone. Ibn al-Khatib acknowledged the theological difficulty and argued
-    that empirical observation must take precedence: "If it were asked, how do we accept the possibility of contagion when the religious law denies it, we reply that the existence of contagion has been
-    established by experience." He was later accused of heresy and strangled in prison in 1374 — for political reasons, though his medical unorthodoxy did not help.
+    Ibn al-Khatib was explicit: "The existence of contagion is established by experience, investigation, the evidence of the
+    senses, and trustworthy reports." He knew this contradicted Islamic orthodoxy. A hadith attributed to the Prophet Muhammad
+    stated that there was no contagion — "la adwa" — and that disease came from God alone. Ibn al-Khatib acknowledged the
+    theological difficulty and argued that empirical observation must take precedence: "If it were asked, how do we accept
+    the possibility of contagion when the religious law denies it, we reply that the existence of contagion has been established
+    by experience." He was later accused of heresy and strangled in prison in 1374 — for political reasons, though his medical
+    unorthodoxy did not help.
 
 
-    The Islamic world''s experience of the plague differed from Europe''s in institutional response. Quarantine measures in Mamluk Cairo, while not systematized as in Venice, included the prohibition
-    of public gatherings and the burning of infected clothing. The concept of "tawakkul" — trust in God''s plan — influenced the response: many Muslim scholars argued that fleeing a plague-stricken area
-    was impermissible, as it implied distrust of divine will. This theological position, based on another hadith ("If you hear of plague in a land, do not enter it; if it is in a land where you are,
-    do not leave"), had the incidental effect of limiting population movement — a crude quarantine by theology.
+    The Islamic world''s experience of the plague differed from Europe''s in institutional response. Quarantine measures in
+    Mamluk Cairo, while not systematized as in Venice, included the prohibition of public gatherings and the burning of infected
+    clothing. The concept of "tawakkul" — trust in God''s plan — influenced the response: many Muslim scholars argued that
+    fleeing a plague-stricken area was impermissible, as it implied distrust of divine will. This theological position, based
+    on another hadith ("If you hear of plague in a land, do not enter it; if it is in a land where you are, do not leave"),
+    had the incidental effect of limiting population movement — a crude quarantine by theology.
 
 
-    Al-Maqrizi''s account of the plague in Cairo records that by October 1348, the city was burying between 10,000 and 20,000 dead per day. Egypt''s agricultural system, dependent on the annual Nile
-    flood and intensive irrigation labor, collapsed as the rural population died. Sugar production in Upper Egypt declined by two-thirds. Tax revenues fell so sharply that the Mamluk state could no
-    longer maintain its military. The long-term consequences were strategic: the weakened Mamluk sultanate fell to the Ottoman Turks in 1517, a conquest that might not have been possible without the
-    demographic catastrophe of the 14th century.
+    Al-Maqrizi''s account of the plague in Cairo records that by October 1348, the city was burying between 10,000 and 20,000
+    dead per day. Egypt''s agricultural system, dependent on the annual Nile flood and intensive irrigation labor, collapsed
+    as the rural population died. Sugar production in Upper Egypt declined by two-thirds. Tax revenues fell so sharply that
+    the Mamluk state could no longer maintain its military. The long-term consequences were strategic: the weakened Mamluk
+    sultanate fell to the Ottoman Turks in 1517, a conquest that might not have been possible without the demographic catastrophe
+    of the 14th century.
 
     '
   key_arguments:
@@ -211,7 +247,7 @@ perspectives:
     author: Peter E. Pormann and Emilie Savage-Smith
     year: '2007'
     type: book
-  - title: 'The Black Death in the Middle East'
+  - title: The Black Death in the Middle East
     author: Michael W. Dols
     year: '1977'
     type: book
@@ -220,10 +256,12 @@ perspectives:
     year: '1349'
     type: archive
   notable_quotes:
-  - text: 'The existence of contagion is established by experience, investigation, the evidence of the senses, and trustworthy reports.'
+  - text: The existence of contagion is established by experience, investigation, the evidence of the senses, and trustworthy
+      reports.
     speaker: Ibn al-Khatib
-    context: 'Muqni''at al-Sa''il, 1349, arguing against the miasma theory'
-  - text: 'It has been established by experience that if a person who is sick with this disease is placed near a healthy person, the healthy person will almost certainly fall sick.'
+    context: Muqni'at al-Sa'il, 1349, arguing against the miasma theory
+  - text: It has been established by experience that if a person who is sick with this disease is placed near a healthy person,
+      the healthy person will almost certainly fall sick.
     speaker: Ibn Khatima
     context: Tahsil al-Gharad al-Qasid, 1349
   emphasized:
@@ -236,32 +274,40 @@ perspectives:
   - Christian theological frameworks and cultural responses
   - The plague's impact on European labor markets and feudalism
   - Jewish persecution across Europe during the plague years
-
 - viewpoint: Jewish Community — Scapegoats and Survivors
   viewpoint_type: vanquished
   region_origin: europe
-  narrative: 'In September 1348, Jews in the Castle of Chillon on Lake Geneva were arrested and tortured until they confessed to poisoning wells. The confession — extracted under duress from a surgeon
-    named Balavigny — spread across Europe faster than the plague itself. It was copied and forwarded from town to town. By November, the city council of Strasbourg had received it. On February 14,
-    1349, before the plague had even arrived in Strasbourg, the city''s 2,000 Jews were taken to the Jewish cemetery and burned alive. Those who agreed to convert were spared. The city council then
-    divided the victims'' property among the citizenry and forgave all debts owed to Jews.
+  narrative: 'In September 1348, Jews in the Castle of Chillon on Lake Geneva were arrested and tortured until they confessed
+    to poisoning wells. The confession — extracted under duress from a surgeon named Balavigny — spread across Europe faster
+    than the plague itself. It was copied and forwarded from town to town. By November, the city council of Strasbourg had
+    received it. On February 14, 1349, before the plague had even arrived in Strasbourg, the city''s 2,000 Jews were taken
+    to the Jewish cemetery and burned alive. Those who agreed to convert were spared. The city council then divided the victims''
+    property among the citizenry and forgave all debts owed to Jews.
 
 
-    The pattern repeated across Central Europe. In Basel, the Jewish community was locked in a wooden building on an island in the Rhine and burned on January 16, 1349. In Erfurt, 3,000 Jews were
-    killed in a single day. In Mainz, the Jewish community — one of the largest in Europe, numbering 6,000 — fought back before being overwhelmed and destroyed in August 1349. In total, over 200
-    Jewish communities were annihilated between 1348 and 1351. The geographic pattern is telling: many massacres occurred before the plague arrived, or in areas where it never struck heavily. The
-    violence was not a spontaneous reaction to disease but an organized campaign that exploited the plague as pretext.
+    The pattern repeated across Central Europe. In Basel, the Jewish community was locked in a wooden building on an island
+    in the Rhine and burned on January 16, 1349. In Erfurt, 3,000 Jews were killed in a single day. In Mainz, the Jewish community
+    — one of the largest in Europe, numbering 6,000 — fought back before being overwhelmed and destroyed in August 1349. In
+    total, over 200 Jewish communities were annihilated between 1348 and 1351. The geographic pattern is telling: many massacres
+    occurred before the plague arrived, or in areas where it never struck heavily. The violence was not a spontaneous reaction
+    to disease but an organized campaign that exploited the plague as pretext.
 
 
-    Pope Clement VI intervened. In July 1348, he issued the bull Quamvis perfidiam, declaring that Jews were dying of the plague like everyone else and could not therefore be its cause. He threatened
-    excommunication for anyone who harmed Jews or seized their property. A second bull in September 1348 repeated the prohibition. The papal intervention saved some communities — in Avignon, under
-    the pope''s direct protection, the Jewish population survived largely intact. But the bulls had limited effect in the Rhineland and the Holy Roman Empire, where local authorities and mobs acted
-    independently of papal authority.
+    Pope Clement VI intervened. In July 1348, he issued the bull Quamvis perfidiam, declaring that Jews were dying of the
+    plague like everyone else and could not therefore be its cause. He threatened excommunication for anyone who harmed Jews
+    or seized their property. A second bull in September 1348 repeated the prohibition. The papal intervention saved some
+    communities — in Avignon, under the pope''s direct protection, the Jewish population survived largely intact. But the
+    bulls had limited effect in the Rhineland and the Holy Roman Empire, where local authorities and mobs acted independently
+    of papal authority.
 
 
-    The well-poisoning accusation had a specific economic function. Jewish communities in medieval Europe were concentrated in moneylending, trade, and skilled crafts — occupations to which they were
-    often legally restricted. Destruction of the Jewish community meant cancellation of debts and seizure of liquid assets. The Strasbourg massacre explicitly included debt forgiveness. In Nuremberg,
-    the city used the cleared Jewish quarter to build a new marketplace — the site of the modern Hauptmarkt. The massacres permanently altered European Jewish geography: surviving communities migrated
-    eastward into Poland and Lithuania, where King Casimir III offered protection and charters. This eastward migration created the Ashkenazi population centers that would endure until the 20th century.
+    The well-poisoning accusation had a specific economic function. Jewish communities in medieval Europe were concentrated
+    in moneylending, trade, and skilled crafts — occupations to which they were often legally restricted. Destruction of the
+    Jewish community meant cancellation of debts and seizure of liquid assets. The Strasbourg massacre explicitly included
+    debt forgiveness. In Nuremberg, the city used the cleared Jewish quarter to build a new marketplace — the site of the
+    modern Hauptmarkt. The massacres permanently altered European Jewish geography: surviving communities migrated eastward
+    into Poland and Lithuania, where King Casimir III offered protection and charters. This eastward migration created the
+    Ashkenazi population centers that would endure until the 20th century.
 
     '
   key_arguments:
@@ -270,11 +316,11 @@ perspectives:
   - Papal intervention saved some communities but was insufficient against local anti-Jewish violence
   - The massacres permanently shifted European Jewish geography eastward into Poland and Lithuania
   sources:
-  - title: 'The Black Death and the Jews, 1348-1349'
+  - title: The Black Death and the Jews, 1348-1349
     author: Anna Foa
     year: '2000'
     type: journal
-  - title: 'European Jewry in the Age of Mercantilism, 1550-1750'
+  - title: European Jewry in the Age of Mercantilism, 1550-1750
     author: Jonathan I. Israel
     year: '1985'
     type: book
@@ -283,10 +329,12 @@ perspectives:
     year: '2005'
     type: book
   notable_quotes:
-  - text: 'Recently it was brought to our attention by public fame — or, more accurately, infamy — that certain Christians, seduced by the Devil, blame the pestilence on poisonings carried out by Jews.'
+  - text: Recently it was brought to our attention by public fame — or, more accurately, infamy — that certain Christians,
+      seduced by the Devil, blame the pestilence on poisonings carried out by Jews.
     speaker: Pope Clement VI
     context: Papal bull Quamvis perfidiam, July 1348
-  - text: 'The money was divided among the artisans. The council took the cash that the Jews possessed and divided the debts owed to the Jews among the citizens.'
+  - text: The money was divided among the artisans. The council took the cash that the Jews possessed and divided the debts
+      owed to the Jews among the citizens.
     speaker: Jacob von Konigshofen
     context: Strasbourg Chronicle, describing the aftermath of the February 1349 massacre
   emphasized:
@@ -299,32 +347,41 @@ perspectives:
   - Christian suffering and theological crisis during the pandemic
   - Labor market transformation and peasant empowerment
   - Non-European experiences of the plague
-
 - viewpoint: Peasant and Laborer — The Great Leveling
   viewpoint_type: revisionist
   region_origin: europe
-  narrative: 'Before the plague, a landless laborer in England earned roughly 1 to 2 pence per day. There were more people than available land. Lords set wages; tenants accepted them or starved.
-    Villeinage — a form of serfdom that bound peasants to their lord''s manor — attached to roughly 40% of the English peasantry. A villein could not leave the manor, marry, or sell land without the
-    lord''s permission. The system had functioned for centuries because demographic pressure ensured a permanent labor surplus.
+  narrative: 'Before the plague, a landless laborer in England earned roughly 1 to 2 pence per day. There were more people
+    than available land. Lords set wages; tenants accepted them or starved. Villeinage — a form of serfdom that bound peasants
+    to their lord''s manor — attached to roughly 40% of the English peasantry. A villein could not leave the manor, marry,
+    or sell land without the lord''s permission. The system had functioned for centuries because demographic pressure ensured
+    a permanent labor surplus.
 
 
-    The plague inverted the equation. By 1350, between one-third and one-half of England''s population was dead. Labor became scarce. Wages rose immediately — by 1350-1351, some agricultural workers
-    were earning double or triple their pre-plague rates. Peasants left manors whose lords could not match competing offers. Parliament, dominated by the landlord class, responded with the Statute of
-    Laborers in 1351, which fixed wages at 1346 levels and criminalized the refusal to work at pre-plague rates. Justices of the peace were empowered to enforce wage controls. The statute was widely
-    evaded. Manorial court records show lords competing for workers by offering higher wages, free meals, and reduced obligations — while publicly supporting the legislation.
+    The plague inverted the equation. By 1350, between one-third and one-half of England''s population was dead. Labor became
+    scarce. Wages rose immediately — by 1350-1351, some agricultural workers were earning double or triple their pre-plague
+    rates. Peasants left manors whose lords could not match competing offers. Parliament, dominated by the landlord class,
+    responded with the Statute of Laborers in 1351, which fixed wages at 1346 levels and criminalized the refusal to work
+    at pre-plague rates. Justices of the peace were empowered to enforce wage controls. The statute was widely evaded. Manorial
+    court records show lords competing for workers by offering higher wages, free meals, and reduced obligations — while publicly
+    supporting the legislation.
 
 
-    The tension between economic reality and legal suppression produced the English Peasants'' Revolt of 1381. The immediate trigger was a poll tax — a flat per-capita levy that fell disproportionately
-    on the poor — but the underlying cause was thirty years of accumulated rage against wage suppression, labor restrictions, and serfdom itself. Wat Tyler and John Ball led an army of perhaps 60,000
-    into London. They burned the Savoy Palace of John of Gaunt, opened the prisons, and cornered 14-year-old King Richard II at Mile End. Richard promised to abolish serfdom. When Tyler was killed at
-    a parley at Smithfield, the revolt collapsed. Richard revoked every concession. But the structural transformation was irreversible. By 1500, villeinage had effectively disappeared from England.
+    The tension between economic reality and legal suppression produced the English Peasants'' Revolt of 1381. The immediate
+    trigger was a poll tax — a flat per-capita levy that fell disproportionately on the poor — but the underlying cause was
+    thirty years of accumulated rage against wage suppression, labor restrictions, and serfdom itself. Wat Tyler and John
+    Ball led an army of perhaps 60,000 into London. They burned the Savoy Palace of John of Gaunt, opened the prisons, and
+    cornered 14-year-old King Richard II at Mile End. Richard promised to abolish serfdom. When Tyler was killed at a parley
+    at Smithfield, the revolt collapsed. Richard revoked every concession. But the structural transformation was irreversible.
+    By 1500, villeinage had effectively disappeared from England.
 
 
-    The pattern varied across Europe. In Western Europe — France, the Low Countries, parts of Germany — serfdom declined as peasants leveraged their scarcity. In Eastern Europe, the opposite occurred.
-    Polish, Prussian, and Russian landlords tightened labor controls after the plague, binding peasants more firmly to the land to prevent migration. Historians call this the "second serfdom," a divergence
-    between Western and Eastern European labor systems that persisted for five centuries. Robert Brenner and other Marxist historians argue that the plague itself did not determine outcomes — identical
-    demographic shocks produced opposite results depending on the balance of class power. Where peasants were organized and lords were weak, freedom expanded. Where lords controlled state institutions,
-    coercion intensified.
+    The pattern varied across Europe. In Western Europe — France, the Low Countries, parts of Germany — serfdom declined as
+    peasants leveraged their scarcity. In Eastern Europe, the opposite occurred. Polish, Prussian, and Russian landlords tightened
+    labor controls after the plague, binding peasants more firmly to the land to prevent migration. Historians call this the
+    "second serfdom," a divergence between Western and Eastern European labor systems that persisted for five centuries. Robert
+    Brenner and other Marxist historians argue that the plague itself did not determine outcomes — identical demographic shocks
+    produced opposite results depending on the balance of class power. Where peasants were organized and lords were weak,
+    freedom expanded. Where lords controlled state institutions, coercion intensified.
 
     '
   key_arguments:
@@ -341,15 +398,15 @@ perspectives:
     author: Walter Scheidel
     year: '2017'
     type: book
-  - title: 'Agrarian Class Structure and Economic Development in Pre-Industrial Europe'
+  - title: Agrarian Class Structure and Economic Development in Pre-Industrial Europe
     author: Robert Brenner
     year: '1976'
     type: journal
   notable_quotes:
-  - text: 'When Adam delved and Eve span, who was then the gentleman?'
+  - text: When Adam delved and Eve span, who was then the gentleman?
     speaker: John Ball
     context: Sermon to rebels at Blackheath, June 1381, before the march on London
-  - text: 'Villeins ye are still, and villeins ye shall remain.'
+  - text: Villeins ye are still, and villeins ye shall remain.
     speaker: King Richard II
     context: Revoking his concessions to the rebels after Wat Tyler's death, June 1381
   emphasized:
@@ -362,31 +419,38 @@ perspectives:
   - Medical knowledge and public health responses
   - Jewish persecution and scapegoating
   - Urban and commercial impacts distinct from agricultural labor
-
 - viewpoint: Mongol Trade Route — The Silk Road Pandemic
   viewpoint_type: bystander
   region_origin: central-asia
-  narrative: 'The plague did not begin in Europe. It ended there. Yersinia pestis originated in Central Asia — a 2022 study in Nature traced the ancestral strain to burial sites near Lake Issyk-Kul in
-    modern Kyrgyzstan, dating to 1338-1339. The tombstones, inscribed in Syriac, recorded an unusual number of deaths attributed to "pestilence" (mawtana). DNA extracted from the teeth of individuals
-    buried at the site matched the genetic ancestor of all known Black Death strains.
+  narrative: 'The plague did not begin in Europe. It ended there. Yersinia pestis originated in Central Asia — a 2022 study
+    in Nature traced the ancestral strain to burial sites near Lake Issyk-Kul in modern Kyrgyzstan, dating to 1338-1339. The
+    tombstones, inscribed in Syriac, recorded an unusual number of deaths attributed to "pestilence" (mawtana). DNA extracted
+    from the teeth of individuals buried at the site matched the genetic ancestor of all known Black Death strains.
 
 
-    The bacterium traveled the arteries of the Mongol Empire. The Pax Mongolica — the period of relative stability that followed the Mongol conquests of the 13th century — had connected China, Central
-    Asia, Persia, and Europe through a network of caravan routes, postal relay stations (yam), and trading posts more extensive than any previous system. A merchant could travel from Beijing to the
-    Black Sea ports under a single political authority. The same infrastructure that moved silk, spices, paper, and gunpowder moved rats, fleas, and Yersinia pestis.
+    The bacterium traveled the arteries of the Mongol Empire. The Pax Mongolica — the period of relative stability that followed
+    the Mongol conquests of the 13th century — had connected China, Central Asia, Persia, and Europe through a network of
+    caravan routes, postal relay stations (yam), and trading posts more extensive than any previous system. A merchant could
+    travel from Beijing to the Black Sea ports under a single political authority. The same infrastructure that moved silk,
+    spices, paper, and gunpowder moved rats, fleas, and Yersinia pestis.
 
 
-    The siege of Caffa in 1346 provides the most dramatic transmission narrative. The Golden Horde — the Mongol successor state controlling the western steppe — besieged the Genoese trading colony on
-    the Crimean coast. When plague struck the besieging army, the Mongol commander Janibeg reportedly catapulted infected corpses over the walls. The Genoese notary Gabriele de'' Mussi wrote the
-    account in his Istoria de Morbo — though modern historians note that de'' Mussi may not have been present and that the plague likely entered Caffa through its rat population regardless of the
-    catapults. The fleeing Genoese carried it to Constantinople, where it killed the son of Emperor John VI Kantakouzenos, and from there to every port in the Mediterranean.
+    The siege of Caffa in 1346 provides the most dramatic transmission narrative. The Golden Horde — the Mongol successor
+    state controlling the western steppe — besieged the Genoese trading colony on the Crimean coast. When plague struck the
+    besieging army, the Mongol commander Janibeg reportedly catapulted infected corpses over the walls. The Genoese notary
+    Gabriele de'' Mussi wrote the account in his Istoria de Morbo — though modern historians note that de'' Mussi may not
+    have been present and that the plague likely entered Caffa through its rat population regardless of the catapults. The
+    fleeing Genoese carried it to Constantinople, where it killed the son of Emperor John VI Kantakouzenos, and from there
+    to every port in the Mediterranean.
 
 
-    The Central Asian origin matters because it reframes the Black Death from a European catastrophe to a Eurasian one. China''s population fell from roughly 120 million in 1340 to 65 million by 1393 —
-    though separating plague deaths from the violence of the Yuan dynasty''s collapse and the wars that produced the Ming dynasty is impossible. The Middle East lost an estimated one-third of its
-    population. Ibn Khaldun, writing from the Maghreb, observed that "civilization in both the East and the West was visited by a destructive plague which devastated nations and caused populations to
-    vanish. It swallowed up many of the good things of civilization and wiped them out." The plague was not a European event that happened to arrive from elsewhere. It was a global catastrophe that
-    struck Europe last.
+    The Central Asian origin matters because it reframes the Black Death from a European catastrophe to a Eurasian one. China''s
+    population fell from roughly 120 million in 1340 to 65 million by 1393 — though separating plague deaths from the violence
+    of the Yuan dynasty''s collapse and the wars that produced the Ming dynasty is impossible. The Middle East lost an estimated
+    one-third of its population. Ibn Khaldun, writing from the Maghreb, observed that "civilization in both the East and the
+    West was visited by a destructive plague which devastated nations and caused populations to vanish. It swallowed up many
+    of the good things of civilization and wiped them out." The plague was not a European event that happened to arrive from
+    elsewhere. It was a global catastrophe that struck Europe last.
 
     '
   key_arguments:
@@ -399,19 +463,21 @@ perspectives:
     author: Maria A. Spyrou et al.
     year: '2022'
     type: journal
-  - title: 'The Black Death in the Middle East'
+  - title: The Black Death in the Middle East
     author: Michael W. Dols
     year: '1977'
     type: book
-  - title: 'Istoria de Morbo sive Mortalitate quae fuit Anno Domini 1348'
+  - title: Istoria de Morbo sive Mortalitate quae fuit Anno Domini 1348
     author: Gabriele de' Mussi
-    year: 'c. 1348'
+    year: c. 1348
     type: archive
   notable_quotes:
-  - text: 'Civilization in both the East and the West was visited by a destructive plague which devastated nations and caused populations to vanish.'
+  - text: Civilization in both the East and the West was visited by a destructive plague which devastated nations and caused
+      populations to vanish.
     speaker: Ibn Khaldun
     context: Muqaddimah, c. 1377
-  - text: 'The dying Tartars, stunned and stupefied by the immensity of the disaster, and realizing that they had no hope of escape, lost interest in the siege and catapulted the infected corpses into the city.'
+  - text: The dying Tartars, stunned and stupefied by the immensity of the disaster, and realizing that they had no hope of
+      escape, lost interest in the siege and catapulted the infected corpses into the city.
     speaker: Gabriele de' Mussi
     context: Istoria de Morbo, c. 1348, on the siege of Caffa
   emphasized:
@@ -427,46 +493,117 @@ perspectives:
 media:
 - media_type: artwork
   title: The Triumph of Death by Pieter Bruegel the Elder
-  description: Panoramic painting depicting an army of skeletons devastating a landscape, reflecting the cultural trauma of recurring plague outbreaks in Europe. Painted c. 1562, two centuries after the Black Death, showing how deeply the pandemic embedded itself in European consciousness.
+  description: Panoramic painting depicting an army of skeletons devastating a landscape, reflecting the cultural trauma of
+    recurring plague outbreaks in Europe. Painted c. 1562, two centuries after the Black Death, showing how deeply the pandemic
+    embedded itself in European consciousness.
   source_url: https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_by_Pieter_Bruegel_the_Elder.jpg
   attribution: Pieter Bruegel the Elder, Museo del Prado, public domain
   license: public-domain
   creator: Pieter Bruegel the Elder
-  creation_date: 'c. 1562'
+  creation_date: c. 1562
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/wiki_0.jpg
 - media_type: artwork
   title: Danse Macabre from the Nuremberg Chronicle
-  description: Woodcut illustration of the Dance of Death, showing skeletons dancing with living people of all social ranks — pope, king, merchant, peasant — a motif that emerged directly from the Black Death and became a staple of late medieval European art.
+  description: Woodcut illustration of the Dance of Death, showing skeletons dancing with living people of all social ranks
+    — pope, king, merchant, peasant — a motif that emerged directly from the Black Death and became a staple of late medieval
+    European art.
   source_url: https://commons.wikimedia.org/wiki/File:Nuremberg_chronicles_-_Dance_of_Death_(CCLXIIIIv).jpg
   attribution: Hartmann Schedel, Nuremberg Chronicle, 1493, public domain
   license: public-domain
   creator: Michael Wolgemut
   creation_date: '1493'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/wiki_1.jpg
 - media_type: map
   title: Spread of the Black Death across Europe, 1346-1353
-  description: Map showing the chronological progression of plague across Europe, from its arrival in Sicily in October 1347 through its spread to Scandinavia and Russia by 1351.
+  description: Map showing the chronological progression of plague across Europe, from its arrival in Sicily in October 1347
+    through its spread to Scandinavia and Russia by 1351.
   source_url: https://commons.wikimedia.org/wiki/File:1346-1353_spread_of_the_Black_Death_in_Europe_map.svg
   attribution: Flappiefh, Wikimedia Commons, CC BY-SA 4.0
   license: cc-by-sa
   creator: Flappiefh
   creation_date: '2020'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/wiki_2.png
 - media_type: document
   title: Illustration from the Toggenburg Bible showing plague victims
-  description: A 15th-century illustration showing a man and woman afflicted with plague buboes, tended by a physician. One of the earliest known medical depictions of the disease's visible symptoms.
+  description: A 15th-century illustration showing a man and woman afflicted with plague buboes, tended by a physician. One
+    of the earliest known medical depictions of the disease's visible symptoms.
   source_url: https://commons.wikimedia.org/wiki/File:Plague-hit_man_and_woman_-_Toggenburg_Bible.jpg
   attribution: Toggenburg Bible, 1411, public domain
   license: public-domain
   creator: Unknown
   creation_date: '1411'
+- media_type: photograph
+  title: Europe map
+  description: Landscape orientation, 8984x7100px
+  source_url: https://unsplash.com/photos/europe-map-AxT4iYcoI2M
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/unsplash_1.jpg
+  attribution: Photo by British Library on Unsplash
+  license: unsplash-license
+  creator: British Library
+- media_type: photograph
+  title: A group of men in armor standing next to each other
+  description: Landscape orientation, 6000x4000px
+  source_url: https://unsplash.com/photos/a-group-of-men-in-armor-standing-next-to-each-other-aOANvL-VO6U
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/unsplash_2.jpg
+  attribution: Photo by Ivona Rož on Unsplash
+  license: unsplash-license
+  creator: Ivona Rož
+- media_type: photograph
+  title: brown concrete building under white clouds during daytime
+  description: Landscape orientation, 4160x3120px
+  source_url: https://unsplash.com/photos/brown-concrete-building-under-white-clouds-during-daytime-Xrf0chQc_G4
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/unsplash_3.jpg
+  attribution: Photo by Kseniia Samoylenko on Unsplash
+  license: unsplash-license
+  creator: Kseniia Samoylenko
+- media_type: photograph
+  title: a large ornate ceiling with many arches
+  description: Landscape orientation, 7097x4736px
+  source_url: https://unsplash.com/photos/a-large-ornate-ceiling-with-many-arches-o3sUok-Sydw
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/unsplash_4.jpg
+  attribution: Photo by Carlos Felipe Ramírez Mesa on Unsplash
+  license: unsplash-license
+  creator: Carlos Felipe Ramírez Mesa
+- media_type: photograph
+  title: Close-up of a historic stone building with a turret against a clear blue sky.
+  description: Landscape orientation, 5120x2880px
+  source_url: https://www.pexels.com/photo/low-angle-shot-of-church-14285643/
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/pexels_1.jpg
+  attribution: Photo by SlimMars 13 on Pexels
+  license: pexels-license
+  creator: SlimMars 13
+- media_type: photograph
+  title: 'Charming historic tower with detailed architecture in Witzenhausen, Hessen, Germany against a clear '
+  description: Landscape orientation, 6240x4160px
+  source_url: https://www.pexels.com/photo/historic-tower-in-witzenhausen-hessen-under-clear-sky-29688206/
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/pexels_2.jpg
+  attribution: Photo by Christina & Peter on Pexels
+  license: pexels-license
+  creator: Christina & Peter
+- media_type: photograph
+  title: Stunning architecture of Salamanca Cathedral captured on a sunny day.
+  description: Landscape orientation, 6000x3375px
+  source_url: https://www.pexels.com/photo/majestic-view-of-salamanca-cathedral-28435486/
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/pexels_3.jpg
+  attribution: Photo by SilBaBum _ on Pexels
+  license: pexels-license
+  creator: SilBaBum _
 connections:
 - target_slug: mongol-conquest-baghdad
   connection_type: consequence
-  description: The Mongol Empire's trade routes — the same infrastructure that connected Baghdad to the Black Sea — became the transmission network for Yersinia pestis from Central Asia to Europe
+  description: The Mongol Empire's trade routes — the same infrastructure that connected Baghdad to the Black Sea — became
+    the transmission network for Yersinia pestis from Central Asia to Europe
 - target_slug: the-crusades
   connection_type: influenced
-  description: East-West trade contacts expanded by the Crusades contributed to the commercial networks along which the plague traveled; the Crusader port cities were early transmission points
+  description: East-West trade contacts expanded by the Crusades contributed to the commercial networks along which the plague
+    traveled; the Crusader port cities were early transmission points
 - target_slug: transatlantic-slave-trade
   connection_type: influenced
-  description: Europe's post-plague labor shortage and demographic collapse contributed to the economic pressures that later drove the search for enslaved labor in the Atlantic economy
+  description: Europe's post-plague labor shortage and demographic collapse contributed to the economic pressures that later
+    drove the search for enslaved labor in the Atlantic economy
 - target_slug: fall-of-rome
   connection_type: parallel
-  description: Both events represent civilizational disruptions that restructured European social hierarchies; the Plague of Justinian (541-549) during Rome's decline foreshadowed the Black Death's demographic catastrophe
+  description: Both events represent civilizational disruptions that restructured European social hierarchies; the Plague
+    of Justinian (541-549) during Rome's decline foreshadowed the Black Death's demographic catastrophe
+hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/wiki_0.jpg
+hero_image_attribution: Pieter Bruegel the Elder, Museo del Prado, public domain
