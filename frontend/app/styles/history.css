@@ -1892,7 +1892,7 @@
   height: 100%;
   overflow-x: scroll;
   overflow-y: hidden;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   display: flex;
   align-items: center;
   scrollbar-width: none;
@@ -2329,6 +2329,119 @@
 
 .hist-tl-track__dot--active .hist-tl-track__year {
   opacity: 1;
+  color: var(--hist-accent);
+  font-weight: 600;
+}
+
+/* Show every 3rd year label + first/last always */
+.hist-tl-track__dot:first-child .hist-tl-track__year,
+.hist-tl-track__dot:last-child .hist-tl-track__year,
+.hist-tl-track__dot:nth-child(3n+1) .hist-tl-track__year {
+  opacity: 0.6;
+}
+
+/* Progress bar — fills from left to active dot */
+.hist-tl-track__line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--tl-progress, 0%);
+  background: var(--hist-accent);
+  opacity: 0.35;
+  border-radius: 1px;
+  transition: width 200ms ease;
+}
+
+/* ── Era labels above track ── */
+.hist-tl-track__era-label {
+  position: absolute;
+  top: -14px;
+  transform: translateX(-50%);
+  font-family: var(--font-meta);
+  font-size: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--hist-brass);
+  white-space: nowrap;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Era fast-travel buttons ── */
+.hist-tl-eras {
+  position: absolute;
+  bottom: calc(var(--space-4) + 42px);
+  left: 5%;
+  right: 5%;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-1);
+  z-index: 20;
+  flex-wrap: wrap;
+}
+
+.hist-tl-era-btn {
+  font-family: var(--font-meta);
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hist-ink-muted);
+  background: transparent;
+  border: 1px solid var(--hist-border);
+  padding: 3px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+  pointer-events: auto;
+  min-height: 28px;
+}
+
+.hist-tl-era-btn:hover {
+  color: var(--hist-accent);
+  border-color: var(--hist-accent);
+}
+
+.hist-tl-era-btn--active {
+  color: var(--hist-paper-fixed, #F2EDE0);
+  background: var(--hist-accent);
+  border-color: var(--hist-accent);
+}
+
+.hist-tl-era-btn:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ── Era dividers between cards ── */
+.hist-tl-era-divider {
+  flex-shrink: 0;
+  width: 2px;
+  height: 60%;
+  align-self: center;
+  background: var(--hist-accent);
+  opacity: 0.15;
+  border-radius: 1px;
+}
+
+/* ── Film grain — subtle archival texture ── */
+.hist-tl-landing::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hist-tl-landing::before { display: none; }
+  .hist-tl-eras { display: none; }
 }
 
 /* ===========================================================================
