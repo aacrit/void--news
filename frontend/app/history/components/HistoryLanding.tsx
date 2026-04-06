@@ -1016,57 +1016,6 @@ export default function HistoryLanding({
             />
           </svg>
 
-          {/* Arc lanes — thematic threads connecting events */}
-          {arcLanes.map((arc) => (
-            <div
-              key={arc.slug}
-              className="hist-tl-arc-lane"
-              style={{
-                left: `${arc.startPct}%`,
-                width: `${arc.endPct - arc.startPct}%`,
-                "--arc-color": arc.color,
-              } as React.CSSProperties}
-            >
-              {/* Arc thread line */}
-              <div className="hist-tl-arc-lane__thread" aria-hidden="true" />
-
-              {/* Arc label at start */}
-              <div className="hist-tl-arc-lane__label">
-                <span className="hist-tl-arc-lane__title">{arc.title}</span>
-                <span className="hist-tl-arc-lane__subtitle">{arc.subtitle}</span>
-              </div>
-
-              {/* Nodes at each connected event */}
-              {arc.nodes.map((node) => {
-                const laneWidth = arc.endPct - arc.startPct;
-                const nodePct = laneWidth > 0
-                  ? ((node.position * 100 - arc.startPct) / laneWidth) * 100
-                  : 0;
-                return (
-                  <div
-                    key={node.slug}
-                    className="hist-tl-arc-lane__node"
-                    style={{ left: `${nodePct}%` }}
-                    title={node.title}
-                  >
-                    <div className="hist-tl-arc-lane__node-dot" />
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-
-          {/* Fun facts — positioned at midpoints between events */}
-          {funFactPositions.map((fact, fi) => (
-            <FunFact
-              key={fi}
-              text={fact.text}
-              position={fact.position}
-              totalWidth={totalWidthVw}
-              containerRef={timelineRef}
-            />
-          ))}
-
           {/* Cards + stems + dots */}
           {sortedEvents.map((event, i) => {
             const side = sides[i];
