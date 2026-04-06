@@ -10,66 +10,51 @@ country: Cambodia
 category: genocide
 severity: catastrophic
 death_toll: 1.5-2 million (approximately one quarter of Cambodia's population)
-affected_population: Entire Cambodian population of approximately 7.9 million subjected to forced evacuation, labor, starvation,
-  and political purges
+affected_population: Entire Cambodian population of approximately 7.9 million subjected to forced evacuation, labor, starvation, and political purges
 duration: 3 years, 8 months, and 20 days (April 17, 1975 - January 7, 1979)
-hero_image_url: https://upload.wikimedia.org/wikipedia/commons/3/38/Tuol_Sleng_Genocide_Museum.jpg
+hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/wiki_1.jpg
 hero_image_attribution: Adam Carr, CC BY-SA 3.0, via Wikimedia Commons
-summary: 'On the morning of April 17, 1975, Khmer Rouge soldiers in black uniforms entered Phnom Penh and ordered the city
-  emptied. Within 48 hours, 2 million residents — hospital patients wheeled in their beds, monks in saffron robes, women in
-  labor — were marched at gunpoint into the countryside. The soldiers told them the evacuation was temporary: three days,
-  maybe a week, until the Americans stopped bombing. The Americans had already stopped bombing. The evacuation was permanent.
+summary: 'On the morning of April 17, 1975, Khmer Rouge soldiers in black uniforms entered Phnom Penh and ordered the city emptied. Within 48 hours, 2 million residents — hospital patients wheeled in their
+  beds, monks in saffron robes, women in labor — were marched at gunpoint into the countryside. The soldiers told them the evacuation was temporary: three days, maybe a week, until the Americans stopped
+  bombing. The Americans had already stopped bombing. The evacuation was permanent.
 
 
-  The regime that emptied Phnom Penh called itself Democratic Kampuchea. Its leader, Saloth Sar — known as Pol Pot — had studied
-  radio electronics in Paris in the early 1950s, where he joined the French Communist Party and absorbed a blend of Marxism-Leninism
-  and Khmer nationalism. His revolution aimed to restart Cambodian civilization at Year Zero: no money, no markets, no schools,
-  no religion, no private property, no cities. Cambodia would become an agrarian utopia of rice paddies worked by a classless
-  peasantry. Anyone who represented the old society — teachers, doctors, monks, ethnic minorities, anyone who wore glasses
-  or spoke a foreign language — was an enemy to be "smashed."
+  The regime that emptied Phnom Penh called itself Democratic Kampuchea. Its leader, Saloth Sar — known as Pol Pot — had studied radio electronics in Paris in the early 1950s, where he joined the French
+  Communist Party and absorbed a blend of Marxism-Leninism and Khmer nationalism. His revolution aimed to restart Cambodian civilization at Year Zero: no money, no markets, no schools, no religion, no private
+  property, no cities. Cambodia would become an agrarian utopia of rice paddies worked by a classless peasantry. Anyone who represented the old society — teachers, doctors, monks, ethnic minorities, anyone
+  who wore glasses or spoke a foreign language — was an enemy to be "smashed."
 
 
-  The country was reorganized into agricultural cooperatives where 12- to 16-hour workdays were mandatory. Rice production
-  targets bore no relationship to agricultural reality; cadres reported yields of 3 tons per hectare when actual harvests
-  produced 1 ton. The surplus was exported to China in exchange for military equipment. The resulting famine killed hundreds
-  of thousands. At the Trapeang Thma Dam in Battambang Province, 10,000 workers labored with hand tools to build an irrigation
-  system designed by cadres with no engineering training. An estimated 4,000 died of exhaustion, starvation, and execution
+  The country was reorganized into agricultural cooperatives where 12- to 16-hour workdays were mandatory. Rice production targets bore no relationship to agricultural reality; cadres reported yields of
+  3 tons per hectare when actual harvests produced 1 ton. The surplus was exported to China in exchange for military equipment. The resulting famine killed hundreds of thousands. At the Trapeang Thma Dam
+  in Battambang Province, 10,000 workers labored with hand tools to build an irrigation system designed by cadres with no engineering training. An estimated 4,000 died of exhaustion, starvation, and execution
   during construction. The dam failed.
 
 
-  Tuol Sleng, a former high school in Phnom Penh redesignated Security Prison 21 (S-21), processed an estimated 14,000-17,000
-  prisoners between 1975 and 1979. Each arrival was photographed — a bureaucratic ritual that produced an archive of faces
-  staring into the camera moments before interrogation, forced confession, and execution. The prison''s commander, Kaing Guek
-  Eav — known as "Duch" — maintained meticulous records: prisoner logs, confession transcripts, execution schedules. Of the
-  thousands who entered S-21, between 7 and 12 survived. Among them was Vann Nath, a painter who was kept alive because the
-  regime needed someone to produce portraits of Pol Pot. After liberation, Vann Nath painted the tortures he witnessed — waterboarding,
-  electrocution, the extraction of fingernails — in canvases that now hang in the Tuol Sleng Genocide Museum.
+  Tuol Sleng, a former high school in Phnom Penh redesignated Security Prison 21 (S-21), processed an estimated 14,000-17,000 prisoners between 1975 and 1979. Each arrival was photographed — a bureaucratic
+  ritual that produced an archive of faces staring into the camera moments before interrogation, forced confession, and execution. The prison''s commander, Kaing Guek Eav — known as "Duch" — maintained
+  meticulous records: prisoner logs, confession transcripts, execution schedules. Of the thousands who entered S-21, between 7 and 12 survived. Among them was Vann Nath, a painter who was kept alive because
+  the regime needed someone to produce portraits of Pol Pot. After liberation, Vann Nath painted the tortures he witnessed — waterboarding, electrocution, the extraction of fingernails — in canvases that
+  now hang in the Tuol Sleng Genocide Museum.
 
 
-  On December 25, 1978, 150,000 Vietnamese troops crossed the Cambodian border. By January 7, 1979, they had taken Phnom Penh.
-  The Khmer Rouge fled westward to the Thai border, where they reconstituted as a guerrilla force that continued fighting
-  until 1999. The Vietnamese-installed People''s Republic of Kampuchea governed Cambodia for the next decade, but the United
-  States, China, and ASEAN recognized the deposed Khmer Rouge coalition''s seat at the United Nations until 1991 — a Cold
-  War calculation that prioritized anti-Vietnamese containment over accountability for genocide.
+  On December 25, 1978, 150,000 Vietnamese troops crossed the Cambodian border. By January 7, 1979, they had taken Phnom Penh. The Khmer Rouge fled westward to the Thai border, where they reconstituted
+  as a guerrilla force that continued fighting until 1999. The Vietnamese-installed People''s Republic of Kampuchea governed Cambodia for the next decade, but the United States, China, and ASEAN recognized
+  the deposed Khmer Rouge coalition''s seat at the United Nations until 1991 — a Cold War calculation that prioritized anti-Vietnamese containment over accountability for genocide.
 
   '
-significance: 'The Extraordinary Chambers in the Courts of Cambodia (ECCC), established in 2003 after a decade of negotiations
-  between the Cambodian government and the United Nations, was the first hybrid international-domestic tribunal for genocide.
-  It convicted three people: Duch (2010, 35 years, later life), Nuon Chea (2018, life), and Khieu Samphan (2018, life). Pol
-  Pot died in 1998 without facing trial. The tribunal cost $337 million and took 16 years to complete — longer than the regime
-  itself lasted. Cambodia''s population in 1979 was approximately 6 million, down from 7.9 million in 1975; the median age
-  in Cambodia as of 2023 was 26, meaning more than half the population was born after the genocide. The destruction of Cambodia''s
-  educated class — teachers, doctors, engineers, lawyers — produced effects measurable decades later: in 1979, the country
-  had fewer than 50 doctors, fewer than 5,000 people with a secondary education, and no functioning judiciary, banking system,
-  or postal service. Dith Pran, the Cambodian journalist whose story became the 1984 film "The Killing Fields," testified
-  that he survived by eating bark, insects, and the flesh of dead animals. He spent four years under the regime before escaping
-  to Thailand.
+significance: 'The Extraordinary Chambers in the Courts of Cambodia (ECCC), established in 2003 after a decade of negotiations between the Cambodian government and the United Nations, was the first hybrid
+  international-domestic tribunal for genocide. It convicted three people: Duch (2010, 35 years, later life), Nuon Chea (2018, life), and Khieu Samphan (2018, life). Pol Pot died in 1998 without facing
+  trial. The tribunal cost $337 million and took 16 years to complete — longer than the regime itself lasted. Cambodia''s population in 1979 was approximately 6 million, down from 7.9 million in 1975; the
+  median age in Cambodia as of 2023 was 26, meaning more than half the population was born after the genocide. The destruction of Cambodia''s educated class — teachers, doctors, engineers, lawyers — produced
+  effects measurable decades later: in 1979, the country had fewer than 50 doctors, fewer than 5,000 people with a secondary education, and no functioning judiciary, banking system, or postal service. Dith
+  Pran, the Cambodian journalist whose story became the 1984 film "The Killing Fields," testified that he survived by eating bark, insects, and the flesh of dead animals. He spent four years under the regime
+  before escaping to Thailand.
 
   '
 key_figures:
 - name: Pol Pot (Saloth Sar)
-  role: General Secretary of the Communist Party of Kampuchea, architect of the Year Zero policy; died April 15, 1998, without
-    facing trial
+  role: General Secretary of the Communist Party of Kampuchea, architect of the Year Zero policy; died April 15, 1998, without facing trial
 - name: Dith Pran
   role: Cambodian journalist for The New York Times, survived the regime, subject of the 1984 film 'The Killing Fields'
   wikidata: Q469846
@@ -77,15 +62,13 @@ key_figures:
   died: 2008
   wikipedia: https://en.wikipedia.org/wiki/Dith_Pran
 - name: Vann Nath
-  role: Painter and S-21 survivor, kept alive to produce Pol Pot portraits; his paintings of torture are displayed at the
-    Tuol Sleng Genocide Museum
+  role: Painter and S-21 survivor, kept alive to produce Pol Pot portraits; his paintings of torture are displayed at the Tuol Sleng Genocide Museum
   wikidata: Q611335
   born: 1946
   died: 2011
   wikipedia: https://en.wikipedia.org/wiki/Vann_Nath
 - name: Kaing Guek Eav ('Duch')
-  role: Commander of S-21 prison, oversaw the interrogation and execution of 14,000-17,000 prisoners; convicted by ECCC in
-    2010
+  role: Commander of S-21 prison, oversaw the interrogation and execution of 14,000-17,000 prisoners; convicted by ECCC in 2010
 - name: Nuon Chea
   role: '''Brother Number Two,'' chief ideologue of the Khmer Rouge; convicted of genocide by ECCC in 2018'
   wikidata: Q379225
@@ -112,13 +95,11 @@ primary_source_excerpts:
   author: Dith Pran
   work: Testimony to the ECCC
   date: '2009'
-- text: I am not a violent man. I was simply doing my duty... I recognize that crimes were committed at S-21 and I accept
-    responsibility.
+- text: I am not a violent man. I was simply doing my duty... I recognize that crimes were committed at S-21 and I accept responsibility.
   author: Kaing Guek Eav (Duch)
   work: Testimony at the Extraordinary Chambers in the Courts of Cambodia
   date: '2009'
-- text: My little sister was beaten to death with a hoe in front of my eyes for stealing a handful of rice. She was six years
-    old.
+- text: My little sister was beaten to death with a hoe in front of my eyes for stealing a handful of rice. She was six years old.
   author: Loung Ung
   work: First They Killed My Father
   date: '2000'
@@ -135,45 +116,33 @@ perspectives:
 - viewpoint: Democratic Kampuchea / Khmer Rouge Ideological
   viewpoint_type: victor
   region_origin: southeast-asia
-  narrative: 'The Khmer Rouge presented their revolution as Cambodia''s liberation from three overlapping forms of domination:
-    French colonialism (1863-1953), American imperialism (1955-1975), and the corruption of the Lon Nol military government
-    (1970-1975). The United States had secretly bombed eastern Cambodia between 1969 and 1973 — Operation Menu and Operation
-    Freedom Deal dropped an estimated 2.7 million tons of ordnance on Cambodian territory, more than the Allies dropped on
-    Japan in all of World War II. An estimated 100,000-150,000 Cambodian civilians died in the bombing. The Khmer Rouge recruited
-    heavily from the bombed rural population, whose rage at the destruction of their villages was channeled into revolutionary
-    fervor.
+  narrative: 'The Khmer Rouge presented their revolution as Cambodia''s liberation from three overlapping forms of domination: French colonialism (1863-1953), American imperialism (1955-1975), and the corruption
+    of the Lon Nol military government (1970-1975). The United States had secretly bombed eastern Cambodia between 1969 and 1973 — Operation Menu and Operation Freedom Deal dropped an estimated 2.7 million
+    tons of ordnance on Cambodian territory, more than the Allies dropped on Japan in all of World War II. An estimated 100,000-150,000 Cambodian civilians died in the bombing. The Khmer Rouge recruited
+    heavily from the bombed rural population, whose rage at the destruction of their villages was channeled into revolutionary fervor.
 
 
-    The party''s ideology drew from three sources: Marxism-Leninism as filtered through the French Communist Party (where
-    Pol Pot, Khieu Samphan, and Ieng Sary studied in Paris in the early 1950s), Maoist agrarianism (the Great Leap Forward''s
-    vision of peasant-powered industrialization), and a specifically Khmer nationalism rooted in nostalgia for the Angkor
-    Empire (802-1431), when the Khmer kingdom controlled much of mainland Southeast Asia. The party cadre saw themselves as
-    restoring Cambodia''s greatness by purging foreign influence — Vietnamese, Chinese, Thai, Western — and returning to the
+    The party''s ideology drew from three sources: Marxism-Leninism as filtered through the French Communist Party (where Pol Pot, Khieu Samphan, and Ieng Sary studied in Paris in the early 1950s), Maoist
+    agrarianism (the Great Leap Forward''s vision of peasant-powered industrialization), and a specifically Khmer nationalism rooted in nostalgia for the Angkor Empire (802-1431), when the Khmer kingdom
+    controlled much of mainland Southeast Asia. The party cadre saw themselves as restoring Cambodia''s greatness by purging foreign influence — Vietnamese, Chinese, Thai, Western — and returning to the
     agrarian purity that, in their mythology, had built Angkor Wat.
 
 
-    The evacuation of Phnom Penh was framed as a military necessity. Party documents captured after the fall of the regime
-    described the cities as "parasitic" — filled with merchants, bureaucrats, and intellectuals who produced nothing. The
-    countryside, where 85% of Cambodians already lived, was the revolution''s base. Moving the urban population to agricultural
-    cooperatives would simultaneously eliminate class distinctions, increase rice production, and deny the enemy (variously
-    defined as the CIA, the Vietnamese, and the old Cambodian elite) its social base. The party''s economic plan called for
-    tripling rice production within three years through collective labor and irrigation — targets that were politically mandated,
-    not agronomically feasible.
+    The evacuation of Phnom Penh was framed as a military necessity. Party documents captured after the fall of the regime described the cities as "parasitic" — filled with merchants, bureaucrats, and intellectuals
+    who produced nothing. The countryside, where 85% of Cambodians already lived, was the revolution''s base. Moving the urban population to agricultural cooperatives would simultaneously eliminate class
+    distinctions, increase rice production, and deny the enemy (variously defined as the CIA, the Vietnamese, and the old Cambodian elite) its social base. The party''s economic plan called for tripling
+    rice production within three years through collective labor and irrigation — targets that were politically mandated, not agronomically feasible.
 
 
-    The internal purges that consumed the party from 1976 onward reflected the regime''s paranoia about enemies within. S-21
-    processed not only suspected counter-revolutionaries but Khmer Rouge cadres accused of working for the CIA, the KGB, or
-    Vietnam. The Eastern Zone purge of 1977-1978 — in which the party liquidated its own commanders and their followers for
-    alleged Vietnamese sympathies — killed an estimated 100,000 people and drove survivors, including Heng Samrin, to defect
-    to Vietnam. These defectors provided the Vietnamese with the military intelligence and political legitimacy for the December
+    The internal purges that consumed the party from 1976 onward reflected the regime''s paranoia about enemies within. S-21 processed not only suspected counter-revolutionaries but Khmer Rouge cadres accused
+    of working for the CIA, the KGB, or Vietnam. The Eastern Zone purge of 1977-1978 — in which the party liquidated its own commanders and their followers for alleged Vietnamese sympathies — killed an
+    estimated 100,000 people and drove survivors, including Heng Samrin, to defect to Vietnam. These defectors provided the Vietnamese with the military intelligence and political legitimacy for the December
     1978 invasion.
 
 
-    The regime never acknowledged the scale of killing. Pol Pot, in a rare interview with Nate Thayer for the Far Eastern
-    Economic Review in October 1997, stated: "I came to carry out the struggle, not to kill people. Even now, and you can
-    look at me: am I a savage person? My conscience is clear." He died on April 15, 1998, in a bamboo shack near the Thai
-    border, reportedly of heart failure. His body was burned on a pile of tires and old furniture before any autopsy could
-    be performed.
+    The regime never acknowledged the scale of killing. Pol Pot, in a rare interview with Nate Thayer for the Far Eastern Economic Review in October 1997, stated: "I came to carry out the struggle, not
+    to kill people. Even now, and you can look at me: am I a savage person? My conscience is clear." He died on April 15, 1998, in a bamboo shack near the Thai border, reportedly of heart failure. His body
+    was burned on a pile of tires and old furniture before any autopsy could be performed.
 
     '
   key_arguments:
@@ -199,8 +168,7 @@ perspectives:
     type: book
     archive_url: https://archive.org/details/howpolpotcametop0000kier
   notable_quotes:
-  - text: 'I came to carry out the struggle, not to kill people. Even now, and you can look at me: am I a savage person? My
-      conscience is clear.'
+  - text: 'I came to carry out the struggle, not to kill people. Even now, and you can look at me: am I a savage person? My conscience is clear.'
     speaker: Pol Pot
     context: Interview with Nate Thayer, Far Eastern Economic Review, October 1997
   - text: Whoever has a Cambodian body but a Vietnamese head shall be eliminated.
@@ -219,52 +187,40 @@ perspectives:
 - viewpoint: Cambodian Survivor / Refugee
   viewpoint_type: vanquished
   region_origin: southeast-asia
-  narrative: 'Loung Ung was five years old when the soldiers came. Her father, a military police captain under the Lon Nol
-    government, told the family to split up to survive. He was taken by Khmer Rouge cadres and never returned. Her mother
-    was taken next. Two of her sisters disappeared. Loung, assigned to a children''s work brigade, dug irrigation ditches
-    12 hours a day on a daily ration of a single bowl of watered rice. She watched a six-year-old girl beaten to death with
-    a hoe for stealing a handful of rice. Her memoir, "First They Killed My Father" (2000), was translated into 17 languages
-    and adapted into a 2017 film directed by Angelina Jolie.
+  narrative: 'Loung Ung was five years old when the soldiers came. Her father, a military police captain under the Lon Nol government, told the family to split up to survive. He was taken by Khmer Rouge
+    cadres and never returned. Her mother was taken next. Two of her sisters disappeared. Loung, assigned to a children''s work brigade, dug irrigation ditches 12 hours a day on a daily ration of a single
+    bowl of watered rice. She watched a six-year-old girl beaten to death with a hoe for stealing a handful of rice. Her memoir, "First They Killed My Father" (2000), was translated into 17 languages and
+    adapted into a 2017 film directed by Angelina Jolie.
 
 
-    The evacuation of April 17, 1975, was experienced by urban Cambodians as the end of the world. Families carried what they
-    could — bags of rice, cooking pots, photographs, gold — and walked for days or weeks to destinations they were not told
-    in advance. Those who fell behind were shot. Those who admitted to being soldiers, civil servants, teachers, or doctors
-    were separated from the column and killed. At checkpoints, cadres searched belongings for books, eyeglasses, foreign currency,
-    or any evidence of education. Wearing glasses could be a death sentence — the regime associated them with literacy and
-    intellectual life.
+    The evacuation of April 17, 1975, was experienced by urban Cambodians as the end of the world. Families carried what they could — bags of rice, cooking pots, photographs, gold — and walked for days
+    or weeks to destinations they were not told in advance. Those who fell behind were shot. Those who admitted to being soldiers, civil servants, teachers, or doctors were separated from the column and
+    killed. At checkpoints, cadres searched belongings for books, eyeglasses, foreign currency, or any evidence of education. Wearing glasses could be a death sentence — the regime associated them with
+    literacy and intellectual life.
 
 
-    In the cooperatives, survival depended on invisibility. Workers who appeared too clean, too pale, or too soft-handed were
-    identified as "new people" — former city dwellers — and assigned the hardest labor with the smallest rations. "Base people"
-    — peasants who had lived in Khmer Rouge zones before 1975 — received larger rations and supervisory roles, though they
-    too were subject to execution for infractions. The workday ran from dawn to past dark, with a midday break for thin rice
-    gruel. Workers who collapsed from exhaustion were sometimes left where they fell. Medical care consisted of herbal remedies
-    administered by teenage cadres with no training; the regime had expelled or killed the country''s doctors.
+    In the cooperatives, survival depended on invisibility. Workers who appeared too clean, too pale, or too soft-handed were identified as "new people" — former city dwellers — and assigned the hardest
+    labor with the smallest rations. "Base people" — peasants who had lived in Khmer Rouge zones before 1975 — received larger rations and supervisory roles, though they too were subject to execution for
+    infractions. The workday ran from dawn to past dark, with a midday break for thin rice gruel. Workers who collapsed from exhaustion were sometimes left where they fell. Medical care consisted of herbal
+    remedies administered by teenage cadres with no training; the regime had expelled or killed the country''s doctors.
 
 
-    Starvation was the primary killer. The regime exported rice to China while its own population starved. Workers caught
-    foraging — eating leaves, insects, lizards, snails, or bark — faced execution for "individualism." Dith Pran described
-    eating tarantulas, crickets, and scorpions to stay alive. Haing Ngor, a Cambodian doctor who survived the regime and later
-    played Dith Pran in "The Killing Fields" (winning the 1985 Academy Award for Best Supporting Actor), wrote in his memoir
-    "Survival in the Killing Fields" (1987) that he watched his pregnant wife die of starvation and untreated illness because
+    Starvation was the primary killer. The regime exported rice to China while its own population starved. Workers caught foraging — eating leaves, insects, lizards, snails, or bark — faced execution for
+    "individualism." Dith Pran described eating tarantulas, crickets, and scorpions to stay alive. Haing Ngor, a Cambodian doctor who survived the regime and later played Dith Pran in "The Killing Fields"
+    (winning the 1985 Academy Award for Best Supporting Actor), wrote in his memoir "Survival in the Killing Fields" (1987) that he watched his pregnant wife die of starvation and untreated illness because
     revealing his medical training would have meant execution.
 
 
-    The killing sites — more than 20,000 mass graves identified across Cambodia by the Documentation Center of Cambodia (DC-Cam)
-    — were not hidden. The largest, Choeung Ek, 15 kilometers south of Phnom Penh, contains an estimated 20,000 bodies in
-    129 mass graves. Prisoners were brought from S-21 and other detention centers, forced to kneel at the edge of pits, and
-    killed with iron bars, bamboo sticks, machetes, and palm-leaf stems sharpened to a cutting edge. Bullets were considered
-    too expensive. A loudspeaker played revolutionary music to cover the screams.
+    The killing sites — more than 20,000 mass graves identified across Cambodia by the Documentation Center of Cambodia (DC-Cam) — were not hidden. The largest, Choeung Ek, 15 kilometers south of Phnom
+    Penh, contains an estimated 20,000 bodies in 129 mass graves. Prisoners were brought from S-21 and other detention centers, forced to kneel at the edge of pits, and killed with iron bars, bamboo sticks,
+    machetes, and palm-leaf stems sharpened to a cutting edge. Bullets were considered too expensive. A loudspeaker played revolutionary music to cover the screams.
 
 
-    The Vietnamese invasion of January 1979 ended the regime but not the suffering. Hundreds of thousands of Cambodians fled
-    to refugee camps along the Thai border, where they waited — some for years — for resettlement. The Khao-I-Dang camp, the
-    largest, held 140,000 people at its peak. The United States accepted approximately 150,000 Cambodian refugees between
-    1975 and 1994. The refugee community in Long Beach, California — estimated at 50,000 — is the largest Cambodian population
-    outside Southeast Asia. Post-traumatic stress disorder, depression, and survivor''s guilt mark the diaspora: a 2005 study
-    by the Harvard Program in Refugee Trauma found that 62% of Cambodian refugees in the United States met diagnostic criteria
-    for PTSD, and 51% met criteria for major depression — 25 years after the events.
+    The Vietnamese invasion of January 1979 ended the regime but not the suffering. Hundreds of thousands of Cambodians fled to refugee camps along the Thai border, where they waited — some for years —
+    for resettlement. The Khao-I-Dang camp, the largest, held 140,000 people at its peak. The United States accepted approximately 150,000 Cambodian refugees between 1975 and 1994. The refugee community
+    in Long Beach, California — estimated at 50,000 — is the largest Cambodian population outside Southeast Asia. Post-traumatic stress disorder, depression, and survivor''s guilt mark the diaspora: a 2005
+    study by the Harvard Program in Refugee Trauma found that 62% of Cambodian refugees in the United States met diagnostic criteria for PTSD, and 51% met criteria for major depression — 25 years after
+    the events.
 
     '
   key_arguments:
@@ -313,55 +269,41 @@ perspectives:
 - viewpoint: Vietnamese Liberator
   viewpoint_type: bystander
   region_origin: southeast-asia
-  narrative: 'Vietnam''s invasion of Cambodia on December 25, 1978, was the event that ended the genocide, and it was punished
-    for it. The United States, China, and ASEAN condemned the invasion as a violation of sovereignty. China launched a retaliatory
-    border war against Vietnam in February 1979, sending 200,000 troops across the northern border in a 29-day conflict that
-    killed an estimated 20,000 Vietnamese soldiers. The Western bloc and China ensured that the deposed Khmer Rouge coalition
-    — not the Vietnamese-installed government — retained Cambodia''s seat at the United Nations until 1991. Vietnam, already
-    under U.S. trade embargo since 1975, faced additional sanctions. The country that stopped the killing was treated as the
-    aggressor.
+  narrative: 'Vietnam''s invasion of Cambodia on December 25, 1978, was the event that ended the genocide, and it was punished for it. The United States, China, and ASEAN condemned the invasion as a violation
+    of sovereignty. China launched a retaliatory border war against Vietnam in February 1979, sending 200,000 troops across the northern border in a 29-day conflict that killed an estimated 20,000 Vietnamese
+    soldiers. The Western bloc and China ensured that the deposed Khmer Rouge coalition — not the Vietnamese-installed government — retained Cambodia''s seat at the United Nations until 1991. Vietnam, already
+    under U.S. trade embargo since 1975, faced additional sanctions. The country that stopped the killing was treated as the aggressor.
 
 
-    The Vietnamese perspective on the invasion centers on three factors: border provocations, refugee flows, and ideological
-    betrayal. From 1977 onward, Khmer Rouge forces conducted cross-border raids into Vietnamese territory, attacking villages
-    in Tay Ninh, An Giang, and Kien Giang provinces. The April 1978 massacre at Ba Chuc in An Giang province killed 3,157
-    Vietnamese civilians in two days — bodies were found in wells, pagodas, and rice paddies. Vietnam maintains the Ba Chuc
-    Massacre Memorial, which displays skulls and bones in a concrete ossuary similar to Cambodia''s own genocide memorials.
-    The border raids, combined with the Eastern Zone purge — in which the Khmer Rouge killed ethnic Vietnamese living in Cambodia
-    and purged pro-Vietnamese cadres — drove defectors into Vietnam and provided Hanoi with both casus belli and local allies.
+    The Vietnamese perspective on the invasion centers on three factors: border provocations, refugee flows, and ideological betrayal. From 1977 onward, Khmer Rouge forces conducted cross-border raids into
+    Vietnamese territory, attacking villages in Tay Ninh, An Giang, and Kien Giang provinces. The April 1978 massacre at Ba Chuc in An Giang province killed 3,157 Vietnamese civilians in two days — bodies
+    were found in wells, pagodas, and rice paddies. Vietnam maintains the Ba Chuc Massacre Memorial, which displays skulls and bones in a concrete ossuary similar to Cambodia''s own genocide memorials.
+    The border raids, combined with the Eastern Zone purge — in which the Khmer Rouge killed ethnic Vietnamese living in Cambodia and purged pro-Vietnamese cadres — drove defectors into Vietnam and provided
+    Hanoi with both casus belli and local allies.
 
 
-    The ideological dimension was acute. Vietnam and Cambodia were nominally communist allies, both recipients of Soviet and
-    Chinese support during their respective wars against the United States. But the Khmer Rouge aligned with China while Vietnam
-    aligned with the Soviet Union, mirroring the Sino-Soviet split. Pol Pot regarded Vietnam as Cambodia''s historical enemy
-    — the Khmer Empire had lost territory to Vietnamese expansion over centuries, and the party''s nationalism incorporated
-    deep anti-Vietnamese sentiment. The slogan "Whoever has a Cambodian body but a Vietnamese head shall be eliminated" expressed
-    a racial hatred that targeted the 400,000-500,000 ethnic Vietnamese living in Cambodia, most of whom were killed or expelled
-    between 1975 and 1978.
+    The ideological dimension was acute. Vietnam and Cambodia were nominally communist allies, both recipients of Soviet and Chinese support during their respective wars against the United States. But the
+    Khmer Rouge aligned with China while Vietnam aligned with the Soviet Union, mirroring the Sino-Soviet split. Pol Pot regarded Vietnam as Cambodia''s historical enemy — the Khmer Empire had lost territory
+    to Vietnamese expansion over centuries, and the party''s nationalism incorporated deep anti-Vietnamese sentiment. The slogan "Whoever has a Cambodian body but a Vietnamese head shall be eliminated"
+    expressed a racial hatred that targeted the 400,000-500,000 ethnic Vietnamese living in Cambodia, most of whom were killed or expelled between 1975 and 1978.
 
 
-    The Vietnamese military operation was swift and decisive. Four divisions — approximately 150,000 troops supported by armor
-    and artillery — crossed the border on December 25. Phnom Penh fell on January 7, 1979. The Khmer Rouge offered limited
-    resistance and retreated to the western mountains and the Thai border. Vietnam installed the People''s Republic of Kampuchea
-    under Heng Samrin (a Khmer Rouge Eastern Zone defector) and maintained an occupation force of 150,000-200,000 troops in
-    Cambodia until 1989. The occupation cost Vietnam an estimated $1 million per day in a period when the country''s own economy
-    was devastated by war, embargo, and the failure of agricultural collectivization.
+    The Vietnamese military operation was swift and decisive. Four divisions — approximately 150,000 troops supported by armor and artillery — crossed the border on December 25. Phnom Penh fell on January
+    7, 1979. The Khmer Rouge offered limited resistance and retreated to the western mountains and the Thai border. Vietnam installed the People''s Republic of Kampuchea under Heng Samrin (a Khmer Rouge
+    Eastern Zone defector) and maintained an occupation force of 150,000-200,000 troops in Cambodia until 1989. The occupation cost Vietnam an estimated $1 million per day in a period when the country''s
+    own economy was devastated by war, embargo, and the failure of agricultural collectivization.
 
 
-    Vietnamese soldiers entering Phnom Penh found a ghost city. The population, forcibly evacuated in April 1975, had not
-    returned. The Central Market was empty. The National Bank had been dynamited. Currency was scattered in the streets —
-    the regime had abolished money on the first day. At Tuol Sleng, Vietnamese journalist Ho Van Tay was among the first to
-    enter the former school and discover the prison records, the photographs, and the bodies of the last prisoners, killed
-    by their guards as the Vietnamese advanced. The Vietnamese military filmed and photographed the evidence, and the Tuol
-    Sleng Genocide Museum — opened in 1980 under Vietnamese supervision — became the primary memorial site.
+    Vietnamese soldiers entering Phnom Penh found a ghost city. The population, forcibly evacuated in April 1975, had not returned. The Central Market was empty. The National Bank had been dynamited. Currency
+    was scattered in the streets — the regime had abolished money on the first day. At Tuol Sleng, Vietnamese journalist Ho Van Tay was among the first to enter the former school and discover the prison
+    records, the photographs, and the bodies of the last prisoners, killed by their guards as the Vietnamese advanced. The Vietnamese military filmed and photographed the evidence, and the Tuol Sleng Genocide
+    Museum — opened in 1980 under Vietnamese supervision — became the primary memorial site.
 
 
-    The Vietnamese narrative frames the invasion as humanitarian intervention before the term existed in international law.
-    Hanoi argues that it acted to stop a genocide, protect its own border population, and remove a hostile regime that threatened
-    regional security. Western and Chinese opposition, in this reading, reflected Cold War priorities — containing Soviet-aligned
-    Vietnam — rather than any principled commitment to Cambodian sovereignty. The historical irony is that the Responsibility
-    to Protect (R2P) doctrine, adopted by the UN in 2005 partly in response to failures in Rwanda and Bosnia, describes exactly
-    the kind of intervention Vietnam carried out in 1978 — but Vietnam was condemned for it.
+    The Vietnamese narrative frames the invasion as humanitarian intervention before the term existed in international law. Hanoi argues that it acted to stop a genocide, protect its own border population,
+    and remove a hostile regime that threatened regional security. Western and Chinese opposition, in this reading, reflected Cold War priorities — containing Soviet-aligned Vietnam — rather than any principled
+    commitment to Cambodian sovereignty. The historical irony is that the Responsibility to Protect (R2P) doctrine, adopted by the UN in 2005 partly in response to failures in Rwanda and Bosnia, describes
+    exactly the kind of intervention Vietnam carried out in 1978 — but Vietnam was condemned for it.
 
     '
   key_arguments:
@@ -390,8 +332,7 @@ perspectives:
     openlibrary: OL11026096M
     archive_url: https://archive.org/details/vietnamsinterven0000gary
   notable_quotes:
-  - text: We could not stand by while our people were being massacred across the border and a genocide was being committed
-      against the Cambodian people.
+  - text: We could not stand by while our people were being massacred across the border and a genocide was being committed against the Cambodian people.
     speaker: Vietnamese government statement
     context: Official justification for the invasion, January 1979
   - text: The world said 'never again' after the Holocaust. When Vietnam acted on that promise, the world imposed sanctions.
@@ -409,65 +350,49 @@ perspectives:
 - viewpoint: ECCC Tribunal / Academic
   viewpoint_type: academic
   region_origin: global
-  narrative: 'The Extraordinary Chambers in the Courts of Cambodia (ECCC) opened its first trial in 2009 — thirty years after
-    the genocide ended. The tribunal was a hybrid: international and Cambodian judges sitting together, applying both Cambodian
-    and international law, funded primarily by foreign donors ($337 million over its lifetime) but housed in a Cambodian military
-    compound on the outskirts of Phnom Penh. The delay was not accidental. Hun Sen, Cambodia''s prime minister from 1985 to
-    2023, was himself a former Khmer Rouge cadre who defected to Vietnam in 1977. His government resisted a tribunal for years,
-    fearing that trials would destabilize the fragile peace achieved through the 1991 Paris Peace Accords and expose connections
-    between current officials and the former regime.
+  narrative: 'The Extraordinary Chambers in the Courts of Cambodia (ECCC) opened its first trial in 2009 — thirty years after the genocide ended. The tribunal was a hybrid: international and Cambodian judges
+    sitting together, applying both Cambodian and international law, funded primarily by foreign donors ($337 million over its lifetime) but housed in a Cambodian military compound on the outskirts of Phnom
+    Penh. The delay was not accidental. Hun Sen, Cambodia''s prime minister from 1985 to 2023, was himself a former Khmer Rouge cadre who defected to Vietnam in 1977. His government resisted a tribunal
+    for years, fearing that trials would destabilize the fragile peace achieved through the 1991 Paris Peace Accords and expose connections between current officials and the former regime.
 
 
-    The tribunal convicted three people. Case 001: Kaing Guek Eav ("Duch"), commander of S-21, sentenced to 35 years in 2010,
-    extended to life on appeal in 2012. Duch was the only defendant who acknowledged his crimes in detail, describing the
-    prison''s operations with a bureaucrat''s precision — the intake procedures, the interrogation techniques (waterboarding,
-    electrocution, suffocation), the execution schedule, the filing system for confessions. He testified that he received
-    orders from the party center and believed that failure to carry them out would mean his own death. Case 002: Nuon Chea
-    ("Brother Number Two") and Khieu Samphan (head of state), both convicted of genocide and crimes against humanity in 2018
-    and sentenced to life. Nuon Chea died in 2019; Khieu Samphan''s appeal was rejected in 2022.
+    The tribunal convicted three people. Case 001: Kaing Guek Eav ("Duch"), commander of S-21, sentenced to 35 years in 2010, extended to life on appeal in 2012. Duch was the only defendant who acknowledged
+    his crimes in detail, describing the prison''s operations with a bureaucrat''s precision — the intake procedures, the interrogation techniques (waterboarding, electrocution, suffocation), the execution
+    schedule, the filing system for confessions. He testified that he received orders from the party center and believed that failure to carry them out would mean his own death. Case 002: Nuon Chea ("Brother
+    Number Two") and Khieu Samphan (head of state), both convicted of genocide and crimes against humanity in 2018 and sentenced to life. Nuon Chea died in 2019; Khieu Samphan''s appeal was rejected in
+    2022.
 
 
-    Cases 003 and 004 — involving mid-level commanders — collapsed under political pressure. The Cambodian government openly
-    opposed their prosecution. The international co-investigating judge, German jurist Siegfried Blunk, resigned in 2011 citing
-    government interference. His successor, Australian Mark Harmon, resigned in 2019 for the same reason. No further trials
-    were held. The tribunal closed its substantive operations in 2022.
+    Cases 003 and 004 — involving mid-level commanders — collapsed under political pressure. The Cambodian government openly opposed their prosecution. The international co-investigating judge, German jurist
+    Siegfried Blunk, resigned in 2011 citing government interference. His successor, Australian Mark Harmon, resigned in 2019 for the same reason. No further trials were held. The tribunal closed its substantive
+    operations in 2022.
 
 
-    Ben Kiernan''s "The Pol Pot Regime: Race, Power, and Genocide in Cambodia under the Khmer Rouge, 1975-79" (1996; revised
-    2008) established the quantitative foundation: 1.671-1.871 million excess deaths, comprising approximately 800,000 from
-    starvation and disease, 500,000 executed, and the remainder from overwork and untreated illness. Kiernan documented the
-    regime''s ethnic targeting: of Cambodia''s 400,000-500,000 ethnic Vietnamese, almost all were killed or expelled. Of the
-    250,000 ethnic Chinese, an estimated 50% died. Of the approximately 200,000 Cham Muslims, approximately 36% were killed
-    — mosques were destroyed, the Quran burned, religious leaders executed, and the Cham language banned. The Khmer Rouge
-    also targeted Buddhist monks: of an estimated 66,000 monks in 1975, fewer than 3,000 survived.
+    Ben Kiernan''s "The Pol Pot Regime: Race, Power, and Genocide in Cambodia under the Khmer Rouge, 1975-79" (1996; revised 2008) established the quantitative foundation: 1.671-1.871 million excess deaths,
+    comprising approximately 800,000 from starvation and disease, 500,000 executed, and the remainder from overwork and untreated illness. Kiernan documented the regime''s ethnic targeting: of Cambodia''s
+    400,000-500,000 ethnic Vietnamese, almost all were killed or expelled. Of the 250,000 ethnic Chinese, an estimated 50% died. Of the approximately 200,000 Cham Muslims, approximately 36% were killed
+    — mosques were destroyed, the Quran burned, religious leaders executed, and the Cham language banned. The Khmer Rouge also targeted Buddhist monks: of an estimated 66,000 monks in 1975, fewer than 3,000
+    survived.
 
 
-    The academic debate centers on classification and causation. Was Democratic Kampuchea a communist revolution that produced
-    genocide, or a genocidal regime that used communist rhetoric as cover for ultranationalism? Kiernan argues for the centrality
-    of race — the regime targeted ethnic minorities with a ferocity that exceeded its class-based violence. Alexander Hinton,
-    in "Why Did They Kill? Cambodia in the Shadow of Genocide" (2005), draws on anthropological fieldwork to argue that the
-    genocide must be understood through Cambodian cultural concepts — disproportionate revenge (kam), the hierarchical patron-client
-    system, and the Buddhist concept of karma reinterpreted as revolutionary justice. David Chandler, in "Voices from S-21:
-    Terror and History in Pol Pot''s Secret Prison" (1999), analyzes the confession archive to show how the regime''s paranoia
-    was self-generating: each confession, extracted under torture, named new "traitors," who were arrested and tortured into
-    naming others, producing an exponentially expanding purge.
+    The academic debate centers on classification and causation. Was Democratic Kampuchea a communist revolution that produced genocide, or a genocidal regime that used communist rhetoric as cover for ultranationalism?
+    Kiernan argues for the centrality of race — the regime targeted ethnic minorities with a ferocity that exceeded its class-based violence. Alexander Hinton, in "Why Did They Kill? Cambodia in the Shadow
+    of Genocide" (2005), draws on anthropological fieldwork to argue that the genocide must be understood through Cambodian cultural concepts — disproportionate revenge (kam), the hierarchical patron-client
+    system, and the Buddhist concept of karma reinterpreted as revolutionary justice. David Chandler, in "Voices from S-21: Terror and History in Pol Pot''s Secret Prison" (1999), analyzes the confession
+    archive to show how the regime''s paranoia was self-generating: each confession, extracted under torture, named new "traitors," who were arrested and tortured into naming others, producing an exponentially
+    expanding purge.
 
 
-    The S-21 photographs — 6,000 of which survive in the Tuol Sleng archive, with thousands more held by the Documentation
-    Center of Cambodia (DC-Cam) — have become the genocide''s primary visual record. The images show men, women, children,
-    and infants, many visibly terrified, some bleeding, all wearing numbered tags. The photographs were taken by Nhem En,
-    a Khmer Rouge cadre who was 15 years old when he began his assignment as S-21''s photographer. In interviews decades later,
-    Nhem En described his work matter-of-factly: "I took the photos. That was my job." The photographs'' power lies in their
-    bureaucratic banality — the regime documented its own crimes with the same efficiency it applied to rice production quotas
-    and execution schedules.
+    The S-21 photographs — 6,000 of which survive in the Tuol Sleng archive, with thousands more held by the Documentation Center of Cambodia (DC-Cam) — have become the genocide''s primary visual record.
+    The images show men, women, children, and infants, many visibly terrified, some bleeding, all wearing numbered tags. The photographs were taken by Nhem En, a Khmer Rouge cadre who was 15 years old when
+    he began his assignment as S-21''s photographer. In interviews decades later, Nhem En described his work matter-of-factly: "I took the photos. That was my job." The photographs'' power lies in their
+    bureaucratic banality — the regime documented its own crimes with the same efficiency it applied to rice production quotas and execution schedules.
 
 
-    The Cambodian genocide''s position in comparative genocide studies raises a question that persists in scholarship: whether
-    the international community''s failure to respond — and its active support for the Khmer Rouge''s UN seat after the Vietnamese
-    invasion — constitutes complicity. The United States provided covert aid to Khmer Rouge-aligned forces through Thailand
-    in the 1980s, a policy documented by John Pilger in "Year Zero: The Silent Death of Cambodia" (1979) and confirmed by
-    declassified State Department cables. China supplied the Khmer Rouge with an estimated $1 billion in military aid between
-    1975 and 1979. The genocide was not merely tolerated; it was, in Cold War terms, useful.
+    The Cambodian genocide''s position in comparative genocide studies raises a question that persists in scholarship: whether the international community''s failure to respond — and its active support
+    for the Khmer Rouge''s UN seat after the Vietnamese invasion — constitutes complicity. The United States provided covert aid to Khmer Rouge-aligned forces through Thailand in the 1980s, a policy documented
+    by John Pilger in "Year Zero: The Silent Death of Cambodia" (1979) and confirmed by declassified State Department cables. China supplied the Khmer Rouge with an estimated $1 billion in military aid
+    between 1975 and 1979. The genocide was not merely tolerated; it was, in Cold War terms, useful.
 
     '
   key_arguments:
@@ -519,9 +444,8 @@ perspectives:
 media:
 - media_type: photograph
   title: Tuol Sleng (S-21) prisoner photographs
-  description: The former Tuol Svay Prey High School, converted into Security Prison 21 by the Khmer Rouge. Each of the estimated
-    14,000-17,000 prisoners was photographed on arrival. The photographs — showing men, women, and children, many visibly
-    terrified, wearing numbered tags — are displayed on the walls of the Tuol Sleng Genocide Museum.
+  description: The former Tuol Svay Prey High School, converted into Security Prison 21 by the Khmer Rouge. Each of the estimated 14,000-17,000 prisoners was photographed on arrival. The photographs — showing
+    men, women, and children, many visibly terrified, wearing numbered tags — are displayed on the walls of the Tuol Sleng Genocide Museum.
   source_url: https://commons.wikimedia.org/wiki/File:Tuol_Sleng_Genocide_Museum.jpg
   attribution: Adam Carr, CC BY-SA 3.0, via Wikimedia Commons
   license: cc-by-sa
@@ -529,19 +453,18 @@ media:
   creation_date: '2005'
 - media_type: photograph
   title: Skulls at the Choeung Ek Killing Field memorial
-  description: The memorial stupa at Choeung Ek, 15 kilometers south of Phnom Penh, contains approximately 8,000 skulls arranged
-    behind glass panels. Choeung Ek was the primary execution site for S-21 prisoners; 129 mass graves have been excavated,
-    containing an estimated 20,000 bodies.
+  description: The memorial stupa at Choeung Ek, 15 kilometers south of Phnom Penh, contains approximately 8,000 skulls arranged behind glass panels. Choeung Ek was the primary execution site for S-21 prisoners;
+    129 mass graves have been excavated, containing an estimated 20,000 bodies.
   source_url: https://commons.wikimedia.org/wiki/File:Choeungek2.JPG
   attribution: Bong Vat, CC BY-SA 3.0, via Wikimedia Commons
   license: cc-by-sa
   creator: Bong Vat
   creation_date: '2007'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/wiki_1.jpg
 - media_type: artwork
   title: Vann Nath painting — waterboarding at S-21
-  description: One of approximately 40 paintings by Vann Nath, one of the 7 known survivors of S-21, depicting torture methods
-    used at the prison. Vann Nath was kept alive because the regime needed a painter to produce portraits of Pol Pot. His
-    paintings, created after liberation, hang in the Tuol Sleng Genocide Museum.
+  description: One of approximately 40 paintings by Vann Nath, one of the 7 known survivors of S-21, depicting torture methods used at the prison. Vann Nath was kept alive because the regime needed a painter
+    to produce portraits of Pol Pot. His paintings, created after liberation, hang in the Tuol Sleng Genocide Museum.
   source_url: https://commons.wikimedia.org/wiki/File:Vann_Nath_Painting.jpg
   attribution: Vann Nath, via Wikimedia Commons
   license: public-domain
@@ -606,14 +529,13 @@ media:
 connections:
 - target_slug: rwandan-genocide
   connection_type: parallel
-  description: Both genocides were state-organized, bureaucratically documented, and occurred while the international community
-    failed to intervene — the Cambodian precedent of inaction was repeated 15 years later in Rwanda
+  description: Both genocides were state-organized, bureaucratically documented, and occurred while the international community failed to intervene — the Cambodian precedent of inaction was repeated 15
+    years later in Rwanda
 - target_slug: fall-of-berlin-wall
   connection_type: influenced
-  description: 'Cold War alignments shaped the genocide''s aftermath: the U.S. and China supported the Khmer Rouge''s UN seat
-    to contain Soviet-aligned Vietnam, a calculus that ended only with the Cold War''s conclusion and the 1991 Paris Peace
-    Accords'
+  description: 'Cold War alignments shaped the genocide''s aftermath: the U.S. and China supported the Khmer Rouge''s UN seat to contain Soviet-aligned Vietnam, a calculus that ended only with the Cold
+    War''s conclusion and the 1991 Paris Peace Accords'
 - target_slug: hiroshima-nagasaki
   connection_type: parallel
-  description: The U.S. bombing of Cambodia (2.7 million tons, 1969-1973) — exceeding the total tonnage dropped on Japan in
-    WWII — destabilized the country and drove rural Cambodians into the Khmer Rouge's ranks
+  description: The U.S. bombing of Cambodia (2.7 million tons, 1969-1973) — exceeding the total tonnage dropped on Japan in WWII — destabilized the country and drove rural Cambodians into the Khmer Rouge's
+    ranks
