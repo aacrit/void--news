@@ -173,7 +173,7 @@ export function sigilLabelInfo(
     if (divergenceFlag === "consensus" || agreement < 20) {
       return { text: "Aligned", color: "var(--sense-low)" };
     }
-    return { text: "Center", color: "var(--bias-center)" };
+    return { text: "Balanced", color: "var(--bias-center)" };
   }
 
   // Tilted — lean direction is primary info
