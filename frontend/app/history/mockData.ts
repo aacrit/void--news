@@ -1,6 +1,6 @@
 /* ===========================================================================
    void --history — Mock Data
-   Real historical content for 3 events + 7 redacted stubs.
+   Real historical content for 3 events + 5 redacted stubs.
    Falls back to this when Supabase returns empty.
    =========================================================================== */
 
@@ -490,7 +490,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
         id: "persp-rwanda-academic",
         viewpointName: "Genocide Studies Scholars",
         viewpointType: "academic",
-        color: "d",
+        color: "c",
         temporalAnchor: "2000s-2020s",
         geographicAnchor: "Global (universities)",
         narrative: "The Rwandan genocide challenges every comfortable assumption about modern civilization. It was not premodern tribalism. It was organized by educated elites using modern media (radio), modern bureaucracy (identity cards, census lists), and modern logistics (roadblocks, militia deployment). The ethnic categories of Hutu and Tutsi were not ancient tribal identities but colonial constructions. Belgian administrators in 1933 issued identity cards that fixed fluid social categories into permanent racial classifications based on cattle ownership and physical measurements. The genocide was preceded by years of state-sponsored propaganda dehumanizing Tutsi as \"inyenzi\" (cockroaches). The pattern matches Stanton's ten stages of genocide, and Rwanda passed through every stage in sequence while the international community watched. The post-genocide government under Paul Kagame has achieved stability and economic growth but at the cost of political freedom. The gacaca courts processed over 1.9 million cases of genocide-related crimes using a community justice model unprecedented in scale. Whether Rwanda's recovery model, which prioritizes unity over individual freedom, constitutes justice or merely effective authoritarianism remains debated.",
@@ -521,7 +521,7 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
         id: "persp-rwanda-panafricanist",
         viewpointName: "Pan-African / Postcolonial",
         viewpointType: "revisionist",
-        color: "e",
+        color: "d",
         temporalAnchor: "1894-present",
         geographicAnchor: "Africa / Global",
         narrative: "The Rwandan genocide did not begin on April 6, 1994. It began in 1894, when Germany's Count Gustav Adolf von Gotzen reached the Rwandan royal court, and accelerated in 1916 when Belgium assumed control. The Belgians did not invent Hutu and Tutsi — these were fluid social designations related to cattle ownership — but they fixed them. In the 1930s, identity cards classified every Rwandan as Hutu (85%), Tutsi (14%), or Twa (1%) based on physical measurements and cattle counts. The categories became hereditary and immutable. Belgium elevated Tutsis as a ruling class using the Hamitic hypothesis, a European racial theory. When independence movements gained force, Belgium reversed allegiance, supporting the 1959 Hutu revolution that killed 20,000 Tutsis and drove 150,000 into exile. The RTLM propaganda drew directly on colonial racial science. The contrast between Western intervention in Bosnia (NATO airstrikes, 1994-95) and Rwanda's abandonment reflects a racial calculus. France maintained a military alliance with the Habyarimana regime, supplying weapons even after the genocide began. The 2021 Duclert Commission found France bore \"heavy and overwhelming responsibilities.\" The genocide was not an African aberration. It was a modern event organized through a state bureaucracy built by Europeans, using identity categories created by Europeans, executed with weapons supplied by Europeans.",
