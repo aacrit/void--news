@@ -223,7 +223,7 @@ function resolveCollisions(
   events: HistoricalEvent[],
   totalWidth: number
 ): { positions: number[]; sides: ("above" | "below")[] } {
-  const MIN_GAP_PX = 200;
+  const MIN_GAP_PX = 320; /* Must exceed card width (280px max) to prevent overlap */
   const minGapNorm = totalWidth > 0 ? MIN_GAP_PX / totalWidth : 0.08;
   const resolved = [...positions];
   const sides = events.map((e) => getCardSide(e));
@@ -232,7 +232,7 @@ function resolveCollisions(
   const belowIndices = events.map((_, i) => i).filter((i) => sides[i] === "below");
 
   for (const group of [aboveIndices, belowIndices]) {
-    for (let pass = 0; pass < 5; pass++) {
+    for (let pass = 0; pass < 12; pass++) {
       let changed = false;
       for (let gi = 1; gi < group.length; gi++) {
         const i = group[gi];
@@ -383,7 +383,7 @@ export default function HistoryLanding({
 
   /* ── Compute total width & positions ── */
   const totalWidthVw = useMemo(
-    () => Math.max(100, sortedEvents.length * 280),
+    () => Math.max(100, sortedEvents.length * 420),
     [sortedEvents.length]
   );
 
@@ -873,21 +873,17 @@ export default function HistoryLanding({
   /* ── State A: Full timeline ── */
   return (
     <div className="hist-tl-wrapper">
-      {/* ── TOP ZONE: Era header + year ribbon + era pills (all fixed) ── */}
-
-      {/* Era header — updates as user scrolls */}
+      {/* ── TOP ZONE: Single fixed container stacking era + year ribbon + pills ── */}
       <div
-        className={`hist-tl-era-header ${hasScrolled ? "" : "hist-tl-era-header--hidden"}`}
-        aria-live="polite"
-        aria-atomic="true"
+        className={`hist-tl-top-zone ${hasScrolled ? "" : "hist-tl-top-zone--hidden"}`}
         style={{ "--era-color": eraCtx.color } as React.CSSProperties}
       >
-        <div className="hist-tl-era-header__label">{eraCtx.label}</div>
-        <div className="hist-tl-era-header__desc">{eraCtx.description}</div>
-      </div>
+        {/* Era header */}
+        <div className="hist-tl-era-header" aria-live="polite" aria-atomic="true">
+          <span className="hist-tl-era-header__label">{eraCtx.label}</span>
+        </div>
 
-      {/* Year ribbon — scrolling ±4 years with focus/blur */}
-      {hasScrolled && (
+        {/* Year ribbon — ±4 years with focus/blur */}
         <div className="hist-tl-year-ribbon" aria-hidden="true">
           {yearRibbon.map((item) => (
             <button
@@ -910,10 +906,8 @@ export default function HistoryLanding({
             </button>
           ))}
         </div>
-      )}
 
-      {/* Era selection pills — ink-styled quick jump */}
-      {hasScrolled && (
+        {/* Era selection pills */}
         <nav className="hist-tl-era-pills" role="navigation" aria-label="Era navigation">
           {eraGroups.map((era) => {
             const isActive = currentEra === era.id;
@@ -938,7 +932,7 @@ export default function HistoryLanding({
             );
           })}
         </nav>
-      )}
+      </div>
 
       {/* Mission Brief -- fades on first scroll */}
       <div
