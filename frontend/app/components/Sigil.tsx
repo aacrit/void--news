@@ -124,20 +124,6 @@ function DataMark({ data, size, mounted }: {
         }}
         opacity={0.9}
       />
-      {/* Consensus ratio inside ring (replaces source count) */}
-      {data.consensusTotal && data.consensusTotal >= 3 && data.consensusCorroborated != null ? (
-        <text x="16" y="13.5" textAnchor="middle" dominantBaseline="central"
-          style={{
-            fontFamily: "var(--font-data)", fontSize: px > 32 ? 7.5 : 6, fontWeight: 700,
-            fill: "var(--fg-secondary)",
-            opacity: mounted ? 0.85 : 0,
-            transition: "opacity 400ms var(--ease-out) 300ms",
-          }}
-        >
-          {data.consensusCorroborated}/{data.consensusTotal}
-        </text>
-      ) : null}
-
       {/* Beam group — pivots around circle center, tilts by lean */}
       <g className="sigil__beam-group" style={{
         transformOrigin: "16px 13px",
@@ -527,6 +513,15 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
           <InkUnderline variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
         )}
       </span>
+
+      {/* Consensus ratio — compact corroborated/total below lean label */}
+      {data.consensusTotal && data.consensusTotal >= 3 && data.consensusCorroborated != null && (
+        <span className="sigil__consensus" style={{
+          opacity: mounted ? 0.7 : 0,
+        }}>
+          {data.consensusCorroborated}/{data.consensusTotal}
+        </span>
+      )}
 
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
