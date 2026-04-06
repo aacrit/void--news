@@ -36,6 +36,8 @@ key_figures:
     role: "Bishop and theologian, wrote City of God (413-426) in response to the sack of 410, arguing that Rome's fall was irrelevant to the eternal city of God"
   - name: "Emperor Zeno"
     role: "Eastern Roman Emperor (474-491), received the Western imperial regalia from Odoacer in 476"
+  - name: "Galla Placidia"
+    role: "Daughter of Theodosius I, captured during the 410 sack, married Visigoth king Athaulf, later governed the Western Empire as regent (425-437)"
   - name: "Justinian I"
     role: "Eastern Roman Emperor (527-565), attempted to reconquer the West; his wars in Italy killed more people than the 'fall' itself"
 
@@ -77,6 +79,8 @@ perspectives:
 
       The imperial perspective records a cascade of losses. After the Visigoths took Spain in 418 and the Vandals took North Africa in 439, the Western Empire lost its two richest provinces. The grain supply from Africa — which had fed Rome for centuries — was cut off. Tax revenue collapsed. The army, already dependent on Germanic foederati (allied troops serving under treaty), could no longer be paid in coin and was instead paid in land grants, which transferred productive territory from the state to individual commanders. By 450, the Western Emperor controlled little beyond Italy and parts of southern Gaul.
 
+      Augustine, writing City of God after the sack of 410, dedicated an entire section (Book I, Chapters 16-28) to the rape of Roman women by Alaric's soldiers. He argued that the women's virtue was not lost because virtue resides in the will, not the body — a position that broke from Roman legal and social convention, which treated raped women as dishonored. Jerome's letters describe women refugees arriving in North Africa and Palestine, many of them "of noble birth, accustomed to be carried by eunuchs" (Letter 130), now destitute.
+
       Romulus Augustulus himself was a puppet. His father Orestes — a former secretary to Attila the Hun — had installed him on the throne in October 475 after deposing Emperor Julius Nepos, who fled to Dalmatia and continued to claim the title until his assassination in 480. Romulus was never recognized by Constantinople. His regnal name was bitterly ironic: Romulus, after the city's founder; Augustus, after its first emperor. The diminutive "Augustulus" — "little Augustus" — was a contemporary mockery. The imperial tradition that had produced Trajan, Hadrian, and Marcus Aurelius ended with a boy whose name was a joke.
 
       The material decline was real. Bryan Ward-Perkins, in The Fall of Rome and the End of Civilization (2005), documented the archaeological evidence: roof tile production in Britain dropped to zero after Roman withdrawal in 410; pottery quality across the Western provinces regressed to pre-Roman levels; average cattle size — a proxy for agricultural productivity — decreased measurably between the 4th and 7th centuries. The aqueducts of Rome, which at their peak delivered 1 million cubic meters of water daily through 11 separate channels, fell into disrepair; by the 6th century, the city's population had dropped from roughly 1 million to perhaps 30,000. The Senate met for the last time around 580. The Forum, once the administrative center of an empire governing 60 million people, became a cattle pasture.
@@ -117,6 +121,7 @@ perspectives:
       - "Germanic successor states' adoption and adaptation of Roman institutions"
       - "The survival and flourishing of Roman culture in Constantinople, the Islamic world, and monastic centers"
       - "The role of Roman internal dysfunction — civil wars, corruption, inflation — in weakening the state long before the 'barbarians' arrived"
+      - "Women's experience of the sack — Augustine's radical defense of rape victims' virtue, and the refugee testimony Jerome recorded"
 
   - viewpoint: "Germanic Successor Kingdoms"
     viewpoint_type: victor
@@ -128,7 +133,11 @@ perspectives:
 
       The Frankish case is the most consequential. Clovis, king of the Franks, converted to Catholic Christianity around 496 — choosing the Roman church over the Arian Christianity that other Germanic kingdoms had adopted. This alliance with the papacy gave the Frankish kingdom a legitimacy that the Ostrogoths and Visigoths lacked. When Pope Leo III crowned Charlemagne as "Emperor of the Romans" on Christmas Day 800, the Frankish kingdom became the direct political successor of the Western Empire — or at least claimed to be. The Holy Roman Empire that emerged from Charlemagne's realm endured, in attenuated form, until Napoleon dissolved it in 1806: over a thousand years of Germanic rulers styling themselves as Roman emperors.
 
+      Galla Placidia embodies the intertwined Roman-Germanic world better than any treaty. Daughter of Emperor Theodosius I, she was captured by Alaric during the sack of Rome in 410, traveled with the Visigoths for six years, and married King Athaulf at Narbonne in 414. After Athaulf's assassination, she returned to the Roman court, married the general Constantius III, and governed the Western Empire as regent for her son Valentinian III from 425 to 437 — twelve years of effective rule. Her mausoleum in Ravenna, with its midnight-blue mosaics of gold stars, still stands.
+
       The Germanic perspective rejects the word "fall." The peoples whom Roman sources called "barbarians" — a Greek term meaning "those who speak unintelligibly" — were not external invaders crashing through the borders. Many had served in the Roman army for generations. Stilicho, the Western Empire's most capable general in the early 5th century, was half-Vandal. Ricimer, the power behind the throne from 456 to 472, was half-Suevian and half-Visigothic. Odoacer's own troops were foederati — contracted soldiers within the Roman military system. The "barbarian invasions" were, in many cases, armed migrations by peoples who had long been part of the Roman world and wanted land, not destruction.
+
+      The legal position of women shifted in ways that complicate the "fall" narrative. Roman law under Augustus had restricted women's property rights through guardianship requirements (tutela mulierum). The Burgundian Code (c. 500) and Visigothic Code (654) gave women inheritance rights, the ability to hold property independently, and in some cases the right to represent themselves in court — provisions that had no equivalent in late Roman law. The "barbarian" legal systems, while patriarchal, granted women economic agency that the "civilized" system had denied.
 
       The archaeological record in many Germanic successor states shows continuity rather than rupture. In Frankish Gaul, villa estates continued to function, albeit under new ownership. In Ostrogothic Italy, the grain dole in Rome was maintained. Trade networks contracted but did not disappear — Byzantine gold coins circulated in Merovingian Gaul, and Syrian merchants operated in Marseilles into the 7th century. The Germanic kingdoms were not a negation of Rome. They were Rome's next chapter, written in a different hand.
     key_arguments:
@@ -166,6 +175,7 @@ perspectives:
       - "Loss of technologies and material culture documented by archaeologists"
       - "The violence of the transition — wars, massacres, and population displacement"
       - "The degree to which Germanic elites adopted Roman culture while the broader population experienced decline"
+      - "Galla Placidia — captured by Visigoths, married a Gothic king, then governed the Western Empire for twelve years as regent"
 
   - viewpoint: "Eastern Roman / Byzantine"
     viewpoint_type: bystander
@@ -228,6 +238,8 @@ perspectives:
 
       The debate maps onto modern politics. The "fall" narrative warns that civilizations can die — and every generation of American and European commentators has found Rome's symptoms (military overextension, fiscal crisis, reliance on foreign soldiers) recognizable. The "transformation" narrative suggests that disruptive change is not collapse, and that the people who lived through the 5th century were active agents shaping new societies, not passive victims of decline.
 
+      Hypatia of Alexandria — mathematician, astronomer, and Neoplatonist philosopher — was murdered by a Christian mob in March 415 CE, dragged from her chariot and killed with roofing tiles in the Caesareum church. She had taught the sons of Alexandria's elite for twenty years, and her death at the hands of a faction loyal to Bishop Cyril came five years after the sack of Rome. Whether her murder represents the end of classical intellectual life or a local political killing is debated, but the fact remains: by 415, the conditions that had sustained a woman teaching advanced mathematics in a public institution no longer held.
+
       Guy Halsall (Barbarian Migrations and the Roman West, 2007) complicates both positions: the "barbarian invasions" were themselves a product of Roman state failure. Germanic peoples migrated into Roman territory not because the Huns pushed them but because the Roman frontier system broke down due to civil wars and administrative dysfunction. Walter Goffart (Barbarians and Romans, 1980) goes further: the foederati settlements were negotiated tax-sharing arrangements, not land seizures. If Goffart is right, there were no "invasions" — only a reallocation of resources within a system that was already Roman.
 
       The debate maps onto a deeper question: how do we read evidence? Ward-Perkins reads material culture — pottery, roof tiles, cattle bones. When these decline, civilization declines. Wickham reads institutions — law, religion, political structures. When these persist, civilization transforms. A peasant in 6th-century Britain, living in a wooden hut on land that once supported a Roman villa with hypocaust heating, experienced a fall. A bishop in 6th-century Gaul, corresponding in Latin across a diocesan network that still mapped onto Roman provincial boundaries, experienced a transformation. The event was the same. The experience depended on who you were.
@@ -271,7 +283,7 @@ perspectives:
     omitted:
       - "Non-European civilizations that were flourishing during Rome's decline (Sassanid Persia, Gupta India, pre-classic Maya)"
       - "The role of climate change (Late Antique Little Ice Age) and pandemic (Justinianic Plague, 541-542)"
-      - "The experience of women, slaves, and non-citizens whose status changed in complex ways during the transition"
+      - "The experience of women, slaves, and non-citizens whose status changed in complex ways during the transition — including cases where Germanic law expanded women's property rights beyond what Roman law had permitted"
       - "The Islamic expansion of the 7th century, which permanently redrew the map of the former Roman world"
 
 media:
