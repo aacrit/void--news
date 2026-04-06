@@ -442,6 +442,9 @@ export default function HistoryLanding({
     const handleScroll = () => {
       const scrollLeft = container.scrollLeft;
       bg.style.transform = `translateX(${-scrollLeft * 0.30}px)`;
+      /* Note: cards scroll at native 1x. Background at 0.7x effective (0.30 offset).
+         The 0.3x differential is sufficient for depth perception. Adding 1.05x to cards
+         would fight with their absolute positioning + Dutch angle transforms. */
       if (!hasScrolled) setHasScrolled(true);
     };
 
