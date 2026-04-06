@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
 import type { HistoricalEvent, Perspective } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 
@@ -42,6 +42,35 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
     if (idx === -1 || idx >= sorted.length - 1) return null;
     return sorted[idx + 1];
   }, [allEvents, event.slug]);
+
+  /* ── Image distribution algorithm — documentary intercut model ──
+     Distributes media across stages: context insert, perspective intercuts,
+     omission exhibit, and remaining gallery. Maps first for context priority. */
+  const { contextImage, perspectiveIntercuts, omissionImage, galleryImages } = useMemo(() => {
+    const media = event.media;
+    if (media.length === 0) return { contextImage: null, perspectiveIntercuts: [], omissionImage: null, galleryImages: [] };
+
+    // First map for context, fallback to first image
+    const mapIdx = media.findIndex(m => m.type === 'map');
+    const ctxIdx = mapIdx >= 0 ? mapIdx : 0;
+    const contextImage = media[ctxIdx];
+
+    const remaining = media.filter((_, i) => i !== ctxIdx);
+
+    // Intercuts between witnesses: up to (perspectives - 1)
+    const maxIntercuts = Math.min(
+      Math.max(event.perspectives.length - 1, 0),
+      Math.floor(remaining.length / 2)
+    );
+    const perspectiveIntercuts = remaining.slice(0, maxIntercuts);
+    const afterIntercuts = remaining.slice(maxIntercuts);
+
+    // Omission image only if 6+ total
+    const omissionImage = media.length >= 6 && afterIntercuts.length > 1 ? afterIntercuts[0] : null;
+    const galleryImages = omissionImage ? afterIntercuts.slice(1) : afterIntercuts;
+
+    return { contextImage, perspectiveIntercuts, omissionImage, galleryImages };
+  }, [event.media, event.perspectives.length]);
 
   /* The crack — hook text */
   const hook =
@@ -147,11 +176,29 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           Stage 2.5 — THE FULL STORY (Context Narrative)
           The crack hooks them. Now the full story grounds them.
           No title — content speaks for itself (arrive late).
+          Context image inserted after first paragraph (documentary intercut).
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--context">
         <div className="hist-context__body hist-reveal">
           {event.contextNarrative.split("\n").filter(Boolean).map((para, i) => (
-            <p key={i}>{para}</p>
+            <Fragment key={i}>
+              <p>{para}</p>
+              {/* Insert context image after first paragraph */}
+              {i === 0 && contextImage && (
+                <figure className="hist-context__figure hist-reveal">
+                  <img
+                    src={contextImage.url}
+                    alt={contextImage.caption}
+                    loading="lazy"
+                    onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+                  />
+                  <figcaption>
+                    {contextImage.caption}
+                    <span className="hist-context__figure-attr">{contextImage.attribution}</span>
+                  </figcaption>
+                </figure>
+              )}
+            </Fragment>
           ))}
         </div>
       </section>
@@ -218,11 +265,26 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
         <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE PERSPECTIVES</h2>
 
         {event.perspectives.map((perspective, i) => (
-          <WitnessBlock
-            key={perspective.id}
-            perspective={perspective}
-            index={i}
-          />
+          <Fragment key={perspective.id}>
+            <WitnessBlock perspective={perspective} index={i} />
+            {/* Insert intercut image after every 2nd witness — documentary evidence exhibit */}
+            {(i + 1) % 2 === 0 && perspectiveIntercuts[Math.floor(i / 2)] && (
+              <figure className="hist-intercut hist-reveal">
+                <img
+                  src={perspectiveIntercuts[Math.floor(i / 2)].url}
+                  alt={perspectiveIntercuts[Math.floor(i / 2)].caption}
+                  loading="lazy"
+                  onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+                />
+                <figcaption>
+                  {perspectiveIntercuts[Math.floor(i / 2)].caption}
+                  <span className="hist-intercut__attribution">
+                    {perspectiveIntercuts[Math.floor(i / 2)].attribution}
+                  </span>
+                </figcaption>
+              </figure>
+            )}
+          </Fragment>
         ))}
       </section>
 
@@ -255,6 +317,24 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
             ))}
           </div>
 
+          {/* Omission exhibit — evidence between the two analyses */}
+          {omissionImage && (
+            <figure className="hist-intercut hist-intercut--omission hist-reveal">
+              <img
+                src={omissionImage.url}
+                alt={omissionImage.caption}
+                loading="lazy"
+                onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+              />
+              <figcaption>
+                {omissionImage.caption}
+                <span className="hist-intercut__attribution">
+                  {omissionImage.attribution}
+                </span>
+              </figcaption>
+            </figure>
+          )}
+
           <div className="hist-omissions-split__panel hist-omissions-split__panel--omitted hist-reveal">
             <h3 className="hist-omissions-split__heading">
               What each side ignores
@@ -283,62 +363,65 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       </section>
 
       {/* ═══════════════════════════════════════════
-          Stage 5 — THE EVIDENCE (Images + Data)
-          Stark numbers + archival images.
+          Stage 5 — THE RECORD (Images + Data)
+          Stark numbers + remaining archival images (after distribution).
+          Only renders if galleryImages remain or stark numbers exist.
           ═══════════════════════════════════════════ */}
-      <section className="hist-stage hist-stage--evidence">
-        <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE EVIDENCE</h2>
+      {(galleryImages.length > 0 || event.deathToll || event.displaced || event.duration) && (
+        <section className="hist-stage hist-stage--evidence">
+          <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE RECORD</h2>
 
-        {/* Stark numbers */}
-        {(event.deathToll || event.displaced || event.duration) && (
-          <div className="hist-evidence__numbers hist-reveal">
-            {event.deathToll && (
-              <div className="hist-evidence__stat">
-                <span className="hist-evidence__figure">{event.deathToll}</span>
-                <span className="hist-evidence__unit">killed</span>
-              </div>
-            )}
-            {event.displaced && (
-              <div className="hist-evidence__stat">
-                <span className="hist-evidence__figure">{event.displaced}</span>
-                <span className="hist-evidence__unit">displaced</span>
-              </div>
-            )}
-            {event.duration && (
-              <div className="hist-evidence__stat">
-                <span className="hist-evidence__figure">{event.duration}</span>
-              </div>
-            )}
-          </div>
-        )}
+          {/* Stark numbers */}
+          {(event.deathToll || event.displaced || event.duration) && (
+            <div className="hist-evidence__numbers hist-reveal">
+              {event.deathToll && (
+                <div className="hist-evidence__stat">
+                  <span className="hist-evidence__figure">{event.deathToll}</span>
+                  <span className="hist-evidence__unit">killed</span>
+                </div>
+              )}
+              {event.displaced && (
+                <div className="hist-evidence__stat">
+                  <span className="hist-evidence__figure">{event.displaced}</span>
+                  <span className="hist-evidence__unit">displaced</span>
+                </div>
+              )}
+              {event.duration && (
+                <div className="hist-evidence__stat">
+                  <span className="hist-evidence__figure">{event.duration}</span>
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* Archival images — vertical, alternating, with context */}
-        {event.media.length > 0 && (
-          <div className="hist-evidence__gallery">
-            {event.media.map((item, i) => (
-              <div
-                key={item.id}
-                className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                <img
-                  src={item.url}
-                  alt={item.caption}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-                <p className="hist-evidence__caption">{item.caption}</p>
-                <span className="hist-evidence__image-attribution">
-                  {item.attribution}
-                  {item.year && ` (${item.year})`}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+          {/* Archival images — vertical, alternating, with context */}
+          {galleryImages.length > 0 && (
+            <div className="hist-evidence__gallery">
+              {galleryImages.map((item, i) => (
+                <div
+                  key={item.id}
+                  className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
+                  style={{ transitionDelay: `${i * 100}ms` }}
+                >
+                  <img
+                    src={item.url}
+                    alt={item.caption}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                  <p className="hist-evidence__caption">{item.caption}</p>
+                  <span className="hist-evidence__image-attribution">
+                    {item.attribution}
+                    {item.year && ` (${item.year})`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════
           Stage 6 — YOUR TURN (Leave Early)
