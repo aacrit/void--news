@@ -215,9 +215,9 @@ function articleByline(
 
 function leanLabel(score: number): string {
   if (score <= 29) return "Far Left Tilt";
-  if (score <= 43) return "Left Tilt";
-  if (score <= 58) return "Balanced";
-  if (score <= 76) return "Right Tilt";
+  if (score <= 46) return "Left Tilt";
+  if (score <= 53) return "Balanced";
+  if (score <= 72) return "Right Tilt";
   return "Far Right Tilt";
 }
 

@@ -89,25 +89,25 @@ export type TiltCategory =
 
 export function tiltToBucket(v: number): TiltCategory {
   if (v <= 29) return "far-left-tilt";
-  if (v <= 43) return "left-tilt";
-  if (v <= 58) return "balanced";
-  if (v <= 76) return "right-tilt";
+  if (v <= 46) return "left-tilt";
+  if (v <= 53) return "balanced";
+  if (v <= 72) return "right-tilt";
   return "far-right-tilt";
 }
 
 export function tiltLabel(v: number): string {
   if (v <= 29) return "Far Left Tilt";
-  if (v <= 43) return "Left Tilt";
-  if (v <= 58) return "Balanced";
-  if (v <= 76) return "Right Tilt";
+  if (v <= 46) return "Left Tilt";
+  if (v <= 53) return "Balanced";
+  if (v <= 72) return "Right Tilt";
   return "Far Right Tilt";
 }
 
 export function tiltLabelAbbr(v: number): string {
   if (v <= 29) return "FL";
-  if (v <= 43) return "LT";
-  if (v <= 58) return "BAL";
-  if (v <= 76) return "RT";
+  if (v <= 46) return "LT";
+  if (v <= 53) return "BAL";
+  if (v <= 72) return "RT";
   return "FR";
 }
 
@@ -115,13 +115,11 @@ export function tiltLabelAbbr(v: number): string {
 export function tiltDescriptor(v: number): string {
   if (v <= 15) return "Strong left lean in coverage language";
   if (v <= 29) return "Clear left lean in coverage framing";
-  if (v <= 36) return "Moderate left lean detected";
-  if (v <= 43) return "Slight left lean in text analysis";
-  if (v <= 47) return "Near-center, leaning slightly left";
+  if (v <= 38) return "Moderate left lean detected";
+  if (v <= 46) return "Slight left lean in text analysis";
   if (v <= 53) return "Balanced coverage from multiple perspectives";
-  if (v <= 58) return "Near-center, leaning slightly right";
-  if (v <= 65) return "Slight right lean in text analysis";
-  if (v <= 76) return "Moderate right lean detected";
+  if (v <= 60) return "Slight right lean in text analysis";
+  if (v <= 72) return "Moderate right lean detected";
   if (v <= 85) return "Clear right lean in coverage framing";
   return "Strong right lean in coverage language";
 }
@@ -129,7 +127,7 @@ export function tiltDescriptor(v: number): string {
 /* ── Unscored gate — story lacks analytical signal for tilt label ───────── */
 
 /**
- * Returns true when a story's lean falls in the balanced range (44-58)
+ * Returns true when a story's lean falls in the balanced range (47-53)
  * but lacks enough analytical signal to genuinely call it "Balanced."
  * Three gates, any failure → unscored:
  *   A: all articles defaulted to 50 (no spread, no range, avg=50)
@@ -143,7 +141,7 @@ export function isUnscoredTilt(
   leanRange: number,
   aggregateConfidence: number,
 ): boolean {
-  if (lean < 44 || lean > 58) return false;
+  if (lean < 47 || lean > 53) return false;
   const allDefault = lean === 50 && leanSpread === 0 && leanRange === 0;
   if (allDefault) return true;
   if (sourceCount < 2) return true;
@@ -164,7 +162,7 @@ export function sigilLabelInfo(
 ): { text: string; color: string } {
   if (unscored) return { text: "\u2014", color: "var(--fg-tertiary)" };
 
-  const isBalanced = lean >= 44 && lean <= 58;
+  const isBalanced = lean >= 47 && lean <= 53;
 
   if (isBalanced) {
     if (divergenceFlag === "divergent" || agreement > 60) {
@@ -178,8 +176,8 @@ export function sigilLabelInfo(
 
   // Tilted — lean direction is primary info
   const dir = lean <= 29 ? "Far Left"
-    : lean <= 43 ? "Left"
-    : lean <= 76 ? "Right"
+    : lean <= 46 ? "Left"
+    : lean <= 72 ? "Right"
     : "Far Right";
 
   if (divergenceFlag === "divergent") {
