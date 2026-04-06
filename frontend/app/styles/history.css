@@ -2782,6 +2782,8 @@
   min-height: calc(100dvh - 56px);
   overflow-y: auto;
   background: var(--hist-bg);
+  /* H03: Match timeline's archival color grade for film stock consistency */
+  filter: contrast(1.02) saturate(0.88) sepia(0.06) brightness(1.01);
 }
 
 /* ===========================================================================
@@ -3120,6 +3122,8 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+  /* H06: Cinematic dolly-in — slow zoom settling into frame */
+  animation: histDollyIn 8s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 .hist-stage__hero-fallback {
@@ -3247,8 +3251,9 @@
 }
 
 .hist-crack__text {
-  font-family: var(--font-structural);
+  font-family: var(--font-editorial);
   font-size: clamp(1.3rem, 1.1rem + 1vw, 2rem);
+  font-weight: 500;
   font-style: italic;
   line-height: 1.5;
   color: var(--hist-ink);
@@ -3417,10 +3422,10 @@
   filter: blur(0);
 }
 
-/* Dimmed witnesses — rack focus + subtle rotation away (cross-dissolve) */
+/* Dimmed witnesses — rack focus with blur + subtle rotation away */
 .hist-witness--background {
   opacity: 0.55;
-  filter: brightness(0.92);
+  filter: brightness(0.92) blur(0.5px);
   transform: rotateY(-1deg);
   transition: opacity 400ms var(--ease-cinematic),
               filter 400ms var(--ease-cinematic),
@@ -4262,6 +4267,7 @@
   .hist-stage__hero {
     position: relative;
     min-height: auto;
+    animation: none;
   }
 
   .hist-witness {
@@ -4273,6 +4279,7 @@
   .hist-witness--background {
     opacity: 1;
     filter: none;
+    transform: none;
   }
 
   .hist-witness--left.hist-reveal,
@@ -5479,11 +5486,11 @@
 }
 
 .hist-tl-year-indicator__year {
-  font-family: var(--font-editorial);
+  font-family: var(--font-data);
   font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.8rem);
-  font-weight: 700;
+  font-weight: 400;
   color: var(--hist-accent);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
   opacity: 0.35;
   white-space: nowrap;
@@ -5651,54 +5658,54 @@
 @keyframes histCardEntrance {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(20px) scale(0.96);
     filter: blur(2px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     filter: blur(0);
   }
 }
 
 .hist-tl-card--entrance {
-  animation: histCardEntrance 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: histCardEntrance 600ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
   animation-delay: calc(var(--card-index, 0) * 60ms);
 }
 
 /* Above cards: entrance includes the side-specific positioning */
 .hist-tl-card--entrance.hist-tl-card--above {
-  animation: histCardEntranceAbove 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: histCardEntranceAbove 600ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
   animation-delay: calc(var(--card-index, 0) * 60ms);
 }
 
 @keyframes histCardEntranceAbove {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(20px);
+    transform: translateX(-50%) translateY(20px) scale(0.96);
     filter: blur(2px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
     filter: blur(0);
   }
 }
 
 .hist-tl-card--entrance.hist-tl-card--below {
-  animation: histCardEntranceBelow 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: histCardEntranceBelow 600ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
   animation-delay: calc(var(--card-index, 0) * 60ms);
 }
 
 @keyframes histCardEntranceBelow {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateX(-50%) translateY(-20px) scale(0.96);
     filter: blur(2px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
     filter: blur(0);
   }
 }
