@@ -61,16 +61,38 @@ significance: 'The fall of the Berlin Wall ended the Cold War division of Europe
 key_figures:
 - name: Mikhail Gorbachev
   role: General Secretary of the Soviet Communist Party; glasnost and perestroika policies undermined hardline regimes
+  wikidata: Q30487
+  born: 1931
+  died: 2022
+  wikipedia: https://en.wikipedia.org/wiki/Mikhail_Gorbachev
 - name: Helmut Kohl
   role: West German Chancellor, architect of German reunification
+  wikidata: Q2518
+  born: 1930
+  died: 2017
+  wikipedia: https://en.wikipedia.org/wiki/Helmut_Kohl
 - name: Gunter Schabowski
   role: East German Politburo member whose press conference gaffe triggered the Wall's opening
+  wikidata: Q57445
+  born: 1929
+  died: 2015
+  wikipedia: https://en.wikipedia.org/wiki/Günter_Schabowski
 - name: Ronald Reagan
   role: U.S. President, delivered 'Tear down this wall' speech at Brandenburg Gate, June 1987
+  wikidata: Q9960
+  born: 1911
+  died: 2004
+  wikipedia: https://en.wikipedia.org/wiki/Ronald_Reagan
 - name: Harald Jager
   role: Stasi border officer at Bornholmer Strasse who made the decision to open the gate
+  wikidata: Q1473355
+  born: 1943
+  wikipedia: https://en.wikipedia.org/wiki/Harald_Jäger
 - name: Lech Walesa
   role: Leader of Poland's Solidarity movement, whose 1989 election victory began the chain of Eastern Bloc revolutions
+  wikidata: Q444
+  born: 1943
+  wikipedia: https://en.wikipedia.org/wiki/Lech_Wałęsa
 legacy_points:
 - Ended the Cold War division of Europe — 28 years, 88 days after the Wall was built
 - Triggered German reunification on October 3, 1990 — the largest European political transformation since 1945
@@ -158,6 +180,8 @@ perspectives:
     author: Philip Zelikow and Condoleezza Rice
     year: '1995'
     type: book
+    doi: 10.2307/2171327
+    archive_url: https://archive.org/details/germanyunifiedeu00zeli
   notable_quotes:
   - text: Mr. Gorbachev, open this gate! Mr. Gorbachev, tear down this wall!
     speaker: Ronald Reagan
@@ -225,10 +249,13 @@ perspectives:
     author: Mary Fulbrook
     year: '2005'
     type: book
+    doi: 10.5860/choice.43-6124
+    archive_url: https://archive.org/details/peoplesstateeast0000fulb
   - title: 'Revolution 1989: The Fall of the Soviet Empire'
     author: Victor Sebestyen
     year: '2009'
     type: book
+    archive_url: https://archive.org/details/revolution1989fa0000sebe
   - title: 'Stasiland: Stories from Behind the Berlin Wall'
     author: Anna Funder
     year: '2003'
@@ -299,14 +326,19 @@ perspectives:
     author: Mary Elise Sarotte
     year: '2021'
     type: book
+    doi: 10.1093/ia/iiac089
   - title: 'Gorbachev: His Life and Times'
     author: William Taubman
     year: '2017'
     type: book
+    archive_url: https://archive.org/details/gorbachevhislife0000taub
   - title: Memoirs
     author: Mikhail Gorbachev
     year: '1996'
     type: book
+    doi: 10.2307/20047996
+    openlibrary: OL24748169M
+    archive_url: https://archive.org/details/memoirsgorb00gorb
   notable_quotes:
   - text: He who arrives too late is punished by life.
     speaker: Mikhail Gorbachev
@@ -382,10 +414,12 @@ perspectives:
     author: Daniela Dahn
     year: '1996'
     type: book
-  - title: 'After the Wall: Confessions from an East German Childhood'
+  - title: 'After the Wall: Confessions from an East German Childhood and the Life that Came Next'
     author: Jana Hensel
     year: '2002'
     type: book
+    openlibrary: OL26394001M
+    archive_url: https://archive.org/details/afterwallconfess00hens
   - title: 'Unification: The Coming Together and Falling Apart of East and West Germany (German: Ungleich vereint)'
     author: Steffen Mau
     year: '2024'

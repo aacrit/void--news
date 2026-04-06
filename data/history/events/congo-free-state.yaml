@@ -70,19 +70,39 @@ significance: 'The Congo Reform Association (1904-1913) is regarded by historian
 key_figures:
 - name: Leopold II
   role: King of Belgium, personal owner and ruler of the Congo Free State (1885-1908)
+  wikidata: Q12967
+  born: 1835
+  died: 1909
+  wikipedia: https://en.wikipedia.org/wiki/Leopold_II_of_Belgium
 - name: E.D. Morel
   role: British journalist who exposed the Congo's forced-labor system and founded the Congo Reform Association (1904)
 - name: Roger Casement
   role: British consul in the Congo whose 1904 report to the Foreign Office documented systematic atrocities
+  wikidata: Q311966
+  born: 1864
+  died: 1916
+  wikipedia: https://en.wikipedia.org/wiki/Roger_Casement
 - name: Alice Seeley Harris
   role: British missionary and photographer whose images of mutilated Congolese — including Nsala and his daughter's severed
     hand — fueled the reform campaign
+  wikidata: Q16595090
+  born: 1870
+  died: 1970
+  wikipedia: https://en.wikipedia.org/wiki/Alice_Seeley_Harris
 - name: George Washington Williams
   role: African American journalist and Civil War veteran; first outsider to document Leopold's atrocities in his 1890 'Open
     Letter'
+  wikidata: Q3083858
+  born: 1849
+  died: 1891
+  wikipedia: https://en.wikipedia.org/wiki/George_Washington_Williams
 - name: Leon Rom
   role: Force Publique station chief at Stanley Falls, decorated his flower beds with severed Congolese heads; model for Kurtz
     in Joseph Conrad's Heart of Darkness
+  wikidata: Q2746081
+  born: 1859
+  died: 1924
+  wikipedia: https://en.wikipedia.org/wiki/Léon_Rom
 legacy_points:
 - Population fell from approximately 20 million (1885) to 10 million (1920) — half the population killed, starved, or unborn
 - Congo Reform Association (1904-1913) was the first international human rights campaign
@@ -107,11 +127,17 @@ primary_source_excerpts:
   author: Mark Twain (as Leopold II)
   work: King Leopold's Soliloquy
   date: '1905'
+  archive_url: https://archive.org/details/kingleopoldssoli00twai
+  openlibrary: OL23308054M
+  doi: 10.1515/9780822385035-111
 - text: The baskets of severed hands, set down at the feet of the European post commanders, became the symbol of the Congo
     Free State.
   author: Adam Hochschild
   work: King Leopold's Ghost
   date: '1998'
+  archive_url: https://archive.org/details/isbn_9781447235514
+  openlibrary: OL3320007M
+  doi: 10.1093/acref/9780195301731.013.42013
 coordinates:
   lat: -4.325
   lng: 15.3222
@@ -176,10 +202,14 @@ perspectives:
     author: Jean Stengers
     year: '1989'
     type: book
+    openlibrary: OL52275452M
   - title: King Leopold's Ghost
     author: Adam Hochschild
     year: '1998'
     type: book
+    doi: 10.1093/acref/9780195301731.013.42013
+    openlibrary: OL3320007M
+    archive_url: https://archive.org/details/isbn_9781447235514
   - title: 'The Congo Free State: New Research and Perspectives from Belgian Archives'
     author: Various, Royal Museum for Central Africa
     year: '2005'
@@ -265,7 +295,7 @@ perspectives:
     author: Adam Hochschild
     year: '1998'
     type: book
-  - title: 'Red Rubber: The Story of the Rubber Slave Trade Flourishing on the Congo'
+  - title: 'Red rubber : the story of the rubber slave trade flourishing on the Congo in the year of grace 1906.'
     author: E.D. Morel
     year: '1906'
     type: book
@@ -273,6 +303,7 @@ perspectives:
     author: Jan Vansina
     year: '2010'
     type: book
+    archive_url: https://archive.org/details/beingcolonizedku0000vans
   notable_quotes:
   - text: We have known ironies, insults, blows that we endured morning, noon, and night because we are negroes.
     speaker: Patrice Lumumba
@@ -354,14 +385,22 @@ perspectives:
     author: William Roger Louis and Jean Stengers
     year: '1968'
     type: book
+    doi: 10.2307/484058
+    openlibrary: OL5155313M
+    archive_url: https://archive.org/details/edmorelshistoryo0000more
   - title: The Casement Report
     author: Roger Casement
     year: '1904'
     type: document
-  - title: King Leopold's Soliloquy
+    doi: 10.1515/9780822385035-105
+    archive_url: https://archive.org/details/the-casement-report
+  - title: King Leopold's soliloquy; a defense of his Congo rule
     author: Mark Twain
     year: '1905'
     type: book
+    doi: 10.1515/9780822385035-111
+    openlibrary: OL23308054M
+    archive_url: https://archive.org/details/kingleopoldssoli00twai
   notable_quotes:
   - text: I do not think I was ever so moved by any spectacle so much as by what I then saw — the people's utter weariness
       and despair.
@@ -457,14 +496,18 @@ perspectives:
     author: Isidore Ndaywel e Nziem
     year: '1998'
     type: book
+    doi: 10.14375/np.9782871066514
+    openlibrary: OL490724M
   - title: 'A Nervous State: Violence, Remedies, and Reverie in Colonial Congo'
     author: Nancy Rose Hunt
     year: '2016'
     type: book
+    doi: 10.1515/9780822375241
   - title: 'Dancing in the Glory of Monsters: The Collapse of the Congo and the Great War of Africa'
     author: Jason Stearns
     year: '2011'
     type: book
+    archive_url: https://archive.org/details/dancingingloryof0000stea
   notable_quotes:
   - text: The great forgetting began immediately. Leopold ordered the archives of the Congo Free State destroyed. Furnaces
       in Brussels burned for eight days.

@@ -55,16 +55,36 @@ significance: 'Partition created two states that are now both nuclear-armed, loc
 key_figures:
 - name: Lord Louis Mountbatten
   role: Last Viceroy of India, oversaw transfer of power
+  wikidata: Q157068
+  born: 1900
+  died: 1979
+  wikipedia: https://en.wikipedia.org/wiki/Lord_Mountbatten
 - name: Jawaharlal Nehru
   role: First Prime Minister of India
+  wikidata: Q1047
+  born: 1889
+  died: 1964
+  wikipedia: https://en.wikipedia.org/wiki/Jawaharlal_Nehru
 - name: Muhammad Ali Jinnah
   role: Founder and first Governor-General of Pakistan
+  wikidata: Q160554
+  born: 1876
+  died: 1948
+  wikipedia: https://en.wikipedia.org/wiki/Muhammad_Ali_Jinnah
 - name: Sir Cyril Radcliffe
   role: Chairman of the Boundary Commissions, drew the Radcliffe Line
 - name: Mahatma Gandhi
   role: Opposed partition, assassinated January 30, 1948
+  wikidata: Q1001
+  born: 1869
+  died: 1948
+  wikipedia: https://en.wikipedia.org/wiki/Mahatma_Gandhi
 - name: Master Tara Singh
   role: Akali Dal leader, rallied Sikhs against partition of Punjab
+  wikidata: Q3634008
+  born: 1885
+  died: 1967
+  wikipedia: https://en.wikipedia.org/wiki/Tara_Singh_(activist)
 legacy_points:
 - Created the world's largest mass migration — 14-15 million people in under four months
 - 'Established the India-Pakistan rivalry: four wars, nuclear standoff, unresolved Kashmir'
@@ -143,14 +163,21 @@ perspectives:
     author: V.P. Menon
     year: '1957'
     type: book
+    doi: 10.1515/9781400879373
+    openlibrary: OL9510348M
+    archive_url: https://archive.org/details/the_transfer_of_power_in_india_-_v_p_menon
   - title: Freedom at Midnight
     author: Larry Collins and Dominique Lapierre
     year: '1975'
     type: book
+    doi: 10.2307/2756705
+    openlibrary: OL9213693M
+    archive_url: https://archive.org/details/freedomatmidnigh00larr_0
   - title: The Transfer of Power, 1942-47 (12 volumes)
     author: Nicholas Mansergh (ed.)
     year: 1970-1983
     type: archive
+    doi: 10.2307/2756706
   notable_quotes:
   - text: The date is fixed. And I have to tell you that I think it is the greatest gamble in history.
     speaker: Lord Mountbatten
@@ -217,14 +244,22 @@ perspectives:
     author: Jawaharlal Nehru
     year: '1946'
     type: book
+    doi: 10.2307/40194131
+    openlibrary: OL1946487M
+    archive_url: https://archive.org/details/discoveryofindia0000nehr
   - title: India Wins Freedom
     author: Maulana Abul Kalam Azad
     year: '1959'
     type: book
+    doi: 10.2307/1569475
+    openlibrary: OL5798203M
+    archive_url: https://archive.org/details/india-wins-freedom
   - title: India After Gandhi
     author: Ramachandra Guha
     year: '2007'
     type: book
+    openlibrary: OL24767387M
+    archive_url: https://archive.org/details/IndiaAfterGandhiByRamchandraGuha
   notable_quotes:
   - text: At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
     speaker: Jawaharlal Nehru
@@ -300,10 +335,13 @@ perspectives:
     author: Ayesha Jalal
     year: '1985'
     type: book
-  - title: 'Struggle for Pakistan: A Muslim Homeland and Global Politics'
+    doi: 10.2307/2758176
+    archive_url: https://archive.org/details/solespokesmanjin0000jala
+  - title: 'The struggle for Pakistan: a Muslim homeland and global politics, by Ayesha Jalal'
     author: Ishtiaq Ahmed
     year: '2017'
     type: book
+    doi: 10.1080/10357823.2018.1524259
   notable_quotes:
   - text: You are free; you are free to go to your temples, you are free to go to your mosques or to any other places of worship
       in this State of Pakistan.
@@ -377,10 +415,13 @@ perspectives:
     author: Urvashi Butalia
     year: '1998'
     type: book
+    doi: 10.2307/20050025
+    archive_url: https://archive.org/details/the-other-side-of-silence-urvashi-butalia
   - title: 'The Great Partition: The Making of India and Pakistan'
     author: Yasmin Khan
     year: '2007'
     type: book
+    archive_url: https://archive.org/details/greatpartitionma00khan
   - title: 'Borders and Boundaries: Women in India''s Partition'
     author: Ritu Menon and Kamla Bhasin
     year: '1998'

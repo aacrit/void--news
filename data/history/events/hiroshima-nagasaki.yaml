@@ -63,16 +63,32 @@ significance: 'Hiroshima and Nagasaki ended World War II in the Pacific and inau
 key_figures:
 - name: Harry S. Truman
   role: U.S. President, authorized the atomic bombings
+  wikidata: Q11613
+  born: 1884
+  died: 1972
+  wikipedia: https://en.wikipedia.org/wiki/Harry_S._Truman
 - name: J. Robert Oppenheimer
   role: Scientific Director of the Manhattan Project
+  wikidata: Q132537
+  born: 1904
+  died: 1967
+  wikipedia: https://en.wikipedia.org/wiki/J._Robert_Oppenheimer
 - name: Colonel Paul Tibbets
   role: Pilot of the Enola Gay, dropped the Hiroshima bomb
 - name: Emperor Hirohito
   role: Emperor of Japan, announced surrender on August 15, 1945
+  wikidata: Q34479
+  born: 1901
+  died: 1989
+  wikipedia: https://en.wikipedia.org/wiki/Hirohito
 - name: Secretary Henry Stimson
   role: U.S. Secretary of War, chaired the Interim Committee that recommended use
 - name: Dr. Michihiko Hachiya
   role: Director of Hiroshima Communications Hospital, author of Hiroshima Diary
+  wikidata: Q353594
+  born: 1903
+  died: 1980
+  wikipedia: https://en.wikipedia.org/wiki/Michihiko_Hachiya
 legacy_points:
 - Inaugurated the nuclear age and the Cold War arms race, peaking at ~70,000 warheads globally
 - Japan's Article 9 constitution — renunciation of war — became the template for nuclear pacifism
@@ -94,6 +110,8 @@ primary_source_excerpts:
   author: Dr. Michihiko Hachiya
   work: Hiroshima Diary
   date: August 6, 1945
+  archive_url: https://archive.org/details/bwb_C0-AUB-665
+  openlibrary: OL22427337M
 - text: The enemy has begun to employ a new and most cruel bomb, the power of which to do damage is, indeed, incalculable.
   author: Emperor Hirohito
   work: Gyokuon-hoso (Jewel Voice Broadcast)
@@ -155,14 +173,19 @@ perspectives:
     author: J. Samuel Walker
     year: '2004'
     type: book
+    doi: 10.2307/20048823
+    archive_url: https://archive.org/details/promptutterdestr00walk
   - title: 'Memoirs by Harry S. Truman, Volume 1: Year of Decisions'
     author: Harry S. Truman
     year: '1955'
     type: book
-  - title: The Decision to Use the Atomic Bomb
+  - title: The Decision to Use the Atomic Bomb and the Architecture of an American Myth.
     author: Gar Alperovitz
     year: '1995'
     type: book
+    doi: 10.2307/2169869
+    openlibrary: OL7700771M
+    archive_url: https://archive.org/details/decisiontouseato0000alpe_n6z9
   notable_quotes:
   - text: The Japanese began the war from the air at Pearl Harbor. They have been repaid many fold.
     speaker: Harry S. Truman
@@ -238,14 +261,19 @@ perspectives:
     author: John Hersey
     year: '1946'
     type: book
+    openlibrary: OL2060639M
+    archive_url: https://archive.org/details/hiroshima0000john_l3f4
   - title: 'Hiroshima Diary: The Journal of a Japanese Physician'
     author: Dr. Michihiko Hachiya
     year: '1955'
     type: book
+    archive_url: https://archive.org/details/hiroshimadiaryjo0000hach
   - title: 'Nagasaki: Life After Nuclear War'
     author: Susan Southard
     year: '2015'
     type: book
+    doi: 10.1080/02690055.2020.1721019
+    archive_url: https://archive.org/details/nagasakilifeafte0000sout
   notable_quotes:
   - text: I want you to understand that it is not merely a picture. It is my body.
     speaker: Sumiteru Taniguchi
@@ -315,14 +343,20 @@ perspectives:
     author: Richard Rhodes
     year: '1986'
     type: book
+    doi: 10.2307/3106232
+    openlibrary: OL2721929M
+    archive_url: https://archive.org/details/makingofatomicbo0000rhod
   - title: The Franck Report
     author: James Franck et al.
     year: June 11, 1945
     type: document
+    archive_url: https://archive.org/details/TheFranckReport
   - title: 'American Prometheus: The Triumph and Tragedy of J. Robert Oppenheimer'
     author: Kai Bird and Martin J. Sherwin
     year: '2005'
     type: book
+    doi: 10.12987/9780300268461-030
+    archive_url: https://archive.org/details/American-prometheus
   notable_quotes:
   - text: Mr. President, I feel I have blood on my hands.
     speaker: J. Robert Oppenheimer
@@ -403,6 +437,8 @@ perspectives:
     author: Tsuyoshi Hasegawa
     year: '2005'
     type: book
+    openlibrary: OL26648584M
+    archive_url: https://archive.org/details/racingenemy00tsuy
   - title: Reconsidering the Decision to Drop the Atomic Bomb (Diplomatic History)
     author: Barton J. Bernstein
     year: '1991'

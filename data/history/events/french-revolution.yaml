@@ -67,16 +67,40 @@ significance: 'The French Revolution destroyed the ancien regime — the feudal,
 key_figures:
 - name: Maximilien Robespierre
   role: Leader of the Committee of Public Safety, architect of the Terror, executed July 28, 1794
+  wikidata: Q44197
+  born: 1758
+  died: 1794
+  wikipedia: https://en.wikipedia.org/wiki/Maximilien_Robespierre
 - name: Louis XVI
   role: King of France, executed January 21, 1793
+  wikidata: Q7732
+  born: 1754
+  died: 1793
+  wikipedia: https://en.wikipedia.org/wiki/Louis_XVI
 - name: Marie Antoinette
   role: Queen of France, executed October 16, 1793
+  wikidata: Q47365
+  born: 1755
+  died: 1793
+  wikipedia: https://en.wikipedia.org/wiki/Marie_Antoinette
 - name: Georges Danton
   role: Revolutionary leader, first president of the Committee of Public Safety, executed April 5, 1794
+  wikidata: Q184623
+  born: 1759
+  died: 1794
+  wikipedia: https://en.wikipedia.org/wiki/Georges_Danton
 - name: Napoleon Bonaparte
   role: Military commander who ended the revolution with the coup of 18 Brumaire, November 9, 1799
+  wikidata: Q517
+  born: 1769
+  died: 1821
+  wikipedia: https://en.wikipedia.org/wiki/Napoleon
 - name: Olympe de Gouges
   role: Author of the Declaration of the Rights of Woman and of the Female Citizen (1791), guillotined November 3, 1793
+  wikidata: Q206972
+  born: 1748
+  died: 1793
+  wikipedia: https://en.wikipedia.org/wiki/Olympe_de_Gouges
 legacy_points:
 - Destroyed the feudal and monarchical order that had governed France for over a millennium
 - Declaration of the Rights of Man (1789) became the foundation for modern human rights law
@@ -166,10 +190,14 @@ perspectives:
     author: Simon Schama
     year: '1989'
     type: book
+    doi: 10.2307/4612165
+    archive_url: https://archive.org/details/citizenschronicl0000simo
   - title: 'The French Revolution: A Very Short Introduction'
     author: William Doyle
     year: '2001'
     type: book
+    doi: 10.1093/actrade/9780198840077.001.0001
+    archive_url: https://archive.org/details/frenchrevolution00doyl_0
   notable_quotes:
   - text: Men are born and remain free and equal in rights.
     speaker: National Assembly
@@ -239,14 +267,22 @@ perspectives:
     author: Edmund Burke
     year: '1790'
     type: book
-  - title: The Old Regime and the Revolution
+    doi: 10.12987/9780300134865-004
+    openlibrary: OL7929481M
+    archive_url: https://archive.org/details/reflectionsonrev0000burk_v5d4
+  - title: The Old Regime and the Revolution, Volume II
     author: Alexis de Tocqueville
     year: '1856'
     type: book
+    doi: 10.7208/chicago/9780226843360.001.0001
+    openlibrary: OL34563449M
+    archive_url: https://archive.org/details/oldregimerevolut00tocq
   - title: Considerations on France
     author: Joseph de Maistre
     year: '1797'
     type: book
+    doi: 10.1017/cbo9781139170758.006
+    archive_url: https://archive.org/details/considerationson0000mais
   notable_quotes:
   - text: By hating vices too much, they came to love men too little.
     speaker: Edmund Burke
@@ -315,14 +351,20 @@ perspectives:
     author: C.L.R. James
     year: '1938'
     type: book
+    doi: 10.2307/2507494
+    archive_url: https://archive.org/details/blackjacobinstou0000jame
   - title: 'Avengers of the New World: The Story of the Haitian Revolution'
     author: Laurent Dubois
     year: '2004'
     type: book
+    doi: 10.2307/4129048
+    archive_url: https://archive.org/details/avengersofnewwor00
   - title: 'A Colony of Citizens: Revolution and Slave Emancipation in the French Caribbean, 1787-1804'
     author: Laurent Dubois
     year: '2004'
     type: book
+    doi: 10.7275/1274
+    archive_url: https://archive.org/details/colonyofcitizens0000dubo
   notable_quotes:
   - text: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue.
       It will spring back from the roots, for they are numerous and deep.
@@ -394,14 +436,21 @@ perspectives:
     author: Francois Furet
     year: '1978'
     type: book
+    doi: 10.2307/1857985
+    openlibrary: OL4116857M
+    archive_url: https://archive.org/details/interpretingfren0000fure
   - title: The Age of the Democratic Revolution (2 volumes)
     author: R.R. Palmer
     year: 1959-1964
     type: book
+    doi: 10.23943/princeton/9780691161280.003.0001
   - title: Women and the Public Sphere in the Age of the French Revolution
     author: Joan Landes
     year: '1988'
     type: book
+    doi: 10.2307/2163303
+    openlibrary: OL2528387M
+    archive_url: https://archive.org/details/womenpublicspher0000land
   notable_quotes:
   - text: The French Revolution is over.
     speaker: Francois Furet

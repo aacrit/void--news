@@ -66,18 +66,42 @@ significance: 'Raphael Lemkin, the Polish-Jewish jurist who coined the word "gen
 key_figures:
 - name: Talat Pasha
   role: Ottoman Interior Minister (1913-1917), Grand Vizier (1917-1918); ordered deportations; assassinated in Berlin, 1921
+  wikidata: Q315888
+  born: 1874
+  died: 1921
+  wikipedia: https://en.wikipedia.org/wiki/Talaat_Pasha
 - name: Enver Pasha
   role: Ottoman War Minister; ordered disarmament of Armenian soldiers in February 1915
+  wikidata: Q153899
+  born: 1881
+  died: 1922
+  wikipedia: https://en.wikipedia.org/wiki/Enver_Pasha
 - name: Henry Morgenthau Sr.
   role: U.S. Ambassador to the Ottoman Empire (1913-1916); confronted Talat directly; published memoir in 1918
+  wikidata: Q47946
+  born: 1856
+  died: 1946
+  wikipedia: https://en.wikipedia.org/wiki/Henry_Morgenthau_Sr.
 - name: Raphael Lemkin
   role: Polish-Jewish jurist; coined 'genocide' in 1944 drawing on the Armenian case as a foundational example
+  wikidata: Q505586
+  born: 1900
+  died: 1959
+  wikipedia: https://en.wikipedia.org/wiki/Raphael_Lemkin
 - name: Aurora Mardiganian
   role: Armenian survivor; published memoir Ravished Armenia (1918); starred in a 1919 film adaptation — one of the earliest
     genocide testimonies in cinema
+  wikidata: Q4822564
+  born: 1901
+  died: 1994
+  wikipedia: https://en.wikipedia.org/wiki/Aurora_Mardiganian
 - name: Soghomon Tehlirian
   role: Armenian assassin who killed Talat Pasha in Berlin on March 15, 1921; acquitted by a German jury after two days of
     testimony about the massacres
+  wikidata: Q738576
+  born: 1896
+  died: 1960
+  wikipedia: https://en.wikipedia.org/wiki/Soghomon_Tehlirian
 legacy_points:
 - Raphael Lemkin coined 'genocide' in 1944 partly from the Armenian case — the word did not exist before him
 - Turkey has maintained denial for over a century; 34 countries have formally recognized the genocide as of 2024
@@ -91,6 +115,9 @@ primary_source_excerpts:
   author: Henry Morgenthau Sr.
   work: Ambassador Morgenthau's Story
   date: '1918'
+  archive_url: https://archive.org/details/bub_gb_ENsLAAAAYAAJ
+  openlibrary: OL11619285M
+  doi: 10.2307/1835376
 - text: I have the honor to report to Your Excellency that the deportation of the Armenians from the eastern provinces and
     their massacre en route continues... A more fiendish or diabolical scheme to exterminate a race has never before been
     heard of.
@@ -174,10 +201,14 @@ perspectives:
     author: Justin McCarthy
     year: '2006'
     type: book
+    doi: 10.1353/book41441
+    openlibrary: OL8085907M
   - title: 'Diplomacy and Murder in Tehran: Alexander Griboyedov and Imperial Russia''s Mission to the Shah of Qajar Iran'
     author: Laurence Kelly
     year: '2002'
     type: book
+    doi: 10.2307/20459584
+    archive_url: https://archive.org/details/diplomacymurderi0000kell
   notable_quotes:
   - text: The objective of the war was to destroy the Armenian people. The government had decided to exterminate all the Armenians
       living in Turkey... An end was to be put to their existence, however criminal the methods resorted to for the purpose.
@@ -255,14 +286,18 @@ perspectives:
     author: Aurora Mardiganian (as told to H.L. Gates)
     year: '1918'
     type: book
+    openlibrary: OL671266M
+    archive_url: https://archive.org/details/ravishedarmenia00mard
   - title: 'Armenian Golgotha: A Memoir of the Armenian Genocide, 1915-1918'
     author: Grigoris Balakian
     year: 1922 (English translation 2009)
     type: book
+    archive_url: https://archive.org/details/armeniangolgotha00unse
   - title: 'A Shameful Act: The Armenian Genocide and the Question of Turkish Responsibility'
     author: Taner Akcam
     year: '2006'
     type: book
+    archive_url: https://archive.org/details/shamefulactarmen2006akam
   - title: 'Operation Nemesis: The Assassination Plot that Avenged the Armenian Genocide'
     author: Eric Bogosian
     year: '2015'
@@ -344,14 +379,19 @@ perspectives:
     author: Henry Morgenthau Sr.
     year: '1918'
     type: book
+    doi: 10.2307/1835376
+    openlibrary: OL11619285M
+    archive_url: https://archive.org/details/bub_gb_ENsLAAAAYAAJ
   - title: 'Deutschland und Armenien 1914-1918: Sammlung diplomatischer Aktenstucke'
     author: Johannes Lepsius
     year: '1919'
     type: document
+    archive_url: https://archive.org/details/deutschlandunda00lepsgoog
   - title: 'The Burning Tigris: The Armenian Genocide and America''s Response'
     author: Peter Balakian
     year: '2003'
     type: book
+    archive_url: https://archive.org/details/burningtigrisarm00bala
   - title: Near East Relief Annual Reports, 1915-1930
     author: Near East Relief
     year: 1915-1930
@@ -441,6 +481,9 @@ perspectives:
     author: Raphael Lemkin
     year: '1944'
     type: book
+    doi: 10.2307/1068910
+    openlibrary: OL3297582M
+    archive_url: https://archive.org/details/axisruleinoccupi0000lemk
   - title: 'A Shameful Act: The Armenian Genocide and the Question of Turkish Responsibility'
     author: Taner Akcam
     year: '2006'
@@ -449,10 +492,15 @@ perspectives:
     author: Ronald Grigor Suny
     year: '2015'
     type: book
-  - title: 'The Great Game of Genocide: Imperialism, Nationalism, and the Destruction of the Ottoman Armenians'
+    doi: 10.1515/9781400865581
+    archive_url: https://archive.org/details/theycanliveindes0000suny
+  - title: 'The Great Game of Genocide: Imperialism, Nationalism and the Destruction of the Ottoman Armenians. Reviewed by
+      Kerem Oktem'
     author: Donald Bloxham
     year: '2005'
     type: book
+    doi: 10.1111/j.1469-8129.2006.00266_7.x
+    openlibrary: OL22622720M
   notable_quotes:
   - text: I became interested in genocide because it happened so many times. It happened to the Armenians, then after the
       Armenians, Hitler took action.

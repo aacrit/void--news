@@ -58,18 +58,41 @@ significance: 'The Haitian Revolution was the only successful slave revolution i
 key_figures:
 - name: Toussaint Louverture
   role: Formerly enslaved military leader; governed Saint-Domingue 1797-1802; died in French captivity, April 7, 1803
+  wikidata: Q205783
+  born: 1743
+  died: 1803
+  wikipedia: https://en.wikipedia.org/wiki/Toussaint_Louverture
 - name: Jean-Jacques Dessalines
   role: Toussaint's successor; won the Battle of Vertieres; declared independence January 1, 1804; assassinated October 17,
     1806
+  wikidata: Q212068
+  born: 1758
+  died: 1806
+  wikipedia: https://en.wikipedia.org/wiki/Jean-Jacques_Dessalines
 - name: Boukman Dutty
   role: Vodou priest who led the Bois Caiman ceremony, August 14, 1791; killed in battle November 1791
+  wikidata: Q1268017
+  born: 1800
+  died: 1791
+  wikipedia: https://en.wikipedia.org/wiki/Dutty_Boukman
 - name: Marie-Jeanne Lamartiniere
   role: Woman combatant who fought at the Battle of Crete-a-Pierrot, March 1802, firing from the ramparts alongside male soldiers
+  wikidata: Q4960632
+  born: 1750
+  wikipedia: https://en.wikipedia.org/wiki/Marie-Jeanne_Lamartinière
 - name: Napoleon Bonaparte
   role: French First Consul; sent 20,000 troops under Leclerc to restore slavery in Saint-Domingue, 1802
+  wikidata: Q517
+  born: 1769
+  died: 1821
+  wikipedia: https://en.wikipedia.org/wiki/Napoleon
 - name: Alexandre Petion
   role: Leader of the southern republic after independence; gave Bolivar refuge, soldiers, and weapons in 1816 in exchange
     for a promise to abolish slavery
+  wikidata: Q353464
+  born: 1770
+  died: 1818
+  wikipedia: https://en.wikipedia.org/wiki/Alexandre_Pétion
 legacy_points:
 - The only successful slave revolution in recorded history — 500,000 enslaved people defeated the armies of France, Spain,
   and Britain
@@ -83,6 +106,7 @@ primary_source_excerpts:
   author: Jean-Jacques Dessalines
   work: Declaration of Independence of Haiti
   date: January 1, 1804
+  doi: 10.1215/9781478007609-006
 - text: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue.
     It will spring back from the roots, for they are numerous and deep.
   author: Toussaint Louverture
@@ -97,6 +121,8 @@ primary_source_excerpts:
   author: C.L.R. James
   work: 'The Black Jacobins: Toussaint L''Ouverture and the San Domingo Revolution'
   date: '1938'
+  archive_url: https://archive.org/details/blackjacobinstou0000jame
+  doi: 10.2307/2507494
 coordinates:
   lat: 19.76
   lng: -72.33
@@ -162,14 +188,20 @@ perspectives:
     author: C.L.R. James
     year: '1938'
     type: book
+    doi: 10.2307/2507494
+    archive_url: https://archive.org/details/blackjacobinstou0000jame
   - title: 'Avengers of the New World: The Story of the Haitian Revolution'
     author: Laurent Dubois
     year: '2004'
     type: book
+    doi: 10.2307/4129048
+    archive_url: https://archive.org/details/avengersofnewwor00
   - title: 'Silencing the Past: Power and the Production of History'
     author: Michel-Rolph Trouillot
     year: '1995'
     type: book
+    doi: 10.2307/2952745
+    archive_url: https://archive.org/details/michel-rolph-trouillot-silencing-the-past-power-and-the-production-of-history-beacon-press-1995
   notable_quotes:
   - text: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue.
       It will spring back from the roots, for they are numerous and deep.
@@ -240,14 +272,20 @@ perspectives:
     author: Andrew Roberts
     year: '2014'
     type: book
+    doi: 10.1093/nq/s7-ii.32.108g
+    openlibrary: OL10492276M
+    archive_url: https://archive.org/details/napoleonwellingt0000robe_d5v0
   - title: 'The Making of Haiti: The Saint Domingue Revolution from Below'
     author: Carolyn Fick
     year: '1990'
     type: book
+    doi: 10.2307/2165920
+    archive_url: https://archive.org/details/makingofhaitisai0000fick
   - title: 'Napoleon and the Struggle for Germany: The Franco-Prussian War of 1813'
     author: Michael V. Leggiere
     year: '2015'
     type: book
+    doi: 10.1017/cbo9781139946377
   notable_quotes:
   - text: The liberty of the blacks is an acknowledged right, but that being so, how can it be reconciled with the property
       of the colonists?
@@ -325,10 +363,14 @@ perspectives:
     author: Jean Price-Mars
     year: '1928'
     type: book
+    doi: 10.1522/030151754
+    openlibrary: OL5088795M
   - title: 'Haiti: The Aftershocks of History'
     author: Laurent Dubois
     year: '2012'
     type: book
+    doi: 10.5860/choice.49-6458
+    archive_url: https://archive.org/details/haitiaftershocks0000dubo_r9e2
   notable_quotes:
   - text: It is not enough to have expelled the barbarians who have bloodied our land for two centuries.
     speaker: Louis Boisrond-Tonnerre / Jean-Jacques Dessalines
@@ -417,10 +459,13 @@ perspectives:
     author: Julius Scott
     year: '2018'
     type: book
+    doi: 10.4324/9781315840376-8
   - title: Haitian Revolutionary Studies
     author: David Geggus
     year: '2002'
     type: book
+    doi: 10.2307/j.ctv1bjc3q7
+    openlibrary: OL9448404M
   notable_quotes:
   - text: The Haitian Revolution was the most radical political event of the age. It was the only place in the world where
       the declaration that all human beings are born free and equal was taken completely literally.

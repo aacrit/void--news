@@ -76,18 +76,38 @@ significance: 'The Peloponnesian War ended Athenian dominance in Greece and weak
 key_figures:
 - name: Pericles
   role: Athenian statesman and strategos; architect of Athens's defensive strategy; died in the plague of 429 BCE
+  wikidata: Q80398
+  born: 494
+  died: 429
+  wikipedia: https://en.wikipedia.org/wiki/Pericles
 - name: Thucydides
   role: Athenian general turned historian; exiled for losing Amphipolis in 424 BCE; wrote the History of the Peloponnesian
     War, the foundational text of Western historiography
+  wikidata: Q41683
+  born: 460
+  died: 395
+  wikipedia: https://en.wikipedia.org/wiki/Thucydides
 - name: Alcibiades
   role: Athenian statesman who championed the Sicily expedition, defected to Sparta, then to Persia, then returned to Athens;
     embodied the democratic system's instability
+  wikidata: Q187982
+  born: 450
+  died: 404
+  wikipedia: https://en.wikipedia.org/wiki/Alcibiades
 - name: Lysander
   role: Spartan navarch who secured Persian funding, destroyed the Athenian fleet at Aegospotami (405 BCE), and imposed the
     Thirty Tyrants
+  wikidata: Q143559
+  born: 401
+  died: 395
+  wikipedia: https://en.wikipedia.org/wiki/Lysander
 - name: Brasidas
   role: Spartan general who broke the mold of cautious Spartan strategy by campaigning aggressively in Thrace; killed at Amphipolis
     in 422 BCE
+  wikidata: Q311742
+  born: 500
+  died: 422
+  wikipedia: https://en.wikipedia.org/wiki/Brasidas
 legacy_points:
 - Thucydides's History became the foundational text of Western historiography and international relations theory
 - The Melian Dialogue remains the canonical text on power politics — 'the strong do what they can; the weak suffer what they
@@ -103,10 +123,12 @@ primary_source_excerpts:
   author: Thucydides (attributed to the Athenian envoys)
   work: History of the Peloponnesian War, Book 5 — the Melian Dialogue
   date: Written c. 400 BCE, describing events of 416 BCE
+  doi: 10.1093/oseo/instance.00266005
 - text: It is a possession for all time, not a prize composition to be heard for the moment.
   author: Thucydides
   work: History of the Peloponnesian War, Book 1.22
   date: c. 400 BCE
+  doi: 10.1093/oseo/instance.00266005
 - text: The whole earth is the tomb of famous men; not only are they commemorated by columns and inscriptions in their own
     country, but in foreign lands there dwells also an unwritten memorial of them, graven not on stone but in the hearts of
     men.
@@ -178,18 +200,27 @@ perspectives:
   - Athens's resilience after Sicily — rebuilding the fleet twice, winning battles, surviving nine more years — is as remarkable
     as the defeat itself
   sources:
-  - title: The Peloponnesian War
+  - title: The Outbreak of the Peloponnesian War
     author: Donald Kagan
     year: '2003'
     type: book
+    doi: 10.7591/9780801467219
+    openlibrary: OL3358095M
+    archive_url: https://archive.org/details/isbn_9780801405013
   - title: Pericles of Athens and the Birth of Democracy
     author: Donald Kagan
     year: '1991'
     type: book
+    doi: 10.2307/494256
+    openlibrary: OL1882449M
+    archive_url: https://archive.org/details/periclesofathens0000kaga
   - title: History of the Peloponnesian War
     author: Thucydides, translated by Rex Warner
     year: 1954 (original c. 400 BCE)
     type: book
+    doi: 10.1093/oseo/instance.00266021
+    openlibrary: OL7127065M
+    archive_url: https://archive.org/details/historyofpelopon0000thuc
   notable_quotes:
   - text: Our constitution does not copy the laws of neighbouring states; we are rather a pattern to others than imitators
       ourselves.
@@ -266,10 +297,14 @@ perspectives:
     author: Paul Cartledge
     year: '2002'
     type: book
+    doi: 10.2307/1087343
+    openlibrary: OL22304992M
+    archive_url: https://archive.org/details/spartalakoniareg0000cart
   - title: 'The Spartans: The World of the Warrior-Heroes of Ancient Greece'
     author: Paul Cartledge
     year: '2003'
     type: book
+    archive_url: https://archive.org/details/spartansworldofw00cart
   - title: 'A War Like No Other: How the Athenians and Spartans Fought the Peloponnesian War'
     author: Victor Davis Hanson
     year: '2005'
@@ -359,14 +394,20 @@ perspectives:
     author: Neville Morley
     year: '2014'
     type: book
-  - title: War and Society in the Ancient and Medieval Worlds
+    doi: 10.5040/9780755610716
+  - title: War and Society in the Ancient and Medieval Worlds. Asia, the Mediterranean, Europe, and Mesoamerica
     author: Kurt Raaflaub and Nathan Rosenstein (editors)
     year: '1999'
     type: book
+    doi: 10.2307/1192487
+    openlibrary: OL33670M
+    archive_url: https://archive.org/details/warsocietyinanci0000unse
   - title: 'Goddesses, Whores, Wives, and Slaves: Women in Classical Antiquity'
     author: Sarah B. Pomeroy
     year: '1975'
     type: book
+    doi: 10.2307/1088026
+    archive_url: https://archive.org/details/goddesseswhoresw1975pome
   notable_quotes:
   - text: The strong do what they can; the weak suffer what they must.
     speaker: Athenian envoys to the Melians (as rendered by Thucydides)
@@ -456,14 +497,19 @@ perspectives:
     author: Graham Allison
     year: '2017'
     type: book
+    openlibrary: OL26810920M
+    archive_url: https://archive.org/details/destinedforwarca0000alli_p4c4
   - title: War and Change in World Politics
     author: Robert Gilpin
     year: '1981'
     type: book
+    doi: 10.1017/cbo9780511664267
+    openlibrary: OL4257408M
   - title: 'Thucydides: An Introduction for the Common Reader'
     author: Perez Zagorin
     year: '2005'
     type: book
+    archive_url: https://archive.org/details/thucydidesintrod0000zago
   - title: 'Goddesses, Whores, Wives, and Slaves: Women in Classical Antiquity'
     author: Sarah B. Pomeroy
     year: '1975'

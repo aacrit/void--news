@@ -64,21 +64,45 @@ key_figures:
 - name: Simon Bolivar
   role: Venezuelan creole aristocrat; led independence wars across Venezuela, Colombia, Ecuador, Peru, and Bolivia; died December
     17, 1830
+  wikidata: Q8605
+  born: 1783
+  died: 1830
+  wikipedia: https://en.wikipedia.org/wiki/Simón_Bolívar
 - name: Jose de San Martin
   role: Argentine general who liberated Chile and Peru from the south; met Bolivar at Guayaquil (July 26, 1822) and withdrew,
     ceding leadership of the continental campaign
+  wikidata: Q134160
+  born: 1778
+  died: 1850
+  wikipedia: https://en.wikipedia.org/wiki/José_de_San_Martín
 - name: Manuela Saenz
   role: Ecuadorian-born political strategist and Bolivar's partner; saved his life during the September 25, 1828 assassination
     attempt by fighting off attackers while Bolivar escaped through a window
+  wikidata: Q372074
+  born: 1797
+  died: 1856
+  wikipedia: https://en.wikipedia.org/wiki/Manuela_Sáenz
 - name: Antonio Jose de Sucre
   role: Bolivar's most trusted general; won the Battle of Ayacucho (1824) that ended Spanish rule; assassinated in the mountains
     of Berruecos, June 4, 1830
+  wikidata: Q189779
+  born: 1795
+  died: 1830
+  wikipedia: https://en.wikipedia.org/wiki/Antonio_José_de_Sucre
 - name: Alexandre Petion
   role: President of the Republic of Haiti (southern); gave Bolivar ships, soldiers, and arms in 1816 in exchange for a promise
     to abolish slavery
+  wikidata: Q353464
+  born: 1770
+  died: 1818
+  wikipedia: https://en.wikipedia.org/wiki/Alexandre_Pétion
 - name: Jose Antonio Paez
   role: Llanero cavalry commander in Venezuela; later became president of Venezuela and led its secession from Gran Colombia
     in 1830
+  wikidata: Q304900
+  born: 1790
+  died: 1873
+  wikipedia: https://en.wikipedia.org/wiki/José_Antonio_Páez
 legacy_points:
 - Ended 300 years of Spanish rule across South America — six nations created from two viceroyalties
 - Venezuela lost one-quarter to one-third of its population — proportional losses comparable to the Thirty Years' War
@@ -174,14 +198,19 @@ perspectives:
     author: Simon Bolivar (ed. Vicente Lecuna)
     year: '1951'
     type: archive
+    openlibrary: OL43554766M
+    archive_url: https://archive.org/details/bwb_W8-BZA-553
   - title: 'Bolivar: American Liberator'
     author: Marie Arana
     year: '2013'
     type: book
+    openlibrary: OL2211902M
+    archive_url: https://archive.org/details/bolivaramericanl0000aran
   - title: 'The Liberators: South America''s Savage Wars of Freedom, 1810-1830'
     author: Robert Harvey
     year: '2000'
     type: book
+    doi: 10.2307/20050198
   notable_quotes:
   - text: We were never viceroys or governors except by extraordinary chance; seldom were we bishops or archbishops; diplomats,
       never; soldiers, only in subordinate ranks.
@@ -261,10 +290,14 @@ perspectives:
     author: Christon Archer (ed.)
     year: '2000'
     type: book
+    doi: 10.2307/2677551
+    archive_url: https://archive.org/details/underflagsoffree0000blan
   - title: 'Spain and the Independence of the United States: An Intrinsic Gift'
     author: Thomas Chavez
     year: '2002'
     type: book
+    doi: 10.1163/2468-1733_shafr_sim020150038
+    archive_url: https://archive.org/details/spainindependenc0000chav
   notable_quotes:
   - text: These provinces belong to the Crown of Spain, and no assembly of rebels can dissolve the bonds that Providence has
       established.
@@ -345,6 +378,8 @@ perspectives:
     author: Eric Van Young
     year: '2001'
     type: book
+    doi: 10.2307/20033202
+    archive_url: https://archive.org/details/otherrebellionpo0000vany
   - title: 'Bolivar: American Liberator'
     author: Marie Arana
     year: '2013'
@@ -353,6 +388,9 @@ perspectives:
     author: Susan Migden Socolow
     year: '2000'
     type: book
+    doi: 10.1017/cbo9780511840074
+    openlibrary: OL7742053M
+    archive_url: https://archive.org/details/womenofcoloniall0000soco
   notable_quotes:
   - text: They want liberty for themselves and slavery for us.
     speaker: Anonymous pardo soldier
@@ -429,14 +467,18 @@ perspectives:
     author: Jay Sexton
     year: '2011'
     type: book
+    doi: 10.1093/acprof:oso/9780190459840.003.0002
+    archive_url: https://archive.org/details/monroedoctrineem0000sext
   - title: 'Simon Bolivar: A Life'
     author: John Lynch
     year: '2006'
     type: book
+    archive_url: https://archive.org/details/simon-bolivar-john-lynch
   - title: The Cambridge History of Latin America, Volume III
     author: Leslie Bethell (ed.)
     year: '1985'
     type: book
+    doi: 10.2307/2167758
   notable_quotes:
   - text: The American continents, by the free and independent condition which they have assumed and maintain, are henceforth
       not to be considered as subjects for future colonization by any European powers.

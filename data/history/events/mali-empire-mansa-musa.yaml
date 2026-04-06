@@ -85,17 +85,33 @@ key_figures:
 - name: Sundiata Keita
   role: Founder of the Mali Empire, defeated Sumanguru at the Battle of Kirina (c. 1235), subject of the Sundiata epic preserved
     by griots for 800 years
+  wikidata: Q175772
+  born: 1190
+  died: 1255
+  wikipedia: https://en.wikipedia.org/wiki/Sundiata_Keita
 - name: Ibn Battuta
   role: Moroccan traveler who visited Mali in 1352 and left the most detailed contemporary account of the empire's society,
     religion, and governance
+  wikidata: Q7331
+  born: 1304
+  died: 1368
+  wikipedia: https://en.wikipedia.org/wiki/Ibn_Battuta
 - name: Al-Umari (Shihab al-Din al-Umari)
   role: Arab historian in Damascus who interviewed Cairene witnesses of Musa's 1324 hajj and documented the gold market crash
 - name: Mansa Sulayman
   role: Musa's successor (r. 1341-1360), ruled during Ibn Battuta's 1352 visit, maintained the empire's Islamic institutions
     and trade networks
+  wikidata: Q3028531
+  born: 1400
+  died: 1360
+  wikipedia: https://en.wikipedia.org/wiki/Sulayman_of_Mali
 - name: Sunni Ali
   role: Ruler of the Songhai Empire (r. 1464-1492), captured Timbuktu from Mali in 1468, marking the empire's effective end
     as a regional power
+  wikidata: Q945436
+  born: 1464
+  died: 1492
+  wikipedia: https://en.wikipedia.org/wiki/Sonni_Ali
 legacy_points:
 - Mansa Musa's 1324 hajj carried an estimated 18 tons of gold — enough to crash Cairo's gold market for 12 years
 - The Catalan Atlas (1375) depicted Musa on a throne with a gold nugget — the first sub-Saharan African ruler in European
@@ -198,10 +214,15 @@ perspectives:
     author: Nehemia Levtzion
     year: '1973'
     type: book
+    doi: 10.2307/1850620
+    openlibrary: OL4422791M
+    archive_url: https://archive.org/details/bwb_S0-AWH-349
   - title: Timbuktu and the Songhay Empire
     author: John Hunwick
     year: '1999'
     type: book
+    doi: 10.1163/9789004491137
+    openlibrary: OL9083917M
   notable_quotes:
   - text: I am a griot. It is I, Djeli Mamoudou Kouyate, son of Bintou Kouyate and Djeli Kedian Kouyate, master in the art
       of eloquence. I am the vessel of the word.
@@ -292,6 +313,8 @@ perspectives:
     author: Ralph Austen
     year: '1987'
     type: book
+    doi: 10.2307/523774
+    archive_url: https://archive.org/details/africaneconomich0000aust
   notable_quotes:
   - text: In that year the Mossi entered the town of Timbuktu, which had no wall at that time. They ravaged it and returned
       to their own country.
@@ -467,6 +490,8 @@ perspectives:
     author: Cheikh Anta Diop
     year: '1954'
     type: book
+    openlibrary: OL3737435M
+    archive_url: https://archive.org/details/01-la-genese-de-la-redaction-de-nations-negres-et-culture
   - title: General History of Africa (8 volumes, UNESCO)
     author: Joseph Ki-Zerbo (general editor)
     year: 1981-1999
@@ -475,6 +500,8 @@ perspectives:
     author: Joshua Hammer
     year: '2016'
     type: book
+    openlibrary: OL26881792M
+    archive_url: https://archive.org/details/badasslibrarians0000hamm_h2n4
   notable_quotes:
   - text: Africa is no historical part of the world; it has no movement or development to exhibit.
     speaker: Georg Wilhelm Friedrich Hegel
