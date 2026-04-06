@@ -286,7 +286,7 @@ function generateInkPath(width: number): string {
    PosterImage — Robust fallback chain
    heroImage -> media[0].url -> ... -> cinematic gradient
    =========================================================================== */
-function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean }) {
+function PosterImage({ event, eager, year }: { event: HistoricalEvent; eager?: boolean; year?: string }) {
   const fallbackUrls = useMemo(() => {
     const urls: string[] = [];
     if (event.heroImage) urls.push(event.heroImage);
@@ -316,7 +316,11 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
   }, [fallbackUrls]);
 
   if (allFailed) {
-    return <div className="hist-tl-card__photo-fallback" aria-hidden="true" />;
+    return (
+      <div className="hist-tl-card__photo-fallback" aria-hidden="true">
+        {year && <span className="hist-tl-card__photo-fallback-year">{year}</span>}
+      </div>
+    );
   }
 
   return (
@@ -746,6 +750,27 @@ export default function HistoryLanding({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortedEvents.length, isMobileVertical]); /* Run once after events load + orientation known */
 
+  /* ── Preload hero images for focused card ± 2 neighbors ── */
+  useEffect(() => {
+    if (sortedEvents.length === 0) return;
+    const preloadIndices = [focusedIndex - 2, focusedIndex - 1, focusedIndex, focusedIndex + 1, focusedIndex + 2];
+    const links: HTMLLinkElement[] = [];
+    for (const idx of preloadIndices) {
+      if (idx < 0 || idx >= sortedEvents.length) continue;
+      const url = sortedEvents[idx].heroImage;
+      if (!url) continue;
+      const existing = document.querySelector(`link[href="${url}"]`);
+      if (existing) continue;
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = url;
+      document.head.appendChild(link);
+      links.push(link);
+    }
+    return () => { links.forEach((l) => l.remove()); };
+  }, [focusedIndex, sortedEvents]);
+
   /* ── URL management ── */
   const openStory = useCallback((event: HistoricalEvent) => {
     /* Remember which card index was opened */
@@ -1058,6 +1083,7 @@ export default function HistoryLanding({
                   onOpen={openStory}
                   entranceReady={entranceReady}
                   reducedMotion={reducedMotion}
+                  focused={isFocused}
                 />
               </div>
             );
@@ -1342,6 +1368,7 @@ function TimelineCard({
   onOpen,
   entranceReady,
   reducedMotion,
+  focused,
 }: {
   event: HistoricalEvent;
   index: number;
@@ -1349,6 +1376,7 @@ function TimelineCard({
   onOpen: (event: HistoricalEvent) => void;
   entranceReady: boolean;
   reducedMotion: boolean;
+  focused: boolean;
 }) {
   const hook =
     HOOKS[event.slug] ||
@@ -1376,10 +1404,11 @@ function TimelineCard({
 
   const severityClass = `hist-tl-card--${event.severity}`;
   const entranceClass = entranceReady && !reducedMotion ? " hist-tl-card--entrance" : "";
+  const focusedClass = focused && !reducedMotion ? " hist-tl-card--focused" : "";
 
   return (
     <article
-      className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}`}
+      className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}`}
       data-slug={event.slug}
       tabIndex={0}
       onKeyDown={handleKeyDown}
@@ -1389,7 +1418,7 @@ function TimelineCard({
     >
       {/* Photo with year badge */}
       <div className="hist-tl-card__photo">
-        <PosterImage event={event} eager={index < 3} />
+        <PosterImage event={event} eager={index < 3} year={year} />
         <span className="hist-tl-card__year-badge" aria-hidden="true">
           {year}
         </span>
