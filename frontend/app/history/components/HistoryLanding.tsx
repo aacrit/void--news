@@ -1,15 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo, forwardRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
 import { ERAS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
-import HistoryOverlay from "./HistoryOverlay";
+import EventDetail from "./EventDetail";
 
 /* ===========================================================================
-   HistoryLanding — The Timeline
-   Horizontal scroll through time. Cards snap to center. A single CSS custom
-   property `--tl-focus` (0-1) drives rack focus, content reveal, and scale.
+   HistoryLanding — Organic Ink Timeline
+   Horizontal scroll through time with above/below card layout.
+   Organic SVG ink track at vertical center. Cards alternate above
+   (catastrophic) and below (critical/major) the track. Proportionate
+   temporal spacing (sqrt scale). Inline story loading replaces overlay.
+
+   Three states:
+     A — Full Timeline (default): horizontal scroll, above/below cards
+     B — Story Active: compressed 56px strip + EventDetail inline
+     C — Story Nav: crossfade to different event via strip dots
+
+   Desktop: horizontal scroll, edge-scroll zones, parallax, Ken Burns
+   Mobile (<768px): vertical timeline, ink track on left, tap to open
+
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
    =========================================================================== */
 
@@ -57,24 +68,110 @@ const PERSP_COLORS: Record<string, string> = {
   e: "var(--hist-persp-e)",
 };
 
-/* ── Severity → CSS modifier ── */
-const SEVERITY_CLASS: Record<string, string> = {
-  catastrophic: "hist-tl-card--catastrophic",
-  critical: "hist-tl-card--critical",
-  major: "hist-tl-card--major",
-};
+/* ── Severity -> side mapping: catastrophic = above, others = below ── */
+function getCardSide(event: HistoricalEvent): "above" | "below" {
+  if (event.severity === "catastrophic") return "above";
+  return "below";
+}
 
 /* ── Extract year from YYYYMMDD dateSort ── */
 function extractYear(dateSort: number, datePrimary: string): string {
-  const s = String(dateSort);
-  if (s.length >= 4) return s.slice(0, 4);
+  const abs = Math.abs(dateSort);
+  const s = String(abs);
+  if (s.length >= 4) {
+    const y = s.slice(0, s.length >= 8 ? 4 : s.length);
+    return dateSort < 0 ? `${y} BCE` : y;
+  }
   const match = datePrimary.match(/\d{4}/);
   return match ? match[0] : "";
 }
 
+/* ── Extract numeric year for positioning ── */
+function extractNumericYear(dateSort: number): number {
+  const abs = Math.abs(dateSort);
+  if (abs > 10000) return dateSort < 0 ? -Math.floor(abs / 10000) : Math.floor(abs / 10000);
+  return dateSort;
+}
+
+/* ── Proportionate spacing with sqrt scale ── */
+function computePositions(events: HistoricalEvent[]): number[] {
+  if (events.length === 0) return [];
+  if (events.length === 1) return [0.5];
+
+  const years = events.map((e) => extractNumericYear(e.dateSort));
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+  const range = maxYear - minYear;
+
+  if (range === 0) return events.map(() => 0.5);
+
+  return years.map((year) => {
+    const normalized = year - minYear;
+    const position = Math.sqrt(Math.max(0, normalized)) / Math.sqrt(range);
+    return 0.05 + position * 0.9;
+  });
+}
+
+/* ── Resolve collisions: ensure minimum spacing between adjacent cards ── */
+function resolveCollisions(
+  positions: number[],
+  events: HistoricalEvent[],
+  totalWidth: number
+): { positions: number[]; sides: ("above" | "below")[] } {
+  const MIN_GAP_PX = 200;
+  const minGapNorm = totalWidth > 0 ? MIN_GAP_PX / totalWidth : 0.08;
+  const resolved = [...positions];
+  const sides = events.map((e) => getCardSide(e));
+
+  const aboveIndices = events.map((_, i) => i).filter((i) => sides[i] === "above");
+  const belowIndices = events.map((_, i) => i).filter((i) => sides[i] === "below");
+
+  for (const group of [aboveIndices, belowIndices]) {
+    for (let pass = 0; pass < 5; pass++) {
+      let changed = false;
+      for (let gi = 1; gi < group.length; gi++) {
+        const i = group[gi];
+        const prev = group[gi - 1];
+        const gap = resolved[i] - resolved[prev];
+        if (gap < minGapNorm) {
+          resolved[i] = resolved[prev] + minGapNorm;
+          changed = true;
+        }
+      }
+      if (!changed) break;
+    }
+  }
+
+  // Flip side on same-position collisions between above and below
+  for (let i = 0; i < resolved.length; i++) {
+    for (let j = i + 1; j < resolved.length; j++) {
+      if (Math.abs(resolved[i] - resolved[j]) < minGapNorm * 0.5) {
+        if (sides[i] === sides[j]) {
+          sides[j] = sides[j] === "above" ? "below" : "above";
+        }
+      }
+    }
+  }
+
+  return { positions: resolved, sides };
+}
+
+/* ── Generate organic ink SVG path ── */
+function generateInkPath(width: number): string {
+  const segments = Math.max(20, Math.floor(width / 50));
+  const step = width / segments;
+  let d = `M0,2`;
+  for (let i = 1; i <= segments; i++) {
+    const x = i * step;
+    const wobble = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 2.3) * 0.8;
+    d += ` S${(x - step * 0.3).toFixed(1)},${(2 + wobble).toFixed(2)} ${x.toFixed(1)},${(2 - wobble * 0.5).toFixed(2)}`;
+  }
+  return d;
+}
+
 /* ===========================================================================
    PosterImage — Robust fallback chain
-   heroImage -> media[0].url -> media[1].url -> ... -> cinematic gradient
+   heroImage -> media[0].url -> ... -> cinematic gradient
    =========================================================================== */
 function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean }) {
   const fallbackUrls = useMemo(() => {
@@ -89,7 +186,6 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
     return urls;
   }, [event.heroImage, event.media]);
 
-  /* Use ref for fallback index to avoid re-render on each error (H11) */
   const indexRef = useRef(0);
   const imgRef = useRef<HTMLImageElement>(null);
   const [allFailed, setAllFailed] = useState(fallbackUrls.length === 0);
@@ -132,107 +228,77 @@ export default function HistoryLanding({
   events,
   redacted,
 }: HistoryLandingProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [focusedIndex, setFocusedIndex] = useState(0);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const bgLayerRef = useRef<HTMLDivElement>(null);
+  const scrollVelocityRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [activeOverlay, setActiveOverlay] = useState<{
-    event: HistoricalEvent;
-    sourceRect: DOMRect | null;
-  } | null>(null);
+  const [activeEvent, setActiveEvent] = useState<HistoricalEvent | null>(null);
 
-  /* Merge events + classified into one timeline (classified at end) */
-  const allItems = useMemo(() => {
-    const sorted = [...events].sort((a, b) => a.dateSort - b.dateSort);
-    return { events: sorted, redacted };
-  }, [events, redacted]);
-
-  const totalCards = allItems.events.length + allItems.redacted.length;
-
-  /* ── Era groups for fast-travel + dividers ── */
-  const eraGroups = useMemo(
-    () => buildEraGroups(allItems.events),
-    [allItems.events]
+  /* Sort events chronologically */
+  const sortedEvents = useMemo(
+    () => [...events].sort((a, b) => a.dateSort - b.dateSort),
+    [events]
   );
 
-  /* Determine active era from focused index */
-  const activeEra = useMemo(() => {
-    for (let i = eraGroups.length - 1; i >= 0; i--) {
-      if (focusedIndex >= eraGroups[i].firstIndex) return eraGroups[i].id;
-    }
-    return eraGroups[0]?.id || "ancient";
-  }, [focusedIndex, eraGroups]);
+  /* ── Era groups ── */
+  const eraGroups = useMemo(
+    () => buildEraGroups(sortedEvents),
+    [sortedEvents]
+  );
 
-  /* Set of indices that are first-of-era (for dividers) */
-  const firstOfEraIndices = useMemo(() => {
-    const set = new Set<number>();
-    for (const g of eraGroups) {
-      if (g.firstIndex > 0) set.add(g.firstIndex);
-    }
-    return set;
-  }, [eraGroups]);
+  /* ── Compute total width & positions ── */
+  const totalWidthVw = useMemo(
+    () => Math.max(100, sortedEvents.length * 280),
+    [sortedEvents.length]
+  );
 
-  /* ── Track ref for progress bar ── */
-  const trackRef = useRef<HTMLDivElement>(null);
+  const rawPositions = useMemo(
+    () => computePositions(sortedEvents),
+    [sortedEvents]
+  );
 
-  /* ── IntersectionObserver: track most-centered card for minimap ── */
+  const { positions, sides } = useMemo(
+    () => resolveCollisions(rawPositions, sortedEvents, totalWidthVw),
+    [rawPositions, sortedEvents, totalWidthVw]
+  );
+
+  /* ── Ink path ── */
+  const inkPath = useMemo(
+    () => generateInkPath(totalWidthVw),
+    [totalWidthVw]
+  );
+
+  /* ── Reduced motion ── */
+  const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
-    /* Track scroll for brief hide + progress bar */
-    const onScroll = () => {
+  /* ── Parallax scroll handler ── */
+  useEffect(() => {
+    if (reducedMotion || activeEvent) return;
+    const container = timelineRef.current;
+    const bg = bgLayerRef.current;
+    if (!container || !bg) return;
+
+    const handleScroll = () => {
+      const scrollLeft = container.scrollLeft;
+      bg.style.transform = `translateX(${-scrollLeft * 0.15}px)`;
       if (!hasScrolled) setHasScrolled(true);
     };
-    container.addEventListener("scroll", onScroll, { passive: true });
 
-    /* IO to find the most-centered visible card */
-    const visibleCards = new Map<Element, number>(); // element -> ratio
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            visibleCards.set(entry.target, entry.intersectionRatio);
-          } else {
-            visibleCards.delete(entry.target);
-          }
-        }
-        /* Find the card with highest intersection ratio */
-        let bestRatio = 0;
-        let bestEl: Element | null = null;
-        visibleCards.forEach((ratio, el) => {
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
-            bestEl = el;
-          }
-        });
-        if (bestEl) {
-          const idx = cardRefs.current.indexOf(bestEl as HTMLDivElement);
-          if (idx !== -1) {
-            setFocusedIndex(idx);
-            if (trackRef.current && totalCards > 1) {
-              const pct = (idx / (totalCards - 1)) * 100;
-              trackRef.current.style.setProperty("--tl-progress", `${pct.toFixed(1)}%`);
-            }
-          }
-        }
-      },
-      { root: container, threshold: [0, 0.25, 0.5, 0.75, 1] }
-    );
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [reducedMotion, activeEvent, hasScrolled]);
 
-    cardRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      container.removeEventListener("scroll", onScroll);
-      observer.disconnect();
-    };
-  }, [allItems.events, allItems.redacted, hasScrolled, totalCards]);
-
-  /* ── Momentum wheel: vertical scroll → horizontal with friction decay ── */
+  /* ── Momentum wheel: vertical scroll -> horizontal ── */
   useEffect(() => {
-    const container = containerRef.current;
+    if (activeEvent) return;
+    const container = timelineRef.current;
     if (!container) return;
 
     let velocity = 0;
@@ -245,15 +311,14 @@ export default function HistoryLanding({
         return;
       }
       container.scrollLeft += velocity;
-      velocity *= 0.92; // friction decay
+      velocity *= 0.92;
       rafId = requestAnimationFrame(applyMomentum);
     };
 
     const handleWheel = (e: WheelEvent) => {
-      /* Only intercept vertical wheel (mice without horizontal scroll) */
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
-        velocity += e.deltaY * 0.8; // accumulate
+        velocity += e.deltaY * 0.8;
         if (!isAnimating) {
           isAnimating = true;
           rafId = requestAnimationFrame(applyMomentum);
@@ -266,86 +331,225 @@ export default function HistoryLanding({
       container.removeEventListener("wheel", handleWheel);
       cancelAnimationFrame(rafId);
     };
+  }, [activeEvent]);
+
+  /* ── Edge scroll: mouse near left/right edge triggers auto-scroll (desktop) ── */
+  useEffect(() => {
+    if (activeEvent || reducedMotion) return;
+    const container = timelineRef.current;
+    if (!container) return;
+
+    /* Only on desktop (pointer: fine) */
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouch) return;
+
+    const EDGE_ZONE = 60;
+    const MAX_SPEED = 8;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (e.clientX < EDGE_ZONE) {
+        const intensity = 1 - e.clientX / EDGE_ZONE;
+        scrollVelocityRef.current = -MAX_SPEED * intensity;
+      } else if (e.clientX > window.innerWidth - EDGE_ZONE) {
+        const intensity = 1 - (window.innerWidth - e.clientX) / EDGE_ZONE;
+        scrollVelocityRef.current = MAX_SPEED * intensity;
+      } else {
+        scrollVelocityRef.current = 0;
+      }
+    };
+
+    const handleMouseLeave = () => {
+      scrollVelocityRef.current = 0;
+    };
+
+    let rafId: number;
+    const tick = () => {
+      if (scrollVelocityRef.current !== 0 && container) {
+        container.scrollLeft += scrollVelocityRef.current;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      cancelAnimationFrame(rafId);
+      scrollVelocityRef.current = 0;
+    };
+  }, [activeEvent, reducedMotion]);
+
+  /* ── URL management ── */
+  const openStory = useCallback((event: HistoricalEvent) => {
+    setActiveEvent(event);
+    window.history.pushState(
+      { historyInline: true, slug: event.slug },
+      "",
+      `/history/${event.slug}`
+    );
   }, []);
 
-  /* ── Smooth scroll to card by index ── */
-  const scrollToCard = useCallback(
-    (index: number) => {
-      const el = cardRefs.current[index];
-      if (el) {
-        el.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-      }
-    },
-    []
-  );
+  const closeStory = useCallback(() => {
+    setActiveEvent(null);
+    window.history.pushState({}, "", "/history");
+  }, []);
 
-  /* ── Keyboard: arrow keys, Home, End ── */
-  const handleKeyDown = useCallback(
+  /* popstate listener for browser back */
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path === "/history" || path === "/history/") {
+        setActiveEvent(null);
+      } else {
+        const slug = path.replace("/history/", "");
+        const found = sortedEvents.find((e) => e.slug === slug);
+        if (found) {
+          setActiveEvent(found);
+        } else {
+          setActiveEvent(null);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [sortedEvents]);
+
+  /* ── Keyboard: arrow keys for strip navigation ── */
+  const handleStripKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (!activeEvent) return;
+      const idx = sortedEvents.findIndex((ev) => ev.slug === activeEvent.slug);
       if (e.key === "ArrowRight") {
         e.preventDefault();
-        scrollToCard(Math.min(focusedIndex + 1, totalCards - 1));
+        const next = sortedEvents[idx + 1];
+        if (next) {
+          setActiveEvent(next);
+          window.history.replaceState(
+            { historyInline: true, slug: next.slug },
+            "",
+            `/history/${next.slug}`
+          );
+        }
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
-        scrollToCard(Math.max(focusedIndex - 1, 0));
-      } else if (e.key === "Home") {
+        const prev = sortedEvents[idx - 1];
+        if (prev) {
+          setActiveEvent(prev);
+          window.history.replaceState(
+            { historyInline: true, slug: prev.slug },
+            "",
+            `/history/${prev.slug}`
+          );
+        }
+      } else if (e.key === "Escape") {
         e.preventDefault();
-        scrollToCard(0);
-      } else if (e.key === "End") {
-        e.preventDefault();
-        scrollToCard(totalCards - 1);
+        closeStory();
       }
     },
-    [focusedIndex, totalCards, scrollToCard]
+    [activeEvent, sortedEvents, closeStory]
   );
 
-  /* ── Open story overlay ── */
-  const openStory = useCallback(
-    (event: HistoricalEvent, cardIndex: number) => {
-      const photoEl = cardRefs.current[cardIndex]?.querySelector<HTMLElement>(
-        ".hist-tl-card__photo"
+  /* ── Navigate between events (from strip or EventDetail Stage 6) ── */
+  const navigateToEvent = useCallback(
+    (event: HistoricalEvent) => {
+      setActiveEvent(event);
+      window.history.pushState(
+        { historyInline: true, slug: event.slug },
+        "",
+        `/history/${event.slug}`
       );
-      const rect = photoEl?.getBoundingClientRect() ?? null;
-      setActiveOverlay({ event, sourceRect: rect });
+      /* Scroll to top of inline story */
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
     []
   );
 
-  /* ── Close overlay ── */
-  const closeOverlay = useCallback(() => {
-    setActiveOverlay(null);
-  }, []);
+  /* ── State B: Compressed strip + inline story ── */
+  if (activeEvent) {
+    return (
+      <div className="hist-tl-wrapper hist-tl-wrapper--story-active">
+        {/* Compressed timeline strip */}
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div
+          className="hist-tl-strip"
+          role="navigation"
+          aria-label="Timeline navigation"
+          tabIndex={0}
+          onKeyDown={handleStripKeyDown}
+        >
+          <div className="hist-tl-strip__track-container">
+            <svg
+              className="hist-tl-strip__track"
+              viewBox={`0 0 ${totalWidthVw} 4`}
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d={inkPath}
+                stroke="var(--hist-accent)"
+                strokeWidth="1.5"
+                fill="none"
+                opacity="0.4"
+              />
+            </svg>
+            {sortedEvents.map((e, i) => {
+              const isActive = e.slug === activeEvent.slug;
+              const year = extractYear(e.dateSort, e.datePrimary);
+              return (
+                <button
+                  key={e.slug}
+                  className={`hist-tl-strip__dot ${isActive ? "hist-tl-strip__dot--active" : ""}`}
+                  style={{ left: `${positions[i] * 100}%` }}
+                  onClick={() => navigateToEvent(e)}
+                  aria-label={`${e.title} (${e.datePrimary})`}
+                  aria-current={isActive ? "true" : undefined}
+                  type="button"
+                >
+                  <span className="hist-tl-strip__year">{year}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button
+            className="hist-tl-strip__close"
+            onClick={closeStory}
+            aria-label="Close story, return to timeline"
+            type="button"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <path d="M18 6L6 18" />
+              <path d="M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-  /* ── Navigate to event from within overlay (Item 2) ── */
-  const handleNavigateToEvent = useCallback(
-    (targetEvent: HistoricalEvent) => {
-      const targetIdx = allItems.events.findIndex(
-        (e) => e.slug === targetEvent.slug
-      );
-      if (targetIdx === -1) return;
+        {/* Inline story — swipe gestures for mobile next/prev */}
+        <StoryContainer
+          event={activeEvent}
+          allEvents={sortedEvents}
+          onNavigateToEvent={navigateToEvent}
+          onClose={closeStory}
+        />
+      </div>
+    );
+  }
 
-      /* Get the photo rect of the target card for FLIP morph */
-      const photoRect =
-        cardRefs.current[targetIdx]
-          ?.querySelector(".hist-tl-card__photo")
-          ?.getBoundingClientRect() ?? null;
-
-      /* Close current overlay, open new one */
-      setActiveOverlay({ event: targetEvent, sourceRect: photoRect });
-
-      /* Scroll to the target card so it is centered */
-      scrollToCard(targetIdx);
-    },
-    [allItems.events, scrollToCard]
-  );
-
+  /* ── State A: Full timeline ── */
   return (
     <div className="hist-tl-wrapper">
-      {/* ── Mission Brief — fades on first scroll ── */}
+      {/* Mission Brief -- fades on first scroll */}
       <div
         className={`hist-tl-brief ${hasScrolled ? "hist-tl-brief--hidden" : ""}`}
         aria-hidden={hasScrolled}
@@ -356,50 +560,137 @@ export default function HistoryLanding({
         <span className="hist-tl-brief__hint">&larr; scroll through time &rarr;</span>
       </div>
 
-      {/* ── Horizontal timeline scroller ── */}
+      {/* Full timeline -- horizontal scroll */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
-        ref={containerRef}
-        className="hist-tl-landing hist-grade"
+        ref={timelineRef}
+        className="hist-tl-full hist-grade"
         role="region"
         aria-label="Historical events timeline"
         aria-roledescription="timeline"
         tabIndex={0}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") {
+            e.preventDefault();
+            timelineRef.current?.scrollBy({ left: 300, behavior: "smooth" });
+          } else if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            timelineRef.current?.scrollBy({ left: -300, behavior: "smooth" });
+          }
+        }}
       >
-        {/* ── Event cards with era dividers ── */}
-        {allItems.events.map((event, i) => (
-          <EraCardWrapper key={event.slug} isFirstOfEra={firstOfEraIndices.has(i)}>
-            <TimelineCard
-              ref={(el) => { cardRefs.current[i] = el; }}
-              event={event}
-              index={i}
-              onOpen={openStory}
-            />
-          </EraCardWrapper>
-        ))}
+        {/* Parallax background layer: era gradient bands */}
+        <div
+          ref={bgLayerRef}
+          className="hist-tl-full__bg-layer"
+          aria-hidden="true"
+          style={{ width: `${totalWidthVw}px` }}
+        >
+          {eraGroups.map((era) => {
+            const startPct = sortedEvents.length > 1
+              ? (positions[era.firstIndex] || 0) * 100
+              : 0;
+            const endPct = sortedEvents.length > 1
+              ? (positions[era.lastIndex] || 1) * 100
+              : 100;
+            return (
+              <div
+                key={era.id}
+                className={`hist-tl-full__era-band hist-tl-full__era-band--${era.id}`}
+                style={{
+                  left: `${startPct}%`,
+                  width: `${Math.max(endPct - startPct, 5)}%`,
+                }}
+              >
+                <span className="hist-tl-full__era-label">{era.label}</span>
+              </div>
+            );
+          })}
+        </div>
 
-        {/* ── Classified cards ── */}
-        {allItems.redacted.map((event, i) => {
-          const idx = allItems.events.length + i;
-          return (
-            <ClassifiedCard
-              key={event.slug}
-              ref={(el) => { cardRefs.current[idx] = el; }}
-              event={event}
-              index={idx}
+        {/* Inner container with total width for absolute positioning */}
+        <div
+          className="hist-tl-full__inner"
+          style={{ width: `${totalWidthVw}px`, minWidth: `${totalWidthVw}px` }}
+        >
+          {/* Organic SVG ink track at vertical center */}
+          <svg
+            className="hist-tl-full__track"
+            viewBox={`0 0 ${totalWidthVw} 4`}
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d={inkPath}
+              stroke="var(--hist-accent)"
+              strokeWidth="1.5"
+              fill="none"
+              opacity="0.6"
             />
-          );
-        })}
+          </svg>
+
+          {/* Cards + stems + dots */}
+          {sortedEvents.map((event, i) => {
+            const side = sides[i];
+            const pct = positions[i] * 100;
+
+            return (
+              <div
+                key={event.slug}
+                className="hist-tl-full__station"
+                style={{ left: `${pct}%` }}
+              >
+                {/* Dot on track */}
+                <div
+                  className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}`}
+                  aria-hidden="true"
+                />
+
+                {/* Stem connecting card to dot */}
+                <div
+                  className={`hist-tl-full__stem hist-tl-full__stem--${side}`}
+                  aria-hidden="true"
+                >
+                  <svg width="2" height="28" viewBox="0 0 2 28">
+                    <path
+                      d="M1,0 C1,8 0.5,14 1,20 S1.5,26 1,28"
+                      stroke="var(--hist-brass)"
+                      strokeWidth="1"
+                      fill="none"
+                      opacity="0.4"
+                    />
+                  </svg>
+                </div>
+
+                {/* Card */}
+                <TimelineCard
+                  event={event}
+                  index={i}
+                  side={side}
+                  onOpen={openStory}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* ── Era fast-travel buttons (Item 5) ── */}
+      {/* Era fast-travel buttons */}
       <div className="hist-tl-eras" role="navigation" aria-label="Era navigation">
         {eraGroups.map((era) => (
           <button
             key={era.id}
-            className={`hist-tl-era ${activeEra === era.id ? "hist-tl-era--active" : ""}`}
-            onClick={() => scrollToCard(era.firstIndex)}
+            className="hist-tl-era"
+            onClick={() => {
+              const container = timelineRef.current;
+              if (!container) return;
+              const targetPct = positions[era.firstIndex] || 0;
+              const totalW = container.scrollWidth;
+              container.scrollTo({
+                left: targetPct * totalW - container.clientWidth / 3,
+                behavior: "smooth",
+              });
+            }}
             type="button"
           >
             {era.label}
@@ -407,118 +698,133 @@ export default function HistoryLanding({
         ))}
       </div>
 
-      {/* ── Timeline track (minimap) with progress bar ── */}
-      <nav className="hist-tl-track" aria-label="Timeline navigation" ref={trackRef}>
-        <div className="hist-tl-track__line" aria-hidden="true" />
-
-        {/* Era labels above the track */}
-        {eraGroups.map((era) => {
-          const midpoint =
-            totalCards > 1
-              ? ((era.firstIndex + era.lastIndex) / 2 / (totalCards - 1)) * 90 + 5
-              : 50;
-          return (
-            <span
-              key={era.id}
-              className="hist-tl-track__era-label"
-              style={{ left: `${midpoint}%` }}
-              aria-hidden="true"
-            >
-              {era.label}
-            </span>
-          );
-        })}
-
-        {allItems.events.map((event, i) => {
-          /* Show year label on every 3rd dot + always on active */
-          const showYear = i % 3 === 0;
+      {/* Bottom minimap track */}
+      <nav className="hist-tl-minimap" aria-label="Timeline minimap">
+        <div className="hist-tl-minimap__line" aria-hidden="true" />
+        {sortedEvents.map((event, i) => {
+          const year = extractYear(event.dateSort, event.datePrimary);
+          const showYear = i % 4 === 0;
           return (
             <button
               key={event.slug}
-              className={`hist-tl-track__dot ${
-                i === focusedIndex ? "hist-tl-track__dot--active" : ""
-              } ${showYear ? "hist-tl-track__dot--labeled" : ""}`}
-              style={{
-                left: `${5 + (totalCards > 1 ? (i / (totalCards - 1)) * 90 : 45)}%`,
+              className={`hist-tl-minimap__dot ${showYear ? "hist-tl-minimap__dot--labeled" : ""}`}
+              style={{ left: `${5 + positions[i] * 90}%` }}
+              onClick={() => {
+                const container = timelineRef.current;
+                if (!container) return;
+                const totalW = container.scrollWidth;
+                container.scrollTo({
+                  left: positions[i] * totalW - container.clientWidth / 2,
+                  behavior: "smooth",
+                });
               }}
-              onClick={() => scrollToCard(i)}
               aria-label={`${event.title} (${event.datePrimary})`}
               type="button"
             >
-              <span className="hist-tl-track__year">
-                {extractYear(event.dateSort, event.datePrimary)}
-              </span>
-            </button>
-          );
-        })}
-        {allItems.redacted.map((event, i) => {
-          const idx = allItems.events.length + i;
-          return (
-            <button
-              key={event.slug}
-              className={`hist-tl-track__dot hist-tl-track__dot--classified ${
-                idx === focusedIndex ? "hist-tl-track__dot--active" : ""
-              }`}
-              style={{
-                left: `${5 + (totalCards > 1 ? (idx / (totalCards - 1)) * 90 : 45)}%`,
-              }}
-              onClick={() => scrollToCard(idx)}
-              aria-label={`Coming: ${event.title}`}
-              type="button"
-            >
-              <span className="hist-tl-track__year">?</span>
+              {showYear && (
+                <span className="hist-tl-minimap__year">{year}</span>
+              )}
             </button>
           );
         })}
       </nav>
-
-      {/* ── Story Overlay ── */}
-      {activeOverlay && (
-        <HistoryOverlay
-          event={activeOverlay.event}
-          allEvents={allItems.events}
-          sourceRect={activeOverlay.sourceRect}
-          onClose={closeOverlay}
-          onNavigateToEvent={handleNavigateToEvent}
-        />
-      )}
     </div>
   );
 }
 
 /* ===========================================================================
-   EraCardWrapper — Inserts era divider before first card of a new era
+   StoryContainer — Wraps EventDetail with swipe gesture support
+   Mobile: swipe left = next event, swipe right = previous
    =========================================================================== */
-function EraCardWrapper({
-  isFirstOfEra,
-  children,
+function StoryContainer({
+  event,
+  allEvents,
+  onNavigateToEvent,
+  onClose,
 }: {
-  isFirstOfEra: boolean;
-  children: React.ReactNode;
+  event: HistoricalEvent;
+  allEvents: HistoricalEvent[];
+  onNavigateToEvent: (event: HistoricalEvent) => void;
+  onClose: () => void;
 }) {
-  if (!isFirstOfEra) return <>{children}</>;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  /* Swipe detection for mobile next/prev navigation */
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (!isTouch) return;
+
+    const SWIPE_THRESHOLD = 80;
+    const SWIPE_VERTICAL_LIMIT = 50;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchStartRef.current.x;
+      const dy = Math.abs(touch.clientY - touchStartRef.current.y);
+      touchStartRef.current = null;
+
+      /* Only count horizontal swipes */
+      if (Math.abs(dx) < SWIPE_THRESHOLD || dy > SWIPE_VERTICAL_LIMIT) return;
+
+      const sorted = allEvents;
+      const idx = sorted.findIndex((ev) => ev.slug === event.slug);
+
+      if (dx < 0 && idx < sorted.length - 1) {
+        /* Swipe left = next event */
+        onNavigateToEvent(sorted[idx + 1]);
+      } else if (dx > 0 && idx > 0) {
+        /* Swipe right = prev event */
+        onNavigateToEvent(sorted[idx - 1]);
+      }
+    };
+
+    el.addEventListener("touchstart", handleTouchStart, { passive: true });
+    el.addEventListener("touchend", handleTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", handleTouchStart);
+      el.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [event, allEvents, onNavigateToEvent]);
+
   return (
-    <>
-      <div className="hist-tl-era-divider" aria-hidden="true" />
-      {children}
-    </>
+    <div ref={containerRef} className="hist-inline-story">
+      <EventDetail
+        event={event}
+        allEvents={allEvents}
+        onNavigateToEvent={onNavigateToEvent}
+        onClose={onClose}
+      />
+    </div>
   );
 }
 
 /* ===========================================================================
-   TimelineCard — A single event in the horizontal timeline
-   Rack focus driven by --tl-focus. Photo + date + title always visible.
-   Hook, dots, CTA revealed when focused (--tl-focus > 0.65).
+   TimelineCard — Above or below the track
+   240px wide (desktop), full-width (mobile).
+   Photo + title always visible. Hook + dots + CTA on hover (desktop).
+   On mobile: title + year + small thumbnail, tap to open.
    =========================================================================== */
-
-const TimelineCard = forwardRef<
-  HTMLDivElement,
-  {
-    event: HistoricalEvent;
-    index: number;
-    onOpen: (event: HistoricalEvent, cardIndex: number) => void;
-  }
->(function TimelineCard({ event, index, onOpen }, ref) {
+function TimelineCard({
+  event,
+  index,
+  side,
+  onOpen,
+}: {
+  event: HistoricalEvent;
+  index: number;
+  side: "above" | "below";
+  onOpen: (event: HistoricalEvent) => void;
+}) {
   const hook =
     HOOKS[event.slug] ||
     event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
@@ -530,51 +836,45 @@ const TimelineCard = forwardRef<
   const year = extractYear(event.dateSort, event.datePrimary);
 
   const handleClick = useCallback(() => {
-    onOpen(event, index);
-  }, [event, index, onOpen]);
+    onOpen(event);
+  }, [event, onOpen]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        onOpen(event, index);
+        onOpen(event);
       }
     },
-    [event, index, onOpen]
+    [event, onOpen]
   );
 
-  const severityClass = SEVERITY_CLASS[event.severity] || "";
+  const severityClass = `hist-tl-card--${event.severity}`;
 
   return (
     <article
-      ref={ref}
-      className={`hist-tl-card ${severityClass}`}
+      className={`hist-tl-card hist-tl-card--${side} ${severityClass}`}
       data-slug={event.slug}
       tabIndex={0}
       onKeyDown={handleKeyDown}
+      onClick={handleClick}
+      role="button"
     >
       {/* Photo with year badge */}
       <div className="hist-tl-card__photo">
-        <PosterImage event={event} eager={index === 0} />
+        <PosterImage event={event} eager={index < 3} />
         <span className="hist-tl-card__year-badge" aria-hidden="true">
           {year}
         </span>
       </div>
 
-      {/* Title — 1 line mini, wraps on expand */}
+      {/* Title */}
       <div className="hist-tl-card__body">
         <h3 className="hist-tl-card__title">{event.title}</h3>
       </div>
 
-      {/* Track entry notch */}
-      <div className="hist-tl-card__notch" aria-hidden="true" />
-
-      {/* Severity accent */}
-      <div className="hist-tl-card__severity" aria-hidden="true" />
-
-      {/* Expanded content — hidden until hover/focus */}
+      {/* Expand on hover (desktop only via CSS) */}
       <div className="hist-tl-card__expand">
-        <span className="hist-tl-card__date">{event.datePrimary}</span>
         <blockquote className="hist-tl-card__hook">{hook}</blockquote>
 
         <div
@@ -596,7 +896,10 @@ const TimelineCard = forwardRef<
 
         <button
           className="hist-tl-card__cta"
-          onClick={handleClick}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleClick();
+          }}
           type="button"
         >
           <span className="hist-tl-card__cta-text">{cta}</span>
@@ -607,82 +910,4 @@ const TimelineCard = forwardRef<
       </div>
     </article>
   );
-});
-
-/* ===========================================================================
-   ClassifiedCard — Desaturated, redacted text, click-to-flip
-   Same --tl-focus system, plus dashed border + desaturation
-   =========================================================================== */
-const ClassifiedCard = forwardRef<
-  HTMLDivElement,
-  {
-    event: RedactedEvent;
-    index: number;
-  }
->(function ClassifiedCard({ event, index }, ref) {
-  const [revealed, setRevealed] = useState(false);
-
-  return (
-    <div
-      ref={ref}
-      className={`hist-tl-card hist-tl-card--classified ${
-        revealed ? "hist-tl-card--classified-revealed" : ""
-      }`}
-      role="button"
-      tabIndex={0}
-      onClick={() => setRevealed((p) => !p)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setRevealed((p) => !p);
-        }
-      }}
-      aria-label={`Coming: ${event.title}`}
-      aria-pressed={revealed}
-      data-index={index}
-    >
-      {/* Photo placeholder with date hint badge */}
-      <div className="hist-tl-card__photo">
-        <div className="hist-tl-card__photo-fallback" aria-hidden="true" />
-        <span className="hist-tl-card__year-badge" aria-hidden="true">
-          {event.dateHint}
-        </span>
-      </div>
-
-      <div className="hist-tl-card__body">
-        {/* Redacted title — 1 line with ellipsis */}
-        <h3 className="hist-tl-card__title">
-          {event.title.split(" ")[0]}{" "}
-          <span className="hist-tl-card--classified__redacted">
-            {event.title
-              .split(" ")
-              .slice(1)
-              .map((w) => "\u2588".repeat(w.length))
-              .join(" ")}
-          </span>
-        </h3>
-      </div>
-
-      {/* Track entry notch */}
-      <div className="hist-tl-card__notch" aria-hidden="true" />
-
-      {/* Date hint + badge in mini state */}
-      <div className="hist-tl-card--classified__meta">
-        <span className="hist-tl-card--classified__badge">COMING</span>
-      </div>
-
-      {/* Reveal overlay — click to flip */}
-      <div
-        className="hist-tl-card--classified__reveal"
-        aria-hidden={!revealed}
-      >
-        <span className="hist-tl-card--classified__reveal-title">
-          {event.title}
-        </span>
-        <span className="hist-tl-card--classified__reveal-hint">
-          Coming soon
-        </span>
-      </div>
-    </div>
-  );
-});
+}

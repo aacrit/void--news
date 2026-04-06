@@ -5,6 +5,13 @@ import type { HistoricalEvent } from "../types";
 import EventDetail from "./EventDetail";
 
 /* ===========================================================================
+   DEPRECATED — HistoryOverlay
+   Replaced by inline story loading in HistoryLanding.tsx (State B).
+   Kept for backward compatibility with [slug]/page.tsx direct access routes.
+   Do not use in new code. Will be removed in a future cleanup.
+   =========================================================================== */
+
+/* ===========================================================================
    HistoryOverlay — Full-screen story overlay with FLIP morph
    Opens when user clicks "Read all N perspectives" on a landing tile.
    The tile photo FLIP-morphs into EventDetail's hero image. URL updates
