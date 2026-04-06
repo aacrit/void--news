@@ -85,6 +85,11 @@ key_figures:
   born: 1937
   died: 2021
   wikipedia: https://en.wikipedia.org/wiki/Colin_Powell
+- name: Barbara Lee
+  role: Sole member of Congress to vote against the 2001 Authorization for Use of Military Force (420-1)
+  wikidata: Q276053
+  born: 1946
+  wikipedia: https://en.wikipedia.org/wiki/Barbara_Lee
 legacy_points:
 - Triggered the longest war in American history (Afghanistan, 2001-2021) and the invasion of Iraq (2003) based on intelligence later discredited
 - Created the global surveillance state — NSA mass data collection, PATRIOT Act, FISA Court expansion — revealed by Snowden in 2013
@@ -223,6 +228,14 @@ perspectives:
     author: Michael Morell
     year: '2015'
     type: book
+  - title: 'No Good Men Among the Living: America, the Taliban, and the War Through Afghan Eyes'
+    author: Anand Gopal
+    year: '2014'
+    type: book
+  - title: 'Taliban: Militant Islam, Oil and Fundamentalism in Central Asia'
+    author: Ahmed Rashid
+    year: '2000'
+    type: book
   notable_quotes:
   - text: 'They bombed the wedding. They said it was a mistake. They always say it is a mistake.'
     speaker: Anonymous Afghan villager
@@ -346,6 +359,10 @@ perspectives:
   - title: 'Islamophobia and the Politics of Empire'
     author: Deepa Kumar
     year: '2012'
+    type: book
+  - title: 'How Does It Feel to Be a Problem?: Being Young and Arab in America'
+    author: Moustafa Bayoumi
+    year: '2008'
     type: book
   notable_quotes:
   - text: 'The face of terror is not the true faith of Islam. Islam is peace.'
