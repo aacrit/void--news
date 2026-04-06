@@ -69,16 +69,24 @@ All lighting tokens should reference the logo-designer's cinematic palette where
 | **Lens flare** | Subtle gradient overlay using `var(--cinematic-accent)` at low opacity, shifts with scroll | Top of page warm wash, hero section ambient glow |
 | **Chiaroscuro** | High contrast between lit and shadow areas: cinematic shadow depth with bright surface foreground | Deep Dive panel against blurred feed, modal states |
 
-### Composition
+### Composition & Framing Principles (MANDATORY — apply to EVERY layout decision)
 
-| Film Technique | Web Implementation | Use Case |
-|----------------|-------------------|----------|
-| **Rule of thirds** | Grid layout with key content at intersection points, not center-center | Lead story placement, Deep Dive content anchoring |
-| **Leading lines** | Thin rules, column dividers, and borders that guide the eye toward content | Newspaper rules between columns, section dividers |
-| **Negative space** | Intentional whitespace that frames content (not empty space, but composed space) | Section margins, card breathing room |
-| **Frame within frame** | Nested visual containers (card within grid, spectrum within panel) | Deep Dive as a frame within the feed, filter bar framing content |
-| **Foreground interest** | Z-layered elements: nav/filter in foreground plane, content in mid-ground, background texture behind | Sticky nav blur, parallax scroll layers |
-| **Depth layering** | 3-5 distinct z-planes with appropriate blur, scale, and opacity per plane | Background (texture) -> Content (feed) -> Overlay (nav/filter) -> Modal (DeepDive) -> Tooltip |
+These are not suggestions. They are the cinematographic law of this product. Every element placement must trace back to one of these principles. If a user cannot explain WHY the page feels right, you succeeded. If they notice the technique, you failed.
+
+| Principle | Film Meaning | Web Application | void --history Specific |
+|-----------|-------------|-----------------|------------------------|
+| **Rule of Thirds** | Subject at grid intersections, NOT dead center | Key content at left-third or right-third of viewport | Timeline focused card at LEFT THIRD. Story hero title at LOWER-LEFT third intersection. Witness arguments at left/right thirds based on their side. |
+| **Leading Lines** | Lines in frame guide eye TO the subject | Rules, borders, stems, track lines point toward content | Organic ink track IS a leading line toward focused card. Stems are vertical leading lines from track to card. Left-border on blockquotes leads eye to quote text. |
+| **Headroom & Looking Space** | Characters face toward open space, not frame edge | Elements have breathing room in the direction they "look" | Cards ABOVE timeline: more space above (headroom). Cards BELOW: more space below. Cards at left of viewport: content left-aligned (looking into frame right). Cards at right: right-aligned (looking left). |
+| **Dutch Angle** | Slight tilt conveys instability/conflict | Very subtle rotate (0.5-1deg) on high-tension elements | Catastrophic events: -0.5deg rotate (subconscious unease). Straightens on hover (tension resolves). Critical/major events stay level. |
+| **Low Angle = Power** | Looking up at subject makes it imposing | Heavier shadows, larger text, more visual weight | Cards ABOVE timeline (catastrophic): deeper shadow (3px 6px 20px), heavier visual weight — they LOOM over the viewer. |
+| **High Angle = Vulnerability** | Looking down at subject makes it small | Lighter shadows, more muted treatment | Cards BELOW timeline (critical/major): lighter shadow (2px 3px 10px) — viewer looks DOWN at them. |
+| **Asymmetric Rack Focus** | Focus falls off differently in each direction | Blur gradients are directional, not uniform | Past (left) blurs MORE (2px) than future (right, 1px). Creates sense of looking FORWARD through time. |
+| **Wide → Close-Up → Wide** | Shot progression tells the story | Progressive content width narrowing then expanding | Story stages: Scene 100% (wide/establishing) → Crack 800px (medium) → Context 720px → Perspectives 680px (close-up) → Omissions 640px (extreme close-up) → Evidence 800px (pull back) → Next 100% (wide). DIAMOND shape. |
+| **Negative space** | Composed emptiness that frames content | Intentional whitespace, not arbitrary padding | Section margins, card breathing room, fog zones between eras |
+| **Frame within frame** | Nested visual containers create depth | Cards within grid, spectrum within panel | Deep Dive as a frame within the feed, timeline strip framing story content |
+| **Foreground interest** | Z-layered elements create spatial depth | Nav in foreground, content mid-ground, texture behind | Sticky nav, parallax scroll layers, film grain overlay |
+| **Depth layering** | 3-5 distinct z-planes with appropriate blur/scale/opacity | Background → Content → Overlay → Modal → Tooltip | Timeline: era bands (0.7x) → ink track (1x) → cards (1.05x) |
 
 ### Scene Transitions
 
