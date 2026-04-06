@@ -112,6 +112,40 @@ function buildEraGroups(events: HistoricalEvent[]): EraGroup[] {
   return groups;
 }
 
+/* ── Timeline Arcs — thematic threads connecting events across centuries ── */
+interface TimelineArc {
+  slug: string;
+  title: string;
+  subtitle: string;
+  color: string;
+  /** Event slugs this arc threads through, in chronological order */
+  connectedSlugs: string[];
+}
+
+const TIMELINE_ARCS: TimelineArc[] = [
+  {
+    slug: "capitalism-and-communism",
+    title: "Capitalism & Communism",
+    subtitle: "The 175-year argument over who owns the future",
+    color: "#B44C00", /* burnt amber — economic arc */
+    connectedSlugs: [
+      "french-revolution",       // 1789 — proto-socialist ideals
+      "haitian-revolution",      // 1804 — slave revolt, economic liberation
+      "opium-wars",              // 1839 — imperial capitalism, forced markets
+      "meiji-restoration",       // 1868 — capitalist industrialization
+      "scramble-for-africa",     // 1884 — colonial extractive capitalism
+      "congo-free-state",        // 1885 — rubber capitalism, forced labor
+      "armenian-genocide",       // 1915 — WWI, imperial collapse
+      "holodomor",               // 1932 — Soviet forced collectivization
+      "hiroshima-nagasaki",      // 1945 — WWII end, Cold War starts
+      "partition-of-india",      // 1947 — decolonization, economic partition
+      "cambodian-genocide",      // 1975 — communist Khmer Rouge
+      "tiananmen-square",        // 1989 — communist state vs. reform
+      "fall-of-berlin-wall",     // 1989 — end of communist Eastern Europe
+    ],
+  },
+];
+
 /* ── Perspective color map ── */
 const PERSP_COLORS: Record<string, string> = {
   a: "var(--hist-persp-a)",
@@ -146,23 +180,41 @@ function extractNumericYear(dateSort: number): number {
   return dateSort;
 }
 
-/* ── Proportionate spacing with sqrt scale ── */
+/* ── Density-adaptive spacing ──
+   Sparse periods (ancient → medieval, 2500-year gaps) compress via log scale.
+   Dense periods (1900-1950, 5-10 year gaps) get near-linear space.
+   Result: less scrolling through empty centuries, more room where events cluster. */
 function computePositions(events: HistoricalEvent[]): number[] {
   if (events.length === 0) return [];
   if (events.length === 1) return [0.5];
 
   const years = events.map((e) => extractNumericYear(e.dateSort));
-  const minYear = Math.min(...years);
-  const maxYear = Math.max(...years);
-  const range = maxYear - minYear;
+  const DENSE_THRESHOLD = 60; // Gaps under 60 years: near-linear
+  const LOG_SCALE = 25; // Controls compression intensity for large gaps
 
-  if (range === 0) return events.map(() => 0.5);
+  // Compute gaps between consecutive events
+  const gaps: number[] = [];
+  for (let i = 1; i < years.length; i++) {
+    gaps.push(Math.max(1, years[i] - years[i - 1]));
+  }
 
-  return years.map((year) => {
-    const normalized = year - minYear;
-    const position = Math.sqrt(Math.max(0, normalized)) / Math.sqrt(range);
-    return 0.05 + position * 0.9;
+  // Compress: linear for dense, log for sparse
+  const compressed = gaps.map((gap) => {
+    if (gap <= DENSE_THRESHOLD) return gap;
+    return DENSE_THRESHOLD + Math.log2(gap / DENSE_THRESHOLD) * LOG_SCALE;
   });
+
+  // Build cumulative positions normalized to [0.05, 0.95]
+  const total = compressed.reduce((a, b) => a + b, 0);
+  if (total === 0) return events.map(() => 0.5);
+
+  const positions = [0.05];
+  let cumulative = 0;
+  for (const g of compressed) {
+    cumulative += g;
+    positions.push(0.05 + (cumulative / total) * 0.9);
+  }
+  return positions;
 }
 
 /* ── Resolve collisions: ensure minimum spacing between adjacent cards ── */
@@ -292,6 +344,7 @@ export default function HistoryLanding({
   const [eraFlashColor, setEraFlashColor] = useState<string | null>(null);
   const [entranceReady, setEntranceReady] = useState(false);
   const activeEventIndexRef = useRef<number>(0);
+  const [scrollYear, setScrollYear] = useState<number | null>(null);
 
   /* Sort events chronologically */
   const sortedEvents = useMemo(
@@ -320,6 +373,32 @@ export default function HistoryLanding({
     () => resolveCollisions(rawPositions, sortedEvents, totalWidthVw),
     [rawPositions, sortedEvents, totalWidthVw]
   );
+
+  /* ── Arc lanes: resolve connected slugs to positions ── */
+  const arcLanes = useMemo(() => {
+    return TIMELINE_ARCS.map((arc) => {
+      const nodes: { index: number; position: number; slug: string; title: string }[] = [];
+      for (const slug of arc.connectedSlugs) {
+        const idx = sortedEvents.findIndex((e) => e.slug === slug);
+        if (idx !== -1) {
+          nodes.push({
+            index: idx,
+            position: positions[idx],
+            slug,
+            title: sortedEvents[idx].title,
+          });
+        }
+      }
+      if (nodes.length < 2) return null;
+      const startPct = nodes[0].position * 100;
+      const endPct = nodes[nodes.length - 1].position * 100;
+      return { ...arc, nodes, startPct, endPct };
+    }).filter(Boolean) as (TimelineArc & {
+      nodes: { index: number; position: number; slug: string; title: string }[];
+      startPct: number;
+      endPct: number;
+    })[];
+  }, [sortedEvents, positions]);
 
   /* ── Ink path ── */
   const inkPath = useMemo(
@@ -360,11 +439,13 @@ export default function HistoryLanding({
     }
   }, [inkPath, reducedMotion]);
 
-  /* ── Focused index tracking — find nearest card to viewport center ── */
+  /* ── Focused index + rolling year — find nearest card & interpolate year ── */
   useEffect(() => {
     if (activeEvent) return;
     const container = timelineRef.current;
     if (!container) return;
+
+    const years = sortedEvents.map((e) => extractNumericYear(e.dateSort));
 
     const updateFocusedIndex = () => {
       const scrollCenter = container.scrollLeft + container.clientWidth / 3; /* Rule of Thirds: left third */
@@ -380,12 +461,38 @@ export default function HistoryLanding({
         }
       }
       setFocusedIndex(closest);
+
+      /* Rolling year: interpolate from viewport center position */
+      const viewCenter = container.scrollLeft + container.clientWidth / 2;
+      const scrollFraction = totalW > 0 ? viewCenter / totalW : 0;
+
+      // Find flanking events
+      let leftIdx = 0;
+      let rightIdx = positions.length - 1;
+      for (let i = 0; i < positions.length - 1; i++) {
+        if (positions[i] <= scrollFraction && positions[i + 1] >= scrollFraction) {
+          leftIdx = i;
+          rightIdx = i + 1;
+          break;
+        }
+      }
+      // Clamp to edges
+      if (scrollFraction <= positions[0]) {
+        setScrollYear(years[0]);
+      } else if (scrollFraction >= positions[positions.length - 1]) {
+        setScrollYear(years[years.length - 1]);
+      } else {
+        const leftPos = positions[leftIdx];
+        const rightPos = positions[rightIdx];
+        const t = rightPos > leftPos ? (scrollFraction - leftPos) / (rightPos - leftPos) : 0;
+        setScrollYear(Math.round(years[leftIdx] + t * (years[rightIdx] - years[leftIdx])));
+      }
     };
 
     container.addEventListener("scroll", updateFocusedIndex, { passive: true });
     updateFocusedIndex();
     return () => container.removeEventListener("scroll", updateFocusedIndex);
-  }, [activeEvent, positions]);
+  }, [activeEvent, positions, sortedEvents]);
 
   /* ── Era transition flash ── */
   const currentEra = sortedEvents[focusedIndex]?.era || "ancient";
@@ -414,23 +521,32 @@ export default function HistoryLanding({
     return null;
   }, [sortedEvents, focusedIndex]);
 
-  /* ── Fun facts: compute positions and match to scroll ── */
+  /* ── Fun facts: position using same adaptive algorithm as events ── */
   const funFactPositions = useMemo(() => {
-    if (sortedEvents.length === 0) return [];
+    if (sortedEvents.length < 2 || positions.length < 2) return [];
     const years = sortedEvents.map((e) => extractNumericYear(e.dateSort));
     const minYear = Math.min(...years);
     const maxYear = Math.max(...years);
-    const range = maxYear - minYear;
-    if (range === 0) return [];
 
     return FUN_FACTS.map((fact) => {
       const midYear = (fact.yearStart + fact.yearEnd) / 2;
       if (midYear < minYear || midYear > maxYear) return null;
-      const normalized = midYear - minYear;
-      const position = Math.sqrt(Math.max(0, normalized)) / Math.sqrt(range);
-      return { ...fact, position: 0.05 + position * 0.9 };
+      // Interpolate position from flanking events
+      let leftIdx = 0;
+      for (let i = 0; i < years.length - 1; i++) {
+        if (years[i] <= midYear && years[i + 1] >= midYear) {
+          leftIdx = i;
+          break;
+        }
+        if (i === years.length - 2) leftIdx = i;
+      }
+      const rightIdx = Math.min(leftIdx + 1, years.length - 1);
+      const yearSpan = years[rightIdx] - years[leftIdx];
+      const t = yearSpan > 0 ? (midYear - years[leftIdx]) / yearSpan : 0.5;
+      const position = positions[leftIdx] + t * (positions[rightIdx] - positions[leftIdx]);
+      return { ...fact, position };
     }).filter(Boolean) as (typeof FUN_FACTS[0] & { position: number })[];
-  }, [sortedEvents]);
+  }, [sortedEvents, positions]);
 
   /* ── Parallax scroll handler — enhanced differential (bg 0.3x = 0.7x relative) ── */
   useEffect(() => {
@@ -697,6 +813,15 @@ export default function HistoryLanding({
         <span className="hist-tl-brief__hint">&larr; scroll through time &rarr;</span>
       </div>
 
+      {/* Rolling year indicator — fixed at viewport center */}
+      {scrollYear !== null && hasScrolled && (
+        <div className="hist-tl-year-indicator" aria-hidden="true">
+          <span className="hist-tl-year-indicator__year">
+            {scrollYear < 0 ? `${Math.abs(scrollYear)} BCE` : String(scrollYear)}
+          </span>
+        </div>
+      )}
+
       {/* Full timeline -- horizontal scroll */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
@@ -768,6 +893,46 @@ export default function HistoryLanding({
               opacity="0.6"
             />
           </svg>
+
+          {/* Arc lanes — thematic threads connecting events */}
+          {arcLanes.map((arc) => (
+            <div
+              key={arc.slug}
+              className="hist-tl-arc-lane"
+              style={{
+                left: `${arc.startPct}%`,
+                width: `${arc.endPct - arc.startPct}%`,
+                "--arc-color": arc.color,
+              } as React.CSSProperties}
+            >
+              {/* Arc thread line */}
+              <div className="hist-tl-arc-lane__thread" aria-hidden="true" />
+
+              {/* Arc label at start */}
+              <div className="hist-tl-arc-lane__label">
+                <span className="hist-tl-arc-lane__title">{arc.title}</span>
+                <span className="hist-tl-arc-lane__subtitle">{arc.subtitle}</span>
+              </div>
+
+              {/* Nodes at each connected event */}
+              {arc.nodes.map((node) => {
+                const laneWidth = arc.endPct - arc.startPct;
+                const nodePct = laneWidth > 0
+                  ? ((node.position * 100 - arc.startPct) / laneWidth) * 100
+                  : 0;
+                return (
+                  <div
+                    key={node.slug}
+                    className="hist-tl-arc-lane__node"
+                    style={{ left: `${nodePct}%` }}
+                    title={node.title}
+                  >
+                    <div className="hist-tl-arc-lane__node-dot" />
+                  </div>
+                );
+              })}
+            </div>
+          ))}
 
           {/* Fun facts — positioned at midpoints between events */}
           {funFactPositions.map((fact, fi) => (

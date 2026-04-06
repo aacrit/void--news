@@ -2910,6 +2910,27 @@
     display: none;
   }
 
+  /* Rolling year indicator — repositioned for vertical timeline */
+  .hist-tl-year-indicator {
+    position: fixed;
+    bottom: auto;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+  }
+
+  .hist-tl-year-indicator__year {
+    font-size: 0.85rem;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    opacity: 0.25;
+  }
+
+  /* Arc lanes — vertical on mobile */
+  .hist-tl-arc-lane {
+    display: none;
+  }
+
   /* Inline story: full width, no side padding wastage */
   .hist-inline-story {
     padding: 0;
@@ -5303,6 +5324,138 @@
 
 .hist-tl-fact--visible {
   opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------------------
+   Rolling Year Indicator — fixed at viewport center, updates on scroll
+   Glass blur background, smooth font transitions, cinematic.
+   --------------------------------------------------------------------------- */
+.hist-tl-year-indicator {
+  position: fixed;
+  bottom: calc(var(--space-4) + 90px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 22;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hist-tl-year-indicator__year {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.8rem);
+  font-weight: 700;
+  color: var(--hist-accent);
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+  opacity: 0.35;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 300ms ease;
+}
+
+:root[data-mode="dark"] .hist-tl-year-indicator__year {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0.25;
+}
+
+/* ---------------------------------------------------------------------------
+   Arc Lanes — thematic threads connecting events across the timeline
+   Positioned below the ink track. Prominent but not overwhelming.
+   --------------------------------------------------------------------------- */
+.hist-tl-arc-lane {
+  position: absolute;
+  top: calc(50% + 40px);
+  height: 32px;
+  z-index: 3;
+}
+
+.hist-tl-arc-lane__thread {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--arc-color, #B44C00);
+  opacity: 0.35;
+  transform: translateY(-50%);
+  /* Organic dash pattern */
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--arc-color, #B44C00) 0px,
+    var(--arc-color, #B44C00) 12px,
+    transparent 12px,
+    transparent 16px
+  );
+  background-size: 16px 2px;
+  background-repeat: repeat-x;
+  background-color: transparent;
+}
+
+.hist-tl-arc-lane__label {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.hist-tl-arc-lane__title {
+  font-family: var(--font-meta);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--arc-color, #B44C00);
+  opacity: 0.7;
+}
+
+.hist-tl-arc-lane__subtitle {
+  font-family: var(--font-data);
+  font-size: 0.5rem;
+  color: var(--hist-ink-muted);
+  opacity: 0.5;
+  margin-top: 1px;
+}
+
+.hist-tl-arc-lane__node {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hist-tl-arc-lane__node-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--arc-color, #B44C00);
+  opacity: 0.5;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--arc-color, #B44C00) 30%, transparent);
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.hist-tl-arc-lane__node:hover .hist-tl-arc-lane__node-dot {
+  transform: scale(1.6);
+  opacity: 0.8;
+}
+
+:root[data-mode="dark"] .hist-tl-arc-lane__thread {
+  opacity: 0.25;
+}
+
+:root[data-mode="dark"] .hist-tl-arc-lane__node-dot {
+  opacity: 0.4;
+}
+
+:root[data-mode="dark"] .hist-tl-arc-lane__title {
+  opacity: 0.6;
 }
 
 /* ---------------------------------------------------------------------------
