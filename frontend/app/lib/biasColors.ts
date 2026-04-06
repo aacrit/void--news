@@ -151,6 +151,46 @@ export function isUnscoredTilt(
   return false;
 }
 
+/* ── Sigil label — lean + divergence combined ──────────────────────────────
+   For balanced stories: label communicates divergence state (the lean is neutral,
+   so divergence IS the useful information). For tilted stories: lean direction
+   remains primary, with divergence flag suffix when top/bottom 10%.          ── */
+
+export function sigilLabelInfo(
+  lean: number,
+  agreement: number,
+  divergenceFlag?: "divergent" | "consensus" | null,
+  unscored?: boolean,
+): { text: string; color: string } {
+  if (unscored) return { text: "\u2014", color: "var(--fg-tertiary)" };
+
+  const isBalanced = lean >= 44 && lean <= 58;
+
+  if (isBalanced) {
+    if (divergenceFlag === "divergent" || agreement > 60) {
+      return { text: "Divergent", color: "var(--sense-high)" };
+    }
+    if (divergenceFlag === "consensus" || agreement < 20) {
+      return { text: "Aligned", color: "var(--sense-low)" };
+    }
+    return { text: "Center", color: "var(--bias-center)" };
+  }
+
+  // Tilted — lean direction is primary info
+  const dir = lean <= 29 ? "Far Left"
+    : lean <= 43 ? "Left"
+    : lean <= 76 ? "Right"
+    : "Far Right";
+
+  if (divergenceFlag === "divergent") {
+    return { text: `${dir} · Split`, color: getLeanColor(lean) };
+  }
+  if (divergenceFlag === "consensus") {
+    return { text: `${dir} · Agreed`, color: getLeanColor(lean) };
+  }
+  return { text: dir, color: getLeanColor(lean) };
+}
+
 /* ── CSS variable cache — single observer ───────────────────────────────── */
 
 const SSR_FALLBACK: Record<string, string> = {

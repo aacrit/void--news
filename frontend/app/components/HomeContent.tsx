@@ -546,6 +546,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               opinionLabel,
               pending: !hasBiasData,
             };
+            const claimCon = cluster.claim_consensus;
             const sigilData: SigilData = {
               politicalLean: biasScores.politicalLean,
               sensationalism: biasScores.sensationalism,
@@ -565,6 +566,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                 biasSpread?.aggregateConfidence ?? 0,
               ),
               opinionLabel,
+              consensusCorroborated: claimCon?.corroborated,
+              consensusTotal: claimCon?.total_claims,
             };
 
             const rawConsensus = usingEnriched ? cluster.consensus_points : null;

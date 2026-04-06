@@ -504,6 +504,18 @@
   position: relative;
 }
 
+.wire-card__summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+  margin-top: var(--space-1);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Hover: underline draws left→right */
 .wire-card__headline::after {
   content: "";

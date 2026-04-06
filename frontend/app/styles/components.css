@@ -581,6 +581,10 @@
 
 .story-card__headline-text {
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   transition: text-shadow 300ms var(--ease-cinematic);
 }
 
@@ -706,8 +710,9 @@
 }
 
 /* Primary lead: larger headline to establish visual hierarchy over secondary */
-.lead-section__col:first-child .lead-story__headline {
-  font-size: clamp(1.75rem, 1.5rem + 1.5vw, 3.25rem);
+.lead-section__col:first-child .lead-story__headline,
+.df-lead__col--primary .lead-story__headline {
+  font-size: clamp(1.375rem, 1.2rem + 1vw, 2.25rem);
 }
 
 .lead-story:has(.story-card__stretch-link:focus-visible) {
@@ -780,9 +785,9 @@
 
 .lead-story__headline {
   font-family: var(--font-editorial);
-  font-size: var(--text-hero);
+  font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.875rem);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.01em;
   color: var(--fg-primary);
   margin-bottom: var(--space-3);
@@ -797,6 +802,10 @@
 
 .lead-story__headline-text {
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   transition: text-shadow 300ms var(--ease-cinematic);
 }
 

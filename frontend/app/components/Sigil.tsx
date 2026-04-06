@@ -8,6 +8,7 @@ import {
   getLeanColor as leanColor,
   tiltLabel,
   tiltDescriptor,
+  sigilLabelInfo,
   lerpColor as lerp,
 } from "../lib/biasColors";
 
@@ -123,17 +124,19 @@ function DataMark({ data, size, mounted }: {
         }}
         opacity={0.9}
       />
-      {/* Source count inside ring */}
-      <text x="16" y="13.5" textAnchor="middle" dominantBaseline="central"
-        style={{
-          fontFamily: "var(--font-data)", fontSize: px > 32 ? 8 : 7, fontWeight: 700,
-          fill: "var(--fg-secondary)",
-          opacity: mounted ? 0.85 : 0,
-          transition: "opacity 400ms var(--ease-out) 300ms",
-        }}
-      >
-        {data.sourceCount}
-      </text>
+      {/* Consensus ratio inside ring (replaces source count) */}
+      {data.consensusTotal && data.consensusTotal >= 3 && data.consensusCorroborated != null ? (
+        <text x="16" y="13.5" textAnchor="middle" dominantBaseline="central"
+          style={{
+            fontFamily: "var(--font-data)", fontSize: px > 32 ? 7.5 : 6, fontWeight: 700,
+            fill: "var(--fg-secondary)",
+            opacity: mounted ? 0.85 : 0,
+            transition: "opacity 400ms var(--ease-out) 300ms",
+          }}
+        >
+          {data.consensusCorroborated}/{data.consensusTotal}
+        </text>
+      ) : null}
 
       {/* Beam group — pivots around circle center, tilts by lean */}
       <g className="sigil__beam-group" style={{
@@ -472,7 +475,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const tooltipId = `sigil-${useId()}`;
 
   const unscored = !!data.unscored;
-  const ll = unscored ? "\u2014" : tiltLabel(data.politicalLean);
+  const labelInfo = sigilLabelInfo(data.politicalLean, data.agreement, data.divergenceFlag, unscored);
   const lc = unscored ? "var(--fg-tertiary)" : leanColor(data.politicalLean);
   const full = isFullDetail(size);
 
@@ -480,7 +483,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
   const aria = unscored
     ? `Coverage tilt: Unscored (insufficient signal). ${data.sourceCount} sources. Press Enter for details.`
-    : `Coverage tilt: ${ll} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
+    : `Coverage tilt: ${labelInfo.text} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
   const ringClass = data.divergenceFlag === "divergent"
     ? " sigil--divergent"
@@ -511,17 +514,16 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
-      {/* Lean label — with optional hand-drawn ink underline for divergence/consensus */}
+      {/* Combined lean + divergence label — InkUnderline on all sizes */}
       <span className="sigil__lean-label" style={{
-        color: lc,
+        color: labelInfo.color,
         opacity: mounted ? 1 : 0,
       }}>
-        {ll}
-        {/* InkUnderline only rendered at full-detail sizes (lg, xl) */}
-        {full && data.divergenceFlag === "divergent" && (
+        {labelInfo.text}
+        {data.divergenceFlag === "divergent" && (
           <InkUnderline variant={data.politicalLean % 3} color="var(--sense-high)" />
         )}
-        {full && data.divergenceFlag === "consensus" && (
+        {data.divergenceFlag === "consensus" && (
           <InkUnderline variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
         )}
       </span>
