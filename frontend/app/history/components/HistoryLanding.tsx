@@ -13,16 +13,69 @@ import EventDetail from "./EventDetail";
    (catastrophic) and below (critical/major) the track. Proportionate
    temporal spacing (sqrt scale). Inline story loading replaces overlay.
 
-   Three states:
-     A — Full Timeline (default): horizontal scroll, above/below cards
-     B — Story Active: compressed 56px strip + EventDetail inline
-     C — Story Nav: crossfade to different event via strip dots
+   Two states:
+     A — Full Timeline (default): horizontal scroll, above/below cards,
+         fixed era header, fun facts, cinematic entrance, snap-assist
+     B — Story Active: floating "Back to Timeline" CTA + EventDetail inline
 
    Desktop: horizontal scroll, edge-scroll zones, parallax, Ken Burns
    Mobile (<768px): vertical timeline, ink track on left, tap to open
 
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
    =========================================================================== */
+
+/* ── Era context — rich descriptions for the fixed era header ── */
+const ERA_CONTEXT: Record<string, { label: string; years: string; description: string; color: string }> = {
+  ancient: {
+    label: "The Ancient World",
+    years: "3000 BCE — 500 BCE",
+    description: "First civilizations, written law, and organized warfare",
+    color: "var(--hist-persp-c)",
+  },
+  classical: {
+    label: "The Classical Age",
+    years: "500 BCE — 500 CE",
+    description: "Empires rose and fell. Democracy was invented. So was crucifixion.",
+    color: "var(--hist-persp-a)",
+  },
+  medieval: {
+    label: "The Medieval World",
+    years: "500 — 1500",
+    description: "Crusades, plagues, and the Mongol storm. Europe called them the Dark Ages. The rest of the world didn\u2019t.",
+    color: "var(--hist-persp-d)",
+  },
+  "early-modern": {
+    label: "The Early Modern Period",
+    years: "1500 — 1800",
+    description: "Colonialism begins. Millions enslaved. Revolutions brew.",
+    color: "var(--hist-persp-b)",
+  },
+  modern: {
+    label: "The Modern Era",
+    years: "1800 — 1945",
+    description: "Industry, nationalism, two world wars, and the atom split open",
+    color: "var(--hist-accent)",
+  },
+  contemporary: {
+    label: "The Contemporary World",
+    years: "1945 — Present",
+    description: "Decolonization, cold war, genocide, and the unfinished project of human rights",
+    color: "var(--hist-brass)",
+  },
+};
+
+/* ── Fun facts — ephemeral context between events ── */
+const FUN_FACTS: { yearStart: number; yearEnd: number; text: string }[] = [
+  { yearStart: 500, yearEnd: 1095, text: "While Europe slept through the \u2018Dark Ages\u2019, the Islamic Golden Age produced algebra, optics, and hospitals." },
+  { yearStart: 1095, yearEnd: 1258, text: "The Crusades lasted 200 years. Both sides claimed God was on theirs." },
+  { yearStart: 1500, yearEnd: 1789, text: "Between 1500 and 1800, European empires moved 12.5 million Africans across the Atlantic in chains." },
+  { yearStart: 1789, yearEnd: 1839, text: "Napoleon sold Louisiana for $15 million. Today that\u2019s about 4 cents per acre." },
+  { yearStart: 1839, yearEnd: 1884, text: "In 50 years, the telegraph, photograph, telephone, and light bulb were all invented. The world shrank." },
+  { yearStart: 1884, yearEnd: 1945, text: "In 1884, Europe carved up Africa at a conference. Not a single African was invited." },
+  { yearStart: 1945, yearEnd: 1947, text: "Between VJ Day and Indian independence: 712 days. Two empires ended." },
+  { yearStart: 1948, yearEnd: 1989, text: "For 41 years, the world was divided by an idea: which economic system would survive." },
+  { yearStart: 1989, yearEnd: 1994, text: "The Berlin Wall fell on a Thursday. Nobody planned it. A spokesman misread his notes at a press conference." },
+];
 
 /* ── Era groups for fast-travel buttons ── */
 interface EraGroup {
@@ -230,9 +283,15 @@ export default function HistoryLanding({
 }: HistoryLandingProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const bgLayerRef = useRef<HTMLDivElement>(null);
+  const inkPathRef = useRef<SVGPathElement>(null);
   const scrollVelocityRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [activeEvent, setActiveEvent] = useState<HistoricalEvent | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [prevEra, setPrevEra] = useState<string | null>(null);
+  const [eraFlashColor, setEraFlashColor] = useState<string | null>(null);
+  const [entranceReady, setEntranceReady] = useState(false);
+  const activeEventIndexRef = useRef<number>(0);
 
   /* Sort events chronologically */
   const sortedEvents = useMemo(
@@ -278,7 +337,102 @@ export default function HistoryLanding({
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  /* ── Parallax scroll handler ── */
+  /* ── Entrance animation trigger ── */
+  useEffect(() => {
+    if (reducedMotion) {
+      setEntranceReady(true);
+      return;
+    }
+    const timer = setTimeout(() => setEntranceReady(true), 100);
+    return () => clearTimeout(timer);
+  }, [reducedMotion]);
+
+  /* ── Ink track draw-on: measure path length ── */
+  useEffect(() => {
+    if (reducedMotion) return;
+    const path = inkPathRef.current;
+    if (!path) return;
+    try {
+      const len = path.getTotalLength();
+      path.style.setProperty("--track-length", String(len));
+    } catch {
+      /* SVG path measurement unavailable */
+    }
+  }, [inkPath, reducedMotion]);
+
+  /* ── Focused index tracking — find nearest card to viewport center ── */
+  useEffect(() => {
+    if (activeEvent) return;
+    const container = timelineRef.current;
+    if (!container) return;
+
+    const updateFocusedIndex = () => {
+      const scrollCenter = container.scrollLeft + container.clientWidth / 3; /* Rule of Thirds: left third */
+      const totalW = container.scrollWidth;
+      let closest = 0;
+      let closestDist = Infinity;
+      for (let i = 0; i < positions.length; i++) {
+        const cardX = positions[i] * totalW;
+        const dist = Math.abs(cardX - scrollCenter);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = i;
+        }
+      }
+      setFocusedIndex(closest);
+    };
+
+    container.addEventListener("scroll", updateFocusedIndex, { passive: true });
+    updateFocusedIndex();
+    return () => container.removeEventListener("scroll", updateFocusedIndex);
+  }, [activeEvent, positions]);
+
+  /* ── Era transition flash ── */
+  const currentEra = sortedEvents[focusedIndex]?.era || "ancient";
+  useEffect(() => {
+    if (reducedMotion || !hasScrolled) return;
+    if (prevEra && prevEra !== currentEra) {
+      const ctx = ERA_CONTEXT[currentEra];
+      if (ctx) {
+        setEraFlashColor(ctx.color);
+        const timer = setTimeout(() => setEraFlashColor(null), 600);
+        return () => clearTimeout(timer);
+      }
+    }
+    setPrevEra(currentEra);
+  }, [currentEra, prevEra, reducedMotion, hasScrolled]);
+
+  /* ── Decade label for post-1800 events ── */
+  const decadeLabel = useMemo(() => {
+    const ev = sortedEvents[focusedIndex];
+    if (!ev) return null;
+    const year = extractNumericYear(ev.dateSort);
+    if (year >= 1800) {
+      const decade = Math.floor(year / 10) * 10;
+      return `${decade}s`;
+    }
+    return null;
+  }, [sortedEvents, focusedIndex]);
+
+  /* ── Fun facts: compute positions and match to scroll ── */
+  const funFactPositions = useMemo(() => {
+    if (sortedEvents.length === 0) return [];
+    const years = sortedEvents.map((e) => extractNumericYear(e.dateSort));
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+    const range = maxYear - minYear;
+    if (range === 0) return [];
+
+    return FUN_FACTS.map((fact) => {
+      const midYear = (fact.yearStart + fact.yearEnd) / 2;
+      if (midYear < minYear || midYear > maxYear) return null;
+      const normalized = midYear - minYear;
+      const position = Math.sqrt(Math.max(0, normalized)) / Math.sqrt(range);
+      return { ...fact, position: 0.05 + position * 0.9 };
+    }).filter(Boolean) as (typeof FUN_FACTS[0] & { position: number })[];
+  }, [sortedEvents]);
+
+  /* ── Parallax scroll handler — enhanced differential (bg 0.3x = 0.7x relative) ── */
   useEffect(() => {
     if (reducedMotion || activeEvent) return;
     const container = timelineRef.current;
@@ -287,7 +441,7 @@ export default function HistoryLanding({
 
     const handleScroll = () => {
       const scrollLeft = container.scrollLeft;
-      bg.style.transform = `translateX(${-scrollLeft * 0.15}px)`;
+      bg.style.transform = `translateX(${-scrollLeft * 0.30}px)`;
       if (!hasScrolled) setHasScrolled(true);
     };
 
@@ -295,7 +449,7 @@ export default function HistoryLanding({
     return () => container.removeEventListener("scroll", handleScroll);
   }, [reducedMotion, activeEvent, hasScrolled]);
 
-  /* ── Momentum wheel: vertical scroll -> horizontal ── */
+  /* ── Momentum wheel: vertical scroll -> horizontal, snappier physics ── */
   useEffect(() => {
     if (activeEvent) return;
     const container = timelineRef.current;
@@ -308,17 +462,35 @@ export default function HistoryLanding({
     const applyMomentum = () => {
       if (Math.abs(velocity) < 0.5) {
         isAnimating = false;
+        /* Snap assist: settle on nearest card */
+        const scrollCenter = container.scrollLeft + container.clientWidth / 3;
+        const totalW = container.scrollWidth;
+        let closest = 0;
+        let closestDist = Infinity;
+        for (let i = 0; i < positions.length; i++) {
+          const cardX = positions[i] * totalW;
+          const dist = Math.abs(cardX - scrollCenter);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = i;
+          }
+        }
+        const targetLeft = positions[closest] * totalW - container.clientWidth / 3;
+        const currentLeft = container.scrollLeft;
+        if (Math.abs(targetLeft - currentLeft) > 5 && Math.abs(targetLeft - currentLeft) < 400) {
+          container.scrollTo({ left: targetLeft, behavior: "smooth" });
+        }
         return;
       }
       container.scrollLeft += velocity;
-      velocity *= 0.92;
+      velocity *= 0.88;
       rafId = requestAnimationFrame(applyMomentum);
     };
 
     const handleWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
-        velocity += e.deltaY * 0.8;
+        velocity += e.deltaY * 1.2;
         if (!isAnimating) {
           isAnimating = true;
           rafId = requestAnimationFrame(applyMomentum);
@@ -331,7 +503,7 @@ export default function HistoryLanding({
       container.removeEventListener("wheel", handleWheel);
       cancelAnimationFrame(rafId);
     };
-  }, [activeEvent]);
+  }, [activeEvent, positions]);
 
   /* ── Edge scroll: mouse near left/right edge triggers auto-scroll (desktop) ── */
   useEffect(() => {
@@ -344,7 +516,7 @@ export default function HistoryLanding({
     if (isTouch) return;
 
     const EDGE_ZONE = 60;
-    const MAX_SPEED = 8;
+    const MAX_SPEED = 12;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (e.clientX < EDGE_ZONE) {
@@ -381,20 +553,58 @@ export default function HistoryLanding({
     };
   }, [activeEvent, reducedMotion]);
 
+  /* ── Auto-scroll to 1945 on initial load ── */
+  useEffect(() => {
+    if (activeEvent) return;
+    const container = timelineRef.current;
+    if (!container || sortedEvents.length === 0) return;
+
+    /* Find card closest to 1945 */
+    let closest = 0;
+    let closestDist = Infinity;
+    for (let i = 0; i < sortedEvents.length; i++) {
+      const year = extractNumericYear(sortedEvents[i].dateSort);
+      const dist = Math.abs(year - 1945);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = i;
+      }
+    }
+
+    /* Instant scroll — user lands at 1945, doesn't watch scroll */
+    const totalW = container.scrollWidth;
+    const targetLeft = positions[closest] * totalW - container.clientWidth / 3;
+    container.scrollTo({ left: Math.max(0, targetLeft), behavior: "instant" as ScrollBehavior });
+    setFocusedIndex(closest);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedEvents.length]); /* Run once after events load */
+
   /* ── URL management ── */
   const openStory = useCallback((event: HistoricalEvent) => {
+    /* Remember which card index was opened */
+    const idx = sortedEvents.findIndex((e) => e.slug === event.slug);
+    if (idx !== -1) activeEventIndexRef.current = idx;
     setActiveEvent(event);
     window.history.pushState(
       { historyInline: true, slug: event.slug },
       "",
       `/history/${event.slug}`
     );
-  }, []);
+  }, [sortedEvents]);
 
   const closeStory = useCallback(() => {
     setActiveEvent(null);
     window.history.pushState({}, "", "/history");
-  }, []);
+    /* Scroll timeline back to the card the user was viewing */
+    requestAnimationFrame(() => {
+      const container = timelineRef.current;
+      if (!container) return;
+      const idx = activeEventIndexRef.current;
+      const totalW = container.scrollWidth;
+      const targetLeft = positions[idx] * totalW - container.clientWidth / 3;
+      container.scrollTo({ left: Math.max(0, targetLeft), behavior: "instant" as ScrollBehavior });
+    });
+  }, [positions]);
 
   /* popstate listener for browser back */
   useEffect(() => {
@@ -417,42 +627,7 @@ export default function HistoryLanding({
     return () => window.removeEventListener("popstate", handlePopState);
   }, [sortedEvents]);
 
-  /* ── Keyboard: arrow keys for strip navigation ── */
-  const handleStripKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!activeEvent) return;
-      const idx = sortedEvents.findIndex((ev) => ev.slug === activeEvent.slug);
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        const next = sortedEvents[idx + 1];
-        if (next) {
-          setActiveEvent(next);
-          window.history.replaceState(
-            { historyInline: true, slug: next.slug },
-            "",
-            `/history/${next.slug}`
-          );
-        }
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        const prev = sortedEvents[idx - 1];
-        if (prev) {
-          setActiveEvent(prev);
-          window.history.replaceState(
-            { historyInline: true, slug: prev.slug },
-            "",
-            `/history/${prev.slug}`
-          );
-        }
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        closeStory();
-      }
-    },
-    [activeEvent, sortedEvents, closeStory]
-  );
-
-  /* ── Navigate between events (from strip or EventDetail Stage 6) ── */
+  /* ── Navigate between events (from EventDetail Stage 6) ── */
   const navigateToEvent = useCallback(
     (event: HistoricalEvent) => {
       setActiveEvent(event);
@@ -467,73 +642,12 @@ export default function HistoryLanding({
     []
   );
 
-  /* ── State B: Compressed strip + inline story ── */
+  /* ── State B: Story active — floating Back CTA + inline story ── */
   if (activeEvent) {
     return (
       <div className="hist-tl-wrapper hist-tl-wrapper--story-active">
-        {/* Compressed timeline strip */}
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-        <div
-          className="hist-tl-strip"
-          role="navigation"
-          aria-label="Timeline navigation"
-          tabIndex={0}
-          onKeyDown={handleStripKeyDown}
-        >
-          <div className="hist-tl-strip__track-container">
-            <svg
-              className="hist-tl-strip__track"
-              viewBox={`0 0 ${totalWidthVw} 4`}
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                d={inkPath}
-                stroke="var(--hist-accent)"
-                strokeWidth="1.5"
-                fill="none"
-                opacity="0.4"
-              />
-            </svg>
-            {sortedEvents.map((e, i) => {
-              const isActive = e.slug === activeEvent.slug;
-              const year = extractYear(e.dateSort, e.datePrimary);
-              return (
-                <button
-                  key={e.slug}
-                  className={`hist-tl-strip__dot ${isActive ? "hist-tl-strip__dot--active" : ""}`}
-                  style={{ left: `${positions[i] * 100}%` }}
-                  onClick={() => navigateToEvent(e)}
-                  aria-label={`${e.title} (${e.datePrimary})`}
-                  aria-current={isActive ? "true" : undefined}
-                  type="button"
-                >
-                  <span className="hist-tl-strip__year">{year}</span>
-                </button>
-              );
-            })}
-          </div>
-          <button
-            className="hist-tl-strip__close"
-            onClick={closeStory}
-            aria-label="Close story, return to timeline"
-            type="button"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              aria-hidden="true"
-            >
-              <path d="M18 6L6 18" />
-              <path d="M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+        {/* Floating Back to Timeline CTA — slides in after 1s */}
+        <BackToTimelineCTA onClose={closeStory} />
 
         {/* Inline story — swipe gestures for mobile next/prev */}
         <StoryContainer
@@ -546,9 +660,29 @@ export default function HistoryLanding({
     );
   }
 
+  /* ── Current era context for header ── */
+  const eraCtx = ERA_CONTEXT[currentEra] || ERA_CONTEXT.contemporary;
+
   /* ── State A: Full timeline ── */
   return (
     <div className="hist-tl-wrapper">
+      {/* Fixed Era Header — updates as user scrolls */}
+      <div
+        className={`hist-tl-era-header ${hasScrolled ? "" : "hist-tl-era-header--hidden"}`}
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ "--era-color": eraCtx.color } as React.CSSProperties}
+      >
+        <div className="hist-tl-era-header__label">{eraCtx.label}</div>
+        <div className="hist-tl-era-header__meta">
+          <span className="hist-tl-era-header__years">{eraCtx.years}</span>
+          {decadeLabel && (
+            <span className="hist-tl-era-header__decade">{decadeLabel}</span>
+          )}
+        </div>
+        <div className="hist-tl-era-header__desc">{eraCtx.description}</div>
+      </div>
+
       {/* Mission Brief -- fades on first scroll */}
       <div
         className={`hist-tl-brief ${hasScrolled ? "hist-tl-brief--hidden" : ""}`}
@@ -564,11 +698,12 @@ export default function HistoryLanding({
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         ref={timelineRef}
-        className="hist-tl-full hist-grade"
+        className={`hist-tl-full hist-grade${eraFlashColor ? " hist-tl-full--era-flash" : ""}`}
         role="region"
         aria-label="Historical events timeline"
         aria-roledescription="timeline"
         tabIndex={0}
+        style={eraFlashColor ? { "--era-flash-color": `color-mix(in srgb, ${eraFlashColor} 8%, transparent)` } as React.CSSProperties : undefined}
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") {
             e.preventDefault();
@@ -613,14 +748,16 @@ export default function HistoryLanding({
           className="hist-tl-full__inner"
           style={{ width: `${totalWidthVw}px`, minWidth: `${totalWidthVw}px` }}
         >
-          {/* Organic SVG ink track at vertical center */}
+          {/* Organic SVG ink track at vertical center — draw-on animation */}
           <svg
-            className="hist-tl-full__track"
+            className={`hist-tl-full__track${entranceReady && !reducedMotion ? " hist-tl-full__track--draw" : ""}`}
             viewBox={`0 0 ${totalWidthVw} 4`}
             preserveAspectRatio="none"
             aria-hidden="true"
           >
             <path
+              ref={inkPathRef}
+              className="hist-tl-full__ink-path"
               d={inkPath}
               stroke="var(--hist-accent)"
               strokeWidth="1.5"
@@ -629,10 +766,22 @@ export default function HistoryLanding({
             />
           </svg>
 
+          {/* Fun facts — positioned at midpoints between events */}
+          {funFactPositions.map((fact, fi) => (
+            <FunFact
+              key={fi}
+              text={fact.text}
+              position={fact.position}
+              totalWidth={totalWidthVw}
+              containerRef={timelineRef}
+            />
+          ))}
+
           {/* Cards + stems + dots */}
           {sortedEvents.map((event, i) => {
             const side = sides[i];
             const pct = positions[i] * 100;
+            const isFocused = i === focusedIndex;
 
             return (
               <div
@@ -642,11 +791,11 @@ export default function HistoryLanding({
               >
                 {/* Dot on track */}
                 <div
-                  className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}`}
+                  className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}${isFocused ? " hist-tl-full__dot--focused" : ""}`}
                   aria-hidden="true"
                 />
 
-                {/* Stem connecting card to dot */}
+                {/* Stem connecting card to dot — spring stretch on hover via CSS var */}
                 <div
                   className={`hist-tl-full__stem hist-tl-full__stem--${side}`}
                   aria-hidden="true"
@@ -662,12 +811,14 @@ export default function HistoryLanding({
                   </svg>
                 </div>
 
-                {/* Card */}
+                {/* Card — entrance stagger via --card-index */}
                 <TimelineCard
                   event={event}
                   index={i}
                   side={side}
                   onOpen={openStory}
+                  entranceReady={entranceReady}
+                  reducedMotion={reducedMotion}
                 />
               </div>
             );
@@ -702,19 +853,20 @@ export default function HistoryLanding({
       <nav className="hist-tl-minimap" aria-label="Timeline minimap">
         <div className="hist-tl-minimap__line" aria-hidden="true" />
         {sortedEvents.map((event, i) => {
+          const isFocused = i === focusedIndex;
           const year = extractYear(event.dateSort, event.datePrimary);
           const showYear = i % 4 === 0;
           return (
             <button
               key={event.slug}
-              className={`hist-tl-minimap__dot ${showYear ? "hist-tl-minimap__dot--labeled" : ""}`}
+              className={`hist-tl-minimap__dot${showYear ? " hist-tl-minimap__dot--labeled" : ""}${isFocused ? " hist-tl-minimap__dot--active" : ""}`}
               style={{ left: `${5 + positions[i] * 90}%` }}
               onClick={() => {
                 const container = timelineRef.current;
                 if (!container) return;
                 const totalW = container.scrollWidth;
                 container.scrollTo({
-                  left: positions[i] * totalW - container.clientWidth / 2,
+                  left: positions[i] * totalW - container.clientWidth / 3,
                   behavior: "smooth",
                 });
               }}
@@ -809,21 +961,127 @@ function StoryContainer({
 }
 
 /* ===========================================================================
+   BackToTimelineCTA — Floating pill button on story page
+   Slides in from right after 1s delay. Keyboard accessible.
+   =========================================================================== */
+function BackToTimelineCTA({ onClose }: { onClose: () => void }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  /* Also close on Escape key */
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
+  return (
+    <button
+      className={`hist-back-to-timeline${visible ? " hist-back-to-timeline--visible" : ""}`}
+      onClick={onClose}
+      aria-label="Back to timeline"
+      type="button"
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        aria-hidden="true"
+      >
+        <path d="M19 12H5" />
+        <path d="M12 19l-7-7 7-7" />
+      </svg>
+      <span>Timeline</span>
+    </button>
+  );
+}
+
+/* ===========================================================================
+   FunFact — Ephemeral contextual fact positioned on the timeline track
+   Fades in when near the viewport center, fades out when scrolled past.
+   =========================================================================== */
+function FunFact({
+  text,
+  position,
+  totalWidth,
+  containerRef,
+}: {
+  text: string;
+  position: number;
+  totalWidth: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const factRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = factRef.current;
+    const container = containerRef.current;
+    if (!el || !container) return;
+
+    /* Use IntersectionObserver with the scroll container as root */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      {
+        root: container,
+        rootMargin: "-20% 0px -20% 0px",
+        threshold: 0,
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [containerRef]);
+
+  return (
+    <div
+      ref={factRef}
+      className={`hist-tl-fact${isVisible ? " hist-tl-fact--visible" : ""}`}
+      style={{ left: `${position * 100}%` }}
+      aria-hidden="true"
+    >
+      {text}
+    </div>
+  );
+}
+
+/* ===========================================================================
    TimelineCard — Above or below the track
    240px wide (desktop), full-width (mobile).
    Photo + title always visible. Hook + dots + CTA on hover (desktop).
    On mobile: title + year + small thumbnail, tap to open.
+   Entrance stagger: cascades left-to-right via --card-index delay.
+   Cinematographic: Dutch angle on catastrophic-above cards, weight
+   differences for above (looming) vs below (receding).
    =========================================================================== */
 function TimelineCard({
   event,
   index,
   side,
   onOpen,
+  entranceReady,
+  reducedMotion,
 }: {
   event: HistoricalEvent;
   index: number;
   side: "above" | "below";
   onOpen: (event: HistoricalEvent) => void;
+  entranceReady: boolean;
+  reducedMotion: boolean;
 }) {
   const hook =
     HOOKS[event.slug] ||
@@ -850,15 +1108,17 @@ function TimelineCard({
   );
 
   const severityClass = `hist-tl-card--${event.severity}`;
+  const entranceClass = entranceReady && !reducedMotion ? " hist-tl-card--entrance" : "";
 
   return (
     <article
-      className={`hist-tl-card hist-tl-card--${side} ${severityClass}`}
+      className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}`}
       data-slug={event.slug}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleClick}
       role="button"
+      style={!reducedMotion ? { "--card-index": index } as React.CSSProperties : undefined}
     >
       {/* Photo with year badge */}
       <div className="hist-tl-card__photo">
