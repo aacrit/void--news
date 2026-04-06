@@ -39,16 +39,36 @@ Every visual asset MUST include:
 7. PERSPECTIVE: Whose viewpoint does this image represent?
 8. WHAT IS NOT SHOWN: What does this image omit?
 
+## Source Enricher Integration
+
+Before manual archive searches, check for pre-computed API results:
+
+```bash
+# Run enricher first (if not already run)
+python3 pipeline/history/source_enricher.py --event <slug> --category images,primary
+
+# Review results
+cat data/history/enrichment/<slug>.json
+```
+
+The enricher queries 15 free APIs (Wikimedia Commons, LOC, Europeana, DPLA, Smithsonian, Gallica, Wikidata, etc.) and outputs structured JSON. Review each result against the Context Protocol before incorporating into YAML. The enricher discovers candidates; you curate.
+
+**Mandatory reads before starting**:
+- `data/history/enrichment/<slug>.json` (if exists)
+- `pipeline/history/apis/` (available API categories)
+
 ## Execution Protocol
 
-1. Read event data from history-curator
-2. Identify visual needs per perspective
-3. Research archives (WebSearch for specific collections)
-4. Complete Context Protocol for each asset
-5. Verify rights status
-6. Assess visual bias across perspectives
-7. Write media entries to event YAML
-8. Report
+1. Run source enricher CLI if enrichment JSON doesn't exist
+2. Review enrichment results against Context Protocol
+3. Read event data from history-curator
+4. Identify visual needs per perspective
+5. Research archives (WebSearch for gaps not covered by enricher)
+6. Complete Context Protocol for each asset
+7. Verify rights status
+8. Assess visual bias across perspectives
+9. Write media entries to event YAML
+10. Report
 
 ## Constraints
 
