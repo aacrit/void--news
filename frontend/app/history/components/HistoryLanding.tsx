@@ -1190,43 +1190,52 @@ function FlipMorphOverlay({
     const el = overlayRef.current;
     if (!el) { onComplete(); return; }
 
-    /* Start at card position, animate to full viewport */
-    const animation = el.animate(
-      [
-        {
-          top: `${rect.top}px`,
-          left: `${rect.left}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-          borderRadius: "2px",
-          opacity: 1,
-        },
-        {
-          top: "0px",
-          left: "0px",
-          width: "100vw",
-          height: "100vh",
-          borderRadius: "0px",
-          opacity: 1,
-        },
-      ],
-      {
-        duration: 500,
-        easing: "cubic-bezier(0.16, 1, 0.3, 1)", /* document-settle */
-        fill: "forwards",
-      }
-    );
+    /* Safety timeout — ensure story is always revealed even if WAAPI fails */
+    const safetyTimer = setTimeout(onComplete, 1200);
 
-    /* After morph completes, fade out to reveal EventDetail */
-    animation.onfinish = () => {
-      const fadeOut = el.animate(
-        [{ opacity: 1 }, { opacity: 0 }],
-        { duration: 300, easing: "ease-out", fill: "forwards" }
+    try {
+      /* Start at card position, animate to full viewport */
+      const animation = el.animate(
+        [
+          {
+            top: `${rect.top}px`,
+            left: `${rect.left}px`,
+            width: `${rect.width}px`,
+            height: `${rect.height}px`,
+            borderRadius: "2px",
+            opacity: 1,
+          },
+          {
+            top: "0px",
+            left: "0px",
+            width: "100vw",
+            height: "100vh",
+            borderRadius: "0px",
+            opacity: 1,
+          },
+        ],
+        {
+          duration: 500,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "forwards",
+        }
       );
-      fadeOut.onfinish = onComplete;
-    };
 
-    return () => { animation.cancel(); };
+      animation.onfinish = () => {
+        clearTimeout(safetyTimer);
+        const fadeOut = el.animate(
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: 300, easing: "ease-out", fill: "forwards" }
+        );
+        fadeOut.onfinish = () => onComplete();
+      };
+    } catch {
+      /* WAAPI not supported — complete immediately */
+      clearTimeout(safetyTimer);
+      onComplete();
+    }
+
+    return () => { clearTimeout(safetyTimer); };
   }, [rect, onComplete]);
 
   return (
