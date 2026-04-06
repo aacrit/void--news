@@ -430,7 +430,7 @@ perspectives:
   - Muslim internal debates about the Crusades (whether they were a central or peripheral concern)
   - The extent of genuine cultural exchange and mutual influence between Latin and Muslim societies
 media:
-- media_type: painting
+- media_type: artwork
   title: Taking of Jerusalem by the Crusaders, 15th July 1099
   description: Emile Signol's 1847 painting depicting the First Crusade's capture of Jerusalem. The romanticized scene — banners, heroic poses, divine light — contrasts with the contemporary accounts of
     three days of massacre. The painting was commissioned for the Salles des Croisades at Versailles, a gallery created by Louis-Philippe to connect French national identity with crusading heritage.
@@ -448,7 +448,7 @@ media:
   license: cc-by-sa
   creator: MapMaster
   creation_date: '2008'
-- media_type: painting
+- media_type: artwork
   title: Entry of the Crusaders into Constantinople, April 12, 1204
   description: 'Eugene Delacroix''s 1840 painting depicting the Fourth Crusade''s sack of Constantinople. Unlike Signol''s heroic Jerusalem, Delacroix shows chaos, suffering, and conquest — Greek civilians
     pleading for mercy as armored knights ride through the burning city. The painting captures the event that Anna Comnena and Nicetas Choniates feared: Latin Christians destroying the Christian East.'

@@ -405,7 +405,7 @@ perspectives:
   - Regional variation within France — the revolution was experienced differently in Paris, the provinces, and the colonies
   - The material conditions of daily life that drove popular participation
 media:
-- media_type: painting
+- media_type: artwork
   title: The Storming of the Bastille, July 14, 1789
   description: Painting by Jean-Pierre Houel depicting the storming of the Bastille fortress and prison in Paris on July 14, 1789. The Bastille held only seven prisoners but its fall became the revolution's
     founding act.
@@ -415,7 +415,7 @@ media:
   creator: Jean-Pierre Houel
   creation_date: '1789'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/wiki_0.jpg
-- media_type: painting
+- media_type: artwork
   title: Execution of Louis XVI, January 21, 1793
   description: Contemporary engraving of the execution of Louis XVI at the Place de la Revolution (now Place de la Concorde) in Paris. The king was guillotined after being convicted of 'conspiracy against
     the public liberty.'

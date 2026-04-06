@@ -155,10 +155,9 @@ const PERSP_COLORS: Record<string, string> = {
   e: "var(--hist-persp-e)",
 };
 
-/* ── Severity -> side mapping: catastrophic = above, others = below ── */
-function getCardSide(event: HistoricalEvent): "above" | "below" {
-  if (event.severity === "catastrophic") return "above";
-  return "below";
+/* ── Side mapping: alternate above/below for even distribution ── */
+function getCardSide(_event: HistoricalEvent, index: number): "above" | "below" {
+  return index % 2 === 0 ? "above" : "below";
 }
 
 /* ── Extract year from YYYYMMDD dateSort ── */
@@ -226,7 +225,7 @@ function resolveCollisions(
   const MIN_GAP_PX = 320; /* Must exceed card width (280px max) to prevent overlap */
   const minGapNorm = totalWidth > 0 ? MIN_GAP_PX / totalWidth : 0.08;
   const resolved = [...positions];
-  const sides = events.map((e) => getCardSide(e));
+  const sides = events.map((e, i) => getCardSide(e, i));
 
   const aboveIndices = events.map((_, i) => i).filter((i) => sides[i] === "above");
   const belowIndices = events.map((_, i) => i).filter((i) => sides[i] === "below");
@@ -274,11 +273,11 @@ function resolveCollisions(
 function generateInkPath(width: number): string {
   const segments = Math.max(20, Math.floor(width / 50));
   const step = width / segments;
-  let d = `M0,2`;
+  let d = `M0,4`;
   for (let i = 1; i <= segments; i++) {
     const x = i * step;
     const wobble = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 2.3) * 0.8;
-    d += ` S${(x - step * 0.3).toFixed(1)},${(2 + wobble).toFixed(2)} ${x.toFixed(1)},${(2 - wobble * 0.5).toFixed(2)}`;
+    d += ` S${(x - step * 0.3).toFixed(1)},${(4 + wobble).toFixed(2)} ${x.toFixed(1)},${(4 - wobble * 0.5).toFixed(2)}`;
   }
   return d;
 }
@@ -1001,7 +1000,7 @@ export default function HistoryLanding({
           {/* Organic SVG ink track at vertical center — draw-on animation */}
           <svg
             className={`hist-tl-full__track${entranceReady && !reducedMotion ? " hist-tl-full__track--draw" : ""}`}
-            viewBox={`0 0 ${totalWidthVw} 4`}
+            viewBox={`0 0 ${totalWidthVw} 8`}
             preserveAspectRatio="none"
             aria-hidden="true"
           >
@@ -1010,9 +1009,9 @@ export default function HistoryLanding({
               className="hist-tl-full__ink-path"
               d={inkPath}
               stroke="var(--hist-accent)"
-              strokeWidth="1.5"
+              strokeWidth="3"
               fill="none"
-              opacity="0.6"
+              opacity="0.8"
             />
           </svg>
 

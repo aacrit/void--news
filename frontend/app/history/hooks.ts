@@ -56,6 +56,36 @@ export const HOOKS: Record<string, string> = {
     "Mansa Musa carried 18 tons of gold to Mecca. His charity crashed Egypt\u2019s gold market for twelve years.",
   "the-crusades":
     "The Fourth Crusade never reached Jerusalem. It sacked Constantinople \u2014 the largest Christian city on earth \u2014 instead.",
+  "september-11-attacks":
+    "Nineteen men with box cutters turned the world\u2019s most powerful military against two countries that didn\u2019t attack it.",
+  "black-death":
+    "It killed one in three Europeans \u2014 and the survivors demanded higher wages.",
+  "assassination-of-caesar":
+    "The Senate voted him dictator for life. Forty days later, twenty-three senators voted with knives.",
+  "civil-rights-movement":
+    "Four college students sat at a lunch counter in Greensboro. Within two months, sit-ins had spread to 54 cities.",
+  "indian-independence-movement":
+    "A lawyer in a loincloth walked to the sea to pick up salt \u2014 and broke an empire\u2019s monopoly on everything.",
+  "fall-of-tenochtitlan":
+    "Cort\u00e9s had 500 soldiers. Tenochtitlan had 300,000 people. Smallpox decided the math.",
+  "alexanders-conquests":
+    "He named 20 cities after himself and one after his horse.",
+  "the-holocaust":
+    "IBM sold the machines that sorted people by ancestry. The trains ran on time.",
+  "russian-revolution":
+    "The Tsar abdicated on a Wednesday. By Friday, two governments claimed to rule Russia. By October, neither did.",
+  "apartheid":
+    "They imprisoned him for 27 years. Then they asked him to run the country.",
+  "silk-road":
+    "A Roman woman wore Chinese silk without either empire knowing the other existed.",
+  "mongol-empire":
+    "He couldn\u2019t read, but he wrote a legal code that governed more people than Rome ever did.",
+  "cuban-missile-crisis":
+    "For thirteen days, one Soviet submarine officer was the only thing between humanity and nuclear war.",
+  "gutenberg-printing-press":
+    "A bankrupt goldsmith copied a Buddhist idea and accidentally ended the Catholic Church\u2019s monopoly on truth.",
+  "chinese-cultural-revolution":
+    "Students beat their teachers to death with the textbooks they\u2019d been taught from.",
 };
 
 /* ── CTAs — story-specific calls to action ── */
@@ -109,4 +139,34 @@ export const CTAS: Record<string, string> = {
     "European maps vs. oral tradition \u2014 two records of Africa\u2019s wealthiest empire",
   "the-crusades":
     "Jerusalem 1099 vs. Jerusalem 1187 \u2014 the massacre and the mercy, side by side",
+  "september-11-attacks":
+    "Ground Zero vs. Kabul \u2014 two countries\u2019 view of the same war",
+  "black-death":
+    "Divine punishment or labor revolution? Read 5 accounts of the same plague",
+  "assassination-of-caesar":
+    "Tyrannicide or murder? The debate that shaped 2,000 years of politics",
+  "civil-rights-movement":
+    "King\u2019s dream vs. Malcolm\u2019s warning \u2014 two visions of the same struggle",
+  "indian-independence-movement":
+    "Gandhi\u2019s salt vs. Bhagat Singh\u2019s pistol \u2014 two paths to the same freedom",
+  "fall-of-tenochtitlan":
+    "Cort\u00e9s\u2019s letters vs. the Broken Spears \u2014 the conquest told by both sides",
+  "alexanders-conquests":
+    "Greek hero or Persian destroyer? The sources that survived vs. the ones he burned",
+  "the-holocaust":
+    "Survivor testimony vs. bureaucratic records \u2014 two archives of the same crime",
+  "russian-revolution":
+    "Workers\u2019 liberation or state hijacking? Five versions of October 1917",
+  "apartheid":
+    "Mandela\u2019s cell vs. Verwoerd\u2019s parliament \u2014 46 years, two South Africas",
+  "silk-road":
+    "Merchants, monks, and microbes \u2014 what traveled the road besides silk",
+  "mongol-empire":
+    "Destroyer of civilizations or connector of continents? Read the conquered and the Khan",
+  "cuban-missile-crisis":
+    "Kennedy\u2019s quarantine vs. Castro\u2019s letter urging nuclear war",
+  "gutenberg-printing-press":
+    "Bi Sheng did it 400 years earlier. Read why Europe gets the credit",
+  "chinese-cultural-revolution":
+    "The party\u2019s 70/30 verdict vs. the testimonies it won\u2019t publish",
 };
