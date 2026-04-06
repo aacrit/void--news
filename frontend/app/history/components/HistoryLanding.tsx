@@ -5,33 +5,29 @@ import type { HistoricalEvent, RedactedEvent } from "../types";
 import HistoryOverlay from "./HistoryOverlay";
 
 /* ===========================================================================
-   HistoryLanding — Full-width vertical tiles for void --history
-   P1: Content is the cinematography. Divergence teasers, death tolls,
-       contradictory quotes ARE the cinematic moments.
-   P2: One surface, no portals. Story loads as overlay. No router.push.
-   P3: Tiles at full size. Flat, generous. Depth from focus/blur on scroll.
-   P4: Divergence is the hook. Teaser is LARGEST text on each tile.
-   P5: Organic means texture, not geometry. No clip-path polygons.
+   HistoryLanding — The Corridor
+   Museum corridor. Events are spotlit exhibits in dim surroundings.
+   Continuous vertical scroll with atmospheric fog between events.
+   Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
    =========================================================================== */
 
-/* ── Void Voice Blurbs — wired, punchy, concrete ── */
-const BLURBS: Record<string, string> = {
+/* ── Hooks — story-specific, "Arrive Late, Leave Early" ── */
+const HOOKS: Record<string, string> = {
   "partition-of-india":
-    "A lawyer who\u2019d never been to India drew the border in five weeks. 15 million crossed it. Trains arrived carrying only corpses.",
+    "A lawyer who\u2019d never been to India drew the border in five weeks. 15 million crossed it.",
   "hiroshima-nagasaki":
-    "66,000 dead in 8.5 seconds. Two governments still disagree about why it was necessary. Seven of eight five-star U.S. officers said it wasn\u2019t.",
+    "66,000 dead in 8.5 seconds. Seven of eight five-star American generals said it wasn\u2019t necessary.",
   "rwandan-genocide":
-    "100 days. 800,000 dead. The killing rate exceeded the Holocaust. The UN reduced its force from 2,500 to 270 and left.",
+    "The UN had a fax warning them. They reduced their force from 2,500 to 270. 800,000 died in 100 days.",
 };
 
-/* ── Divergence Teasers — one-line perspective clash ── */
-const DIVERGENCE_TEASERS: Record<string, string> = {
-  "partition-of-india":
-    "Britain says \u2018orderly transfer.\u2019 India says \u2018imperial sabotage.\u2019 Pakistan says \u2018democratic creation.\u2019",
+/* ── CTAs — story-specific ── */
+const CTAS: Record<string, string> = {
+  "partition-of-india": "See how 4 nations remember August 15, 1947",
   "hiroshima-nagasaki":
-    "Washington says \u2018saved a million lives.\u2019 Survivors say \u2018my classmate Emiko couldn\u2019t find her mother.\u2019 Historians say \u2018Japan was already seeking surrender.\u2019",
+    "Compare what Washington said vs. what survivors remember",
   "rwandan-genocide":
-    "Survivors say \u2018the neighbors came with lists.\u2019 The UN says \u2018our mandate was limited.\u2019 Scholars say \u2018colonial categories marked people for death.\u2019",
+    "Read what the world chose not to see for 100 days",
 };
 
 /* ── Perspective color map ── */
@@ -53,35 +49,33 @@ export default function HistoryLanding({
   events,
   redacted,
 }: HistoryLandingProps) {
-  const feedRef = useRef<HTMLDivElement>(null);
+  const corridorRef = useRef<HTMLDivElement>(null);
   const [activeOverlay, setActiveOverlay] = useState<{
     event: HistoricalEvent;
     sourceRect: DOMRect | null;
   } | null>(null);
 
-  /* ── Scroll cinematography: rack focus via IntersectionObserver ── */
+  /* ── Scroll cinematography: poster reveal via IntersectionObserver ── */
   useEffect(() => {
-    const tiles = feedRef.current?.querySelectorAll(".hist-event-tile");
-    if (!tiles || tiles.length === 0) return;
+    const posters = corridorRef.current?.querySelectorAll(".hist-poster");
+    if (!posters || posters.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-            entry.target.classList.remove("hist-event-tile--blurred");
-          } else {
-            entry.target.classList.add("hist-event-tile--blurred");
+          if (entry.isIntersecting) {
+            entry.target.classList.add("hist-poster--visible");
           }
         });
       },
-      { threshold: [0, 0.3, 0.6], rootMargin: "-10% 0px -10% 0px" }
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
     );
 
-    tiles.forEach((el) => observer.observe(el));
+    posters.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [events]);
 
-  /* ── Cold open stagger ── */
+  /* ── Classified tile reveal observer ── */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -93,69 +87,74 @@ export default function HistoryLanding({
       },
       { threshold: 0.05, rootMargin: "0px 0px -30px 0px" }
     );
-    const tiles = feedRef.current?.querySelectorAll(".hist-event-tile, .hist-classified-tile");
+    const tiles = corridorRef.current?.querySelectorAll(".hist-classified-tile");
     tiles?.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [events, redacted]);
+  }, [redacted]);
 
   /* ── Open story overlay ── */
-  const openStory = useCallback((event: HistoricalEvent, photoEl: HTMLElement | null) => {
-    const rect = photoEl?.getBoundingClientRect() ?? null;
-    setActiveOverlay({ event, sourceRect: rect });
-  }, []);
+  const openStory = useCallback(
+    (event: HistoricalEvent, photoEl: HTMLElement | null) => {
+      const rect = photoEl?.getBoundingClientRect() ?? null;
+      setActiveOverlay({ event, sourceRect: rect });
+    },
+    []
+  );
 
-  /* ── Close overlay: restore URL + scroll ── */
+  /* ── Close overlay ── */
   const closeOverlay = useCallback(() => {
     setActiveOverlay(null);
-    /* URL is restored by popstate/history.back in the overlay */
   }, []);
 
   return (
     <div>
-      <div className="hist-main hist-grade">
-        {/* ── Mission Brief ── */}
+      <div ref={corridorRef} className="hist-corridor hist-grade">
+        {/* ── Mission Brief — one line, cold open ── */}
         <header className="hist-brief" aria-label="Archive mission brief">
-          <h2 className="hist-brief__title">THE ARCHIVE</h2>
           <p className="hist-brief__line">
             One event. Every side. Decide for yourself.
           </p>
         </header>
 
-        {/* ── Event Tiles — full-width vertical sections ── */}
-        <section
-          ref={feedRef}
-          className="hist-event-feed"
-          aria-label="Historical event archive"
-        >
-          {events.map((event, i) => (
-            <EventTile
-              key={event.slug}
+        {/* ── Fog zone after brief ── */}
+        <div className="hist-fog" aria-hidden="true" />
+
+        {/* ── Event Posters ── */}
+        {events.map((event, i) => (
+          <div key={event.slug}>
+            <EventPoster
               event={event}
               index={i}
               onOpen={openStory}
             />
-          ))}
-        </section>
-
-        {/* ── Classified Divider ── */}
-        {redacted.length > 0 && (
-          <div className="hist-classified-divider">
-            <span className="hist-classified-divider__line" aria-hidden="true" />
-            <span className="hist-classified-divider__label">CLASSIFIED — PENDING DECLASSIFICATION</span>
-            <span className="hist-classified-divider__line" aria-hidden="true" />
+            {/* Fog zone between events (not after the last) */}
+            {i < events.length - 1 && (
+              <div className="hist-fog" aria-hidden="true" />
+            )}
           </div>
-        )}
+        ))}
 
-        {/* ── Classified Tiles ── */}
+        {/* ── Classified Section ── */}
         {redacted.length > 0 && (
-          <section
-            className="hist-classified-feed"
-            aria-label="Classified upcoming event dossiers"
-          >
-            {redacted.map((event, i) => (
-              <ClassifiedTile key={event.slug} event={event} index={i} />
-            ))}
-          </section>
+          <>
+            <div className="hist-fog" aria-hidden="true" />
+            <div className="hist-classified-divider">
+              <span className="hist-classified-divider__line" aria-hidden="true" />
+              <span className="hist-classified-divider__label">
+                CLASSIFIED — PENDING DECLASSIFICATION
+              </span>
+              <span className="hist-classified-divider__line" aria-hidden="true" />
+            </div>
+
+            <section
+              className="hist-classified-feed"
+              aria-label="Classified upcoming event dossiers"
+            >
+              {redacted.map((event, i) => (
+                <ClassifiedTile key={event.slug} event={event} index={i} />
+              ))}
+            </section>
+          </>
         )}
       </div>
 
@@ -173,11 +172,11 @@ export default function HistoryLanding({
 }
 
 /* ===========================================================================
-   EventTile — Full-width vertical section for a published event
-   Photo on top, title block below, divergence teaser as largest text,
-   perspective dots, stark data, specific CTA.
+   EventPoster — Full-width spotlit exhibit
+   Archival photo (Ken Burns drift), date + title, THE HOOK,
+   perspective dots (colored circles, no names), story-specific CTA.
    =========================================================================== */
-function EventTile({
+function EventPoster({
   event,
   index,
   onOpen,
@@ -187,16 +186,14 @@ function EventTile({
   onOpen: (event: HistoricalEvent, photoEl: HTMLElement | null) => void;
 }) {
   const photoRef = useRef<HTMLDivElement>(null);
-  const divergenceTeaser =
-    DIVERGENCE_TEASERS[event.slug] ||
-    event.perspectives
-      .slice(0, 3)
-      .map((p) => `${p.viewpointName} says \u2018${p.keyNarratives[0]?.toLowerCase() ?? "..."}\u2019`)
-      .join(" ");
 
-  const blurb =
-    BLURBS[event.slug] ||
+  const hook =
+    HOOKS[event.slug] ||
     event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
+
+  const cta =
+    CTAS[event.slug] ||
+    `Explore ${event.perspectives.length} accounts of ${event.title}`;
 
   const handleClick = useCallback(() => {
     onOpen(event, photoRef.current);
@@ -204,14 +201,14 @@ function EventTile({
 
   return (
     <article
-      className="hist-event-tile hist-reveal"
+      className="hist-poster"
       data-slug={event.slug}
-      style={{ animationDelay: `${100 + index * 120}ms` }}
+      style={{ transitionDelay: index === 0 ? "300ms" : undefined }}
     >
       {/* 1. Full-width archival photo */}
       <div
         ref={photoRef}
-        className="hist-event-tile__photo"
+        className="hist-poster__photo"
         data-slug={event.slug}
       >
         {event.heroImage ? (
@@ -224,62 +221,37 @@ function EventTile({
             }}
           />
         ) : (
-          <div className="hist-event-tile__photo-fallback" />
+          <div className="hist-poster__photo-fallback" />
         )}
       </div>
 
-      {/* 2. Title block — below the photo */}
-      <div className="hist-event-tile__body">
-        <span className="hist-event-tile__date">{event.datePrimary}</span>
-        <h3 className="hist-event-tile__title">{event.title}</h3>
-        {event.subtitle && (
-          <p className="hist-event-tile__subtitle">{event.subtitle}</p>
-        )}
+      {/* 2. Date + Title */}
+      <div className="hist-poster__body">
+        <span className="hist-poster__date">{event.datePrimary}</span>
+        <h3 className="hist-poster__title">{event.title}</h3>
 
-        {/* 3. DIVERGENCE TEASER — largest text, the hook */}
-        <blockquote className="hist-event-tile__divergence">
-          {divergenceTeaser}
-        </blockquote>
+        {/* 3. THE HOOK — the most important line */}
+        <blockquote className="hist-poster__hook">{hook}</blockquote>
 
-        {/* Blurb — concrete, punchy context */}
-        <p className="hist-event-tile__blurb">{blurb}</p>
-
-        {/* 4. Perspective dots + names */}
-        <div className="hist-event-tile__perspectives">
+        {/* 4. Perspective dots — colored circles, no names */}
+        <div className="hist-poster__dots" aria-label={`${event.perspectives.length} perspectives`}>
           {event.perspectives.map((p) => (
-            <span key={p.id} className="hist-event-tile__persp">
-              <span
-                className="hist-event-tile__dot"
-                style={{ background: PERSP_COLORS[p.color] || PERSP_COLORS.a }}
-              />
-              {p.viewpointName}
-            </span>
+            <span
+              key={p.id}
+              className="hist-poster__dot"
+              style={{ background: PERSP_COLORS[p.color] || PERSP_COLORS.a }}
+              aria-hidden="true"
+            />
           ))}
         </div>
 
-        {/* 5. Stark data */}
-        {(event.deathToll || event.displaced) && (
-          <div className="hist-event-tile__stark">
-            {event.deathToll && (
-              <span className="hist-event-tile__stark-figure">
-                {event.deathToll} killed
-              </span>
-            )}
-            {event.displaced && (
-              <span className="hist-event-tile__stark-figure">
-                {event.displaced} displaced
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* 6. CTA — specific, tells you what you get */}
+        {/* 5. CTA — story-specific, prominent */}
         <button
-          className="hist-event-tile__cta"
+          className="hist-poster__cta"
           onClick={handleClick}
           type="button"
         >
-          Read all {event.perspectives.length} perspectives
+          {cta}
         </button>
       </div>
     </article>
@@ -287,8 +259,7 @@ function EventTile({
 }
 
 /* ===========================================================================
-   ClassifiedTile — Upcoming event: desaturated, redacted text
-   Click toggles redacted text reveal. No navigation. Much simpler.
+   ClassifiedTile — Desaturated, redacted text, click-to-flip
    =========================================================================== */
 function ClassifiedTile({
   event,
@@ -345,7 +316,9 @@ function ClassifiedTile({
 
       {/* Reveal overlay */}
       <div className="hist-classified-tile__reveal" aria-hidden={!revealed}>
-        <span className="hist-classified-tile__reveal-title">{event.title}</span>
+        <span className="hist-classified-tile__reveal-title">
+          {event.title}
+        </span>
         <span className="hist-classified-tile__reveal-hint">Coming soon</span>
       </div>
     </div>

@@ -1830,53 +1830,27 @@
 /* Landing Hero — REMOVED (dead code, Round 7 cleanup) */
 
 /* ---------------------------------------------------------------------------
-   Mission Brief — Self-marketing header
-   Classified briefing document: Plex Mono, tight, matter-of-fact.
+   THE CORRIDOR — Landing page dark canvas with spotlit event posters
    --------------------------------------------------------------------------- */
-.hist-brief {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-5) 0 var(--space-4);
-  border-bottom: none;
-  margin-bottom: var(--space-4);
-  opacity: 0;
-  animation: histBriefIn 800ms var(--ease-document-settle) 100ms both;
+.hist-corridor {
+  background: var(--hist-bg-primary, var(--hist-bg));
+  padding-bottom: var(--space-7);
 }
 
-.hist-brief::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 2px;
-  margin-top: var(--space-4);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--hist-border) 8%,
-    var(--hist-accent) 20%,
-    var(--hist-border) 45%,
-    transparent 55%,
-    var(--hist-border) 70%,
-    var(--hist-accent) 85%,
-    var(--hist-border) 95%,
-    transparent 100%
-  );
-  opacity: 0.4;
-  border-radius: 1px;
+/* ---------------------------------------------------------------------------
+   Mission Brief — Single line, cold open
+   --------------------------------------------------------------------------- */
+.hist-brief {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-3);
+  opacity: 0;
+  animation: histBriefIn 800ms var(--ease-document-settle) 100ms both;
 }
 
 @keyframes histBriefIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.hist-brief__title {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  color: var(--hist-accent);
-  margin: 0 0 var(--space-2);
 }
 
 .hist-brief__line {
@@ -1886,42 +1860,51 @@
   line-height: 1.6;
   margin: 0;
   letter-spacing: 0.01em;
+  text-align: center;
 }
 
 /* ---------------------------------------------------------------------------
-   Event Feed — Single-column, full-width vertical sections
+   Fog Zone — atmospheric breathing room between events
    --------------------------------------------------------------------------- */
-.hist-event-feed {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-4) 0;
+.hist-fog {
+  height: 80px;
+  background: radial-gradient(
+    ellipse 80% 100% at 50% 50%,
+    transparent 0%,
+    var(--hist-bg) 100%
+  );
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .hist-fog {
+    height: 40px;
+  }
 }
 
 /* ===========================================================================
-   Event Tile — Full-width vertical section (P3: flat, generous)
+   Event Poster — Spotlit exhibit in the corridor
+   Full-width archival photo, date + title, THE HOOK,
+   perspective dots, story-specific CTA.
    =========================================================================== */
-.hist-event-tile {
-  position: relative;
-  max-width: 800px;
+.hist-poster {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0;
-  background: var(--hist-bg-card);
-  box-shadow: var(--hist-doc-edge);
-  overflow: hidden;
-  transition: filter 400ms var(--ease-cinematic), transform 300ms var(--ease-cinematic);
+  padding: 0 var(--space-4);
+  opacity: 0;
+  transform: translateY(30px);
+  filter: blur(3px);
+  transition: opacity 600ms ease, transform 600ms ease, filter 600ms ease;
 }
 
-/* Rack focus on scroll — active tile sharp, others soften (P3) */
-.hist-event-tile--blurred {
-  filter: blur(1px) brightness(0.92);
-  transform: scale(0.98);
+.hist-poster--visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
-/* ── Photo — full width, archival grade ── */
-.hist-event-tile__photo {
+/* ── Photo — full width, archival grade, Ken Burns on viewport ── */
+.hist-poster__photo {
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
@@ -1929,38 +1912,39 @@
   background: var(--hist-paper-deep);
 }
 
-.hist-event-tile__photo img {
+.hist-poster__photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
+  transform: scale(1.0);
   transition: transform 8s linear;
 }
 
-/* Ken Burns slow zoom when tile is in viewport */
-.hist-event-tile:not(.hist-event-tile--blurred) .hist-event-tile__photo img {
-  transform: scale(1.04);
+/* Ken Burns activates when poster is in viewport */
+.hist-poster--visible .hist-poster__photo img {
+  transform: scale(1.06);
 }
 
-.hist-event-tile__photo-fallback {
+.hist-poster__photo-fallback {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, var(--hist-paper-deep) 0%, var(--hist-bg-secondary) 50%, var(--hist-paper-deep) 100%);
 }
 
 /* ── Body — below photo ── */
-.hist-event-tile__body {
-  padding: var(--space-4) var(--space-5);
+.hist-poster__body {
+  padding: var(--space-4) 0;
 }
 
 @media (min-width: 768px) {
-  .hist-event-tile__body {
-    padding: var(--space-5) var(--space-6);
+  .hist-poster__body {
+    padding: var(--space-4) 0;
   }
 }
 
 /* ── Date ── */
-.hist-event-tile__date {
+.hist-poster__date {
   display: block;
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -1971,93 +1955,44 @@
 }
 
 /* ── Title ── */
-.hist-event-tile__title {
+.hist-poster__title {
   font-family: var(--font-editorial);
-  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
+  font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
   font-weight: 700;
   line-height: 1.15;
   color: var(--hist-ink);
-  margin: 0 0 var(--space-1);
+  margin: 0 0 var(--space-2);
 }
 
-/* ── Subtitle ── */
-.hist-event-tile__subtitle {
+/* ── THE HOOK — the most important line. Arrive late, leave early. ── */
+.hist-poster__hook {
   font-family: var(--font-structural);
-  font-size: var(--text-base);
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--hist-ink-secondary);
-  margin: 0 0 var(--space-3);
-}
-
-/* ── DIVERGENCE TEASER — THE LARGEST TEXT, the hook (P4) ── */
-.hist-event-tile__divergence {
-  font-family: var(--font-structural);
-  font-size: clamp(1.15rem, 1rem + 0.7vw, 1.5rem);
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
   font-style: italic;
   line-height: 1.5;
   color: var(--hist-ink);
   border-left: 3px solid var(--hist-accent);
-  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  padding-left: var(--space-3);
   margin: var(--space-3) 0;
   quotes: none;
 }
 
-/* ── Blurb — punchy context paragraph ── */
-.hist-event-tile__blurb {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-secondary);
-  line-height: 1.6;
-  margin: 0 0 var(--space-3);
-  text-align: justify;
-  hyphens: auto;
-}
-
-/* ── Perspectives — dot + name row ── */
-.hist-event-tile__perspectives {
+/* ── Perspective dots — colored circles only, no names ── */
+.hist-poster__dots {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
 }
 
-.hist-event-tile__persp {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--hist-ink-secondary);
-  letter-spacing: 0.02em;
-}
-
-.hist-event-tile__dot {
-  width: 8px;
-  height: 8px;
+.hist-poster__dot {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-/* ── Stark data — death toll / displaced ── */
-.hist-event-tile__stark {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
-}
-
-.hist-event-tile__stark-figure {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.01em;
-}
-
-/* ── CTA — specific, prominent, full-width ── */
-.hist-event-tile__cta {
+/* ── CTA — story-specific, prominent ── */
+.hist-poster__cta {
   display: block;
   width: 100%;
   font-family: var(--font-meta);
@@ -2065,26 +2000,599 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.10em;
-  text-align: center;
   color: var(--hist-paper-fixed, #F2EDE0);
   background: var(--hist-accent);
   padding: var(--space-3) var(--space-4);
   border: none;
   cursor: pointer;
   min-height: 44px;
-  transition: background 200ms ease;
+  text-align: center;
+  transition: background 200ms ease, transform 100ms ease;
 }
 
-.hist-event-tile__cta:hover {
+.hist-poster__cta:hover {
   background: var(--hist-accent-bright, #7A5B47);
 }
 
-.hist-event-tile__cta:active {
+.hist-poster__cta:active {
   transform: scale(0.98);
-  transition: transform 80ms ease-out;
 }
 
-.hist-event-tile__cta:focus-visible {
+.hist-poster__cta:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ===========================================================================
+   STAGE SYSTEM — 6-stage scroll-driven documentary
+   All stages use IntersectionObserver with .hist-reveal pattern.
+   =========================================================================== */
+
+/* ── Base stage ── */
+.hist-stage {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ── Stage label (e.g., "THE PERSPECTIVES") ── */
+.hist-stage__label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-accent);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+/* ─────────────────────────────────────────────
+   Stage 1 — THE SCENE (sticky hero, curtain-rise)
+   ───────────────────────────────────────────── */
+.hist-stage--scene {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hist-stage__hero {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.hist-stage__hero-fallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--hist-paper-deep) 0%, var(--hist-bg) 50%, var(--hist-paper-deep) 100%);
+}
+
+.hist-stage__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(44, 36, 24, 0.10) 0%,
+    rgba(44, 36, 24, 0.50) 50%,
+    rgba(44, 36, 24, 0.88) 100%
+  );
+}
+
+:root[data-mode="dark"] .hist-stage__hero-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.92) 100%
+  );
+}
+
+.hist-stage__hero-content {
+  position: relative;
+  z-index: 2;
+  padding: var(--space-7) var(--space-5);
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  color: var(--hist-paper-fixed);
+}
+
+@media (min-width: 768px) {
+  .hist-stage__hero-content {
+    padding: var(--space-7) var(--space-6);
+  }
+}
+
+.hist-stage__date {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  opacity: 0.7;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.hist-stage__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 var(--space-2);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+}
+
+.hist-stage__subtitle {
+  font-family: var(--font-structural);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  line-height: 1.4;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0;
+}
+
+.hist-stage__attribution {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-3);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: rgba(242, 237, 224, 0.5);
+  z-index: 3;
+}
+
+/* Scroll indicator — thin animated line */
+.hist-stage__scroll-hint {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0 var(--space-6);
+}
+
+.hist-stage__scroll-line {
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: var(--hist-paper-fixed, #F2EDE0);
+  opacity: 0.4;
+  animation: histScrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes histScrollPulse {
+  0%, 100% { opacity: 0.2; transform: scaleY(0.8); }
+  50% { opacity: 0.6; transform: scaleY(1); }
+}
+
+/* Mobile: hero is NOT sticky, scrolls normally */
+@media (max-width: 767px) {
+  .hist-stage__hero {
+    position: relative;
+    min-height: 70vh;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Stage 2 — THE CRACK (one blockquote, centered)
+   ───────────────────────────────────────────── */
+.hist-stage--crack {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+}
+
+.hist-crack__text {
+  font-family: var(--font-structural);
+  font-size: clamp(1.3rem, 1.1rem + 1vw, 2rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--hist-ink);
+  max-width: 700px;
+  text-align: center;
+  margin: 0;
+  quotes: none;
+}
+
+/* ─────────────────────────────────────────────
+   Stage 3 — THE PERSPECTIVES (witnesses)
+   ───────────────────────────────────────────── */
+.hist-stage--perspectives {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+}
+
+/* Witness block — alternating left/right on desktop */
+.hist-witness {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  background: var(--hist-bg-card);
+  box-shadow: var(--hist-doc-edge);
+  border-radius: 2px;
+  transition:
+    opacity 600ms ease,
+    transform 600ms ease,
+    filter 600ms ease;
+}
+
+.hist-witness--left {
+  margin-right: auto;
+  max-width: 75%;
+}
+
+.hist-witness--right {
+  margin-left: auto;
+  max-width: 75%;
+}
+
+/* Each witness enters from their side */
+.hist-witness--left.hist-reveal {
+  transform: translateX(-30px);
+}
+
+.hist-witness--right.hist-reveal {
+  transform: translateX(30px);
+}
+
+.hist-witness.hist-reveal--visible {
+  transform: translateX(0);
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Dimmed witnesses — rack focus within the stage */
+.hist-witness--background {
+  opacity: 0.55;
+  filter: brightness(0.92);
+  transition: opacity 400ms ease, filter 400ms ease;
+}
+
+/* Mobile: full width, no alternating */
+@media (max-width: 767px) {
+  .hist-witness--left,
+  .hist-witness--right {
+    max-width: 100%;
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .hist-witness--left.hist-reveal,
+  .hist-witness--right.hist-reveal {
+    transform: translateY(20px);
+  }
+}
+
+/* Witness identity row */
+.hist-witness__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.hist-witness__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hist-witness__name {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hist-ink);
+}
+
+.hist-witness__type {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 400;
+  color: var(--hist-ink-muted);
+  text-transform: capitalize;
+}
+
+/* Key argument blockquote */
+.hist-witness__argument {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--hist-ink);
+  border-left: 3px solid var(--hist-accent);
+  padding-left: var(--space-3);
+  margin: 0 0 var(--space-3);
+  quotes: none;
+}
+
+/* Primary source quote */
+.hist-witness__source {
+  padding: var(--space-3);
+  background: var(--hist-bg-inset);
+  border-radius: 2px;
+}
+
+.hist-witness__quote {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-2);
+}
+
+.hist-witness__cite {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hist-ink-muted);
+  font-style: normal;
+}
+
+/* ─────────────────────────────────────────────
+   Stage 4 — THE OMISSIONS (split panel)
+   ───────────────────────────────────────────── */
+.hist-stage--omissions {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+}
+
+.hist-omissions-split {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .hist-omissions-split {
+    flex-direction: row;
+    gap: var(--space-5);
+  }
+}
+
+.hist-omissions-split__panel {
+  flex: 1;
+  padding: var(--space-4);
+  background: var(--hist-bg-card);
+  box-shadow: var(--hist-doc-edge);
+  border-radius: 2px;
+}
+
+/* Emphasized panel enters from left */
+.hist-omissions-split__panel--emphasized.hist-reveal {
+  transform: translateX(-20px);
+}
+
+/* Omitted panel enters from right */
+.hist-omissions-split__panel--omitted.hist-reveal {
+  transform: translateX(20px);
+}
+
+@media (max-width: 767px) {
+  .hist-omissions-split__panel--emphasized.hist-reveal,
+  .hist-omissions-split__panel--omitted.hist-reveal {
+    transform: translateY(20px);
+  }
+}
+
+.hist-omissions-split__heading {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hist-accent);
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-omissions-split__group {
+  margin-bottom: var(--space-3);
+}
+
+.hist-omissions-split__name {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.hist-omissions-split__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hist-omissions-split__list li {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--hist-ink);
+  padding: var(--space-1) 0;
+  padding-left: var(--space-3);
+  position: relative;
+}
+
+.hist-omissions-split__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hist-accent);
+  opacity: 0.5;
+}
+
+/* Strikethrough for omitted items */
+.hist-omission--struck {
+  text-decoration: line-through;
+  color: var(--hist-ink-muted);
+}
+
+.hist-omission--struck::before {
+  background: var(--hist-ink-muted);
+  opacity: 0.3;
+}
+
+/* ─────────────────────────────────────────────
+   Stage 5 — THE EVIDENCE (numbers + images)
+   ───────────────────────────────────────────── */
+.hist-stage--evidence {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+}
+
+/* Stark numbers row */
+.hist-evidence__numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  justify-content: center;
+  margin-bottom: var(--space-6);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--hist-border-subtle);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-evidence__stat {
+  text-align: center;
+}
+
+.hist-evidence__figure {
+  display: block;
+  font-family: var(--font-data);
+  font-size: clamp(1.1rem, 0.9rem + 0.8vw, 1.5rem);
+  font-weight: 600;
+  color: var(--hist-ink);
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.hist-evidence__unit {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hist-ink-muted);
+  margin-top: 2px;
+}
+
+/* Archival images — vertical, alternating */
+.hist-evidence__gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.hist-evidence__image {
+  max-width: 80%;
+}
+
+.hist-evidence__image--left {
+  margin-right: auto;
+}
+
+.hist-evidence__image--right {
+  margin-left: auto;
+}
+
+@media (max-width: 767px) {
+  .hist-evidence__image {
+    max-width: 100%;
+  }
+}
+
+.hist-evidence__image img {
+  width: 100%;
+  display: block;
+  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  border-radius: 2px;
+}
+
+.hist-evidence__caption {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--hist-ink-secondary);
+  margin-top: var(--space-2);
+}
+
+.hist-evidence__image-attribution {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   Stage 6 — YOUR TURN (no summary, just a link)
+   ───────────────────────────────────────────── */
+.hist-stage--next {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-7);
+  text-align: center;
+}
+
+.hist-next__prompt {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-muted);
+  margin: 0 0 var(--space-3);
+  letter-spacing: 0.02em;
+}
+
+.hist-next__cta {
+  display: inline-block;
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--hist-paper-fixed, #F2EDE0);
+  background: var(--hist-accent);
+  padding: var(--space-3) var(--space-5);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  text-decoration: none;
+  transition: background 200ms ease, transform 100ms ease;
+}
+
+.hist-next__cta:hover {
+  background: var(--hist-accent-bright, #7A5B47);
+}
+
+.hist-next__cta:active {
+  transform: scale(0.98);
+}
+
+.hist-next__cta:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
 }
@@ -2346,11 +2854,15 @@
 }
 
 /* ===========================================================================
-   Mobile — Tiles always visible (no hover)
+   Mobile — Posters always visible, no Ken Burns on photos
    =========================================================================== */
 @media (max-width: 767px) {
-  .hist-event-tile--blurred {
-    filter: none;
+  .hist-poster__photo img {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-poster--visible .hist-poster__photo img {
     transform: none;
   }
 
@@ -2360,26 +2872,64 @@
 }
 
 /* ===========================================================================
-   Reduced Motion — Event tiles, overlay, classified
+   Reduced Motion — Posters, stages, overlay, classified
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-event-tile {
-    transition: none;
-  }
-
-  .hist-event-tile--blurred {
+  .hist-poster {
+    opacity: 1;
+    transform: none;
     filter: none;
-    transform: none;
+    transition: none;
   }
 
-  .hist-event-tile__photo img {
+  .hist-poster__photo img {
     transition: none;
     transform: none;
   }
 
-  .hist-event-tile__cta,
-  .hist-event-tile__cta:hover,
-  .hist-event-tile__cta:active {
+  .hist-poster__cta,
+  .hist-poster__cta:hover,
+  .hist-poster__cta:active {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-stage__scroll-line {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  .hist-stage__hero {
+    position: relative;
+    min-height: auto;
+  }
+
+  .hist-witness {
+    transition: none;
+    opacity: 1;
+    filter: none;
+  }
+
+  .hist-witness--background {
+    opacity: 1;
+    filter: none;
+  }
+
+  .hist-witness--left.hist-reveal,
+  .hist-witness--right.hist-reveal {
+    transform: none;
+  }
+
+  .hist-omissions-split__panel.hist-reveal {
+    transform: none;
+  }
+
+  .hist-evidence__image.hist-reveal {
+    transform: none;
+  }
+
+  .hist-next__cta,
+  .hist-next__cta:active {
     transition: none;
     transform: none;
   }
@@ -2711,22 +3261,6 @@
     transform: none;
   }
 
-  /* Disable rack focus on event tiles */
-  .hist-event-tile--blurred {
-    filter: none;
-    transform: none;
-  }
-
-  /* Disable hero depth transition */
-  .hist-hero {
-    transition: none;
-  }
-
-  .hist-hero--receded .hist-hero__image {
-    filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
-    transition: none;
-  }
-
   /* Disable spotlight on perspective tabs */
   .hist-persp-tabs:has(.hist-persp-tab--active) .hist-persp-tab:not(.hist-persp-tab--active):not(:hover) {
     opacity: 1;
@@ -2783,7 +3317,8 @@
 /* Word-wrap safety on all headline elements */
 .hist-hero__title,
 .hist-event-card__title,
-.hist-event-tile__title,
+.hist-poster__title,
+.hist-stage__title,
 .hist-classified-tile__title,
 .hist-persp-tab__name,
 .hist-comparison__header,
@@ -3197,8 +3732,8 @@
     transition: none;
   }
 
-  .hist-event-tile__cta,
-  .hist-event-tile__cta:hover {
+  .hist-poster__cta,
+  .hist-poster__cta:hover {
     transition: none;
     transform: none;
   }
