@@ -12,7 +12,8 @@ severity: catastrophic
 death_toll: "110,000-210,000 by end of 1945"
 affected_population: "Over 500,000 residents of both cities; hibakusha survivors and descendants numbering in the hundreds of thousands"
 duration: "August 6-9, 1945 (bombings); radiation effects ongoing"
-hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Nagasakibomb.jpg"
+# Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/e/e0/Nagasakibomb.jpg
+hero_image_url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/Nagasakibomb.jpg"
 hero_image_attribution: "Charles Levy, U.S. Army Air Forces, public domain via Wikimedia Commons"
 
 summary: |

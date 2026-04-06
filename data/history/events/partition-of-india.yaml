@@ -12,7 +12,8 @@ severity: catastrophic
 death_toll: "1-2 million"
 affected_population: "14-15 million displaced"
 duration: "August-November 1947 (peak violence)"
-hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Oxcart_-_Train_to_Pakistan%2C_1947.jpg"
+# Original Wikimedia (404): https://upload.wikimedia.org/wikipedia/commons/2/2d/Oxcart_-_Train_to_Pakistan%2C_1947.jpg
+hero_image_url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/Emergency_trains_crowded_with_desperate_refugees.jpg"
 hero_image_attribution: "Unknown photographer, 1947, public domain via Wikimedia Commons"
 
 summary: |

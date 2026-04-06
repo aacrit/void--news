@@ -12,7 +12,8 @@ severity: catastrophic
 death_toll: "800,000-1,000,000"
 affected_population: "2 million refugees fled the country; 3.5 million internally displaced"
 duration: "100 days (April 7 - mid-July 1994)"
-hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Genocide_memorial_Murambi.jpg"
+# Original Wikimedia (404): https://upload.wikimedia.org/wikipedia/commons/c/c5/Genocide_memorial_Murambi.jpg
+hero_image_url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/rwandan-genocide/Grounds_of_Kigali_Genocide_Memorial.jpg"
 hero_image_attribution: "Adam Jones, CC BY-SA 3.0, via Wikimedia Commons"
 
 summary: |

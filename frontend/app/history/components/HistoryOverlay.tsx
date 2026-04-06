@@ -27,6 +27,7 @@ export default function HistoryOverlay({
   onClose,
 }: HistoryOverlayProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [contentVisible, setContentVisible] = useState(false);
   const closingRef = useRef(false);
 
@@ -82,6 +83,11 @@ export default function HistoryOverlay({
       });
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ── Auto-focus close button on mount (WCAG: Item 6) ── */
+  useEffect(() => {
+    closeRef.current?.focus();
+  }, []);
 
   /* ── pushState for URL + popstate listener ── */
   useEffect(() => {
@@ -157,6 +163,7 @@ export default function HistoryOverlay({
     >
       {/* Close button */}
       <button
+        ref={closeRef}
         className="hist-overlay__close"
         onClick={handleClose}
         aria-label="Close story overlay"

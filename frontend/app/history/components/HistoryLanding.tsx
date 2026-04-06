@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import type { HistoricalEvent, RedactedEvent } from "../types";
+import { useState, useEffect, useRef, useCallback, useMemo, forwardRef } from "react";
+import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
+import { ERAS } from "../types";
+import { HOOKS, CTAS } from "../hooks";
 import HistoryOverlay from "./HistoryOverlay";
 
 /* ===========================================================================
@@ -11,112 +13,40 @@ import HistoryOverlay from "./HistoryOverlay";
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
    =========================================================================== */
 
-/* ── Hooks — story-specific, "Arrive Late, Leave Early" ── */
-const HOOKS: Record<string, string> = {
-  "partition-of-india":
-    "A lawyer who\u2019d never been to India drew the border in five weeks. 15 million crossed it.",
-  "hiroshima-nagasaki":
-    "66,000 dead in 8.5 seconds. Seven of eight five-star American generals said it wasn\u2019t necessary.",
-  "rwandan-genocide":
-    "The UN had a fax warning them. They reduced their force from 2,500 to 270. 800,000 died in 100 days.",
-  "scramble-for-africa":
-    "Fourteen nations met in a Berlin conference room in 1884. Not one African was invited. By 1914, Europeans controlled 90% of the continent.",
-  "opium-wars":
-    "Britain went to war because China burned 20,000 chests of opium. The peace treaty ceded Hong Kong for 156 years.",
-  "french-revolution":
-    "A Parisian laborer spent 88% of his wages on bread. On July 14, the crowd took 30,000 muskets. The Bastille fell by dinner.",
-  "creation-of-israel-nakba":
-    "On May 14, 1948, one people declared independence. On May 15, 750,000 of another people became refugees. Same land.",
-  "trail-of-tears":
-    "The Supreme Court ruled in their favor. The president ignored the ruling. 60,000 walked. 4,000 never arrived.",
-  "fall-of-berlin-wall":
-    "At 6:53 p.m. on November 9, 1989, a spokesman misread a memo on live television. The Wall fell by midnight.",
-  "transatlantic-slave-trade":
-    "12.5 million embarked. 10.7 million survived the crossing. The database lists 36,000 individual voyages.",
-  "armenian-genocide":
-    "The American ambassador cabled Washington: \u2018Race extermination.\u2019 Raphael Lemkin later coined a word for it \u2014 \u2018genocide.\u2019",
-  "holodomor":
-    "Gareth Jones walked through Ukrainian villages counting bodies. Walter Duranty won a Pulitzer for saying there was no famine.",
-  "congo-free-state":
-    "Leopold II never visited the Congo. His agents collected severed hands as proof of productivity. The population fell by 10 million.",
-  "cambodian-genocide":
-    "Tuol Sleng processed 17,000 prisoners. Seven survived. The guards photographed every face before killing them.",
-  "tiananmen-square":
-    "On June 5, 1989, a man with two shopping bags stopped a column of tanks. No one knows his name. China erased the photograph.",
-  "peloponnesian-war":
-    "Athens told the island of Melos: submit or die. Melos chose neutrality. Athens killed every man and enslaved the women and children.",
-  "mongol-conquest-baghdad":
-    "The Tigris ran black with ink from a million manuscripts. Then Hulagu built the world\u2019s finest observatory with the looted books.",
-  "haitian-revolution":
-    "Dessalines tore the white from the French tricolor. The flag that remained was the first made by formerly enslaved people who\u2019d defeated a European army.",
-  "meiji-restoration":
-    "Japan watched China lose two wars to Britain. In 30 years, a feudal archipelago built railways, a constitution, and a navy that sank the Russian fleet.",
-  "treaty-of-waitangi":
-    "The English text said \u2018sovereignty.\u2019 The Maori text said \u2018governance.\u2019 Hone Heke cut down the British flagpole four times to make the point.",
-  "bolivarian-revolutions":
-    "Bol\u00edvar sailed to Haiti after his defeat. P\u00e9tion gave him ships and soldiers in exchange for one promise: free the enslaved. Bol\u00edvar partially broke it.",
-  "ashoka-maurya-empire":
-    "He carved the body count into rock for everyone to read: 100,000 killed, 150,000 deported. Then, on the same stone, he said he regretted it.",
-  "fall-of-rome":
-    "The last emperor was sixteen. The general who deposed him didn\u2019t kill him \u2014 he gave him a pension and mailed the crown to Constantinople.",
-  "mali-empire-mansa-musa":
-    "Mansa Musa carried 18 tons of gold to Mecca. His charity crashed Egypt\u2019s gold market for twelve years.",
-  "the-crusades":
-    "The Fourth Crusade never reached Jerusalem. It sacked Constantinople \u2014 the largest Christian city on earth \u2014 instead.",
-};
+/* ── Era groups for fast-travel buttons ── */
+interface EraGroup {
+  id: HistoryEra;
+  label: string;
+  firstIndex: number;
+  lastIndex: number;
+}
 
-/* ── CTAs — story-specific ── */
-const CTAS: Record<string, string> = {
-  "partition-of-india": "See how 4 nations remember August 15, 1947",
-  "hiroshima-nagasaki":
-    "Compare what Washington said vs. what survivors remember",
-  "rwandan-genocide":
-    "Read what the world chose not to see for 100 days",
-  "scramble-for-africa":
-    "See what the colonizers wrote vs. what the kingdoms remember",
-  "opium-wars":
-    "Compare the British free-trade argument with the Qing court\u2019s response",
-  "french-revolution":
-    "Read the revolution from Paris, Versailles, and Haiti",
-  "creation-of-israel-nakba":
-    "Same day, same land \u2014 read both declarations side by side",
-  "trail-of-tears":
-    "The court said no. The president said yes. Read both arguments",
-  "fall-of-berlin-wall":
-    "Compare what East and West saw on the same night",
-  "transatlantic-slave-trade":
-    "Ledger entries vs. survivor testimony \u2014 two records of the same voyage",
-  "armenian-genocide":
-    "The ambassador\u2019s cables vs. the government\u2019s denials",
-  "holodomor":
-    "One journalist told the truth. Another won a Pulitzer for lying. Read both",
-  "congo-free-state":
-    "Leopold\u2019s civilizing mission vs. the photographs of severed hands",
-  "cambodian-genocide":
-    "The regime\u2019s ideology vs. the faces in the S-21 photographs",
-  "tiananmen-square":
-    "The party\u2019s version vs. what the cameras recorded before the signal cut",
-  "peloponnesian-war":
-    "Thucydides put words in both mouths. Read what Athens said to Melos",
-  "mongol-conquest-baghdad":
-    "Destroyer or globalizer? Two accounts of what happened to the library",
-  "haitian-revolution":
-    "The enslaved who defeated Napoleon \u2014 told by 4 sides",
-  "meiji-restoration":
-    "How Japan avoided China\u2019s fate \u2014 reformers vs. the last samurai",
-  "treaty-of-waitangi":
-    "Two texts, two languages, two meanings. Read both treaties",
-  "bolivarian-revolutions":
-    "The liberator\u2019s promise to Haiti vs. what he actually delivered",
-  "ashoka-maurya-empire":
-    "The conqueror\u2019s own confession vs. the modern nation that put his symbol on its flag",
-  "fall-of-rome":
-    "Did it fall or transform? The debate that shaped how the West thinks about collapse",
-  "mali-empire-mansa-musa":
-    "European maps vs. oral tradition \u2014 two records of Africa\u2019s wealthiest empire",
-  "the-crusades":
-    "Jerusalem 1099 vs. Jerusalem 1187 \u2014 the massacre and the mercy, side by side",
-};
+function buildEraGroups(events: HistoricalEvent[]): EraGroup[] {
+  const eraOrder: HistoryEra[] = [
+    "ancient",
+    "classical",
+    "medieval",
+    "early-modern",
+    "modern",
+    "contemporary",
+  ];
+  const groups: EraGroup[] = [];
+  for (const eraId of eraOrder) {
+    const indices = events
+      .map((e, i) => (e.era === eraId ? i : -1))
+      .filter((i) => i !== -1);
+    if (indices.length > 0) {
+      const eraInfo = ERAS.find((e) => e.id === eraId);
+      groups.push({
+        id: eraId,
+        label: eraInfo?.label || eraId,
+        firstIndex: indices[0],
+        lastIndex: indices[indices.length - 1],
+      });
+    }
+  }
+  return groups;
+}
 
 /* ── Perspective color map ── */
 const PERSP_COLORS: Record<string, string> = {
@@ -213,7 +143,33 @@ export default function HistoryLanding({
 
   const totalCards = allItems.events.length + allItems.redacted.length;
 
-  /* ── Scroll listener: update --tl-focus on every card ── */
+  /* ── Era groups for fast-travel + dividers ── */
+  const eraGroups = useMemo(
+    () => buildEraGroups(allItems.events),
+    [allItems.events]
+  );
+
+  /* Determine active era from focused index */
+  const activeEra = useMemo(() => {
+    for (let i = eraGroups.length - 1; i >= 0; i--) {
+      if (focusedIndex >= eraGroups[i].firstIndex) return eraGroups[i].id;
+    }
+    return eraGroups[0]?.id || "ancient";
+  }, [focusedIndex, eraGroups]);
+
+  /* Set of indices that are first-of-era (for dividers) */
+  const firstOfEraIndices = useMemo(() => {
+    const set = new Set<number>();
+    for (const g of eraGroups) {
+      if (g.firstIndex > 0) set.add(g.firstIndex);
+    }
+    return set;
+  }, [eraGroups]);
+
+  /* ── Track ref for progress bar ── */
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  /* ── Scroll listener: update --tl-focus on every card + progress bar ── */
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -241,6 +197,12 @@ export default function HistoryLanding({
       });
 
       setFocusedIndex(closestIndex);
+
+      /* Update progress bar via CSS custom property */
+      if (trackRef.current && totalCards > 1) {
+        const pct = (closestIndex / (totalCards - 1)) * 100;
+        trackRef.current.style.setProperty("--tl-progress", `${pct.toFixed(1)}%`);
+      }
     };
 
     const onScroll = () => {
@@ -255,22 +217,44 @@ export default function HistoryLanding({
       container.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(rafId);
     };
-  }, [allItems.events, allItems.redacted, hasScrolled]);
+  }, [allItems.events, allItems.redacted, hasScrolled, totalCards]);
 
-  /* ── Vertical wheel -> horizontal scroll ── */
+  /* ── Momentum wheel: vertical scroll → horizontal with friction decay ── */
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    let velocity = 0;
+    let rafId: number;
+    let isAnimating = false;
+
+    const applyMomentum = () => {
+      if (Math.abs(velocity) < 0.5) {
+        isAnimating = false;
+        return;
+      }
+      container.scrollLeft += velocity;
+      velocity *= 0.92; // friction decay
+      rafId = requestAnimationFrame(applyMomentum);
+    };
+
     const handleWheel = (e: WheelEvent) => {
+      /* Only intercept vertical wheel (mice without horizontal scroll) */
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
-        container.scrollLeft += e.deltaY;
+        velocity += e.deltaY * 0.8; // accumulate
+        if (!isAnimating) {
+          isAnimating = true;
+          rafId = requestAnimationFrame(applyMomentum);
+        }
       }
     };
 
     container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => container.removeEventListener("wheel", handleWheel);
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   /* ── Smooth scroll to card by index ── */
@@ -325,6 +309,29 @@ export default function HistoryLanding({
     setActiveOverlay(null);
   }, []);
 
+  /* ── Navigate to event from within overlay (Item 2) ── */
+  const handleNavigateToEvent = useCallback(
+    (targetEvent: HistoricalEvent) => {
+      const targetIdx = allItems.events.findIndex(
+        (e) => e.slug === targetEvent.slug
+      );
+      if (targetIdx === -1) return;
+
+      /* Get the photo rect of the target card for FLIP morph */
+      const photoRect =
+        cardRefs.current[targetIdx]
+          ?.querySelector(".hist-tl-card__photo")
+          ?.getBoundingClientRect() ?? null;
+
+      /* Close current overlay, open new one */
+      setActiveOverlay({ event: targetEvent, sourceRect: photoRect });
+
+      /* Scroll to the target card so it is centered */
+      scrollToCard(targetIdx);
+    },
+    [allItems.events, scrollToCard]
+  );
+
   return (
     <div className="hist-tl-wrapper">
       {/* ── Mission Brief — fades on first scroll ── */}
@@ -349,15 +356,16 @@ export default function HistoryLanding({
         tabIndex={0}
         onKeyDown={handleKeyDown}
       >
-        {/* ── Event cards ── */}
+        {/* ── Event cards with era dividers ── */}
         {allItems.events.map((event, i) => (
-          <TimelineCard
-            key={event.slug}
-            ref={(el) => { cardRefs.current[i] = el; }}
-            event={event}
-            index={i}
-            onOpen={openStory}
-          />
+          <EraCardWrapper key={event.slug} isFirstOfEra={firstOfEraIndices.has(i)}>
+            <TimelineCard
+              ref={(el) => { cardRefs.current[i] = el; }}
+              event={event}
+              index={i}
+              onOpen={openStory}
+            />
+          </EraCardWrapper>
         ))}
 
         {/* ── Classified cards ── */}
@@ -374,27 +382,64 @@ export default function HistoryLanding({
         })}
       </div>
 
-      {/* ── Timeline track (minimap) ── */}
-      <nav className="hist-tl-track" aria-label="Timeline navigation">
-        <div className="hist-tl-track__line" aria-hidden="true" />
-        {allItems.events.map((event, i) => (
+      {/* ── Era fast-travel buttons (Item 5) ── */}
+      <div className="hist-tl-eras" role="navigation" aria-label="Era navigation">
+        {eraGroups.map((era) => (
           <button
-            key={event.slug}
-            className={`hist-tl-track__dot ${
-              i === focusedIndex ? "hist-tl-track__dot--active" : ""
-            }`}
-            style={{
-              left: `${5 + (totalCards > 1 ? (i / (totalCards - 1)) * 90 : 45)}%`,
-            }}
-            onClick={() => scrollToCard(i)}
-            aria-label={`${event.title} (${event.datePrimary})`}
+            key={era.id}
+            className={`hist-tl-era ${activeEra === era.id ? "hist-tl-era--active" : ""}`}
+            onClick={() => scrollToCard(era.firstIndex)}
             type="button"
           >
-            <span className="hist-tl-track__year">
-              {extractYear(event.dateSort, event.datePrimary)}
-            </span>
+            {era.label}
           </button>
         ))}
+      </div>
+
+      {/* ── Timeline track (minimap) with progress bar ── */}
+      <nav className="hist-tl-track" aria-label="Timeline navigation" ref={trackRef}>
+        <div className="hist-tl-track__line" aria-hidden="true" />
+
+        {/* Era labels above the track */}
+        {eraGroups.map((era) => {
+          const midpoint =
+            totalCards > 1
+              ? ((era.firstIndex + era.lastIndex) / 2 / (totalCards - 1)) * 90 + 5
+              : 50;
+          return (
+            <span
+              key={era.id}
+              className="hist-tl-track__era-label"
+              style={{ left: `${midpoint}%` }}
+              aria-hidden="true"
+            >
+              {era.label}
+            </span>
+          );
+        })}
+
+        {allItems.events.map((event, i) => {
+          /* Show year label on every 3rd dot + always on active */
+          const showYear = i % 3 === 0;
+          return (
+            <button
+              key={event.slug}
+              className={`hist-tl-track__dot ${
+                i === focusedIndex ? "hist-tl-track__dot--active" : ""
+              } ${showYear ? "hist-tl-track__dot--labeled" : ""}`}
+              style={{
+                left: `${5 + (totalCards > 1 ? (i / (totalCards - 1)) * 90 : 45)}%`,
+              }}
+              onClick={() => scrollToCard(i)}
+              aria-label={`${event.title} (${event.datePrimary})`}
+              type="button"
+            >
+              <span className="hist-tl-track__year">
+                {extractYear(event.dateSort, event.datePrimary)}
+              </span>
+            </button>
+          );
+        })}
         {allItems.redacted.map((event, i) => {
           const idx = allItems.events.length + i;
           return (
@@ -423,9 +468,29 @@ export default function HistoryLanding({
           allEvents={allItems.events}
           sourceRect={activeOverlay.sourceRect}
           onClose={closeOverlay}
+          onNavigateToEvent={handleNavigateToEvent}
         />
       )}
     </div>
+  );
+}
+
+/* ===========================================================================
+   EraCardWrapper — Inserts era divider before first card of a new era
+   =========================================================================== */
+function EraCardWrapper({
+  isFirstOfEra,
+  children,
+}: {
+  isFirstOfEra: boolean;
+  children: React.ReactNode;
+}) {
+  if (!isFirstOfEra) return <>{children}</>;
+  return (
+    <>
+      <div className="hist-tl-era-divider" aria-hidden="true" />
+      {children}
+    </>
   );
 }
 
@@ -434,7 +499,6 @@ export default function HistoryLanding({
    Rack focus driven by --tl-focus. Photo + date + title always visible.
    Hook, dots, CTA revealed when focused (--tl-focus > 0.65).
    =========================================================================== */
-import { forwardRef } from "react";
 
 const TimelineCard = forwardRef<
   HTMLDivElement,

@@ -21,7 +21,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     dateSort: 19470815,
     dateRange: "June 1947 - January 1948",
     location: "British India (present-day India and Pakistan)",
-    heroImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Emergency_trains_crowded_with_desperate_refugees.jpg/800px-Emergency_trains_crowded_with_desperate_refugees.jpg",
+    // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Emergency_trains_crowded_with_desperate_refugees.jpg/800px-Emergency_trains_crowded_with_desperate_refugees.jpg
+    heroImage: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/Emergency_trains_crowded_with_desperate_refugees.jpg",
     heroCaption: "Refugees crowd a train departing Amritsar, September 1947",
     heroAttribution: "Margaret Bourke-White / LIFE Magazine",
     contextNarrative: "On August 15, 1947, British India ceased to exist. In its place stood two nations: India and Pakistan. The boundary line, drawn by British lawyer Cyril Radcliffe in five weeks using outdated maps and census data, split Punjab and Bengal along religious lines. Radcliffe had never visited India before his appointment. The announcement came two days after independence, leaving millions on the wrong side of borders they had not chosen. Between 10 and 20 million people crossed in both directions. Trains arrived at stations carrying only corpses. Conservative estimates place the death toll between 200,000 and 2 million.",
@@ -169,7 +170,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-partition-1",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/A_refugee_train%2C_Punjab%2C_1947.jpg/800px-A_refugee_train%2C_Punjab%2C_1947.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/A_refugee_train%2C_Punjab%2C_1947.jpg/800px-A_refugee_train%2C_Punjab%2C_1947.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/A_refugee_train_Punjab_1947.jpg",
         caption: "A refugee train arrives in Punjab, 1947",
         attribution: "Unknown photographer / Public Domain",
         year: "1947",
@@ -177,7 +179,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-partition-2",
         type: "map",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Partition_of_India_1947_en.svg/800px-Partition_of_India_1947_en.svg.png",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Partition_of_India_1947_en.svg/800px-Partition_of_India_1947_en.svg.png
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/Partition_of_India_1947_en.svg.png",
         caption: "The Partition of India, 1947 — new borders dividing British India into India and Pakistan",
         attribution: "Wikimedia Commons / CC BY-SA 4.0",
         year: "1947",
@@ -185,7 +188,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-partition-3",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Columns_of_refugees_from_West_Punjab.jpg/800px-Columns_of_refugees_from_West_Punjab.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Columns_of_refugees_from_West_Punjab.jpg/800px-Columns_of_refugees_from_West_Punjab.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/Columns_of_refugees_from_West_Punjab.jpg",
         caption: "Columns of refugees walking from West Punjab during Partition",
         attribution: "Unknown photographer / Public Domain",
         year: "1947",
@@ -222,7 +226,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     dateSort: 19450806,
     dateRange: "August 6, 1945",
     location: "Hiroshima, Japan",
-    heroImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Atomic_cloud_over_Hiroshima.jpg/800px-Atomic_cloud_over_Hiroshima.jpg",
+    // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Atomic_cloud_over_Hiroshima.jpg/800px-Atomic_cloud_over_Hiroshima.jpg
+    heroImage: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/Atomic_cloud_over_Hiroshima.jpg",
     heroCaption: "The mushroom cloud over Hiroshima, photographed from Enola Gay's tail gunner position",
     heroAttribution: "U.S. Army Air Force / National Archives",
     contextNarrative: "At 8:15 AM on August 6, 1945, the B-29 bomber Enola Gay released a uranium-235 bomb designated \"Little Boy\" over the center of Hiroshima. The detonation occurred at 1,900 feet with a yield of approximately 15 kilotons. The fireball reached temperatures exceeding 1 million degrees Celsius. Within one second, everything within a 1-mile radius was incinerated. The blast wave traveled at 984 feet per second, collapsing every structure within 1.5 miles. Of Hiroshima's 350,000 residents, between 70,000 and 80,000 died instantly. By December 1945, the total reached 140,000. Radiation sickness continued killing for decades. Three days later, a second bomb fell on Nagasaki. Japan surrendered on August 15.",
@@ -361,7 +366,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-hiroshima-1",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Nagasakibomb.jpg/800px-Nagasakibomb.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Nagasakibomb.jpg/800px-Nagasakibomb.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/Nagasakibomb.jpg",
         caption: "The mushroom cloud over Nagasaki, August 9, 1945 — photographed by Charles Levy",
         attribution: "Charles Levy / U.S. Army Air Force / Public Domain",
         year: "1945",
@@ -369,7 +375,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-hiroshima-2",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/AtomicEffects-Hiroshima.jpg/800px-AtomicEffects-Hiroshima.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/AtomicEffects-Hiroshima.jpg/800px-AtomicEffects-Hiroshima.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/AtomicEffects-Hiroshima.jpg",
         caption: "Effects of the atomic bomb on Hiroshima, photographed from the Red Cross Hospital, about 1 mile from the hypocenter",
         attribution: "U.S. Army / Public Domain",
         year: "1945",
@@ -377,7 +384,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-hiroshima-3",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/B-29_Enola_Gay_w_Crews.jpg/800px-B-29_Enola_Gay_w_Crews.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/B-29_Enola_Gay_w_Crews.jpg/800px-B-29_Enola_Gay_w_Crews.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/B-29_Enola_Gay_w_Crews.jpg",
         caption: "The B-29 Superfortress Enola Gay with ground crew on Tinian Island",
         attribution: "U.S. Air Force / Public Domain",
         year: "1945",
@@ -414,7 +422,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
     dateSort: 19940407,
     dateRange: "April 7 - July 15, 1994",
     location: "Rwanda",
-    heroImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Grounds_of_Kigali_Genocide_Memorial_with_City_in_the_Distance_-_Kigali_-_Rwanda.jpg/800px-Grounds_of_Kigali_Genocide_Memorial_with_City_in_the_Distance_-_Kigali_-_Rwanda.jpg",
+    // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Grounds_of_Kigali_Genocide_Memorial_with_City_in_the_Distance_-_Kigali_-_Rwanda.jpg/800px-Grounds_of_Kigali_Genocide_Memorial_with_City_in_the_Distance_-_Kigali_-_Rwanda.jpg
+    heroImage: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/rwandan-genocide/Grounds_of_Kigali_Genocide_Memorial.jpg",
     heroCaption: "Memorial at Murambi Technical School, where 45,000 were killed in a single day",
     heroAttribution: "Gilles Peress / Magnum Photos",
     contextNarrative: "In 100 days between April and July 1994, Hutu extremists in Rwanda killed an estimated 800,000 Tutsi and moderate Hutu. The killing rate exceeded that of the Nazi Holocaust. Perpetrators used machetes, clubs, and small arms. The genocide was not spontaneous violence but a coordinated campaign organized by the Hutu Power faction within the government, military, and Interahamwe militia. Radio Mille Collines broadcast lists of names and addresses. Roadblocks checked identity cards that listed ethnicity, a classification system introduced by Belgian colonial authorities in 1933. The UN peacekeeping force (UNAMIR), commanded by Canadian General Romeo Dallaire, had warned headquarters of the planned extermination three months before it began. The UN Security Council reduced the force from 2,500 to 270 troops ten days into the genocide. France, Belgium, and the United States evacuated their nationals and left.",
@@ -554,7 +563,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-rwanda-1",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Kigali_Genocide_Memorial.jpg/800px-Kigali_Genocide_Memorial.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Kigali_Genocide_Memorial.jpg/800px-Kigali_Genocide_Memorial.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/rwandan-genocide/Kigali_Genocide_Memorial.jpg",
         caption: "Kigali Genocide Memorial, where over 250,000 are interred",
         attribution: "Wikimedia Commons / CC BY-SA 3.0",
         year: "2004",
@@ -562,7 +572,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-rwanda-2",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Mass_Graves_in_Which_259000_Genocide_Victims_Are_Interred_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda_-_01.jpg/800px-Mass_Graves_in_Which_259000_Genocide_Victims_Are_Interred_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda_-_01.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Mass_Graves_in_Which_259000_Genocide_Victims_Are_Interred_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda_-_01.jpg/800px-Mass_Graves_in_Which_259000_Genocide_Victims_Are_Interred_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda_-_01.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/rwandan-genocide/Mass_Graves_Genocide_Memorial_Center_Kigali.jpg",
         caption: "Mass graves at the Genocide Memorial Center in Kigali where 259,000 victims are interred",
         attribution: "Adam Jones / CC BY-SA 3.0",
         year: "2012",
@@ -570,7 +581,8 @@ export const MOCK_EVENTS: HistoricalEvent[] = [
       {
         id: "media-rwanda-3",
         type: "image",
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Panorama_of_Photos_of_Genocide_Victims_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda.jpg/800px-Panorama_of_Photos_of_Genocide_Victims_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda.jpg",
+        // Original Wikimedia: https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Panorama_of_Photos_of_Genocide_Victims_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda.jpg/800px-Panorama_of_Photos_of_Genocide_Victims_-_Genocide_Memorial_Center_-_Kigali_-_Rwanda.jpg
+        url: "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/rwandan-genocide/Panorama_of_Photos_of_Genocide_Victims.jpg",
         caption: "Panorama of photographs of genocide victims displayed at the Genocide Memorial Center, Kigali",
         attribution: "Adam Jones / CC BY-SA 3.0",
         year: "2012",
