@@ -255,7 +255,7 @@ function mapEventWithRelations(
     heroImage: row.hero_image_url ?? undefined,
     heroCaption: row.subtitle ?? undefined,
     heroAttribution: row.hero_image_attribution ?? undefined,
-    contextNarrative: row.summary,
+    contextNarrative: row.summary ?? "",
     keyFigures,
     deathToll: row.death_toll ?? undefined,
     displaced: row.affected_population ?? undefined,
