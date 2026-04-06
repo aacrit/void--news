@@ -1922,8 +1922,8 @@
 
 @media (max-width: 767px) {
   .hist-tl-landing {
-    --tl-card-w: calc(100vw - 48px);
-    --tl-card-gap: 0px;
+    --tl-card-w: calc(100vw - 72px);
+    --tl-card-gap: 20px;
     padding-left: 24px;
     padding-right: 24px;
   }
