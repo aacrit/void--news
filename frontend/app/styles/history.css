@@ -1917,13 +1917,13 @@
   height: 100%;
 }
 
-/* ── Organic SVG ink track at vertical center ── */
+/* ── Organic SVG ink track at vertical center — thick anchor line ── */
 .hist-tl-full__track {
   position: absolute;
   top: 50%;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 8px;
   transform: translateY(-50%);
   z-index: 2;
   pointer-events: none;
@@ -2041,7 +2041,7 @@
 .hist-tl-full {
   --tl-card-w: clamp(180px, 18vw, 280px);
   --tl-stem-h: clamp(16px, 2vh, 32px);
-  --tl-dot-size: clamp(6px, 0.6vw, 10px);
+  --tl-dot-size: clamp(10px, 1vw, 16px);
   --tl-gap: clamp(8px, 1vw, 16px);
 }
 
