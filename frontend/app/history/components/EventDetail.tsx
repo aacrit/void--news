@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import type { HistoricalEvent, Perspective } from "../types";
+import { HOOKS, CTAS } from "../hooks";
 
 /* ===========================================================================
    EventDetail — 6-Stage Guided Journey
@@ -14,25 +15,6 @@ import type { HistoricalEvent, Perspective } from "../types";
    Stage 5 — THE EVIDENCE: Stark numbers + archival images
    Stage 6 — YOUR TURN: Point to next event, no summary
    =========================================================================== */
-
-/* ── Hooks — the "crack" for each event ── */
-const HOOKS: Record<string, string> = {
-  "partition-of-india":
-    "A lawyer who\u2019d never been to India drew the border in five weeks. 15 million crossed it.",
-  "hiroshima-nagasaki":
-    "66,000 dead in 8.5 seconds. Seven of eight five-star American generals said it wasn\u2019t necessary.",
-  "rwandan-genocide":
-    "The UN had a fax warning them. They reduced their force from 2,500 to 270. 800,000 died in 100 days.",
-};
-
-/* ── CTAs for next event navigation ── */
-const CTAS: Record<string, string> = {
-  "partition-of-india": "See how 4 nations remember August 15, 1947",
-  "hiroshima-nagasaki":
-    "Compare what Washington said vs. what survivors remember",
-  "rwandan-genocide":
-    "Read what the world chose not to see for 100 days",
-};
 
 /* ── Perspective color map ── */
 const PERSP_COLORS: Record<string, string> = {
