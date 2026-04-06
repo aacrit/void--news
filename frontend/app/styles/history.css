@@ -1830,10 +1830,11 @@
 /* Landing Hero — REMOVED (dead code, Round 7 cleanup) */
 
 /* ===========================================================================
-   THE TIMELINE — Horizontal scroll-snap landing.
-   Cards snap to viewport center. A single CSS custom property `--tl-focus`
-   (0 = off-screen, 1 = centered) drives opacity, blur, scale, and
-   progressive content reveal. Set by JS on each scroll frame.
+   THE TIMELINE — Organic Ink Above/Below Layout
+   Horizontal scroll. Organic SVG ink track at vertical center.
+   Cards alternate above (catastrophic) and below (critical/major).
+   Proportionate temporal spacing (sqrt scale).
+   Three states: A (full timeline), B (strip + inline story), C (story nav).
    =========================================================================== */
 
 /* ── Wrapper — full viewport, positions brief + track ── */
@@ -1844,6 +1845,14 @@
   height: 100dvh;
   overflow: hidden;
   background: var(--hist-bg);
+}
+
+/* Story-active state: wrapper becomes scrollable column */
+.hist-tl-wrapper--story-active {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: visible;
 }
 
 /* ── Mission Brief — fades on first scroll ── */
@@ -1886,59 +1895,158 @@
   50% { opacity: 0.8; }
 }
 
-/* ── The horizontal scroller ── */
-.hist-tl-landing {
+/* ===========================================================================
+   STATE A: Full Timeline — Horizontal scroll with above/below cards
+   =========================================================================== */
+.hist-tl-full {
   width: 100%;
   height: 100%;
   overflow-x: scroll;
   overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  display: flex;
-  align-items: center;
   scrollbar-width: none;
   position: relative;
-
-  /* Padding so first/last cards can reach center on scroll */
-  padding-left: var(--space-5);
-  padding-right: var(--space-5);
-  gap: var(--tl-card-gap, 12px);
 }
 
-.hist-tl-landing::-webkit-scrollbar {
+.hist-tl-full::-webkit-scrollbar {
   display: none;
 }
 
-/* ── Card sizing custom properties — Film Strip Mini Cards ── */
-.hist-tl-landing {
-  --tl-card-w: 180px;
-  --tl-card-gap: 12px;
+/* Inner container — sized to total timeline width */
+.hist-tl-full__inner {
+  position: relative;
+  height: 100%;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  .hist-tl-landing {
-    --tl-card-w: 160px;
-    --tl-card-gap: 10px;
-  }
+/* ── Organic SVG ink track at vertical center ── */
+.hist-tl-full__track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  transform: translateY(-50%);
+  z-index: 2;
+  pointer-events: none;
 }
 
-@media (max-width: 767px) {
-  .hist-tl-landing {
-    --tl-card-w: calc(100vw - 72px);
-    --tl-card-gap: 20px;
-    padding-left: 24px;
-    padding-right: 24px;
-  }
+/* ── Parallax background layer: era gradient bands ── */
+.hist-tl-full__bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hist-tl-full__era-band {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  opacity: 0.04;
+}
+
+.hist-tl-full__era-band--ancient { background: linear-gradient(180deg, #8B6F47 0%, transparent 100%); }
+.hist-tl-full__era-band--classical { background: linear-gradient(180deg, #5C7A6F 0%, transparent 100%); }
+.hist-tl-full__era-band--medieval { background: linear-gradient(180deg, #6B5B73 0%, transparent 100%); }
+.hist-tl-full__era-band--early-modern { background: linear-gradient(180deg, #7A6B4A 0%, transparent 100%); }
+.hist-tl-full__era-band--modern { background: linear-gradient(180deg, #4A5A6B 0%, transparent 100%); }
+.hist-tl-full__era-band--contemporary { background: linear-gradient(180deg, #5A4A4A 0%, transparent 100%); }
+
+:root[data-mode="dark"] .hist-tl-full__era-band { opacity: 0.06; }
+
+.hist-tl-full__era-label {
+  position: absolute;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-brass);
+  opacity: 0.5;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ── Station — absolute positioned container for dot + stem + card ── */
+.hist-tl-full__station {
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+/* ── Dot on the track ── */
+.hist-tl-full__dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--tl-dot-size);
+  height: var(--tl-dot-size);
+  border-radius: 50%;
+  background: var(--hist-brass);
+  border: 1.5px solid var(--hist-bg);
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  transition: transform 200ms var(--ease-archive-snap), box-shadow 200ms ease;
+}
+
+.hist-tl-full__dot--catastrophic { background: #8B0000; }
+.hist-tl-full__dot--critical { background: #B44C00; }
+.hist-tl-full__dot--major { background: var(--hist-brass); }
+
+/* Dot hover glow when parent station hovered */
+.hist-tl-full__station:hover .hist-tl-full__dot {
+  transform: translate(-50%, -50%) scale(1.5);
+  box-shadow: 0 0 8px var(--hist-brass-wash);
+}
+
+/* ── Stem connecting card to dot ── */
+.hist-tl-full__stem {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.hist-tl-full__stem--above {
+  bottom: 0;
+  top: auto;
+  margin-bottom: 4px;
+}
+
+.hist-tl-full__stem--below {
+  top: 0;
+  bottom: auto;
+  margin-top: 4px;
+}
+
+.hist-tl-full__stem svg {
+  height: var(--tl-stem-h);
 }
 
 /* ===========================================================================
-   Timeline Card — Film Strip Mini Cards
-   180px mini, hover expands to 400px (desktop). All cards always visible.
-   No rack focus / --tl-focus. Hover drives expansion + content reveal.
+   Timeline Card — Fluid above/below cards
+   Cards positioned absolutely relative to their station.
+   Above = catastrophic (card bottom at track), Below = critical/major.
+   Hover: scale(1.04), expand content, Ken Burns photo, neighbors blur.
+   All dimensions use clamp() for continuous fluid scaling.
    =========================================================================== */
+
+/* Fluid custom properties for timeline layout */
+.hist-tl-full {
+  --tl-card-w: clamp(180px, 18vw, 280px);
+  --tl-stem-h: clamp(16px, 2vh, 32px);
+  --tl-dot-size: clamp(6px, 0.6vw, 10px);
+  --tl-gap: clamp(8px, 1vw, 16px);
+}
+
 .hist-tl-card {
-  flex-shrink: 0;
-  width: var(--tl-card-w, 180px);
-  scroll-snap-align: center;
+  width: var(--tl-card-w);
   position: relative;
   cursor: pointer;
 
@@ -1947,52 +2055,61 @@
   border: 1px solid var(--hist-border-subtle);
   overflow: hidden;
 
-  /* Smooth width transition for hover expand */
-  transition: width 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 250ms ease;
-  will-change: width;
-  z-index: 2;
+  /* Hover animation */
+  transition: transform 300ms var(--ease-archive-snap),
+              box-shadow 250ms ease,
+              filter 300ms ease;
+  will-change: transform;
+  z-index: 3;
 }
 
-/* Hover expand — desktop only */
+/* Above cards: positioned above the track center */
+.hist-tl-card--above {
+  position: absolute;
+  bottom: calc(var(--tl-stem-h) + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Below cards: positioned below the track center */
+.hist-tl-card--below {
+  position: absolute;
+  top: calc(var(--tl-stem-h) + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Hover — desktop only */
 @media (min-width: 768px) {
   .hist-tl-card:hover,
   .hist-tl-card:focus-within {
-    width: 400px;
+    transform: translateX(-50%) scale(1.04);
     box-shadow: var(--hist-doc-edge-hover);
-    z-index: 4;
+    z-index: 10;
+  }
+
+  /* Blur neighbors when one card is hovered */
+  .hist-tl-full__station:hover ~ .hist-tl-full__station .hist-tl-card {
+    filter: blur(1px) opacity(0.7);
+  }
+  .hist-tl-full__station:has(~ .hist-tl-full__station:hover) .hist-tl-card {
+    filter: blur(1px) opacity(0.7);
+  }
+  /* Unblur the hovered card itself */
+  .hist-tl-full__station:hover .hist-tl-card {
+    filter: none;
   }
 }
 
-/* ── Severity accent — left border ── */
-.hist-tl-card--catastrophic { border-left: 4px solid #8B0000; }
-.hist-tl-card--critical { border-left: 4px solid #B44C00; }
-.hist-tl-card--major { border-left: 4px solid var(--hist-brass); }
-
-/* ── Severity pseudo-element (subtle top glow) ── */
-.hist-tl-card__severity {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  pointer-events: none;
-}
-
-.hist-tl-card--catastrophic .hist-tl-card__severity {
-  background: linear-gradient(90deg, #8B0000 0%, transparent 60%);
-  opacity: 0.4;
-}
-
-.hist-tl-card--critical .hist-tl-card__severity {
-  background: linear-gradient(90deg, #B44C00 0%, transparent 60%);
-  opacity: 0.3;
-}
+/* ── Severity accent — top border ── */
+.hist-tl-card--catastrophic { border-top: 3px solid #8B0000; }
+.hist-tl-card--critical { border-top: 3px solid #B44C00; }
+.hist-tl-card--major { border-top: 3px solid var(--hist-brass); }
 
 /* ── Photo — archival grade, Ken Burns on hover ── */
 .hist-tl-card__photo {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   position: relative;
   background: var(--hist-paper-deep);
@@ -2009,7 +2126,7 @@
 /* Ken Burns on hover only */
 @media (min-width: 768px) {
   .hist-tl-card:hover .hist-tl-card__photo-img {
-    transform: scale(1.06);
+    transform: scale(1.08);
   }
 }
 
@@ -2051,7 +2168,7 @@
   padding: 0;
 }
 
-/* ── Title — 1 line mini, wraps on expand ── */
+/* ── Title — 1 line, wraps on hover ── */
 .hist-tl-card__title {
   font-family: var(--font-editorial);
   font-size: var(--text-sm);
@@ -2073,20 +2190,6 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-}
-
-/* ── Track entry notch — brass circle at left edge ── */
-.hist-tl-card__notch {
-  position: absolute;
-  left: -5px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--hist-brass);
-  border: 1.5px solid var(--hist-bg-card);
-  z-index: 3;
 }
 
 /* ── Expanded content — hidden until hover/focus (desktop) ── */
@@ -2318,9 +2421,9 @@
 }
 
 /* ===========================================================================
-   Timeline Track — Fixed minimap at bottom of viewport
+   Bottom Minimap — Simplified track at bottom of viewport
    =========================================================================== */
-.hist-tl-track {
+.hist-tl-minimap {
   position: absolute;
   bottom: var(--space-4);
   left: 5%;
@@ -2330,7 +2433,7 @@
   pointer-events: none;
 }
 
-.hist-tl-track__line {
+.hist-tl-minimap__line {
   position: absolute;
   top: 50%;
   left: 0;
@@ -2341,20 +2444,19 @@
   transform: translateY(-50%);
 }
 
-.hist-tl-track__dot {
+.hist-tl-minimap__dot {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--hist-border);
-  border: 1.5px solid var(--hist-bg);
+  background: transparent;
+  border: none;
   cursor: pointer;
   pointer-events: auto;
   padding: 0;
-  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
-  /* Enlarge touch target without visual change */
+  /* Enlarged touch target */
   min-width: 44px;
   min-height: 44px;
   display: flex;
@@ -2362,96 +2464,36 @@
   justify-content: center;
 }
 
-/* Visual dot inside the touch target */
-.hist-tl-track__dot::before {
+.hist-tl-minimap__dot::before {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--hist-border);
-  border: 1.5px solid var(--hist-bg);
-  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  transition: background 200ms ease, transform 200ms ease;
   flex-shrink: 0;
 }
 
-/* Hide the actual button's background */
-.hist-tl-track__dot {
-  background: transparent;
-  border: none;
-}
-
-.hist-tl-track__dot--active::before {
+.hist-tl-minimap__dot:hover::before {
   background: var(--hist-accent);
-  border-color: var(--hist-accent);
-  transform: scale(1.4);
-  box-shadow: 0 0 8px var(--hist-accent-wash);
+  transform: scale(1.5);
 }
 
-.hist-tl-track__dot--classified::before {
-  border-style: dashed;
-  opacity: 0.5;
-}
-
-.hist-tl-track__dot:focus-visible {
+.hist-tl-minimap__dot:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
 }
 
-/* Year labels below dots */
-.hist-tl-track__year {
+.hist-tl-minimap__year {
   position: absolute;
-  top: calc(50% + 12px);
+  top: calc(50% + 10px);
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-data);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 400;
   color: var(--hist-ink-muted);
   letter-spacing: 0.04em;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 200ms ease;
-  pointer-events: none;
-}
-
-.hist-tl-track__dot--active .hist-tl-track__year {
-  opacity: 1;
-  color: var(--hist-accent);
-  font-weight: 600;
-}
-
-/* Show every 3rd year label + first/last always */
-.hist-tl-track__dot:first-child .hist-tl-track__year,
-.hist-tl-track__dot:last-child .hist-tl-track__year,
-.hist-tl-track__dot:nth-child(3n+1) .hist-tl-track__year {
-  opacity: 0.6;
-}
-
-/* Progress bar — fills from left to active dot */
-.hist-tl-track__line::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: var(--tl-progress, 0%);
-  background: var(--hist-accent);
-  opacity: 0.35;
-  border-radius: 1px;
-  transition: width 200ms ease;
-}
-
-/* ── Era labels above track ── */
-.hist-tl-track__era-label {
-  position: absolute;
-  top: -14px;
-  transform: translateX(-50%);
-  font-family: var(--font-meta);
-  font-size: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--hist-brass);
   white-space: nowrap;
   opacity: 0.6;
   pointer-events: none;
@@ -2492,45 +2534,13 @@
   border-color: var(--hist-accent);
 }
 
-.hist-tl-era--active {
-  color: var(--hist-paper-fixed, #F2EDE0);
-  background: var(--hist-accent);
-  border-color: var(--hist-accent);
-}
-
 .hist-tl-era:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
 }
 
-/* ── Era dividers between cards ── */
-.hist-tl-era-divider {
-  flex-shrink: 0;
-  width: 2px;
-  height: 60%;
-  align-self: center;
-  background: var(--hist-accent);
-  opacity: 0.15;
-  border-radius: 1px;
-}
-
-/* ── Timeline track line THROUGH cards — horizontal at vertical center ── */
-.hist-tl-landing::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--hist-border);
-  opacity: 0.3;
-  z-index: 1;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
 /* ── Film grain — subtle archival texture ── */
-.hist-tl-landing::before {
+.hist-tl-full::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -2541,16 +2551,158 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
 }
 
+/* ===========================================================================
+   STATE B: Compressed Strip + Inline Story
+   =========================================================================== */
+.hist-tl-strip {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 56px;
+  background: var(--hist-bg-elevated);
+  border-bottom: 1px solid var(--hist-border);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  backdrop-filter: blur(10px) saturate(0.9);
+  -webkit-backdrop-filter: blur(10px) saturate(0.9);
+}
+
+.hist-tl-strip__track-container {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hist-tl-strip__track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  transform: translateY(-50%);
+}
+
+.hist-tl-strip__dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hist-border);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 200ms ease, width 200ms ease, height 200ms ease,
+              box-shadow 200ms ease;
+  /* Touch target */
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hist-tl-strip__dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hist-border);
+  transition: background 200ms ease, width 200ms ease, height 200ms ease,
+              box-shadow 200ms ease;
+  flex-shrink: 0;
+}
+
+.hist-tl-strip__dot--active::before {
+  width: 8px;
+  height: 8px;
+  background: var(--hist-brass);
+  box-shadow: 0 0 6px var(--hist-brass-wash);
+}
+
+.hist-tl-strip__dot:hover::before {
+  background: var(--hist-accent);
+}
+
+.hist-tl-strip__dot:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-tl-strip__year {
+  position: absolute;
+  top: calc(50% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: 0.5rem;
+  font-weight: 400;
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.hist-tl-strip__dot--active .hist-tl-strip__year {
+  opacity: 1;
+  color: var(--hist-brass);
+  font-weight: 600;
+}
+
+.hist-tl-strip__dot:hover .hist-tl-strip__year {
+  opacity: 0.7;
+}
+
+.hist-tl-strip__close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--hist-ink-secondary);
+  transition: color 200ms, background 200ms;
+  border-radius: 50%;
+  margin-left: var(--space-2);
+}
+
+.hist-tl-strip__close:hover {
+  color: var(--hist-accent);
+  background: var(--hist-accent-ghost);
+}
+
+.hist-tl-strip__close:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ── Inline story container ── */
+.hist-inline-story {
+  min-height: calc(100vh - 56px);
+  min-height: calc(100dvh - 56px);
+  overflow-y: auto;
+  background: var(--hist-bg);
+}
+
+/* ===========================================================================
+   Reduced Motion — Timeline
+   =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-tl-landing::before { display: none; }
+  .hist-tl-full::before { display: none; }
   .hist-tl-eras { display: none; }
 
-  /* Instant expand — no width transition */
   .hist-tl-card {
     transition: none;
   }
 
-  /* No Ken Burns */
   .hist-tl-card__photo-img {
     transition: none;
   }
@@ -2558,7 +2710,6 @@
     transform: none;
   }
 
-  /* Expanded content always visible */
   .hist-tl-card__expand {
     max-height: none;
     opacity: 1;
@@ -2566,46 +2717,202 @@
     overflow: visible;
     transition: none;
   }
+
+  .hist-tl-full__dot {
+    transition: none;
+  }
+
+  .hist-tl-full__bg-layer {
+    will-change: auto;
+  }
+
+  .hist-tl-strip__dot::before,
+  .hist-tl-minimap__dot::before {
+    transition: none;
+  }
 }
 
 /* ===========================================================================
-   Mobile Timeline Adjustments
+   Mobile Timeline — Vertical layout below 768px
+   Touch targets 48px+. No parallax, no Ken Burns. Instant transitions.
+   Vertical ink track on left, cards stack right. scroll-snap for clean snap.
    =========================================================================== */
 @media (max-width: 767px) {
-  .hist-tl-card {
-    scroll-snap-stop: always;
+  /* Switch to vertical timeline */
+  .hist-tl-full {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    scroll-snap-type: y proximity;
+    --tl-card-w: calc(100vw - 72px);
   }
 
-  /* Title shows multi-line on mobile since cards are full-width */
+  .hist-tl-full__inner {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto;
+    position: relative;
+    padding-left: 48px;
+    padding-right: var(--space-3);
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-7);
+  }
+
+  /* Ink track runs vertically on the left */
+  .hist-tl-full__track {
+    top: 0;
+    left: 24px;
+    width: 4px;
+    height: 100%;
+    transform: none;
+  }
+
+  .hist-tl-full__track svg {
+    display: none;
+  }
+
+  .hist-tl-full__track::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1.5px;
+    height: 100%;
+    background: var(--hist-accent);
+    opacity: 0.4;
+    transform: translateX(-50%);
+  }
+
+  /* Station stacks vertically */
+  .hist-tl-full__station {
+    position: relative;
+    top: auto;
+    left: auto !important;
+    transform: none;
+    margin-bottom: clamp(16px, 3vh, 32px);
+    scroll-snap-align: start;
+  }
+
+  /* Dots on the vertical track */
+  .hist-tl-full__dot {
+    position: absolute;
+    left: -24px;
+    top: 20px;
+    transform: translate(-50%, 0);
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Horizontal stems */
+  .hist-tl-full__stem {
+    position: absolute;
+    left: -20px;
+    top: 20px;
+    transform: none;
+  }
+
+  .hist-tl-full__stem--above,
+  .hist-tl-full__stem--below {
+    top: 20px;
+    bottom: auto;
+    margin: 0;
+  }
+
+  .hist-tl-full__stem svg {
+    transform: rotate(90deg);
+    width: 20px;
+    height: 2px;
+  }
+
+  /* Cards are all on the right, full available width */
+  .hist-tl-card {
+    width: var(--tl-card-w);
+    max-width: var(--tl-card-w);
+  }
+
+  .hist-tl-card--above,
+  .hist-tl-card--below {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    transform: none;
+  }
+
   .hist-tl-card__title {
     white-space: normal;
+    padding: 10px 12px 8px;
   }
 
-  /* Track at top (below topbar) instead of bottom */
-  .hist-tl-track {
-    top: var(--space-3);
-    bottom: auto;
-  }
-
-  /* Simpler photo filter on mobile */
   .hist-tl-card__photo-img {
     transition: none;
     transform: scale(1);
   }
 
+  /* Mobile: show compact expand on tap (handled by CSS, open via JS click) */
+  .hist-tl-card__expand {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 12px;
+    /* Keep hidden — card click opens story directly on mobile */
+  }
+
+  /* Touch targets: 48px minimum */
+  .hist-tl-card {
+    min-height: 48px;
+  }
+
+  .hist-tl-card__cta {
+    min-height: 48px;
+  }
+
+  /* Hide era bands on mobile */
+  .hist-tl-full__bg-layer {
+    display: none;
+  }
+
+  /* Hide bottom minimap on mobile */
+  .hist-tl-minimap {
+    display: none;
+  }
+
   /* Brief positioned higher */
   .hist-tl-brief {
-    top: 40%;
+    top: 25%;
   }
 
-  /* No notch on mobile — full-width cards */
-  .hist-tl-card__notch {
+  /* Eras scroll horizontally at top */
+  .hist-tl-eras {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-3);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Strip on mobile */
+  .hist-tl-strip {
+    height: 48px;
+    padding: 0 var(--space-3);
+  }
+
+  .hist-tl-strip__dot {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Film grain off on mobile (battery) */
+  .hist-tl-full::before {
     display: none;
   }
 
-  /* Hide through-card track line on mobile */
-  .hist-tl-landing::after {
-    display: none;
+  /* Inline story: full width, no side padding wastage */
+  .hist-inline-story {
+    padding: 0;
   }
 }
 
@@ -3775,7 +4082,8 @@
     opacity: 0.6;
   }
 
-  .hist-tl-track__dot::before {
+  .hist-tl-strip__dot::before,
+  .hist-tl-minimap__dot::before {
     transition: none;
   }
 
