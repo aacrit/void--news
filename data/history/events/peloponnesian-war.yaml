@@ -81,13 +81,13 @@ perspectives:
     viewpoint_type: vanquished
     region_origin: europe
     narrative: |
-      The Athenian perspective, as Thucydides reconstructed it, was defined by the tension between democratic ideals and imperial necessity. Pericles articulated this tension in the Funeral Oration of 431 BCE — a speech delivered over the bodies of the first year's war dead. The oration is the most famous defense of democracy in ancient literature. "Our constitution does not copy the laws of neighbouring states," Pericles declared. "We are rather a pattern to others than imitators ourselves." Athens was open where Sparta was closed; democratic where Sparta was oligarchic; cosmopolitan where Sparta was xenophobic. Athenian culture — the tragedies of Sophocles, the philosophy of Socrates, the architecture of the Parthenon — was produced by a system that gave citizens voice.
+      The Athenian perspective, as Thucydides reconstructed it, was defined by the tension between democratic ideals and imperial necessity. Pericles articulated this tension in the Funeral Oration of 431 BCE — a speech delivered over the bodies of the first year's war dead. The oration is the most famous defense of democracy in ancient literature. "Our constitution does not copy the laws of neighbouring states," Pericles declared. "We are rather a pattern to others than imitators ourselves." Athens was open where Sparta was closed; democratic where Sparta was oligarchic; cosmopolitan where Sparta was xenophobic. Athenian culture — the tragedies of Sophocles, the philosophy of Socrates, the architecture of the Parthenon — was produced by a system that gave citizens voice. The oration's closing line to the widows in attendance defined the boundary of that voice: "the greatest glory of a woman is to be least talked about by men, whether they are praising you or criticizing you." Democracy extended to adult male citizens. Women, slaves, and metics — together the majority of Attica's population — were excluded.
 
       But Pericles also told the Athenians a harder truth. "Your empire is now like a tyranny," he said in a later speech. "It may have been wrong to take it; it is certainly dangerous to let it go." The Delian League had begun in 478 BCE as a voluntary alliance against Persia. By the 440s, it was an empire. Athens moved the League treasury from Delos to the Acropolis in 454 BCE and used the tribute — 600 talents annually from roughly 150 allied cities — to build the Parthenon. Members who tried to leave were crushed: Naxos in 470 BCE, Thasos in 465 BCE, Samos in 440 BCE. The empire funded the democracy. The rowing crews of the trireme fleet — free citizens of the lower class, the thetes — were paid from imperial revenue. Remove the empire, and the economic basis of democratic participation collapsed.
 
       The Sicily expedition revealed the democracy's structural weakness: the assembly could vote for war on a wave of enthusiasm, without the institutional checks that might restrain ambition. Thucydides recorded that the Athenians voted overwhelmingly for the expedition with "a passionate desire to sail" (eros), and that most had no idea how large Sicily was or how many peoples inhabited it. Nicias, the reluctant general assigned to lead the expedition, tried to discourage the assembly by demanding an absurdly large force — and the assembly voted to give him everything he asked for. The democracy's very responsiveness to popular desire became the mechanism of its destruction.
 
-      After the catastrophe in Sicily, Athens survived nine more years through extraordinary resilience — rebuilding its fleet, winning victories at Cyzicus (410) and Arginusae (406), and fighting with a fraction of its former resources. The end came not from a single defeat but from exhaustion. Lysander's destruction of the fleet at Aegospotami cut off the grain supply from the Black Sea. Athens surrendered under siege in 404 BCE. The Long Walls were torn down to the sound of flute music. The Thirty Tyrants ruled for eight months before Thrasybulus led a democratic restoration — Athens was the only Greek city to restore democracy after oligarchic overthrow. But the empire was gone, and with it the economic foundation that had supported the golden age.
+      After the catastrophe in Sicily, Athens survived nine more years through extraordinary resilience — rebuilding its fleet, winning victories at Cyzicus (410) and Arginusae (406), and fighting with a fraction of its former resources. During the Plague of Athens (430-426 BCE), Thucydides recorded that women who nursed the sick died disproportionately (2.51). By 411 BCE, war-weariness had grown severe enough that Aristophanes staged Lysistrata — a comedy in which Athenian and Spartan women seize the Acropolis treasury and withhold sex to force their husbands to negotiate peace. The play was comedy, not politics, but it drew on real conditions: women managed household economies that were collapsing under twenty years of war. The end came not from a single defeat but from exhaustion. Lysander's destruction of the fleet at Aegospotami cut off the grain supply from the Black Sea. Athens surrendered under siege in 404 BCE. The Long Walls were torn down to the sound of flute music. The Thirty Tyrants ruled for eight months before Thrasybulus led a democratic restoration — Athens was the only Greek city to restore democracy after oligarchic overthrow. But the empire was gone, and with it the economic foundation that had supported the golden age.
     key_arguments:
       - "Athenian democracy and Athenian empire were inseparable — imperial revenue funded democratic participation"
       - "Pericles's defensive strategy was sound; the plague, not strategic error, undermined the first phase"
@@ -122,6 +122,7 @@ perspectives:
       - "Athenian brutality toward subject allies — Melos, Mytilene, Scione"
       - "The empire's coercive foundation — allied cities that tried to leave were crushed"
       - "Reliance on slave labor: Athens's silver mines at Laurion depended on 20,000-30,000 enslaved workers"
+      - "Women's exclusion from democratic participation — Pericles's Funeral Oration explicitly defined female virtue as silence"
 
   - viewpoint: "Spartan / Peloponnesian League"
     viewpoint_type: victor
@@ -178,6 +179,8 @@ perspectives:
 
       In 416 BCE, Athens sent 38 ships, 3,000 hoplites, and 300 archers to Melos, a small island in the southern Aegean with a population of perhaps 1,500 citizens. Melos was a Spartan colony that had maintained neutrality throughout the war. Athens demanded submission and tribute. The Melians argued that they had harmed no one, that neutrality was their right, that the gods would protect the just, and that Sparta would come to their aid. The Athenian envoys dismissed every argument. Justice, they said, "is only in question between equals in power." The gods, if they existed, followed the same law as men: "of the gods we believe, and of men we know, that by a necessary law of their nature they rule wherever they can." Sparta would not come. The Melians refused to submit. Athens besieged the island for six months, then executed every adult male and enslaved the women and children.
 
+      After the siege, Athens executed every adult male on Melos and sold the women and children into slavery (Thucydides 5.116). The fates diverged by sex: men were killed; women and children became property, dispersed across Aegean slave markets with no record of where they were sent.
+
       Melos was not unique. Mytilene, a member of the Delian League on the island of Lesbos, revolted in 428 BCE. After its recapture, the Athenian assembly voted to execute all adult males and enslave the rest. The next day, they reconsidered — barely. A second ship was sent to countermand the order, arriving hours before the first decree would have been carried out. But 1,000 men identified as ringleaders were still executed. Scione, a city in Chalcidice, revolted in 423 BCE; when Athens recaptured it in 421 BCE, all adult males were killed and women and children enslaved. Thucydides recorded the Scione decree with the same clinical detachment he applied to the plague.
 
       Sparta's record was no better. After capturing Plataea in 427 BCE — the same city whose attack had started the war — the Spartans put the surviving garrison on trial. Each man was asked one question: "Have you done anything to help the Spartans or their allies in the present war?" When the answer was no — as it inevitably was, since Plataea had been under siege — the man was executed. Two hundred Plataeans and 25 Athenians were killed. The women were enslaved. Thebes demolished the city.
@@ -203,6 +206,10 @@ perspectives:
         author: "Kurt Raaflaub and Nathan Rosenstein (editors)"
         year: "1999"
         type: book
+      - title: "Goddesses, Whores, Wives, and Slaves: Women in Classical Antiquity"
+        author: "Sarah B. Pomeroy"
+        year: "1975"
+        type: book
     notable_quotes:
       - text: "The strong do what they can; the weak suffer what they must."
         speaker: "Athenian envoys to the Melians (as rendered by Thucydides)"
@@ -211,6 +218,7 @@ perspectives:
         speaker: "Athenian envoys (as rendered by Thucydides)"
         context: "The Melian Dialogue, 416 BCE — Thucydides, History, Book 5.105"
     emphasized:
+      - "The fate of women and children after conquest — enslavement at Melos, Scione, and Plataea"
       - "The systematic destruction of neutral and allied small states by both great powers"
       - "Civil war (stasis) as the internal mechanism of great-power interference"
       - "The Melian precedent as a permanent feature of international relations"
@@ -233,6 +241,8 @@ perspectives:
 
       But the realist reading has its own blind spots. Thucydides wrote as a participant, not an objective observer. He was an Athenian general, exiled for losing a battle. His sympathies, while controlled, were not absent. The speeches he attributed to Pericles are more eloquent than those given to any Spartan; the Funeral Oration has no Spartan equivalent. His analysis foregrounded interstate competition and minimized economic factors, class conflict, and the experience of non-citizens — women, slaves, metics (resident aliens) — who constituted the majority of Athens's population. The realist appropriation of Thucydides takes his framework as universal truth rather than as the perspective of a displaced Athenian aristocrat writing in exile, shaped by his own losses.
 
+      Sarah Pomeroy's Goddesses, Whores, Wives, and Slaves (1975) opened a line of inquiry that Thucydides's realist inheritors have largely ignored: the war's impact on the majority of Athens's population who could not vote, speak in the assembly, or hold command. Thucydides mentions women exactly twice in the Funeral Oration — once to praise the mothers of the dead, once to instruct the widows to be silent. The plague narrative (2.51) notes women dying as caregivers but assigns them no agency. Aristophanes' Lysistrata (411 BCE) and Assemblywomen (392 BCE) satirize women seizing political and economic power, which means women's exclusion from both was visible enough to be comic material. The realist tradition built on Thucydides inherits his silences along with his insights.
+
       The deepest irony is methodological. Thucydides invented multi-perspective history. He put speeches in the mouths of both sides — Pericles AND the Corinthians, the Athenians AND the Melians, the hawks AND the doves. He did this not because he believed all positions were equally valid, but because he believed that understanding conflict required hearing how each side justified itself. void --history operates on the same principle, 2,400 years later. The method is Thucydidean. The difference is that Thucydides was one man selecting which perspectives to present; void --history makes the selection transparent and the perspectives independently sourced.
     key_arguments:
       - "Thucydides identified the structural cause of great-power conflict — the rising power / ruling power dynamic — that remains the dominant framework in international relations"
@@ -252,6 +262,10 @@ perspectives:
         author: "Perez Zagorin"
         year: "2005"
         type: book
+      - title: "Goddesses, Whores, Wives, and Slaves: Women in Classical Antiquity"
+        author: "Sarah B. Pomeroy"
+        year: "1975"
+        type: book
     notable_quotes:
       - text: "It was the rise of Athens and the fear that this inspired in Sparta that made war inevitable."
         speaker: "Thucydides (paraphrased by Graham Allison)"
@@ -265,7 +279,7 @@ perspectives:
       - "Thucydides as the inventor of the multi-perspective method that void --history continues"
     omitted:
       - "Thucydides's own biases — he was an exiled Athenian aristocrat, not an impartial observer"
-      - "Economic, class, and gender dimensions that Thucydides minimized and realists inherit"
+      - "Economic, class, and gender dimensions that Thucydides minimized and realists inherit — women appear in his text as victims (plague), property (Melos), or as subjects of instruction to be silent (Funeral Oration)"
       - "Non-Western traditions of historical analysis that developed independently of Thucydides"
 
 media:
