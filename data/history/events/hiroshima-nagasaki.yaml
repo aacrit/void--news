@@ -76,6 +76,11 @@ key_figures:
   born: 1903
   died: 1980
   wikipedia: https://en.wikipedia.org/wiki/Michihiko_Hachiya
+- name: Setsuko Thurlow
+  role: Hibakusha survivor of Hiroshima, Nobel Peace Prize acceptance speech for ICAN (2017)
+  wikidata: Q29579274
+  born: 1932
+  wikipedia: https://en.wikipedia.org/wiki/Setsuko_Thurlow
 legacy_points:
 - Inaugurated the nuclear age and the Cold War arms race, peaking at ~70,000 warheads globally
 - Japan's Article 9 constitution — renunciation of war — became the template for nuclear pacifism

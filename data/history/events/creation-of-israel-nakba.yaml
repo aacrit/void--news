@@ -80,6 +80,12 @@ key_figures:
   born: 1904
   died: 1971
   wikipedia: https://en.wikipedia.org/wiki/Ralph_Bunche
+- name: Golda Meir
+  role: Signatory of the Declaration of Independence, later Prime Minister of Israel
+  wikidata: Q7344
+  born: 1898
+  died: 1978
+  wikipedia: https://en.wikipedia.org/wiki/Golda_Meir
 legacy_points:
 - Created the State of Israel — the first Jewish-majority sovereign state in nearly 2,000 years
 - Displaced 700,000-750,000 Palestinians — their descendants now number 5.9 million registered refugees

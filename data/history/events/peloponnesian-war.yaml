@@ -87,6 +87,12 @@ key_figures:
   born: 500
   died: 422
   wikipedia: https://en.wikipedia.org/wiki/Brasidas
+- name: Aspasia of Miletus
+  role: Companion of Pericles, intellectual whose influence on Athenian politics Aristophanes satirized and Plato honored
+  wikidata: Q171421
+  born: -470
+  died: -400
+  wikipedia: https://en.wikipedia.org/wiki/Aspasia
 legacy_points:
 - Thucydides's History became the foundational text of Western historiography and international relations theory
 - The Melian Dialogue remains the canonical text on power politics — 'the strong do what they can; the weak suffer what they must'
