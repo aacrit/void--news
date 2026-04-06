@@ -72,16 +72,31 @@ key_figures:
     facing trial
 - name: Dith Pran
   role: Cambodian journalist for The New York Times, survived the regime, subject of the 1984 film 'The Killing Fields'
+  wikidata: Q469846
+  born: 1942
+  died: 2008
+  wikipedia: https://en.wikipedia.org/wiki/Dith_Pran
 - name: Vann Nath
   role: Painter and S-21 survivor, kept alive to produce Pol Pot portraits; his paintings of torture are displayed at the
     Tuol Sleng Genocide Museum
+  wikidata: Q611335
+  born: 1946
+  died: 2011
+  wikipedia: https://en.wikipedia.org/wiki/Vann_Nath
 - name: Kaing Guek Eav ('Duch')
   role: Commander of S-21 prison, oversaw the interrogation and execution of 14,000-17,000 prisoners; convicted by ECCC in
     2010
 - name: Nuon Chea
   role: '''Brother Number Two,'' chief ideologue of the Khmer Rouge; convicted of genocide by ECCC in 2018'
+  wikidata: Q379225
+  born: 1926
+  died: 2019
+  wikipedia: https://en.wikipedia.org/wiki/Nuon_Chea
 - name: Loung Ung
   role: Author of 'First They Killed My Father' (2000), memoir of surviving the genocide as a five-year-old girl
+  wikidata: Q2330022
+  born: 1970
+  wikipedia: https://en.wikipedia.org/wiki/Loung_Ung
 legacy_points:
 - 1.5-2 million dead in 3 years, 8 months — approximately one quarter of Cambodia's population
 - S-21 processed 14,000-17,000 prisoners; between 7 and 12 survived
@@ -107,6 +122,8 @@ primary_source_excerpts:
   author: Loung Ung
   work: First They Killed My Father
   date: '2000'
+  archive_url: https://archive.org/details/firsttheykilledm0000ungl
+  openlibrary: OL9237892M
 coordinates:
   lat: 11.5493
   lng: 104.9176
@@ -169,14 +186,18 @@ perspectives:
     author: David P. Chandler
     year: '1992'
     type: book
+    doi: 10.2307/20045600
+    archive_url: https://archive.org/details/brothernumberone0000chan_j6y0
   - title: 'Pol Pot: Anatomy of a Nightmare'
     author: Philip Short
     year: '2004'
     type: book
+    archive_url: https://archive.org/details/polpot00phil
   - title: 'How Pol Pot Came to Power: Colonialism, Nationalism, and Communism in Cambodia, 1930-1975'
     author: Ben Kiernan
     year: '1985'
     type: book
+    archive_url: https://archive.org/details/howpolpotcametop0000kier
   notable_quotes:
   - text: 'I came to carry out the struggle, not to kill people. Even now, and you can look at me: am I a savage person? My
       conscience is clear.'
@@ -252,18 +273,23 @@ perspectives:
   - Wearing glasses, speaking a foreign language, or having soft hands could be a death sentence
   - 'Refugee trauma persists: 62% of Cambodian refugees in the U.S. met PTSD criteria 25 years later'
   sources:
-  - title: First They Killed My Father
+  - title: 'First they killed my father : a daughter of Cambodia remembers'
     author: Loung Ung
     year: '2000'
     type: book
+    openlibrary: OL9237892M
+    archive_url: https://archive.org/details/firsttheykilledm0000ungl
   - title: Survival in the Killing Fields
     author: Haing Ngor
     year: '1987'
     type: book
+    openlibrary: OL8141275M
+    archive_url: https://archive.org/details/survivalinkillin0000ngor
   - title: The Killing Fields (film)
     author: Roland Joffe (director)
     year: '1984'
     type: film
+    doi: 10.1017/9781780687094
   - title: Prevalence of trauma and mental illness among Cambodians in the United States
     author: Harvard Program in Refugee Trauma
     year: '2005'
@@ -348,14 +374,21 @@ perspectives:
     author: Craig Etcheson
     year: '2005'
     type: book
+    doi: 10.5860/choice.43-2946
+    archive_url: https://archive.org/details/afterkillingfiel0000etch
   - title: 'Brothers in Arms: Chinese Aid to the Khmer Rouge, 1975-1979'
     author: Andrew Mertha
     year: '2014'
     type: book
+    doi: 10.1355/cs36-2h
+    archive_url: https://archive.org/details/mertha-andrew-brothers-in-arms-chinese-aid-to-the-khmer-rouge-1975a-1979-2016-co
   - title: Vietnam's Intervention in Cambodia in International Law
     author: Gary Klintworth
     year: '1989'
     type: book
+    doi: 10.2307/2759949
+    openlibrary: OL11026096M
+    archive_url: https://archive.org/details/vietnamsinterven0000gary
   notable_quotes:
   - text: We could not stand by while our people were being massacred across the border and a genocide was being committed
       against the Cambodian people.
@@ -447,18 +480,26 @@ perspectives:
     author: Ben Kiernan
     year: '1996'
     type: book
+    archive_url: https://archive.org/details/polpotregimerace0000kier_a7v9
   - title: 'Voices from S-21: Terror and History in Pol Pot''s Secret Prison'
     author: David Chandler
     year: '1999'
     type: book
+    doi: 10.5860/choice.37-5821
+    archive_url: https://archive.org/details/voicesfroms2100davi
   - title: Why Did They Kill? Cambodia in the Shadow of Genocide
     author: Alexander Hinton
     year: '2005'
     type: book
+    doi: 10.2307/20034330
+    openlibrary: OL26798096M
   - title: A History of Cambodia
     author: David Chandler
     year: '2008'
     type: book
+    doi: 10.4324/9780429495519
+    openlibrary: OL3159716M
+    archive_url: https://archive.org/details/historyofcambodi0000chan_g1n7
   notable_quotes:
   - text: To keep you is no benefit. To destroy you is no loss.
     speaker: Khmer Rouge slogan

@@ -76,23 +76,46 @@ significance: 'The June 4 crackdown ended China''s most sustained experiment in 
 key_figures:
 - name: Deng Xiaoping
   role: Paramount leader of China; authorized the military crackdown despite having no formal title as head of state
+  wikidata: Q16977
+  born: 1904
+  died: 1997
+  wikipedia: https://en.wikipedia.org/wiki/Deng_Xiaoping
 - name: Zhao Ziyang
   role: General Secretary of the CCP; urged dialogue with students, visited the Square on May 19, was purged and died under
     house arrest in 2005
+  wikidata: Q99829
+  born: 1919
+  died: 2005
+  wikipedia: https://en.wikipedia.org/wiki/Zhao_Ziyang
 - name: Wang Dan
   role: Student leader, top of the government's most-wanted list; served two prison terms totaling 11 years before exile
+  wikidata: Q104532866
+  born: 1983
 - name: Chai Ling
   role: Commander-in-chief of the Tiananmen Square student headquarters at age 23 — the highest operational role in the movement;
     fled China via Operation Yellowbird
+  wikidata: Q610332
+  born: 1966
+  wikipedia: https://en.wikipedia.org/wiki/Chai_Ling
 - name: Ding Zilin
   role: Founder of the Tiananmen Mothers; documented 203 victims by name after her 17-year-old son Jiang Jielian was shot
     on June 3, 1989
+  wikidata: Q2279786
+  born: 1936
+  wikipedia: https://en.wikipedia.org/wiki/Ding_Zilin
 - name: Liu Xiaobo
   role: Literary critic who joined the hunger strike on June 2; later drafted Charter 08 and won the 2010 Nobel Peace Prize
     while imprisoned; died in custody in 2017
+  wikidata: Q41617
+  born: 1955
+  died: 2017
+  wikipedia: https://en.wikipedia.org/wiki/Liu_Xiaobo
 - name: Jeff Widener
   role: Associated Press photographer who captured the Tank Man image from the Beijing Hotel balcony, 800 meters away, using
     a 400mm lens
+  wikidata: Q2122902
+  born: 1956
+  wikipedia: https://en.wikipedia.org/wiki/Jeff_Widener
 legacy_points:
 - Ended China's post-Mao political liberalization; the CCP has not permitted organized political opposition since
 - The crackdown and the Berlin Wall's fall — separated by 5 months — produced opposite outcomes that defined two models of
@@ -179,14 +202,19 @@ perspectives:
     author: Carma Hinton and Richard Gordon
     year: '1995'
     type: documentary
+    doi: 10.2307/2169643
   - title: 'Wealth and Power: China''s Long March to the Twenty-first Century'
     author: Orville Schell and John Delury
     year: '2013'
     type: book
+    doi: 10.1007/978-1-349-27441-3_9
   - title: Deng Xiaoping and the Transformation of China
     author: Ezra Vogel
     year: '2011'
     type: book
+    doi: 10.2307/j.ctt2jbw2f
+    openlibrary: OL24827222M
+    archive_url: https://archive.org/details/deng-xiaoping-and-the-transformation-of-china
   notable_quotes:
   - text: This storm was bound to come sooner or later. It was bound to happen and was independent of man's will.
     speaker: Deng Xiaoping
@@ -268,6 +296,9 @@ perspectives:
     author: Compiled by Zhang Liang, edited by Andrew Nathan and Perry Link
     year: '2001'
     type: book
+    doi: 10.2307/20050041
+    openlibrary: OL10686942M
+    archive_url: https://archive.org/details/tiananmenpapers00zhan
   - title: 'Almost a Revolution: The Story of a Chinese Student''s Journey from Boyhood to Leadership in Tiananmen Square'
     author: Shen Tong
     year: '1990'
@@ -348,6 +379,7 @@ perspectives:
     author: Philip Cunningham
     year: '2009'
     type: book
+    archive_url: https://archive.org/details/tiananmenmoonins0000cunn
   - title: 'Assignment: China — Covering the Biggest Story in the World'
     author: Mike Chinoy
     year: '2023'
@@ -449,14 +481,20 @@ perspectives:
     author: Zhang Liang (compiler), Andrew Nathan and Perry Link (editors)
     year: '2001'
     type: book
+    doi: 10.2307/20050041
+    openlibrary: OL10686942M
+    archive_url: https://archive.org/details/tiananmenpapers00zhan
   - title: 'Prisoner of the State: The Secret Journal of Premier Zhao Ziyang'
     author: Zhao Ziyang
     year: '2009'
     type: book
+    archive_url: https://archive.org/details/prisonerofstates00zhao
   - title: 'Quelling the People: The Military Suppression of the Beijing Democracy Movement'
     author: Timothy Brook
     year: '1992'
     type: book
+    doi: 10.2307/2760686
+    archive_url: https://archive.org/details/quellingpeoplemi0000broo
   - title: 'The Power of Tiananmen: State-Society Relations and the 1989 Beijing Student Movement'
     author: Zhao Dingxin
     year: '2001'
@@ -465,6 +503,7 @@ perspectives:
     author: Louisa Lim
     year: '2014'
     type: book
+    archive_url: https://archive.org/details/the-peoples-republic-of-amnesia-tiananmen-revisited-louisa-lim-z-library
   notable_quotes:
   - text: A China that embraces reform and modernization needs the rule of law.
     speaker: Zhao Ziyang

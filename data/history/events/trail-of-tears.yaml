@@ -68,19 +68,43 @@ significance: 'The Trail of Tears established the legal and operational template
 key_figures:
 - name: Andrew Jackson
   role: 7th President of the United States, architect of Indian removal policy
+  wikidata: Q11817
+  born: 1767
+  died: 1845
+  wikipedia: https://en.wikipedia.org/wiki/Andrew_Jackson
 - name: John Ross
   role: Principal Chief of the Cherokee Nation, opposed removal for two decades
+  wikidata: Q456083
+  born: 1777
+  died: 1856
+  wikipedia: https://en.wikipedia.org/wiki/John_Ross_(Royal_Navy_officer)
 - name: Winfield Scott
   role: U.S. Army General, commanded the 1838 Cherokee roundup and removal
+  wikidata: Q354759
+  born: 1786
+  died: 1866
+  wikipedia: https://en.wikipedia.org/wiki/Winfield_Scott
 - name: John Marshall
   role: Chief Justice, ruled in favor of Cherokee sovereignty in Worcester v. Georgia (1832)
+  wikidata: Q310829
+  born: 1755
+  died: 1835
+  wikipedia: https://en.wikipedia.org/wiki/John_Marshall
 - name: Major Ridge
   role: Cherokee leader who signed the Treaty of New Echota; assassinated by Cherokee opponents in 1839
+  wikidata: Q938906
+  born: 1771
+  died: 1839
+  wikipedia: https://en.wikipedia.org/wiki/Major_Ridge
 - name: Nancy Ward (Nanye'hi)
   role: Beloved Woman of the Cherokee — a political-military title carrying council veto power; advocated for peace and Cherokee
     sovereignty until her death in 1822
 - name: Sequoyah
   role: Created the Cherokee syllabary, enabling Cherokee literacy and the Cherokee Phoenix newspaper
+  wikidata: Q313595
+  born: 1770
+  died: 1843
+  wikipedia: https://en.wikipedia.org/wiki/Sequoyah
 legacy_points:
 - Approximately 60,000 Native people forcibly removed; 15,000 died en route or in the first year
 - Worcester v. Georgia (1832) established tribal sovereignty doctrine — still cited in federal Indian law
@@ -93,6 +117,9 @@ primary_source_excerpts:
   author: Alexis de Tocqueville
   work: Democracy in America
   date: 1835 (observing Choctaw removal, December 1831)
+  archive_url: https://archive.org/details/democracyinameri0002alex_g9t0
+  openlibrary: OL44217743M
+  doi: 10.7312/blau17412-043
 - text: The instrument in question is not the act of our nation; we are not parties to its covenants; it has not received
     the sanction of our people.
   author: John Ross
@@ -163,10 +190,12 @@ perspectives:
   - State sovereignty conflicts made the status quo unsustainable
   - White settlement was proceeding regardless — removal was the 'least bad' option
   sources:
-  - title: Andrew Jackson and the Politics of Martial Law
+  - title: 'Andrew Jackson and the Politics of Martial Law: Nationalism, Civil Liberties, and Partisanship'
     author: Matthew Warshauer
     year: '2006'
     type: book
+    doi: 10.2307/27650162
+    openlibrary: OL8734827M
   - title: President Andrew Jackson's Case for the Removal Act (First Annual Message to Congress, December 8, 1829)
     author: Andrew Jackson
     year: '1829'
@@ -175,6 +204,9 @@ perspectives:
     author: William E. Nelson
     year: '1982'
     type: book
+    doi: 10.2307/1874161
+    openlibrary: OL3486640M
+    archive_url: https://archive.org/details/rootsofamericanb0000nels
   notable_quotes:
   - text: It gives me pleasure to announce to Congress that the benevolent policy of the Government... is approaching a happy
       consummation.
@@ -263,14 +295,21 @@ perspectives:
     author: John Ehle
     year: '1988'
     type: book
+    doi: 10.1007/978-3-319-51902-9_4
+    archive_url: https://archive.org/details/trailoftearsrise0000ehle
   - title: 'Cherokee Removal: The William Penn Essays and Other Writings'
     author: Jeremiah Evarts
     year: 1981 (originally 1829)
     type: book
+    doi: 10.2307/1184581
+    archive_url: https://archive.org/details/cherokeeremovalw0000evar
   - title: The Cherokee Nation and the Trail of Tears
     author: Theda Perdue and Michael D. Green
     year: '2007'
     type: book
+    doi: 10.1353/jowh.2010.0030
+    openlibrary: OL29578442M
+    archive_url: https://archive.org/details/the-cherokee-nation-and-the-trail-of-tears-2007-theda-perdue
   notable_quotes:
   - text: The instrument in question is not the act of our nation; we are not parties to its covenants; it has not received
       the sanction of our people.
@@ -350,18 +389,25 @@ perspectives:
     author: Claudio Saunt
     year: '2020'
     type: book
+    openlibrary: OL27931262M
   - title: An Indigenous Peoples' History of the United States
     author: Roxanne Dunbar-Ortiz
     year: '2014'
     type: book
-  - title: Settler Colonialism and the Elimination of the Native
+    doi: 10.36019/9780813550336-009
+    openlibrary: OL26246061M
+  - title: 'Arabic Translation: Settler Colonialism and the Elimination of the Native (2006)'
     author: Patrick Wolfe
     year: '2006'
     type: journal
+    doi: 10.1080/2201473x.2012.10648834
+    archive_url: https://archive.org/details/FugitiveDistro_Settler_Colonialism_And_The_Elimination_Of_The_Native_Anonymous
   - title: 'Cherokee Women: Gender and Culture Change, 1700-1835'
     author: Theda Perdue
     year: '1998'
     type: book
+    doi: 10.2307/2587442
+    archive_url: https://archive.org/details/cherokeewomengen0000perd
   notable_quotes:
   - text: Settler colonialism destroys to replace. It is not an event but a structure.
     speaker: Patrick Wolfe

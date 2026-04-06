@@ -75,19 +75,42 @@ significance: 'The Soviet government suppressed all information about the famine
 key_figures:
 - name: Joseph Stalin
   role: General Secretary of the Communist Party; signed directives enforcing grain quotas and blocking peasant flight
+  wikidata: Q855
+  born: 1878
+  died: 1953
+  wikipedia: https://en.wikipedia.org/wiki/Joseph_Stalin
 - name: Lazar Kaganovich
   role: Head of the Organizational Bureau; dispatched to Ukraine in late 1932 to enforce grain procurements
+  wikidata: Q215705
+  born: 1893
+  died: 1991
+  wikipedia: https://en.wikipedia.org/wiki/Lazar_Kaganovich
 - name: Gareth Jones
   role: Welsh journalist; walked through famine-stricken Ukraine in March 1933; published eyewitness accounts; murdered in
     Manchuria in 1935, age 29
+  wikidata: Q15990091
+  born: 1951
+  wikipedia: https://en.wikipedia.org/wiki/Gareth_Jones_(director)
 - name: Walter Duranty
   role: New York Times Moscow bureau chief; won 1932 Pulitzer; privately estimated 10 million dead while publicly denying
     the famine
+  wikidata: Q1286904
+  born: 1884
+  died: 1957
+  wikipedia: https://en.wikipedia.org/wiki/Walter_Duranty
 - name: Raphael Lemkin
   role: Coined 'genocide' in 1944; included the Holodomor in a 1953 speech as Soviet genocide against Ukraine
+  wikidata: Q505586
+  born: 1900
+  died: 1959
+  wikipedia: https://en.wikipedia.org/wiki/Raphael_Lemkin
 - name: Vlas Chubar
   role: Chairman of the Ukrainian Council of People's Commissars; appealed to Moscow to reduce quotas; executed in 1939 during
     Stalin's purges
+  wikidata: Q1398065
+  born: 1891
+  died: 1939
+  wikipedia: https://en.wikipedia.org/wiki/Vlas_Chubar
 legacy_points:
 - 3.5-7.5 million dead from a man-made famine in a country that had been Europe's breadbasket
 - Duranty won a Pulitzer for denying the famine; the Pulitzer Board has refused to revoke it since 2003
@@ -105,6 +128,8 @@ primary_source_excerpts:
   author: Walter Duranty
   work: The New York Times
   date: March 31, 1933
+  openlibrary: OL5290939M
+  doi: 10.1093/gao/9781884446054.article.t062193
 - text: In order to prevent the mass exodus of peasants... party and Soviet organs in Ukraine and the North Caucasus are directed
     to adopt immediate measures to stop the mass departure of peasants.
   author: Joseph Stalin and Vyacheslav Molotov
@@ -185,10 +210,14 @@ perspectives:
     author: Alexander Erlich
     year: '1960'
     type: book
+    doi: 10.4159/harvard.9780674189126
   - title: 'The Harvest of Sorrow: Soviet Collectivization and the Terror-Famine'
     author: Robert Conquest
     year: '1986'
     type: book
+    doi: 10.2307/25143203
+    openlibrary: OL26642856M
+    archive_url: https://archive.org/details/conquest-robert-the-harvest-of-sorrow-soviet-collectivization-and
   notable_quotes:
   - text: To slow down would mean to lag behind. And those who lag behind get beaten.
     speaker: Joseph Stalin
@@ -270,6 +299,7 @@ perspectives:
     author: U.S. Commission on the Ukraine Famine
     year: '1988'
     type: report
+    archive_url: https://archive.org/details/investigation-of-the-ukrainian-famine-1932-1933-report-to-congress
   - title: 'Voices of the Holodomor: Survivor Testimonies'
     author: Ukrainian Canadian Research and Documentation Centre
     year: '2008'
@@ -278,6 +308,7 @@ perspectives:
     author: Anne Applebaum
     year: '2017'
     type: book
+    archive_url: https://archive.org/details/redfaminestalins0000appl
   - title: Reconstruction of the Demographic Losses of the Ukrainian Population Due to the Holodomor of 1932-1933
     author: Omelian Rudnytskyi et al.
     year: '2015'
@@ -386,6 +417,9 @@ perspectives:
     author: Malcolm Muggeridge
     year: '1934'
     type: book
+    doi: 10.2307/2750764
+    openlibrary: OL9363861M
+    archive_url: https://archive.org/details/winter-in-moscow-malcolm-muggeridge
   notable_quotes:
   - text: I walked through villages and twelve collective farms. Everywhere was the cry, 'There is no bread. We are dying.'
     speaker: Gareth Jones
@@ -487,6 +521,8 @@ perspectives:
     author: Timothy Snyder
     year: '2010'
     type: book
+    doi: 10.5860/choice.48-6461
+    archive_url: https://archive.org/details/bloodlandseurope0000snyd_e5a3
   - title: 'The Years of Hunger: Soviet Agriculture, 1931-1933'
     author: R.W. Davies and Stephen Wheatcroft
     year: '2004'

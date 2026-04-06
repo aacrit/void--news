@@ -54,16 +54,35 @@ significance: 'Ashoka''s edicts are the oldest surviving written records of an I
 key_figures:
 - name: Ashoka Maurya
   role: Third Maurya emperor (r. 268-232 BCE), conquered Kalinga, converted to Buddhism, erected edicts across the subcontinent
+  wikidata: Q8589
+  born: 304
+  died: 232
+  wikipedia: https://en.wikipedia.org/wiki/Ashoka
 - name: Chandragupta Maurya
   role: Ashoka's grandfather, founded the Maurya Empire c. 322 BCE by overthrowing the Nanda dynasty
+  wikidata: Q188541
+  born: 340
+  died: 297
+  wikipedia: https://en.wikipedia.org/wiki/Chandragupta_Maurya
 - name: Kautilya (Chanakya)
   role: Chandragupta's chief minister, author of the Arthashastra, architect of Maurya statecraft
 - name: Bindusara
   role: Ashoka's father, second Maurya emperor, expanded the empire southward into the Deccan
+  wikidata: Q315526
+  born: 320
+  died: 273
+  wikipedia: https://en.wikipedia.org/wiki/Bindusara
 - name: Mahinda
   role: Ashoka's son (or brother, per some traditions), led the Buddhist mission to Sri Lanka c. 247 BCE
+  wikidata: Q57338
+  born: 1945
+  wikipedia: https://en.wikipedia.org/wiki/Mahinda_Rajapaksa
 - name: B.R. Ambedkar
   role: Architect of India's constitution, converted to Buddhism in 1956 citing Ashoka's egalitarian dharma
+  wikidata: Q231690
+  born: 1891
+  died: 1956
+  wikipedia: https://en.wikipedia.org/wiki/B._R._Ambedkar
 legacy_points:
 - Rock Edict XIII is the first known instance of a ruler publicly expressing remorse for military conquest
 - Ashoka's Sarnath lion capital is the national emblem of India; his dharmachakra is on the Indian flag
@@ -146,14 +165,19 @@ perspectives:
     author: Romila Thapar
     year: '1961'
     type: book
+    doi: 10.1093/acprof:oso/9780198077244.003.0031
   - title: The Discovery of India
     author: Jawaharlal Nehru
     year: '1946'
     type: book
+    doi: 10.2307/40194131
+    openlibrary: OL1946487M
+    archive_url: https://archive.org/details/discoveryofindia0000nehr
   - title: 'Ashoka: The Search for India''s Lost Emperor'
     author: Charles Allen
     year: '2012'
     type: book
+    archive_url: https://archive.org/details/ashokasearchfori0000alle
   notable_quotes:
   - text: His Sacred Majesty felt remorse for having conquered the Kalingas, because the conquest of a country previously
       unconquered involves the slaughter, death, and carrying away captive of the people.
@@ -231,6 +255,7 @@ perspectives:
     author: Kailash Chandra Dash
     year: '2009'
     type: book
+    archive_url: https://archive.org/details/dli.bengal.10689.897
   - title: Ashoka and the Decline of the Mauryas
     author: Romila Thapar
     year: '1961'
@@ -239,6 +264,7 @@ perspectives:
     author: Translated by N.A. Nikam and Richard McKeon
     year: '1959'
     type: book
+    doi: 10.2307/3035135
   notable_quotes:
   - text: A hundred and fifty thousand people were deported, a hundred thousand were killed, and many times that number perished.
     speaker: Ashoka
@@ -312,6 +338,7 @@ perspectives:
     author: Attributed to Mahanama Thera
     year: c. 5th century CE
     type: document
+    openlibrary: OL2010201M
   - title: Ashokavadana (Legend of King Ashoka)
     author: Anonymous, Sanskrit text
     year: c. 2nd century CE
@@ -320,6 +347,8 @@ perspectives:
     author: Hajime Nakamura
     year: '1980'
     type: book
+    doi: 10.2307/604003
+    archive_url: https://archive.org/details/indianbuddhismsu0000haji
   notable_quotes:
   - text: In the eighth year of his reign, Ashoka conquered Kalinga. A hundred and fifty thousand people were deported, a
       hundred thousand were killed. After that, Ashoka began to follow dhamma, to love dhamma, to teach dhamma.
@@ -402,10 +431,13 @@ perspectives:
     author: B.R. Ambedkar
     year: '1957'
     type: book
+    openlibrary: OL25055056M
+    archive_url: https://archive.org/details/mpr281_Bhd
   - title: 'Buddhism in India: Challenging Brahmanism and Caste'
     author: Gail Omvedt
     year: '2003'
     type: book
+    archive_url: https://archive.org/details/BuddhismInIndia
   - title: Ashoka and the Decline of the Mauryas
     author: Romila Thapar
     year: 1961 (revised 1997)

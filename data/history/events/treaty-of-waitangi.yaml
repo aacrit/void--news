@@ -63,16 +63,29 @@ significance: 'The Treaty of Waitangi is the founding document of New Zealand, i
 key_figures:
 - name: Hone Heke
   role: Ngapuhi chief; first signatory to later rebel — cut down the British flagpole at Kororareka four times (1844-1845)
+  wikidata: Q125005194
 - name: Captain William Hobson
   role: British officer who negotiated the treaty on behalf of the Crown; became New Zealand's first governor
 - name: Henry Williams
   role: Church Missionary Society missionary; translated the treaty into Te Reo Maori overnight on February 4-5, 1840 — later
     accused of deliberate mistranslation
+  wikidata: Q993376
+  born: 1805
+  died: 1887
+  wikipedia: https://en.wikipedia.org/wiki/Henry_Williams_(Massachusetts_politician)
 - name: Tamati Waka Nene
   role: Ngapuhi chief who argued in favor of signing and later fought alongside the British against Hone Heke
+  wikidata: Q737058
+  born: 1780
+  died: 1871
+  wikipedia: https://en.wikipedia.org/wiki/Tāmati_Wāka_Nene
 - name: Te Kooti Arikirangi Te Turuki
   role: Military leader and founder of the Ringatū faith; escaped from Chatham Islands exile in 1868, fought a guerrilla campaign
     until 1872
+  wikidata: Q737045
+  born: 1820
+  died: 1891
+  wikipedia: https://en.wikipedia.org/wiki/Te_Kooti
 - name: Wiremu Tamati Ngatata-i-te-Rangi
   role: Te Ati Awa chief in Wellington; negotiated with settlers and colonial government for decades over Port Nicholson land
     claims
@@ -166,10 +179,13 @@ perspectives:
     author: Claudia Orange
     year: '1987'
     type: book
+    doi: 10.7810/9781877242489_3
+    openlibrary: OL2236378M
   - title: 'Ka Whawhai Tonu Matou: Struggle Without End'
     author: Ranginui Walker
     year: '1990'
     type: book
+    archive_url: https://archive.org/details/kawhawhaitonumat0000walk
   - title: The New Zealand Wars / Nga Pakanga o Aotearoa
     author: New Zealand Ministry for Culture and Heritage
     year: ongoing
@@ -252,10 +268,14 @@ perspectives:
     author: Peter Adams
     year: '1977'
     type: book
+    doi: 10.7810/9781927277195
   - title: The New Zealand Wars and the Victorian Interpretation of Racial Conflict
     author: James Belich
     year: '1986'
     type: book
+    doi: 10.2307/2760517
+    openlibrary: OL6808293M
+    archive_url: https://archive.org/details/victorianinterpr0000beli
   notable_quotes:
   - text: All dealings with the Aborigines for their Lands must be conducted on the same principles of sincerity, justice,
       and good faith as must govern your transactions with them for any other purpose.
@@ -338,10 +358,13 @@ perspectives:
     author: James Belich
     year: '1996'
     type: book
+    archive_url: https://archive.org/details/makingpeopleshis0000beli
   - title: The Oxford History of New Zealand
     author: Geoffrey Rice (ed.)
     year: '1992'
     type: book
+    openlibrary: OL1470814M
+    archive_url: https://archive.org/details/oxfordillustrate0000unse_j4a0
   notable_quotes:
   - text: We came to better ourselves, not to fight.
     speaker: Anonymous settler, New Plymouth
@@ -429,6 +452,7 @@ perspectives:
     author: Matthew Palmer
     year: '2008'
     type: book
+    openlibrary: OL23234946M
   notable_quotes:
   - text: The Treaty signified a partnership between races, and it is the duty of the Crown to act reasonably and in good
       faith.

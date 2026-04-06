@@ -53,21 +53,44 @@ significance: 'The date 476 CE is a historiographic convention, not a lived expe
 key_figures:
 - name: Romulus Augustulus
   role: Last Western Roman Emperor, deposed at age 16, granted a pension and exiled to Campania
+  wikidata: Q130601
+  born: 462
+  wikipedia: https://en.wikipedia.org/wiki/Romulus_Augustulus
 - name: Odoacer
   role: Germanic chieftain of the Heruli/Scirii, deposed Romulus, ruled Italy 476-493 as patrician under Constantinople
+  wikidata: Q103333
+  born: 433
+  died: 493
+  wikipedia: https://en.wikipedia.org/wiki/Odoacer
 - name: Alaric I
   role: Visigothic king who sacked Rome on August 24, 410 — the first time the city had been taken in 800 years
+  wikidata: Q102371
+  born: 400
+  died: 410
+  wikipedia: https://en.wikipedia.org/wiki/Alaric_I
 - name: Augustine of Hippo
   role: Bishop and theologian, wrote City of God (413-426) in response to the sack of 410, arguing that Rome's fall was irrelevant
     to the eternal city of God
+  wikidata: Q8018
+  born: 354
+  died: 430
+  wikipedia: https://en.wikipedia.org/wiki/Augustine_of_Hippo
 - name: Emperor Zeno
   role: Eastern Roman Emperor (474-491), received the Western imperial regalia from Odoacer in 476
 - name: Galla Placidia
   role: Daughter of Theodosius I, captured during the 410 sack, married Visigoth king Athaulf, later governed the Western
     Empire as regent (425-437)
+  wikidata: Q237907
+  born: 386
+  died: 450
+  wikipedia: https://en.wikipedia.org/wiki/Galla_Placidia
 - name: Justinian I
   role: Eastern Roman Emperor (527-565), attempted to reconquer the West; his wars in Italy killed more people than the 'fall'
     itself
+  wikidata: Q41866
+  born: 482
+  died: 565
+  wikipedia: https://en.wikipedia.org/wiki/Justinian_I
 legacy_points:
 - Odoacer did not destroy the Western Empire — he sent its regalia to Constantinople and ruled as a Roman-style patrician
 - The Eastern Roman Empire continued for 977 years after 476, falling only in 1453
@@ -80,10 +103,12 @@ primary_source_excerpts:
   author: Marcellinus Comes
   work: Chronicle
   date: c. 520 CE
+  archive_url: https://archive.org/details/ChronicleCast13
 - text: Rome was not built to be eternal... What is the fate of the City compared to the City of God?
   author: Augustine of Hippo
   work: City of God (De Civitate Dei), Book I
   date: 413-426 CE
+  doi: 10.3828/liverpool/9780856687594.001.0001
 - text: The whole world perished in one city.
   author: Jerome of Stridon
   work: Letter 127, to Principia, on the sack of Rome by Alaric
@@ -156,6 +181,7 @@ perspectives:
     author: Bryan Ward-Perkins
     year: '2005'
     type: book
+    archive_url: https://archive.org/details/fallofromeendofc0000brya
   - title: 'The Fall of the Roman Empire: A New History of Rome and the Barbarians'
     author: Peter Heather
     year: '2005'
@@ -164,6 +190,8 @@ perspectives:
     author: Augustine of Hippo
     year: 413-426 CE
     type: document
+    openlibrary: OL46872447M
+    archive_url: https://archive.org/details/cityofgoddecivit0000augu
   notable_quotes:
   - text: The city which had taken the whole world was itself taken.
     speaker: Jerome of Stridon
@@ -255,10 +283,13 @@ perspectives:
     author: Chris Wickham
     year: '2009'
     type: book
+    archive_url: https://archive.org/details/inheritanceofrom0000wick
   - title: Rome's Gothic Wars
     author: Michael Kulikowski
     year: '2006'
     type: book
+    doi: 10.1017/cbo9781139167277
+    openlibrary: OL7766422M
   notable_quotes:
   - text: An uncivilized man in power, yet one who ruled admirably.
     speaker: Ennodius of Pavia
@@ -333,14 +364,20 @@ perspectives:
     author: Judith Herrin
     year: '2007'
     type: book
+    archive_url: https://archive.org/details/byzantiumsurpris0000herr_i8i3
   - title: The Byzantine Economy
     author: Angeliki E. Laiou and Cecile Morrisson
     year: '2007'
     type: book
+    doi: 10.1017/cbo9780511816727
+    openlibrary: OL7766584M
+    archive_url: https://archive.org/details/byzantineeconomy0000laio
   - title: 'Justinian''s Flea: The First Great Plague and the End of the Roman Empire'
     author: William Rosen
     year: '2007'
     type: book
+    openlibrary: OL26840736M
+    archive_url: https://archive.org/details/justiniansfleafi0000rose
   notable_quotes:
   - text: The Western Empire of the Roman people, which first began in the 709th year after the founding of the city with
       Octavian Augustus, perished with this Augustulus.
@@ -430,6 +467,9 @@ perspectives:
     author: Edward Gibbon
     year: 1776-1789
     type: book
+    doi: 10.1017/cbo9781139333597
+    openlibrary: OL17945484M
+    archive_url: https://archive.org/details/historydeclinefa03gibbiala
   - title: The Fall of Rome and the End of Civilization
     author: Bryan Ward-Perkins
     year: '2005'
@@ -442,6 +482,9 @@ perspectives:
     author: Guy Halsall
     year: '2007'
     type: book
+    doi: 10.1017/cbo9780511802393
+    openlibrary: OL10435611M
+    archive_url: https://archive.org/details/barbarianmigrati0000hals
   notable_quotes:
   - text: The decline of Rome was the natural and inevitable effect of immoderate greatness. Prosperity ripened the principle
       of decay.

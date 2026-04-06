@@ -68,17 +68,33 @@ significance: 'Israel''s establishment fulfilled the Zionist movement''s goal of
 key_figures:
 - name: David Ben-Gurion
   role: Chairman of the Jewish Agency, first Prime Minister of Israel, read the Declaration of Independence
+  wikidata: Q37610
+  born: 1886
+  died: 1973
+  wikipedia: https://en.wikipedia.org/wiki/David_Ben-Gurion
 - name: Hajj Amin al-Husseini
   role: Grand Mufti of Jerusalem, Chairman of the Arab Higher Committee, opposed partition
+  wikidata: Q164745
+  born: 1895
+  died: 1974
+  wikipedia: https://en.wikipedia.org/wiki/Amin_al-Husseini
 - name: Count Folke Bernadotte
   role: UN Mediator for Palestine, proposed refugee return and territorial adjustments; assassinated by Lehi on September
     17, 1948
 - name: Chaim Weizmann
   role: President of the World Zionist Organization, first President of Israel
+  wikidata: Q172183
+  born: 1874
+  died: 1952
+  wikipedia: https://en.wikipedia.org/wiki/Chaim_Weizmann
 - name: King Abdullah I of Jordan
   role: King of Transjordan, commanded the Arab Legion, annexed the West Bank in 1950
 - name: Ralph Bunche
   role: UN mediator who succeeded Bernadotte, negotiated the 1949 armistice agreements, Nobel Peace Prize 1950
+  wikidata: Q213500
+  born: 1904
+  died: 1971
+  wikipedia: https://en.wikipedia.org/wiki/Ralph_Bunche
 legacy_points:
 - Created the State of Israel — the first Jewish-majority sovereign state in nearly 2,000 years
 - Displaced 700,000-750,000 Palestinians — their descendants now number 5.9 million registered refugees
@@ -90,6 +106,7 @@ primary_source_excerpts:
   author: David Ben-Gurion
   work: Israeli Declaration of Independence
   date: May 14, 1948
+  doi: 10.4159/9780674020276
 - text: The case of the Arabs of Palestine was based on the principles of international justice; it was that of a people which
     desired to live in undisturbed possession of the country where Providence and history had placed them.
   author: Jamal Husseini
@@ -171,14 +188,18 @@ perspectives:
     author: Benny Morris
     year: '2008'
     type: book
-  - title: O Jerusalem!
+  - title: O Jerusalem [dt.]
     author: Larry Collins and Dominique Lapierre
     year: '1972'
     type: book
+    doi: 10.2307/1987131
+    openlibrary: OL4585166M
   - title: 'A History of Modern Palestine: One Land, Two Peoples'
     author: Ilan Pappe
     year: '2004'
     type: book
+    doi: 10.1017/cbo9780511992728
+    archive_url: https://archive.org/details/a-history-of-modern-palestine-one-land-two-peoples-ilan-pappe
   notable_quotes:
   - text: In Israel, in order to be a realist, you must believe in miracles.
     speaker: David Ben-Gurion
@@ -258,14 +279,19 @@ perspectives:
     author: Walid Khalidi
     year: '1992'
     type: book
-  - title: The Hundred Years' War on Palestine
+  - title: Historical Landmarks in the Hundred Years’ War on Palestine
     author: Rashid Khalidi
     year: '2020'
     type: book
+    doi: 10.1525/jps.2017.47.1.6
+    openlibrary: OL27946857M
   - title: The Ethnic Cleansing of Palestine
     author: Ilan Pappe
     year: '2006'
     type: book
+    doi: 10.1525/jps.2006.36.1.6
+    openlibrary: OL8971660M
+    archive_url: https://archive.org/details/ilan-pappe-the-ethnic-cleansing-of-palestine
   notable_quotes:
   - text: Jewish villages were built in the place of Arab villages. You do not even know the names of these Arab villages,
       and I do not blame you because geography books no longer exist.
@@ -340,10 +366,15 @@ perspectives:
     author: Tom Segev
     year: '2000'
     type: book
-  - title: The Question of Palestine
+    doi: 10.2307/20050073
+    archive_url: https://archive.org/details/onepalestinecomp0000sege
+  - title: Chomsky and the Question of Palestine
     author: Edward Said
     year: '1979'
     type: book
+    doi: 10.2307/2535556
+    openlibrary: OL1566664M
+    archive_url: https://archive.org/details/questionofpalest00said
   notable_quotes:
   - text: In Palestine we do not propose even to go through the form of consulting the wishes of the present inhabitants of
       the country.
@@ -420,14 +451,20 @@ perspectives:
     author: Benny Morris
     year: '2004'
     type: book
+    doi: 10.1017/cbo9780511816659
+    openlibrary: OL7713048M
+    archive_url: https://archive.org/details/birthofpalestini0000morr_e6e3
   - title: 'The Iron Wall: Israel and the Arab World'
     author: Avi Shlaim
     year: '2000'
     type: book
+    archive_url: https://archive.org/details/ironwallisraelar00unse
   - title: 'The Birth of Israel: Myths and Realities'
     author: Simha Flapan
     year: '1987'
     type: book
+    doi: 10.4324/9781003743958
+    archive_url: https://archive.org/details/flapan-simha-the-birth-of-israel-myths-and-realities-pantheon-1988
   notable_quotes:
   - text: The Palestinian refugee problem was born of war, not by design, Jewish or Arab. It was largely a by-product of Arab
       and Jewish fears and of the protracted, bitter fighting.

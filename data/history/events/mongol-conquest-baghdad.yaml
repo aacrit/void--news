@@ -77,17 +77,33 @@ significance: 'The fall of Baghdad in 1258 ended the Abbasid Caliphate — the l
 key_figures:
 - name: Hulagu Khan
   role: Grandson of Genghis Khan; commanded the Mongol invasion of the Middle East; founder of the Ilkhanate
+  wikidata: Q177320
+  born: 1217
+  died: 1265
+  wikipedia: https://en.wikipedia.org/wiki/Hulegu_Khan
 - name: Caliph al-Musta'sim bi-llah
   role: The 37th and last Abbasid caliph; refused to surrender; executed by being rolled in a carpet and trampled by horses
 - name: Nasir al-Din al-Tusi
   role: Persian polymath who joined Hulagu's retinue; built the Maragheh Observatory with looted books and instruments; his
     'Tusi couple' influenced Copernicus
+  wikidata: Q302835
+  born: 1201
+  died: 1273
+  wikipedia: https://en.wikipedia.org/wiki/Nasir_al-Din_al-Tusi
 - name: Ibn al-Alqami
   role: Shia vizier of the Abbasid court; Sunni sources accuse him of betraying the caliph to the Mongols; the accusation
     shapes Sunni-Shia polemics to this day
+  wikidata: Q124771291
+  born: 1197
+  died: 1258
+  wikipedia: https://en.wikipedia.org/wiki/Muhammad_ibn_al-Alqami
 - name: Genghis Khan
   role: Founder of the Mongol Empire (d. 1227); his grandson Hulagu executed the Baghdad campaign as part of Genghis Khan's
     strategic vision of westward expansion
+  wikidata: Q720
+  born: 1162
+  died: 1227
+  wikipedia: https://en.wikipedia.org/wiki/Genghis_Khan
 - name: Sultan Qutuz
   role: Mamluk sultan of Egypt who defeated the Mongols at Ain Jalut (1260), halting Mongol expansion into Africa and preserving
     Islamic political authority
@@ -110,11 +126,13 @@ primary_source_excerpts:
   author: Ata-Malik Juvayni (paraphrasing a local poet's account of earlier Mongol conquests)
   work: Tarikh-i Jahangushay (History of the World Conqueror)
   date: c. 1260
+  doi: 10.2307/1845462
 - text: With one stroke, a world which billowed with fertility was laid desolate, and the regions thereof became a desert,
     and the greater part of the living dead, and their skin and bones crumbling dust.
   author: Ata-Malik Juvayni
   work: Tarikh-i Jahangushay (History of the World Conqueror)
   date: c. 1260
+  doi: 10.2307/1845462
 - text: The people of Baghdad were divided into groups, and each Mongol horseman was allotted a certain number to kill. Some
     were allotted twenty, some thirty, some fifty.
   author: Rashid al-Din Hamadani
@@ -183,6 +201,7 @@ perspectives:
     author: Ata-Malik Juvayni
     year: c. 1260
     type: primary-source
+    doi: 10.2307/1845462
   - title: Jami al-Tawarikh (Compendium of Chronicles)
     author: Rashid al-Din Hamadani
     year: c. 1307
@@ -191,6 +210,9 @@ perspectives:
     author: Michael Prawdin
     year: '1940'
     type: book
+    doi: 10.2307/1841672
+    openlibrary: OL50992054M
+    archive_url: https://archive.org/details/in.ernet.dli.2015.283519
   notable_quotes:
   - text: In the Muslim ones there was fighting and bloodshed, and in the Mongol ones there was feasting and joy.
     speaker: Ata-Malik Juvayni
@@ -279,6 +301,7 @@ perspectives:
     author: Justin Marozzi
     year: '2014'
     type: book
+    archive_url: https://archive.org/details/baghdadcityofpea0000maro_n9u5
   notable_quotes:
   - text: For several years I put off reporting this event. I found it terrifying and felt revulsion at recording it.
     speaker: Ibn al-Athir
@@ -356,14 +379,21 @@ perspectives:
     author: Marco Polo (edited by Ronald Latham)
     year: c. 1300 (Penguin edition 1958)
     type: primary-source
+    doi: 10.2307/1790961
+    openlibrary: OL6247082M
+    archive_url: https://archive.org/details/travelsofmarcopo0000polo_a7i8
   - title: 'The Cambridge History of China, Volume 6: Alien Regimes and Border States, 907-1368'
     author: Herbert Franke and Denis Twitchett (editors)
     year: '1994'
     type: book
+    doi: 10.2307/2719408
   - title: Daily Life in the Mongol Empire
     author: George Lane
     year: '2006'
     type: book
+    doi: 10.5040/9798400637155
+    openlibrary: OL3410866M
+    archive_url: https://archive.org/details/dailylifeinmongo0000lane
   notable_quotes:
   - text: I did not tell half of what I saw.
     speaker: Marco Polo
@@ -445,10 +475,14 @@ perspectives:
     author: Jack Weatherford
     year: '2004'
     type: book
+    openlibrary: OL7585947M
+    archive_url: https://archive.org/details/chengjisihanyuji0000weat
   - title: 'The Mongols and the Islamic World: From Conquest to Conversion'
     author: Peter Jackson
     year: '2017'
     type: book
+    doi: 10.12987/yale/9780300125337.001.0001
+    archive_url: https://archive.org/details/mongolsislamicwo0000jack
   - title: 'The Mongol Empire: Its Rise and Legacy'
     author: Michael Prawdin
     year: '1940'
@@ -457,6 +491,7 @@ perspectives:
     author: Jack Weatherford
     year: '2010'
     type: book
+    archive_url: https://archive.org/details/secrethistoryofm0000weat
   notable_quotes:
   - text: The Mongols made no technological breakthroughs, founded no new religions, wrote few books or dramas... yet, as
       their empires grew, they blazed new links among civilizations.

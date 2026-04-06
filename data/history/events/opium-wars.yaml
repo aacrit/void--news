@@ -70,16 +70,36 @@ significance: 'The Opium Wars opened China to Western imperial penetration and i
 key_figures:
 - name: Lin Zexu
   role: Qing Imperial Commissioner, confiscated and destroyed 20,283 chests of British opium in Canton
+  wikidata: Q184999
+  born: 1785
+  died: 1850
+  wikipedia: https://en.wikipedia.org/wiki/Lin_Zexu
 - name: Lord Palmerston
   role: British Foreign Secretary, authorized the First Opium War expedition
+  wikidata: Q193656
+  born: 1784
+  died: 1865
+  wikipedia: https://en.wikipedia.org/wiki/Henry_John_Temple,_3rd_Viscount_Palmerston
 - name: Queen Victoria
   role: British monarch during both wars; Lin Zexu wrote her an undelivered letter appealing to morality
+  wikidata: Q9439
+  born: 1819
+  died: 1901
+  wikipedia: https://en.wikipedia.org/wiki/Queen_Victoria
 - name: Emperor Daoguang
   role: Qing Emperor who ordered the opium suppression campaign
 - name: Lord Elgin
   role: British High Commissioner who ordered the burning of the Yuanmingyuan (Old Summer Palace)
+  wikidata: Q335098
+  born: 1766
+  died: 1841
+  wikipedia: https://en.wikipedia.org/wiki/Thomas_Bruce,_7th_Earl_of_Elgin
 - name: Charles Elliot
   role: British Superintendent of Trade in Canton, negotiated initial terms
+  wikidata: Q184780
+  born: 1801
+  died: 1875
+  wikipedia: https://en.wikipedia.org/wiki/Charles_Elliot
 legacy_points:
 - Inaugurated the 'Century of Humiliation' (1839-1949) — the foundational narrative of modern Chinese nationalism
 - Treaty of Nanjing (1842) was the first 'Unequal Treaty,' creating the model for Western extraterritorial rights across Asia
@@ -160,10 +180,14 @@ perspectives:
     author: Julia Lovell
     year: '2011'
     type: book
+    archive_url: https://archive.org/details/opiumwardrugsdre0000love
   - title: The Great Chinese Revolution, 1800-1985
     author: John King Fairbank
     year: '1986'
     type: book
+    doi: 10.2307/20043058
+    openlibrary: OL2708129M
+    archive_url: https://archive.org/details/greatchineserevo0000fair
   - title: 'Imperial Twilight: The Opium War and the End of China''s Last Golden Age'
     author: Stephen R. Platt
     year: '2018'
@@ -253,6 +277,8 @@ perspectives:
     author: Jonathan D. Spence
     year: '1990'
     type: book
+    openlibrary: OL2190783M
+    archive_url: https://archive.org/details/searchformodernc0000spen_n2w7
   - title: Lin Zexu's Letter to Queen Victoria (1839)
     author: Lin Zexu
     year: '1839'
@@ -261,6 +287,7 @@ perspectives:
     author: Stephen R. Platt
     year: '2012'
     type: book
+    archive_url: https://archive.org/details/autumninheavenly00plat
   notable_quotes:
   - text: Suppose there were people from another country who carried opium for sale to England and seduced your people into
       buying and smoking it. Certainly your honorable ruler would deeply hate it and be bitterly aroused.
@@ -334,10 +361,14 @@ perspectives:
     author: Frank Dikotter
     year: '1992'
     type: book
+    doi: 10.2307/2761148
+    openlibrary: OL18789911M
+    archive_url: https://archive.org/details/the-discourse-of-race-in-modern-china-2015-frank-dikotter
   - title: 'China''s War with Japan, 1937-1945: The Struggle for Survival'
     author: Rana Mitter
     year: '2013'
     type: book
+    archive_url: https://archive.org/details/chinaswarwithjap0000unse
   notable_quotes:
   - text: The Chinese people have stood up.
     speaker: Mao Zedong
@@ -407,14 +438,19 @@ perspectives:
   - The treaty port system created 'semi-colonialism' — nominal sovereignty with foreign control
   - Silver drain from opium contributed to the fiscal crisis that fueled the Taiping Rebellion (20-30 million dead)
   sources:
-  - title: 'The Great Divergence: China, Europe, and the Making of the Modern World Economy'
+  - title: Introduction to the Great Divergence. China, Europe, and the Making of the Modern World Economy
     author: Kenneth Pomeranz
     year: '2000'
     type: book
+    doi: 10.1002/9780470774212.ch29
+    archive_url: https://archive.org/details/greatdivergence0000unse
   - title: Opium, Empire and the Global Political Economy
     author: Carl A. Trocki
     year: '1999'
     type: book
+    doi: 10.4324/9780203601532
+    openlibrary: OL7486173M
+    archive_url: https://archive.org/details/opiumempiregloba0000troc
   - title: 'The Scramble for China: Foreign Devils in the Qing Empire, 1832-1914'
     author: Robert Bickers
     year: '2011'

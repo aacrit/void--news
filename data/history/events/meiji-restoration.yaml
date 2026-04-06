@@ -62,16 +62,36 @@ key_figures:
 - name: Ito Hirobumi
   role: Four-time Prime Minister; principal author of the Meiji Constitution (1889); assassinated by a Korean independence
     activist in 1909
+  wikidata: Q174971
+  born: 1841
+  died: 1909
+  wikipedia: https://en.wikipedia.org/wiki/Itō_Hirobumi
 - name: Saigo Takamori
   role: Led the Satsuma forces in the Boshin War; later led the Satsuma Rebellion (1877) against the government he helped
     create; died September 24, 1877
+  wikidata: Q310462
+  born: 1828
+  died: 1877
+  wikipedia: https://en.wikipedia.org/wiki/Saigō_Takamori
 - name: Commodore Matthew Perry
   role: Commanded the U.S. naval expedition that forced Japan to open to trade, July 1853
+  wikidata: Q61855
+  born: 1794
+  died: 1858
+  wikipedia: https://en.wikipedia.org/wiki/Matthew_C._Perry
 - name: Fukuzawa Yukichi
   role: Educator, writer, founder of Keio University; author of An Encouragement of Learning (1872-1876), which sold 3.4 million
     copies
+  wikidata: Q355447
+  born: 1835
+  died: 1901
+  wikipedia: https://en.wikipedia.org/wiki/Fukuzawa_Yukichi
 - name: Okubo Toshimichi
   role: De facto leader of the Meiji government 1873-1878; assassinated May 14, 1878 by samurai who opposed his reforms
+  wikidata: Q356118
+  born: 1830
+  died: 1878
+  wikipedia: https://en.wikipedia.org/wiki/Ōkubo_Toshimichi
 legacy_points:
 - Japan industrialized in 30 years without being colonized — the only non-Western nation to do so in the 19th century
 - Tsushima (1905) was the first modern defeat of a European great power by a non-European nation
@@ -89,6 +109,8 @@ primary_source_excerpts:
   author: Fukuzawa Yukichi
   work: An Encouragement of Learning
   date: '1872'
+  openlibrary: OL27590039M
+  doi: 10.7312/fuku16714
 - text: The rights of sovereignty of the State, We have inherited from Our Ancestors, and We shall bequeath them to Our descendants.
   author: Emperor Meiji
   work: Preamble, Constitution of the Empire of Japan
@@ -98,6 +120,7 @@ primary_source_excerpts:
   author: Commodore Matthew Perry
   work: Narrative of the Expedition of an American Squadron to the China Seas and Japan
   date: '1856'
+  openlibrary: OL32854729M
 coordinates:
   lat: 35.0116
   lng: 135.7681
@@ -170,6 +193,9 @@ perspectives:
     author: Marius Jansen
     year: '2000'
     type: book
+    doi: 10.4159/9780674039100
+    openlibrary: OL7670839M
+    archive_url: https://archive.org/details/makingofmodernja00jans
   notable_quotes:
   - text: Knowledge shall be sought throughout the world so as to strengthen the foundations of imperial rule.
     speaker: Emperor Meiji
@@ -245,6 +271,7 @@ perspectives:
     author: Mark Ravina
     year: '2004'
     type: book
+    archive_url: https://archive.org/details/lastsamurailifeb0000ravi_n3i9
   - title: 'Samurai Revolution: The Dawn of Modern Japan Seen Through the Eyes of the Shogun''s Last Samurai'
     author: Romulus Hillsborough
     year: '2014'
@@ -253,6 +280,7 @@ perspectives:
     author: Conrad Totman
     year: '1993'
     type: book
+    doi: 10.2307/2385154
   notable_quotes:
   - text: I will never forget the time I spent with you. Farewell.
     speaker: Saigo Takamori
@@ -326,14 +354,18 @@ perspectives:
     author: Commodore Matthew Perry (compiled by Francis L. Hawks)
     year: '1856'
     type: archive
+    openlibrary: OL32854729M
   - title: 'Facing the Rising Sun: African Americans, Japan, and the Rise of Afro-Asian Solidarity'
     author: Gerald Horne
     year: '2018'
     type: book
+    doi: 10.18574/9781479899852
+    archive_url: https://archive.org/details/facing-the-rising-sun
   - title: 'Japan Rising: The Iwakura Embassy to the USA and Europe 1871-1873'
     author: Kume Kunitake (ed. Chushichi Tsuzuki and R. Jules Young)
     year: '2009'
     type: book
+    archive_url: https://archive.org/details/japanrisingiwaku0000kume
   notable_quotes:
   - text: If the Japanese seek by any action of theirs, to oppose the march of American commerce, they must be taught a lesson.
     speaker: Commodore Matthew Perry
@@ -412,14 +444,20 @@ perspectives:
     author: E.H. Norman
     year: '1940'
     type: book
+    doi: 10.2307/4127210
+    archive_url: https://archive.org/details/japansemergencea0000eher
   - title: Korea Between Empires, 1895-1919
     author: Andre Schmid
     year: '2002'
     type: book
+    archive_url: https://archive.org/details/koreabetweenempi0000schm
   - title: 'Flowers in Salt: The Beginnings of Feminist Consciousness in Modern Japan'
     author: Sharon Sievers
     year: '1983'
     type: book
+    doi: 10.2307/2385029
+    openlibrary: OL26818624M
+    archive_url: https://archive.org/details/flowersinsaltbeg0000siev
   - title: The Making of Modern Japan
     author: Marius Jansen
     year: '2000'

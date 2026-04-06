@@ -85,6 +85,10 @@ significance: 'The Crusades created four Latin states in the Levant that lasted 
 key_figures:
 - name: Pope Urban II
   role: Called the First Crusade at the Council of Clermont, November 27, 1095
+  wikidata: Q30578
+  born: 1035
+  died: 1099
+  wikipedia: https://en.wikipedia.org/wiki/Pope_Urban_II
 - name: Saladin (Salah ad-Din Yusuf ibn Ayyub)
   role: Kurdish sultan of Egypt and Syria, recaptured Jerusalem on October 2, 1187, after destroying the crusader army at
     Hattin
@@ -94,12 +98,24 @@ key_figures:
 - name: Anna Comnena
   role: Byzantine princess, author of the Alexiad (c. 1148), the primary Byzantine account of the First Crusade — one of the
     medieval world's few female historians
+  wikidata: Q179284
+  born: 1083
+  died: 1153
+  wikipedia: https://en.wikipedia.org/wiki/Anna_Komnene
 - name: Usama ibn Munqidh
   role: Muslim nobleman and warrior of Shaizar, author of the Book of Contemplation — a firsthand memoir of Frankish-Muslim
     coexistence and conflict
+  wikidata: Q451427
+  born: 1095
+  died: 1188
+  wikipedia: https://en.wikipedia.org/wiki/Usama_ibn_Munqidh
 - name: Enrico Dandolo
   role: Doge of Venice, age 90+ and blind, diverted the Fourth Crusade to sack Constantinople in 1204 to advance Venetian
     commercial interests
+  wikidata: Q205688
+  born: 1107
+  died: 1205
+  wikipedia: https://en.wikipedia.org/wiki/Enrico_Dandolo
 legacy_points:
 - 196 years of intermittent warfare across the eastern Mediterranean, driven by religious mobilization, commercial interest,
   and dynastic ambition
@@ -126,6 +142,7 @@ primary_source_excerpts:
   author: Nicetas Choniates
   work: 'O City of Byzantium: Annals of Niketas Choniates'
   date: c. 1206
+  archive_url: https://archive.org/details/ocityofbyzantium0000chon
 - text: Among the Franks — God damn them — there are none more wretched than the knights. They are the great ones and the
     fighters, but everyone else is merely a servant to them.
   author: Usama ibn Munqidh
@@ -202,10 +219,13 @@ perspectives:
     author: Steven Runciman
     year: 1951-1954
     type: book
+    openlibrary: OL7738127M
   - title: 'God''s War: A New History of the Crusades'
     author: Christopher Tyerman
     year: '2006'
     type: book
+    doi: 10.1177/096834450100800206
+    archive_url: https://archive.org/details/godswarnewhistor0000tyer_o2a6
   notable_quotes:
   - text: Whoever for devotion alone, not to gain honour or money, goes to Jerusalem to liberate the Church of God can substitute
       this journey for all penance.
@@ -287,10 +307,13 @@ perspectives:
     author: Baha al-Din ibn Shaddad
     year: c. 1228
     type: book
+    openlibrary: OL22585762M
   - title: The Crusades Through Arab Eyes
     author: Amin Maalouf
     year: '1984'
     type: book
+    doi: 10.2307/3012018
+    archive_url: https://archive.org/details/crusadesthrougha00maal_0
   notable_quotes:
   - text: The population of the holy city was put to the sword, and the Franks spent a week massacring Muslims. In the Masjid
       al-Aqsa the Franks slaughtered more than 70,000 people.
@@ -375,14 +398,19 @@ perspectives:
     author: Anna Comnena
     year: c. 1148
     type: book
+    openlibrary: OL3383803M
+    archive_url: https://archive.org/details/sewter-alexiad-2009-ed
   - title: 'O City of Byzantium: Annals of Niketas Choniates'
     author: Nicetas Choniates
     year: c. 1206
     type: book
+    archive_url: https://archive.org/details/ocityofbyzantium0000chon
   - title: Byzantium and the Crusades
     author: Jonathan Harris
     year: '2003'
     type: book
+    doi: 10.5040/9781474210508
+    openlibrary: OL29188640M
   notable_quotes:
   - text: Even the Saracens are merciful and kind compared with these men who bear the Cross of Christ on their shoulders.
     speaker: Nicetas Choniates
@@ -466,6 +494,9 @@ perspectives:
     author: Jonathan Riley-Smith
     year: '1997'
     type: book
+    doi: 10.2307/2650290
+    openlibrary: OL26333720M
+    archive_url: https://archive.org/details/firstcrusaders1000jona
   - title: The Crusades Through Arab Eyes
     author: Amin Maalouf
     year: '1984'

@@ -70,20 +70,48 @@ significance: 'Of Africa''s 54 nations, 44 have borders drawn at the Berlin Conf
 key_figures:
 - name: Otto von Bismarck
   role: German Chancellor, hosted the Berlin Conference of 1884-1885
+  wikidata: Q8442
+  born: 1815
+  died: 1898
+  wikipedia: https://en.wikipedia.org/wiki/Otto_von_Bismarck
 - name: Leopold II
   role: King of Belgium, personal ruler of the Congo Free State (1885-1908)
+  wikidata: Q12967
+  born: 1835
+  died: 1909
+  wikipedia: https://en.wikipedia.org/wiki/Leopold_II_of_Belgium
 - name: Cecil Rhodes
   role: British imperialist, Prime Minister of the Cape Colony, founder of Rhodesia
+  wikidata: Q19825
+  born: 1853
+  died: 1902
+  wikipedia: https://en.wikipedia.org/wiki/Cecil_Rhodes
 - name: Menelik II
   role: Emperor of Ethiopia, defeated Italy at the Battle of Adwa (1896), preserved Ethiopian independence
+  wikidata: Q244748
+  born: 1844
+  died: 1913
+  wikipedia: https://en.wikipedia.org/wiki/Menelik_II
 - name: Samori Ture
   role: Mandinka Empire ruler, resisted French conquest in West Africa for 16 years
+  wikidata: Q469314
+  born: 1830
+  died: 1900
+  wikipedia: https://en.wikipedia.org/wiki/Samori_Ture
 - name: E.D. Morel
   role: British journalist, led the international campaign exposing atrocities in Leopold's Congo
 - name: Yaa Asantewaa
   role: Queen Mother of Ejisu, led the Ashanti war against the British in 1900; exiled to the Seychelles
+  wikidata: Q467803
+  born: 1832
+  died: 1921
+  wikipedia: https://en.wikipedia.org/wiki/Yaa_Asantewaa
 - name: Lothar von Trotha
   role: German general who issued the extermination order against the Herero and Nama peoples
+  wikidata: Q65898
+  born: 1848
+  died: 1920
+  wikipedia: https://en.wikipedia.org/wiki/Lothar_von_Trotha
 legacy_points:
 - In 30 years, European control of Africa went from 10% to over 90% of the continent
 - Berlin Conference borders divided 177+ ethnic groups and combined unrelated groups — the map persists in 44 of 54 African
@@ -176,14 +204,22 @@ perspectives:
     author: Frederick Lugard
     year: '1922'
     type: book
+    doi: 10.4324/9780203042205
+    openlibrary: OL6642444M
+    archive_url: https://archive.org/details/dualmandateinbri0000luga
   - title: The Scramble for Africa
     author: Thomas Pakenham
     year: '1991'
     type: book
+    openlibrary: OL1567232M
+    archive_url: https://archive.org/details/scrambleforafric0000pake_x3j5
   - title: King Leopold's Ghost
     author: Adam Hochschild
     year: '1998'
     type: book
+    doi: 10.1093/acref/9780195301731.013.42013
+    openlibrary: OL3320007M
+    archive_url: https://archive.org/details/isbn_9781447235514
   notable_quotes:
   - text: Take up the White Man's burden — Send forth the best ye breed.
     speaker: Rudyard Kipling
@@ -263,6 +299,9 @@ perspectives:
     author: Roland Oliver and Anthony Atmore
     year: '2005'
     type: book
+    doi: 10.1017/cbo9780511800283
+    openlibrary: OL7746590M
+    archive_url: https://archive.org/details/southernafricasi0000deno
   - title: The Scramble for Africa
     author: Thomas Pakenham
     year: '1991'
@@ -271,10 +310,14 @@ perspectives:
     author: Jomo Kenyatta
     year: '1938'
     type: book
+    openlibrary: OL7461912M
+    archive_url: https://archive.org/details/facingmountkenya0000jomo_q6x5
   - title: Yaa Asantewaa and the Asante-British War of 1900-1
     author: A. Adu Boahen
     year: '2003'
     type: book
+    doi: 10.3368/gs.3.1.111
+    openlibrary: OL3739414M
   notable_quotes:
   - text: When the missionaries came to Africa, they had the Bible and we had the land. They said 'Let us pray.' We closed
       our eyes. When we opened them, we had the Bible and they had the land.
@@ -358,22 +401,29 @@ perspectives:
   - Neo-colonialism continues the extractive relationship through currency arrangements, debt, and resource extraction
   - Africa's 3% share of global GDP is a structural consequence of the Scramble, not a natural condition
   sources:
-  - title: How Europe Underdeveloped Africa
+  - title: How Europe Underdeveloped Africa How Europe Underdeveloped Africa
     author: Walter Rodney
     year: '1972'
     type: book
-  - title: The Wretched of the Earth
+    doi: 10.5040/9798216428046.ch-010
+    archive_url: https://archive.org/details/howeuropeunderde00rodn
+  - title: Concerning Violence (The Wretched of the Earth)
     author: Frantz Fanon
     year: '1961'
     type: book
+    doi: 10.2307/j.ctv120qr2d.9
+    archive_url: https://archive.org/details/bwb_T5-AFH-004
   - title: 'Neo-Colonialism: The Last Stage of Imperialism'
     author: Kwame Nkrumah
     year: '1965'
     type: book
+    doi: 10.2307/40199801
+    archive_url: https://archive.org/details/NeoColonialismTheLastStageOfImperialism1966
   - title: 'African Women: A Modern History'
     author: Catherine Coquery-Vidrovitch
     year: '1997'
     type: book
+    archive_url: https://archive.org/details/africanwomenmode0000coqu
   notable_quotes:
   - text: The African economy was integrated into the very structure of the developed capitalist economies; and it is in this
       way that Africa has contributed to the development of the Western world.
@@ -453,14 +503,18 @@ perspectives:
     author: Daron Acemoglu and James A. Robinson
     year: '2012'
     type: book
+    doi: 10.1355/ae29-2j
   - title: King Leopold's Ghost
     author: Adam Hochschild
     year: '1998'
     type: book
-  - title: 'Poor Numbers: How We Are Misled by African Development Statistics'
+  - title: Poor Numbers – How We Are Misled by African Development Statistics and What to Do About It (Uzuazo Etemire)
     author: Morten Jerven
     year: '2013'
     type: book
+    doi: 10.5771/0506-7286-2013-3-336
+    openlibrary: OL26812887M
+    archive_url: https://archive.org/details/poornumbershowwe0000jerv
   notable_quotes:
   - text: He kept the left hands of all the corpses he had in his collection. These hands were smoked to keep them from putrefying.
     speaker: E.D. Morel
