@@ -157,7 +157,7 @@ related_event_slugs:
 perspectives:
 - viewpoint: American
   viewpoint_type: victor
-  region_origin: north-america
+  region_origin: americas
   narrative: 'The missiles appeared in the photographs on Tuesday morning. McGeorge Bundy briefed
     Kennedy before breakfast. By noon, the fourteen men who would become ExComm were seated in the
     Cabinet Room. Dean Acheson, brought in as an elder statesman, argued immediately for airstrikes.
@@ -401,7 +401,7 @@ perspectives:
 
 - viewpoint: Nuclear Deterrence Theory
   viewpoint_type: academic
-  region_origin: north-america
+  region_origin: americas
   narrative: 'The crisis became the foundational case in nuclear deterrence theory, and every lesson
     drawn from it has been contested. Thomas Schelling''s Arms and Influence (1966) used it to
     illustrate the "threat that leaves something to chance": neither Kennedy nor Khrushchev
@@ -479,7 +479,7 @@ perspectives:
 
 - viewpoint: Declassified Revisionist
   viewpoint_type: revisionist
-  region_origin: north-america
+  region_origin: americas
   narrative: 'For thirty years, the Cuban Missile Crisis was understood through a narrative shaped
     by the Kennedy administration: Soviet aggression met by American resolve, a young president
     staring down a reckless adversary, the world saved by steady nerves. This narrative began

@@ -503,7 +503,7 @@ media:
   creation_date: '1992'
 connections:
 - target_slug: scramble-for-africa
-  connection_type: caused
+  connection_type: consequence
   description: European colonization of southern Africa created the racial hierarchies that apartheid codified into law — the 1913 Natives Land Act predated the National Party by 35 years
 - target_slug: civil-rights-movement
   connection_type: parallel
