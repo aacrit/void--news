@@ -89,6 +89,18 @@ export default function Lightbox({
     };
   }, [handleKeyDown]);
 
+  /* Preload adjacent images for snappy navigation (H12) */
+  useEffect(() => {
+    if (currentIndex > 0 && media[currentIndex - 1]?.url) {
+      const img = new Image();
+      img.src = media[currentIndex - 1].url;
+    }
+    if (currentIndex < media.length - 1 && media[currentIndex + 1]?.url) {
+      const img = new Image();
+      img.src = media[currentIndex + 1].url;
+    }
+  }, [currentIndex, media]);
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === backdropRef.current) {
       onClose();

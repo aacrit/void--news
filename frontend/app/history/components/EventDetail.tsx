@@ -150,7 +150,9 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--context">
         <div className="hist-context__body hist-reveal">
-          {event.contextNarrative}
+          {event.contextNarrative.split("\n").filter(Boolean).map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
         </div>
       </section>
 

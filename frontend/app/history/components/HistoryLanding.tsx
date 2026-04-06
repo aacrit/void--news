@@ -89,17 +89,22 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
     return urls;
   }, [event.heroImage, event.media]);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  /* Use ref for fallback index to avoid re-render on each error (H11) */
+  const indexRef = useRef(0);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [allFailed, setAllFailed] = useState(fallbackUrls.length === 0);
 
   const handleError = useCallback(() => {
-    const nextIdx = currentIndex + 1;
+    const nextIdx = indexRef.current + 1;
     if (nextIdx < fallbackUrls.length) {
-      setCurrentIndex(nextIdx);
+      indexRef.current = nextIdx;
+      if (imgRef.current) {
+        imgRef.current.src = fallbackUrls[nextIdx];
+      }
     } else {
       setAllFailed(true);
     }
-  }, [currentIndex, fallbackUrls.length]);
+  }, [fallbackUrls]);
 
   if (allFailed) {
     return <div className="hist-tl-card__photo-fallback" aria-hidden="true" />;
@@ -107,7 +112,8 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
 
   return (
     <img
-      src={fallbackUrls[currentIndex]}
+      ref={imgRef}
+      src={fallbackUrls[0]}
       alt={event.heroCaption || event.title}
       loading={eager ? "eager" : "lazy"}
       className="hist-tl-card__photo-img"
@@ -169,53 +175,58 @@ export default function HistoryLanding({
   /* ── Track ref for progress bar ── */
   const trackRef = useRef<HTMLDivElement>(null);
 
-  /* ── Scroll listener: update --tl-focus on every card + progress bar ── */
+  /* ── IntersectionObserver: track most-centered card for minimap ── */
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    let rafId: number;
-    const updateFocus = () => {
-      const containerRect = container.getBoundingClientRect();
-      const centerX = containerRect.left + containerRect.width / 2;
-      let closestIndex = 0;
-      let closestDist = Infinity;
-
-      cardRefs.current.forEach((cardEl, i) => {
-        if (!cardEl) return;
-        const cardRect = cardEl.getBoundingClientRect();
-        const cardCenterX = cardRect.left + cardRect.width / 2;
-        const dist = Math.abs(cardCenterX - centerX);
-        const maxDist = containerRect.width * 0.8;
-        const t = Math.min(dist / maxDist, 1);
-        cardEl.style.setProperty("--tl-focus", (1 - t).toFixed(3));
-
-        if (dist < closestDist) {
-          closestDist = dist;
-          closestIndex = i;
-        }
-      });
-
-      setFocusedIndex(closestIndex);
-
-      /* Update progress bar via CSS custom property */
-      if (trackRef.current && totalCards > 1) {
-        const pct = (closestIndex / (totalCards - 1)) * 100;
-        trackRef.current.style.setProperty("--tl-progress", `${pct.toFixed(1)}%`);
-      }
-    };
-
+    /* Track scroll for brief hide + progress bar */
     const onScroll = () => {
       if (!hasScrolled) setHasScrolled(true);
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(updateFocus);
     };
-
     container.addEventListener("scroll", onScroll, { passive: true });
-    updateFocus(); // initial calculation
+
+    /* IO to find the most-centered visible card */
+    const visibleCards = new Map<Element, number>(); // element -> ratio
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            visibleCards.set(entry.target, entry.intersectionRatio);
+          } else {
+            visibleCards.delete(entry.target);
+          }
+        }
+        /* Find the card with highest intersection ratio */
+        let bestRatio = 0;
+        let bestEl: Element | null = null;
+        visibleCards.forEach((ratio, el) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestEl = el;
+          }
+        });
+        if (bestEl) {
+          const idx = cardRefs.current.indexOf(bestEl as HTMLDivElement);
+          if (idx !== -1) {
+            setFocusedIndex(idx);
+            if (trackRef.current && totalCards > 1) {
+              const pct = (idx / (totalCards - 1)) * 100;
+              trackRef.current.style.setProperty("--tl-progress", `${pct.toFixed(1)}%`);
+            }
+          }
+        }
+      },
+      { root: container, threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    cardRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
     return () => {
       container.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(rafId);
+      observer.disconnect();
     };
   }, [allItems.events, allItems.redacted, hasScrolled, totalCards]);
 
@@ -516,9 +527,21 @@ const TimelineCard = forwardRef<
     CTAS[event.slug] ||
     `Explore ${event.perspectives.length} accounts of ${event.title}`;
 
+  const year = extractYear(event.dateSort, event.datePrimary);
+
   const handleClick = useCallback(() => {
     onOpen(event, index);
   }, [event, index, onOpen]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onOpen(event, index);
+      }
+    },
+    [event, index, onOpen]
+  );
 
   const severityClass = SEVERITY_CLASS[event.severity] || "";
 
@@ -526,21 +549,32 @@ const TimelineCard = forwardRef<
     <article
       ref={ref}
       className={`hist-tl-card ${severityClass}`}
-      style={{ "--tl-focus": "0.5" } as React.CSSProperties}
       data-slug={event.slug}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
     >
-      {/* Photo -- always visible, Ken Burns when focused */}
+      {/* Photo with year badge */}
       <div className="hist-tl-card__photo">
         <PosterImage event={event} eager={index === 0} />
+        <span className="hist-tl-card__year-badge" aria-hidden="true">
+          {year}
+        </span>
       </div>
 
-      {/* Body content */}
+      {/* Title — 1 line mini, wraps on expand */}
       <div className="hist-tl-card__body">
-        {/* Always visible: date + title */}
-        <span className="hist-tl-card__date">{event.datePrimary}</span>
         <h3 className="hist-tl-card__title">{event.title}</h3>
+      </div>
 
-        {/* Revealed when focused */}
+      {/* Track entry notch */}
+      <div className="hist-tl-card__notch" aria-hidden="true" />
+
+      {/* Severity accent */}
+      <div className="hist-tl-card__severity" aria-hidden="true" />
+
+      {/* Expanded content — hidden until hover/focus */}
+      <div className="hist-tl-card__expand">
+        <span className="hist-tl-card__date">{event.datePrimary}</span>
         <blockquote className="hist-tl-card__hook">{hook}</blockquote>
 
         <div
@@ -571,9 +605,6 @@ const TimelineCard = forwardRef<
           </span>
         </button>
       </div>
-
-      {/* Severity accent */}
-      <div className="hist-tl-card__severity" aria-hidden="true" />
     </article>
   );
 });
@@ -597,7 +628,6 @@ const ClassifiedCard = forwardRef<
       className={`hist-tl-card hist-tl-card--classified ${
         revealed ? "hist-tl-card--classified-revealed" : ""
       }`}
-      style={{ "--tl-focus": "0.5" } as React.CSSProperties}
       role="button"
       tabIndex={0}
       onClick={() => setRevealed((p) => !p)}
@@ -611,8 +641,16 @@ const ClassifiedCard = forwardRef<
       aria-pressed={revealed}
       data-index={index}
     >
+      {/* Photo placeholder with date hint badge */}
+      <div className="hist-tl-card__photo">
+        <div className="hist-tl-card__photo-fallback" aria-hidden="true" />
+        <span className="hist-tl-card__year-badge" aria-hidden="true">
+          {event.dateHint}
+        </span>
+      </div>
+
       <div className="hist-tl-card__body">
-        {/* Redacted title */}
+        {/* Redacted title — 1 line with ellipsis */}
         <h3 className="hist-tl-card__title">
           {event.title.split(" ")[0]}{" "}
           <span className="hist-tl-card--classified__redacted">
@@ -623,27 +661,17 @@ const ClassifiedCard = forwardRef<
               .join(" ")}
           </span>
         </h3>
-
-        {/* Contradictory quotes */}
-        {event.quoteA && (
-          <p className="hist-tl-card--classified__quote">{event.quoteA}</p>
-        )}
-        {event.quoteB && (
-          <p className="hist-tl-card--classified__quote hist-tl-card--classified__quote-b">
-            {event.quoteB}
-          </p>
-        )}
-
-        {/* Date hint + badge */}
-        <div className="hist-tl-card--classified__meta">
-          <span className="hist-tl-card--classified__date">
-            {event.dateHint}
-          </span>
-          <span className="hist-tl-card--classified__badge">COMING</span>
-        </div>
       </div>
 
-      {/* Reveal overlay */}
+      {/* Track entry notch */}
+      <div className="hist-tl-card__notch" aria-hidden="true" />
+
+      {/* Date hint + badge in mini state */}
+      <div className="hist-tl-card--classified__meta">
+        <span className="hist-tl-card--classified__badge">COMING</span>
+      </div>
+
+      {/* Reveal overlay — click to flip */}
       <div
         className="hist-tl-card--classified__reveal"
         aria-hidden={!revealed}
