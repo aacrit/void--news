@@ -328,6 +328,21 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+/* Wide screens: 2-column digest to fill canvas, reduce scroll */
+@media (min-width: 1200px) {
+  .df-digest {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-5);
+  }
+
+  /* Vertical divider between columns via border */
+  .df-digest .dg-row:nth-child(odd) {
+    border-right: 1px solid var(--divider);
+    padding-right: var(--space-3);
+  }
+}
+
 .dg-row {
   position: relative;
   display: flex;

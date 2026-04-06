@@ -23,6 +23,12 @@
   width: 100%;
 }
 
+@media (min-width: 1440px) {
+  .page-main {
+    max-width: min(92vw, 1600px);
+  }
+}
+
 @media (min-width: 768px) {
   .page-main {
     padding: 0 var(--space-7);
@@ -339,7 +345,7 @@
   margin-top: var(--space-6);
   /* Match page-main padding so footer border aligns with content canvas */
   padding: var(--space-5) var(--space-5);
-  max-width: 1400px;
+  max-width: min(92vw, 1600px);
   margin-left: auto;
   margin-right: auto;
   width: 100%;

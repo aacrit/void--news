@@ -990,11 +990,42 @@ export default function HistoryLanding({
             />
           ))}
 
-          {/* Cards + stems + dots */}
+          {/* Era markers — ink-styled labels on the track at era boundaries */}
+          {eraGroups.map((era) => {
+            const eraPct = positions[era.firstIndex] * 100;
+            const eraCtxLocal = ERA_CONTEXT[era.id];
+            return (
+              <button
+                key={`era-${era.id}`}
+                className="hist-tl-full__era-marker"
+                style={{ left: `${eraPct}%` }}
+                onClick={() => {
+                  const station = stationRefs.current[era.firstIndex];
+                  if (station) {
+                    station.scrollIntoView({
+                      block: isMobileVertical ? "center" : "nearest",
+                      inline: isMobileVertical ? "nearest" : "center",
+                      behavior: "smooth",
+                    });
+                  }
+                }}
+                type="button"
+                aria-label={`Jump to ${era.label}`}
+              >
+                <span className="hist-tl-full__era-marker-line" aria-hidden="true" />
+                <span className="hist-tl-full__era-marker-label">{eraCtxLocal?.label || era.label}</span>
+                <span className="hist-tl-full__era-marker-years">{eraCtxLocal?.years || ""}</span>
+              </button>
+            );
+          })}
+
+          {/* Cards + stems + dots + year labels (unified) */}
           {sortedEvents.map((event, i) => {
             const side = sides[i];
             const pct = positions[i] * 100;
             const isFocused = i === focusedIndex;
+            const year = extractYear(event.dateSort, event.datePrimary);
+            const showYear = i % 3 === 0 || i === 0 || i === sortedEvents.length - 1;
 
             return (
               <div
@@ -1003,6 +1034,13 @@ export default function HistoryLanding({
                 className="hist-tl-full__station"
                 style={{ left: `${pct}%` }}
               >
+                {/* Year label on the track — replaces minimap year labels */}
+                {showYear && (
+                  <span className={`hist-tl-full__year-label hist-tl-full__year-label--${side}`}>
+                    {year}
+                  </span>
+                )}
+
                 {/* Dot on track */}
                 <div
                   className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}${isFocused ? " hist-tl-full__dot--focused" : ""}`}
@@ -1039,62 +1077,6 @@ export default function HistoryLanding({
           })}
         </div>
       </div>
-
-      {/* Era fast-travel buttons */}
-      <div className="hist-tl-eras" role="navigation" aria-label="Era navigation">
-        {eraGroups.map((era) => (
-          <button
-            key={era.id}
-            className="hist-tl-era"
-            onClick={() => {
-              /* scrollIntoView works for both horizontal and vertical layouts */
-              const station = stationRefs.current[era.firstIndex];
-              if (station) {
-                station.scrollIntoView({
-                  block: isMobileVertical ? "center" : "nearest",
-                  inline: isMobileVertical ? "nearest" : "center",
-                  behavior: "smooth",
-                });
-              }
-            }}
-            type="button"
-          >
-            {era.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Bottom minimap track */}
-      <nav className="hist-tl-minimap" aria-label="Timeline minimap">
-        <div className="hist-tl-minimap__line" aria-hidden="true" />
-        {sortedEvents.map((event, i) => {
-          const isFocused = i === focusedIndex;
-          const year = extractYear(event.dateSort, event.datePrimary);
-          const showYear = i % 4 === 0;
-          return (
-            <button
-              key={event.slug}
-              className={`hist-tl-minimap__dot${showYear ? " hist-tl-minimap__dot--labeled" : ""}${isFocused ? " hist-tl-minimap__dot--active" : ""}`}
-              style={{ left: `${5 + positions[i] * 90}%` }}
-              onClick={() => {
-                const container = timelineRef.current;
-                if (!container) return;
-                const totalW = container.scrollWidth;
-                container.scrollTo({
-                  left: positions[i] * totalW - container.clientWidth / 3,
-                  behavior: "smooth",
-                });
-              }}
-              aria-label={`${event.title} (${event.datePrimary})`}
-              type="button"
-            >
-              {showYear && (
-                <span className="hist-tl-minimap__year">{year}</span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
     </div>
   );
 }
