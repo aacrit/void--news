@@ -409,7 +409,7 @@ perspectives:
   - Post-independence state formation and its failures — the academic focus on the revolution itself can obscure what came after
   - The emotional and psychological experience of enslavement and liberation
 media:
-- media_type: painting
+- media_type: artwork
   title: Portrait of Toussaint Louverture
   description: 19th-century engraving depicting Toussaint Louverture in military uniform. No authenticated portrait from his lifetime survives — all images are posthumous, shaped by the artist's political
     sympathies.
@@ -419,7 +419,7 @@ media:
   creator: Unknown
   creation_date: 19th century
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/haitian-revolution/wiki_0.jpg
-- media_type: painting
+- media_type: artwork
   title: Battle of Vertieres, November 18, 1803
   description: Depiction of the Battle of Vertieres outside Le Cap, the final major engagement of the Haitian Revolution. Dessalines's army defeated the French garrison under Rochambeau, leading to the
     French evacuation and Haitian independence.
@@ -464,7 +464,7 @@ media:
   creator: Clarisa Lizana
 connections:
 - target_slug: french-revolution
-  connection_type: caused_by
+  connection_type: consequence
   description: The French Revolution's Declaration of the Rights of Man provided the universalist language that enslaved people in Saint-Domingue applied to their own condition; the political chaos in Paris
     destabilized colonial authority
 - target_slug: transatlantic-slave-trade

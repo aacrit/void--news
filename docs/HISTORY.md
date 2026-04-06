@@ -1,6 +1,6 @@
 # void --history — The Archive
 
-Last updated: 2026-04-05 (rev 1)
+Last updated: 2026-04-06 (rev 2)
 
 > Full spec for the multi-perspective historical events platform.
 > Only read when working on history-related files.
@@ -11,9 +11,10 @@ Last updated: 2026-04-05 (rev 1)
 
 - **Organic ink timeline** (horizontal desktop, vertical mobile) at `/history`
 - **6-stage inline story loading** — no page navigation from landing; EventDetail renders below compressed timeline strip
-- **25 events**, sqrt temporal spacing, above/below severity placement (catastrophic above, critical/major below)
-- **100 perspectives** across all events, 6 viewpoint types
-- **218 media items** (images, maps, documents, artwork)
+- **40 events**, sqrt temporal spacing, above/below severity placement (catastrophic above, critical/major below)
+- **175 perspectives** across all events, 6 viewpoint types
+- **278 media items** (images, maps, documents, artwork)
+- **120 cross-event connections**
 - **4 Supabase tables** + Supabase Storage for mirrored media
 - **Mock data fallback** when Supabase unavailable
 
@@ -142,11 +143,11 @@ No summary. Points to next chronological event using shared CTAS from `hooks.ts`
 | Era | Events |
 |-----|--------|
 | Ancient | Ashoka & Maurya Empire (268 BCE) |
-| Classical | Peloponnesian War (431 BCE), Fall of Rome (476 CE) |
-| Medieval | Mongol Conquest of Baghdad (1258), The Crusades (1095), Mali Empire / Mansa Musa (1324) |
-| Early Modern | Transatlantic Slave Trade, Haitian Revolution |
-| Modern | Scramble for Africa, Opium Wars, French Revolution, Trail of Tears, Armenian Genocide, Holodomor, Congo Free State, Meiji Restoration, Treaty of Waitangi, Bolivarian Revolutions |
-| Contemporary | Partition of India, Hiroshima, Rwanda, Israel/Nakba, Berlin Wall, Tiananmen Square, Cambodian Genocide |
+| Classical | Peloponnesian War (431 BCE), Conquests of Alexander (334 BCE), Assassination of Caesar (44 BCE), Fall of Rome (476 CE), Silk Road (2nd c. BCE-15th c. CE) |
+| Medieval | Mongol Conquest of Baghdad (1258), The Crusades (1095), Mali Empire / Mansa Musa (1324), Black Death (1347), Mongol Empire (1206), Gutenberg Printing Press (1440) |
+| Early Modern | Transatlantic Slave Trade, Haitian Revolution, Fall of Tenochtitlan (1521) |
+| Modern | Scramble for Africa, Opium Wars, French Revolution, Trail of Tears, Armenian Genocide, Holodomor, Congo Free State, Meiji Restoration, Treaty of Waitangi, Bolivarian Revolutions, Indian Independence Movement, Russian Revolution (1917) |
+| Contemporary | Partition of India, Hiroshima, Rwanda, Israel/Nakba, Berlin Wall, Tiananmen Square, Cambodian Genocide, The Holocaust, Civil Rights Movement, Apartheid, 9/11 & War on Terror, Cuban Missile Crisis, Chinese Cultural Revolution |
 
 All 25 have story-specific HOOKS (arrive-late one-liners) and CTAS in `hooks.ts`. Shared across HistoryLanding (timeline cards) and EventDetail (Stage 2 crack + Stage 6 next).
 

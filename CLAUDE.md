@@ -120,7 +120,7 @@ Unified component library powering both the onboarding prologue and the about ma
 ### History — "void --history" (`frontend/app/history/`)
 Multi-perspective historical events platform ("The Archive"). See `docs/HISTORY.md` for full spec.
 Routes: `/history` (organic ink timeline), `/history/[slug]` (6-stage story), `/history/era/[era]`, `/history/region/[region]`.
-25 events, 100 perspectives, 218 media. 19 components. Supabase tables: `history_events`, `history_perspectives`, `history_media`, `history_connections` (migrations 039, 043).
+40 events, 175 perspectives, 278 media, 120 connections. 19 components. Supabase tables: `history_events`, `history_perspectives`, `history_media`, `history_connections` (migrations 039, 043).
 
 ### Animation
 Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). Layer-specific: edition tabs (Row 2) use `hapticConfirm` on switch, filter lens uses `--ease-rack` timing + `hapticMicro`, page links (Row 1) use CSS departure arrow slide (4px shift), weekly (Row 1) uses spine rule glow + unfold physics on hover, search bar expands 160px to 280px on focus. ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
@@ -199,7 +199,7 @@ void-news/
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
 ├── data/sources.json      # 1,013 curated sources
-├── data/history/events/   # 25 YAML event files (see docs/HISTORY.md for full list)
+├── data/history/events/   # 40 YAML event files (see docs/HISTORY.md for full list)
 ├── supabase/migrations/   # 001-043
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml, weekly-digest.yml
 ├── .claude/agents/        # 34 agent definitions
@@ -209,7 +209,7 @@ void-news/
 
 ## Status
 
-**Complete**: Pipeline (all 12 steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (25 events, 19 components, 5-lens historiographic framework).
+**Complete**: Pipeline (all 12 steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (40 events, 19 components, 5-lens historiographic framework).
 **In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
