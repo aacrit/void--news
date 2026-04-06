@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-05 (rev 31)
+Last updated: 2026-04-05 (rev 32)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
@@ -118,19 +118,21 @@ Magazine-style weekly digest at `/weekly`. **No NavBar** — uses its own sticky
 Unified component library powering both the onboarding prologue and the about manifesto. 6 chapters (~90s prologue, scroll-driven manifesto). Content constants in `data.ts` (CHAPTERS, DIVERGENT_HEADLINES, SIX_AXES, FIRST_PRINCIPLES, PRODUCT_FAMILY, RANKING_SIGNALS, NUMBERS, LANDSCAPE, COMPARISON_SCORES, SIGIL_PARTS, SWEEP_POSITIONS). SVG paths, spring easings, and timing tokens in `constants.ts`. Shared `useReducedMotion.ts` hook. 6 scene components in `film/scenes/`: `SigilBreakdown` (centerpiece: 6-stage animated exploded Sigil view — draw, separate, label, reassemble, activate, hold), `DivergentHeadlines`, `SourceEngine`, `ArticleDifference`, `ProductWorlds`, `TheVerdict`. Each scene accepts `mode: "prologue" | "manifesto"` + `active: boolean`. Styles: `film.css` (`.film-*` namespace, mode-specific overrides via `--prologue`/`--manifesto` suffixes). `OnboardingCarousel.tsx` is a thin wrapper (modal overlay, auto-advance, keyboard nav) importing scenes with `mode="prologue"`. `/about` page is a thin wrapper (scroll-driven IO reveals) importing scenes with `mode="manifesto"` — no forced dark mode. `OnboardingSpotlight.tsx` deleted (dead code).
 
 ### History — "void --history" (`frontend/app/history/`)
-Multi-perspective historical events platform ("The Archive"). Routes: `/history` (landing), `/history/[slug]` (event detail), `/history/era/[era]`, `/history/region/[region]`. **No NavBar** — uses its own sticky topbar (`.hist-topbar`) with back link + ThemeToggle (mirrors Weekly pattern). "Archival Cinema" design in `history.css` (~2000 lines, `.hist-page` namespace): burnt umber `#5C4033` + aged brass `#9B7A2F`, foxed vellum `#F2EDE0`, Ken Burns parallax, lectern page-turn transitions. 5-lens historiographic framework: Geographic/National, Social Position, Temporal Frame, Causal Emphasis, Evidentiary Base. Viewpoint types: victor, vanquished, bystander, academic, revisionist, indigenous. 18 components in `history/components/`: HistoryTopbar, HistoryLanding, EventCard, EventDetail, PerspectiveSelector, PerspectiveView, PerspectiveComparison, PrimarySourceBlock, OmissionsPanel, MediaGallery, Lightbox, HistoryTimeline, CompactTimeline, MapView, KeyFacts, EraDrawer, RedactedDossier, HistoryFooter. Data layer: `data.ts` (Supabase fetch), `mockData.ts` (3 events + 7 stubs), `types.ts`. Supabase tables: `history_events`, `history_perspectives`, `history_media`, `history_connections` (migration 039). Pipeline loader: `pipeline/history/content_loader.py` (YAML to Supabase batch). Content: 3 real events in `data/history/events/` (Partition of India, Hiroshima, Rwanda). No MobileBottomNav.
+Multi-perspective historical events platform ("The Archive"). See `docs/HISTORY.md` for full spec.
+Routes: `/history` (organic ink timeline), `/history/[slug]` (6-stage story), `/history/era/[era]`, `/history/region/[region]`.
+25 events, 100 perspectives, 218 media. 19 components. Supabase tables: `history_events`, `history_perspectives`, `history_media`, `history_connections` (migrations 039, 043).
 
 ### Animation
 Spring presets in `tokens.css`: snappy (600/35/1), smooth (280/22/1), gentle (150/12/1.2), bouncy. Cinematic easings: `--ease-cinematic`, `--ease-whip`, `--ease-rack`. Keyframes: coldOpenSettle, coldOpenDollyIn (staggered page entrance), whipPanOutRight/whipPanInLeft (direction-aware edition switch), cinGoldenHourPulse (theme toggle warmth). Layer-specific: edition tabs (Row 2) use `hapticConfirm` on switch, filter lens uses `--ease-rack` timing + `hapticMicro`, page links (Row 1) use CSS departure arrow slide (4px shift), weekly (Row 1) uses spine rule glow + unfold physics on hover, search bar expands 160px to 280px on focus. ScaleIcon idle: 5s period, 2-degree amplitude, `--ease-cinematic`. GPU-only (transform + opacity). `prefers-reduced-motion` → 0ms duration + delay. Asymmetric panels.
 
 ### CSS
-Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → mobile-nav → responsive → command-center → weekly → film → about → ship → history` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav classes: `.nav-pages`/`.nav-page` (Row 1 pages), `.nav-weekly` (Row 1 magazine link, deep red accent), `.nav-lens__editions`/`.nav-ed` (Row 2 edition tabs), `.nav-lens`/`.nav-lens__*` (Row 2 filters), `.nav-lens__search` (Row 2 expandable search bar) — all in `components.css`.
+Load order (in `frontend/app/globals.css`): `tokens → layout → typography → components → animations → spectrum → mobile-feed → desktop-feed → skybox-banner → floating-player → mobile-nav → responsive → command-center → weekly → film → about → ship → history → verify` (all in `frontend/app/styles/`). Reset is inline in `globals.css` after imports. Custom properties only. Mobile-first. `clamp()` for fluid scaling. Justified body text. Nav classes: `.nav-pages`/`.nav-page` (Row 1 pages), `.nav-weekly` (Row 1 magazine link, deep red accent), `.nav-lens__editions`/`.nav-ed` (Row 2 edition tabs), `.nav-lens`/`.nav-lens__*` (Row 2 filters), `.nav-lens__search` (Row 2 expandable search bar) — all in `components.css`.
 
 ## Data Model (Supabase)
 
-**Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio), `history_events`, `history_perspectives`, `history_media`, `history_connections`.
+**Tables**: `sources`, `articles` (300-char excerpt), `bias_scores` (rationale JSONB), `story_clusters` (sections text[] GIN-indexed), `cluster_articles`, `categories` + `article_categories`, `source_topic_lean`, `pipeline_runs`, `daily_briefs` (TL;DR + audio). History tables: see `docs/HISTORY.md`.
 
-**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-039).
+**Views/Functions**: `cluster_bias_summary`, `refresh_cluster_enrichment()`, `cleanup_stale_clusters()`, `cleanup_stuck_pipeline_runs()`. Migrations: `supabase/migrations/` (001-043).
 
 Frontend edition filter: `.contains("sections", [edition])`.
 
@@ -177,17 +179,17 @@ void-news/
 │   ├── ranker/            # importance_ranker.py, edition_ranker.py
 │   ├── validation/        # fixtures, signal_tracker, source_profiles, runner, snapshot
 │   ├── memory/            # memory_orchestrator.py, live_poller.py (story memory engine)
-│   ├── history/           # content_loader.py (YAML to Supabase batch loader)
+│   ├── history/           # content_loader, image_enricher, mirror_images, source_enricher, verify_content (see docs/HISTORY.md)
 │   ├── utils/             # supabase client, nlp_shared, prohibited_terms
 │   ├── main.py            # Orchestrator
 │   └── rerank.py          # Re-ranker CLI + rerank_all_clusters() shared function
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # 49 components: AudioProvider, BiasInspector, BiasLens, CommandCenter, ComparativeView, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileMiniPlayer, MobileNav, MobileSidePanel, MobileStoryCard, MobileTabBar, NavBar, OnboardingCarousel, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
-│   │   ├── history/       # /history routes + 18 components: HistoryTopbar, HistoryLanding, EventCard, EventDetail, PerspectiveSelector, PerspectiveView, PerspectiveComparison, PrimarySourceBlock, OmissionsPanel, MediaGallery, Lightbox, HistoryTimeline, CompactTimeline, MapView, KeyFacts, EraDrawer, RedactedDossier, HistoryFooter + data.ts, mockData.ts, types.ts
+│   │   ├── components/    # 53 components: AudioProvider, BiasInspector, BiasLens, ClaimConsensusSection, ClaimMark, CommandCenter, ComparativeView, ConsensusBadge, CredibilityArc, DailyBrief, DeepDive, DeepDiveSpectrum, DesktopFeed, DigestRow, DivergenceAlerts, EditionIcon, ErrorBoundary, FloatingPlayer, Footer, HomeContent, InstallPrompt, KeyboardShortcuts, LeadStory, LoadingSkeleton, Logo{Full,Icon,Wordmark}, MobileBottomNav, MobileBriefPill, MobileFeed, MobileMiniPlayer, MobileNav, MobileSidePanel, MobileStoryCard, MobileTabBar, NavBar, OnboardingCarousel, OpEdPage, OpinionCard, PageToggle, ScaleIcon, SearchOverlay, ShareCard, ShipBoard, Sigil, SkyboxBanner, SpectrumChart, StoryCard, StoryMeta, ThemeToggle, UnifiedOnboarding, WeeklyDigest, WireCard
+│   │   ├── history/       # /history routes + 19 components + hooks.ts, data.ts, mockData.ts, types.ts (see docs/HISTORY.md)
 │   │   ├── lib/           # supabase.ts, types.ts, utils.ts, mockData.ts, biasColors.ts, haptics.ts, sharedObserver.ts, shareCardRenderer.ts
 │   │   ├── film/           # Shared cinematic scenes: data.ts, constants.ts, useReducedMotion.ts, scenes/{SigilBreakdown,DivergentHeadlines,SourceEngine,ArticleDifference,ProductWorlds,TheVerdict}.tsx
-│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, mobile-nav, responsive, command-center, weekly, film, about, ship, history
+│   │   ├── styles/        # tokens, layout, typography, components, animations, spectrum, mobile-feed, desktop-feed, skybox-banner, floating-player, mobile-nav, responsive, command-center, weekly, film, about, ship, history, verify
 │   │   ├── sources/       # /sources page
 │   │   ├── paper/         # /paper and /paper/[edition] e-paper pages
 │   │   ├── command-center/ # /command-center KPI dashboard
@@ -197,18 +199,18 @@ void-news/
 │   │   └── [edition]/     # /[edition] dynamic edition routes
 │   └── next.config.ts
 ├── data/sources.json      # 1,013 curated sources
-├── data/history/events/   # YAML event files (Partition of India, Hiroshima, Rwanda)
-├── supabase/migrations/   # 001-039
+├── data/history/events/   # 25 YAML event files (see docs/HISTORY.md for full list)
+├── supabase/migrations/   # 001-043
 ├── .github/workflows/     # pipeline.yml, deploy.yml, migrate.yml, validate-bias.yml, auto-merge-claude.yml, audit-db.yml, refresh-brief.yml, weekly-digest.yml
 ├── .claude/agents/        # 34 agent definitions
-├── .claude/skills/        # pressdesign + prompt-iterate + workflows + ship-queue + 19 workflow skills (23 total)
-└── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE, VOICE-BRAND, SOURCE-CURATION-REPORT-2026-04-02
+├── .claude/skills/        # pressdesign + prompt-iterate + workflows + ship-queue + 20 workflow skills (24 total)
+└── docs/                  # PROJECT-CHARTER, DESIGN-SYSTEM, IMPLEMENTATION-PLAN, GEMINI-VOICE-PLAN, PERF-REPORT, IP-COMPLIANCE, CEO-AGENT-GUIDE, DB-AUDIT-FRAMEWORK, DB-REVIEWER-GUIDE, MEMORY-ENGINE-*, MUSICAL-ELEMENTS-SPEC, NEWS-MEMORY-ENGINE, VOICE-BRAND, SOURCE-CURATION-REPORT-2026-04-02, HISTORY, HISTORY-FRONTEND-SPEC, HISTORY-AUDIO-SPEC, VOID-HISTORY-DESIGN-SPEC, VOID-HISTORY-PROPOSAL, PIPELINE-BRAIN, VOID-VERIFY
 ```
 
 ## Status
 
-**Complete**: Pipeline (all 12 steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (3 events, 18 components, 5-lens historiographic framework).
-**In progress**: Deep Dive framing comparison, source credibility panels, void --history content expansion (additional events).
+**Complete**: Pipeline (all 12 steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center), void --history (25 events, 19 components, 5-lens historiographic framework).
+**In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
 
