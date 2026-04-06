@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
+import type { HistoricalEvent, RedactedEvent, HistoryEra, HistoryRegion } from "../types";
 import { ERAS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import EventDetail from "./EventDetail";
+import CartographerStrip from "./CartographerStrip";
 
 /* ===========================================================================
    HistoryLanding — Organic Ink Timeline
@@ -362,6 +363,8 @@ export default function HistoryLanding({
   const flipRectRef = useRef<DOMRect | null>(null);
   const flipImageRef = useRef<string | null>(null);
   const [flipAnimating, setFlipAnimating] = useState(false);
+  const [mapActive, setMapActive] = useState(false);
+  const [activeRegion, setActiveRegion] = useState<HistoryRegion | null>(null);
 
   /* ── Detect vertical (mobile) timeline mode ── */
   useEffect(() => {
@@ -928,31 +931,57 @@ export default function HistoryLanding({
           ))}
         </div>
 
-        {/* Era selection pills */}
-        <nav className="hist-tl-era-pills" role="navigation" aria-label="Era navigation">
-          {eraGroups.map((era) => {
-            const isActive = currentEra === era.id;
-            return (
-              <button
-                key={era.id}
-                className={`hist-tl-era-pill${isActive ? " hist-tl-era-pill--active" : ""}`}
-                onClick={() => {
-                  const station = stationRefs.current[era.firstIndex];
-                  if (station) {
-                    station.scrollIntoView({
-                      block: isMobileVertical ? "center" : "nearest",
-                      inline: isMobileVertical ? "nearest" : "center",
-                      behavior: "smooth",
-                    });
-                  }
-                }}
-                type="button"
-              >
-                {ERA_CONTEXT[era.id]?.label || era.label}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Era pills OR CartographerStrip — toggled by [globe]/[eras] */}
+        {mapActive ? (
+          <CartographerStrip
+            events={sortedEvents}
+            focusedIndex={focusedIndex}
+            activeRegion={activeRegion}
+            currentEra={currentEra}
+            onRegionClick={(region) => {
+              setActiveRegion((prev) => prev === region ? null : region);
+            }}
+            onEventClick={openStory}
+          />
+        ) : (
+          <nav className="hist-tl-era-pills" role="navigation" aria-label="Era navigation">
+            {eraGroups.map((era) => {
+              const isActive = currentEra === era.id;
+              return (
+                <button
+                  key={era.id}
+                  className={`hist-tl-era-pill${isActive ? " hist-tl-era-pill--active" : ""}`}
+                  onClick={() => {
+                    const station = stationRefs.current[era.firstIndex];
+                    if (station) {
+                      station.scrollIntoView({
+                        block: isMobileVertical ? "center" : "nearest",
+                        inline: isMobileVertical ? "nearest" : "center",
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                  type="button"
+                >
+                  {ERA_CONTEXT[era.id]?.label || era.label}
+                </button>
+              );
+            })}
+          </nav>
+        )}
+
+        {/* Toggle: [globe] / [eras] */}
+        <button
+          className="hist-tl-view-toggle"
+          onClick={() => {
+            setMapActive((prev) => !prev);
+            if (mapActive) setActiveRegion(null); /* Clear filter when switching back */
+          }}
+          type="button"
+          aria-label={mapActive ? "Show era navigation" : "Show world map"}
+        >
+          [ {mapActive ? "eras" : "globe"} ]
+        </button>
       </div>
 
       {/* Mission Brief -- fades on first scroll */}
@@ -1045,12 +1074,13 @@ export default function HistoryLanding({
             const side = sides[i];
             const pct = positions[i] * 100;
             const isFocused = i === focusedIndex;
+            const isGhosted = activeRegion && !event.regions.includes(activeRegion);
 
             return (
               <div
                 key={event.slug}
                 ref={(el) => { stationRefs.current[i] = el; }}
-                className="hist-tl-full__station"
+                className={`hist-tl-full__station${isGhosted ? " hist-tl-full__station--ghosted" : ""}`}
                 style={{ left: `${pct}%` }}
               >
                 {/* Dot on track */}
