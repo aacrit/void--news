@@ -4867,10 +4867,116 @@
   transition: transform 60ms ease-out;
 }
 
+/* ---------------------------------------------------------------------------
+   23. DOCUMENTARY INTERCUTS — Evidence exhibits woven into stages
+   Ruled borders (court exhibit stamps), archival filter, argumentative placement.
+   Images participate in scroll-reveal (.hist-reveal class).
+   --------------------------------------------------------------------------- */
+
+/* ── Context figure — full-width evidence in narrative flow ── */
+.hist-context__figure {
+  margin: var(--space-5) 0;
+  width: 100%;
+}
+
+.hist-context__figure img {
+  width: 100%;
+  display: block;
+  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  border-radius: 2px;
+}
+
+.hist-context__figure figcaption {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--hist-ink-secondary, var(--hist-ink-muted));
+  margin-top: var(--space-2);
+}
+
+.hist-context__figure-attr {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+  margin-top: 2px;
+}
+
+/* ── Documentary intercut — evidence exhibit between testimonies ── */
+.hist-intercut {
+  margin: var(--space-6) 0;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--hist-border);
+  border-bottom: 1px solid var(--hist-border);
+  width: 100%;
+}
+
+.hist-intercut img {
+  width: 100%;
+  display: block;
+  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  border-radius: 2px;
+}
+
+.hist-intercut figcaption {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--hist-ink-secondary, var(--hist-ink-muted));
+  margin-top: var(--space-2);
+}
+
+.hist-intercut__attribution {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+/* ── Omission intercut — inside flex split, must span full width ──
+   On mobile (column): natural flow.
+   On desktop (row): forces a full-width break between panels via grid fallback. */
+.hist-omissions-split > .hist-intercut--omission {
+  margin: var(--space-4) 0;
+}
+
+@media (min-width: 768px) {
+  /* Upgrade to grid when intercut is present, so image spans both columns */
+  .hist-omissions-split:has(.hist-intercut--omission) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+
+  .hist-omissions-split:has(.hist-intercut--omission) > .hist-omissions-split__panel--emphasized {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .hist-omissions-split:has(.hist-intercut--omission) > .hist-omissions-split__panel--omitted {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .hist-omissions-split:has(.hist-intercut--omission) > .hist-intercut--omission {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
 /* ===========================================================================
    REDUCED MOTION — Override remaining interactions
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  .hist-context__figure,
+  .hist-intercut {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+
   .hist-classified-tile,
   .hist-classified-tile:hover,
   .hist-classified-tile:active {
