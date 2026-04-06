@@ -5355,17 +5355,35 @@
   background: linear-gradient(180deg, var(--hist-bg) 85%, transparent);
 }
 
-/* Era header — just the era name, compact */
+/* Era header — organic ink border to distinguish from scroll content */
 .hist-tl-era-header {
   text-align: center;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--hist-border);
+  border-radius: 1px;
+  /* Organic ink feel — slightly rough via box-shadow */
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--era-color, var(--hist-accent)) 10%, transparent),
+    0 1px 3px rgba(44, 36, 24, 0.06);
+  background: color-mix(in srgb, var(--hist-bg) 95%, var(--era-color, var(--hist-accent)));
+  max-width: 500px;
 }
 
 .hist-tl-era-header__label {
   font-family: var(--font-editorial);
-  font-size: clamp(1rem, 0.9rem + 0.6vw, 1.5rem);
+  font-size: clamp(1rem, 0.9rem + 0.6vw, 1.4rem);
   font-weight: 700;
   color: var(--era-color, var(--hist-accent));
   line-height: 1.2;
+}
+
+.hist-tl-era-header__desc {
+  font-family: var(--font-structural);
+  font-size: clamp(0.7rem, 0.65rem + 0.2vw, 0.85rem);
+  color: var(--hist-ink-muted);
+  font-style: italic;
+  margin-top: 2px;
+  line-height: 1.4;
 }
 
 /* ---------------------------------------------------------------------------
@@ -5374,7 +5392,7 @@
    --------------------------------------------------------------------------- */
 .hist-tl-fact {
   position: absolute;
-  top: calc(50% + 140px); /* Below card zone — cards are ~120px above/below track */
+  top: calc(50% + 240px); /* Well below card zone — cards extend ~210px below track */
   transform: translateX(-50%);
   max-width: 300px;
   font-family: var(--font-data);
@@ -5489,7 +5507,7 @@
    --------------------------------------------------------------------------- */
 .hist-tl-arc-lane {
   position: absolute;
-  top: calc(50% + 160px); /* Below card zone + fun facts */
+  top: calc(50% + 270px); /* Below card zone + fun facts, clear of everything */
   height: 36px;
   z-index: 3;
 }
@@ -5511,8 +5529,9 @@
 
 .hist-tl-arc-lane__label {
   position: absolute;
-  top: -20px;
+  top: 100%; /* Below the lane, not above */
   left: 0;
+  margin-top: 4px;
   display: flex;
   flex-direction: column;
   white-space: nowrap;
