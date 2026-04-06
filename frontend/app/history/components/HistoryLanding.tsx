@@ -876,7 +876,7 @@ export default function HistoryLanding({
         aria-label="Historical events timeline"
         aria-roledescription="timeline"
         tabIndex={0}
-        style={eraFlashColor ? { "--era-flash-color": `color-mix(in srgb, ${eraFlashColor} 8%, transparent)` } as React.CSSProperties : undefined}
+        style={eraFlashColor ? { "--era-flash-color": `color-mix(in srgb, ${eraFlashColor} 18%, transparent)` } as React.CSSProperties : undefined}
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") {
             e.preventDefault();
