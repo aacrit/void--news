@@ -5730,6 +5730,40 @@
   animation: histDotPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ---------------------------------------------------------------------------
+   Focused Card — Ken Burns slow zoom on the center card's photo
+   The rack focus blurs neighbors; this makes the focused card breathe.
+   --------------------------------------------------------------------------- */
+@keyframes histKenBurnsFocused {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+
+.hist-tl-card--focused .hist-tl-card__photo-img {
+  animation: histKenBurnsFocused 8s ease-in-out alternate infinite;
+}
+
+.hist-tl-card--focused {
+  z-index: 5;
+}
+
+/* Image fallback — show year in large type instead of blank gradient */
+.hist-tl-card__photo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hist-tl-card__photo-fallback-year {
+  font-family: var(--font-data);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--hist-brass);
+  opacity: 0.4;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Minimap dot pulse */
 @keyframes histMinimapDotPop {
   0% { transform: scale(1); }
@@ -5844,6 +5878,10 @@
   }
 
   .hist-tl-full__dot--focused {
+    animation: none;
+  }
+
+  .hist-tl-card--focused .hist-tl-card__photo-img {
     animation: none;
   }
 
