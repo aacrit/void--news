@@ -8,16 +8,31 @@ import EventPageClient from "./EventPageClient";
 
 /* All known event slugs — mock data + YAML/Supabase canonical slugs */
 const YAML_SLUGS = [
-  "partition-of-india",
-  "hiroshima-nagasaki",
-  "rwandan-genocide",
+  "armenian-genocide",
+  "ashoka-maurya-empire",
+  "bolivarian-revolutions",
+  "cambodian-genocide",
+  "congo-free-state",
   "creation-of-israel-nakba",
   "fall-of-berlin-wall",
+  "fall-of-rome",
   "french-revolution",
+  "haitian-revolution",
+  "hiroshima-nagasaki",
+  "holodomor",
+  "mali-empire-mansa-musa",
+  "meiji-restoration",
+  "mongol-conquest-baghdad",
   "opium-wars",
+  "partition-of-india",
+  "peloponnesian-war",
+  "rwandan-genocide",
   "scramble-for-africa",
+  "the-crusades",
+  "tiananmen-square",
   "trail-of-tears",
   "transatlantic-slave-trade",
+  "treaty-of-waitangi",
 ];
 
 export function generateStaticParams() {

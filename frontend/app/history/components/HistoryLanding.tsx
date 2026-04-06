@@ -55,6 +55,14 @@ const HOOKS: Record<string, string> = {
     "The English text said \u2018sovereignty.\u2019 The Maori text said \u2018governance.\u2019 Hone Heke cut down the British flagpole four times to make the point.",
   "bolivarian-revolutions":
     "Bol\u00edvar sailed to Haiti after his defeat. P\u00e9tion gave him ships and soldiers in exchange for one promise: free the enslaved. Bol\u00edvar partially broke it.",
+  "ashoka-maurya-empire":
+    "He carved the body count into rock for everyone to read: 100,000 killed, 150,000 deported. Then, on the same stone, he said he regretted it.",
+  "fall-of-rome":
+    "The last emperor was sixteen. The general who deposed him didn\u2019t kill him \u2014 he gave him a pension and mailed the crown to Constantinople.",
+  "mali-empire-mansa-musa":
+    "Mansa Musa carried 18 tons of gold to Mecca. His charity crashed Egypt\u2019s gold market for twelve years.",
+  "the-crusades":
+    "The Fourth Crusade never reached Jerusalem. It sacked Constantinople \u2014 the largest Christian city on earth \u2014 instead.",
 };
 
 /* ── CTAs — story-specific ── */
@@ -100,6 +108,14 @@ const CTAS: Record<string, string> = {
     "Two texts, two languages, two meanings. Read both treaties",
   "bolivarian-revolutions":
     "The liberator\u2019s promise to Haiti vs. what he actually delivered",
+  "ashoka-maurya-empire":
+    "The conqueror\u2019s own confession vs. the modern nation that put his symbol on its flag",
+  "fall-of-rome":
+    "Did it fall or transform? The debate that shaped how the West thinks about collapse",
+  "mali-empire-mansa-musa":
+    "European maps vs. oral tradition \u2014 two records of Africa\u2019s wealthiest empire",
+  "the-crusades":
+    "Jerusalem 1099 vs. Jerusalem 1187 \u2014 the massacre and the mercy, side by side",
 };
 
 /* ── Perspective color map ── */
