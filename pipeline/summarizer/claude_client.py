@@ -17,13 +17,15 @@ import json
 import os
 import time
 
-# SDK is optional — pipeline works without it
+# Claude is disabled to avoid API costs pre-launch.
+# All brief generation uses Gemini Flash free tier instead.
+# To re-enable: remove the early False and uncomment the try/except.
 CLAUDE_AVAILABLE = False
-try:
-    import anthropic
-    CLAUDE_AVAILABLE = True
-except ImportError:
-    pass
+# try:
+#     import anthropic
+#     CLAUDE_AVAILABLE = True
+# except ImportError:
+#     pass
 
 _MODEL = "claude-sonnet-4-6"
 
