@@ -477,7 +477,7 @@ export default function HistoryLanding({
 
       if (isMobileVertical) {
         /* Vertical mode: use scrollTop + station offsetTop */
-        const viewCenter = container.scrollTop + container.clientHeight / 3;
+        const viewCenter = container.scrollTop + container.clientHeight / 2;
         for (let i = 0; i < stationRefs.current.length; i++) {
           const el = stationRefs.current[i];
           if (!el) continue;
@@ -488,23 +488,20 @@ export default function HistoryLanding({
             closest = i;
           }
         }
-        /* Scroll fraction for year interpolation */
         const totalH = container.scrollHeight;
-        const viewCenterFull = container.scrollTop + container.clientHeight / 2;
-        scrollFraction = totalH > 0 ? viewCenterFull / totalH : 0;
+        scrollFraction = totalH > 0 ? viewCenter / totalH : 0;
       } else {
-        /* Horizontal mode: use scrollLeft (original logic) */
-        const scrollCenter = container.scrollLeft + container.clientWidth / 3;
+        /* Horizontal mode: viewport CENTER for year ribbon sync */
+        const viewCenter = container.scrollLeft + container.clientWidth / 2;
         const totalW = container.scrollWidth;
         for (let i = 0; i < positions.length; i++) {
           const cardX = positions[i] * totalW;
-          const dist = Math.abs(cardX - scrollCenter);
+          const dist = Math.abs(cardX - viewCenter);
           if (dist < closestDist) {
             closestDist = dist;
             closest = i;
           }
         }
-        const viewCenter = container.scrollLeft + container.clientWidth / 2;
         scrollFraction = totalW > 0 ? viewCenter / totalW : 0;
       }
 
@@ -768,13 +765,13 @@ export default function HistoryLanding({
     window.history.pushState(
       { historyInline: true, slug: event.slug },
       "",
-      `/history/${event.slug}`
+      `/history#${event.slug}`
     );
   }, [sortedEvents, reducedMotion]);
 
   const closeStory = useCallback(() => {
     setActiveEvent(null);
-    window.history.pushState({}, "", "/history");
+    window.history.pushState({}, "", "/history#timeline");
     /* Scroll timeline back to the card the user was viewing */
     requestAnimationFrame(() => {
       const idx = activeEventIndexRef.current;
@@ -792,12 +789,11 @@ export default function HistoryLanding({
   /* popstate listener for browser back */
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname;
-      if (path === "/history" || path === "/history/") {
+      const hash = window.location.hash.replace("#", "");
+      if (!hash || hash === "timeline") {
         setActiveEvent(null);
       } else {
-        const slug = path.replace("/history/", "");
-        const found = sortedEvents.find((e) => e.slug === slug);
+        const found = sortedEvents.find((e) => e.slug === hash);
         if (found) {
           setActiveEvent(found);
         } else {
@@ -817,7 +813,7 @@ export default function HistoryLanding({
       window.history.pushState(
         { historyInline: true, slug: event.slug },
         "",
-        `/history/${event.slug}`
+        `/history#${event.slug}`
       );
       /* Scroll to top of inline story */
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -878,9 +874,10 @@ export default function HistoryLanding({
         className={`hist-tl-top-zone ${hasScrolled ? "" : "hist-tl-top-zone--hidden"}`}
         style={{ "--era-color": eraCtx.color } as React.CSSProperties}
       >
-        {/* Era header */}
+        {/* Era header — organic ink border to distinguish from scroll content */}
         <div className="hist-tl-era-header" aria-live="polite" aria-atomic="true">
           <span className="hist-tl-era-header__label">{eraCtx.label}</span>
+          <span className="hist-tl-era-header__desc">{eraCtx.description}</span>
         </div>
 
         {/* Year ribbon — ±4 years with focus/blur */}
