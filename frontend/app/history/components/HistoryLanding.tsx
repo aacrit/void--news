@@ -258,6 +258,15 @@ function resolveCollisions(
     }
   }
 
+  // Clamp all positions to [0.03, 0.97] so they stay within the ink path
+  const maxPos = Math.max(...resolved);
+  if (maxPos > 0.97) {
+    const scale = 0.94 / (maxPos - resolved[0]);
+    for (let i = 0; i < resolved.length; i++) {
+      resolved[i] = 0.03 + (resolved[i] - resolved[0]) * scale;
+    }
+  }
+
   return { positions: resolved, sides };
 }
 
@@ -848,10 +857,25 @@ export default function HistoryLanding({
   /* ── Current era context for header ── */
   const eraCtx = ERA_CONTEXT[currentEra] || ERA_CONTEXT.contemporary;
 
+  /* ── Year ribbon: ±4 neighboring event years with distance for blur ── */
+  const yearRibbon = useMemo(() => {
+    if (sortedEvents.length === 0 || focusedIndex < 0) return [];
+    const ribbon: { year: string; distance: number; index: number }[] = [];
+    for (let d = -4; d <= 4; d++) {
+      const idx = focusedIndex + d;
+      if (idx < 0 || idx >= sortedEvents.length) continue;
+      const y = extractYear(sortedEvents[idx].dateSort, sortedEvents[idx].datePrimary);
+      ribbon.push({ year: y, distance: Math.abs(d), index: idx });
+    }
+    return ribbon;
+  }, [sortedEvents, focusedIndex]);
+
   /* ── State A: Full timeline ── */
   return (
     <div className="hist-tl-wrapper">
-      {/* Fixed Era Header — updates as user scrolls */}
+      {/* ── TOP ZONE: Era header + year ribbon + era pills (all fixed) ── */}
+
+      {/* Era header — updates as user scrolls */}
       <div
         className={`hist-tl-era-header ${hasScrolled ? "" : "hist-tl-era-header--hidden"}`}
         aria-live="polite"
@@ -859,14 +883,62 @@ export default function HistoryLanding({
         style={{ "--era-color": eraCtx.color } as React.CSSProperties}
       >
         <div className="hist-tl-era-header__label">{eraCtx.label}</div>
-        <div className="hist-tl-era-header__meta">
-          <span className="hist-tl-era-header__years">{eraCtx.years}</span>
-          {decadeLabel && (
-            <span className="hist-tl-era-header__decade">{decadeLabel}</span>
-          )}
-        </div>
         <div className="hist-tl-era-header__desc">{eraCtx.description}</div>
       </div>
+
+      {/* Year ribbon — scrolling ±4 years with focus/blur */}
+      {hasScrolled && (
+        <div className="hist-tl-year-ribbon" aria-hidden="true">
+          {yearRibbon.map((item) => (
+            <button
+              key={item.index}
+              className={`hist-tl-year-ribbon__year${item.distance === 0 ? " hist-tl-year-ribbon__year--focused" : ""}`}
+              style={{ "--yr-dist": item.distance } as React.CSSProperties}
+              onClick={() => {
+                const station = stationRefs.current[item.index];
+                if (station) {
+                  station.scrollIntoView({
+                    block: isMobileVertical ? "center" : "nearest",
+                    inline: isMobileVertical ? "nearest" : "center",
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              type="button"
+            >
+              {item.year}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Era selection pills — ink-styled quick jump */}
+      {hasScrolled && (
+        <nav className="hist-tl-era-pills" role="navigation" aria-label="Era navigation">
+          {eraGroups.map((era) => {
+            const isActive = currentEra === era.id;
+            return (
+              <button
+                key={era.id}
+                className={`hist-tl-era-pill${isActive ? " hist-tl-era-pill--active" : ""}`}
+                onClick={() => {
+                  const station = stationRefs.current[era.firstIndex];
+                  if (station) {
+                    station.scrollIntoView({
+                      block: isMobileVertical ? "center" : "nearest",
+                      inline: isMobileVertical ? "nearest" : "center",
+                      behavior: "smooth",
+                    });
+                  }
+                }}
+                type="button"
+              >
+                {ERA_CONTEXT[era.id]?.label || era.label}
+              </button>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Mission Brief -- fades on first scroll */}
       <div
@@ -880,15 +952,6 @@ export default function HistoryLanding({
           {isMobileVertical ? "scroll through time" : "\u2190 scroll through time \u2192"}
         </span>
       </div>
-
-      {/* Rolling year indicator — fixed at viewport center */}
-      {scrollYear !== null && hasScrolled && (
-        <div className="hist-tl-year-indicator" aria-hidden="true">
-          <span className="hist-tl-year-indicator__year">
-            {scrollYear < 0 ? `${Math.abs(scrollYear)} BCE` : String(scrollYear)}
-          </span>
-        </div>
-      )}
 
       {/* Full timeline -- horizontal scroll */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
@@ -1013,42 +1076,11 @@ export default function HistoryLanding({
             />
           ))}
 
-          {/* Era markers — ink-styled labels on the track at era boundaries */}
-          {eraGroups.map((era) => {
-            const eraPct = positions[era.firstIndex] * 100;
-            const eraCtxLocal = ERA_CONTEXT[era.id];
-            return (
-              <button
-                key={`era-${era.id}`}
-                className="hist-tl-full__era-marker"
-                style={{ left: `${eraPct}%` }}
-                onClick={() => {
-                  const station = stationRefs.current[era.firstIndex];
-                  if (station) {
-                    station.scrollIntoView({
-                      block: isMobileVertical ? "center" : "nearest",
-                      inline: isMobileVertical ? "nearest" : "center",
-                      behavior: "smooth",
-                    });
-                  }
-                }}
-                type="button"
-                aria-label={`Jump to ${era.label}`}
-              >
-                <span className="hist-tl-full__era-marker-line" aria-hidden="true" />
-                <span className="hist-tl-full__era-marker-label">{eraCtxLocal?.label || era.label}</span>
-                <span className="hist-tl-full__era-marker-years">{eraCtxLocal?.years || ""}</span>
-              </button>
-            );
-          })}
-
-          {/* Cards + stems + dots + year labels (unified) */}
+          {/* Cards + stems + dots */}
           {sortedEvents.map((event, i) => {
             const side = sides[i];
             const pct = positions[i] * 100;
             const isFocused = i === focusedIndex;
-            const year = extractYear(event.dateSort, event.datePrimary);
-            const showYear = i % 3 === 0 || i === 0 || i === sortedEvents.length - 1;
 
             return (
               <div
@@ -1057,13 +1089,6 @@ export default function HistoryLanding({
                 className="hist-tl-full__station"
                 style={{ left: `${pct}%` }}
               >
-                {/* Year label on the track — replaces minimap year labels */}
-                {showYear && (
-                  <span className={`hist-tl-full__year-label hist-tl-full__year-label--${side}`}>
-                    {year}
-                  </span>
-                )}
-
                 {/* Dot on track */}
                 <div
                   className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}${isFocused ? " hist-tl-full__dot--focused" : ""}`}

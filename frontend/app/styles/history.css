@@ -2029,98 +2029,6 @@
   height: var(--tl-stem-h);
 }
 
-/* ── Year labels on the ink track — integrated, not a separate minimap ── */
-.hist-tl-full__year-label {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-data);
-  font-size: 0.55rem;
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.hist-tl-full__year-label--above {
-  top: 10px; /* Below dot, on the "below" side of track */
-}
-
-.hist-tl-full__year-label--below {
-  top: -18px; /* Above dot, on the "above" side of track */
-}
-
-/* ── Era markers — ink-styled vertical rules with labels on the track ── */
-.hist-tl-full__era-marker {
-  position: absolute;
-  top: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: auto;
-  min-width: 44px;
-  min-height: 44px;
-}
-
-.hist-tl-full__era-marker-line {
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  width: 1px;
-  height: 80px;
-  background: var(--hist-accent);
-  opacity: 0.15;
-  transform: translateX(-50%);
-}
-
-.hist-tl-full__era-marker-label {
-  position: absolute;
-  bottom: 44px;
-  white-space: nowrap;
-  font-family: var(--font-meta);
-  font-size: 0.55rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--hist-accent);
-  opacity: 0.5;
-  transition: opacity 200ms ease;
-}
-
-.hist-tl-full__era-marker-years {
-  position: absolute;
-  top: 44px;
-  white-space: nowrap;
-  font-family: var(--font-data);
-  font-size: 0.5rem;
-  color: var(--hist-ink-muted);
-  opacity: 0.35;
-  transition: opacity 200ms ease;
-}
-
-.hist-tl-full__era-marker:hover .hist-tl-full__era-marker-label,
-.hist-tl-full__era-marker:hover .hist-tl-full__era-marker-years {
-  opacity: 0.9;
-}
-
-.hist-tl-full__era-marker:hover .hist-tl-full__era-marker-line {
-  opacity: 0.35;
-}
-
-.hist-tl-full__era-marker:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
 /* ===========================================================================
    Timeline Card — Fluid above/below cards
    Cards positioned absolutely relative to their station.
@@ -2986,60 +2894,40 @@
     display: none;
   }
 
-  /* Year labels on vertical track — beside the dot */
-  .hist-tl-full__year-label {
-    position: absolute;
-    left: -48px;
-    top: 18px;
-    transform: none;
-    font-size: 0.5rem;
-    opacity: 0.4;
+  /* Year ribbon: compact on mobile */
+  .hist-tl-year-ribbon {
+    top: calc(48px + 44px); /* below topbar + compact era header */
+    gap: 6px;
+    padding: 2px var(--space-3);
   }
 
-  .hist-tl-full__year-label--above,
-  .hist-tl-full__year-label--below {
-    top: 18px;
-    left: -48px;
+  .hist-tl-year-ribbon__year {
+    font-size: 0.6rem;
   }
 
-  /* Era markers on vertical track — horizontal labels */
-  .hist-tl-full__era-marker {
-    position: relative;
-    top: auto;
-    left: auto !important;
-    transform: none;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-3);
-    padding: var(--space-2) 0;
+  .hist-tl-year-ribbon__year--focused {
+    font-size: 0.85rem;
+  }
+
+  /* Era pills: horizontal scroll on mobile */
+  .hist-tl-era-pills {
+    top: calc(48px + 44px + 22px);
+    gap: 2px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 var(--space-3);
+  }
+
+  .hist-tl-era-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hist-tl-era-pill {
     min-height: 44px;
-  }
-
-  .hist-tl-full__era-marker-line {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    height: 1px;
-    transform: none;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-  }
-
-  .hist-tl-full__era-marker-label {
-    position: relative;
-    bottom: auto;
-    font-size: 0.65rem;
-    opacity: 0.7;
-  }
-
-  .hist-tl-full__era-marker-years {
-    position: relative;
-    top: auto;
-    font-size: 0.55rem;
-    opacity: 0.4;
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.6rem;
   }
 
   /* Brief positioned higher */
@@ -3069,24 +2957,7 @@
     display: none;
   }
 
-  /* Rolling year indicator — horizontal pill at bottom on mobile */
-  .hist-tl-year-indicator {
-    position: fixed;
-    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-    top: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .hist-tl-year-indicator__year {
-    font-size: 1rem;
-    opacity: 0.4;
-    background: color-mix(in srgb, var(--hist-bg) 80%, transparent);
-    padding: 2px 12px;
-    border-radius: 2px;
-  }
-
-  /* Arc lanes — vertical on mobile */
+  /* Arc lanes — hidden on mobile (vertical layout) */
   .hist-tl-arc-lane {
     display: none;
   }
@@ -5461,8 +5332,8 @@
   left: 0;
   right: 0;
   z-index: 25;
-  padding: var(--space-4) var(--space-6);
-  background: linear-gradient(180deg, var(--hist-bg) 70%, transparent);
+  padding: var(--space-2) var(--space-6) 0;
+  background: linear-gradient(180deg, var(--hist-bg) 85%, transparent);
   pointer-events: none;
   transition: opacity 400ms ease;
   text-align: center;
@@ -5525,7 +5396,7 @@
    --------------------------------------------------------------------------- */
 .hist-tl-fact {
   position: absolute;
-  top: calc(50% + 80px);
+  top: calc(50% + 140px); /* Below card zone — cards are ~120px above/below track */
   transform: translateX(-50%);
   max-width: 300px;
   font-family: var(--font-data);
@@ -5545,37 +5416,104 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Rolling Year Indicator — fixed at viewport center, updates on scroll
-   Glass blur background, smooth font transitions, cinematic.
+   Year Ribbon — scrolling ±4 years with focus/blur depth-of-field
+   Fixed at top, below era header. Center year sharp, neighbors blur out.
    --------------------------------------------------------------------------- */
-.hist-tl-year-indicator {
+.hist-tl-year-ribbon {
   position: fixed;
-  bottom: calc(var(--space-4) + 90px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 22;
-  pointer-events: none;
+  top: calc(56px + 60px); /* below topbar + era header */
+  left: 0;
+  right: 0;
+  z-index: 24;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: clamp(8px, 1.5vw, 20px);
+  padding: var(--space-1) 0;
+  pointer-events: none;
 }
 
-.hist-tl-year-indicator__year {
+.hist-tl-year-ribbon__year {
   font-family: var(--font-data);
-  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.8rem);
-  font-weight: 400;
-  color: var(--hist-accent);
-  letter-spacing: 0.08em;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
-  opacity: 0.35;
-  white-space: nowrap;
   font-variant-numeric: tabular-nums;
-  transition: opacity 300ms ease;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 2px 4px;
+  transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+  /* Distance-based depth-of-field: --yr-dist 0=sharp, 1-4=progressively blurred */
+  font-size: clamp(0.7rem, 0.6rem + 0.5vw, 1rem);
+  color: var(--hist-ink-muted);
+  opacity: calc(1 - var(--yr-dist, 0) * 0.18);
+  filter: blur(calc(var(--yr-dist, 0) * 0.6px));
+  transform: scale(calc(1 - var(--yr-dist, 0) * 0.04));
 }
 
-:root[data-mode="dark"] .hist-tl-year-indicator__year {
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
-  opacity: 0.25;
+.hist-tl-year-ribbon__year--focused {
+  font-size: clamp(1.1rem, 0.9rem + 1vw, 1.6rem);
+  font-weight: 600;
+  color: var(--hist-accent);
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.hist-tl-year-ribbon__year:hover {
+  color: var(--hist-accent);
+  opacity: 1;
+  filter: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Era Pills — ink-styled quick-jump buttons below year ribbon
+   --------------------------------------------------------------------------- */
+.hist-tl-era-pills {
+  position: fixed;
+  top: calc(56px + 60px + 28px); /* below topbar + era header + year ribbon */
+  left: 0;
+  right: 0;
+  z-index: 24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-4);
+  pointer-events: none;
+}
+
+.hist-tl-era-pill {
+  font-family: var(--font-editorial);
+  font-size: 0.65rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--hist-ink-muted);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 2px 8px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color 200ms ease, border-color 200ms ease;
+  white-space: nowrap;
+  min-height: 28px;
+}
+
+.hist-tl-era-pill:hover {
+  color: var(--hist-accent);
+  border-bottom-color: var(--hist-accent);
+}
+
+.hist-tl-era-pill--active {
+  color: var(--hist-accent);
+  font-weight: 600;
+  border-bottom: 1.5px solid var(--hist-accent);
+}
+
+.hist-tl-era-pill:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -5584,7 +5522,7 @@
    --------------------------------------------------------------------------- */
 .hist-tl-arc-lane {
   position: absolute;
-  top: calc(50% + 28px);
+  top: calc(50% + 160px); /* Below card zone + fun facts */
   height: 36px;
   z-index: 3;
 }
