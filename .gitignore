@@ -43,6 +43,9 @@ supabase/.temp/
 # History enrichment results (ephemeral, not committed)
 data/history/enrichment/
 
+# History verification reports (ephemeral, not committed)
+data/history/verification/
+
 # Agent report artifacts
 AUDIT_*.txt
 AUDIT_*.md
