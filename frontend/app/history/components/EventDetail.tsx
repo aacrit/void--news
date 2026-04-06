@@ -1,90 +1,70 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import type { HistoricalEvent } from "../types";
-import { ERAS, REGIONS } from "../types";
-import KeyFacts from "./KeyFacts";
-import MediaGallery from "./MediaGallery";
-import PerspectiveSelector from "./PerspectiveSelector";
-import PerspectiveView from "./PerspectiveView";
-import PerspectiveComparison from "./PerspectiveComparison";
-import CompactTimeline from "./CompactTimeline";
+import { useEffect, useRef, useMemo } from "react";
+import type { HistoricalEvent, Perspective } from "../types";
 
 /* ===========================================================================
-   EventDetail — The core event detail component
-   Static hero with archival grade. Title card overlay.
-   Perspectives (THE PRODUCT) immediately after hero.
-   Collapsible context, KeyFacts, connected events, compact timeline.
+   EventDetail — 6-Stage Guided Journey
+   Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
+
+   Stage 1 — THE SCENE: Drop into the event (sticky hero, curtain-rise)
+   Stage 2 — THE CRACK: One fact that breaks the textbook (single blockquote)
+   Stage 3 — THE PERSPECTIVES: Witnesses enter left/right
+   Stage 4 — THE OMISSIONS: Emphasized vs. What They Left Out
+   Stage 5 — THE EVIDENCE: Stark numbers + archival images
+   Stage 6 — YOUR TURN: Point to next event, no summary
    =========================================================================== */
+
+/* ── Hooks — the "crack" for each event ── */
+const HOOKS: Record<string, string> = {
+  "partition-of-india":
+    "A lawyer who\u2019d never been to India drew the border in five weeks. 15 million crossed it.",
+  "hiroshima-nagasaki":
+    "66,000 dead in 8.5 seconds. Seven of eight five-star American generals said it wasn\u2019t necessary.",
+  "rwandan-genocide":
+    "The UN had a fax warning them. They reduced their force from 2,500 to 270. 800,000 died in 100 days.",
+};
+
+/* ── CTAs for next event navigation ── */
+const CTAS: Record<string, string> = {
+  "partition-of-india": "See how 4 nations remember August 15, 1947",
+  "hiroshima-nagasaki":
+    "Compare what Washington said vs. what survivors remember",
+  "rwandan-genocide":
+    "Read what the world chose not to see for 100 days",
+};
+
+/* ── Perspective color map ── */
+const PERSP_COLORS: Record<string, string> = {
+  a: "var(--hist-persp-a)",
+  b: "var(--hist-persp-b)",
+  c: "var(--hist-persp-c)",
+  d: "var(--hist-persp-d)",
+  e: "var(--hist-persp-e)",
+};
 
 interface EventDetailProps {
   event: HistoricalEvent;
   allEvents: HistoricalEvent[];
 }
 
-/* ── Organic Ink Divider ── */
-function InkRule() {
-  const ref = useRef<SVGSVGElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            el.classList.add("hist-micro-drawn");
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <svg
-      ref={ref}
-      className="hist-ink-rule"
-      viewBox="0 0 400 4"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        fill="none"
-        opacity="0.35"
-      />
-    </svg>
-  );
-}
-
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
-  const [activePerspectiveId, setActivePerspectiveId] = useState(
-    event.perspectives[0]?.id ?? ""
-  );
-  const [comparisonMode, setComparisonMode] = useState(false);
-  const [comparisonPerspId, setComparisonPerspId] = useState<string | null>(null);
-  const [contextExpanded, setContextExpanded] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLDivElement>(null);
 
-  const eraInfo = ERAS.find((e) => e.id === event.era);
-  const activePerspective = event.perspectives.find((p) => p.id === activePerspectiveId);
+  /* Determine next event for Stage 6 navigation */
+  const nextEvent = useMemo(() => {
+    const sorted = [...allEvents].sort((a, b) => a.dateSort - b.dateSort);
+    const idx = sorted.findIndex((e) => e.slug === event.slug);
+    if (idx === -1 || idx >= sorted.length - 1) return null;
+    return sorted[idx + 1];
+  }, [allEvents, event.slug]);
 
-  /* When comparison mode is toggled on, default the second perspective to the next one */
-  useEffect(() => {
-    if (comparisonMode && !comparisonPerspId && event.perspectives.length > 1) {
-      const other = event.perspectives.find((p) => p.id !== activePerspectiveId);
-      if (other) setComparisonPerspId(other.id);
-    }
-  }, [comparisonMode, comparisonPerspId, activePerspectiveId, event.perspectives]);
+  /* The crack — hook text */
+  const hook =
+    HOOKS[event.slug] ||
+    event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
 
-  /* Scroll reveal for content sections */
+  /* ── Scroll reveal observer for all .hist-reveal elements ── */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -103,222 +83,299 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
     return () => observer.disconnect();
   }, []);
 
-  /* Hero depth — recedes as content scrolls into view */
+  /* ── Witness background dimming: when a new witness becomes visible,
+       add background class to previously revealed witnesses ── */
   useEffect(() => {
-    const heroEl = heroRef.current;
-    if (!heroEl) return;
+    const witnesses = contentRef.current?.querySelectorAll(".hist-witness");
+    if (!witnesses || witnesses.length === 0) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) {
-          heroEl.classList.add("hist-hero--receded");
-        } else {
-          heroEl.classList.remove("hist-hero--receded");
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
+            /* Mark this witness as the focus */
+            witnesses.forEach((w) => {
+              if (w === entry.target) {
+                w.classList.remove("hist-witness--background");
+              } else if (w.classList.contains("hist-reveal--visible")) {
+                w.classList.add("hist-witness--background");
+              }
+            });
+          }
+        });
       },
-      { threshold: 0.3 }
+      { threshold: [0.3], rootMargin: "-10% 0px -10% 0px" }
     );
-    observer.observe(heroEl);
+
+    witnesses.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  const comparisonPersp = comparisonPerspId
-    ? event.perspectives.find((p) => p.id === comparisonPerspId)
-    : null;
-
-  /* Split context into sentences for collapsible display */
-  const contextParagraphs = event.contextNarrative.split("\n");
-  const firstParaText = contextParagraphs[0] || "";
-  const firstSentences = firstParaText.split(/(?<=[.!?])\s+(?=[A-Z])/).slice(0, 3).join(" ");
-  const hasMoreContext = firstParaText.length > firstSentences.length || contextParagraphs.length > 1;
-
   return (
     <div ref={contentRef}>
-      {/* ── Hero (static, depth on scroll) ── */}
-      <div ref={heroRef} className="hist-hero hist-hero--static hist-cold-open--hero">
-        {event.heroImage ? (
-          <img
-            src={event.heroImage}
-            alt={event.heroCaption ?? event.title}
-            className="hist-hero__image hist-hero__image--static"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        ) : (
-          <div className="hist-hero__fallback" />
-        )}
-        <div className="hist-hero__overlay" />
-        <div className="hist-hero__content">
-          {eraInfo && (
-            <span className="hist-hero__era">
-              {eraInfo.label} &middot; {eraInfo.dateRange}
+      {/* ═══════════════════════════════════════════
+          Stage 1 — THE SCENE (Arrive Late)
+          Full-viewport hero image, sticky behind content.
+          Content scrolls OVER the hero (curtain rising).
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--scene">
+        <div
+          className="hist-stage__hero"
+          style={
+            event.heroImage
+              ? { backgroundImage: `url(${event.heroImage})` }
+              : undefined
+          }
+        >
+          {!event.heroImage && <div className="hist-stage__hero-fallback" />}
+          <div className="hist-stage__hero-overlay" />
+          <div className="hist-stage__hero-content">
+            <span className="hist-stage__date">{event.datePrimary}</span>
+            <h1 className="hist-stage__title">{event.title}</h1>
+            {event.subtitle && (
+              <p className="hist-stage__subtitle">{event.subtitle}</p>
+            )}
+          </div>
+          {event.heroAttribution && (
+            <span className="hist-stage__attribution">
+              {event.heroAttribution}
             </span>
           )}
-          <h1 className="hist-hero__title">{event.title}</h1>
-          {event.subtitle && (
-            <p className="hist-hero__subtitle">{event.subtitle}</p>
-          )}
-          <span className="hist-hero__date">{event.dateRange || event.datePrimary}</span>
         </div>
-        {event.heroAttribution && (
-          <span className="hist-hero__caption">{event.heroAttribution}</span>
-        )}
-      </div>
+        {/* Scroll indicator */}
+        <div className="hist-stage__scroll-hint" aria-hidden="true">
+          <span className="hist-stage__scroll-line" />
+        </div>
+      </section>
 
-      {/* ── Main Content ── */}
-      <div className="hist-main hist-grade">
-        {/* 1. PERSPECTIVES — THE PRODUCT (immediately after hero) */}
-        <section className="hist-reveal hist-cold-open--content" aria-label="Perspectives">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-            <h2 className="hist-section-label" style={{ marginBottom: 0 }}>
-              Perspectives
-            </h2>
-            {event.perspectives.length >= 2 && (
-              <button
-                className={`hist-compare-toggle ${comparisonMode ? "hist-compare-toggle--active" : ""}`}
-                onClick={() => {
-                  setComparisonMode(!comparisonMode);
-                  if (comparisonMode) setComparisonPerspId(null);
-                }}
-                aria-pressed={comparisonMode}
-              >
-                {comparisonMode ? "Exit Comparison" : "Compare"}
-              </button>
-            )}
+      {/* ═══════════════════════════════════════════
+          Stage 2 — THE CRACK (Show Not Tell)
+          One fact that breaks the textbook.
+          Short. Just one blockquote. Arrive late, leave early.
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--crack">
+        <blockquote className="hist-crack__text hist-reveal">
+          {hook}
+        </blockquote>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          Stage 3 — THE PERSPECTIVES (The Conversation)
+          Each perspective enters as a "witness."
+          Alternating left/right on desktop, stacked on mobile.
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--perspectives">
+        <h2 className="hist-stage__label hist-reveal">THE PERSPECTIVES</h2>
+
+        {event.perspectives.map((perspective, i) => (
+          <WitnessBlock
+            key={perspective.id}
+            perspective={perspective}
+            index={i}
+          />
+        ))}
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          Stage 4 — THE OMISSIONS (The Climax)
+          Two panels: "What They Stress" vs "What They Leave Out"
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--omissions">
+        <h2 className="hist-stage__label hist-reveal">WHAT THEY LEFT OUT</h2>
+
+        <div className="hist-omissions-split">
+          <div className="hist-omissions-split__panel hist-omissions-split__panel--emphasized hist-reveal">
+            <h3 className="hist-omissions-split__heading">
+              What each side stresses
+            </h3>
+            {event.perspectives.map((p) => (
+              <div key={p.id} className="hist-omissions-split__group">
+                <span
+                  className="hist-omissions-split__name"
+                  style={{ color: PERSP_COLORS[p.color] }}
+                >
+                  {p.viewpointName}
+                </span>
+                <ul className="hist-omissions-split__list">
+                  {p.keyNarratives.map((n, ni) => (
+                    <li key={ni}>{n}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          {/* Perspective tabs */}
-          <PerspectiveSelector
-            perspectives={event.perspectives}
-            activeId={activePerspectiveId}
-            onSelect={(id) => {
-              setActivePerspectiveId(id);
-              if (comparisonMode && id === comparisonPerspId) {
-                const other = event.perspectives.find(
-                  (p) => p.id !== id && p.id !== comparisonPerspId
-                );
-                if (other) setComparisonPerspId(other.id);
-              }
-            }}
-          />
-
-          {/* Comparison selector for second perspective */}
-          {comparisonMode && (
-            <div className="hist-compare-selector">
-              <span className="hist-compare-label">
-                Compare with:
-              </span>
-              {event.perspectives
-                .filter((p) => p.id !== activePerspectiveId)
-                .map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setComparisonPerspId(p.id)}
-                    className={`hist-compare-option ${p.id === comparisonPerspId ? "hist-compare-option--active" : ""}`}
-                    style={p.id === comparisonPerspId ? {
-                      background: `var(--hist-persp-${p.color})`,
-                      borderColor: `var(--hist-persp-${p.color})`,
-                    } : {}}
+          <div className="hist-omissions-split__panel hist-omissions-split__panel--omitted hist-reveal">
+            <h3 className="hist-omissions-split__heading">
+              What each side ignores
+            </h3>
+            {event.perspectives
+              .filter((p) => p.omissions.length > 0)
+              .map((p) => (
+                <div key={p.id} className="hist-omissions-split__group">
+                  <span
+                    className="hist-omissions-split__name"
+                    style={{ color: PERSP_COLORS[p.color] }}
                   >
                     {p.viewpointName}
-                  </button>
-                ))}
-            </div>
-          )}
+                  </span>
+                  <ul className="hist-omissions-split__list">
+                    {p.omissions.map((o, oi) => (
+                      <li key={oi} className="hist-omission--struck">
+                        {o}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Active perspective or comparison */}
-          {comparisonMode && activePerspective && comparisonPersp ? (
-            <PerspectiveComparison
-              perspectiveA={activePerspective}
-              perspectiveB={comparisonPersp}
-            />
-          ) : activePerspective ? (
-            <PerspectiveView
-              key={activePerspective.id}
-              perspective={activePerspective}
-            />
-          ) : null}
-        </section>
+      {/* ═══════════════════════════════════════════
+          Stage 5 — THE EVIDENCE (Images + Data)
+          Stark numbers + archival images.
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--evidence">
+        <h2 className="hist-stage__label hist-reveal">THE EVIDENCE</h2>
 
-        <InkRule />
-
-        {/* 2. Context: What Happened (collapsible) */}
-        <section className="hist-reveal" aria-label="What happened">
-          <h2 className="hist-section-label">What Happened</h2>
-          <div className="hist-context">
-            {contextExpanded ? (
-              contextParagraphs.map((para, i) => (
-                <p key={i}>{para}</p>
-              ))
-            ) : (
-              <p>{firstSentences}</p>
+        {/* Stark numbers */}
+        {(event.deathToll || event.displaced || event.duration) && (
+          <div className="hist-evidence__numbers hist-reveal">
+            {event.deathToll && (
+              <div className="hist-evidence__stat">
+                <span className="hist-evidence__figure">{event.deathToll}</span>
+                <span className="hist-evidence__unit">killed</span>
+              </div>
+            )}
+            {event.displaced && (
+              <div className="hist-evidence__stat">
+                <span className="hist-evidence__figure">{event.displaced}</span>
+                <span className="hist-evidence__unit">displaced</span>
+              </div>
+            )}
+            {event.duration && (
+              <div className="hist-evidence__stat">
+                <span className="hist-evidence__figure">{event.duration}</span>
+              </div>
             )}
           </div>
-          {hasMoreContext && (
-            <button
-              className="hist-context-toggle"
-              onClick={() => setContextExpanded(!contextExpanded)}
-              aria-expanded={contextExpanded}
-            >
-              {contextExpanded ? "Show less" : "Read more"}
-            </button>
-          )}
-        </section>
+        )}
 
-        {/* 3. Archival Media Gallery */}
-        {event.media && event.media.length > 0 && (
-          <div className="hist-reveal">
-            <MediaGallery media={event.media} />
+        {/* Archival images — vertical, alternating, with context */}
+        {event.media.length > 0 && (
+          <div className="hist-evidence__gallery">
+            {event.media.map((item, i) => (
+              <div
+                key={item.id}
+                className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                <img
+                  src={item.url}
+                  alt={item.caption}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+                <p className="hist-evidence__caption">{item.caption}</p>
+                <span className="hist-evidence__image-attribution">
+                  {item.attribution}
+                  {item.year && ` (${item.year})`}
+                </span>
+              </div>
+            ))}
           </div>
         )}
+      </section>
 
-        {/* 4. Key Facts (compact) */}
-        <div className="hist-reveal">
-          <KeyFacts event={event} />
-        </div>
-
-        {/* 5. Connected Events */}
-        {event.connections.length > 0 && (
-          <section className="hist-reveal hist-connections" aria-label="Connected events">
-            <h2 className="hist-section-label">Connected Events</h2>
-            {event.connections.map((conn, i) => {
-              const targetExists = allEvents.some((e) => e.slug === conn.targetSlug);
-              if (targetExists) {
-                return (
-                  <Link
-                    key={i}
-                    href={`/history/${conn.targetSlug}`}
-                    className="hist-connection"
-                  >
-                    <span className="hist-connection__type">{conn.type}</span>
-                    <div className="hist-connection__body">
-                      <span className="hist-connection__title">{conn.targetTitle}</span>
-                      <span className="hist-connection__desc">{conn.description}</span>
-                    </div>
-                  </Link>
-                );
-              }
-              return (
-                <div key={i} className="hist-connection" style={{ cursor: "default" }}>
-                  <span className="hist-connection__type">{conn.type}</span>
-                  <div className="hist-connection__body">
-                    <span className="hist-connection__title">
-                      {conn.targetTitle}
-                      <span className="hist-connection__coming">(coming)</span>
-                    </span>
-                    <span className="hist-connection__desc">{conn.description}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </section>
+      {/* ═══════════════════════════════════════════
+          Stage 6 — YOUR TURN (Leave Early)
+          No summary. Point to next event, or return.
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--next hist-reveal">
+        {nextEvent ? (
+          <>
+            <p className="hist-next__prompt">Now read:</p>
+            <a
+              className="hist-next__cta"
+              href={`/history/${nextEvent.slug}`}
+              onClick={(e) => {
+                e.preventDefault();
+                /* Navigate to next event page directly */
+                window.location.href = `/history/${nextEvent.slug}`;
+              }}
+            >
+              {CTAS[nextEvent.slug] ||
+                `Explore ${nextEvent.perspectives.length} accounts of ${nextEvent.title}`}
+            </a>
+          </>
+        ) : (
+          <button
+            className="hist-next__cta"
+            type="button"
+            onClick={() => window.history.back()}
+          >
+            Return to The Archive
+          </button>
         )}
+      </section>
+    </div>
+  );
+}
 
-        {/* 6. Compact Timeline: Prev / Next */}
-        <div className="hist-reveal">
-          <CompactTimeline events={allEvents} currentSlug={event.slug} />
-        </div>
+/* ===========================================================================
+   WitnessBlock — A single perspective "witness"
+   Identity (dot + name + type), key argument blockquote,
+   one primary source quote if available.
+   =========================================================================== */
+function WitnessBlock({
+  perspective,
+  index,
+}: {
+  perspective: Perspective;
+  index: number;
+}) {
+  const side = index % 2 === 0 ? "left" : "right";
+
+  return (
+    <div
+      className={`hist-witness hist-witness--${side} hist-reveal`}
+      style={{ transitionDelay: `${index * 150}ms` }}
+    >
+      {/* Witness identity */}
+      <div className="hist-witness__identity">
+        <span
+          className="hist-witness__dot"
+          style={{
+            background: PERSP_COLORS[perspective.color] || PERSP_COLORS.a,
+          }}
+          aria-hidden="true"
+        />
+        <span className="hist-witness__name">{perspective.viewpointName}</span>
+        <span className="hist-witness__type">{perspective.viewpointType}</span>
       </div>
+
+      {/* Key argument — strongest claim from this side */}
+      {perspective.keyNarratives[0] && (
+        <blockquote className="hist-witness__argument">
+          {perspective.keyNarratives[0]}
+        </blockquote>
+      )}
+
+      {/* One primary source quote if available */}
+      {perspective.primarySources[0] && (
+        <div className="hist-witness__source">
+          <p className="hist-witness__quote">
+            &ldquo;{perspective.primarySources[0].text}&rdquo;
+          </p>
+          <cite className="hist-witness__cite">
+            &mdash; {perspective.primarySources[0].author},{" "}
+            {perspective.primarySources[0].date}
+          </cite>
+        </div>
+      )}
     </div>
   );
 }
