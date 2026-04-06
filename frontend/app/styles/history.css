@@ -1829,126 +1829,157 @@
 
 /* Landing Hero — REMOVED (dead code, Round 7 cleanup) */
 
-/* ---------------------------------------------------------------------------
-   THE CORRIDOR — Landing page dark canvas with spotlit event posters
-   --------------------------------------------------------------------------- */
-.hist-corridor {
-  background: var(--hist-bg-primary, var(--hist-bg));
-  padding-bottom: var(--space-7);
+/* ===========================================================================
+   THE TIMELINE — Horizontal scroll-snap landing.
+   Cards snap to viewport center. A single CSS custom property `--tl-focus`
+   (0 = off-screen, 1 = centered) drives opacity, blur, scale, and
+   progressive content reveal. Set by JS on each scroll frame.
+   =========================================================================== */
+
+/* ── Wrapper — full viewport, positions brief + track ── */
+.hist-tl-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--hist-bg);
 }
 
-/* ---------------------------------------------------------------------------
-   Mission Brief — Single line, cold open
-   --------------------------------------------------------------------------- */
-.hist-brief {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: var(--space-6) var(--space-4) var(--space-3);
+/* ── Mission Brief — fades on first scroll ── */
+.hist-tl-brief {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 600ms var(--ease-document-settle);
+}
+
+.hist-tl-brief--hidden {
   opacity: 0;
-  animation: histBriefIn 800ms var(--ease-document-settle) 100ms both;
 }
 
-@keyframes histBriefIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.hist-brief__line {
+.hist-tl-brief__text {
   font-family: var(--font-data);
   font-size: var(--text-sm);
   color: var(--hist-ink-secondary);
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 var(--space-2);
   letter-spacing: 0.01em;
-  text-align: center;
 }
 
-/* ---------------------------------------------------------------------------
-   Fog Zone — atmospheric breathing room between events
-   --------------------------------------------------------------------------- */
-.hist-fog {
-  height: 80px;
-  background: radial-gradient(
-    ellipse 80% 100% at 50% 50%,
-    transparent 0%,
-    var(--hist-bg) 100%
-  );
-  pointer-events: none;
+.hist-tl-brief__hint {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.06em;
+  animation: histBriefPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes histBriefPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ── The horizontal scroller ── */
+.hist-tl-landing {
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  display: flex;
+  align-items: center;
+  scrollbar-width: none;
+
+  /* Padding so first/last cards can center */
+  padding-left: calc(50vw - var(--tl-card-w, 520px) / 2);
+  padding-right: calc(50vw - var(--tl-card-w, 520px) / 2);
+  gap: var(--tl-card-gap, 80px);
+}
+
+.hist-tl-landing::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Card sizing custom properties ── */
+.hist-tl-landing {
+  --tl-card-w: 520px;
+  --tl-card-gap: 80px;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hist-tl-landing {
+    --tl-card-w: 440px;
+    --tl-card-gap: 60px;
+  }
 }
 
 @media (max-width: 767px) {
-  .hist-fog {
-    height: 40px;
+  .hist-tl-landing {
+    --tl-card-w: calc(100vw - 48px);
+    --tl-card-gap: 0px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }
 
 /* ===========================================================================
-   Event Poster — Spotlit exhibit in the corridor (cinematic v2)
-   Full-width archival photo (Ken Burns + hover acceleration), date + title,
-   THE HOOK, hover-reveal perspective names + stark data, CTA with arrow.
-   Severity accent border. Rack focus on corridor hover.
+   Timeline Card — Scroll-snap + --tl-focus driven rack focus
    =========================================================================== */
-.hist-poster {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 var(--space-4);
-  opacity: 0;
-  transform: translateY(30px) scale(0.97);
-  filter: blur(3px);
-  transition:
-    opacity 600ms ease,
-    transform 600ms ease,
-    filter 600ms ease,
-    box-shadow 300ms ease,
-    border-left-width 200ms ease;
+.hist-tl-card {
+  flex-shrink: 0;
+  width: var(--tl-card-w, 520px);
+  scroll-snap-align: center;
+  position: relative;
+  cursor: pointer;
 
-  /* ── Severity accent — always visible ── */
-  border-left: 3px solid transparent;
+  /* Rack focus from scroll position */
+  opacity: calc(0.35 + 0.65 * var(--tl-focus, 0.5));
+  filter: blur(calc(4px * (1 - var(--tl-focus, 0.5))));
+  transform: scale(calc(0.85 + 0.15 * var(--tl-focus, 0.5)));
+
+  transition: opacity 150ms ease, filter 150ms ease, transform 150ms ease;
+  will-change: transform, opacity, filter;
+
+  /* Card surface */
+  background: var(--hist-bg-card);
+  border: 1px solid var(--hist-border-subtle);
+  overflow: hidden;
 }
 
-.hist-poster--catastrophic { border-left-color: #8B0000; }
-.hist-poster--critical { border-left-color: #B44C00; }
-.hist-poster--major { border-left-color: var(--hist-brass); }
+/* ── Severity accent — left border ── */
+.hist-tl-card--catastrophic { border-left: 4px solid #8B0000; }
+.hist-tl-card--critical { border-left: 4px solid #B44C00; }
+.hist-tl-card--major { border-left: 4px solid var(--hist-brass); }
 
-.hist-poster--visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+/* ── Severity pseudo-element (subtle corner glow) ── */
+.hist-tl-card__severity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  pointer-events: none;
 }
 
-/* ── Poster hover — comes alive (desktop) ── */
-@media (min-width: 768px) {
-  .hist-poster--visible:hover {
-    transform: translateY(-3px) scale(1);
-    box-shadow: 4px 6px 24px var(--hist-shadow-tint);
-  }
-
-  /* Severity accent widens on hover */
-  .hist-poster--visible:hover {
-    border-left-width: 6px;
-  }
-
-  /* Rack focus — non-hovered posters dim when any poster is hovered */
-  .hist-corridor:has(.hist-poster:hover) .hist-poster:not(:hover) {
-    filter: blur(1px) brightness(0.85);
-    opacity: 0.7;
-    transition:
-      filter 400ms ease,
-      opacity 300ms ease,
-      transform 600ms ease,
-      box-shadow 300ms ease,
-      border-left-width 200ms ease;
-  }
-
-  /* Hovered poster stays crisp */
-  .hist-corridor:has(.hist-poster:hover) .hist-poster:hover {
-    filter: none;
-    opacity: 1;
-  }
+.hist-tl-card--catastrophic .hist-tl-card__severity {
+  background: linear-gradient(90deg, #8B0000 0%, transparent 60%);
+  opacity: 0.4;
 }
 
-/* ── Photo — full width, archival grade, Ken Burns on viewport ── */
-.hist-poster__photo {
+.hist-tl-card--critical .hist-tl-card__severity {
+  background: linear-gradient(90deg, #B44C00 0%, transparent 60%);
+  opacity: 0.3;
+}
+
+/* ── Photo — archival grade, Ken Burns when focused ── */
+.hist-tl-card__photo {
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
@@ -1956,33 +1987,17 @@
   background: var(--hist-paper-deep);
 }
 
-.hist-poster__photo img,
-.hist-poster__photo .hist-poster__photo-img {
+.hist-tl-card__photo-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
-  transform: scale(1.0);
-  transition: transform 8s linear;
-}
-
-/* Ken Burns activates when poster is in viewport */
-.hist-poster--visible .hist-poster__photo img,
-.hist-poster--visible .hist-poster__photo .hist-poster__photo-img {
-  transform: scale(1.06);
-}
-
-/* Ken Burns ACCELERATES on hover (faster drift) */
-@media (min-width: 768px) {
-  .hist-poster--visible:hover .hist-poster__photo img,
-  .hist-poster--visible:hover .hist-poster__photo .hist-poster__photo-img {
-    transform: scale(1.10);
-    transition: transform 4s linear;
-  }
+  transform: scale(calc(1 + 0.06 * var(--tl-focus, 0.5)));
+  transition: transform 3s linear;
 }
 
 /* ── Photo fallback — cinematic gradient when all images fail ── */
-.hist-poster__photo-fallback {
+.hist-tl-card__photo-fallback {
   width: 100%;
   height: 100%;
   background: linear-gradient(
@@ -1994,27 +2009,13 @@
   opacity: 0.3;
 }
 
-/* ── Body — below photo, L-cut stagger (text enters after photo) ── */
-.hist-poster__body {
-  padding: var(--space-4) 0;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 400ms ease 150ms, transform 400ms ease 150ms;
-}
-
-.hist-poster--visible .hist-poster__body {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (min-width: 768px) {
-  .hist-poster__body {
-    padding: var(--space-4) 0;
-  }
+/* ── Body — text content below photo ── */
+.hist-tl-card__body {
+  padding: var(--space-3) var(--space-4) var(--space-4);
 }
 
 /* ── Date ── */
-.hist-poster__date {
+.hist-tl-card__date {
   display: block;
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -2025,145 +2026,58 @@
 }
 
 /* ── Title ── */
-.hist-poster__title {
+.hist-tl-card__title {
   font-family: var(--font-editorial);
-  font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.2;
   color: var(--hist-ink);
   margin: 0 0 var(--space-2);
 }
 
-/* ── THE HOOK — the most important line. Arrive late, leave early. ── */
-.hist-poster__hook {
+/* ── Hook, dots, CTA — revealed when focused (--tl-focus > 0.65) ── */
+.hist-tl-card__hook,
+.hist-tl-card__dots,
+.hist-tl-card__cta {
+  opacity: calc(max(0, (var(--tl-focus, 0) - 0.65)) / 0.35);
+  transform: translateY(calc(10px * (1 - min(1, max(0, (var(--tl-focus, 0) - 0.65)) / 0.35))));
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+/* CTA always clickable for keyboard users */
+.hist-tl-card__cta {
+  pointer-events: auto;
+}
+
+/* ── THE HOOK — arrive late, leave early ── */
+.hist-tl-card__hook {
   font-family: var(--font-structural);
-  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+  font-size: clamp(0.9rem, 0.85rem + 0.35vw, 1.1rem);
   font-style: italic;
   line-height: 1.5;
   color: var(--hist-ink);
   border-left: 3px solid var(--hist-accent);
   padding-left: var(--space-3);
-  margin: var(--space-3) 0;
+  margin: var(--space-2) 0;
   quotes: none;
 }
 
-/* ── Perspective dots — colored circles only, no names at rest ── */
-.hist-poster__dots {
+/* ── Perspective dots ── */
+.hist-tl-card__dots {
   display: flex;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
 }
 
-.hist-poster__dot {
+.hist-tl-card__dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-/* ── Hover-reveal content — perspective names + stark data ── */
-.hist-poster__hover-content {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 400ms ease, opacity 300ms ease 100ms;
-  margin-bottom: 0;
-}
-
-@media (min-width: 768px) {
-  .hist-poster:hover .hist-poster__hover-content {
-    max-height: 200px;
-    opacity: 1;
-    margin-bottom: var(--space-3);
-  }
-}
-
-/* Mobile: always visible, no hover needed */
-@media (max-width: 767px) {
-  .hist-poster__hover-content {
-    max-height: none;
-    opacity: 1;
-    overflow: visible;
-    margin-bottom: var(--space-3);
-    transition: none;
-  }
-}
-
-/* ── Perspective names — staggered reveal ── */
-.hist-poster__perspectives {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
-  margin-bottom: var(--space-2);
-}
-
-.hist-poster__persp-name {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 200ms ease, transform 200ms ease;
-}
-
-.hist-poster__persp-bullet {
-  font-size: 0.5em;
-  vertical-align: middle;
-  margin-right: 2px;
-}
-
-/* Desktop stagger — nth-child delays */
-@media (min-width: 768px) {
-  .hist-poster:hover .hist-poster__persp-name {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .hist-poster:hover .hist-poster__persp-name:nth-child(1) { transition-delay: 40ms; }
-  .hist-poster:hover .hist-poster__persp-name:nth-child(2) { transition-delay: 80ms; }
-  .hist-poster:hover .hist-poster__persp-name:nth-child(3) { transition-delay: 120ms; }
-  .hist-poster:hover .hist-poster__persp-name:nth-child(4) { transition-delay: 160ms; }
-  .hist-poster:hover .hist-poster__persp-name:nth-child(5) { transition-delay: 200ms; }
-}
-
-/* Mobile: always visible */
-@media (max-width: 767px) {
-  .hist-poster__persp-name {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-}
-
-/* ── Stark data line — death toll + displaced ── */
-.hist-poster__stark {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-  margin: 0;
-  opacity: 0;
-  transition: opacity 300ms ease 250ms;
-}
-
-@media (min-width: 768px) {
-  .hist-poster:hover .hist-poster__stark {
-    opacity: 1;
-  }
-}
-
-/* Mobile: always visible */
-@media (max-width: 767px) {
-  .hist-poster__stark {
-    opacity: 1;
-    transition: none;
-  }
-}
-
-/* ── CTA — story-specific, prominent, with arrow ── */
-.hist-poster__cta {
+/* ── CTA — story-specific, with arrow ── */
+.hist-tl-card__cta {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2184,31 +2098,263 @@
   transition: background 200ms ease, transform 100ms ease, filter 200ms ease;
 }
 
-.hist-poster__cta-text {
+.hist-tl-card__cta-text {
   flex: 1;
 }
 
-.hist-poster__cta-arrow {
+.hist-tl-card__cta-arrow {
   display: inline-block;
   transition: transform 250ms var(--ease-archive-snap, cubic-bezier(0.22, 1.4, 0.36, 1));
 }
 
-.hist-poster__cta:hover {
+.hist-tl-card__cta:hover {
   background: var(--hist-accent-bright, #7A5B47);
   filter: brightness(1.08);
 }
 
-.hist-poster__cta:hover .hist-poster__cta-arrow {
+.hist-tl-card__cta:hover .hist-tl-card__cta-arrow {
   transform: translateX(6px);
 }
 
-.hist-poster__cta:active {
+.hist-tl-card__cta:active {
   transform: scale(0.97);
 }
 
-.hist-poster__cta:focus-visible {
+.hist-tl-card__cta:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
+}
+
+/* ===========================================================================
+   Classified Card — Desaturated, dashed border, within timeline
+   =========================================================================== */
+.hist-tl-card--classified {
+  border: 1.5px dashed var(--hist-border);
+  background: var(--hist-bg-card);
+  filter:
+    blur(calc(4px * (1 - var(--tl-focus, 0.5))))
+    saturate(0.3);
+}
+
+.hist-tl-card--classified-revealed {
+  filter:
+    blur(calc(4px * (1 - var(--tl-focus, 0.5))))
+    saturate(1);
+  border-style: solid;
+  border-color: var(--hist-accent);
+}
+
+.hist-tl-card--classified__redacted {
+  opacity: 0.12;
+  letter-spacing: -0.02em;
+}
+
+.hist-tl-card--classified__quote {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--hist-ink-secondary);
+  line-height: 1.45;
+  margin: var(--space-1) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--hist-border);
+}
+
+.hist-tl-card--classified__quote-b {
+  border-left-color: var(--hist-accent);
+  color: var(--hist-ink);
+}
+
+.hist-tl-card--classified__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.hist-tl-card--classified__date {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.04em;
+}
+
+.hist-tl-card--classified__badge {
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 1px 6px;
+  border: 1px solid var(--hist-brass);
+  color: var(--hist-brass);
+  opacity: 0.7;
+}
+
+.hist-tl-card--classified__reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--hist-bg-card);
+  border: 1px solid var(--hist-accent);
+  opacity: 0;
+  transform: rotateY(90deg);
+  transition:
+    opacity 0.35s ease,
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.hist-tl-card--classified-revealed .hist-tl-card--classified__reveal {
+  opacity: 1;
+  transform: rotateY(0deg);
+}
+
+.hist-tl-card--classified__reveal-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--hist-accent);
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.hist-tl-card--classified__reveal-hint {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.08em;
+}
+
+/* ===========================================================================
+   Timeline Track — Fixed minimap at bottom of viewport
+   =========================================================================== */
+.hist-tl-track {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 5%;
+  right: 5%;
+  height: 32px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hist-tl-track__line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hist-border);
+  opacity: 0.5;
+  transform: translateY(-50%);
+}
+
+.hist-tl-track__dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--hist-border);
+  border: 1.5px solid var(--hist-bg);
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 0;
+  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  /* Enlarge touch target without visual change */
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Visual dot inside the touch target */
+.hist-tl-track__dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--hist-border);
+  border: 1.5px solid var(--hist-bg);
+  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  flex-shrink: 0;
+}
+
+/* Hide the actual button's background */
+.hist-tl-track__dot {
+  background: transparent;
+  border: none;
+}
+
+.hist-tl-track__dot--active::before {
+  background: var(--hist-accent);
+  border-color: var(--hist-accent);
+  transform: scale(1.4);
+  box-shadow: 0 0 8px var(--hist-accent-wash);
+}
+
+.hist-tl-track__dot--classified::before {
+  border-style: dashed;
+  opacity: 0.5;
+}
+
+.hist-tl-track__dot:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* Year labels below dots */
+.hist-tl-track__year {
+  position: absolute;
+  top: calc(50% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.hist-tl-track__dot--active .hist-tl-track__year {
+  opacity: 1;
+}
+
+/* ===========================================================================
+   Mobile Timeline Adjustments
+   =========================================================================== */
+@media (max-width: 767px) {
+  .hist-tl-card {
+    scroll-snap-stop: always;
+  }
+
+  /* Track at top (below topbar) instead of bottom */
+  .hist-tl-track {
+    top: var(--space-3);
+    bottom: auto;
+  }
+
+  /* Simpler photo filter on mobile */
+  .hist-tl-card__photo-img {
+    transition: none;
+    transform: scale(1);
+  }
+
+  /* Brief positioned higher */
+  .hist-tl-brief {
+    top: 40%;
+  }
 }
 
 /* ===========================================================================
@@ -3280,95 +3426,82 @@
 }
 
 /* ===========================================================================
-   Mobile — Posters always visible, no Ken Burns on photos, no hover effects
+   Mobile — Timeline cards: no Ken Burns, no hover effects
    =========================================================================== */
 @media (max-width: 767px) {
-  .hist-poster__photo img,
-  .hist-poster__photo .hist-poster__photo-img {
+  .hist-tl-card__photo-img {
     transition: none;
     transform: none;
   }
 
-  .hist-poster--visible .hist-poster__photo img,
-  .hist-poster--visible .hist-poster__photo .hist-poster__photo-img {
-    transform: none;
-  }
-
-  .hist-classified-tile__badge {
+  .hist-tl-card--classified__badge {
     transform: none;
   }
 }
 
 /* ===========================================================================
-   Reduced Motion — Posters, stages, overlay, classified
+   Reduced Motion — Timeline cards, stages, overlay, classified
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-poster {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-    border-left-width: 3px;
-  }
-
-  .hist-poster__body {
-    opacity: 1;
-    transform: none;
+  /* Timeline cards: no rack focus, no blur, no scale */
+  .hist-tl-card {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
     transition: none;
   }
 
-  .hist-poster__photo img,
-  .hist-poster__photo .hist-poster__photo-img {
-    transition: none;
-    transform: none;
-  }
-
-  /* No hover transforms, no rack focus */
-  .hist-poster:hover {
-    transform: none;
-  }
-
-  .hist-corridor:has(.hist-poster:hover) .hist-poster:not(:hover) {
-    filter: none;
-    opacity: 1;
-    transition: none;
-  }
-
-  /* Content always visible (no hover reveal) */
-  .hist-poster__hover-content {
-    max-height: none;
-    opacity: 1;
-    overflow: visible;
-    transition: none;
-    margin-bottom: var(--space-3);
-  }
-
-  .hist-poster__persp-name {
+  .hist-tl-card__hook,
+  .hist-tl-card__dots,
+  .hist-tl-card__cta {
     opacity: 1;
     transform: none;
     transition: none;
   }
 
-  .hist-poster__stark {
-    opacity: 1;
-    transition: none;
-  }
-
-  .hist-poster__cta,
-  .hist-poster__cta:hover,
-  .hist-poster__cta:active {
+  .hist-tl-card__photo-img {
     transition: none;
     transform: none;
   }
 
-  .hist-poster__cta-arrow {
+  .hist-tl-card__cta,
+  .hist-tl-card__cta:hover,
+  .hist-tl-card__cta:active {
     transition: none;
-  }
-
-  .hist-poster__cta:hover .hist-poster__cta-arrow {
     transform: none;
   }
 
+  .hist-tl-card__cta-arrow {
+    transition: none;
+  }
+
+  .hist-tl-card__cta:hover .hist-tl-card__cta-arrow {
+    transform: none;
+  }
+
+  .hist-tl-brief {
+    transition: none;
+  }
+
+  .hist-tl-brief__hint {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  .hist-tl-track__dot::before {
+    transition: none;
+  }
+
+  .hist-tl-card--classified {
+    transition: none;
+    filter: saturate(0.3) !important;
+  }
+
+  .hist-tl-card--classified__reveal {
+    transition: none;
+  }
+
+  /* Stage system */
   .hist-stage__scroll-line {
     animation: none;
     opacity: 0.4;
@@ -3431,18 +3564,6 @@
     opacity: 1;
     transform: none;
     transition: none;
-  }
-
-  .hist-classified-tile {
-    transition: none;
-  }
-
-  .hist-classified-tile__reveal {
-    transition: none;
-  }
-
-  .hist-classified-tile:active {
-    transform: none;
   }
 }
 
@@ -3811,14 +3932,12 @@
 /* Word-wrap safety on all headline elements */
 .hist-hero__title,
 .hist-event-card__title,
-.hist-poster__title,
+.hist-tl-card__title,
 .hist-stage__title,
-.hist-classified-tile__title,
 .hist-persp-tab__name,
 .hist-comparison__header,
 .hist-connection__title,
-.hist-compact-timeline__title,
-.hist-classified-tile__reveal-title {
+.hist-compact-timeline__title {
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -4226,14 +4345,14 @@
     transition: none;
   }
 
-  .hist-poster__cta,
-  .hist-poster__cta:hover {
+  .hist-tl-card__cta,
+  .hist-tl-card__cta:hover {
     transition: none;
     transform: none;
   }
 
-  .hist-poster__cta-arrow,
-  .hist-poster__cta:hover .hist-poster__cta-arrow {
+  .hist-tl-card__cta-arrow,
+  .hist-tl-card__cta:hover .hist-tl-card__cta-arrow {
     transition: none;
     transform: none;
   }

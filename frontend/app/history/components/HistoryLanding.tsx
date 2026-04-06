@@ -5,9 +5,9 @@ import type { HistoricalEvent, RedactedEvent } from "../types";
 import HistoryOverlay from "./HistoryOverlay";
 
 /* ===========================================================================
-   HistoryLanding — The Corridor
-   Museum corridor. Events are spotlit exhibits in dim surroundings.
-   Continuous vertical scroll with atmospheric fog between events.
+   HistoryLanding — The Timeline
+   Horizontal scroll through time. Cards snap to center. A single CSS custom
+   property `--tl-focus` (0-1) drives rack focus, content reveal, and scale.
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
    =========================================================================== */
 
@@ -127,16 +127,24 @@ const PERSP_COLORS: Record<string, string> = {
   e: "var(--hist-persp-e)",
 };
 
-/* ── Severity → CSS class + color ── */
+/* ── Severity → CSS modifier ── */
 const SEVERITY_CLASS: Record<string, string> = {
-  catastrophic: "hist-poster--catastrophic",
-  critical: "hist-poster--critical",
-  major: "hist-poster--major",
+  catastrophic: "hist-tl-card--catastrophic",
+  critical: "hist-tl-card--critical",
+  major: "hist-tl-card--major",
 };
+
+/* ── Extract year from YYYYMMDD dateSort ── */
+function extractYear(dateSort: number, datePrimary: string): string {
+  const s = String(dateSort);
+  if (s.length >= 4) return s.slice(0, 4);
+  const match = datePrimary.match(/\d{4}/);
+  return match ? match[0] : "";
+}
 
 /* ===========================================================================
    PosterImage — Robust fallback chain
-   heroImage → media[0].url → media[1].url → … → cinematic gradient
+   heroImage -> media[0].url -> media[1].url -> ... -> cinematic gradient
    =========================================================================== */
 function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean }) {
   const fallbackUrls = useMemo(() => {
@@ -145,7 +153,6 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
     event.media.forEach((m) => {
       if (m.url && m.type === "image") urls.push(m.url);
     });
-    // Also include maps/documents as last resort before gradient
     event.media.forEach((m) => {
       if (m.url && m.type !== "image" && !urls.includes(m.url)) urls.push(m.url);
     });
@@ -165,7 +172,7 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
   }, [currentIndex, fallbackUrls.length]);
 
   if (allFailed) {
-    return <div className="hist-poster__photo-fallback" aria-hidden="true" />;
+    return <div className="hist-tl-card__photo-fallback" aria-hidden="true" />;
   }
 
   return (
@@ -173,7 +180,7 @@ function PosterImage({ event, eager }: { event: HistoricalEvent; eager?: boolean
       src={fallbackUrls[currentIndex]}
       alt={event.heroCaption || event.title}
       loading={eager ? "eager" : "lazy"}
-      className="hist-poster__photo-img"
+      className="hist-tl-card__photo-img"
       onError={handleError}
     />
   );
@@ -189,52 +196,124 @@ export default function HistoryLanding({
   events,
   redacted,
 }: HistoryLandingProps) {
-  const corridorRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [activeOverlay, setActiveOverlay] = useState<{
     event: HistoricalEvent;
     sourceRect: DOMRect | null;
   } | null>(null);
 
-  /* ── Scroll cinematography: poster reveal via IntersectionObserver ── */
+  /* Merge events + classified into one timeline (classified at end) */
+  const allItems = useMemo(() => {
+    const sorted = [...events].sort((a, b) => a.dateSort - b.dateSort);
+    return { events: sorted, redacted };
+  }, [events, redacted]);
+
+  const totalCards = allItems.events.length + allItems.redacted.length;
+
+  /* ── Scroll listener: update --tl-focus on every card ── */
   useEffect(() => {
-    const posters = corridorRef.current?.querySelectorAll(".hist-poster");
-    if (!posters || posters.length === 0) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("hist-poster--visible");
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
-    );
+    let rafId: number;
+    const updateFocus = () => {
+      const containerRect = container.getBoundingClientRect();
+      const centerX = containerRect.left + containerRect.width / 2;
+      let closestIndex = 0;
+      let closestDist = Infinity;
 
-    posters.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [events]);
+      cardRefs.current.forEach((cardEl, i) => {
+        if (!cardEl) return;
+        const cardRect = cardEl.getBoundingClientRect();
+        const cardCenterX = cardRect.left + cardRect.width / 2;
+        const dist = Math.abs(cardCenterX - centerX);
+        const maxDist = containerRect.width * 0.8;
+        const t = Math.min(dist / maxDist, 1);
+        cardEl.style.setProperty("--tl-focus", (1 - t).toFixed(3));
 
-  /* ── Classified tile reveal observer ── */
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestIndex = i;
+        }
+      });
+
+      setFocusedIndex(closestIndex);
+    };
+
+    const onScroll = () => {
+      if (!hasScrolled) setHasScrolled(true);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateFocus);
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    updateFocus(); // initial calculation
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, [allItems.events, allItems.redacted, hasScrolled]);
+
+  /* ── Vertical wheel -> horizontal scroll ── */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("hist-reveal--visible");
-          }
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, []);
+
+  /* ── Smooth scroll to card by index ── */
+  const scrollToCard = useCallback(
+    (index: number) => {
+      const el = cardRefs.current[index];
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
         });
-      },
-      { threshold: 0.05, rootMargin: "0px 0px -30px 0px" }
-    );
-    const tiles = corridorRef.current?.querySelectorAll(".hist-classified-tile");
-    tiles?.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [redacted]);
+      }
+    },
+    []
+  );
+
+  /* ── Keyboard: arrow keys, Home, End ── */
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        scrollToCard(Math.min(focusedIndex + 1, totalCards - 1));
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        scrollToCard(Math.max(focusedIndex - 1, 0));
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        scrollToCard(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        scrollToCard(totalCards - 1);
+      }
+    },
+    [focusedIndex, totalCards, scrollToCard]
+  );
 
   /* ── Open story overlay ── */
   const openStory = useCallback(
-    (event: HistoricalEvent, photoEl: HTMLElement | null) => {
+    (event: HistoricalEvent, cardIndex: number) => {
+      const photoEl = cardRefs.current[cardIndex]?.querySelector<HTMLElement>(
+        ".hist-tl-card__photo"
+      );
       const rect = photoEl?.getBoundingClientRect() ?? null;
       setActiveOverlay({ event, sourceRect: rect });
     },
@@ -247,62 +326,101 @@ export default function HistoryLanding({
   }, []);
 
   return (
-    <div>
-      <div ref={corridorRef} className="hist-corridor hist-grade">
-        {/* ── Mission Brief — one line, cold open ── */}
-        <header className="hist-brief" aria-label="Archive mission brief">
-          <p className="hist-brief__line">
-            One event. Every side. Decide for yourself.
-          </p>
-        </header>
+    <div className="hist-tl-wrapper">
+      {/* ── Mission Brief — fades on first scroll ── */}
+      <div
+        className={`hist-tl-brief ${hasScrolled ? "hist-tl-brief--hidden" : ""}`}
+        aria-hidden={hasScrolled}
+      >
+        <p className="hist-tl-brief__text">
+          One event. Every side. Decide for yourself.
+        </p>
+        <span className="hist-tl-brief__hint">&larr; scroll through time &rarr;</span>
+      </div>
 
-        {/* ── Fog zone after brief ── */}
-        <div className="hist-fog" aria-hidden="true" />
-
-        {/* ── Event Posters ── */}
-        {events.map((event, i) => (
-          <div key={event.slug}>
-            <EventPoster
-              event={event}
-              index={i}
-              onOpen={openStory}
-            />
-            {/* Fog zone between events (not after the last) */}
-            {i < events.length - 1 && (
-              <div className="hist-fog" aria-hidden="true" />
-            )}
-          </div>
+      {/* ── Horizontal timeline scroller ── */}
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+      <div
+        ref={containerRef}
+        className="hist-tl-landing hist-grade"
+        role="region"
+        aria-label="Historical events timeline"
+        aria-roledescription="timeline"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+      >
+        {/* ── Event cards ── */}
+        {allItems.events.map((event, i) => (
+          <TimelineCard
+            key={event.slug}
+            ref={(el) => { cardRefs.current[i] = el; }}
+            event={event}
+            index={i}
+            onOpen={openStory}
+          />
         ))}
 
-        {/* ── Classified Section ── */}
-        {redacted.length > 0 && (
-          <>
-            <div className="hist-fog" aria-hidden="true" />
-            <div className="hist-classified-divider">
-              <span className="hist-classified-divider__line" aria-hidden="true" />
-              <span className="hist-classified-divider__label">
-                CLASSIFIED — PENDING DECLASSIFICATION
-              </span>
-              <span className="hist-classified-divider__line" aria-hidden="true" />
-            </div>
-
-            <section
-              className="hist-classified-feed"
-              aria-label="Classified upcoming event dossiers"
-            >
-              {redacted.map((event, i) => (
-                <ClassifiedTile key={event.slug} event={event} index={i} />
-              ))}
-            </section>
-          </>
-        )}
+        {/* ── Classified cards ── */}
+        {allItems.redacted.map((event, i) => {
+          const idx = allItems.events.length + i;
+          return (
+            <ClassifiedCard
+              key={event.slug}
+              ref={(el) => { cardRefs.current[idx] = el; }}
+              event={event}
+              index={idx}
+            />
+          );
+        })}
       </div>
+
+      {/* ── Timeline track (minimap) ── */}
+      <nav className="hist-tl-track" aria-label="Timeline navigation">
+        <div className="hist-tl-track__line" aria-hidden="true" />
+        {allItems.events.map((event, i) => (
+          <button
+            key={event.slug}
+            className={`hist-tl-track__dot ${
+              i === focusedIndex ? "hist-tl-track__dot--active" : ""
+            }`}
+            style={{
+              left: `${5 + (totalCards > 1 ? (i / (totalCards - 1)) * 90 : 45)}%`,
+            }}
+            onClick={() => scrollToCard(i)}
+            aria-label={`${event.title} (${event.datePrimary})`}
+            type="button"
+          >
+            <span className="hist-tl-track__year">
+              {extractYear(event.dateSort, event.datePrimary)}
+            </span>
+          </button>
+        ))}
+        {allItems.redacted.map((event, i) => {
+          const idx = allItems.events.length + i;
+          return (
+            <button
+              key={event.slug}
+              className={`hist-tl-track__dot hist-tl-track__dot--classified ${
+                idx === focusedIndex ? "hist-tl-track__dot--active" : ""
+              }`}
+              style={{
+                left: `${5 + (totalCards > 1 ? (idx / (totalCards - 1)) * 90 : 45)}%`,
+              }}
+              onClick={() => scrollToCard(idx)}
+              aria-label={`Coming: ${event.title}`}
+              type="button"
+            >
+              <span className="hist-tl-track__year">?</span>
+            </button>
+          );
+        })}
+      </nav>
 
       {/* ── Story Overlay ── */}
       {activeOverlay && (
         <HistoryOverlay
           event={activeOverlay.event}
-          allEvents={events}
+          allEvents={allItems.events}
           sourceRect={activeOverlay.sourceRect}
           onClose={closeOverlay}
         />
@@ -312,22 +430,20 @@ export default function HistoryLanding({
 }
 
 /* ===========================================================================
-   EventPoster — Full-width spotlit exhibit (cinematic v2)
-   Archival photo (Ken Burns drift + accelerated hover), date + title,
-   THE HOOK, perspective names (hover-reveal desktop, always-visible mobile),
-   stark data line (death toll + displaced), story-specific CTA with arrow.
+   TimelineCard — A single event in the horizontal timeline
+   Rack focus driven by --tl-focus. Photo + date + title always visible.
+   Hook, dots, CTA revealed when focused (--tl-focus > 0.65).
    =========================================================================== */
-function EventPoster({
-  event,
-  index,
-  onOpen,
-}: {
-  event: HistoricalEvent;
-  index: number;
-  onOpen: (event: HistoricalEvent, photoEl: HTMLElement | null) => void;
-}) {
-  const photoRef = useRef<HTMLDivElement>(null);
+import { forwardRef } from "react";
 
+const TimelineCard = forwardRef<
+  HTMLDivElement,
+  {
+    event: HistoricalEvent;
+    index: number;
+    onOpen: (event: HistoricalEvent, cardIndex: number) => void;
+  }
+>(function TimelineCard({ event, index, onOpen }, ref) {
   const hook =
     HOOKS[event.slug] ||
     event.contextNarrative.split(". ").slice(0, 2).join(". ") + ".";
@@ -337,104 +453,87 @@ function EventPoster({
     `Explore ${event.perspectives.length} accounts of ${event.title}`;
 
   const handleClick = useCallback(() => {
-    onOpen(event, photoRef.current);
-  }, [event, onOpen]);
-
-  /* Build stark data line from deathToll + displaced */
-  const starkParts: string[] = [];
-  if (event.deathToll) starkParts.push(`${event.deathToll} killed`);
-  if (event.displaced) starkParts.push(`${event.displaced} displaced`);
-  const starkLine = starkParts.join(" \u00b7 ");
+    onOpen(event, index);
+  }, [event, index, onOpen]);
 
   const severityClass = SEVERITY_CLASS[event.severity] || "";
 
   return (
     <article
-      className={`hist-poster ${severityClass}`}
+      ref={ref}
+      className={`hist-tl-card ${severityClass}`}
+      style={{ "--tl-focus": "0.5" } as React.CSSProperties}
       data-slug={event.slug}
-      style={{ transitionDelay: index === 0 ? "300ms" : undefined }}
     >
-      {/* 1. Full-width archival photo — PosterImage with fallback chain */}
-      <div
-        ref={photoRef}
-        className="hist-poster__photo"
-        data-slug={event.slug}
-      >
+      {/* Photo -- always visible, Ken Burns when focused */}
+      <div className="hist-tl-card__photo">
         <PosterImage event={event} eager={index === 0} />
       </div>
 
-      {/* 2. Date + Title */}
-      <div className="hist-poster__body">
-        <span className="hist-poster__date">{event.datePrimary}</span>
-        <h3 className="hist-poster__title">{event.title}</h3>
+      {/* Body content */}
+      <div className="hist-tl-card__body">
+        {/* Always visible: date + title */}
+        <span className="hist-tl-card__date">{event.datePrimary}</span>
+        <h3 className="hist-tl-card__title">{event.title}</h3>
 
-        {/* 3. THE HOOK — the most important line */}
-        <blockquote className="hist-poster__hook">{hook}</blockquote>
+        {/* Revealed when focused */}
+        <blockquote className="hist-tl-card__hook">{hook}</blockquote>
 
-        {/* 4. Perspective dots — colored circles, no names at rest */}
-        <div className="hist-poster__dots" aria-label={`${event.perspectives.length} perspectives`}>
+        <div
+          className="hist-tl-card__dots"
+          aria-label={`${event.perspectives.length} perspectives`}
+        >
           {event.perspectives.map((p) => (
             <span
               key={p.id}
-              className="hist-poster__dot"
-              style={{ background: PERSP_COLORS[p.color] || PERSP_COLORS.a }}
+              className="hist-tl-card__dot"
+              style={{
+                background: PERSP_COLORS[p.color] || PERSP_COLORS.a,
+              }}
+              title={p.viewpointName}
               aria-hidden="true"
             />
           ))}
         </div>
 
-        {/* 5. Hover-reveal: perspective names + stark data */}
-        <div className="hist-poster__hover-content" aria-hidden="false">
-          {/* Perspective names — staggered reveal */}
-          <div className="hist-poster__perspectives">
-            {event.perspectives.map((p) => (
-              <span
-                key={p.id}
-                className="hist-poster__persp-name"
-                style={{ color: PERSP_COLORS[p.color] || PERSP_COLORS.a }}
-              >
-                <span className="hist-poster__persp-bullet" aria-hidden="true">&#9679;</span>
-                {" "}{p.viewpointName}
-              </span>
-            ))}
-          </div>
-
-          {/* Stark data line — death toll + displaced */}
-          {starkLine && (
-            <p className="hist-poster__stark">{starkLine}</p>
-          )}
-        </div>
-
-        {/* 6. CTA — story-specific, with arrow */}
         <button
-          className="hist-poster__cta"
+          className="hist-tl-card__cta"
           onClick={handleClick}
           type="button"
         >
-          <span className="hist-poster__cta-text">{cta}</span>
-          <span className="hist-poster__cta-arrow" aria-hidden="true">&rarr;</span>
+          <span className="hist-tl-card__cta-text">{cta}</span>
+          <span className="hist-tl-card__cta-arrow" aria-hidden="true">
+            &rarr;
+          </span>
         </button>
       </div>
+
+      {/* Severity accent */}
+      <div className="hist-tl-card__severity" aria-hidden="true" />
     </article>
   );
-}
+});
 
 /* ===========================================================================
-   ClassifiedTile — Desaturated, redacted text, click-to-flip
+   ClassifiedCard — Desaturated, redacted text, click-to-flip
+   Same --tl-focus system, plus dashed border + desaturation
    =========================================================================== */
-function ClassifiedTile({
-  event,
-  index,
-}: {
-  event: RedactedEvent;
-  index: number;
-}) {
+const ClassifiedCard = forwardRef<
+  HTMLDivElement,
+  {
+    event: RedactedEvent;
+    index: number;
+  }
+>(function ClassifiedCard({ event, index }, ref) {
   const [revealed, setRevealed] = useState(false);
 
   return (
     <div
-      className={`hist-classified-tile hist-reveal ${revealed ? "hist-classified-tile--revealed" : ""}`}
-      style={{ animationDelay: `${100 + index * 80}ms` }}
+      ref={ref}
+      className={`hist-tl-card hist-tl-card--classified ${
+        revealed ? "hist-tl-card--classified-revealed" : ""
+      }`}
+      style={{ "--tl-focus": "0.5" } as React.CSSProperties}
       role="button"
       tabIndex={0}
       onClick={() => setRevealed((p) => !p)}
@@ -446,42 +545,52 @@ function ClassifiedTile({
       }}
       aria-label={`Coming: ${event.title}`}
       aria-pressed={revealed}
+      data-index={index}
     >
-      {/* Redacted title */}
-      <h3 className="hist-classified-tile__title">
-        {event.title.split(" ")[0]}{" "}
-        <span className="hist-classified-tile__redacted">
-          {event.title
-            .split(" ")
-            .slice(1)
-            .map((w) => "\u2588".repeat(w.length))
-            .join(" ")}
-        </span>
-      </h3>
+      <div className="hist-tl-card__body">
+        {/* Redacted title */}
+        <h3 className="hist-tl-card__title">
+          {event.title.split(" ")[0]}{" "}
+          <span className="hist-tl-card--classified__redacted">
+            {event.title
+              .split(" ")
+              .slice(1)
+              .map((w) => "\u2588".repeat(w.length))
+              .join(" ")}
+          </span>
+        </h3>
 
-      {/* Contradictory quotes */}
-      {event.quoteA && (
-        <p className="hist-classified-tile__quote">{event.quoteA}</p>
-      )}
-      {event.quoteB && (
-        <p className="hist-classified-tile__quote hist-classified-tile__quote--b">
-          {event.quoteB}
-        </p>
-      )}
+        {/* Contradictory quotes */}
+        {event.quoteA && (
+          <p className="hist-tl-card--classified__quote">{event.quoteA}</p>
+        )}
+        {event.quoteB && (
+          <p className="hist-tl-card--classified__quote hist-tl-card--classified__quote-b">
+            {event.quoteB}
+          </p>
+        )}
 
-      {/* Date hint + badge */}
-      <div className="hist-classified-tile__meta">
-        <span className="hist-classified-tile__date">{event.dateHint}</span>
-        <span className="hist-classified-tile__badge">COMING</span>
+        {/* Date hint + badge */}
+        <div className="hist-tl-card--classified__meta">
+          <span className="hist-tl-card--classified__date">
+            {event.dateHint}
+          </span>
+          <span className="hist-tl-card--classified__badge">COMING</span>
+        </div>
       </div>
 
       {/* Reveal overlay */}
-      <div className="hist-classified-tile__reveal" aria-hidden={!revealed}>
-        <span className="hist-classified-tile__reveal-title">
+      <div
+        className="hist-tl-card--classified__reveal"
+        aria-hidden={!revealed}
+      >
+        <span className="hist-tl-card--classified__reveal-title">
           {event.title}
         </span>
-        <span className="hist-classified-tile__reveal-hint">Coming soon</span>
+        <span className="hist-tl-card--classified__reveal-hint">
+          Coming soon
+        </span>
       </div>
     </div>
   );
-}
+});
