@@ -2936,13 +2936,14 @@
     flex-shrink: 0;
   }
 
-  /* CartographerStrip compact on mobile */
+  /* CartographerStrip overlay on mobile */
   .hist-carto-strip {
-    max-width: 100%;
+    padding-top: calc(48px + 60px); /* Below mobile topbar + top zone */
   }
 
   .hist-carto-strip__svg {
-    max-height: 70px;
+    width: 95vw;
+    max-height: 200px;
   }
 
   .hist-tl-view-toggle {
@@ -5500,18 +5501,36 @@
    CartographerStrip — Compact SVG atlas in the top zone
    Replaces era pills when [globe] toggle is active.
    --------------------------------------------------------------------------- */
+/* CartographerStrip renders as a dropdown panel overlaying the timeline */
 .hist-carto-strip {
-  width: 100%;
-  max-width: 500px;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: calc(56px + 80px); /* Below topbar + top zone */
+  background: color-mix(in srgb, var(--hist-bg) 92%, transparent);
+  backdrop-filter: blur(4px);
   pointer-events: auto;
+  animation: histCartoFadeIn 300ms ease forwards;
+}
+
+@keyframes histCartoFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .hist-carto-strip__svg {
-  width: 100%;
+  width: min(90vw, 600px);
   height: auto;
-  max-height: 90px;
+  max-height: 280px;
   display: block;
+  filter: drop-shadow(0 2px 8px rgba(44, 36, 24, 0.1));
 }
 
 .hist-carto-strip__region {
@@ -5528,6 +5547,21 @@
   fill: color-mix(in srgb, var(--hist-accent) 18%, var(--hist-paper-deep));
 }
 
+.hist-carto-strip__label {
+  font-family: var(--font-meta);
+  font-size: 6px;
+  fill: var(--hist-ink-muted);
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hist-carto-strip__label--active {
+  fill: var(--hist-accent);
+  opacity: 0.9;
+  font-weight: 600;
+}
+
 .hist-carto-strip__pin {
   transition: r 300ms ease, opacity 300ms ease;
 }
@@ -5542,12 +5576,9 @@
 }
 
 .hist-carto-strip__dismiss {
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: var(--space-2);
   font-family: var(--font-meta);
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;

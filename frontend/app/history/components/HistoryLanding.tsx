@@ -931,57 +931,43 @@ export default function HistoryLanding({
           ))}
         </div>
 
-        {/* Era pills OR CartographerStrip — toggled by [globe]/[eras] */}
-        {mapActive ? (
-          <CartographerStrip
-            events={sortedEvents}
-            focusedIndex={focusedIndex}
-            activeRegion={activeRegion}
-            currentEra={currentEra}
-            onRegionClick={(region) => {
-              setActiveRegion((prev) => prev === region ? null : region);
+        {/* Era pills — always visible */}
+        <nav className="hist-tl-era-pills" role="navigation" aria-label="Era navigation">
+          {eraGroups.map((era) => {
+            const isActive = currentEra === era.id;
+            return (
+              <button
+                key={era.id}
+                className={`hist-tl-era-pill${isActive ? " hist-tl-era-pill--active" : ""}`}
+                onClick={() => {
+                  const station = stationRefs.current[era.firstIndex];
+                  if (station) {
+                    station.scrollIntoView({
+                      block: isMobileVertical ? "center" : "nearest",
+                      inline: isMobileVertical ? "nearest" : "center",
+                      behavior: "smooth",
+                    });
+                  }
+                }}
+                type="button"
+              >
+                {ERA_CONTEXT[era.id]?.label || era.label}
+              </button>
+            );
+          })}
+          {/* Globe toggle at end of era pills */}
+          <button
+            className="hist-tl-view-toggle"
+            onClick={() => {
+              setMapActive((prev) => !prev);
+              if (mapActive) setActiveRegion(null);
             }}
-            onEventClick={openStory}
-          />
-        ) : (
-          <nav className="hist-tl-era-pills" role="navigation" aria-label="Era navigation">
-            {eraGroups.map((era) => {
-              const isActive = currentEra === era.id;
-              return (
-                <button
-                  key={era.id}
-                  className={`hist-tl-era-pill${isActive ? " hist-tl-era-pill--active" : ""}`}
-                  onClick={() => {
-                    const station = stationRefs.current[era.firstIndex];
-                    if (station) {
-                      station.scrollIntoView({
-                        block: isMobileVertical ? "center" : "nearest",
-                        inline: isMobileVertical ? "nearest" : "center",
-                        behavior: "smooth",
-                      });
-                    }
-                  }}
-                  type="button"
-                >
-                  {ERA_CONTEXT[era.id]?.label || era.label}
-                </button>
-              );
-            })}
-          </nav>
-        )}
-
-        {/* Toggle: [globe] / [eras] */}
-        <button
-          className="hist-tl-view-toggle"
-          onClick={() => {
-            setMapActive((prev) => !prev);
-            if (mapActive) setActiveRegion(null); /* Clear filter when switching back */
-          }}
-          type="button"
-          aria-label={mapActive ? "Show era navigation" : "Show world map"}
-        >
-          [ {mapActive ? "eras" : "globe"} ]
-        </button>
+            type="button"
+            aria-label={mapActive ? "Close world map" : "Show world map"}
+          >
+            [ {mapActive ? "close" : "globe"} ]
+          </button>
+        </nav>
       </div>
 
       {/* Mission Brief -- fades on first scroll */}
@@ -996,6 +982,24 @@ export default function HistoryLanding({
           {isMobileVertical ? "scroll through time" : "\u2190 scroll through time \u2192"}
         </span>
       </div>
+
+      {/* CartographerStrip — overlay panel, opens on [globe] toggle */}
+      {mapActive && (
+        <CartographerStrip
+          events={sortedEvents}
+          focusedIndex={focusedIndex}
+          activeRegion={activeRegion}
+          currentEra={currentEra}
+          onRegionClick={(region) => {
+            setActiveRegion((prev) => prev === region ? null : region);
+          }}
+          onEventClick={(event) => {
+            setMapActive(false);
+            openStory(event);
+          }}
+          onClose={() => setMapActive(false)}
+        />
+      )}
 
       {/* Full timeline -- horizontal scroll */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}

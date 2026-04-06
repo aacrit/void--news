@@ -81,6 +81,7 @@ interface CartographerStripProps {
   currentEra: string;
   onRegionClick: (region: HistoryRegion) => void;
   onEventClick: (event: HistoricalEvent) => void;
+  onClose: () => void;
 }
 
 export default function CartographerStrip({
@@ -90,6 +91,7 @@ export default function CartographerStrip({
   currentEra,
   onRegionClick,
   onEventClick,
+  onClose,
 }: CartographerStripProps) {
   /* Compute pin data with focused state */
   const pins = useMemo(() => {
@@ -121,7 +123,12 @@ export default function CartographerStrip({
   }, [events]);
 
   return (
-    <div className="hist-carto-strip" role="img" aria-label="World map showing event locations">
+    <div
+      className="hist-carto-strip"
+      role="dialog"
+      aria-label="World map showing event locations"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <svg
         className="hist-carto-strip__svg"
         viewBox="0 60 460 180"
@@ -168,6 +175,16 @@ export default function CartographerStrip({
                   }
                 }}
               />
+              {/* Region label */}
+              <text
+                x={data.cx}
+                y={data.cy + (id === "europe" ? 14 : id === "central-asia" ? 14 : 0)}
+                textAnchor="middle"
+                className={`hist-carto-strip__label${isActive ? " hist-carto-strip__label--active" : ""}`}
+                pointerEvents="none"
+              >
+                {REGION_LABELS[id] || id}
+              </text>
               {/* Feathered border */}
               <path
                 d={data.d}
