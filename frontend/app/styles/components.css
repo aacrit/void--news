@@ -632,7 +632,6 @@
   font-size: var(--text-base);
   line-height: 1.6;
   color: var(--fg-secondary);
-  max-width: 65ch;
   margin-bottom: var(--space-3);
   display: -webkit-box;
   -webkit-line-clamp: 5;
