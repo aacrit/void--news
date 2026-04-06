@@ -67,6 +67,9 @@ export default function WireCard({ story, onStoryClick, globalIndex, kbdFocused 
         <span className="wire-card__sources">{story.sigilData.sourceCount}</span>
       )}
       <h3 className="wire-card__headline">{story.title}</h3>
+      {story.summary && (
+        <p className="wire-card__summary">{story.summary}</p>
+      )}
     </article>
   );
 }

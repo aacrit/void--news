@@ -214,6 +214,10 @@ export interface SigilData {
   opinionLabel: OpinionLabel;
   /** Percentile-based divergence flag: "divergent" (top 10%), "consensus" (bottom 10%), or null */
   divergenceFlag?: "divergent" | "consensus" | null;
+  /** Claim consensus: corroborated count (from void --verify) */
+  consensusCorroborated?: number;
+  /** Claim consensus: total claims checked */
+  consensusTotal?: number;
 }
 
 export interface OpinionArticle {
