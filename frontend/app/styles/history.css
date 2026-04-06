@@ -5390,25 +5390,14 @@
    Fun Facts — ephemeral context between events
    Positioned at midpoints, fade in/out based on visibility.
    --------------------------------------------------------------------------- */
+/* Fun facts hidden — they overlap with below-cards which have variable height.
+   The era header description now provides contextual information instead. */
 .hist-tl-fact {
-  position: absolute;
-  top: calc(50% + 240px); /* Well below card zone — cards extend ~210px below track */
-  transform: translateX(-50%);
-  max-width: 300px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-style: italic;
-  color: var(--hist-ink-muted);
-  opacity: 0;
-  transition: opacity 500ms ease;
-  pointer-events: none;
-  text-align: center;
-  line-height: 1.5;
-  z-index: 1;
+  display: none;
 }
 
 .hist-tl-fact--visible {
-  opacity: 0.7;
+  display: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -5507,7 +5496,7 @@
    --------------------------------------------------------------------------- */
 .hist-tl-arc-lane {
   position: absolute;
-  top: calc(50% + 270px); /* Below card zone + fun facts, clear of everything */
+  top: calc(50% + 320px); /* Well below tallest below-cards */
   height: 36px;
   z-index: 3;
 }
