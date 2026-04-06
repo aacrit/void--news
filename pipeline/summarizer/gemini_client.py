@@ -37,6 +37,10 @@ _MIN_INTERVAL: float = 4.2  # 60s / 14 calls = ~4.3s (stay under 15 RPM)
 _MAX_CALLS_PER_RUN: int = 25
 _call_count: int = 0
 
+# Persistent failure flag — set on billing/spending-cap errors to skip all
+# subsequent calls in the same run (avoids wasting minutes on doomed retries).
+_persistent_failure: bool = False
+
 _client: object = None
 
 
@@ -96,7 +100,10 @@ def generate_json(
     Returns parsed JSON dict, or None on failure (caller falls back
     to rule-based generation).
     """
-    global _call_count
+    global _call_count, _persistent_failure
+
+    if _persistent_failure:
+        return None
 
     client = _get_client()
     if client is None:
@@ -113,11 +120,14 @@ def generate_json(
         system_instruction=system_instruction,  # None = no system turn (backward-compatible)
     )
 
+    # Increment call count ONCE before the retry loop — failed retries should
+    # not burn additional budget.
+    if count_call:
+        _call_count += 1
+
     for attempt in range(max_retries + 1):
         try:
             _rate_limit()
-            if count_call:
-                _call_count += 1
             response = client.models.generate_content(
                 model=_MODEL,
                 contents=prompt,
@@ -148,6 +158,11 @@ def generate_json(
             return None
         except Exception as e:
             error_str = str(e).lower()
+            # Detect persistent billing/spending-cap errors — no point retrying
+            if "spending cap" in error_str or "credit" in error_str or "billing" in error_str:
+                _persistent_failure = True
+                print(f"  [error] Gemini persistent billing failure — disabling for this run: {e}")
+                return None
             if "429" in error_str or "quota" in error_str or "rate" in error_str:
                 print(f"  [warn] Gemini rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
@@ -161,7 +176,9 @@ def generate_json(
 
 
 def is_available() -> bool:
-    """Check if Gemini is configured and the SDK is installed."""
+    """Check if Gemini is configured, the SDK is installed, and no persistent failure."""
+    if _persistent_failure:
+        return False
     if not GEMINI_AVAILABLE:
         return False
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
