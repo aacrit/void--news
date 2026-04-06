@@ -231,6 +231,24 @@
   letter-spacing: 0.04em;
 }
 
+/* Consensus ratio annotation — compact corroborated/total below lean label */
+.sigil__consensus {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: var(--fg-muted);
+  transition: opacity 400ms var(--ease-out) 500ms;
+}
+
+/* Inside headlines: tighter, dimmer */
+.story-card__headline .sigil__consensus,
+.lead-story__headline .sigil__consensus {
+  font-size: 7px;
+  opacity: 0.45;
+}
+
 /* ---- Sigil first-visit tap hint (mobile only) ---- */
 .sigil__tap-hint {
   position: absolute;
