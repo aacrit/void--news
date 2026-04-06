@@ -16,12 +16,14 @@ interface HistoryOverlayProps {
   allEvents: HistoricalEvent[];
   sourceRect: DOMRect | null; // tile photo position for FLIP
   onClose: () => void;
+  onNavigateToEvent?: (event: HistoricalEvent) => void;
 }
 
 export default function HistoryOverlay({
   event,
   allEvents,
   sourceRect,
+  onNavigateToEvent,
   onClose,
 }: HistoryOverlayProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export default function HistoryOverlay({
     }
 
     /* Find EventDetail's hero image inside the overlay */
-    const heroEl = overlayRef.current?.querySelector<HTMLImageElement>(".hist-hero__image");
+    const heroEl = overlayRef.current?.querySelector<HTMLElement>(".hist-stage__hero");
 
     if (!heroEl) {
       setContentVisible(true);
@@ -180,7 +182,12 @@ export default function HistoryOverlay({
       <div
         className={`hist-overlay__content ${contentVisible ? "hist-overlay__content--visible" : ""}`}
       >
-        <EventDetail event={event} allEvents={allEvents} />
+        <EventDetail
+          event={event}
+          allEvents={allEvents}
+          onNavigateToEvent={onNavigateToEvent}
+          onClose={onClose}
+        />
       </div>
     </div>
   );
