@@ -116,7 +116,7 @@ def upsert_media(event_id: str, media_items: list[dict]) -> int:
             "media_type": m["media_type"],
             "title": m["title"],
             "description": m.get("description"),
-            "source_url": m["source_url"],
+            "source_url": m.get("supabase_url") or m["source_url"],
             "thumbnail_url": m.get("thumbnail_url"),
             "attribution": m["attribution"],
             "license": m.get("license", "public-domain"),
