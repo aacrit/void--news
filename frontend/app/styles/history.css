@@ -2936,6 +2936,20 @@
     flex-shrink: 0;
   }
 
+  /* CartographerStrip compact on mobile */
+  .hist-carto-strip {
+    max-width: 100%;
+  }
+
+  .hist-carto-strip__svg {
+    max-height: 70px;
+  }
+
+  .hist-tl-view-toggle {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+  }
+
   /* Brief positioned higher */
   .hist-tl-brief {
     top: 25%;
@@ -5480,6 +5494,124 @@
 .hist-tl-era-pill:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   CartographerStrip — Compact SVG atlas in the top zone
+   Replaces era pills when [globe] toggle is active.
+   --------------------------------------------------------------------------- */
+.hist-carto-strip {
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  pointer-events: auto;
+}
+
+.hist-carto-strip__svg {
+  width: 100%;
+  height: auto;
+  max-height: 90px;
+  display: block;
+}
+
+.hist-carto-strip__region {
+  fill: var(--hist-paper-deep, #E8E0CF);
+  cursor: pointer;
+  transition: fill 300ms var(--ease-cinematic, ease);
+}
+
+.hist-carto-strip__region:hover {
+  fill: color-mix(in srgb, var(--hist-accent) 12%, var(--hist-paper-deep));
+}
+
+.hist-carto-strip__region--active {
+  fill: color-mix(in srgb, var(--hist-accent) 18%, var(--hist-paper-deep));
+}
+
+.hist-carto-strip__pin {
+  transition: r 300ms ease, opacity 300ms ease;
+}
+
+@keyframes histPinPulseStrip {
+  0%, 100% { r: 5; }
+  50% { r: 7; }
+}
+
+.hist-carto-strip__pin--focused {
+  animation: histPinPulseStrip 2s var(--ease-cinematic, ease) infinite;
+}
+
+.hist-carto-strip__dismiss {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-meta);
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hist-accent);
+  background: var(--hist-bg);
+  border: 1px dotted var(--hist-accent);
+  padding: 1px 8px;
+  cursor: pointer;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.hist-carto-strip__dismiss:hover {
+  background: var(--hist-accent);
+  color: var(--hist-paper-fixed, #F2EDE0);
+}
+
+/* ---------------------------------------------------------------------------
+   View Toggle — [globe] / [eras] bracket-notation button
+   --------------------------------------------------------------------------- */
+.hist-tl-view-toggle {
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  color: var(--hist-ink-muted);
+  background: none;
+  border: none;
+  border-bottom: 1px dotted transparent;
+  padding: 2px 6px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color 200ms ease, border-color 200ms ease;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.hist-tl-view-toggle:hover {
+  color: var(--hist-brass);
+  border-bottom-color: var(--hist-brass);
+}
+
+.hist-tl-view-toggle:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Ghost Filtering — Dim non-matching events when region filter is active
+   --------------------------------------------------------------------------- */
+.hist-tl-full__station--ghosted {
+  opacity: 0.12;
+  filter: blur(1px) saturate(0.3);
+  pointer-events: none;
+  transition: opacity 400ms var(--ease-cinematic, ease),
+              filter 400ms var(--ease-cinematic, ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hist-tl-full__station--ghosted {
+    transition: none;
+    filter: saturate(0.3);
+  }
+  .hist-carto-strip__pin--focused {
+    animation: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
