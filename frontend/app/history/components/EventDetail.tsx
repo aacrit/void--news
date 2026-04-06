@@ -425,11 +425,26 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
 
       {/* ═══════════════════════════════════════════
           Stage 6 — YOUR TURN (Leave Early)
-          No summary. Point to next event, or return.
+          Cliffhanger: hook teaser + thumbnail + CTA.
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--next hist-reveal">
         {nextEvent ? (
-          <>
+          <div className="hist-next__cliffhanger">
+            {/* Next event hero thumbnail for visual pull */}
+            {nextEvent.heroImage && (
+              <div className="hist-next__thumb-wrap">
+                <img
+                  src={nextEvent.heroImage}
+                  alt=""
+                  className="hist-next__thumb"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            {/* Hook teaser — the crack of the next story */}
+            <p className="hist-next__hook">
+              {HOOKS[nextEvent.slug] || nextEvent.contextNarrative.split(". ").slice(0, 2).join(". ") + "."}
+            </p>
             <p className="hist-next__prompt">Now read:</p>
             <button
               className="hist-next__cta"
@@ -439,7 +454,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
               {CTAS[nextEvent.slug] ||
                 `Explore ${nextEvent.perspectives.length} accounts of ${nextEvent.title}`}
             </button>
-          </>
+          </div>
         ) : (
           <button
             className="hist-next__cta"

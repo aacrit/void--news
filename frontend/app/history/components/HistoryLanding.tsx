@@ -347,6 +347,9 @@ export default function HistoryLanding({
   const [scrollYear, setScrollYear] = useState<number | null>(null);
   const [isMobileVertical, setIsMobileVertical] = useState(false);
   const stationRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const flipRectRef = useRef<DOMRect | null>(null);
+  const flipImageRef = useRef<string | null>(null);
+  const [flipAnimating, setFlipAnimating] = useState(false);
 
   /* ── Detect vertical (mobile) timeline mode ── */
   useEffect(() => {
@@ -743,13 +746,22 @@ export default function HistoryLanding({
     /* Remember which card index was opened */
     const idx = sortedEvents.findIndex((e) => e.slug === event.slug);
     if (idx !== -1) activeEventIndexRef.current = idx;
+
+    /* FLIP: Capture card rect for morph animation */
+    const cardEl = document.querySelector(`[data-slug="${event.slug}"]`) as HTMLElement | null;
+    if (cardEl && !reducedMotion) {
+      flipRectRef.current = cardEl.getBoundingClientRect();
+      flipImageRef.current = event.heroImage || event.media[0]?.url || null;
+      setFlipAnimating(true);
+    }
+
     setActiveEvent(event);
     window.history.pushState(
       { historyInline: true, slug: event.slug },
       "",
       `/history/${event.slug}`
     );
-  }, [sortedEvents]);
+  }, [sortedEvents, reducedMotion]);
 
   const closeStory = useCallback(() => {
     setActiveEvent(null);
@@ -804,20 +816,31 @@ export default function HistoryLanding({
     []
   );
 
-  /* ── State B: Story active — floating Back CTA + inline story ── */
+  /* ── State B: Story active — floating Back CTA + FLIP morph + inline story ── */
   if (activeEvent) {
     return (
       <div className="hist-tl-wrapper hist-tl-wrapper--story-active">
+        {/* FLIP morph overlay — animates card rect → full screen */}
+        {flipAnimating && flipRectRef.current && (
+          <FlipMorphOverlay
+            rect={flipRectRef.current}
+            imageUrl={flipImageRef.current}
+            onComplete={() => setFlipAnimating(false)}
+          />
+        )}
+
         {/* Floating Back to Timeline CTA — slides in after 1s */}
         <BackToTimelineCTA onClose={closeStory} />
 
-        {/* Inline story — swipe gestures for mobile next/prev */}
-        <StoryContainer
-          event={activeEvent}
-          allEvents={sortedEvents}
-          onNavigateToEvent={navigateToEvent}
-          onClose={closeStory}
-        />
+        {/* Inline story — L-cut: content fades in during morph */}
+        <div className={`hist-inline-story-wrap${flipAnimating ? " hist-inline-story-wrap--entering" : ""}`}>
+          <StoryContainer
+            event={activeEvent}
+            allEvents={sortedEvents}
+            onNavigateToEvent={navigateToEvent}
+            onClose={closeStory}
+          />
+        </div>
       </div>
     );
   }
@@ -1154,6 +1177,89 @@ function StoryContainer({
         onClose={onClose}
       />
     </div>
+  );
+}
+
+/* ===========================================================================
+   FlipMorphOverlay — FLIP animation from card rect to full viewport
+   Creates a clone at the card's position, animates it to fill the screen,
+   then fades out to reveal the actual EventDetail underneath (L-cut).
+   =========================================================================== */
+function FlipMorphOverlay({
+  rect,
+  imageUrl,
+  onComplete,
+}: {
+  rect: DOMRect;
+  imageUrl: string | null;
+  onComplete: () => void;
+}) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = overlayRef.current;
+    if (!el) { onComplete(); return; }
+
+    /* Start at card position, animate to full viewport */
+    const animation = el.animate(
+      [
+        {
+          top: `${rect.top}px`,
+          left: `${rect.left}px`,
+          width: `${rect.width}px`,
+          height: `${rect.height}px`,
+          borderRadius: "2px",
+          opacity: 1,
+        },
+        {
+          top: "0px",
+          left: "0px",
+          width: "100vw",
+          height: "100vh",
+          borderRadius: "0px",
+          opacity: 1,
+        },
+      ],
+      {
+        duration: 500,
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)", /* document-settle */
+        fill: "forwards",
+      }
+    );
+
+    /* After morph completes, fade out to reveal EventDetail */
+    animation.onfinish = () => {
+      const fadeOut = el.animate(
+        [{ opacity: 1 }, { opacity: 0 }],
+        { duration: 300, easing: "ease-out", fill: "forwards" }
+      );
+      fadeOut.onfinish = onComplete;
+    };
+
+    return () => { animation.cancel(); };
+  }, [rect, onComplete]);
+
+  return (
+    <div
+      ref={overlayRef}
+      className="hist-flip-morph"
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        zIndex: 60,
+        overflow: "hidden",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundColor: "var(--hist-paper-deep)",
+        backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
+        filter: "contrast(1.05) saturate(0.75) sepia(0.12)",
+        pointerEvents: "none",
+      }}
+    />
   );
 }
 
