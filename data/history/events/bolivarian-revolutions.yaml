@@ -1,7 +1,6 @@
 slug: bolivarian-revolutions
 title: The Bolivarian Revolutions
-subtitle: Bolivar went to Haiti after his defeat, got ships and soldiers from a Black republic in exchange for a promise to
-  free the enslaved — then broke the promise
+subtitle: Bolivar went to Haiti after his defeat, got ships and soldiers from a Black republic in exchange for a promise to free the enslaved — then broke the promise
 date_display: 1810-1830
 date_sort: 1810
 date_precision: year
@@ -13,92 +12,71 @@ severity: major
 death_toll: ~500,000-1,000,000 across all theaters; Venezuela alone lost an estimated one-quarter to one-third of its population
 affected_population: ~17 million inhabitants of Spanish South America
 duration: 1810-1830 (Caracas junta to Bolivar's death; peak military campaigns 1813-1826)
-hero_image_url: https://upload.wikimedia.org/wikipedia/commons/3/34/Sim%C3%B3n_Bol%C3%ADvar_-_Arturo_Michelena.jpg
+hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/bolivarian-revolutions/wiki_1.jpg
 hero_image_attribution: Arturo Michelena, c. 1895, public domain via Wikimedia Commons
-summary: 'On July 5, 1811, the Congress of Venezuela declared independence from Spain. By July 1812, the republic was finished.
-  An earthquake on March 26, 1812 — centered on Caracas, killing an estimated 10,000 people — destroyed the patriot strongholds
-  while leaving royalist cities intact. The Catholic clergy declared the earthquake divine punishment for rebellion. Simon
-  Bolivar, a 28-year-old creole aristocrat who had inherited copper mines, cacao plantations, and enslaved laborers, escaped
-  to Cartagena. He wrote a manifesto. He raised a new army. He invaded Venezuela from the west. He won. He lost again. He
-  fled to Jamaica. He wrote another manifesto. He fled to Haiti, where Alexandre Petion, the president of the southern republic,
-  gave him 7 ships, 250 soldiers, weapons, ammunition, and a printing press — in exchange for a single condition: abolish
-  slavery.
+summary: 'On July 5, 1811, the Congress of Venezuela declared independence from Spain. By July 1812, the republic was finished. An earthquake on March 26, 1812 — centered on Caracas, killing an estimated
+  10,000 people — destroyed the patriot strongholds while leaving royalist cities intact. The Catholic clergy declared the earthquake divine punishment for rebellion. Simon Bolivar, a 28-year-old creole
+  aristocrat who had inherited copper mines, cacao plantations, and enslaved laborers, escaped to Cartagena. He wrote a manifesto. He raised a new army. He invaded Venezuela from the west. He won. He lost
+  again. He fled to Jamaica. He wrote another manifesto. He fled to Haiti, where Alexandre Petion, the president of the southern republic, gave him 7 ships, 250 soldiers, weapons, ammunition, and a printing
+  press — in exchange for a single condition: abolish slavery.
 
 
-  Bolivar returned to Venezuela in 1816 and issued a decree of emancipation — but applied it only to enslaved people who joined
-  the army. The full abolition Petion demanded did not come during Bolivar''s lifetime. The wars that followed were not gentlemen''s
-  campaigns. The "Decree of War to the Death" (Decreto de Guerra a Muerte), issued by Bolivar on June 15, 1813, declared that
-  any Spaniard who did not actively support independence would be executed, while any American — regardless of actions — would
-  be spared. The decree reflected the war''s character: extermination, not negotiation. In the eastern plains (llanos), cavalry
-  armies under Jose Antonio Paez — llaneros, the horsemen of the Venezuelan grasslands — fought with lances, machetes, and
-  a ferocity that terrified both sides. Paez had been a cattle herder. His riders had been enslaved workers, fugitives, mixed-race
-  farmers. They fought not for Enlightenment principles but for land, freedom, and the promise that the old order would not
-  return.
+  Bolivar returned to Venezuela in 1816 and issued a decree of emancipation — but applied it only to enslaved people who joined the army. The full abolition Petion demanded did not come during Bolivar''s
+  lifetime. The wars that followed were not gentlemen''s campaigns. The "Decree of War to the Death" (Decreto de Guerra a Muerte), issued by Bolivar on June 15, 1813, declared that any Spaniard who did
+  not actively support independence would be executed, while any American — regardless of actions — would be spared. The decree reflected the war''s character: extermination, not negotiation. In the eastern
+  plains (llanos), cavalry armies under Jose Antonio Paez — llaneros, the horsemen of the Venezuelan grasslands — fought with lances, machetes, and a ferocity that terrified both sides. Paez had been a
+  cattle herder. His riders had been enslaved workers, fugitives, mixed-race farmers. They fought not for Enlightenment principles but for land, freedom, and the promise that the old order would not return.
 
 
-  The military tide turned at the Battle of Boyaca on August 7, 1819, when Bolivar''s army — having crossed the flooded Orinoco
-  basin, climbed the frozen Andes passes at 13,000 feet, and arrived in the highlands of New Granada with half its men — surprised
-  the Spanish royalist force and won in two hours. Bolivar entered Bogota three days later. By 1822, Antonio Jose de Sucre
-  had liberated Quito (Battle of Pichincha, May 24, 1822). By 1824, Sucre had broken the last Spanish army at the Battle of
-  Ayacucho in Peru — the battle that ended 300 years of Spanish rule on the South American continent. Bolivar''s dream was
-  a single South American republic — Gran Colombia — stretching from Panama to Bolivia. By 1830, it had splintered into Venezuela,
-  Colombia, and Ecuador. Bolivar, exiled from the country he had liberated, died of tuberculosis at age 47 in a borrowed house
-  in Santa Marta, Colombia, on December 17, 1830. His last words, by multiple accounts: "Let us go. These people do not want
-  us here."
+  The military tide turned at the Battle of Boyaca on August 7, 1819, when Bolivar''s army — having crossed the flooded Orinoco basin, climbed the frozen Andes passes at 13,000 feet, and arrived in the
+  highlands of New Granada with half its men — surprised the Spanish royalist force and won in two hours. Bolivar entered Bogota three days later. By 1822, Antonio Jose de Sucre had liberated Quito (Battle
+  of Pichincha, May 24, 1822). By 1824, Sucre had broken the last Spanish army at the Battle of Ayacucho in Peru — the battle that ended 300 years of Spanish rule on the South American continent. Bolivar''s
+  dream was a single South American republic — Gran Colombia — stretching from Panama to Bolivia. By 1830, it had splintered into Venezuela, Colombia, and Ecuador. Bolivar, exiled from the country he had
+  liberated, died of tuberculosis at age 47 in a borrowed house in Santa Marta, Colombia, on December 17, 1830. His last words, by multiple accounts: "Let us go. These people do not want us here."
 
   '
-significance: 'The Bolivarian revolutions ended 300 years of Spanish colonial rule across South America, creating six independent
-  nations (Venezuela, Colombia, Ecuador, Peru, Bolivia, Panama) from the wreckage of the viceroyalties of New Granada and
-  Peru. The wars killed an estimated 500,000 to 1,000,000 people — Venezuela lost between one-quarter and one-third of its
-  population. Bolivar''s "Jamaica Letter" (1815) articulated the first comprehensive vision of Latin American political identity
-  separate from both Spain and the United States. His dream of continental unity — Gran Colombia — lasted nine years (1821-1830)
-  before fracturing along the regional, racial, and personal rivalries that he had held together by force of personality and
-  military command. The Monroe Doctrine (1823), declared while Bolivar''s wars were still underway, asserted U.S. hegemony
-  over the Western Hemisphere under the guise of protecting Latin American independence — a claim Bolivar himself neither
-  requested nor endorsed. The Congress of Panama (1826), Bolivar''s attempt to create a pan-American federation, failed when
-  only 4 of the 10 invited nations attended. The independence he won produced not Bolivar''s unified republic but 15 separate
-  nations, most governed by military strongmen (caudillos) for the following century.
+significance: 'The Bolivarian revolutions ended 300 years of Spanish colonial rule across South America, creating six independent nations (Venezuela, Colombia, Ecuador, Peru, Bolivia, Panama) from the wreckage
+  of the viceroyalties of New Granada and Peru. The wars killed an estimated 500,000 to 1,000,000 people — Venezuela lost between one-quarter and one-third of its population. Bolivar''s "Jamaica Letter"
+  (1815) articulated the first comprehensive vision of Latin American political identity separate from both Spain and the United States. His dream of continental unity — Gran Colombia — lasted nine years
+  (1821-1830) before fracturing along the regional, racial, and personal rivalries that he had held together by force of personality and military command. The Monroe Doctrine (1823), declared while Bolivar''s
+  wars were still underway, asserted U.S. hegemony over the Western Hemisphere under the guise of protecting Latin American independence — a claim Bolivar himself neither requested nor endorsed. The Congress
+  of Panama (1826), Bolivar''s attempt to create a pan-American federation, failed when only 4 of the 10 invited nations attended. The independence he won produced not Bolivar''s unified republic but 15
+  separate nations, most governed by military strongmen (caudillos) for the following century.
 
   '
 key_figures:
 - name: Simon Bolivar
-  role: Venezuelan creole aristocrat; led independence wars across Venezuela, Colombia, Ecuador, Peru, and Bolivia; died December
-    17, 1830
+  role: Venezuelan creole aristocrat; led independence wars across Venezuela, Colombia, Ecuador, Peru, and Bolivia; died December 17, 1830
   wikidata: Q8605
   born: 1783
   died: 1830
   wikipedia: https://en.wikipedia.org/wiki/Simón_Bolívar
 - name: Jose de San Martin
-  role: Argentine general who liberated Chile and Peru from the south; met Bolivar at Guayaquil (July 26, 1822) and withdrew,
-    ceding leadership of the continental campaign
+  role: Argentine general who liberated Chile and Peru from the south; met Bolivar at Guayaquil (July 26, 1822) and withdrew, ceding leadership of the continental campaign
   wikidata: Q134160
   born: 1778
   died: 1850
   wikipedia: https://en.wikipedia.org/wiki/José_de_San_Martín
 - name: Manuela Saenz
-  role: Ecuadorian-born political strategist and Bolivar's partner; saved his life during the September 25, 1828 assassination
-    attempt by fighting off attackers while Bolivar escaped through a window
+  role: Ecuadorian-born political strategist and Bolivar's partner; saved his life during the September 25, 1828 assassination attempt by fighting off attackers while Bolivar escaped through a window
   wikidata: Q372074
   born: 1797
   died: 1856
   wikipedia: https://en.wikipedia.org/wiki/Manuela_Sáenz
 - name: Antonio Jose de Sucre
-  role: Bolivar's most trusted general; won the Battle of Ayacucho (1824) that ended Spanish rule; assassinated in the mountains
-    of Berruecos, June 4, 1830
+  role: Bolivar's most trusted general; won the Battle of Ayacucho (1824) that ended Spanish rule; assassinated in the mountains of Berruecos, June 4, 1830
   wikidata: Q189779
   born: 1795
   died: 1830
   wikipedia: https://en.wikipedia.org/wiki/Antonio_José_de_Sucre
 - name: Alexandre Petion
-  role: President of the Republic of Haiti (southern); gave Bolivar ships, soldiers, and arms in 1816 in exchange for a promise
-    to abolish slavery
+  role: President of the Republic of Haiti (southern); gave Bolivar ships, soldiers, and arms in 1816 in exchange for a promise to abolish slavery
   wikidata: Q353464
   born: 1770
   died: 1818
   wikipedia: https://en.wikipedia.org/wiki/Alexandre_Pétion
 - name: Jose Antonio Paez
-  role: Llanero cavalry commander in Venezuela; later became president of Venezuela and led its secession from Gran Colombia
-    in 1830
+  role: Llanero cavalry commander in Venezuela; later became president of Venezuela and led its secession from Gran Colombia in 1830
   wikidata: Q304900
   born: 1790
   died: 1873
@@ -110,13 +88,11 @@ legacy_points:
 - Gran Colombia lasted nine years (1821-1830) before fragmenting — Bolivar's continental unity died with him
 - The Petion-Bolivar exchange connected the Haitian and South American revolutions through a broken promise of abolition
 primary_source_excerpts:
-- text: We are a small human race; we possess a world apart, surrounded by vast seas, new in almost all the arts and sciences
-    although, in a certain manner, old in the uses of civil society.
+- text: We are a small human race; we possess a world apart, surrounded by vast seas, new in almost all the arts and sciences although, in a certain manner, old in the uses of civil society.
   author: Simon Bolivar
   work: The Jamaica Letter (Carta de Jamaica)
   date: September 6, 1815
-- text: The most perfect system of government is that which produces the greatest amount of happiness, the greatest amount
-    of social security, and the greatest amount of political stability.
+- text: The most perfect system of government is that which produces the greatest amount of happiness, the greatest amount of social security, and the greatest amount of political stability.
   author: Simon Bolivar
   work: Address at the Congress of Angostura
   date: February 15, 1819
@@ -124,8 +100,7 @@ primary_source_excerpts:
   author: Simon Bolivar
   work: Last words, reported by attendants
   date: December 17, 1830
-- text: The American continents, by the free and independent condition which they have assumed and maintain, are henceforth
-    not to be considered as subjects for future colonization by any European powers.
+- text: The American continents, by the free and independent condition which they have assumed and maintain, are henceforth not to be considered as subjects for future colonization by any European powers.
   author: James Monroe
   work: Monroe Doctrine, Annual Message to Congress
   date: December 2, 1823
@@ -140,58 +115,42 @@ perspectives:
 - viewpoint: Bolivarian / Creole Elite
   viewpoint_type: victor
   region_origin: americas
-  narrative: 'Bolivar''s case was made most explicitly in two documents: the Jamaica Letter of September 6, 1815, and the
-    Address at the Congress of Angostura of February 15, 1819. Written from exile in Kingston after the collapse of the Second
-    Venezuelan Republic, the Jamaica Letter is 8,000 words of political analysis, historical argument, and strategic vision.
-    Bolivar dissected Spanish colonial rule with surgical precision: 300 years of governance that denied creoles (American-born
-    Spaniards) access to high office, restricted colonial manufacturing to protect peninsular industries, imposed trade monopolies
-    that benefited Cadiz merchants, and treated the Americas as a revenue source rather than a society. "We were never viceroys
-    or governors except by extraordinary chance; seldom were we bishops or archbishops; diplomats, never; soldiers, only in
-    subordinate ranks."
+  narrative: 'Bolivar''s case was made most explicitly in two documents: the Jamaica Letter of September 6, 1815, and the Address at the Congress of Angostura of February 15, 1819. Written from exile in
+    Kingston after the collapse of the Second Venezuelan Republic, the Jamaica Letter is 8,000 words of political analysis, historical argument, and strategic vision. Bolivar dissected Spanish colonial
+    rule with surgical precision: 300 years of governance that denied creoles (American-born Spaniards) access to high office, restricted colonial manufacturing to protect peninsular industries, imposed
+    trade monopolies that benefited Cadiz merchants, and treated the Americas as a revenue source rather than a society. "We were never viceroys or governors except by extraordinary chance; seldom were
+    we bishops or archbishops; diplomats, never; soldiers, only in subordinate ranks."
 
 
-    The creole elite who led the independence movements were not peasants or slaves — they were the sons and daughters of
-    Spanish landowners, educated in Europe, readers of Montesquieu, Rousseau, and the Encyclopedists. Bolivar himself inherited
-    a fortune. His education included two years in Europe (1799-1802), where he witnessed Napoleon''s coronation and swore
-    on Rome''s Monte Sacro to liberate his homeland. His colleague Francisco de Miranda — who preceded Bolivar as leader of
-    the independence movement — had fought in the American Revolution, the French Revolution, and corresponded with Thomas
-    Jefferson, Alexander Hamilton, and Catherine the Great. The creole independence movement was, in its self-understanding,
-    the American extension of the Atlantic Age of Revolution.
+    The creole elite who led the independence movements were not peasants or slaves — they were the sons and daughters of Spanish landowners, educated in Europe, readers of Montesquieu, Rousseau, and the
+    Encyclopedists. Bolivar himself inherited a fortune. His education included two years in Europe (1799-1802), where he witnessed Napoleon''s coronation and swore on Rome''s Monte Sacro to liberate his
+    homeland. His colleague Francisco de Miranda — who preceded Bolivar as leader of the independence movement — had fought in the American Revolution, the French Revolution, and corresponded with Thomas
+    Jefferson, Alexander Hamilton, and Catherine the Great. The creole independence movement was, in its self-understanding, the American extension of the Atlantic Age of Revolution.
 
 
-    The Address at Angostura (1819) reveals Bolivar''s political thought at its most complex. He argued against both monarchy
-    and pure democracy, proposing instead a republic with a hereditary senate, a strong executive, and a "moral power" — a
-    fourth branch of government responsible for education and public virtue. He rejected federalism, arguing that Latin America
-    lacked the civic traditions and institutional maturity for decentralized government. "Do not adopt the best system of
-    government, but the one that is most likely to succeed." His proposals were partly adopted, partly ignored, and partly
-    overtaken by events.
+    The Address at Angostura (1819) reveals Bolivar''s political thought at its most complex. He argued against both monarchy and pure democracy, proposing instead a republic with a hereditary senate, a
+    strong executive, and a "moral power" — a fourth branch of government responsible for education and public virtue. He rejected federalism, arguing that Latin America lacked the civic traditions and
+    institutional maturity for decentralized government. "Do not adopt the best system of government, but the one that is most likely to succeed." His proposals were partly adopted, partly ignored, and
+    partly overtaken by events.
 
 
-    The military campaigns that followed Angostura demonstrated Bolivar''s genius and his ruthlessness. The crossing of the
-    Andes in June-July 1819 — through the flooded plains of the Apure, up the Pisba Pass at over 13,000 feet, in winter, with
-    an army of llaneros who had never seen snow — killed hundreds of soldiers and most of the horses. Those who survived descended
-    onto the plains of Boyaca and destroyed the Spanish royalist army in two hours on August 7. Bolivar''s strategy throughout
-    combined long-distance forced marches, surprise attacks, and the willingness to accept catastrophic losses for decisive
-    engagements. He lost more campaigns than he won — the First Republic (1811-1812), the Second Republic (1813-1814), the
-    Haitian expedition (1816) — but each failure taught him to build broader coalitions, reach beyond the creole elite to
-    the pardos (mixed-race people) and llaneros, and accept the social costs of the alliances he needed.
+    The military campaigns that followed Angostura demonstrated Bolivar''s genius and his ruthlessness. The crossing of the Andes in June-July 1819 — through the flooded plains of the Apure, up the Pisba
+    Pass at over 13,000 feet, in winter, with an army of llaneros who had never seen snow — killed hundreds of soldiers and most of the horses. Those who survived descended onto the plains of Boyaca and
+    destroyed the Spanish royalist army in two hours on August 7. Bolivar''s strategy throughout combined long-distance forced marches, surprise attacks, and the willingness to accept catastrophic losses
+    for decisive engagements. He lost more campaigns than he won — the First Republic (1811-1812), the Second Republic (1813-1814), the Haitian expedition (1816) — but each failure taught him to build broader
+    coalitions, reach beyond the creole elite to the pardos (mixed-race people) and llaneros, and accept the social costs of the alliances he needed.
 
 
-    Gran Colombia — the union of Venezuela, New Granada (Colombia), and Quito (Ecuador) — was proclaimed in 1821 and governed
-    by Bolivar as president and his vice-president Francisco de Paula Santander. It was Bolivar''s answer to the fragmentation
-    he feared: a continental republic large enough to resist European re-colonization and powerful enough to command international
-    respect. It collapsed within a decade. Paez led Venezuela''s secession in 1830. Santander broke with Bolivar over the
-    question of centralism vs. federalism. Ecuador followed Venezuela out. Bolivar''s final years were a descent from triumph
-    to exile, from continental liberator to abandoned leader. He died in Santa Marta on December 17, 1830, at 47.
+    Gran Colombia — the union of Venezuela, New Granada (Colombia), and Quito (Ecuador) — was proclaimed in 1821 and governed by Bolivar as president and his vice-president Francisco de Paula Santander.
+    It was Bolivar''s answer to the fragmentation he feared: a continental republic large enough to resist European re-colonization and powerful enough to command international respect. It collapsed within
+    a decade. Paez led Venezuela''s secession in 1830. Santander broke with Bolivar over the question of centralism vs. federalism. Ecuador followed Venezuela out. Bolivar''s final years were a descent
+    from triumph to exile, from continental liberator to abandoned leader. He died in Santa Marta on December 17, 1830, at 47.
 
     '
   key_arguments:
-  - 300 years of Spanish colonial restriction denied creoles access to power — independence was both a philosophical and practical
-    necessity
-  - Bolivar's political thought was original — he rejected both monarchy and pure democracy, seeking a middle path for Latin
-    America's specific conditions
-  - The military campaigns — Andes crossing at 13,000 feet, five defeats before Boyaca — required the willingness to rebuild
-    after repeated catastrophes
+  - 300 years of Spanish colonial restriction denied creoles access to power — independence was both a philosophical and practical necessity
+  - Bolivar's political thought was original — he rejected both monarchy and pure democracy, seeking a middle path for Latin America's specific conditions
+  - The military campaigns — Andes crossing at 13,000 feet, five defeats before Boyaca — required the willingness to rebuild after repeated catastrophes
   - Gran Colombia's failure was a tragedy of personality and regional jealousy, not a failure of the continental vision
   sources:
   - title: Selected Writings of Bolivar (2 volumes)
@@ -212,8 +171,7 @@ perspectives:
     type: book
     doi: 10.2307/20050198
   notable_quotes:
-  - text: We were never viceroys or governors except by extraordinary chance; seldom were we bishops or archbishops; diplomats,
-      never; soldiers, only in subordinate ranks.
+  - text: We were never viceroys or governors except by extraordinary chance; seldom were we bishops or archbishops; diplomats, never; soldiers, only in subordinate ranks.
     speaker: Simon Bolivar
     context: The Jamaica Letter, September 6, 1815
   - text: Do not adopt the best system of government, but the one that is most likely to succeed.
@@ -231,53 +189,39 @@ perspectives:
 - viewpoint: Spanish Colonial / Royalist
   viewpoint_type: vanquished
   region_origin: europe
-  narrative: 'Spain''s position in 1810 was not that of a confident imperial power suppressing a colonial revolt. It was that
-    of a nation fighting for its own survival. Napoleon''s invasion of Spain in 1808, the forced abdication of King Ferdinand
-    VII, and the imposition of Napoleon''s brother Joseph Bonaparte on the Spanish throne had shattered metropolitan authority.
-    The juntas that declared independence in Caracas, Buenos Aires, and Bogota in 1810 initially claimed loyalty to Ferdinand
-    VII — they rejected Joseph Bonaparte''s authority, not the Spanish Crown. The separatist faction grew within the juntas
-    only after Ferdinand VII''s restoration in 1814, when the king abolished the liberal Constitution of 1812, restored absolutism,
-    and sent armies to reconquer the Americas.
+  narrative: 'Spain''s position in 1810 was not that of a confident imperial power suppressing a colonial revolt. It was that of a nation fighting for its own survival. Napoleon''s invasion of Spain in
+    1808, the forced abdication of King Ferdinand VII, and the imposition of Napoleon''s brother Joseph Bonaparte on the Spanish throne had shattered metropolitan authority. The juntas that declared independence
+    in Caracas, Buenos Aires, and Bogota in 1810 initially claimed loyalty to Ferdinand VII — they rejected Joseph Bonaparte''s authority, not the Spanish Crown. The separatist faction grew within the juntas
+    only after Ferdinand VII''s restoration in 1814, when the king abolished the liberal Constitution of 1812, restored absolutism, and sent armies to reconquer the Americas.
 
 
-    The royalist armies in South America were not exclusively Spanish. The bulk of royalist forces were American — creoles,
-    mestizos, Indigenous soldiers, and pardos who fought for the Crown out of loyalty, local interest, or hostility to the
-    creole elites who led the independence movement. In Venezuela, the llaneros initially fought for the royalists under the
-    warlord Jose Tomas Boves. Boves''s forces — composed largely of pardos and enslaved men — devastated the Second Venezuelan
-    Republic in 1814, committing atrocities that matched or exceeded anything in Bolivar''s Decree of War to the Death. Boves
-    offered the dispossessed what the creole republicans initially would not: freedom, land, and revenge against the hacienda
-    owners who had exploited them. The royalist cause in South America was not simply Spanish colonialism; it was also a social
-    war within American society.
+    The royalist armies in South America were not exclusively Spanish. The bulk of royalist forces were American — creoles, mestizos, Indigenous soldiers, and pardos who fought for the Crown out of loyalty,
+    local interest, or hostility to the creole elites who led the independence movement. In Venezuela, the llaneros initially fought for the royalists under the warlord Jose Tomas Boves. Boves''s forces
+    — composed largely of pardos and enslaved men — devastated the Second Venezuelan Republic in 1814, committing atrocities that matched or exceeded anything in Bolivar''s Decree of War to the Death. Boves
+    offered the dispossessed what the creole republicans initially would not: freedom, land, and revenge against the hacienda owners who had exploited them. The royalist cause in South America was not simply
+    Spanish colonialism; it was also a social war within American society.
 
 
-    General Pablo Morillo arrived in Venezuela in 1815 with 10,000 Spanish troops — the largest expeditionary force Spain
-    had ever sent to the Americas. He reconquered New Granada by 1816, executing independence leaders including Camilo Torres,
-    Francisco Jose de Caldas, and Policarpa Salavarrieta (La Pola, a woman spy for the independence movement, executed by
-    firing squad on November 14, 1817). Morillo''s campaign restored Spanish authority across most of South America by 1817,
-    but he lacked the resources to hold it. Spain itself was in economic crisis. The Liberal revolution of 1820 — which restored
+    General Pablo Morillo arrived in Venezuela in 1815 with 10,000 Spanish troops — the largest expeditionary force Spain had ever sent to the Americas. He reconquered New Granada by 1816, executing independence
+    leaders including Camilo Torres, Francisco Jose de Caldas, and Policarpa Salavarrieta (La Pola, a woman spy for the independence movement, executed by firing squad on November 14, 1817). Morillo''s
+    campaign restored Spanish authority across most of South America by 1817, but he lacked the resources to hold it. Spain itself was in economic crisis. The Liberal revolution of 1820 — which restored
     the Constitution of 1812 and diverted military resources back to the peninsula — made sustained reconquest impossible.
 
 
-    The royalist perspective sees the independence wars not as a liberation but as a social catastrophe orchestrated by a
-    creole elite that replaced Spanish rule with their own. The republics that emerged did not abolish the hacienda system,
-    did not redistribute land, did not extend political rights to Indigenous people or pardos. Venezuela''s Declaration of
-    Independence (1811) was signed by 41 creole aristocrats; the subsequent constitution restricted suffrage to property-owning
-    males. The Spanish Crown, whatever its faults, had maintained the Laws of the Indies — a legal framework that theoretically
-    protected Indigenous communities, regulated labor, and provided (however imperfectly) for the defense of Indigenous land
-    rights through the Royal Protector of Indians. The republics abolished this protective apparatus along with Spanish rule,
-    leaving Indigenous communities exposed to creole land seizure without even the theoretical recourse that colonial law
-    had provided.
+    The royalist perspective sees the independence wars not as a liberation but as a social catastrophe orchestrated by a creole elite that replaced Spanish rule with their own. The republics that emerged
+    did not abolish the hacienda system, did not redistribute land, did not extend political rights to Indigenous people or pardos. Venezuela''s Declaration of Independence (1811) was signed by 41 creole
+    aristocrats; the subsequent constitution restricted suffrage to property-owning males. The Spanish Crown, whatever its faults, had maintained the Laws of the Indies — a legal framework that theoretically
+    protected Indigenous communities, regulated labor, and provided (however imperfectly) for the defense of Indigenous land rights through the Royal Protector of Indians. The republics abolished this protective
+    apparatus along with Spanish rule, leaving Indigenous communities exposed to creole land seizure without even the theoretical recourse that colonial law had provided.
 
 
-    Ferdinand VII never recognized Latin American independence. Spain did not recognize Colombia until 1881, Peru until 1879,
-    or Honduras until 1894. The loss of the American empire — which had provided silver, gold, and trade revenue since the
-    16th century — contributed to Spain''s decline from a global power to a second-tier European state. The empire''s last
-    remnants — Cuba, Puerto Rico, the Philippines, and Guam — were lost to the United States in 1898.
+    Ferdinand VII never recognized Latin American independence. Spain did not recognize Colombia until 1881, Peru until 1879, or Honduras until 1894. The loss of the American empire — which had provided
+    silver, gold, and trade revenue since the 16th century — contributed to Spain''s decline from a global power to a second-tier European state. The empire''s last remnants — Cuba, Puerto Rico, the Philippines,
+    and Guam — were lost to the United States in 1898.
 
     '
   key_arguments:
-  - Spain in 1810 was fighting Napoleon, not willfully oppressing colonies — the juntas initially claimed loyalty to Ferdinand
-    VII
+  - Spain in 1810 was fighting Napoleon, not willfully oppressing colonies — the juntas initially claimed loyalty to Ferdinand VII
   - Royalist armies were largely American, not Spanish — pardos, Indigenous soldiers, and mestizos fought for the Crown
   - The creole republics did not liberate the masses — they replaced Spanish rule with creole oligarchy
   - The Laws of the Indies provided theoretical protections for Indigenous people that the republics abolished
@@ -299,12 +243,10 @@ perspectives:
     doi: 10.1163/2468-1733_shafr_sim020150038
     archive_url: https://archive.org/details/spainindependenc0000chav
   notable_quotes:
-  - text: These provinces belong to the Crown of Spain, and no assembly of rebels can dissolve the bonds that Providence has
-      established.
+  - text: These provinces belong to the Crown of Spain, and no assembly of rebels can dissolve the bonds that Providence has established.
     speaker: Captain General Juan de Casas
     context: Proclamation in response to the Caracas junta, 1810
-  - text: The rebels do not fight for liberty — they fight for the right to oppress those beneath them without interference
-      from Madrid.
+  - text: The rebels do not fight for liberty — they fight for the right to oppress those beneath them without interference from Madrid.
     speaker: General Pablo Morillo
     context: Dispatch to Ferdinand VII, 1816
   emphasized:
@@ -319,53 +261,41 @@ perspectives:
 - viewpoint: Indigenous / Afro-Latin American
   viewpoint_type: indigenous
   region_origin: americas
-  narrative: 'The Indigenous and Afro-descendant populations of Spanish America — who constituted the majority in most regions
-    — fought in the independence wars on both sides, for their own reasons, and received almost nothing from the outcome.
-    The creole revolutionaries needed them as soldiers, laborers, and cannon fodder. The Spanish royalists needed them as
-    soldiers, laborers, and cannon fodder. Neither side intended to share power with them after the fighting stopped.
+  narrative: 'The Indigenous and Afro-descendant populations of Spanish America — who constituted the majority in most regions — fought in the independence wars on both sides, for their own reasons, and
+    received almost nothing from the outcome. The creole revolutionaries needed them as soldiers, laborers, and cannon fodder. The Spanish royalists needed them as soldiers, laborers, and cannon fodder.
+    Neither side intended to share power with them after the fighting stopped.
 
 
-    In Venezuela, the pardos (people of mixed African, European, and Indigenous descent) constituted roughly 45% of the population.
-    Under the Spanish colonial sistema de castas, they were legally subordinated to creoles and peninsulares (Spaniards born
-    in Spain) regardless of wealth or education. Pardo artisans, merchants, and small farmers had their own grievances against
-    the colonial order, but they also recognized that the creole independence movement was led by the same hacienda owners
-    who exploited them. When Jose Tomas Boves — a Spanish-born warlord who recruited pardos and enslaved people with promises
-    of freedom and plunder — swept through Venezuela in 1813-1814, his army''s violence was directed as much against the creole
-    class as against the republican government. Boves''s men burned haciendas, killed landowners, and redistributed property.
-    The Second Republic collapsed under their assault.
+    In Venezuela, the pardos (people of mixed African, European, and Indigenous descent) constituted roughly 45% of the population. Under the Spanish colonial sistema de castas, they were legally subordinated
+    to creoles and peninsulares (Spaniards born in Spain) regardless of wealth or education. Pardo artisans, merchants, and small farmers had their own grievances against the colonial order, but they also
+    recognized that the creole independence movement was led by the same hacienda owners who exploited them. When Jose Tomas Boves — a Spanish-born warlord who recruited pardos and enslaved people with
+    promises of freedom and plunder — swept through Venezuela in 1813-1814, his army''s violence was directed as much against the creole class as against the republican government. Boves''s men burned haciendas,
+    killed landowners, and redistributed property. The Second Republic collapsed under their assault.
 
 
-    Bolivar learned from this defeat. After 1816, he actively recruited pardos and formerly enslaved people, offering freedom
-    in exchange for military service. The llaneros of the Apure plains — who had initially fought for the royalists under
-    Boves — switched allegiance under Jose Antonio Paez and became the backbone of Bolivar''s cavalry. But the offer was selective.
-    Bolivar freed enslaved people who fought; he did not abolish slavery. His Address at Angostura (1819) called for abolition
-    in principle but proposed gradual emancipation — a process that, in practice, delayed full abolition in Venezuela until
-    1854, in Colombia until 1851, and in Ecuador until 1851. Petion''s condition — "abolish slavery" — was met with a decree
-    that applied only to soldiers.
+    Bolivar learned from this defeat. After 1816, he actively recruited pardos and formerly enslaved people, offering freedom in exchange for military service. The llaneros of the Apure plains — who had
+    initially fought for the royalists under Boves — switched allegiance under Jose Antonio Paez and became the backbone of Bolivar''s cavalry. But the offer was selective. Bolivar freed enslaved people
+    who fought; he did not abolish slavery. His Address at Angostura (1819) called for abolition in principle but proposed gradual emancipation — a process that, in practice, delayed full abolition in Venezuela
+    until 1854, in Colombia until 1851, and in Ecuador until 1851. Petion''s condition — "abolish slavery" — was met with a decree that applied only to soldiers.
 
 
-    Indigenous communities in the Andes faced their own calculus. The Spanish colonial system had subjected them to the mita
-    — a forced labor draft, most notoriously at the silver mines of Potosi, where an estimated 8 million Indigenous laborers
-    died over three centuries. But the colonial system also maintained the Indigenous repúblicas de indios — semiautonomous
-    communities with collective land tenure, their own councils, and (theoretical) legal protection through the Royal Protector
-    of Indians. Bolivar''s republics abolished these structures. The rhetoric of republican equality — "all men are citizens"
-    — in practice dissolved the legal framework that had (however inadequately) protected Indigenous communal land from individual
-    sale. Within decades, creole elites used republican property law to acquire Indigenous communal lands across the Andes.
+    Indigenous communities in the Andes faced their own calculus. The Spanish colonial system had subjected them to the mita — a forced labor draft, most notoriously at the silver mines of Potosi, where
+    an estimated 8 million Indigenous laborers died over three centuries. But the colonial system also maintained the Indigenous repúblicas de indios — semiautonomous communities with collective land tenure,
+    their own councils, and (theoretical) legal protection through the Royal Protector of Indians. Bolivar''s republics abolished these structures. The rhetoric of republican equality — "all men are citizens"
+    — in practice dissolved the legal framework that had (however inadequately) protected Indigenous communal land from individual sale. Within decades, creole elites used republican property law to acquire
+    Indigenous communal lands across the Andes.
 
 
-    Women of all races participated in the independence wars in roles that the patriot leadership celebrated in propaganda
-    and erased in practice. Policarpa Salavarrieta — "La Pola" — ran an intelligence network in Bogota for the independence
-    cause before her capture and execution by firing squad on November 14, 1817. Manuela Saenz served as Bolivar''s archivist,
-    political advisor, and bodyguard; on September 25, 1828, she delayed assassins at the door while Bolivar escaped through
-    a window, then faced the attackers alone. After Bolivar''s death, she was exiled, impoverished, and denied a pension.
-    She died in Paita, Peru, in 1856, running a small shop. The republics that Bolivar and Saenz built together denied women
-    political rights, property rights independent of male relatives, and access to the military honors given to male veterans.
+    Women of all races participated in the independence wars in roles that the patriot leadership celebrated in propaganda and erased in practice. Policarpa Salavarrieta — "La Pola" — ran an intelligence
+    network in Bogota for the independence cause before her capture and execution by firing squad on November 14, 1817. Manuela Saenz served as Bolivar''s archivist, political advisor, and bodyguard; on
+    September 25, 1828, she delayed assassins at the door while Bolivar escaped through a window, then faced the attackers alone. After Bolivar''s death, she was exiled, impoverished, and denied a pension.
+    She died in Paita, Peru, in 1856, running a small shop. The republics that Bolivar and Saenz built together denied women political rights, property rights independent of male relatives, and access to
+    the military honors given to male veterans.
 
 
-    The fundamental critique is structural: the independence wars replaced a European colonial elite with a creole colonial
-    elite. The hacienda system survived. The casta hierarchy survived, informally. The land distribution survived. The mines
-    continued to operate with coerced labor. An Indigenous farmer in the Andes or an enslaved African on a Venezuelan plantation
-    experienced the transition from colony to republic as a change in the nationality of the oppressor, not as liberation.
+    The fundamental critique is structural: the independence wars replaced a European colonial elite with a creole colonial elite. The hacienda system survived. The casta hierarchy survived, informally.
+    The land distribution survived. The mines continued to operate with coerced labor. An Indigenous farmer in the Andes or an enslaved African on a Venezuelan plantation experienced the transition from
+    colony to republic as a change in the nationality of the oppressor, not as liberation.
 
     '
   key_arguments:
@@ -410,58 +340,42 @@ perspectives:
 - viewpoint: Monroe Doctrine / U.S. Perspective
   viewpoint_type: bystander
   region_origin: americas
-  narrative: 'On December 2, 1823, President James Monroe delivered his seventh annual message to Congress. Buried in a 7,000-word
-    address that covered tariffs, the budget, and relations with Russia was a passage that would define U.S. foreign policy
-    for two centuries: "The American continents, by the free and independent condition which they have assumed and maintain,
-    are henceforth not to be considered as subjects for future colonization by any European powers." Secretary of State John
-    Quincy Adams — the doctrine''s actual architect — had drafted the language. The Monroe Doctrine declared the Western Hemisphere
-    a U.S. sphere of influence, framed as protection of Latin American independence, without consulting a single Latin American
-    government.
+  narrative: 'On December 2, 1823, President James Monroe delivered his seventh annual message to Congress. Buried in a 7,000-word address that covered tariffs, the budget, and relations with Russia was
+    a passage that would define U.S. foreign policy for two centuries: "The American continents, by the free and independent condition which they have assumed and maintain, are henceforth not to be considered
+    as subjects for future colonization by any European powers." Secretary of State John Quincy Adams — the doctrine''s actual architect — had drafted the language. The Monroe Doctrine declared the Western
+    Hemisphere a U.S. sphere of influence, framed as protection of Latin American independence, without consulting a single Latin American government.
 
 
-    The doctrine''s timing was not coincidental. In 1823, the Holy Alliance (Russia, Austria, Prussia, and France) was rumored
-    to be planning an intervention to restore Spanish authority in the Americas. Britain — which had the naval power to prevent
-    such an intervention and the commercial interest to do so (British trade with Latin America had exploded since independence)
-    — proposed a joint Anglo-American declaration. Adams persuaded Monroe to act unilaterally. The result was a declaration
-    that positioned the United States, not Britain, as the guarantor of Latin American sovereignty — a claim that the United
-    States lacked the military capacity to enforce in 1823 but would exercise with increasing force over the next two centuries.
+    The doctrine''s timing was not coincidental. In 1823, the Holy Alliance (Russia, Austria, Prussia, and France) was rumored to be planning an intervention to restore Spanish authority in the Americas.
+    Britain — which had the naval power to prevent such an intervention and the commercial interest to do so (British trade with Latin America had exploded since independence) — proposed a joint Anglo-American
+    declaration. Adams persuaded Monroe to act unilaterally. The result was a declaration that positioned the United States, not Britain, as the guarantor of Latin American sovereignty — a claim that the
+    United States lacked the military capacity to enforce in 1823 but would exercise with increasing force over the next two centuries.
 
 
-    The U.S. relationship with the Bolivarian revolutions was ambivalent. The American public and press generally supported
-    independence — newspapers celebrated Bolivar as the "George Washington of South America." Congress debated recognition
-    early and sent agents to observe the wars. But the government moved cautiously. Secretary of State Adams delayed recognition
-    until 1822, fearing that premature action would provoke Spain and complicate negotiations over Florida (which the U.S.
-    acquired from Spain in the Adams-Onis Treaty of 1819). Southern slaveholders in Congress viewed the revolutions with suspicion:
-    Bolivar''s rhetoric of emancipation, and the Haitian precedent, raised uncomfortable questions about slavery in the United
-    States. When Bolivar invited the United States to the Congress of Panama in 1826, two American delegates were appointed
-    — one died en route, the other arrived after the Congress had adjourned.
+    The U.S. relationship with the Bolivarian revolutions was ambivalent. The American public and press generally supported independence — newspapers celebrated Bolivar as the "George Washington of South
+    America." Congress debated recognition early and sent agents to observe the wars. But the government moved cautiously. Secretary of State Adams delayed recognition until 1822, fearing that premature
+    action would provoke Spain and complicate negotiations over Florida (which the U.S. acquired from Spain in the Adams-Onis Treaty of 1819). Southern slaveholders in Congress viewed the revolutions with
+    suspicion: Bolivar''s rhetoric of emancipation, and the Haitian precedent, raised uncomfortable questions about slavery in the United States. When Bolivar invited the United States to the Congress of
+    Panama in 1826, two American delegates were appointed — one died en route, the other arrived after the Congress had adjourned.
 
 
-    The gap between American rhetoric and American action defined the relationship from the beginning. The Monroe Doctrine
-    claimed to protect Latin American independence; in practice, it asserted U.S. hegemony. The United States did not consult
-    Latin American governments before declaring itself their protector. Bolivar himself viewed the doctrine with skepticism
-    — he saw it as a unilateral assertion of U.S. power, not a guarantee of Latin American sovereignty. His Congress of Panama
-    (1826) was an attempt to create a Latin American federation that could defend itself without U.S. patronage. The United
-    States effectively sabotaged the Congress by sending delegates who arrived too late.
+    The gap between American rhetoric and American action defined the relationship from the beginning. The Monroe Doctrine claimed to protect Latin American independence; in practice, it asserted U.S. hegemony.
+    The United States did not consult Latin American governments before declaring itself their protector. Bolivar himself viewed the doctrine with skepticism — he saw it as a unilateral assertion of U.S.
+    power, not a guarantee of Latin American sovereignty. His Congress of Panama (1826) was an attempt to create a Latin American federation that could defend itself without U.S. patronage. The United States
+    effectively sabotaged the Congress by sending delegates who arrived too late.
 
 
-    The Monroe Doctrine''s subsequent application confirmed Bolivar''s skepticism. The Roosevelt Corollary (1904) declared
-    that the United States had the right to intervene in Latin American nations to maintain order and collect debts. The United
-    States occupied Cuba (1898-1902, 1906-1909), the Dominican Republic (1916-1924), Haiti (1915-1934), Nicaragua (1912-1933),
-    and intervened in Guatemala (1954), Chile (1973), Grenada (1983), and Panama (1989). The doctrine that claimed to protect
-    Latin American sovereignty became the justification for violating it. Bolivar''s warning — that the United States "seemed
-    destined by Providence to plague America with torments in the name of freedom" (attributed, from the Jamaica Letter''s
-    broader argument) — proved prophetic.
+    The Monroe Doctrine''s subsequent application confirmed Bolivar''s skepticism. The Roosevelt Corollary (1904) declared that the United States had the right to intervene in Latin American nations to
+    maintain order and collect debts. The United States occupied Cuba (1898-1902, 1906-1909), the Dominican Republic (1916-1924), Haiti (1915-1934), Nicaragua (1912-1933), and intervened in Guatemala (1954),
+    Chile (1973), Grenada (1983), and Panama (1989). The doctrine that claimed to protect Latin American sovereignty became the justification for violating it. Bolivar''s warning — that the United States
+    "seemed destined by Providence to plague America with torments in the name of freedom" (attributed, from the Jamaica Letter''s broader argument) — proved prophetic.
 
     '
   key_arguments:
   - The Monroe Doctrine asserted U.S. hegemony over Latin America without consulting any Latin American government
-  - U.S. recognition of Latin American independence was delayed by domestic politics — especially Southern slaveholders' fear
-    of abolition
-  - The gap between American rhetoric (protection of independence) and American practice (intervention, occupation, regime
-    change) defined the relationship
-  - Bolivar viewed U.S. influence with skepticism — the Congress of Panama was designed to create Latin American solidarity
-    independent of Washington
+  - U.S. recognition of Latin American independence was delayed by domestic politics — especially Southern slaveholders' fear of abolition
+  - The gap between American rhetoric (protection of independence) and American practice (intervention, occupation, regime change) defined the relationship
+  - Bolivar viewed U.S. influence with skepticism — the Congress of Panama was designed to create Latin American solidarity independent of Washington
   sources:
   - title: 'The Monroe Doctrine: Empire and Nation in Nineteenth-Century America'
     author: Jay Sexton
@@ -480,8 +394,7 @@ perspectives:
     type: book
     doi: 10.2307/2167758
   notable_quotes:
-  - text: The American continents, by the free and independent condition which they have assumed and maintain, are henceforth
-      not to be considered as subjects for future colonization by any European powers.
+  - text: The American continents, by the free and independent condition which they have assumed and maintain, are henceforth not to be considered as subjects for future colonization by any European powers.
     speaker: James Monroe
     context: Monroe Doctrine, Annual Message to Congress, December 2, 1823
   - text: The United States seems destined by Providence to plague America with torments in the name of freedom.
@@ -495,13 +408,12 @@ perspectives:
   - The genuine popular enthusiasm for Latin American independence in the United States
   - Britain's role as the actual naval guarantor of Latin American independence in the 1820s
   - Latin American agency — the revolutions succeeded through Latin American military effort, not U.S. protection
-  - The internal dynamics of the independence wars — the U.S. perspective tends to view Latin America as an object of policy,
-    not a set of actors
+  - The internal dynamics of the independence wars — the U.S. perspective tends to view Latin America as an object of policy, not a set of actors
 media:
 - media_type: painting
   title: Simon Bolivar, by Arturo Michelena
-  description: Portrait of Simon Bolivar by Venezuelan painter Arturo Michelena, c. 1895. Bolivar is depicted in military
-    uniform — the standard iconographic representation that dominated Latin American public art for two centuries.
+  description: Portrait of Simon Bolivar by Venezuelan painter Arturo Michelena, c. 1895. Bolivar is depicted in military uniform — the standard iconographic representation that dominated Latin American
+    public art for two centuries.
   source_url: https://commons.wikimedia.org/wiki/File:Sim%C3%B3n_Bol%C3%ADvar_-_Arturo_Michelena.jpg
   attribution: Arturo Michelena, c. 1895, public domain
   license: public-domain
@@ -509,19 +421,18 @@ media:
   creation_date: c. 1895
 - media_type: painting
   title: The Battle of Boyaca, August 7, 1819
-  description: Painting depicting the Battle of Boyaca, where Bolivar's army — having crossed the Andes — surprised and defeated
-    the Spanish royalist force under Colonel Jose Maria Barreiro in two hours. The battle secured the liberation of New Granada
-    (Colombia).
+  description: Painting depicting the Battle of Boyaca, where Bolivar's army — having crossed the Andes — surprised and defeated the Spanish royalist force under Colonel Jose Maria Barreiro in two hours.
+    The battle secured the liberation of New Granada (Colombia).
   source_url: https://commons.wikimedia.org/wiki/File:Batalla_de_Boyac%C3%A1.jpg
   attribution: Martin Tovar y Tovar, 1890, public domain
   license: public-domain
   creator: Martin Tovar y Tovar
   creation_date: '1890'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/bolivarian-revolutions/wiki_1.jpg
 - media_type: document
   title: The Jamaica Letter (Carta de Jamaica), September 6, 1815
-  description: Bolivar's letter written from exile in Kingston, Jamaica, analyzing the causes of independence and proposing
-    a political framework for post-colonial Latin America. The 8,000-word document is the founding text of Latin American
-    political identity.
+  description: Bolivar's letter written from exile in Kingston, Jamaica, analyzing the causes of independence and proposing a political framework for post-colonial Latin America. The 8,000-word document
+    is the founding text of Latin American political identity.
   source_url: https://commons.wikimedia.org/wiki/File:Carta_de_Jamaica.jpg
   attribution: Public domain
   license: public-domain
@@ -554,14 +465,12 @@ media:
 connections:
 - target_slug: french-revolution
   connection_type: influenced
-  description: Bolivar studied in Paris, witnessed Napoleon's coronation, and drew on Enlightenment political philosophy —
-    the French Revolution's ideas of popular sovereignty and republicanism shaped the independence movements
+  description: Bolivar studied in Paris, witnessed Napoleon's coronation, and drew on Enlightenment political philosophy — the French Revolution's ideas of popular sovereignty and republicanism shaped the
+    independence movements
 - target_slug: haitian-revolution
   connection_type: influenced
-  description: Petion gave Bolivar ships, soldiers, and arms in 1816 in exchange for a promise to abolish slavery — Haiti's
-    revolution directly enabled the Bolivarian campaigns and connected the two independence movements through the politics
-    of emancipation
+  description: Petion gave Bolivar ships, soldiers, and arms in 1816 in exchange for a promise to abolish slavery — Haiti's revolution directly enabled the Bolivarian campaigns and connected the two independence
+    movements through the politics of emancipation
 - target_slug: transatlantic-slave-trade
   connection_type: consequence
-  description: The wars ended Spanish colonial rule but did not immediately end slavery — full abolition in the Bolivarian
-    republics came only in the 1850s, three decades after independence
+  description: The wars ended Spanish colonial rule but did not immediately end slavery — full abolition in the Bolivarian republics came only in the 1850s, three decades after independence

@@ -12,52 +12,40 @@ severity: major
 death_toll: ~2,100 Maori; ~740 British soldiers and settlers during the New Zealand Wars (1845-1872)
 affected_population: ~80,000 Maori at the time of signing; ~2,000 European settlers in 1840, growing to ~250,000 by 1870
 duration: 1840-1872 (Treaty signing through the end of the New Zealand Wars); Treaty jurisprudence ongoing
-hero_image_url: https://upload.wikimedia.org/wikipedia/commons/f/f8/Treatyofwaitangi.jpg
+hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/unsplash_1.jpg
 hero_image_attribution: Archives New Zealand, public domain via Wikimedia Commons
-summary: 'On the morning of February 6, 1840, approximately 500 Maori chiefs gathered at the house of the British Resident,
-  James Busby, at Waitangi in the Bay of Islands. Captain William Hobson, representing the British Crown, presented a document
-  that he said would protect Maori rights while establishing British authority over New Zealand. The missionary Henry Williams
-  and his son Edward translated the text into Te Reo Maori overnight. By the end of the day, 43 chiefs had signed. Over the
-  following months, the treaty was carried around the country; eventually, over 500 chiefs signed. Some refused. Some were
+summary: 'On the morning of February 6, 1840, approximately 500 Maori chiefs gathered at the house of the British Resident, James Busby, at Waitangi in the Bay of Islands. Captain William Hobson, representing
+  the British Crown, presented a document that he said would protect Maori rights while establishing British authority over New Zealand. The missionary Henry Williams and his son Edward translated the text
+  into Te Reo Maori overnight. By the end of the day, 43 chiefs had signed. Over the following months, the treaty was carried around the country; eventually, over 500 chiefs signed. Some refused. Some were
   never asked.
 
 
-  The two versions of the treaty say different things. Article 1 in the English text cedes to the Crown "all the rights and
-  powers of Sovereignty." Article 1 in the Maori text cedes "te kawanatanga katoa" — governance, not sovereignty. The distinction
-  is not semantic. In Te Reo Maori, the word for sovereignty — "mana" — exists and was not used. Instead, Williams chose "kawanatanga,"
-  a transliteration of "governorship," a word that implied administrative authority without the transfer of supreme power.
-  Article 2 in the English text guarantees Maori "full exclusive and undisturbed possession of their Lands and Estates." Article
-  2 in the Maori text guarantees "te tino rangatiratanga" — the full chieftainship — over their lands, forests, fisheries,
-  and other treasures ("taonga"). Rangatiratanga implies not just property rights but political autonomy. The Maori chiefs
-  who signed believed they were granting a governor the right to control British settlers while retaining their own authority
-  over their people and lands. The British believed they had acquired sovereignty over the entire territory.
+  The two versions of the treaty say different things. Article 1 in the English text cedes to the Crown "all the rights and powers of Sovereignty." Article 1 in the Maori text cedes "te kawanatanga katoa"
+  — governance, not sovereignty. The distinction is not semantic. In Te Reo Maori, the word for sovereignty — "mana" — exists and was not used. Instead, Williams chose "kawanatanga," a transliteration of
+  "governorship," a word that implied administrative authority without the transfer of supreme power. Article 2 in the English text guarantees Maori "full exclusive and undisturbed possession of their Lands
+  and Estates." Article 2 in the Maori text guarantees "te tino rangatiratanga" — the full chieftainship — over their lands, forests, fisheries, and other treasures ("taonga"). Rangatiratanga implies not
+  just property rights but political autonomy. The Maori chiefs who signed believed they were granting a governor the right to control British settlers while retaining their own authority over their people
+  and lands. The British believed they had acquired sovereignty over the entire territory.
 
 
-  Hone Heke, a Ngapuhi chief who had been among the first to sign, was the first to declare the treaty broken. In July 1844,
-  he cut down the British flagpole at Kororareka (now Russell). The British re-erected it. Heke cut it down again. They raised
-  it a third time, encased in iron and protected by a blockhouse. Heke cut it down a fourth time on March 11, 1845, while
-  his ally Kawiti attacked the town. The symbolism was exact: the flagpole represented British sovereignty over Maori land,
-  and Heke rejected it with an axe. The Northern War that followed — the first of the New Zealand Wars — lasted until 1846
-  and ended inconclusively. Heke was never captured, never surrendered, and never accepted that the treaty transferred sovereignty.
+  Hone Heke, a Ngapuhi chief who had been among the first to sign, was the first to declare the treaty broken. In July 1844, he cut down the British flagpole at Kororareka (now Russell). The British re-erected
+  it. Heke cut it down again. They raised it a third time, encased in iron and protected by a blockhouse. Heke cut it down a fourth time on March 11, 1845, while his ally Kawiti attacked the town. The symbolism
+  was exact: the flagpole represented British sovereignty over Maori land, and Heke rejected it with an axe. The Northern War that followed — the first of the New Zealand Wars — lasted until 1846 and ended
+  inconclusively. Heke was never captured, never surrendered, and never accepted that the treaty transferred sovereignty.
 
 
-  The wars continued, with intervals, for three decades. The Waikato War (1863-1864), the largest, saw 12,000 British troops
-  invade the Waikato region and confiscate 1.2 million acres of Maori land. The Taranaki Wars (1860-1861, 1863-1866) centered
-  on disputed land sales. The East Coast campaigns against Te Kooti Arikirangi Te Turuki lasted until 1872. By the end, the
-  Crown had confiscated approximately 3.4 million acres of Maori land under the New Zealand Settlements Act of 1863 — legislation
-  that allowed the government to seize the land of any tribe deemed to be "in rebellion." The act made no distinction between
-  combatants and non-combatants, between tribes that had fought and tribes that had merely lived in the wrong district.
+  The wars continued, with intervals, for three decades. The Waikato War (1863-1864), the largest, saw 12,000 British troops invade the Waikato region and confiscate 1.2 million acres of Maori land. The
+  Taranaki Wars (1860-1861, 1863-1866) centered on disputed land sales. The East Coast campaigns against Te Kooti Arikirangi Te Turuki lasted until 1872. By the end, the Crown had confiscated approximately
+  3.4 million acres of Maori land under the New Zealand Settlements Act of 1863 — legislation that allowed the government to seize the land of any tribe deemed to be "in rebellion." The act made no distinction
+  between combatants and non-combatants, between tribes that had fought and tribes that had merely lived in the wrong district.
 
   '
-significance: 'The Treaty of Waitangi is the founding document of New Zealand, invoked by both Maori and Pakeha (European
-  New Zealanders) to make competing claims about the country''s constitutional identity. The Waitangi Tribunal, established
-  in 1975 and given retrospective jurisdiction to 1840 in 1985, has issued over 100 reports examining Crown breaches of the
-  treaty. Treaty settlements since 1992 have transferred over NZ$2.24 billion in assets and apologies to iwi (tribes). The
-  treaty''s two-text divergence — sovereignty vs. governance, property vs. chieftainship — remains unresolved and shapes every
-  major debate about Maori rights, land, water, fisheries, and political representation in contemporary New Zealand. The Maori
-  seats in Parliament, established in 1867 (four years before any British colony granted Indigenous parliamentary representation),
-  and the Treaty Principles enacted in legislation since 1986 have made New Zealand''s Indigenous-settler constitutional relationship
-  the most juridically developed in the world.
+significance: 'The Treaty of Waitangi is the founding document of New Zealand, invoked by both Maori and Pakeha (European New Zealanders) to make competing claims about the country''s constitutional identity.
+  The Waitangi Tribunal, established in 1975 and given retrospective jurisdiction to 1840 in 1985, has issued over 100 reports examining Crown breaches of the treaty. Treaty settlements since 1992 have
+  transferred over NZ$2.24 billion in assets and apologies to iwi (tribes). The treaty''s two-text divergence — sovereignty vs. governance, property vs. chieftainship — remains unresolved and shapes every
+  major debate about Maori rights, land, water, fisheries, and political representation in contemporary New Zealand. The Maori seats in Parliament, established in 1867 (four years before any British colony
+  granted Indigenous parliamentary representation), and the Treaty Principles enacted in legislation since 1986 have made New Zealand''s Indigenous-settler constitutional relationship the most juridically
+  developed in the world.
 
   '
 key_figures:
@@ -67,8 +55,7 @@ key_figures:
 - name: Captain William Hobson
   role: British officer who negotiated the treaty on behalf of the Crown; became New Zealand's first governor
 - name: Henry Williams
-  role: Church Missionary Society missionary; translated the treaty into Te Reo Maori overnight on February 4-5, 1840 — later
-    accused of deliberate mistranslation
+  role: Church Missionary Society missionary; translated the treaty into Te Reo Maori overnight on February 4-5, 1840 — later accused of deliberate mistranslation
   wikidata: Q993376
   born: 1805
   died: 1887
@@ -80,36 +67,28 @@ key_figures:
   died: 1871
   wikipedia: https://en.wikipedia.org/wiki/Tāmati_Wāka_Nene
 - name: Te Kooti Arikirangi Te Turuki
-  role: Military leader and founder of the Ringatū faith; escaped from Chatham Islands exile in 1868, fought a guerrilla campaign
-    until 1872
+  role: Military leader and founder of the Ringatū faith; escaped from Chatham Islands exile in 1868, fought a guerrilla campaign until 1872
   wikidata: Q737045
   born: 1820
   died: 1891
   wikipedia: https://en.wikipedia.org/wiki/Te_Kooti
 - name: Wiremu Tamati Ngatata-i-te-Rangi
-  role: Te Ati Awa chief in Wellington; negotiated with settlers and colonial government for decades over Port Nicholson land
-    claims
+  role: Te Ati Awa chief in Wellington; negotiated with settlers and colonial government for decades over Port Nicholson land claims
 legacy_points:
-- Two versions of the same treaty say different things — 'sovereignty' (English) vs. 'governance' (Maori) — a textual divergence
-  still unresolved after 186 years
+- Two versions of the same treaty say different things — 'sovereignty' (English) vs. 'governance' (Maori) — a textual divergence still unresolved after 186 years
 - 3.4 million acres of Maori land confiscated under the New Zealand Settlements Act of 1863
-- The Waitangi Tribunal (est. 1975) has produced over 100 reports on Crown breaches — the most developed Indigenous treaty
-  jurisprudence in the world
-- Maori parliamentary seats established in 1867 — four years before any other British colony granted Indigenous parliamentary
-  representation
+- The Waitangi Tribunal (est. 1975) has produced over 100 reports on Crown breaches — the most developed Indigenous treaty jurisprudence in the world
+- Maori parliamentary seats established in 1867 — four years before any other British colony granted Indigenous parliamentary representation
 - Treaty settlements since 1992 have transferred over NZ$2.24 billion in assets and formal Crown apologies
 primary_source_excerpts:
-- text: Her Majesty the Queen of England confirms and guarantees to the Chiefs and Tribes of New Zealand and to the respective
-    families and individuals thereof the full exclusive and undisturbed possession of their Lands and Estates Forests Fisheries
-    and other properties.
+- text: Her Majesty the Queen of England confirms and guarantees to the Chiefs and Tribes of New Zealand and to the respective families and individuals thereof the full exclusive and undisturbed possession
+    of their Lands and Estates Forests Fisheries and other properties.
   author: Treaty of Waitangi
   work: English text, Article 2
   date: February 6, 1840
-- text: Ko te Kuini o Ingarani ka wakarite ka wakaae ki nga Rangitira ki nga hapu — ki nga tangata katoa o Nu Tirani te tino
-    rangatiratanga o o ratou wenua o ratou kainga me o ratou taonga katoa.
+- text: Ko te Kuini o Ingarani ka wakarite ka wakaae ki nga Rangitira ki nga hapu — ki nga tangata katoa o Nu Tirani te tino rangatiratanga o o ratou wenua o ratou kainga me o ratou taonga katoa.
   author: Te Tiriti o Waitangi
-  work: Maori text, Article 2 — guarantees 'te tino rangatiratanga' (full chieftainship) over lands, homes, and all treasured
-    possessions
+  work: Maori text, Article 2 — guarantees 'te tino rangatiratanga' (full chieftainship) over lands, homes, and all treasured possessions
   date: February 6, 1840
 - text: The shadow of the land will go to the Queen, but the substance will remain with us.
   author: Nopera Panakareao
@@ -130,49 +109,38 @@ perspectives:
 - viewpoint: Maori Chiefs / Iwi
   viewpoint_type: indigenous
   region_origin: oceania
-  narrative: 'The chiefs who gathered at Waitangi on February 6, 1840 were not illiterate tribesmen overawed by European power.
-    Many had extensive experience with Europeans. The Bay of Islands had been a trading center for decades — whaling ships,
-    timber merchants, missionaries. Several chiefs, including Hone Heke and Tamati Waka Nene, were literate in both Te Reo
-    Maori and English. Hongi Hika had traveled to England in 1820 and met King George IV. The chiefs understood what a treaty
-    was. What they did not understand — because the Maori text did not say it — was that they were ceding sovereignty.
+  narrative: 'The chiefs who gathered at Waitangi on February 6, 1840 were not illiterate tribesmen overawed by European power. Many had extensive experience with Europeans. The Bay of Islands had been
+    a trading center for decades — whaling ships, timber merchants, missionaries. Several chiefs, including Hone Heke and Tamati Waka Nene, were literate in both Te Reo Maori and English. Hongi Hika had
+    traveled to England in 1820 and met King George IV. The chiefs understood what a treaty was. What they did not understand — because the Maori text did not say it — was that they were ceding sovereignty.
 
 
-    The debate at Waitangi lasted five hours. Te Kemara of Ngapuhi spoke first and rejected the treaty outright: "I am not
-    willing to consent to the proposal of the governor. We are not thy people. We are free." Rewa of Ngapuhi warned that "the
-    Maori and the Pakeha cannot live together." Tamati Waka Nene argued for signing: "Do not go away from us, return to us."
-    The speeches reveal a sophisticated political calculus. Chiefs who supported the treaty wanted British authority over
-    British settlers — the whalers, traders, and convicts whose lawlessness had destabilized the Bay of Islands. They were
-    granting a governor authority over his own people, not surrendering authority over theirs.
+    The debate at Waitangi lasted five hours. Te Kemara of Ngapuhi spoke first and rejected the treaty outright: "I am not willing to consent to the proposal of the governor. We are not thy people. We are
+    free." Rewa of Ngapuhi warned that "the Maori and the Pakeha cannot live together." Tamati Waka Nene argued for signing: "Do not go away from us, return to us." The speeches reveal a sophisticated political
+    calculus. Chiefs who supported the treaty wanted British authority over British settlers — the whalers, traders, and convicts whose lawlessness had destabilized the Bay of Islands. They were granting
+    a governor authority over his own people, not surrendering authority over theirs.
 
 
-    The Maori text supports this reading. Henry Williams translated the English word "sovereignty" not as "mana" (which any
-    Maori speaker would have understood as supreme authority) but as "kawanatanga" — a neologism derived from the English
-    word "governor." Chiefs who signed te Tiriti ceded governance — administrative authority — while Article 2 guaranteed
-    them "te tino rangatiratanga," full chieftainship, over their lands, villages, and taonga (treasured possessions, a term
-    whose scope encompasses language, culture, waterways, and sacred sites). The two articles, read together in the Maori
-    text, describe a power-sharing arrangement, not a surrender. Nopera Panakareao, signing at Kaitaia in April 1840, articulated
-    it precisely: "The shadow of the land will go to the Queen, but the substance will remain with us."
+    The Maori text supports this reading. Henry Williams translated the English word "sovereignty" not as "mana" (which any Maori speaker would have understood as supreme authority) but as "kawanatanga"
+    — a neologism derived from the English word "governor." Chiefs who signed te Tiriti ceded governance — administrative authority — while Article 2 guaranteed them "te tino rangatiratanga," full chieftainship,
+    over their lands, villages, and taonga (treasured possessions, a term whose scope encompasses language, culture, waterways, and sacred sites). The two articles, read together in the Maori text, describe
+    a power-sharing arrangement, not a surrender. Nopera Panakareao, signing at Kaitaia in April 1840, articulated it precisely: "The shadow of the land will go to the Queen, but the substance will remain
+    with us."
 
 
-    Hone Heke''s four cuttings of the flagpole at Kororareka (1844-1845) were the physical enactment of this reading. The
-    flagpole represented British sovereignty — mana, not kawanatanga. Heke did not reject the treaty; he rejected the British
-    interpretation of the treaty. He had been among the first to sign, and he continued to assert that his signature granted
-    governance, not sovereignty. The flagpole was the visible symbol of the claim he denied. He destroyed it with an axe,
-    four times, because the British kept rebuilding it — each reconstruction asserting the claim, each cutting rejecting it.
+    Hone Heke''s four cuttings of the flagpole at Kororareka (1844-1845) were the physical enactment of this reading. The flagpole represented British sovereignty — mana, not kawanatanga. Heke did not reject
+    the treaty; he rejected the British interpretation of the treaty. He had been among the first to sign, and he continued to assert that his signature granted governance, not sovereignty. The flagpole
+    was the visible symbol of the claim he denied. He destroyed it with an axe, four times, because the British kept rebuilding it — each reconstruction asserting the claim, each cutting rejecting it.
 
 
-    The New Zealand Wars that followed (1845-1872) were fought by iwi who shared Heke''s reading. The Kingitanga (King Movement),
-    established in 1858, elected Potatau Te Wherowhero as the first Maori King — a pan-tribal political authority designed
-    to match the Crown''s claim with a Maori equivalent. The Crown treated the Kingitanga as rebellion. The 1863 invasion
-    of the Waikato and the confiscation of 1.2 million acres of Kingitanga land confirmed what Maori leaders had feared: "governance"
-    was a word the Crown used when it was weak, and "sovereignty" was the word it enacted when it was strong.
+    The New Zealand Wars that followed (1845-1872) were fought by iwi who shared Heke''s reading. The Kingitanga (King Movement), established in 1858, elected Potatau Te Wherowhero as the first Maori King
+    — a pan-tribal political authority designed to match the Crown''s claim with a Maori equivalent. The Crown treated the Kingitanga as rebellion. The 1863 invasion of the Waikato and the confiscation
+    of 1.2 million acres of Kingitanga land confirmed what Maori leaders had feared: "governance" was a word the Crown used when it was weak, and "sovereignty" was the word it enacted when it was strong.
 
     '
   key_arguments:
   - The Maori text of the treaty does not cede sovereignty — it cedes 'kawanatanga' (governance), a lesser authority
   - Chiefs intended to grant the Crown authority over British settlers, not over Maori people or Maori land
-  - Hone Heke's flagpole cuttings were acts of treaty interpretation, not rebellion — he rejected British sovereignty, not
-    the treaty itself
+  - Hone Heke's flagpole cuttings were acts of treaty interpretation, not rebellion — he rejected British sovereignty, not the treaty itself
   - The Kingitanga (King Movement) was a political response to the Crown's unilateral expansion of treaty authority
   sources:
   - title: The Treaty of Waitangi
@@ -209,54 +177,40 @@ perspectives:
 - viewpoint: British Crown / Colonial Administration
   viewpoint_type: victor
   region_origin: europe
-  narrative: 'The Colonial Office in London dispatched Captain William Hobson to New Zealand in August 1839 with instructions
-    shaped by two competing pressures. The first was the New Zealand Company, a private colonization venture led by Edward
-    Gibbon Wakefield, which was already shipping settlers to Port Nicholson (Wellington) without Crown authority. The Company''s
-    land purchases from Maori were of dubious legality — conducted through agents who bought enormous tracts for trade goods
-    worth a fraction of the land''s value. The Colonial Office feared that unregulated settlement would provoke conflict,
-    embarrass the Crown, and create another settler-indigenous war of the kind that had consumed vast resources in the Cape
-    Colony and New South Wales. The second pressure was humanitarian: the Church Missionary Society and the Aborigines'' Protection
-    Society lobbied Parliament to ensure that any annexation of New Zealand included protections for Maori rights.
+  narrative: 'The Colonial Office in London dispatched Captain William Hobson to New Zealand in August 1839 with instructions shaped by two competing pressures. The first was the New Zealand Company, a
+    private colonization venture led by Edward Gibbon Wakefield, which was already shipping settlers to Port Nicholson (Wellington) without Crown authority. The Company''s land purchases from Maori were
+    of dubious legality — conducted through agents who bought enormous tracts for trade goods worth a fraction of the land''s value. The Colonial Office feared that unregulated settlement would provoke
+    conflict, embarrass the Crown, and create another settler-indigenous war of the kind that had consumed vast resources in the Cape Colony and New South Wales. The second pressure was humanitarian: the
+    Church Missionary Society and the Aborigines'' Protection Society lobbied Parliament to ensure that any annexation of New Zealand included protections for Maori rights.
 
 
-    The treaty was Hobson''s solution to both pressures. By obtaining Maori consent to British sovereignty — voluntarily,
-    through a negotiated agreement — the Crown could regulate settlement, control land sales (the Crown pre-emption clause
-    in Article 2 gave the government the sole right to purchase Maori land), and position itself as the protector of Maori
-    interests against unscrupulous settlers and land companies. Hobson''s instructions from Lord Normanby, the Colonial Secretary,
-    were explicit: "All dealings with the Aborigines for their Lands must be conducted on the same principles of sincerity,
+    The treaty was Hobson''s solution to both pressures. By obtaining Maori consent to British sovereignty — voluntarily, through a negotiated agreement — the Crown could regulate settlement, control land
+    sales (the Crown pre-emption clause in Article 2 gave the government the sole right to purchase Maori land), and position itself as the protector of Maori interests against unscrupulous settlers and
+    land companies. Hobson''s instructions from Lord Normanby, the Colonial Secretary, were explicit: "All dealings with the Aborigines for their Lands must be conducted on the same principles of sincerity,
     justice, and good faith as must govern your transactions with them for any other purpose."
 
 
-    The British reading of the treaty is straightforward: Article 1 cedes sovereignty; Article 2 protects property; Article
-    3 grants Maori the rights of British subjects. The translation issue, in the Crown''s view, arose from the inherent difficulty
-    of rendering European legal concepts into a language that did not possess equivalent terms — not from any intent to deceive.
-    Henry Williams, a missionary who had spent 17 years among the Maori and spoke fluent Te Reo, made translation choices
-    that reflected his judgment of the closest available equivalents. The fact that many chiefs debated the treaty at length,
-    asked questions, and some refused to sign suggests they understood enough of its implications to make an informed decision.
+    The British reading of the treaty is straightforward: Article 1 cedes sovereignty; Article 2 protects property; Article 3 grants Maori the rights of British subjects. The translation issue, in the Crown''s
+    view, arose from the inherent difficulty of rendering European legal concepts into a language that did not possess equivalent terms — not from any intent to deceive. Henry Williams, a missionary who
+    had spent 17 years among the Maori and spoke fluent Te Reo, made translation choices that reflected his judgment of the closest available equivalents. The fact that many chiefs debated the treaty at
+    length, asked questions, and some refused to sign suggests they understood enough of its implications to make an informed decision.
 
 
-    Governor George Grey (1845-1853, 1861-1868), the dominant figure of early colonial New Zealand, enforced the Crown''s
-    interpretation with military force and legal instruments. Grey defeated Hone Heke in the Northern War (though Heke was
-    never captured), invaded the Waikato in 1863 with 12,000 Imperial and colonial troops, and oversaw the New Zealand Settlements
-    Act — the confiscation legislation. Grey also established native schools, supported Maori literacy, and collected Maori
-    oral traditions (Polynesian Mythology, 1855). He saw no contradiction between military conquest and cultural preservation:
-    the Crown''s role, in his understanding, was to impose order, protect Maori from exploitation, and guide them toward civilization.
-    The paternalism was sincere. It was also incompatible with Maori autonomy.
+    Governor George Grey (1845-1853, 1861-1868), the dominant figure of early colonial New Zealand, enforced the Crown''s interpretation with military force and legal instruments. Grey defeated Hone Heke
+    in the Northern War (though Heke was never captured), invaded the Waikato in 1863 with 12,000 Imperial and colonial troops, and oversaw the New Zealand Settlements Act — the confiscation legislation.
+    Grey also established native schools, supported Maori literacy, and collected Maori oral traditions (Polynesian Mythology, 1855). He saw no contradiction between military conquest and cultural preservation:
+    the Crown''s role, in his understanding, was to impose order, protect Maori from exploitation, and guide them toward civilization. The paternalism was sincere. It was also incompatible with Maori autonomy.
 
 
-    The settler population grew from roughly 2,000 in 1840 to 250,000 by 1870. Settlers wanted land. The Crown pre-emption
-    clause — which gave the government a monopoly on purchasing Maori land and reselling it to settlers at a markup — was
-    supposed to regulate the process. In practice, it created a system in which the Crown was both buyer and regulator, with
-    obvious conflicts of interest. The Native Land Court, established in 1862, individualized Maori communal land tenure —
-    converting collective tribal ownership into individual titles that could be sold. The effect was to make Maori land alienable,
+    The settler population grew from roughly 2,000 in 1840 to 250,000 by 1870. Settlers wanted land. The Crown pre-emption clause — which gave the government a monopoly on purchasing Maori land and reselling
+    it to settlers at a markup — was supposed to regulate the process. In practice, it created a system in which the Crown was both buyer and regulator, with obvious conflicts of interest. The Native Land
+    Court, established in 1862, individualized Maori communal land tenure — converting collective tribal ownership into individual titles that could be sold. The effect was to make Maori land alienable,
     one title at a time, until by 1900, Maori retained only 11 million of the 66 million acres they had held in 1840.
 
     '
   key_arguments:
-  - The treaty was a genuine attempt to regulate settlement and protect Maori rights — driven by humanitarian and pragmatic
-    concerns
-  - Translation difficulties were inherent in rendering European legal concepts into Te Reo Maori, not evidence of deliberate
-    deception
+  - The treaty was a genuine attempt to regulate settlement and protect Maori rights — driven by humanitarian and pragmatic concerns
+  - Translation difficulties were inherent in rendering European legal concepts into Te Reo Maori, not evidence of deliberate deception
   - Crown pre-emption was designed to protect Maori from predatory private land purchases
   - Military force was used to suppress rebellion and maintain order, consistent with the Crown's sovereign authority
   sources:
@@ -277,8 +231,7 @@ perspectives:
     openlibrary: OL6808293M
     archive_url: https://archive.org/details/victorianinterpr0000beli
   notable_quotes:
-  - text: All dealings with the Aborigines for their Lands must be conducted on the same principles of sincerity, justice,
-      and good faith as must govern your transactions with them for any other purpose.
+  - text: All dealings with the Aborigines for their Lands must be conducted on the same principles of sincerity, justice, and good faith as must govern your transactions with them for any other purpose.
     speaker: Lord Normanby
     context: Instructions to Captain Hobson, Colonial Office, August 1839
   - text: The Queen wishes to be a friend and protector of the Maori people.
@@ -296,50 +249,37 @@ perspectives:
 - viewpoint: Settler / Pakeha
   viewpoint_type: bystander
   region_origin: oceania
-  narrative: 'The settlers who arrived in New Zealand in the 1840s and 1850s came, in most cases, not to dispossess the Maori
-    but to build farms, towns, and communities in a country that the New Zealand Company''s advertisements described as abundant,
-    fertile, and welcoming. Edward Gibbon Wakefield''s "systematic colonization" model promised planned settlements with a
-    balance of laborers, artisans, and capitalists — not a frontier free-for-all but an orderly transplantation of English
-    civil society. The reality was harder. The settlers who arrived at Port Nicholson (Wellington) in 1840 found that the
-    Company''s land purchases from Maori were contested, that the promised surveys had not been completed, and that the land
-    they had paid for in London might belong to someone else.
+  narrative: 'The settlers who arrived in New Zealand in the 1840s and 1850s came, in most cases, not to dispossess the Maori but to build farms, towns, and communities in a country that the New Zealand
+    Company''s advertisements described as abundant, fertile, and welcoming. Edward Gibbon Wakefield''s "systematic colonization" model promised planned settlements with a balance of laborers, artisans,
+    and capitalists — not a frontier free-for-all but an orderly transplantation of English civil society. The reality was harder. The settlers who arrived at Port Nicholson (Wellington) in 1840 found that
+    the Company''s land purchases from Maori were contested, that the promised surveys had not been completed, and that the land they had paid for in London might belong to someone else.
 
 
-    The settler experience of the New Zealand Wars was defined by proximity and vulnerability. Settlers in Taranaki, Waikato,
-    and the Bay of Plenty lived within miles of fighting. The massacre at Wairau in 1843 — where 22 settlers and 4 Maori died
-    in a confrontation over disputed land — established the pattern: ambiguous land transactions, escalation, violence. The
-    settlers demanded military protection, and when the Imperial government withdrew most of its troops in the 1860s, they
-    formed colonial militia units. The Forest Rangers, recruited from settlers who knew the bush, fought alongside Imperial
+    The settler experience of the New Zealand Wars was defined by proximity and vulnerability. Settlers in Taranaki, Waikato, and the Bay of Plenty lived within miles of fighting. The massacre at Wairau
+    in 1843 — where 22 settlers and 4 Maori died in a confrontation over disputed land — established the pattern: ambiguous land transactions, escalation, violence. The settlers demanded military protection,
+    and when the Imperial government withdrew most of its troops in the 1860s, they formed colonial militia units. The Forest Rangers, recruited from settlers who knew the bush, fought alongside Imperial
     regulars in the Waikato campaign.
 
 
-    Settlers occupied a contradictory position. They depended on Maori — for food (Maori supplied wheat, potatoes, pigs, and
-    flax to early colonial towns), for knowledge of the land, and for labor. They also competed with Maori for the one resource
-    that mattered: land. The Crown pre-emption system frustrated settlers who wanted to buy land directly from willing Maori
-    sellers. The Native Land Court, when it arrived, was welcomed by settlers because it created individual titles that could
-    be purchased — but the process was slow, expensive, and tangled in competing claims.
+    Settlers occupied a contradictory position. They depended on Maori — for food (Maori supplied wheat, potatoes, pigs, and flax to early colonial towns), for knowledge of the land, and for labor. They
+    also competed with Maori for the one resource that mattered: land. The Crown pre-emption system frustrated settlers who wanted to buy land directly from willing Maori sellers. The Native Land Court,
+    when it arrived, was welcomed by settlers because it created individual titles that could be purchased — but the process was slow, expensive, and tangled in competing claims.
 
 
-    The settler narrative of the wars tends toward a language of frontier defense: farms burned, families evacuated, volunteers
-    mustered. The Gate Pa battle of April 29, 1864 — where 230 Ngai Te Rangi warriors held a fortified pa (fortification)
-    against 1,700 British troops, inflicted 111 casualties, and withdrew undetected at night — is remembered in settler tradition
-    as a defeat that demonstrated Maori military skill while reinforcing the narrative that the settlers were outnumbered,
-    outmatched, and dependent on Imperial support.
+    The settler narrative of the wars tends toward a language of frontier defense: farms burned, families evacuated, volunteers mustered. The Gate Pa battle of April 29, 1864 — where 230 Ngai Te Rangi warriors
+    held a fortified pa (fortification) against 1,700 British troops, inflicted 111 casualties, and withdrew undetected at night — is remembered in settler tradition as a defeat that demonstrated Maori
+    military skill while reinforcing the narrative that the settlers were outnumbered, outmatched, and dependent on Imperial support.
 
 
-    James Belich''s The New Zealand Wars and the Victorian Interpretation of Racial Conflict (1986) challenged the settler
-    narrative by demonstrating that the British consistently misrepresented the wars — claiming victories that were, in reality,
-    inconclusive or defeats. The "modern pa," a trench-and-bunker system that Maori developed independently (predating European
-    trench warfare by fifty years), neutralized British artillery and forced costly infantry assaults. The settler memory
-    of the wars as a civilizing triumph was, Belich argued, a retrospective construction that served the political needs of
-    a colony that wanted to believe it had earned its land fairly.
+    James Belich''s The New Zealand Wars and the Victorian Interpretation of Racial Conflict (1986) challenged the settler narrative by demonstrating that the British consistently misrepresented the wars
+    — claiming victories that were, in reality, inconclusive or defeats. The "modern pa," a trench-and-bunker system that Maori developed independently (predating European trench warfare by fifty years),
+    neutralized British artillery and forced costly infantry assaults. The settler memory of the wars as a civilizing triumph was, Belich argued, a retrospective construction that served the political needs
+    of a colony that wanted to believe it had earned its land fairly.
 
 
-    By the late 19th century, settlers and their descendants constituted the majority population. The narrative shifted from
-    "frontier" to "nation" — a New Zealand identity defined by European settlement, parliamentary government, and agricultural
-    prosperity. Maori became a presence to be managed, assimilated, or romanticized. The treaty faded from public discourse.
-    It was not until the Maori protest movements of the 1970s — the Maori Land March of 1975, the Bastion Point occupation
-    of 1977-1978 — that the treaty re-entered New Zealand''s political vocabulary as a living document rather than a historical
+    By the late 19th century, settlers and their descendants constituted the majority population. The narrative shifted from "frontier" to "nation" — a New Zealand identity defined by European settlement,
+    parliamentary government, and agricultural prosperity. Maori became a presence to be managed, assimilated, or romanticized. The treaty faded from public discourse. It was not until the Maori protest
+    movements of the 1970s — the Maori Land March of 1975, the Bastion Point occupation of 1977-1978 — that the treaty re-entered New Zealand''s political vocabulary as a living document rather than a historical
     artifact.
 
     '
@@ -347,8 +287,7 @@ perspectives:
   - Settlers arrived expecting ordered colonization — the reality was contested land, ambiguous purchases, and frontier violence
   - Settlers depended on Maori economically and socially while competing for the same land
   - The wars were experienced as defensive — farms burned, families evacuated, militia raised
-  - British accounts of the wars were systematically misleading — Belich proved that many claimed victories were actually
-    defeats
+  - British accounts of the wars were systematically misleading — Belich proved that many claimed victories were actually defeats
   sources:
   - title: The New Zealand Wars and the Victorian Interpretation of Racial Conflict
     author: James Belich
@@ -369,8 +308,7 @@ perspectives:
   - text: We came to better ourselves, not to fight.
     speaker: Anonymous settler, New Plymouth
     context: Letter quoted in Keith Sinclair, A History of New Zealand, 1959
-  - text: The natives are, for the most part, friendly and well-disposed, but there is a party among them which is hostile
-      to all Europeans.
+  - text: The natives are, for the most part, friendly and well-disposed, but there is a party among them which is hostile to all Europeans.
     speaker: Colonel Henry Despard
     context: Report on the Northern War, 1845
   emphasized:
@@ -385,53 +323,40 @@ perspectives:
 - viewpoint: Contemporary Treaty Jurisprudence / Waitangi Tribunal
   viewpoint_type: revisionist
   region_origin: oceania
-  narrative: 'The Waitangi Tribunal was established by the Treaty of Waitangi Act 1975, initially with jurisdiction only over
-    contemporary Crown actions. In 1985, the Fourth Labour Government extended its jurisdiction retrospectively to 1840, opening
-    the entire colonial history of New Zealand to legal re-examination. The Tribunal is a permanent commission of inquiry
-    — it hears claims from Maori, investigates Crown breaches of the treaty, and issues recommendations. It cannot compel
-    the government to act, but its reports have shaped legislation, settled claims worth billions, and fundamentally altered
-    how New Zealand understands its own founding.
+  narrative: 'The Waitangi Tribunal was established by the Treaty of Waitangi Act 1975, initially with jurisdiction only over contemporary Crown actions. In 1985, the Fourth Labour Government extended its
+    jurisdiction retrospectively to 1840, opening the entire colonial history of New Zealand to legal re-examination. The Tribunal is a permanent commission of inquiry — it hears claims from Maori, investigates
+    Crown breaches of the treaty, and issues recommendations. It cannot compel the government to act, but its reports have shaped legislation, settled claims worth billions, and fundamentally altered how
+    New Zealand understands its own founding.
 
 
-    The Tribunal''s approach resolved the two-text problem by applying a principle from international law: where a treaty
-    exists in two languages and the texts diverge, the meaning that most favors the Indigenous signatories should prevail.
-    This principle, combined with the Tribunal''s finding that the Maori text was the version most chiefs actually signed
-    and understood, shifted the legal ground beneath 145 years of Crown sovereignty claims. The Tribunal did not rule that
-    the Crown lacks sovereignty — that would be constitutionally impossible — but it did establish that the Crown''s exercise
-    of sovereignty is conditioned by the treaty''s guarantees, particularly the guarantee of rangatiratanga (chieftainship/autonomy)
-    in Article 2.
+    The Tribunal''s approach resolved the two-text problem by applying a principle from international law: where a treaty exists in two languages and the texts diverge, the meaning that most favors the
+    Indigenous signatories should prevail. This principle, combined with the Tribunal''s finding that the Maori text was the version most chiefs actually signed and understood, shifted the legal ground
+    beneath 145 years of Crown sovereignty claims. The Tribunal did not rule that the Crown lacks sovereignty — that would be constitutionally impossible — but it did establish that the Crown''s exercise
+    of sovereignty is conditioned by the treaty''s guarantees, particularly the guarantee of rangatiratanga (chieftainship/autonomy) in Article 2.
 
 
-    The Muriwhenua Land Report (1997), the Waikato-Tainui Raupatu (Confiscation) Report (1995), and the Ngai Tahu Report (1991)
-    are among the most consequential. The Waikato-Tainui claim addressed the 1863 confiscation of 1.2 million acres of Kingitanga
-    land. The Crown''s own evidence showed that the confiscation was disproportionate (far exceeding any military threat),
-    indiscriminate (punishing non-combatant iwi), and intended not as a security measure but as a land-acquisition mechanism
-    disguised as a penalty. The settlement, signed in 1995, included NZ$170 million in assets, a formal Crown apology, and
+    The Muriwhenua Land Report (1997), the Waikato-Tainui Raupatu (Confiscation) Report (1995), and the Ngai Tahu Report (1991) are among the most consequential. The Waikato-Tainui claim addressed the 1863
+    confiscation of 1.2 million acres of Kingitanga land. The Crown''s own evidence showed that the confiscation was disproportionate (far exceeding any military threat), indiscriminate (punishing non-combatant
+    iwi), and intended not as a security measure but as a land-acquisition mechanism disguised as a penalty. The settlement, signed in 1995, included NZ$170 million in assets, a formal Crown apology, and
     the return of land — though the acreage returned was a fraction of what was taken.
 
 
-    The Tribunal''s work has revealed a pattern across its 100-plus reports: the Crown consistently acted in ways that breached
-    the treaty while maintaining the appearance of legality. The Native Land Court individualized communal title, facilitating
-    alienation. The Public Works Act compulsorily acquired Maori land for roads, railways, and public buildings — often without
-    adequate compensation. The Tohunga Suppression Act of 1907 criminalized traditional Maori healing practices. The urban
-    relocation policies of the 1950s and 1960s moved Maori from rural communities to cities, disrupting iwi structures. Each
-    of these actions was lawful under New Zealand legislation; each was a breach of the treaty''s guarantees.
+    The Tribunal''s work has revealed a pattern across its 100-plus reports: the Crown consistently acted in ways that breached the treaty while maintaining the appearance of legality. The Native Land Court
+    individualized communal title, facilitating alienation. The Public Works Act compulsorily acquired Maori land for roads, railways, and public buildings — often without adequate compensation. The Tohunga
+    Suppression Act of 1907 criminalized traditional Maori healing practices. The urban relocation policies of the 1950s and 1960s moved Maori from rural communities to cities, disrupting iwi structures.
+    Each of these actions was lawful under New Zealand legislation; each was a breach of the treaty''s guarantees.
 
 
-    The "Treaty Principles" — partnership, protection, and participation — first articulated in the Court of Appeal''s decision
-    in New Zealand Maori Council v. Attorney-General (1987) and subsequently incorporated into over 40 statutes, have created
-    a constitutional framework without a written constitution. The treaty is not technically part of New Zealand law unless
-    Parliament incorporates it into specific legislation, but its principles permeate the legal system. This juridical halfway
-    house — the treaty as a source of principles rather than enforceable rights — satisfies neither Maori who want full rangatiratanga
+    The "Treaty Principles" — partnership, protection, and participation — first articulated in the Court of Appeal''s decision in New Zealand Maori Council v. Attorney-General (1987) and subsequently incorporated
+    into over 40 statutes, have created a constitutional framework without a written constitution. The treaty is not technically part of New Zealand law unless Parliament incorporates it into specific legislation,
+    but its principles permeate the legal system. This juridical halfway house — the treaty as a source of principles rather than enforceable rights — satisfies neither Maori who want full rangatiratanga
     nor settler-descendants who argue that the treaty should have no contemporary legal force.
 
 
-    The unresolved question is whether the treaty framework can achieve justice or only manage its absence. Settlements compensate
-    for historic breaches at a fraction of their actual cost — the Waikato-Tainui settlement of NZ$170 million represents
-    roughly 14 cents per acre confiscated. The settlements are accompanied by formal apologies that acknowledge Crown wrongdoing,
-    but they do not restore the political autonomy that Article 2 in the Maori text guaranteed. The Tribunal''s work continues,
-    claim by claim, region by region, building an archive of dispossession that is simultaneously a legal instrument, a historical
-    record, and a political argument about what New Zealand owes to the people who were there first.
+    The unresolved question is whether the treaty framework can achieve justice or only manage its absence. Settlements compensate for historic breaches at a fraction of their actual cost — the Waikato-Tainui
+    settlement of NZ$170 million represents roughly 14 cents per acre confiscated. The settlements are accompanied by formal apologies that acknowledge Crown wrongdoing, but they do not restore the political
+    autonomy that Article 2 in the Maori text guaranteed. The Tribunal''s work continues, claim by claim, region by region, building an archive of dispossession that is simultaneously a legal instrument,
+    a historical record, and a political argument about what New Zealand owes to the people who were there first.
 
     '
   key_arguments:
@@ -454,8 +379,7 @@ perspectives:
     type: book
     openlibrary: OL23234946M
   notable_quotes:
-  - text: The Treaty signified a partnership between races, and it is the duty of the Crown to act reasonably and in good
-      faith.
+  - text: The Treaty signified a partnership between races, and it is the duty of the Crown to act reasonably and in good faith.
     speaker: Justice Robin Cooke
     context: New Zealand Maori Council v. Attorney-General, Court of Appeal, 1987
   - text: The Crown has not honoured the Treaty. We have failed in our duty to the Maori people.
@@ -472,18 +396,18 @@ perspectives:
 media:
 - media_type: document
   title: The Treaty of Waitangi / Te Tiriti o Waitangi, February 6, 1840
-  description: The Treaty of Waitangi bearing the signatures and moko marks of over 500 Maori chiefs. The original document
-    — the 'Waitangi sheet' signed on February 6 — is held at Archives New Zealand in Wellington.
+  description: The Treaty of Waitangi bearing the signatures and moko marks of over 500 Maori chiefs. The original document — the 'Waitangi sheet' signed on February 6 — is held at Archives New Zealand
+    in Wellington.
   source_url: https://commons.wikimedia.org/wiki/File:Treatyofwaitangi.jpg
   attribution: Archives New Zealand, public domain
   license: public-domain
   creator: British Colonial Office / Henry Williams (translator)
   creation_date: February 6, 1840
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/wiki_0.jpg
 - media_type: painting
   title: The Signing of the Treaty of Waitangi, February 6, 1840
-  description: Marcus King's 1938 painting depicting the treaty signing at James Busby's house, Waitangi. The painting — commissioned
-    for New Zealand's centennial — shows Hobson and Maori chiefs in a formalized ceremony, though accounts suggest the actual
-    event was less orderly.
+  description: Marcus King's 1938 painting depicting the treaty signing at James Busby's house, Waitangi. The painting — commissioned for New Zealand's centennial — shows Hobson and Maori chiefs in a formalized
+    ceremony, though accounts suggest the actual event was less orderly.
   source_url: https://commons.wikimedia.org/wiki/File:Waitangi_1940.jpg
   attribution: Marcus King, 1938, public domain via Alexander Turnbull Library
   license: public-domain
@@ -491,9 +415,8 @@ media:
   creation_date: '1938'
 - media_type: photograph
   title: Gate Pa fortification, Tauranga, 1864
-  description: Photograph of the Gate Pa fortification after the battle of April 29, 1864, where 230 Ngai Te Rangi warriors
-    held a modern pa against 1,700 British troops. The trench-and-bunker system — which neutralized British artillery — predated
-    European trench warfare by fifty years.
+  description: Photograph of the Gate Pa fortification after the battle of April 29, 1864, where 230 Ngai Te Rangi warriors held a modern pa against 1,700 British troops. The trench-and-bunker system —
+    which neutralized British artillery — predated European trench warfare by fifty years.
   source_url: https://commons.wikimedia.org/wiki/File:Gate_Pa_after_battle.jpg
   attribution: Unknown photographer, 1864, public domain via Alexander Turnbull Library
   license: public-domain
@@ -542,13 +465,11 @@ media:
 connections:
 - target_slug: trail-of-tears
   connection_type: parallel
-  description: Both involved the systematic dispossession of Indigenous peoples through legal instruments — the Indian Removal
-    Act (1830) and the New Zealand Settlements Act (1863) — backed by military force
+  description: Both involved the systematic dispossession of Indigenous peoples through legal instruments — the Indian Removal Act (1830) and the New Zealand Settlements Act (1863) — backed by military
+    force
 - target_slug: scramble-for-africa
   connection_type: parallel
-  description: New Zealand was annexed during the same era of European colonial expansion — the treaty was one mechanism among
-    many for imposing European sovereignty on non-European peoples
+  description: New Zealand was annexed during the same era of European colonial expansion — the treaty was one mechanism among many for imposing European sovereignty on non-European peoples
 - target_slug: opium-wars
   connection_type: parallel
-  description: Both demonstrate how unequal treaties imposed by European powers restructured sovereignty in non-European societies
-    — China through gunboat diplomacy, New Zealand through mistranslation
+  description: Both demonstrate how unequal treaties imposed by European powers restructured sovereignty in non-European societies — China through gunboat diplomacy, New Zealand through mistranslation
