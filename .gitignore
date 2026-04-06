@@ -46,6 +46,9 @@ data/history/enrichment/
 # History verification reports (ephemeral, not committed)
 data/history/verification/
 
+# History upgrade patches (ephemeral, not committed)
+data/history/upgrades/
+
 # Agent report artifacts
 AUDIT_*.txt
 AUDIT_*.md
