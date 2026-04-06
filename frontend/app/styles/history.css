@@ -5355,18 +5355,9 @@
   background: linear-gradient(180deg, var(--hist-bg) 85%, transparent);
 }
 
-/* Era header — organic ink border to distinguish from scroll content */
+/* Era header — clean, no border */
 .hist-tl-era-header {
   text-align: center;
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--hist-border);
-  border-radius: 1px;
-  /* Organic ink feel — slightly rough via box-shadow */
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--era-color, var(--hist-accent)) 10%, transparent),
-    0 1px 3px rgba(44, 36, 24, 0.06);
-  background: color-mix(in srgb, var(--hist-bg) 95%, var(--era-color, var(--hist-accent)));
-  max-width: 500px;
 }
 
 .hist-tl-era-header__label {
@@ -5378,6 +5369,7 @@
 }
 
 .hist-tl-era-header__desc {
+  display: block;
   font-family: var(--font-structural);
   font-size: clamp(0.7rem, 0.65rem + 0.2vw, 0.85rem);
   color: var(--hist-ink-muted);
