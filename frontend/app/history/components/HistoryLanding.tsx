@@ -345,6 +345,17 @@ export default function HistoryLanding({
   const [entranceReady, setEntranceReady] = useState(false);
   const activeEventIndexRef = useRef<number>(0);
   const [scrollYear, setScrollYear] = useState<number | null>(null);
+  const [isMobileVertical, setIsMobileVertical] = useState(false);
+  const stationRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  /* ── Detect vertical (mobile) timeline mode ── */
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobileVertical(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobileVertical(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   /* Sort events chronologically */
   const sortedEvents = useMemo(
@@ -439,7 +450,7 @@ export default function HistoryLanding({
     }
   }, [inkPath, reducedMotion]);
 
-  /* ── Focused index + rolling year — find nearest card & interpolate year ── */
+  /* ── Focused index + rolling year — works for both horizontal (desktop) and vertical (mobile) ── */
   useEffect(() => {
     if (activeEvent) return;
     const container = timelineRef.current;
@@ -448,25 +459,46 @@ export default function HistoryLanding({
     const years = sortedEvents.map((e) => extractNumericYear(e.dateSort));
 
     const updateFocusedIndex = () => {
-      const scrollCenter = container.scrollLeft + container.clientWidth / 3; /* Rule of Thirds: left third */
-      const totalW = container.scrollWidth;
       let closest = 0;
       let closestDist = Infinity;
-      for (let i = 0; i < positions.length; i++) {
-        const cardX = positions[i] * totalW;
-        const dist = Math.abs(cardX - scrollCenter);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closest = i;
+      let scrollFraction = 0;
+
+      if (isMobileVertical) {
+        /* Vertical mode: use scrollTop + station offsetTop */
+        const viewCenter = container.scrollTop + container.clientHeight / 3;
+        for (let i = 0; i < stationRefs.current.length; i++) {
+          const el = stationRefs.current[i];
+          if (!el) continue;
+          const stationCenter = el.offsetTop + el.offsetHeight / 2;
+          const dist = Math.abs(stationCenter - viewCenter);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = i;
+          }
         }
+        /* Scroll fraction for year interpolation */
+        const totalH = container.scrollHeight;
+        const viewCenterFull = container.scrollTop + container.clientHeight / 2;
+        scrollFraction = totalH > 0 ? viewCenterFull / totalH : 0;
+      } else {
+        /* Horizontal mode: use scrollLeft (original logic) */
+        const scrollCenter = container.scrollLeft + container.clientWidth / 3;
+        const totalW = container.scrollWidth;
+        for (let i = 0; i < positions.length; i++) {
+          const cardX = positions[i] * totalW;
+          const dist = Math.abs(cardX - scrollCenter);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = i;
+          }
+        }
+        const viewCenter = container.scrollLeft + container.clientWidth / 2;
+        scrollFraction = totalW > 0 ? viewCenter / totalW : 0;
       }
+
       setFocusedIndex(closest);
 
-      /* Rolling year: interpolate from viewport center position */
-      const viewCenter = container.scrollLeft + container.clientWidth / 2;
-      const scrollFraction = totalW > 0 ? viewCenter / totalW : 0;
-
-      // Find flanking events
+      /* Rolling year: interpolate from scroll fraction */
       let leftIdx = 0;
       let rightIdx = positions.length - 1;
       for (let i = 0; i < positions.length - 1; i++) {
@@ -476,7 +508,6 @@ export default function HistoryLanding({
           break;
         }
       }
-      // Clamp to edges
       if (scrollFraction <= positions[0]) {
         setScrollYear(years[0]);
       } else if (scrollFraction >= positions[positions.length - 1]) {
@@ -492,7 +523,7 @@ export default function HistoryLanding({
     container.addEventListener("scroll", updateFocusedIndex, { passive: true });
     updateFocusedIndex();
     return () => container.removeEventListener("scroll", updateFocusedIndex);
-  }, [activeEvent, positions, sortedEvents]);
+  }, [activeEvent, positions, sortedEvents, isMobileVertical]);
 
   /* ── Era transition flash ── */
   const currentEra = sortedEvents[focusedIndex]?.era || "ancient";
@@ -568,9 +599,9 @@ export default function HistoryLanding({
     return () => container.removeEventListener("scroll", handleScroll);
   }, [reducedMotion, activeEvent, hasScrolled]);
 
-  /* ── Momentum wheel: vertical scroll -> horizontal, snappier physics ── */
+  /* ── Momentum wheel: vertical scroll -> horizontal, snappier physics (desktop only) ── */
   useEffect(() => {
-    if (activeEvent) return;
+    if (activeEvent || isMobileVertical) return; /* Skip on mobile — native vertical scroll */
     const container = timelineRef.current;
     if (!container) return;
 
@@ -622,7 +653,7 @@ export default function HistoryLanding({
       container.removeEventListener("wheel", handleWheel);
       cancelAnimationFrame(rafId);
     };
-  }, [activeEvent, positions]);
+  }, [activeEvent, positions, isMobileVertical]);
 
   /* ── Edge scroll: mouse near left/right edge triggers auto-scroll (desktop) ── */
   useEffect(() => {
@@ -691,12 +722,21 @@ export default function HistoryLanding({
     }
 
     /* Instant scroll — user lands at 1945, doesn't watch scroll */
-    const totalW = container.scrollWidth;
-    const targetLeft = positions[closest] * totalW - container.clientWidth / 3;
-    container.scrollTo({ left: Math.max(0, targetLeft), behavior: "instant" as ScrollBehavior });
+    if (isMobileVertical) {
+      /* Mobile: scroll vertically to station element */
+      const station = stationRefs.current[closest];
+      if (station) {
+        station.scrollIntoView({ block: "center", behavior: "instant" as ScrollBehavior });
+      }
+    } else {
+      /* Desktop: scroll horizontally by position fraction */
+      const totalW = container.scrollWidth;
+      const targetLeft = positions[closest] * totalW - container.clientWidth / 3;
+      container.scrollTo({ left: Math.max(0, targetLeft), behavior: "instant" as ScrollBehavior });
+    }
     setFocusedIndex(closest);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedEvents.length]); /* Run once after events load */
+  }, [sortedEvents.length, isMobileVertical]); /* Run once after events load + orientation known */
 
   /* ── URL management ── */
   const openStory = useCallback((event: HistoricalEvent) => {
@@ -716,14 +756,17 @@ export default function HistoryLanding({
     window.history.pushState({}, "", "/history");
     /* Scroll timeline back to the card the user was viewing */
     requestAnimationFrame(() => {
-      const container = timelineRef.current;
-      if (!container) return;
       const idx = activeEventIndexRef.current;
-      const totalW = container.scrollWidth;
-      const targetLeft = positions[idx] * totalW - container.clientWidth / 3;
-      container.scrollTo({ left: Math.max(0, targetLeft), behavior: "instant" as ScrollBehavior });
+      const station = stationRefs.current[idx];
+      if (station) {
+        station.scrollIntoView({
+          block: isMobileVertical ? "center" : "nearest",
+          inline: isMobileVertical ? "nearest" : "center",
+          behavior: "instant" as ScrollBehavior,
+        });
+      }
     });
-  }, [positions]);
+  }, [isMobileVertical]);
 
   /* popstate listener for browser back */
   useEffect(() => {
@@ -810,7 +853,9 @@ export default function HistoryLanding({
         <p className="hist-tl-brief__text">
           One event. Every side. Decide for yourself.
         </p>
-        <span className="hist-tl-brief__hint">&larr; scroll through time &rarr;</span>
+        <span className="hist-tl-brief__hint">
+          {isMobileVertical ? "scroll through time" : "\u2190 scroll through time \u2192"}
+        </span>
       </div>
 
       {/* Rolling year indicator — fixed at viewport center */}
@@ -954,6 +999,7 @@ export default function HistoryLanding({
             return (
               <div
                 key={event.slug}
+                ref={(el) => { stationRefs.current[i] = el; }}
                 className="hist-tl-full__station"
                 style={{ left: `${pct}%` }}
               >
@@ -1001,14 +1047,15 @@ export default function HistoryLanding({
             key={era.id}
             className="hist-tl-era"
             onClick={() => {
-              const container = timelineRef.current;
-              if (!container) return;
-              const targetPct = positions[era.firstIndex] || 0;
-              const totalW = container.scrollWidth;
-              container.scrollTo({
-                left: targetPct * totalW - container.clientWidth / 3,
-                behavior: "smooth",
-              });
+              /* scrollIntoView works for both horizontal and vertical layouts */
+              const station = stationRefs.current[era.firstIndex];
+              if (station) {
+                station.scrollIntoView({
+                  block: isMobileVertical ? "center" : "nearest",
+                  inline: isMobileVertical ? "nearest" : "center",
+                  behavior: "smooth",
+                });
+              }
             }}
             type="button"
           >

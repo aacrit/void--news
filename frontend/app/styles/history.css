@@ -1841,8 +1841,8 @@
 .hist-tl-wrapper {
   position: relative;
   width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  height: calc(100vh - 56px);
+  height: calc(100dvh - 56px);
   overflow: hidden;
   background: var(--hist-bg);
 }
@@ -2743,8 +2743,8 @@
     overflow-y: auto;
     overflow-x: hidden;
     height: 100%;
-    scroll-snap-type: y proximity;
     --tl-card-w: calc(100vw - 72px);
+    -webkit-overflow-scrolling: touch;
   }
 
   .hist-tl-full__inner {
@@ -2790,7 +2790,6 @@
     left: auto !important;
     transform: none;
     margin-bottom: clamp(16px, 3vh, 32px);
-    scroll-snap-align: start;
   }
 
   /* Dots on the vertical track */
@@ -2894,6 +2893,12 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  .hist-tl-era {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+  }
+
   /* Strip on mobile */
   .hist-tl-strip {
     height: 48px;
@@ -2910,20 +2915,21 @@
     display: none;
   }
 
-  /* Rolling year indicator — repositioned for vertical timeline */
+  /* Rolling year indicator — horizontal pill at bottom on mobile */
   .hist-tl-year-indicator {
     position: fixed;
-    bottom: auto;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
+    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .hist-tl-year-indicator__year {
-    font-size: 0.85rem;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-    opacity: 0.25;
+    font-size: 1rem;
+    opacity: 0.4;
+    background: color-mix(in srgb, var(--hist-bg) 80%, transparent);
+    padding: 2px 12px;
+    border-radius: 2px;
   }
 
   /* Arc lanes — vertical on mobile */
@@ -5762,9 +5768,11 @@
    Mobile — Timeline Polish Overrides
    --------------------------------------------------------------------------- */
 @media (max-width: 767px) {
-  /* Era header: smaller, at top */
+  /* Era header: compact on mobile, fixed below topbar */
   .hist-tl-era-header {
     padding: var(--space-2) var(--space-3);
+    top: 48px; /* tighter fit on mobile */
+    background: linear-gradient(180deg, var(--hist-bg) 80%, transparent);
   }
 
   .hist-tl-era-header__desc {
@@ -5776,9 +5784,9 @@
     display: none;
   }
 
-  /* Back CTA: same position */
+  /* Back CTA: safe area for iOS home indicator */
   .hist-back-to-timeline {
-    bottom: var(--space-3);
+    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
     right: var(--space-3);
   }
 
