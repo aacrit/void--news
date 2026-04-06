@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-05 (rev 20)
+Last updated: 2026-04-05 (rev 21)
 
 ## Philosophy
 
@@ -51,7 +51,7 @@ CEO (Aacrit)
 
 **Total: 34 agents across 13 divisions**
 
-Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows.
+Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows. Full history spec: `docs/HISTORY.md`.
 
 ---
 
@@ -298,5 +298,5 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
 | 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
 | 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
-| 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 18 components, 5-lens historiographic framework, 3 events (Partition of India, Hiroshima, Rwanda), migration 039 (4 history tables), pipeline/history content loader, 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
+| 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 19 components, 5-lens historiographic framework, 25 events (100 perspectives, 218 media), migrations 039+043 (4 history tables), pipeline/history (content_loader, image_enricher, mirror_images, source_enricher), 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
 | 2026-04-05 | color-grader + media-curator agents added to Cinematic Division; per-image CSS filter grading pipeline for external media (Weekly cover, History archival, Deep Dive); cinematic overhaul cycle updated; ranking v6.0 (10 signals, lean_diversity merged into perspective_diversity, divergence purified, edition_ranker.py extracted, holistic re-rank step 8c); 34 agents, 13 divisions |
