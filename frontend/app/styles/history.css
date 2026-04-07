@@ -2024,7 +2024,8 @@
   border-radius: 50%;
   background: var(--hist-brass);
   border: 1.5px solid var(--hist-bg);
-  transform: translate(-50%, -50%);
+  /* Easter egg: --dot-scale encodes death toll as % of world population */
+  transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
   z-index: 4;
   transition: transform 200ms var(--ease-archive-snap), box-shadow 200ms ease;
 }
@@ -2153,8 +2154,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
-  transition: transform 3s linear;
+  /* Easter egg: saturation + sepia driven by victor dominance.
+     More victors = heavier sepia (further from truth).
+     Balanced perspectives = more color fidelity. */
+  filter: contrast(1.05) saturate(var(--photo-sat, 0.75)) sepia(var(--photo-sepia, 0.12)) brightness(0.85);
+  transition: transform 3s linear, filter 500ms ease;
 }
 
 /* Ken Burns on hover only */
@@ -5998,6 +6002,23 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Easter Egg: Anniversary Vigil — events glow on their date
+   If today matches an event's month+day, the card glows warm like a candle.
+   --------------------------------------------------------------------------- */
+@keyframes histAnniversaryPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(155, 122, 47, 0); }
+  50% { box-shadow: 0 0 16px 4px rgba(155, 122, 47, 0.3); }
+}
+
+.hist-tl-full__station--anniversary .hist-tl-card {
+  box-shadow: 0 0 20px rgba(155, 122, 47, 0.2);
+}
+
+.hist-tl-full__station--anniversary .hist-tl-full__dot {
+  animation: histAnniversaryPulse 3s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------------
    Focused Card — Ken Burns slow zoom on the center card's photo
    The rack focus blurs neighbors; this makes the focused card breathe.
    --------------------------------------------------------------------------- */
@@ -6149,6 +6170,10 @@
   }
 
   .hist-tl-card--focused .hist-tl-card__photo-img {
+    animation: none;
+  }
+
+  .hist-tl-full__station--anniversary .hist-tl-full__dot {
     animation: none;
   }
 

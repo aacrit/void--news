@@ -271,16 +271,82 @@ function resolveCollisions(
 }
 
 /* ── Generate organic ink SVG path ── */
-function generateInkPath(width: number): string {
+/* ── Easter Egg: "The line remembers" — severity encodes the wobble ──
+   The ink track is a seismograph of human suffering. Near catastrophic
+   events the line shudders. Near peaceful events it calms. The wobble
+   is not random — it carries the weight of what happened. */
+const SEVERITY_WEIGHT: Record<string, number> = {
+  catastrophic: 1.0, critical: 0.55, major: 0.2,
+};
+
+function generateInkPath(
+  width: number,
+  events: HistoricalEvent[],
+  positions: number[]
+): string {
   const segments = Math.max(20, Math.floor(width / 50));
   const step = width / segments;
   let d = `M0,4`;
   for (let i = 1; i <= segments; i++) {
     const x = i * step;
-    const wobble = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 2.3) * 0.8;
+    const frac = x / width;
+
+    /* Find severity intensity at this point */
+    let intensity = 0.15;
+    for (let e = 0; e < events.length; e++) {
+      const dist = Math.abs(frac - (positions[e] || 0));
+      const influence = Math.max(0, 1 - dist * 14);
+      const w = SEVERITY_WEIGHT[events[e].severity] || 0.2;
+      intensity = Math.max(intensity, w * influence);
+    }
+
+    const baseWobble = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 2.3) * 0.8;
+    const wobble = baseWobble * (0.12 + intensity * 1.5);
     d += ` S${(x - step * 0.3).toFixed(1)},${(4 + wobble).toFixed(2)} ${x.toFixed(1)},${(4 - wobble * 0.5).toFixed(2)}`;
   }
   return d;
+}
+
+/* ── Easter Egg: Dot size = death toll as % of world population ──
+   Ancient catastrophes (Black Death: 25-50% of humanity) feel heavier
+   than modern ones with larger absolute numbers but smaller relative impact. */
+const WORLD_POP: [number, number][] = [
+  [-3000, 14e6], [-500, 100e6], [0, 200e6], [500, 200e6], [1000, 310e6],
+  [1200, 400e6], [1350, 370e6], [1500, 500e6], [1700, 600e6], [1800, 1e9],
+  [1900, 1.6e9], [1940, 2.3e9], [1960, 3e9], [1980, 4.4e9], [1994, 5.6e9],
+];
+
+function worldPopAt(year: number): number {
+  for (let i = WORLD_POP.length - 1; i >= 0; i--) {
+    if (year >= WORLD_POP[i][0]) {
+      if (i === WORLD_POP.length - 1) return WORLD_POP[i][1];
+      const [y0, p0] = WORLD_POP[i];
+      const [y1, p1] = WORLD_POP[i + 1];
+      const t = (year - y0) / (y1 - y0);
+      return p0 + t * (p1 - p0);
+    }
+  }
+  return WORLD_POP[0][1];
+}
+
+function parseDeathToll(toll?: string): number {
+  if (!toll || toll === "N/A") return 0;
+  const mMatch = toll.match(/([\d,.]+)\s*(?:million|m)/i);
+  if (mMatch) return parseFloat(mMatch[1].replace(/,/g, "")) * 1e6;
+  const kMatch = toll.match(/([\d,.]+)\s*(?:thousand|k)/i);
+  if (kMatch) return parseFloat(kMatch[1].replace(/,/g, "")) * 1e3;
+  const nMatch = toll.match(/([\d,.]+)/);
+  return nMatch ? parseFloat(nMatch[1].replace(/,/g, "")) : 0;
+}
+
+function dotScaleFromDeathToll(event: HistoricalEvent): number {
+  const toll = parseDeathToll(event.deathToll);
+  if (toll <= 0) return 1;
+  const year = extractNumericYear(event.dateSort);
+  const pop = worldPopAt(year);
+  const pct = toll / pop; // fraction of world population
+  // Log scale: 0.01% → 1.0, 1% → 1.3, 10% → 1.5, 50% → 1.7
+  return 0.8 + Math.min(Math.log10(Math.max(pct, 1e-6) * 1e4 + 1) / 5, 0.9);
 }
 
 /* ===========================================================================
@@ -428,10 +494,10 @@ export default function HistoryLanding({
     })[];
   }, [sortedEvents, positions]);
 
-  /* ── Ink path ── */
+  /* ── Ink path — "The line remembers" ── */
   const inkPath = useMemo(
-    () => generateInkPath(totalWidthVw),
-    [totalWidthVw]
+    () => generateInkPath(totalWidthVw, sortedEvents, positions),
+    [totalWidthVw, sortedEvents, positions]
   );
 
   /* ── Reduced motion ── */
@@ -884,6 +950,21 @@ export default function HistoryLanding({
     );
   }
 
+  /* ── Easter Egg: Anniversary Vigil — events glow on their date ── */
+  const anniversarySlugs = useMemo(() => {
+    const today = new Date();
+    const monthName = today.toLocaleString("en-US", { month: "long" }).toLowerCase();
+    const day = today.getDate();
+    return new Set(
+      sortedEvents
+        .filter((e) => {
+          const dp = (e.datePrimary || "").toLowerCase();
+          return dp.includes(monthName) && dp.includes(String(day));
+        })
+        .map((e) => e.slug)
+    );
+  }, [sortedEvents]);
+
   /* ── Current era context for header ── */
   const eraCtx = ERA_CONTEXT[currentEra] || ERA_CONTEXT.contemporary;
 
@@ -1039,6 +1120,7 @@ export default function HistoryLanding({
             preserveAspectRatio="none"
             aria-hidden="true"
           >
+            <title>The line remembers.</title>
             <path
               ref={inkPathRef}
               className="hist-tl-full__ink-path"
@@ -1056,18 +1138,21 @@ export default function HistoryLanding({
             const pct = positions[i] * 100;
             const isFocused = i === focusedIndex;
             const dist = Math.min(Math.abs(i - focusedIndex), 6);
+            const isAnniversary = anniversarySlugs.has(event.slug);
+            const dScale = dotScaleFromDeathToll(event);
 
             return (
               <div
                 key={event.slug}
                 ref={(el) => { stationRefs.current[i] = el; }}
-                className={`hist-tl-full__station${isFocused ? " hist-tl-full__station--focused" : ""}`}
+                className={`hist-tl-full__station${isFocused ? " hist-tl-full__station--focused" : ""}${isAnniversary ? " hist-tl-full__station--anniversary" : ""}`}
                 style={{
                   left: `${pct}%`,
                   "--card-dist": dist,
+                  "--dot-scale": dScale,
                 } as React.CSSProperties}
               >
-                {/* Dot on track */}
+                {/* Dot on track — size encodes death toll as % of world population */}
                 <div
                   className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}${isFocused ? " hist-tl-full__dot--focused" : ""}`}
                   aria-hidden="true"
@@ -1430,6 +1515,14 @@ function TimelineCard({
   const entranceClass = entranceReady && !reducedMotion ? " hist-tl-card--entrance" : "";
   const focusedClass = focused && !reducedMotion ? " hist-tl-card--focused" : "";
 
+  /* Easter Egg: Victor dominance → photo saturation.
+     More victors = heavier sepia (further from truth).
+     Balanced perspectives = more color fidelity. */
+  const victorCount = event.perspectives.filter((p) => p.viewpointType === "victor").length;
+  const victorDominance = event.perspectives.length > 0 ? victorCount / event.perspectives.length : 0.5;
+  const photoSat = 0.55 + (1 - victorDominance) * 0.35;
+  const photoSepia = 0.04 + victorDominance * 0.14;
+
   return (
     <article
       className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}`}
@@ -1438,9 +1531,13 @@ function TimelineCard({
       onKeyDown={handleKeyDown}
       onClick={handleClick}
       role="button"
-      style={!reducedMotion ? { "--card-index": index } as React.CSSProperties : undefined}
+      style={{
+        ...(reducedMotion ? {} : { "--card-index": index }),
+        "--photo-sat": photoSat,
+        "--photo-sepia": photoSepia,
+      } as React.CSSProperties}
     >
-      {/* Photo with year badge */}
+      {/* Photo with year badge — saturation encodes victor dominance */}
       <div className="hist-tl-card__photo">
         <PosterImage event={event} eager={index < 3} year={year} />
         <span className="hist-tl-card__year-badge" aria-hidden="true">
