@@ -816,6 +816,7 @@
 .lead-story__image-wrap {
   position: relative;
   width: 100%;
+  aspect-ratio: 16 / 9;
   max-height: 320px;
   overflow: hidden;
   border-radius: 2px;
@@ -3204,14 +3205,15 @@
  * Stage 3: Grain — 1.5x page grain for subtle studio texture.
  * Stage 4: Vignette — light radial darkening for a "printed photograph" feel.
  *
- * Note: the hero image is inside .deep-dive-panel__header, OUTSIDE of
- * .deep-dive-panel__content (which has --cin-grade-editorial). So the hero
- * only compounds with the page-level --cin-grade, not the editorial grade.
+ * Note: the hero image is inside .deep-dive-panel__header, which is inside
+ * .deep-dive-panel (position: fixed). The panel is NOT a descendant of
+ * .page-main, so no ancestor-level --cin-grade compounds with this filter.
  */
 .dd-hero-image {
   position: relative;
   width: calc(100% + var(--space-5) * 2);
   margin-left: calc(var(--space-5) * -1);
+  aspect-ratio: 16 / 9;
   max-height: 360px;
   overflow: hidden;
   background: var(--bg-secondary);
@@ -3273,15 +3275,16 @@
   z-index: 2;
 }
 
-/* Mobile: tighter image for bottom sheet */
+/* Mobile: tighter image for bottom sheet — cap at 35vh so headline
+   and first line of content remain visible above the fold */
 @media (max-width: 767px) {
   .dd-hero-image {
-    max-height: 260px;
+    max-height: max(180px, 35vh);
     width: calc(100% + var(--space-4) * 2);
     margin-left: calc(var(--space-4) * -1);
   }
   .dd-hero-image__img {
-    max-height: 260px;
+    max-height: max(180px, 35vh);
   }
 }
 
@@ -5638,6 +5641,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .lead-story:active {
     transform: none;
     transition: none;
+  }
+
+  /* Image fade-in: instant reveal, not removed entirely */
+  .lead-story__image,
+  .dd-hero-image__img {
+    transition: opacity 10ms ease-out;
   }
 }
 
