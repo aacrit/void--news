@@ -94,8 +94,8 @@ function DataMark({ data, size, mounted }: {
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
   const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
-  // xl = organic ink (Deep Dive character); sm + lg = geometric precision (data readability)
-  const isOrganic = size === "xl";
+  // All sizes now use geometric precision — circle + straight beam
+  const isOrganic = false;
 
   // Source coverage Harvey ball — ring fill proportional to source count
   const coverage = Math.min(data.sourceCount / 15, 1);
