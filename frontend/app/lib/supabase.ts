@@ -44,6 +44,7 @@ export async function fetchDeepDiveData(clusterId: string) {
         url,
         summary,
         published_at,
+        image_url,
         source:sources (
           name,
           tier,
@@ -95,6 +96,43 @@ export async function fetchDeepDiveData(clusterId: string) {
   }
 
   return data;
+}
+
+/** Fetch the best og:image for a cluster — picks the first non-null image_url
+ *  from articles in the cluster, preferring higher-tier sources. */
+export async function fetchClusterLeadImage(clusterId: string): Promise<string | null> {
+  if (!_client) return null;
+  const { data, error } = await _client
+    .from('cluster_articles')
+    .select(`
+      article:articles (
+        image_url,
+        source:sources ( tier )
+      )
+    `)
+    .eq('cluster_id', clusterId);
+
+  if (error || !data) return null;
+
+  // Rank by source tier: us_major > international > independent
+  const tierRank: Record<string, number> = { us_major: 3, international: 2, independent: 1 };
+  let best: { url: string; rank: number } | null = null;
+
+  for (const row of data) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const article = row.article as any;
+    if (!article?.image_url) continue;
+    const url = article.image_url as string;
+    // Skip tiny tracking pixels, logos, or broken URLs
+    if (url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker/i.test(url)) continue;
+    const tier = article.source?.tier as string ?? 'independent';
+    const rank = tierRank[tier] ?? 0;
+    if (!best || rank > best.rank) {
+      best = { url, rank };
+    }
+  }
+
+  return best?.url ?? null;
 }
 
 // FUTURE: Op-Ed feature — commented out for redesign

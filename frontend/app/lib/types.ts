@@ -255,6 +255,8 @@ export interface Story {
   coverageVelocity: number;
   deepDive?: DeepDiveData;
   articleUrl?: string;
+  /** Best available og:image URL from cluster articles (highest-tier source) */
+  imageUrl?: string | null;
 }
 
 export type Category =

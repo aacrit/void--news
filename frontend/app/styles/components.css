@@ -800,6 +800,67 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cpath d='M60 4 C100 2 116 14 114 30 C112 46 96 58 60 56 C24 58 8 46 6 30 C4 14 20 2 60 4' stroke='%23AD7E1E' stroke-width='1.5' fill='none' opacity='0.4'/%3E%3C/svg%3E");
 }
 
+/* ---- Lead Story — Front-Page Photograph -------------------------------- */
+/*
+ * Stage 1: Base grade on <img> — cinematic amber, desaturated editorial.
+ *   Compounds with .page-main --cin-grade (contrast 1.03, sat 0.92, sepia 0.04).
+ *   Effective compound (light): contrast ~1.06, sat ~0.83, sepia ~0.09.
+ *   Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.06-0.16.
+ *
+ * Stage 2: Gradient overlay (.lead-story__image-grade) — fades bottom edge
+ *   into the card background, grounding the image in the page surface.
+ *
+ * Stages 3-4 (grain/vignette): Not applied. Feed images are small; grain
+ *   would reduce legibility, vignette would just darken them.
+ */
+.lead-story__image-wrap {
+  position: relative;
+  width: 100%;
+  max-height: 320px;
+  overflow: hidden;
+  border-radius: 2px;
+  margin-bottom: var(--space-4);
+  background: var(--bg-secondary);
+}
+
+.lead-story__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-cinematic);
+  filter: var(--img-grade-feed);
+}
+
+.lead-story__image--loaded {
+  opacity: 1;
+}
+
+/* Ambient overlay — bottom gradient grounds image into card surface */
+.lead-story__image-grade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    color-mix(in srgb, var(--bg-primary) 30%, transparent) 80%,
+    color-mix(in srgb, var(--bg-primary) 60%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+/* Mobile: tighter max-height for feed images */
+@media (max-width: 767px) {
+  .lead-story__image-wrap {
+    max-height: 240px;
+  }
+  .lead-story__image {
+    max-height: 240px;
+  }
+}
+
 .lead-story__headline {
   font-family: var(--font-editorial);
   font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.875rem);
@@ -3127,6 +3188,108 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+}
+
+/* ---- Deep Dive Hero Image — Documentary Opening Shot ------------------- */
+/*
+ * Stage 1: Base grade on <img> — higher contrast, minimal sepia. The "close-up"
+ *   grade. Clean, studio-lit editorial feel for feature article openers.
+ *   Compounds with .page-main --cin-grade (contrast 1.03, sat 0.92, sepia 0.04).
+ *   Effective compound (light): contrast ~1.08, sat ~0.85, sepia ~0.07.
+ *   Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.06-0.16.
+ *
+ * Stage 2: Gradient overlay (.dd-hero-image__grade) — heavy bottom gradient
+ *   fading into the panel background. Grounds the image into the summary text.
+ *
+ * Stage 3: Grain — 1.5x page grain for subtle studio texture.
+ * Stage 4: Vignette — light radial darkening for a "printed photograph" feel.
+ *
+ * Note: the hero image is inside .deep-dive-panel__header, OUTSIDE of
+ * .deep-dive-panel__content (which has --cin-grade-editorial). So the hero
+ * only compounds with the page-level --cin-grade, not the editorial grade.
+ */
+.dd-hero-image {
+  position: relative;
+  width: calc(100% + var(--space-5) * 2);
+  margin-left: calc(var(--space-5) * -1);
+  max-height: 360px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.dd-hero-image__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-cinematic);
+  filter: var(--img-grade-deepdive);
+}
+
+.dd-hero-image--loaded .dd-hero-image__img {
+  opacity: 1;
+}
+
+/* Gradient overlay — heavy bottom fade into panel surface */
+.dd-hero-image__grade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    color-mix(in srgb, var(--bg-card) 20%, transparent) 60%,
+    color-mix(in srgb, var(--bg-card) 70%, transparent) 85%,
+    var(--bg-card) 100%
+  );
+  pointer-events: none;
+}
+
+/* Vignette — light radial darkening (printed photograph feel) */
+.dd-hero-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 85% 75% at center,
+    transparent 55%,
+    color-mix(in srgb, var(--bg-card) 25%, transparent) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Grain — 1.5x page grain for studio texture */
+.dd-hero-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: calc(var(--cin-grain-opacity) * 1.5);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  filter: url(#void-grain);
+  z-index: 2;
+}
+
+/* Mobile: tighter image for bottom sheet */
+@media (max-width: 767px) {
+  .dd-hero-image {
+    max-height: 260px;
+    width: calc(100% + var(--space-4) * 2);
+    margin-left: calc(var(--space-4) * -1);
+  }
+  .dd-hero-image__img {
+    max-height: 260px;
+  }
+}
+
+/* Touch devices: skip grain pseudo-element (SVG filter is expensive) */
+@media (hover: none) {
+  .dd-hero-image::after {
+    display: none;
+  }
 }
 
 /* ---- Deep Dive Headline — editorial Playfair, generous leading ---------- */

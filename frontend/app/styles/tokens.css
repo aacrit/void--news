@@ -471,6 +471,26 @@
   --dd-breathe-scale: 1.0005;
   --dd-breathe-dur: 6s;
 
+  /* ── Per-Image Color Grades (color-grader) ──
+     Context-specific filter chains for <img> elements. Each grade normalizes
+     external og:image sources (Unsplash vivid, Pexels variable, social cards)
+     toward the void warm-paper identity. Values are tuned to compound with
+     ancestor-level grades (--cin-grade on .page-main, --cin-grade-editorial
+     on .wk-main / .deep-dive-panel__content) without exceeding safe bounds.
+
+     Compound bounds: contrast 1.04-1.12, saturation 0.70-0.90, sepia 0.06-0.16.
+
+     Parameters:
+       contrast  — slightly elevated (1.03-1.08) to compensate for desat flatness
+       saturate  — always < 1.0, pulls digital oversaturation toward editorial print
+       sepia     — warm shift, ties images to paper palette; higher = more archival
+       brightness — only where needed (dark mode compensation, dramatic darkening) */
+
+  --img-grade-feed:        contrast(1.03) saturate(0.90) sepia(0.05);
+  --img-grade-deepdive:    contrast(1.05) saturate(0.92) sepia(0.03);
+  --img-grade-weekly:      contrast(1.04) saturate(0.88) sepia(0.06);
+  --img-grade-epaper:      contrast(1.15) saturate(0) brightness(1.02);
+
 }
 
 /* --------------------------------------------------------------------------
@@ -645,6 +665,15 @@
   --cinematic-rim-edge: rgba(212, 165, 116, 0.05);
   --cin-grade-editorial: contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03);
   --cin-vignette-warm: rgba(20, 14, 6, 0.06);
+
+  /* ── Per-Image Color Grades — Dark Mode (color-grader) ──
+     Stronger contrast (dark backgrounds eat contrast), lower saturation
+     (bright source images on dark surfaces read as over-vivid), brightness
+     reduction to prevent images from blowing out against dark walnut. */
+  --img-grade-feed:        contrast(1.06) saturate(0.84) sepia(0.03) brightness(0.94);
+  --img-grade-deepdive:    contrast(1.07) saturate(0.88) sepia(0.02) brightness(0.92);
+  --img-grade-weekly:      contrast(1.06) saturate(0.83) sepia(0.04) brightness(0.93);
+  --img-grade-epaper:      contrast(1.20) saturate(0) brightness(0.95);
 
   /* ── Laid Paper Texture — Dark Mode ──
      On dark walnut surfaces, the laid lines appear as subtle light ridges

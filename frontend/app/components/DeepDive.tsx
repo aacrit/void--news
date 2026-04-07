@@ -210,6 +210,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   /** Cross-fade opacity for horizontal story swipe navigation */
   const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
 
+  /* ---- Hero image state -------------------------------------------------- */
+  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
+  const [heroImgError, setHeroImgError] = useState(false);
+
   /* ---- Share button state ------------------------------------------------ */
   const [shareCopied, setShareCopied] = useState(false);
   const [shareToastText, setShareToastText] = useState("Link copied");
@@ -460,6 +465,27 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             articleTitle: (article.title as string) ?? undefined,
             articleSummary: (article.summary as string) ?? undefined,
           });
+        }
+
+        // Extract best hero image from cluster articles (prefer highest-tier source)
+        {
+          const tierRank: Record<string, number> = { us_major: 3, international: 2, independent: 1 };
+          let bestImg: { url: string; rank: number } | null = null;
+          for (const row of raw!) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const a = row.article as any;
+            if (!a?.image_url) continue;
+            const url = a.image_url as string;
+            if (url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker/i.test(url)) continue;
+            const tier = (a.source?.tier as string) ?? "independent";
+            const rank = tierRank[tier] ?? 0;
+            if (!bestImg || rank > bestImg.rank) bestImg = { url, rank };
+          }
+          if (!cancelled) {
+            setHeroImageUrl(bestImg?.url ?? null);
+            setHeroImgLoaded(false);
+            setHeroImgError(false);
+          }
         }
 
         // Deduplicate: keep only the first article per source name.
@@ -1128,6 +1154,22 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               <X size={20} weight="regular" aria-hidden="true" />
             </button>
           </div>
+
+          {/* Hero image — cinematic front-page photograph */}
+          {heroImageUrl && !heroImgError && (
+            <div className={`dd-hero-image${heroImgLoaded ? " dd-hero-image--loaded" : ""}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={heroImageUrl}
+                alt=""
+                className="dd-hero-image__img"
+                loading="eager"
+                onLoad={() => setHeroImgLoaded(true)}
+                onError={() => setHeroImgError(true)}
+              />
+              <div className="dd-hero-image__grade" aria-hidden="true" />
+            </div>
+          )}
 
           <h2 className="dd-headline">
             {story.title}
