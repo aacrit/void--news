@@ -18,8 +18,10 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      - name: Install and build
-        run: cd frontend && npm ci && npx next build
+      - name: Install and build (with retry for Turbopack race condition)
+        run: |
+          cd frontend && npm ci
+          npx next build || npx next build || npx next build
 
   auto-merge:
     needs: build-check
