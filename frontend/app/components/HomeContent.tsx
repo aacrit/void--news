@@ -808,7 +808,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
       <main
         id="main-content"
-        className="page-main anim-cold-open-feed"
+        className="page-main"
         onTouchStart={handlePullStart}
         onTouchMove={handlePullMove}
         onTouchEnd={handlePullEnd}
@@ -938,7 +938,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   </div>
 
                   {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className={`lead-section anim-cold-open-lead${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                    <section key={filterKey} aria-label="Lead stories" className={`lead-section${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {leadStories.map((story, i) => (
                         <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
                           <div data-story-index={i}>
