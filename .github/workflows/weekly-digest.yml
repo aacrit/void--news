@@ -1,7 +1,8 @@
 name: Weekly Digest
 on:
-  schedule:
-    - cron: '0 12 * * 0'  # Sunday 12:00 UTC = 6:00 AM CST
+  # Parking Lot: weekly digest cron disabled pre-launch to save Gemini RPD budget.
+  # schedule:
+  #   - cron: '0 12 * * 0'  # Sunday 12:00 UTC = 6:00 AM CST
   workflow_dispatch:
     inputs:
       editions:

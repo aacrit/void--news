@@ -81,6 +81,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # ANTHROPIC_API_KEY disabled pre-launch to avoid costs
           DISABLE_AUDIO: "1"
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
@@ -100,6 +102,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # ANTHROPIC_API_KEY disabled pre-launch to avoid costs
           DISABLE_AUDIO: "1"
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           if [ -n "$EDITIONS" ]; then

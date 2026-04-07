@@ -1560,7 +1560,8 @@ def main():
         # large, and high-divergence clusters. Mutates article_bias_map in
         # place; downstream steps (ranking, storage) pick up the adjustments
         # automatically since they reference the same dict.
-        if GEMINI_REASONING_AVAILABLE and gemini_is_available():
+        _skip_reasoning = os.environ.get("DISABLE_GEMINI_REASONING", "").strip() in ("1", "true", "yes")
+        if GEMINI_REASONING_AVAILABLE and gemini_is_available() and not _skip_reasoning:
             print("\n[6c] Running Gemini bias reasoning...")
             start_6c = time.time()
             try:
@@ -1577,6 +1578,8 @@ def main():
                 )
             except Exception as e:
                 print(f"  [warn] Gemini reasoning failed: {e}")
+        elif _skip_reasoning:
+            print("\n[6c] Skipping Gemini bias reasoning (DISABLE_GEMINI_REASONING=1)")
         elif GEMINI_REASONING_AVAILABLE:
             print("\n[6c] Skipping Gemini bias reasoning (GEMINI_API_KEY not set)")
         else:
@@ -1770,7 +1773,10 @@ def main():
         # Step 7c: Editorial triage (Gemini) — reorder top 10 per section
         # Uses 1 API call per section (3 total). Falls back to deterministic
         # ranking if Gemini is unavailable.
-        if SUMMARIZER_AVAILABLE and gemini_is_available():
+        _skip_triage = os.environ.get("DISABLE_EDITORIAL_TRIAGE", "").strip() in ("1", "true", "yes")
+        if _skip_triage:
+            print("\n[7c] Skipping editorial triage (DISABLE_EDITORIAL_TRIAGE=1)")
+        elif SUMMARIZER_AVAILABLE and gemini_is_available():
             try:
                 from summarizer.gemini_client import editorial_triage
                 print("\n[7c] Running editorial triage (Gemini)...")
@@ -2140,14 +2146,15 @@ def main():
                 elapsed_7d = time.time() - start_7d
                 print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
 
-                # Generate podcast RSS feeds (world + us)
-                try:
-                    from briefing.podcast_feed_generator import generate_podcast_feeds
-                    feed_results = generate_podcast_feeds(["world", "us"])
-                    if feed_results:
-                        print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
-                except Exception as e:
-                    print(f"  [warn] Podcast feed generation failed: {e}")
+                # Generate podcast RSS feeds (only when audio is enabled)
+                if not os.environ.get("DISABLE_AUDIO", "").strip() in ("1", "true", "yes"):
+                    try:
+                        from briefing.podcast_feed_generator import generate_podcast_feeds
+                        feed_results = generate_podcast_feeds(ACTIVE_EDITIONS)
+                        if feed_results:
+                            print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
+                    except Exception as e:
+                        print(f"  [warn] Podcast feed generation failed: {e}")
             except Exception as e:
                 print(f"  [warn] Daily brief generation failed: {e}")
         else:
