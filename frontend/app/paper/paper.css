@@ -458,6 +458,10 @@ html:has(.np-root) body { background: transparent; }
   opacity: 1;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .np-article__image { transition: opacity 10ms ease-out; }
+}
+
 /* --- Body Text — Century/Imperial style (Lora) --- */
 .np-article__summary {
   font-family: var(--np-font-body);

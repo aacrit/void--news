@@ -227,6 +227,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     setIsDragging(false);
     setDragOffset(0);
     setShareCopied(false);
+    setHeroImageUrl(null);
+    setHeroImgLoaded(false);
+    setHeroImgError(false);
     touchStartRef.current = null;
     if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
   }, [story.id]);
@@ -476,7 +479,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             const a = row.article as any;
             if (!a?.image_url) continue;
             const url = a.image_url as string;
-            if (url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker/i.test(url)) continue;
+            if (url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker|1x1|blank|placeholder|default-og|brand/i.test(url)) continue;
             const tier = (a.source?.tier as string) ?? "independent";
             const rank = tierRank[tier] ?? 0;
             if (!bestImg || rank > bestImg.rank) bestImg = { url, rank };
