@@ -119,6 +119,15 @@ if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
         pass
 
 
+# ---------------------------------------------------------------------------
+# Active editions — controls which editions get briefs, ranking, and DB writes.
+# Set to ["world"] to disable regional editions and save API calls.
+# Set to None or list all to enable all editions.
+# Parking Lot: regional editions (us, europe, south-asia) disabled pre-launch.
+# ---------------------------------------------------------------------------
+ACTIVE_EDITIONS: list[str] = ["world"]
+_ALL_EDITIONS = ["world", "us", "europe", "south-asia"]
+
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
 # ---------------------------------------------------------------------------
@@ -1972,7 +1981,7 @@ def main():
         )
 
         # Print top 10 per edition for diagnostics
-        _RANK_EDITIONS = ["us", "europe", "south-asia", "world"]
+        _RANK_EDITIONS = ACTIVE_EDITIONS
         for ed in _RANK_EDITIONS:
             pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
             pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
@@ -1988,7 +1997,7 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
-                    edition_sections=["world", "us", "europe", "south-asia"],
+                    edition_sections=ACTIVE_EDITIONS,
                 )
 
                 for edition, brief in brief_results.items():

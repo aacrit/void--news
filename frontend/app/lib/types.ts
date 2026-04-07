@@ -302,7 +302,13 @@ export interface EditionMeta {
   description: string;
 }
 
+// Parking Lot: regional editions (us, europe, south-asia) disabled pre-launch.
+// To re-enable, move entries from _ALL_EDITIONS back into EDITIONS.
 export const EDITIONS: EditionMeta[] = [
+  { slug: "world", label: "World", country: "Global", sourceCount: "200+ sources", description: "International coverage" },
+];
+
+export const _ALL_EDITIONS: EditionMeta[] = [
   { slug: "world", label: "World", country: "Global", sourceCount: "200+ sources", description: "International coverage" },
   { slug: "us", label: "US", country: "United States", sourceCount: "170+ sources", description: "United States coverage" },
   { slug: "europe", label: "Europe", country: "UK & Europe", sourceCount: "110+ sources", description: "UK and European coverage" },
