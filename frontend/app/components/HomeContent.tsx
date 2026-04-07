@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
 import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
-import { supabase, supabaseError } from "../lib/supabase";
+import { supabase, supabaseError, fetchClusterLeadImage } from "../lib/supabase";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
@@ -714,6 +714,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const compactStories = filteredStories.slice(5);
   const visibleCompact = compactStories.slice(0, visibleCount);
 
+  // Fetch lead image for primary story (rank 0 only — one front-page photograph)
+  const [leadImageUrl, setLeadImageUrl] = useState<string | null>(null);
+  const leadStoryId = leadStories[0]?.id;
+  useEffect(() => {
+    if (!leadStoryId) { setLeadImageUrl(null); return; }
+    let cancelled = false;
+    fetchClusterLeadImage(leadStoryId).then((url) => {
+      if (!cancelled) setLeadImageUrl(url);
+    });
+    return () => { cancelled = true; };
+  }, [leadStoryId]);
+
   // Pool size depends on feed layout
   const poolSize = isMobile
     ? filteredStories.length - 1
@@ -930,7 +942,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                       {leadStories.map((story, i) => (
                         <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
                           <div data-story-index={i}>
-                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} />
+                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} imageUrl={i === 0 ? leadImageUrl : undefined} />
                           </div>
                         </div>
                       ))}

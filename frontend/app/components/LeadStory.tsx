@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
@@ -13,21 +13,28 @@ interface LeadStoryProps {
   onStoryClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
+  /** og:image URL for the lead story — primary (rank 0) only */
+  imageUrl?: string | null;
 }
 
 /* ---------------------------------------------------------------------------
    LeadStory — Hero treatment for the most important story
    Larger typography, more prominent layout, bigger bias stamp.
+   Primary (rank 0) includes a cinematic front-page photograph.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, imageUrl }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const showImage = rank === 0 && imageUrl && !imgError;
 
   return (
     <article
       ref={cardRef}
       data-story-id={story.id}
-      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
+      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}${showImage ? " lead-story--has-image" : ""}`}
     >
       {/* Stretched link — the invisible button covers the entire article
           while preserving <article> semantics for screen readers */}
@@ -51,6 +58,22 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
         }}
       />
       {rank === 0 && <span className="lead-story__badge">Top Story</span>}
+
+      {/* Front-page photograph — primary lead story only */}
+      {showImage && (
+        <div className="lead-story__image-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl!}
+            alt=""
+            className={`lead-story__image${imgLoaded ? " lead-story__image--loaded" : ""}`}
+            loading="eager"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+          />
+          <div className="lead-story__image-grade" aria-hidden="true" />
+        </div>
+      )}
 
       {/* Hero headline + inline Sigil + caret */}
       <h2 className="lead-story__headline">

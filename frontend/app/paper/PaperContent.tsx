@@ -12,7 +12,7 @@ import type {
   OpinionLabel,
   SigilData,
 } from "../lib/types";
-import { supabase } from "../lib/supabase";
+import { supabase, fetchClusterLeadImage } from "../lib/supabase";
 import {
   type ArticleTier,
   type FillerItem,
@@ -344,13 +344,19 @@ function Article({
   story,
   tier,
   edition,
+  imageUrl,
 }: {
   story: Story;
   tier: ArticleTier;
   edition: Edition;
+  imageUrl?: string | null;
 }) {
   const dateline = getDateline(story, edition);
   const decks = generateDecks(story.summary, tier);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const showImage = tier === "banner" && imageUrl && !imgError;
 
   // Extract remaining summary after decks for body text
   let bodyText = truncateSummary(story.summary, tier);
@@ -366,7 +372,22 @@ function Article({
   }
 
   return (
-    <article className={`np-article np-article--${tier}`}>
+    <article className={`np-article np-article--${tier}${showImage ? " np-article--has-image" : ""}`}>
+      {/* B&W front-page photograph — banner stories only */}
+      {showImage && (
+        <div className="np-article__image-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl!}
+            alt=""
+            className={`np-article__image${imgLoaded ? " np-article__image--loaded" : ""}`}
+            loading="eager"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+          />
+        </div>
+      )}
+
       {/* Headline + Decks */}
       {decks.length > 0 ? (
         <div className="np-headline-deck">
@@ -515,6 +536,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [tldr, setTldr] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -533,6 +555,11 @@ export default function PaperContent({ edition }: { edition: Edition }) {
         const stories = (clusters || []).map((c) => buildStory(c, true));
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
         setAllStories(stories);
+
+        // Fetch B&W front-page photograph for the banner story
+        if (stories.length > 0) {
+          fetchClusterLeadImage(stories[0].id).then((url) => setBannerImageUrl(url));
+        }
       } catch (err) {
         console.error("Paper page load failed:", err);
       } finally {
@@ -621,7 +648,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
                 story={story}
                 tier={i === 0 ? "banner" : "standard"}
                 edition={edition}
-
+                imageUrl={i === 0 ? bannerImageUrl : undefined}
               />
             ))}
           </div>
