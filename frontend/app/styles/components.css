@@ -839,11 +839,7 @@
     transform var(--dur-fast) var(--spring);
 }
 
-.filter-toggle:hover {
-  color: var(--fg-secondary);
-  border-color: var(--border-strong);
-  background-color: var(--bg-secondary);
-}
+/* .filter-toggle:hover removed — toggle state change is sufficient affordance */
 
 .filter-toggle:active {
   transform: scale(0.96);
@@ -935,10 +931,7 @@
   border-right: none;
 }
 
-.lean-bar__seg:hover {
-  color: var(--fg-secondary);
-  background-color: var(--bg-secondary);
-}
+/* .lean-bar__seg:hover removed — active state already communicates selection */
 
 .lean-bar__seg:active {
   transform: scale(0.97);
@@ -1090,10 +1083,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.topic-bar__chip:hover {
-  color: var(--fg-secondary);
-  border-color: var(--border-subtle);
-}
+/* .topic-bar__chip:hover removed — active state already communicates selection */
 
 .topic-bar__chip:active {
   transform: scale(0.92);
@@ -2133,10 +2123,7 @@
   padding: var(--space-1) var(--space-3);
   position: relative;
   border-radius: var(--radius-sm);
-  transition:
-    transform 300ms var(--ease-unfold),
-    background-color 300ms var(--ease-cinematic),
-    box-shadow 300ms var(--ease-cinematic);
+  transition: transform 300ms var(--ease-unfold);
 }
 
 .nav-weekly__rule {
@@ -2163,18 +2150,7 @@
   transition: color 200ms var(--ease-cinematic);
 }
 
-/* Hover: flamboyant unfold — spine grows, label brightens, glow bleeds */
-.nav-weekly:hover {
-  background-color: var(--wk-accent-glow);
-  box-shadow: 0 0 12px var(--wk-accent-glow);
-}
-
-.nav-weekly:hover .nav-weekly__rule {
-  opacity: 1;
-  height: 22px;
-  transform: scaleX(1.5);
-}
-
+/* Hover: label brightens (color only, no glow/unfold) */
 .nav-weekly:hover .nav-weekly__label {
   color: var(--wk-accent-bright);
 }
@@ -2222,10 +2198,7 @@
   padding: var(--space-1) var(--space-3);
   position: relative;
   border-radius: var(--radius-sm);
-  transition:
-    transform 300ms var(--ease-unfold),
-    background-color 300ms var(--ease-cinematic),
-    box-shadow 300ms var(--ease-cinematic);
+  transition: transform 300ms var(--ease-unfold);
 }
 
 .nav-history__rule {
@@ -2252,17 +2225,7 @@
   transition: color 200ms var(--ease-cinematic);
 }
 
-.nav-history:hover {
-  background-color: var(--hist-nav-accent-glow);
-  box-shadow: 0 0 12px var(--hist-nav-accent-glow);
-}
-
-.nav-history:hover .nav-history__rule {
-  opacity: 1;
-  height: 22px;
-  transform: scaleX(1.5);
-}
-
+/* Hover: label brightens (color only, no glow/unfold) */
 .nav-history:hover .nav-history__label {
   color: var(--hist-nav-accent-bright);
 }
@@ -2590,9 +2553,7 @@
   transition: color 120ms var(--ease-rack);
 }
 
-.nav-lens__lean:hover {
-  color: var(--fg-secondary);
-}
+/* .nav-lens__lean:hover removed — minimal value, cursor: pointer is enough */
 
 .nav-lens__lean:active {
   transform: scale(0.96);
@@ -2748,9 +2709,7 @@
   outline-offset: 2px;
 }
 
-.theme-toggle:hover {
-  background-color: var(--bg-secondary);
-}
+/* .theme-toggle:hover removed — toggle is visually distinct already */
 
 .theme-toggle--placeholder {
   width: 44px;
@@ -4087,9 +4046,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   border-radius: var(--radius-sm);
 }
 
-.bi-axis__header:hover:not(:disabled) {
-  background-color: var(--bg-secondary);
-}
+/* .bi-axis__header:hover removed — accordion expand is the interaction, not a bg shift */
 
 .bi-axis__header:focus-visible {
   outline: 2px solid var(--accent-warm);
@@ -5297,13 +5254,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .dd-lens:nth-child(5)::before { transform: rotate(-3deg) scaleX(-1); }
 .dd-lens:nth-child(6)::before { transform: rotate(2deg) scaleX(-1) scaleY(-1); }
 
-.dd-lens:hover {
-  transform: translateY(-2px);
-}
-
-.dd-lens:hover::before {
-  filter: drop-shadow(0 0 4px var(--accent-warm));
-}
+/* .dd-lens:hover lift/shadow removed — stamps sit still, cursor: pointer is enough */
 
 /* Active stamp gets accent ink */
 .dd-lens--active::before {
@@ -5393,9 +5344,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .dd-lens--visible {
     animation: none;
   }
-  .dd-lens:hover {
-    transform: none;
-  }
+  /* .dd-lens:hover reduced-motion override removed — base hover already stripped */
   .dd-lens::before {
     transition: none;
   }
@@ -6335,9 +6284,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .div-alert-card:last-child { border-right: none; }
 }
 
-.div-alert-card:hover {
-  background-color: var(--bg-secondary);
-}
+/* .div-alert-card:hover removed — container, not a button */
 
 .div-alert-card:active {
   transform: scale(0.98);
@@ -6350,7 +6297,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 @media (hover: none) {
-  .div-alert-card:hover { background-color: transparent; transform: none; }
   .div-alert-card:active { transform: scale(0.97); opacity: 0.9; }
 }
 
@@ -6732,10 +6678,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   overflow: hidden;
 }
 
-.intro__btn--primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px color-mix(in srgb, var(--cinematic-shadow-tint) 18%, transparent);
-}
+/* .intro__btn--primary:hover lift/shadow removed — button color + cursor is enough */
 
 .intro__btn:active { transform: scale(0.97); }
 .intro__btn:focus-visible { outline: 2px solid var(--accent-warm); outline-offset: 2px; }

@@ -245,11 +245,7 @@
     0 4px 16px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.3)) 12%, transparent);
   transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
 }
-.about-hero__play:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 6px 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.3)) 18%, transparent);
-}
+/* .about-hero__play:hover lift/shadow removed — button color + cursor is enough */
 .about-hero__play:active { transform: scale(0.97); }
 .about-hero__play:focus-visible {
   outline: 2px solid var(--accent-warm);
@@ -748,10 +744,10 @@
   min-width: 44px;
 }
 
+/* CTA button hover: keep color (button affordance), kill lift */
 .about-cta__button:hover {
   background: var(--bg-hover);
   border-color: var(--accent-warm);
-  transform: translateY(-1px);
 }
 
 .about-cta__button:focus-visible {

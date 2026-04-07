@@ -607,9 +607,7 @@
     box-shadow 300ms var(--ease-cinematic);
 }
 
-.hist-event-card:hover {
-  box-shadow: var(--hist-doc-edge-hover);
-}
+/* .hist-event-card:hover shadow removed — card sits still */
 
 .hist-event-card:focus-visible {
   outline: 2px solid var(--hist-brass);
@@ -632,9 +630,7 @@
   transition: transform 600ms var(--ease-cinematic);
 }
 
-.hist-event-card:hover .hist-event-card__image img {
-  transform: scale(1.04);
-}
+/* .hist-event-card:hover img zoom removed — images sit still */
 
 .hist-event-card__severity {
   position: absolute;
@@ -874,11 +870,7 @@
   flex-shrink: 0;
 }
 
-.hist-persp-tab:hover {
-  filter: brightness(1.03);
-  transform: translateY(-1px);
-  box-shadow: var(--hist-doc-edge-hover);
-}
+/* .hist-persp-tab:hover lift/brightness removed — active state is the signal */
 
 /* Spotlight lighting — active tab is lit, siblings fall into shadow */
 .hist-persp-tab--active {
@@ -1229,9 +1221,7 @@
   }
 }
 
-.hist-gallery__item:hover {
-  transform: translateY(-2px);
-}
+/* .hist-gallery__item:hover lift removed — gallery items sit still */
 
 .hist-gallery__image {
   width: 100%;
@@ -1447,9 +1437,7 @@
   text-align: center;
 }
 
-.hist-timeline__dot:hover {
-  transform: translateY(-3px);
-}
+/* .hist-timeline__dot:hover lift removed — dots sit still */
 
 .hist-timeline__dot-circle {
   width: 12px;
@@ -1617,9 +1605,7 @@
   transition: transform 200ms var(--ease-cinematic);
 }
 
-.hist-map__pin:hover {
-  transform: scale(1.3);
-}
+/* .hist-map__pin:hover scale removed — pins sit still */
 
 /* ---------------------------------------------------------------------------
    Era Drawer — Expandable era section
@@ -1639,9 +1625,7 @@
   min-height: 56px;
 }
 
-.hist-era-drawer__header:hover {
-  background: var(--hist-accent-ghost);
-}
+/* .hist-era-drawer__header:hover bg removed — accordion, not a button */
 
 .hist-era-drawer__header:focus-visible {
   outline: 2px solid var(--hist-brass);
@@ -1716,9 +1700,7 @@
   transition: box-shadow 300ms var(--ease-cinematic);
 }
 
-.hist-redacted:hover {
-  box-shadow: var(--hist-doc-edge-hover);
-}
+/* .hist-redacted:hover shadow removed — card sits still */
 
 /* Foxing texture overlay on redacted card */
 .hist-redacted::before {
@@ -2034,11 +2016,7 @@
 .hist-tl-full__dot--critical { background: #B44C00; }
 .hist-tl-full__dot--major { background: var(--hist-brass); }
 
-/* Dot hover glow when parent station hovered */
-.hist-tl-full__station:hover .hist-tl-full__dot {
-  transform: translate(-50%, -50%) scale(1.5);
-  box-shadow: 0 0 8px var(--hist-brass-wash);
-}
+/* .hist-tl-full__station:hover dot scale/glow removed — dots sit still */
 
 /* ── Stem connecting card to dot ── */
 .hist-tl-full__stem {
@@ -2114,26 +2092,14 @@
   transform: translateX(-50%);
 }
 
-/* Hover — desktop only */
+/* Hover — desktop only: focus-within for keyboard, no card scale */
 @media (min-width: 768px) {
-  .hist-tl-card:hover,
   .hist-tl-card:focus-within {
-    transform: translateX(-50%) scale(1.04);
     box-shadow: var(--hist-doc-edge-hover);
     z-index: 10;
   }
 
-  /* Asymmetric rack focus: past blurs more (2px), future blurs less (1px) */
-  .hist-tl-full__station:has(~ .hist-tl-full__station:hover) .hist-tl-card {
-    filter: blur(2px) opacity(0.65);
-  }
-  .hist-tl-full__station:hover ~ .hist-tl-full__station .hist-tl-card {
-    filter: blur(1px) opacity(0.75);
-  }
-  /* Unblur the hovered card itself */
-  .hist-tl-full__station:hover .hist-tl-card {
-    filter: none;
-  }
+  /* Card scale/shadow on hover removed — cards sit still */
 }
 
 /* ── Severity accent — top border ── */
@@ -2161,12 +2127,7 @@
   transition: transform 3s linear, filter 500ms ease;
 }
 
-/* Ken Burns on hover only */
-@media (min-width: 768px) {
-  .hist-tl-card:hover .hist-tl-card__photo-img {
-    transform: scale(1.08);
-  }
-}
+/* Ken Burns on hover removed — photos sit still */
 
 /* ── Photo fallback — cinematic gradient when all images fail ── */
 .hist-tl-card__photo-fallback {
@@ -2513,9 +2474,9 @@
   flex-shrink: 0;
 }
 
+/* .hist-tl-minimap__dot:hover scale removed — dots sit still */
 .hist-tl-minimap__dot:hover::before {
   background: var(--hist-accent);
-  transform: scale(1.5);
 }
 
 .hist-tl-minimap__dot:focus-visible {
@@ -2662,6 +2623,7 @@
   box-shadow: 0 0 6px var(--hist-brass-wash);
 }
 
+/* .hist-tl-strip__dot:hover color change kept — communicates "this is selectable" */
 .hist-tl-strip__dot:hover::before {
   background: var(--hist-accent);
 }
@@ -2769,9 +2731,7 @@
   .hist-tl-card__photo-img {
     transition: none;
   }
-  .hist-tl-card:hover .hist-tl-card__photo-img {
-    transform: none;
-  }
+  /* .hist-tl-card:hover photo zoom already stripped from base */
 
   .hist-tl-card__expand {
     max-height: none;
@@ -4137,9 +4097,7 @@
   overflow: hidden;
 }
 
-.hist-classified-tile:hover {
-  filter: grayscale(0.6) opacity(0.65);
-}
+/* .hist-classified-tile:hover filter removed — tile sits still */
 
 .hist-classified-tile:focus-visible {
   outline: 2px solid var(--hist-brass);
@@ -4439,9 +4397,7 @@
     center / 100% 100% no-repeat;
 }
 
-.hist-connection:hover {
-  color: var(--hist-accent);
-}
+/* .hist-connection:hover color removed — connection is not a button */
 
 .hist-connection:last-child::after {
   display: none;
@@ -4600,10 +4556,7 @@
     color 200ms;
 }
 
-.hist-compare-toggle:hover {
-  border-color: var(--hist-accent);
-  color: var(--hist-accent);
-}
+/* .hist-compare-toggle:hover removed — active state is the signal */
 
 .hist-compare-toggle--active {
   background: var(--hist-accent);
@@ -4619,17 +4572,7 @@
 /* ---------------------------------------------------------------------------
    Rack Focus — Depth-of-field effect for event cards
    --------------------------------------------------------------------------- */
-.hist-card-grid:hover .hist-event-card:not(:hover) {
-  filter: blur(1.5px) brightness(0.92);
-  transform: scale(0.98);
-  transition: filter 300ms var(--ease-cinematic), transform 300ms var(--ease-cinematic);
-}
-
-.hist-card-grid:hover .hist-event-card:hover {
-  filter: none;
-  transform: scale(1.02);
-  z-index: 2;
-}
+/* Card grid rack focus removed — cards sit still, no blur/scale on hover */
 
 /* Atmospheric Haze, Parallax — REMOVED (dead code, Round 7 cleanup) */
 
@@ -4694,16 +4637,7 @@
     transition: none;
   }
 
-  /* Disable rack focus on event cards */
-  .hist-card-grid:hover .hist-event-card:not(:hover) {
-    filter: none;
-    transform: none;
-  }
-
-  .hist-card-grid:hover .hist-event-card:hover {
-    filter: none;
-    transform: none;
-  }
+  /* Card grid rack focus already stripped from base — no override needed */
 
   /* Disable spotlight on perspective tabs */
   .hist-persp-tabs:has(.hist-persp-tab--active) .hist-persp-tab:not(.hist-persp-tab--active):not(:hover) {
@@ -4878,10 +4812,7 @@
     min-width: 200px;
   }
 
-  /* Rack focus on cards: deeper blur at wider viewport */
-  .hist-card-grid:hover .hist-event-card:not(:hover) {
-    filter: blur(2px) brightness(0.90);
-  }
+  /* Card grid rack focus removed — cards sit still */
 }
 
 /* ── Wide Desktop (1440px+) ── */
@@ -4917,11 +4848,7 @@
    2. PERSPECTIVE TABS — Spotlight lighting model
    --------------------------------------------------------------------------- */
 
-/* Hover: subtle brightness lift */
-.hist-persp-tab:hover {
-  filter: brightness(1.03);
-  transform: translateY(-1px);
-}
+/* .hist-persp-tab:hover lift/brightness already stripped above */
 
 /* Tab click: quick press */
 .hist-persp-tab:active {
@@ -5982,11 +5909,7 @@
   transition: height 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (min-width: 768px) {
-  .hist-tl-full__station:hover .hist-tl-full__stem {
-    --stem-stretch: 6px;
-  }
-}
+/* .hist-tl-full__station:hover stem stretch removed — stems sit still */
 
 /* ---------------------------------------------------------------------------
    Dot Pulse on Focus — scale pop when dot becomes active
@@ -6090,9 +6013,7 @@
     transform: translateX(-50%) rotate(-0.5deg);
   }
 
-  .hist-tl-card--above.hist-tl-card--catastrophic:hover {
-    transform: translateX(-50%) rotate(0deg) scale(1.04);
-  }
+  /* .hist-tl-card--above.hist-tl-card--catastrophic:hover scale removed — sits still */
 }
 
 /* 5. Low Angle = Power (above), High Angle = Vulnerability (below) */

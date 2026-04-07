@@ -123,9 +123,7 @@
   transition: background-color 120ms var(--ease-out);
 }
 
-.skb__compact-col:hover {
-  background-color: color-mix(in srgb, var(--fg-primary) 3%, transparent);
-}
+/* .skb__compact-col:hover bg removed — brief column, not a button */
 
 .skb__compact-col:focus-visible {
   outline: 2px solid var(--accent-warm);
@@ -372,10 +370,9 @@
   transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out), color 200ms var(--ease-out);
 }
 
+/* Hover: color only, no glow */
 .skb__topbar-chip:hover {
   color: var(--accent-warm);
-  border-color: color-mix(in srgb, var(--accent-warm) 40%, transparent);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
 }
 
 .skb__topbar-chip-logo {
@@ -836,9 +833,7 @@
   transition: background 150ms var(--ease-out);
 }
 
-.skb__ep-row:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent-warm) 5%, transparent);
-}
+/* .skb__ep-row:hover removed — episode row, not a button */
 
 .skb__ep-row--current {
   background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
@@ -935,6 +930,6 @@
 
 @media (hover: none) {
   .skb__compact-col:hover .skb__compact-expand { opacity: 0.5; color: var(--fg-muted); border-color: transparent; background: transparent; }
-  .skb__topbar-chip:hover { color: var(--fg-secondary); border-color: color-mix(in srgb, var(--accent-warm) 15%, transparent); background: color-mix(in srgb, var(--accent-warm) 4%, transparent); }
+  .skb__topbar-chip:hover { color: var(--fg-secondary); }
   .skb__topbar-collapse:hover { border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent); background: var(--cin-amber-ghost); }
 }

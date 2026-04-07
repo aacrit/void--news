@@ -119,13 +119,7 @@
   transition: box-shadow 300ms var(--ease-cinematic, ease), border-color 200ms;
 }
 
-.fp__pill:hover {
-  border-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
-  box-shadow:
-    0 4px 16px var(--console-shadow-strong),
-    0 0 12px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 6%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 10%, transparent);
-}
+/* .fp__pill:hover glow removed — pill is always visible, glow adds no info */
 
 /* Void logo */
 .fp__logo { flex-shrink: 0; }
@@ -149,9 +143,9 @@
   flex-shrink: 0;
 }
 
+/* Play button hover: keep bg shift (button affordance), kill glow */
 .fp__play:hover {
   background: color-mix(in srgb, var(--accent-warm) 15%, transparent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
 }
 
 .fp__play:active { transform: scale(0.92); transition-duration: 60ms; }
@@ -583,9 +577,9 @@
   transition: background 200ms var(--ease-out), box-shadow 300ms var(--ease-cinematic);
 }
 
+/* Play-lg button hover: keep bg shift (button affordance), kill glow */
 .fp__play-lg:hover {
   background: color-mix(in srgb, var(--accent-warm) 12%, transparent);
-  box-shadow: 0 0 16px color-mix(in srgb, var(--cin-amber, var(--accent-warm)) 15%, transparent);
 }
 
 .fp__play-lg:active { transform: scale(0.92); transition-duration: 60ms; }
@@ -1683,10 +1677,7 @@
    --------------------------------------------------------------------------- */
 
 @media (hover: none) {
-  .fp__pill:hover {
-    border-color: color-mix(in srgb, var(--accent-warm) 18%, transparent);
-    box-shadow: 0 2px 12px var(--console-shadow), inset 0 1px 0 color-mix(in srgb, var(--accent-warm) 8%, transparent);
-  }
+  /* .fp__pill:hover already stripped from base — no touch override needed */
   .fp__play:hover { background: color-mix(in srgb, var(--accent-warm) 8%, transparent); box-shadow: none; }
   .fp__play-lg:hover { background: color-mix(in srgb, var(--accent-warm) 6%, transparent); box-shadow: none; }
   .fp__minimize:hover, .fp__dismiss:hover { color: color-mix(in srgb, var(--accent-warm) 50%, transparent); background: none; }

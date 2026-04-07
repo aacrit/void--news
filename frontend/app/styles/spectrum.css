@@ -373,10 +373,9 @@
   margin: 2px;
 }
 
-/* Individual logo hover: pop above neighbors */
+/* Individual logo hover: subtle scale, no shadow — communicates "look at this source" */
 .spectrum-logo:hover {
-  transform: scale(1.35);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transform: scale(1.15);
   z-index: var(--z-tooltip);
   border-color: var(--border-strong);
 }
@@ -1203,15 +1202,7 @@
   to   { opacity: 1; transform: translateY(0) rotate(0); }
 }
 
-/* Hover: lift + warm glow */
-.meth-dot:hover {
-  transform: translateY(-4px) scale(1.03);
-}
-
-.meth-dot:hover::before {
-  opacity: 1;
-  filter: drop-shadow(0 0 8px var(--accent-warm));
-}
+/* .meth-dot:hover lift/glow removed — stamps sit still */
 
 /* Click feedback: stamp-down spring */
 .meth-dot:active {
@@ -1259,7 +1250,6 @@
   transition: color 200ms var(--ease-out);
 }
 
-.meth-dot:hover .meth-dot__glyph-wrap,
 .meth-dot--active .meth-dot__glyph-wrap {
   color: var(--fg-primary);
 }
@@ -1674,9 +1664,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%239CA3AF' stroke-width='2' fill='none' opacity='0.25' stroke-dasharray='6 4'/%3E%3C/svg%3E");
 }
 
-.meth-stats-strip__item:hover {
-  transform: translateY(-3px) scale(1.04);
-}
+/* .meth-stats-strip__item:hover removed — stats strip items sit still */
 
 /* Hand-placed rotations — like physically stamped */
 .meth-stats-strip__item:nth-child(1) { transform: rotate(-3deg); }
@@ -1826,11 +1814,7 @@
   transition: transform 200ms var(--spring-snappy), border-color 200ms var(--ease-out);
 }
 
-.meth-river__fav:hover {
-  transform: translateY(var(--river-y, 0px)) scale(1.2);
-  border-color: var(--accent-warm);
-  z-index: 1;
-}
+/* .meth-river__fav:hover removed — river favicons sit still */
 
 @keyframes methRiverFavIn {
   from { opacity: 0; transform: translateY(calc(var(--river-y, 0px) + 6px)) scale(0.8); }
@@ -2112,9 +2096,7 @@
     transition: none;
   }
 
-  .meth-dot:hover {
-    transform: none;
-  }
+  /* .meth-dot:hover reduced-motion override removed — base hover already stripped */
 
   .meth-dot:active {
     transform: none;
