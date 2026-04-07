@@ -593,7 +593,7 @@
 .story-card__headline .sigil__lean-label,
 .lead-story__headline .sigil__lean-label {
   font-size: 8px;
-  opacity: 0.55;
+  opacity: 0.75;
   letter-spacing: 0.04em;
 }
 
