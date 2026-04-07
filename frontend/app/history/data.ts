@@ -28,12 +28,18 @@ const COLORS: PerspectiveColor[] = ["a", "b", "c", "d", "e"];
 export async function fetchHistoryEvents(): Promise<HistoricalEvent[]> {
   if (!supabase) return MOCK_EVENTS;
 
-  const { data: events, error } = await supabase
+  /* Timeout: fall back to mock data if Supabase is unreachable (paused/slow) */
+  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000));
+  const query = supabase
     .from("history_events")
     .select("*")
     .eq("is_published", true)
     .order("date_sort", { ascending: true });
 
+  const result = await Promise.race([query, timeout]);
+  if (!result) return MOCK_EVENTS; /* Timed out */
+
+  const { data: events, error } = result;
   if (error || !events || events.length === 0) return MOCK_EVENTS;
 
   /* Batch-fetch perspectives for all events */
