@@ -1031,10 +1031,6 @@ export default function HistoryLanding({
                   "--card-dist": dist,
                 } as React.CSSProperties}
               >
-                {/* Year labels on both sides of the ink track */}
-                <span className="hist-tl-full__year-above" aria-hidden="true">{year}</span>
-                <span className="hist-tl-full__year-below" aria-hidden="true">{year}</span>
-
                 {/* Dot on track */}
                 <div
                   className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}${isFocused ? " hist-tl-full__dot--focused" : ""}`}
@@ -1067,6 +1063,11 @@ export default function HistoryLanding({
                   reducedMotion={reducedMotion}
                   focused={isFocused}
                 />
+
+                {/* Year below the station — single clean date marker */}
+                <span className={`hist-tl-full__year${isFocused ? " hist-tl-full__year--focused" : ""}`}>
+                  {year}
+                </span>
               </div>
             );
           })}
