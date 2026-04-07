@@ -252,7 +252,7 @@ export default function NavBar({
           ) : (
             /* Single-edition: content navigation replaces edition tabs */
             <nav className="nav-lens__content" aria-label="Content sections">
-              <Link href="/history" className="nav-lens__content-link" title="void --history">
+              <Link href="/history" className="nav-lens__content-link nav-lens__content-link--history" title="void --history">
                 History
               </Link>
               <Link href="/weekly" className="nav-lens__content-link nav-lens__content-link--weekly" title="void --weekly">
