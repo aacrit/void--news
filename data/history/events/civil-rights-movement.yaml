@@ -621,6 +621,15 @@ media:
   attribution: Photo by Chris on Pexels
   license: pexels-license
   creator: Chris
+- media_type: video
+  title: "March on Washington — 'I Have a Dream,' August 28, 1963"
+  description: "250,000 people gathered at the Lincoln Memorial. Filmed by the United States Information Agency. The camera captures the crowd stretching from the Memorial to the Washington Monument."
+  source_url: https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/March_on_washington_Aug_28_1963.jpg/1200px-March_on_washington_Aug_28_1963.jpg
+  embed_url: https://archive.org/embed/march-on-washington-1963
+  attribution: United States Information Agency (USIA) / National Archives
+  license: public-domain
+  creator: USIA
+  creation_date: "August 28, 1963"
 connections:
 - target_slug: trail-of-tears
   connection_type: parallel

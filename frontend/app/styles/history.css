@@ -3822,6 +3822,56 @@
   margin-top: 2px;
 }
 
+/* ── Archival Video — poster + play overlay → Internet Archive iframe ── */
+.hist-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--hist-paper-deep);
+  overflow: hidden;
+}
+
+.hist-video--poster {
+  display: block;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.hist-video__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  transition: filter 300ms ease;
+}
+
+.hist-video--poster:hover .hist-video__poster {
+  filter: contrast(1.05) saturate(0.8) sepia(0.06);
+}
+
+.hist-video__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--hist-paper-fixed, #F2EDE0);
+  opacity: 0.8;
+  transition: opacity 200ms ease, transform 200ms ease;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+.hist-video--poster:hover .hist-video__play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.hist-video__iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 /* ─────────────────────────────────────────────
    Stage 6 — YOUR TURN (no summary, just a link)
    ───────────────────────────────────────────── */

@@ -497,6 +497,15 @@ media:
   attribution: Photo by じいじ on Pexels
   license: pexels-license
   creator: じいじ
+- media_type: video
+  title: "Trinity Test — first nuclear detonation, July 16, 1945"
+  description: "The world's first nuclear explosion at the Trinity site in New Mexico. Filmed by the U.S. Army at 10,000 frames per second. The blast yielded 21 kilotons — equivalent to 21,000 tons of TNT."
+  source_url: https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Trinity_Test_Fireball_16ms.jpg/1200px-Trinity_Test_Fireball_16ms.jpg
+  embed_url: https://archive.org/embed/trinity-and-beyond-the-atomic-bomb-movie
+  attribution: U.S. Department of Energy / National Archives
+  license: public-domain
+  creator: U.S. Army Pictorial Service
+  creation_date: "July 16, 1945"
 connections:
 - target_slug: partition-of-india
   connection_type: parallel

@@ -215,6 +215,7 @@ function mapEventWithRelations(
     caption: m.description ?? m.title,
     attribution: m.attribution,
     year: m.creation_date ?? undefined,
+    videoEmbedUrl: m.embed_url ?? undefined,
   }));
 
   const connections: EventConnection[] = dbConnections.map((c) => {
