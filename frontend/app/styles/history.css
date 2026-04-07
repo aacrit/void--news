@@ -1917,10 +1917,10 @@
   height: 100%;
 }
 
-/* ── Organic SVG ink track — upper third for cards + year below ── */
+/* ── Organic SVG ink track — centered with clearance for top zone ── */
 .hist-tl-full__track {
   position: absolute;
-  top: 35%;
+  top: 50%;
   left: 0;
   width: 100%;
   height: 8px;
@@ -1975,7 +1975,7 @@
 /* ── Station — absolute positioned container for dot + stem + card ── */
 .hist-tl-full__station {
   position: absolute;
-  top: 35%;
+  top: 50%;
   transform: translateX(-50%);
   z-index: 3;
   /* Soft depth-of-field: only cards 4+ away get any blur (nearly off-screen) */
@@ -2240,9 +2240,10 @@
 @media (min-width: 768px) {
   .hist-tl-card:hover .hist-tl-card__expand,
   .hist-tl-card:focus-within .hist-tl-card__expand {
-    max-height: 300px;
+    max-height: 180px;
     opacity: 1;
     padding: 0 10px 10px;
+    overflow-y: auto;
   }
 }
 

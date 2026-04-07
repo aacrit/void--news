@@ -80,7 +80,8 @@ function useCountUp(target: number, ms: number, active: boolean): number {
 
 /* ── Constants ─────────────────────────────────────────────────────────── */
 
-const CIRC = 57; // organic hand-drawn void circle path length (~57)
+const CIRC_ORGANIC = 57;   // organic hand-drawn void circle path length (~57)
+const CIRC_GEOMETRIC = 56.5; // 2π × 9 ≈ 56.5 (true circle r=9, cx=16, cy=13)
 
 /* ── Compact data-mark: the logo encoding live data ───────────────────── */
 
@@ -93,10 +94,12 @@ function DataMark({ data, size, mounted }: {
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
   const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
+  const isSmall = size === "sm";
 
   // Source coverage Harvey ball — ring fill proportional to source count
   const coverage = Math.min(data.sourceCount / 15, 1);
-  const ringFill = coverage * CIRC;
+  const circ = isSmall ? CIRC_GEOMETRIC : CIRC_ORGANIC;
+  const ringFill = coverage * circ;
   const ringCol = beamCol;
 
   return (
@@ -109,45 +112,79 @@ function DataMark({ data, size, mounted }: {
       aria-hidden="true"
       style={{ display: "block", flexShrink: 0 }}
     >
-      {/* Void circle — organic hand-drawn path, coverage ring (facts) */}
-      {/* Background ring (faint) */}
-      <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
-        stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
-      />
-      {/* Fill ring */}
-      <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
-        stroke={ringCol} strokeWidth="1.8"
-        strokeDasharray={`${mounted ? ringFill : 0} ${CIRC}`}
-        style={{
-          transform: "rotate(-90deg)", transformOrigin: "16px 13px",
-          transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
-        }}
-        opacity={0.9}
-      />
+      {/* Coverage ring — geometric circle at sm for instant readability,
+          organic hand-drawn path at lg/xl where the wobble is perceptible */}
+      {isSmall ? (
+        <>
+          {/* Background ring (geometric) */}
+          <circle cx="16" cy="13" r="9"
+            stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} fill="none"
+          />
+          {/* Fill ring (geometric Harvey ball) */}
+          <circle cx="16" cy="13" r="9"
+            stroke={ringCol} strokeWidth="1.8" fill="none"
+            strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_GEOMETRIC}`}
+            style={{
+              transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+              transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
+            }}
+            opacity={0.9}
+          />
+        </>
+      ) : (
+        <>
+          {/* Background ring (organic) */}
+          <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
+            stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
+          />
+          {/* Fill ring (organic) */}
+          <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
+            stroke={ringCol} strokeWidth="1.8"
+            strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_ORGANIC}`}
+            style={{
+              transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+              transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
+            }}
+            opacity={0.9}
+          />
+        </>
+      )}
+
       {/* Beam group — pivots around circle center, tilts by lean */}
       <g className="sigil__beam-group" style={{
         transformOrigin: "16px 13px",
         transform: `rotate(${mounted ? beamAngle : 0}deg)`,
         transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
       }}>
-        {/* Beam line — organic S-curve. Color staggers 200ms behind tilt. */}
-        <path d="M4 13 C10 12.3 22 13.7 28 13"
-          stroke={beamCol} strokeWidth="1.8"
-          style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
-          opacity={mounted ? 1 : 0.3}
-        />
-        {/* Left weight tick */}
-        <line x1="5.8" y1="11.5" x2="6.2" y2="14.5"
-          stroke={beamCol} strokeWidth="1.4"
-          style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
-          opacity={mounted ? 0.85 : 0.2}
-        />
-        {/* Right weight tick */}
-        <line x1="26.2" y1="11.5" x2="25.8" y2="14.5"
-          stroke={beamCol} strokeWidth="1.4"
-          style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
-          opacity={mounted ? 0.85 : 0.2}
-        />
+        {/* Beam — straight line at sm (tilt readable at 28px), organic S-curve at lg/xl */}
+        {isSmall ? (
+          <line x1="4" y1="13" x2="28" y2="13"
+            stroke={beamCol} strokeWidth="1.8"
+            style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
+            opacity={mounted ? 1 : 0.3}
+          />
+        ) : (
+          <path d="M4 13 C10 12.3 22 13.7 28 13"
+            stroke={beamCol} strokeWidth="1.8"
+            style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
+            opacity={mounted ? 1 : 0.3}
+          />
+        )}
+        {/* Weight ticks — only at lg/xl where they're visible (3px at 28px = noise) */}
+        {!isSmall && (
+          <>
+            <line x1="5.8" y1="11.5" x2="6.2" y2="14.5"
+              stroke={beamCol} strokeWidth="1.4"
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
+              opacity={mounted ? 0.85 : 0.2}
+            />
+            <line x1="26.2" y1="11.5" x2="25.8" y2="14.5"
+              stroke={beamCol} strokeWidth="1.4"
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
+              opacity={mounted ? 0.85 : 0.2}
+            />
+          </>
+        )}
       </g>
 
       {/* Source count — below beam, in lower half of circle */}
