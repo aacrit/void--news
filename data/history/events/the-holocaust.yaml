@@ -647,6 +647,15 @@ media:
   attribution: Photo by Alexander Zvir on Pexels
   license: pexels-license
   creator: Alexander Zvir
+- media_type: video
+  title: "Liberation of Buchenwald — U.S. Army Signal Corps, April 1945"
+  description: "American soldiers enter Buchenwald concentration camp. General Eisenhower ordered every unit in the area to visit — 'so that you can tell others what you saw.' Filmed by the U.S. Army Signal Corps."
+  source_url: https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Buchenwald_Slave_Laborers_Liberation.jpg/1200px-Buchenwald_Slave_Laborers_Liberation.jpg
+  embed_url: https://archive.org/embed/nazi-concentration-camps
+  attribution: U.S. Army Signal Corps / National Archives
+  license: public-domain
+  creator: U.S. Army Signal Corps
+  creation_date: "April 1945"
 connections:
 - target_slug: armenian-genocide
   connection_type: influenced

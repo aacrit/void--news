@@ -2072,6 +2072,36 @@
   gap: var(--space-1);
 }
 
+/* Content navigation — replaces edition tabs when single-edition */
+.nav-lens__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nav-lens__content-link {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--fg-tertiary);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition:
+    color 200ms var(--ease-cinematic),
+    border-color 250ms var(--ease-cinematic);
+}
+
+.nav-lens__content-link:hover {
+  color: var(--fg-secondary);
+  border-color: color-mix(in srgb, var(--cin-amber) 30%, transparent);
+}
+
+.nav-lens__content-link--weekly {
+  font-style: italic;
+}
+
 .nav-ed {
   display: inline-flex;
   align-items: center;

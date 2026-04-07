@@ -25,11 +25,13 @@ export interface KeyFigure {
 
 export interface MediaItem {
   id: string;
-  type: 'image' | 'map' | 'document' | 'artwork';
+  type: 'image' | 'map' | 'document' | 'artwork' | 'video';
   url: string;
   caption: string;
   attribution: string;
   year?: string;
+  /** Internet Archive embed URL — only for type 'video' */
+  videoEmbedUrl?: string;
 }
 
 export interface EventConnection {

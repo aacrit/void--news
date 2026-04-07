@@ -89,7 +89,7 @@ export default function MobileFeed({
       {stories.length > 0 && (
         <div className="mf__footer">
           <span className="edition-meta">
-            {editionMeta.label} Edition / {stories.length} stories
+            {stories.length} stories
           </span>
           <LogoWordmark height={12} />
         </div>

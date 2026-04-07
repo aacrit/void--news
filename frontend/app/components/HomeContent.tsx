@@ -858,9 +858,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   The Presses Are Warming Up
                 </h2>
                 <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
-                  No stories yet for the {editionMeta.label} edition. The pipeline is still
-                  collecting and analyzing {editionMeta.sourceCount}.
-                  The next edition will appear shortly.
+                  No stories yet. The pipeline is still collecting and analyzing
+                  sources. The next update will appear shortly.
                 </p>
                 <p className="edition-meta">
                   Editions: 7 AM &middot; 2 PM &middot; 8 PM Chicago
@@ -979,7 +978,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   {filteredStories.length > 0 && (
                     <div className="edition-line">
                       <span className="edition-meta">
-                        {editionMeta.label} Edition / {filteredStories.length} stories
+                        {filteredStories.length} stories
                       </span>
                       <LogoWordmark height={14} />
                     </div>

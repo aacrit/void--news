@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-/* DotsThree removed — MobileTabBar replaces overflow menu */
 import type { Edition, Category, LeanChip } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
@@ -16,6 +15,9 @@ import { hapticMicro, hapticConfirm } from "../lib/haptics";
 const ALL_CATEGORIES: ("All" | Category)[] = [
   "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
+
+/** When only one edition exists, edition UI is hidden and Row 2 shows content links instead. */
+const MULTI_EDITION = EDITIONS.length > 1;
 
 interface NavBarProps {
   activeEdition: Edition;
@@ -37,14 +39,11 @@ interface NavBarProps {
      Logo | dateline · timestamp | Sources Ship About | Theme
 
    Row 2 (Lens — content-shaping, inset shadow texture):
-     World US Europe South-Asia | Weekly | [ topics ▾ ] [ ·L ·C ·R ] | Search...
+     Multi-edition:  World US Europe South-Asia | [ topics ] [ ·L ·C ·R ] | Search
+     Single-edition: History  Weekly | [ topics ] [ ·L ·C ·R ] | Search
 
-   Editions: Playfair typographic tabs (biggest decision)
-   Weekly:   Playfair italic, amber accent (magazine supplement)
-   Filters:  IBM Plex Mono, bracket notation (instrument panel)
-   Search:   Expandable bar, compact→wide on focus
-   Pages:    Inter text links, departure arrow on hover
-   Utility:  Icon-only, monochrome
+   Edition tabs auto-show when EDITIONS.length > 1. When parked (world-only),
+   Row 2 reclaims the space for content navigation links.
    --------------------------------------------------------------------------- */
 
 function formatDateCompact(): string {
@@ -67,7 +66,6 @@ export default function NavBar({
   const [topicOpen, setTopicOpen] = useState(false);
   const [topicFocusIdx, setTopicFocusIdx] = useState(-1);
   const [searchFocused, setSearchFocused] = useState(false);
-  /* mobileMenuOpen + mobileMenuRef removed — MobileTabBar handles navigation */
   const topicRef = useRef<HTMLDivElement>(null);
   const topicTriggerRef = useRef<HTMLButtonElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -158,8 +156,6 @@ export default function NavBar({
     return () => document.removeEventListener("mousedown", close);
   }, [topicOpen]);
 
-  /* Mobile menu close-on-outside removed — MobileTabBar handles navigation */
-
   const hasFilters = !!onLeanChange;
 
   return (
@@ -186,27 +182,19 @@ export default function NavBar({
           {dateline}
         </span>
 
-        {/* Spinoff editions — center-left, before dateline */}
-        <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          <Link
-            href="/weekly"
-            className="nav-weekly"
-            aria-label="Go to Weekly digest"
-            title="void --weekly"
-          >
-            <span className="nav-weekly__rule" aria-hidden="true" />
-            <span className="nav-weekly__label">Weekly</span>
-          </Link>
-          <Link
-            href="/history"
-            className="nav-history"
-            aria-label="Go to History archive"
-            title="void --history"
-          >
-            <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">History</span>
-          </Link>
-        </nav>
+        {/* Spinoff links — only shown when multi-edition (otherwise they move to Row 2) */}
+        {MULTI_EDITION && (
+          <nav className="nav-spinoffs" aria-label="Spinoff editions">
+            <Link href="/weekly" className="nav-weekly" aria-label="Go to Weekly digest" title="void --weekly">
+              <span className="nav-weekly__rule" aria-hidden="true" />
+              <span className="nav-weekly__label">Weekly</span>
+            </Link>
+            <Link href="/history" className="nav-history" aria-label="Go to History archive" title="void --history">
+              <span className="nav-history__rule" aria-hidden="true" />
+              <span className="nav-history__label">History</span>
+            </Link>
+          </nav>
+        )}
 
         <div className="nav-right">
           {/* Page navigation — destinations */}
@@ -225,8 +213,8 @@ export default function NavBar({
         </div>
       </nav>
 
-      {/* ── Mobile edition tabs — horizontal scroll, Playfair ── */}
-      {onEditionChange && (
+      {/* ── Mobile edition tabs — only when multi-edition ── */}
+      {MULTI_EDITION && onEditionChange && (
         <nav className="nav-mob-editions" aria-label="Edition">
           {EDITIONS.map((ed) => (
             <button
@@ -245,23 +233,33 @@ export default function NavBar({
       {/* ── Row 2: Lens — content-shaping controls, inset texture ── */}
       {hasFilters && (
         <div className="nav-lens">
-          {/* Edition tabs — Playfair, biggest decision */}
-          <nav className="nav-lens__editions" aria-label="Edition">
-            {EDITIONS.map((ed) => (
-              <button
-                key={ed.slug}
-                type="button"
-                aria-current={activeEdition === ed.slug ? "page" : undefined}
-                className={`nav-ed${activeEdition === ed.slug ? " nav-ed--active" : ""}`}
-                onClick={() => handleEditionTap(ed.slug)}
-              >
-                <EditionIcon slug={ed.slug} size={10} />
-                <span>{ed.label}</span>
-              </button>
-            ))}
-          </nav>
-
-          {/* Weekly moved to Row 1 nav-pages */}
+          {/* Edition tabs — only when multi-edition */}
+          {MULTI_EDITION ? (
+            <nav className="nav-lens__editions" aria-label="Edition">
+              {EDITIONS.map((ed) => (
+                <button
+                  key={ed.slug}
+                  type="button"
+                  aria-current={activeEdition === ed.slug ? "page" : undefined}
+                  className={`nav-ed${activeEdition === ed.slug ? " nav-ed--active" : ""}`}
+                  onClick={() => handleEditionTap(ed.slug)}
+                >
+                  <EditionIcon slug={ed.slug} size={10} />
+                  <span>{ed.label}</span>
+                </button>
+              ))}
+            </nav>
+          ) : (
+            /* Single-edition: content navigation replaces edition tabs */
+            <nav className="nav-lens__content" aria-label="Content sections">
+              <Link href="/history" className="nav-lens__content-link" title="void --history">
+                History
+              </Link>
+              <Link href="/weekly" className="nav-lens__content-link nav-lens__content-link--weekly" title="void --weekly">
+                Weekly
+              </Link>
+            </nav>
+          )}
 
           {/* Topic dropdown — bracket notation */}
           <div

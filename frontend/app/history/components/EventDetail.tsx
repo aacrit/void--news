@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
-import type { HistoricalEvent, Perspective } from "../types";
+import type { HistoricalEvent, Perspective, MediaItem } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 
 /* ===========================================================================
@@ -394,7 +394,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
             </div>
           )}
 
-          {/* Archival images — vertical, alternating, with context */}
+          {/* Archival images + video — vertical, alternating, with context */}
           {galleryImages.length > 0 && (
             <div className="hist-evidence__gallery">
               {galleryImages.map((item, i) => (
@@ -403,16 +403,21 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                   className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  <img
-                    src={item.url}
-                    alt={item.caption}
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
+                  {item.type === "video" && item.videoEmbedUrl ? (
+                    <ArchivalVideo item={item} />
+                  ) : (
+                    <img
+                      src={item.url}
+                      alt={item.caption}
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  )}
                   <p className="hist-evidence__caption">{item.caption}</p>
                   <span className="hist-evidence__image-attribution">
+                    {item.type === "video" ? "Filmed by: " : ""}
                     {item.attribution}
                     {item.year && ` (${item.year})`}
                   </span>
@@ -563,5 +568,49 @@ function WitnessBlock({
         </div>
       )}
     </div>
+  );
+}
+
+/* ===========================================================================
+   ArchivalVideo — Poster frame with play overlay → Internet Archive iframe
+   No self-hosting. Camera-holder attribution is prominent ("Filmed by:").
+   =========================================================================== */
+function ArchivalVideo({ item }: { item: MediaItem }) {
+  const [playing, setPlaying] = useState(false);
+
+  if (playing && item.videoEmbedUrl) {
+    return (
+      <div className="hist-video">
+        <iframe
+          src={item.videoEmbedUrl}
+          className="hist-video__iframe"
+          allowFullScreen
+          title={item.caption}
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      className="hist-video hist-video--poster"
+      onClick={() => setPlaying(true)}
+      type="button"
+      aria-label={`Play archival footage: ${item.caption}`}
+    >
+      <img
+        src={item.url}
+        alt={item.caption}
+        className="hist-video__poster"
+        loading="lazy"
+      />
+      <div className="hist-video__play" aria-hidden="true">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="23" stroke="currentColor" strokeWidth="1.5" opacity="0.8" />
+          <path d="M19 16l14 8-14 8V16z" fill="currentColor" opacity="0.9" />
+        </svg>
+      </div>
+    </button>
   );
 }

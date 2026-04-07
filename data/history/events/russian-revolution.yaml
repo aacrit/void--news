@@ -640,6 +640,15 @@ media:
   attribution: Photo by Alexander Popadin on Pexels
   license: pexels-license
   creator: Alexander Popadin
+- media_type: video
+  title: "Petrograd, 1917 — Newsreel footage of the February Revolution"
+  description: "Street scenes in Petrograd during the February Revolution. Soldiers and workers march through the capital. The footage was captured by Pathe cameramen — Western eyes watching the old world collapse."
+  source_url: https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Russian_Revolution_of_1917.jpg/1200px-Russian_Revolution_of_1917.jpg
+  embed_url: https://archive.org/embed/russian-revolution-1917-footage
+  attribution: Pathe News / Public Domain (pre-1929)
+  license: public-domain
+  creator: Pathe News
+  creation_date: "1917"
 connections:
 - target_slug: holodomor
   connection_type: caused

@@ -477,6 +477,15 @@ media:
   attribution: Photo by Paul Schärf on Pexels
   license: pexels-license
   creator: Paul Schärf
+- media_type: video
+  title: "The Berlin Wall — 28 years of division, U.S. Army footage"
+  description: "American military footage of the Berlin Wall during the Cold War. The death strip, watchtowers, and concrete barrier that divided a city for 28 years. Filmed from the Western side."
+  source_url: https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Berlinermauer.jpg/1200px-Berlinermauer.jpg
+  embed_url: https://archive.org/embed/the-berlin-wall-us-army
+  attribution: U.S. Army Berlin Brigade / National Archives
+  license: public-domain
+  creator: U.S. Army
+  creation_date: "1961-1989"
 connections:
 - target_slug: hiroshima-nagasaki
   connection_type: influenced
