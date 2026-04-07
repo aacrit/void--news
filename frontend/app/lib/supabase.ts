@@ -123,8 +123,8 @@ export async function fetchClusterLeadImage(clusterId: string): Promise<string |
     const article = row.article as any;
     if (!article?.image_url) continue;
     const url = article.image_url as string;
-    // Skip tiny tracking pixels, logos, or broken URLs
-    if (url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker|1x1|blank|placeholder|default-og|brand/i.test(url)) continue;
+    // Skip data URIs, tiny tracking pixels, logos, or broken URLs
+    if (url.startsWith('data:') || url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker|1x1|blank|placeholder|default-og|brand/i.test(url)) continue;
     const tier = article.source?.tier as string ?? 'independent';
     const rank = tierRank[tier] ?? 0;
     if (!best || rank > best.rank) {
