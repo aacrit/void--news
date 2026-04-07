@@ -887,10 +887,23 @@ export default function HistoryLanding({
   /* ── Current era context for header ── */
   const eraCtx = ERA_CONTEXT[currentEra] || ERA_CONTEXT.contemporary;
 
+  /* ── Year ribbon: ±4 neighboring event years with distance for blur ── */
+  const yearRibbon = useMemo(() => {
+    if (sortedEvents.length === 0 || focusedIndex < 0) return [];
+    const ribbon: { year: string; distance: number; index: number }[] = [];
+    for (let d = -4; d <= 4; d++) {
+      const idx = focusedIndex + d;
+      if (idx < 0 || idx >= sortedEvents.length) continue;
+      const y = extractYear(sortedEvents[idx].dateSort, sortedEvents[idx].datePrimary);
+      ribbon.push({ year: y, distance: Math.abs(d), index: idx });
+    }
+    return ribbon;
+  }, [sortedEvents, focusedIndex]);
+
   /* ── State A: Full timeline ── */
   return (
     <div className="hist-tl-wrapper">
-      {/* ── TOP ZONE: Era header + era pills (year ribbon merged into timeline) ── */}
+      {/* ── TOP ZONE: Era header + year ribbon + era pills ── */}
       <div
         className={`hist-tl-top-zone ${hasScrolled ? "" : "hist-tl-top-zone--hidden"}`}
         style={{ "--era-color": eraCtx.color } as React.CSSProperties}
@@ -899,6 +912,30 @@ export default function HistoryLanding({
         <div className="hist-tl-era-header" aria-live="polite" aria-atomic="true">
           <span className="hist-tl-era-header__label">{eraCtx.label}</span>
           <span className="hist-tl-era-header__desc">{eraCtx.description}</span>
+        </div>
+
+        {/* Year ribbon — ±4 years with focus/blur depth-of-field */}
+        <div className="hist-tl-year-ribbon" aria-hidden="true">
+          {yearRibbon.map((item) => (
+            <button
+              key={item.index}
+              className={`hist-tl-year-ribbon__year${item.distance === 0 ? " hist-tl-year-ribbon__year--focused" : ""}`}
+              style={{ "--yr-dist": item.distance } as React.CSSProperties}
+              onClick={() => {
+                const station = stationRefs.current[item.index];
+                if (station) {
+                  station.scrollIntoView({
+                    block: isMobileVertical ? "center" : "nearest",
+                    inline: isMobileVertical ? "nearest" : "center",
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              type="button"
+            >
+              {item.year}
+            </button>
+          ))}
         </div>
 
         {/* Era pills */}
@@ -1013,13 +1050,12 @@ export default function HistoryLanding({
             />
           </svg>
 
-          {/* Cards + stems + dots + year labels */}
+          {/* Cards + stems + dots */}
           {sortedEvents.map((event, i) => {
             const side = sides[i];
             const pct = positions[i] * 100;
             const isFocused = i === focusedIndex;
             const dist = Math.min(Math.abs(i - focusedIndex), 6);
-            const year = extractYear(event.dateSort, event.datePrimary);
 
             return (
               <div
@@ -1064,10 +1100,6 @@ export default function HistoryLanding({
                   focused={isFocused}
                 />
 
-                {/* Year below the station — single clean date marker */}
-                <span className={`hist-tl-full__year${isFocused ? " hist-tl-full__year--focused" : ""}`}>
-                  {year}
-                </span>
               </div>
             );
           })}
