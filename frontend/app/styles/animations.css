@@ -493,14 +493,10 @@
 }
 
 @keyframes coldOpenRackIn {
-  /* Lead story: Rack focus — the subject sharpens from background haze.
-     Deakins in Sicario: the convoy emerges from heat haze into clarity.
-     The scale shift (0.97->1) creates micro-parallax — the subject
-     feels like it's moving toward the viewer as it sharpens.
-     GPU-compositable: uses only transform + opacity (no filter:blur). */
+  /* Lead story: simple settle-in (opacity + subtle scale). */
   from {
     opacity: 0;
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
@@ -629,14 +625,9 @@
   to { opacity: 0.5; }
 }
 
-/* ── Deep Dive: Imperceptible breathing while reading ──
-   A 6s micro-scale pulse (1.0005x — 0.05% change) that simulates
-   the organic imprecision of a film projector's gate. Consciously
-   invisible but subconsciously felt as "alive." */
-@keyframes ddBreathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(var(--dd-breathe-scale, 1.0005)); }
-}
+/* ddBreathe removed — 0.05% scale over 6s is imperceptible on any display.
+   GPU cost for zero visual effect. Deep Dive editorial grade + vignette
+   provides the reading surface distinction. */
 
 /* ══ SCENE 7: Practical Light — OnAir Breathing Pulse ══
    When audio is playing, the OnAir indicator becomes a "practical light"
@@ -1364,10 +1355,6 @@
   /* Backdrop rack animations: instant state, no ramp */
   .deep-dive-backdrop,
   .deep-dive-backdrop--closing {
-    animation: none;
-  }
-  /* ddBreathe: disable infinite ambient animation on settled panel */
-  .deep-dive-panel[data-settled] .deep-dive-panel__content {
     animation: none;
   }
   .anim-lens-breathe {

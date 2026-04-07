@@ -649,7 +649,7 @@
   }
 
   .story-card:active {
-    transform: scale(0.975);
+    transform: scale(0.985);
     opacity: 0.9;
     transition: transform 60ms var(--ease-out), opacity 60ms var(--ease-out);
     box-shadow: none;
@@ -926,10 +926,6 @@
   /* Vignette: 50% reduced — subtle framing preserved */
   .page-container::before {
     opacity: 0.5;
-  }
-  /* Atmospheric haze: opacity-only on mobile (no filter chain) */
-  .story-card:not(.anim-stagger--visible) {
-    filter: none;
   }
 }
 

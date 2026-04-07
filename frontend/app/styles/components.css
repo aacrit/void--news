@@ -42,44 +42,9 @@
   --separator-mobile: 0.5px solid var(--border-subtle);
 }
 
-/* No hover glow or lift — the rack focus blur system handles emphasis.
-   Hovered card stays in place; neighbors defocus around it. */
+/* Hover: warm background tint only — the newspaper sits still, the reader reads */
 .story-card:hover {
-  /* No transform, no box-shadow change — clean, quiet */
-}
-
-/* Rack focus — when hovering a card, neighbors defocus (Deakins shallow DOF) */
-@supports selector(:has(*)) {
-  .grid-medium:has(.story-card:hover) .story-card:not(:hover) {
-    filter: var(--rack-blur-neighbor);
-    opacity: var(--rack-dim-neighbor);
-    transform: var(--rack-recede-neighbor);
-    transition:
-      filter var(--rack-blur-throw-dur) var(--ease-rack),
-      opacity var(--rack-dim-throw-dur) var(--rack-dim-throw-delay) var(--ease-rack),
-      transform var(--rack-recede-throw-dur) var(--rack-recede-throw-delay) var(--ease-rack);
-  }
-
-  .grid-medium .story-card:not(:hover) {
-    transition:
-      filter var(--rack-blur-return-dur) var(--ease-steadicam),
-      opacity var(--rack-dim-return-dur) var(--ease-steadicam),
-      transform var(--rack-recede-return-dur) var(--ease-steadicam);
-  }
-
-  /* Key light boost on focused card */
-  .grid-medium .story-card:hover {
-    filter: var(--rack-key-light) var(--rack-warm-cast);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .grid-medium:has(.story-card:hover) .story-card:not(:hover) {
-    filter: none;
-    opacity: var(--rack-dim-neighbor);
-    transform: none;
-    transition: opacity 150ms var(--ease-out);
-  }
+  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
 }
 
 /* Desktop press — instant compression, spring bounce-back on release.
@@ -614,13 +579,8 @@
   opacity: 0.5;
 }
 
-/* Headline sharpening on hover: sub-pixel text-shadow thickens anti-aliased
-   glyph edges — perceived as "sharper" without layout reflow.
-   Caret icon: dolly-in approach indicator (translateX 2px + opacity lift). */
+/* Caret icon: dolly-in approach indicator (translateX 2px + opacity lift). */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .story-card:hover .story-card__headline-text {
-    text-shadow: 0 0 0.5px var(--fg-primary);
-  }
   .story-card:hover .story-card__headline-icon {
     transform: translateX(2px);
     opacity: 0.8;
@@ -690,26 +650,9 @@
     transform  320ms var(--spring-snappy);
 }
 
-/* Warm tint — paper catching light, contained within card bounds */
-.lead-story::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: color-mix(in srgb, var(--bg-secondary) 40%, transparent);
-  opacity: 0;
-  transition: opacity 200ms var(--ease-out);
-  pointer-events: none;
-  z-index: 0;
-}
-
 .lead-story > *:not(.story-card__stretch-link) {
   position: relative;
   z-index: 1;
-}
-
-.lead-story:hover::before {
-  opacity: 1;
 }
 
 .lead-story:hover {
@@ -732,14 +675,7 @@
   font-size: clamp(1.375rem, 1.2rem + 1vw, 2.25rem);
 }
 
-.lead-story:has(.story-card__stretch-link:focus-visible) {
-  background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
-}
-
-.lead-story:has(.story-card__stretch-link:focus-visible)::before {
-  opacity: 1;
-}
-
+.lead-story:has(.story-card__stretch-link:focus-visible),
 .lead-story:focus-within {
   background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
 }
@@ -752,16 +688,12 @@
     transform: none;
   }
 
-  .lead-story:hover::before {
-    opacity: 0;
-  }
-
   .lead-story:active {
     transform: scale(0.985);
     box-shadow: none;
     opacity: 0.92;
     transition:
-      transform  80ms var(--spring-snappy),
+      transform  80ms var(--ease-out),
       opacity    80ms var(--ease-out);
   }
 }
@@ -5625,10 +5557,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     background-color: transparent;
   }
 
-  .story-card:hover::before,
-  .lead-story:hover::before {
-    opacity: 0;
-  }
 }
 
 /* ---- Disable all card animations under prefers-reduced-motion ---------- */
@@ -5637,11 +5565,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .lead-story {
     transition: none;
     will-change: auto;
-  }
-
-  .story-card::before,
-  .lead-story::before {
-    transition: none;
   }
 
   .story-card:hover,
@@ -7709,196 +7632,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   mix-blend-mode: soft-light;
 }
 
-/* ══ SCENE 3: Rack Focus (Desktop Hover) ══
-   When the viewer hovers a story card, the camera "racks focus" to that
-   card. Everything outside the focal plane softens — blur, dimming, and
-   micro-recession create genuine depth-of-field, not just a highlight.
-
-   This is the Deakins hallmark: one subject is razor-sharp while the
-   world behind it becomes an impressionist wash. The transition timing
-   (--rack-focus-dur: 600ms at --rack-focus-ease) is deliberately slower
-   than a typical hover effect — it mimics the physical rotation speed
-   of a lens barrel pulling focus.
-
-   The hovered card gets:
-   - Elevated shadow (dolly in: card approaches the camera)
-   - Rim light (key light catch on the edge — Deakins top-left motivation)
-   - No blur (sharp: the focal plane)
-
-   Non-hovered cards get:
-   - Defocus blur (--focus-soft: 1.5px — T2.8 equivalent)
-   - Dimming (opacity reduction — exposure falloff)
-   - Micro-recession (scale 0.997 — perspective depth)
-
-   The CSS :has() selector makes this zero-JS — the browser engine
-   handles the rack focus natively via GPU-composited properties. */
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  /* Staggered rack focus return: blur recovers first (500ms, Steadicam
-     glide), opacity follows (600ms), scale lingers longest (650ms,
-     cinematic ease). The return easing shifts from --ease-rack (mechanical)
-     to --ease-steadicam (weightless, long settle) — the lens drifts back
-     to neutral with Kubrick inevitability. */
-  .story-card,
-  .lead-story {
-    transition:
-      filter var(--rack-blur-return-dur, 500ms) var(--ease-steadicam),
-      opacity var(--rack-dim-return-dur, 600ms) var(--ease-steadicam),
-      transform var(--rack-recede-return-dur, 650ms) var(--ease-cinematic),
-      background-color 120ms var(--ease-out),
-      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out);
-  }
-
-  /* Staggered defocus throw: blur first (350ms, lens barrel rotation),
-     dim second (420ms + 60ms delay, exposure adjusts), recede last
-     (480ms + 90ms delay, cognitive depth perception).
-     Deakins, Blade Runner 2049 — optical signals lead, perception follows.
-
-     VFX addition: --rack-neighbor-cool desaturates and removes warmth from
-     defocused siblings — simulating the color shift that occurs when areas
-     fall outside the lens's optimal focus plane. Real lenses render OOF areas
-     cooler and flatter due to longitudinal chromatic aberration. */
-  /* Universal rack focus: ANY container with a hovered card blurs siblings */
-  :has(.story-card:hover) .story-card:not(:hover),
-  :has(.lead-story:hover) .story-card:not(:hover),
-  :has(.lead-story:hover) .lead-story:not(:hover) {
-    opacity: var(--rack-dim-neighbor);
-    filter: var(--rack-blur-neighbor) var(--rack-neighbor-cool);
-    transform: var(--rack-recede-neighbor);
-    transition:
-      filter var(--rack-blur-throw-dur, 350ms) var(--ease-rack),
-      opacity var(--rack-dim-throw-dur, 420ms) var(--rack-dim-throw-delay, 60ms) var(--ease-rack),
-      transform var(--rack-recede-throw-dur, 480ms) var(--rack-recede-throw-delay, 90ms) var(--ease-cinematic);
-  }
-
-  /* Hovered card: sharp focal plane with subtle warm ambient lighting.
-     No lift, no heavy shadow. Just a gentle warmth that complements the
-     blur on neighbors — like a reading lamp settling on the page. */
-  .story-card:hover,
-  .lead-story:hover {
-    background: color-mix(in srgb, var(--accent-warm) 3%, transparent);
-    transition:
-      background 300ms var(--ease-cinematic),
-      filter 300ms var(--ease-cinematic),
-      opacity 300ms var(--ease-cinematic);
-  }
-
-  /* Lead headline sharpening — Deakins, Sicario: subject emerges from
-     atmospheric haze into razor clarity. Sub-pixel text-shadow increases
-     perceived glyph weight without font-weight change (no layout shift). */
-  .lead-story:hover .lead-story__headline-text {
-    text-shadow: 0 0 1px color-mix(in srgb, var(--fg-primary) 8%, transparent);
-  }
-}
-
-/* ── Focus Breathing — exposure shift on container ──
-   When any card is hovered (rack focus is active), the entire feed
-   container receives a micro-brightness dip (--rack-breathe-brightness).
-   This simulates the fractional T-stop shift that occurs during a real
-   focus pull — the aperture adjusts and the overall exposure shifts by
-   a nearly imperceptible amount.
-
-   The brightness dip is < 1% (0.992 light, 0.988 dark) — purely
-   subliminal. The user perceives the hovered card as "brighter" partly
-   because the container around it dimmed, not just because the card
-   itself gained brightness. This is the depth cue: subject separation
-   through differential exposure, not just blur.
-
-   Applied to feed layout containers only, not .page-main (which would
-   affect nav and other non-feed elements). Scoped inside hover: hover
-   to avoid mobile activation. */
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .df:has(.story-card:hover),
-  .df:has(.lead-story:hover),
-  .lead-section:has(.lead-story:hover),
-  .grid-medium:has(.story-card:hover),
-  .grid-compact:has(.story-card:hover) {
-    filter: brightness(var(--rack-breathe-brightness));
-    transition: filter var(--rack-defocus-dur, 420ms) var(--rack-focus-ease);
-  }
-}
-
-/* ── Atmospheric Haze ──
-   Distant elements (not yet scrolled into view) have reduced saturation
-   and slight brightness reduction — simulating atmospheric perspective
-   where objects further from the camera appear muted and hazy. As the
-   Steadicam approaches (scroll into view), the haze clears. */
-.story-card:not(.anim-stagger--visible) {
-  filter: var(--cin-haze-far);
-  transition: filter 600ms var(--ease-steadicam), opacity 600ms var(--ease-steadicam);
-}
-.story-card.anim-stagger--visible {
-  filter: none;
-  transition: filter 600ms var(--ease-steadicam), opacity 600ms var(--ease-steadicam);
-}
-
-/* ── Scroll-Driven Haze Clearing (Progressive Enhancement) ──
-   On browsers supporting view() timelines, the atmospheric haze
-   clears progressively as the card scrolls into the viewport,
-   rather than switching abruptly at the IO threshold. This creates
-   the Steadicam approach effect — continuous depth perception
-   rather than binary visible/hidden.
-
-   The filter transitions from --cin-haze-far (distant, desaturated)
-   through --cin-haze-mid (approaching) to none (sharp, present).
-   This layers on top of the IO-based class toggle. */
-@keyframes scrollHazeClear {
-  0%   { filter: var(--cin-haze-far); }
-  40%  { filter: var(--cin-haze-mid); }
-  100% { filter: none; }
-}
-
-@supports (animation-timeline: view()) {
-  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    /* Exclude :hover — CSS animation values override normal declarations,
-       so the scroll-driven haze would suppress the rack focus key light
-       boost (filter: brightness/sepia) on hovered cards. By excluding
-       :hover, the haze clears via the animation on scroll, but the key
-       light filter takes over cleanly on hover via the cascade. */
-    .story-card.anim-stagger--visible:not(:hover) {
-      animation: scrollHazeClear linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 80%;
-    }
-  }
-}
-
-
-/* ── Key Light Boost on Hovered Card ──
-   When a card is hovered, the focused subject receives a micro-brightness
-   and contrast lift (--rack-key-light) plus a warm color cast (--rack-warm-cast).
-   This simulates the focused subject sitting in the key light's sweet spot.
-
-   IMPORTANT: This rule is placed AFTER the atmospheric haze section because
-   both set the `filter` property on .story-card. The haze sets `filter: none`
-   on visible cards; this override applies the key light lift only when
-   hovered. Source-order cascade: haze clears filter, then hover re-applies
-   the key light. Specificity: .story-card:hover (0,2,0) matches
-   .story-card.anim-stagger--visible (0,2,0), so source order decides. */
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .story-card:hover,
-  .lead-story:hover {
-    filter: var(--rack-key-light) var(--rack-warm-cast);
-    transition:
-      filter var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
-      opacity var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
-      transform var(--rack-refocus-dur, 600ms) var(--rack-focus-ease),
-      background-color 120ms var(--ease-out),
-      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out);
-  }
-}
-
-/* ── Deep Dive: Editorial Grade + Warm Vignette + Breathing ──
-   Once the Deep Dive panel settles (data-settled attribute), the content
-   receives a subtle editorial color grade (slightly higher contrast, lower
-   saturation) that distinguishes the reading surface from the feed.
-   The warm inset vignette creates an intimate reading atmosphere — a
-   desk lamp casting warm falloff at the panel edges. The breathing
-   animation (ddBreathe, 6s period, 0.05% scale) is imperceptible
-   consciously but creates organic "living" quality in the panel. */
+/* ── Deep Dive: Editorial Grade + Warm Vignette ──
+   Once the Deep Dive panel settles, the content receives a subtle editorial
+   color grade (slightly higher contrast, lower saturation) that distinguishes
+   the reading surface from the feed. The warm inset vignette creates an
+   intimate reading atmosphere — a desk lamp casting warm falloff at the
+   panel edges. */
 .deep-dive-panel[data-settled] .deep-dive-panel__content {
   filter: var(--cin-grade-editorial);
   transition: filter 500ms var(--ease-cinematic);
-  animation: ddBreathe var(--dd-breathe-dur, 6s) var(--ease-cinematic) infinite;
 }
 
 .deep-dive-panel[data-settled] {
@@ -8049,17 +7791,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
       border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
       box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out);
   }
-}
-
-/* ── Card Rim Light (Dark Mode) ──
-   Stronger rim light visibility on dark surfaces (Bradford Young: practicals
-   read brighter against low ambient). Warm shadow spread uses dark-mode
-   --rack-shadow-warm which has higher amber mix for dark surface contrast. */
-:root[data-mode="dark"] .story-card:hover {
-  box-shadow:
-    var(--shadow-card-hover),
-    0 8px 25px -4px var(--rack-shadow-warm),
-    inset 1px 1px 0 0 color-mix(in srgb, var(--cinematic-rim-light) 80%, transparent);
 }
 
 /* ── Mobile Cinematic Overrides ──
