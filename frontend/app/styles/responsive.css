@@ -655,62 +655,22 @@
     box-shadow: none;
   }
 
-  /* Filter chip — aggressive press for snappy tap feel */
-  .filter-chip:hover {
-    color: var(--fg-tertiary);
-    background-color: transparent;
-    border-color: var(--border-subtle);
-    transform: none;
-    box-shadow: none;
-  }
-
+  /* Filter chip — press feedback only */
   .filter-chip:active {
     transform: scale(0.88);
     transition: transform 50ms var(--ease-out);
   }
 
-  /* Lean bar segments — disable hover lift, use press feedback */
-  .lean-bar__seg:hover {
-    background-color: transparent;
-    color: var(--fg-tertiary);
-  }
-
+  /* Lean bar segments — base hover already stripped, press feedback only */
   .lean-bar__seg:active {
     transform: scale(0.95);
     transition: transform 50ms var(--ease-out);
   }
 
-  /* Keep active segment color on mobile even without hover */
-  .lean-bar__seg--active:hover {
-    color: var(--fg-primary);
-  }
-
-  .lean-bar__seg--active.lean-bar__seg--left:hover {
-    background-color: color-mix(in srgb, var(--bias-left) 14%, transparent);
-  }
-
-  .lean-bar__seg--active.lean-bar__seg--center:hover {
-    background-color: color-mix(in srgb, var(--bias-center) 14%, transparent);
-  }
-
-  .lean-bar__seg--active.lean-bar__seg--right:hover {
-    background-color: color-mix(in srgb, var(--bias-right) 14%, transparent);
-  }
-
-  /* Topic chip — native press feel */
-  .topic-bar__chip:hover {
-    color: var(--fg-tertiary);
-    border-color: transparent;
-  }
-
+  /* Topic chip — base hover already stripped, press feedback only */
   .topic-bar__chip:active {
     transform: scale(0.88);
     transition: transform 50ms var(--ease-out);
-  }
-
-  .topic-bar__chip--active:hover {
-    color: var(--fg-primary);
-    border-color: var(--border-strong);
   }
 
   /* === PERFORMANCE — DISABLE PAINT-HEAVY EFFECTS === */

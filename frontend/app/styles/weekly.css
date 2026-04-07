@@ -604,9 +604,7 @@
   transition: background 200ms var(--ease-cinematic);
 }
 
-.wk-timeline__node:hover {
-  background: var(--bg-hover);
-}
+/* .wk-timeline__node:hover bg removed — node is not a button */
 
 .wk-timeline__node:focus-visible {
   outline: 2px solid var(--accent-warm);
@@ -628,11 +626,11 @@
     box-shadow 300ms var(--ease-cinematic);
 }
 
-.wk-timeline__node:hover .wk-timeline__dot,
 .wk-timeline__node--expanded .wk-timeline__dot {
   background: var(--wk-accent);
-  box-shadow: 0 0 8px var(--wk-accent-glow);
 }
+
+/* .wk-timeline__node:hover dot glow removed — expanded state is the signal */
 
 .wk-timeline__day {
   font-family: var(--font-meta);
@@ -644,7 +642,6 @@
   transition: color 200ms var(--ease-cinematic);
 }
 
-.wk-timeline__node:hover .wk-timeline__day,
 .wk-timeline__node--expanded .wk-timeline__day {
   color: var(--wk-accent);
 }
@@ -693,9 +690,7 @@
   transition: opacity 200ms var(--ease-cinematic);
 }
 
-.wk-timeline__node:hover .wk-timeline__expand-hint {
-  opacity: 0.6;
-}
+/* .wk-timeline__node:hover expand-hint removed — expand hint shown on expanded state */
 
 .wk-timeline__node--expanded .wk-timeline__expand-hint {
   opacity: 0.8;
@@ -781,10 +776,7 @@
     transform 320ms var(--spring-snappy);
 }
 
-.wk-opinion:hover {
-  box-shadow: inset 2px 0 0 var(--lean-color, var(--wk-accent)), var(--shadow-e2);
-  transform: translateY(-2px);
-}
+/* .wk-opinion:hover lift/shadow removed — opinion cards sit still */
 
 .wk-opinion__header {
   display: flex;
@@ -1225,15 +1217,7 @@
   }
 
   /* Disable hover transforms on touch */
-  .wk-opinion:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .wk-opinion:active {
-    transform: none;
-    box-shadow: none;
-  }
+  /* .wk-opinion:hover already stripped from base — no override needed */
 
   /* Opinion cards: tighter padding */
   .wk-opinion {
@@ -1395,11 +1379,8 @@
     transform: none;
   }
 
-  .wk-opinion:hover {
-    transform: none;
-  }
+  /* .wk-opinion:hover already stripped from base — no override needed */
 
-  .wk-timeline__node:hover .wk-timeline__dot,
   .wk-timeline__node--expanded .wk-timeline__dot {
     transform: none;
     box-shadow: none;
