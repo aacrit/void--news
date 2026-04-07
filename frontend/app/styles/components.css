@@ -2162,6 +2162,29 @@
 
 .nav-lens__content-link--weekly {
   font-style: italic;
+  color: var(--palette-weekly, #B91C1C);
+}
+
+.nav-lens__content-link--weekly:hover {
+  color: #D41920;
+  border-color: color-mix(in srgb, var(--palette-weekly, #B91C1C) 40%, transparent);
+}
+
+.nav-lens__content-link--history {
+  color: #5C4033;
+}
+
+.nav-lens__content-link--history:hover {
+  color: #7A5B47;
+  border-color: color-mix(in srgb, #5C4033 40%, transparent);
+}
+
+:root[data-mode="dark"] .nav-lens__content-link--weekly {
+  color: #EF5350;
+}
+
+:root[data-mode="dark"] .nav-lens__content-link--history {
+  color: #A37A66;
 }
 
 .nav-ed {
