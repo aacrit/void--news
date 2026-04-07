@@ -2062,6 +2062,8 @@
   width: var(--tl-card-w);
   position: relative;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 
   /* Card surface */
   background: var(--hist-bg-card);

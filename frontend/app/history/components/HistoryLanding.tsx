@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Link from "next/link";
 import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
 import { ERAS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
-import EventDetail from "./EventDetail";
 /* CartographerStrip deferred — removed from timeline view, kept as component for future arc/map pages */
 
 /* ===========================================================================
@@ -417,18 +417,13 @@ export default function HistoryLanding({
   const inkPathRef = useRef<SVGPathElement>(null);
   const scrollVelocityRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [activeEvent, setActiveEvent] = useState<HistoricalEvent | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [prevEra, setPrevEra] = useState<string | null>(null);
   const [eraFlashColor, setEraFlashColor] = useState<string | null>(null);
   const [entranceReady, setEntranceReady] = useState(false);
-  const activeEventIndexRef = useRef<number>(0);
   const [scrollYear, setScrollYear] = useState<number | null>(null);
   const [isMobileVertical, setIsMobileVertical] = useState(false);
   const stationRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const flipRectRef = useRef<DOMRect | null>(null);
-  const flipImageRef = useRef<string | null>(null);
-  const [flipAnimating, setFlipAnimating] = useState(false);
   /* Globe view removed — kept simple */
 
   /* ── Detect vertical (mobile) timeline mode ── */
@@ -535,7 +530,6 @@ export default function HistoryLanding({
 
   /* ── Focused index + rolling year — works for both horizontal (desktop) and vertical (mobile) ── */
   useEffect(() => {
-    if (activeEvent) return;
     const container = timelineRef.current;
     if (!container) return;
 
@@ -603,7 +597,7 @@ export default function HistoryLanding({
     container.addEventListener("scroll", updateFocusedIndex, { passive: true });
     updateFocusedIndex();
     return () => container.removeEventListener("scroll", updateFocusedIndex);
-  }, [activeEvent, positions, sortedEvents, isMobileVertical]);
+  }, [positions, sortedEvents, isMobileVertical]);
 
   /* ── Era transition flash ── */
   const currentEra = sortedEvents[focusedIndex]?.era || "ancient";
@@ -661,7 +655,7 @@ export default function HistoryLanding({
 
   /* ── Parallax scroll handler — enhanced differential (bg 0.3x = 0.7x relative) ── */
   useEffect(() => {
-    if (reducedMotion || activeEvent) return;
+    if (reducedMotion) return;
     const container = timelineRef.current;
     const bg = bgLayerRef.current;
     if (!container || !bg) return;
@@ -677,11 +671,11 @@ export default function HistoryLanding({
 
     container.addEventListener("scroll", handleScroll, { passive: true });
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [reducedMotion, activeEvent, hasScrolled]);
+  }, [reducedMotion, hasScrolled]);
 
   /* ── Momentum wheel: vertical scroll -> horizontal, snappier physics (desktop only) ── */
   useEffect(() => {
-    if (activeEvent || isMobileVertical) return; /* Skip on mobile — native vertical scroll */
+    if (isMobileVertical) return; /* Skip on mobile — native vertical scroll */
     const container = timelineRef.current;
     if (!container) return;
 
@@ -733,11 +727,11 @@ export default function HistoryLanding({
       container.removeEventListener("wheel", handleWheel);
       cancelAnimationFrame(rafId);
     };
-  }, [activeEvent, positions, isMobileVertical]);
+  }, [positions, isMobileVertical]);
 
   /* ── Edge scroll: mouse near left/right edge triggers auto-scroll (desktop) ── */
   useEffect(() => {
-    if (activeEvent || reducedMotion) return;
+    if (reducedMotion) return;
     const container = timelineRef.current;
     if (!container) return;
 
@@ -781,11 +775,10 @@ export default function HistoryLanding({
       cancelAnimationFrame(rafId);
       scrollVelocityRef.current = 0;
     };
-  }, [activeEvent, reducedMotion]);
+  }, [reducedMotion]);
 
   /* ── Auto-scroll to 1945 on initial load ── */
   useEffect(() => {
-    if (activeEvent) return;
     const container = timelineRef.current;
     if (!container || sortedEvents.length === 0) return;
 
@@ -838,70 +831,6 @@ export default function HistoryLanding({
     }
     return () => { links.forEach((l) => l.remove()); };
   }, [focusedIndex, sortedEvents]);
-
-  /* ── URL management ── */
-  const openStory = useCallback((event: HistoricalEvent) => {
-    /* Remember which card index was opened */
-    const idx = sortedEvents.findIndex((e) => e.slug === event.slug);
-    if (idx !== -1) activeEventIndexRef.current = idx;
-
-    setActiveEvent(event);
-  }, [sortedEvents]);
-
-  const closeStory = useCallback(() => {
-    setActiveEvent(null);
-    /* Scroll timeline back to the card the user was viewing */
-    requestAnimationFrame(() => {
-      const idx = activeEventIndexRef.current;
-      const station = stationRefs.current[idx];
-      if (station) {
-        station.scrollIntoView({
-          block: isMobileVertical ? "center" : "nearest",
-          inline: isMobileVertical ? "nearest" : "center",
-          behavior: "instant" as ScrollBehavior,
-        });
-      }
-    });
-  }, [isMobileVertical]);
-
-  /* Escape key closes story */
-  useEffect(() => {
-    if (!activeEvent) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActiveEvent(null);
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [activeEvent]);
-
-  /* ── Navigate between events (from EventDetail Stage 6) ── */
-  const navigateToEvent = useCallback(
-    (event: HistoricalEvent) => {
-      setActiveEvent(event);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-    []
-  );
-
-  /* ── State B: Story active — floating Back CTA + FLIP morph + inline story ── */
-  if (activeEvent) {
-    return (
-      <div className="hist-tl-wrapper hist-tl-wrapper--story-active">
-        {/* Floating Back to Timeline CTA — slides in after 1s */}
-        <BackToTimelineCTA onClose={closeStory} />
-
-        {/* Inline story */}
-        <div className="hist-inline-story-wrap">
-          <StoryContainer
-            event={activeEvent}
-            allEvents={sortedEvents}
-            onNavigateToEvent={navigateToEvent}
-            onClose={closeStory}
-          />
-        </div>
-      </div>
-    );
-  }
 
   /* ── Easter Egg: Anniversary Vigil — events glow on their date ── */
   const anniversarySlugs = useMemo(() => {
@@ -1132,7 +1061,6 @@ export default function HistoryLanding({
                   event={event}
                   index={i}
                   side={side}
-                  onOpen={openStory}
                   entranceReady={entranceReady}
                   reducedMotion={reducedMotion}
                   focused={isFocused}
@@ -1147,219 +1075,6 @@ export default function HistoryLanding({
   );
 }
 
-/* ===========================================================================
-   StoryContainer — Wraps EventDetail with swipe gesture support
-   Mobile: swipe left = next event, swipe right = previous
-   =========================================================================== */
-function StoryContainer({
-  event,
-  allEvents,
-  onNavigateToEvent,
-  onClose,
-}: {
-  event: HistoricalEvent;
-  allEvents: HistoricalEvent[];
-  onNavigateToEvent: (event: HistoricalEvent) => void;
-  onClose: () => void;
-}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-
-  /* Swipe detection for mobile next/prev navigation */
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    if (!isTouch) return;
-
-    const SWIPE_THRESHOLD = 80;
-    const SWIPE_VERTICAL_LIMIT = 50;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (!touchStartRef.current) return;
-      const touch = e.changedTouches[0];
-      const dx = touch.clientX - touchStartRef.current.x;
-      const dy = Math.abs(touch.clientY - touchStartRef.current.y);
-      touchStartRef.current = null;
-
-      /* Only count horizontal swipes */
-      if (Math.abs(dx) < SWIPE_THRESHOLD || dy > SWIPE_VERTICAL_LIMIT) return;
-
-      const sorted = allEvents;
-      const idx = sorted.findIndex((ev) => ev.slug === event.slug);
-
-      if (dx < 0 && idx < sorted.length - 1) {
-        /* Swipe left = next event */
-        onNavigateToEvent(sorted[idx + 1]);
-      } else if (dx > 0 && idx > 0) {
-        /* Swipe right = prev event */
-        onNavigateToEvent(sorted[idx - 1]);
-      }
-    };
-
-    el.addEventListener("touchstart", handleTouchStart, { passive: true });
-    el.addEventListener("touchend", handleTouchEnd, { passive: true });
-    return () => {
-      el.removeEventListener("touchstart", handleTouchStart);
-      el.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [event, allEvents, onNavigateToEvent]);
-
-  return (
-    <div ref={containerRef} className="hist-inline-story">
-      <EventDetail
-        event={event}
-        allEvents={allEvents}
-        onNavigateToEvent={onNavigateToEvent}
-        onClose={onClose}
-      />
-    </div>
-  );
-}
-
-/* ===========================================================================
-   FlipMorphOverlay — FLIP animation from card rect to full viewport
-   Creates a clone at the card's position, animates it to fill the screen,
-   then fades out to reveal the actual EventDetail underneath (L-cut).
-   =========================================================================== */
-function FlipMorphOverlay({
-  rect,
-  imageUrl,
-  onComplete,
-}: {
-  rect: DOMRect;
-  imageUrl: string | null;
-  onComplete: () => void;
-}) {
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = overlayRef.current;
-    if (!el) { onComplete(); return; }
-
-    /* Safety timeout — ensure story is always revealed even if WAAPI fails */
-    const safetyTimer = setTimeout(onComplete, 1200);
-
-    try {
-      /* Start at card position, animate to full viewport */
-      const animation = el.animate(
-        [
-          {
-            top: `${rect.top}px`,
-            left: `${rect.left}px`,
-            width: `${rect.width}px`,
-            height: `${rect.height}px`,
-            borderRadius: "2px",
-            opacity: 1,
-          },
-          {
-            top: "0px",
-            left: "0px",
-            width: "100vw",
-            height: "100vh",
-            borderRadius: "0px",
-            opacity: 1,
-          },
-        ],
-        {
-          duration: 500,
-          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-          fill: "forwards",
-        }
-      );
-
-      animation.onfinish = () => {
-        clearTimeout(safetyTimer);
-        const fadeOut = el.animate(
-          [{ opacity: 1 }, { opacity: 0 }],
-          { duration: 300, easing: "ease-out", fill: "forwards" }
-        );
-        fadeOut.onfinish = () => onComplete();
-      };
-    } catch {
-      /* WAAPI not supported — complete immediately */
-      clearTimeout(safetyTimer);
-      onComplete();
-    }
-
-    return () => { clearTimeout(safetyTimer); };
-  }, [rect, onComplete]);
-
-  return (
-    <div
-      ref={overlayRef}
-      className="hist-flip-morph"
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        top: rect.top,
-        left: rect.left,
-        width: rect.width,
-        height: rect.height,
-        zIndex: 60,
-        overflow: "hidden",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundColor: "var(--hist-paper-deep)",
-        backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
-        filter: "contrast(1.05) saturate(0.75) sepia(0.12)",
-        pointerEvents: "none",
-      }}
-    />
-  );
-}
-
-/* ===========================================================================
-   BackToTimelineCTA — Floating pill button on story page
-   Slides in from right after 1s delay. Keyboard accessible.
-   =========================================================================== */
-function BackToTimelineCTA({ onClose }: { onClose: () => void }) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  /* Also close on Escape key */
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
-  return (
-    <button
-      className={`hist-back-to-timeline${visible ? " hist-back-to-timeline--visible" : ""}`}
-      onClick={onClose}
-      aria-label="Back to timeline"
-      type="button"
-    >
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        aria-hidden="true"
-      >
-        <path d="M19 12H5" />
-        <path d="M12 19l-7-7 7-7" />
-      </svg>
-      <span>Timeline</span>
-    </button>
-  );
-}
 
 /* ===========================================================================
    FunFact — Ephemeral contextual fact positioned on the timeline track
@@ -1427,7 +1142,6 @@ function TimelineCard({
   event,
   index,
   side,
-  onOpen,
   entranceReady,
   reducedMotion,
   focused,
@@ -1435,7 +1149,6 @@ function TimelineCard({
   event: HistoricalEvent;
   index: number;
   side: "above" | "below";
-  onOpen: (event: HistoricalEvent) => void;
   entranceReady: boolean;
   reducedMotion: boolean;
   focused: boolean;
@@ -1450,20 +1163,6 @@ function TimelineCard({
 
   const year = extractYear(event.dateSort, event.datePrimary);
 
-  const handleClick = useCallback(() => {
-    onOpen(event);
-  }, [event, onOpen]);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        onOpen(event);
-      }
-    },
-    [event, onOpen]
-  );
-
   const severityClass = `hist-tl-card--${event.severity}`;
   const entranceClass = entranceReady && !reducedMotion ? " hist-tl-card--entrance" : "";
   const focusedClass = focused && !reducedMotion ? " hist-tl-card--focused" : "";
@@ -1477,13 +1176,11 @@ function TimelineCard({
   const photoSepia = 0.04 + victorDominance * 0.14;
 
   return (
-    <article
+    <Link
+      href={`/history/${event.slug}`}
       className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}`}
       data-slug={event.slug}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onClick={handleClick}
-      role="button"
+      aria-label={`${event.title} — ${event.datePrimary}`}
       style={{
         ...(reducedMotion ? {} : { "--card-index": index }),
         "--photo-sat": photoSat,
@@ -1524,20 +1221,13 @@ function TimelineCard({
           ))}
         </div>
 
-        <button
-          className="hist-tl-card__cta"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleClick();
-          }}
-          type="button"
-        >
+        <span className="hist-tl-card__cta">
           <span className="hist-tl-card__cta-text">{cta}</span>
           <span className="hist-tl-card__cta-arrow" aria-hidden="true">
             &rarr;
           </span>
-        </button>
+        </span>
       </div>
-    </article>
+    </Link>
   );
 }
