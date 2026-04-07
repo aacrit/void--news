@@ -1,10 +1,10 @@
 # void --news
 
-Last updated: 2026-04-05 (rev 32)
+Last updated: 2026-04-06 (rev 33)
 
 > **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
 
-News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 1,013 curated sources across 158 countries. World, US, Europe, South Asia editions.
+News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 1,013 curated sources across 158 countries. World edition (regional editions parked pre-launch).
 
 ## Architecture
 
@@ -213,6 +213,24 @@ void-news/
 **In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 **Shelved**: Op-Ed page (pipeline still computes axis 3).
+
+### Parking Lot (Disabled Pre-Launch — Fully Reversible)
+Features disabled to stay within Gemini Flash free tier (250 RPD). All gated by env vars or config — no code deleted.
+
+| Feature | Gate | RPD Saved | Re-enable |
+|---------|------|-----------|-----------|
+| Claude API for briefs | `CLAUDE_AVAILABLE = False` in `claude_client.py` | ~$140/month | Uncomment import |
+| Regional editions (us/europe/south-asia) | `ACTIVE_EDITIONS = ["world"]` in `main.py`, `EDITIONS` in `types.ts` | 18-24/day | Add editions back to arrays |
+| Gemini bias reasoning (step 6c) | `DISABLE_GEMINI_REASONING=1` in `pipeline.yml` | 45-60/day | Remove env var |
+| Editorial triage (step 7c) | `DISABLE_EDITORIAL_TRIAGE=1` in `pipeline.yml` | 12/day | Remove env var |
+| Audio/TTS | `DISABLE_AUDIO=1` in `pipeline.yml` | ~16/day | Remove env var |
+| Weekly digest cron | Cron commented in `weekly-digest.yml` | 100-120/Sunday | Uncomment cron |
+| Podcast RSS feeds | Gated behind `DISABLE_AUDIO` | trivial | Follows audio |
+
+**Current budget**: ~51-87 RPD/day (35% of 250 RPD limit). Comfortable headroom.
+
+### LLM Grounding Rule
+All Gemini prompts (cluster summaries, daily briefs) include: "Every fact MUST appear in the provided articles. Do not supplement with prior knowledge." Enforced in `cluster_summarizer.py` and `daily_brief_generator.py` system instructions.
 
 ## Git & Dev
 
