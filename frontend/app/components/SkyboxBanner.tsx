@@ -60,7 +60,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   }, []);
 
   if (!brief) return (
-    <div className="skb skb--compact anim-cold-open-skybox" role="complementary" aria-label="Daily Brief">
+    <div className="skb skb--compact" role="complementary" aria-label="Daily Brief">
       <div className="skb__compact">
         <div className="skb__compact-header">
           <div className="skb__compact-cols">
@@ -87,7 +87,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
 
   const rootClass = [
     "skb",
-    !hasExpandedOnce.current ? "anim-cold-open-skybox" : "",
     isCompact ? "skb--compact" : "skb--section-open",
     expandedSection ? `skb--show-${expandedSection}` : "",
   ].filter(Boolean).join(" ");
