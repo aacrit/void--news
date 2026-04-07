@@ -1975,9 +1975,54 @@
 /* ── Station — absolute positioned container for dot + stem + card ── */
 .hist-tl-full__station {
   position: absolute;
-  top: 58%; /* Shifted down to clear fixed top zone (era header + year ribbon + pills) */
+  top: 58%;
   transform: translateX(-50%);
   z-index: 3;
+  /* Scroll depth-of-field: --card-dist 0=focused, 1-6=progressively blurred */
+  filter: blur(calc(var(--card-dist, 0) * 0.4px));
+  opacity: calc(1 - var(--card-dist, 0) * 0.08);
+  transition: filter 300ms ease, opacity 300ms ease;
+}
+
+.hist-tl-full__station--focused {
+  z-index: 5;
+  filter: none;
+  opacity: 1;
+}
+
+/* ── Year labels flanking the ink track ── */
+.hist-tl-full__year-above,
+.hist-tl-full__year-below {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+  /* Depth-of-field: focused year sharp + large, neighbors blur out */
+  font-size: calc(0.55rem + (1 - min(var(--card-dist, 0), 3) / 3) * 0.35rem);
+  opacity: calc(0.7 - var(--card-dist, 0) * 0.1);
+  color: var(--hist-brass);
+}
+
+.hist-tl-full__year-above {
+  bottom: calc(100% + 6px); /* Above the dot, below above-cards */
+  transform: translateX(-50%);
+}
+
+.hist-tl-full__year-below {
+  top: calc(100% + 6px); /* Below the dot, above below-cards */
+  transform: translateX(-50%);
+}
+
+/* Focused station: year labels prominent */
+.hist-tl-full__station--focused .hist-tl-full__year-above,
+.hist-tl-full__station--focused .hist-tl-full__year-below {
+  font-weight: 600;
+  color: var(--hist-accent);
+  opacity: 0.9;
 }
 
 /* ── Dot on the track ── */
@@ -2814,6 +2859,23 @@
     left: auto !important;
     transform: none;
     margin-bottom: clamp(16px, 3vh, 32px);
+    filter: none; /* No scroll blur on mobile — native vertical scroll */
+    opacity: 1;
+  }
+
+  /* Year labels: show one above the card, hide the other */
+  .hist-tl-full__year-above {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    font-size: 0.55rem;
+    opacity: 0.5;
+    margin-bottom: 4px;
+  }
+
+  .hist-tl-full__year-below {
+    display: none;
   }
 
   /* Dots on the vertical track */
@@ -5636,6 +5698,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hist-tl-full__station {
+    filter: none;
+    opacity: 1;
+    transition: none;
+  }
   .hist-tl-full__station--ghosted {
     transition: none;
     filter: saturate(0.3);
