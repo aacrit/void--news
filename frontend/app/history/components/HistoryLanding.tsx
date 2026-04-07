@@ -780,19 +780,27 @@ export default function HistoryLanding({
     if (idx !== -1) activeEventIndexRef.current = idx;
 
     /* FLIP: Capture card rect for morph animation */
-    const cardEl = document.querySelector(`[data-slug="${event.slug}"]`) as HTMLElement | null;
-    if (cardEl && !reducedMotion) {
-      flipRectRef.current = cardEl.getBoundingClientRect();
-      flipImageRef.current = event.heroImage || event.media[0]?.url || null;
-      setFlipAnimating(true);
+    try {
+      const cardEl = document.querySelector(`[data-slug="${event.slug}"]`) as HTMLElement | null;
+      if (cardEl && !reducedMotion) {
+        flipRectRef.current = cardEl.getBoundingClientRect();
+        flipImageRef.current = event.heroImage || (event.media && event.media[0]?.url) || null;
+        setFlipAnimating(true);
+      }
+    } catch {
+      /* FLIP is non-critical — story still opens without morph */
     }
 
     setActiveEvent(event);
-    window.history.pushState(
-      { historyInline: true, slug: event.slug },
-      "",
-      `/history#${event.slug}`
-    );
+    try {
+      window.history.pushState(
+        { historyInline: true, slug: event.slug },
+        "",
+        `/history#${event.slug}`
+      );
+    } catch {
+      /* pushState can fail in some contexts — story still opens */
+    }
   }, [sortedEvents, reducedMotion]);
 
   const closeStory = useCallback(() => {
