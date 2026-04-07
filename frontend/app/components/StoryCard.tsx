@@ -58,7 +58,7 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       {/* Headline + inline Sigil + caret */}
       <h3 className="story-card__headline">
         <span className="story-card__headline-text">{story.title}</span>
-        <Sigil data={story.sigilData} size="sm" />
+        <Sigil data={story.sigilData} size="lg" />
         <CaretRight
           size={14}
           weight="bold"

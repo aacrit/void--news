@@ -78,7 +78,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
       {/* Hero headline + inline Sigil + caret */}
       <h2 className="lead-story__headline">
         <span className="lead-story__headline-text">{story.title}</span>
-        <Sigil data={story.sigilData} size="lg" />
+        <Sigil data={story.sigilData} size="xl" />
         <CaretRight
           size={16}
           weight="bold"

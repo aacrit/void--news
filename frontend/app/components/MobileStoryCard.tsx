@@ -67,7 +67,7 @@ export default function MobileStoryCard({
         <>
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
-            <Sigil data={story.sigilData} size="sm" instant />
+            <Sigil data={story.sigilData} size="lg" instant />
             <CaretRight size={14} weight="bold" aria-hidden="true" className="msc__caret" />
           </h2>
           <p className="msc__summary">{story.summary}</p>
