@@ -130,7 +130,7 @@ export default function DesktopFeed({
       {stories.length > 0 && (
         <div className="edition-line">
           <span className="edition-meta">
-            {editionMeta.label} Edition / {stories.length} stories
+            {stories.length} stories
           </span>
           <LogoWordmark height={14} />
         </div>
