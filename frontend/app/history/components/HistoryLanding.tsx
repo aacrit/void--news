@@ -846,20 +846,10 @@ export default function HistoryLanding({
     if (idx !== -1) activeEventIndexRef.current = idx;
 
     setActiveEvent(event);
-    try {
-      window.history.pushState(
-        { historyInline: true, slug: event.slug },
-        "",
-        `/history#${event.slug}`
-      );
-    } catch {
-      /* pushState can fail in some contexts — story still opens */
-    }
-  }, [sortedEvents, reducedMotion]);
+  }, [sortedEvents]);
 
   const closeStory = useCallback(() => {
     setActiveEvent(null);
-    window.history.pushState({}, "", "/history#timeline");
     /* Scroll timeline back to the card the user was viewing */
     requestAnimationFrame(() => {
       const idx = activeEventIndexRef.current;
@@ -874,36 +864,20 @@ export default function HistoryLanding({
     });
   }, [isMobileVertical]);
 
-  /* popstate listener for browser back */
+  /* Escape key closes story */
   useEffect(() => {
-    const handlePopState = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (!hash || hash === "timeline") {
-        setActiveEvent(null);
-      } else {
-        const found = sortedEvents.find((e) => e.slug === hash);
-        if (found) {
-          setActiveEvent(found);
-        } else {
-          setActiveEvent(null);
-        }
-      }
+    if (!activeEvent) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActiveEvent(null);
     };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [sortedEvents]);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [activeEvent]);
 
   /* ── Navigate between events (from EventDetail Stage 6) ── */
   const navigateToEvent = useCallback(
     (event: HistoricalEvent) => {
       setActiveEvent(event);
-      window.history.pushState(
-        { historyInline: true, slug: event.slug },
-        "",
-        `/history#${event.slug}`
-      );
-      /* Scroll to top of inline story */
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
     []
