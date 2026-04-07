@@ -845,18 +845,6 @@ export default function HistoryLanding({
     const idx = sortedEvents.findIndex((e) => e.slug === event.slug);
     if (idx !== -1) activeEventIndexRef.current = idx;
 
-    /* FLIP: Capture card rect for morph animation */
-    try {
-      const cardEl = document.querySelector(`[data-slug="${event.slug}"]`) as HTMLElement | null;
-      if (cardEl && !reducedMotion) {
-        flipRectRef.current = cardEl.getBoundingClientRect();
-        flipImageRef.current = event.heroImage || (event.media && event.media[0]?.url) || null;
-        setFlipAnimating(true);
-      }
-    } catch {
-      /* FLIP is non-critical — story still opens without morph */
-    }
-
     setActiveEvent(event);
     try {
       window.history.pushState(
@@ -925,20 +913,11 @@ export default function HistoryLanding({
   if (activeEvent) {
     return (
       <div className="hist-tl-wrapper hist-tl-wrapper--story-active">
-        {/* FLIP morph overlay — animates card rect → full screen */}
-        {flipAnimating && flipRectRef.current && (
-          <FlipMorphOverlay
-            rect={flipRectRef.current}
-            imageUrl={flipImageRef.current}
-            onComplete={() => setFlipAnimating(false)}
-          />
-        )}
-
         {/* Floating Back to Timeline CTA — slides in after 1s */}
         <BackToTimelineCTA onClose={closeStory} />
 
-        {/* Inline story — L-cut: content fades in during morph */}
-        <div className={`hist-inline-story-wrap${flipAnimating ? " hist-inline-story-wrap--entering" : ""}`}>
+        {/* Inline story */}
+        <div className="hist-inline-story-wrap">
           <StoryContainer
             event={activeEvent}
             allEvents={sortedEvents}
