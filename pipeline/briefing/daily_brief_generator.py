@@ -91,8 +91,8 @@ except ImportError:
 # Hard cap: 9 Gemini calls per run (3 per edition × 3 editions).
 # Budget: TL;DR+audio (1) + opinion (1) + retry buffer (1) per edition.
 # These are charged against a separate budget (count_call=False) so they
-# do not consume the 25-call cluster summarization budget.
-# At 3 runs/day this is 27 RPD — 1.8% of the 1500 RPD free tier.
+# do not consume the 50-call cluster summarization budget.
+# At 3 runs/day this is 27 RPD — 11% of the 250 RPD free tier.
 # ---------------------------------------------------------------------------
 _MAX_BRIEF_CALLS: int = 9
 _brief_call_count: int = 0

@@ -41,7 +41,7 @@ CLI-style naming: `void --news` (platform), `void --tl;dr` (daily brief), `void 
 void --news is a newspaper, not a feed. Every reader sees the same stories in the same order. The engine decides what is shown based on editorial importance, not user behavior. No reading history tracking, no recommendation algorithms, no "for you" logic, no user accounts. This is a locked architectural decision. Features that adapt content to individual consumption patterns violate the platform's core philosophy.
 
 ### Zero Operational Cost
-$0. All bias analysis is rule-based NLP. Gemini Flash free tier (~116/1500 RPD). GitHub Actions + Supabase + Pages all free tier. Motion One via CDN importmap.
+$0. All bias analysis is rule-based NLP. Gemini Flash free tier (250 RPD). GitHub Actions + Supabase + Pages all free tier. Motion One via CDN importmap.
 
 ### Bias Analysis — 6 Axes
 Per-article, score 0-100 + structured rationale JSONB. No LLM calls for scoring.
@@ -227,7 +227,7 @@ Features disabled to stay within Gemini Flash free tier (250 RPD). All gated by 
 | Weekly digest cron | Cron commented in `weekly-digest.yml` | 100-120/Sunday | Uncomment cron |
 | Podcast RSS feeds | Gated behind `DISABLE_AUDIO` | trivial | Follows audio |
 
-**Current budget**: ~51-87 RPD/day (35% of 250 RPD limit). Comfortable headroom.
+**Current budget**: ~177 RPD/day (71% of 250 RPD limit). 73 RPD safety buffer. Summarization cap raised to 50/run (was 25) to cover more clusters.
 
 ### LLM Grounding Rule
 All Gemini prompts (cluster summaries, daily briefs) include: "Every fact MUST appear in the provided articles. Do not supplement with prior knowledge." Enforced in `cluster_summarizer.py` and `daily_brief_generator.py` system instructions.
