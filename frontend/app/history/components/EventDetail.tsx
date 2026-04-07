@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
+import Link from "next/link";
 import type { HistoricalEvent, Perspective, MediaItem } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 
@@ -451,23 +452,21 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
               {HOOKS[nextEvent.slug] || (nextEvent.contextNarrative || nextEvent.title).split(". ").slice(0, 2).join(". ") + "."}
             </p>
             <p className="hist-next__prompt">Now read:</p>
-            <button
+            <Link
+              href={`/history/${nextEvent.slug}`}
               className="hist-next__cta"
-              type="button"
-              onClick={() => onNavigateToEvent?.(nextEvent)}
             >
               {CTAS[nextEvent.slug] ||
                 `Explore ${nextEvent.perspectives.length} accounts of ${nextEvent.title}`}
-            </button>
+            </Link>
           </div>
         ) : (
-          <button
+          <Link
+            href="/history"
             className="hist-next__cta"
-            type="button"
-            onClick={() => onClose?.()}
           >
             Return to The Archive
-          </button>
+          </Link>
         )}
       </section>
     </div>
