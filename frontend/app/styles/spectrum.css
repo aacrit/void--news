@@ -2190,89 +2190,103 @@
   color: var(--fg-muted);
 }
 
-/* ---- View toggle — 3-button pill ---- */
-.dd-sv-toggle {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  gap: 0;
-  z-index: 2;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--bg-card);
+/* ---- (Toggle removed — single merged organic view) ---- */
+
+/* ==========================================================================
+   Merged Organic View — 5-beat cinematic entrance
+   ========================================================================== */
+
+.dd-sv-view {
+  position: relative;
 }
 
-.dd-sv-toggle__btn {
+.dd-sv-view__svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Beat 1: Fill — no CSS anim, rAF handles the rise */
+.dd-sv-view__fill {
+  /* rAF writes d= attribute directly */
+}
+
+/* Beat 2: Stroke — dashoffset transition triggered by JS at 150ms */
+.dd-sv-view__stroke {
+  transition: stroke-dashoffset 550ms var(--ease-cinematic);
+  opacity: 0.65;
+}
+
+/* Beat 3: Contour lines — fade in at 350ms */
+.dd-sv-view__contour {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.dd-sv-view--animated .dd-sv-view__contour {
+  opacity: 0.22;
+}
+
+/* Beat 4: Amber mean line — fades in at 400ms */
+.dd-sv-view__mean {
+  opacity: 0;
+  transition: opacity 150ms ease-out 400ms;
+}
+
+.dd-sv-view--animated .dd-sv-view__mean {
+  opacity: 0.65;
+}
+
+/* Dark mode: amber mean gets subtle glow */
+:root[data-mode="dark"] .dd-sv-view--animated .dd-sv-view__mean {
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cin-amber) 50%, transparent));
+}
+
+/* Beat 5: Bimodal peak callouts — fade in at 500ms with slight upward settle */
+.dd-sv-view__bm-peak {
+  opacity: 0;
+  transition: opacity 250ms ease-out 500ms, transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms;
+  transform: translateY(4px);
+  transform-box: fill-box;
+}
+
+.dd-sv-view--animated .dd-sv-view__bm-peak {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Dead zone labels — static, subtle */
+.dd-sv-view__dead-label {
+  opacity: 0;
+  transition: opacity 300ms ease-out 600ms;
+}
+
+.dd-sv-view--animated .dd-sv-view__dead-label {
+  opacity: 0.45;
+}
+
+/* Split banner — left-right bimodal signal */
+.dd-sv-view__split-banner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 24px;
-  padding: 0;
-  margin: 0;
-  background: none;
-  border: none;
-  border-right: 1px solid var(--border-subtle);
-  color: var(--fg-tertiary);
-  cursor: pointer;
-  transition: color var(--dur-fast) ease;
-  position: relative;
-}
-
-.dd-sv-toggle__btn:last-child {
-  border-right: none;
-}
-
-.dd-sv-toggle__btn:hover {
-  color: var(--fg-secondary);
-}
-
-.dd-sv-toggle__btn--active {
-  color: var(--fg-primary);
-}
-
-.dd-sv-toggle__btn--active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 4px;
-  right: 4px;
-  height: 2px;
-  background: var(--cin-amber);
-  border-radius: 1px;
-}
-
-.dd-sv-toggle__btn:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: -2px;
-}
-
-/* ---- View area ---- */
-.dd-sv__view {
-  min-height: 40px;
-  position: relative;
-  opacity: 1;
-  transform: scale(1);
-  /* ease-out: entering views accelerate into place, not drag */
-  transition:
-    opacity 200ms ease-out,
-    transform 200ms ease-out,
-    height 250ms ease;
-}
-
-.dd-sv__view--exiting {
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-top: 2px;
   opacity: 0;
-  transform: scale(0.97);
-  /* ease-in: exiting views decelerate as they disappear */
-  transition: opacity 150ms ease-in, transform 150ms ease-in;
+  animation: svSplitBannerIn 300ms ease-out 600ms both;
 }
 
-.dd-sv__view--entering {
-  opacity: 0;
-  transform: scale(0.97);
-  transition: opacity 200ms ease-out, transform 200ms ease-out;
+.dd-sv-view__split-icon {
+  font-size: 8px;
+  color: var(--cin-amber);
+}
+
+@keyframes svSplitBannerIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ---- Shared axis ---- */
@@ -2583,225 +2597,33 @@
 }
 
 /* ==========================================================================
-   Ink Ridge — View A (shape only, no source markers)
-   ========================================================================== */
-
-.dd-sv-ridge {
-  position: relative;
-}
-
-.dd-sv-ridge__svg {
-  display: block;
-  overflow: visible;
-}
-
-/* Fill fade-in */
-.dd-sv-ridge__fill {
-  opacity: 0;
-  transition: opacity 400ms ease-out;
-}
-
-.dd-sv-ridge--animated .dd-sv-ridge__fill {
-  opacity: 1;
-}
-
-/* Stroke draw */
-.dd-sv-ridge__stroke {
-  transition: stroke-dashoffset 600ms var(--ease-cinematic);
-}
-
-/* Mean line */
-.dd-sv-ridge__mean {
-  opacity: 0;
-}
-
-.dd-sv-ridge--animated .dd-sv-ridge__mean {
-  animation: ridgeMeanIn 300ms ease-out 200ms both;
-}
-
-@keyframes ridgeMeanIn {
-  from { opacity: 0; }
-  to { opacity: 0.5; }
-}
-
-/* ==========================================================================
-   Witness Line — View B (whisker stems only, no source markers)
-   ========================================================================== */
-
-.dd-sv-witness {
-  position: relative;
-}
-
-.dd-sv-witness__svg {
-  display: block;
-  overflow: visible;
-}
-
-/* Track draw */
-.dd-sv-witness__track {
-  stroke-dasharray: 395;
-  stroke-dashoffset: 395;
-}
-
-.dd-sv-witness--animated .dd-sv-witness__track {
-  animation: witnessTrackDraw 350ms var(--ease-cinematic) both;
-}
-
-@keyframes witnessTrackDraw {
-  from { stroke-dashoffset: 395; }
-  to { stroke-dashoffset: 0; }
-}
-
-/* Whisker stems — grow from bottom */
-.dd-sv-witness__whisker {
-  transform-origin: bottom center;
-  transform-box: fill-box;
-  transform: scaleY(0);
-}
-
-.dd-sv-witness--animated .dd-sv-witness__whisker {
-  animation: witnessWhiskerIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes witnessWhiskerIn {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-/* ==========================================================================
-   Terrain Map — View C (terrain shape only, no pebbles/crosshair)
-   ========================================================================== */
-
-.dd-sv-terrain {
-  position: relative;
-}
-
-.dd-sv-terrain__svg {
-  display: block;
-  overflow: visible;
-}
-
-/* Fill fade */
-.dd-sv-terrain__fill {
-  opacity: 0;
-  transition: opacity 400ms ease-out 200ms;
-}
-
-.dd-sv-terrain--animated .dd-sv-terrain__fill {
-  opacity: 1;
-}
-
-/* Stroke */
-.dd-sv-terrain__stroke {
-  opacity: 0;
-  transition: opacity 300ms ease-out 300ms;
-}
-
-.dd-sv-terrain--animated .dd-sv-terrain__stroke {
-  opacity: 0.6;
-}
-
-/* Contour lines */
-.dd-sv-terrain__contour {
-  opacity: 0;
-}
-
-.dd-sv-terrain--animated .dd-sv-terrain__contour {
-  animation: terrainContourIn 200ms ease-out both;
-}
-
-@keyframes terrainContourIn {
-  from { opacity: 0; }
-  to { opacity: 0.3; }
-}
-
-/* Peak callout */
-.dd-sv-terrain__peak {
-  opacity: 0;
-}
-
-.dd-sv-terrain--animated .dd-sv-terrain__peak {
-  animation: terrainPeakIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms both;
-}
-
-@keyframes terrainPeakIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-    transform-box: fill-box;
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    transform-box: fill-box;
-  }
-}
-
-/* ==========================================================================
-   Reduced motion — all spectrum views
+   Reduced motion — merged organic view + source row
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .dd-sv__view {
-    transition: none;
-  }
-
-  .dd-sv-ridge__fill {
-    transition: none;
-    opacity: 1;
-  }
-
-  .dd-sv-ridge__stroke {
+  /* Stroke: JS already checks matchMedia and skips dashoffset setup */
+  .dd-sv-view__stroke {
     transition: none;
     stroke-dashoffset: 0 !important;
     stroke-dasharray: none !important;
   }
 
-  .dd-sv-ridge__mean {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
+  .dd-sv-view__contour,
+  .dd-sv-view__mean,
+  .dd-sv-view__bm-peak,
+  .dd-sv-view__dead-label {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .dd-sv-view__split-banner {
+    animation: none;
     opacity: 1;
   }
 
-  .dd-sv-witness__track {
-    animation-duration: 0.01ms !important;
-    stroke-dashoffset: 0;
-  }
-
-  .dd-sv-witness__whisker {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    transform: scaleY(1);
-  }
-
-  .dd-sv-terrain__fill {
-    transition: none;
-    opacity: 1;
-  }
-
-  .dd-sv-terrain__stroke {
-    transition: none;
-    opacity: 0.6;
-  }
-
-  .dd-sv-terrain__contour {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    opacity: 0.3;
-  }
-
-  .dd-sv-terrain__peak {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    opacity: 1;
-    transform: none;
-  }
-
-  /* Source row — no transition animations */
+  /* Source row */
   .dd-sv-sources__avatars {
     transition: none;
   }
@@ -2819,23 +2641,6 @@
   .dd-sv {
     display: flex;
     flex-direction: column;
-  }
-
-  .dd-sv-toggle {
-    position: relative;
-    top: auto;
-    right: auto;
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: var(--space-2);
-    order: -1;
-  }
-
-  .dd-sv-toggle__btn {
-    width: 32px;
-    height: 28px;
-    min-width: 44px;
-    min-height: 44px;
   }
 
   /* Smaller avatars on mobile */
