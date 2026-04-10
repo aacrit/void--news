@@ -80,12 +80,22 @@ function computeKDE(values: number[], bandwidth: number, points = 100): number[]
   });
 }
 
-function silvermanBandwidth(values: number[]): number {
+/**
+ * Robust bandwidth — normal reference rule with IQR correction.
+ * Uses min(std, IQR/1.34) to avoid over-smoothing bimodal distributions.
+ * Silverman's rule uses std alone, which smears two peaks into one hump.
+ */
+function robustBandwidth(values: number[]): number {
   const n = values.length;
-  if (n < 2) return 15;
+  if (n < 2) return 8;
   const mean = values.reduce((s, v) => s + v, 0) / n;
   const std = Math.sqrt(values.reduce((s, v) => s + (v - mean) ** 2, 0) / n);
-  return Math.max(8, 1.06 * (std || 10) * Math.pow(n, -0.2));
+  const sorted = [...values].sort((a, b) => a - b);
+  const q1 = sorted[Math.floor(n * 0.25)] ?? sorted[0];
+  const q3 = sorted[Math.floor(n * 0.75)] ?? sorted[n - 1];
+  const iqrNorm = (q3 - q1) / 1.34; // IQR scaled to std units
+  const spread = Math.min(std || 10, iqrNorm > 0 ? iqrNorm : std || 10);
+  return Math.max(4, 0.9 * spread * Math.pow(n, -0.2));
 }
 
 /** Normalize KDE so peak = 1.0 */
@@ -465,13 +475,13 @@ interface BimodalInfo {
 function detectBimodal(densities: number[]): BimodalInfo | null {
   if (densities.length < 10) return null;
 
-  // Find local maxima with significance ≥ 25% of normalized max (already 1.0)
+  // Find local maxima ≥ 20% of normalized max
   const peaks: Array<{ idx: number; density: number }> = [];
   for (let i = 2; i < densities.length - 2; i++) {
     if (
       densities[i] > densities[i - 1] &&
       densities[i] > densities[i + 1] &&
-      densities[i] >= 0.25
+      densities[i] >= 0.20
     ) {
       peaks.push({ idx: i, density: densities[i] });
     }
@@ -483,6 +493,11 @@ function detectBimodal(densities: number[]): BimodalInfo | null {
   const [p1, p2] = peaks.slice(0, 2);
   const [left, right] = p1.idx < p2.idx ? [p1, p2] : [p2, p1];
 
+  // Peaks must be ≥ 15 lean-points apart — prevents noise within center from triggering
+  const leftLean = (left.idx / (densities.length - 1)) * 100;
+  const rightLean = (right.idx / (densities.length - 1)) * 100;
+  if (rightLean - leftLean < 15) return null;
+
   // Valley between peaks
   let valleyIdx = left.idx;
   let valleyDensity = densities[left.idx];
@@ -490,13 +505,14 @@ function detectBimodal(densities: number[]): BimodalInfo | null {
     if (densities[i] < valleyDensity) { valleyDensity = densities[i]; valleyIdx = i; }
   }
 
-  // Bimodal only if valley < 30% of the lower peak
-  if (valleyDensity >= Math.min(left.density, right.density) * 0.3) return null;
+  // Bimodal when valley < 55% of lower peak — catches real editorial splits,
+  // not just polar extremes (loosened from 30% per CEO advisory)
+  if (valleyDensity >= Math.min(left.density, right.density) * 0.55) return null;
 
   return {
     peaks: [
-      { lean: (left.idx / (densities.length - 1)) * 100, density: left.density },
-      { lean: (right.idx / (densities.length - 1)) * 100, density: right.density },
+      { lean: leftLean, density: left.density },
+      { lean: rightLean, density: right.density },
     ],
     valleyLean: (valleyIdx / (densities.length - 1)) * 100,
     valleyDensity,
@@ -546,13 +562,21 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
 
   const W = 400;
   const svgH = 60;
-  const isFlat = n <= 3;
-  const isLow = n >= 4 && n <= 7;
+  const isFlat = n <= 3;  // dot strip — no KDE
+  const isLow = n >= 4 && n <= 7; // tight bandwidth + source dots overlay
   const peakH = isFlat ? 0 : isLow ? 26 : 48;
+
+  // Standard deviation of lean — used for divergence classification
+  const std = useMemo(() => {
+    if (leans.length < 2) return 0;
+    const m = leans.reduce((s, v) => s + v, 0) / leans.length;
+    return Math.sqrt(leans.reduce((s, v) => s + (v - m) ** 2, 0) / leans.length);
+  }, [leans]);
 
   const densities = useMemo(() => {
     if (isFlat) return null;
-    const bw = isLow ? 20 : silvermanBandwidth(leans);
+    // isLow: fixed bw=6 (Silverman at n=5 gives ~12 — obliterates two clusters)
+    const bw = isLow ? 6 : robustBandwidth(leans);
     const raw = computeKDE(leans, bw, 100);
     return normalizeKDE(raw);
   }, [leans, isFlat, isLow]);
@@ -589,7 +613,7 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
 
   // Bimodal & dead-zone detection
   const bimodal = useMemo(() => {
-    if (!densities || isFlat || n < 6) return null;
+    if (!densities || isFlat || n < 5) return null;
     return detectBimodal(densities);
   }, [densities, isFlat, n]);
 
@@ -597,6 +621,16 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
     if (!densities || isFlat || n < 4) return [];
     return detectDeadZones(densities);
   }, [densities, isFlat, n]);
+
+  // 4-state coverage classification
+  // consensus (silent) / leaning / divergent / split
+  type CoverageClass = "consensus" | "leaning" | "divergent" | "split";
+  const coverage = useMemo((): CoverageClass => {
+    if (bimodal) return "split";
+    if (std >= 18) return "divergent";
+    if (mean < 38 || mean > 62) return "leaning";
+    return "consensus";
+  }, [bimodal, std, mean]);
 
   const gradStops = LEAN_GRADIENT_STOPS;
 
@@ -681,12 +715,26 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
           )}
         </defs>
 
-        {/* Flat baseline — ≤3 sources */}
+        {/* Dot strip — ≤3 sources: honest dots, no KDE curve */}
         {isFlat && (
-          <line
-            x1="10" y1={svgH - 6} x2={W - 10} y2={svgH - 6}
-            stroke="var(--fg-tertiary)" strokeWidth="1.5" opacity="0.4"
-          />
+          <>
+            <line
+              x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
+              stroke="var(--fg-muted)" strokeWidth="0.75" opacity="0.25"
+            />
+            {sources.map((s, i) => (
+              <circle
+                key={`dot-${i}`}
+                cx={(s.politicalLean / 100) * W}
+                cy={svgH - 8}
+                r="5"
+                fill="none"
+                strokeWidth="1.5"
+                className="dd-sv-view__dot"
+                data-lean={leanToBucket(s.politicalLean)}
+              />
+            ))}
+          </>
         )}
 
         {/* Beat 1: Ink wash fill — rises first, soft organic texture */}
@@ -726,6 +774,25 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
             className="dd-sv-view__stroke"
           />
         )}
+
+        {/* Source dots overlay — n=4-7 only: ground truth on the KDE curve */}
+        {isLow && densities && sources.map((s, i) => {
+          const x = (s.politicalLean / 100) * W;
+          const scaledD = densities.map((d) => d * (peakH / (svgH - 12)));
+          const y = getYOnCurve(s.politicalLean, scaledD, svgH, 12);
+          return (
+            <circle
+              key={`src-dot-${i}`}
+              cx={x}
+              cy={y}
+              r="2.5"
+              fill="none"
+              strokeWidth="1.5"
+              className="dd-sv-view__src-dot"
+              data-lean={leanToBucket(s.politicalLean)}
+            />
+          );
+        })}
 
         {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
         {!isFlat && (
@@ -779,11 +846,18 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
         ))}
       </svg>
 
-      {/* Bimodal split banner — only fired when distribution genuinely splits */}
-      {bimodal && (
-        <div className="dd-sv-view__split-banner" aria-live="polite">
-          <span className="dd-sv-view__split-icon" aria-hidden="true">◈</span>
-          Left-right split — sources diverge
+      {/* 4-state coverage banner — consensus is silent (no banner) */}
+      {coverage !== "consensus" && (
+        <div
+          className={`dd-sv-view__banner dd-sv-view__banner--${coverage}`}
+          aria-live="polite"
+        >
+          <span className="dd-sv-view__banner-icon" aria-hidden="true">
+            {coverage === "split" ? "◈" : coverage === "divergent" ? "◐" : "◑"}
+          </span>
+          {coverage === "split"    && "Left-right split — sources diverge"}
+          {coverage === "divergent" && "Wide spectrum — no consensus"}
+          {coverage === "leaning"  && `Leaning ${mean < 50 ? "left" : "right"}`}
         </div>
       )}
     </div>

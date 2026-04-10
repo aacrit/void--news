@@ -2264,8 +2264,8 @@
   opacity: 0.45;
 }
 
-/* Split banner — left-right bimodal signal */
-.dd-sv-view__split-banner {
+/* ---- 4-state coverage banner ---- */
+.dd-sv-view__banner {
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -2276,18 +2276,55 @@
   color: var(--fg-muted);
   margin-top: 2px;
   opacity: 0;
-  animation: svSplitBannerIn 300ms ease-out 600ms both;
+  animation: svBannerIn 300ms ease-out 600ms both;
 }
 
-.dd-sv-view__split-icon {
+.dd-sv-view__banner-icon {
   font-size: 8px;
-  color: var(--cin-amber);
 }
 
-@keyframes svSplitBannerIn {
+/* Split: amber — highest urgency */
+.dd-sv-view__banner--split .dd-sv-view__banner-icon { color: var(--cin-amber); }
+.dd-sv-view__banner--split { color: var(--fg-secondary); }
+
+/* Divergent: muted — notable but not alarming */
+.dd-sv-view__banner--divergent .dd-sv-view__banner-icon { color: var(--fg-tertiary); }
+
+/* Leaning: lean-colored icon */
+.dd-sv-view__banner--leaning .dd-sv-view__banner-icon { color: var(--fg-tertiary); }
+
+@keyframes svBannerIn {
   from { opacity: 0; transform: translateY(-2px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ---- Source dots (n≤3 dot strip + n=4-7 overlay) ---- */
+.dd-sv-view__dot,
+.dd-sv-view__src-dot {
+  opacity: 0;
+  transition: opacity 300ms ease-out 200ms;
+}
+
+.dd-sv-view--animated .dd-sv-view__dot,
+.dd-sv-view--animated .dd-sv-view__src-dot {
+  opacity: 0.8;
+}
+
+/* Lean-colored strokes via data-lean */
+.dd-sv-view__dot[data-lean="far-left"],
+.dd-sv-view__src-dot[data-lean="far-left"]     { stroke: var(--bias-far-left); }
+.dd-sv-view__dot[data-lean="left"],
+.dd-sv-view__src-dot[data-lean="left"]         { stroke: var(--bias-left); }
+.dd-sv-view__dot[data-lean="center-left"],
+.dd-sv-view__src-dot[data-lean="center-left"]  { stroke: var(--bias-center-left); }
+.dd-sv-view__dot[data-lean="center"],
+.dd-sv-view__src-dot[data-lean="center"]       { stroke: var(--bias-center); }
+.dd-sv-view__dot[data-lean="center-right"],
+.dd-sv-view__src-dot[data-lean="center-right"] { stroke: var(--bias-center-right); }
+.dd-sv-view__dot[data-lean="right"],
+.dd-sv-view__src-dot[data-lean="right"]        { stroke: var(--bias-right); }
+.dd-sv-view__dot[data-lean="far-right"],
+.dd-sv-view__src-dot[data-lean="far-right"]    { stroke: var(--bias-far-right); }
 
 /* ---- Shared axis ---- */
 .dd-sv__axis {
@@ -2618,9 +2655,15 @@
     transform: none !important;
   }
 
-  .dd-sv-view__split-banner {
+  .dd-sv-view__banner {
     animation: none;
     opacity: 1;
+  }
+
+  .dd-sv-view__dot,
+  .dd-sv-view__src-dot {
+    transition: none;
+    opacity: 0.8;
   }
 
   /* Source row */
