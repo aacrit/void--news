@@ -763,19 +763,30 @@ def summarize_clusters_batch(clusters: list[dict],
 
     results: dict[int, dict] = {}
     p1_ok = p2_ok = p3_ok = 0
+    consecutive_failures = 0
+    _CIRCUIT_BREAKER_THRESHOLD = 5  # bail if 5 clusters fail in a row (API down)
+    attempted_pool1: set[int] = set()  # track which pool-1 indices were actually tried
 
     for idx in all_candidates:
+        if consecutive_failures >= _CIRCUIT_BREAKER_THRESHOLD:
+            print(f"  [warn] Circuit breaker triggered after {consecutive_failures} consecutive failures — Gemini overloaded, aborting batch")
+            break
+        if idx in pool1_set:
+            attempted_pool1.add(idx)
         articles = clusters[idx].get("articles", [])
         cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
         result = summarize_cluster(articles, claims_consensus=cc)
         if result:
             results[idx] = result
+            consecutive_failures = 0  # reset on success
             if idx in pool1_set:
                 p1_ok += 1
             elif idx in pool2_set:
                 p2_ok += 1
             else:
                 p3_ok += 1
+        else:
+            consecutive_failures += 1
 
     total_ok = p1_ok + p2_ok + p3_ok
     total_att = len(all_candidates)
@@ -797,4 +808,6 @@ def summarize_clusters_batch(clusters: list[dict],
         print(f"  Summary avg {avg_s:.1f} words, "
               f"{out_of_range_s}/{len(summary_lens)} out of 250-350 range")
 
-    return results, attempted - results.keys()
+    # Return only pool-1 indices that were attempted but failed — circuit-breaker
+    # skipped indices are NOT cleared (their rule-based summaries stay as fallback).
+    return results, attempted_pool1 - results.keys()
