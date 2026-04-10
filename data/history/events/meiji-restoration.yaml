@@ -414,6 +414,82 @@ perspectives:
   - The lived experience of rapid modernization — psychological and cultural dislocation at the individual level
   - The Ainu and Ryukyuan peoples, whose incorporation into the Japanese state involved cultural erasure
   - The role of religion (Shinto as state ideology) in legitimating the Meiji system
+- viewpoint: Korean / Asian Neighbor
+  viewpoint_type: vanquished
+  region_origin: east-asia
+  narrative: 'On February 26, 1876, three Japanese warships appeared off Ganghwa Island, near the mouth of the Han River leading to Seoul. Japan demanded that Korea sign a trade treaty. The Japanese envoy,
+    Kuroda Kiyotaka, brought 800 soldiers. The Treaty of Ganghwa, signed on February 27, opened three Korean ports to Japanese trade, granted extraterritorial rights to Japanese nationals in Korea, and
+    declared Korea an "independent state" — a formula designed to sever Korea''s tributary relationship with Qing China and bring it into Japan''s sphere. Every clause replicated the unequal treaties that
+    Perry had imposed on Japan twenty-two years earlier. The student had learned the lesson precisely.
+
+
+    Korea was the laboratory where Meiji Japan tested the tools of Western imperialism. Ito Hirobumi, who had drafted Japan''s constitution and served four terms as prime minister, became the first Resident-General
+    of Korea in 1905, after Japan''s victory in the Russo-Japanese War placed the peninsula under Japanese "protection." Ito administered Korea''s foreign affairs, suppressed the Korean press, and dissolved
+    the Korean army. On October 26, 1909, An Jung-geun, a Korean independence activist, shot Ito dead at Harbin railway station in Manchuria. An was executed five months later; he is a national hero in
+    both Koreas. Japan formally annexed Korea on August 22, 1910.
+
+
+    Thirty-five years of Japanese colonial rule (1910-1945) restructured Korean society along lines dictated by Tokyo. The Government-General, headquartered in a massive building constructed directly in
+    front of the Gyeongbokgung Palace to symbolize Japanese authority over the Joseon dynasty, administered Korea as a resource extraction zone. Land surveys between 1910 and 1918 transferred approximately
+    40% of Korean agricultural land to Japanese ownership. Korean rice was shipped to Japan to feed its industrial workforce; Korean farmers ate less so Japanese factory workers could eat more. By the late
+    1930s, the colonial regime intensified assimilation: Korean-language instruction was banned in schools in 1938, Koreans were forced to adopt Japanese names (the soshi-kaimei policy of 1940), and Shinto
+    shrine worship was made compulsory.
+
+
+    The "comfort women" system represents the most documented atrocity. Between 1932 and 1945, the Imperial Japanese military established a network of sexual slavery stations across occupied Asia. Estimates
+    of the total number of women coerced range from 20,000 to 200,000; a large proportion were Korean. The women — many of them teenagers — were recruited through deception, coercion, and outright abduction.
+    The issue remains unresolved between Japan and South Korea in the 2020s, with survivors demanding an apology that Japanese governments have alternately offered and qualified.
+
+
+    Taiwan experienced a parallel colonization. Ceded by China after the First Sino-Japanese War in 1895, Taiwan was Japan''s first formal colony. The colonial government built infrastructure — railways,
+    hospitals, schools — but the benefits served Japanese settlers and strategic interests. Taiwanese resistance movements were suppressed; the Wushe Incident of 1930, in which indigenous Seediq people
+    killed 134 Japanese settlers, was followed by retaliatory bombardment with poison gas. China itself paid the Meiji transformation''s first international price: defeat in the Sino-Japanese War of 1894-1895,
+    an indemnity of 200 million Kuping taels (roughly $150 million in contemporary terms), and the loss of Taiwan and the Pescadores. The indemnity financed Japan''s gold standard and further industrialization.
+    China''s defeat funded Japan''s rise.
+
+
+    From Seoul, Taipei, and Beijing, the Meiji Restoration was not a national renaissance. It was the moment a neighbor armed itself with Western weapons, Western legal fictions, and Western racial theories,
+    and turned them on the peoples closest to hand.
+
+    '
+  key_arguments:
+  - Japan replicated Western imperialism on its neighbors — imposing on Korea the same unequal treaties Perry had imposed on Japan
+  - Korea's annexation (1910) and 35 years of colonial rule erased Korean political sovereignty, language, and cultural identity
+  - The comfort women system was a direct product of the militarized state that Meiji modernization built
+  - 'China''s 1895 war indemnity of 200 million taels funded Japan''s industrialization — the vanquished financed the victor''s rise'
+  sources:
+  - title: Japan's Colonization of Korea
+    author: Alexis Dudden
+    year: '2005'
+    type: book
+    doi: 10.21313/hawaii/9780824828165.001.0001
+  - title: Korea Between Empires, 1895-1919
+    author: Andre Schmid
+    year: '2002'
+    type: book
+    archive_url: https://archive.org/details/koreabetweenempi0000schm
+  - title: 'Comfort Women: Sexual Slavery in the Japanese Military During World War II'
+    author: Yoshimi Yoshiaki
+    year: '1995'
+    type: book
+    doi: 10.7312/yosh13532
+  notable_quotes:
+  - text: I am not afraid of death. I came here to fight for Korean independence and for peace in Asia.
+    speaker: An Jung-geun
+    context: Statement after assassinating Ito Hirobumi at Harbin station, October 26, 1909
+  - text: The Japanese have taken our country, our names, and our language. What remains for us except our dignity?
+    speaker: Korean independence declaration
+    context: March First Movement, Seoul, March 1, 1919 — signed by 33 national representatives
+  emphasized:
+  - Japan imposed on Korea the same unequal treaty structure it had suffered under Perry
+  - Colonial economic extraction — Korean rice shipped to Japan, Korean land transferred to Japanese owners
+  - Forced cultural assimilation — language bans, name changes, compulsory Shinto worship
+  - The comfort women system as the gendered cost of Meiji militarism
+  omitted:
+  - Japanese colonial infrastructure development (railways, hospitals, schools) and its mixed legacy
+  - Korean collaborators who participated in and benefited from colonial administration
+  - Intra-Korean political divisions over how to respond to Japanese encroachment
+  - Japan's own experience of Western coercion that motivated its imperial expansion
 media:
 - media_type: photograph
   title: Emperor Meiji, 1873

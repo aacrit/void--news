@@ -446,6 +446,83 @@ perspectives:
   - Economic, class, and gender dimensions that Thucydides minimized and realists inherit — women appear in his text as victims (plague), property (Melos), or as subjects of instruction to be silent (Funeral
     Oration)
   - Non-Western traditions of historical analysis that developed independently of Thucydides
+- viewpoint: Non-Athenian Greek Cities / Subject Allies
+  viewpoint_type: vanquished
+  region_origin: europe
+  narrative: 'The envoys from Athens arrived at Melos in the summer of 416 BCE. Their message was simple: join the Athenian empire or be destroyed. The Melians were a small island community, a Spartan colony
+    that had maintained neutrality throughout the war. They had attacked no one. They asked only to be left alone. The Athenian envoys dismissed every argument — justice, gods, tradition. "The strong do
+    what they can," they told the Melians. "The weak suffer what they must." The Melians refused to submit. Athens besieged the island for the winter. In the spring of 415, the Melians surrendered. Athens
+    executed every adult male and sold every woman and child into slavery. Then it colonized the empty island with 500 Athenian settlers.
+
+
+    Melos was not an exception. It was the logic of the Delian League stripped of pretense. The League had been founded in 478 BCE as a voluntary alliance against Persia. By the 450s, it was an empire.
+    Athens moved the common treasury from Delos to the Acropolis in 454, using allied tribute — 600 talents annually from roughly 150 cities — to build the Parthenon. The monument that symbolizes democracy
+    was financed by imperial extraction. When Naxos attempted to leave the League around 470 BCE, Athens besieged it and forced it back. Thasos revolted in 465; Athens crushed it and confiscated its gold
+    mines. Samos rebelled in 440; Pericles personally commanded the nine-month siege that brought it to heel.
+
+
+    The allies paid, rowed, and died. Athenian triremes required 170 oarsmen each; the allied cities supplied both ships and crews. Allied soldiers fought in Athenian campaigns from Egypt to Sicily. The
+    tribute lists, carved on stone stelae on the Acropolis and partially surviving, record payments from Aegina, Lesbos, Chios, Byzantium, and dozens of smaller communities. The tribute was assessed by
+    Athens, collected by Athenian officials, and spent by the Athenian assembly. The allies had no vote in the assembly that decided how their money was used.
+
+
+    Mytilene on Lesbos revolted in 428 BCE. Athens suppressed the revolt and debated the punishment. Cleon, the demagogue, persuaded the assembly to execute all adult men and enslave the women and children.
+    A trireme was dispatched with the order. The next day, the assembly reconsidered. Diodotus argued not for mercy but for pragmatism: killing the population would destroy a valuable asset and encourage
+    other allies to fight to the death rather than surrender. A second trireme was sent, rowing through the night to arrive before the execution order could be carried out. It arrived just in time. The
+    thousand ringleaders were executed instead. The reprieve was not clemency — it was accounting.
+
+
+    Scione, a small city on the Pallene peninsula, revolted during a truce between Athens and Sparta in 423 BCE. Cleon again proposed the execution of all men and enslavement of all women and children.
+    This time, there was no second vote. When Athens captured Scione in 421, the sentence was carried out. The women and children were sold. The land was given to Plataean refugees — themselves victims
+    of Spartan brutality, now beneficiaries of Athenian brutality against others.
+
+
+    Thucydides recorded these events because he understood their meaning: Athens, the champion of liberty against Persia, had become the thing it claimed to oppose. The war was experienced by the smaller
+    cities of the Greek world not as a contest between rival systems but as a catastrophe inflicted by both. Spartan armies burned their fields; Athenian fleets demanded their tribute and their obedience.
+    Neutrality was not permitted. Independence was punished. The Peloponnesian War was not two powers fighting each other. It was two powers grinding the smaller cities between them.
+
+    '
+  key_arguments:
+  - The Delian League began as a voluntary alliance against Persia and became an Athenian empire by the 450s
+  - Melos, Scione, and Mytilene demonstrate that Athens punished neutrality and revolt with massacre and enslavement
+  - Allied cities paid tribute, supplied crews, and fought in Athens's wars without any voice in Athenian decision-making
+  - The war was experienced by smaller cities as imperial violence from both sides — neither Athens nor Sparta offered freedom
+  sources:
+  - title: History of the Peloponnesian War
+    author: Thucydides, translated by Rex Warner
+    year: 1954 (original c. 400 BCE)
+    type: book
+    doi: 10.1093/oseo/instance.00266021
+    openlibrary: OL7127065M
+    archive_url: https://archive.org/details/historyofpelopon0000thuc
+  - title: The Athenian Empire
+    author: Russell Meiggs
+    year: '1972'
+    type: book
+    doi: 10.1093/acprof:oso/9780198142348.001.0001
+    openlibrary: OL5094785M
+  - title: 'Thucydides and the Idea of History: Between Science and Literature'
+    author: Neville Morley
+    year: '2014'
+    type: book
+    doi: 10.5040/9781472511539
+  notable_quotes:
+  - text: The strong do what they can; the weak suffer what they must.
+    speaker: Athenian envoys to Melos (as rendered by Thucydides)
+    context: The Melian Dialogue, 416 BCE — spoken to a neutral city before its destruction
+  - text: The Athenians took the city, put to death all the grown men whom they took, and sold the women and children for slaves. They then colonized Melos with five hundred settlers of their own.
+    speaker: Thucydides
+    context: History of the Peloponnesian War, 5.116 — the sentence on Melos, 415 BCE
+  emphasized:
+  - The transformation of the Delian League from voluntary alliance to coercive empire
+  - Melos as the paradigmatic case — neutrality punished by annihilation
+  - Allied cities as subjects without political voice in the empire that taxed and conscripted them
+  - Both Athens and Sparta destroyed smaller cities that fell between them
+  omitted:
+  - Athenian democratic culture and intellectual achievement that the empire funded
+  - The genuine Persian threat that originally justified the alliance
+  - Periods of genuine cooperation and benefit within the League
+  - Some allies who preferred Athenian hegemony to the alternatives — Sparta's allies also suffered under its control
 media:
 - media_type: map
   title: Alliances at the start of the Peloponnesian War, 431 BCE

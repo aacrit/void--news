@@ -127,7 +127,7 @@ related_event_slugs:
 - fall-of-berlin-wall
 perspectives:
 - viewpoint: Latin Christian / Crusader
-  viewpoint_type: victor
+  viewpoint_type: vanquished
   region_origin: europe
   narrative: 'The call came on November 27, 1095. Pope Urban II, standing on a wooden platform outside the cathedral at Clermont, told the assembled clergy and nobles that the holy places of Christendom
     were in the hands of infidels. He offered a bargain that reshaped European history: any man who took the cross — sewing a cloth cross onto his garment — would receive remission of all sins. The crowd
@@ -201,7 +201,7 @@ perspectives:
   - Fourth Crusade's sack of Constantinople — Christians destroying Christendom's greatest city
   - Forced conversion and exploitation of local Christian populations (Maronites, Armenians, Orthodox) who predated the crusaders
 - viewpoint: Muslim / Ayyubid-Mamluk
-  viewpoint_type: vanquished
+  viewpoint_type: victor
   region_origin: middle-east
   narrative: 'When the Franks took Jerusalem on July 15, 1099, the Islamic world barely noticed. The Seljuk sultanate had fragmented into rival city-states. The Fatimid Caliphate in Cairo had lost Jerusalem
     to the Seljuks only the year before and initially attempted to negotiate with the crusaders rather than fight them. The Muslim sources that recorded the fall of Jerusalem — primarily Ibn al-Athir, writing

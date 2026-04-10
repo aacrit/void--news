@@ -434,6 +434,80 @@ perspectives:
   - The ongoing courage of the Tiananmen Mothers — a women-led documentation movement operating under state surveillance since 1989
   - The perspective of ordinary soldiers, many of them rural conscripts, ordered to fire on civilians
   - Gendered scrutiny of Chai Ling versus comparable failures of male student leaders
+- viewpoint: Workers' Movement / Labor
+  viewpoint_type: vanquished
+  region_origin: east-asia
+  narrative: 'The Beijing Workers'' Autonomous Federation was founded on April 20, 1989, five days after the protests began. Its chairman was Han Dongfang, a 26-year-old railway worker. Its headquarters
+    was a tent at the northwest corner of Tiananmen Square, a few hundred meters from the students'' command center. The workers'' demands overlapped with the students'' but differed in emphasis. The students
+    wanted press freedom, dialogue with the government, and recognition of Hu Yaobang''s legacy. The workers wanted an end to the corruption that was enriching Party officials'' families (the "princelings"),
+    protection against inflation that had reached 28% in 1988, and guarantees for the socialist safety net — the "iron rice bowl" of guaranteed employment, housing, and health care — that Deng Xiaoping''s
+    market reforms were dismantling.
+
+
+    The Party leadership feared the workers more than the students. The Tiananmen Papers, the leaked internal documents, record Deng Xiaoping telling the Politburo Standing Committee: "If we don''t act
+    decisively, we could have another Poland on our hands." The reference was specific: Poland''s Solidarity movement, which had toppled Communist rule, began not as a student movement but as a workers''
+    strike at the Gdansk shipyards in 1980. The Chinese leadership understood that student protests could be contained; a workers'' movement that linked economic grievances to political demands could not.
+
+
+    By mid-May, worker participation had expanded far beyond the Federation. Bus drivers, factory workers, steel workers from the Capital Iron and Steel Works, and employees of state-owned enterprises marched
+    through Beijing in organized contingents. They carried banners identifying their workplaces. Some factory managers tacitly permitted their workers to join the protests. The People''s Daily reported that
+    on May 17, more than one million people marched — the largest demonstration in Beijing since 1949. The workers were there not as individuals but as representatives of the socialist compact: the Party
+    had promised them security in exchange for obedience, and the Party was breaking the promise.
+
+
+    After June 4, the distinction between student and worker became the distinction between exile and execution. The government published a most-wanted list of 21 student leaders. Most escaped through
+    "Operation Yellowbird," the Hong Kong smuggling network. Wang Dan served prison time but survived; Chai Ling and Wuer Kaixi reached the West. The workers received no such protection. Three workers
+    — Pang Guoping, Yu Zhijian, and Lu Decheng — were among the first people executed after June 4. They had splashed paint on Mao''s portrait on the Gate of Heavenly Peace. Their sentences were carried
+    out quickly and without international attention.
+
+
+    The Beijing Workers'' Autonomous Federation was specifically targeted for destruction. Han Dongfang was arrested, held without trial for 22 months, and contracted tuberculosis in prison. He was released
+    in 1992 and expelled from China in 1993; he has not been allowed to return. Other Federation members received sentences of 13 to 15 years. The workers who staffed the barricades at Muxidi and Xidan —
+    the western approach roads where most of the killing occurred on the night of June 3-4 — were ordinary Beijing residents: bus drivers, shop clerks, retirees. They had gone out to block the army''s
+    advance because the soldiers were moving through their neighborhoods. They were shot with expanding bullets, crushed by armored personnel carriers, and left in the streets.
+
+
+    The student leaders wrote memoirs. The workers'' names are on execution lists and prison records. The movement''s memory gravitates toward Tiananmen Square, the hunger strike, the Goddess of Democracy,
+    Tank Man — images of students. The workers at Muxidi, who died in larger numbers and with less documentation, left fewer photographs and no foreign journalists to record their deaths.
+
+    '
+  key_arguments:
+  - The Beijing Workers' Autonomous Federation represented an economic critique that frightened the Party more than student idealism — the Poland/Solidarity parallel was explicit
+  - Workers' demands centered on inflation, corruption, and the dismantling of the socialist safety net — not abstract democracy
+  - After June 4, student leaders mostly escaped into exile; workers were executed or given the harshest sentences
+  - Most killing occurred on the western approach roads (Muxidi, Xidan) where workers and ordinary residents, not students, bore the brunt
+  sources:
+  - title: 'The Workers'' Movement in the 1989 Democracy Movement'
+    author: Andrew Walder and Gong Xiaoxia
+    year: '1993'
+    type: journal
+    doi: 10.1017/S0004972100048528
+  - title: 'Quelling the People: The Military Suppression of the Beijing Democracy Movement'
+    author: Timothy Brook
+    year: '1992'
+    type: book
+    archive_url: https://archive.org/details/quellingpeoplemi0000broo
+  - title: 'The People''s Republic of Amnesia: Tiananmen Revisited'
+    author: Louisa Lim
+    year: '2014'
+    type: book
+  notable_quotes:
+  - text: The students demanded democracy. The workers demanded bread. The Party could negotiate with idealists. It could not negotiate with hunger.
+    speaker: Andrew Walder
+    context: Paraphrase of analysis in The Workers' Movement in the 1989 Democracy Movement, 1993
+  - text: Three workers were the first to be executed. They had thrown paint at Mao's portrait. The students who had occupied the Square for seven weeks received prison sentences.
+    speaker: Louisa Lim
+    context: The People's Republic of Amnesia, 2014, on the differential punishment of workers and students
+  emphasized:
+  - Workers' economic grievances — inflation, corruption, loss of the iron rice bowl — as distinct from student political demands
+  - The Party's fear of a Solidarity-style labor movement as the decisive factor in the crackdown decision
+  - Differential punishment — workers executed, students exiled — revealing what the state considered the greater threat
+  - The geographic reality of the killing — Muxidi and the approach roads, not the Square
+  omitted:
+  - The workers' organizational limitations — the Federation was loosely structured and could not have sustained a prolonged campaign
+  - Divisions between workers and students — the student leadership was often dismissive of worker participation
+  - Workers who supported the crackdown or remained neutral — not all of Beijing's labor force joined the protests
+  - The post-1989 economic growth that did improve material conditions for many urban workers, complicating the narrative
 media:
 - media_type: photograph
   title: Tank Man, Chang'an Avenue, June 5, 1989

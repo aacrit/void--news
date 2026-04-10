@@ -414,6 +414,84 @@ perspectives:
   - Economic self-interest as a motive for some abolitionists
   - The ongoing slave trade after British abolition — Brazil continued until 1850
   - Post-emancipation systems (apprenticeship, sharecropping, convict leasing) that maintained coerced labor
+- viewpoint: African State / Political Economy
+  viewpoint_type: victor
+  region_origin: africa
+  narrative: 'In 1727, King Agaja of Dahomey conquered Whydah, the busiest slave port on the West African coast. Within a decade, Dahomey
+    controlled the export of human beings from a 200-mile stretch of coastline that Europeans called the Slave Coast. The kingdom did not
+    stumble into the trade. It organized annual military campaigns — the "Annual Customs" — that functioned simultaneously as religious
+    ceremonies, judicial proceedings, and slave raids. By the mid-18th century, Dahomey''s campaigns produced approximately 10,000 captives
+    per year. Some were sacrificed. Some were retained as agricultural laborers. Most were marched to the coast and sold to European traders
+    for guns, textiles, cowrie shells, and iron bars.
+
+
+    Dahomey was not unique. The Ashanti Empire in present-day Ghana built its 18th-century expansion on the gold-slave exchange, using
+    European firearms acquired through slave sales to conquer neighboring peoples, who then became the next generation of captives. The
+    kingdom of Bonny, in the Niger Delta, operated as a commercial oligarchy whose wealth derived almost entirely from the slave trade.
+    Bonny''s merchants — including King Pepple and the trading houses of Anna Pepple and Manilla Pepple — negotiated prices, extended
+    credit to European captains, and maintained sophisticated commercial networks that reached hundreds of miles into the interior. Nana
+    Olomu of Itsekiri controlled trade along the Benin River into the 1890s, long after the British had officially abolished the traffic.
+
+
+    The interior supply chains were as structured as any European commercial enterprise. The Aro Confederacy, operating through the Long
+    Juju oracle at Arochukwu in present-day southeastern Nigeria, used religious authority to adjudicate disputes and condemn the losing
+    parties to slavery. The Imbangala of Angola served as professional raiders and middlemen for the Portuguese trade. The Lunda Empire
+    in Central Africa extended trade networks that connected the Atlantic coast to the Indian Ocean, moving captives in both directions.
+
+
+    These were not passive victims of European demand. They were political actors who calculated that selling captives from rival groups
+    strengthened their own states. Tegbesu of Dahomey, who ruled from 1740 to 1774, derived an estimated one-third of his kingdom''s revenue
+    from the slave trade. When the British navy began suppressing the Atlantic trade after 1807, Dahomey''s King Ghezo told the British
+    consul in 1849: "The slave trade is the ruling principle of my people. It is the source and the glory of their wealth." He was not
+    wrong. The transition to palm oil — the "legitimate commerce" the British proposed as a substitute — took decades and destabilized
+    kingdoms built on captive labor and captive export.
+
+
+    This perspective does not exculpate European demand, the Middle Passage, or plantation slavery. The 12.5 million people loaded onto
+    ships did not choose their fate. But the supply side of the trade was African-controlled, African-organized, and African-profited.
+    European traders rarely ventured more than a few miles inland. They did not need to. African states delivered captives to the coast,
+    negotiated terms, and enforced contracts. The trade existed because both sides — European buyers and African sellers — found it
+    profitable. The cost was borne by the people neither side counted as parties to the transaction.
+
+    '
+  key_arguments:
+  - Dahomey, Ashanti, Bonny, and the Aro Confederacy were active, organized participants in the slave trade — not passive suppliers
+  - Annual military campaigns in Dahomey produced approximately 10,000 captives per year by the mid-18th century
+  - African states controlled interior supply chains and coastal negotiations — European traders rarely penetrated inland
+  - The transition away from slave trading destabilized African kingdoms whose economies depended on captive export
+  sources:
+  - title: 'Dahomey and the Slave Trade: An Analysis of an Archaic Economy'
+    author: Karl Polanyi
+    year: '1966'
+    type: book
+    openlibrary: OL5961261M
+  - title: 'Transformations in Slavery: A History of Slavery in Africa'
+    author: Paul Lovejoy
+    year: '1983'
+    type: book
+    doi: 10.1017/CBO9781139170505
+  - title: 'Africa and Africans in the Making of the Atlantic World, 1400-1800'
+    author: John Thornton
+    year: '1992'
+    type: book
+    archive_url: https://archive.org/details/africaafricansin0000thor
+  notable_quotes:
+  - text: The slave trade is the ruling principle of my people. It is the source and the glory of their wealth.
+    speaker: King Ghezo of Dahomey
+    context: Statement to British consul at Abomey, 1849, refusing to end the trade
+  - text: We want nothing from the white man but gunpowder and shot, and we will sell slaves to get them.
+    speaker: Ashanti trader
+    context: Reported by T. Edward Bowdich, Mission from Cape Coast Castle to Ashantee, 1819
+  emphasized:
+  - African state agency — these were sovereign political decisions, not coerced collaboration
+  - The economic structure of African slave-trading kingdoms — revenue, military organization, commercial networks
+  - Interior supply chains controlled entirely by African polities — European coastal dependency
+  - King Ghezo's 1849 refusal to end the trade as evidence of African economic calculation
+  omitted:
+  - The Middle Passage and plantation systems that determined the captives' fate after African sale
+  - European demand as the market force that incentivized African supply
+  - The millions of Africans who were victims, not participants, in the trade
+  - Post-abolition European imperialism that used the slave trade as moral justification for colonization
 media:
 - media_type: document
   title: Slave ship Brookes — cross-section diagram, 1788

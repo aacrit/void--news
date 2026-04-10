@@ -409,6 +409,75 @@ perspectives:
   - Chinese cultural and intellectual responses to the crisis
   - The human experience of opium addiction at the individual level
   - 'Gendered economic effects: women''s factory labor in treaty port silk production, and trafficking enabled by extraterritorial legal gaps'
+- viewpoint: Indian / Bengal Production
+  viewpoint_type: vanquished
+  region_origin: south-asia
+  narrative: 'The opium that poisoned China grew in the fields of Bihar and Bengal. The East India Company held a monopoly on opium production in India from 1773. Indian peasants — ryots — were contracted
+    to grow poppy on their land at prices fixed by the Company, not negotiated in any market. The system operated through two opium agencies: one at Patna, covering Bihar, and one at Benares (now Varanasi),
+    covering the eastern United Provinces. Each agency employed a staff of sub-agents who advanced cash to cultivators at the start of the season and purchased the raw opium at harvest at rates the Company
+    set unilaterally. A cultivator who accepted an advance was legally bound to grow poppy and sell his entire crop to the agency. Refusal meant forfeiture of the advance and, in practice, ruin.
+
+
+    The economics were extractive by design. By 1838, opium revenue contributed approximately 15% of British Indian government revenue — roughly 22 million rupees annually. The Company auctioned processed
+    opium in Calcutta to private merchants — the "country traders" — who shipped it to Canton. The system created a legal fiction: the East India Company did not sell opium to China; it sold opium at auction
+    in India, and what private traders did with it was their affair. The fiction satisfied Parliament in London while generating the revenue that kept the Indian colonial administration solvent.
+
+
+    For the cultivators of Bihar and eastern UP, poppy was a crop they grew under compulsion, not choice. The fixed purchase prices were consistently below market value. Opium cultivation replaced food
+    crops — rice, wheat, pulses — on some of the most fertile agricultural land in the Gangetic plain. The Bihar famines of the 19th century, while primarily caused by drought and colonial taxation policy,
+    were exacerbated by the diversion of land from food production to an export crop that fed no one. Women bore the labor of both poppy cultivation and the resulting food insecurity: they weeded the poppy
+    fields, collected the raw opium sap through painstaking incisions in the seed pods, and managed households on diminished food stocks when the crop displaced subsistence agriculture.
+
+
+    The Ghazipur opium factory, established in 1820 and still standing, processed raw opium into the balls and cakes that were shipped to Calcutta for auction. At its peak, the factory employed over 1,000
+    workers, many of them women and children, who handled raw opium with their bare hands in un-ventilated sheds. The British physician and reformer Henry Whitehead, visiting the Patna factory in the 1890s,
+    described conditions that would be recognized as industrial poisoning by modern standards.
+
+
+    India appears in the Opium Wars historiography as a supply node — the place where the drug was made. The British imperial perspective treats Indian opium production as a revenue matter. The Chinese
+    perspective treats it as the weapon that was used against them. Neither asks what the system did to the people who grew the poppy. Amar Farooqui''s Smuggling as Subversion (2005) and Rolf Bauer''s
+    The Peasant Production of Opium in Nineteenth-Century India (2019) reconstruct the perspective of cultivators who were coerced into growing a crop they could not consume, at prices they did not set,
+    for a trade whose moral and physical destruction occurred on another continent.
+
+    '
+  key_arguments:
+  - Indian cultivators were coerced into growing opium through the advance system — refusal meant financial ruin
+  - Opium revenue constituted 15% of British Indian government revenue — the colonial state depended on the drug trade
+  - Poppy cultivation displaced food crops on fertile Gangetic land, contributing to food insecurity and famine vulnerability
+  - India was the invisible production node in a triangular trade designed by Britain, suffered by China, and grown by Indian peasants
+  sources:
+  - title: 'Smuggling as Subversion: Colonialism, Indian Merchants, and the Politics of Opium, 1790-1843'
+    author: Amar Farooqui
+    year: '2005'
+    type: book
+    doi: 10.1017/S0026749X07003356
+  - title: The Peasant Production of Opium in Nineteenth-Century India
+    author: Rolf Bauer
+    year: '2019'
+    type: book
+    doi: 10.1163/9789004390508
+  - title: 'Opium, Empire and the Global Political Economy: A Study of the Asian Opium Trade, 1750-1950'
+    author: Carl A. Trocki
+    year: '1999'
+    type: book
+    doi: 10.4324/9780203601532
+  notable_quotes:
+  - text: The cultivator who accepts the Company's advance is no longer a free agent. He must grow what he is told, and sell at the price he is given.
+    speaker: Report of the Royal Commission on Opium
+    context: Parliamentary investigation into the Indian opium system, 1893-1895
+  - text: The wealth of China is used to profit the barbarians. The poison of India is used to destroy the Chinese. And the labor of India is used to produce the poison.
+    speaker: Paraphrase of Lin Zexu's triangular trade analysis
+    context: Adapted from Lin Zexu's 1839 letter to Queen Victoria, which identified the India-China-Britain triangle
+  emphasized:
+  - Coerced cultivation — the advance system bound Indian peasants to grow poppy at non-negotiable prices
+  - Opium revenue as the financial backbone of British colonial administration in India
+  - Displacement of food crops and its contribution to famine vulnerability
+  - Indian labor — including women's labor in field and factory — as the invisible foundation of the triangular trade
+  omitted:
+  - Indian merchants who profited as intermediaries in the opium trade
+  - Regions of India where opium cultivation was genuinely voluntary and commercially profitable
+  - The Malwa opium trade (western India) that operated outside the Company monopoly
+  - Post-independence India's own struggles with opium regulation and the legal pharmaceutical opium industry
 media:
 - media_type: artwork
   title: Destroying Chinese War Junks, by Edward Duncan (1843)
