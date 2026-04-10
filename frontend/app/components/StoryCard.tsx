@@ -67,8 +67,8 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         />
       </h3>
 
-      {/* Summary */}
-      <p className="story-card__summary">{story.summary}</p>
+      {/* Summary — hidden when empty (Gemini pending or failed) */}
+      {story.summary && <p className="story-card__summary">{story.summary}</p>}
 
       {/* Consensus ratio now embedded in Sigil */}
     </article>

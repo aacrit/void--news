@@ -1894,10 +1894,10 @@ def main():
                         clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
                     if result.get("consensus_summary"):
                         clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
-                # Clear rule-based summaries for top-30 clusters Gemini failed on —
-                # no fallback text should reach the frontend for premium slots.
-                for idx in gemini_failed:
-                    clusters[idx]["summary"] = ""
+                # Log pool-1 failures (rule-based summary kept as fallback —
+                # empty card is worse than imperfect text when Gemini is down).
+                if gemini_failed:
+                    print(f"  [info] {len(gemini_failed)} pool-1 cluster(s) keeping rule-based summary (Gemini failed)")
             except Exception as e:
                 print(f"  [warn] Gemini summarization failed: {e}")
         elif SUMMARIZER_AVAILABLE:

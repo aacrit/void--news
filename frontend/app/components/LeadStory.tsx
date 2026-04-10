@@ -87,8 +87,8 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
         />
       </h2>
 
-      {/* Extended summary */}
-      <p className="lead-story__summary">{story.summary}</p>
+      {/* Extended summary — hidden when empty (Gemini pending or failed) */}
+      {story.summary && <p className="lead-story__summary">{story.summary}</p>}
 
       {/* Consensus ratio now embedded in Sigil */}
     </article>
