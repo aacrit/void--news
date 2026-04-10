@@ -2169,3 +2169,641 @@
     transform: none;
   }
 }
+
+/* ==========================================================================
+   Spectrum Visualization System — Toggle + 3 views (Ridge, Witness, Terrain)
+   ========================================================================== */
+
+/* ---- Container ---- */
+.dd-sv {
+  position: relative;
+  width: 100%;
+  padding-top: var(--space-1);
+}
+
+.dd-sv__empty {
+  padding: var(--space-3) 0;
+  text-align: center;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+/* ---- View toggle — 3-button pill ---- */
+.dd-sv-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 0;
+  z-index: 2;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.dd-sv-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border-subtle);
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  transition: color var(--dur-fast) ease;
+  position: relative;
+}
+
+.dd-sv-toggle__btn:last-child {
+  border-right: none;
+}
+
+.dd-sv-toggle__btn:hover {
+  color: var(--fg-secondary);
+}
+
+.dd-sv-toggle__btn--active {
+  color: var(--fg-primary);
+}
+
+.dd-sv-toggle__btn--active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: var(--cin-amber);
+  border-radius: 1px;
+}
+
+.dd-sv-toggle__btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+
+/* ---- View area ---- */
+.dd-sv__view {
+  min-height: 60px;
+  position: relative;
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 150ms ease-in,
+    transform 150ms ease-in,
+    height 250ms ease;
+}
+
+.dd-sv__view--exiting {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+.dd-sv__view--entering {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+/* ---- Shared axis ---- */
+.dd-sv__axis {
+  position: relative;
+  width: 100%;
+  height: 14px;
+  margin-top: 2px;
+}
+
+.dd-sv__axis-tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 4px;
+  background: var(--fg-muted);
+  opacity: 0.3;
+  transform: translateX(-50%);
+}
+
+.dd-sv__axis-label {
+  position: absolute;
+  top: 5px;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  transform: translateX(-50%);
+  letter-spacing: 0.04em;
+}
+
+/* ---- Shared tooltip ---- */
+.dd-sv__tooltip {
+  position: fixed;
+  transform: translate(-50%, calc(-100% - 10px));
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-e2);
+  padding: var(--space-2) var(--space-3);
+  pointer-events: none;
+  z-index: var(--z-tooltip);
+  min-width: 140px;
+  max-width: 220px;
+  animation: svTooltipIn var(--dur-normal) var(--ease-out) both;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@keyframes svTooltipIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 16px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 10px));
+  }
+}
+
+.dd-sv__tooltip-name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin-bottom: 2px;
+}
+
+.dd-sv__tooltip-lean {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: 2px;
+}
+
+.dd-sv__tooltip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.dd-sv__tooltip-score {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+.dd-sv__tooltip-tier {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin-bottom: 2px;
+}
+
+.dd-sv__tooltip-trust {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  margin-bottom: 2px;
+}
+
+.dd-sv__tooltip-hint {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.dd-sv__tooltip-link {
+  color: var(--fg-secondary);
+  text-decoration: none;
+  pointer-events: auto;
+  font-style: normal;
+}
+
+.dd-sv__tooltip-link:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Ink Ridge — View A
+   ========================================================================== */
+
+.dd-sv-ridge {
+  position: relative;
+}
+
+.dd-sv-ridge__svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Fill fade-in */
+.dd-sv-ridge__fill {
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.dd-sv-ridge--animated .dd-sv-ridge__fill {
+  opacity: 1;
+}
+
+/* Stroke draw */
+.dd-sv-ridge__stroke {
+  transition: stroke-dashoffset 600ms var(--ease-cinematic);
+}
+
+/* Dot entrance */
+.dd-sv-ridge__dot {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+  cursor: pointer;
+}
+
+.dd-sv-ridge--animated .dd-sv-ridge__dot {
+  animation: ridgeDotIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes ridgeDotIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dd-sv-ridge__dot:hover {
+  transform: scale(1.4);
+  transition: transform 100ms ease-out;
+}
+
+/* Dot label */
+.dd-sv-ridge__dot-label {
+  opacity: 0;
+}
+
+.dd-sv-ridge--animated .dd-sv-ridge__dot-label {
+  animation: ridgeDotIn 300ms ease-out 500ms both;
+}
+
+/* Mean line */
+.dd-sv-ridge__mean {
+  opacity: 0;
+}
+
+.dd-sv-ridge--animated .dd-sv-ridge__mean {
+  animation: ridgeMeanIn 300ms ease-out 200ms both;
+}
+
+@keyframes ridgeMeanIn {
+  from { opacity: 0; }
+  to { opacity: 0.5; }
+}
+
+/* ==========================================================================
+   Witness Line — View B
+   ========================================================================== */
+
+.dd-sv-witness {
+  position: relative;
+}
+
+.dd-sv-witness__svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Track draw */
+.dd-sv-witness__track {
+  stroke-dasharray: 395;
+  stroke-dashoffset: 395;
+}
+
+.dd-sv-witness--animated .dd-sv-witness__track {
+  animation: witnessTrackDraw 350ms var(--ease-cinematic) both;
+}
+
+@keyframes witnessTrackDraw {
+  from { stroke-dashoffset: 395; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Stem grow */
+.dd-sv-witness__stem {
+  transform-origin: bottom center;
+  transform-box: fill-box;
+  transform: scaleY(0);
+}
+
+.dd-sv-witness--animated .dd-sv-witness__stem {
+  animation: witnessGrow 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms both;
+}
+
+@keyframes witnessGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Favicon fade in */
+.dd-sv-witness__fav,
+.dd-sv-witness__fav-img {
+  opacity: 0;
+}
+
+.dd-sv-witness--animated .dd-sv-witness__fav,
+.dd-sv-witness--animated .dd-sv-witness__fav-img {
+  animation: witnessFavIn 250ms ease-out 500ms both;
+}
+
+@keyframes witnessFavIn {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+}
+
+/* Tilt plumb-bob drop */
+.dd-sv-witness__tilt {
+  opacity: 0;
+  transform: translateY(-10px);
+  transform-box: fill-box;
+}
+
+.dd-sv-witness--animated .dd-sv-witness__tilt {
+  animation: witnessDropIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both;
+}
+
+@keyframes witnessDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Idle sway — desktop only, reduced-motion respecting */
+@media (hover: hover) and (min-width: 1024px) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dd-sv-witness--animated .dd-sv-witness__stem-group {
+      animation: witnessSwayIdle 5s ease-in-out var(--stem-delay, 0s) infinite;
+    }
+
+    @keyframes witnessSwayIdle {
+      0%, 100% { transform: rotate(-0.4deg); }
+      50% { transform: rotate(0.4deg); }
+    }
+  }
+}
+
+/* Stem group hover states */
+.dd-sv-witness__stem-group {
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Terrain Map — View C
+   ========================================================================== */
+
+.dd-sv-terrain {
+  position: relative;
+}
+
+.dd-sv-terrain__svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Fill fade */
+.dd-sv-terrain__fill {
+  opacity: 0;
+  transition: opacity 400ms ease-out 200ms;
+}
+
+.dd-sv-terrain--animated .dd-sv-terrain__fill {
+  opacity: 1;
+}
+
+/* Stroke */
+.dd-sv-terrain__stroke {
+  opacity: 0;
+  transition: opacity 300ms ease-out 300ms;
+}
+
+.dd-sv-terrain--animated .dd-sv-terrain__stroke {
+  opacity: 0.6;
+}
+
+/* Contour lines */
+.dd-sv-terrain__contour {
+  opacity: 0;
+}
+
+.dd-sv-terrain--animated .dd-sv-terrain__contour {
+  animation: terrainContourIn 200ms ease-out both;
+}
+
+@keyframes terrainContourIn {
+  from { opacity: 0; }
+  to { opacity: 0.3; }
+}
+
+/* Peak callout */
+.dd-sv-terrain__peak {
+  opacity: 0;
+}
+
+.dd-sv-terrain--animated .dd-sv-terrain__peak {
+  animation: terrainPeakIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms both;
+}
+
+@keyframes terrainPeakIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+    transform-box: fill-box;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    transform-box: fill-box;
+  }
+}
+
+/* Pebbles */
+.dd-sv-terrain__pebble {
+  transform: scale(0);
+  transform-origin: center;
+  transform-box: fill-box;
+  cursor: pointer;
+}
+
+.dd-sv-terrain--animated .dd-sv-terrain__pebble {
+  animation: terrainPop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes terrainPop {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.dd-sv-terrain__pebble:hover {
+  transform: scale(1.5);
+  transition: transform 80ms ease-out;
+}
+
+/* Crosshair */
+.dd-sv-terrain__crosshair {
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Reduced motion — all spectrum views
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-sv__view {
+    transition: none;
+  }
+
+  .dd-sv-ridge__fill {
+    transition: none;
+    opacity: 1;
+  }
+
+  .dd-sv-ridge__stroke {
+    transition: none;
+    stroke-dashoffset: 0 !important;
+    stroke-dasharray: none !important;
+  }
+
+  .dd-sv-ridge__dot,
+  .dd-sv-ridge__dot-label,
+  .dd-sv-ridge__mean {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    opacity: 1;
+  }
+
+  .dd-sv-witness__track {
+    animation-duration: 0.01ms !important;
+    stroke-dashoffset: 0;
+  }
+
+  .dd-sv-witness__stem {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transform: scaleY(1);
+  }
+
+  .dd-sv-witness__fav,
+  .dd-sv-witness__fav-img {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    opacity: 1;
+  }
+
+  .dd-sv-witness__tilt {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .dd-sv-witness__stem-group {
+    animation: none !important;
+  }
+
+  .dd-sv-terrain__fill {
+    transition: none;
+    opacity: 1;
+  }
+
+  .dd-sv-terrain__stroke {
+    transition: none;
+    opacity: 0.6;
+  }
+
+  .dd-sv-terrain__contour {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    opacity: 0.3;
+  }
+
+  .dd-sv-terrain__peak {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .dd-sv-terrain__pebble {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   Mobile — Spectrum Visualization System
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .dd-sv {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dd-sv-toggle {
+    position: relative;
+    top: auto;
+    right: auto;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-2);
+    order: -1;
+  }
+
+  .dd-sv-toggle__btn {
+    width: 32px;
+    height: 28px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .dd-sv-ridge__dot-label,
+  .dd-sv-terrain__peak text {
+    font-size: 6px;
+  }
+}
