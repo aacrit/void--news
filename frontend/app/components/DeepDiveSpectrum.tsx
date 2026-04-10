@@ -28,7 +28,7 @@ export interface DeepDiveSpectrumSource {
   confidence?: number;
 }
 
-type SpectrumView = "ridge" | "witness" | "terrain";
+// (single organic view — no toggle)
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 
@@ -452,230 +452,103 @@ function TiltRow({ mean }: { mean: number }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   View A: Ink Ridge — KDE distribution curve (shape only, no dots)
+   Bimodal detection — two significant peaks with deep valley between them
    ═══════════════════════════════════════════════════════════════════════ */
 
-function InkRidge({ sources }: { sources: DeepDiveSpectrumSource[] }) {
-  const strokeRef = useRef<SVGPathElement>(null);
-  const [animated, setAnimated] = useState(false);
-  const n = sources.length;
-  const mean = weightedMeanLean(sources);
-  const leans = sources.map((s) => s.politicalLean);
+interface BimodalPeak { lean: number; density: number; }
+interface BimodalInfo {
+  peaks: BimodalPeak[];
+  valleyLean: number;
+  valleyDensity: number;
+}
 
-  // Determine rendering mode
-  const isFlat = n <= 3;
-  const isBroad = n >= 4 && n <= 7;
-  const W = 400;
-  const svgH = isFlat ? 40 : isBroad ? 48 : 52;
+function detectBimodal(densities: number[]): BimodalInfo | null {
+  if (densities.length < 10) return null;
 
-  // KDE computation
-  const densities = useMemo(() => {
-    if (isFlat) return null;
-    const bw = isBroad ? 20 : silvermanBandwidth(leans);
-    const raw = computeKDE(leans, bw, 100);
-    return normalizeKDE(raw);
-  }, [leans, isFlat, isBroad]);
-
-  // Path
-  const paths = useMemo(() => {
-    if (!densities) return null;
-    const peakH = isBroad ? 28 : 42;
-    const scaled = densities.map((d) => d * (peakH / (svgH - 10)));
-    return kdeToCubicPath(scaled, svgH, W, 10);
-  }, [densities, svgH, isBroad]);
-
-  // Stroke animation
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimated(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (animated && strokeRef.current) {
-      const len = strokeRef.current.getTotalLength();
-      strokeRef.current.style.setProperty("--ridge-stroke-length", `${len}`);
-      strokeRef.current.style.strokeDasharray = `${len}`;
-      strokeRef.current.style.strokeDashoffset = `${len}`;
-      // Force reflow then animate
-      void strokeRef.current.getBoundingClientRect();
-      strokeRef.current.style.strokeDashoffset = "0";
+  // Find local maxima with significance ≥ 25% of normalized max (already 1.0)
+  const peaks: Array<{ idx: number; density: number }> = [];
+  for (let i = 2; i < densities.length - 2; i++) {
+    if (
+      densities[i] > densities[i - 1] &&
+      densities[i] > densities[i + 1] &&
+      densities[i] >= 0.25
+    ) {
+      peaks.push({ idx: i, density: densities[i] });
     }
-  }, [animated, paths]);
+  }
+  if (peaks.length < 2) return null;
 
-  const gradStops = LEAN_GRADIENT_STOPS;
+  // Top 2 peaks by density
+  peaks.sort((a, b) => b.density - a.density);
+  const [p1, p2] = peaks.slice(0, 2);
+  const [left, right] = p1.idx < p2.idx ? [p1, p2] : [p2, p1];
 
-  return (
-    <div className={`dd-sv-ridge${animated ? " dd-sv-ridge--animated" : ""}`}>
-      <svg
-        viewBox={`0 0 ${W} ${svgH}`}
-        width="100%"
-        className="dd-sv-ridge__svg"
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="ridge-lean-grad" x1="0" y1="0" x2="1" y2="0">
-            {gradStops.map((s) => (
-              <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.15" />
-            ))}
-          </linearGradient>
-          {/* Organic ink filter — 8+ sources only */}
-          {n >= 8 && (
-            <filter id="ridge-ink-wobble" x="-5%" y="-5%" width="110%" height="110%">
-              <feTurbulence
-                type="turbulence"
-                baseFrequency="0.015 0.03"
-                numOctaves="1"
-                seed="42"
-                result="turb"
-              />
-              <feDisplacementMap in="SourceGraphic" in2="turb" scale="2" />
-            </filter>
-          )}
-        </defs>
+  // Valley between peaks
+  let valleyIdx = left.idx;
+  let valleyDensity = densities[left.idx];
+  for (let i = left.idx; i <= right.idx; i++) {
+    if (densities[i] < valleyDensity) { valleyDensity = densities[i]; valleyIdx = i; }
+  }
 
-        {/* Flat baseline for 2-3 sources */}
-        {isFlat && (
-          <line
-            x1="10"
-            y1={svgH - 4}
-            x2="390"
-            y2={svgH - 4}
-            stroke="var(--fg-tertiary)"
-            strokeWidth="1.5"
-            opacity="0.4"
-          />
-        )}
+  // Bimodal only if valley < 30% of the lower peak
+  if (valleyDensity >= Math.min(left.density, right.density) * 0.3) return null;
 
-        {/* Fill path */}
-        {paths && (
-          <path
-            d={paths.fillPath}
-            fill="url(#ridge-lean-grad)"
-            filter={n >= 8 ? "url(#ridge-ink-wobble)" : undefined}
-            className="dd-sv-ridge__fill"
-          />
-        )}
+  return {
+    peaks: [
+      { lean: (left.idx / (densities.length - 1)) * 100, density: left.density },
+      { lean: (right.idx / (densities.length - 1)) * 100, density: right.density },
+    ],
+    valleyLean: (valleyIdx / (densities.length - 1)) * 100,
+    valleyDensity,
+  };
+}
 
-        {/* Stroke path */}
-        {paths && (
-          <path
-            ref={strokeRef}
-            d={paths.strokePath}
-            fill="none"
-            stroke="var(--fg-tertiary)"
-            strokeWidth="1.5"
-            className="dd-sv-ridge__stroke"
-          />
-        )}
+/* ── Dead zone detection — spectrum regions with no coverage ─────────── */
 
-        {/* Weighted mean dashed line */}
-        <line
-          x1={(mean / 100) * W}
-          y1={isFlat ? 8 : 4}
-          x2={(mean / 100) * W}
-          y2={svgH - 2}
-          stroke="var(--fg-tertiary)"
-          strokeWidth="0.5"
-          strokeDasharray="3 2"
-          opacity="0.5"
-          className="dd-sv-ridge__mean"
-        />
-      </svg>
-    </div>
-  );
+function detectDeadZones(
+  densities: number[]
+): Array<{ startLean: number; endLean: number; midLean: number }> {
+  const zones: Array<{ startLean: number; endLean: number; midLean: number }> = [];
+  const threshold = 0.03; // < 3% of normalized peak = dead zone
+  const minWidth = 14;    // minimum 14 lean-point span to annotate
+
+  let inZone = false;
+  let zoneStart = 0;
+  for (let i = 0; i < densities.length; i++) {
+    const lean = (i / (densities.length - 1)) * 100;
+    if (densities[i] < threshold && !inZone) {
+      inZone = true; zoneStart = lean;
+    } else if (densities[i] >= threshold && inZone) {
+      inZone = false;
+      if (lean - zoneStart >= minWidth) {
+        zones.push({ startLean: zoneStart, endLean: lean, midLean: (zoneStart + lean) / 2 });
+      }
+    }
+  }
+  return zones;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   View B: Witness Line — whisker stems only, no source markers
+   SpectrumView — merged organic view
+   Ink wash rises (rAF) → stroke draws (dashoffset) → contours settle →
+   amber plumb line drops → bimodal callout appears.
    ═══════════════════════════════════════════════════════════════════════ */
 
-function WitnessLine({ sources }: { sources: DeepDiveSpectrumSource[] }) {
-  const [animated, setAnimated] = useState(false);
-  const W = 400;
-  const svgH = 48;
-  const trackY = 44;
-
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimated(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Sort by lean for clean whisker rendering
-  const sortedSources = useMemo(() => {
-    return [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
-  }, [sources]);
-
-  return (
-    <div className={`dd-sv-witness${animated ? " dd-sv-witness--animated" : ""}`}>
-      <svg
-        viewBox={`0 0 ${W} ${svgH}`}
-        width="100%"
-        className="dd-sv-witness__svg"
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-      >
-        <defs>
-          <filter id="witness-ink" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="turbulence" baseFrequency="0.015 0.03" numOctaves="1" seed="42" result="turb" />
-            <feDisplacementMap in="SourceGraphic" in2="turb" scale="2" />
-          </filter>
-        </defs>
-
-        {/* Track line */}
-        <line
-          x1="5"
-          y1={trackY}
-          x2={W - 5}
-          y2={trackY}
-          stroke="var(--fg-tertiary)"
-          strokeWidth="1.5"
-          opacity="0.4"
-          filter="url(#witness-ink)"
-          className="dd-sv-witness__track"
-        />
-
-        {/* Whisker stems — height encodes factual rigor */}
-        {sortedSources.map((s, i) => {
-          const x = (s.politicalLean / 100) * W;
-          const rigor = s.factualRigor ?? 50;
-          const h = 6 + (rigor / 100) * 28; // 6-34px height
-          return (
-            <line
-              key={`whisker-${s.name}-${i}`}
-              x1={x}
-              y1={trackY}
-              x2={x}
-              y2={trackY - h}
-              stroke={getLeanColor(s.politicalLean)}
-              strokeWidth="1"
-              opacity="0.7"
-              className="dd-sv-witness__whisker"
-              style={{ animationDelay: `${60 + i * 20}ms` }}
-            />
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   View C: Terrain Map — topographic landscape (shape only)
-   ═══════════════════════════════════════════════════════════════════════ */
-
-function TerrainMap({ sources }: { sources: DeepDiveSpectrumSource[] }) {
-  const terrainRef = useRef<SVGPathElement>(null);
+function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
+  const fillRef = useRef<SVGPathElement>(null);
+  const strokeRef = useRef<SVGPathElement>(null);
   const riseRafRef = useRef<number>(0);
   const [animated, setAnimated] = useState(false);
+
   const n = sources.length;
   const leans = sources.map((s) => s.politicalLean);
-  const W = 400;
+  const mean = weightedMeanLean(sources);
 
+  const W = 400;
+  const svgH = 60;
   const isFlat = n <= 3;
   const isLow = n >= 4 && n <= 7;
-  const svgH = 56;
-  const peakH = isFlat ? 0 : isLow ? 20 : 46;
+  const peakH = isFlat ? 0 : isLow ? 26 : 48;
 
   const densities = useMemo(() => {
     if (isFlat) return null;
@@ -684,13 +557,14 @@ function TerrainMap({ sources }: { sources: DeepDiveSpectrumSource[] }) {
     return normalizeKDE(raw);
   }, [leans, isFlat, isLow]);
 
+  // Paths
   const paths = useMemo(() => {
     if (!densities) return null;
-    const scaled = densities.map((d) => d * (peakH / (svgH - 10)));
-    return kdeToCubicPath(scaled, svgH, W, 10);
+    const scaled = densities.map((d) => d * (peakH / (svgH - 12)));
+    return kdeToCubicPath(scaled, svgH, W, 12);
   }, [densities, svgH, peakH]);
 
-  // Contour lines
+  // Contour lines: 1 at 50%; 2 (33%+66%) for 16+ sources
   const contours = useMemo(() => {
     if (!densities || isFlat || isLow) return [];
     const thresholds = n >= 16 ? [0.33, 0.66] : [0.5];
@@ -705,7 +579,7 @@ function TerrainMap({ sources }: { sources: DeepDiveSpectrumSource[] }) {
         } else if ((densities[i] < thresh || i === densities.length - 1) && inRegion) {
           inRegion = false;
           const endX = (i / (densities.length - 1)) * W;
-          const y = svgH - thresh * peakH - 10;
+          const y = svgH - thresh * peakH - 12;
           segments.push({ x1: startX, x2: endX, y });
         }
       }
@@ -713,240 +587,205 @@ function TerrainMap({ sources }: { sources: DeepDiveSpectrumSource[] }) {
     });
   }, [densities, n, svgH, peakH, isFlat, isLow]);
 
-  // Peak position
-  const peakInfo = useMemo(() => {
-    if (!densities || isFlat) return null;
-    let maxIdx = 0;
-    for (let i = 1; i < densities.length; i++) {
-      if (densities[i] > densities[maxIdx]) maxIdx = i;
-    }
-    const peakLean = (maxIdx / (densities.length - 1)) * 100;
-    const x = (maxIdx / (densities.length - 1)) * W;
-    const y = getYOnCurve(peakLean, densities.map((d) => d * (peakH / (svgH - 10))), svgH, 10);
-    return { x, y, lean: peakLean };
-  }, [densities, svgH, peakH, isFlat]);
+  // Bimodal & dead-zone detection
+  const bimodal = useMemo(() => {
+    if (!densities || isFlat || n < 6) return null;
+    return detectBimodal(densities);
+  }, [densities, isFlat, n]);
+
+  const deadZones = useMemo(() => {
+    if (!densities || isFlat || n < 4) return [];
+    return detectDeadZones(densities);
+  }, [densities, isFlat, n]);
 
   const gradStops = LEAN_GRADIENT_STOPS;
 
+  // Trigger entrance
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 50);
     return () => clearTimeout(timer);
   }, []);
 
-  // Terrain rise animation via JS
+  // Beat 1 (0ms): fill rises from flat via rAF — 450ms ease-out cubic
   useEffect(() => {
-    if (!animated || !terrainRef.current || !densities || !paths) return;
-    const el = terrainRef.current;
-    const finalD = densities.map((d) => d * (peakH / (svgH - 10)));
+    if (!animated || !fillRef.current || !densities || !paths) return;
+    const el = fillRef.current;
+    const finalD = densities.map((d) => d * (peakH / (svgH - 12)));
 
-    // Skip animation for users who prefer reduced motion
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const { fillPath } = kdeToCubicPath(finalD, svgH, W, 10);
-      el.setAttribute("d", fillPath);
+      el.setAttribute("d", kdeToCubicPath(finalD, svgH, W, 12).fillPath);
       return;
     }
 
     const flatD = densities.map(() => 0);
     let start: number | null = null;
-    const duration = 500;
-
     function step(ts: number) {
       if (!start) start = ts;
-      const elapsed = ts - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const t = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const progress = Math.min((ts - start) / 450, 1);
+      const t = 1 - Math.pow(1 - progress, 3);
       const interp = flatD.map((f, i) => f + (finalD[i] - f) * t);
-      const { fillPath } = kdeToCubicPath(interp, svgH, W, 10);
-      el.setAttribute("d", fillPath);
-      if (progress < 1) {
-        riseRafRef.current = requestAnimationFrame(step);
-      }
+      el.setAttribute("d", kdeToCubicPath(interp, svgH, W, 12).fillPath);
+      if (progress < 1) riseRafRef.current = requestAnimationFrame(step);
     }
     riseRafRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(riseRafRef.current);
   }, [animated, densities, paths, svgH, peakH]);
 
+  // Beat 2 (150ms): stroke draws via CSS transition on dashoffset
+  useEffect(() => {
+    if (!animated || !strokeRef.current || !paths) return;
+    const el = strokeRef.current;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const len = el.getTotalLength();
+      el.style.strokeDasharray = `${len}`;
+      el.style.strokeDashoffset = "0";
+      return;
+    }
+
+    const len = el.getTotalLength();
+    el.style.strokeDasharray = `${len}`;
+    el.style.strokeDashoffset = `${len}`;
+    void el.getBoundingClientRect();
+    const timer = setTimeout(() => { el.style.strokeDashoffset = "0"; }, 150);
+    return () => clearTimeout(timer);
+  }, [animated, paths]);
+
   return (
-    <div className={`dd-sv-terrain${animated ? " dd-sv-terrain--animated" : ""}`}>
+    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}`}>
       <svg
         viewBox={`0 0 ${W} ${svgH}`}
         width="100%"
-        className="dd-sv-terrain__svg"
+        className="dd-sv-view__svg"
         preserveAspectRatio="xMidYMid meet"
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="terrain-lean-grad" x1="0" y1="0" x2="1" y2="0">
+          <linearGradient id="sv-lean-grad" x1="0" y1="0" x2="1" y2="0">
             {gradStops.map((s) => (
-              <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.08" />
+              <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.12" />
             ))}
           </linearGradient>
+          {/* Ink wash filter on fill only — not stroke — 8+ sources */}
+          {n >= 8 && (
+            <filter id="sv-ink-wash" x="-5%" y="-5%" width="110%" height="110%">
+              <feTurbulence
+                type="turbulence"
+                baseFrequency="0.012 0.025"
+                numOctaves="1"
+                seed="42"
+                result="turb"
+              />
+              <feDisplacementMap in="SourceGraphic" in2="turb" scale="1.8" />
+            </filter>
+          )}
         </defs>
 
-        {/* Flat baseline for 2-3 sources */}
+        {/* Flat baseline — ≤3 sources */}
         {isFlat && (
           <line
-            x1="5"
-            y1={svgH - 12}
-            x2={W - 5}
-            y2={svgH - 12}
-            stroke="var(--fg-tertiary)"
-            strokeWidth="1.5"
-            opacity="0.4"
+            x1="10" y1={svgH - 6} x2={W - 10} y2={svgH - 6}
+            stroke="var(--fg-tertiary)" strokeWidth="1.5" opacity="0.4"
           />
         )}
 
-        {/* Terrain fill (animated via JS) */}
+        {/* Beat 1: Ink wash fill — rises first, soft organic texture */}
         {paths && (
           <path
-            ref={terrainRef}
+            ref={fillRef}
             d={paths.fillPath}
-            fill="url(#terrain-lean-grad)"
-            className="dd-sv-terrain__fill"
+            fill="url(#sv-lean-grad)"
+            filter={n >= 8 ? "url(#sv-ink-wash)" : undefined}
+            className="dd-sv-view__fill"
           />
         )}
 
-        {/* Terrain stroke */}
-        {paths && (
-          <path
-            d={paths.strokePath}
-            fill="none"
-            stroke="var(--fg-tertiary)"
-            strokeWidth="1.5"
-            opacity="0.6"
-            className="dd-sv-terrain__stroke"
-          />
-        )}
-
-        {/* Contour lines */}
+        {/* Beat 3 (350ms): Contour lines — topographic depth, dashed */}
         {contours.map((contour, ci) =>
           contour.segments.map((seg, si) => (
             <line
               key={`contour-${ci}-${si}`}
-              x1={seg.x1}
-              y1={seg.y}
-              x2={seg.x2}
-              y2={seg.y}
+              x1={seg.x1} y1={seg.y} x2={seg.x2} y2={seg.y}
               stroke="var(--fg-tertiary)"
               strokeWidth="0.5"
-              opacity="0.3"
               strokeDasharray="4 3"
-              className="dd-sv-terrain__contour"
-              style={{ animationDelay: `${400 + ci * 200}ms` }}
+              className="dd-sv-view__contour"
+              style={{ transitionDelay: `${350 + ci * 80}ms` }}
             />
           ))
         )}
 
-        {/* Peak callout */}
-        {peakInfo && !isFlat && (
-          <g className="dd-sv-terrain__peak">
-            <line
-              x1={peakInfo.x}
-              y1={peakInfo.y - 8}
-              x2={peakInfo.x}
-              y2={peakInfo.y}
-              stroke="var(--fg-tertiary)"
-              strokeWidth="0.5"
-              opacity="0.6"
-            />
-            <text
-              x={peakInfo.x}
-              y={peakInfo.y - 10}
-              textAnchor={peakInfo.x > W * 0.75 ? "end" : peakInfo.x < W * 0.25 ? "start" : "middle"}
-              fill="var(--fg-muted)"
-              fontSize="6.5"
-              fontFamily="var(--font-data)"
-            >
-              Peak {leanLabelAbbr(peakInfo.lean)}
-            </text>
-          </g>
+        {/* Beat 2 (150ms): Stroke — cartographer's nib, crisp (no ink filter) */}
+        {paths && (
+          <path
+            ref={strokeRef}
+            d={paths.strokePath}
+            fill="none"
+            stroke="var(--fg-tertiary)"
+            strokeWidth="1.5"
+            className="dd-sv-view__stroke"
+          />
         )}
 
-        {/* Tilt dashed line inside SVG */}
+        {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
         {!isFlat && (
           <line
-            x1={(weightedMeanLean(sources) / 100) * W}
-            y1={4}
-            x2={(weightedMeanLean(sources) / 100) * W}
-            y2={svgH - 4}
+            x1={(mean / 100) * W} y1={4}
+            x2={(mean / 100) * W} y2={svgH - 4}
             stroke="var(--cin-amber)"
             strokeWidth="0.75"
             strokeDasharray="3 2"
-            opacity="0.6"
+            className="dd-sv-view__mean"
           />
         )}
+
+        {/* Beat 5 (500ms): Bimodal peak dots — only when split detected */}
+        {bimodal && bimodal.peaks.map((peak, pi) => {
+          const x = (peak.lean / 100) * W;
+          const scaledD = densities!.map((d) => d * (peakH / (svgH - 12)));
+          const y = getYOnCurve(peak.lean, scaledD, svgH, 12);
+          const anchor = x > W * 0.75 ? "end" : x < W * 0.25 ? "start" : "middle";
+          return (
+            <g key={`bm-peak-${pi}`} className="dd-sv-view__bm-peak">
+              <circle cx={x} cy={y} r="2.5" fill="var(--fg-muted)" opacity="0.6" />
+              <text
+                x={x} y={y - 7}
+                textAnchor={anchor}
+                fill="var(--fg-muted)"
+                fontSize="6"
+                fontFamily="var(--font-data)"
+                letterSpacing="0.04em"
+              >
+                {leanLabelAbbr(peak.lean)}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Dead zone annotations */}
+        {deadZones.map((zone, zi) => (
+          <text
+            key={`dead-${zi}`}
+            x={(zone.midLean / 100) * W}
+            y={svgH - 3}
+            textAnchor="middle"
+            fill="var(--fg-muted)"
+            fontSize="5.5"
+            fontFamily="var(--font-data)"
+            className="dd-sv-view__dead-label"
+          >
+            no coverage
+          </text>
+        ))}
       </svg>
-    </div>
-  );
-}
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Toggle — 3-button pill
-   ═══════════════════════════════════════════════════════════════════════ */
-
-const VIEW_LABELS: Record<SpectrumView, string> = {
-  ridge: "Ridge",
-  witness: "Witness",
-  terrain: "Terrain",
-};
-
-const VIEWS: SpectrumView[] = ["ridge", "witness", "terrain"];
-
-function ViewToggle({
-  active,
-  onChange,
-}: {
-  active: SpectrumView;
-  onChange: (v: SpectrumView) => void;
-}) {
-  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) return;
-    e.preventDefault();
-    const currentIdx = VIEWS.indexOf(active);
-    const nextIdx =
-      e.key === "ArrowLeft" || e.key === "ArrowUp"
-        ? (currentIdx - 1 + VIEWS.length) % VIEWS.length
-        : (currentIdx + 1) % VIEWS.length;
-    onChange(VIEWS[nextIdx]);
-    // Move DOM focus to the newly selected button (required by WAI-ARIA radiogroup)
-    btnRefs.current[nextIdx]?.focus();
-  };
-
-  return (
-    <div
-      className="dd-sv-toggle"
-      role="radiogroup"
-      aria-label="Spectrum visualization style"
-      onKeyDown={handleKeyDown}
-    >
-      {VIEWS.map((v, i) => (
-        <button
-          key={v}
-          ref={(el) => { btnRefs.current[i] = el; }}
-          type="button"
-          role="radio"
-          aria-checked={active === v}
-          aria-label={VIEW_LABELS[v]}
-          title={VIEW_LABELS[v]}
-          tabIndex={active === v ? 0 : -1}
-          className={`dd-sv-toggle__btn${active === v ? " dd-sv-toggle__btn--active" : ""}`}
-          onClick={() => onChange(v)}
-        >
-          <svg viewBox="0 0 20 12" width="16" height="10" aria-hidden="true">
-            {v === "ridge" && (
-              <path d="M2 8 Q6 2 10 8 Q14 2 18 8" stroke="currentColor" fill="none" strokeWidth="1.5" />
-            )}
-            {v === "witness" && (
-              <path d="M4 10V2M10 10V4M16 10V6" stroke="currentColor" fill="none" strokeWidth="1.5" />
-            )}
-            {v === "terrain" && (
-              <path d="M1 10 L7 2 L13 6 L19 10 Z" stroke="currentColor" fill="none" strokeWidth="1.5" />
-            )}
-          </svg>
-        </button>
-      ))}
+      {/* Bimodal split banner — only fired when distribution genuinely splits */}
+      {bimodal && (
+        <div className="dd-sv-view__split-banner" aria-live="polite">
+          <span className="dd-sv-view__split-icon" aria-hidden="true">◈</span>
+          Left-right split — sources diverge
+        </div>
+      )}
     </div>
   );
 }
@@ -959,44 +798,9 @@ interface DeepDiveSpectrumProps {
   sources: DeepDiveSpectrumSource[];
 }
 
-function readStoredView(): SpectrumView {
-  if (typeof window === "undefined") return "witness";
-  try {
-    const v = localStorage.getItem("void-spectrum-view") as SpectrumView | null;
-    if (v === "ridge" || v === "witness" || v === "terrain") return v;
-  } catch { /* noop */ }
-  return "witness";
-}
-
 export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
-  const [view, setView] = useState<SpectrumView>(() => readStoredView());
-  const [displayView, setDisplayView] = useState<SpectrumView>(view);
-  const [exiting, setExiting] = useState(false);
-  const [entering, setEntering] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
   const mean = useMemo(() => weightedMeanLean(sources), [sources]);
-
-  const handleViewChange = useCallback((v: SpectrumView) => {
-    if (v === view) return;
-    try { localStorage.setItem("void-spectrum-view", v); } catch { /* noop */ }
-    setExiting(true);
-    setTooltip(null);
-    // After exit animation, swap view
-    setTimeout(() => {
-      setView(v);
-      setDisplayView(v);
-      setExiting(false);
-      setEntering(true);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setEntering(false));
-      });
-    }, 160);
-  }, [view]);
-
-  // Initialize displayView on mount
-  useEffect(() => {
-    setDisplayView(view);
-  }, [view]);
 
   if (sources.length === 0) {
     return (
@@ -1007,19 +811,11 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   }
 
   return (
-    <div className="dd-sv" role="img" aria-label="Source political lean spectrum visualization">
-      <ViewToggle active={view} onChange={handleViewChange} />
-      <div className={`dd-sv__view${exiting ? " dd-sv__view--exiting" : ""}${entering ? " dd-sv__view--entering" : ""}`}>
-        {displayView === "ridge" && <InkRidge sources={sources} />}
-        {displayView === "witness" && <WitnessLine sources={sources} />}
-        {displayView === "terrain" && <TerrainMap sources={sources} />}
-      </div>
-
-      {/* Shared HTML elements below SVG — tilt, sources, axis */}
+    <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
+      <SpectrumView sources={sources} />
       <TiltRow mean={mean} />
       <SourceFaviconRow sources={sources} setTooltip={setTooltip} />
       <SpectrumAxis mode="full" />
-
       {tooltip && <SpectrumTooltip data={tooltip} />}
     </div>
   );
