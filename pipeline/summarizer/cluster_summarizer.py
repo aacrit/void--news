@@ -641,7 +641,8 @@ def summarize_clusters_batch(clusters: list[dict],
 
     Selection criteria (to minimize API calls):
         1. Must have 3+ sources (2-source clusters use rule-based)
-        2. Processed in descending source_count order (biggest stories first)
+        2. Processed in descending headline_rank order (editorially important
+           stories first); falls back to source_count when rank not yet set
         3. Stops when per-run call cap is reached
 
     Args:
@@ -667,8 +668,13 @@ def summarize_clusters_batch(clusters: list[dict],
         if source_count >= _MIN_SOURCES:
             candidates.append((i, source_count))
 
-    # Process highest-source-count clusters first (most value per API call)
-    candidates.sort(key=lambda x: x[1], reverse=True)
+    # Process highest-ranked clusters first. headline_rank is set when this
+    # function is called post-ranking (the normal path). Falls back to
+    # source_count for legacy/test callers that invoke before ranking.
+    candidates.sort(
+        key=lambda x: (clusters[x[0]].get("headline_rank") or 0, x[1]),
+        reverse=True,
+    )
 
     results: dict[int, dict] = {}
     processed = 0
