@@ -58,6 +58,17 @@ const YAML_SLUGS = [
   "trail-of-tears",
   "transatlantic-slave-trade",
   "treaty-of-waitangi",
+  // Batch 2 — 10 new events (2026-04-10)
+  "arab-spring",
+  "bandung-conference",
+  "columbian-exchange",
+  "congo-wars",
+  "industrial-revolution",
+  "iranian-revolution",
+  "korean-war",
+  "ottoman-empire",
+  "vietnam-war",
+  "womens-suffrage",
 ];
 
 export function generateStaticParams() {

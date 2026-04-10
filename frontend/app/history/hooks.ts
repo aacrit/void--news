@@ -102,6 +102,26 @@ export const HOOKS: Record<string, string> = {
     "168 soldiers captured the emperor of 12 million people. The ransom room filled with gold. Then they killed him anyway.",
   "taiping-rebellion":
     "A failed exam candidate claimed to be Jesus\u2019s brother. His kingdom grew to 30 million people and cost more lives than the First World War.",
+  "ottoman-empire":
+    "The empire lasted 623 years. The men who carved it up needed six.",
+  "industrial-revolution":
+    "In 1750, a Bengali weaver earned more than his English counterpart. By 1830, the looms of Dacca were silent \u2014 Britain had made sure of it.",
+  "vietnam-war":
+    "The Pentagon Papers showed the government knew by 1967 it couldn\u2019t win. The war continued for eight more years. 2.1 million more people died.",
+  "womens-suffrage":
+    "New Zealand gave women the vote in 1893. Switzerland waited until 1971. One canton held out until 1990 \u2014 a federal court forced it.",
+  "arab-spring":
+    "A fruit vendor set himself on fire in a town of 40,000. Within 60 days, three presidents had fallen.",
+  "columbian-exchange":
+    "Columbus carried 17 ships on his second voyage. On them were horses, cattle, pigs, and smallpox. Within 50 years, 90% of the people he\u2019d found were dead.",
+  "korean-war":
+    "The US dropped more bombs on Korea than it used in the entire Pacific war. The armistice was signed in 1953. No peace treaty has ever followed.",
+  "congo-wars":
+    "The deadliest war since 1945 killed 5.4 million people. Most people cannot name the country where it happened.",
+  "bandung-conference":
+    "Twenty-nine nations sent delegates to a city in Java. They represented 1.5 billion people \u2014 more than half the world \u2014 and not one of their countries had been independent 15 years earlier.",
+  "iranian-revolution":
+    "Women marched alongside mullahs to overthrow the Shah. Within a year, the mullahs made the veil mandatory.",
 };
 
 /* ── CTAs — story-specific calls to action ── */
@@ -201,4 +221,24 @@ export const CTAS: Record<string, string> = {
     "Atahualpa\u2019s ransom vs. Pizarro\u2019s letters \u2014 two accounts of the same plaza at Cajamarca",
   "taiping-rebellion":
     "Mao\u2019s hero vs. the dynasty that burned his kingdom \u2014 30 million dead, two explanations",
+  "ottoman-empire":
+    "The empire that governed three continents \u2014 told by Turks, Arabs, Balkan Christians, and the people Sykes and Picot replaced it with",
+  "industrial-revolution":
+    "The progress narrative vs. the workers it crushed vs. the colonies it deindustrialized \u2014 five accounts of the same engine",
+  "vietnam-war":
+    "The American War vs. the American War \u2014 five names for one conflict, four countries, three million dead",
+  "womens-suffrage":
+    "New Zealand first. Switzerland last. Black women excluded in between. Read five versions of the same demand",
+  "arab-spring":
+    "Same spark, six outcomes \u2014 why Tunisia built a democracy and Syria became a graveyard",
+  "columbian-exchange":
+    "The discovery vs. the destruction \u2014 Columbus\u2019s diary vs. Las Casas\u2019s testimony vs. the biology that decided it all",
+  "korean-war":
+    "Four names for one war: \u2018police action,\u2019 \u2018liberation war,\u2019 \u20186.25,\u2019 \u2018resist aggression\u2019 \u2014 read all four",
+  "congo-wars":
+    "Rwanda\u2019s security logic vs. Congo\u2019s sovereignty vs. the coltan in your phone \u2014 5.4 million dead, three explanations",
+  "bandung-conference":
+    "The birth of the Third World \u2014 told by the nations that built it, the superpowers that feared it, and the women it excluded",
+  "iranian-revolution":
+    "Islamic awakening, hijacked revolution, Cold War blowback, or women betrayed \u2014 four readings of one February afternoon",
 };

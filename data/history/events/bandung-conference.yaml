@@ -8,7 +8,7 @@ era: contemporary
 region: southeast-asia
 country: Indonesia (host); 29 African and Asian nations attending
 category: political
-severity: moderate
+severity: major
 death_toll: None from the conference itself; the anti-colonial struggles it catalyzed killed millions across
   three continents over the following three decades
 affected_population: 1.54 billion people represented by the 29 delegations — 54% of world population in
@@ -254,7 +254,7 @@ perspectives:
   - Sukarno's authoritarian consolidation of power before and after the conference
   - The failure of Third World solidarity to produce economic redistribution
 - viewpoint: Cold War / Western Realist
-  viewpoint_type: institutional
+  viewpoint_type: bystander
   region_origin: north-america
   narrative: 'John Foster Dulles had a word for non-alignment: immoral. In a world divided between freedom
     and communism, neutrality was complicity. "The concept of neutrality," he told a press conference in
@@ -347,7 +347,7 @@ perspectives:
   - The moral dimension of self-determination for 1.54 billion people
   - Bandung's institutional legacy in shaping multilateral diplomacy at the UN
 - viewpoint: Chinese / Zhou Enlai
-  viewpoint_type: institutional
+  viewpoint_type: academic
   region_origin: east-asia
   narrative: 'On April 11, 1955, a bomb exploded aboard the Kashmir Princess, a chartered Air India
     Constellation carrying members of the Chinese delegation''s advance team from Hong Kong to Jakarta.
@@ -683,12 +683,12 @@ connections:
     — non-alignment as the extension of the independence struggle into global politics, the newly sovereign
     refusing to become subordinate again
 - target_slug: scramble-for-africa
-  connection_type: responds_to
+  connection_type: response-to
   description: Bandung was the collective response to the world the Berlin Conference (1884-1885) had
     created — colonized peoples organizing to dismantle the system of partition and extraction built
     without their consent
 - target_slug: rwandan-genocide
-  connection_type: ideological_context
+  connection_type: influenced
   description: The Non-Aligned Movement's principle of non-interference in member states' internal affairs
     provided no framework for intervention — when 800,000 were killed in Rwanda in 100 days, the NAM
     offered no mechanism to override sovereignty in defense of human life
@@ -698,7 +698,7 @@ connections:
     world remained subject to superpower decisions it could not influence, two men in Washington and Moscow
     negotiating the fate of the planet
 - target_slug: creation-of-israel-nakba
-  connection_type: political_context
+  connection_type: influenced
   description: The Palestine question was on Bandung's agenda — the conference declared support for
     Palestinian self-determination, establishing the Third World solidarity with Palestine that persists
     through the NAM, the G-77, and the UN General Assembly in 2026
