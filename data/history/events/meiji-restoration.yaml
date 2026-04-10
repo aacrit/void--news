@@ -38,7 +38,7 @@ significance: 'Japan was the only non-Western nation in the 19th century to indu
   country with a constitutional government. Japan''s victory over Russia at Tsushima (1905) — where Admiral Togo''s fleet sank 21 of 38 Russian ships — shattered the assumption of European military invincibility
   and inspired anti-colonial movements from India (where the Indian National Congress cited it as proof that Asians could defeat Europeans) to the Ottoman Empire to Persia. The same industrial and military
   apparatus that produced Tsushima also produced the imperial expansion into Korea (annexed 1910), Manchuria (invaded 1931), China (1937), and Southeast Asia (1941-1942) — a trajectory that ended at Hiroshima.
-  Meiji Japan''s path from feudal society to industrial empire to atomic destruction in 77 years remains the most compressed arc of modernization, conquest, and catastrophe in modern history.
+  Meiji Japan''s path from feudal society to industrial empire to atomic destruction in 77 years remains the most compressed arc of industrialization, conquest, and catastrophe in modern history.
 
   '
 key_figures:
@@ -346,10 +346,13 @@ perspectives:
     the fascism of the 1930s.
 
 
-    The postcolonial critique inverts the Western admiration narrative. Japan''s modernization came at the expense of its neighbors. Korea was forced to sign an unequal treaty with Japan in 1876 — twelve
-    years before Japan renegotiated its own. Taiwan was colonized in 1895. Korea was annexed in 1910 and subjected to forced labor, cultural suppression (the Korean language was banned in schools from 1938),
-    and the "comfort women" system. Japan''s success in avoiding colonization enabled it to become a colonizer. Andre Schmid''s Korea Between Empires (2002) and Alexis Dudden''s Japan''s Colonization of
-    Korea (2005) document how Meiji Japan adopted the rhetoric, legal frameworks, and civilizing-mission ideology of European imperialism to justify its own expansion.
+    The postcolonial critique inverts the Western admiration narrative. The word "modernization" itself carries ideological weight that academic convention has only recently begun to interrogate. Prasenjit
+    Duara argued in Rescuing History from the Nation (1995) that "modernization" naturalizes a specific trajectory — Western industrialization, centralized state formation, colonial expansion — as universal
+    progress, making alternatives appear as backwardness rather than difference. Korean historians named the same process differently: what Japanese sources called "modernization" of the Korean peninsula,
+    Korean sources called colonization. Japan''s reforms came at the expense of its neighbors. Korea was forced to sign an unequal treaty with Japan in 1876 — twelve years before Japan renegotiated its own.
+    Taiwan was colonized in 1895. Korea was annexed in 1910 and subjected to forced labor, cultural suppression (the Korean language was banned in schools from 1938), and the "comfort women" system. Japan''s
+    success in avoiding colonization enabled it to become a colonizer. Andre Schmid''s Korea Between Empires (2002) and Alexis Dudden''s Japan''s Colonization of Korea (2005) document how Meiji Japan adopted
+    the rhetoric, legal frameworks, and civilizing-mission ideology of European imperialism to justify its own expansion.
 
 
     The gender dimension of Meiji modernization receives less attention than it warrants. The 1872 Education Ordinance mandated education for girls as well as boys, but the curriculum diverged sharply:
@@ -383,6 +386,11 @@ perspectives:
     doi: 10.2307/2385029
     openlibrary: OL26818624M
     archive_url: https://archive.org/details/flowersinsaltbeg0000siev
+  - title: 'Rescuing History from the Nation: Questioning Narratives of Modern China'
+    author: Prasenjit Duara
+    year: '1995'
+    type: book
+    doi: 10.7208/chicago/9780226167237.001.0001
   - title: The Making of Modern Japan
     author: Marius Jansen
     year: '2000'
@@ -394,6 +402,9 @@ perspectives:
   - text: Heaven does not create one man above or below another man.
     speaker: Fukuzawa Yukichi
     context: An Encouragement of Learning, 1872 — though Fukuzawa later advocated Japanese imperialism in Asia
+  - text: What they called civilization, we called conquest.
+    speaker: Pak Eun-sik
+    context: 'Korean nationalist historian, The Painful History of Korea (1915) — describing Japan''s annexation in the language of modernization'
   emphasized:
   - Comparative analysis — why Japan succeeded where China, the Ottomans, and others did not
   - The trajectory from defensive modernization to imperial aggression as a structural outcome, not an aberration

@@ -101,6 +101,18 @@ key_figures:
   born: 1879
   died: 1949
   wikipedia: https://en.wikipedia.org/wiki/Sarojini_Naidu
+- name: Aruna Asaf Ali
+  role: Hoisted Congress flag at Gowalia Tank on August 9, 1942; went underground for four years during Quit India
+  wikidata: Q541162
+  born: 1909
+  died: 1996
+  wikipedia: https://en.wikipedia.org/wiki/Aruna_Asaf_Ali
+- name: Kamladevi Chattopadhyay
+  role: Led salt raids at Wadala, Bombay (1930); first woman political prisoner of the salt satyagraha
+  wikidata: Q533919
+  born: 1903
+  died: 1988
+  wikipedia: https://en.wikipedia.org/wiki/Kamaladevi_Chattopadhyay
 - name: Bal Gangadhar Tilak
   role: Early nationalist leader, declared "Swaraj is my birthright"
   wikidata: Q312502
@@ -167,18 +179,26 @@ perspectives:
     The Salt March of 1930 demonstrated the method at its most devastating. The British salt tax was regressive — it fell
     hardest on the poorest Indians — but it was also symbolic. The colonial state claimed a monopoly on salt, the most basic
     commodity. Gandhi walked 240 miles over 24 days, giving speeches at every village. By the time he reached Dandi, the march
-    had become a global media event. The subsequent raid on the Dharasana Salt Works, led by Sarojini Naidu after Gandhi''s
-    arrest, produced images — and Webb Miller''s wire dispatch — that damaged British prestige beyond recovery. Viceroy Lord
-    Irwin was forced to negotiate: the Gandhi-Irwin Pact of March 1931 released political prisoners and allowed Indians to
-    make salt.
+    had become a global media event. The 78 marchers to Dandi were all men — Gandhi chose them — but the civil disobedience
+    campaigns that followed were not. Kamladevi Chattopadhyay led salt raids on Wadala in Bombay, was arrested on April 17,
+    1930, and became the first woman political prisoner of the salt satyagraha. The subsequent raid on the Dharasana Salt Works
+    on May 21, led by Sarojini Naidu after Gandhi''s arrest, sent 2,500 unarmed volunteers into police clubs; Webb Miller''s
+    wire dispatch ran in 1,350 newspapers and damaged British prestige beyond recovery. Naidu, who had served as Congress
+    president in 1925 — the first Indian woman to hold the office — was arrested at Dharasana and spent months in prison.
+    Viceroy Lord Irwin was forced to negotiate: the Gandhi-Irwin Pact of March 1931 released political prisoners and allowed
+    Indians to make salt.
 
 
     Quit India, launched on August 8, 1942, was Gandhi''s final mass movement and his most radical. "Do or Die" — the slogan
     reduced the demand to its essence. The British responded with the largest mass arrests in Indian colonial history. Over
-    100,000 were detained. The entire Congress Working Committee was imprisoned within hours of the resolution. Leaderless,
-    the movement turned spontaneous and violent in ways Gandhi had not intended — railway stations were burned, telegraph
-    lines cut, parallel governments briefly established in Satara and Midnapore. British suppression was severe: official
-    figures recorded 1,060 killed by police and military fire, though Indian estimates reach 10,000.
+    100,000 were detained. The entire Congress Working Committee was imprisoned within hours of the resolution. Aruna Asaf
+    Ali, 31, hoisted the Congress flag at Gowalia Tank on August 9 when the senior leadership was already in jail. She went
+    underground and evaded British capture for four years, editing the clandestine Congress bulletin Inquilab while carrying
+    a price of 5,000 rupees on her head. Leaderless above ground, the movement turned spontaneous and violent in ways Gandhi
+    had not intended — railway stations were burned, telegraph lines cut, parallel governments briefly established in Satara
+    and Midnapore. In Midnapore, Matangini Hazra, a 73-year-old widow, led a procession of 6,000 toward the local police
+    station on September 29, 1942; she was shot three times and died holding the Congress flag. British suppression was severe:
+    official figures recorded 1,060 killed by police and military fire, though Indian estimates reach 10,000.
 
 
     The Congress narrative holds that Indian independence was won through moral authority, not military force. The British
@@ -235,7 +255,10 @@ perspectives:
     The revolutionary tradition did not begin with Bhagat Singh. It ran through the Anushilan Samiti and Jugantar groups in
     Bengal from the 1900s, the Ghadar Party formed by Punjabi immigrants in San Francisco in 1913, Surya Sen''s Chittagong
     Armoury Raid of 1930, and Khudiram Bose — hanged at 18 in 1908 for throwing a bomb at a British magistrate''s carriage.
-    The revolutionaries argued that nonviolence was a luxury afforded by those who could wait. The colonial state was maintained
+    Women fought in the armed struggle too. Pritilata Waddedar, 21, led the September 1932 attack on the Pahartali European
+    Club in Chittagong as part of Surya Sen''s network; she swallowed cyanide rather than be captured. Bina Das fired a pistol
+    at the Governor of Bengal at a convocation ceremony in February 1932; she missed, was sentenced to nine years, and served
+    them. The revolutionaries argued that nonviolence was a luxury afforded by those who could wait. The colonial state was maintained
     by violence — police, army, jails, hangings — and could only be answered by violence.
 
 
@@ -471,7 +494,9 @@ perspectives:
     The League perspective frames Congress as a Hindu organization wearing a secular mask. Nehru''s socialism and Gandhi''s
     Ram Rajya ("rule of God") were, in this reading, two faces of the same upper-caste Hindu dominance. The League''s demand
     was not separation for its own sake but protection: 100 million Muslims needed a state where they would not be a permanent
-    minority subject to the whims of a Hindu majority. Jinnah''s August 11, 1947 speech to Pakistan''s Constituent Assembly
+    minority subject to the whims of a Hindu majority. Begum Ra''ana Liaquat Ali Khan organized the Women''s National Guard
+    for the League in 1947, mobilizing thousands of Muslim women for refugee relief during Partition; she later served as
+    Pakistan''s ambassador to the Netherlands and Italy — the first Muslim woman to hold ambassadorial rank. Jinnah''s August 11, 1947 speech to Pakistan''s Constituent Assembly
     — "You are free to go to your temples, you are free to go to your mosques" — articulated a vision of Pakistan as a state
     for Muslims, not an Islamic state. That distinction eroded within a decade.
 
