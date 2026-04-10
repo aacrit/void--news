@@ -1018,20 +1018,118 @@ export default function HistoryLanding({
         </div>
       )}
 
-      {/* Ledger link — gated only by LEDGER, independent of LONG_VIEW */}
-      {ARC_FEATURES.LEDGER && (
-        <div className="hist-longview-ledger-wrap">
-          <Link href="/history/threads" className="hist-longview-ledger-link">
-            Thematic Threads &rarr;
-          </Link>
+      {/* Thread-grouped view — replaces timeline when threadsMode is active */}
+      {threadsMode && (
+        <div className="hist-thread-groups" role="main" aria-label="Events grouped by thematic thread">
+          {THREADS.map((thread) => {
+            const threadEvents = thread.eventSlugs
+              .map((slug) => sortedEvents.find((e) => e.slug === slug))
+              .filter((e): e is NonNullable<typeof e> => !!e);
+            if (threadEvents.length === 0) return null;
+            return (
+              <div key={thread.id} className="hist-thread-group">
+                <div className="hist-thread-group__header">
+                  <span
+                    className="hist-thread-group__accent"
+                    style={{ background: thread.colorVar }}
+                    aria-hidden="true"
+                  />
+                  <div className="hist-thread-group__heading">
+                    <h2 className="hist-thread-group__label">{thread.label}</h2>
+                    <p className="hist-thread-group__subtitle">{thread.subtitle}</p>
+                  </div>
+                  <span className="hist-thread-group__count" aria-label={`${threadEvents.length} events`}>
+                    {threadEvents.length}
+                  </span>
+                </div>
+                <div className="hist-thread-group__row" role="list">
+                  {threadEvents.map((event) => {
+                    const hook = HOOKS[event.slug] ||
+                      (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
+                    const year = extractYear(event.dateSort, event.datePrimary);
+                    const eventThreads = threadMembership.get(event.slug) ?? [];
+                    return (
+                      <Link
+                        key={event.slug}
+                        href={`/history/${event.slug}`}
+                        className="hist-thread-tile"
+                        role="listitem"
+                        aria-label={`${event.title}, ${year}`}
+                      >
+                        <span className="hist-thread-tile__year">{year}</span>
+                        <h3 className="hist-thread-tile__title">{event.title}</h3>
+                        <p className="hist-thread-tile__hook">{hook}</p>
+                        {eventThreads.length > 1 && (
+                          <div className="hist-thread-tile__tags" aria-label="Also in threads">
+                            {eventThreads
+                              .filter((t) => t.id !== thread.id)
+                              .slice(0, 2)
+                              .map((t) => (
+                                <span
+                                  key={t.id}
+                                  className="hist-thread-tile__tag"
+                                  style={{ borderColor: t.colorVar }}
+                                >
+                                  {t.label}
+                                </span>
+                              ))}
+                          </div>
+                        )}
+                        <span className="hist-thread-tile__arrow" aria-hidden="true">&rarr;</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* General archive — events not assigned to any thread */}
+          {(() => {
+            const allThreadSlugs = new Set(THREADS.flatMap((t) => t.eventSlugs));
+            const unthreaded = sortedEvents.filter((e) => !allThreadSlugs.has(e.slug));
+            if (unthreaded.length === 0) return null;
+            return (
+              <div className="hist-thread-group">
+                <div className="hist-thread-group__header">
+                  <span className="hist-thread-group__accent" style={{ background: "var(--hist-brass)" }} aria-hidden="true" />
+                  <div className="hist-thread-group__heading">
+                    <h2 className="hist-thread-group__label">GENERAL ARCHIVE</h2>
+                    <p className="hist-thread-group__subtitle">Events that span multiple threads or resist easy categorization</p>
+                  </div>
+                  <span className="hist-thread-group__count">{unthreaded.length}</span>
+                </div>
+                <div className="hist-thread-group__row" role="list">
+                  {unthreaded.map((event) => {
+                    const hook = HOOKS[event.slug] ||
+                      (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
+                    const year = extractYear(event.dateSort, event.datePrimary);
+                    return (
+                      <Link
+                        key={event.slug}
+                        href={`/history/${event.slug}`}
+                        className="hist-thread-tile"
+                        role="listitem"
+                      >
+                        <span className="hist-thread-tile__year">{year}</span>
+                        <h3 className="hist-thread-tile__title">{event.title}</h3>
+                        <p className="hist-thread-tile__hook">{hook}</p>
+                        <span className="hist-thread-tile__arrow" aria-hidden="true">&rarr;</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 
-      {/* Full timeline -- horizontal scroll */}
+      {/* Full timeline -- horizontal scroll (hidden when in threads mode) */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         ref={timelineRef}
-        className={`hist-tl-full hist-grade${eraFlashColor ? " hist-tl-full--era-flash" : ""}`}
+        className={`hist-tl-full hist-grade${eraFlashColor ? " hist-tl-full--era-flash" : ""}${threadsMode ? " hist-tl-full--hidden" : ""}`}
         role="region"
         aria-label="Historical events timeline"
         aria-roledescription="timeline"
