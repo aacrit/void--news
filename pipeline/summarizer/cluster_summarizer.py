@@ -636,69 +636,153 @@ def summarize_cluster(articles: list[dict],
 def summarize_clusters_batch(clusters: list[dict],
                              cluster_consensus: dict | None = None,
                              top_n: int = 30,
+                             regional_fill: int = 10,
+                             topic_fill: int = 10,
                              ) -> tuple[dict[int, dict], set[int]]:
     """
-    Summarize the top N highest-ranked clusters with Gemini.
+    Summarize up to 50 clusters using three non-overlapping priority pools.
 
-    Selection criteria:
-        1. Must have 3+ sources (2-source clusters skipped)
-        2. Sorted by descending headline_rank (editorially important first)
-        3. Only the top N candidates are attempted — no rule-based fallback
-           for these slots
+    Pool 1 — Top 30 global (headline_rank DESC): ensures the most important
+      stories always get Gemini-quality summaries.
+    Pool 2 — Regional fill (up to 10): round-robin across editions
+      (world/us/europe/south-asia) to guarantee each region has representation
+      even when Pool 1 is dominated by one region.
+    Pool 3 — Topic fill (up to 10): 1 per category desk first, then fills
+      remaining slots with the best remaining clusters.
+
+    Each cluster is summarized at most once. Pool 1 failures have their
+    rule-based summaries cleared by the caller (no fallback for premium slots).
+    Pool 2/3 failures keep their rule-based summaries as acceptable fallback.
 
     Args:
         clusters: List of cluster dicts with "articles" and "source_count".
         cluster_consensus: Optional dict of cluster_index_str -> ClusterConsensus.
-        top_n: Maximum number of clusters to summarize. Defaults to 30.
+        top_n: Pool 1 size (top global clusters). Defaults to 30.
+        regional_fill: Pool 2 max size. Defaults to 10.
+        topic_fill: Pool 3 max size. Defaults to 10.
 
     Returns:
         Tuple of:
-          - Dict mapping cluster index -> summarize_cluster result (successes).
-          - Set of cluster indices that were attempted but Gemini failed —
-            callers should clear their rule-based summaries so no fallback text
-            reaches the frontend.
+          - Dict mapping cluster index -> summarize_cluster result.
+          - Set of Pool 1 cluster indices that Gemini failed on — callers
+            should clear their rule-based summaries so no fallback text
+            reaches the frontend for these premium positions.
     """
     if not is_available():
         return {}, set()
 
-    # Build list of (original_index, source_count) for qualifying clusters.
-    # Opinion clusters always skipped — they use original article text.
-    candidates = []
-    for i, cluster in enumerate(clusters):
+    # ── Helper: check if a cluster qualifies for Gemini summarization ──
+    def _qualifies(cluster: dict) -> bool:
         if cluster.get("_is_opinion"):
-            continue
-        source_count = cluster.get("source_count", 0) or len(cluster.get("articles", []))
-        if source_count >= _MIN_SOURCES:
-            candidates.append((i, source_count))
+            return False
+        sc = cluster.get("source_count", 0) or len(cluster.get("articles", []))
+        return sc >= _MIN_SOURCES
 
-    # Sort by headline_rank descending, tiebreak by source_count.
-    # headline_rank is set post-ranking (the normal path); falls back to
-    # source_count for legacy/test callers that invoke before ranking.
-    candidates.sort(
-        key=lambda x: (clusters[x[0]].get("headline_rank") or 0, x[1]),
+    def _rank_key(i: int) -> tuple:
+        return (clusters[i].get("headline_rank") or 0,
+                clusters[i].get("source_count", 0))
+
+    # All qualifying indices sorted by headline_rank DESC
+    all_qualifying = sorted(
+        (i for i, c in enumerate(clusters) if _qualifies(c)),
+        key=_rank_key,
         reverse=True,
     )
 
-    # Hard cap: only process the top N candidates.
-    candidates = candidates[:top_n]
-    attempted: set[int] = {idx for idx, _ in candidates}
+    # ── Pool 1: Top N global ──────────────────────────────────────────────────
+    pool1: list[int] = all_qualifying[:top_n]
+    selected: set[int] = set(pool1)
+
+    # ── Pool 2: Regional round-robin ──────────────────────────────────────────
+    _EDITIONS = ["world", "us", "europe", "south-asia"]
+
+    # Per-edition sorted candidate queue (excluding pool1)
+    edition_queues: dict[str, list[int]] = {ed: [] for ed in _EDITIONS}
+    for i in all_qualifying:
+        if i in selected:
+            continue
+        sections = clusters[i].get("sections") or [clusters[i].get("section", "world")]
+        for ed in _EDITIONS:
+            if ed in sections:
+                edition_queues[ed].append(i)
+    # Queues are already in headline_rank order since all_qualifying is sorted
+
+    pool2: list[int] = []
+    edition_ptrs = {ed: 0 for ed in _EDITIONS}
+    while len(pool2) < regional_fill:
+        advanced = False
+        for ed in _EDITIONS:
+            if len(pool2) >= regional_fill:
+                break
+            ptr = edition_ptrs[ed]
+            queue = edition_queues[ed]
+            while ptr < len(queue):
+                candidate = queue[ptr]
+                ptr += 1
+                if candidate not in selected:
+                    pool2.append(candidate)
+                    selected.add(candidate)
+                    advanced = True
+                    break
+            edition_ptrs[ed] = ptr
+        if not advanced:
+            break  # All edition queues exhausted
+
+    # ── Pool 3: Topic (category desk) fill ───────────────────────────────────
+    _CATEGORIES = ["politics", "conflict", "economy",
+                   "science", "health", "environment", "culture"]
+
+    pool3: list[int] = []
+
+    # First pass: 1 per category (breadth)
+    seen_cats: set[str] = set()
+    for i in all_qualifying:
+        if len(pool3) >= topic_fill:
+            break
+        if i in selected:
+            continue
+        cat = (clusters[i].get("category") or "").lower()
+        if cat in _CATEGORIES and cat not in seen_cats:
+            pool3.append(i)
+            selected.add(i)
+            seen_cats.add(cat)
+
+    # Second pass: fill remaining slots with best unselected clusters
+    if len(pool3) < topic_fill:
+        for i in all_qualifying:
+            if len(pool3) >= topic_fill:
+                break
+            if i not in selected:
+                pool3.append(i)
+                selected.add(i)
+
+    # ── Summarize: pool1 → pool2 → pool3 ─────────────────────────────────────
+    all_candidates = pool1 + pool2 + pool3
+    pool1_set = set(pool1)
+    pool2_set = set(pool2)
 
     results: dict[int, dict] = {}
-    processed = 0
+    p1_ok = p2_ok = p3_ok = 0
 
-    for idx, _count in candidates:
+    for idx in all_candidates:
         articles = clusters[idx].get("articles", [])
-        cc = None
-        if cluster_consensus:
-            cc = cluster_consensus.get(str(idx))
+        cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
         result = summarize_cluster(articles, claims_consensus=cc)
         if result:
             results[idx] = result
-            processed += 1
+            if idx in pool1_set:
+                p1_ok += 1
+            elif idx in pool2_set:
+                p2_ok += 1
+            else:
+                p3_ok += 1
 
-    failed = len(attempted) - processed
-    print(f"  Gemini: {processed}/{len(attempted)} top clusters summarized"
-          + (f", {failed} failed (summaries cleared)" if failed else ""))
+    total_ok = p1_ok + p2_ok + p3_ok
+    total_att = len(all_candidates)
+    print(f"  Gemini: {total_ok}/{total_att} clusters summarized "
+          f"({p1_ok} top-30 / {p2_ok} regional / {p3_ok} topic)")
+    if total_ok < total_att:
+        print(f"  {total_att - total_ok} failed (pool-1 failures will have summaries cleared)")
 
     # Per-run aggregate quality instrumentation
     if results:
