@@ -5,6 +5,8 @@ import Link from "next/link";
 import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
 import { ERAS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
+import { ARC_FEATURES } from "../arc-features";
+import { THREADS, buildThreadMembership } from "../threads";
 /* CartographerStrip deferred — removed from timeline view, kept as component for future arc/map pages */
 
 /* ===========================================================================
@@ -425,6 +427,13 @@ export default function HistoryLanding({
   const [isMobileVertical, setIsMobileVertical] = useState(false);
   const stationRefs = useRef<(HTMLDivElement | null)[]>([]);
   /* Globe view removed — kept simple */
+
+  /* ── Long View: Thread overlay mode ── */
+  const [threadsMode, setThreadsMode] = useState(false);
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+
+  /* Thread membership lookup */
+  const threadMembership = useMemo(() => buildThreadMembership(), []);
 
   /* ── Detect vertical (mobile) timeline mode ── */
   useEffect(() => {
@@ -941,6 +950,56 @@ export default function HistoryLanding({
         </span>
       </div>
 
+      {/* ── Long View toggle + Ledger link ── */}
+      {ARC_FEATURES.LONG_VIEW && (
+        <div className="hist-longview-controls">
+          <div className="hist-longview-toggle" role="group" aria-label="View mode">
+            <button
+              type="button"
+              className={`hist-longview-toggle__btn ${!threadsMode ? "hist-longview-toggle__btn--active" : ""}`}
+              onClick={() => { setThreadsMode(false); setActiveThreadId(null); }}
+            >
+              TIMELINE
+            </button>
+            <button
+              type="button"
+              className={`hist-longview-toggle__btn ${threadsMode ? "hist-longview-toggle__btn--active" : ""}`}
+              onClick={() => setThreadsMode(true)}
+            >
+              THREADS
+            </button>
+          </div>
+
+          {/* Thread legend — visible in threads mode */}
+          {threadsMode && (
+            <div className="hist-longview-legend" role="group" aria-label="Thread filter">
+              {THREADS.map((thread) => (
+                <button
+                  key={thread.id}
+                  type="button"
+                  className={`hist-longview-legend__item ${activeThreadId === thread.id ? "hist-longview-legend__item--active" : ""}`}
+                  onClick={() => setActiveThreadId(activeThreadId === thread.id ? null : thread.id)}
+                >
+                  <span
+                    className="hist-longview-legend__dot"
+                    style={{ background: thread.colorVar }}
+                    aria-hidden="true"
+                  />
+                  {thread.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Ledger link */}
+          {ARC_FEATURES.LEDGER && (
+            <Link href="/history/threads" className="hist-longview-ledger-link">
+              Thematic Threads &rarr;
+            </Link>
+          )}
+        </div>
+      )}
+
       {/* Full timeline -- horizontal scroll */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
@@ -1023,17 +1082,38 @@ export default function HistoryLanding({
             const isAnniversary = anniversarySlugs.has(event.slug);
             const dScale = dotScaleFromDeathToll(event);
 
+            /* Thread overlay: membership + dimming */
+            const eventThreads = threadMembership.get(event.slug) ?? [];
+            const inAnyThread = eventThreads.length > 0;
+            const inActiveThread = activeThreadId
+              ? eventThreads.some((t) => t.id === activeThreadId)
+              : true;
+            const isDimmed = threadsMode && (!inAnyThread || (activeThreadId && !inActiveThread));
+
             return (
               <div
                 key={event.slug}
                 ref={(el) => { stationRefs.current[i] = el; }}
-                className={`hist-tl-full__station${isFocused ? " hist-tl-full__station--focused" : ""}${isAnniversary ? " hist-tl-full__station--anniversary" : ""}`}
+                className={`hist-tl-full__station${isFocused ? " hist-tl-full__station--focused" : ""}${isAnniversary ? " hist-tl-full__station--anniversary" : ""}${isDimmed ? " hist-tl-full__station--dimmed" : ""}`}
                 style={{
                   left: `${pct}%`,
                   "--card-dist": dist,
                   "--dot-scale": dScale,
                 } as React.CSSProperties}
               >
+                {/* Thread indicator bars — visible in threads mode */}
+                {threadsMode && eventThreads.length > 0 && (
+                  <div className="hist-tl-thread-bars" aria-hidden="true">
+                    {eventThreads.map((thread) => (
+                      <span
+                        key={thread.id}
+                        className="hist-tl-thread-bar"
+                        style={{ background: thread.colorVar }}
+                      />
+                    ))}
+                  </div>
+                )}
+
                 {/* Dot on track — size encodes death toll as % of world population */}
                 <div
                   className={`hist-tl-full__dot hist-tl-full__dot--${event.severity}${isFocused ? " hist-tl-full__dot--focused" : ""}`}
