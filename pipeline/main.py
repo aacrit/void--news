@@ -1869,7 +1869,7 @@ def main():
         # no fallback text reaches the frontend.
         gemini_results: dict[int, dict] = {}
         if SUMMARIZER_AVAILABLE and gemini_is_available():
-            print("\n[7b] Summarizing top 30 clusters with Gemini Flash...")
+            print("\n[7b] Summarizing up to 50 clusters (top-30 + regional + topic)...")
             try:
                 gemini_results, gemini_failed = summarize_clusters_batch(
                     clusters, cluster_consensus=cluster_consensus,

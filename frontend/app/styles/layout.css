@@ -139,49 +139,19 @@
   gap: var(--space-3);
 }
 
-/* ---- Lead Section — Above the fold -------------------------------------- */
-/* Mobile: single column stack. Desktop: two equal columns (1fr 1fr). */
-.lead-section {
-  display: grid;
-  grid-template-columns: 1fr;
+/* ---- Hero Slot — rank 0 front-page image treatment --------------------- */
+.hero-slot {
   border-bottom: var(--rule-strong);
 }
 
-.lead-section__col {
-  /* Prevent grid blowout from long headlines */
-  min-width: 0;
-}
-
-.lead-section__col:not(:last-child) {
-  border-bottom: var(--rule-thin);
-}
-
-.lead-section__col .lead-story {
-  border-bottom: none;
-}
-
-/* ---- Broadsheet Grid — Asymmetric newspaper layout --------------------- */
+/* ---- Unified Feed Grid — ranks 1-29, identical StoryCard --------------- */
 /* Mobile: single column stack */
-.grid-medium {
-  display: grid;
-  grid-template-columns: 1fr;
-  border-bottom: var(--rule-thin);
-}
-
-.grid-medium__item {
-  padding-right: 0;
-  padding-left: 0;
-  border-right: none;
-  /* Prevent grid blowout from long headlines */
-  min-width: 0;
-}
-
-.grid-compact {
+.feed-grid {
   display: grid;
   grid-template-columns: 1fr;
 }
 
-.grid-compact__item {
+.feed-grid__item {
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
   /* Prevent grid blowout from long headlines */

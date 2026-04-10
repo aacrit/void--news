@@ -12,7 +12,6 @@ import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
-import WireCard from "./WireCard";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -135,13 +134,6 @@ const EDITION_FEED_SIZE = 30;
 /** Maximum stories from any single category within the 30-story feed. */
 const CATEGORY_CAP = 8;
 
-/** Zone boundaries (0-indexed) for the three-zone broadsheet layout. */
-const ZONE_LEAD_END = 2;         // indexes 0-1: LeadStory treatment
-const ZONE_EDITION_END = 12;     // indexes 2-11: StoryCard grid (Sigil, summary, bias)
-// indexes 12-29: WireCard compact (headline + source count + lean + category)
-
-/** Number of high-divergence stories injected at the tail of the wire zone. */
-const DIVERGENCE_TAIL_SLOTS = 3;
 
 interface HomeContentProps {
   initialEdition?: Edition;
@@ -735,41 +727,16 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       if (diversified.length >= EDITION_FEED_SIZE) break;
     }
 
-    // High-divergence tail injection — replace last 3 slots (positions 27-29)
-    // with the highest-divergence stories NOT already in the top 27.
-    // TODO post-launch: wire in divergence query from story_clusters table
-    if (diversified.length >= EDITION_FEED_SIZE) {
-      const topIds = new Set(diversified.slice(0, EDITION_FEED_SIZE - DIVERGENCE_TAIL_SLOTS).map((s) => s.id));
-      const divergenceCandidates = sorted
-        .filter((s) => !topIds.has(s.id) && s.divergenceScore > 0)
-        .sort((a, b) => b.divergenceScore - a.divergenceScore)
-        .slice(0, DIVERGENCE_TAIL_SLOTS);
-
-      if (divergenceCandidates.length > 0) {
-        // Replace the last N slots with high-divergence stories
-        const base = diversified.slice(0, EDITION_FEED_SIZE - DIVERGENCE_TAIL_SLOTS);
-        return [...base, ...divergenceCandidates].slice(0, EDITION_FEED_SIZE);
-      }
-    }
-
     return diversified.slice(0, EDITION_FEED_SIZE);
   }, [stories, activeCategory, activeLean]);
 
-  // Three-zone broadsheet layout — all 30 stories render immediately (no pagination)
-  const leadStories = filteredStories.slice(0, ZONE_LEAD_END);                      // Zone 1: Lead (0-1)
-  const editionStories = filteredStories.slice(ZONE_LEAD_END, ZONE_EDITION_END);    // Zone 2: Edition (2-11)
-  const wireStories = filteredStories.slice(ZONE_EDITION_END);                      // Zone 3: Wire (12-29)
-
-  // Mark high-divergence stories in the wire zone tail for visual distinction
-  const divergenceTailIds = new Set(
-    filteredStories.length >= EDITION_FEED_SIZE
-      ? filteredStories.slice(EDITION_FEED_SIZE - DIVERGENCE_TAIL_SLOTS).map((s) => s.id)
-      : [],
-  );
+  // Unified feed — hero at rank 0, identical StoryCard for ranks 1-29
+  const heroStory = filteredStories[0] ?? null;
+  const gridStories = filteredStories.slice(1);
 
   // Fetch lead image for primary story (rank 0 only — one front-page photograph)
   const [leadImageUrl, setLeadImageUrl] = useState<string | null>(null);
-  const leadStoryId = leadStories[0]?.id;
+  const leadStoryId = heroStory?.id;
   useEffect(() => {
     if (!leadStoryId) { setLeadImageUrl(null); return; }
     let cancelled = false;
@@ -955,7 +922,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   filterKey={filterKey}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
-                  divergenceTailIds={divergenceTailIds}
                   transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                 />
               ) : (
@@ -964,50 +930,21 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     <SkyboxBanner state={dailyBriefState} />
                   </div>
 
-                  {/* Zone 1: Lead — full-width hero treatment (indexes 0-1) */}
-                  {leadStories.length > 0 && (
-                    <section key={filterKey} aria-label="Lead stories" className={`lead-section${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {leadStories.map((story, i) => (
-                        <div key={story.id} className="lead-section__col" style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}>
-                          <div data-story-index={i}>
-                            <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} imageUrl={i === 0 ? leadImageUrl : undefined} />
-                          </div>
-                        </div>
-                      ))}
-                    </section>
+                  {/* Hero — rank 0, front-page image treatment */}
+                  {heroStory && (
+                    <div key={filterKey} className={`hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      <LeadStory story={heroStory} rank={0} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === 0} imageUrl={leadImageUrl} />
+                    </div>
                   )}
 
-                  {/* Zone 2: Edition — StoryCard grid with Sigil, summary, bias data (indexes 2-11) */}
-                  {editionStories.length > 0 && (
-                    <section key={`ed-${filterKey}`} aria-label="Top stories" className={`grid-medium${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {editionStories.map((story, idx) => {
-                        const gi = leadStories.length + idx;
+                  {/* Unified grid — ranks 1-29, identical StoryCard */}
+                  {gridStories.length > 0 && (
+                    <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      {gridStories.map((story, idx) => {
+                        const gi = 1 + idx;
                         return (
-                          <div key={story.id} className="grid-medium__item" style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
+                          <div key={story.id} className="feed-grid__item" style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
                             <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
-                          </div>
-                        );
-                      })}
-                    </section>
-                  )}
-
-                  {/* Zone 3: Wire — compact WireCard grid (indexes 12-29) */}
-                  {wireStories.length > 0 && (
-                    <section key={`wire-${filterKey}`} aria-label="Wire stories" className={`grid-compact${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {wireStories.map((story, idx) => {
-                        const gi = leadStories.length + editionStories.length + idx;
-                        const isDivergent = divergenceTailIds.has(story.id);
-                        return (
-                          <div key={story.id} className={`grid-compact__item${isDivergent ? " grid-compact__item--divergent" : ""}`} style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
-                            {isDivergent && (
-                              <span className="wire-divergence-label" aria-label="High source disagreement">Sources Disagree</span>
-                            )}
-                            <WireCard
-                              story={story}
-                              onStoryClick={handleStoryClick}
-                              globalIndex={gi}
-                              kbdFocused={kbdFocusIndex === gi}
-                            />
                           </div>
                         );
                       })}
