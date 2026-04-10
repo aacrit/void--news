@@ -457,6 +457,89 @@ perspectives:
   - African agency and resistance within extractive systems
   - Variation in colonial governance across different European powers
   - Post-independence economic choices by African governments
+- viewpoint: North African / Islamic Resistance
+  viewpoint_type: vanquished
+  region_origin: middle-east
+  narrative: 'The "Scramble for Africa" is typically illustrated with maps of sub-Saharan partition. North Africa disappears into a different narrative — the "Eastern Question," the decline of Ottoman power,
+    the construction of the Suez Canal. But the partition of North Africa was the same process, driven by the same powers, using the same methods, and met with resistance that drew on Islamic political
+    traditions with no equivalent south of the Sahara.
+
+
+    France took Algeria first, invading in 1830. The conquest lasted seventeen years and killed an estimated 825,000 Algerians — roughly one-third of the pre-invasion population. Abd el-Kader, the Algerian
+    emir who organized resistance from 1832 to 1847, built a mobile state-in-arms that combined Sufi religious authority with modern military organization. He fought 26 pitched battles against French
+    forces before his surrender. The French settled Algeria with European colonists — the colons or pieds-noirs — who numbered over one million by independence in 1962. Algeria was not administered as
+    a colony but as an integral part of France, divided into departements. The fiction of integration made the reality of dispossession harder to challenge.
+
+
+    Tunisia fell next (French protectorate, 1881). Egypt followed in 1882, when British forces occupied the country after bombarding Alexandria on July 11 and defeating Ahmed Urabi''s nationalist army
+    at Tel el-Kebir on September 13. The British occupation was framed as temporary — a measure to protect the Suez Canal, opened in 1869, through which 80% of British trade with Asia passed. "Temporary"
+    lasted 74 years. Lord Cromer, the British Consul-General who governed Egypt from 1883 to 1907, ran the country''s finances, reorganized its army, and restructured its agriculture around cotton export
+    for Lancashire mills. Egypt was never formally a colony — it was a "veiled protectorate" — but Cromer''s power exceeded any viceroy''s.
+
+
+    Sudan produced the most dramatic resistance. Muhammad Ahmad, who declared himself the Mahdi (the guided one) in 1881, raised an army of Ansar that destroyed a 10,000-man Egyptian force under Hicks
+    Pasha at the Battle of Shaykan on November 5, 1883. Only 500 of Hicks''s men survived. The Mahdi besieged Khartoum for ten months; on January 26, 1885, the Ansar breached the walls and killed
+    General Charles Gordon, the British officer sent to evacuate the garrison. Gordon''s severed head was brought to the Mahdi. The Mahdist state survived until 1898, when Lord Kitchener''s Anglo-Egyptian
+    force annihilated the Ansar at the Battle of Omdurman on September 2 — 10,800 Sudanese dead against 48 British, a ratio achieved by Maxim guns and artillery against men with swords and rifles.
+
+
+    Libya resisted Italian conquest from 1911 to 1932. Omar al-Mukhtar, the Senussi resistance leader in Cyrenaica, fought Italian forces for twenty years. Italy responded with concentration camps,
+    poison gas (in violation of the Geneva Protocol), and the deportation of 100,000 Libyan civilians into camps where an estimated 40,000-70,000 died. Al-Mukhtar was captured and publicly hanged on
+    September 16, 1931, at the age of 73. His image appears on Libya''s ten-dinar note.
+
+
+    Morocco was divided between France (protectorate, 1912) and Spain (northern strip and western Sahara). Abd el-Krim, a Berber leader in the Rif Mountains, inflicted the worst defeat on a European
+    colonial army since Adwa: at the Battle of Annual on July 22, 1921, Riffian forces killed over 8,000 Spanish soldiers in a single day. Spain and France combined forces — 250,000 troops, including
+    aerial bombardment with mustard gas — to defeat el-Krim in 1926. He was exiled to Reunion Island.
+
+
+    The Islamic dimension of North African resistance distinguishes it from most sub-Saharan anti-colonial movements. The Mahdi, Senussi, and Sufi orders provided organizational structures, theological
+    justifications for jihad, and transnational networks that connected resistance movements across national boundaries. The resistance was not "tribal" — it was political, religious, and military, drawing
+    on a tradition of Islamic statecraft that Europeans did not encounter in the same form elsewhere on the continent.
+
+    '
+  key_arguments:
+  - North Africa was part of the same Scramble but is typically narrated separately — the partition of Egypt, Tunisia, Morocco, and Libya followed the same logic as sub-Saharan partition
+  - Islamic political and military traditions provided organizational frameworks for resistance that had no equivalent south of the Sahara
+  - The Mahdist state in Sudan (1885-1898) was the most successful anti-colonial state in Africa — it destroyed a British-led army and governed for 13 years
+  - Italian Libya's concentration camps and poison gas constitute some of the colonial era's most extreme violence
+  sources:
+  - title: 'The Mahdist State in the Sudan, 1881-1898: A Study of Its Origins, Development, and Overthrow'
+    author: P.M. Holt
+    year: '1958'
+    type: book
+    archive_url: https://archive.org/details/mahdiststateInsu0000holt
+  - title: 'A Savage War of Peace: Algeria 1954-1962'
+    author: Alistair Horne
+    year: '1977'
+    type: book
+    archive_url: https://archive.org/details/savagewarofpeace00horn
+  - title: 'The Modern History of Egypt: From Muhammad Ali to Mubarak'
+    author: Afaf Lutfi al-Sayyid Marsot
+    year: '2007'
+    type: book
+  - title: 'Omar Al-Mukhtar: Lion of the Desert'
+    author: E.E. Evans-Pritchard (on the Senussi) and Italian colonial archives
+    year: '1949'
+    type: book
+    archive_url: https://archive.org/details/sanusiofcyrenaica0000evan
+  notable_quotes:
+  - text: We shall not surrender. We shall win or we shall die.
+    speaker: Omar al-Mukhtar
+    context: Attributed statement during interrogation before his execution, September 16, 1931
+  - text: Gordon is dead. His head was brought to me on a shield.
+    speaker: Muhammad Ahmad (the Mahdi)
+    context: Attributed account of the fall of Khartoum, January 26, 1885 — paraphrased from multiple contemporary sources
+  emphasized:
+  - North Africa as part of the Scramble, not a separate story — the same process, same methods, same period
+  - Islamic organizational structures and theological justification for resistance
+  - Military successes against European forces — the Mahdi at Shaykan, Abd el-Krim at Annual
+  - Italy's use of concentration camps and chemical weapons in Libya
+  omitted:
+  - Collaboration of North African elites with colonial administrations
+  - Internal divisions within North African societies that Europeans exploited
+  - The Ottoman Empire's own claims to these territories and its complex role as both Muslim power and European ally
+  - Women's roles in North African resistance movements — largely undocumented in colonial-era sources
 media:
 - media_type: artwork
   title: Berlin Conference of 1884-1885

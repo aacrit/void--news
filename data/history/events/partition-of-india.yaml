@@ -404,6 +404,81 @@ perspectives:
   - Geopolitical strategy and state-building achievements
   - Constitutional and institutional accomplishments of new nations
   - Cold War context and international diplomatic dimensions
+- viewpoint: Women's History / Gender and Violence
+  viewpoint_type: vanquished
+  region_origin: south-asia
+  narrative: 'The numbers are specific because the states kept records. The Indian government''s Recovery Operation retrieved 12,500 Muslim women from India. Pakistan''s operation retrieved 6,272 Hindu and
+    Sikh women. The Abducted Persons (Recovery and Restoration) Act of 1949 — passed by both governments — authorized the police to enter homes, seize women classified as "abducted," and transport them
+    across the border to the country that matched their religion. The women were not consulted. A Muslim woman who had been taken by a Hindu family during partition violence, who had borne children and
+    built a life over two years, was extracted by Indian police and sent to Pakistan. She was being "recovered." She experienced it as a second abduction.
+
+
+    Urvashi Butalia''s The Other Side of Silence (1998) and Ritu Menon and Kamla Bhasin''s Borders and Boundaries (1998) reconstructed what the state files suppressed: the voices of the women themselves.
+    Butalia interviewed women who had been abducted in 1947 and "recovered" in 1949-1954. Many did not want to be recovered. They had children by their captors. They had converted — some under force,
+    some through pragmatic accommodation. They had ceased to be who they were. The Indian and Pakistani states decided that a woman''s religion determined where she belonged, regardless of her circumstances
+    or wishes. Menon and Bhasin quote one recovered woman: "You think you are saving us? You are tearing us apart again."
+
+
+    The violence against women during partition was not incidental. It was systematic and purposeful. An estimated 75,000 to 100,000 women were abducted, raped, forcibly converted, and married across the
+    communal divide. Women''s bodies became territory — the sites on which communal honor was inscribed, violated, and reclaimed. In Punjab, Sikh jathas attacked Muslim women in refugee columns; Muslim
+    militias attacked Hindu and Sikh women in theirs. The patterns were symmetrical. Men from each community stripped, branded, and mutilated women of the other community — carving religious symbols into
+    their skin, amputating breasts, parading them naked through villages. The violence was public, witnessed, and intended as humiliation of the other community through its women.
+
+
+    The "honor killings" that occurred within communities add another dimension. In some Sikh and Hindu families, male relatives killed their own women rather than allow them to be taken by Muslims. At
+    Thoa Khalsa in Rawalpindi district, on March 13, 1947, an estimated 90 Sikh women jumped into a well to avoid capture by a Muslim mob that had surrounded the village. The event is commemorated as
+    martyrdom in Sikh memory. The women who jumped — and the women who were pushed, and the women who were told that death was preferable to dishonor — had no agency in a calculus that treated their bodies
+    as vessels of communal purity.
+
+
+    Kamla Bhasin''s fieldwork found that women who survived partition violence carried their experiences in silence for decades. Many could not speak of what had happened to them — not because the trauma
+    was inexpressible, but because their families, communities, and states did not want to hear it. A "recovered" woman in India or Pakistan was expected to resume life as if nothing had happened. Her
+    children from the abductor — if she was allowed to keep them — were living evidence of what the state wanted to erase. The bureaucratic language of "recovery" and "restoration" masked a process that
+    treated women as objects to be sorted, filed, and repatriated according to the religious identities that men had assigned to them.
+
+
+    Amrita Pritam''s poem "Ajj Aakhaan Waris Shah Nu" — written on a train fleeing Lahore in August 1947, addressed to the 18th-century Punjabi poet Waris Shah — became the literary voice of partition''s
+    gendered anguish. "Today, every daughter of Punjab weeps / And calls out to you, Waris Shah." The poem names what the state files do not: that partition was experienced, above all, in women''s bodies.
+
+    '
+  key_arguments:
+  - An estimated 75,000-100,000 women were abducted, raped, forcibly converted, and married during partition violence
+  - The Abducted Persons Act (1949) "recovered" women across borders based on religion — without consulting the women themselves
+  - Women's bodies were treated as communal territory — sites of honor, violation, and state-directed restoration
+  - 'Honor killings and mass suicides (Thoa Khalsa) reveal a patriarchal calculus in which death was preferable to dishonor — women had no voice in this equation'
+  sources:
+  - title: 'The Other Side of Silence: Voices from the Partition of India'
+    author: Urvashi Butalia
+    year: '1998'
+    type: book
+    doi: 10.2307/20050025
+    archive_url: https://archive.org/details/the-other-side-of-silence-urvashi-butalia
+  - title: 'Borders and Boundaries: Women in India''s Partition'
+    author: Ritu Menon and Kamla Bhasin
+    year: '1998'
+    type: book
+  - title: 'Partitioned Lives: Narratives of Home, Displacement, and Resettlement'
+    author: Anjali Gera Roy
+    year: '2012'
+    type: book
+    doi: 10.4324/9780321377548
+  notable_quotes:
+  - text: You think you are saving us? You are tearing us apart again.
+    speaker: Anonymous recovered woman
+    context: Quoted in Menon and Bhasin, Borders and Boundaries, 1998
+  - text: Today, every daughter of Punjab weeps / And calls out to you, Waris Shah.
+    speaker: Amrita Pritam
+    context: Ajj Aakhaan Waris Shah Nu, written on a train fleeing Lahore, August 1947
+  emphasized:
+  - Systematic sexual violence as a weapon of communal conflict — not incidental but purposeful
+  - State recovery operations that treated women as objects to be sorted by religion
+  - Silence imposed on survivors by families, communities, and state institutions
+  - Women's lack of agency in decisions about their own bodies, children, and futures
+  omitted:
+  - Women who found safety and even stability in their post-abduction situations
+  - Male victims of sexual and communal violence — men were also killed and mutilated
+  - The broader political and diplomatic history of partition beyond gendered violence
+  - Women's active roles in resettlement, refugee camps, and nation-building after partition
 media:
 - media_type: photograph
   title: Refugee train during Partition, Punjab, 1947

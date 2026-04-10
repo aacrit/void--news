@@ -136,6 +136,19 @@ perspectives:
     — a pan-tribal political authority designed to match the Crown''s claim with a Maori equivalent. The Crown treated the Kingitanga as rebellion. The 1863 invasion of the Waikato and the confiscation
     of 1.2 million acres of Kingitanga land confirmed what Maori leaders had feared: "governance" was a word the Crown used when it was weak, and "sovereignty" was the word it enacted when it was strong.
 
+
+    The treaty''s erasure extended beyond sovereignty to gender. Maori women held rangatiratanga — chieftainship — in their own right. Ana Hato of Ngati Kahungunu, Rangi Topeora of Ngati Toa, and at least
+    eleven other women signed or marked te Tiriti. Their signatures appear on the document. The Crown recorded them. Then colonial law — which did not recognize women as political actors — rendered those
+    signatures invisible. English common law coverture, imposed on New Zealand after 1840, stripped married women of property rights that Maori women had always held. Under tikanga Maori, women could hold
+    land, speak on marae, exercise mana whenua (authority over land), and transmit rank through whakapapa (genealogy). Whakapapa itself is matrilineal in many iwi — descent from Papatuanuku, the Earth Mother,
+    is the foundation of Maori cosmology. The Crown did not merely take land; it imported a legal system that did not acknowledge the women who owned it.
+
+
+    The Native Land Court compounded this erasure. When communal title was individualized after 1862, court judges — all European men — registered land in the names of male chiefs, bypassing women who held
+    customary rights. Ani Kaaro, a Ngati Porou leader who protested to the Native Land Court in the 1870s, told the judge: "This land belongs to me through my mother and her mother before her." The court
+    recorded her statement and awarded the title to her male relatives. By 1900, the intersection of land confiscation and gender exclusion had stripped Maori women of both the political authority guaranteed
+    by Article 2 and the property rights guaranteed by Article 3. The treaty promised them everything. Colonial law gave them nothing.
+
     '
   key_arguments:
   - The Maori text of the treaty does not cede sovereignty — it cedes 'kawanatanga' (governance), a lesser authority
@@ -393,6 +406,83 @@ perspectives:
   - Maori agency in land sales — not all alienation was confiscation or fraud; some chiefs sold willingly
   - The political backlash against Treaty settlements from Pakeha who view them as unfair privilege
   - Internal Maori disputes over settlement distribution — who represents an iwi, and who benefits
+- viewpoint: Colonial Settler / Pakeha Progressive
+  viewpoint_type: bystander
+  region_origin: oceania
+  narrative: 'Not all Pakeha endorsed what the Crown did in their name. The fissure opened early and never fully closed. Edward Gibbon
+    Wakefield''s New Zealand Company promised "systematic colonization" — planned settlements purchased from Maori at fair prices, with
+    missionary oversight to ensure consent. The reality arrived before the theory. When settlers landed at Port Nicholson in January 1840
+    — a month before the treaty was even signed — they found that the Company''s agent, Colonel William Wakefield, had "purchased" 20
+    million acres from a handful of chiefs for goods worth roughly 9,000 pounds. Several of those chiefs later denied the sale. The Spain
+    Commission of 1842 reduced the Company''s validated purchases to 283,000 acres. Even Wakefield''s own settlers recognized the gap
+    between the promise and the swindle.
+
+
+    The missionaries saw it first and said it loudest. Octavius Hadfield, an Anglican missionary in the Kapiti Coast, wrote to the Colonial
+    Office in 1860 warning that Governor Thomas Gore Browne''s Taranaki land purchases were fraudulent — the sellers did not represent
+    all the owners. Hadfield published "One of England''s Little Wars" in 1861, arguing that the Crown was manufacturing pretexts for
+    confiscation. The pamphlet circulated in London and embarrassed the Colonial Office. James Busby, the former British Resident who had
+    helped draft the treaty, wrote repeatedly to the governor protesting that Crown actions violated the document he had helped create.
+    His letters were filed and ignored.
+
+
+    The Quaker and Wesleyan networks provided a different kind of witness. John Whiteley, a Wesleyan missionary in Taranaki, spent 25
+    years among Maori communities and opposed the wars until Titokowaru''s forces killed him in 1869 — a death that both sides used to
+    justify their positions. The Religious Society of Friends in New Zealand, though small, consistently argued that the treaty was a
+    covenant, not a conquest document, and that the Crown''s breaches of Article 2 violated both law and conscience.
+
+
+    By the 1870s and 1880s, a small group of Pakeha began documenting what was being lost. John White''s six-volume Ancient History of
+    the Maori (1887-1891), commissioned by the government but shaped by White''s genuine immersion in Maori oral tradition, preserved
+    accounts of pre-contact life that the colonial project was actively destroying. William Pember Reeves, a Liberal politician who served
+    as Minister of Labour, wrote The Long White Cloud (1898), a history of New Zealand that acknowledged the treaty''s two-text problem
+    and the injustice of confiscation — unusual candor for a sitting politician. Judge F.D. Fenton, the first Chief Judge of the Native
+    Land Court, resigned in 1882 after concluding that the court he administered was an instrument of dispossession, not justice.
+
+
+    These Pakeha progressives did not prevent anything. The confiscations happened. The land courts ground on. By 1900, Maori retained
+    17 percent of the land they had held in 1840. But the progressive dissenters created a documentary record — letters, pamphlets, court
+    transcripts, parliamentary speeches — that the Waitangi Tribunal would use a century later to prove the Crown knew what it was doing,
+    knew it was wrong, and did it anyway. The witnesses existed. The Crown chose not to listen.
+
+    '
+  key_arguments:
+  - Not all settlers supported Crown actions — missionaries, Quakers, and liberal politicians dissented publicly
+  - Octavius Hadfield's 1860s pamphlets embarrassed the Colonial Office by documenting fraudulent land purchases
+  - The Native Land Court's own first Chief Judge resigned, concluding the court was an instrument of dispossession
+  - Progressive Pakeha created the documentary evidence the Waitangi Tribunal later used to prove Crown knowledge of breaches
+  sources:
+  - title: "One of England's Little Wars"
+    author: Octavius Hadfield
+    year: '1861'
+    type: book
+  - title: 'The Long White Cloud: Ao Tea Roa'
+    author: William Pember Reeves
+    year: '1898'
+    type: book
+    archive_url: https://archive.org/details/longwhitecloudao00reev
+  - title: 'Fatal Necessity: British Intervention in New Zealand, 1830-1847'
+    author: Peter Adams
+    year: '1977'
+    type: book
+    doi: 10.7810/9781927277195
+  notable_quotes:
+  - text: The natives have been plundered of their land under forms of law devised for that purpose.
+    speaker: Octavius Hadfield
+    context: Letter to the Colonial Office, 1860, protesting Taranaki land purchases
+  - text: The colony has not dealt justly with the Maori race.
+    speaker: William Pember Reeves
+    context: The Long White Cloud, 1898
+  emphasized:
+  - Internal Pakeha dissent — the settler population was not monolithic in supporting Crown confiscation
+  - Missionary witnesses who documented treaty breaches in real time
+  - The documentary trail that progressive Pakeha left for future tribunals
+  - Judge Fenton's resignation as evidence that even Crown officials recognized the injustice
+  omitted:
+  - Most settlers supported confiscation and wanted more land, not less
+  - Progressive Pakeha dissent rarely translated into political action that changed outcomes
+  - The paternalism embedded in even sympathetic Pakeha attitudes — protecting Maori rather than recognizing Maori sovereignty
+  - Missionaries' own role in cultural destruction through conversion and suppression of tikanga
 media:
 - media_type: document
   title: The Treaty of Waitangi / Te Tiriti o Waitangi, February 6, 1840

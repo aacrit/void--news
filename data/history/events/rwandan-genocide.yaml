@@ -432,6 +432,89 @@ perspectives:
   - Agency of Rwandan political actors in planning and executing the genocide
   - Precolonial Hutu-Tutsi relations and their complexities
   - Post-genocide RPF governance and its authoritarian dimensions
+- viewpoint: UN Peacekeeping / International Failure
+  viewpoint_type: bystander
+  region_origin: global
+  narrative: 'On January 11, 1994, General Romeo Dallaire sent a cable from Kigali to the UN Department of Peacekeeping Operations in New York. The cable — cataloged as DPKO/UNAMIR outgoing code cable
+    11 January 1994, later known as the "genocide fax" — reported intelligence from a high-level informant within the Interahamwe militia. The informant, identified by the codename "Jean-Pierre," disclosed
+    three facts: weapons were being cached across Kigali for distribution to Interahamwe cells; Belgian peacekeepers would be targeted in order to trigger a Belgian withdrawal; and lists of all Tutsis
+    in Kigali had been compiled, "for their extermination." Jean-Pierre offered to show Dallaire the weapons caches. Dallaire requested authorization to raid them. Kofi Annan''s office replied within
+    hours: the proposed action exceeded UNAMIR''s Chapter VI mandate. Dallaire was instructed to share the intelligence with President Habyarimana — the head of the government whose associates were planning
+    the genocide.
+
+
+    Three months later, the genocide began. On April 7, 1994, ten Belgian peacekeepers assigned to protect Prime Minister Agathe Uwilingiyimana were captured, disarmed by Rwandan government soldiers at
+    Camp Kigali, tortured, and killed. Belgium withdrew its contingent — its 400 troops were the best-equipped in UNAMIR — within a week. The sequence matched the informant''s prediction precisely. The
+    UN Security Council convened on April 21. The United States, led by Ambassador Madeleine Albright, pushed for full withdrawal. The compromise was worse: reduction from 2,548 to 270 troops. Dallaire
+    defied the order and retained approximately 450 by refusing to release some contingents.
+
+
+    The United States'' role was not passive neglect. It was active obstruction. Declassified documents from the National Security Archive show that the Defense Intelligence Agency identified the killings
+    as genocide by April 11. The State Department''s legal advisor instructed spokespeople to say "acts of genocide may have occurred" — a formulation designed to avoid triggering the Genocide Convention''s
+    obligation to prevent and punish. On June 10, State Department spokesperson Christine Shelley was asked how many "acts of genocide" constitute "genocide." She replied: "That''s just not a question
+    that I''m in a position to answer." The exchange became a case study in bureaucratic moral evasion.
+
+
+    The Clinton administration''s internal calculus was shaped by Somalia. Eighteen American soldiers had been killed in Mogadishu on October 3, 1993 — six months before the Rwandan genocide began. Presidential
+    Decision Directive 25, signed in May 1994 while the genocide was underway, established restrictive criteria for U.S. support of peacekeeping operations. Rwanda was the first test of the new doctrine.
+    The United States did not merely fail to act. It actively worked to prevent others from acting — blocking a Security Council resolution that would have authorized reinforcement, and refusing to jam
+    RTLM radio broadcasts that were directing the killers to their victims.
+
+
+    France''s Operation Turquoise, authorized by the Security Council on June 22, deployed 2,500 French troops to southwestern Rwanda under a humanitarian mandate. The operation saved Tutsi lives at
+    Bisesero, where survivors had held out for weeks on a hilltop under sustained attack. But the "safe zone" also provided a corridor for genocidaires to escape into Zaire. At Goma, across the border,
+    850,000 Hutu refugees arrived in July — among them thousands of armed Interahamwe and former Rwandan army soldiers who used the camps as bases for cross-border raids, destabilizing the region for
+    three decades.
+
+
+    The UN''s own Independent Inquiry, the Carlsson Report (1999), concluded that the organization had failed at every level: headquarters in New York, the Security Council, and the member states whose
+    interests determined the Council''s inaction. Kofi Annan, by then Secretary-General, accepted the report and said: "The international community failed Rwanda." Dallaire, who suffered severe PTSD
+    and attempted suicide in 2000, wrote: "I know there is a God, because in Rwanda I shook hands with the devil."
+
+    '
+  key_arguments:
+  - The genocide fax of January 11 provided specific, actionable intelligence that the UN headquarters refused to act on
+  - The US deliberately avoided the word "genocide" to circumvent the Genocide Convention's legal obligation to intervene
+  - The Security Council reduced UNAMIR from 2,548 to 270 troops after the genocide had begun — active disengagement, not passive neglect
+  - France's Operation Turquoise saved some lives but provided an escape corridor for genocidaires into Zaire
+  sources:
+  - title: 'Shake Hands with the Devil: The Failure of Humanity in Rwanda'
+    author: Romeo Dallaire
+    year: '2003'
+    type: book
+    doi: 10.2307/40203936
+    archive_url: https://archive.org/details/shakehandswithde00dall
+  - title: 'A People Betrayed: The Role of the West in Rwanda''s Genocide'
+    author: Linda Melvern
+    year: '2000'
+    type: book
+    doi: 10.2307/40203545
+    archive_url: https://archive.org/details/peoplebetrayedro0000melv
+  - title: 'Bystanders to Genocide: Why the United States Let the Rwandan Tragedy Happen'
+    author: Samantha Power
+    year: '2001'
+    type: journal
+  - title: Report of the Independent Inquiry into the Actions of the United Nations during the 1994 Genocide in Rwanda (Carlsson Report)
+    author: Ingvar Carlsson et al.
+    year: '1999'
+    type: document
+  notable_quotes:
+  - text: That's just not a question that I'm in a position to answer.
+    speaker: Christine Shelley
+    context: State Department briefing, June 10, 1994 — asked how many acts of genocide constitute genocide
+  - text: I know there is a God, because in Rwanda I shook hands with the devil.
+    speaker: Romeo Dallaire
+    context: Shake Hands with the Devil, 2003
+  emphasized:
+  - Specific advance intelligence that was deliberately not acted upon
+  - Active US obstruction — not just inaction but prevention of others' action
+  - The Security Council's decision to reduce peacekeepers during an active genocide
+  - The Somalia precedent as the political calculus behind non-intervention
+  omitted:
+  - RPF atrocities during the advance on Kigali and in the aftermath
+  - The agency of Rwandan perpetrators — the international failure narrative can obscure domestic responsibility
+  - Regional dynamics including Uganda's long-standing support for the RPF
+  - The limitations of what 2,500 peacekeepers could have achieved against a nationwide killing operation
 media:
 - media_type: photograph
   title: Murambi Genocide Memorial — preserved remains

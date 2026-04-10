@@ -437,6 +437,83 @@ perspectives:
   - Cherokee slaveholding and the 1866 treaty controversy over Freedmen citizenship
   - Contemporary intertribal politics and competing sovereignty claims
   - The pre-removal political authority of Cherokee women through the clan system and the Women's Council
+- viewpoint: US Settler / Expansionist
+  viewpoint_type: victor
+  region_origin: americas
+  narrative: 'Gold was found at Dahlonega, Georgia, in 1828. Within a year, 10,000 white prospectors had crossed onto Cherokee land. Georgia''s legislature, which had been maneuvering against the Cherokee
+    since the 1802 compact (in which the federal government promised to extinguish Indian title within the state in exchange for Georgia''s cession of its western land claims), passed a series of laws extending
+    state jurisdiction over Cherokee territory. Cherokee governance was nullified. Cherokee courts were abolished. Cherokee gold mines were seized. It became illegal for a white person to reside on Cherokee
+    land without a state license — a provision designed to expel the missionaries who were helping the Cherokee resist. Samuel Worcester, a Congregationalist missionary, went to prison for refusing to leave.
+
+
+    For the white settlers of Georgia, Tennessee, Alabama, and Mississippi, Indian removal meant land. The Five Tribes occupied approximately 25 million acres of some of the most fertile territory in the
+    American Southeast — cotton land, river-bottom land, land with timber, game, and gold. The Indian Removal Act of 1830 authorized the president to exchange these lands for territory west of the Mississippi.
+    The settlers who pressed for removal were not abstract policymakers. They were families who wanted farms, speculators who wanted acreage, and plantation owners who wanted cotton fields. Their motives
+    were concrete and material.
+
+
+    The Jacksonian argument for removal combined paternalism with realism. Jackson''s Second Annual Message to Congress (December 6, 1830) asked whether it would not be better for the Indians to be removed
+    "from the evil" that surrounded them — meaning the white settlement that was already engulfing their lands — than to be "left to the mercy of those states" that had demonstrated their willingness to
+    override federal treaties. The argument was circular but contained a real observation: Georgia, Alabama, and Mississippi would not protect Cherokee, Creek, or Choctaw rights. Jackson offered removal
+    as protection from states he chose not to constrain.
+
+
+    The economic benefits were distributed immediately. Cherokee land in Georgia was parceled into 160-acre lots and distributed by lottery to white citizens in 1832. Creek land in Alabama was allotted
+    to individual Creek members under the 1832 Treaty of Cusseta — and then purchased, often through fraud, by white speculators before the ink was dry. Claudio Saunt estimates the total value of the
+    removed nations'' lands at approximately $74 million in contemporary dollars. Cotton planters, land speculators, and state governments were the direct beneficiaries. Jackson''s associates, including
+    his nephew Andrew Jackson Donelson and political allies like Georgia Governor Wilson Lumpkin, held financial interests in the lands being cleared.
+
+
+    The settler perspective is uncomfortable to recover because its premises are morally indefensible by modern standards. But it was the majority position in the 1830s American South. Removal passed the
+    House by 101 to 97 — narrow, but a majority. The opponents — missionaries, northern Whigs, some Southern moderates — were vocal but outnumbered. The Cherokee''s legal victory in Worcester v. Georgia
+    (1832) was meaningless because the political system had already decided against them. The settlers did not need to argue that removal was just. They needed only to argue that it was inevitable — that
+    white expansion would not stop, that state governments would not relent, and that the federal government would not fight a civil war with Georgia over Cherokee land twenty-eight years before it fought
+    one over slavery.
+
+
+    The land that removal opened grew cotton. By 1840, Alabama and Mississippi, built on former Creek and Choctaw territory, produced more cotton than any other states. The cotton economy relied on enslaved
+    labor — the same institution that the Cherokee themselves had partially adopted. The Trail of Tears and the expansion of slavery were not separate events. They were two faces of the same process: the
+    construction of the antebellum South on land taken from one dispossessed people and worked by another.
+
+    '
+  key_arguments:
+  - Removal was driven by concrete economic interests — 25 million acres of fertile land, gold at Dahlonega, cotton expansion
+  - The Jacksonian argument was that state governments would destroy the tribes regardless — removal was framed as the lesser evil
+  - The lands removed from the Five Tribes became the foundation of the antebellum cotton economy, worked by enslaved labor
+  - The House passed the Indian Removal Act 101-97 — narrow, but it was a democratic majority acting through legal channels
+  sources:
+  - title: 'Unworthy Republic: The Dispossession of Native Americans and the Road to Indian Territory'
+    author: Claudio Saunt
+    year: '2020'
+    type: book
+    openlibrary: OL27931262M
+  - title: 'The Rise of American Democracy: Jefferson to Lincoln'
+    author: Sean Wilentz
+    year: '2005'
+    type: book
+    doi: 10.1353/rah.2006.0088
+    archive_url: https://archive.org/details/riseofamericande00wile
+  - title: 'Jacksonland: President Andrew Jackson, Cherokee Chief John Ross, and a Great American Land Grab'
+    author: Steve Inskeep
+    year: '2015'
+    type: book
+  notable_quotes:
+  - text: It gives me pleasure to announce to Congress that the benevolent policy of the Government... is approaching a happy consummation.
+    speaker: Andrew Jackson
+    context: Seventh Annual Message to Congress, December 7, 1835 — describing the removal of 60,000 people as a policy success
+  - text: Humanity has often wept over the fate of the aborigines of this country... but true philanthropy reconciles the mind to these vicissitudes.
+    speaker: Andrew Jackson
+    context: Second Annual Message to Congress, December 6, 1830
+  emphasized:
+  - Economic incentives — land, gold, cotton — as the actual drivers of removal policy
+  - The political reality that state governments would not protect Native rights regardless of federal policy
+  - Democratic legitimacy — removal was passed by Congress and signed by a twice-elected president
+  - The connection between Indian removal and the expansion of slavery
+  omitted:
+  - The death toll — 15,000 across the Five Tribes — and the conditions of the forced march
+  - The fraudulent Treaty of New Echota and the suppression of Cherokee democratic opposition
+  - Worcester v. Georgia and Jackson's refusal to enforce a Supreme Court ruling
+  - The voices of the removed — the suffering the settler perspective chose not to see
 media:
 - media_type: map
   title: Routes of the Trail of Tears
