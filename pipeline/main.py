@@ -1585,44 +1585,6 @@ def main():
         else:
             print("\n[6c] Skipping Gemini bias reasoning (module not available)")
 
-        # Step 7b: Summarize clusters with Gemini Flash
-        # Generates polished headlines, summaries, and consensus/divergence.
-        # Falls back to rule-based generation (already set by cluster_stories)
-        # when Gemini is unavailable or fails for a given cluster.
-        gemini_results: dict[int, dict] = {}
-        if SUMMARIZER_AVAILABLE and gemini_is_available():
-            print("\n[7b] Summarizing clusters with Gemini Flash...")
-            try:
-                gemini_results = summarize_clusters_batch(
-                    clusters, cluster_consensus=cluster_consensus,
-                )
-                for idx, result in gemini_results.items():
-                    clusters[idx]["title"] = result["headline"]
-                    clusters[idx]["summary"] = result["summary"]
-                    clusters[idx]["consensus_points"] = result["consensus"]
-                    clusters[idx]["divergence_points"] = result["divergence"]
-                    clusters[idx]["_gemini_enriched"] = True
-                    # v5.0: editorial intelligence fields
-                    if result.get("editorial_importance") is not None:
-                        clusters[idx]["editorial_importance"] = result["editorial_importance"]
-                    if result.get("story_type") is not None:
-                        clusters[idx]["story_type"] = result["story_type"]
-                    if result.get("has_binding_consequences") is not None:
-                        clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
-                    # void --verify: Gemini-deduplicated claims
-                    if result.get("claims"):
-                        clusters[idx]["_gemini_claims"] = result["claims"]
-                    if result.get("consensus_ratio") is not None:
-                        clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
-                    if result.get("consensus_summary"):
-                        clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
-            except Exception as e:
-                print(f"  [warn] Gemini summarization failed: {e}")
-        elif SUMMARIZER_AVAILABLE:
-            print("\n[7b] Skipping Gemini summarization (GEMINI_API_KEY not set)")
-        else:
-            print("\n[7b] Skipping Gemini summarization (google-generativeai not installed)")
-
         # Step 7: Categorize and rank with v2 engine
         print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
         for cluster in clusters:
@@ -1898,6 +1860,44 @@ def main():
                 key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
                 reverse=True,
             )
+
+        # Step 7b: Summarize clusters with Gemini Flash (runs after ranking so
+        # Gemini calls are spent on the clusters that will actually appear on the
+        # frontend, not merely the ones with the most raw sources).
+        # Falls back to rule-based generation when Gemini is unavailable or fails.
+        gemini_results: dict[int, dict] = {}
+        if SUMMARIZER_AVAILABLE and gemini_is_available():
+            print("\n[7b] Summarizing top-ranked clusters with Gemini Flash...")
+            try:
+                gemini_results = summarize_clusters_batch(
+                    clusters, cluster_consensus=cluster_consensus,
+                )
+                for idx, result in gemini_results.items():
+                    clusters[idx]["title"] = result["headline"]
+                    clusters[idx]["summary"] = result["summary"]
+                    clusters[idx]["consensus_points"] = result["consensus"]
+                    clusters[idx]["divergence_points"] = result["divergence"]
+                    clusters[idx]["_gemini_enriched"] = True
+                    # v5.0: editorial intelligence fields
+                    if result.get("editorial_importance") is not None:
+                        clusters[idx]["editorial_importance"] = result["editorial_importance"]
+                    if result.get("story_type") is not None:
+                        clusters[idx]["story_type"] = result["story_type"]
+                    if result.get("has_binding_consequences") is not None:
+                        clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
+                    # void --verify: Gemini-deduplicated claims
+                    if result.get("claims"):
+                        clusters[idx]["_gemini_claims"] = result["claims"]
+                    if result.get("consensus_ratio") is not None:
+                        clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
+                    if result.get("consensus_summary"):
+                        clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
+            except Exception as e:
+                print(f"  [warn] Gemini summarization failed: {e}")
+        elif SUMMARIZER_AVAILABLE:
+            print("\n[7b] Skipping Gemini summarization (GEMINI_API_KEY not set)")
+        else:
+            print("\n[7b] Skipping Gemini summarization (google-generativeai not installed)")
 
         # Topic diversity re-ranking: prevent any single category from
         # dominating the top of the feed. Within each section pool,
