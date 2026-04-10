@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.1
-**Last updated:** 2026-04-04 (rev 16)
+**Last updated:** 2026-04-09 (rev 17)
 
 ---
 
@@ -572,7 +572,7 @@ Active components in `frontend/app/components/`:
 | `ShipBoard` | Feature request board for `/ship` page | -- |
 | `WeeklyDigest` | `/weekly` magazine page. No NavBar — own sticky topbar (`.wk-topbar`: back link + ThemeToggle, glass blur). Deep red palette (`--wk-accent: #B91C1C` light / `#EF5350` dark). Warmer paper (`#EDE4D0` light / `#1E1A16` dark). Film grain 3x, tighter vignette. Sections: red masthead, cover hero (drop cap, justified), timeline (horizontal desktop / vertical mobile), opinions (3-col lean grid, no card backgrounds), week in brief (2-col compact), inline audio, archive, footer. No MobileBottomNav. No collapsibles. | -- |
 
-**49 components total** (49 `.tsx` files). Added since last audit: `AudioProvider`, `MobileMiniPlayer`, `MobileNav`, `MobileSidePanel`, `MobileTabBar`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
+**53 components total** (53 `.tsx` files). Added since last audit: `ClaimConsensusSection`, `ClaimMark`, `ConsensusBadge`, `CredibilityArc`, `FloatingPlayer`, `SearchOverlay`, `ShareCard`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 
