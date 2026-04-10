@@ -86,6 +86,22 @@ export const HOOKS: Record<string, string> = {
     "A bankrupt goldsmith copied a Buddhist idea and accidentally ended the Catholic Church\u2019s monopoly on truth.",
   "chinese-cultural-revolution":
     "Students beat their teachers to death with the textbooks they\u2019d been taught from.",
+  "cyrus-cylinder":
+    "He freed the Babylonians, the Jews, and the Egyptians \u2014 and put it in writing. 2,500 years before human rights became a legal concept.",
+  "fall-of-constantinople":
+    "A 21-year-old sultan hired a cannon maker the emperor couldn\u2019t pay. Then someone left a gate unlocked.",
+  "mughal-empire":
+    "Twenty followers joined Akbar\u2019s new religion. His empire held 25% of world GDP.",
+  "angkor-khmer-empire":
+    "LIDAR revealed a city larger than modern Paris, buried under jungle since 1431. No one had noticed the canals.",
+  "kingdom-of-kongo":
+    "Afonso I wrote to Portugal in 1526: \u2018Your people are taking our people.\u2019 He was writing to the man selling them.",
+  "rise-of-islam":
+    "Within 100 years of the first revelation, Islam stretched from Spain to the borders of China. The Byzantine and Sassanid empires were gone.",
+  "inca-conquest-peru":
+    "168 soldiers captured the emperor of 12 million people. The ransom room filled with gold. Then they killed him anyway.",
+  "taiping-rebellion":
+    "A failed exam candidate claimed to be Jesus\u2019s brother. His kingdom grew to 30 million people and cost more lives than the First World War.",
 };
 
 /* ── CTAs — story-specific calls to action ── */
@@ -169,4 +185,20 @@ export const CTAS: Record<string, string> = {
     "Bi Sheng did it 400 years earlier. Read why Europe gets the credit",
   "chinese-cultural-revolution":
     "The party\u2019s 70/30 verdict vs. the testimonies it won\u2019t publish",
+  "cyrus-cylinder":
+    "The world\u2019s first human rights charter vs. the empires that rewrote its meaning",
+  "fall-of-constantinople":
+    "The last emperor died with his soldiers. Read five versions of the empire\u2019s final night",
+  "mughal-empire":
+    "Din-i-Ilahi to Babri Masjid \u2014 500 years of one civilization, four contested narratives",
+  "angkor-khmer-empire":
+    "What LIDAR found in the jungle vs. what colonial France chose to see",
+  "kingdom-of-kongo":
+    "A king\u2019s letters vs. the ledgers of the men who ignored them",
+  "rise-of-islam":
+    "Divine revelation or social revolution? Five traditions on the same century of expansion",
+  "inca-conquest-peru":
+    "Atahualpa\u2019s ransom vs. Pizarro\u2019s letters \u2014 two accounts of the same plaza at Cajamarca",
+  "taiping-rebellion":
+    "Mao\u2019s hero vs. the dynasty that burned his kingdom \u2014 30 million dead, two explanations",
 };
