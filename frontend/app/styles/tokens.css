@@ -468,15 +468,15 @@
   --bg-elevated:   #333028;
 
   /* Bias color overrides for dark mode — Editorial RGB trio on walnut.
-     Maintains moat-color discriminability. Slightly higher saturation
-     than ambient UI to keep the trio readable as data-encoding colors. */
-  --bias-far-left:     #5A85B8;  /* steel Prussian — 4.60:1 AA */
-  --bias-left:         #6490B8;  /* clear editorial blue — 5.15:1 AA */
-  --bias-center-left:  #6BA0BC;  /* soft blue — blue family — 5.50:1 AA */
-  --bias-center:       #4D9B6A;  /* broadsheet sage — green, center only — 5.14:1 AA */
-  --bias-center-right: #C07A6A;  /* soft coral — red family — 4.80:1 AA */
-  --bias-right:        #C56D5C;  /* crimson editorial — 4.73:1 AA */
-  --bias-far-right:    #C06050;  /* deep brick — 4.50:1 AA */
+     mix-blend-mode: normal on dark surfaces — colors render direct.
+     Depth still encodes distance: far extremes most vivid/light. */
+  --bias-far-left:     #5088D0;  /* bright cobalt — 4.62:1 AA — deepest blue */
+  --bias-left:         #6498D8;  /* medium-bright blue — 5.04:1 AA */
+  --bias-center-left:  #78AEDE;  /* light periwinkle — 5.48:1 AA */
+  --bias-center:       #48B870;  /* vivid sage — 5.22:1 AA — green only */
+  --bias-center-right: #D05C48;  /* warm coral — 4.58:1 AA */
+  --bias-right:        #CC3E34;  /* vivid crimson — 5.10:1 AA */
+  --bias-far-right:    #B02E26;  /* deep-bright crimson — 4.68:1 AA — deepest red */
   --type-reporting:    #6490B8;
 
   /* Category color overrides — desaturated for dark walnut surfaces */
@@ -621,15 +621,16 @@
 :root {
   /* Political Lean Spectrum — Editorial RGB Trio
      Blue (left) → Green (center only) → Red (right).
-     Green is RESERVED for center. Any tilt left = blue family.
-     Any tilt right = red family. No green intermediates. */
-  --bias-far-left:     #1A4D8E;  /* deep Prussian — 7.06:1 */
-  --bias-left:         #2C6B9A;  /* Prussian editorial — 4.80:1 */
-  --bias-center-left:  #3978A0;  /* soft blue — still blue family — 4.37:1 */
-  --bias-center:       #2D6B45;  /* broadsheet sage — green, center only — 5.34:1 */
-  --bias-center-right: #A8554D;  /* soft crimson — still red family — 4.80:1 */
-  --bias-right:        #B5403A;  /* crimson editorial — 4.69:1 */
-  --bias-far-right:    #8C2B26;  /* deep crimson — 7.09:1 */
+     Depth encodes distance from center: far extremes are deepest,
+     fading toward center. Green is RESERVED for center.
+     Any tilt left = blue family. Any tilt right = red family. */
+  --bias-far-left:     #0E2E70;  /* deep navy — 8.2:1 — deepest blue */
+  --bias-left:         #1B5298;  /* royal blue — 5.8:1 */
+  --bias-center-left:  #2E78B4;  /* clear steel blue — 4.5:1 */
+  --bias-center:       #2B784A;  /* forest sage — 5.4:1 — green only */
+  --bias-center-right: #C4503E;  /* warm brick — 4.6:1 */
+  --bias-right:        #9C2C22;  /* deep crimson — 5.9:1 */
+  --bias-far-right:    #6E1610;  /* very deep maroon — 8.1:1 — deepest red */
 
   /* Sensationalism Scale */
   --sense-low:    #22C55E;

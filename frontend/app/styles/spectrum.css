@@ -6,23 +6,23 @@
 
 /* ---- Spectrum zone tint tokens — Green center only, blue left, red right */
 :root {
-  --spectrum-zone-far-left:    rgba(26, 77, 142, 0.12);
-  --spectrum-zone-left:        rgba(44, 107, 154, 0.08);
-  --spectrum-zone-center-left: rgba(57, 120, 160, 0.06);
-  --spectrum-zone-center:      rgba(45, 107, 69, 0.06);
-  --spectrum-zone-center-right:rgba(168, 85, 77, 0.06);
-  --spectrum-zone-right:       rgba(181, 64, 58, 0.08);
-  --spectrum-zone-far-right:   rgba(140, 43, 38, 0.12);
+  --spectrum-zone-far-left:    rgba(14, 46, 112, 0.12);
+  --spectrum-zone-left:        rgba(27, 82, 152, 0.08);
+  --spectrum-zone-center-left: rgba(46, 120, 180, 0.06);
+  --spectrum-zone-center:      rgba(43, 120, 74, 0.06);
+  --spectrum-zone-center-right:rgba(196, 80, 62, 0.06);
+  --spectrum-zone-right:       rgba(156, 44, 34, 0.08);
+  --spectrum-zone-far-right:   rgba(110, 22, 16, 0.12);
 }
 
 :root[data-mode="dark"] {
-  --spectrum-zone-far-left:    rgba(80, 120, 174, 0.14);
-  --spectrum-zone-left:        rgba(100, 144, 184, 0.10);
-  --spectrum-zone-center-left: rgba(107, 160, 188, 0.08);
-  --spectrum-zone-center:      rgba(77, 155, 106, 0.08);
-  --spectrum-zone-center-right:rgba(192, 122, 106, 0.08);
-  --spectrum-zone-right:       rgba(197, 109, 92, 0.10);
-  --spectrum-zone-far-right:   rgba(178, 87, 72, 0.14);
+  --spectrum-zone-far-left:    rgba(80, 136, 208, 0.14);
+  --spectrum-zone-left:        rgba(100, 152, 216, 0.10);
+  --spectrum-zone-center-left: rgba(120, 174, 222, 0.08);
+  --spectrum-zone-center:      rgba(72, 184, 112, 0.08);
+  --spectrum-zone-center-right:rgba(208, 92, 72, 0.08);
+  --spectrum-zone-right:       rgba(204, 62, 52, 0.10);
+  --spectrum-zone-far-right:   rgba(176, 46, 38, 0.14);
 }
 
 /* ---- Sources Page Wrapper ---------------------------------------------- */
@@ -142,15 +142,18 @@
   height: 34px;
   border-radius: 1px;
   overflow: hidden;
+  /* oklch midpoints at blue→green and green→red transitions prevent muddy sRGB crossover */
   background: linear-gradient(
     to right,
-    var(--bias-far-left),
+    var(--bias-far-left) 0%,
     var(--bias-left) 14%,
     var(--bias-center-left) 28%,
-    var(--bias-center) 42%,
-    var(--bias-center-right) 57%,
-    var(--bias-right) 71%,
-    var(--bias-far-right)
+    color-mix(in oklch, var(--bias-center-left) 50%, var(--bias-center) 50%) 38%,
+    var(--bias-center) 50%,
+    color-mix(in oklch, var(--bias-center) 50%, var(--bias-center-right) 50%) 62%,
+    var(--bias-center-right) 72%,
+    var(--bias-right) 86%,
+    var(--bias-far-right) 100%
   );
   position: relative;
   /* Letterpress deboss: pressed into the paper */
@@ -621,6 +624,20 @@
 }
 
 /* ==========================================================================
+   Dark mode — spectrum bars use normal blend (not multiply) on dark walnut.
+   multiply × dark surface → near-black; normal lets vivid dark-mode
+   bias colors render as-is against the dark background.
+   ========================================================================== */
+
+:root[data-mode="dark"] .spectrum-bar,
+:root[data-mode="dark"] .dd-spectrum__bar {
+  mix-blend-mode: normal;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ==========================================================================
    Reduced motion
    ========================================================================== */
 
@@ -663,13 +680,15 @@
   overflow: hidden;
   background: linear-gradient(
     to right,
-    var(--bias-far-left),
+    var(--bias-far-left) 0%,
     var(--bias-left) 14%,
     var(--bias-center-left) 28%,
-    var(--bias-center) 42%,
-    var(--bias-center-right) 57%,
-    var(--bias-right) 71%,
-    var(--bias-far-right)
+    color-mix(in oklch, var(--bias-center-left) 50%, var(--bias-center) 50%) 38%,
+    var(--bias-center) 50%,
+    color-mix(in oklch, var(--bias-center) 50%, var(--bias-center-right) 50%) 62%,
+    var(--bias-center-right) 72%,
+    var(--bias-right) 86%,
+    var(--bias-far-right) 100%
   );
   box-shadow:
     inset 0 1px 3px rgba(28, 26, 23, 0.18),
