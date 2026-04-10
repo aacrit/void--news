@@ -113,7 +113,13 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
 
   const showSidebar = ARC_FEATURES.SIDEBAR && sidebarConnections.length >= 2;
 
-  /* ── Scroll reveal observer for all .hist-reveal elements ── */
+  /* ── Scroll reveal observer for all .hist-reveal elements ──
+       Also observes arc connection elements that have their own
+       CSS transitions triggered by hist-reveal--visible:
+       - .hist-thread-stage (parent for divider + lead quote)
+       - .hist-thread-stage__item (staggered connection list items)
+       - .hist-dossier__card (staggered dossier cards)
+       - .hist-sidebar__entry (margin note slide-in) */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -126,8 +132,17 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
     );
 
-    const sections = contentRef.current?.querySelectorAll(".hist-reveal");
-    sections?.forEach((el) => observer.observe(el));
+    const root = contentRef.current;
+    if (!root) return;
+
+    /* Standard stage sections */
+    root.querySelectorAll(".hist-reveal").forEach((el) => observer.observe(el));
+
+    /* Arc connection elements — each observed individually for
+       per-element stagger timing (delays set via inline style) */
+    root.querySelectorAll(
+      ".hist-thread-stage, .hist-thread-stage__item, .hist-dossier__card, .hist-sidebar__entry"
+    ).forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
@@ -470,25 +485,28 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           No heading. The strongest connection leads as italic blockquote.
           ═══════════════════════════════════════════ */}
       {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 0 && (
-        <section className="hist-stage hist-thread-stage">
+        <section className="hist-stage hist-thread-stage hist-reveal">
           <hr className="hist-thread-stage__divider" />
 
-          {/* Strongest connection — full-width Playfair italic quote */}
-          <blockquote className="hist-thread-stage__lead hist-reveal">
+          {/* Strongest connection — full-width Playfair italic quote.
+              Dolly-in entrance with 400ms delay (after divider draws). */}
+          <blockquote className="hist-thread-stage__lead">
             {sortedConnections[0].description}
           </blockquote>
 
-          {/* Remaining connections */}
+          {/* Remaining connections — cascaded reveal.
+              Each item gets 150ms stagger delay (focus-pull rhythm). */}
           {sortedConnections.length > 1 && (
-            <div className="hist-thread-stage__list hist-reveal">
+            <div className="hist-thread-stage__list">
               {sortedConnections.slice(1).map((conn, i) => (
                 <div
                   key={`${conn.targetSlug}-${i}`}
                   className={`hist-thread-stage__item hist-thread-stage__item--${conn.type}`}
+                  style={{ transitionDelay: `${600 + i * 150}ms` }}
                 >
                   <span className="hist-thread-stage__indicator" aria-hidden="true">
-                    {conn.type === "caused" || conn.type === "consequence" ? "↓" : ""}
-                    {conn.type === "response-to" ? "↑" : ""}
+                    {conn.type === "caused" || conn.type === "consequence" ? "\u2193" : ""}
+                    {conn.type === "response-to" ? "\u2191" : ""}
                   </span>
                   <div className="hist-thread-stage__content">
                     <Link
@@ -520,7 +538,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
         {ARC_FEATURES.DOSSIER && dossierEvents.length > 0 ? (
           <>
             <div className="hist-dossier">
-              {dossierEvents.map(({ connection, event: linkedEvent }) => {
+              {dossierEvents.map(({ connection, event: linkedEvent }, cardIndex) => {
                 const slug = connection.targetSlug;
                 const hookText = HOOKS[slug]
                   || (linkedEvent?.contextNarrative || connection.targetTitle).split(". ").slice(0, 2).join(". ") + ".";
@@ -534,6 +552,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                     key={slug}
                     href={`/history/${slug}`}
                     className="hist-dossier__card"
+                    style={{ transitionDelay: `${cardIndex * 120}ms` }}
                   >
                     {heroImg && (
                       <div
@@ -751,8 +770,12 @@ function SidebarElsewhere({
         {/* Eyebrow for desktop (mobile uses the button) */}
         <span className="hist-sidebar__eyebrow hist-sidebar__eyebrow--desktop">ELSEWHERE</span>
 
-        {entries.map((entry) => (
-          <div key={entry.slug} className="hist-sidebar__entry hist-reveal">
+        {entries.map((entry, entryIndex) => (
+          <div
+            key={entry.slug}
+            className="hist-sidebar__entry"
+            style={{ transitionDelay: `${entryIndex * 100}ms` }}
+          >
             <span className="hist-sidebar__entry-year">{entry.year}</span>
             <Link
               href={`/history/${entry.slug}`}

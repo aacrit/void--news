@@ -6193,18 +6193,37 @@
 
 /* ---------------------------------------------------------------------------
    Feature 2: Thread Stage — Stage 5.5 (between Record and Your Turn)
+
+   Cinematic motivation: the Thread Stage is a MATCH CUT from the event's
+   evidence into its broader historical connections. The divider draws in
+   like iron gall ink on vellum. The lead quote fades up from the margin
+   (a Steadicam dolly settling onto its subject). Connection items cascade
+   with staggered delays -- each one a new focal plane sharpening.
+   Type indicators use ink-draw animation for caused/consequence borders.
    --------------------------------------------------------------------------- */
 .hist-thread-stage {
   padding-top: var(--space-5);
   padding-bottom: var(--space-5);
 }
 
+/* Divider: ink draw-in from left to right — a nib crossing the page */
 .hist-thread-stage__divider {
   border: none;
-  border-top: 1px solid var(--hist-border-subtle);
+  height: 1px;
+  background: var(--hist-border-subtle);
   margin: 0 0 var(--space-5);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 800ms var(--ease-cinematic);
 }
 
+.hist-thread-stage.hist-reveal--visible .hist-thread-stage__divider {
+  transform: scaleX(1);
+}
+
+/* Lead quote: dolly-in from bottom margin with slight scale increase.
+   The strongest connection statement arrives with editorial weight --
+   like a pull-quote dropped onto the page by a compositor. */
 .hist-thread-stage__lead {
   font-family: var(--font-editorial);
   font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
@@ -6216,8 +6235,22 @@
   padding: 0 var(--space-4);
   border-left: 3px solid var(--hist-accent-wash);
   max-width: 720px;
+  /* Entrance: opacity + translateY + border reveal */
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 600ms var(--ease-cinematic) 400ms,
+    transform 600ms var(--ease-cinematic) 400ms;
 }
 
+.hist-thread-stage.hist-reveal--visible .hist-thread-stage__lead {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Connection list: staggered cascade reveal.
+   Each item is a new focal plane sharpening, like
+   pulling focus through depth layers in a single shot. */
 .hist-thread-stage__list {
   display: flex;
   flex-direction: column;
@@ -6229,9 +6262,21 @@
   gap: var(--space-3);
   align-items: flex-start;
   padding-left: var(--space-2);
+  /* Cascade entrance: each item fades + slides, with per-item delay via inline style */
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--ease-cinematic),
+    border-color 400ms var(--ease-cinematic);
 }
 
-/* Connection type indicators */
+.hist-thread-stage__item.hist-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Connection type indicators — directional arrows with ink-draw reveal */
 .hist-thread-stage__indicator {
   flex-shrink: 0;
   width: 1.2rem;
@@ -6240,17 +6285,40 @@
   color: var(--hist-accent);
   text-align: center;
   line-height: 1.5;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 300ms var(--ease-cinematic) 200ms,
+              transform 300ms var(--ease-cinematic) 200ms;
 }
 
+.hist-thread-stage__item.hist-reveal--visible .hist-thread-stage__indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Border-left animates from transparent — ink drawing down the page edge.
+   Caused/consequence: solid line, causal chain.
+   Influenced: dashed line, indirect ripple.
+   Parallel: no border, independent occurrence.
+   Response-to: solid, reactive chain. */
 .hist-thread-stage__item--caused,
 .hist-thread-stage__item--consequence {
-  border-left: 2px solid var(--hist-persp-a);
+  border-left: 2px solid transparent;
   padding-left: var(--space-3);
+}
+
+.hist-thread-stage__item--caused.hist-reveal--visible,
+.hist-thread-stage__item--consequence.hist-reveal--visible {
+  border-left-color: var(--hist-persp-a);
 }
 
 .hist-thread-stage__item--influenced {
-  border-left: 2px dashed var(--hist-persp-c);
+  border-left: 2px dashed transparent;
   padding-left: var(--space-3);
+}
+
+.hist-thread-stage__item--influenced.hist-reveal--visible {
+  border-left-color: var(--hist-persp-c);
 }
 
 .hist-thread-stage__item--parallel {
@@ -6259,8 +6327,12 @@
 }
 
 .hist-thread-stage__item--response-to {
-  border-left: 2px solid var(--hist-persp-d);
+  border-left: 2px solid transparent;
   padding-left: var(--space-3);
+}
+
+.hist-thread-stage__item--response-to.hist-reveal--visible {
+  border-left-color: var(--hist-persp-d);
 }
 
 .hist-thread-stage__content {
@@ -6304,6 +6376,15 @@
 
 /* ---------------------------------------------------------------------------
    Feature 1: Dossier — Connection-ranked next reads (Stage 6 rewrite)
+
+   Cinematic motivation: the Dossier IS the cliffhanger -- the final shot
+   before the cut to black. Cards stagger-reveal like archival folders being
+   laid on a desk (card 1, then 2, then 3 with 120ms gap). Hover lifts the
+   card from the surface -- dolly-in with shadow depth increase simulating
+   a hand picking up a document from a research table.
+
+   Connection description reveals on hover -- the archivist's penciled note
+   on the back of the folder, visible only when you pick it up.
    --------------------------------------------------------------------------- */
 .hist-dossier {
   display: grid;
@@ -6320,6 +6401,8 @@
   }
 }
 
+/* Dossier cards: staggered entrance via per-card delay (inline style).
+   Start hidden, reveal with dolly-in (scale 0.97 -> 1, blur 2px -> 0). */
 .hist-dossier__card {
   position: relative;
   display: flex;
@@ -6331,12 +6414,29 @@
   color: var(--hist-paper-fixed, #F2EDE0);
   border-radius: 2px;
   box-shadow: var(--hist-doc-edge);
-  transition: box-shadow 200ms ease, transform 150ms ease;
+  /* Entrance: staggered dolly-in, hidden by default */
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+  filter: blur(2px);
+  transition:
+    opacity 600ms var(--ease-cinematic),
+    transform 600ms var(--ease-cinematic),
+    filter 500ms var(--ease-cinematic),
+    box-shadow 300ms var(--ease-cinematic);
 }
 
+.hist-dossier__card.hist-reveal--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* Hover: archival lift — picking up a document from the desk.
+   Shadow deepens from contact to ambient (card rises from surface).
+   Subtle translateY(-4px) + scale(1.015) simulates dolly-in. */
 .hist-dossier__card:hover {
-  box-shadow: var(--hist-doc-edge-hover);
-  transform: translateY(-2px);
+  box-shadow: var(--hist-doc-edge-lifted);
+  transform: translateY(-4px) scale(1.015);
 }
 
 .hist-dossier__card:focus-visible {
@@ -6344,12 +6444,19 @@
   outline-offset: 2px;
 }
 
+/* Hero background image — Ken Burns on hover for subtle life */
 .hist-dossier__card-bg {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
   filter: contrast(1.03) saturate(0.65) sepia(0.15);
+  transition: transform 4s linear, filter 600ms var(--ease-cinematic);
+}
+
+.hist-dossier__card:hover .hist-dossier__card-bg {
+  transform: scale(1.04);
+  filter: contrast(1.05) saturate(0.72) sepia(0.10);
 }
 
 .hist-dossier__card-bg::after {
@@ -6383,12 +6490,19 @@
   opacity: 0.92;
 }
 
+/* Connection description: the archivist's note.
+   Always visible at 0.7 opacity, brightens on hover to signal relevance. */
 .hist-dossier__card-connection {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
   line-height: 1.4;
   margin: 0;
-  opacity: 0.7;
+  opacity: 0.5;
+  transition: opacity 300ms var(--ease-cinematic);
+}
+
+.hist-dossier__card:hover .hist-dossier__card-connection {
+  opacity: 0.85;
 }
 
 .hist-dossier__card-cta {
@@ -6551,9 +6665,33 @@
   }
 }
 
+/* Sidebar entries: margin notes that arrive from the right edge —
+   a compositor's annotation sliding into the gutter of the page.
+   On desktop, each entry fades in + translateX(8px -> 0) as the
+   corresponding main content scrolls into view. On mobile, they
+   simply fade in vertically (standard hist-reveal). */
 .hist-sidebar__entry {
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--hist-border-subtle);
+  /* Desktop entrance: slide from right margin */
+  opacity: 0;
+  transform: translateX(8px);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--ease-cinematic);
+}
+
+.hist-sidebar__entry.hist-reveal--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Active entry — synced with main content scroll position.
+   The currently-relevant sidebar note gets a left brass accent
+   (rim light on the active subject) while others recede. */
+.hist-sidebar__entry--active {
+  border-left: 2px solid var(--hist-brass);
+  padding-left: var(--space-2);
 }
 
 .hist-sidebar__entry:last-child {
@@ -6697,17 +6835,29 @@
   }
 }
 
+/* Connector: ink line that draws itself between nodes.
+   On desktop (horizontal), the line extends from left with scaleX.
+   On mobile (vertical), it extends downward with scaleY.
+   The ink line appears AFTER the preceding card is visible --
+   the archivist's pen drawing a connection between documents. */
 .hist-threads__connector {
   border: none;
   margin: 0;
 }
 
-/* Mobile: vertical connector */
+/* Mobile: vertical connector with ink-draw animation */
 .hist-threads__connector {
   border-left: 1px solid var(--hist-border);
   height: var(--space-3);
   width: 0;
   margin-left: var(--space-3);
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform 400ms var(--ease-cinematic);
+}
+
+.hist-threads__node.hist-reveal--visible .hist-threads__connector {
+  transform: scaleY(1);
 }
 
 @media (min-width: 768px) {
@@ -6717,9 +6867,19 @@
     height: 0;
     width: var(--space-4);
     margin-left: 0;
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 400ms var(--ease-cinematic);
+  }
+
+  .hist-threads__node.hist-reveal--visible .hist-threads__connector {
+    transform: scaleX(1);
   }
 }
 
+/* Node cards: staggered reveal as user scrolls past each strip.
+   Each node fades in and slides slightly (tilt up -- content rising
+   from the archive into view). Per-node delay via inline style. */
 .hist-threads__node-card {
   display: flex;
   flex-direction: column;
@@ -6730,8 +6890,20 @@
   border-radius: 2px;
   text-decoration: none;
   color: var(--hist-ink);
-  transition: box-shadow 200ms ease, border-color 200ms ease;
   max-width: 280px;
+  /* Entrance state */
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--ease-cinematic),
+    box-shadow 250ms var(--ease-cinematic),
+    border-color 250ms var(--ease-cinematic);
+}
+
+.hist-threads__node.hist-reveal--visible .hist-threads__node-card {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hist-threads__node-card:hover {
@@ -6771,7 +6943,14 @@
    Feature 5: Long View — Thread overlay on HistoryLanding timeline
    --------------------------------------------------------------------------- */
 
-/* Thread bars on timeline cards */
+/* Thread bars: colored strip indicators that slide in from the left
+   when entering Threads mode. Each bar represents a thematic thread
+   this event belongs to. The slide-in mimics a colored tab being
+   attached to the edge of an archival folder.
+
+   Animation: scaleY(0 -> 1) from top, staggered per-bar by 60ms.
+   Transform-origin top so the bar appears to "grow" downward
+   like ink bleeding along the card edge. */
 .hist-tl-thread-bars {
   position: absolute;
   left: -6px;
@@ -6787,17 +6966,55 @@
 .hist-tl-thread-bar {
   width: 4px;
   border-radius: 1px;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition:
+    opacity 350ms var(--ease-cinematic),
+    transform 350ms var(--ease-cinematic);
+}
+
+/* Bars become visible when parent has the threads-active state.
+   Per-bar stagger uses nth-child delay for the cascade effect. */
+.hist-tl-thread-bar--visible {
   opacity: 0.85;
+  transform: scaleY(1);
 }
 
-/* Dimmed state for events not in active thread */
+.hist-tl-thread-bar:nth-child(1) { transition-delay: 0ms; }
+.hist-tl-thread-bar:nth-child(2) { transition-delay: 60ms; }
+.hist-tl-thread-bar:nth-child(3) { transition-delay: 120ms; }
+.hist-tl-thread-bar:nth-child(4) { transition-delay: 180ms; }
+.hist-tl-thread-bar:nth-child(5) { transition-delay: 240ms; }
+
+/* Dimmed state for events not in active thread.
+   Cross-fade: opacity + grayscale.
+   The "rack focus" metaphor: unrelated events fall out of the
+   depth of field while the thread's events stay sharp and full-size.
+   Asymmetric timing: dimming is faster (300ms) than restoring (500ms)
+   because the eye notices things leaving focus faster than returning.
+   Note: transform not animated — stations use translateX(-50%) for
+   positioning, and adding scale would conflict with inline left%. */
 .hist-tl-full__station--dimmed {
-  opacity: 0.35;
-  filter: grayscale(0.4);
-  transition: opacity 300ms ease, filter 300ms ease;
+  opacity: 0.3;
+  filter: grayscale(0.5) blur(0.5px);
+  transition:
+    opacity 300ms var(--ease-cinematic),
+    filter 300ms var(--ease-cinematic);
 }
 
-/* Long View controls — toggle + legend + ledger link */
+/* Restore from dimmed state: slower settle (rack focus returning) */
+.hist-tl-full__station:not(.hist-tl-full__station--dimmed) {
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    filter 500ms var(--ease-cinematic);
+}
+
+/* Long View controls — toggle + legend + ledger link.
+   Legend items enter when switching to Threads mode:
+   dissolve-in (opacity 0->1) with stagger per-chip.
+   Toggle button active state uses a smash-cut: instant bg change
+   (no slow crossfade -- the mode switch is decisive). */
 .hist-longview-controls {
   display: flex;
   flex-wrap: wrap;
@@ -6841,11 +7058,21 @@
   outline-offset: -2px;
 }
 
-/* Thread legend */
+/* Thread legend — dissolve-in when entering Threads mode.
+   Each legend chip fades in with stagger (60ms per chip)
+   using animation-delay via CSS nth-child. The dissolve
+   mimics a title card appearing on film — no movement, just
+   materialization from the background. */
 .hist-longview-legend {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  animation: histLegendFadeIn 400ms var(--ease-cinematic) both;
+}
+
+@keyframes histLegendFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .hist-longview-legend__item {
@@ -6864,7 +7091,28 @@
   padding: var(--space-1) var(--space-2);
   cursor: pointer;
   min-height: 28px;
-  transition: border-color 150ms ease, color 150ms ease;
+  /* Staggered entrance per chip */
+  opacity: 0;
+  animation: histLegendChipIn 350ms var(--ease-cinematic) both;
+  transition: border-color 150ms ease, color 150ms ease, opacity 150ms ease;
+}
+
+.hist-longview-legend__item:nth-child(1) { animation-delay: 80ms; }
+.hist-longview-legend__item:nth-child(2) { animation-delay: 140ms; }
+.hist-longview-legend__item:nth-child(3) { animation-delay: 200ms; }
+.hist-longview-legend__item:nth-child(4) { animation-delay: 260ms; }
+.hist-longview-legend__item:nth-child(5) { animation-delay: 320ms; }
+.hist-longview-legend__item:nth-child(6) { animation-delay: 380ms; }
+
+@keyframes histLegendChipIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hist-longview-legend__item:hover {
@@ -6909,18 +7157,119 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Reduced motion: disable all arc connection transitions
+   Reduced motion: all arc connection animations collapse to instant state.
+   Every feature degrades gracefully — content is visible, just without
+   choreographed reveals. This is mandatory per WCAG 2.1 SC 2.3.3.
    --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
+  /* Long View: instant dimming, no transition */
   .hist-tl-full__station--dimmed {
     transition: none;
   }
 
+  .hist-tl-full__station:not(.hist-tl-full__station--dimmed) {
+    transition: none;
+  }
+
+  /* Thread bars: instant appear, no scale animation */
+  .hist-tl-thread-bar {
+    transition: none;
+  }
+
+  .hist-tl-thread-bar--visible {
+    opacity: 0.85;
+    transform: scaleY(1);
+  }
+
+  /* Dossier cards: instant visible, no stagger or blur */
   .hist-dossier__card {
     transition: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .hist-dossier__card:hover {
+    transform: none;
+  }
+
+  .hist-dossier__card-bg {
+    transition: none;
+  }
+
+  .hist-dossier__card:hover .hist-dossier__card-bg {
+    transform: none;
+  }
+
+  /* Thread Stage: instant visible, no ink-draw */
+  .hist-thread-stage__divider {
+    transition: none;
+    transform: scaleX(1);
+  }
+
+  .hist-thread-stage__lead {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hist-thread-stage__item {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hist-thread-stage__indicator {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hist-thread-stage__item--caused,
+  .hist-thread-stage__item--consequence {
+    border-left-color: var(--hist-persp-a);
+  }
+
+  .hist-thread-stage__item--influenced {
+    border-left-color: var(--hist-persp-c);
+  }
+
+  .hist-thread-stage__item--response-to {
+    border-left-color: var(--hist-persp-d);
+  }
+
+  /* Sidebar: instant visible, no slide-from-right */
+  .hist-sidebar__entry {
+    transition: none;
+    opacity: 1;
+    transform: none;
   }
 
   .hist-sidebar__disclosure {
     transition: none;
+  }
+
+  /* Ledger: instant node reveal, no ink-draw connectors */
+  .hist-threads__connector {
+    transition: none;
+    transform: none;
+  }
+
+  .hist-threads__node-card {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Legend: instant appear */
+  .hist-longview-legend {
+    animation: none;
+    opacity: 1;
+  }
+
+  .hist-longview-legend__item {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
