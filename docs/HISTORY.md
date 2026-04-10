@@ -1,6 +1,6 @@
 # void --history — The Archive
 
-Last updated: 2026-04-06 (rev 2)
+Last updated: 2026-04-09 (rev 3)
 
 > Full spec for the multi-perspective historical events platform.
 > Only read when working on history-related files.
@@ -138,7 +138,7 @@ Stark numbers (death toll, displaced, duration as large figures). Archival image
 ### Stage 6 — YOUR TURN (Leave Early)
 No summary. Points to next chronological event using shared CTAS from `hooks.ts`. Fallback: "Return to The Archive."
 
-## Content — 25 Events
+## Content — 40 Events
 
 | Era | Events |
 |-----|--------|
@@ -149,7 +149,7 @@ No summary. Points to next chronological event using shared CTAS from `hooks.ts`
 | Modern | Scramble for Africa, Opium Wars, French Revolution, Trail of Tears, Armenian Genocide, Holodomor, Congo Free State, Meiji Restoration, Treaty of Waitangi, Bolivarian Revolutions, Indian Independence Movement, Russian Revolution (1917) |
 | Contemporary | Partition of India, Hiroshima, Rwanda, Israel/Nakba, Berlin Wall, Tiananmen Square, Cambodian Genocide, The Holocaust, Civil Rights Movement, Apartheid, 9/11 & War on Terror, Cuban Missile Crisis, Chinese Cultural Revolution |
 
-All 25 have story-specific HOOKS (arrive-late one-liners) and CTAS in `hooks.ts`. Shared across HistoryLanding (timeline cards) and EventDetail (Stage 2 crack + Stage 6 next).
+All 40 have story-specific HOOKS (arrive-late one-liners) and CTAS in `hooks.ts`. Shared across HistoryLanding (timeline cards) and EventDetail (Stage 2 crack + Stage 6 next).
 
 ## Data Model (Supabase)
 
@@ -192,7 +192,7 @@ Arc types (future, CEO decision pending): `LongArcTopic`, `ArcPerspective`, `Arc
 | `pipeline/history/upgrade_sources.py` | Source upgrade utility |
 | `pipeline/media/image_search.py` | Shared unified image search API (Unsplash, Pexels, Wikimedia) |
 
-## Components (19)
+## Components (20)
 
 All in `frontend/app/history/components/`:
 
@@ -216,6 +216,7 @@ All in `frontend/app/history/components/`:
 | `KeyFacts` | — | Compact reference panel (date, location, figures, toll) |
 | `EraDrawer` | — | Era filter/navigation drawer |
 | `MapView` | — | Geographic map visualization |
+| `CartographerStrip` | — | Geographic cartography strip |
 | `RedactedDossier` | — | Redacted/coming-soon event stubs (currently empty) |
 
 ### Page Files

@@ -1,6 +1,6 @@
 # void --news Pipeline Brain
 
-Last updated: 2026-04-05 (ranking engine v6.0)
+Last updated: 2026-04-09 (rev 2, summarization cap updated)
 
 Complete reference for every intelligent system in the pipeline: bias analysis, clustering, ranking, summarization, editorial triage, memory, and audio generation.
 
@@ -83,7 +83,7 @@ Complete reference for every intelligent system in the pipeline: bias analysis, 
   ================================================================================
 
   [7b] SUMMARIZE                       Gemini Flash, 3+ source clusters
-       |                               250-350 words, 25-call cap
+       |                               250-350 words, 50-call cap
        |                               cluster_summarizer.py
        v
   [7] CATEGORIZE + RANK               Per-cluster importance scoring
@@ -281,7 +281,7 @@ Produces per-edition ranks (rank_world, rank_us, rank_europe, rank_south_asia) s
 
 | Component | File | Technique |
 |-----------|------|-----------|
-| Gemini Summarizer | `cluster_summarizer.py` | Gemini 2.5 Flash, 250-350 words, 25-call cap/run |
+| Gemini Summarizer | `cluster_summarizer.py` | Gemini 2.5 Flash, 250-350 words, 50-call cap/run |
 | Rule-based Fallback | `cluster_summarizer.py` | Lead extraction when Gemini budget exhausted |
 | Gemini Reasoning | `gemini_reasoning.py` | Contextual bias score adjustments, 25-call cap |
 

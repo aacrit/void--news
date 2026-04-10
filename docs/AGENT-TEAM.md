@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-05 (rev 21)
+Last updated: 2026-04-09 (rev 22)
 
 ## Philosophy
 
@@ -21,7 +21,7 @@ Adapted from DondeAI. Every principle is inherited and tailored for a news bias 
 COST BUDGET: $0.00 — ABSOLUTE CEILING
 
 Pipeline NLP:      Rule-based only (spaCy, NLTK, TextBlob) — $0
-Summarization:     Gemini Flash free tier (~116 RPD used, 7.7% of 1500 limit) — $0
+Summarization:     Gemini Flash free tier (250 RPD budget, ~177 RPD used) — $0
 Audio TTS:         Gemini 2.5 Flash TTS free tier (same GEMINI_API_KEY) — $0
 Database:          Supabase free tier — $0
 Hosting:           GitHub Pages — $0
