@@ -2172,6 +2172,7 @@
 
 /* ==========================================================================
    Spectrum Visualization System — Toggle + 3 views (Ridge, Witness, Terrain)
+   Architecture: SVG = distribution shape only; HTML = source avatars + tilt
    ========================================================================== */
 
 /* ---- Container ---- */
@@ -2250,19 +2251,22 @@
 
 /* ---- View area ---- */
 .dd-sv__view {
-  min-height: 60px;
+  min-height: 40px;
   position: relative;
   opacity: 1;
   transform: scale(1);
+  /* ease-out: entering views accelerate into place, not drag */
   transition:
-    opacity 150ms ease-in,
-    transform 150ms ease-in,
+    opacity 200ms ease-out,
+    transform 200ms ease-out,
     height 250ms ease;
 }
 
 .dd-sv__view--exiting {
   opacity: 0;
   transform: scale(0.97);
+  /* ease-in: exiting views decelerate as they disappear */
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
 }
 
 .dd-sv__view--entering {
@@ -2297,6 +2301,190 @@
   color: var(--fg-muted);
   transform: translateX(-50%);
   letter-spacing: 0.04em;
+}
+
+/* ---- Tilt row (HTML) ---- */
+.dd-sv__tilt-row {
+  position: relative;
+  height: 16px;
+  margin-top: 2px;
+}
+
+.dd-sv__tilt-needle {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 10px;
+  background: var(--cin-amber);
+  opacity: 0.6;
+  transform: translateX(-50%);
+}
+
+.dd-sv__tilt-label {
+  position: absolute;
+  top: 2px;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--cin-amber);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Source favicon row (HTML) ---- */
+.dd-sv-sources {
+  position: relative;
+  height: 28px;
+  margin: 4px 0 2px;
+}
+
+.dd-sv-sources__slot {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.dd-sv-sources__avatars {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transition: gap 200ms ease;
+}
+
+.dd-sv-sources__slot--expanded {
+  z-index: 10;
+}
+
+.dd-sv-sources__slot--expanded .dd-sv-sources__avatars {
+  gap: 4px;
+}
+
+/* Names dropdown — hidden by default */
+.dd-sv-sources__names {
+  display: none;
+}
+
+.dd-sv-sources__slot--expanded .dd-sv-sources__names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 26px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 6px 8px;
+  gap: 2px;
+  z-index: 20;
+  box-shadow: var(--shadow-e2);
+  min-width: 120px;
+}
+
+.dd-sv-sources__name-link {
+  font-family: var(--font-structural);
+  font-size: var(--text-xxs);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.dd-sv-sources__name-link:hover {
+  color: var(--fg-primary);
+  text-decoration: underline;
+}
+
+/* ---- Avatar (favicon circle) ---- */
+.dd-sv-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-left: -6px;
+  transition: margin 200ms ease, transform 200ms ease;
+  cursor: pointer;
+}
+
+.dd-sv-sources__avatars .dd-sv-avatar:first-child {
+  margin-left: 0;
+}
+
+.dd-sv-sources__slot--expanded .dd-sv-avatar {
+  margin-left: 0;
+}
+
+.dd-sv-avatar:hover {
+  transform: scale(1.15);
+  z-index: 5;
+}
+
+.dd-sv-avatar__img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+.dd-sv-avatar__letter {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dd-sv-avatar--count {
+  background: var(--bg-secondary);
+  border-color: var(--border-subtle);
+  font-family: var(--font-data);
+  font-size: 7px;
+  color: var(--fg-tertiary);
+  font-weight: 600;
+}
+
+/* ---- Avatar lean colors via data-lean (theme-reactive CSS vars) ---- */
+.dd-sv-avatar[data-lean="far-left"]     { border-color: var(--bias-far-left); }
+.dd-sv-avatar[data-lean="left"]         { border-color: var(--bias-left); }
+.dd-sv-avatar[data-lean="center-left"]  { border-color: var(--bias-center-left); }
+.dd-sv-avatar[data-lean="center"]       { border-color: var(--bias-center); }
+.dd-sv-avatar[data-lean="center-right"] { border-color: var(--bias-center-right); }
+.dd-sv-avatar[data-lean="right"]        { border-color: var(--bias-right); }
+.dd-sv-avatar[data-lean="far-right"]    { border-color: var(--bias-far-right); }
+
+.dd-sv-avatar[data-lean="far-left"]     .dd-sv-avatar__letter { color: var(--bias-far-left); }
+.dd-sv-avatar[data-lean="left"]         .dd-sv-avatar__letter { color: var(--bias-left); }
+.dd-sv-avatar[data-lean="center-left"]  .dd-sv-avatar__letter { color: var(--bias-center-left); }
+.dd-sv-avatar[data-lean="center"]       .dd-sv-avatar__letter { color: var(--bias-center); }
+.dd-sv-avatar[data-lean="center-right"] .dd-sv-avatar__letter { color: var(--bias-center-right); }
+.dd-sv-avatar[data-lean="right"]        .dd-sv-avatar__letter { color: var(--bias-right); }
+.dd-sv-avatar[data-lean="far-right"]    .dd-sv-avatar__letter { color: var(--bias-far-right); }
+
+/* ---- Edge zone popup anchoring (prevents viewport clipping) ---- */
+.dd-sv-sources__slot--edge-left {
+  transform: translateX(-10%);
+}
+
+.dd-sv-sources__slot--edge-left .dd-sv-sources__names {
+  left: 0;
+  transform: none;
+}
+
+.dd-sv-sources__slot--edge-right {
+  transform: translateX(-90%);
+}
+
+.dd-sv-sources__slot--edge-right .dd-sv-sources__names {
+  left: auto;
+  right: 0;
+  transform: none;
 }
 
 /* ---- Shared tooltip ---- */
@@ -2395,7 +2583,7 @@
 }
 
 /* ==========================================================================
-   Ink Ridge — View A
+   Ink Ridge — View A (shape only, no source markers)
    ========================================================================== */
 
 .dd-sv-ridge {
@@ -2422,43 +2610,6 @@
   transition: stroke-dashoffset 600ms var(--ease-cinematic);
 }
 
-/* Dot entrance */
-.dd-sv-ridge__dot {
-  opacity: 0;
-  transform-origin: center;
-  transform-box: fill-box;
-  cursor: pointer;
-}
-
-.dd-sv-ridge--animated .dd-sv-ridge__dot {
-  animation: ridgeDotIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes ridgeDotIn {
-  from {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.dd-sv-ridge__dot:hover {
-  transform: scale(1.4);
-  transition: transform 100ms ease-out;
-}
-
-/* Dot label */
-.dd-sv-ridge__dot-label {
-  opacity: 0;
-}
-
-.dd-sv-ridge--animated .dd-sv-ridge__dot-label {
-  animation: ridgeDotIn 300ms ease-out 500ms both;
-}
-
 /* Mean line */
 .dd-sv-ridge__mean {
   opacity: 0;
@@ -2474,7 +2625,7 @@
 }
 
 /* ==========================================================================
-   Witness Line — View B
+   Witness Line — View B (whisker stems only, no source markers)
    ========================================================================== */
 
 .dd-sv-witness {
@@ -2501,18 +2652,18 @@
   to { stroke-dashoffset: 0; }
 }
 
-/* Stem grow */
-.dd-sv-witness__stem {
+/* Whisker stems — grow from bottom */
+.dd-sv-witness__whisker {
   transform-origin: bottom center;
   transform-box: fill-box;
   transform: scaleY(0);
 }
 
-.dd-sv-witness--animated .dd-sv-witness__stem {
-  animation: witnessGrow 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms both;
+.dd-sv-witness--animated .dd-sv-witness__whisker {
+  animation: witnessWhiskerIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-@keyframes witnessGrow {
+@keyframes witnessWhiskerIn {
   from {
     transform: scaleY(0);
   }
@@ -2521,75 +2672,8 @@
   }
 }
 
-/* Favicon fade in */
-.dd-sv-witness__fav,
-.dd-sv-witness__fav-img {
-  opacity: 0;
-}
-
-.dd-sv-witness--animated .dd-sv-witness__fav,
-.dd-sv-witness--animated .dd-sv-witness__fav-img {
-  animation: witnessFavIn 250ms ease-out 500ms both;
-}
-
-@keyframes witnessFavIn {
-  from {
-    opacity: 0;
-    transform: scale(0.6);
-    transform-origin: center;
-    transform-box: fill-box;
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-    transform-origin: center;
-    transform-box: fill-box;
-  }
-}
-
-/* Tilt plumb-bob drop */
-.dd-sv-witness__tilt {
-  opacity: 0;
-  transform: translateY(-10px);
-  transform-box: fill-box;
-}
-
-.dd-sv-witness--animated .dd-sv-witness__tilt {
-  animation: witnessDropIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both;
-}
-
-@keyframes witnessDropIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Idle sway — desktop only, reduced-motion respecting */
-@media (hover: hover) and (min-width: 1024px) {
-  @media (prefers-reduced-motion: no-preference) {
-    .dd-sv-witness--animated .dd-sv-witness__stem-group {
-      animation: witnessSwayIdle 5s ease-in-out var(--stem-delay, 0s) infinite;
-    }
-
-    @keyframes witnessSwayIdle {
-      0%, 100% { transform: rotate(-0.4deg); }
-      50% { transform: rotate(0.4deg); }
-    }
-  }
-}
-
-/* Stem group hover states */
-.dd-sv-witness__stem-group {
-  cursor: pointer;
-}
-
 /* ==========================================================================
-   Terrain Map — View C
+   Terrain Map — View C (terrain shape only, no pebbles/crosshair)
    ========================================================================== */
 
 .dd-sv-terrain {
@@ -2657,37 +2741,6 @@
   }
 }
 
-/* Pebbles */
-.dd-sv-terrain__pebble {
-  transform: scale(0);
-  transform-origin: center;
-  transform-box: fill-box;
-  cursor: pointer;
-}
-
-.dd-sv-terrain--animated .dd-sv-terrain__pebble {
-  animation: terrainPop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes terrainPop {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-.dd-sv-terrain__pebble:hover {
-  transform: scale(1.5);
-  transition: transform 80ms ease-out;
-}
-
-/* Crosshair */
-.dd-sv-terrain__crosshair {
-  pointer-events: none;
-}
-
 /* ==========================================================================
    Reduced motion — all spectrum views
    ========================================================================== */
@@ -2708,8 +2761,6 @@
     stroke-dasharray: none !important;
   }
 
-  .dd-sv-ridge__dot,
-  .dd-sv-ridge__dot-label,
   .dd-sv-ridge__mean {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
@@ -2721,28 +2772,10 @@
     stroke-dashoffset: 0;
   }
 
-  .dd-sv-witness__stem {
+  .dd-sv-witness__whisker {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
     transform: scaleY(1);
-  }
-
-  .dd-sv-witness__fav,
-  .dd-sv-witness__fav-img {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    opacity: 1;
-  }
-
-  .dd-sv-witness__tilt {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    opacity: 1;
-    transform: none;
-  }
-
-  .dd-sv-witness__stem-group {
-    animation: none !important;
   }
 
   .dd-sv-terrain__fill {
@@ -2768,10 +2801,13 @@
     transform: none;
   }
 
-  .dd-sv-terrain__pebble {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    transform: scale(1);
+  /* Source row — no transition animations */
+  .dd-sv-sources__avatars {
+    transition: none;
+  }
+
+  .dd-sv-avatar {
+    transition: none;
   }
 }
 
@@ -2802,8 +2838,50 @@
     min-height: 44px;
   }
 
-  .dd-sv-ridge__dot-label,
-  .dd-sv-terrain__peak text {
+  /* Smaller avatars on mobile */
+  .dd-sv-avatar {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dd-sv-avatar__img {
+    width: 10px;
+    height: 10px;
+  }
+
+  .dd-sv-avatar__letter {
     font-size: 6px;
+  }
+
+  .dd-sv-avatar--count {
+    font-size: 6px;
+  }
+
+  /* Tilt label smaller on mobile */
+  .dd-sv__tilt-label {
+    font-size: 8px;
+  }
+
+  /* Source name dropdown — fixed bottom sheet feel on mobile */
+  .dd-sv-sources__slot--expanded .dd-sv-sources__names {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    min-width: unset;
+    width: 100%;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: var(--shadow-e3);
+    padding: var(--space-3);
+    gap: var(--space-1);
+    max-height: 40vh;
+    overflow-y: auto;
+    z-index: 30;
+  }
+
+  .dd-sv-sources__name-link {
+    font-size: var(--text-xs);
+    padding: var(--space-1) 0;
   }
 }
