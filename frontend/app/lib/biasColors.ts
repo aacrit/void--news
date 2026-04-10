@@ -192,13 +192,13 @@ export function sigilLabelInfo(
 /* ── CSS variable cache — single observer ───────────────────────────────── */
 
 const SSR_FALLBACK: Record<string, string> = {
-  "--bias-far-left": "#1A4D8E",
-  "--bias-left": "#2C6B9A",
-  "--bias-center-left": "#3978A0",
-  "--bias-center": "#2D6B45",
-  "--bias-center-right": "#A8554D",
-  "--bias-right": "#B5403A",
-  "--bias-far-right": "#8C2B26",
+  "--bias-far-left": "#0E2E70",
+  "--bias-left": "#1B5298",
+  "--bias-center-left": "#2E78B4",
+  "--bias-center": "#2B784A",
+  "--bias-center-right": "#C4503E",
+  "--bias-right": "#9C2C22",
+  "--bias-far-right": "#6E1610",
   "--sense-low": "#22C55E",
   "--sense-medium": "#EAB308",
   "--sense-high": "#EF4444",
