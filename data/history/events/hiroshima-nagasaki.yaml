@@ -405,6 +405,83 @@ perspectives:
   - Japan's military faction's genuine resistance to any surrender
   - The attempted coup of August 14-15, 1945, by officers who opposed even post-bomb surrender
   - Practical difficulties of a demonstration bombing on an uninhabited target
+- viewpoint: Asian Colonial Subjects / Korean Forced Laborers
+  viewpoint_type: vanquished
+  region_origin: east-asia
+  narrative: 'Among the dead at Hiroshima on August 6, 1945, were an estimated 20,000 to 40,000 Koreans. They were not Japanese citizens by choice. Korea had been annexed by Japan in 1910. Under the National
+    Mobilization Law of 1938 and the subsequent labor conscription orders, hundreds of thousands of Koreans were transported to Japan to work in mines, factories, and military installations. By August 1945,
+    approximately 2.4 million Koreans were in Japan — roughly 600,000 of them conscripted laborers. In Hiroshima, Korean workers were concentrated in industrial zones and military supply facilities. At the
+    Mitsubishi shipyards in Nagasaki, Korean laborers worked alongside Japanese civilians and Allied prisoners of war. When the bombs fell, they died alongside their colonizers.
+
+
+    The Korean dead occupied a category that neither Japanese nor American postwar narratives could accommodate. Japan''s hibakusha (bomb survivor) identity was constructed around Japanese national suffering
+    — the uniquely Japanese experience of nuclear victimhood. Koreans who survived the bombings were not included in the hibakusha recognition framework until 1978, when the Japanese Supreme Court ruled that
+    Korean survivors in Japan were entitled to the same medical benefits. Koreans who had returned to Korea after the war — many of them repatriated to the southern zone that became South Korea — received
+    no Japanese government support until 2003, when the Supreme Court extended limited assistance. Those who ended up in North Korea received nothing.
+
+
+    The American narrative was equally exclusionary. The decision to drop the bombs was framed as a choice between American lives (the projected casualties of an invasion) and Japanese lives (the actual casualties
+    of the bombings). Korean forced laborers appeared in neither calculation. Secretary of War Henry Stimson''s famous 1947 Harper''s Magazine article, "The Decision to Use the Atomic Bomb," does not mention
+    Koreans. Neither does Truman''s diary. The laborers were invisible in the logic that justified the weapons that killed them.
+
+
+    In Hiroshima, the Korean memorial — the Cenotaph for Korean Victims — was originally placed outside the Peace Memorial Park, across the Honkawa River. Korean community leaders and the South Korean government
+    protested for decades. The cenotaph was moved inside the park in 1999 — fifty-four years after the bombing. The inscription reads: "The Korean victims were given no choice but to come to Hiroshima, where
+    they were subjected to the atomic bombing. They died nameless, their spirits unable to return home." The memorial''s location history — excluded from the park for half a century, then included after prolonged
+    advocacy — mirrors the broader pattern of Korean erasure from the atomic narrative.
+
+
+    Among the survivors who returned to Korea, the stigma was compounded. In South Korea, atomic bomb survivors formed the Korean Atomic Bomb Victims Association in 1967, seeking recognition and medical assistance
+    from both the Japanese and South Korean governments. As of 2024, approximately 1,700 Korean hibakusha were still alive in South Korea, their average age above 85. Their situation was unique: colonial subjects
+    of Japan, bombed by America, returned to a divided Korea, ignored by both the country that had conscripted them and the country that had bombed them. They were caught in the intersection of three imperial
+    histories — Japanese colonialism, American military power, and the Cold War division of Korea — and rendered invisible by each.
+
+
+    Historian Naoko Wake''s American Survivors (2014) and Lisa Yoneyama''s Hiroshima Traces (1999) have documented how the Korean experience disrupts the neat binaries of the atomic narrative. If Hiroshima
+    is framed as Japanese victimhood, the Korean presence complicates the claim — Japan was simultaneously a victim of the bomb and a colonial power whose conscription placed non-Japanese in the blast zone.
+    If Hiroshima is framed as American military necessity, the Korean dead expose the fiction that the calculus weighed only American against Japanese lives. The forced laborers died because two empires — one
+    colonial, one military — intersected at a single point in space and time. Neither empire counted them.
+
+    '
+  key_arguments:
+  - 20,000-40,000 Koreans — colonial subjects conscripted as forced laborers — died in the bombings, appearing in neither Japanese nor American narratives
+  - Korean survivors were excluded from Japan's hibakusha recognition framework until 1978; those in Korea waited until 2003
+  - The Hiroshima Korean Cenotaph was placed outside the Peace Park for 54 years (1945-1999) — exclusion from the memorial space mirrored exclusion from the narrative
+  - The Korean dead disrupt both the Japanese victimhood narrative and the American military necessity calculus
+  - Approximately 1,700 Korean hibakusha were still alive in South Korea as of 2024, caught between three imperial histories
+  sources:
+  - title: 'American Survivors: Trans-Pacific Memories of Hiroshima and Nagasaki'
+    author: Naoko Wake
+    year: '2014'
+    type: book
+    doi: 10.1215/9780822376699
+  - title: 'Hiroshima Traces: Time, Space, and the Dialectics of Memory'
+    author: Lisa Yoneyama
+    year: '1999'
+    type: book
+    doi: 10.2307/2659211
+  - title: 'Korea''s Grievous War'
+    author: Su-kyoung Hwang
+    year: '2016'
+    type: book
+    doi: 10.9783/9780812292312
+  notable_quotes:
+  - text: The Korean victims were given no choice but to come to Hiroshima, where they were subjected to the atomic bombing. They died nameless, their spirits unable to return home.
+    speaker: Inscription on the Cenotaph for Korean Victims
+    context: Hiroshima Peace Memorial Park, erected 1970, moved inside the park 1999
+  - text: They were colonial subjects of the country that was bombed, bombed by a country that did not know they were there, and returned to a country that was about to be divided.
+    speaker: Naoko Wake
+    context: American Survivors, 2014
+  emphasized:
+  - Korean forced laborers as invisible victims of both Japanese colonialism and American military action
+  - The 54-year exclusion of the Korean cenotaph from the Peace Memorial Park as a spatial enactment of narrative erasure
+  - The disruption of neat victim/aggressor binaries — Japan was both colonial power and nuclear target
+  - The intersection of three imperial histories (Japanese, American, Cold War) rendering Korean survivors invisible to each
+  omitted:
+  - Japanese civilians who suffered equally from the bombings regardless of their government's colonial policies
+  - American POWs who also died at Hiroshima — at least 12 confirmed
+  - The postwar Japanese peace movement's evolution toward acknowledging non-Japanese victims
+  - Koreans who had voluntarily migrated to Japan for economic reasons, complicating the forced labor narrative
 media:
 - media_type: photograph
   title: Mushroom cloud over Nagasaki, August 9, 1945

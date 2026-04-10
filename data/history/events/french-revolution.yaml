@@ -404,6 +404,81 @@ perspectives:
   - The revolution's emotional and experiential dimensions — crowd psychology, fear, hope
   - Regional variation within France — the revolution was experienced differently in Paris, the provinces, and the colonies
   - The material conditions of daily life that drove popular participation
+- viewpoint: Colonial / Caribbean
+  viewpoint_type: vanquished
+  region_origin: americas
+  narrative: 'On February 4, 1794, the National Convention in Paris voted to abolish slavery in all French colonies. The decree was not born of philosophical consistency. It was born of military necessity.
+    In Saint-Domingue, 500,000 enslaved Africans had been in revolt since August 1791. Toussaint Louverture''s forces controlled most of the colony. The Spanish and British were competing for the territory.
+    Civil Commissioner Leger-Felicite Sonthonax had already proclaimed emancipation in Saint-Domingue on August 29, 1793 — a unilateral act designed to recruit Black soldiers against the Spanish invasion.
+    The Convention''s abolition decree ratified a fact on the ground that the enslaved had created through armed rebellion.
+
+
+    The revolution''s universalism had never extended to the colonies without a fight. The Declaration of the Rights of Man and of the Citizen (August 26, 1789) declared that "men are born and remain free
+    and equal in rights." The Declaration did not specify whether "men" included the 700,000 enslaved people in French colonies. In September 1791, the National Assembly granted political rights to free people
+    of color born of free parents — a concession that excluded the vast majority of the colony''s non-white population. The colonial lobby (Club Massiac), composed of absentee plantation owners who lived in
+    Paris, fought every extension of rights to colonial subjects. Antoine Barnave, a moderate revolutionary who chaired the Colonial Committee, argued explicitly that the Rights of Man did not apply overseas:
+    "The colonies are not part of France. They are possessions."
+
+
+    Saint-Domingue in 1789 produced 40% of the world''s sugar and 60% of its coffee. The colony''s revenue exceeded that of all thirteen former English colonies in North America combined. This wealth was
+    produced by enslaved Africans under a mortality regime that required 40,000 new captives per year to maintain the labor force. The Code Noir of 1685, which theoretically regulated slavery, permitted whipping,
+    branding, and mutilation as punishments. Planters ignored even these constraints. The colony was France''s most valuable possession, and its economy depended entirely on unfree labor.
+
+
+    The revolution''s betrayal was not gradual. On May 20, 1802, Napoleon Bonaparte signed the Law of 20 May 1802, restoring slavery in the French colonies. The decree applied to colonies where the 1794
+    abolition had been implemented — Guadeloupe and Guyane. In Saint-Domingue, Napoleon sent his brother-in-law General Leclerc with 20,000 soldiers to crush the revolution and reimpose slavery. Toussaint
+    was captured under a flag of truce and deported to Fort de Joux in the Jura mountains, where he died of cold, starvation, and deliberate neglect on April 7, 1803. Napoleon told his ministers: "The liberty
+    of the blacks is an insult to the dignity of Europe."
+
+
+    Guadeloupe''s experience was the revolution''s cruelest laboratory. When General Richepance arrived in 1802 to reimpose slavery, the formerly enslaved population resisted under Louis Delgres, a mixed-race
+    officer. On May 28, 1802, at the fortress of Matouba, Delgres and approximately 300 followers blew themselves up rather than return to bondage. The explosion was audible across the island. Slavery was
+    reimposed. It was not abolished again in the French colonies until 1848 — by the Second Republic, fifty-four years after the Convention had first declared all men free. The revolution that gave the world
+    "liberty, equality, fraternity" restored human bondage within eight years of abolishing it. The enslaved people of Saint-Domingue took the revolution''s words and gave them a meaning that the men who wrote
+    them never intended — and when the revolution tried to take those words back, the enslaved burned the colony rather than surrender them.
+
+    '
+  key_arguments:
+  - The 1794 abolition of slavery ratified a fact created by enslaved rebellion, not revolutionary principle
+  - Napoleon restored slavery in 1802 — the revolution's universalism lasted eight years in the colonies
+  - The colonial lobby in Paris explicitly argued that the Rights of Man did not apply to colonial subjects
+  - Guadeloupe's Louis Delgres and 300 followers chose death over re-enslavement at Matouba in 1802
+  - Saint-Domingue produced more revenue than all thirteen American colonies — the revolution's economics contradicted its philosophy
+  sources:
+  - title: 'Avengers of the New World: The Story of the Haitian Revolution'
+    author: Laurent Dubois
+    year: '2004'
+    type: book
+    doi: 10.2307/3185360
+    archive_url: https://archive.org/details/avengersofnewwor0000dubo
+  - title: 'A Colony of Citizens: Revolution & Slave Emancipation in the French Caribbean, 1787-1804'
+    author: Laurent Dubois
+    year: '2004'
+    type: book
+    doi: 10.5149/9780807861592_dubois
+  - title: 'The Black Jacobins: Toussaint L''Ouverture and the San Domingo Revolution'
+    author: C.L.R. James
+    year: '1938'
+    type: book
+    openlibrary: OL24955382M
+    archive_url: https://archive.org/details/blackjacobinstou0000jame_h9v8
+  notable_quotes:
+  - text: The slaves of San Domingo took the revolutionary slogans — liberty, equality, fraternity — and gave them a meaning that the makers of the slogans never dreamed of.
+    speaker: C.L.R. James
+    context: The Black Jacobins, 1938
+  - text: The liberty of the blacks is an insult to the dignity of Europe.
+    speaker: Napoleon Bonaparte
+    context: Instructions to colonial administrators, 1802, cited in Laurent Dubois, Avengers of the New World
+  emphasized:
+  - The 1794 abolition as a military expedient, not a philosophical achievement
+  - Napoleon's restoration of slavery in 1802 as the revolution's definitive colonial betrayal
+  - Louis Delgres and Matouba — the choice of death over re-enslavement
+  - The colonial lobby's explicit exclusion of enslaved people from the Rights of Man
+  omitted:
+  - French abolitionists (Societe des Amis des Noirs) who genuinely advocated for colonial subjects' rights
+  - The complexity of free people of color's position — some were slaveholders themselves
+  - The revolution's long-term influence on global abolition movements despite its immediate colonial failures
+  - French revolutionary soldiers who fought alongside the enslaved in Saint-Domingue
 media:
 - media_type: artwork
   title: The Storming of the Bastille, July 14, 1789

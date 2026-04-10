@@ -448,6 +448,81 @@ perspectives:
   - The specific role of Kurdish tribes as perpetrators and rescuers
   - The geopolitics of the Caucasus front and Russia's role
   - The diaspora's internal political divisions (Dashnak, Hunchak, Ramgavar)
+- viewpoint: International Law / Genocide Convention
+  viewpoint_type: academic
+  region_origin: global
+  narrative: 'In 1921, Soghomon Tehlirian shot Talat Pasha on a Berlin street and stood trial for murder. The jury acquitted him in two days. Raphael Lemkin, then a twenty-year-old law student in Lviv, read
+    the trial transcript and arrived at a question that consumed the rest of his life: why was the killing of one man a crime prosecutable in a German court, while the killing of a million people had no legal
+    name and no tribunal?
+
+
+    Lemkin spent two decades building the answer. At the 1933 Madrid conference of the International Bureau for Unification of Criminal Law, he proposed two new crimes: "barbarity" (the destruction of national,
+    religious, or ethnic groups) and "vandalism" (the destruction of cultural works). The proposal was rejected. Poland''s foreign ministry pressured Lemkin to withdraw the paper; its delegation feared offending
+    Germany. Lemkin persisted. In 1944, as a refugee scholar at Duke University, he published Axis Rule in Occupied Europe, a 712-page legal analysis of Nazi occupation policy. On page 79, he introduced the
+    word "genocide" — from the Greek genos (race, tribe) and the Latin caedere (to kill). He cited two foundational cases: the Holocaust, which was still underway, and the Armenian massacres of 1915.
+
+
+    The 1948 UN Convention on the Prevention and Punishment of the Crime of Genocide was Lemkin''s legislative achievement. He lobbied delegations personally, sleeping in the UN corridors, drafting and redrafting
+    language. The Convention defined genocide as acts committed "with intent to destroy, in whole or in part, a national, ethnical, racial or religious group" — and it was adopted unanimously on December 9,
+    1948. But the politics of recognition had already begun to corrode the framework Lemkin built. The Soviet Union ratified the Convention while denying the Ukrainian famine. The United States did not ratify
+    it until 1988 — forty years later — partly because Southern senators feared it could be applied to the treatment of African Americans.
+
+
+    The Armenian case sits at the center of the recognition problem. As of 2024, 34 countries formally recognize the Armenian Genocide. Turkey does not. The United States did not until April 24, 2021, when
+    President Biden issued a statement using the word "genocide" for the first time in official U.S. presidential communication — 106 years after the events. Every previous administration had avoided the term.
+    Ronald Reagan used it once, in a 1981 proclamation about the Holocaust, referencing "the genocide of the Armenians" — and the State Department spent the next forty years insisting the reference was not
+    official policy. The reason was strategic: Turkey joined NATO in 1952, hosted Incirlik Air Base (used for operations in Iraq, Syria, and Afghanistan), and threatened diplomatic retaliation every time recognition
+    was proposed. In 2007, when the House Foreign Affairs Committee passed a non-binding resolution calling the events genocide, Turkey recalled its ambassador and threatened to restrict U.S. access to Incirlik.
+    The resolution never reached the House floor.
+
+
+    The legal precedent the Armenian case established flows through Nuremberg to the International Criminal Tribunal for Rwanda (ICTR) and the International Criminal Court. The 1919-1920 Ottoman court-martials
+    — convened under British pressure after the armistice — tried CUP officials for "the massacre and destruction of the Armenians." Sentences were handed down, including death sentences in absentia for Talat,
+    Enver, and Cemal. The trials collapsed when the Treaty of Sevres was replaced by the Treaty of Lausanne (1923), which included no provisions for Armenian justice. The pattern — prosecution attempted,
+    geopolitics intervening, accountability abandoned — repeated at every subsequent stage. When the ICTR convicted Jean-Paul Akayesu of genocide in 1998, the legal definition it applied traced directly to
+    the Convention that Lemkin wrote with the Armenian dead in mind.
+
+    '
+  key_arguments:
+  - Lemkin coined 'genocide' explicitly drawing on the Armenian case — without 1915, the word and the Convention may not exist
+  - U.S. recognition was delayed 106 years by NATO alliance management and Turkish diplomatic leverage
+  - The 1919-1920 Ottoman court-martials established the precedent of prosecuting state-organized mass killing — then collapsed under geopolitical pressure
+  - The pattern of legal framework followed by political abandonment has repeated from Lausanne (1923) through the ICC
+  - The Convention's requirement of proving 'intent to destroy' became the juridical battlefield where recognition is fought
+  sources:
+  - title: Axis Rule in Occupied Europe
+    author: Raphael Lemkin
+    year: '1944'
+    type: book
+    doi: 10.2307/1068910
+    openlibrary: OL3297582M
+    archive_url: https://archive.org/details/axisruleinoccupi0000lemk
+  - title: 'Totally Unofficial: The Autobiography of Raphael Lemkin'
+    author: Raphael Lemkin (ed. Donna-Lee Frieze)
+    year: '2013'
+    type: book
+    doi: 10.12987/yale/9780300186963.001.0001
+  - title: 'The Armenian Genocide in International Law: The State of the Art'
+    author: Alfred de Zayas
+    year: '2010'
+    type: journal
+  notable_quotes:
+  - text: Why is the killing of a million a lesser crime than the killing of a single individual?
+    speaker: Raphael Lemkin
+    context: Totally Unofficial, autobiography, recounting his reaction to the Tehlirian trial
+  - text: Each year on April 24th, we remember the lives of all those who died in the Ottoman-era Armenian genocide and recommit ourselves to preventing such an atrocity from ever again occurring.
+    speaker: Joseph Biden
+    context: Presidential statement, April 24, 2021 — the first U.S. presidential use of 'genocide' for the Armenian case
+  emphasized:
+  - The direct causal line from the Armenian case through Lemkin to the Genocide Convention
+  - The politics of non-recognition — NATO, Incirlik, and strategic alliance as barriers to legal acknowledgment
+  - The Ottoman court-martials of 1919-1920 as the first attempt to prosecute genocide, abandoned under geopolitical pressure
+  - The juridical requirement of proving 'intent' as the mechanism through which denial operates within the legal system
+  omitted:
+  - The lived experience of survivors and descendants in favor of legal and institutional analysis
+  - Armenian political agency — the diaspora's lobbying campaigns and their strategies
+  - The role of non-state actors (missionaries, journalists, relief workers) in documentation
+  - Turkey's internal debates — not all Turkish citizens or scholars support the state's denial position
 media:
 - media_type: photograph
   title: Armenian deportees on the march, 1915

@@ -419,6 +419,83 @@ perspectives:
   - Emotional and experiential dimensions of both Israeli and Palestinian memory
   - The Holocaust's role in shaping the moral urgency of Jewish statehood
   - Post-1948 developments that have transformed the conflict
+- viewpoint: Arab Regional / Pan-Arab Nationalism
+  viewpoint_type: bystander
+  region_origin: middle-east
+  narrative: 'On May 15, 1948, five Arab armies crossed into Palestine. The public rhetoric was unified: the Arab League would prevent the partition of Palestine and defend Palestinian Arab rights. The private
+    calculations were not. King Abdullah I of Transjordan had met secretly with Golda Meir of the Jewish Agency on November 17, 1947 — twelve days before the UN vote — and reached an understanding: Transjordan
+    would annex the Arab portions of Palestine, and the Jewish Agency would accept the partition boundaries. Abdullah was not fighting to create a Palestinian state. He was fighting to enlarge his own kingdom.
+
+
+    Egypt''s intervention was driven by King Farouk''s rivalry with Abdullah. If Transjordan annexed Arab Palestine, Egypt''s position as the leading Arab state would be diminished. Farouk sent his army into
+    the Negev and Gaza not to liberate Palestinians but to prevent Hashemite expansion. The Egyptian army in Gaza operated independently of the other Arab forces; coordination between the five armies was minimal.
+    Glubb Pasha (Sir John Bagot Glubb), the British officer commanding Transjordan''s Arab Legion — the most effective Arab fighting force in the war — later wrote that the Arab armies "ichly operated independently,
+    with no unified command, no agreed strategy, and no shared war aims." The Arab League''s Military Committee, chaired by Iraqi general Ismail Safwat, had warned in March 1948 that the Arab states were
+    unprepared for war. The warning was ignored.
+
+
+    Syria''s Shukri al-Quwatli sent troops into the Galilee with territorial ambitions of his own — Greater Syria, a project that would unite Syria, Lebanon, Palestine, and Transjordan under Damascus. Iraq
+    sent an expeditionary force that fought in the northern West Bank but had no clear political objective beyond pan-Arab solidarity and domestic political pressure. Lebanon''s contribution was token: a few
+    hundred soldiers who crossed into the Galilee and withdrew. The Arab intervention was not a coordinated military campaign for Palestinian self-determination. It was five states pursuing five different objectives,
+    united only by the rhetoric of opposition to Zionism.
+
+
+    The Palestinians themselves were treated as objects, not agents, by the Arab states. The Arab Higher Committee under Hajj Amin al-Husseini had been weakened by the British suppression of the 1936-1939
+    Arab Revolt; al-Husseini himself was discredited by his wartime collaboration with Nazi Germany. The Arab League established the All-Palestine Government in Gaza in September 1948, headed by al-Husseini,
+    but it controlled no territory, had no army, and was immediately marginalized by Egypt, which administered Gaza without consulting it. Jordan formally annexed the West Bank in 1950, granted Jordanian
+    citizenship to its Palestinian residents, and suppressed Palestinian national organizations. Egypt administered Gaza as a military zone — Palestinians there were not offered Egyptian citizenship. UNRWA
+    was established in 1949 to administer refugee camps that the Arab host states declined to absorb.
+
+
+    The 1948 war exposed the gap between pan-Arab rhetoric and Arab state interests. The Palestinian refugee problem was created in part by the war that the Arab states launched, then sustained by the Arab
+    states'' refusal to resettle refugees — a refusal that served the political purpose of maintaining the Palestinian cause as a lever against Israel and the West. Fawaz Gerges and Rashid Khalidi have documented
+    how Palestinian national aspirations were systematically subordinated to the interests of the surrounding states. Jordan''s King Hussein crushed the PLO in Black September (1970). Syria intervened in
+    Lebanon partly to control, not support, Palestinian factions. The Arab states that declared war in 1948 in the name of Palestine produced no Palestinian state. They produced larger Jordan, occupied Gaza,
+    and 700,000 refugees whose descendants remain stateless.
+
+    '
+  key_arguments:
+  - The five Arab armies pursued five different territorial objectives — there was no coordinated plan for Palestinian statehood
+  - Abdullah of Transjordan had pre-arranged with the Jewish Agency to annex Arab Palestine — the war enlarged his kingdom, not Palestinian rights
+  - Egypt and Jordan administered Gaza and the West Bank respectively without offering Palestinians political representation or sovereignty
+  - Arab states maintained the refugee problem as a political instrument — refusing resettlement while invoking Palestinian suffering
+  - Palestinian national aspirations were subordinated to inter-Arab rivalries from 1948 through Black September (1970) and beyond
+  sources:
+  - title: 'Collusion Across the Jordan: King Abdullah, the Zionist Movement, and the Partition of Palestine'
+    author: Avi Shlaim
+    year: '1988'
+    type: book
+    doi: 10.7312/shla93334
+    archive_url: https://archive.org/details/collusionacrossj0000shla
+  - title: 'The Iron Cage: The Story of the Palestinian Struggle for Statehood'
+    author: Rashid Khalidi
+    year: '2006'
+    type: book
+    doi: 10.1093/ia/iim023
+    archive_url: https://archive.org/details/ironcagestoryofp0000khal
+  - title: 'A Soldier with the Arabs: A British Officer''s Memoir of the Arab Legion'
+    author: John Bagot Glubb
+    year: '1957'
+    type: book
+    openlibrary: OL6257766M
+    archive_url: https://archive.org/details/soldierwithara00glub
+  notable_quotes:
+  - text: The Arab armies entered Palestine to prevent the establishment of a Jewish state — and to prevent each other from getting the pieces.
+    speaker: Avi Shlaim
+    context: Collusion Across the Jordan, 1988
+  - text: Every one of the Arab states that entered Palestine had its own axe to grind.
+    speaker: John Bagot Glubb
+    context: A Soldier with the Arabs, 1957
+  emphasized:
+  - Inter-Arab rivalries — Abdullah vs. Farouk, Damascus vs. Amman — as the actual drivers of the 1948 intervention
+  - The absence of any plan for Palestinian statehood among the invading states
+  - Jordan's annexation and Egypt's military administration of Palestinian territories as extensions of state interest
+  - The refugee problem as both a humanitarian catastrophe and a political instrument
+  omitted:
+  - Genuine popular Arab solidarity with Palestinians that existed alongside state cynicism
+  - The military courage of individual Arab soldiers who fought and died believing they were defending Palestine
+  - Israel's own responsibility for creating the refugee crisis through expulsion and preventing return
+  - The Palestinian resistance movements that eventually asserted independence from Arab state control
 media:
 - media_type: photograph
   title: David Ben-Gurion reading the Israeli Declaration of Independence, May 14, 1948
