@@ -441,6 +441,80 @@ perspectives:
   - The lived experience of individual survivors in favor of aggregate data
   - Vietnamese conduct during and after the invasion
   - Cambodian domestic politics and the role of Hun Sen in delaying and limiting the tribunal
+- viewpoint: Vietnamese / Regional Intervention
+  viewpoint_type: bystander
+  region_origin: east-asia
+  narrative: 'On December 25, 1978, 150,000 Vietnamese troops crossed the Cambodian border in a full-scale invasion. Thirteen days later, on January 7, 1979, they entered Phnom Penh. The Khmer Rouge fled
+    westward. The genocide — 3 years, 8 months, and 20 days of starvation, forced labor, and mass execution — was over. It ended not through a UN resolution, not through an international tribunal, not through
+    diplomatic intervention, but through a military invasion by a neighboring communist state acting on its own strategic interests.
+
+
+    Vietnam''s motivations were not humanitarian abstractions. The Khmer Rouge had been attacking Vietnamese border provinces since 1975, killing thousands of Vietnamese civilians in cross-border raids. On
+    April 30, 1977, Khmer Rouge forces struck Ba Chuc village in An Giang Province; over the following two weeks, they killed 3,157 Vietnamese civilians. The Cambodian regime — paranoid about Vietnamese influence
+    and driven by a racialized Khmer nationalism that viewed ethnic Vietnamese as existential enemies — had purged the "Eastern Zone" of its own cadres suspected of Vietnamese sympathies. An estimated 100,000
+    people were killed in the Eastern Zone purges of 1978 alone. Heng Samrin and Hun Sen, Khmer Rouge commanders in the Eastern Zone who survived the purge, crossed into Vietnam and formed the Kampuchean
+    United Front for National Salvation, which provided the political framework for the Vietnamese invasion.
+
+
+    The international response to Vietnam''s intervention was not gratitude. It was condemnation. China, the Khmer Rouge''s primary patron, invaded northern Vietnam on February 17, 1979, in a "punitive war"
+    that lasted 27 days and killed an estimated 20,000-50,000 soldiers on both sides. The United States, which had bombed Cambodia with 2.7 million tons of ordnance between 1969 and 1973 — more than the Allies
+    dropped on Japan in all of World War II — opposed Vietnam''s invasion because Vietnam was a Soviet ally. The U.S., China, Britain, and ASEAN ensured that the deposed Khmer Rouge coalition retained Cambodia''s
+    seat at the United Nations. Pol Pot''s ambassador, Thiounn Prasith, sat in the General Assembly representing a government that had killed a quarter of its population. The seat remained with the Khmer Rouge
+    coalition until 1991.
+
+
+    The Cold War logic was explicit. Zbigniew Brzezinski, Carter''s National Security Advisor, told journalists in 1979: "I encouraged the Chinese to support Pol Pot... Pol Pot was an abomination. We could
+    never support him, but China could." The Reagan administration continued the policy. The U.S. provided covert aid to non-communist factions within the Khmer Rouge coalition forces camped along the Thai
+    border. Britain''s SAS trained Khmer Rouge-allied fighters in the 1980s. Thailand served as a rear base and conduit. The stated rationale was containing Vietnamese (and by extension Soviet) influence in
+    Southeast Asia. The unstated consequence was that the perpetrators of genocide received international protection because their enemies were aligned with Moscow.
+
+
+    Vietnam withdrew its forces from Cambodia in 1989, under pressure from the Soviet Union''s own collapse and the diplomatic costs of occupation. The 1991 Paris Peace Accords — negotiated by the UN, the
+    permanent five Security Council members, and the Cambodian factions — established UNTAC (the UN Transitional Authority in Cambodia) and organized elections in 1993. The Accords treated all factions, including
+    the Khmer Rouge, as legitimate participants in the peace process. Hun Sen, who had governed Cambodia since the Vietnamese installation, maneuvered himself into permanent power. He ruled until 2023, when
+    he passed the premiership to his son.
+
+    '
+  key_arguments:
+  - The genocide ended through Vietnamese military invasion, not international law or humanitarian intervention
+  - The Khmer Rouge retained Cambodia's UN seat until 1991 — twelve years after the genocide — because Vietnam was a Soviet ally
+  - The U.S., China, and Britain provided direct or indirect support to Khmer Rouge coalition forces along the Thai border
+  - Vietnam's invasion was driven by border attacks and strategic interest, not altruism — but it stopped the killing
+  - The Paris Peace Accords (1991) treated genocide perpetrators as legitimate political actors
+  sources:
+  - title: 'Brother Enemy: The War After the War'
+    author: Nayan Chanda
+    year: '1986'
+    type: book
+    openlibrary: OL2552862M
+    archive_url: https://archive.org/details/brotherenemywar000chan
+  - title: 'After the Killing Fields: Lessons from the Cambodian Genocide'
+    author: Craig Etcheson
+    year: '2005'
+    type: book
+    doi: 10.5860/choice.43-2697
+  - title: 'How Pol Pot Came to Power: Colonialism, Nationalism, and Communism in Cambodia, 1930-1975'
+    author: Ben Kiernan
+    year: '2004'
+    type: book
+    archive_url: https://archive.org/details/howpolpotcametop0000kier
+  notable_quotes:
+  - text: I encouraged the Chinese to support Pol Pot... Pol Pot was an abomination. We could never support him, but China could.
+    speaker: Zbigniew Brzezinski
+    context: Quoted in Elizabeth Becker, When the War Was Over, 1986
+  - text: The Vietnamese did what the United Nations would not do. They stopped the genocide. Then the world punished them for it.
+    speaker: Nayan Chanda
+    context: Brother Enemy, 1986
+  emphasized:
+  - The genocide ended through military force, not international legal mechanisms
+  - Cold War geopolitics — U.S., China, Britain supporting Khmer Rouge allies to contain Vietnam
+  - Twelve years of Khmer Rouge UN representation after the genocide
+  - The moral inversion of punishing the state that stopped the killing while protecting the killers
+  omitted:
+  - Vietnam's own conduct during the occupation — human rights concerns, political control, economic extraction
+  - The genuine complexity of Cambodian-Vietnamese historical enmity predating the Cold War
+  - Cambodian agency within the Vietnamese-installed government
+  - The humanitarian work of international NGOs in refugee camps along the Thai border
 media:
 - media_type: photograph
   title: Tuol Sleng (S-21) prisoner photographs

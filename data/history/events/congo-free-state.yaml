@@ -438,6 +438,80 @@ perspectives:
   - The reform movement's achievements and the international solidarity it generated
   - Belgian individuals who opposed the system from within
   - Comparative analysis with non-colonial extraction in other global regions
+- viewpoint: Congolese Resistance / African Agency
+  viewpoint_type: vanquished
+  region_origin: africa
+  narrative: 'The standard account of the Congo Free State begins with Leopold and ends with the reform movement. In this version, Congolese people appear as victims — mutilated hands, staring eyes in missionary
+    photographs, bodies counted by European reformers. The photographic record is itself a product of European documentation: Alice Seeley Harris carried the camera; Nsala sat before it. The question of what
+    Nsala did before and after the photograph — how he survived, what community sustained him, what structures of resistance he participated in — is rarely asked.
+
+
+    Congolese resistance to the rubber regime was continuous, organized, and in several cases militarily effective. The Yaka people of the Kwango River region, under the leadership of Mundele Funji (also known
+    as Kiamvu), fought the Force Publique from 1895 to 1906. Mundele Funji''s forces used guerrilla tactics — ambushes in the forest, destruction of rubber collection stations, targeted attacks on sentinels
+    and their posts. The Force Publique launched multiple expeditions against the Yaka and suffered repeated defeats before establishing control. In the Kasai region, the Luba chief Mulume Niama led an armed
+    resistance from 1892 to 1895 that required a full military campaign to suppress. The Budja people of the Equateur province revolted in 1903 against rubber quotas, destroying collecting posts and killing
+    sentinels. The Azande of the northeastern Congo, who had maintained a centralized military state before Leopold''s annexation, resisted incorporation until 1912.
+
+
+    Resistance was not only military. Congolese communities developed strategies of evasion, sabotage, and strategic alliance. Villages near mission stations cultivated relationships with missionaries as a
+    protective buffer — the presence of European witnesses constrained the most extreme violence. William Sheppard, an African American Presbyterian missionary who arrived in the Congo in 1890 and was one
+    of the first outsiders to document the rubber atrocities, worked closely with Congolese informants who guided him to evidence, translated testimony, and ensured he saw what the rubber companies tried to
+    hide. The Kuba kingdom, which Sheppard documented extensively, maintained its internal governance structures and cultural institutions throughout the Free State period, adapting to rather than collapsing
+    under colonial pressure.
+
+
+    Women''s roles in resistance are documented in fragmentary but persistent evidence. The hostage system — in which wives and children were held to compel men''s rubber collection — made women the regime''s
+    primary lever of coercion. But hostage-taking also placed women at the center of the system''s vulnerabilities: escapes, uprisings within holding compounds, and women''s networks of intelligence and
+    communication between captive groups are documented in Force Publique reports and missionary correspondence. Nancy Rose Hunt''s A Nervous State (2016) recovers evidence of Congolese women organizing healing
+    networks, maintaining agricultural knowledge, and rebuilding communities in the aftermath of rubber raids.
+
+
+    The most consequential act of Congolese agency may have been survival itself. The population of the Congo dropped from approximately 20 million in 1885 to 10 million by 1920. The people who survived
+    did so through flight, concealment, agricultural adaptation, and the maintenance of kinship networks that the rubber system was designed to destroy. When independence came in 1960, the political movements
+    that produced it — Patrice Lumumba''s MNC, Joseph Kasavubu''s ABAKO — drew on organizational traditions and communal identities that had persisted through 75 years of colonialism. The Congo was not
+    a blank slate written on by Leopold. It was a society that endured him.
+
+    '
+  key_arguments:
+  - Congolese resistance was continuous and organized — the Yaka fought the Force Publique for eleven years (1895-1906)
+  - Communities strategically allied with missionaries as protective witnesses — Congolese informants guided outsiders to evidence
+  - Women were both the regime's primary lever of coercion (the hostage system) and agents of resistance within it
+  - Survival itself was an act of agency — maintaining kinship networks and communal identity through a system designed to destroy both
+  - Post-independence political movements drew on organizational traditions that survived 75 years of colonial rule
+  sources:
+  - title: 'A Nervous State: Violence, Remedies, and Reverie in Colonial Congo'
+    author: Nancy Rose Hunt
+    year: '2016'
+    type: book
+    doi: 10.1515/9780822375241
+  - title: 'The Congo from Leopold to Kabila: A People''s History'
+    author: Georges Nzongola-Ntalaja
+    year: '2002'
+    type: book
+    doi: 10.5860/choice.40-5625
+    archive_url: https://archive.org/details/congofromleopold0000nzon
+  - title: William Sheppard — Congo's African-American Livingstone
+    author: Pagan Kennedy
+    year: '2002'
+    type: book
+    archive_url: https://archive.org/details/blacklivingstons0000kenn
+  notable_quotes:
+  - text: The Congo was not a failed state. It was a successful extraction machine. It did exactly what it was designed to do.
+    speaker: Georges Nzongola-Ntalaja
+    context: 'The Congo from Leopold to Kabila: A People''s History, 2002'
+  - text: These people are not sitting waiting to be saved. They are fighting, hiding, running, rebuilding. They have been doing this for decades before any European reformer arrives.
+    speaker: Nancy Rose Hunt
+    context: 'A Nervous State, 2016 — on Congolese agency within the colonial system'
+  emphasized:
+  - Armed resistance movements that lasted years and required full military campaigns to suppress
+  - Strategic use of missionaries as protective witnesses — Congolese agency in shaping the reform campaign
+  - Women's resistance within the hostage system and in rebuilding communities
+  - Survival as agency — maintaining identity, kinship, and communal organization through demographic catastrophe
+  omitted:
+  - Congolese who served in the Force Publique — some as coerced soldiers, others as willing participants in the system
+  - Internal conflicts between Congolese communities that the colonial system exploited
+  - The reform movement's genuine achievements in ending Leopold's personal rule
+  - Post-colonial failures of governance that complicate the narrative of Congolese agency
 media:
 - media_type: photograph
   title: Nsala of Wala contemplates his daughter's remains

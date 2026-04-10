@@ -409,6 +409,79 @@ perspectives:
   - Britain's role as the actual naval guarantor of Latin American independence in the 1820s
   - Latin American agency — the revolutions succeeded through Latin American military effort, not U.S. protection
   - The internal dynamics of the independence wars — the U.S. perspective tends to view Latin America as an object of policy, not a set of actors
+- viewpoint: Indigenous / Andean Peoples
+  viewpoint_type: indigenous
+  region_origin: americas
+  narrative: 'Bolivar wrote to General Francisco de Paula Santander in 1826: "We are neither Indians nor Europeans, but a race halfway between the legitimate owners of the land and the Spanish usurpers."
+    The sentence framed Indigenous peoples as a historical category, not a political constituency. At the Congress of Angostura in 1819, Bolivar described the revolution''s participants as a "new race" — the
+    product of mestizaje, the mixing of Spanish, Indigenous, and African bloodlines. This racial alchemy erased the peoples who still lived on their ancestral lands, spoke Quechua or Aymara or Mapudungun,
+    and governed their communities through structures that predated the Spanish by centuries.
+
+
+    The colonial system had been brutal. The mita — forced labor rotations — had sent millions of Indigenous men into the silver mines at Potosi since the 1570s. An estimated 8 million died in the mines over
+    three centuries. The obrajes (textile workshops) operated as debt-bondage prisons. The Tupac Amaru II rebellion of 1780-1781, in which the Indigenous leader Jose Gabriel Condorcanqui raised an army of
+    60,000 across the Andean highlands, was the largest anti-colonial uprising in the Americas before the Bolivarian wars. Spanish forces defeated it, executed Tupac Amaru by quartering in the plaza of Cusco
+    on May 18, 1781, and banned Indigenous cultural markers: the speaking of Quechua in official settings, the wearing of traditional dress, and the reading of the Inca Garcilaso de la Vega''s Royal Commentaries.
+    The Spanish response to Indigenous rebellion was cultural annihilation.
+
+
+    The creole independence movements borrowed the Tupac Amaru rebellion''s energy but not its aims. Bolivar named a province after the rebellion''s leader. He did not restore Indigenous land tenure, abolish
+    the Indigenous tribute (head tax), or include Indigenous representatives in the constitutional conventions that designed the new republics. His Decree of April 1820, issued at Cucuta, formally abolished
+    the tribute and declared all "Indians" to be citizens with equal rights — including the right to sell their communal lands. The Protector of Indians, the colonial office that had (at least in theory) defended
+    Indigenous land claims, was abolished as part of the colonial apparatus. The result was predictable: across the Andes, creole landowners used the new property laws to purchase or seize Indigenous communal
+    territories. By the 1860s, Bolivia''s hacendado class had absorbed vast tracts of ayllu (Indigenous communal) land.
+
+
+    In Ecuador, the huasipungo system replaced colonial encomienda: Indigenous families were granted small plots on hacienda land in exchange for unpaid labor. The system persisted until agrarian reform in
+    1964. In Peru, Bolivar''s lieutenant San Martin abolished the word "Indian" by decree in 1821, declaring that all natives would henceforth be called "Peruvians." The lexical change did not alter the hacienda
+    system, the mita''s successor institutions, or the social hierarchy that placed Indigenous people at the bottom. In Bolivia — the country that bore Bolivar''s name — Indigenous peoples constituted the
+    majority of the population but held no political office until Evo Morales was elected president in 2006, 181 years after independence.
+
+
+    Silvia Rivera Cusicanqui, the Bolivian Aymara sociologist, has argued that the independence wars created an "internal colonialism" in which creole elites replaced Spanish administrators while maintaining
+    the racial hierarchy intact. The Andean concept of pachakuti — a cyclical overturning of the world — framed the independence wars not as liberation but as a transfer of colonial authority from one group
+    of outsiders to another. For the ayllus, the Spanish had been bad; the creoles, who spoke the language of rights while taking the land, were in some ways worse, because they wrapped dispossession in the
+    vocabulary of equality.
+
+    '
+  key_arguments:
+  - Bolivar's racial theory of mestizaje erased Indigenous peoples as a distinct political constituency
+  - The abolition of colonial protections (Protector of Indians, communal land tenure) exposed Indigenous communities to creole land seizure
+  - The Tupac Amaru II rebellion (1780-1781) was the largest anti-colonial uprising in the Americas — the creole revolutions borrowed its energy but abandoned its aims
+  - Bolivia's Indigenous majority held no political office until Evo Morales in 2006 — 181 years after the country was named for Bolivar
+  - Independence replaced external colonialism with internal colonialism — the racial hierarchy survived the change of flags
+  sources:
+  - title: 'Oppressed but Not Defeated: Peasant Struggles Among the Aymara and Qhechwa in Bolivia, 1900-1980'
+    author: Silvia Rivera Cusicanqui
+    year: '1987'
+    type: book
+    archive_url: https://archive.org/details/oppressedbutnot0000rive
+  - title: 'The Tupac Amaru Rebellion: Anticolonialism and Protonationalism in Late Colonial Peru'
+    author: Charles F. Walker
+    year: '2014'
+    type: book
+    doi: 10.4159/harvard.9780674726116
+  - title: 'Latin America Since Independence: A History with Primary Sources'
+    author: Alexander Ferraro and Noel Maurer
+    year: '2021'
+    type: book
+  notable_quotes:
+  - text: We are neither Indians nor Europeans, but a race halfway between the legitimate owners of the land and the Spanish usurpers.
+    speaker: Simon Bolivar
+    context: Letter to Francisco de Paula Santander, 1826
+  - text: The colonial horizon did not end with independence. It was renewed, dressed in republican clothing.
+    speaker: Silvia Rivera Cusicanqui
+    context: 'Oppressed but Not Defeated, 1987'
+  emphasized:
+  - The Tupac Amaru rebellion as the actual anti-colonial revolution — predating and overshadowed by the creole wars
+  - Communal land destruction under republican property law as the material consequence of independence
+  - Internal colonialism — creole elites replacing Spanish administrators while maintaining racial hierarchy
+  - 181 years between Bolivian independence and Indigenous political representation
+  omitted:
+  - Creole leaders who genuinely advocated for Indigenous rights within the republican framework
+  - Indigenous communities that strategically allied with the independence movements for their own reasons
+  - Post-independence Indigenous resistance movements that eventually won political gains
+  - The complexity of mestizo identity — not all mixed-race people identified with creole elites
 media:
 - media_type: artwork
   title: Simon Bolivar, by Arturo Michelena

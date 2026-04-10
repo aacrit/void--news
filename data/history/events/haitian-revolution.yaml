@@ -408,6 +408,79 @@ perspectives:
   - Vodou's spiritual dimensions — academic analysis tends to treat it as 'organizing technology' rather than genuine religious experience
   - Post-independence state formation and its failures — the academic focus on the revolution itself can obscure what came after
   - The emotional and psychological experience of enslavement and liberation
+- viewpoint: Economic Aftermath / French Indemnity
+  viewpoint_type: revisionist
+  region_origin: europe
+  narrative: 'In July 1825, a French naval squadron of fourteen warships appeared off the coast of Port-au-Prince. The squadron carried an ultimatum from King Charles X: France would recognize Haitian independence
+    in exchange for 150 million gold francs — ten times Haiti''s annual revenue — and a 50% reduction on tariffs for French goods. The money was compensation for French slaveholders who had lost their "property"
+    — 500,000 human beings who had freed themselves through thirteen years of war. President Jean-Pierre Boyer accepted the terms. He had no choice. The warships carried enough firepower to bombard the capital,
+    and no other nation recognized Haiti. The alternative to paying was re-invasion.
+
+
+    Haiti borrowed the first installment from French banks — primarily Ternaux Gandolphe et Cie, later Caisse des Depots et Consignations — at interest rates of 6%. The debt was restructured in 1838, reduced
+    to 90 million francs, and refinanced through the French banking system. Haiti continued to make payments until 1947 — 122 years after the original agreement. The debt consumed between 50% and 80% of Haiti''s
+    annual government revenue in its first decades. Schools were not built. Roads were not paved. The army consumed most of what remained. When the debt was finally retired, Haiti had paid the equivalent of
+    $21 billion in 2022 dollars, according to a New York Times investigation published on May 20, 2022. The investigation traced the financial flows from Port-au-Prince through the Parisian banking system
+    and concluded that France had extracted from its former colony a sum that dwarfed what the colony had produced in its entire period of enslavement.
+
+
+    The indemnity was not merely a financial instrument. It was a legal declaration that enslaved people were property, that their self-liberation was theft, and that the thieves owed restitution. The 1825
+    ordinance described the payments as compensation for "former colonists who demand indemnity." It did not name the enslaved. It named the slaveholders. The legal framework treated the revolution not as
+    a liberation but as a property crime — the largest in French colonial history — and the indemnity as the court-ordered settlement.
+
+
+    The economic consequences cascaded across two centuries. Unable to invest in infrastructure, education, or agricultural modernization while servicing debt, Haiti remained dependent on subsistence farming
+    and external credit. The Haitian-Dominican border, drawn in 1929, separated the western third of Hispaniola — deforested, indebted, underdeveloped — from a Dominican Republic that, while hardly prosperous,
+    had not been subjected to a century of debt extraction. The disparity is visible from satellite imagery: the border is marked by the line where trees end. U.S. occupation (1915-1934) further entrenched
+    the pattern: the Marines rewrote Haiti''s constitution to allow foreign land ownership and redirected customs revenue to service debts held by the National City Bank of New York (now Citigroup).
+
+
+    The revisionist question is not why Haiti is poor — that framing concedes the premise that Haiti''s poverty requires a special explanation. The question is who profited. France received the equivalent
+    of $21 billion. French banks received decades of interest payments. American banks received customs revenue during the occupation. The Haitian people received the freedom they had already won, sold back
+    to them at a price designed to ensure they could never enjoy it. In 2003, on the bicentennial of Haitian independence, President Jean-Bertrand Aristide demanded restitution from France: $21,685,135,571.48,
+    calculated to the cent. France declined. Within a year, Aristide was overthrown in a coup that France, the United States, and Canada facilitated.
+
+    '
+  key_arguments:
+  - France demanded 150 million gold francs — ten times annual revenue — as compensation for slaveholders who lost "property" in human beings
+  - Haiti paid the indemnity for 122 years (1825-1947), consuming 50-80% of government revenue in early decades
+  - The New York Times calculated the total extraction at $21 billion in 2022 dollars
+  - The indemnity's legal framework treated self-liberation as property theft — the enslaved owed compensation for freeing themselves
+  - Aristide demanded restitution in 2003; France declined; Aristide was overthrown within a year
+  sources:
+  - title: 'Haiti: The Aftershocks of History'
+    author: Laurent Dubois
+    year: '2012'
+    type: book
+    archive_url: https://archive.org/details/haitiaftershocks0000dubo
+  - title: Inventing the Haitian Debt
+    author: The New York Times (Catherine Porter, Constant Meheut, Matt Apuzzo, Selam Gebrekidan)
+    year: '2022'
+    type: investigation
+  - title: 'Debt: The First 5,000 Years'
+    author: David Graeber
+    year: '2011'
+    type: book
+    doi: 10.5860/choice.49-3633
+    openlibrary: OL24833863M
+    archive_url: https://archive.org/details/debtfirst5000yea0000grae
+  notable_quotes:
+  - text: France extorted Haiti into paying for its own freedom. Then it called the result poverty.
+    speaker: Laurent Dubois
+    context: 'Haiti: The Aftershocks of History, 2012'
+  - text: The amount of $21,685,135,571.48 — we calculated it to the last cent, because they calculated what we owed them to the last centime.
+    speaker: Jean-Bertrand Aristide
+    context: Restitution demand, April 7, 2003 — the 200th anniversary of Toussaint's death
+  emphasized:
+  - The indemnity as the mechanism that converted revolutionary freedom into economic bondage
+  - 122 years of debt payments consuming the majority of government revenue
+  - The legal framework treating self-liberation as theft and enslaved people as property owed back to owners
+  - The $21 billion extraction calculated by the New York Times in 2022
+  omitted:
+  - Haiti's internal political failures — authoritarianism, corruption, and elite extraction — that compounded the debt's impact
+  - The role of Haitian elites who profited from the debt system as intermediaries
+  - Dominican Republic's own colonial debts and economic struggles, which complicate the bilateral comparison
+  - French individuals and institutions that opposed the indemnity at the time and since
 media:
 - media_type: artwork
   title: Portrait of Toussaint Louverture

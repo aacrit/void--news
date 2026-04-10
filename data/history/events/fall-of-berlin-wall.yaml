@@ -391,6 +391,84 @@ perspectives:
   - The genuine repressiveness of the GDR's Stasi surveillance state
   - Mass popular enthusiasm for reunification among East Germans in 1989-1990
   - Real improvements in infrastructure, environment, and living standards after reunification
+- viewpoint: Global South / Third World
+  viewpoint_type: bystander
+  region_origin: global
+  narrative: 'On December 20, 1989 — forty-one days after the Berlin Wall fell — the United States invaded Panama, killed between 500 and 4,000 Panamanians (the range itself a measure of how little the dead
+    were counted), and installed a new government. The operation was called "Just Cause." In the same month that East Germans walked through the Brandenburg Gate to champagne and embraces, Panamanian civilians
+    in the El Chorrillo neighborhood were buried in mass graves. Both events shared the calendar. Only one entered the narrative of 1989 as a story about freedom.
+
+
+    The Cold War had been, among other things, a bidding war. The Non-Aligned Movement — founded at the 1955 Bandung Conference by Nehru, Nasser, Sukarno, Tito, and Nkrumah — comprised 120 nations by 1989.
+    These countries had leveraged the superpower competition to extract aid, arms, and diplomatic support from both sides. Egypt received Soviet weapons and American wheat. India built its steel industry with
+    Soviet technical assistance and its Green Revolution with American agricultural science. Tanzania, Zambia, and Mozambique played Moscow and Washington against each other to fund infrastructure, education,
+    and military capacity. The Cold War was brutal for the Third World — proxy wars in Angola, Afghanistan, Nicaragua, and Mozambique killed millions — but it was also a structure of leverage. When one superpower
+    fell, the leverage vanished.
+
+
+    The "end of history" announced by Francis Fukuyama in a 1989 essay — and expanded into a 1992 book — declared liberal democratic capitalism the final form of human governance. The Washington Consensus,
+    codified by economist John Williamson in 1989, prescribed privatization, deregulation, trade liberalization, and fiscal austerity as the universal formula for development. The International Monetary Fund
+    and World Bank imposed structural adjustment programs across Africa, Latin America, and South Asia. Between 1980 and 2000, sub-Saharan Africa''s per capita income declined. In Latin America, the 1980s
+    were called "the lost decade." The programs cut public spending on health, education, and food subsidies. In Zambia, structural adjustment coincided with a decline in life expectancy from 51 years in 1980
+    to 40 years in 2000.
+
+
+    The Soviet Union''s collapse eliminated the alternative model. Whatever the USSR''s failures — and they were comprehensive — its existence had meant that capitalism was not the only available framework.
+    Soviet-aligned states had provided free education, universal healthcare (of varying quality), and guaranteed employment. Cuba''s literacy rate exceeded that of the United States. The German Democratic Republic''s
+    childcare system was among the most comprehensive in the world. These systems came with political repression, surveillance, and the absence of civil liberties — but their disappearance left no counterweight
+    to the Washington Consensus. Vijay Prashad has documented how Third World solidarity institutions — the Non-Aligned Movement, the G-77, UNCTAD — lost their negotiating leverage as the bipolar world became
+    unipolar. The "peace dividend" that the West celebrated after 1989 did not flow south.
+
+
+    In South Africa, the Wall''s fall had a direct consequence. The apartheid regime had justified itself partly as a bulwark against Soviet-backed communism in southern Africa. With the Soviet threat gone,
+    the strategic rationale for Western tolerance of apartheid collapsed. Nelson Mandela was released from prison on February 11, 1990 — three months after the Wall fell. But the economic settlement that
+    accompanied the political transition preserved the racial distribution of wealth: in 2024, white South Africans (7.3% of the population) still owned more than 70% of the country''s private farmland.
+    The Wall fell, and the world''s structure of power tilted further toward those who had always held it.
+
+    '
+  key_arguments:
+  - The U.S. invaded Panama forty-one days after the Wall fell — the "freedom" narrative of 1989 was geographically selective
+  - The Non-Aligned Movement lost its leverage when the bipolar world became unipolar — the Cold War had been a structure of negotiation, not only of oppression
+  - Structural adjustment programs imposed by the IMF and World Bank devastated social spending across the Global South in the 1990s
+  - The "end of history" thesis universalized Western liberal capitalism at the moment when alternative models disappeared
+  - South Africa's political transition preserved economic inequality — the Wall's fall enabled democracy without redistribution
+  sources:
+  - title: 'The Darker Nations: A People''s History of the Third World'
+    author: Vijay Prashad
+    year: '2007'
+    type: book
+    doi: 10.2307/20455169
+    archive_url: https://archive.org/details/darkernationspe000pras
+  - title: 'Globalization and Its Discontents'
+    author: Joseph Stiglitz
+    year: '2002'
+    type: book
+    doi: 10.1023/B:Dam.0000009338.23400.3d
+    openlibrary: OL3955389M
+    archive_url: https://archive.org/details/globalizationits00stig
+  - title: 'The End of History and the Last Man'
+    author: Francis Fukuyama
+    year: '1992'
+    type: book
+    doi: 10.2307/20045108
+    archive_url: https://archive.org/details/endofhistorylast00fuku
+  notable_quotes:
+  - text: The Cold War had been a cage, but it had also been a shelter. When the cage opened, the shelter vanished.
+    speaker: Vijay Prashad
+    context: The Darker Nations, 2007
+  - text: What we may be witnessing is not just the end of the Cold War, but the end of history as such — the universalization of Western liberal democracy as the final form of human government.
+    speaker: Francis Fukuyama
+    context: The End of History?, The National Interest, Summer 1989
+  emphasized:
+  - The Panama invasion as the unacknowledged other side of 1989
+  - Loss of Third World leverage in a unipolar world
+  - Structural adjustment as the economic policy that followed the Wall's fall in the Global South
+  - The selective geography of 'freedom' — who benefited from the end of the Cold War and who did not
+  omitted:
+  - The genuine horror of Soviet-aligned regimes — political repression, surveillance states, gulags
+  - Eastern European agency — the revolutions were driven by peoples who wanted freedom, not by Global South geopolitics
+  - Economic growth in some Global South countries (China, India, Vietnam) that accelerated after the Cold War
+  - The Non-Aligned Movement's own failures of governance, corruption, and authoritarianism
 media:
 - media_type: photograph
   title: Crowds at the Brandenburg Gate, November 9, 1989

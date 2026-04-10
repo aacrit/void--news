@@ -392,6 +392,79 @@ perspectives:
   - The complexity of post-Maurya religious change (not reducible to brahmanical persecution)
   - Ambedkar's selective reading of Buddhist texts to construct Navayana Buddhism
   - The continued existence of caste within Buddhist communities in India
+- viewpoint: South Indian / Dravidian Kingdoms
+  viewpoint_type: bystander
+  region_origin: south-asia
+  narrative: 'Ashoka''s Rock Edict II names the southern kingdoms with diplomatic precision: the Cholas, the Pandyas, the Satiyaputras, and the Keralaputras. He claims to have provided medical treatment for
+    humans and animals in their territories. He does not claim to have conquered them. Rock Edict XIII — the edict that catalogs the Kalinga massacre — explicitly states that dhamma conquest has been achieved
+    "here and among the borderers, even as far as six hundred yojanas away, where the Greek king named Antiochos rules." The southern kingdoms are listed among the places Ashoka''s dhamma has reached, not
+    among the places his armies have taken. The edicts acknowledge, by omission, that the Maurya Empire''s southern boundary stopped.
+
+
+    The archaeological record confirms the literary silence. Ashoka''s rock edicts appear at Girnar in Gujarat, at Dhauli and Jaugada in Kalinga (Odisha), at Yerragudi in Andhra Pradesh, and at Maski and
+    Siddapura in northern Karnataka. South of these points — in the Tamil-speaking heartlands of the Chola and Pandya kingdoms, in Kerala, in the deep Deccan — no Ashokan inscription has been found. The southernmost
+    edicts reach into what is now northern Karnataka, roughly the boundary of the Maurya Empire''s direct control. Below that line, the Maurya presence was diplomatic at best. Bindusara, Ashoka''s father,
+    had expanded the empire into the Deccan, but the Sangam literature of the Tamil country — composed between the 3rd century BCE and the 3rd century CE — records no Maurya conquest of Tamil Nadu.
+
+
+    The Sangam anthologies — Purananuru, Akananuru, Pattinappalai — describe a political landscape of three competing kingdoms: the Cholas based at Uraiyur (near modern Tiruchirappalli), the Pandyas at Madurai,
+    and the Cheras in Kerala. These kingdoms traded with Rome, maintained ports at Arikamedu (where Roman pottery has been excavated), and governed complex societies with their own literary, religious, and
+    administrative traditions. The Purananuru poems celebrate warrior kings, battlefield valor, and gift-giving — a political culture that owed nothing to Ashokan dhamma. When the poems mention the north,
+    it is as a distant place of great armies, not as a governing authority.
+
+
+    Megasthenes, the Greek ambassador to Chandragupta''s court at Pataliputra (c. 300 BCE), described the Maurya Empire as the largest political entity in India but noted that the southern peninsula remained
+    outside its jurisdiction. Kautilya''s Arthashastra — whether written in the Maurya period or later — discusses southern trade routes and pearl fisheries but does not describe southern kingdoms as Maurya
+    provinces. The spice trade that passed through Tamil ports generated wealth independent of northern empires; pepper, cinnamon, and cardamom from Kerala reached Egyptian and Roman markets through sea routes
+    that bypassed the Maurya road network entirely.
+
+
+    The Dravidian perspective reframes the Maurya Empire as a northern Indian phenomenon whose reach weakened as it moved south. Ashoka''s dhamma may have traveled — Buddhism did establish itself in Tamil Nadu,
+    as evidenced by the rock-cut caves at Sittanavasal and the Tamil Brahmi inscriptions of Buddhist monks — but it traveled as a religious idea, not as imperial authority. R. Champakalakshmi and Romila Thapar
+    have noted that Tamil Buddhism developed its own characteristics, including the Tamil Buddhist epic Manimekalai (attributed to the poet Sitalai Sattanar, c. 2nd-6th century CE), which adapted Buddhist
+    themes to a Dravidian literary framework rather than transplanting north Indian models. The south received Ashoka''s religion. It did not receive his administration, his officials, or his taxes. The distinction
+    matters: what the Maurya Empire looked like from Pataliputra — a universal state governed by dhamma — is not what it looked like from Madurai.
+
+    '
+  key_arguments:
+  - Ashoka's own edicts name the southern kingdoms as neighbors receiving dhamma, not as conquered territories
+  - No Ashokan inscription has been found south of northern Karnataka — the archaeological record confirms the literary silence
+  - Sangam literature records a political world of three Tamil kingdoms owing nothing to Maurya governance
+  - Tamil Buddhism developed independently from north Indian models — the Manimekalai adapted Buddhist ideas to Dravidian literary forms
+  - The spice trade through Kerala connected the south to Rome and Egypt through sea routes that bypassed the Maurya road network
+  sources:
+  - title: Ashoka and the Decline of the Mauryas
+    author: Romila Thapar
+    year: 1961 (revised 1997)
+    type: book
+  - title: 'Trade, Ideology and Urbanization: South India 300 BC to AD 1300'
+    author: R. Champakalakshmi
+    year: '1996'
+    type: book
+    doi: 10.1093/acprof:oso/9780195643367.001.0001
+  - title: 'A History of South India: From Prehistoric Times to the Fall of Vijayanagar'
+    author: K.A. Nilakanta Sastri
+    year: '1955'
+    type: book
+    openlibrary: OL6208937M
+    archive_url: https://archive.org/details/historyofsouthin0000kani
+  notable_quotes:
+  - text: The Beloved of the Gods considers victory by dhamma to be the foremost victory. And it has been won here, on the borders, even six hundred yojanas away.
+    speaker: Ashoka
+    context: Rock Edict XIII — dhamma has 'reached' the south; the army has not
+  - text: The poets of the Sangam age sang of their kings without reference to the Mauryas. The north was a distant place of armies, not a governing presence.
+    speaker: K.A. Nilakanta Sastri
+    context: A History of South India, 1955
+  emphasized:
+  - The Maurya Empire's southern boundary as a limit, not an edge of ongoing expansion
+  - Sangam literature as an independent literary and political tradition predating and parallel to north Indian sources
+  - Tamil Buddhism as a locally adapted tradition, not a Maurya transplant
+  - South Indian trade networks connecting to Rome and Egypt independently of northern empires
+  omitted:
+  - Ashoka's welfare measures that may have benefited border populations indirectly
+  - The possibility that Maurya influence was exercised through trade and diplomacy rather than direct conquest
+  - Later south Indian empires (Chola, Pallava, Chalukya) that expanded northward, reversing the pattern
+  - Buddhist monastic networks that connected north and south despite political boundaries
 media:
 - media_type: photograph
   title: Ashoka Pillar at Vaishali, Bihar
