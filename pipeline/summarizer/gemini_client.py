@@ -33,8 +33,9 @@ _last_call_time: float = 0.0
 _MIN_INTERVAL: float = 4.2  # 60s / 14 calls = ~4.3s (stay under 15 RPM)
 
 # Per-run call cap — hard limit to stay within free tier (250 RPD).
-# Pipeline runs 3x/day, so 50 calls/run × 3 = 150 RPD for summarization.
-_MAX_CALLS_PER_RUN: int = 50
+# Pipeline runs 3x/day, so 30 calls/run × 3 = 90 RPD for summarization,
+# leaving headroom for triage calls and other Gemini steps.
+_MAX_CALLS_PER_RUN: int = 30
 _call_count: int = 0
 
 # Persistent failure flag — set on billing/spending-cap errors to skip all

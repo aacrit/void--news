@@ -1864,12 +1864,14 @@ def main():
         # Step 7b: Summarize clusters with Gemini Flash (runs after ranking so
         # Gemini calls are spent on the clusters that will actually appear on the
         # frontend, not merely the ones with the most raw sources).
-        # Falls back to rule-based generation when Gemini is unavailable or fails.
+        # Gemini generates headlines + summaries for the top 30 clusters only.
+        # Clusters that fail Gemini get their rule-based summary cleared so
+        # no fallback text reaches the frontend.
         gemini_results: dict[int, dict] = {}
         if SUMMARIZER_AVAILABLE and gemini_is_available():
-            print("\n[7b] Summarizing top-ranked clusters with Gemini Flash...")
+            print("\n[7b] Summarizing top 30 clusters with Gemini Flash...")
             try:
-                gemini_results = summarize_clusters_batch(
+                gemini_results, gemini_failed = summarize_clusters_batch(
                     clusters, cluster_consensus=cluster_consensus,
                 )
                 for idx, result in gemini_results.items():
@@ -1892,6 +1894,10 @@ def main():
                         clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
                     if result.get("consensus_summary"):
                         clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
+                # Clear rule-based summaries for top-30 clusters Gemini failed on —
+                # no fallback text should reach the frontend for premium slots.
+                for idx in gemini_failed:
+                    clusters[idx]["summary"] = ""
             except Exception as e:
                 print(f"  [warn] Gemini summarization failed: {e}")
         elif SUMMARIZER_AVAILABLE:

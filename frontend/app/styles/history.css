@@ -6966,7 +6966,43 @@
   }
 }
 
-/* ── Story Card ── */
+/* ── Event Card wrapper for thread carousels ── */
+/* Constrains EventCard to carousel width + stagger entrance animation. */
+.hist-threads__event-wrap {
+  flex: 0 0 220px;
+  width: 220px;
+  scroll-snap-align: start;
+  /* Entrance state */
+  opacity: 0;
+  transform: translateX(-12px);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--ease-cinematic);
+  transition-delay: var(--card-delay, 0ms);
+}
+
+.hist-threads__event-wrap--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale down EventCard internals for carousel width */
+.hist-threads__event-wrap .hist-event-card__title {
+  font-size: var(--text-base);
+}
+
+.hist-threads__event-wrap .hist-event-card__body {
+  padding: var(--space-2) var(--space-3);
+}
+
+@media (max-width: 767px) {
+  .hist-threads__event-wrap {
+    flex: 0 0 180px;
+    width: 180px;
+  }
+}
+
+/* ── Story Card (legacy — kept for CSS completeness) ── */
 .hist-threads__card {
   position: relative;
   flex: 0 0 220px;
@@ -7538,6 +7574,12 @@
   .hist-threads__track-line {
     transition: none;
     transform: scaleX(1);
+  }
+
+  .hist-threads__event-wrap {
+    transition: none;
+    opacity: 1;
+    transform: none;
   }
 
   .hist-threads__card {

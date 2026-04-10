@@ -635,31 +635,34 @@ def summarize_cluster(articles: list[dict],
 
 def summarize_clusters_batch(clusters: list[dict],
                              cluster_consensus: dict | None = None,
-                             ) -> dict[int, dict]:
+                             top_n: int = 30,
+                             ) -> tuple[dict[int, dict], set[int]]:
     """
-    Summarize only high-value clusters, returning results keyed by index.
+    Summarize the top N highest-ranked clusters with Gemini.
 
-    Selection criteria (to minimize API calls):
-        1. Must have 3+ sources (2-source clusters use rule-based)
-        2. Processed in descending headline_rank order (editorially important
-           stories first); falls back to source_count when rank not yet set
-        3. Stops when per-run call cap is reached
+    Selection criteria:
+        1. Must have 3+ sources (2-source clusters skipped)
+        2. Sorted by descending headline_rank (editorially important first)
+        3. Only the top N candidates are attempted — no rule-based fallback
+           for these slots
 
     Args:
-        clusters: List of cluster dicts, each with "articles" and
-            "source_count" keys.
-        cluster_consensus: Optional dict of cluster_index_str -> ClusterConsensus
-            from void --verify claim extraction.
+        clusters: List of cluster dicts with "articles" and "source_count".
+        cluster_consensus: Optional dict of cluster_index_str -> ClusterConsensus.
+        top_n: Maximum number of clusters to summarize. Defaults to 30.
 
     Returns:
-        Dict mapping cluster index -> summarize_cluster result.
-        Missing indices = use rule-based fallback.
+        Tuple of:
+          - Dict mapping cluster index -> summarize_cluster result (successes).
+          - Set of cluster indices that were attempted but Gemini failed —
+            callers should clear their rule-based summaries so no fallback text
+            reaches the frontend.
     """
     if not is_available():
-        return {}
+        return {}, set()
 
     # Build list of (original_index, source_count) for qualifying clusters.
-    # Opinion clusters are always skipped — they use original article text.
+    # Opinion clusters always skipped — they use original article text.
     candidates = []
     for i, cluster in enumerate(clusters):
         if cluster.get("_is_opinion"):
@@ -668,26 +671,23 @@ def summarize_clusters_batch(clusters: list[dict],
         if source_count >= _MIN_SOURCES:
             candidates.append((i, source_count))
 
-    # Process highest-ranked clusters first. headline_rank is set when this
-    # function is called post-ranking (the normal path). Falls back to
+    # Sort by headline_rank descending, tiebreak by source_count.
+    # headline_rank is set post-ranking (the normal path); falls back to
     # source_count for legacy/test callers that invoke before ranking.
     candidates.sort(
         key=lambda x: (clusters[x[0]].get("headline_rank") or 0, x[1]),
         reverse=True,
     )
 
+    # Hard cap: only process the top N candidates.
+    candidates = candidates[:top_n]
+    attempted: set[int] = {idx for idx, _ in candidates}
+
     results: dict[int, dict] = {}
     processed = 0
 
     for idx, _count in candidates:
-        if calls_remaining() <= 0:
-            remaining = len(candidates) - processed
-            print(f"  Call cap reached after {processed} clusters "
-                  f"({remaining} remaining will use rule-based)")
-            break
-
         articles = clusters[idx].get("articles", [])
-        # Pass claims consensus if available for this cluster
         cc = None
         if cluster_consensus:
             cc = cluster_consensus.get(str(idx))
@@ -696,9 +696,9 @@ def summarize_clusters_batch(clusters: list[dict],
             results[idx] = result
             processed += 1
 
-    skipped = len(clusters) - processed
-    print(f"  Gemini: {processed} clusters summarized, "
-          f"{skipped} using rule-based (cap: {calls_remaining()} calls left)")
+    failed = len(attempted) - processed
+    print(f"  Gemini: {processed}/{len(attempted)} top clusters summarized"
+          + (f", {failed} failed (summaries cleared)" if failed else ""))
 
     # Per-run aggregate quality instrumentation
     if results:
@@ -713,4 +713,4 @@ def summarize_clusters_batch(clusters: list[dict],
         print(f"  Summary avg {avg_s:.1f} words, "
               f"{out_of_range_s}/{len(summary_lens)} out of 250-350 range")
 
-    return results
+    return results, attempted - results.keys()
