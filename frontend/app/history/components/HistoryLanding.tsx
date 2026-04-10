@@ -432,6 +432,9 @@ export default function HistoryLanding({
   const [threadsMode, setThreadsMode] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
+  /* ── Hover-pulse: track hovered slug for connection highlighting ── */
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+
   /* Thread membership lookup */
   const threadMembership = useMemo(() => buildThreadMembership(), []);
 
@@ -497,6 +500,27 @@ export default function HistoryLanding({
       endPct: number;
     })[];
   }, [sortedEvents, positions]);
+
+  /* ── Connection map: slug → set of all connected slugs (outgoing + incoming, deduplicated) ── */
+  const connectionMap = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    for (const event of sortedEvents) {
+      if (!map.has(event.slug)) map.set(event.slug, new Set());
+      for (const conn of event.connections) {
+        map.get(event.slug)!.add(conn.targetSlug);
+        /* Reverse: the target also connects back */
+        if (!map.has(conn.targetSlug)) map.set(conn.targetSlug, new Set());
+        map.get(conn.targetSlug)!.add(event.slug);
+      }
+    }
+    return map;
+  }, [sortedEvents]);
+
+  /* ── Connected slugs for the currently hovered event ── */
+  const hoveredConnectedSlugs = useMemo(() => {
+    if (!hoveredSlug) return new Set<string>();
+    return connectionMap.get(hoveredSlug) ?? new Set<string>();
+  }, [hoveredSlug, connectionMap]);
 
   /* ── Ink path — "The line remembers" ── */
   const inkPath = useMemo(
@@ -991,12 +1015,15 @@ export default function HistoryLanding({
             </div>
           )}
 
-          {/* Ledger link */}
-          {ARC_FEATURES.LEDGER && (
-            <Link href="/history/threads" className="hist-longview-ledger-link">
-              Thematic Threads &rarr;
-            </Link>
-          )}
+        </div>
+      )}
+
+      {/* Ledger link — gated only by LEDGER, independent of LONG_VIEW */}
+      {ARC_FEATURES.LEDGER && (
+        <div className="hist-longview-ledger-wrap">
+          <Link href="/history/threads" className="hist-longview-ledger-link">
+            Thematic Threads &rarr;
+          </Link>
         </div>
       )}
 
@@ -1090,16 +1117,29 @@ export default function HistoryLanding({
               : true;
             const isDimmed = threadsMode && (!inAnyThread || (activeThreadId && !inActiveThread));
 
+            /* Connection count (outgoing + incoming, deduplicated) */
+            const connectedSlugs = connectionMap.get(event.slug);
+            const connectionCount = connectedSlugs ? connectedSlugs.size : 0;
+
+            /* Hover-pulse: is this card a connection target of the hovered card? */
+            const isPulsed = ARC_FEATURES.LONG_VIEW
+              && !reducedMotion
+              && hoveredSlug !== null
+              && hoveredSlug !== event.slug
+              && hoveredConnectedSlugs.has(event.slug);
+
             return (
               <div
                 key={event.slug}
                 ref={(el) => { stationRefs.current[i] = el; }}
-                className={`hist-tl-full__station${isFocused ? " hist-tl-full__station--focused" : ""}${isAnniversary ? " hist-tl-full__station--anniversary" : ""}${isDimmed ? " hist-tl-full__station--dimmed" : ""}`}
+                className={`hist-tl-full__station${isFocused ? " hist-tl-full__station--focused" : ""}${isAnniversary ? " hist-tl-full__station--anniversary" : ""}${isDimmed ? " hist-tl-full__station--dimmed" : ""}${isPulsed ? " hist-tl-full__station--conn-pulse" : ""}`}
                 style={{
                   left: `${pct}%`,
                   "--card-dist": dist,
                   "--dot-scale": dScale,
                 } as React.CSSProperties}
+                onMouseEnter={ARC_FEATURES.LONG_VIEW && !reducedMotion ? () => setHoveredSlug(event.slug) : undefined}
+                onMouseLeave={ARC_FEATURES.LONG_VIEW && !reducedMotion ? () => setHoveredSlug(null) : undefined}
               >
                 {/* Thread indicator bars — always rendered for CSS transition,
                     visibility toggled via hist-tl-thread-bar--visible class.
@@ -1110,7 +1150,7 @@ export default function HistoryLanding({
                     {eventThreads.map((thread) => (
                       <span
                         key={thread.id}
-                        className={`hist-tl-thread-bar${threadsMode ? " hist-tl-thread-bar--visible" : ""}`}
+                        className={`hist-tl-thread-bar${threadsMode ? " hist-tl-thread-bar--visible" : ""}${isPulsed ? " hist-tl-thread-bar--pulse" : ""}`}
                         style={{ background: thread.colorVar }}
                       />
                     ))}
@@ -1147,6 +1187,8 @@ export default function HistoryLanding({
                   entranceReady={entranceReady}
                   reducedMotion={reducedMotion}
                   focused={isFocused}
+                  connectionCount={connectionCount}
+                  isPulsed={isPulsed}
                 />
 
               </div>
@@ -1228,6 +1270,8 @@ function TimelineCard({
   entranceReady,
   reducedMotion,
   focused,
+  connectionCount,
+  isPulsed,
 }: {
   event: HistoricalEvent;
   index: number;
@@ -1235,6 +1279,8 @@ function TimelineCard({
   entranceReady: boolean;
   reducedMotion: boolean;
   focused: boolean;
+  connectionCount: number;
+  isPulsed: boolean;
 }) {
   const hook =
     HOOKS[event.slug] ||
@@ -1261,7 +1307,7 @@ function TimelineCard({
   return (
     <Link
       href={`/history/${event.slug}`}
-      className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}`}
+      className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}${isPulsed ? " hist-tl-card--conn-pulse" : ""}`}
       data-slug={event.slug}
       aria-label={`${event.title} — ${event.datePrimary}`}
       style={{
@@ -1282,6 +1328,20 @@ function TimelineCard({
       <div className="hist-tl-card__body">
         <h3 className="hist-tl-card__title">{event.title}</h3>
       </div>
+
+      {/* Connection count badge — bottom-right, only when connections exist */}
+      {connectionCount > 0 && (
+        <span
+          className="hist-tl-card__conn-badge"
+          aria-label={`${connectionCount} connected events`}
+          title={`${connectionCount} connected event${connectionCount !== 1 ? "s" : ""}`}
+        >
+          <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" className="hist-tl-card__conn-icon">
+            <path d="M1 5h3M6 5h3M5 1v3M5 6v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+          </svg>
+          {connectionCount}
+        </span>
+      )}
 
       {/* Expand on hover (desktop only via CSS) */}
       <div className="hist-tl-card__expand">
