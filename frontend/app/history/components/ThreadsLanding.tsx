@@ -4,17 +4,14 @@ import { useMemo, useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import type { HistoricalEvent } from "../types";
 import { THREADS, type ThematicThread } from "../threads";
-import { HOOKS } from "../hooks";
+import EventCard from "./EventCard";
 
 /* ===========================================================================
-   ThreadsLanding — Scrollable Story Card Carousel
-   Each thread: header row (label + count), then a horizontal scroll strip
-   of richly styled event cards. IntersectionObserver triggers staggered
-   entrance per strip. Scroll snap + nav buttons for keyboard accessibility.
-
-   Card anatomy: hero image bg (or burnt umber gradient), year badge,
-   title (3 lines max), hook (italic one-liner), read link. Left border
-   in thread perspective color.
+   ThreadsLanding — Scrollable EventCard Carousel per Thematic Thread
+   Each thread: colored header + count, then a horizontal scroll strip of
+   EventCards (same archival card used on era/region pages — consistent look).
+   IntersectionObserver triggers staggered entrance per strip.
+   Scroll snap + nav buttons for keyboard accessibility.
 
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
    =========================================================================== */
@@ -190,13 +187,14 @@ function ThreadStrip({
           aria-label={`${thread.label} events`}
         >
           {events.map((event, i) => (
-            <StoryCard
+            <div
               key={event.slug}
-              event={event}
-              index={i}
-              thread={thread}
-              revealed={revealed}
-            />
+              className={`hist-threads__event-wrap${revealed ? " hist-threads__event-wrap--visible" : ""}`}
+              style={{ "--card-delay": `${i * 80}ms` } as React.CSSProperties}
+              role="listitem"
+            >
+              <EventCard event={event} />
+            </div>
           ))}
         </div>
 
@@ -223,93 +221,4 @@ function ThreadStrip({
       )}
     </div>
   );
-}
-
-
-/* ===========================================================================
-   StoryCard — Individual event card within a thread carousel
-   Hero image bg, year badge, title, hook, read link. Left border color
-   from the thread's perspective color.
-   =========================================================================== */
-function StoryCard({
-  event,
-  index,
-  thread,
-  revealed,
-}: {
-  event: HistoricalEvent;
-  index: number;
-  thread: ThematicThread;
-  revealed: boolean;
-}) {
-  const year = extractDisplayYear(event);
-  const hookText = HOOKS[event.slug] ?? "";
-  const fallbackHook = hookText
-    || (event.contextNarrative || "").split(". ").slice(0, 1).join(". ");
-
-  const hasHero = !!event.heroImage;
-
-  return (
-    <Link
-      href={`/history/${event.slug}`}
-      className={`hist-threads__card${revealed ? " hist-threads__card--visible" : ""}`}
-      style={{
-        "--card-delay": `${index * 80}ms`,
-        "--thread-color": thread.colorVar,
-      } as React.CSSProperties}
-      role="listitem"
-      aria-label={`${event.title} — ${year}`}
-    >
-      {/* Hero image or gradient fallback */}
-      <div className="hist-threads__card-bg" aria-hidden="true">
-        {hasHero ? (
-          <img
-            src={event.heroImage}
-            alt=""
-            className="hist-threads__card-img"
-            loading="lazy"
-          />
-        ) : (
-          <div className="hist-threads__card-gradient" />
-        )}
-        <div className="hist-threads__card-overlay" />
-      </div>
-
-      {/* Thread color indicator — left border */}
-      <div
-        className="hist-threads__card-indicator"
-        style={{ background: thread.colorVar }}
-        aria-hidden="true"
-      />
-
-      {/* Content */}
-      <div className="hist-threads__card-content">
-        <span className="hist-threads__card-year">{year}</span>
-        <h3 className="hist-threads__card-title">{event.title}</h3>
-        {fallbackHook && (
-          <p className="hist-threads__card-hook">{fallbackHook}</p>
-        )}
-        <span className="hist-threads__card-read" aria-hidden="true">
-          Read &rarr;
-        </span>
-      </div>
-    </Link>
-  );
-}
-
-
-/* ── Extract display year from dateSort ── */
-function extractDisplayYear(event: HistoricalEvent): string {
-  const abs = Math.abs(event.dateSort);
-  const s = String(abs);
-  if (s.length >= 8) {
-    const y = s.slice(0, 4);
-    return event.dateSort < 0 ? `${y} BCE` : y;
-  }
-  if (s.length >= 4) {
-    const y = s.slice(0, s.length >= 8 ? 4 : s.length);
-    return event.dateSort < 0 ? `${y} BCE` : y;
-  }
-  const match = event.datePrimary.match(/\d{4}/);
-  return match ? match[0] : "";
 }
