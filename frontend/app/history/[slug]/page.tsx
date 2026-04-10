@@ -21,6 +21,7 @@ const YAML_SLUGS = [
   "chinese-cultural-revolution",
   "civil-rights-movement",
   "congo-free-state",
+  "cyrus-cylinder",
   "creation-of-israel-nakba",
   "cuban-missile-crisis",
   "fall-of-berlin-wall",
