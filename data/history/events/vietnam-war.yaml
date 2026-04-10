@@ -689,7 +689,7 @@ connections:
   description: Eisenhower considered nuclear weapons for Dien Bien Phu in 1954 (Operation Vulture); Nixon ordered a worldwide
     nuclear alert in October 1969 as part of the madman theory; the bomb's shadow shaped every escalation decision of the war
 - target_slug: french-revolution
-  connection_type: ideological_link
+  connection_type: influenced
   description: Ho Chi Minh quoted Jefferson, who drew on Enlightenment thought born of the French Revolution — the anti-colonial
     movement invoked the democratic ideals of the civilization that had colonized it; Ho joined the French Communist Party in
     Paris in 1920

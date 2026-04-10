@@ -168,7 +168,7 @@ related_event_slugs:
 - tiananmen-square
 perspectives:
 - viewpoint: American / UN Coalition
-  viewpoint_type: institutional
+  viewpoint_type: bystander
   region_origin: north-america
   narrative: 'Dean Rusk and Charles Bonesteel, two young US Army colonels, were given thirty minutes and a
     National Geographic map on the night of August 10, 1945. Their task: draw a line dividing the Korean
@@ -264,7 +264,7 @@ perspectives:
   - The arbitrariness of the 38th parallel itself — drawn by two colonels in thirty minutes
 
 - viewpoint: North Korean / DPRK — Fatherland Liberation War
-  viewpoint_type: institutional
+  viewpoint_type: academic
   region_origin: east-asia
   narrative: 'In Pyongyang, the war did not begin on June 25, 1950. It began on September 8, 1945, when American
     forces occupied the southern half of Korea and installed a military government that retained Japanese
@@ -454,7 +454,7 @@ perspectives:
   - North Korean civilian suffering under US bombing
 
 - viewpoint: Chinese — War to Resist American Aggression and Aid Korea
-  viewpoint_type: institutional
+  viewpoint_type: academic
   region_origin: east-asia
   narrative: 'The Politburo voted against intervention four times. Mao wanted to fight. The generals did not.
     The People''s Republic of China was one year old. The treasury was empty. The army had no air force, no
@@ -679,23 +679,23 @@ media:
   creator: US Navy photographer
   creation_date: September 15, 1950
 connections:
-- slug: hiroshima-nagasaki
-  relationship: precedes
+- target_slug: hiroshima-nagasaki
+  connection_type: consequence
   description: MacArthur requested 30 to 50 atomic bombs for use along the Chinese border and in North Korea.
     Truman refused. The precedent of Hiroshima — both its demonstrated power and the horror it produced —
     shaped the restraint that kept Korea a conventional war.
-- slug: cuban-missile-crisis
-  relationship: parallel
+- target_slug: cuban-missile-crisis
+  connection_type: parallel
   description: Both were Cold War confrontations where nuclear escalation was possible and narrowly avoided
     through political restraint over military advice. Korea established the doctrine of limited war that Cuba
     tested at the nuclear threshold.
-- slug: chinese-cultural-revolution
-  relationship: follows
+- target_slug: chinese-cultural-revolution
+  connection_type: consequence
   description: The Korean War consolidated Mao's domestic authority and eliminated internal opposition to his
     leadership. Peng Dehuai, the hero of the Chinese intervention, was purged by Mao during the Cultural
     Revolution and died in prison in 1974.
-- slug: tiananmen-square
-  relationship: regional_context
+- target_slug: tiananmen-square
+  connection_type: influenced
   description: The Cold War division of Asia that Korea created — the US military presence, the containment
     architecture, the Sino-American confrontation — shaped the geopolitical context within which Tiananmen
     unfolded in 1989.

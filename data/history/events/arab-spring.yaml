@@ -265,7 +265,7 @@ perspectives:
   - The economic demands that drove much of the participation — unemployment exceeded 30% among Egyptian
       youth in 2011
 - viewpoint: Authoritarian Stability / Regime
-  viewpoint_type: institutional
+  viewpoint_type: bystander
   region_origin: middle-east
   narrative: 'On October 20, 2011, the day Gaddafi was dragged from a drainage pipe and killed, Syria''s
     state news agency ran the footage on a loop. The message was clear without commentary. On February
@@ -622,7 +622,7 @@ media:
     of the Arab Spring.
   source_url: https://commons.wikimedia.org/wiki/File:Tahrir_Square_on_February_8_2011.png
   attribution: Jonathan Rashad, February 8, 2011, CC BY 2.0, via Wikimedia Commons
-  license: CC-BY-2.0
+  license: cc-by
   creator: Jonathan Rashad
   creation_date: '2011-02-08'
 - media_type: photograph
@@ -632,7 +632,7 @@ media:
     time.
   source_url: https://commons.wikimedia.org/wiki/File:Tawakkol_Karman_(Nobel_Prize_2011).jpg
   attribution: Harry Wad, December 10, 2011, CC BY-SA 3.0, via Wikimedia Commons
-  license: CC-BY-SA-3.0
+  license: cc-by-sa
   creator: Harry Wad
   creation_date: '2011-12-10'
 - media_type: map
@@ -643,7 +643,7 @@ media:
     Morocco and Jordan survived through limited reform.'
   source_url: https://commons.wikimedia.org/wiki/File:Arab_Spring_and_Regional_Conflict_Map.svg
   attribution: Wikimedia Commons, CC BY-SA 3.0
-  license: CC-BY-SA-3.0
+  license: cc-by-sa
   creator: Wikimedia contributors
   creation_date: '2013'
 - media_type: photograph
@@ -653,27 +653,27 @@ media:
     killed two months later outside Sirte.
   source_url: https://commons.wikimedia.org/wiki/File:Libyans_celebrate_the_fall_of_Tripoli.jpg
   attribution: CC BY 2.0, via Wikimedia Commons
-  license: CC-BY-2.0
+  license: cc-by
   creator: Wikimedia contributors
   creation_date: '2011-08-23'
 connections:
 - target_slug: creation-of-israel-nakba
-  connection_type: contextual
+  connection_type: influenced
   description: Palestine's occupation precluded the possibility of uprising against a foreign occupier
     in the form the Arab Spring took; the Palestinian experience of dispossession shaped regional grievances
     but produced a structurally different kind of resistance
 - target_slug: september-11-attacks
-  connection_type: causal
+  connection_type: caused
   description: The US invasions of Afghanistan (2001) and Iraq (2003) restructured the region the Arab
     Spring erupted across; post-invasion Iraq's sectarian collapse incubated both ISIS and the Shia militias
     that fought in Syria
 - target_slug: french-revolution
-  connection_type: thematic
+  connection_type: influenced
   description: The chant "the people want the fall of the regime" invoked the same popular sovereignty
     Rousseau theorized and 1789 enacted — and produced similarly divergent outcomes across six countries,
     including terror, counter-revolution, and dictatorship
 - target_slug: fall-of-berlin-wall
-  connection_type: thematic
+  connection_type: influenced
   description: Both the 1989 revolutions and the 2011 uprisings saw authoritarian regimes fall in rapid
     succession across a region; both demonstrated that revolutionary contagion can cross borders faster
     than any government can build firewalls

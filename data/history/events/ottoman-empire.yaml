@@ -154,7 +154,7 @@ related_event_slugs:
 - scramble-for-africa
 perspectives:
 - viewpoint: Turkish Republican / Kemalist
-  viewpoint_type: institutional
+  viewpoint_type: academic
   region_origin: turkey
   narrative: 'In November 1922, when the Grand National Assembly in Ankara voted to abolish the sultanate,
     Mustafa Kemal Ataturk addressed the delegates who hesitated. "Sovereignty," he told them, "is acquired
@@ -645,10 +645,10 @@ media:
   creation_date: '1916'
 connections:
 - target_slug: fall-of-constantinople
-  connection_type: contains
+  connection_type: consequence
   description: The conquest of Constantinople on May 29, 1453, transformed a Balkan-Anatolian principality into an intercontinental empire — Mehmed II's victory gave the Ottomans the Bosphorus, the Roman imperial claim, and a capital that would serve for 470 years
 - target_slug: armenian-genocide
-  connection_type: contains
+  connection_type: consequence
   description: The Armenian Genocide of 1915-1923 was organized by the CUP leadership (Enver, Talat, Cemal) within the Ottoman state apparatus — deportation orders, labor battalions, and gendarme escorts used Ottoman administrative infrastructure to kill 600,000-1,500,000 Armenians
 - target_slug: creation-of-israel-nakba
   connection_type: influenced
