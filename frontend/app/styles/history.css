@@ -6181,3 +6181,746 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* ===========================================================================
+   ARC CONNECTION FEATURES
+   Feature 1: Dossier (Stage 6 rewrite)
+   Feature 2: Thread Stage (Stage 5.5)
+   Feature 3: Ledger (/history/threads)
+   Feature 4: Sidebar ("Elsewhere, Meanwhile")
+   Feature 5: Long View (timeline thread overlay)
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Feature 2: Thread Stage — Stage 5.5 (between Record and Your Turn)
+   --------------------------------------------------------------------------- */
+.hist-thread-stage {
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-5);
+}
+
+.hist-thread-stage__divider {
+  border: none;
+  border-top: 1px solid var(--hist-border-subtle);
+  margin: 0 0 var(--space-5);
+}
+
+.hist-thread-stage__lead {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-5);
+  padding: 0 var(--space-4);
+  border-left: 3px solid var(--hist-accent-wash);
+  max-width: 720px;
+}
+
+.hist-thread-stage__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hist-thread-stage__item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding-left: var(--space-2);
+}
+
+/* Connection type indicators */
+.hist-thread-stage__indicator {
+  flex-shrink: 0;
+  width: 1.2rem;
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--hist-accent);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.hist-thread-stage__item--caused,
+.hist-thread-stage__item--consequence {
+  border-left: 2px solid var(--hist-persp-a);
+  padding-left: var(--space-3);
+}
+
+.hist-thread-stage__item--influenced {
+  border-left: 2px dashed var(--hist-persp-c);
+  padding-left: var(--space-3);
+}
+
+.hist-thread-stage__item--parallel {
+  border-left: none;
+  padding-left: var(--space-2);
+}
+
+.hist-thread-stage__item--response-to {
+  border-left: 2px solid var(--hist-persp-d);
+  padding-left: var(--space-3);
+}
+
+.hist-thread-stage__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.hist-thread-stage__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem);
+  font-weight: 600;
+  color: var(--hist-ink);
+  text-decoration: none;
+  line-height: 1.3;
+}
+
+.hist-thread-stage__title:hover {
+  color: var(--hist-accent);
+}
+
+.hist-thread-stage__title:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-thread-stage__date {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.02em;
+}
+
+.hist-thread-stage__desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Feature 1: Dossier — Connection-ranked next reads (Stage 6 rewrite)
+   --------------------------------------------------------------------------- */
+.hist-dossier {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  max-width: 900px;
+  margin: 0 auto var(--space-4);
+  padding: 0 var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .hist-dossier {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
+.hist-dossier__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 240px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--hist-paper-fixed, #F2EDE0);
+  border-radius: 2px;
+  box-shadow: var(--hist-doc-edge);
+  transition: box-shadow 200ms ease, transform 150ms ease;
+}
+
+.hist-dossier__card:hover {
+  box-shadow: var(--hist-doc-edge-hover);
+  transform: translateY(-2px);
+}
+
+.hist-dossier__card:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-dossier__card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: contrast(1.03) saturate(0.65) sepia(0.15);
+}
+
+.hist-dossier__card-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(44, 36, 24, 0.15) 0%,
+    rgba(44, 36, 24, 0.75) 60%,
+    rgba(44, 36, 24, 0.92) 100%
+  );
+}
+
+.hist-dossier__card-content {
+  position: relative;
+  z-index: 1;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.hist-dossier__card-hook {
+  font-family: var(--font-editorial);
+  font-size: clamp(0.9rem, 0.85rem + 0.3vw, 1.05rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.hist-dossier__card-connection {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  margin: 0;
+  opacity: 0.7;
+}
+
+.hist-dossier__card-cta {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+.hist-dossier__chrono {
+  text-align: center;
+  margin: 0;
+}
+
+.hist-dossier__chrono a {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hist-border-subtle);
+  transition: color 150ms ease;
+}
+
+.hist-dossier__chrono a:hover {
+  color: var(--hist-ink);
+}
+
+.hist-dossier__chrono a:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Feature 4: Sidebar — "Elsewhere, Meanwhile"
+   Desktop: sticky right column via CSS grid on parent.
+   Mobile: disclosure accordion.
+   --------------------------------------------------------------------------- */
+
+/* Parent layout grid when sidebar is active (desktop) */
+@media (min-width: 1024px) {
+  .hist-layout-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 0 var(--space-4);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* All direct children span main column by default */
+  .hist-layout-sidebar > * {
+    grid-column: 1;
+  }
+
+  /* Stage 1 (hero) spans full width */
+  .hist-layout-sidebar > .hist-stage--scene {
+    grid-column: 1 / -1;
+  }
+
+  /* Sidebar takes the second column, all rows from row 3 onward */
+  .hist-layout-sidebar > .hist-sidebar--elsewhere {
+    grid-column: 2;
+    grid-row: 3 / span 20;
+  }
+}
+
+.hist-sidebar--elsewhere {
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .hist-sidebar--elsewhere {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  /* Hide mobile toggle on desktop */
+  .hist-sidebar--mobile-toggle {
+    display: none;
+  }
+}
+
+/* Mobile accordion trigger */
+.hist-sidebar--mobile-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  background: var(--hist-bg-secondary);
+  border: 1px solid var(--hist-border-subtle);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  margin-top: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .hist-sidebar--mobile-toggle {
+    display: none;
+  }
+}
+
+.hist-sidebar__eyebrow {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-persp-b);
+}
+
+.hist-sidebar__eyebrow--desktop {
+  display: none;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+@media (min-width: 1024px) {
+  .hist-sidebar__eyebrow--desktop {
+    display: block;
+  }
+}
+
+.hist-sidebar__disclosure {
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  transition: transform 200ms ease;
+}
+
+.hist-sidebar__disclosure--open {
+  transform: rotate(180deg);
+}
+
+/* Content visibility */
+.hist-sidebar__content {
+  display: none;
+}
+
+.hist-sidebar__content--open {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--hist-border-subtle);
+  border-top: none;
+  background: var(--hist-bg-secondary);
+}
+
+@media (min-width: 1024px) {
+  .hist-sidebar__content {
+    display: block;
+  }
+
+  .hist-sidebar__content--open {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+}
+
+.hist-sidebar__entry {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-sidebar__entry:last-child {
+  border-bottom: none;
+}
+
+.hist-sidebar__entry-year {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  margin-bottom: 0.15rem;
+}
+
+.hist-sidebar__entry-title {
+  display: block;
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--hist-ink);
+  text-decoration: none;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.hist-sidebar__entry-title:hover {
+  color: var(--hist-accent);
+}
+
+.hist-sidebar__entry-title:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-sidebar__entry-desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Feature 3: Ledger — /history/threads page
+   --------------------------------------------------------------------------- */
+.hist-threads {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+.hist-threads__header {
+  margin-bottom: var(--space-6);
+}
+
+.hist-threads__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 2.2rem);
+  font-weight: 700;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-2);
+  line-height: 1.2;
+}
+
+.hist-threads__subtitle {
+  margin: 0;
+}
+
+.hist-threads__subtitle a {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-threads__subtitle a:hover {
+  color: var(--hist-ink);
+}
+
+.hist-threads__subtitle a:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-threads__strips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.hist-threads__strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .hist-threads__strip {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: var(--space-4);
+    align-items: start;
+  }
+}
+
+.hist-threads__strip-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  padding-top: var(--space-2);
+}
+
+.hist-threads__strip-track {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .hist-threads__strip-track {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+}
+
+.hist-threads__node {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .hist-threads__node {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.hist-threads__connector {
+  border: none;
+  margin: 0;
+}
+
+/* Mobile: vertical connector */
+.hist-threads__connector {
+  border-left: 1px solid var(--hist-border);
+  height: var(--space-3);
+  width: 0;
+  margin-left: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .hist-threads__connector {
+    border-left: none;
+    border-top: 1px solid var(--hist-border);
+    height: 0;
+    width: var(--space-4);
+    margin-left: 0;
+  }
+}
+
+.hist-threads__node-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: var(--space-3);
+  background: var(--hist-bg-card);
+  border: 1px solid var(--hist-border-subtle);
+  border-radius: 2px;
+  text-decoration: none;
+  color: var(--hist-ink);
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+  max-width: 280px;
+}
+
+.hist-threads__node-card:hover {
+  box-shadow: var(--hist-doc-edge-hover);
+  border-color: var(--hist-accent-wash);
+}
+
+.hist-threads__node-card:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-threads__node-year {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.02em;
+}
+
+.hist-threads__node-title {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--hist-ink);
+}
+
+.hist-threads__node-hook {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-style: italic;
+  color: var(--hist-ink-secondary);
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------------------
+   Feature 5: Long View — Thread overlay on HistoryLanding timeline
+   --------------------------------------------------------------------------- */
+
+/* Thread bars on timeline cards */
+.hist-tl-thread-bars {
+  position: absolute;
+  left: -6px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hist-tl-thread-bar {
+  width: 4px;
+  border-radius: 1px;
+  opacity: 0.85;
+}
+
+/* Dimmed state for events not in active thread */
+.hist-tl-full__station--dimmed {
+  opacity: 0.35;
+  filter: grayscale(0.4);
+  transition: opacity 300ms ease, filter 300ms ease;
+}
+
+/* Long View controls — toggle + legend + ledger link */
+.hist-longview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  position: relative;
+  z-index: 20;
+}
+
+.hist-longview-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--hist-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.hist-longview-toggle__btn {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--hist-ink-muted);
+  border: none;
+  cursor: pointer;
+  min-height: 32px;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.hist-longview-toggle__btn--active {
+  background: var(--hist-accent);
+  color: var(--hist-paper-fixed, #F2EDE0);
+}
+
+.hist-longview-toggle__btn:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: -2px;
+}
+
+/* Thread legend */
+.hist-longview-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.hist-longview-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hist-ink-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  min-height: 28px;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.hist-longview-legend__item:hover {
+  border-color: var(--hist-border);
+}
+
+.hist-longview-legend__item--active {
+  border-color: var(--hist-accent);
+  color: var(--hist-ink);
+}
+
+.hist-longview-legend__item:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-longview-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Ledger link */
+.hist-longview-ledger-link {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hist-border-subtle);
+  margin-left: auto;
+  transition: color 150ms ease;
+}
+
+.hist-longview-ledger-link:hover {
+  color: var(--hist-ink);
+}
+
+.hist-longview-ledger-link:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: disable all arc connection transitions
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hist-tl-full__station--dimmed {
+    transition: none;
+  }
+
+  .hist-dossier__card {
+    transition: none;
+  }
+
+  .hist-sidebar__disclosure {
+    transition: none;
+  }
+}

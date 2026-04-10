@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
 import Link from "next/link";
-import type { HistoricalEvent, Perspective, MediaItem } from "../types";
+import type { HistoricalEvent, Perspective, MediaItem, EventConnection, ConnectionType } from "../types";
 import { HOOKS, CTAS } from "../hooks";
+import { ARC_FEATURES } from "../arc-features";
 
 /* ===========================================================================
    EventDetail — 6-Stage Guided Journey
@@ -24,6 +25,15 @@ const PERSP_COLORS: Record<string, string> = {
   c: "var(--hist-persp-c)",
   d: "var(--hist-persp-d)",
   e: "var(--hist-persp-e)",
+};
+
+/* ── Connection type priority for sorting ── */
+const CONNECTION_PRIORITY: Record<ConnectionType, number> = {
+  caused: 4,
+  consequence: 3,
+  "response-to": 3,
+  influenced: 2,
+  parallel: 1,
 };
 
 interface EventDetailProps {
@@ -78,6 +88,31 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
     HOOKS[event.slug] ||
     (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
 
+  const sortedConnections = useMemo(() => {
+    return [...event.connections].sort(
+      (a, b) => (CONNECTION_PRIORITY[b.type] ?? 0) - (CONNECTION_PRIORITY[a.type] ?? 0)
+    );
+  }, [event.connections]);
+
+  /* ── Dossier: top 3 connection-ranked events ── */
+  const dossierEvents = useMemo(() => {
+    if (!ARC_FEATURES.DOSSIER || sortedConnections.length === 0) return [];
+    return sortedConnections.slice(0, 3).map((conn) => {
+      const linked = allEvents.find((e) => e.slug === conn.targetSlug);
+      return { connection: conn, event: linked ?? null };
+    });
+  }, [sortedConnections, allEvents]);
+
+  /* ── Sidebar: parallel + consequence connections for "Elsewhere" ── */
+  const sidebarConnections = useMemo(() => {
+    if (!ARC_FEATURES.SIDEBAR) return [];
+    return event.connections.filter(
+      (c) => c.type === "parallel" || c.type === "consequence"
+    );
+  }, [event.connections]);
+
+  const showSidebar = ARC_FEATURES.SIDEBAR && sidebarConnections.length >= 2;
+
   /* ── Scroll reveal observer for all .hist-reveal elements ── */
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -126,7 +161,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
   }, []);
 
   return (
-    <div ref={contentRef}>
+    <div ref={contentRef} className={showSidebar ? "hist-layout-sidebar" : ""}>
       {/* ═══════════════════════════════════════════
           Stage 1 — THE SCENE (Arrive Late)
           Full-viewport hero image, sticky behind content.
@@ -430,13 +465,103 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       )}
 
       {/* ═══════════════════════════════════════════
+          Stage 5.5 — THE THREAD (Connection Descriptions)
+          Editorial asides drawn from cross-event connections.
+          No heading. The strongest connection leads as italic blockquote.
+          ═══════════════════════════════════════════ */}
+      {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 0 && (
+        <section className="hist-stage hist-thread-stage">
+          <hr className="hist-thread-stage__divider" />
+
+          {/* Strongest connection — full-width Playfair italic quote */}
+          <blockquote className="hist-thread-stage__lead hist-reveal">
+            {sortedConnections[0].description}
+          </blockquote>
+
+          {/* Remaining connections */}
+          {sortedConnections.length > 1 && (
+            <div className="hist-thread-stage__list hist-reveal">
+              {sortedConnections.slice(1).map((conn, i) => (
+                <div
+                  key={`${conn.targetSlug}-${i}`}
+                  className={`hist-thread-stage__item hist-thread-stage__item--${conn.type}`}
+                >
+                  <span className="hist-thread-stage__indicator" aria-hidden="true">
+                    {conn.type === "caused" || conn.type === "consequence" ? "↓" : ""}
+                    {conn.type === "response-to" ? "↑" : ""}
+                  </span>
+                  <div className="hist-thread-stage__content">
+                    <Link
+                      href={`/history/${conn.targetSlug}`}
+                      className="hist-thread-stage__title"
+                    >
+                      {conn.targetTitle}
+                    </Link>
+                    <span className="hist-thread-stage__date">
+                      {allEvents.find((e) => e.slug === conn.targetSlug)?.datePrimary ?? ""}
+                    </span>
+                    <p className="hist-thread-stage__desc">
+                      {conn.description.split(". ")[0]}.
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════
           Stage 6 — YOUR TURN (Leave Early)
-          Cliffhanger: hook teaser + thumbnail + CTA.
+          Dossier mode: connection-ranked next reads (up to 3).
+          Fallback: chronological next event (original behavior).
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--next hist-reveal">
-        {nextEvent ? (
+        {ARC_FEATURES.DOSSIER && dossierEvents.length > 0 ? (
+          <>
+            <div className="hist-dossier">
+              {dossierEvents.map(({ connection, event: linkedEvent }) => {
+                const slug = connection.targetSlug;
+                const hookText = HOOKS[slug]
+                  || (linkedEvent?.contextNarrative || connection.targetTitle).split(". ").slice(0, 2).join(". ") + ".";
+                const ctaText = CTAS[slug]
+                  || `Explore ${linkedEvent?.perspectives.length ?? 0} accounts of ${connection.targetTitle}`;
+                const heroImg = linkedEvent?.heroImage;
+                const firstSentence = connection.description.split(". ")[0] + ".";
+
+                return (
+                  <Link
+                    key={slug}
+                    href={`/history/${slug}`}
+                    className="hist-dossier__card"
+                  >
+                    {heroImg && (
+                      <div
+                        className="hist-dossier__card-bg"
+                        style={{ backgroundImage: `url(${heroImg})` }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="hist-dossier__card-content">
+                      <p className="hist-dossier__card-hook">{hookText}</p>
+                      <p className="hist-dossier__card-connection">{firstSentence}</p>
+                      <span className="hist-dossier__card-cta">{ctaText}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+            {/* Chronological fallback link */}
+            {nextEvent && (
+              <p className="hist-dossier__chrono">
+                <Link href={`/history/${nextEvent.slug}`}>
+                  Or continue chronologically &rarr;
+                </Link>
+              </p>
+            )}
+          </>
+        ) : nextEvent ? (
           <div className="hist-next__cliffhanger">
-            {/* Next event hero thumbnail for visual pull */}
             {nextEvent.heroImage && (
               <div className="hist-next__thumb-wrap">
                 <img
@@ -447,7 +572,6 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                 />
               </div>
             )}
-            {/* Hook teaser — the crack of the next story */}
             <p className="hist-next__hook">
               {HOOKS[nextEvent.slug] || (nextEvent.contextNarrative || nextEvent.title).split(". ").slice(0, 2).join(". ") + "."}
             </p>
@@ -469,6 +593,16 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           </Link>
         )}
       </section>
+
+      {/* ═══════════════════════════════════════════
+          THE PARALLAX SIDEBAR — "Elsewhere, Meanwhile"
+          Desktop: sticky right column alongside all content.
+          Mobile: accordion section below the main flow.
+          Only renders when >=2 parallel/consequence connections exist.
+          ═══════════════════════════════════════════ */}
+      {showSidebar && (
+        <SidebarElsewhere connections={sidebarConnections} allEvents={allEvents} />
+      )}
     </div>
   );
 }
@@ -567,6 +701,70 @@ function WitnessBlock({
         </div>
       )}
     </div>
+  );
+}
+
+/* ===========================================================================
+   SidebarElsewhere — "Elsewhere, Meanwhile" margin notes
+   Desktop: sticky right column (via CSS grid on parent).
+   Mobile: disclosure accordion.
+   =========================================================================== */
+function SidebarElsewhere({
+  connections,
+  allEvents,
+}: {
+  connections: EventConnection[];
+  allEvents: HistoricalEvent[];
+}) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const entries = connections.map((conn) => {
+    const linked = allEvents.find((e) => e.slug === conn.targetSlug);
+    return {
+      slug: conn.targetSlug,
+      title: conn.targetTitle,
+      year: linked?.datePrimary ?? "",
+      description: conn.description.split(". ")[0] + ".",
+    };
+  });
+
+  return (
+    <aside className="hist-sidebar--elsewhere" aria-label="Parallel events">
+      {/* Mobile accordion trigger */}
+      <button
+        className="hist-sidebar--mobile-toggle"
+        type="button"
+        onClick={() => setMobileOpen((prev) => !prev)}
+        aria-expanded={mobileOpen}
+      >
+        <span className="hist-sidebar__eyebrow">ELSEWHERE</span>
+        <span
+          className={`hist-sidebar__disclosure ${mobileOpen ? "hist-sidebar__disclosure--open" : ""}`}
+          aria-hidden="true"
+        >
+          &#9662;
+        </span>
+      </button>
+
+      {/* Content — always visible on desktop, toggle on mobile */}
+      <div className={`hist-sidebar__content ${mobileOpen ? "hist-sidebar__content--open" : ""}`}>
+        {/* Eyebrow for desktop (mobile uses the button) */}
+        <span className="hist-sidebar__eyebrow hist-sidebar__eyebrow--desktop">ELSEWHERE</span>
+
+        {entries.map((entry) => (
+          <div key={entry.slug} className="hist-sidebar__entry hist-reveal">
+            <span className="hist-sidebar__entry-year">{entry.year}</span>
+            <Link
+              href={`/history/${entry.slug}`}
+              className="hist-sidebar__entry-title"
+            >
+              {entry.title}
+            </Link>
+            <p className="hist-sidebar__entry-desc">{entry.description}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
   );
 }
 
