@@ -1,33 +1,38 @@
 "use client";
 
-import type { RefObject } from "react";
 import type { Story, EditionMeta } from "../lib/types";
 import type { DailyBriefState } from "./DailyBrief";
 import MobileStoryCard from "./MobileStoryCard";
 import MobileBriefPill from "./MobileBriefPill";
 import LogoWordmark from "./LogoWordmark";
 
+/* ---------------------------------------------------------------------------
+   Editorial feed constants — mirrored from HomeContent for zone boundaries.
+   Mobile editorial intent: hero(1) + edition cards(~10) + wire compact(rest).
+   --------------------------------------------------------------------------- */
+
+/** Wire zone starts at index 12 (matching desktop Zone 3). */
+const MOBILE_WIRE_START = 12;
+
 interface MobileFeedProps {
   stories: Story[];
   dailyBriefState: DailyBriefState;
   onStoryClick: (story: Story, rect: DOMRect) => void;
   filterKey: string;
-  visibleCount: number;
-  hasMore: boolean;
-  sentinelRef: RefObject<HTMLDivElement | null>;
   kbdFocusIndex: number;
   editionMeta: EditionMeta;
+  /** IDs of high-divergence stories injected at tail positions */
+  divergenceTailIds: Set<string>;
   /** CSS class for edition switch cross-fade animation */
   transitionClass?: string;
 }
 
 /* ---------------------------------------------------------------------------
-   MobileFeed — Mobile-native news feed layout
+   MobileFeed — Mobile-native news feed layout (30-story cap, no pagination)
 
-   Renders: Brief (skybox) → Hero (story #1) → Compact cards (story #2+)
-   Brief promoted above hero like desktop SkyboxBanner.
-   Shows 5+ stories above the fold on iPhone 15 (390×844).
-   Infinite scroll via sentinel. Pull-to-refresh handled by parent.
+   Renders: Hero (story #1) → Brief → Edition cards (stories 2-11) →
+            Wire compact (stories 12-29, with divergence labels on tail)
+   All 30 stories render immediately. No infinite scroll, no sentinel.
    --------------------------------------------------------------------------- */
 
 export default function MobileFeed({
@@ -35,16 +40,14 @@ export default function MobileFeed({
   dailyBriefState,
   onStoryClick,
   filterKey,
-  visibleCount,
-  hasMore,
-  sentinelRef,
   kbdFocusIndex,
   editionMeta,
+  divergenceTailIds,
   transitionClass,
 }: MobileFeedProps) {
   const hero = stories[0];
-  const rest = stories.slice(1);
-  const visibleRest = rest.slice(0, visibleCount);
+  const editionCards = stories.slice(1, MOBILE_WIRE_START);
+  const wireCards = stories.slice(MOBILE_WIRE_START);
 
   return (
     <div className={["mf", transitionClass].filter(Boolean).join(" ")} key={filterKey}>
@@ -63,25 +66,45 @@ export default function MobileFeed({
       {/* Brief — below hero, first 2 sentences visible */}
       <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
 
-      {/* Compact story cards */}
-      <div className="mf__cards" aria-label="Stories">
-        {visibleRest.map((story, idx) => (
-          <MobileStoryCard
-            key={story.id}
-            story={story}
-            index={idx + 1}
-            variant="compact"
-            onStoryClick={onStoryClick}
-            globalIndex={idx + 1}
-            kbdFocused={kbdFocusIndex === idx + 1}
-          />
-        ))}
-      </div>
+      {/* Edition cards — full compact treatment with Sigil */}
+      {editionCards.length > 0 && (
+        <div className="mf__cards" aria-label="Top stories">
+          {editionCards.map((story, idx) => (
+            <MobileStoryCard
+              key={story.id}
+              story={story}
+              index={idx + 1}
+              variant="compact"
+              onStoryClick={onStoryClick}
+              globalIndex={idx + 1}
+              kbdFocused={kbdFocusIndex === idx + 1}
+            />
+          ))}
+        </div>
+      )}
 
-      {/* Infinite scroll sentinel */}
-      {hasMore && (
-        <div className="mf__sentinel" ref={sentinelRef}>
-          <div className="mf__sentinel-fade" aria-hidden="true" />
+      {/* Wire zone — ultra-compact, headline-only density */}
+      {wireCards.length > 0 && (
+        <div className="mf__wire" aria-label="Wire stories">
+          {wireCards.map((story, idx) => {
+            const gi = MOBILE_WIRE_START + idx;
+            const isDivergent = divergenceTailIds.has(story.id);
+            return (
+              <div key={story.id} className={isDivergent ? "mf__wire-item--divergent" : undefined}>
+                {isDivergent && (
+                  <span className="wire-divergence-label" aria-label="High source disagreement">Sources Disagree</span>
+                )}
+                <MobileStoryCard
+                  story={story}
+                  index={gi}
+                  variant="compact"
+                  onStoryClick={onStoryClick}
+                  globalIndex={gi}
+                  kbdFocused={kbdFocusIndex === gi}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
 

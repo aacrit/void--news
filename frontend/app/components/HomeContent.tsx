@@ -12,6 +12,7 @@ import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
+import WireCard from "./WireCard";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -50,7 +51,7 @@ import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
-import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
+import { hapticConfirm, hapticLight } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
@@ -124,6 +125,24 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
   return Math.round((sourceNorm * 0.35 + 0.2 + confNorm * 0.20 + rigorNorm * 0.25) * 100);
 }
 
+/* ---------------------------------------------------------------------------
+   Editorial feed constants — newspaper-principle (same feed for all readers)
+   --------------------------------------------------------------------------- */
+
+/** Hard cap: maximum stories in the edition feed. No pagination, no load-more. */
+const EDITION_FEED_SIZE = 30;
+
+/** Maximum stories from any single category within the 30-story feed. */
+const CATEGORY_CAP = 8;
+
+/** Zone boundaries (0-indexed) for the three-zone broadsheet layout. */
+const ZONE_LEAD_END = 2;         // indexes 0-1: LeadStory treatment
+const ZONE_EDITION_END = 12;     // indexes 2-11: StoryCard grid (Sigil, summary, bias)
+// indexes 12-29: WireCard compact (headline + source count + lean + category)
+
+/** Number of high-divergence stories injected at the tail of the wire zone. */
+const DIVERGENCE_TAIL_SLOTS = 3;
+
 interface HomeContentProps {
   initialEdition?: Edition;
 }
@@ -192,10 +211,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return "All";
   });
 
-  // Batch reveal for compact stories — no hard cap, progressive loading
-  const BATCH_SIZE = 8;
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Search overlay state
@@ -330,7 +345,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     setSelectedStory(null);
     setOriginRect(null);
     setActiveCategory("All");
-    setVisibleCount(BATCH_SIZE);
 
     // Mobile edition cross-fade — trigger out/in sequence before scroll
     if (prevIdx !== nextIdx && isMobile) {
@@ -456,7 +470,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .select(enrichedFields)
           .contains("sections", [activeEdition])
           .order(rankColumn, { ascending: false })
-          .limit(200);
+          .limit(50);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -466,7 +480,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(200);
+            .limit(50);
         }
 
         if (controller.signal.aborted) return;
@@ -705,14 +719,53 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         return true;
       });
     }
-    return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
+
+    // Sort by editorial importance (headline rank from pipeline)
+    const sorted = filtered.sort((a, b) => b.headlineRank - a.headlineRank);
+
+    // Topic diversity cap — no single category dominates the 30-story feed
+    const diversified: typeof sorted = [];
+    const categoryCounts: Record<string, number> = {};
+    for (const story of sorted) {
+      const cat = story.category || "uncategorized";
+      const count = categoryCounts[cat] ?? 0;
+      if (count >= CATEGORY_CAP) continue;
+      categoryCounts[cat] = count + 1;
+      diversified.push(story);
+      if (diversified.length >= EDITION_FEED_SIZE) break;
+    }
+
+    // High-divergence tail injection — replace last 3 slots (positions 27-29)
+    // with the highest-divergence stories NOT already in the top 27.
+    // TODO post-launch: wire in divergence query from story_clusters table
+    if (diversified.length >= EDITION_FEED_SIZE) {
+      const topIds = new Set(diversified.slice(0, EDITION_FEED_SIZE - DIVERGENCE_TAIL_SLOTS).map((s) => s.id));
+      const divergenceCandidates = sorted
+        .filter((s) => !topIds.has(s.id) && s.divergenceScore > 0)
+        .sort((a, b) => b.divergenceScore - a.divergenceScore)
+        .slice(0, DIVERGENCE_TAIL_SLOTS);
+
+      if (divergenceCandidates.length > 0) {
+        // Replace the last N slots with high-divergence stories
+        const base = diversified.slice(0, EDITION_FEED_SIZE - DIVERGENCE_TAIL_SLOTS);
+        return [...base, ...divergenceCandidates].slice(0, EDITION_FEED_SIZE);
+      }
+    }
+
+    return diversified.slice(0, EDITION_FEED_SIZE);
   }, [stories, activeCategory, activeLean]);
 
-  // Story slicing — desktop broadsheet: lead(2) + medium(3) + compact(rest)
-  const leadStories = filteredStories.slice(0, 2);
-  const mediumStories = filteredStories.slice(2, 5);
-  const compactStories = filteredStories.slice(5);
-  const visibleCompact = compactStories.slice(0, visibleCount);
+  // Three-zone broadsheet layout — all 30 stories render immediately (no pagination)
+  const leadStories = filteredStories.slice(0, ZONE_LEAD_END);                      // Zone 1: Lead (0-1)
+  const editionStories = filteredStories.slice(ZONE_LEAD_END, ZONE_EDITION_END);    // Zone 2: Edition (2-11)
+  const wireStories = filteredStories.slice(ZONE_EDITION_END);                      // Zone 3: Wire (12-29)
+
+  // Mark high-divergence stories in the wire zone tail for visual distinction
+  const divergenceTailIds = new Set(
+    filteredStories.length >= EDITION_FEED_SIZE
+      ? filteredStories.slice(EDITION_FEED_SIZE - DIVERGENCE_TAIL_SLOTS).map((s) => s.id)
+      : [],
+  );
 
   // Fetch lead image for primary story (rank 0 only — one front-page photograph)
   const [leadImageUrl, setLeadImageUrl] = useState<string | null>(null);
@@ -725,30 +778,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     });
     return () => { cancelled = true; };
   }, [leadStoryId]);
-
-  // Pool size depends on feed layout
-  const poolSize = isMobile
-    ? filteredStories.length - 1
-    : compactStories.length;
-  const hasMore = poolSize > visibleCount && poolSize > 0;
-
-  const loadMoreStories = useCallback(() => {
-    hapticScrollEdge();
-    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
-  }, [compactStories.length]);
-
-  // Infinite scroll via IntersectionObserver on sentinel (desktop + mobile)
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) loadMoreStories(); },
-      { rootMargin: "200px" },
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasMore, loadMoreStories]);
 
   // Stable key that changes whenever the active filter changes.
   // Keying the <section> elements on this value causes React to unmount+remount
@@ -792,11 +821,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     <div className="page-container" data-whip={whipDirection === "left" ? "left" : undefined}>
       <NavBar
         activeEdition={activeEdition}
-        onEditionChange={(edition) => { setActiveEdition(edition); setVisibleCount(BATCH_SIZE); }}
+        onEditionChange={(edition) => { setActiveEdition(edition); }}
         activeCategory={activeCategory}
-        onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+        onCategoryChange={(cat) => { setActiveCategory(cat); }}
         activeLean={activeLean}
-        onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+        onLeanChange={(lean) => { setActiveLean(lean); }}
         onSearchClick={() => setSearchOpen(true)}
         hasAudio={!!dailyBriefState.brief?.audio_url}
         isAudioPlaying={dailyBriefState.isPlaying}
@@ -910,9 +939,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {!isLoading && stories.length > 0 && isMobile && (
               <MobileBottomNav
                 activeLean={activeLean}
-                onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+                onLeanChange={(lean) => { setActiveLean(lean); }}
                 activeCategory={activeCategory}
-                onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+                onCategoryChange={(cat) => { setActiveCategory(cat); }}
               />
             )}
 
@@ -924,11 +953,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   dailyBriefState={dailyBriefState}
                   onStoryClick={handleStoryClick}
                   filterKey={filterKey}
-                  visibleCount={visibleCount}
-                  hasMore={hasMore}
-                  sentinelRef={sentinelRef}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
+                  divergenceTailIds={divergenceTailIds}
                   transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                 />
               ) : (
@@ -937,6 +964,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     <SkyboxBanner state={dailyBriefState} />
                   </div>
 
+                  {/* Zone 1: Lead — full-width hero treatment (indexes 0-1) */}
                   {leadStories.length > 0 && (
                     <section key={filterKey} aria-label="Lead stories" className={`lead-section${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {leadStories.map((story, i) => (
@@ -949,9 +977,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </section>
                   )}
 
-                  {mediumStories.length > 0 && (
-                    <section key={`med-${filterKey}`} aria-label="Top stories" className={`grid-medium${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {mediumStories.map((story, idx) => {
+                  {/* Zone 2: Edition — StoryCard grid with Sigil, summary, bias data (indexes 2-11) */}
+                  {editionStories.length > 0 && (
+                    <section key={`ed-${filterKey}`} aria-label="Top stories" className={`grid-medium${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      {editionStories.map((story, idx) => {
                         const gi = leadStories.length + idx;
                         return (
                           <div key={story.id} className="grid-medium__item" style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
@@ -962,29 +991,27 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </section>
                   )}
 
-                  {compactStories.length > 0 && (
-                    <>
-                      <section key={`cmp-${filterKey}`} aria-label="More stories" className={`grid-compact${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                        {visibleCompact.map((story, idx) => {
-                          const gi = leadStories.length + mediumStories.length + idx;
-                          return (
-                            <div key={story.id} className="grid-compact__item" style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}>
-                              <StoryCard
-                                story={story}
-                                index={idx + mediumStories.length + 1}
-                                onStoryClick={handleStoryClick}
-                                globalIndex={gi}
-                                kbdFocused={kbdFocusIndex === gi}
-                              />
-                            </div>
-                          );
-                        })}
-                      </section>
-
-                      {hasMore && (
-                        <div className="feed-sentinel" ref={sentinelRef} aria-hidden="true" />
-                      )}
-                    </>
+                  {/* Zone 3: Wire — compact WireCard grid (indexes 12-29) */}
+                  {wireStories.length > 0 && (
+                    <section key={`wire-${filterKey}`} aria-label="Wire stories" className={`grid-compact${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      {wireStories.map((story, idx) => {
+                        const gi = leadStories.length + editionStories.length + idx;
+                        const isDivergent = divergenceTailIds.has(story.id);
+                        return (
+                          <div key={story.id} className={`grid-compact__item${isDivergent ? " grid-compact__item--divergent" : ""}`} style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
+                            {isDivergent && (
+                              <span className="wire-divergence-label" aria-label="High source disagreement">Sources Disagree</span>
+                            )}
+                            <WireCard
+                              story={story}
+                              onStoryClick={handleStoryClick}
+                              globalIndex={gi}
+                              kbdFocused={kbdFocusIndex === gi}
+                            />
+                          </div>
+                        );
+                      })}
+                    </section>
                   )}
 
                   {filteredStories.length > 0 && (
