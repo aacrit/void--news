@@ -1101,13 +1101,16 @@ export default function HistoryLanding({
                   "--dot-scale": dScale,
                 } as React.CSSProperties}
               >
-                {/* Thread indicator bars — visible in threads mode */}
-                {threadsMode && eventThreads.length > 0 && (
+                {/* Thread indicator bars — always rendered for CSS transition,
+                    visibility toggled via hist-tl-thread-bar--visible class.
+                    Bars slide in (scaleY 0->1) when entering threads mode,
+                    staggered per-bar by nth-child delay in CSS. */}
+                {eventThreads.length > 0 && (
                   <div className="hist-tl-thread-bars" aria-hidden="true">
                     {eventThreads.map((thread) => (
                       <span
                         key={thread.id}
-                        className="hist-tl-thread-bar"
+                        className={`hist-tl-thread-bar${threadsMode ? " hist-tl-thread-bar--visible" : ""}`}
                         style={{ background: thread.colorVar }}
                       />
                     ))}
