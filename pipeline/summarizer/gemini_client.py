@@ -170,6 +170,12 @@ def generate_json(
                 if attempt < max_retries:
                     time.sleep(15)
                     continue
+            elif "503" in error_str or "unavailable" in error_str or "overloaded" in error_str or "high demand" in error_str:
+                # 503 = transient server overload — wait longer before retry
+                print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
+                if attempt < max_retries:
+                    time.sleep(30)
+                    continue
             else:
                 print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
             return None
