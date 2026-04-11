@@ -257,6 +257,8 @@ export interface Story {
   articleUrl?: string;
   /** Best available og:image URL from cluster articles (highest-tier source) */
   imageUrl?: string | null;
+  /** Supabase Storage URL — pipeline-cached image, no hotlink protection */
+  cachedImageUrl?: string | null;
 }
 
 export type Category =
