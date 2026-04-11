@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-09 (rev 34)
+Last updated: 2026-04-10 (rev 35)
 
 News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 1,013 curated sources across 158 countries. World edition (regional editions parked pre-launch).
 
@@ -54,7 +54,7 @@ Applies to: void --history event pages, daily briefs, CTAs, audio scripts. These
 
 ## Status
 
-**Complete**: Pipeline (all steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center + ship), void --history (40 events, 20 components).
+**Complete**: Pipeline (all steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center + ship), void --history (58 events, 22 components, museum UX).
 **In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 
@@ -104,17 +104,17 @@ void-news/
 │   └── rerank.py          # Holistic re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/    # 53 components
-│   │   ├── history/       # 20 history components + data/types/hooks
-│   │   ├── film/          # 6 cinematic scenes (prologue + manifesto)
+│   │   ├── components/    # 52 components
+│   │   ├── history/       # 22 history components + data/types/hooks
+│   │   ├── film/          # 7 cinematic scenes (prologue + manifesto)
 │   │   ├── lib/           # supabase, types, utils, haptics, biasColors
-│   │   ├── styles/        # 19 CSS files (tokens → verify)
+│   │   ├── styles/        # 21 CSS files (tokens → verify)
 │   │   └── [routes]/      # sources, paper, weekly, about, ship, command-center, [edition]
 │   └── next.config.ts
 ├── data/sources.json      # 1,013 sources
-├── data/history/events/   # 40 YAML event files
-├── supabase/migrations/   # 001-043
-├── .github/workflows/     # pipeline, deploy, migrate, validate-bias, auto-merge, audit-db, refresh-brief, weekly-digest
+├── data/history/events/   # 58 YAML event files
+├── supabase/migrations/   # 001-045
+├── .github/workflows/     # pipeline, deploy, migrate, validate-bias, auto-merge, audit-db, refresh-brief, weekly-digest, generate-history-audio
 ├── .claude/agents/        # 34 agents across 13 divisions
 ├── .claude/skills/        # 24 skills (workflows + tools)
 └── docs/                  # 23 documentation files
