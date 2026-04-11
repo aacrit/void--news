@@ -81,7 +81,7 @@ function useCountUp(target: number, ms: number, active: boolean): number {
 /* ── Constants ─────────────────────────────────────────────────────────── */
 
 const CIRC_ORGANIC = 57;   // organic hand-drawn void circle path length (~57)
-const CIRC_GEOMETRIC = 56.5; // 2π × 9 ≈ 56.5 (true circle r=9, cx=16, cy=13)
+const CIRC_GEOMETRIC = 69.1; // 2π × 11 ≈ 69.1 (true circle r=11, cx=16, cy=14)
 
 /* ── Compact data-mark: the logo encoding live data ───────────────────── */
 
@@ -93,9 +93,8 @@ function DataMark({ data, size, mounted }: {
   const beamAngle = isUnscored ? 0 : (lean - 50) * 0.30; // ±15° range, level when unscored
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
-  // Sizes increased so 3-digit source counts fit the lower semi-circle without
-  // overlap. fontSize=6 viewBox units is the maximum that fits within the
-  // r=9 chord at y=18 for a 3-digit number (inner chord ≈ 11.4 units).
+  // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.
+  // px sizes: sm=40, lg=56, xl=72 — The Moat, no horizontal saving.
   const px = size === "xl" ? 72 : size === "lg" ? 56 : 40;
   // All sizes now use geometric precision — circle + straight beam
   const isOrganic = false;
@@ -137,15 +136,15 @@ function DataMark({ data, size, mounted }: {
       ) : (
         <>
           {/* Background ring (geometric) */}
-          <circle cx="16" cy="13" r="9"
+          <circle cx="16" cy="14" r="11"
             stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} fill="none"
           />
           {/* Fill ring (geometric Harvey ball) */}
-          <circle cx="16" cy="13" r="9"
+          <circle cx="16" cy="14" r="11"
             stroke={ringCol} strokeWidth="1.8" fill="none"
             strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_GEOMETRIC}`}
             style={{
-              transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+              transform: "rotate(-90deg)", transformOrigin: "16px 14px",
               transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
             }}
             opacity={0.9}
@@ -155,33 +154,33 @@ function DataMark({ data, size, mounted }: {
 
       {/* Beam group — pivots around circle center, tilts by lean */}
       <g className="sigil__beam-group" style={{
-        transformOrigin: "16px 13px",
+        transformOrigin: "16px 14px",
         transform: `rotate(${mounted ? beamAngle : 0}deg)`,
         transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
       }}>
-        {/* Beam — straight line at sm/lg (geometry wins), organic S-curve at xl (Deep Dive) */}
+        {/* Beam — straight line from edge to edge of circle */}
         {isOrganic ? (
-          <path d="M4 13 C10 12.3 22 13.7 28 13"
+          <path d="M4 14 C10 13.3 22 14.7 28 14"
             stroke={beamCol} strokeWidth="1.8"
             style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
             opacity={mounted ? 1 : 0.3}
           />
         ) : (
-          <line x1="4" y1="13" x2="28" y2="13"
+          <line x1="4" y1="14" x2="28" y2="14"
             stroke={beamCol} strokeWidth="1.8"
             style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
             opacity={mounted ? 1 : 0.3}
           />
         )}
-        {/* Weight ticks — at lg/xl where they're visible (3px at 28px = noise) */}
+        {/* Weight ticks — outside the r=11 circle (circle edge at x=5/x=27) */}
         {size !== "sm" && (
           <>
-            <line x1="5.8" y1="11.5" x2="6.2" y2="14.5"
+            <line x1="4.2" y1="12.5" x2="3.8" y2="15.5"
               stroke={beamCol} strokeWidth="1.4"
               style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
               opacity={mounted ? 0.85 : 0.2}
             />
-            <line x1="26.2" y1="11.5" x2="25.8" y2="14.5"
+            <line x1="27.8" y1="12.5" x2="28.2" y2="15.5"
               stroke={beamCol} strokeWidth="1.4"
               style={{ transition: "stroke 500ms var(--ease-rack) 200ms" }}
               opacity={mounted ? 0.85 : 0.2}
@@ -190,9 +189,10 @@ function DataMark({ data, size, mounted }: {
         )}
       </g>
 
-      {/* Source count — lower semi-circle. fontSize=6 viewBox units is the
-          max that fits a 3-digit number within the r=9 chord at y=18. */}
-      <text x="16" y="18" textAnchor="middle" dominantBaseline="central"
+      {/* Source count — lower semi-circle.
+          r=11, cy=14: chord at y=20 = 18.4 viewBox units, inner ≈ 14.8.
+          font-size 6 × 3 digits × 0.60 aspect = 10.8 units — 4 units breathing room. */}
+      <text x="16" y="20" textAnchor="middle" dominantBaseline="central"
         style={{
           fontFamily: "var(--font-data)", fontSize: 6, fontWeight: 700,
           fill: "var(--fg-secondary)",
@@ -203,15 +203,15 @@ function DataMark({ data, size, mounted }: {
         {data.sourceCount}
       </text>
 
-      {/* Center post */}
-      <line x1="16" y1="22" x2="16" y2="28"
+      {/* Center post — from circle bottom (y=25) to base */}
+      <line x1="16" y1="25" x2="16" y2="29"
         stroke="var(--fg-tertiary)" strokeWidth="1.4"
         opacity={mounted ? 0.4 : 0.15}
         style={{ transition: "opacity 300ms var(--ease-out) 200ms" }}
       />
 
-      {/* Base — organic subtle curve */}
-      <path d="M12 28.5 C14 28.2 18 28.8 20 28.5"
+      {/* Base — wider to match larger circle */}
+      <path d="M11 30.5 C13.5 30.2 18.5 30.8 21 30.5"
         stroke="var(--fg-tertiary)" strokeWidth="1.8"
         opacity={mounted ? 0.3 : 0.1}
         style={{ transition: "opacity 400ms var(--ease-out) 250ms" }}
