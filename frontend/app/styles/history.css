@@ -6545,47 +6545,27 @@
    Mobile: disclosure accordion.
    --------------------------------------------------------------------------- */
 
-/* Parent layout grid when sidebar is active (desktop) */
-@media (min-width: 1024px) {
-  .hist-layout-sidebar {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 0 var(--space-4);
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  /* All direct children span main column by default */
-  .hist-layout-sidebar > * {
-    grid-column: 1;
-  }
-
-  /* Stage 1 (hero) spans full width */
-  .hist-layout-sidebar > .hist-stage--scene {
-    grid-column: 1 / -1;
-  }
-
-  /* Sidebar takes the second column, all rows from row 3 onward */
-  .hist-layout-sidebar > .hist-sidebar--elsewhere {
-    grid-column: 2;
-    grid-row: 3 / span 20;
-  }
+/* Parent layout — no grid offset when sidebar is active.
+   Elsewhere renders as a full-width section at the bottom of the page,
+   keeping the main content centered on both mobile and desktop. */
+.hist-layout-sidebar {
+  display: block;
 }
 
 .hist-sidebar--elsewhere {
   position: relative;
+  max-width: 800px;
+  margin: var(--space-8) auto 0;
+  border-top: 1px solid var(--hist-border-subtle);
+  padding-top: var(--space-5);
 }
 
 @media (min-width: 1024px) {
   .hist-sidebar--elsewhere {
-    position: sticky;
-    top: 2rem;
-    align-self: start;
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
+    display: block;
   }
 
-  /* Hide mobile toggle on desktop */
+  /* Show desktop label, hide mobile toggle */
   .hist-sidebar--mobile-toggle {
     display: none;
   }
@@ -6621,7 +6601,7 @@
 
 .hist-sidebar__eyebrow--desktop {
   display: none;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--hist-border-subtle);
 }
@@ -6629,6 +6609,8 @@
 @media (min-width: 1024px) {
   .hist-sidebar__eyebrow--desktop {
     display: block;
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
   }
 }
 
@@ -6655,9 +6637,12 @@
   background: var(--hist-bg-secondary);
 }
 
+/* On desktop, Elsewhere is a bottom section — always show content, no accordion */
 @media (min-width: 1024px) {
   .hist-sidebar__content {
-    display: block;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
   }
 
   .hist-sidebar__content--open {
@@ -6667,17 +6652,16 @@
   }
 }
 
-/* Sidebar entries: margin notes that arrive from the right edge —
-   a compositor's annotation sliding into the gutter of the page.
-   On desktop, each entry fades in + translateX(8px -> 0) as the
-   corresponding main content scrolls into view. On mobile, they
-   simply fade in vertically (standard hist-reveal). */
+/* Sidebar entries: section cards at the bottom of the page.
+   On desktop they render in a horizontal grid (auto-fill columns).
+   On mobile they stack vertically inside the accordion.
+   Entrance: fade-up from 12px below. */
 .hist-sidebar__entry {
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--hist-border-subtle);
-  /* Desktop entrance: slide from right margin */
+  padding: var(--space-3);
+  border: 1px solid var(--hist-border-subtle);
+  background: var(--hist-bg-secondary);
   opacity: 0;
-  transform: translateX(8px);
+  transform: translateY(12px);
   transition:
     opacity 500ms var(--ease-cinematic),
     transform 500ms var(--ease-cinematic);
@@ -6685,19 +6669,15 @@
 
 .hist-sidebar__entry.hist-reveal--visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
 }
 
-/* Active entry — synced with main content scroll position.
-   The currently-relevant sidebar note gets a left brass accent
-   (rim light on the active subject) while others recede. */
 .hist-sidebar__entry--active {
   border-left: 2px solid var(--hist-brass);
-  padding-left: var(--space-2);
 }
 
 .hist-sidebar__entry:last-child {
-  border-bottom: none;
+  border-bottom: 1px solid var(--hist-border-subtle);
 }
 
 .hist-sidebar__entry-year {
@@ -7312,19 +7292,26 @@
   transform: scaleY(1);
 }
 
-/* Long View controls — toggle + legend + ledger link.
-   Legend items enter when switching to Threads mode:
-   dissolve-in (opacity 0->1) with stagger per-chip.
-   Toggle button active state uses a smash-cut: instant bg change
-   (no slow crossfade -- the mode switch is decisive). */
+/* Long View controls — TIMELINE / THREADS toggle pill.
+   Fixed at bottom-center of the viewport so it's always visible
+   regardless of scroll position. Floats above the timeline + thread view.
+   Toggle button active state uses a smash-cut: instant bg change. */
 .hist-longview-controls {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  position: relative;
-  z-index: 20;
+  padding: var(--space-2) var(--space-3);
+  background: var(--hist-bg);
+  border: 1px solid var(--hist-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.08);
+  max-width: calc(100vw - 2rem);
 }
 
 .hist-longview-toggle {

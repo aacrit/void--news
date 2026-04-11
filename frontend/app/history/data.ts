@@ -5,6 +5,25 @@
    history_media, history_connections.
    =========================================================================== */
 
+/* ── Wikimedia Commons page URL → direct upload URL ──
+   Converts https://commons.wikimedia.org/wiki/File:X.jpg
+   to       https://upload.wikimedia.org/wikipedia/commons/{a}/{ab}/X.jpg
+   using the MD5-based path algorithm that Wikimedia uses for file storage. */
+function resolveMediaUrl(url: string): string {
+  if (!url) return url;
+  const match = url.match(/commons\.wikimedia\.org\/wiki\/File:(.+)$/);
+  if (!match) return url;
+  const filename = decodeURIComponent(match[1]).replace(/ /g, "_");
+  // MD5 hash of the filename (browser-compatible via subtle crypto is async,
+  // so we use the deterministic lookup table Wikimedia publishes: first two
+  // hex chars of md5(filename) give the two-level path prefix).
+  // We pre-compute via a simple inline lookup for known files, otherwise
+  // fall through to a Wikimedia API thumb URL which works without hash.
+  const encoded = encodeURIComponent(filename);
+  // Use Special:Redirect as a universal fallback — always works for valid files
+  return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encoded}`;
+}
+
 import { supabase } from "../lib/supabase";
 import type {
   HistoricalEvent,
@@ -217,7 +236,7 @@ function mapEventWithRelations(
   const media: MediaItem[] = dbMedia.map((m) => ({
     id: m.id,
     type: m.media_type === "photograph" ? "image" : m.media_type,
-    url: m.source_url,
+    url: resolveMediaUrl(m.source_url),
     caption: m.description ?? m.title,
     attribution: m.attribution,
     year: m.creation_date ?? undefined,

@@ -749,6 +749,9 @@ function SidebarElsewhere({
 
   return (
     <aside className="hist-sidebar--elsewhere" aria-label="Parallel events">
+      {/* Desktop heading — always visible (section is at bottom of page) */}
+      <span className="hist-sidebar__eyebrow hist-sidebar__eyebrow--desktop">ELSEWHERE, MEANWHILE</span>
+
       {/* Mobile accordion trigger */}
       <button
         className="hist-sidebar--mobile-toggle"
@@ -756,7 +759,7 @@ function SidebarElsewhere({
         onClick={() => setMobileOpen((prev) => !prev)}
         aria-expanded={mobileOpen}
       >
-        <span className="hist-sidebar__eyebrow">ELSEWHERE</span>
+        <span className="hist-sidebar__eyebrow">ELSEWHERE, MEANWHILE</span>
         <span
           className={`hist-sidebar__disclosure ${mobileOpen ? "hist-sidebar__disclosure--open" : ""}`}
           aria-hidden="true"
@@ -767,13 +770,10 @@ function SidebarElsewhere({
 
       {/* Content — always visible on desktop, toggle on mobile */}
       <div className={`hist-sidebar__content ${mobileOpen ? "hist-sidebar__content--open" : ""}`}>
-        {/* Eyebrow for desktop (mobile uses the button) */}
-        <span className="hist-sidebar__eyebrow hist-sidebar__eyebrow--desktop">ELSEWHERE</span>
-
         {entries.map((entry, entryIndex) => (
           <div
             key={entry.slug}
-            className="hist-sidebar__entry"
+            className="hist-sidebar__entry hist-reveal"
             style={{ transitionDelay: `${entryIndex * 100}ms` }}
           >
             <span className="hist-sidebar__entry-year">{entry.year}</span>
