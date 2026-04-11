@@ -64,8 +64,8 @@ export default function EventPageClient({ slugPromise }: EventPageClientProps) {
   }
 
   return (
-    <div className="hist-page hist-page--clean" style={{ position: "relative" }}>
-      {/* Fixed back button for standalone pages (H07) */}
+    <>
+      {/* Fixed back button for standalone pages */}
       <Link
         href="/history"
         className="hist-standalone-back"
@@ -86,6 +86,6 @@ export default function EventPageClient({ slugPromise }: EventPageClientProps) {
         </svg>
       </Link>
       <EventDetail event={event} allEvents={allEvents} />
-    </div>
+    </>
   );
 }
