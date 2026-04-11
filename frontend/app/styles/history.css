@@ -579,17 +579,14 @@
 .hist-reveal {
   opacity: 0;
   transform: translateY(20px);
-  filter: blur(2px);
   transition:
     opacity 700ms var(--ease-cinematic),
-    transform 700ms var(--ease-cinematic),
-    filter 600ms var(--ease-cinematic);
+    transform 700ms var(--ease-cinematic);
 }
 
 .hist-reveal--visible {
   opacity: 1;
   transform: translateY(0);
-  filter: blur(0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1824,7 +1821,7 @@
 /* ── Wrapper — full viewport, positions brief + track ── */
 .hist-tl-wrapper {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 56px);
   height: calc(100dvh - 56px);
   overflow: hidden;
@@ -1962,15 +1959,12 @@
   top: 50%;
   transform: translateX(-50%);
   z-index: 3;
-  /* Soft depth-of-field: only cards 4+ away get any blur (nearly off-screen) */
-  filter: blur(calc(max(var(--card-dist, 0) - 3, 0) * 0.5px));
   opacity: calc(1 - max(var(--card-dist, 0) - 2, 0) * 0.1);
-  transition: filter 300ms ease, opacity 300ms ease;
+  transition: opacity 300ms ease;
 }
 
 .hist-tl-full__station--focused {
   z-index: 5;
-  filter: none;
   opacity: 1;
 }
 
@@ -2076,8 +2070,11 @@
   transition: transform 300ms var(--ease-archive-snap),
               box-shadow 250ms ease,
               filter 300ms ease;
-  will-change: transform;
   z-index: 3;
+}
+
+.hist-tl-card:hover {
+  will-change: transform;
 }
 
 /* Above cards: positioned above the track center */
@@ -2692,7 +2689,7 @@
 /* ── Inline story container ── */
 /* ── FLIP Morph Overlay — card → full-screen hero transition ── */
 .hist-flip-morph {
-  will-change: top, left, width, height, opacity;
+  will-change: transform, opacity;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -2889,14 +2886,6 @@
     transform: scale(1);
   }
 
-  /* Mobile: show compact expand on tap (handled by CSS, open via JS click) */
-  .hist-tl-card__expand {
-    max-height: 0;
-    opacity: 0;
-    padding: 0 12px;
-    /* Keep hidden — card click opens story directly on mobile */
-  }
-
   /* Touch targets: 48px minimum */
   .hist-tl-card {
     min-height: 48px;
@@ -3053,6 +3042,8 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+  /* Static archival filter — no longer animated via keyframe */
+  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.92);
   /* H06: Cinematic dolly-in — slow zoom settling into frame */
   animation: histDollyIn 8s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
@@ -3301,6 +3292,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .hist-keyfacts__label {
@@ -4579,14 +4571,8 @@
    Dolly-In Hero — Slow cinematic zoom on event detail hero
    --------------------------------------------------------------------------- */
 @keyframes histDollyIn {
-  from {
-    transform: scale(1.06);
-    filter: blur(1px) contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
-  }
-  to {
-    transform: scale(1.0);
-    filter: blur(0) contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
-  }
+  from { transform: scale(1.06); }
+  to   { transform: scale(1.0); }
 }
 
 /* ---------------------------------------------------------------------------
@@ -4756,7 +4742,12 @@
 .hist-persp-tab__name,
 .hist-comparison__header,
 .hist-connection__title,
-.hist-compact-timeline__title {
+.hist-compact-timeline__title,
+.hist-keyfacts__value,
+.hist-crack__text,
+.hist-witness__argument,
+.hist-witness__quote,
+.hist-dossier__card-hook {
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -5888,12 +5879,10 @@
   from {
     opacity: 0;
     transform: translateY(20px) scale(0.96);
-    filter: blur(2px);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -5912,12 +5901,10 @@
   from {
     opacity: 0;
     transform: translateX(-50%) translateY(20px) scale(0.96);
-    filter: blur(2px);
   }
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -5930,12 +5917,10 @@
   from {
     opacity: 0;
     transform: translateX(-50%) translateY(-20px) scale(0.96);
-    filter: blur(2px);
   }
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
-    filter: blur(0);
   }
 }
 

@@ -151,7 +151,7 @@ export default function RootLayout({
         {/* Status bar integration — matches app chrome to warm paper tones */}
         <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
-        {/* Inline script to set theme before first paint — avoids flash */}
+        {/* Inline script to set theme + viewport before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -164,6 +164,8 @@ export default function RootLayout({
                     document.documentElement.setAttribute('data-mode', 'light');
                   }
                 } catch(e) {}
+                var m = window.matchMedia('(max-width: 767px)').matches;
+                document.documentElement.setAttribute('data-viewport', m ? 'mobile' : 'desktop');
               })();
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/void--news/sw.js').catch(function() {});
