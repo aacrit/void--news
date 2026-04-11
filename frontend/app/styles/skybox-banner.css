@@ -426,11 +426,9 @@
 
 .skb__section-content {
   padding: var(--space-3) var(--space-4) var(--space-4);
-  max-height: 40vh;
-  overflow-y: auto;
+  /* No max-height cap — panel grows to full content height, no internal scroll */
   position: relative;
   z-index: 1;
-  /* Animation removed — children animate individually via L-cut cascade */
 }
 
 /* Section content appears instantly — no loading animation on expand.
