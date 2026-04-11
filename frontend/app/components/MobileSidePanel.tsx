@@ -160,6 +160,10 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --sources</span>
             <span className="msp__link-desc">1,013 curated sources</span>
           </Link>
+          <Link href="/games" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --games</span>
+            <span className="msp__link-desc">Media literacy puzzles</span>
+          </Link>
           <Link href="/about" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --about</span>
             <span className="msp__link-desc">See through the void</span>

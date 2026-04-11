@@ -200,6 +200,9 @@ export default function NavBar({
           {/* Page navigation — destinations */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
+            <Link href="/games" className="nav-page" aria-label="void --games" title="void --games">
+              Games
+            </Link>
             <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
               Ship
             </Link>

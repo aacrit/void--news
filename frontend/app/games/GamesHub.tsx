@@ -5,18 +5,34 @@ import Link from "next/link";
 
 /* ==========================================================================
    GamesHub — void --games Landing Page
-   Featured game card + coming-soon ghost cards.
+   Featured game card + active games + coming-soon ghost cards.
    ========================================================================== */
+
+/** Active game entries */
+const ACTIVE_GAMES = [
+  {
+    name: "UNDERTOW",
+    href: "/games/undertow",
+    tagline: "every text has a tide",
+    description:
+      "Four cultural artifacts. One axis. Order them from pole to pole.",
+    badge: "DAILY",
+  },
+  {
+    name: "THE FRAME",
+    href: "/games/frame",
+    tagline: "see through the frame",
+    description:
+      "Four outlets. One story. Rank the headlines from left to right.",
+    badge: "DAILY",
+  },
+];
 
 /** Ghost/coming-soon game entries */
 const COMING_SOON = [
   {
     name: "THE WIRE",
     tagline: "Headline or hallucination? Spot the AI-generated story.",
-  },
-  {
-    name: "THE SOURCE",
-    tagline: "Match the quote to the outlet. Harder than it sounds.",
   },
 ];
 
@@ -48,7 +64,7 @@ export default function GamesHub() {
       <header className="games-hub__masthead">
         <h1 className="games-hub__title">void --games</h1>
         <p className="games-hub__subtitle">
-          everyone reads the story. almost nobody reads the frame.
+          every text has a tide
         </p>
 
         {/* Organic ink divider */}
@@ -62,24 +78,30 @@ export default function GamesHub() {
         </svg>
       </header>
 
-      {/* Featured game */}
-      <section className="games-hub__featured" aria-label="Featured game">
-        <Link href="/games/frame" className="games-hub__card games-hub__card--featured">
-          <div className="games-hub__card-badge">DAILY</div>
-          <div className="games-hub__card-content">
-            <h2 className="games-hub__card-name">THE FRAME</h2>
-            <p className="games-hub__card-tagline">
-              Four outlets. One story. Rank the headlines from left to right.
-            </p>
-            <div className="games-hub__card-meta">
-              <span className="games-hub__card-date" suppressHydrationWarning>{today}</span>
-              <span className="games-hub__card-id">#1</span>
+      {/* Active games */}
+      <section className="games-hub__featured" aria-label="Active games">
+        {ACTIVE_GAMES.map((game, i) => (
+          <Link
+            key={game.name}
+            href={game.href}
+            className={`games-hub__card games-hub__card--featured${i === 0 ? " games-hub__card--hero" : ""}`}
+          >
+            <div className="games-hub__card-badge">{game.badge}</div>
+            <div className="games-hub__card-content">
+              <h2 className="games-hub__card-name">{game.name}</h2>
+              <p className="games-hub__card-tagline">{game.description}</p>
+              <div className="games-hub__card-meta">
+                <span className="games-hub__card-date" suppressHydrationWarning>
+                  {today}
+                </span>
+                <span className="games-hub__card-id">#1</span>
+              </div>
             </div>
-          </div>
-          <div className="games-hub__card-cta" aria-hidden="true">
-            PLAY &rarr;
-          </div>
-        </Link>
+            <div className="games-hub__card-cta" aria-hidden="true">
+              PLAY &rarr;
+            </div>
+          </Link>
+        ))}
       </section>
 
       {/* Coming soon */}
