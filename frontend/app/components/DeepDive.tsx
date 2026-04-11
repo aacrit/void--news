@@ -248,6 +248,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const onNavigateRef = useRef(onNavigate);
   onNavigateRef.current = onNavigate;
 
+  /** Guards against double-close (popstate vs close button race) */
+  const closingRef = useRef(false);
+
   /* ---- Swipe gesture state (mobile only) -------------------------------- */
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -280,6 +283,22 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     touchStartRef.current = null;
     if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
   }, [story.id]);
+
+  /* ---- pushState so browser back button closes the deep dive ------------ */
+  useEffect(() => {
+    closingRef.current = false;
+    window.history.pushState({ deepDiveId: story.id }, "", `?story=${story.id}`);
+
+    const handlePopState = () => {
+      if (!closingRef.current) {
+        closingRef.current = true;
+        onClose();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [story.id, onClose]);
 
   /* ---- One-time swipe hint (mobile only) -------------------------------- */
   const [showSwipeHint, setShowSwipeHint] = useState(false);
@@ -643,11 +662,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         const panel = panelRef.current;
         if (!panel) return;
 
-        // On desktop the panel is centered via left:50%;top:50% + translate(-50%,-50%).
-        // We must measure with that centering transform applied to get the true final rect.
-        const centeringTransform = isDesktopNow ? "translate(-50%, -50%)" : "none";
+        // With inset:24px, the panel is positioned directly — no centering transform.
         panel.style.opacity = "1";
-        panel.style.transform = centeringTransform;
+        panel.style.transform = "none";
         const finalRect = panel.getBoundingClientRect();
 
         if (finalRect.width === 0) {
@@ -663,12 +680,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
-        const snapTransform = isDesktopNow
-          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
-          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-        const finalTransform = isDesktopNow
-          ? "translate(-50%, -50%) scale(1, 1)"
-          : "translate(0, 0) scale(1, 1)";
+        const snapTransform = `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+        const finalTransform = "translate(0, 0) scale(1, 1)";
 
         // Step 3: Snap panel to card position (no transition)
         setMorphStyle({
@@ -883,6 +896,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    // Restore URL immediately — replaceState never fires popstate
+    window.history.replaceState({}, "", window.location.pathname);
     hapticLight();
     // Remove settled state — hides studio reflection ::before immediately
     panelRef.current?.removeAttribute('data-settled');
@@ -925,10 +942,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       const dx = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
       const dy = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
 
-      const isDesktopNow = window.innerWidth >= 1024;
-      const closeTransform = isDesktopNow
-        ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
-        : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+      const closeTransform = `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
 
       // Reverse match cut — panel physically returns to the card.
       // 320ms with smooth deceleration: fast departure, gentle arrival.
@@ -1111,10 +1125,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
              Close animation (spring-snappy 350ms) is kept as-is. */
           transform: isVisible
             ? isDesktop
-              ? "translate(-50%, -50%) scale(1)"
+              ? "scale(1)"
               : `translateY(${dragOffset}px)`
             : isDesktop
-              ? "translate(-50%, -50%) scale(0.98)"
+              ? "scale(0.98)"
               : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
           boxShadow: isVisible ? "var(--shadow-cinematic-dramatic)" : "none",
