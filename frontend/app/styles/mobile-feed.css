@@ -51,17 +51,8 @@
 .msc--hero {
   padding: var(--space-3) 0 var(--space-4);
   border-bottom: var(--rule-thin);
-  /* Warm shadow elevates hero above compact cards — depth without blur.
-     Deakins, Skyfall: key subject separated by subtle shadow plane. */
-  box-shadow: var(--shadow-cinematic-contact);
-  transition: box-shadow 200ms var(--ease-out),
-              transform 350ms var(--spring-gentle),
+  transition: transform 350ms var(--spring-gentle),
               opacity 350ms var(--ease-steadicam);
-}
-
-/* Hero press: shadow collapses — card sinks into surface */
-.msc--hero:active {
-  box-shadow: none;
 }
 
 .msc--hero .msc__meta {
@@ -236,10 +227,26 @@
   gap: 4px;
 }
 
+/* Lean dot — 8px colored circle replacing full Sigil on compact cards */
+.msc__lean-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--lean-dot-color, var(--text-muted));
+  flex-shrink: 0;
+}
+
+.msc__lean-label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.02em;
+}
+
 /* Touch interaction — asymmetric press states (Spielberg hold-and-release)
    Fast attack (60ms), slow spring release (350ms spring-gentle). */
 .msc {
-  transition: transform 350ms var(--spring-gentle), opacity 350ms var(--ease-steadicam);
+  transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
 }
 
 .msc:active {
@@ -252,8 +259,10 @@
   transform: scale(0.985);
 }
 
-/* Touch rack focus — sibling dimming during press (depth-of-field on touch) */
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
+/* Touch rack focus — sibling dimming during press (depth-of-field on touch).
+   Guarded by min-resolution 1.5dppx (retina proxy) to limit expensive :has()
+   evaluation to capable hardware. */
+@media (max-width: 767px) and (min-resolution: 1.5dppx) {
   .mf__cards:has(.msc:active) .msc:not(:active) {
     opacity: 0.65;
     transition: opacity 120ms var(--ease-rack);
@@ -700,27 +709,22 @@
   .msc--hero.anim-cold-open-hero {
     opacity: 0;
     transform: translateY(12px);
-    animation: mobileHeroEnter 400ms var(--ease-cinematic) 120ms both;
+    animation: mobileHeroEnter 250ms var(--ease-cinematic) 0ms both;
   }
 
   /* Brief pill: unfold entrance */
   .mbp.anim-cold-open-pill {
     opacity: 0;
     transform: translateY(-8px);
-    animation: mobilePillSlideIn 350ms var(--ease-unfold) 240ms both;
+    animation: mobilePillSlideIn 200ms var(--ease-unfold) 80ms both;
   }
 
-  /* Compact cards: tighter stagger base (300ms offset from cold-open start) */
+  /* Compact cards: tighter stagger base (120ms offset from cold-open start) */
   .msc--compact.anim-stagger {
-    animation-delay: calc(300ms + var(--stagger-delay, 0ms));
+    animation-delay: calc(120ms + var(--stagger-delay, 0ms));
   }
 
-  /* Bottom nav: last element — frame completes */
-  .mob-nav.anim-cold-open-nav {
-    opacity: 0;
-    transform: translateY(12px);
-    animation: mobileNavRise 300ms var(--ease-cinematic) 500ms both;
-  }
+  /* Bottom nav: appears instantly — persistent chrome never animates on launch */
 }
 
 /* ---------------------------------------------------------------------------
@@ -757,7 +761,7 @@
   }
 
   .mf.anim-edition-in {
-    animation: mobileEditionIn 350ms var(--ease-cinematic) both;
+    animation: mobileEditionIn 250ms var(--ease-cinematic) both;
   }
 }
 
@@ -776,7 +780,7 @@
     pointer-events: none;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.01 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
     mix-blend-mode: overlay;
-    opacity: 0.06;
+    opacity: 0.03;
   }
 
   .mbp {

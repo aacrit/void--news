@@ -20,6 +20,7 @@ interface MobileSidePanelProps {
 
 export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<{ x: number } | null>(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -70,6 +71,12 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           panelRef.current.style.transform = `translateX(${dx}px)`;
           panelRef.current.style.transition = "none";
         }
+        if (backdropRef.current) {
+          const panelWidth = panelRef.current?.offsetWidth ?? 280;
+          const newOpacity = Math.max(0, 1 - (dx / panelWidth));
+          backdropRef.current.style.opacity = String(newOpacity);
+          backdropRef.current.style.transition = "none";
+        }
       });
     }
   }, []);
@@ -81,9 +88,15 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
       if (dx > 60) {
         hapticLight();
         onClose();
-      } else if (panelRef.current) {
-        panelRef.current.style.transition = "transform 300ms var(--spring-snappy)";
-        panelRef.current.style.transform = "";
+      } else {
+        if (panelRef.current) {
+          panelRef.current.style.transition = "transform 300ms var(--spring-snappy)";
+          panelRef.current.style.transform = "";
+        }
+        if (backdropRef.current) {
+          backdropRef.current.style.transition = "opacity 300ms var(--ease-cinematic)";
+          backdropRef.current.style.opacity = "";
+        }
       }
       touchStartRef.current = null;
     },
@@ -99,6 +112,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
     <>
       {/* Backdrop overlay */}
       <div
+        ref={backdropRef}
         className={`msp__backdrop${open ? " msp__backdrop--open" : ""}`}
         onClick={onClose}
         aria-hidden="true"

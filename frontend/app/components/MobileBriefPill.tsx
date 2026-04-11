@@ -46,17 +46,23 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
     previousEpisodes, loadEpisode,
   } = state;
 
+  const [isExpanded, setIsExpanded] = useState(false);
   const [tldrExpanded, setTldrExpanded] = useState(false);
   const [opinionExpanded, setOpinionExpanded] = useState(false);
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
 
   if (!brief) return (
-    <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
-      <div className="mbp__header">
-        <ScaleIcon size={16} animation="analyzing" />
-        <span className="mbp__cmd">void --tl;dr</span>
+    <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+      <button
+        className="mbp__pill"
+        type="button"
+        aria-expanded={false}
+        disabled
+      >
+        <span className="mbp__pill-cmd">void --tl;dr</span>
+        <span className="mbp__pill-sep" aria-hidden="true">/</span>
         <span className="mbp__pill-label mbp__pill-label--loading">Loading&hellip;</span>
-      </div>
+      </button>
     </div>
   );
 
@@ -83,6 +89,28 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
     if (!isPlaying) handlePlayPause();
   };
 
+  const pillHeadline = brief.tldr_headline || tldrSentences[0] || "Daily Brief";
+
+  /* Collapsed pill — tap to expand */
+  if (!isExpanded) {
+    return (
+      <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+        <button
+          className="mbp__pill"
+          type="button"
+          onClick={() => { hapticLight(); setIsExpanded(true); }}
+          aria-expanded={false}
+          aria-label="Expand daily brief"
+        >
+          <span className="mbp__pill-cmd">void --tl;dr</span>
+          <span className="mbp__pill-sep" aria-hidden="true">/</span>
+          <span className="mbp__pill-label">{pillHeadline}</span>
+          <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
       {/* Header row: branding + OnAir button */}
@@ -91,6 +119,14 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
         <span className="mbp__cmd">void --tl;dr</span>
         {brief.created_at && <span className="mbp__time">{timeAgo(brief.created_at)}</span>}
         <div className="mbp__header-actions">
+          <button
+            className="mbp__pill-chevron-btn"
+            type="button"
+            onClick={() => { hapticLight(); setIsExpanded(false); }}
+            aria-label="Collapse daily brief"
+          >
+            <span className="mbp__pill-chevron mbp__pill--open" aria-hidden="true">&#9662;</span>
+          </button>
           {hasAudio && (
             <button
               className={`mbp__play${isPlaying ? " mbp__play--active" : ""}`}

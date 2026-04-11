@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import LogoIcon from "./LogoIcon";
 import { useAudio } from "./AudioProvider";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
@@ -40,6 +40,14 @@ export default function MobileMiniPlayer() {
     setExpanded,
     setPlayerVisible,
   } = useAudio();
+
+  // Set data-audio-active on body when mini-player becomes visible —
+  // CSS uses this to add bottom padding for the 44px mini-player strip.
+  useEffect(() => {
+    if (hasEverPlayed && brief?.audio_url) {
+      document.body.setAttribute("data-audio-active", "true");
+    }
+  }, [hasEverPlayed, brief?.audio_url]);
 
   const displayDuration = brief?.audio_duration_seconds || duration;
   const progress =

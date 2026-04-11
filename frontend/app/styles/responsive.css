@@ -458,6 +458,8 @@
   /* Suppress DD breathing on mobile — 0.05% scale is imperceptible on small viewports */
   .deep-dive-panel[data-settled] .deep-dive-panel__content {
     animation: none;
+    /* Disable editorial color grade filter — forces recomposite on scroll */
+    filter: none;
   }
 
   .deep-dive-panel::-webkit-scrollbar {
@@ -492,7 +494,7 @@
     opacity: 0.8;
     transition: width 150ms var(--ease-out), opacity 150ms var(--ease-out);
     /* Brief width-expansion entrance that draws attention to the handle */
-    animation: dragIndicatorReveal 500ms var(--ease-out) 300ms both;
+    animation: dragIndicatorReveal 200ms var(--ease-out) 100ms both;
     box-shadow: 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
   }
 
@@ -599,6 +601,21 @@
       transform 250ms var(--ease-out);
   }
 
+  /* Static story counter — persistent mobile navigation affordance */
+  .dd-story-counter {
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+  }
+
+  /* Compress DD cascade for mobile — desktop timing too slow on phone */
+  .dd-cascade-1 { transition-delay: 50ms; }
+  .dd-cascade-2 { transition-delay: 150ms; }
+  .dd-cascade-3 { transition-delay: 250ms; }
+  .dd-cascade-4 { transition-delay: 350ms; }
+
   /* === EMPTY STATE === */
 
   /* [ENHANCEMENT-6] Scale down empty state for mobile */
@@ -612,7 +629,7 @@
 
   /* Filter chips — pill-toggle feel with sliding indicator */
   .lean-bar__seg--active {
-    transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), transform 200ms var(--ease-out);
+    transition: transform 200ms var(--ease-out);
   }
 
   /* Topic chips — tighter, more native pill feel */
@@ -636,7 +653,7 @@
 
   /* Filter chip — press feedback only */
   .filter-chip:active {
-    transform: scale(0.88);
+    transform: scale(0.92);
     transition: transform 50ms var(--ease-out);
   }
 
@@ -648,7 +665,7 @@
 
   /* Topic chip — base hover already stripped, press feedback only */
   .topic-bar__chip:active {
-    transform: scale(0.88);
+    transform: scale(0.92);
     transition: transform 50ms var(--ease-out);
   }
 
@@ -660,7 +677,6 @@
   .lead-story {
     box-shadow: none;
     transition:
-      background-color 200ms var(--ease-out),
       transform 200ms var(--ease-out),
       opacity 200ms var(--ease-out);
   }
@@ -761,14 +777,21 @@
 
   /* === PAGE MAIN — clear MobileTabBar + MobileMiniPlayer === */
   /* MobileTabBar: 52px. MobileMiniPlayer (above tab bar, optional): 44px.
-     Total max fixed = 96px + safe-area. The mini-player may not always be
-     visible, but padding must account for worst case to prevent content
-     being hidden behind fixed chrome. */
+     Default: tab bar only. Mini-player padding added via data-audio-active
+     when audio has been started — avoids wasting 44px for users who never play. */
   .page-main {
+    padding-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  body[data-audio-active="true"] .page-main {
     padding-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
+    margin-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  body[data-audio-active="true"] .site-footer {
     margin-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
@@ -815,8 +838,6 @@
     top: var(--nav-height);
     z-index: var(--z-sticky);
     background-color: var(--bg-primary);
-    backdrop-filter: blur(8px) saturate(1.1);
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
   }
 
   /* DivergenceAlerts removed from homepage — CSS kept for reference */
@@ -928,7 +949,7 @@
     text-decoration: none;
     border-bottom: var(--rule-thin);
     min-height: 44px;
-    transition: color 150ms var(--ease-out);
+    transition: none;
   }
 
   .pwa-back:active {

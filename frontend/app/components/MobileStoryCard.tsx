@@ -5,6 +5,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
+import { getLeanColor, tiltLabel } from "../lib/biasColors";
 
 interface MobileStoryCardProps {
   story: Story;
@@ -77,14 +78,19 @@ export default function MobileStoryCard({
           )}
         </>
       ) : (
-        /* Compact layout: headline + dedicated sigil row beneath */
+        /* Compact layout: headline + lean dot row beneath */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
             <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
           </h3>
           <div className="msc__sigil-row">
-            <Sigil data={story.sigilData} size="sm" instant />
+            <span
+              className="msc__lean-dot"
+              style={{ "--lean-dot-color": story.sigilData.unscored ? undefined : getLeanColor(story.sigilData.politicalLean) } as React.CSSProperties}
+              aria-hidden="true"
+            />
+            <span className="msc__lean-label">{story.sigilData.unscored ? "unscored" : tiltLabel(story.sigilData.politicalLean).toLowerCase().replace(" tilt", "")}</span>
             {story.category && <span className="msc__cat">{story.category}</span>}
             <span className="msc__cat">{story.source.count} sources</span>
           </div>
