@@ -3469,11 +3469,10 @@ a.hist-figures__name:hover {
 
 /* Dimmed witnesses — rack focus with blur + subtle rotation away */
 .hist-witness--background {
-  opacity: 0.55;
-  filter: brightness(0.92) blur(0.5px);
+  opacity: 0.45;
+  filter: none;
   transform: rotateY(-1deg);
   transition: opacity 400ms var(--ease-cinematic),
-              filter 400ms var(--ease-cinematic),
               transform 400ms var(--ease-cinematic);
 }
 
