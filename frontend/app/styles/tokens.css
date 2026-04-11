@@ -93,6 +93,31 @@
 
   --cin-amber-muted: #B08A40;
 
+  /* ── Counter-temperature: Slate (Deakins/Sicario — cool foil to warm amber) ── */
+  --cin-slate:             #5C6B7A;
+  --cin-slate-light:       #8A96A3;
+  --cin-slate-ghost:       rgba(92, 107, 122, 0.08);
+
+  /* ── Grain refinement (cotton rag newsprint character) ── */
+  --cin-grain-frequency:   0.55;
+  --cin-grain-octaves:     4;
+  --cin-grain-blend-light: overlay;
+  --cin-grain-blend-dark:  soft-light;
+
+  /* ── Typography refinements ── */
+  --cin-tracking-meta:     0.10em;
+  --cin-weight-pullquote:  400;
+
+  /* ── Scene 3: Rack Focus — Neighbor Defocus (Zsigmond, Close Encounters) ──
+     Defocus is fast (420ms) — decisive focus pull.
+     Refocus is slow (600ms) — gradual plane resolution. */
+  --cin-rack-dim-neighbor:    0.62;
+  --cin-rack-blur-neighbor:   1.5px;
+  --cin-rack-recede-neighbor: 0.997;
+  --cin-rack-blur-return-dur: 500ms;
+  --cin-rack-dim-return-dur:  600ms;
+  --cin-card-glow:            0 0 0 1px color-mix(in srgb, var(--cinematic-rim-light, rgba(148,107,21,0.08)) 60%, transparent);
+
   /* ── Product World Palette — accent colors for product family previews ── */
   --palette-weekly: #B91C1C;
   --palette-weekly-paper: #EDE4D0;
@@ -584,6 +609,11 @@
     -1px 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 50%, transparent);
 
+  /* ── Counter-temperature: Slate (Dark) ── */
+  --cin-slate:       #8A96A3;
+  --cin-slate-light: #A8B4C0;
+  --cin-slate-ghost: rgba(138, 150, 163, 0.06);
+
   /* ── Dark mode: cinematic additions ── */
   --cinematic-rim-edge: rgba(212, 165, 116, 0.05);
   --cin-grade-editorial: contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03);
@@ -678,6 +708,7 @@
   --space-5:  clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
   --space-6:  clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   --space-7:  clamp(2rem, 1.5rem + 2vw, 4rem);
+  --space-8:  clamp(3rem, 2rem + 3vw, 6rem);
 }
 
 /* --------------------------------------------------------------------------
