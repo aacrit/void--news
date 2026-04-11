@@ -937,3 +937,44 @@
   }
 }
 
+/* ---- View Transitions — forward-compatible CSS ----------------------------
+   Browsers with View Transition API support will use these names for
+   cross-document or SPA transitions. Zero cost on unsupported browsers. */
+
+@media (max-width: 767px) {
+  .page-main {
+    view-transition-name: main-content;
+  }
+  .nav-header {
+    view-transition-name: nav-header;
+  }
+  .mtb {
+    view-transition-name: tab-bar;
+  }
+}
+
+/* Cross-fade with subtle slide — mobile route transitions */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(main-content) {
+    animation: vtSlideOut 200ms var(--ease-out) both;
+  }
+  ::view-transition-new(main-content) {
+    animation: vtSlideIn 200ms var(--ease-out) both;
+  }
+
+  /* Persistent chrome stays put during route change */
+  ::view-transition-old(nav-header),
+  ::view-transition-new(nav-header),
+  ::view-transition-old(tab-bar),
+  ::view-transition-new(tab-bar) {
+    animation: none;
+  }
+}
+
+@keyframes vtSlideOut {
+  to { opacity: 0; transform: translateX(-8px); }
+}
+@keyframes vtSlideIn {
+  from { opacity: 0; transform: translateX(8px); }
+}
+

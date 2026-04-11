@@ -58,8 +58,8 @@ const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
 
 function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
   const [activeAxis, setActiveAxis] = useState<string | null>(null);
-  const [showSecondary, setShowSecondary] = useState(false);
   const [isMobileLens, setIsMobileLens] = useState(false);
+  const [showSecondary, setShowSecondary] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -69,6 +69,7 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  /* Priority order per memory rule: lean is hero, rigor second, opinion third */
   const PRIMARY_IDS = new Set(["lean", "rigor", "opinion"]);
   const primaryAxes = SIX_AXES.filter(a => PRIMARY_IDS.has(a.id));
   const secondaryAxes = SIX_AXES.filter(a => !PRIMARY_IDS.has(a.id));
@@ -110,22 +111,20 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
             style={{
               maxHeight: showSecondary ? "300px" : "0",
               overflow: "hidden",
-              transition: "max-height 300ms ease-out",
+              transition: "max-height 300ms var(--ease-out)",
             }}
           >
-            <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`} style={{ marginTop: "var(--space-2)" }}>
+            <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
               {secondaryAxes.map((axis, i) => renderAxis(axis, i + 3))}
             </div>
           </div>
-          {!showSecondary && (
-            <button
-              className="dd-read-more"
-              onClick={() => { hapticMicro(); setShowSecondary(true); }}
-              style={{ marginTop: "var(--space-2)" }}
-            >
-              3 more axes
-            </button>
-          )}
+          <button
+            className="dd-lenses__expand text-meta"
+            onClick={() => { hapticMicro(); setShowSecondary(!showSecondary); }}
+            aria-expanded={showSecondary}
+          >
+            {showSecondary ? "Show less" : `${secondaryAxes.length} more axes`}
+          </button>
         </>
       ) : (
         <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
@@ -608,9 +607,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     pageMain?.classList.add('page-main--deep-dive-open');
 
     hapticMedium();
-    // Skip FLIP morph on mobile — full-width card expands to full-width panel
-    // with zero horizontal transform, making morph visually imperceptible
-    // while adding ~40ms startup latency.
     const isDesktopForMorph = window.innerWidth >= 1024;
     const hasMorph = originRect && originRect.width > 0 && panelRef.current && isDesktopForMorph;
 
@@ -1397,6 +1393,25 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
         </div>
+
+        {/* Mobile sticky footer — "Read All Sides" CTA */}
+        {!isDesktop && sources.length > 0 && hasCrossLeanSources && (
+          <div className="dd-cta-footer">
+            <button
+              className="dd-read-more dd-cta-footer__btn"
+              onClick={() => {
+                hapticLight();
+                if (!analysisExpanded) setAnalysisExpanded(true);
+                const perspectives = document.getElementById("dd-panel-perspectives");
+                if (perspectives) {
+                  perspectives.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }}
+            >
+              Read All Sides &mdash; {sources.length} sources
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

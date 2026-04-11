@@ -5342,6 +5342,34 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-secondary);
 }
 
+/* Secondary axes container — max-height transition controlled by inline style */
+.dd-lenses__secondary {
+  margin-top: var(--space-2);
+}
+
+/* Expand button for mobile compact mode */
+.dd-lenses__expand {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+  padding: var(--space-2) 0;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 120ms var(--ease-out);
+}
+
+.dd-lenses__expand:active {
+  color: var(--accent-warm);
+}
+
 /* Reduced motion — show instantly, no hover lift */
 @media (prefers-reduced-motion: reduce) {
   .dd-lens {

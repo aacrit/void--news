@@ -273,7 +273,7 @@
 .film-worlds--manifesto { max-width: 72ch; }
 .film-worlds__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .film-worlds--manifesto .film-worlds__grid { grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 768px) { .film-worlds--manifesto .film-worlds__grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 767px) { .film-worlds--manifesto .film-worlds__grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 479px) { .film-worlds__grid { grid-template-columns: 1fr; gap: 8px; } }
 
 .film-world {
