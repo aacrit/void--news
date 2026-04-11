@@ -3300,6 +3300,9 @@
   .hist-keyfacts__pull-number {
     font-size: clamp(1.75rem, 1.2rem + 3vw, 2.5rem);
   }
+  .hist-keyfacts__ledger-row dt {
+    flex: 0 0 5rem;
+  }
 }
 
 /* Progressive disclosure for full story */
@@ -3384,6 +3387,13 @@
   color: var(--hist-ink);
   text-decoration: none;
   line-height: 1.2;
+}
+
+/* Wikipedia link — ensure 44px touch target on mobile */
+a.hist-figures__name {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 a.hist-figures__name:hover {
