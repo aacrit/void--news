@@ -2284,6 +2284,27 @@
   }
 }
 
+/* ---- Confidence Pick Indicator ---- */
+.undertow-card__confidence {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: #c9a84c;
+  opacity: 0.8;
+  z-index: 2;
+  pointer-events: none;
+}
+.undertow-card__confidence--correct {
+  color: #c9a84c;
+  opacity: 1;
+}
+.undertow-card__confidence--wrong {
+  color: rgba(200, 80, 80, 0.7);
+}
+
 /* ---- Card Header ---- */
 .undertow-card__header {
   display: flex;

@@ -3,61 +3,96 @@
 import { useState, useCallback } from "react";
 
 /* ==========================================================================
-   ShareButton — Copies geometric symbol grid of game result to clipboard
+   ShareButton — Copies punchy game result grid to clipboard
 
    Share format:
    void --undertow #1
-   CONTROL <-> FREEDOM
-   ◆ ◈ ● ○
-   correct: ◆ ◈ ● ○
-   3 of 4 . 2 attempts
+   CULT <-> YOGA CLASS
+
+   ◆ ○ ● ◈   attempt 1
+   ◆ ◈ ○ ●   attempt 2
+   ◆ ◈ ● ○   ✓
+
+   called: ✓
    void.news/games
    ========================================================================== */
 
 interface ShareButtonProps {
   challengeId: number;
-  playerOrder: (string | null)[];
+  axisLabel: string;
   correctOrder: string[];
+  attemptHistory: (string | null)[][];
   attemptsUsed: number;
+  confidencePick: string | null;
+  confidenceResult: "correct" | "wrong" | null;
 }
 
-/** Map artifact position to geometric symbol */
-const SYMBOLS = ["\u25C6", "\u25C8", "\u25CF", "\u25CB"];
+/** Map artifact position (in correct order) to geometric symbol */
+const SYMBOLS = ["\u25C6", "\u25C8", "\u25CB", "\u25CF"];
 
 export default function ShareButton({
   challengeId,
-  playerOrder,
+  axisLabel,
   correctOrder,
+  attemptHistory,
   attemptsUsed,
+  confidencePick,
+  confidenceResult,
 }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const buildShareText = useCallback(() => {
+    // Map each artifact id to its symbol (based on correct order position)
     const symbolMap = new Map<string, string>();
     correctOrder.forEach((id, i) => symbolMap.set(id, SYMBOLS[i]));
 
-    const playerSymbols = playerOrder
-      .map((id) => (id ? symbolMap.get(id) ?? "\u25A1" : "\u25A1"))
-      .join(" ");
+    const totalAttempts = attemptHistory.length;
+    const lastAttempt = attemptHistory[totalAttempts - 1];
+    const wasCorrect =
+      lastAttempt &&
+      lastAttempt.every((id, i) => id === correctOrder[i]);
 
-    const correctSymbols = correctOrder
-      .map((id) => symbolMap.get(id) ?? "\u25A1")
-      .join(" ");
+    // Build attempt lines
+    const attemptLines = attemptHistory.map((order, idx) => {
+      const symbols = order
+        .map((id) => (id ? symbolMap.get(id) ?? "\u25A1" : "\u25A1"))
+        .join(" ");
 
-    const correctCount = playerOrder.filter(
-      (id, i) => id === correctOrder[i]
-    ).length;
+      const isLast = idx === totalAttempts - 1;
+      if (isLast && wasCorrect) {
+        return `${symbols}   \u2713`;
+      }
+      return `${symbols}   attempt ${idx + 1}`;
+    });
 
     const lines = [
       `void --undertow #${challengeId}`,
-      playerSymbols,
-      `correct: ${correctSymbols}`,
-      `${correctCount} of ${correctOrder.length} \u00B7 ${attemptsUsed} attempt${attemptsUsed !== 1 ? "s" : ""}`,
-      "void.news/games",
+      axisLabel,
+      "",
+      ...attemptLines,
     ];
 
+    // Confidence line
+    if (confidencePick) {
+      lines.push("");
+      lines.push(
+        confidenceResult === "correct"
+          ? "called: \u2713"
+          : "called: \u2717"
+      );
+    }
+
+    lines.push("void.news/games");
+
     return lines.join("\n");
-  }, [challengeId, playerOrder, correctOrder, attemptsUsed]);
+  }, [
+    challengeId,
+    axisLabel,
+    correctOrder,
+    attemptHistory,
+    confidencePick,
+    confidenceResult,
+  ]);
 
   const handleCopy = useCallback(async () => {
     const text = buildShareText();

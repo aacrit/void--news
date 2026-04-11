@@ -6,10 +6,12 @@
 export type ArtifactCategory =
   | "advertising"
   | "speech"
+  | "wellness"
   | "corporate"
   | "literary"
   | "lyric"
-  | "logline";
+  | "linkedin"
+  | "manifesto";
 
 export interface Artifact {
   id: string;
@@ -17,14 +19,14 @@ export interface Artifact {
   category: ArtifactCategory;
   axis_position: number; // -2 to +2 (negative = left pole, positive = right pole)
   highlighted_words: string[]; // specific words to highlight during reveal
-  reveal: string; // 2-3 sentences of Orwellian commentary
+  reveal: string; // 2-3 sentences, witty + precise
 }
 
 export interface Axis {
-  label: string;
-  left_pole: string;
-  right_pole: string;
-  description: string;
+  label: string; // e.g. "CULT <-> YOGA CLASS"
+  left_pole: string; // e.g. "CULT"
+  right_pole: string; // e.g. "YOGA CLASS"
+  description: string; // one sharp question that makes you laugh and think
 }
 
 export interface DailyChallenge {
@@ -38,99 +40,106 @@ export interface DailyChallenge {
 
 /** Category label colors — muted, atmospheric */
 export const CATEGORY_COLORS: Record<ArtifactCategory, string> = {
-  speech: "#8a9bb5", // muted blue
-  advertising: "#b5a08a", // muted amber
-  literary: "#a08ab5", // muted violet
-  corporate: "#8ab5a0", // muted teal
-  lyric: "#b58a8a", // muted rose
-  logline: "#9bb58a", // muted sage
+  advertising: "#b5a08a",
+  speech: "#8a9bb5",
+  wellness: "#a08ab5",
+  corporate: "#8ab5a0",
+  literary: "#b5b08a",
+  lyric: "#b58a8a",
+  linkedin: "#8aabb5",
+  manifesto: "#b58aaa",
 };
 
 /** Background images per axis — Unsplash License (free commercial use) */
-export const AXIS_IMAGES: Record<
-  string,
-  { url: string; credit: string }
-> = {
-  default: {
-    url: "https://images.unsplash.com/photo-f01ZbhYCBuQ?w=1920&q=80&auto=format&fit=crop",
-    credit: "Alexander X.",
-  },
-  "CONTROL": {
+export const AXIS_IMAGES: Record<string, { url: string; credit: string }> = {
+  CULT: {
     url: "https://images.unsplash.com/photo-XS49QQVKh_8?w=1920&q=80&auto=format&fit=crop",
     credit: "Ilia Bronskiy",
   },
-  "COLLECTIVE": {
+  BOSS: {
     url: "https://images.unsplash.com/photo-AHlWf9ICfIc?w=1920&q=80&auto=format&fit=crop",
     credit: "Willian Justen de Vasconcellos",
   },
-  "OPTIMISM": {
+  "2AM": {
     url: "https://images.unsplash.com/photo-Xq1VNBrpJzI?w=1920&q=80&auto=format&fit=crop",
     credit: "Baris Cobanoglu",
   },
-  "TRADITION": {
+  DAD: {
     url: "https://images.unsplash.com/photo-7q-hhI27pUU?w=1920&q=80&auto=format&fit=crop",
     credit: "Hasan Almasi",
+  },
+  DEFAULT: {
+    url: "https://images.unsplash.com/photo-f01ZbhYCBuQ?w=1920&q=80&auto=format&fit=crop",
+    credit: "Alexander X.",
   },
 };
 
 /** Resolve the background image for a given axis */
-export function getAxisImage(axis: Axis): { url: string; credit: string } {
-  // Try matching left pole first, then right pole
-  return (
-    AXIS_IMAGES[axis.left_pole] ??
-    AXIS_IMAGES[axis.right_pole] ??
-    AXIS_IMAGES["default"]
-  );
+export function getAxisImage(leftPole: string): { url: string; credit: string } {
+  const key = Object.keys(AXIS_IMAGES).find((k) => leftPole.includes(k));
+  return key ? AXIS_IMAGES[key] : AXIS_IMAGES["DEFAULT"];
 }
 
 export const DAILY_UNDERTOW: DailyChallenge = {
   id: 1,
   date: "2026-04-10",
   axis: {
-    label: "CONTROL \u2194 FREEDOM",
-    left_pole: "CONTROL",
-    right_pole: "FREEDOM",
+    label: "SOUNDS LIKE A CULT \u2194 SOUNDS LIKE A YOGA CLASS",
+    left_pole: "CULT",
+    right_pole: "YOGA CLASS",
     description:
-      "Where does this text locate the source of order \u2014 in structure, or in the self?",
+      "Is this asking you to surrender yourself \u2014 or just your Saturday morning?",
   },
   artifacts: [
     {
       id: "a",
-      text: "The harvest belongs to all. Our fields, our future, our strength \u2014 together.",
-      category: "speech",
+      text: "Leave everything behind. Your old life was a preparation. The community is waiting. You are ready now.",
+      category: "manifesto",
       axis_position: -2,
-      highlighted_words: ["belongs to all", "Our", "together"],
+      highlighted_words: [
+        "Leave everything behind",
+        "old life",
+        "community is waiting",
+      ],
       reveal:
-        "No singular pronoun appears. The grammar does the work before the argument does. \u2018Our\u2019 repeated three times confirms what \u2018together\u2019 makes explicit: the individual is grammatically absent before they are politically so.",
+        'Four sentences. Four imperatives. The self that arrived is described as a problem to be solved. "Ready now" closes the door on the question of whether you agreed to any of this.',
     },
     {
       id: "b",
-      text: "We exist to connect every person on earth and give everyone the power to share anything with anyone.",
-      category: "corporate",
-      axis_position: -0.8,
-      highlighted_words: ["connect every person", "give", "everyone"],
+      text: "This is not just a workout. This is a movement. Clip in. Find your tribe. Leave it all on the bike.",
+      category: "advertising",
+      axis_position: -0.9,
+      highlighted_words: ["movement", "tribe", "Leave it all"],
       reveal:
-        "The promise is universal freedom. The mechanism is a single platform owned by one company. The text does not register this tension. \u2018Give\u2019 places the company in the role of benefactor. The infrastructure is not mentioned.",
+        "The copy borrows the grammar of conversion. \"Movement\" and \"tribe\" do not belong to fitness \u2014 they belong to belonging. The bike is incidental. The subscription is not mentioned.",
     },
     {
       id: "c",
-      text: "Here\u2019s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes.",
-      category: "advertising",
-      axis_position: 1.2,
-      highlighted_words: ["crazy ones", "misfits", "rebels", "troublemakers"],
+      text: "Honor your body. Release what no longer serves you. This hour belongs to you.",
+      category: "wellness",
+      axis_position: 1.1,
+      highlighted_words: [
+        "Honor",
+        "Release",
+        "no longer serves you",
+        "belongs to you",
+      ],
       reveal:
-        "The copy positions nonconformity as a purchasable feature. The rebels referenced were not selling anything. This text borrows their dissent to sell yours. The grammar is implicit second person: you are the rebel. The company is not.",
+        '"No longer serves you" treats your own feelings as employees you can terminate. The grammar is gentle. The implication \u2014 that your current self needs to be managed \u2014 is not.',
     },
     {
       id: "d",
-      text: "One must imagine Sisyphus happy.",
-      category: "literary",
-      axis_position: 2,
-      highlighted_words: ["imagine", "happy"],
+      text: "Set an intention. Breathe into it. The mat is a mirror. You already have everything you need.",
+      category: "wellness",
+      axis_position: 1.9,
+      highlighted_words: [
+        "intention",
+        "mirror",
+        "already have everything",
+      ],
       reveal:
-        "Freedom here is not political but ontological \u2014 the capacity to assign meaning to a condition no external authority can improve. The sentence contains no imperative for collective action. It locates rebellion entirely within the individual\u2019s relationship to their own fate.",
+        "The claim that you already have everything you need is the most radical sentence here \u2014 it is the one selling the least. The mat as mirror is a metaphor so soft it almost disappears. This one means it.",
     },
   ],
   correct_order: ["a", "b", "c", "d"],
-  tomorrow_axis: "OPTIMISM \u2194 ABSURDISM",
 };

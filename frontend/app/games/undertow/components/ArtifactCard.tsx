@@ -20,6 +20,7 @@ import RevealCommentary from "./RevealCommentary";
      Wrong:     shake animation (400ms)
      Correct:   subtle warm glow at base
      Revealed:  highlighted words stagger in, commentary fades in below
+     Confidence: amber dot top-right; CALLED IT / MISJUDGED on reveal
 
    Desktop: draggable onto AxisBar drop zones.
    Mobile: slot assignment buttons (1st 2nd 3rd 4th) below text.
@@ -45,6 +46,12 @@ interface ArtifactCardProps {
   /** Axis pole labels for slot buttons */
   leftPole: string;
   rightPole: string;
+  /** Whether this card is the confidence pick */
+  isConfidencePick?: boolean;
+  /** Callback to toggle confidence pick on this card */
+  onConfidencePick?: () => void;
+  /** Confidence result for reveal: 'correct', 'wrong', or null */
+  confidenceResult?: "correct" | "wrong" | null;
 }
 
 const SLOT_LABELS = ["1st", "2nd", "3rd", "4th"];
@@ -64,6 +71,9 @@ export default function ArtifactCard({
   isCorrectPosition = false,
   leftPole,
   rightPole,
+  isConfidencePick = false,
+  onConfidencePick,
+  confidenceResult = null,
 }: ArtifactCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const revealDelay = revealIndex * 500; // sequential: 500ms between each card
@@ -105,6 +115,12 @@ export default function ArtifactCard({
     },
     [artifact.id, revealed, onSlotAssign]
   );
+
+  /** Handle card body click for confidence pick (not slot buttons) */
+  const handleCardClick = useCallback(() => {
+    if (revealed) return;
+    onConfidencePick?.();
+  }, [revealed, onConfidencePick]);
 
   /** Render artifact text with highlighted words during reveal */
   function renderText(text: string, highlights: string[]) {
@@ -175,10 +191,22 @@ export default function ArtifactCard({
       draggable={!revealed}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onClick={handleCardClick}
       role="listitem"
-      aria-label={`Artifact ${roman}: ${artifact.text}`}
+      aria-label={`Artifact ${roman}: ${artifact.text}${isConfidencePick ? " (your confidence pick)" : ""}`}
       tabIndex={0}
     >
+      {/* Confidence indicator — top-right corner */}
+      {isConfidencePick && !revealed && (
+        <div className="undertow-card__confidence" aria-label="Your confidence pick">&middot;</div>
+      )}
+      {revealed && confidenceResult === "correct" && (
+        <div className="undertow-card__confidence undertow-card__confidence--correct">CALLED IT</div>
+      )}
+      {revealed && confidenceResult === "wrong" && (
+        <div className="undertow-card__confidence undertow-card__confidence--wrong">MISJUDGED</div>
+      )}
+
       {/* Card header: category + roman numeral */}
       <div className="undertow-card__header">
         <span

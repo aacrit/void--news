@@ -11,10 +11,13 @@ import ShareButton from "./components/ShareButton";
 /* ==========================================================================
    UndertowGame — void --undertow: Daily Cultural Subtext Puzzle
 
-   Four cultural artifacts. One conceptual axis (e.g. CONTROL <-> FREEDOM).
+   Four cultural artifacts. One conceptual axis (e.g. CULT <-> YOGA CLASS).
    Player orders the artifacts along the axis. Three attempts.
    Cinematic reveal: sequential card-by-card highlighted words + Orwellian
    commentary.
+
+   Confidence mechanic: player can optionally tap a card to mark it as their
+   "call" — if it lands in the correct position, they get a CALLED IT badge.
 
    Cinematic layer system (back to front):
      1. Background image — full-viewport, heavily blurred, dark overlay
@@ -33,6 +36,32 @@ const ROMAN = ["I", "II", "III", "IV"];
 
 type Phase = "playing" | "feedback" | "reveal";
 
+/* ---- Personality-driven feedback messages ---- */
+const FEEDBACK_MESSAGES = [
+  // attempt 1 wrong (attemptsRemaining goes from 3 to 2)
+  [
+    "Close. {n} of 4 landed.",
+    "Interesting read. {n} of 4.",
+    "Not quite. {n} placed correctly.",
+  ],
+  // attempt 2 wrong (1 remaining)
+  [
+    "Last chance. {n} of 4 right.",
+    "One more look. {n} correct.",
+    "Trust your instincts. {n} of 4.",
+  ],
+];
+
+/** Pick a random message from the right attempt bucket, inject correctCount */
+function getFeedbackMessage(attemptNumber: number, correctCount: number): string {
+  const bucket =
+    FEEDBACK_MESSAGES[
+      Math.min(attemptNumber - 1, FEEDBACK_MESSAGES.length - 1)
+    ];
+  const template = bucket[Math.floor(Math.random() * bucket.length)];
+  return template.replace("{n}", String(correctCount));
+}
+
 export default function UndertowGame() {
   const challenge = DAILY_UNDERTOW;
   const [phase, setPhase] = useState<Phase>("playing");
@@ -40,6 +69,12 @@ export default function UndertowGame() {
   const [feedbackMsg, setFeedbackMsg] = useState("");
   const [mounted, setMounted] = useState(false);
   const bgRef = useRef<HTMLDivElement>(null);
+
+  // Confidence pick: player marks one card as their call
+  const [confidencePick, setConfidencePick] = useState<string | null>(null);
+
+  // Track every submitted ordering (for share text)
+  const [attemptHistory, setAttemptHistory] = useState<(string | null)[][]>([]);
 
   // Axis intro animation: staged entrance
   useEffect(() => {
@@ -150,6 +185,9 @@ export default function UndertowGame() {
   const handleSubmit = useCallback(() => {
     if (slots.some((s) => s === null)) return;
 
+    // Record this attempt's ordering
+    setAttemptHistory((prev) => [...prev, [...slots]]);
+
     const isCorrect = slots.every(
       (id, i) => id === challenge.correct_order[i]
     );
@@ -182,7 +220,7 @@ export default function UndertowGame() {
 
     setCorrectPositionIds(correctIds);
     setWrongIds(wrong);
-    setFeedbackMsg(`Not quite. ${correctInPosition} of 4 in position.`);
+    setFeedbackMsg(getFeedbackMessage(attempt, correctInPosition));
     setPhase("feedback");
     setAttempt((a) => a + 1);
 
@@ -198,6 +236,15 @@ export default function UndertowGame() {
   const allFilled = slots.every((s) => s !== null);
   const isPlayerCorrect = phase === "reveal" && correctCount === 4;
 
+  // Determine confidence pick result for reveal phase
+  const confidenceResult = useMemo((): "correct" | "wrong" | null => {
+    if (phase !== "reveal" || !confidencePick) return null;
+    const assignedSlot = assignmentMap.get(confidencePick);
+    const correctSlot = challenge.correct_order.indexOf(confidencePick);
+    if (assignedSlot === undefined) return null;
+    return assignedSlot === correctSlot ? "correct" : "wrong";
+  }, [phase, confidencePick, assignmentMap, challenge.correct_order]);
+
   // Format date
   const dateStr = new Date(challenge.date + "T00:00:00").toLocaleDateString(
     "en-US",
@@ -207,7 +254,7 @@ export default function UndertowGame() {
   const attemptsRemaining = MAX_ATTEMPTS - attempt + 1;
 
   // Resolve background image for this axis
-  const axisImage = getAxisImage(challenge.axis);
+  const axisImage = getAxisImage(challenge.axis.left_pole);
 
   return (
     <div className={`undertow-page${mounted ? " undertow-page--mounted" : ""}${phase === "reveal" ? " undertow-page--revealed" : ""}`}>
@@ -356,6 +403,19 @@ export default function UndertowGame() {
               isCorrectPosition={correctPositionIds.has(artifact.id)}
               leftPole={challenge.axis.left_pole}
               rightPole={challenge.axis.right_pole}
+              isConfidencePick={confidencePick === artifact.id}
+              onConfidencePick={() =>
+                setConfidencePick((prev) =>
+                  prev === artifact.id ? null : artifact.id
+                )
+              }
+              confidenceResult={
+                phase === "reveal"
+                  ? confidencePick === artifact.id
+                    ? confidenceResult
+                    : null
+                  : null
+              }
             />
           ))}
         </div>
@@ -406,23 +466,26 @@ export default function UndertowGame() {
 
             <ShareButton
               challengeId={challenge.id}
-              playerOrder={slots}
+              axisLabel={`${challenge.axis.left_pole} \u2194 ${challenge.axis.right_pole}`}
               correctOrder={challenge.correct_order}
+              attemptHistory={attemptHistory}
               attemptsUsed={attempt}
+              confidencePick={confidencePick}
+              confidenceResult={confidenceResult}
             />
 
-            {challenge.tomorrow_axis && (
-              <p className="undertow-page__tomorrow">
-                Tomorrow&apos;s axis: {challenge.tomorrow_axis}
-              </p>
-            )}
+            <p className="undertow-page__credit" aria-hidden="true">
+              {axisImage.credit}
+            </p>
           </div>
         )}
 
-        {/* Photo credit */}
-        <p className="undertow-page__credit" aria-hidden="true">
-          {axisImage.credit}
-        </p>
+        {/* Photo credit (playing phase only — reveal has its own) */}
+        {phase !== "reveal" && (
+          <p className="undertow-page__credit" aria-hidden="true">
+            {axisImage.credit}
+          </p>
+        )}
       </div>
     </div>
   );
