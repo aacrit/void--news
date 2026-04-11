@@ -7912,3 +7912,306 @@ a.hist-figures__name:hover {
     transition: none;
   }
 }
+
+/* ===========================================================================
+   MUSEUM REDESIGN — Record Block, Omissions Toggle, Witness Vitrine
+   Aged artifact treatment: excavated stone, brass rules, inset shadows.
+   =========================================================================== */
+
+/* ─────────────────────────────────────────────
+   Record Block — merged facts + figures
+   Aged artifact: excavated, passive, always been here.
+   ───────────────────────────────────────────── */
+.hist-stage--record {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hist-record {
+  position: relative;
+  overflow: hidden;
+  background: var(--hist-paper-deep);
+  border: 1px solid var(--hist-border);
+  padding: var(--space-4) var(--space-5);
+  box-shadow:
+    inset 0 2px 6px rgba(44, 36, 24, 0.07),
+    inset 0 -1px 3px rgba(44, 36, 24, 0.04);
+}
+
+/* Chisel-line grain — horizontal turbulence for tooled stone feel */
+.hist-record::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='chisel'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01 0.65' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23chisel)' opacity='0.07'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+
+.hist-record__ledger {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--hist-accent);
+}
+
+.hist-record__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-record__row dt {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--hist-ink-muted);
+  flex: 0 0 6rem;
+  min-width: 0;
+}
+
+.hist-record__row dd {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--hist-ink);
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* Mid-rule between facts and figures */
+.hist-record__divider {
+  position: relative;
+  z-index: 1;
+  height: 0;
+  border-top: 1px solid var(--hist-accent);
+  margin: var(--space-2) 0;
+  opacity: 0.5;
+}
+
+/* Figures ledger — same layout, name in Playfair */
+.hist-record__row--figure dt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+  min-width: 10rem;
+  max-width: 14rem;
+}
+
+.hist-record__figure-name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-style: normal;
+  color: var(--hist-ink);
+  text-decoration: none;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+a.hist-record__figure-name:hover {
+  color: var(--hist-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--hist-accent);
+  text-underline-offset: 3px;
+}
+
+.hist-record__figure-dates {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 400;
+  color: var(--hist-accent-dim);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Dark mode adjustments */
+:root[data-mode="dark"] .hist-record {
+  background: var(--hist-paper-deep);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.18),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.10);
+}
+
+:root[data-mode="dark"] .hist-record::before {
+  mix-blend-mode: soft-light;
+  opacity: 0.10;
+}
+
+/* Mobile: narrow dt column */
+@media (max-width: 479px) {
+  .hist-record {
+    padding: var(--space-3) var(--space-3);
+  }
+  .hist-record__row dt {
+    flex: 0 0 5rem;
+  }
+  .hist-record__row--figure dt {
+    min-width: 8rem;
+    max-width: 11rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Context — significance pull quote + legacy list
+   ───────────────────────────────────────────── */
+.hist-context__significance {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--hist-ink-secondary);
+  border-left: 2px solid var(--hist-border);
+  padding-left: var(--space-4);
+  margin: var(--space-5) 0;
+}
+
+.hist-context__legacy {
+  margin: var(--space-4) 0 0 0;
+  padding: 0 0 0 var(--space-4);
+  border-left: 1px solid var(--hist-border-subtle);
+}
+
+.hist-context__legacy li {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--hist-ink-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+/* ─────────────────────────────────────────────
+   Omissions toggle bar — mobile only
+   Flip the card: stressed ↔ ignored
+   ───────────────────────────────────────────── */
+.hist-omissions__toggle-bar {
+  display: none; /* hidden on desktop — both panels visible */
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.hist-omissions__toggle-btn {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--hist-ink-muted);
+  background: none;
+  border: none;
+  padding: var(--space-1) 0;
+  cursor: pointer;
+  min-height: 44px;
+  transition: color 200ms;
+}
+
+.hist-omissions__toggle-btn--active {
+  color: var(--hist-accent);
+  border-bottom: 1px solid var(--hist-accent);
+}
+
+.hist-omissions__toggle-sep {
+  color: var(--hist-border);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 767px) {
+  .hist-omissions__toggle-bar {
+    display: flex;
+  }
+  /* Hide non-active panel on mobile */
+  .hist-omissions-split__panel {
+    display: none;
+  }
+  .hist-omissions-split__panel--mobile-visible {
+    display: block;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Witness — vitrine model (one argument default)
+   ───────────────────────────────────────────── */
+
+/* Secondary arguments (revealed on expand) — slightly quieter */
+.hist-witness__argument--secondary {
+  opacity: 0.85;
+}
+
+/* Expand button — minimal, just arrow + count */
+.hist-witness__expand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  min-height: 44px;
+  margin-top: var(--space-2);
+}
+
+.hist-witness__expand-arrow {
+  font-size: var(--text-xs);
+  color: var(--hist-accent);
+  transition: transform 200ms;
+  display: inline-block;
+}
+
+.hist-witness__expand-arrow--open {
+  transform: rotate(180deg);
+}
+
+.hist-witness__expand-count {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.04em;
+}
+
+/* Dossier card — connection glyph */
+.hist-dossier__card-glyph {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+  display: block;
+  margin-bottom: var(--space-1);
+  opacity: 0.6;
+}
+
+/* Dossier cards — archivist sliding folders: 0.75 rest → 1.0 hover */
+.hist-dossier__card {
+  opacity: 0.78;
+  transition: opacity 250ms ease, box-shadow 250ms ease, transform 250ms ease;
+}
+
+.hist-dossier__card:hover,
+.hist-dossier__card:focus-visible {
+  opacity: 1;
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .hist-record::before {
+    display: none;
+  }
+  .hist-witness__expand-arrow {
+    transition: none;
+  }
+  .hist-dossier__card {
+    transition: none;
+    opacity: 1;
+  }
+}

@@ -75,6 +75,8 @@ export interface HistoricalEvent {
   heroCaption?: string;
   heroAttribution?: string;
   contextNarrative: string;
+  significance?: string;
+  legacyPoints?: string[];
   keyFigures: KeyFigure[];
   deathToll?: string;
   displaced?: string;

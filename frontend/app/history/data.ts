@@ -288,6 +288,8 @@ function mapEventWithRelations(
     heroCaption: row.subtitle ?? undefined,
     heroAttribution: row.hero_image_attribution ?? undefined,
     contextNarrative: row.summary ?? "",
+    significance: row.significance ?? undefined,
+    legacyPoints: Array.isArray(row.legacy_points) ? row.legacy_points as string[] : undefined,
     keyFigures,
     deathToll: row.death_toll ?? undefined,
     displaced: row.affected_population ?? undefined,
