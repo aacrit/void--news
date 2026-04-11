@@ -232,25 +232,31 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--keyfacts">
         <div className="hist-keyfacts hist-reveal">
-          {/* Tier 1: Dominant numbers — stop the scroll */}
-          {(event.deathToll || event.displaced) && (
-            <div className="hist-keyfacts__pull">
-              {event.deathToll && (
-                <div className="hist-keyfacts__pull-stat">
-                  <span className="hist-keyfacts__pull-number">{event.deathToll}</span>
-                  <span className="hist-keyfacts__pull-label">killed</span>
-                </div>
-              )}
-              {event.displaced && (
-                <div className="hist-keyfacts__pull-stat">
-                  <span className="hist-keyfacts__pull-number">{event.displaced}</span>
-                  <span className="hist-keyfacts__pull-label">displaced</span>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Pull Stats — only short numeric-style values (≤35 chars, not "N/A").
+              Long descriptive text falls through to the ledger instead. */}
+          {(() => {
+            const isPullable = (v?: string) => !!v && v !== "N/A" && v.length <= 35;
+            const showToll = isPullable(event.deathToll);
+            const showDisp = isPullable(event.displaced);
+            return (showToll || showDisp) ? (
+              <div className="hist-keyfacts__pull">
+                {showToll && (
+                  <div className="hist-keyfacts__pull-stat">
+                    <span className="hist-keyfacts__pull-number">{event.deathToll}</span>
+                    <span className="hist-keyfacts__pull-label">killed</span>
+                  </div>
+                )}
+                {showDisp && (
+                  <div className="hist-keyfacts__pull-stat">
+                    <span className="hist-keyfacts__pull-number">{event.displaced}</span>
+                    <span className="hist-keyfacts__pull-label">displaced</span>
+                  </div>
+                )}
+              </div>
+            ) : null;
+          })()}
 
-          {/* Tier 2: Ledger — ruled document block for remaining facts */}
+          {/* Ledger — ruled document block. Long or N/A casualty values appear here. */}
           <dl className="hist-keyfacts__ledger">
             <div className="hist-keyfacts__ledger-row">
               <dt>Date</dt>
@@ -264,6 +270,18 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
               <div className="hist-keyfacts__ledger-row">
                 <dt>Duration</dt>
                 <dd>{event.duration}</dd>
+              </div>
+            )}
+            {event.deathToll && event.deathToll !== "N/A" && event.deathToll.length > 35 && (
+              <div className="hist-keyfacts__ledger-row">
+                <dt>Casualties</dt>
+                <dd>{event.deathToll}</dd>
+              </div>
+            )}
+            {event.displaced && event.displaced !== "N/A" && event.displaced.length > 35 && (
+              <div className="hist-keyfacts__ledger-row">
+                <dt>Displaced</dt>
+                <dd>{event.displaced}</dd>
               </div>
             )}
           </dl>
