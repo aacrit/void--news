@@ -3205,56 +3205,19 @@
 }
 
 /* ─────────────────────────────────────────────
-   Key Facts — Pull Stats + Ledger
+   Key Facts — Pure Ledger
    No card background. Type on page surface.
+   All facts as ruled rows — equal weight.
    ───────────────────────────────────────────── */
 .hist-keyfacts {
   max-width: 800px;
   margin: 0 auto;
 }
 
-/* ── Tier 1: Dominant Numbers (Pull Stats) ── */
-.hist-keyfacts__pull {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-6);
-  justify-content: center;
-  padding: var(--space-5) 0;
-  border-top: 2px solid var(--hist-accent);
-  border-bottom: 1px solid var(--hist-border-subtle);
-  margin-bottom: var(--space-4);
-}
-
-.hist-keyfacts__pull-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.hist-keyfacts__pull-number {
-  font-family: var(--font-data);
-  font-size: clamp(2rem, 1.5rem + 2vw, 3.5rem);
-  font-weight: 500;
-  line-height: 1;
-  color: var(--hist-accent);
-  letter-spacing: -0.02em;
-}
-
-.hist-keyfacts__pull-label {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-ink-muted);
-}
-
-/* ── Tier 2: Ledger (ruled document block) ── */
 .hist-keyfacts__ledger {
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--hist-border-subtle);
+  border-top: 2px solid var(--hist-accent);
 }
 
 .hist-keyfacts__ledger-row {
@@ -3287,9 +3250,6 @@
 }
 
 @media (max-width: 479px) {
-  .hist-keyfacts__pull-number {
-    font-size: clamp(1.75rem, 1.2rem + 3vw, 2.5rem);
-  }
   .hist-keyfacts__ledger-row dt {
     flex: 0 0 5rem;
   }
