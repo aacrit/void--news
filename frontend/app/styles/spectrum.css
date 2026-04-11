@@ -6,23 +6,23 @@
 
 /* ---- Spectrum zone tint tokens — Green center only, blue left, red right */
 :root {
-  --spectrum-zone-far-left:    rgba(14, 46, 112, 0.12);
-  --spectrum-zone-left:        rgba(27, 82, 152, 0.08);
-  --spectrum-zone-center-left: rgba(46, 120, 180, 0.06);
-  --spectrum-zone-center:      rgba(43, 120, 74, 0.06);
-  --spectrum-zone-center-right:rgba(196, 80, 62, 0.06);
-  --spectrum-zone-right:       rgba(156, 44, 34, 0.08);
-  --spectrum-zone-far-right:   rgba(110, 22, 16, 0.12);
+  --spectrum-zone-far-left:    rgba(14, 46, 112, 0.22);
+  --spectrum-zone-left:        rgba(27, 82, 152, 0.15);
+  --spectrum-zone-center-left: rgba(46, 120, 180, 0.10);
+  --spectrum-zone-center:      rgba(43, 120, 74, 0.10);
+  --spectrum-zone-center-right:rgba(196, 80, 62, 0.10);
+  --spectrum-zone-right:       rgba(156, 44, 34, 0.15);
+  --spectrum-zone-far-right:   rgba(110, 22, 16, 0.22);
 }
 
 :root[data-mode="dark"] {
-  --spectrum-zone-far-left:    rgba(80, 136, 208, 0.14);
-  --spectrum-zone-left:        rgba(100, 152, 216, 0.10);
-  --spectrum-zone-center-left: rgba(120, 174, 222, 0.08);
-  --spectrum-zone-center:      rgba(72, 184, 112, 0.08);
-  --spectrum-zone-center-right:rgba(208, 92, 72, 0.08);
-  --spectrum-zone-right:       rgba(204, 62, 52, 0.10);
-  --spectrum-zone-far-right:   rgba(176, 46, 38, 0.14);
+  --spectrum-zone-far-left:    rgba(80, 136, 208, 0.22);
+  --spectrum-zone-left:        rgba(100, 152, 216, 0.16);
+  --spectrum-zone-center-left: rgba(120, 174, 222, 0.12);
+  --spectrum-zone-center:      rgba(72, 184, 112, 0.12);
+  --spectrum-zone-center-right:rgba(208, 92, 72, 0.12);
+  --spectrum-zone-right:       rgba(204, 62, 52, 0.16);
+  --spectrum-zone-far-right:   rgba(176, 46, 38, 0.22);
 }
 
 /* ---- Sources Page Wrapper ---------------------------------------------- */
@@ -140,38 +140,24 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   height: 34px;
-  border-radius: 1px;
+  border-radius: 2px;
   overflow: hidden;
-  /* oklch midpoints at blue→green and green→red transitions prevent muddy sRGB crossover */
+  /* oklch interpolation avoids muddy sRGB crossover at blue→green and green→red */
   background: linear-gradient(
-    to right,
+    in oklch to right,
     var(--bias-far-left) 0%,
     var(--bias-left) 14%,
     var(--bias-center-left) 28%,
-    color-mix(in oklch, var(--bias-center-left) 50%, var(--bias-center) 50%) 38%,
     var(--bias-center) 50%,
-    color-mix(in oklch, var(--bias-center) 50%, var(--bias-center-right) 50%) 62%,
     var(--bias-center-right) 72%,
     var(--bias-right) 86%,
     var(--bias-far-right) 100%
   );
   position: relative;
-  /* Letterpress deboss: pressed into the paper */
   box-shadow:
-    inset 0 1px 3px rgba(28, 26, 23, 0.18),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    inset 0 1px 3px rgba(0, 0, 0, 0.15),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
   margin-bottom: 2px;
-  /* Ink-on-paper: multiply darkens against warm paper background */
-  mix-blend-mode: multiply;
-  /* Organic feathered edges via mask — ink doesn't stop at clean lines */
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, black 1.5%, black 98.5%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-  -webkit-mask-composite: destination-in;
-  mask-image:
-    linear-gradient(to right, transparent 0%, black 1.5%, black 98.5%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-  mask-composite: intersect;
 }
 
 /* Zone cells: soft ink bleed at boundaries instead of hard borders */
@@ -624,20 +610,6 @@
 }
 
 /* ==========================================================================
-   Dark mode — spectrum bars use normal blend (not multiply) on dark walnut.
-   multiply × dark surface → near-black; normal lets vivid dark-mode
-   bias colors render as-is against the dark background.
-   ========================================================================== */
-
-:root[data-mode="dark"] .spectrum-bar,
-:root[data-mode="dark"] .dd-spectrum__bar {
-  mix-blend-mode: normal;
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.35),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
-}
-
-/* ==========================================================================
    Reduced motion
    ========================================================================== */
 
@@ -671,38 +643,27 @@
   color: var(--fg-muted);
 }
 
-/* ---- Bar: organic ink impression (matches Sources page) ---- */
+/* ---- Bar: chromatic spectrum (matches Sources page) ---- */
 .dd-spectrum__bar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   height: 28px;
-  border-radius: 1px;
+  border-radius: 2px;
   overflow: hidden;
   background: linear-gradient(
-    to right,
+    in oklch to right,
     var(--bias-far-left) 0%,
     var(--bias-left) 14%,
     var(--bias-center-left) 28%,
-    color-mix(in oklch, var(--bias-center-left) 50%, var(--bias-center) 50%) 38%,
     var(--bias-center) 50%,
-    color-mix(in oklch, var(--bias-center) 50%, var(--bias-center-right) 50%) 62%,
     var(--bias-center-right) 72%,
     var(--bias-right) 86%,
     var(--bias-far-right) 100%
   );
   box-shadow:
-    inset 0 1px 3px rgba(28, 26, 23, 0.18),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    inset 0 1px 3px rgba(0, 0, 0, 0.15),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
   margin-bottom: 0;
-  mix-blend-mode: multiply;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-composite: destination-in;
-  mask-image:
-    linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-  mask-composite: intersect;
 }
 
 .dd-spectrum__bar-zone {
