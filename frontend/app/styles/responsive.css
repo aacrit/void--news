@@ -936,24 +936,24 @@
   }
 }
 
-/* ---- View Transitions — forward-compatible CSS ----------------------------
-   Browsers with View Transition API support will use these names for
-   cross-document or SPA transitions. Zero cost on unsupported browsers. */
-
-@media (max-width: 767px) {
-  .page-main {
-    view-transition-name: main-content;
-  }
-  .nav-header {
-    view-transition-name: nav-header;
-  }
-  .mtb {
-    view-transition-name: tab-bar;
-  }
-}
+/* ---- View Transitions — applied via JS only during navigation ------------
+   DO NOT set view-transition-name statically in CSS — permanently-named
+   elements are promoted to their own GPU compositing layers, which creates
+   visible seam lines (horizontal strips) between layers during scroll.
+   view-transition-name is set/removed by ViewTransitionLink component. */
 
 /* Cross-fade with subtle slide — mobile route transitions */
 @media (prefers-reduced-motion: no-preference) {
+  html.is-transitioning .page-main {
+    view-transition-name: main-content;
+  }
+  html.is-transitioning .nav-header {
+    view-transition-name: nav-header;
+  }
+  html.is-transitioning .mtb {
+    view-transition-name: tab-bar;
+  }
+
   ::view-transition-old(main-content) {
     animation: vtSlideOut 200ms var(--ease-out) both;
   }

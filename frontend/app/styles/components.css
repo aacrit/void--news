@@ -4502,7 +4502,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   overflow-x: hidden;
   z-index: calc(var(--z-modal) + 2);
   outline: none;
-  will-change: transform;
+  /* will-change set only during drag via .bi-panel__drawer--dragging — not at rest */
   /* Drag handle affordance on mobile — pseudo-element */
   /* Clear home indicator on notched phones */
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -7459,11 +7459,16 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 
   .mob-nav--inline .mob-nav__topic-panel {
+    /* Opens downward when bar is sticky at top — not upward into the navbar */
     position: absolute;
-    bottom: 100%;
+    top: 100%;
+    bottom: auto;
     left: 0;
     right: 0;
-    z-index: var(--z-sticky);
+    z-index: var(--z-dropdown);
+    border-top: none;
+    border-bottom: var(--rule-thin);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   @keyframes mob-nav-up {
@@ -7707,9 +7712,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
       color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
       box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out),
-      transform var(--scene-dolly-in) var(--spring-snappy),
-      filter var(--cin-rack-blur-return-dur, 500ms) var(--ease-steadicam),
-      opacity var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam);
+      transform var(--scene-dolly-in) var(--spring-snappy);
   }
   .lead-story {
     transition:
@@ -7739,65 +7742,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
   .anim-lens-breathe {
     animation: none;
-  }
-}
-
-
-/* ── Rack Focus: Neighbor Defocus (Scene 3) ──
-   When any story card is hovered within a feed section, neighboring
-   cards soften — Zsigmond's focus pull technique (Close Encounters).
-   Hovered card sharpens; surrounding field goes soft.
-   Only on hover-capable devices. Suppressed in reduced-motion. */
-@media (hover: hover) and (pointer: fine) {
-  /* blur(0) at rest on hover-capable devices — ensures the filter function
-     list matches the rack-focus neighbor blur() for smooth interpolation.
-     Not set in the base rule to avoid forcing a GPU layer on mobile. */
-  .lead-story {
-    filter: blur(0) var(--cin-warmth-near);
-  }
-
-  .feed-grid:has(.story-card:hover) .story-card:not(:hover),
-  .hero-slot:has(.lead-story:hover) .lead-story:not(:hover),
-  .page-main:has(.story-card:hover) .story-card:not(:hover) {
-    opacity: var(--cin-rack-dim-neighbor, 0.62);
-    filter: blur(var(--cin-rack-blur-neighbor, 1.5px));
-    transform: scale(var(--cin-rack-recede-neighbor, 0.997));
-    transition:
-      opacity var(--rack-defocus-dur, 420ms) var(--ease-rack, cubic-bezier(0.4, 0, 0.2, 1)),
-      filter var(--rack-defocus-dur, 420ms) var(--ease-rack, cubic-bezier(0.4, 0, 0.2, 1)),
-      transform var(--rack-defocus-dur, 420ms) var(--ease-rack, cubic-bezier(0.4, 0, 0.2, 1));
-  }
-
-  /* Refocus on hover end — asymmetric timing (lens barrel returns slower).
-     Must include ALL transition properties from the theme dissolve block
-     (lines 7667-7676) since this shorthand overrides it in the cascade. */
-  .feed-grid .story-card,
-  .page-main .story-card {
-    transition:
-      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
-      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
-      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
-      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out),
-      opacity var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam),
-      filter var(--cin-rack-blur-return-dur, 500ms) var(--ease-steadicam),
-      transform var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam);
-  }
-
-  /* Card glow: warm rim light on the focused card */
-  .story-card:hover {
-    box-shadow: var(--shadow-card-hover, var(--shadow-card)), var(--cin-card-glow, none);
-  }
-}
-
-/* Reduced motion: suppress all rack focus effects */
-@media (prefers-reduced-motion: reduce) {
-  .feed-grid:has(.story-card:hover) .story-card:not(:hover),
-  .hero-slot:has(.lead-story:hover) .lead-story:not(:hover),
-  .page-main:has(.story-card:hover) .story-card:not(:hover) {
-    opacity: 1;
-    filter: none;
-    transform: none;
-    transition: none;
   }
 }
 
