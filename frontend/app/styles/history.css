@@ -8215,3 +8215,404 @@ a.hist-record__figure-name:hover {
     opacity: 1;
   }
 }
+
+
+/* ===========================================================================
+   void --history Audio Companion — HistoryAudioCue
+   Archival Cinema design language: document annotation (in-flow cue)
+   + sticky archive bar (appears when audio starts).
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   In-flow cue strip — positioned between Stage 1 Scene and Stage 2 Crack
+   Feels like a museum placard pinned to the dossier.
+   --------------------------------------------------------------------------- */
+
+.hist-audio-cue {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 18px 24px;
+
+  /* Dashed rules — document annotation framing */
+  border-top: 1px dashed var(--hist-border-subtle);
+  border-bottom: 1px dashed var(--hist-border-subtle);
+
+  /* Breathing room from the hero above and The Crack below */
+  margin-top: 8px;
+  margin-bottom: 0;
+
+  transition: border-color 0.3s ease;
+}
+
+.hist-audio-cue[data-playing="true"] {
+  border-color: var(--hist-border);
+}
+
+/* Play button — brass circle */
+.hist-audio-cue__play {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hist-brass);
+  background: transparent;
+  color: var(--hist-brass);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.hist-audio-cue__play:hover {
+  background: var(--hist-brass-ghost);
+  border-color: var(--hist-brass-bright);
+}
+
+.hist-audio-cue__play:active {
+  transform: scale(0.93);
+}
+
+.hist-audio-cue__play:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Pulsing ring when playing */
+.hist-audio-cue__play-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--hist-brass);
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-playing="true"] .hist-audio-cue__play-ring {
+  animation: hist-ring-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hist-ring-pulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  40%       { opacity: 0.4; transform: scale(1.18); }
+  60%       { opacity: 0.15; transform: scale(1.28); }
+}
+
+/* Loading spinner */
+.hist-audio-cue__spinner {
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid transparent;
+  border-top-color: var(--hist-brass);
+  border-radius: 50%;
+  animation: hist-spin 0.8s linear infinite;
+}
+
+@keyframes hist-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Meta block: label + perspective dots */
+.hist-audio-cue__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hist-audio-cue__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--hist-ink-secondary);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.hist-audio-cue__label svg {
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Perspective dots */
+.hist-audio-cue__persp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hist-audio-cue__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hist-audio-cue__dot--a { background: var(--hist-persp-a); }
+.hist-audio-cue__dot--b { background: var(--hist-persp-b); }
+.hist-audio-cue__dot--c { background: var(--hist-persp-c); }
+.hist-audio-cue__dot--d { background: var(--hist-persp-d); }
+.hist-audio-cue__dot--e { background: var(--hist-persp-e); }
+
+.hist-audio-cue__persp-count {
+  font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--hist-ink-muted);
+  margin-left: 2px;
+}
+
+/* Duration — right-aligned mono */
+.hist-audio-cue__duration {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Thin progress strip — appears inside the cue once started */
+.hist-audio-cue__progress {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--hist-border-subtle);
+  overflow: hidden;
+}
+
+.hist-audio-cue__progress-fill {
+  height: 100%;
+  background: var(--hist-brass);
+  transition: width 0.5s linear;
+}
+
+/* Hover state on the entire cue strip */
+.hist-audio-cue:hover {
+  background: var(--hist-accent-ghost);
+}
+
+/* Mobile: compact layout */
+@media (max-width: 767px) {
+  .hist-audio-cue {
+    gap: 12px;
+    padding: 14px 16px;
+    margin: 0 0;
+  }
+
+  .hist-audio-cue__play {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hist-audio-cue__label {
+    font-size: 0.68rem;
+  }
+
+  .hist-audio-cue__duration {
+    font-size: 0.68rem;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Sticky Archive Bar — persistent transport once audio has started
+   Slides up from bottom of viewport. Archival dark treatment.
+   --------------------------------------------------------------------------- */
+
+.hist-audio-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 80;
+
+  /* Archival dark base — foxed charcoal */
+  background: #1A1410;
+  border-top: 1px solid var(--hist-brass-dim);
+
+  /* Slide-in from below */
+  animation: hist-bar-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom center;
+}
+
+@keyframes hist-bar-enter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.hist-audio-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  height: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Brand mark */
+.hist-audio-bar__brand {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 400;
+  color: rgba(232, 224, 207, 0.45);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hist-audio-bar__brand-cmd {
+  color: var(--hist-brass);
+  opacity: 0.8;
+}
+
+/* Transport button */
+.hist-audio-bar__play {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(155, 122, 47, 0.5);
+  background: transparent;
+  color: var(--hist-brass);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.hist-audio-bar__play:hover {
+  background: var(--hist-brass-ghost);
+  border-color: var(--hist-brass);
+}
+
+.hist-audio-bar__play:active {
+  transform: scale(0.92);
+}
+
+/* Progress strip — fills remaining space, clickable */
+.hist-audio-bar__progress {
+  flex: 1;
+  height: 3px;
+  background: rgba(232, 224, 207, 0.12);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.hist-audio-bar__progress:hover {
+  height: 5px;
+}
+
+.hist-audio-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--hist-brass-dim) 0%, var(--hist-brass-bright) 100%);
+  border-radius: 2px;
+  transition: width 0.5s linear;
+  pointer-events: none;
+}
+
+/* Time display */
+.hist-audio-bar__time {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 300;
+  color: rgba(232, 224, 207, 0.5);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+
+.hist-audio-bar__sep {
+  opacity: 0.4;
+}
+
+.hist-audio-bar__total {
+  opacity: 0.5;
+}
+
+/* VU pulse: thin glow on bar top when playing */
+.hist-audio-bar[data-playing="true"]::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hist-brass);
+  opacity: 0.5;
+  animation: hist-bar-glow 2s ease-in-out infinite;
+}
+
+@keyframes hist-bar-glow {
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 0.7; }
+}
+
+/* Mobile: tighter layout */
+@media (max-width: 767px) {
+  .hist-audio-bar__inner {
+    padding: 0 14px;
+    gap: 10px;
+  }
+
+  .hist-audio-bar__brand {
+    display: none; /* space is too tight on narrow screens */
+  }
+
+  .hist-audio-bar__play {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Dark mode — archival charcoal palette
+   --------------------------------------------------------------------------- */
+.hist-page.dark .hist-audio-cue,
+[data-theme="dark"] .hist-audio-cue,
+.dark .hist-page .hist-audio-cue {
+  border-color: rgba(168, 128, 108, 0.2);
+}
+
+.hist-page.dark .hist-audio-cue:hover,
+[data-theme="dark"] .hist-audio-cue:hover,
+.dark .hist-page .hist-audio-cue:hover {
+  background: rgba(168, 128, 108, 0.05);
+}
+
+/* Dark mode audio bar stays dark regardless */
+.hist-audio-bar {
+  --hist-brass: #A8806C;
+  --hist-brass-bright: #B89070;
+  --hist-brass-dim: #8A6A56;
+  --hist-brass-ghost: rgba(168, 128, 108, 0.08);
+}

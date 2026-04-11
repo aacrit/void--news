@@ -85,6 +85,10 @@ export interface HistoricalEvent {
   media: MediaItem[];
   connections: EventConnection[];
   published: boolean;
+  /** void --onair companion audio URL. Null = not yet generated. */
+  audioUrl?: string | null;
+  /** Duration of the companion audio in seconds. */
+  audioDuration?: number | null;
 }
 
 export interface RedactedEvent {

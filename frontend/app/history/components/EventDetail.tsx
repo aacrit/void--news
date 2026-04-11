@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { HistoricalEvent, Perspective, MediaItem, EventConnection, ConnectionType } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
+import HistoryAudioCue from "./HistoryAudioCue";
 
 /* ===========================================================================
    EventDetail — Museum Journey
@@ -215,6 +216,18 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           <span className="hist-stage__scroll-line" />
         </div>
       </section>
+
+      {/* ── AUDIO COMPANION — void --onair for history
+           In-flow between Scene and The Crack.
+           Renders only when audio has been generated for this event. ── */}
+      {event.audioUrl && (
+        <HistoryAudioCue
+          audioUrl={event.audioUrl}
+          durationSeconds={event.audioDuration ?? 0}
+          eventTitle={event.title}
+          perspectives={event.perspectives}
+        />
+      )}
 
       {/* ── CRACK — inscribed line, separate scroll stop ── */}
       <section className="hist-stage hist-stage--crack">

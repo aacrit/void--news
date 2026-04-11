@@ -298,5 +298,7 @@ function mapEventWithRelations(
     media,
     connections,
     published: row.is_published ?? false,
+    audioUrl: row.audio_url ?? null,
+    audioDuration: row.audio_duration_seconds ? Number(row.audio_duration_seconds) : null,
   };
 }
