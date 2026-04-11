@@ -163,10 +163,27 @@ def cache_cluster_images(
     _init_bucket(supabase_client)
 
     # Select top-N by rank_world (post-holistic-rerank), then headline_rank fallback
+    # Only include clusters with proper DB UUIDs — in-memory clusters created this run
+    # may have Python object id() as their id before being written to Supabase (step 9).
+    import re as _re
+    _UUID_RE = _re.compile(
+        r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+        _re.IGNORECASE,
+    )
     eligible = [
         c for c in clusters
-        if c.get("id") and not c.get("_is_opinion") and c.get("articles")
+        if c.get("id")
+        and _UUID_RE.match(str(c["id"]))  # skip Python memory-address IDs
+        and not c.get("_is_opinion")
+        and c.get("articles")
     ]
+    no_uuid = sum(
+        1 for c in clusters
+        if c.get("id") and not _UUID_RE.match(str(c["id"]))
+    )
+    if no_uuid > 0:
+        print(f"  [img-cache] Skipped {no_uuid} cluster(s) without a DB UUID (in-memory only, not yet persisted)")
+
     ranked = sorted(
         eligible,
         key=lambda c: c.get("rank_world") or c.get("headline_rank") or 0,
