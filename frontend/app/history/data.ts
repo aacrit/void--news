@@ -278,7 +278,7 @@ function mapEventWithRelations(
     dateSort: row.date_sort,
     dateRange: row.duration ?? row.date_display,
     location: row.country ?? "",
-    heroImage: row.hero_image_url ?? undefined,
+    heroImage: row.hero_image_url ? resolveMediaUrl(row.hero_image_url) : undefined,
     heroCaption: row.subtitle ?? undefined,
     heroAttribution: row.hero_image_attribution ?? undefined,
     contextNarrative: row.summary ?? "",
