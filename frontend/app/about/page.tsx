@@ -16,6 +16,7 @@ import SourceEngine from "../film/scenes/SourceEngine";
 import ArticleDifference from "../film/scenes/ArticleDifference";
 import ProductWorlds from "../film/scenes/ProductWorlds";
 import TheVerdict from "../film/scenes/TheVerdict";
+import ArchiveTeaser from "../film/scenes/ArchiveTeaser";
 
 /* ===========================================================================
    /about — "The Film: Director's Cut"
@@ -113,7 +114,7 @@ export default function AboutPage() {
         {/* Two paths: interactive film or scroll manifesto */}
         <div className="about-hero__ctas">
           <button className="about-hero__play" onClick={playFilm}>
-            Play the 90-second tour
+            Watch how five outlets told the same story
           </button>
           <span className="about-hero__or">or scroll to explore</span>
         </div>
@@ -286,6 +287,22 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ══════════════════════════════════════════════════════════════════
+          THE ARCHIVE — Two witnesses. One event.
+          Half-chapter between The Worlds and The Verdict.
+          A teaser for void --history without announcing it.
+          ══════════════════════════════════════════════════════════════════ */}
+      <section className="about-section" aria-label="The Archive" data-film-section="archive">
+        <div className="about-section__inner">
+          <div className="about-reveal" data-visible={isVisible("archive") || undefined}>
+            <p className="about-body about-body--lead">
+              The news lasts a day.<br />History lasts forever.
+            </p>
+          </div>
+          <ArchiveTeaser active={isVisible("archive")} />
+        </div>
+      </section>
+
       <OrganicDivider />
 
       {/* ══════════════════════════════════════════════════════════════════
@@ -317,6 +334,9 @@ export default function AboutPage() {
             <p className="about-cta__sub">
               No signup. No paywall. No tracking.
             </p>
+            <Link href="/history" className="about-cta__secondary">
+              Or explore 5,000 years of perspective
+            </Link>
           </div>
         </div>
       </section>
