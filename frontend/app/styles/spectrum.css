@@ -2613,6 +2613,190 @@
 }
 
 /* ==========================================================================
+   Interactive Expand — toggle button, source pins, scrub, label strip
+   ========================================================================== */
+
+/* SVG wrapper — position:relative for scrub label + crosshair on expand */
+.dd-sv-view__svg-wrap {
+  position: relative;
+}
+
+.dd-sv-view--expanded .dd-sv-view__svg-wrap {
+  cursor: crosshair;
+}
+
+/* ---- Toggle button ---- */
+.dd-sv-view__toggle-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  padding: 0 2px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  z-index: 5;
+  line-height: 1;
+  opacity: 0.45;
+  transition: opacity 150ms ease, color 150ms ease;
+}
+
+.dd-sv-view__toggle-btn:hover {
+  opacity: 1;
+  color: var(--fg-secondary);
+}
+
+.dd-sv-view--expanded .dd-sv-view__toggle-btn {
+  opacity: 0.7;
+}
+
+/* ---- Expanded source pins — all sources on KDE curve ---- */
+.dd-sv-view__exp-pin {
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 200ms ease-out, transform 150ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dd-sv-view--expanded .dd-sv-view__exp-pin {
+  opacity: 1;
+}
+
+.dd-sv-view__exp-pin:hover {
+  transform: scale(1.45);
+}
+
+/* Lean-colored borders via data-lean */
+.dd-sv-view__exp-pin[data-lean="far-left"]     { stroke: var(--bias-far-left); }
+.dd-sv-view__exp-pin[data-lean="left"]         { stroke: var(--bias-left); }
+.dd-sv-view__exp-pin[data-lean="center-left"]  { stroke: var(--bias-center-left); }
+.dd-sv-view__exp-pin[data-lean="center"]       { stroke: var(--bias-center); }
+.dd-sv-view__exp-pin[data-lean="center-right"] { stroke: var(--bias-center-right); }
+.dd-sv-view__exp-pin[data-lean="right"]        { stroke: var(--bias-right); }
+.dd-sv-view__exp-pin[data-lean="far-right"]    { stroke: var(--bias-far-right); }
+
+/* ---- Scrub line ---- */
+.dd-sv-view__scrub-line {
+  stroke: var(--fg-muted);
+  stroke-width: 0.75;
+  stroke-dasharray: 3 2;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ---- Scrub label — follows cursor horizontally ---- */
+.dd-sv-view__scrub-label {
+  position: absolute;
+  bottom: 2px;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-card);
+  padding: 0 3px;
+  border-radius: 2px;
+  opacity: 0.9;
+  border: 1px solid var(--border-subtle);
+}
+
+/* ---- Expand label strip ---- */
+.dd-sv-expand-layer {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  transition: height 400ms var(--ease-out);
+  margin-top: 2px;
+}
+
+.dd-sv-expand-layer--open {
+  height: 44px;
+}
+
+/* ---- Expand items — absolutely pinned by lean % ---- */
+.dd-sv-expand-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  max-width: 62px;
+}
+
+.dd-sv-expand-layer--open .dd-sv-expand-item {
+  opacity: 1;
+}
+
+.dd-sv-expand-item[data-row="0"] { top: 2px; }
+.dd-sv-expand-item[data-row="1"] { top: 23px; }
+
+.dd-sv-expand-item__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--fg-muted);
+  flex-shrink: 0;
+  display: block;
+  margin-bottom: 2px;
+  transition: border-color 150ms ease;
+}
+
+/* Lean-colored dots */
+.dd-sv-expand-item[data-lean="far-left"]     .dd-sv-expand-item__dot { border-color: var(--bias-far-left); }
+.dd-sv-expand-item[data-lean="left"]         .dd-sv-expand-item__dot { border-color: var(--bias-left); }
+.dd-sv-expand-item[data-lean="center-left"]  .dd-sv-expand-item__dot { border-color: var(--bias-center-left); }
+.dd-sv-expand-item[data-lean="center"]       .dd-sv-expand-item__dot { border-color: var(--bias-center); }
+.dd-sv-expand-item[data-lean="center-right"] .dd-sv-expand-item__dot { border-color: var(--bias-center-right); }
+.dd-sv-expand-item[data-lean="right"]        .dd-sv-expand-item__dot { border-color: var(--bias-right); }
+.dd-sv-expand-item[data-lean="far-right"]    .dd-sv-expand-item__dot { border-color: var(--bias-far-right); }
+
+.dd-sv-expand-item__name {
+  font-family: var(--font-structural);
+  font-size: 7px;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1.1;
+  transition: color 150ms ease;
+}
+
+.dd-sv-expand-item:hover .dd-sv-expand-item__name {
+  color: var(--fg-primary);
+}
+
+/* Mobile: tighter rows */
+@media (max-width: 767px) {
+  .dd-sv-expand-layer--open {
+    height: 48px;
+  }
+
+  .dd-sv-expand-item[data-row="1"] { top: 25px; }
+
+  .dd-sv-expand-item__name {
+    font-size: 6px;
+    max-width: 52px;
+  }
+
+  .dd-sv-view__toggle-btn {
+    font-size: 12px;
+    opacity: 0.6;
+  }
+}
+
+/* ==========================================================================
    Reduced motion — merged organic view + source row
    ========================================================================== */
 
@@ -2652,6 +2836,24 @@
 
   .dd-sv-avatar {
     transition: none;
+  }
+
+  /* Expand layer */
+  .dd-sv-expand-layer {
+    transition: none;
+  }
+
+  .dd-sv-expand-item,
+  .dd-sv-view__exp-pin {
+    transition: none;
+  }
+
+  .dd-sv-expand-layer--open .dd-sv-expand-item {
+    opacity: 1;
+  }
+
+  .dd-sv-view--expanded .dd-sv-view__exp-pin {
+    opacity: 1;
   }
 }
 
