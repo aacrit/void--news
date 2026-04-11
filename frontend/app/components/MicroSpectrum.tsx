@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useMemo } from "react";
-import { gaussianDensities, kdeToCubicPath, getYOnCurve } from "../lib/kde";
+import { gaussianDensities, kdeToCubicPath, getYOnCurve, computeKDE, robustBandwidth, normalizeKDE } from "../lib/kde";
 
 /* ---------------------------------------------------------------------------
    MicroSpectrum — Compact KDE bell-curve sparkline of lean distribution.
@@ -21,10 +21,13 @@ import { gaussianDensities, kdeToCubicPath, getYOnCurve } from "../lib/kde";
    --------------------------------------------------------------------------- */
 
 interface MicroSpectrumProps {
-  /** Political lean 0–100 (center of Gaussian) */
+  /** Political lean 0–100 (center of Gaussian — used when leans[] not provided) */
   mean: number;
-  /** leanSpread std dev (width of Gaussian). Floor 4 enforced internally. */
+  /** leanSpread std dev (Gaussian fallback width). Floor 4 enforced internally. */
   spread: number;
+  /** Raw per-source lean values — when provided, uses real KDE instead of Gaussian.
+   *  Matches the DeepDive spectrum shape exactly. */
+  leans?: number[];
   /** SVG height in px (viewBox height). Default 28. */
   height?: number;
   /** Show dashed needle + ring dot at mean position. Default true. */
@@ -52,6 +55,7 @@ const VB_W = 200;
 export default function MicroSpectrum({
   mean,
   spread,
+  leans,
   height = 28,
   showMarker = true,
   strokeWidth = 1.5,
@@ -64,10 +68,15 @@ export default function MicroSpectrum({
   // bottomPad: pixels of flat baseline below curve bottom
   const bottomPad = Math.max(3, Math.round(height * 0.12));
 
-  const densities = useMemo(
-    () => gaussianDensities(mean, spread, 80),
-    [mean, spread]
-  );
+  const densities = useMemo(() => {
+    if (leans && leans.length >= 3) {
+      // Real KDE — matches DeepDive spectrum shape exactly
+      const bw = leans.length <= 7 ? 6 : robustBandwidth(leans);
+      return normalizeKDE(computeKDE(leans, bw, 80));
+    }
+    // Gaussian fallback — symmetric approximation from mean + spread
+    return gaussianDensities(mean, spread, 80);
+  }, [leans, mean, spread]);
 
   const { fillPath, strokePath } = useMemo(
     () => kdeToCubicPath(densities, height, VB_W, bottomPad),
