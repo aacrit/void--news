@@ -7724,13 +7724,19 @@ a.footer-products__item:hover { color: var(--accent-warm); }
       transform var(--rack-defocus-dur, 420ms) var(--ease-rack, cubic-bezier(0.4, 0, 0.2, 1));
   }
 
-  /* Refocus on hover end — asymmetric timing (lens barrel returns slower) */
+  /* Refocus on hover end — asymmetric timing (lens barrel returns slower).
+     Must include ALL transition properties from the theme dissolve block
+     (lines 7667-7676) since this shorthand overrides it in the cascade. */
   .feed-grid .story-card,
   .page-main .story-card {
     transition:
-      opacity var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam, cubic-bezier(0.16, 1, 0.3, 1)),
-      filter var(--cin-rack-blur-return-dur, 500ms) var(--ease-steadicam, cubic-bezier(0.16, 1, 0.3, 1)),
-      transform var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam, cubic-bezier(0.16, 1, 0.3, 1));
+      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
+      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out),
+      opacity var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam),
+      filter var(--cin-rack-blur-return-dur, 500ms) var(--ease-steadicam),
+      transform var(--cin-rack-dim-return-dur, 600ms) var(--ease-steadicam);
   }
 
   /* Card glow: warm rim light on the focused card */
