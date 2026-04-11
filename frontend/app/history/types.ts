@@ -21,6 +21,9 @@ export interface PrimarySource {
 export interface KeyFigure {
   name: string;
   role: string;
+  born?: number;
+  died?: number;
+  wikipedia?: string;
 }
 
 export interface MediaItem {

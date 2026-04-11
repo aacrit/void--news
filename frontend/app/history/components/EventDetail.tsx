@@ -225,56 +225,91 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       </section>
 
       {/* ═══════════════════════════════════════════
-          Key Facts — Compact reference panel
-          Date, location, key figures, death toll, displaced, duration.
+          Key Facts — Pull Stats + Ledger
+          Dominant numbers (death toll, displaced) shown large.
+          Remaining facts as a ruled ledger document block.
+          No card background — type on page surface.
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--keyfacts">
         <div className="hist-keyfacts hist-reveal">
-          <div className="hist-keyfacts__grid">
-            <div className="hist-keyfacts__item">
-              <span className="hist-keyfacts__label">Date</span>
-              <span className="hist-keyfacts__value">{event.dateRange || event.datePrimary}</span>
-            </div>
-            <div className="hist-keyfacts__item">
-              <span className="hist-keyfacts__label">Location</span>
-              <span className="hist-keyfacts__value">{event.location}</span>
-            </div>
-            {event.deathToll && (
-              <div className="hist-keyfacts__item">
-                <span className="hist-keyfacts__label">Death toll</span>
-                <span className="hist-keyfacts__value hist-keyfacts__value--figure">{event.deathToll}</span>
-              </div>
-            )}
-            {event.displaced && (
-              <div className="hist-keyfacts__item">
-                <span className="hist-keyfacts__label">Displaced</span>
-                <span className="hist-keyfacts__value hist-keyfacts__value--figure">{event.displaced}</span>
-              </div>
-            )}
-            {event.duration && (
-              <div className="hist-keyfacts__item">
-                <span className="hist-keyfacts__label">Duration</span>
-                <span className="hist-keyfacts__value">{event.duration}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Key Figures */}
-          {event.keyFigures.length > 0 && (
-            <div className="hist-keyfacts__figures">
-              <span className="hist-keyfacts__label">Key figures</span>
-              <div className="hist-keyfacts__figures-list">
-                {event.keyFigures.map((fig, i) => (
-                  <span key={i} className="hist-keyfacts__figure">
-                    <strong className="hist-keyfacts__figure-name">{fig.name}</strong>
-                    <span className="hist-keyfacts__figure-role">{fig.role}</span>
-                  </span>
-                ))}
-              </div>
+          {/* Tier 1: Dominant numbers — stop the scroll */}
+          {(event.deathToll || event.displaced) && (
+            <div className="hist-keyfacts__pull">
+              {event.deathToll && (
+                <div className="hist-keyfacts__pull-stat">
+                  <span className="hist-keyfacts__pull-number">{event.deathToll}</span>
+                  <span className="hist-keyfacts__pull-label">killed</span>
+                </div>
+              )}
+              {event.displaced && (
+                <div className="hist-keyfacts__pull-stat">
+                  <span className="hist-keyfacts__pull-number">{event.displaced}</span>
+                  <span className="hist-keyfacts__pull-label">displaced</span>
+                </div>
+              )}
             </div>
           )}
+
+          {/* Tier 2: Ledger — ruled document block for remaining facts */}
+          <dl className="hist-keyfacts__ledger">
+            <div className="hist-keyfacts__ledger-row">
+              <dt>Date</dt>
+              <dd>{event.dateRange || event.datePrimary}</dd>
+            </div>
+            <div className="hist-keyfacts__ledger-row">
+              <dt>Location</dt>
+              <dd>{event.location}</dd>
+            </div>
+            {event.duration && (
+              <div className="hist-keyfacts__ledger-row">
+                <dt>Duration</dt>
+                <dd>{event.duration}</dd>
+              </div>
+            )}
+          </dl>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════
+          Key Figures — Name Plate treatment
+          Standalone section. Playfair Display name, IBM Plex Mono dates.
+          No card background — thin ruled separators only.
+          ═══════════════════════════════════════════ */}
+      {event.keyFigures.length > 0 && (
+        <section className="hist-stage hist-stage--figures">
+          <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE FIGURES</h2>
+          <div className="hist-figures hist-reveal">
+            {event.keyFigures.map((fig, i) => {
+              const hasDates = fig.born != null || fig.died != null;
+              const dateStr = hasDates
+                ? `(${fig.born != null ? (fig.born < 0 ? `${Math.abs(fig.born)} BCE` : fig.born) : "?"}–${fig.died != null ? (fig.died < 0 ? `${Math.abs(fig.died)} BCE` : fig.died) : "?"})`
+                : null;
+              return (
+                <div key={i} className="hist-figures__plate">
+                  <div className="hist-figures__namerow">
+                    {fig.wikipedia ? (
+                      <a
+                        href={fig.wikipedia}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hist-figures__name"
+                      >
+                        {fig.name}
+                      </a>
+                    ) : (
+                      <span className="hist-figures__name">{fig.name}</span>
+                    )}
+                    {dateStr && (
+                      <span className="hist-figures__dates">{dateStr}</span>
+                    )}
+                  </div>
+                  <p className="hist-figures__role">{fig.role}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════
           Stage 2.5 — THE FULL STORY (Context Narrative)

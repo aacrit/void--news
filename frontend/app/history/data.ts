@@ -260,9 +260,15 @@ function mapEventWithRelations(
     };
   });
 
-  /* Parse key_figures JSONB */
+  /* Parse key_figures JSONB — map all available fields */
   const keyFigures = Array.isArray(row.key_figures)
-    ? row.key_figures
+    ? row.key_figures.map((f: { name: string; role: string; born?: number; died?: number; wikipedia?: string }) => ({
+        name: f.name,
+        role: f.role,
+        born: f.born ?? undefined,
+        died: f.died ?? undefined,
+        wikipedia: f.wikipedia ?? undefined,
+      }))
     : [];
 
   return {
