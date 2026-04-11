@@ -195,7 +195,7 @@
 
   .mf,
   .deep-dive-panel__content,
-  .msp__content {
+  .msp {
     overscroll-behavior: contain;
   }
 
@@ -279,10 +279,9 @@
   /* === LAYOUT === */
 
   /* page-main: shorthand overrides the base rule's padding: 0 var(--space-7)
-     on all sides. No bottom nav — just safe area padding. */
+     on all sides. Bottom padding overridden later (line ~769) by tab bar clearance. */
   .page-main {
     padding: 0 var(--space-5);
-    padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
