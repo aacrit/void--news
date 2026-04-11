@@ -48,6 +48,47 @@
   }
 }
 
+/* ---- Tablet (768-1023px) — Deep Dive bottom sheet ----------------------- */
+/* Fills the gap where neither mobile nor desktop rules apply.
+   Same physical metaphor as mobile: bottom sheet with drag indicator. */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .deep-dive-panel {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    border: none;
+    background: var(--bg-primary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow:
+      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .deep-dive-panel::before {
+    opacity: 0;
+  }
+
+  .deep-dive-panel[data-settled] {
+    box-shadow:
+      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
+  }
+
+  .dd-drag-indicator {
+    display: block;
+  }
+}
+
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
 @media (min-width: 1024px) {
@@ -81,31 +122,24 @@
     border-right: none;
   }
 
-  /* Deep Dive: centered overlay covering 75% of viewport.
-     Opaque surface — no see-through. Cinematic depth via shadow layers.
-     The backdrop blur handles the "frosted world behind" feel. */
+  /* Deep Dive: near-full-canvas panel — inset:24px leaves a 24px gap on all
+     sides. The gap reveals the blurred feed behind, preserving the cinematic
+     rack-focus depth cue. Content is constrained to a readable max-width. */
   .deep-dive-panel {
-    left: 50%;
-    top: 50%;
-    right: auto;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-    width: 75vw;
-    max-width: 920px;
-    height: 80vh;
-    max-height: 80vh;
+    inset: 24px;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
     min-height: 0;
+    transform: none;
     border-radius: 6px;
     border: 1px solid var(--border-subtle);
 
     /* Solid opaque — content demands full attention, not transparency */
     background-color: var(--bg-primary);
 
-    /* Cinematic depth: layered shadows using brand-warm tint.
-       Four rings: ambient → mid → close → inner rim light.
-       Uses --cinematic-shadow-tint for warm walnut shadows instead of
-       neutral black. The rim light uses --cinematic-rim-light for
-       brand-consistent edge catch. */
+    /* Cinematic depth: layered shadows using brand-warm tint. */
     box-shadow:
       0 50px 140px color-mix(in srgb, var(--cinematic-shadow-tint) 50%, transparent),
       0 20px 60px color-mix(in srgb, var(--cinematic-shadow-tint) 28%, transparent),
@@ -114,14 +148,20 @@
       inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 40%, transparent);
   }
 
-  /* Studio light — refined top-edge catch. Higher opacity + wider gradient
-     mimics a single overhead light source catching the panel's lip. */
+  /* Readable body width — centers reading content within the full-canvas panel */
+  .deep-dive-panel__content {
+    max-width: 860px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  /* Studio light — refined top-edge catch. */
   .deep-dive-panel::before {
     opacity: 0.8;
     height: 2px;
   }
 
-  /* Close button visible on desktop modal — no back arrow needed */
+  /* Close button visible on desktop — no back arrow needed */
   .deep-dive-close {
     display: inline-flex;
   }
@@ -131,11 +171,6 @@
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
 
 @media (min-width: 1280px) {
-  /* Wider modal on large screens */
-  .deep-dive-panel {
-    max-width: 1080px;
-  }
-
   /* 1280: keep 3-col compact — enough room for footer without overflow */
 }
 
@@ -166,10 +201,6 @@
     border-right: none;
   }
 
-  /* Deep Dive: wider on ultra-wide for more reading comfort */
-  .deep-dive-panel {
-    max-width: 1120px;
-  }
 }
 
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
