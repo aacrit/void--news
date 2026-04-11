@@ -58,35 +58,80 @@ const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
 
 function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
   const [activeAxis, setActiveAxis] = useState<string | null>(null);
+  const [showSecondary, setShowSecondary] = useState(false);
+  const [isMobileLens, setIsMobileLens] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobileLens(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobileLens(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const PRIMARY_IDS = new Set(["lean", "rigor", "opinion"]);
+  const primaryAxes = SIX_AXES.filter(a => PRIMARY_IDS.has(a.id));
+  const secondaryAxes = SIX_AXES.filter(a => !PRIMARY_IDS.has(a.id));
+
+  const renderAxis = (axis: typeof SIX_AXES[0], i: number) => {
+    const score = sigilData[axis.key] as number;
+    const dotCount = Math.max(1, Math.round((score / 100) * 5));
+    const isActive = activeAxis === axis.id;
+    return (
+      <button
+        key={axis.id}
+        className={`dd-lens${isActive ? " dd-lens--active" : ""}${visible ? " dd-lens--visible" : ""}`}
+        style={{ "--lens-delay": `${450 + i * 50}ms` } as React.CSSProperties}
+        onClick={() => { hapticMicro(); setActiveAxis(isActive ? null : axis.id); }}
+        aria-expanded={isActive}
+        aria-label={`${axis.name}: ${score} out of 100`}
+      >
+        <span className="dd-lens__score">{score}</span>
+        <span className="dd-lens__dots" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, di) => (
+            <span key={di} className={`dd-lens__pip${di < dotCount ? " dd-lens__pip--filled" : ""}`} />
+          ))}
+        </span>
+        <span className="dd-lens__name">{axis.name}</span>
+      </button>
+    );
+  };
 
   return (
     <div className="dd-lenses">
       <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
-      <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
-        {SIX_AXES.map((axis, i) => {
-          const score = sigilData[axis.key] as number;
-          const dotCount = Math.max(1, Math.round((score / 100) * 5));
-          const isActive = activeAxis === axis.id;
-          return (
+      {isMobileLens ? (
+        <>
+          <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+            {primaryAxes.map((axis, i) => renderAxis(axis, i))}
+          </div>
+          <div
+            className="dd-lenses__secondary"
+            style={{
+              maxHeight: showSecondary ? "300px" : "0",
+              overflow: "hidden",
+              transition: "max-height 300ms ease-out",
+            }}
+          >
+            <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`} style={{ marginTop: "var(--space-2)" }}>
+              {secondaryAxes.map((axis, i) => renderAxis(axis, i + 3))}
+            </div>
+          </div>
+          {!showSecondary && (
             <button
-              key={axis.id}
-              className={`dd-lens${isActive ? " dd-lens--active" : ""}${visible ? " dd-lens--visible" : ""}`}
-              style={{ "--lens-delay": `${450 + i * 50}ms` } as React.CSSProperties}
-              onClick={() => { hapticMicro(); setActiveAxis(isActive ? null : axis.id); }}
-              aria-expanded={isActive}
-              aria-label={`${axis.name}: ${score} out of 100`}
+              className="dd-read-more"
+              onClick={() => { hapticMicro(); setShowSecondary(true); }}
+              style={{ marginTop: "var(--space-2)" }}
             >
-              <span className="dd-lens__score">{score}</span>
-              <span className="dd-lens__dots" aria-hidden="true">
-                {Array.from({ length: 5 }, (_, di) => (
-                  <span key={di} className={`dd-lens__pip${di < dotCount ? " dd-lens__pip--filled" : ""}`} />
-                ))}
-              </span>
-              <span className="dd-lens__name">{axis.name}</span>
+              3 more axes
             </button>
-          );
-        })}
-      </div>
+          )}
+        </>
+      ) : (
+        <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+          {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
+        </div>
+      )}
       <a href={`${BASE_PATH}/sources/#methodology`} className="dd-lenses__link text-meta">
         How we score
       </a>
@@ -187,7 +232,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return true;
+    return false;
+  });
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [summaryOverflows, setSummaryOverflows] = useState(false);
   const summaryInnerRef = useRef<HTMLDivElement>(null);
@@ -560,7 +608,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     pageMain?.classList.add('page-main--deep-dive-open');
 
     hapticMedium();
-    const hasMorph = originRect && originRect.width > 0 && panelRef.current;
+    // Skip FLIP morph on mobile — full-width card expands to full-width panel
+    // with zero horizontal transform, making morph visually imperceptible
+    // while adding ~40ms startup latency.
+    const isDesktopForMorph = window.innerWidth >= 1024;
+    const hasMorph = originRect && originRect.width > 0 && panelRef.current && isDesktopForMorph;
 
     if (hasMorph) {
       /* ═══ SCENE 4: MATCH CUT — Card expands into Deep Dive panel ═══
