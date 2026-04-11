@@ -776,10 +776,7 @@
 
 .lead-story__headline-text {
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  overflow-wrap: break-word;
   transition: text-shadow 300ms var(--ease-cinematic);
 }
 
@@ -789,12 +786,8 @@
   line-height: 1.6;
   color: var(--fg-secondary);
   margin-bottom: var(--space-4);
-  display: -webkit-box;
-  -webkit-line-clamp: 8;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   /* Newspaper norm: justified body copy with hyphenation.
-     text-align-last:left prevents the clamp cutoff line from being
+     text-align-last:left prevents the last line from being
      stretched across the full measure by the justify algorithm. */
   text-align: justify;
   text-align-last: left;
