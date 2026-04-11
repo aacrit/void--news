@@ -209,8 +209,8 @@ Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
 TL;DR INSTRUCTIONS (return as "tldr_text"):
 REGISTER: Newspaper editorial page. No contractions. No spoken fragments. \
 Declarative sentences. Every clause load-bearing.
-8-10 sentences as a flowing editorial paragraph. Aim for exactly 200 words. \
-Acceptable range: 180-240 words. Density over length — if a sentence restates \
+16-20 sentences as a flowing editorial paragraph. Aim for exactly 400 words. \
+Acceptable range: 360-480 words. Density over length — if a sentence restates \
 rather than advances, cut it. \
 Put one sentence per line, separated by \\n (literal newline). \
 Write in the voice of today's lead host:
@@ -367,12 +367,12 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     words = len(tldr.split())
     report["metrics"]["tldr_lines"] = len(lines)
     report["metrics"]["tldr_words"] = words
-    if len(lines) < 5 or len(lines) > 15:
-        msg = f"TL;DR has {len(lines)} lines (expected 8-12)"
+    if len(lines) < 10 or len(lines) > 25:
+        msg = f"TL;DR has {len(lines)} lines (expected 16-20)"
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
-    if words < 120 or words > 300:
-        msg = f"TL;DR has {words} words (expected 180-240)"
+    if words < 240 or words > 560:
+        msg = f"TL;DR has {words} words (expected 360-480)"
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
 

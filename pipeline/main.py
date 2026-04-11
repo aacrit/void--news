@@ -60,8 +60,8 @@ except ImportError as e:
 # Gemini summarizer — optional (requires google-generativeai + API key)
 SUMMARIZER_AVAILABLE = False
 try:
-    from summarizer.cluster_summarizer import summarize_clusters_batch
-    from summarizer.gemini_client import is_available as gemini_is_available
+    from summarizer.cluster_summarizer import summarize_clusters_batch, summarize_cluster
+    from summarizer.gemini_client import is_available as gemini_is_available, calls_remaining
     SUMMARIZER_AVAILABLE = True
 except ImportError:
     pass
@@ -2530,6 +2530,74 @@ def main():
             import traceback
             print(f"  [warn] Holistic re-rank failed: {e}")
             traceback.print_exc()
+
+    # Step 8d: Post-rerank Gemini top-up — summarize clusters promoted into top-50
+    # by the holistic re-ranker that didn't receive Gemini summaries in step 7b.
+    # This ensures the stories the frontend actually shows always have Gemini quality.
+    if SUMMARIZER_AVAILABLE and gemini_is_available() and calls_remaining() > 0:
+        print("\n[8d] Gemini top-up for post-rerank top-50...")
+        try:
+            # Fetch current top-50 by rank_world from DB (post-rerank order)
+            rank_res = supabase.table("story_clusters").select("id").contains("sections", ["world"]).order("rank_world", ascending=False).limit(50).execute()
+            top50_ids = [row["id"] for row in (rank_res.data or [])]
+
+            # Build lookup: cluster_id → in-memory cluster index
+            id_to_idx = {c.get("id"): i for i, c in enumerate(clusters) if c.get("id")}
+
+            # Find clusters in final top-50 that don't have Gemini summaries
+            needs_summary: list[tuple[str, int]] = []
+            for cid in top50_ids:
+                idx = id_to_idx.get(cid)
+                if idx is None:
+                    continue
+                c = clusters[idx]
+                if c.get("_gemini_enriched"):
+                    continue  # already summarized in step 7b
+                if c.get("_is_opinion"):
+                    continue
+                if len(c.get("articles", [])) < 3:
+                    continue
+                needs_summary.append((cid, idx))
+
+            print(f"  {len(needs_summary)} top-50 clusters need Gemini summaries (not covered by step 7b)")
+
+            ok = 0
+            consecutive = 0
+            for cid, idx in needs_summary:
+                if calls_remaining() <= 0:
+                    print("  [warn] Gemini budget exhausted, stopping top-up")
+                    break
+                if consecutive >= 5:
+                    print(f"  [warn] Circuit breaker triggered after {consecutive} consecutive failures")
+                    break
+                result = summarize_cluster(clusters[idx].get("articles", []))
+                if result:
+                    clusters[idx]["title"] = result["headline"]
+                    clusters[idx]["summary"] = result["summary"]
+                    clusters[idx]["_gemini_enriched"] = True
+                    consecutive = 0
+                    ok += 1
+                    # Targeted DB update for just this cluster's summary fields
+                    try:
+                        update_payload = {
+                            "title": result["headline"],
+                            "summary": result["summary"],
+                        }
+                        if result.get("consensus"):
+                            update_payload["consensus_points"] = result["consensus"]
+                        if result.get("divergence"):
+                            update_payload["divergence_points"] = result["divergence"]
+                        if result.get("editorial_importance") is not None:
+                            update_payload["editorial_importance"] = result["editorial_importance"]
+                        supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
+                    except Exception as ue:
+                        print(f"  [warn] DB update failed for cluster {cid}: {ue}")
+                else:
+                    consecutive += 1
+
+            print(f"  Top-up: {ok}/{len(needs_summary)} clusters enriched with Gemini")
+        except Exception as e:
+            print(f"  [warn] Post-rerank Gemini top-up failed: {e}")
 
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
