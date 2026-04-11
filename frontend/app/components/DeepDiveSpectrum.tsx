@@ -695,9 +695,16 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
         aria-hidden="true"
       >
         <defs>
+          {/* Fill gradient — spectrum colors at medium opacity */}
           <linearGradient id="sv-lean-grad" x1="0" y1="0" x2="1" y2="0">
             {gradStops.map((s) => (
-              <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.12" />
+              <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.38" />
+            ))}
+          </linearGradient>
+          {/* Stroke gradient — same spectrum, full opacity for the curve line */}
+          <linearGradient id="sv-lean-stroke-grad" x1="0" y1="0" x2="1" y2="0">
+            {gradStops.map((s) => (
+              <stop key={`stroke-${s.offset}`} offset={s.offset} stopColor={s.color} stopOpacity="0.9" />
             ))}
           </linearGradient>
           {/* Ink wash filter on fill only — not stroke — 8+ sources */}
@@ -720,7 +727,7 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
           <>
             <line
               x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
-              stroke="var(--fg-muted)" strokeWidth="0.75" opacity="0.25"
+              stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4"
             />
             {sources.map((s, i) => (
               <circle
@@ -763,14 +770,14 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
           ))
         )}
 
-        {/* Beat 2 (150ms): Stroke — cartographer's nib, crisp (no ink filter) */}
+        {/* Beat 2 (150ms): Stroke — chromatic curve, blue→green→red spectrum */}
         {paths && (
           <path
             ref={strokeRef}
             d={paths.strokePath}
             fill="none"
-            stroke="var(--fg-tertiary)"
-            strokeWidth="1.5"
+            stroke="url(#sv-lean-stroke-grad)"
+            strokeWidth="1.8"
             className="dd-sv-view__stroke"
           />
         )}
