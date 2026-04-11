@@ -63,6 +63,14 @@ try:
     from summarizer.cluster_summarizer import summarize_clusters_batch, summarize_cluster
     from summarizer.gemini_client import is_available as gemini_is_available, calls_remaining
     SUMMARIZER_AVAILABLE = True
+
+# Cluster image cacher — downloads og:images and re-serves from Supabase Storage
+IMAGE_CACHER_AVAILABLE = False
+try:
+    from media.cluster_image_cacher import cache_cluster_images
+    IMAGE_CACHER_AVAILABLE = True
+except ImportError:
+    pass
 except ImportError:
     pass
 
@@ -2598,6 +2606,18 @@ def main():
             print(f"  Top-up: {ok}/{len(needs_summary)} clusters enriched with Gemini")
         except Exception as e:
             print(f"  [warn] Post-rerank Gemini top-up failed: {e}")
+
+    # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
+    # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
+    # re-serves from Supabase CDN. Top 10 clusters get guaranteed image availability.
+    if IMAGE_CACHER_AVAILABLE:
+        print("\n[8e] Caching cluster images to Supabase Storage...")
+        try:
+            cache_cluster_images(clusters, supabase, top_n=10)
+        except Exception as e:
+            print(f"  [warn] Image caching failed: {e}")
+    else:
+        print("\n[8e] Skipping image cache (cluster_image_cacher not available)")
 
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:

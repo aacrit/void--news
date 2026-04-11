@@ -448,7 +448,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         // Use per-edition rank column for ordering (cross-edition differentiation)
@@ -621,6 +621,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     claimConsensus: cluster.claim_consensus || undefined,
                   }
                 : undefined,
+              cachedImageUrl: cluster.cached_image_url ?? null,
             };
           }
         );
@@ -734,17 +735,22 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const heroStory = filteredStories[0] ?? null;
   const gridStories = filteredStories.slice(1);
 
-  // Fetch lead image for primary story (rank 0 only — one front-page photograph)
+  // Fetch lead image for primary story (rank 0 only — one front-page photograph).
+  // If cached_image_url is already on the story (pipeline step 8e), use it directly —
+  // no extra Supabase round-trip needed. Fallback to og:image-from-articles via
+  // fetchClusterLeadImage for clusters without a cached image.
   const [leadImageUrl, setLeadImageUrl] = useState<string | null>(null);
   const leadStoryId = heroStory?.id;
+  const leadCachedUrl = heroStory?.cachedImageUrl ?? null;
   useEffect(() => {
     if (!leadStoryId) { setLeadImageUrl(null); return; }
+    if (leadCachedUrl) { setLeadImageUrl(leadCachedUrl); return; }
     let cancelled = false;
     fetchClusterLeadImage(leadStoryId).then((url) => {
       if (!cancelled) setLeadImageUrl(url);
     });
     return () => { cancelled = true; };
-  }, [leadStoryId]);
+  }, [leadStoryId, leadCachedUrl]);
 
   // Stable key that changes whenever the active filter changes.
   // Keying the <section> elements on this value causes React to unmount+remount

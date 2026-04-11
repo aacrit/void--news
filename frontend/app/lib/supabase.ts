@@ -98,10 +98,25 @@ export async function fetchDeepDiveData(clusterId: string) {
   return data;
 }
 
-/** Fetch the best og:image for a cluster — picks the first non-null image_url
- *  from articles in the cluster, preferring higher-tier sources. */
+/** Fetch the best image URL for a cluster.
+ *  Priority 1: cached_image_url on the cluster (Supabase Storage, no hotlink issues).
+ *  Priority 2: og:image from articles, tier-ranked (us_major > international > independent).
+ *  cached_image_url is populated by the pipeline's step 8e (cluster_image_cacher.py). */
 export async function fetchClusterLeadImage(clusterId: string): Promise<string | null> {
   if (!_client) return null;
+
+  // Check cached Supabase Storage image first — guaranteed no hotlink protection
+  const { data: clusterRow } = await _client
+    .from('story_clusters')
+    .select('cached_image_url')
+    .eq('id', clusterId)
+    .single();
+
+  if (clusterRow?.cached_image_url) {
+    return clusterRow.cached_image_url as string;
+  }
+
+  // Fallback: og:image from cluster articles (may be blocked by CDN hotlinking)
   const { data, error } = await _client
     .from('cluster_articles')
     .select(`
@@ -123,7 +138,6 @@ export async function fetchClusterLeadImage(clusterId: string): Promise<string |
     const article = row.article as any;
     if (!article?.image_url) continue;
     const url = article.image_url as string;
-    // Skip data URIs, tiny tracking pixels, logos, or broken URLs
     if (url.startsWith('data:') || url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker|1x1|blank|placeholder|default-og|brand/i.test(url)) continue;
     const tier = article.source?.tier as string ?? 'independent';
     const rank = tierRank[tier] ?? 0;
