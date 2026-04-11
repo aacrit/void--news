@@ -281,8 +281,10 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           <div className="hist-figures hist-reveal">
             {event.keyFigures.map((fig, i) => {
               const hasDates = fig.born != null || fig.died != null;
+              /* Format year: ≤0 means BCE (year 0 = 1 BCE in historical convention) */
+              const fmtYear = (y: number) => y <= 0 ? `${Math.abs(y) + (y === 0 ? 1 : 0)} BCE` : String(y);
               const dateStr = hasDates
-                ? `(${fig.born != null ? (fig.born < 0 ? `${Math.abs(fig.born)} BCE` : fig.born) : "?"}–${fig.died != null ? (fig.died < 0 ? `${Math.abs(fig.died)} BCE` : fig.died) : "?"})`
+                ? `(${fig.born != null ? fmtYear(fig.born) : "?"}–${fig.died != null ? fmtYear(fig.died) : "?"})`
                 : null;
               return (
                 <div key={i} className="hist-figures__plate">
@@ -293,6 +295,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hist-figures__name"
+                        aria-label={`${fig.name} on Wikipedia (opens in new tab)`}
                       >
                         {fig.name}
                       </a>
