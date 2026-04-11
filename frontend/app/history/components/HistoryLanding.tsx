@@ -418,6 +418,7 @@ export default function HistoryLanding({
   const bgLayerRef = useRef<HTMLDivElement>(null);
   const inkPathRef = useRef<SVGPathElement>(null);
   const scrollVelocityRef = useRef(0);
+  const focusedIndexRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [prevEra, setPrevEra] = useState<string | null>(null);
@@ -603,7 +604,10 @@ export default function HistoryLanding({
         scrollFraction = totalW > 0 ? viewCenter / totalW : 0;
       }
 
-      setFocusedIndex(closest);
+      if (closest !== focusedIndexRef.current) {
+        focusedIndexRef.current = closest;
+        setFocusedIndex(closest);
+      }
 
       /* Rolling year: interpolate from scroll fraction */
       let leftIdx = 0;
@@ -775,13 +779,26 @@ export default function HistoryLanding({
     const EDGE_ZONE = 60;
     const MAX_SPEED = 12;
 
+    let rafId: number;
+    const tick = () => {
+      if (scrollVelocityRef.current === 0) return;
+      if (container) container.scrollLeft += scrollVelocityRef.current;
+      rafId = requestAnimationFrame(tick);
+    };
+    const startTick = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(tick);
+    };
+
     const handleMouseMove = (e: MouseEvent) => {
       if (e.clientX < EDGE_ZONE) {
         const intensity = 1 - e.clientX / EDGE_ZONE;
         scrollVelocityRef.current = -MAX_SPEED * intensity;
+        startTick();
       } else if (e.clientX > window.innerWidth - EDGE_ZONE) {
         const intensity = 1 - (window.innerWidth - e.clientX) / EDGE_ZONE;
         scrollVelocityRef.current = MAX_SPEED * intensity;
+        startTick();
       } else {
         scrollVelocityRef.current = 0;
       }
@@ -790,15 +807,6 @@ export default function HistoryLanding({
     const handleMouseLeave = () => {
       scrollVelocityRef.current = 0;
     };
-
-    let rafId: number;
-    const tick = () => {
-      if (scrollVelocityRef.current !== 0 && container) {
-        container.scrollLeft += scrollVelocityRef.current;
-      }
-      rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
 
     window.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseleave", handleMouseLeave);
@@ -1129,7 +1137,7 @@ export default function HistoryLanding({
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         ref={timelineRef}
-        className={`hist-tl-full hist-grade${eraFlashColor ? " hist-tl-full--era-flash" : ""}${threadsMode ? " hist-tl-full--hidden" : ""}`}
+        className={`hist-tl-full${eraFlashColor ? " hist-tl-full--era-flash" : ""}${threadsMode ? " hist-tl-full--hidden" : ""}`}
         role="region"
         aria-label="Historical events timeline"
         aria-roledescription="timeline"
