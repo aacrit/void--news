@@ -12,6 +12,10 @@ import {
   lerpColor as lerp,
 } from "../lib/biasColors";
 import MicroSpectrum from "./MicroSpectrum";
+import { fetchSourceLeans } from "../lib/supabase";
+
+/** Session-level cache: storyId → lean values. Avoids re-fetching on re-hover. */
+const leanCache = new Map<string, number[]>();
 
 /* ==========================================================================
    Sigil — The Brand Mark AS the Bias Indicator
@@ -34,6 +38,8 @@ interface SigilProps {
   mode?: "facts";
   /** Skip 4-stage stagger reveal on mobile — single 150ms transition */
   instant?: boolean;
+  /** Story cluster ID — enables real KDE in the popup spectrum (matches DeepDive shape) */
+  storyId?: string;
 }
 
 /** Feed-level sizes (sm) get simplified popup + no InkUnderline.
@@ -223,11 +229,12 @@ function DataMark({ data, size, mounted }: {
 
 /* ── Popup: the mark unfolds ──────────────────────────────────────────── */
 
-function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data, instant = false, size = "sm" }: {
+function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, id, data, instant = false, size = "sm", storyId }: {
   triggerRef: React.RefObject<HTMLElement | null>;
   isOpen: boolean; onClose: () => void;
   onMouseEnter: () => void; onMouseLeave: () => void;
   id: string; data: SigilData; instant?: boolean; size?: "sm" | "lg" | "xl";
+  storyId?: string;
 }) {
   const [pos, setPos] = useState<{ x: number; y: number; mobile: boolean } | null>(null);
   const [stage, setStage] = useState(0); // 0=hidden, 1=mark, 2=beam, 3=circle, 4=details
@@ -238,6 +245,25 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   const ll = popupUnscored ? "Unscored" : tiltLabel(lean);
   const full = isFullDetail(size);
 
+  /** Real per-source lean values — loaded on first popup open, cached by storyId */
+  const [sourceLeans, setSourceLeans] = useState<number[] | null>(null);
+
+  useEffect(() => {
+    if (!isOpen || !storyId) return;
+    // Serve from cache immediately if available
+    if (leanCache.has(storyId)) {
+      setSourceLeans(leanCache.get(storyId)!);
+      return;
+    }
+    // Fetch lean values — lightweight query, only political_lean column
+    fetchSourceLeans(storyId).then((leans) => {
+      if (leans.length > 0) {
+        leanCache.set(storyId, leans);
+        setSourceLeans(leans);
+      }
+    });
+  }, [isOpen, storyId]);
+
   useEffect(() => {
     if (!isOpen || !triggerRef.current) { setStage(0); return; }
     const mobile = window.innerWidth < 768;
@@ -246,7 +272,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       setPos({ x: 0, y: 0, mobile: true });
     } else {
       const r = triggerRef.current.getBoundingClientRect();
-      const W = 280, H = full ? 320 : 200;
+      const W = 280, H = 200;
       const spR = window.innerWidth - r.right;
       const x = spR > W + 16 ? r.right + 10 : r.left > W + 16 ? r.left - W - 10 : Math.max(8, (window.innerWidth - W) / 2);
       const y = Math.max(8, Math.min(r.top - 60, window.innerHeight - H - 16));
@@ -285,12 +311,6 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   if (!isOpen || !pos || typeof document === "undefined") return null;
 
   const TM: Record<string, string> = { us_major: "US Major", international: "Intl", independent: "Ind" };
-  const secondary = [
-    { label: "Sensationalism", v: data.sensationalism, d: data.sensationalism <= 25 ? "Measured" : data.sensationalism <= 50 ? "Moderate" : data.sensationalism <= 75 ? "Elevated" : "Inflammatory" },
-    { label: "Factual Rigor", v: data.factualRigor, d: data.factualRigor >= 70 ? "High" : data.factualRigor >= 40 ? "Moderate" : "Low", inv: true },
-    { label: "Framing", v: data.framing, d: data.framing <= 25 ? "Neutral" : data.framing <= 55 ? "Some" : "Heavy" },
-    { label: "Agreement", v: data.agreement, d: data.agreement <= 25 ? "Agree" : data.agreement <= 55 ? "Mixed" : "Disagree" },
-  ];
 
   const isMobile = pos.mobile;
 
@@ -327,16 +347,17 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
             {popupUnscored ? "Not enough analytical signal to determine lean" : tiltDescriptor(lean)}
           </p>
         )}
-        {/* KDE bell-curve sparkline — distribution shape instead of flat bar */}
+        {/* KDE spectrum — real shape when source leans are loaded, Gaussian fallback */}
         <div className="sigil-popup__spectrum">
           <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--left" />
           <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--right" />
           <MicroSpectrum
             mean={lean}
             spread={data.biasSpread?.leanSpread ?? 12}
-            height={18}
+            leans={sourceLeans ?? undefined}
+            height={40}
             showMarker={true}
-            strokeWidth={1.2}
+            strokeWidth={1.4}
             className="sigil-popup__spectrum-curve"
           />
         </div>
@@ -348,73 +369,25 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
       {full ? (
         <>
-          {/* ═══ SECTION 2: Circle → Source Coverage (full detail) ═══ */}
-          <div className="sigil-popup__section sigil-popup__scores" style={{
-            alignItems: "center",
-            opacity: stage >= 3 ? 1 : 0, transform: stage >= 3 ? "translateY(0)" : "translateY(-6px)",
-            transition: "opacity 280ms var(--ease-out), transform 320ms var(--spring)",
+          {/* ═══ SECTION 2: Source count — compact ═══ */}
+          <div className="sigil-popup__section" style={{
+            opacity: stage >= 3 ? 1 : 0,
+            transition: "opacity 280ms var(--ease-out)",
           }}>
-            {/* Mini coverage ring (echoing the void circle) */}
-            <svg viewBox="0 0 40 40" width="40" height="40" fill="none" className="sigil-popup__ring-svg">
-              <circle cx="20" cy="20" r="16" stroke="var(--border-subtle)" strokeWidth="2.5" opacity={0.25} />
-              <circle cx="20" cy="20" r="16"
-                stroke={lc} strokeWidth="2.5" strokeLinecap="round"
-                strokeDasharray={`${stage >= 3 ? Math.min(data.sourceCount / 15, 1) * (2 * Math.PI * 16) : 0} ${2 * Math.PI * 16}`}
-                style={{ transform: "rotate(-90deg)", transformOrigin: "20px 20px", transition: "stroke-dasharray 600ms var(--spring)" }}
-                opacity={0.6}
-              />
-              <text x="20" y="20" textAnchor="middle" dominantBaseline="central"
-                className="sigil__popup-lean"
-              >
-                <CountText target={data.sourceCount} active={stage >= 3} />
-              </text>
-            </svg>
-            {/* Source details */}
-            <div>
-              <div className="sigil-popup__source-label">
-                {data.sourceCount} source{data.sourceCount !== 1 ? "s" : ""}
-              </div>
-              {data.tierBreakdown && (
-                <div className="sigil-popup__tier-list">
-                  {Object.entries(data.tierBreakdown).map(([tier, count]) =>
-                    (count as number) > 0 ? (
-                      <span key={tier} className="sigil-popup__tier-tag">
-                        {TM[tier] || tier}: {count as number}
-                      </span>
-                    ) : null
-                  )}
-                </div>
-              )}
+            <div className="sigil-popup__source-label">
+              {data.sourceCount} source{data.sourceCount !== 1 ? "s" : ""}
             </div>
-          </div>
-
-          {/* ═══ SECTION 3: Secondary Scores — dot scale (matches BiasInspector) ═══ */}
-          <div className="sigil-popup__section">
-            {secondary.map((ax, i) => (
-              <div key={ax.label} className="sigil-popup__axis-row" style={{
-                opacity: stage >= 4 ? 1 : 0,
-                transition: `opacity 250ms var(--ease-out) ${i * 55}ms`,
-              }}>
-                <span className="sigil-popup__axis-label">
-                  {ax.label}
-                </span>
-                {/* 5-dot scale — consistent with BiasInspector subfactors */}
-                <span className="sigil-popup__dots">
-                  {Array.from({ length: 5 }, (_, di) => {
-                    const filled = Math.max(0, Math.min(5, Math.round((ax.v / 100) * 5)));
-                    return (
-                      <span key={di} className="sigil-popup__dot" style={{
-                        backgroundColor: di < filled ? "var(--fg-secondary)" : "var(--border-subtle)",
-                        transition: `background-color 250ms var(--ease-out) ${(150 + i * 55 + di * 30)}ms`,
-                      }} />
-                    );
-                  })}
-                </span>
-                <span className="sigil-popup__axis-desc">
-                  {ax.d}
-                </span>
+            {data.tierBreakdown && (
+              <div className="sigil-popup__tier-list" style={{ marginTop: 4 }}>
+                {Object.entries(data.tierBreakdown).map(([tier, count]) =>
+                  (count as number) > 0 ? (
+                    <span key={tier} className="sigil-popup__tier-tag">
+                      {TM[tier] || tier}: {count as number}
+                    </span>
+                  ) : null
+                )}
               </div>
-            ))}
+            )}
           </div>
         </>
       ) : (
@@ -505,7 +478,7 @@ function InkUnderline({ variant, color }: { variant: number; color: string }) {
 
 /* ── Main Sigil ────────────────────────────────────────────────────────── */
 
-export default function Sigil({ data, size = "sm", mode = "facts", instant = false }: SigilProps) {
+export default function Sigil({ data, size = "sm", mode = "facts", instant = false, storyId }: SigilProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { open, show, hide, toggle, onKey, keep } = useHover();
   const [mounted, setMounted] = useState(false);
@@ -570,7 +543,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       <SigilPopup
         triggerRef={ref} isOpen={open} onClose={() => hide()}
         onMouseEnter={keep} onMouseLeave={hide}
-        id={tooltipId} data={data} instant={instant} size={size}
+        id={tooltipId} data={data} instant={instant} size={size} storyId={storyId}
       />
     </div>
   );

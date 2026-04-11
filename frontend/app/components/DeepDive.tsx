@@ -1296,7 +1296,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             >
               {story.sigilData && (
                 <div className="dd-analysis-block__sigil">
-                  <Sigil data={story.sigilData} size="xl" />
+                  <Sigil data={story.sigilData} size="xl" storyId={story.id} />
                 </div>
               )}
               {spectrumSources.length > 0 && (

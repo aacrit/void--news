@@ -98,6 +98,29 @@ export async function fetchDeepDiveData(clusterId: string) {
   return data;
 }
 
+/** Lightweight fetch: political_lean values for all articles in a cluster.
+ *  Used by the Sigil popup to compute real KDE matching the DeepDive spectrum.
+ *  Much cheaper than fetchDeepDiveData — only the lean column, no joins on sources/rationale. */
+export async function fetchSourceLeans(clusterId: string): Promise<number[]> {
+  if (!_client) return [];
+  const { data, error } = await _client
+    .from("cluster_articles")
+    .select("article:articles(bias_scores(political_lean))")
+    .eq("cluster_id", clusterId);
+  if (error || !data) return [];
+  const leans: number[] = [];
+  for (const row of data) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const article = row.article as any;
+    if (!article) continue;
+    const biasRaw = article.bias_scores;
+    const bias = Array.isArray(biasRaw) ? biasRaw[0] : biasRaw;
+    const lean = bias?.political_lean as number;
+    if (typeof lean === "number") leans.push(lean);
+  }
+  return leans;
+}
+
 /** Fetch the best image URL for a cluster.
  *  Priority 1: cached_image_url on the cluster (Supabase Storage, no hotlink issues).
  *  Priority 2: og:image from articles, tier-ranked (us_major > international > independent).

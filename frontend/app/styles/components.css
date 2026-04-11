@@ -268,18 +268,18 @@
   font-weight: 700;
 }
 
-/* Spectrum bar inside popup — echoes the beam */
+/* Spectrum in popup — taller to let the KDE shape breathe */
 .sigil-popup__spectrum {
   position: relative;
-  height: 18px;
+  height: 40px;
   margin-bottom: 4px;
 }
 
 .sigil-popup__spectrum-tick {
   position: absolute;
-  top: 3px;
+  top: 4px;
   width: 2px;
-  height: 12px;
+  height: 32px;
   border-radius: 1px;
   opacity: 0.4;
 }
