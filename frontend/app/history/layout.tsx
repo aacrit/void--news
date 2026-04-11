@@ -1,3 +1,4 @@
+import '../styles/history.css';
 import HistoryTopbar from "./components/HistoryTopbar";
 import HistoryFooter from "./components/HistoryFooter";
 
