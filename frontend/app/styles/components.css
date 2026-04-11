@@ -3772,7 +3772,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   right: 0;
   top: 3px;
   height: 3px;
-  background: linear-gradient(to right, var(--bias-left), var(--bias-center) 50%, var(--bias-right));
+  background: linear-gradient(in oklch to right, var(--bias-far-left) 0%, var(--bias-left) 20%, var(--bias-center) 50%, var(--bias-right) 80%, var(--bias-far-right) 100%);
   border-radius: 2px;
   opacity: 0.4;
 }
