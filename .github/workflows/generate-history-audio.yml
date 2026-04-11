@@ -46,7 +46,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r pipeline/requirements.txt
 
       - name: Run history audio generation
         env:
