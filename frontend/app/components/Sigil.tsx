@@ -93,7 +93,10 @@ function DataMark({ data, size, mounted }: {
   const beamAngle = isUnscored ? 0 : (lean - 50) * 0.30; // ±15° range, level when unscored
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
-  const px = size === "xl" ? 56 : size === "lg" ? 42 : 28;
+  // Sizes increased so 3-digit source counts fit the lower semi-circle without
+  // overlap. fontSize=6 viewBox units is the maximum that fits within the
+  // r=9 chord at y=18 for a 3-digit number (inner chord ≈ 11.4 units).
+  const px = size === "xl" ? 72 : size === "lg" ? 56 : 40;
   // All sizes now use geometric precision — circle + straight beam
   const isOrganic = false;
 
@@ -187,12 +190,13 @@ function DataMark({ data, size, mounted }: {
         )}
       </g>
 
-      {/* Source count — below beam, in lower half of circle */}
+      {/* Source count — lower semi-circle. fontSize=6 viewBox units is the
+          max that fits a 3-digit number within the r=9 chord at y=18. */}
       <text x="16" y="18" textAnchor="middle" dominantBaseline="central"
         style={{
-          fontFamily: "var(--font-data)", fontSize: px > 32 ? 8 : 7, fontWeight: 700,
+          fontFamily: "var(--font-data)", fontSize: 6, fontWeight: 700,
           fill: "var(--fg-secondary)",
-          opacity: mounted ? 0.8 : 0,
+          opacity: mounted ? 0.85 : 0,
           transition: "opacity 400ms var(--ease-out) 300ms",
         }}
       >
