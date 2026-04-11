@@ -7210,6 +7210,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     flex-wrap: wrap;
     gap: var(--space-1);
     box-shadow: 0 -8px 24px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent);
+    z-index: var(--z-dropdown);
   }
 
   .mob-nav__topic-opt {
@@ -7381,6 +7382,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     border: none;
     padding: var(--space-2) 0;
     min-height: 44px;
+    min-width: 44px;
     cursor: pointer;
     transition: color 120ms var(--ease-rack);
   }

@@ -137,6 +137,10 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         {/* Content destinations */}
         <nav className="msp__links" aria-label="Side navigation">
           <span className="msp__section-label" data-msp-cascade="2">Read</span>
+          <Link href="/history" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --history</span>
+            <span className="msp__link-desc">The archive</span>
+          </Link>
           <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --weekly</span>
             <span className="msp__link-desc">Weekly digest</span>
