@@ -4,12 +4,14 @@ import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hapticMicro } from "../lib/haptics";
+import { useAudio } from "./AudioProvider";
 import { BASE_PATH } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
-   4 tabs: Feed, Sources, Weekly, More.
+   4 tabs: Feed, History, OnAir, More.
    "More" toggles MobileSidePanel (callback from parent).
+   "OnAir" triggers audio playback via AudioProvider.
    Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
@@ -18,7 +20,7 @@ interface MobileTabBarProps {
   moreOpen: boolean;
 }
 
-/* ── SVG Icons — 20x20, currentColor ── */
+/* -- SVG Icons — 20x20, currentColor -- */
 
 function FeedIcon() {
   return (
@@ -30,13 +32,23 @@ function FeedIcon() {
   );
 }
 
-function SourcesIcon() {
+function HistoryIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <circle cx="4" cy="10" r="2" opacity="0.6" />
-      <circle cx="8" cy="10" r="2" opacity="0.8" />
-      <circle cx="12" cy="10" r="2" />
-      <circle cx="16" cy="10" r="2" opacity="0.8" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="2" width="14" height="4" rx="1" />
+      <rect x="4" y="8" width="12" height="4" rx="1" />
+      <rect x="5" y="14" width="10" height="4" rx="1" />
+    </svg>
+  );
+}
+
+function OnAirIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="8" y="6" width="4" height="8" rx="2" />
+      <path d="M5 10a5 5 0 0 0 10 0" />
+      <line x1="10" y1="14" x2="10" y2="17" />
+      <line x1="7" y1="17" x2="13" y2="17" />
     </svg>
   );
 }
@@ -51,36 +63,65 @@ function MoreIcon() {
   );
 }
 
-const TABS = [
+type TabDef = {
+  key: string;
+  label: string;
+  Icon: () => React.JSX.Element;
+  href: string | null;
+  action?: "onair";
+};
+
+const TABS: TabDef[] = [
   { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
-  { key: "sources", label: "sources", Icon: SourcesIcon, href: "/sources" },
+  { key: "history", label: "history", Icon: HistoryIcon, href: "/history" },
+  { key: "onair", label: "onair", Icon: OnAirIcon, href: null, action: "onair" },
   { key: "more", label: "more", Icon: MoreIcon, href: null },
-] as const;
+];
 
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
+  const audio = useAudio();
 
   const isActive = useCallback(
     (key: string): boolean => {
-      // Strip basePath prefix for comparison
       const p = pathname.replace(BASE_PATH, "") || "/";
       switch (key) {
         case "feed":
           return p === "/" || p === "" || /^\/(world|us|europe|south-asia)\/?$/.test(p);
-        case "sources":
-          return p.startsWith("/sources");
+        case "history":
+          return p.startsWith("/history");
+        case "onair":
+          return audio.isPlaying;
         case "more":
           return moreOpen;
         default:
           return false;
       }
     },
-    [pathname, moreOpen]
+    [pathname, moreOpen, audio.isPlaying]
   );
+
+  const handleOnAirTap = useCallback(() => {
+    hapticMicro();
+    if (audio.isPlaying) {
+      audio.setPlayerVisible(true);
+      audio.setExpanded(true);
+      return;
+    }
+    if (audio.brief?.audio_url) {
+      audio.setPlayerVisible(true);
+      audio.handlePlayPause();
+      return;
+    }
+    const briefPill = document.querySelector(".mbp, .skybox");
+    if (briefPill) {
+      briefPill.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [audio]);
 
   return (
     <nav className="mtb" aria-label="Mobile navigation">
-      {TABS.map(({ key, label, Icon, href }) => {
+      {TABS.map(({ key, label, Icon, href, action }) => {
         const active = isActive(key);
         if (href) {
           return (
@@ -94,6 +135,20 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
               <Icon />
               <span className="mtb__label">{label}</span>
             </Link>
+          );
+        }
+        if (action === "onair") {
+          return (
+            <button
+              key={key}
+              type="button"
+              className={`mtb__tab${active ? " mtb__tab--active" : ""}`}
+              aria-label="Play audio brief"
+              onClick={handleOnAirTap}
+            >
+              <Icon />
+              <span className="mtb__label">{label}</span>
+            </button>
           );
         }
         return (

@@ -50,7 +50,7 @@ import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
-import { hapticConfirm, hapticLight } from "../lib/haptics";
+import { hapticConfirm, hapticLight, hapticMicro } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
