@@ -541,36 +541,26 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Cold Open — Staggered entrance sequence
+   Cold Open — Minimal entrance (functional not glamourous)
+   Content is visible immediately; only hero gets a brief opacity fade.
+   Stagger delays removed — no content hidden behind animation delays.
    --------------------------------------------------------------------------- */
 @keyframes histColdOpenFade {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-@keyframes histColdOpenScale {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+/* topbar/content/section: visible immediately, no animation overhead */
+.hist-cold-open--topbar,
+.hist-cold-open--content,
+.hist-cold-open--section {
+  opacity: 1;
 }
 
-.hist-cold-open--topbar {
-  opacity: 0;
-  animation: histColdOpenFade 600ms var(--ease-cinematic) 80ms both;
-}
-
+/* hero only: 150ms fade, no delay, no scale or translateY */
 .hist-cold-open--hero {
   opacity: 0;
-  animation: histColdOpenScale 800ms var(--ease-cinematic) 200ms both;
-}
-
-.hist-cold-open--content {
-  opacity: 0;
-  animation: histColdOpenFade 700ms var(--ease-cinematic) 400ms both;
-}
-
-.hist-cold-open--section {
-  opacity: 0;
-  animation: histColdOpenFade 600ms var(--ease-cinematic) 600ms both;
+  animation: histColdOpenFade 150ms ease both;
 }
 
 /* ---------------------------------------------------------------------------
@@ -578,10 +568,10 @@
    --------------------------------------------------------------------------- */
 .hist-reveal {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(12px);
   transition:
-    opacity 700ms var(--ease-cinematic),
-    transform 700ms var(--ease-cinematic);
+    opacity 300ms var(--ease-cinematic),
+    transform 300ms var(--ease-cinematic);
 }
 
 .hist-reveal--visible {
@@ -3044,8 +3034,8 @@
   overflow: hidden;
   /* Static archival filter — no longer animated via keyframe */
   filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.92);
-  /* H06: Cinematic dolly-in — slow zoom settling into frame */
-  animation: histDollyIn 4s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  /* H06: Dolly-in — 1.5s subtle settle (was 4s) */
+  animation: histDollyIn 1.5s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 .hist-stage__hero-fallback {
@@ -4651,7 +4641,7 @@ a.hist-figures__name:hover {
    Dolly-In Hero — Slow cinematic zoom on event detail hero
    --------------------------------------------------------------------------- */
 @keyframes histDollyIn {
-  from { transform: scale(1.06); }
+  from { transform: scale(1.03); }
   to   { transform: scale(1.0); }
 }
 
@@ -5962,56 +5952,37 @@ a.hist-figures__name:hover {
 }
 
 /* ---------------------------------------------------------------------------
-   Card Entrance Stagger — cascade left-to-right on timeline load
-   Rise from translateY(20px) + opacity(0) + blur(2px), 60ms apart.
+   Card Entrance — fast fade-in on timeline load (no scale, no blur)
    --------------------------------------------------------------------------- */
 @keyframes histCardEntrance {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .hist-tl-card--entrance {
-  animation: histCardEntrance 600ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
-  animation-delay: calc(var(--card-index, 0) * 60ms);
+  animation: histCardEntrance 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation-delay: calc(var(--card-index, 0) * 30ms);
 }
 
 /* Above cards: entrance includes the side-specific positioning */
 .hist-tl-card--entrance.hist-tl-card--above {
-  animation: histCardEntranceAbove 600ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
-  animation-delay: calc(var(--card-index, 0) * 60ms);
+  animation: histCardEntranceAbove 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation-delay: calc(var(--card-index, 0) * 30ms);
 }
 
 @keyframes histCardEntranceAbove {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .hist-tl-card--entrance.hist-tl-card--below {
-  animation: histCardEntranceBelow 600ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
-  animation-delay: calc(var(--card-index, 0) * 60ms);
+  animation: histCardEntranceBelow 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation-delay: calc(var(--card-index, 0) * 30ms);
 }
 
 @keyframes histCardEntranceBelow {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 /* ---------------------------------------------------------------------------
