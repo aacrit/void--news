@@ -17,11 +17,12 @@ import {
 
 /* ---------------------------------------------------------------------------
    DeepDiveSpectrum — Political lean spectrum visualization
-   Individual source pins at actual lean values on the KDE curve.
-   Desktop: hover → tooltip (interactive, pointer-events:auto).
-   Mobile: tap → persistent info bar.
-   12+ sources: compact source list below axis.
-   Keyboard: roving tabindex, arrow keys cycle by lean.
+   Source pins hidden by default — appear on hover (desktop) or tap (mobile).
+   Each pin shows a favicon inside a thin lean-colored ring.
+   Desktop: hover → tooltip (pointer-events:auto, hover bridge).
+   Mobile:  tap spectrum → show pins; tap pin → persistent info bar.
+   12+ sources: compact scrollable source list below axis.
+   Keyboard: roving tabindex on pin group, arrow keys cycle by lean.
    --------------------------------------------------------------------------- */
 
 export interface DeepDiveSpectrumSource {
@@ -38,8 +39,10 @@ export interface DeepDiveSpectrumSource {
 
 const W = 400;
 const SVG_H = 60;
-const PIN_MIN_GAP = 14;       // SVG units; within this → row 1
+const PIN_MIN_GAP = 14;
 const SOURCE_LIST_THRESHOLD = 12;
+const PIN_R = 7;          // visible circle radius (px in SVG coords)
+const FAVICON_SIZE = 10;  // favicon image size inside circle
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 
@@ -87,8 +90,8 @@ const LEAN_GRADIENT_STOPS: Array<{ offset: string; color: string }> = [
 ];
 
 /* ── Tooltip ─────────────────────────────────────────────────────────────
-   pointer-events: auto so the "Open article" link is reachable.
-   Dismiss is delayed 150ms so cursor can travel pin → tooltip.
+   pointer-events: auto — "Open article" link is clickable.
+   Hover bridge below tooltip closes the gap so cursor can travel pin→tooltip.
    ─────────────────────────────────────────────────────────────────────── */
 
 interface TooltipData {
@@ -114,7 +117,6 @@ function SpectrumTooltip({
       onPointerEnter={onEnter}
       onPointerLeave={onLeave}
     >
-      {/* Bridge: transparent extension below tooltip closes the hover gap */}
       <span className="dd-sv__tooltip-bridge" aria-hidden="true" />
       <p className="dd-sv__tooltip-name">{data.source.name}</p>
       <p className="dd-sv__tooltip-lean">
@@ -147,7 +149,7 @@ function SpectrumTooltip({
 }
 
 /* ── Mobile info bar ─────────────────────────────────────────────────────
-   Persistent selected-source bar. Full-width tap target for article link.
+   Persistent callout on tap. Full-width "Read article" button.
    ─────────────────────────────────────────────────────────────────────── */
 
 function SourceInfoBar({
@@ -189,7 +191,7 @@ function SourceInfoBar({
 }
 
 /* ── Compact source list (12+ sources) ──────────────────────────────────
-   Always-visible, scrollable, sorted by lean. Two columns on desktop.
+   Always-visible below axis. Sorted by lean. Two columns desktop.
    ─────────────────────────────────────────────────────────────────────── */
 
 function SourceList({ sources }: { sources: DeepDiveSpectrumSource[] }) {
@@ -223,18 +225,15 @@ function SourceList({ sources }: { sources: DeepDiveSpectrumSource[] }) {
   );
 }
 
-/* ── SpectrumAxis ────────────────────────────────────────────────────── */
+/* ── SpectrumAxis — gradient bar + bold L / C / R labels ────────────── */
 
 function SpectrumAxis() {
-  const ticks = [0, 14, 28, 50, 72, 86, 100];
   return (
     <div className="dd-sv__axis" aria-hidden="true">
-      {ticks.map((p) => (
-        <span key={p} className="dd-sv__axis-tick" style={{ left: `${p}%` }} />
-      ))}
-      <span className="dd-sv__axis-label" style={{ left: "0%" }}>L</span>
-      <span className="dd-sv__axis-label" style={{ left: "50%" }}>C</span>
-      <span className="dd-sv__axis-label" style={{ left: "100%" }}>R</span>
+      <div className="dd-sv__axis-bar" />
+      <span className="dd-sv__axis-label dd-sv__axis-label--l">Left</span>
+      <span className="dd-sv__axis-label dd-sv__axis-label--c">Center</span>
+      <span className="dd-sv__axis-label dd-sv__axis-label--r">Right</span>
     </div>
   );
 }
@@ -255,8 +254,110 @@ function TiltRow({ mean }: { mean: number }) {
   );
 }
 
+/* ── FaviconPin — single SVG source pin with favicon + fallback letter ──
+   Thin lean-colored ring, favicon inside, invisible 44×44 hit area.
+   Hidden by default; revealed via .dd-sv-view--pins-visible on parent.
+   ─────────────────────────────────────────────────────────────────────── */
+
+interface PinData {
+  source: DeepDiveSpectrumSource;
+  origIdx: number;
+  x: number;
+  y: number;
+  row: 0 | 1;
+  leanBucket: string;
+}
+
+function FaviconPin({
+  pin,
+  cy,
+  focused,
+  selected,
+  isMobile,
+  tabIdx,
+  onFocus,
+  onPointerEnter,
+  onPointerLeave,
+  onClick,
+}: {
+  pin: PinData;
+  cy: number;
+  focused: boolean;
+  selected: boolean;
+  isMobile: boolean;
+  tabIdx: number;
+  onFocus: () => void;
+  onPointerEnter: () => void;
+  onPointerLeave: () => void;
+  onClick: () => void;
+}) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const faviconUrl = useMemo(() => getFaviconUrl(pin.source.sourceUrl), [pin.source.sourceUrl]);
+
+  return (
+    <a
+      href={isMobile ? undefined : pin.source.articleUrl}
+      target={isMobile ? undefined : "_blank"}
+      rel={isMobile ? undefined : "noopener noreferrer"}
+      className={`dd-sv-pin${focused ? " dd-sv-pin--focused" : ""}${selected ? " dd-sv-pin--selected" : ""}`}
+      data-lean={pin.leanBucket}
+      tabIndex={tabIdx}
+      aria-label={`${pin.source.name} — ${leanLabel(pin.source.politicalLean)} — open article`}
+      onFocus={onFocus}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      onClick={(e) => {
+        if (isMobile) { e.preventDefault(); onClick(); }
+      }}
+    >
+      {/* 44×44 invisible hit area centered on pin */}
+      <rect
+        x={pin.x - 22} y={cy - 22}
+        width="44" height="44"
+        fill="transparent"
+        className="dd-sv-pin__hit"
+      />
+      {/* Lean-colored thin ring */}
+      <circle
+        cx={pin.x} cy={cy}
+        r={PIN_R}
+        fill="var(--bg-card)"
+        strokeWidth="1"
+        className="dd-sv-pin__circle"
+      />
+      {/* Favicon image */}
+      {!imgFailed && faviconUrl && (
+        <image
+          href={faviconUrl}
+          x={pin.x - FAVICON_SIZE / 2}
+          y={cy - FAVICON_SIZE / 2}
+          width={FAVICON_SIZE}
+          height={FAVICON_SIZE}
+          preserveAspectRatio="xMidYMid meet"
+          className="dd-sv-pin__favicon"
+          onError={() => setImgFailed(true)}
+        />
+      )}
+      {/* Fallback: first letter when favicon unavailable */}
+      {(imgFailed || !faviconUrl) && (
+        <text
+          x={pin.x}
+          y={cy + 2.5}
+          textAnchor="middle"
+          fontSize="6"
+          fontFamily="var(--font-data)"
+          fontWeight="700"
+          className="dd-sv-pin__letter"
+        >
+          {pin.source.name.charAt(0).toUpperCase()}
+        </text>
+      )}
+    </a>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
-   Bimodal + dead-zone detection (unchanged)
+   Bimodal detection
    ═══════════════════════════════════════════════════════════════════════ */
 
 interface BimodalPeak { lean: number; density: number; }
@@ -266,9 +367,8 @@ function detectBimodal(densities: number[]): BimodalInfo | null {
   if (densities.length < 10) return null;
   const peaks: Array<{ idx: number; density: number }> = [];
   for (let i = 2; i < densities.length - 2; i++) {
-    if (densities[i] > densities[i - 1] && densities[i] > densities[i + 1] && densities[i] >= 0.20) {
+    if (densities[i] > densities[i - 1] && densities[i] > densities[i + 1] && densities[i] >= 0.20)
       peaks.push({ idx: i, density: densities[i] });
-    }
   }
   if (peaks.length < 2) return null;
   peaks.sort((a, b) => b.density - a.density);
@@ -289,36 +389,15 @@ function detectBimodal(densities: number[]): BimodalInfo | null {
   };
 }
 
-function detectDeadZones(densities: number[]): Array<{ startLean: number; endLean: number; midLean: number }> {
-  const zones: Array<{ startLean: number; endLean: number; midLean: number }> = [];
-  let inZone = false, zoneStart = 0;
-  for (let i = 0; i < densities.length; i++) {
-    const lean = (i / (densities.length - 1)) * 100;
-    if (densities[i] < 0.03 && !inZone) { inZone = true; zoneStart = lean; }
-    else if (densities[i] >= 0.03 && inZone) {
-      inZone = false;
-      if (lean - zoneStart >= 14) zones.push({ startLean: zoneStart, endLean: lean, midLean: (zoneStart + lean) / 2 });
-    }
-  }
-  return zones;
-}
-
 /* ═══════════════════════════════════════════════════════════════════════
-   SpectrumView — KDE curve + individual source pins
+   SpectrumView — KDE curve + source pins (revealed on hover/tap)
    ═══════════════════════════════════════════════════════════════════════ */
-
-interface PinData {
-  source: DeepDiveSpectrumSource;
-  origIdx: number;
-  x: number;    // SVG units
-  y: number;    // SVG units (on curve)
-  row: 0 | 1;   // vertical row (collision detection)
-  leanBucket: string;
-}
 
 function SpectrumView({
   sources,
+  pinsVisible,
   isMobile,
+  onTogglePins,
   focusedIdx,
   setFocusedIdx,
   onPinHover,
@@ -327,7 +406,9 @@ function SpectrumView({
   selectedIdx,
 }: {
   sources: DeepDiveSpectrumSource[];
+  pinsVisible: boolean;
   isMobile: boolean;
+  onTogglePins: () => void;
   focusedIdx: number | null;
   setFocusedIdx: (i: number | null) => void;
   onPinHover: (pin: PinData, svgEl: SVGElement) => void;
@@ -356,8 +437,7 @@ function SpectrumView({
 
   const densities = useMemo(() => {
     if (isFlat) return null;
-    const bw  = isLow ? 6 : robustBandwidth(leans);
-    return normalizeKDE(computeKDE(leans, bw, 100));
+    return normalizeKDE(computeKDE(leans, isLow ? 6 : robustBandwidth(leans), 100));
   }, [leans, isFlat, isLow]);
 
   const paths = useMemo(() => {
@@ -381,53 +461,51 @@ function SpectrumView({
     });
   }, [densities, n, peakH, isFlat, isLow]);
 
-  const bimodal  = useMemo(() => (!densities || isFlat || n < 5) ? null : detectBimodal(densities),  [densities, isFlat, n]);
-  const deadZones = useMemo(() => (!densities || isFlat || n < 4) ? [] : detectDeadZones(densities), [densities, isFlat, n]);
+  const bimodal = useMemo(() =>
+    (!densities || isFlat || n < 5) ? null : detectBimodal(densities),
+  [densities, isFlat, n]);
 
   type CC = "consensus" | "leaning" | "divergent" | "split";
   const coverage = useMemo((): CC => {
-    if (bimodal)    return "split";
-    if (std >= 18)  return "divergent";
+    if (bimodal)           return "split";
+    if (std >= 18)         return "divergent";
     if (mean < 38 || mean > 62) return "leaning";
     return "consensus";
   }, [bimodal, std, mean]);
 
-  // Pin positions — 2-row vertical collision detection
+  // Pin positions — 2-row collision detection (row 1: +10px toward baseline)
   const pins = useMemo((): PinData[] => {
     const scaledD = densities ? densities.map((d) => d * (peakH / (SVG_H - 12))) : null;
     const list = sources.map((s, origIdx) => ({
-      source: s,
-      origIdx,
+      source: s, origIdx,
       x: (s.politicalLean / 100) * W,
       y: scaledD ? getYOnCurve(s.politicalLean, scaledD, SVG_H, 12) : SVG_H - 8,
       row: 0 as 0 | 1,
       leanBucket: leanToBucket(s.politicalLean),
     }));
-    // Sort by x, assign rows
     const byX = [...list].sort((a, b) => a.x - b.x);
     const lastX: [number, number] = [-Infinity, -Infinity];
     for (const pin of byX) {
       if (pin.x - lastX[0] >= PIN_MIN_GAP) { pin.row = 0; lastX[0] = pin.x; }
       else                                   { pin.row = 1; lastX[1] = pin.x; }
     }
-    return list; // restore original order
+    return list;
   }, [densities, sources, peakH]);
 
-  // Row-1 pins are shifted 10px down toward baseline (clamped)
   const pinY = useCallback((pin: PinData) =>
-    pin.row === 1 ? Math.min(pin.y + 10, SVG_H - 6) : pin.y,
+    pin.row === 1 ? Math.min(pin.y + 10, SVG_H - PIN_R - 2) : pin.y,
   []);
 
-  // Keyboard: sorted by lean, roving tabindex
+  // Keyboard roving tabindex
   const byLean = useMemo(() => [...pins].sort((a, b) => a.x - b.x), [pins]);
 
   const handleGroupKey = useCallback((e: React.KeyboardEvent) => {
     if (!["ArrowLeft","ArrowRight","Home","End"].includes(e.key)) return;
     e.preventDefault();
     const cur = focusedIdx ?? byLean[0]?.origIdx ?? 0;
-    const curPos = byLean.findIndex((p) => p.origIdx === cur);
-    if (e.key === "ArrowRight") setFocusedIdx(byLean[Math.min(curPos + 1, byLean.length - 1)].origIdx);
-    if (e.key === "ArrowLeft")  setFocusedIdx(byLean[Math.max(curPos - 1, 0)].origIdx);
+    const pos = byLean.findIndex((p) => p.origIdx === cur);
+    if (e.key === "ArrowRight") setFocusedIdx(byLean[Math.min(pos + 1, byLean.length - 1)].origIdx);
+    if (e.key === "ArrowLeft")  setFocusedIdx(byLean[Math.max(pos - 1, 0)].origIdx);
     if (e.key === "Home") setFocusedIdx(byLean[0].origIdx);
     if (e.key === "End")  setFocusedIdx(byLean[byLean.length - 1].origIdx);
   }, [byLean, focusedIdx, setFocusedIdx]);
@@ -468,7 +546,7 @@ function SpectrumView({
   }, [animated, paths]);
 
   return (
-    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}`}>
+    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}${pinsVisible ? " dd-sv-view--pins-visible" : ""}`}>
       <svg
         viewBox={`0 0 ${W} ${SVG_H}`}
         width="100%"
@@ -495,12 +573,20 @@ function SpectrumView({
           )}
         </defs>
 
+        {/* Mobile: tap SVG background to toggle pins */}
+        {isMobile && (
+          <rect
+            x="0" y="0" width={W} height={SVG_H}
+            fill="transparent"
+            onClick={onTogglePins}
+            style={{ cursor: "pointer" }}
+          />
+        )}
+
         {/* Dot strip — ≤3 sources */}
         {isFlat && (
-          <>
-            <line x1="10" y1={SVG_H - 8} x2={W - 10} y2={SVG_H - 8}
-              stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4" />
-          </>
+          <line x1="10" y1={SVG_H - 8} x2={W - 10} y2={SVG_H - 8}
+            stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4" />
         )}
 
         {/* Fill */}
@@ -530,7 +616,7 @@ function SpectrumView({
             stroke="var(--cin-amber)" strokeWidth="0.75" strokeDasharray="3 2" className="dd-sv-view__mean" />
         )}
 
-        {/* Bimodal peaks */}
+        {/* Bimodal peak annotations */}
         {bimodal && bimodal.peaks.map((peak, pi) => {
           const px = (peak.lean / 100) * W;
           const scaledD = densities!.map((d) => d * (peakH / (SVG_H - 12)));
@@ -547,16 +633,7 @@ function SpectrumView({
           );
         })}
 
-        {/* Dead zones */}
-        {deadZones.map((zone, zi) => (
-          <text key={`dz-${zi}`} x={(zone.midLean / 100) * W} y={SVG_H - 3}
-            textAnchor="middle" fill="var(--fg-muted)" fontSize="5.5"
-            fontFamily="var(--font-data)" className="dd-sv-view__dead-label">
-            no coverage
-          </text>
-        ))}
-
-        {/* ── Source pins — native SVG <a> with 44×44 hit rects ── */}
+        {/* Source pins — hidden by default, revealed via .dd-sv-view--pins-visible */}
         <g
           role="group"
           aria-label="Source positions on political lean spectrum"
@@ -564,48 +641,22 @@ function SpectrumView({
         >
           {pins.map((pin, i) => {
             const cy = pinY(pin);
-            const isFocused  = focusedIdx  === pin.origIdx;
-            const isSelected = selectedIdx === pin.origIdx;
             return (
-              <a
+              <FaviconPin
                 key={`pin-${i}`}
-                href={isMobile ? undefined : pin.source.articleUrl}
-                target={isMobile ? undefined : "_blank"}
-                rel={isMobile ? undefined : "noopener noreferrer"}
-                className={`dd-sv-pin${isFocused ? " dd-sv-pin--focused" : ""}${isSelected ? " dd-sv-pin--selected" : ""}`}
-                data-lean={pin.leanBucket}
-                tabIndex={isFocused || (focusedIdx === null && i === 0) ? 0 : -1}
-                aria-label={`${pin.source.name} — ${leanLabel(pin.source.politicalLean)} — open article`}
+                pin={pin}
+                cy={cy}
+                focused={focusedIdx === pin.origIdx}
+                selected={selectedIdx === pin.origIdx}
+                isMobile={isMobile}
+                tabIdx={focusedIdx === pin.origIdx || (focusedIdx === null && i === 0) ? 0 : -1}
                 onFocus={() => setFocusedIdx(pin.origIdx)}
-                onPointerEnter={(e) => {
-                  if (isMobile) return;
-                  onPinHover(pin, e.currentTarget as unknown as SVGElement);
+                onPointerEnter={() => {
+                  if (!isMobile) onPinHover(pin, document.querySelector("svg.dd-sv-view__svg") as SVGElement);
                 }}
-                onPointerLeave={() => {
-                  if (!isMobile) onPinHoverEnd();
-                }}
-                onClick={(e) => {
-                  if (isMobile) {
-                    e.preventDefault();
-                    onPinTap(pin.origIdx);
-                  }
-                }}
-              >
-                {/* Invisible 44×44 hit area */}
-                <rect
-                  x={pin.x - 22} y={cy - 22}
-                  width="44" height="44"
-                  fill="transparent"
-                  className="dd-sv-pin__hit"
-                />
-                {/* Visible circle */}
-                <circle
-                  cx={pin.x} cy={cy} r="4"
-                  fill="var(--bg-card)"
-                  strokeWidth="2"
-                  className="dd-sv-pin__circle"
-                />
-              </a>
+                onPointerLeave={() => { if (!isMobile) onPinHoverEnd(); }}
+                onClick={() => onPinTap(pin.origIdx)}
+              />
             );
           })}
         </g>
@@ -628,6 +679,8 @@ function SpectrumView({
 
 /* ═══════════════════════════════════════════════════════════════════════
    Container — DeepDiveSpectrum
+   Owns: pinsVisible, tooltip, selectedPin, keyboard focus, isMobile.
+   Shared dismiss timer so tooltip hover keeps pins alive.
    ═══════════════════════════════════════════════════════════════════════ */
 
 interface DeepDiveSpectrumProps {
@@ -636,11 +689,13 @@ interface DeepDiveSpectrumProps {
 
 export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   const [tooltip, setTooltip]         = useState<TooltipData | null>(null);
+  const [pinsVisible, setPinsVisible] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [focusedIdx, setFocusedIdx]   = useState<number | null>(null);
   const [isMobile, setIsMobile]       = useState(false);
 
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const svgRef       = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mean = useMemo(() => weightedMeanLean(sources), [sources]);
@@ -648,46 +703,69 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     setIsMobile(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const h = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
   }, []);
 
-  // Mobile: tap outside → dismiss info bar
+  // Mobile: tap outside container → dismiss info bar
   useEffect(() => {
     if (selectedIdx === null || !isMobile) return;
     const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node))
         setSelectedIdx(null);
-      }
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [selectedIdx, isMobile]);
 
-  const scheduleHide = useCallback(() => {
-    dismissTimer.current = setTimeout(() => setTooltip(null), 150);
-  }, []);
-
-  const cancelHide = useCallback(() => {
+  // Shared dismiss timer — delays hiding pins + tooltip so cursor can travel
+  const cancelDismiss = useCallback(() => {
     if (dismissTimer.current) { clearTimeout(dismissTimer.current); dismissTimer.current = null; }
   }, []);
 
-  const handlePinHover = useCallback((pin: PinData, svgEl: SVGElement) => {
-    cancelHide();
-    const rect = svgEl.closest("svg")!.getBoundingClientRect();
-    const svgWidth = rect.width;
-    const x = rect.left + (pin.x / W) * svgWidth;
-    const svgHeight = rect.height;
-    const y = rect.top + (pin.y / SVG_H) * svgHeight;
-    setTooltip({ source: pin.source, x, y });
-  }, [cancelHide]);
+  const scheduleDismiss = useCallback(() => {
+    cancelDismiss();
+    dismissTimer.current = setTimeout(() => {
+      setTooltip(null);
+      setPinsVisible(false);
+    }, 600);
+  }, [cancelDismiss]);
 
-  const handlePinHoverEnd = useCallback(() => { scheduleHide(); }, [scheduleHide]);
+  // Desktop: enter container → show pins; leave → delayed hide
+  const handleContainerEnter = useCallback(() => {
+    if (isMobile) return;
+    cancelDismiss();
+    setPinsVisible(true);
+  }, [isMobile, cancelDismiss]);
+
+  const handleContainerLeave = useCallback(() => {
+    if (isMobile) return;
+    scheduleDismiss();
+  }, [isMobile, scheduleDismiss]);
+
+  // Pin hover → compute tooltip position from SVG coordinate space
+  const handlePinHover = useCallback((pin: PinData) => {
+    cancelDismiss();
+    // Find the rendered SVG element
+    const svgEl = containerRef.current?.querySelector("svg.dd-sv-view__svg") as SVGSVGElement | null;
+    if (!svgEl) return;
+    const rect = svgEl.getBoundingClientRect();
+    const x = rect.left + (pin.x / W) * rect.width;
+    const y = rect.top  + (pin.y / SVG_H) * rect.height;
+    setTooltip({ source: pin.source, x, y });
+  }, [cancelDismiss]);
+
+  const handlePinHoverEnd = useCallback(() => scheduleDismiss(), [scheduleDismiss]);
 
   const handlePinTap = useCallback((idx: number) => {
     setSelectedIdx((prev) => prev === idx ? null : idx);
   }, []);
+
+  const handleTogglePins = useCallback(() => {
+    setPinsVisible((v) => !v);
+    if (pinsVisible) setSelectedIdx(null);
+  }, [pinsVisible]);
 
   if (sources.length === 0) {
     return (
@@ -701,10 +779,17 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   const showSourceList = sources.length > SOURCE_LIST_THRESHOLD;
 
   return (
-    <div className="dd-sv" ref={containerRef}>
+    <div
+      className="dd-sv"
+      ref={containerRef}
+      onPointerEnter={handleContainerEnter}
+      onPointerLeave={handleContainerLeave}
+    >
       <SpectrumView
         sources={sources}
+        pinsVisible={pinsVisible}
         isMobile={isMobile}
+        onTogglePins={handleTogglePins}
         focusedIdx={focusedIdx}
         setFocusedIdx={setFocusedIdx}
         onPinHover={handlePinHover}
@@ -715,7 +800,7 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
       <TiltRow mean={mean} />
       <SpectrumAxis />
 
-      {/* Mobile info bar — tap-to-select */}
+      {/* Mobile info bar */}
       {isMobile && selectedSource && (
         <SourceInfoBar source={selectedSource} onDismiss={() => setSelectedIdx(null)} />
       )}
@@ -723,12 +808,12 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
       {/* Compact source list — 12+ sources */}
       {showSourceList && <SourceList sources={sources} />}
 
-      {/* Desktop tooltip — pointer-events:auto, hover bridge inside */}
+      {/* Desktop tooltip */}
       {!isMobile && tooltip && (
         <SpectrumTooltip
           data={tooltip}
-          onEnter={cancelHide}
-          onLeave={scheduleHide}
+          onEnter={cancelDismiss}
+          onLeave={scheduleDismiss}
         />
       )}
     </div>
