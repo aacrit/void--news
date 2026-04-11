@@ -338,7 +338,7 @@
 .film-preview__broadsheet-cols { display: flex; gap: 1px; padding: 0 4px; }
 .film-preview__broadsheet-cols > div { flex: 1; height: 20px; background: var(--fg-tertiary); opacity: 0.08; border-radius: 1px; }
 .film-preview--sources { background: var(--bg-secondary); }
-.film-preview__spectrum-bar { height: 3px; margin: 22px 4px 0; background: linear-gradient(in oklch to right, var(--bias-far-left) 0%, var(--bias-left) 20%, var(--bias-center) 50%, var(--bias-right) 80%, var(--bias-far-right) 100%); border-radius: 2px; }
+.film-preview__spectrum-bar { height: 3px; margin: 22px 4px 0; background: linear-gradient(to right, var(--bias-far-left) 0%, var(--bias-left) 20%, var(--bias-center) 50%, var(--bias-right) 80%, var(--bias-far-right) 100%); border-radius: 2px; }
 .film-preview__dots { position: absolute; inset: 0; }
 .film-preview__src-dot { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--fg-tertiary); }
 .film-preview--onair { background: var(--palette-onair-surface, #1A1816); }
