@@ -3045,7 +3045,7 @@
   /* Static archival filter — no longer animated via keyframe */
   filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.92);
   /* H06: Cinematic dolly-in — slow zoom settling into frame */
-  animation: histDollyIn 8s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation: histDollyIn 4s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 .hist-stage__hero-fallback {
@@ -3068,9 +3068,9 @@
 :root[data-mode="dark"] .hist-stage__hero-overlay {
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.55) 50%,
-    rgba(0, 0, 0, 0.92) 100%
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.48) 50%,
+    rgba(0, 0, 0, 0.80) 100%
   );
 }
 
@@ -3537,7 +3537,8 @@ a.hist-figures__name:hover {
   margin-bottom: var(--space-3);
 }
 
-/* Key argument blockquote — prominent, Playfair italic */
+/* Key argument blockquote — prominent, Playfair italic.
+   Uses perspective color via CSS var threaded from witness block. */
 .hist-witness__argument {
   font-family: var(--font-editorial);
   font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
@@ -3545,7 +3546,7 @@ a.hist-figures__name:hover {
   font-style: italic;
   line-height: 1.5;
   color: var(--hist-ink);
-  border-left: 3px solid var(--hist-accent);
+  border-left: 3px solid var(--persp-color, var(--hist-accent));
   padding-left: var(--space-3);
   margin: 0 0 var(--space-2);
   quotes: none;
@@ -6081,7 +6082,7 @@ a.hist-figures__name:hover {
 }
 
 .hist-tl-card--focused .hist-tl-card__photo-img {
-  animation: histKenBurnsFocused 8s ease-in-out alternate infinite;
+  animation: histKenBurnsFocused 6s ease-in-out forwards;
 }
 
 .hist-tl-card--focused {
@@ -6705,6 +6706,7 @@ a.hist-figures__name:hover {
   align-items: center;
   gap: var(--space-2);
   width: 100%;
+  min-height: 44px;
   background: var(--hist-bg-secondary);
   border: 1px solid var(--hist-border-subtle);
   padding: var(--space-3) var(--space-4);

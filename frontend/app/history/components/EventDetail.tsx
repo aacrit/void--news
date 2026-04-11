@@ -668,10 +668,12 @@ function WitnessBlock({
     setExpanded((prev) => !prev);
   }, []);
 
+  const perspColor = PERSP_COLORS[perspective.color] || PERSP_COLORS.a;
+
   return (
     <div
       className={`hist-witness hist-witness--${side} hist-reveal`}
-      style={{ transitionDelay: `${index * 150}ms` }}
+      style={{ transitionDelay: `${index * 150}ms`, "--persp-color": perspColor } as React.CSSProperties}
     >
       {/* Witness identity */}
       <div className="hist-witness__identity">
