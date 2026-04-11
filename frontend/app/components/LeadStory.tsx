@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
-import MicroSpectrum from "./MicroSpectrum";
 import { hapticLight } from "../lib/haptics";
 
 interface LeadStoryProps {
@@ -93,18 +92,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
         <p className="lead-story__summary lead-story__summary--pending">
           {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
         </p>
-      )}
-
-      {/* MicroSpectrum — lean distribution bell-curve, 4+ sources only */}
-      {story.sigilData.sourceCount >= 4 && (
-        <div className="lead-story__spectrum">
-          <MicroSpectrum
-            mean={story.sigilData.politicalLean}
-            spread={story.sigilData.biasSpread?.leanSpread ?? 12}
-            height={28}
-            strokeWidth={1.5}
-          />
-        </div>
       )}
 
       {/* Consensus ratio now embedded in Sigil */}
