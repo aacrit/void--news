@@ -7432,6 +7432,12 @@ a.hist-figures__name:hover {
   max-width: calc(100vw - 2rem);
 }
 
+@media (max-width: 767px) {
+  .hist-longview-controls {
+    bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  }
+}
+
 .hist-longview-toggle {
   display: flex;
   gap: 0;
