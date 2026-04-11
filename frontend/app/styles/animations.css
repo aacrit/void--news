@@ -708,16 +708,7 @@
   }
 }
 
-@keyframes mobileNavRise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* mobileNavRise removed — bottom nav appears instantly on mobile (persistent chrome) */
 
 /* ── Mobile Edition Switch: Vertical Dissolve ──
    Replaces horizontal whip pan for bottom-nav gesture context. */

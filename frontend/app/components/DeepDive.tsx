@@ -296,7 +296,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       hideTimer = setTimeout(() => {
         setShowSwipeHint(false);
         try { sessionStorage.setItem("dd-swipe-hint-seen", "1"); } catch { /* ignore */ }
-      }, 2000);
+      }, 4000);
     }, 500);
     return () => {
       clearTimeout(showTimer);
@@ -1177,6 +1177,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                   </span>
                 )}
               </div>
+            )}
+            {/* Static story counter — mobile only, replaces swipe hint as persistent affordance */}
+            {!isDesktop && totalStories > 1 && (
+              <span className="dd-story-counter" aria-label={`Story ${storyIndex + 1} of ${totalStories}`}>
+                {storyIndex + 1} / {totalStories}
+              </span>
             )}
 
             {/* Share button */}
