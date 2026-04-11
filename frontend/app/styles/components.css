@@ -160,9 +160,9 @@
   transition: opacity 300ms var(--ease-out), filter 300ms var(--ease-out);
 }
 
-.sigil--sm  { gap: 5px; }
-.sigil--lg  { gap: 8px; }
-.sigil--xl  { gap: 12px; }
+.sigil--sm  { gap: 7px; }
+.sigil--lg  { gap: 10px; }
+.sigil--xl  { gap: 14px; }
 
 /* Sigil tilt label — tilt vocabulary for story-level lean.
    Stamp entrance: beam settles → label appears (L-cut timing). */
