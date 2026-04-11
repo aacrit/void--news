@@ -11,7 +11,6 @@ import {
   sigilLabelInfo,
   lerpColor as lerp,
 } from "../lib/biasColors";
-import MicroSpectrum from "./MicroSpectrum";
 
 /* ==========================================================================
    Sigil — The Brand Mark AS the Bias Indicator
@@ -327,20 +326,22 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
             {popupUnscored ? "Not enough analytical signal to determine lean" : tiltDescriptor(lean)}
           </p>
         )}
-        {/* KDE bell-curve — echoes the beam with distribution shape */}
+        {/* Spectrum bar — echoes the beam */}
         <div className="sigil-popup__spectrum">
           {/* Ticks at ends (echoing beam weight ticks) */}
           <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--left" />
           <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--right" />
-          {/* MicroSpectrum KDE curve with built-in ring marker at peak */}
-          <MicroSpectrum
-            mean={lean}
-            spread={data.biasSpread?.leanSpread ?? 12}
-            height={18}
-            showMarker={true}
-            strokeWidth={1.2}
-            className="sigil-popup__spectrum-curve"
-          />
+          {/* Track */}
+          <div className="sigil-popup__spectrum-track" />
+          {/* Marker dot — positioned within the track (6px inset each side) */}
+          <div className="sigil-popup__spectrum-marker-area">
+            <div className="sigil-popup__spectrum-dot" style={{
+              left: `${lean}%`,
+              backgroundColor: lc,
+              transform: stage >= 2 ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0)",
+              boxShadow: `0 0 0 2.5px var(--bg-card)`,
+            }} />
+          </div>
         </div>
         {/* Tick labels */}
         <div className="sigil-popup__spectrum-labels">

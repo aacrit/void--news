@@ -3,7 +3,6 @@
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
-import MicroSpectrum from "./MicroSpectrum";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 
@@ -73,18 +72,6 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         <p className="story-card__summary story-card__summary--pending">
           {story.source.count} source{story.source.count !== 1 ? 's' : ''} reporting
         </p>
-      )}
-
-      {/* MicroSpectrum — lean distribution bell-curve, 4+ sources only */}
-      {story.sigilData.sourceCount >= 4 && (
-        <div className="story-card__spectrum">
-          <MicroSpectrum
-            mean={story.sigilData.politicalLean}
-            spread={story.sigilData.biasSpread?.leanSpread ?? 12}
-            height={24}
-            strokeWidth={1.3}
-          />
-        </div>
       )}
 
       {/* Consensus ratio now embedded in Sigil */}
