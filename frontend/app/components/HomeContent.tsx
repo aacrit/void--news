@@ -6,6 +6,7 @@ import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, O
 import { EDITIONS, _ALL_EDITIONS, LEAN_RANGES } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError, fetchClusterLeadImage } from "../lib/supabase";
+import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
@@ -428,20 +429,28 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   useEffect(() => {
     const controller = new AbortController();
 
-    // Stale-while-revalidate: show cached stories instantly on mount,
-    // then fetch fresh data in background and swap when ready.
-    try {
-      const cached = localStorage.getItem(`void-stories-${activeEdition}`);
-      if (cached && stories.length === 0) {
-        const parsed = JSON.parse(cached) as Story[];
-        if (parsed.length > 0) {
-          setStories(parsed.map(sanitizeStory));
-        }
+    // Stale-while-revalidate via IndexedDB: show cached stories instantly
+    // on repeat visits (no loading skeleton), then fetch fresh data in
+    // background and silently swap when ready.
+    let hasCachedData = false;
+
+    async function loadCachedStories() {
+      const cacheKey = `feed-${activeEdition}`;
+      const cached = await cacheGet<Story[]>(cacheKey);
+      if (cached && cached.data.length > 0 && !controller.signal.aborted) {
+        setStories(cached.data.map(sanitizeStory));
+        setIsLoading(false);
+        hasCachedData = true;
       }
-    } catch { /* localStorage unavailable */ }
+    }
 
     async function loadFromSupabase() {
-      setIsLoading(true);
+      // Only show loading skeleton when there is no cached data to display.
+      // On repeat visits, cached stories are already rendered — skeleton would
+      // flash over visible content.
+      if (!hasCachedData) {
+        setIsLoading(true);
+      }
       setError(null);
 
       // Guard: if Supabase client is unavailable, surface a user-friendly error
@@ -485,20 +494,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         const clusters = res.data || [];
 
         if (clusters.length === 0) {
-          // Try to restore cached stories so the user never sees an empty feed
-          // (pipeline mid-run, transient DB gap, or retention cleanup).
-          try {
-            const cached = localStorage.getItem(`void-stories-${activeEdition}`);
-            if (cached) {
-              const parsed = JSON.parse(cached) as Story[];
-              if (parsed.length > 0) {
-                setStories(parsed.map(sanitizeStory));
-                setIsLoading(false);
-                return;
-              }
+          // When Supabase returns empty (pipeline mid-run, transient DB gap),
+          // keep showing any cached data already on screen rather than blanking.
+          if (!hasCachedData) {
+            // Last resort: try IndexedDB for any previously cached feed
+            const cached = await cacheGet<Story[]>(`feed-${activeEdition}`);
+            if (cached && cached.data.length > 0) {
+              setStories(cached.data.map(sanitizeStory));
+              setIsLoading(false);
+              return;
             }
-          } catch { /* localStorage unavailable */ }
-          setStories([]);
+            setStories([]);
+          }
           setIsLoading(false);
           return;
         }
@@ -653,13 +660,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         setStories(mappedStories);
         setIsLoading(false);
 
-        // Cache stories so the feed is never empty during pipeline gaps
-        try {
-          localStorage.setItem(
-            `void-stories-${activeEdition}`,
-            JSON.stringify(mappedStories.slice(0, 50)),
-          );
-        } catch { /* quota exceeded or unavailable — no-op */ }
+        // Persist to IndexedDB for instant render on next visit
+        cacheSet(`feed-${activeEdition}`, mappedStories.slice(0, 50), activeEdition);
 
         const { data: run } = await supabase
           .from("pipeline_runs")
@@ -680,7 +682,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
     }
 
-    loadFromSupabase();
+    // Load cached data first (instant), then revalidate from Supabase.
+    // Sequential: cache read must complete before Supabase fetch starts
+    // so we know whether to show the loading skeleton.
+    loadCachedStories().then(() => loadFromSupabase());
     return () => controller.abort();
   }, [activeEdition, retryKey]);
 
