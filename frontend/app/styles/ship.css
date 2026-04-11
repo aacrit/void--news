@@ -1539,7 +1539,7 @@ a.ship-card__commit:hover {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .ship-page {
     padding: var(--space-4) var(--space-3);
     --ship-grid-minor-color: transparent;

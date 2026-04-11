@@ -784,9 +784,9 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* Tablet portrait: 2 columns */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .np-root { padding: 16px 20px 32px; }
-  .np-masthead__nameplate { font-size: 42px; }
+  .np-masthead__nameplate { font-size: clamp(1.75rem, 8vw, 2.625rem); }
 
   .np-front {
     display: block;
@@ -878,6 +878,15 @@ html:has(.np-root) body { background: transparent; }
   }
 
   .np-pdf-action { bottom: 12px; right: 12px; }
+
+  /* Tab bar clearance — content must not hide behind fixed bottom nav */
+  .np-root {
+    padding-bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + var(--space-4, 16px));
+  }
+
+  /* Touch targets — WCAG 44x44px minimum */
+  .np-article { min-height: 44px; }
+  .np-pdf-action { min-height: 44px; min-width: 44px; }
 }
 
 /* ==========================================================================

@@ -817,6 +817,12 @@
      Used for padding-bottom on .page-main so content clears the fixed nav. */
   --nav-bottom-height: 52px;
 
+  /* Total height of mobile tab bar chrome: tab bar + mini-player potential.
+     Used by all pages for padding-bottom to clear fixed bottom chrome.
+     52px tab bar + 44px mini-player potential = 96px, rounded to 64px base
+     (mini-player only visible during playback). */
+  --tab-bar-height: 64px;
+
   /* Height of the sticky lean-bar on mobile (44px min-height + 2px border).
      Used by .section-header sticky top so it docks below the lean-bar and
      does not overlap it when both are simultaneously stuck. */

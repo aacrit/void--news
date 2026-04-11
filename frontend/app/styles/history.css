@@ -4814,6 +4814,16 @@
   padding: var(--space-3) var(--space-4);
 }
 
+/* ── Mobile tab bar clearance ── */
+@media (max-width: 767px) {
+  .hist-main {
+    padding-bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + var(--space-4));
+  }
+  .hist-page {
+    padding-bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* ── Tablet (768px+) ── */
 @media (min-width: 768px) {
   .hist-persp-tab {

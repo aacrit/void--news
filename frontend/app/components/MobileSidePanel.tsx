@@ -56,9 +56,22 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
     };
   }, [open]);
 
-  // Swipe right to close
+  // Swipe right to close with visual drag feedback
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartRef.current = { x: e.touches[0].clientX };
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current || !panelRef.current) return;
+    const dx = e.touches[0].clientX - touchStartRef.current.x;
+    if (dx > 0) {
+      requestAnimationFrame(() => {
+        if (panelRef.current) {
+          panelRef.current.style.transform = `translateX(${dx}px)`;
+          panelRef.current.style.transition = "none";
+        }
+      });
+    }
   }, []);
 
   const handleTouchEnd = useCallback(
@@ -68,6 +81,9 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
       if (dx > 60) {
         hapticLight();
         onClose();
+      } else if (panelRef.current) {
+        panelRef.current.style.transition = "transform 300ms var(--spring-snappy)";
+        panelRef.current.style.transform = "";
       }
       touchStartRef.current = null;
     },
@@ -96,6 +112,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         aria-modal={open}
         aria-label="Navigation menu"
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         {/* Header — ScaleIcon brand mark with ink underline */}
