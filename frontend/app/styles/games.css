@@ -1696,3 +1696,793 @@
     min-height: 40px;
   }
 }
+
+
+/* ==========================================================================
+   UNDERTOW — Daily Cultural Subtext Puzzle
+   Dark cinematic: #0a0a0a bg, warm newsprint text, amber accents.
+   Film grain + vignette. The artifact text is the hero.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Undertow Page — Container & Atmosphere
+   -------------------------------------------------------------------------- */
+
+.undertow-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--space-6) var(--space-5);
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  background: #0a0a0a;
+  color: #f5f0e8;
+}
+
+/* Vignette — radial darkening at edges */
+.undertow-page__vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 70% at 50% 50%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Film grain overlay */
+.undertow-page__grain {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+}
+
+.undertow-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Navigation ---- */
+.undertow-page__nav {
+  margin-bottom: var(--space-5);
+}
+
+.undertow-page__back {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: #8a8278;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  min-height: 44px;
+}
+
+.undertow-page__back:hover {
+  color: #f5f0e8;
+}
+
+.undertow-page__back:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ---- Header ---- */
+.undertow-page__header {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.undertow-page__title {
+  font-family: var(--font-meta);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f5f0e8;
+  line-height: 1.1;
+  margin-bottom: var(--space-2);
+}
+
+.undertow-page__meta {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: #8a8278;
+  letter-spacing: 0.04em;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---- Axis Announcement ---- */
+.undertow-page__axis {
+  text-align: center;
+  margin-bottom: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+  border-top: 1px solid #2a2a2a;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.undertow-page__axis-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8278;
+  margin-bottom: var(--space-3);
+}
+
+.undertow-page__axis-poles {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.undertow-page__pole {
+  font-family: var(--font-meta);
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f5f0e8;
+}
+
+.undertow-page__axis-line {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: #3a3a3a;
+  letter-spacing: -0.05em;
+  flex-shrink: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 40ch;
+}
+
+.undertow-page__axis-desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: #8a8278;
+  font-style: italic;
+  max-width: 50ch;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* ---- Attempt Counter ---- */
+.undertow-page__attempt {
+  text-align: center;
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.undertow-page__attempt-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8278;
+}
+
+.undertow-page__attempt-dots {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.undertow-page__attempt-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8a8278;
+  opacity: 0.2;
+  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.undertow-page__attempt-dot--active {
+  opacity: 1;
+  background: #c9a84c;
+}
+
+/* ---- Feedback Message ---- */
+.undertow-page__feedback {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c9a84c;
+  text-align: center;
+  margin-bottom: var(--space-4);
+  animation: utFeedbackIn 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes utFeedbackIn {
+  0% { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Artifact Cards Grid ---- */
+.undertow-page__cards {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .undertow-page__cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Revealed: single column for full-width reveal with commentary */
+.undertow-page__cards--revealed {
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- Submit Row ---- */
+.undertow-page__submit-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+}
+
+.undertow-page__submit {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8278;
+  border: 1px solid #3a3a3a;
+  background: transparent;
+  padding: var(--space-3) var(--space-6);
+  border-radius: 2px;
+  cursor: not-allowed;
+  opacity: 0.5;
+  transition:
+    opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.undertow-page__submit--ready {
+  opacity: 1;
+  cursor: pointer;
+  color: #c9a84c;
+  border-color: #c9a84c;
+}
+
+.undertow-page__submit--ready:hover {
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.undertow-page__submit--ready:active {
+  transform: scale(0.97);
+  transition: transform 60ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.undertow-page__submit--ready:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 2px;
+}
+
+/* ---- Summary (Post-Reveal) ---- */
+.undertow-page__summary {
+  text-align: center;
+  padding: var(--space-5) 0 var(--space-6);
+  animation: utSummaryIn 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes utSummaryIn {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.undertow-page__divider {
+  width: min(60%, 300px);
+  height: 4px;
+  margin: 0 auto var(--space-5);
+  display: block;
+}
+
+.undertow-page__divider path {
+  fill: none;
+  stroke: #c9a84c;
+  stroke-width: 1;
+  opacity: 0.3;
+}
+
+.undertow-page__result {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  color: #f5f0e8;
+  line-height: 1.2;
+  margin-bottom: var(--space-5);
+}
+
+.undertow-page__result-attempts {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: #8a8278;
+  font-weight: 400;
+}
+
+.undertow-page__tomorrow {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: #8a8278;
+  letter-spacing: 0.04em;
+  margin-top: var(--space-4);
+}
+
+
+/* --------------------------------------------------------------------------
+   ArtifactCard — Document-like card for cultural artifacts
+   -------------------------------------------------------------------------- */
+
+.ut-card {
+  position: relative;
+  background: #111009;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  cursor: grab;
+  transition:
+    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.ut-card:hover {
+  border-color: #3a3a3a;
+}
+
+.ut-card:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 2px;
+}
+
+/* Drag state */
+.ut-card--dragging {
+  transform: rotate(1deg) translateY(-6px) scale(1.02);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0.85;
+  cursor: grabbing;
+  z-index: 100;
+}
+
+/* Selected (mobile tap) */
+.ut-card--selected {
+  border-color: #c9a84c;
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.2);
+}
+
+/* Assigned to a slot */
+.ut-card--assigned {
+  border-color: #c9a84c;
+}
+
+.ut-card--assigned::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #c9a84c;
+  opacity: 0.6;
+}
+
+/* Wrong guess shake */
+.ut-card--wrong {
+  animation: utCardShake 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes utCardShake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-1px); }
+}
+
+/* Correct position hint — subtle warm glow at base */
+.ut-card--correct-hint {
+  box-shadow: 0 3px 12px rgba(201, 168, 76, 0.08);
+}
+
+.ut-card--correct-hint::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(201, 168, 76, 0.3),
+    transparent
+  );
+}
+
+/* Revealed state */
+.ut-card--revealed {
+  cursor: default;
+  opacity: 0;
+  animation: utCardReveal 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+  border-color: #2a2a2a;
+}
+
+@keyframes utCardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Card Header ---- */
+.ut-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.ut-card__roman {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8278;
+}
+
+.ut-card__category {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: #c9a84c;
+  opacity: 0.7;
+}
+
+/* ---- Artifact Text — The Hero ---- */
+.ut-card__text {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: #f5f0e8;
+  letter-spacing: -0.005em;
+  margin-bottom: 0;
+}
+
+.ut-card__text p {
+  margin: 0;
+}
+
+/* ---- Highlighted Words (Reveal) ---- */
+.ut-card__highlight {
+  background: none;
+  color: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+  position: relative;
+  text-decoration: underline;
+  text-decoration-color: #c9a84c;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  opacity: 0;
+  animation: utHighlightIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--hl-delay, 0ms);
+}
+
+@keyframes utHighlightIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ---- Mobile Slot Buttons ---- */
+.ut-card__slots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid #2a2a2a;
+}
+
+/* Desktop: hide slot buttons (use drag-drop instead) */
+@media (min-width: 768px) {
+  .ut-card__slots {
+    display: none;
+  }
+}
+
+.ut-card__slots-pole {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a8278;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.ut-card__slot-btn {
+  flex: 1;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a8278;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  padding: var(--space-2) var(--space-2);
+  min-height: 44px;
+  cursor: pointer;
+  transition:
+    background 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ut-card__slot-btn:hover {
+  border-color: #3a3a3a;
+  color: #f5f0e8;
+}
+
+.ut-card__slot-btn--active {
+  border-color: #c9a84c;
+  color: #c9a84c;
+  background: rgba(201, 168, 76, 0.06);
+}
+
+.ut-card__slot-btn:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 1px;
+}
+
+
+/* --------------------------------------------------------------------------
+   AxisBar — Desktop drag-drop ordering track
+   -------------------------------------------------------------------------- */
+
+/* Mobile: hide the axis bar (use card slot buttons) */
+.ut-axis {
+  display: none;
+  margin-bottom: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .ut-axis {
+    display: block;
+  }
+}
+
+/* Axis pole labels */
+.ut-axis__poles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  padding: 0 var(--space-2);
+}
+
+.ut-axis__pole {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8278;
+  opacity: 0.7;
+}
+
+/* Drop zones */
+.ut-axis__zones {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.ut-axis__zone {
+  border: 1px dashed #2a2a2a;
+  border-radius: 2px;
+  padding: var(--space-4) var(--space-3);
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition:
+    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ut-axis__zone--over {
+  border-color: #c9a84c;
+  background: rgba(201, 168, 76, 0.05);
+  border-style: solid;
+}
+
+.ut-axis__zone--filled {
+  border-style: solid;
+  border-color: #3a3a3a;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ut-axis__zone-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8278;
+  opacity: 0.7;
+}
+
+.ut-axis__zone-preview {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: #b8b0a5;
+  text-align: center;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.ut-axis__zone-placeholder {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: #8a8278;
+  opacity: 0.4;
+  letter-spacing: 0.04em;
+}
+
+
+/* --------------------------------------------------------------------------
+   RevealCommentary — Marginalia-style analysis text
+   -------------------------------------------------------------------------- */
+
+.ut-commentary {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid #2a2a2a;
+  opacity: 0;
+  animation: utCommentaryIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--commentary-delay, 0ms);
+}
+
+@keyframes utCommentaryIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ut-commentary__text {
+  font-family: var(--font-structural);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-style: italic;
+  color: #a0a0a0;
+  line-height: 1.65;
+  text-align: justify;
+  hyphens: auto;
+}
+
+
+/* --------------------------------------------------------------------------
+   ShareButton (Undertow)
+   -------------------------------------------------------------------------- */
+
+.ut-share {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c9a84c;
+  border: 1px solid #c9a84c;
+  background: transparent;
+  padding: var(--space-3) var(--space-5);
+  border-radius: 2px;
+  cursor: pointer;
+  min-height: 44px;
+  transition:
+    background 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ut-share:hover {
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.ut-share:active {
+  transform: scale(0.97);
+  transition: transform 60ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ut-share:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 2px;
+}
+
+.ut-share__icon {
+  display: flex;
+  align-items: center;
+}
+
+
+/* --------------------------------------------------------------------------
+   Games Hub — Multi-card featured section spacing
+   -------------------------------------------------------------------------- */
+
+.games-hub__featured {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.games-hub__card--hero {
+  border-color: var(--cin-amber);
+}
+
+
+/* --------------------------------------------------------------------------
+   Reduced Motion — disable all UNDERTOW animations
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ut-card--wrong { animation: none; }
+  .ut-card--revealed { animation: none; opacity: 1; transform: none; }
+  .ut-card__highlight { animation: none; opacity: 1; }
+  .ut-commentary { animation: none; opacity: 1; transform: none; }
+  .undertow-page__feedback { animation: none; opacity: 1; transform: none; }
+  .undertow-page__summary { animation: none; opacity: 1; transform: none; }
+}
