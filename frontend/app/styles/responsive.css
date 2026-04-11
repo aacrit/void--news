@@ -4,6 +4,18 @@
    375px → 768px → 1024px → 1280px → 1440px
    ========================================================================== */
 
+/* ---- Prevent layout flash — hide wrong layout before React hydration ---- */
+[data-viewport="mobile"] .skybox,
+[data-viewport="mobile"] .hero-slot,
+[data-viewport="mobile"] .feed-grid,
+[data-viewport="mobile"] .edition-line {
+  display: none;
+}
+[data-viewport="desktop"] .mf,
+[data-viewport="desktop"] .mob-nav--inline {
+  display: none;
+}
+
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
 @media (min-width: 768px) {
@@ -22,6 +34,18 @@
     padding-right: 0;
   }
 
+  /* F01: 4-line clamp on 2-col grid — more room for long headlines */
+  .story-card__headline-text {
+    -webkit-line-clamp: 4;
+  }
+}
+
+/* ---- Justified text guard: left-align on narrow 2-col (768-1023px) ---- */
+@media (max-width: 1023px) {
+  .story-card__summary,
+  .lead-story__summary {
+    text-align: left;
+  }
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
@@ -160,8 +184,19 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Prevent elastic bounce pull-through — screams "this is a website" */
+  body {
+    overscroll-behavior-y: none;
+  }
+
   .page-main {
     -webkit-overflow-scrolling: touch;
+  }
+
+  .mf,
+  .deep-dive-panel__content,
+  .msp__content {
+    overscroll-behavior: contain;
   }
 
   /* Filter bar horizontal scroll — proximity snap keeps chips reachable
@@ -490,6 +525,22 @@
     min-height: 44px;
   }
 
+  /* Deep Dive: sticky "Read All Sides" footer on mobile */
+  .dd-cta-footer {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
+    padding: var(--space-4) var(--space-5) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    margin-top: auto;
+    z-index: 2;
+  }
+  .dd-cta-footer__btn {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-3) var(--space-4);
+    font-weight: 600;
+  }
+
   /* Analysis section: tighter padding and gap on mobile */
   .dd-analysis-section {
     padding: var(--space-3) 0;
@@ -513,6 +564,22 @@
   /* Perspectives: single column on mobile */
   .dd-perspectives-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Convergence/divergence — horizontal scroll-snap tabs on mobile */
+  .comp-view__insights-content {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .comp-view__insights-content::-webkit-scrollbar { display: none; }
+  .comp-view__insight-item {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    min-width: 0;
   }
 
   /* [ENHANCEMENT-5] Source rows — better stacking on narrow screens */

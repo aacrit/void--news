@@ -39,7 +39,6 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       <button
         type="button"
         className="story-card__stretch-link"
-        tabIndex={0}
         aria-label={`Open deep dive for: ${story.title}`}
         onClick={() => {
           if (cardRef.current && onStoryClick) {
@@ -68,7 +67,12 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       </h3>
 
       {/* Summary — hidden when empty (Gemini pending or failed) */}
-      {story.summary && <p className="story-card__summary">{story.summary}</p>}
+      {story.summary?.trim() && <p className="story-card__summary">{story.summary}</p>}
+      {!story.summary?.trim() && (
+        <p className="story-card__summary story-card__summary--pending">
+          {story.source.count} source{story.source.count !== 1 ? 's' : ''} reporting
+        </p>
+      )}
 
       {/* Consensus ratio now embedded in Sigil */}
     </article>

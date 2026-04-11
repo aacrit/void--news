@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
-import { EDITIONS, LEAN_RANGES } from "../lib/types";
+import { EDITIONS, _ALL_EDITIONS, LEAN_RANGES } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError, fetchClusterLeadImage } from "../lib/supabase";
 import { BASE_PATH } from "../lib/utils";
@@ -203,7 +203,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return "All";
   });
 
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.getAttribute("data-viewport") === "mobile";
+    }
+    return false;
+  });
 
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);
@@ -908,6 +913,24 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
+            {/* Edition pills — mobile only, scrollable strip */}
+            {!isLoading && stories.length > 0 && isMobile && (
+              <div className="mobile-edition-pills" role="tablist" aria-label="Edition">
+                {_ALL_EDITIONS.map((meta) => (
+                  <button
+                    key={meta.slug}
+                    role="tab"
+                    aria-selected={activeEdition === meta.slug}
+                    data-active={activeEdition === meta.slug ? "true" : undefined}
+                    className="mobile-edition-pill"
+                    onClick={() => { hapticMicro(); setActiveEdition(meta.slug); }}
+                  >
+                    {meta.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Inline filter bar — mobile only, feed-only, bracket notation */}
             {!isLoading && stories.length > 0 && isMobile && (
               <MobileBottomNav
@@ -949,7 +972,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                       {gridStories.map((story, idx) => {
                         const gi = 1 + idx;
                         return (
-                          <div key={story.id} className="feed-grid__item" style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}>
+                          <div key={story.id} className="feed-grid__item">
                             <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
                           </div>
                         );

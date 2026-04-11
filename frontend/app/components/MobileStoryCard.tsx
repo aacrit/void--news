@@ -43,7 +43,6 @@ export default function MobileStoryCard({
       <button
         type="button"
         className="story-card__stretch-link"
-        tabIndex={0}
         aria-label={`Open deep dive for: ${story.title}`}
         onClick={() => {
           if (cardRef.current && onStoryClick) {
@@ -70,17 +69,26 @@ export default function MobileStoryCard({
             <Sigil data={story.sigilData} size="lg" instant />
             <CaretRight size={14} weight="bold" aria-hidden="true" className="msc__caret" />
           </h2>
-          <p className="msc__summary">{story.summary}</p>
+          {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
+          {!story.summary?.trim() && (
+            <p className="msc__summary msc__summary--pending">
+              {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
+            </p>
+          )}
         </>
       ) : (
-        /* Compact layout: headline + Sigil + caret — badge hidden on compact */
+        /* Compact layout: headline + dedicated sigil row beneath */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
-            <Sigil data={story.sigilData} size="sm" instant />
             <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
           </h3>
-          {story.summary && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
+          <div className="msc__sigil-row">
+            <Sigil data={story.sigilData} size="sm" instant />
+            {story.category && <span className="msc__cat">{story.category}</span>}
+            <span className="msc__cat">{story.source.count} sources</span>
+          </div>
+          {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
         </>
       )}
     </article>

@@ -41,7 +41,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
       <button
         type="button"
         className="story-card__stretch-link"
-        tabIndex={0}
         aria-label={`Open deep dive for: ${story.title}`}
         onClick={() => {
           if (cardRef.current && onStoryClick) {
@@ -88,7 +87,12 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
       </h2>
 
       {/* Extended summary — hidden when empty (Gemini pending or failed) */}
-      {story.summary && <p className="lead-story__summary">{story.summary}</p>}
+      {story.summary?.trim() && <p className="lead-story__summary">{story.summary}</p>}
+      {!story.summary?.trim() && (
+        <p className="lead-story__summary lead-story__summary--pending">
+          {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
+        </p>
+      )}
 
       {/* Consensus ratio now embedded in Sigil */}
     </article>
