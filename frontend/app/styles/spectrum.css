@@ -142,9 +142,8 @@
   height: 34px;
   border-radius: 2px;
   overflow: hidden;
-  /* oklch interpolation avoids muddy sRGB crossover at blue→green and green→red */
   background: linear-gradient(
-    in oklch to right,
+    to right,
     var(--bias-far-left) 0%,
     var(--bias-left) 14%,
     var(--bias-center-left) 28%,
@@ -651,7 +650,7 @@
   border-radius: 2px;
   overflow: hidden;
   background: linear-gradient(
-    in oklch to right,
+    to right,
     var(--bias-far-left) 0%,
     var(--bias-left) 14%,
     var(--bias-center-left) 28%,
