@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
-**Version:** 2.1
-**Last updated:** 2026-04-09 (rev 17)
+**Version:** 2.2
+**Last updated:** 2026-04-10 (rev 18)
 
 ---
 
@@ -485,7 +485,7 @@ Unified component library powering both the onboarding prologue (`OnboardingCaro
 | `data.ts` | Canonical content constants: `CHAPTERS` (6 chapters), `DIVERGENT_HEADLINES`, `SIX_AXES`, `FIRST_PRINCIPLES`, `PRODUCT_FAMILY`, `RANKING_SIGNALS`, `NUMBERS`, `LANDSCAPE`, `COMPARISON_SCORES`, `SIGIL_PARTS`, `SWEEP_POSITIONS` |
 | `constants.ts` | SVG paths (organic hand-drawn brand mark coordinates matching ScaleIcon/Sigil), stroke-dasharray lengths, spring easings (`SPRING`, `SPRING_BOUNCY`, `SPRING_GENTLE`), draw stagger timing (`DRAW_TIMING`), breakdown stage durations (`BREAKDOWN_TIMING`), exploded view transforms (`EXPLODE_TRANSFORMS`) |
 | `useReducedMotion.ts` | Shared hook — checks `prefers-reduced-motion` once on mount |
-| `scenes/*.tsx` | 6 scene components (see below) |
+| `scenes/*.tsx` | 7 scene components (see below) |
 
 ### Scene Components
 
@@ -498,6 +498,7 @@ Each scene accepts `mode: "prologue" | "manifesto"` and `active: boolean`.
 | `SourceEngine` | III: The Engine | 1,013 sources, 158 countries, 10 ranking signals visualization. |
 | `ArticleDifference` | IV: The Difference | Per-article vs. per-outlet scoring comparison morph. |
 | `ProductWorlds` | V: The Worlds | Product family showcase (6 products with CLI names + descriptions). |
+| `ArchiveTeaser` | (between V-VI) | void --history teaser: two witnesses, same day, opposing quotes. Shows what The Archive does without explaining it. |
 | `TheVerdict` | VI: Read with clarity | Key numbers counter + closing statement. |
 
 ### Modes
@@ -535,7 +536,7 @@ Active components in `frontend/app/components/`:
 | `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
 | `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
 | `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
-| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels (smaller font on mobile). Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. No max-height cap. 3-row algorithm for dense source clustering. "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
+| `DeepDiveSpectrum` | Three toggleable lean visualization views (localStorage `void-spectrum-view`): **Ink Ridge** (KDE density curve SVG + positioned source logos), **Witness Line** (lean-positioned source dots on gradient track), **Terrain Map** (7-zone column layout). Logos positioned at exact `politicalLean` % (0-100). "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
 | `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
@@ -572,7 +573,7 @@ Active components in `frontend/app/components/`:
 | `ShipBoard` | Feature request board for `/ship` page | -- |
 | `WeeklyDigest` | `/weekly` magazine page. No NavBar — own sticky topbar (`.wk-topbar`: back link + ThemeToggle, glass blur). Deep red palette (`--wk-accent: #B91C1C` light / `#EF5350` dark). Warmer paper (`#EDE4D0` light / `#1E1A16` dark). Film grain 3x, tighter vignette. Sections: red masthead, cover hero (drop cap, justified), timeline (horizontal desktop / vertical mobile), opinions (3-col lean grid, no card backgrounds), week in brief (2-col compact), inline audio, archive, footer. No MobileBottomNav. No collapsibles. | -- |
 
-**53 components total** (53 `.tsx` files). Added since last audit: `ClaimConsensusSection`, `ClaimMark`, `ConsensusBadge`, `CredibilityArc`, `FloatingPlayer`, `SearchOverlay`, `ShareCard`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
+**52 components total** (52 `.tsx` files). Added since last audit: `ClaimConsensusSection`, `ClaimMark`, `ConsensusBadge`, `CredibilityArc`, `FloatingPlayer`, `SearchOverlay`, `ShareCard`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 
@@ -675,3 +676,46 @@ All values via CSS custom properties. No hardcoded values in components.
 | Borders | `--border-` | `--border-subtle`, `--divider` |
 | Elevation | `--blur-`, `--shadow-` | `--blur-e2`, `--shadow-e1` |
 | Z-index | `--z-` | `--z-base(1)`, `--z-cinematic(45)`, `--z-modal(100)` |
+
+---
+
+## 14. void --history — "Archival Cinema" Design
+
+Full spec in `docs/HISTORY.md`. Key design elements integrated into the Cinematic Press system:
+
+### Museum UX Model
+
+EventDetail uses an interactive museum journey metaphor. 8 stages flow without didactic section labels (Show Don't Tell applied to all headers). The user walks through exhibits: Hero (cinematic entry) -> Crack (inscribed one-liner) -> Record (aged artifact) -> Context (full story) -> Perspectives (museum vitrine) -> Omissions (toggle) -> Evidence (archival gallery) -> Exit (dossier or cliffhanger).
+
+### Record Block (Aged Artifact)
+
+Merged Key Facts + Key Figures into a single `dl` ledger with chisel-grain SVG texture overlay. All facts rendered as equal-weight ruled rows (no pull stats tier). Texture uses `feTurbulence fractalNoise` with horizontal bias (`baseFrequency: 0.01 0.65`, 2 octaves) and `mix-blend-mode: multiply` at 7% opacity. Dark mode inverts to `screen` blend. Key Figures separated by a mid-rule divider, names link to Wikipedia.
+
+### Perspective Vitrine Model
+
+Each witness shows ONE lead argument visible. Remaining arguments, primary sources, narrative, and disputed claims behind an expand button showing count + directional arrow glyph. This mirrors museum vitrine glass -- lean in to see more.
+
+### Omissions Toggle
+
+Mobile: toggle button group (`stressed` / `ignored`) with `aria-pressed`. Desktop: both panels visible side by side. Per-perspective color-coded. Omitted items use struck styling.
+
+### Connection Type Glyphs
+
+Directional glyphs replace text labels for connection types: `caused` = `down-arrow`, `consequence`/`response-to` = `up-arrow`, `influenced`/`parallel` = `centered-dot`. Show Don't Tell -- the glyph communicates direction without explaining it.
+
+### Animation Performance
+
+| Animation | Duration | Notes |
+|-----------|----------|-------|
+| Hero cold open | 150ms fade | Content visible immediately, no stagger delays |
+| Scroll reveal | 300ms | `translateY(12px) -> 0`, `--ease-cinematic` |
+| Card entrance | 300ms | Filter + transform, no scale |
+| Dossier cards | staggered 120ms | Scroll-triggered via IntersectionObserver |
+
+### Palette
+
+Inherits main Cinematic Press tokens plus `--hist-*` namespace: `--hist-accent` (burnt umber), `--hist-brass` (aged brass), `--hist-paper` (foxed vellum), `--hist-ink` (iron gall), `--hist-persp-{a-e}` (5 perspective identity colors).
+
+### Stylesheet
+
+`history.css` (~8,600 lines, `.hist-page` namespace). Full implementation of all museum UX elements.

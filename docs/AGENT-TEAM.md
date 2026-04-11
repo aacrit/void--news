@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-09 (rev 22)
+Last updated: 2026-04-10 (rev 23)
 
 ## Philosophy
 
@@ -300,3 +300,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
 | 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 19 components, 5-lens historiographic framework, 25 events (100 perspectives, 218 media), migrations 039+043 (4 history tables), pipeline/history (content_loader, image_enricher, mirror_images, source_enricher), 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
 | 2026-04-05 | color-grader + media-curator agents added to Cinematic Division; per-image CSS filter grading pipeline for external media (Weekly cover, History archival, Deep Dive); cinematic overhaul cycle updated; ranking v6.0 (10 signals, lean_diversity merged into perspective_diversity, divergence purified, edition_ranker.py extracted, holistic re-rank step 8c); 34 agents, 13 divisions |
+| 2026-04-10 | void --history museum redesign: 8-stage journey (hero, crack, record, context, perspectives, omissions, evidence, exit), museum vitrine perspectives, chisel-grain record block, omissions toggle, dossier cards with connection glyphs, HistoryAudioCue + ThreadsLanding components; 25→58 events, 20→22 components; DeepDiveSpectrum 3 toggleable views (Ink Ridge, Witness Line, Terrain Map); migration 045 (history audio); generate-history-audio workflow |
