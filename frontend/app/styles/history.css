@@ -6545,21 +6545,18 @@ a.hist-figures__name:hover {
   color: var(--hist-paper-fixed, #F2EDE0);
   border-radius: 2px;
   box-shadow: var(--hist-doc-edge);
-  /* Entrance: staggered dolly-in, hidden by default */
+  /* Entrance: staggered fade + lift */
   opacity: 0;
-  transform: translateY(16px) scale(0.97);
-  filter: blur(2px);
+  transform: translateY(12px);
   transition:
-    opacity 600ms var(--ease-cinematic),
-    transform 600ms var(--ease-cinematic),
-    filter 500ms var(--ease-cinematic),
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--ease-cinematic),
     box-shadow 300ms var(--ease-cinematic);
 }
 
 .hist-dossier__card.hist-reveal--visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+  transform: translateY(0);
 }
 
 /* Hover: archival lift — picking up a document from the desk.
