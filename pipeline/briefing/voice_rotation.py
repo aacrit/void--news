@@ -357,3 +357,58 @@ def get_voices_for_today(edition: str) -> dict:
 def get_voice_for_today(edition: str) -> dict:
     """Return a single voice for backward compatibility."""
     return get_voices_for_today(edition)["host_a"]
+
+
+# ---------------------------------------------------------------------------
+# History voices — fixed pair for void --history companion audio.
+# Never rotates: permanence is the feature.
+#   Host A: Sadaltager (The Chronicler) — knowledgeable, measured authority
+#   Host B: Achernar   (The Witness)   — soft-spoken precision, counter-archive
+# ---------------------------------------------------------------------------
+
+HISTORY_VOICES = {
+    "host_a": {
+        **HOSTS["editor"],
+        "key": "editor",
+        "name": "The Chronicler",
+        "role": "chronicler",
+        # Override name in persona for script prompt
+        "persona": (
+            "The Chronicler. Knowledgeable, warm authority. The voice of someone "
+            "who has read the archive. Deliberate pace with weight behind each "
+            "sentence. Comfortable with silence — lets facts settle before moving on."
+        ),
+    },
+    "host_b": {
+        **HOSTS["realist"],
+        "key": "realist",
+        "name": "The Witness",
+        "role": "witness",
+        "persona": (
+            "The Witness. Soft-spoken but precise. The voice of the counter-archive. "
+            "Calm delivery of details that complicate the narrative. Slight pauses "
+            "before presenting contradictory evidence — not for drama, but for the "
+            "listener to hold both versions simultaneously. Intimate, not performative."
+        ),
+    },
+}
+
+HISTORY_TTS_PREAMBLE = (
+    "Audio Profile: Two historians reviewing primary sources together in a library. "
+    "Not a lecture. Not a debate. A shared examination of evidence.\n\n"
+    "Scene: A wood-paneled reading room. Books open on a desk. Both speakers are "
+    "looking at the same documents but noticing different things. The energy is "
+    "reflective — they are here to understand, not to inform on deadline.\n\n"
+    "Director's Notes: Slower pace than news. Allow sentences to breathe. Emphasis "
+    "lands on dates, names, and numbers — these are the anchors. When one speaker "
+    "presents a perspective, the other listens before responding. Pauses between "
+    "perspectives are deliberate — the silence is the page turning. No urgency. "
+    "The event already happened. The question is what it means.\n\n"
+    "Speaker One (The Chronicler): Knowledgeable, measured, warm authority. The "
+    "voice of someone who has read the archive. Deliberate pace with weight behind "
+    "each sentence. Comfortable with silence — lets facts settle before moving on.\n\n"
+    "Speaker Two (The Witness): Soft-spoken but precise. The voice of the counter-"
+    "archive. Calm delivery of details that complicate the narrative. Slight pauses "
+    "before presenting contradictory evidence — not for drama, but for the listener "
+    "to hold both versions simultaneously. Intimate, not performative."
+)

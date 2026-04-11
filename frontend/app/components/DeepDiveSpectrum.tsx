@@ -474,13 +474,17 @@ function detectDeadZones(
    SpectrumView — merged organic view
    Ink wash rises (rAF) → stroke draws (dashoffset) → contours settle →
    amber plumb line drops → bimodal callout appears.
+   Expand toggle: source pins on curve + label strip + scrub line.
    ═══════════════════════════════════════════════════════════════════════ */
 
 function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
   const fillRef = useRef<SVGPathElement>(null);
   const strokeRef = useRef<SVGPathElement>(null);
   const riseRafRef = useRef<number>(0);
+  const svgWrapRef = useRef<HTMLDivElement>(null);
   const [animated, setAnimated] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [scrubLean, setScrubLean] = useState<number | null>(null);
 
   const n = sources.length;
   const leans = sources.map((s) => s.politicalLean);
@@ -560,6 +564,46 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
 
   const gradStops = LEAN_GRADIENT_STOPS;
 
+  // Source pins — each source mapped to its KDE curve (x,y) position
+  const sourcePins = useMemo(() => {
+    const scaledD = densities
+      ? densities.map((d) => d * (peakH / (svgH - 12)))
+      : null;
+    return sources.map((s) => ({
+      source: s,
+      x: (s.politicalLean / 100) * W,
+      y: scaledD ? getYOnCurve(s.politicalLean, scaledD, svgH, 12) : svgH - 8,
+      leanBucket: leanToBucket(s.politicalLean),
+    }));
+  }, [densities, sources, peakH, svgH]);
+
+  // Label row assignment — 2-row collision detection in SVG coord space
+  const labelRows = useMemo(() => {
+    const sorted = [...sourcePins].sort((a, b) => a.x - b.x);
+    const minGap = 55; // SVG units (~14% of W=400)
+    const result: Array<(typeof sorted)[number] & { row: 0 | 1 }> = [];
+    const lastX: [number, number] = [-Infinity, -Infinity];
+    for (const pin of sorted) {
+      if (pin.x - lastX[0] >= minGap) {
+        result.push({ ...pin, row: 0 as const });
+        lastX[0] = pin.x;
+      } else {
+        result.push({ ...pin, row: 1 as const });
+        lastX[1] = pin.x;
+      }
+    }
+    return result;
+  }, [sourcePins]);
+
+  // Scrub handlers — convert clientX → lean value 0-100
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!expanded || !svgWrapRef.current) return;
+    const rect = svgWrapRef.current.getBoundingClientRect();
+    setScrubLean(Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)));
+  }, [expanded]);
+
+  const handlePointerLeave = useCallback(() => setScrubLean(null), []);
+
   // Trigger entrance
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 50);
@@ -612,172 +656,243 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
   }, [animated, paths]);
 
   return (
-    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}`}>
-      <svg
-        viewBox={`0 0 ${W} ${svgH}`}
-        width="100%"
-        className="dd-sv-view__svg"
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
+    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}${expanded ? " dd-sv-view--expanded" : ""}`}>
+      {/* Expand toggle button */}
+      <button
+        type="button"
+        className="dd-sv-view__toggle-btn"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        aria-label={expanded ? "Collapse source detail" : "Expand source detail"}
       >
-        <defs>
-          {/* Fill gradient — spectrum colors at medium opacity */}
-          <linearGradient id="sv-lean-grad" x1="0" y1="0" x2="1" y2="0">
-            {gradStops.map((s) => (
-              <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.38" />
-            ))}
-          </linearGradient>
-          {/* Stroke gradient — same spectrum, full opacity for the curve line */}
-          <linearGradient id="sv-lean-stroke-grad" x1="0" y1="0" x2="1" y2="0">
-            {gradStops.map((s) => (
-              <stop key={`stroke-${s.offset}`} offset={s.offset} stopColor={s.color} stopOpacity="0.9" />
-            ))}
-          </linearGradient>
-          {/* Ink wash filter on fill only — not stroke — 8+ sources */}
-          {n >= 8 && (
-            <filter id="sv-ink-wash" x="-5%" y="-5%" width="110%" height="110%">
-              <feTurbulence
-                type="turbulence"
-                baseFrequency="0.012 0.025"
-                numOctaves="1"
-                seed="42"
-                result="turb"
+        {expanded ? "⊖" : "⊕"}
+      </button>
+
+      {/* SVG wrapper — captures pointer for scrub */}
+      <div
+        ref={svgWrapRef}
+        className="dd-sv-view__svg-wrap"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+      >
+        <svg
+          viewBox={`0 0 ${W} ${svgH}`}
+          width="100%"
+          className="dd-sv-view__svg"
+          preserveAspectRatio="xMidYMid meet"
+          aria-hidden="true"
+        >
+          <defs>
+            {/* Fill gradient — spectrum colors at medium opacity */}
+            <linearGradient id="sv-lean-grad" x1="0" y1="0" x2="1" y2="0">
+              {gradStops.map((s) => (
+                <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.38" />
+              ))}
+            </linearGradient>
+            {/* Stroke gradient — same spectrum, full opacity for the curve line */}
+            <linearGradient id="sv-lean-stroke-grad" x1="0" y1="0" x2="1" y2="0">
+              {gradStops.map((s) => (
+                <stop key={`stroke-${s.offset}`} offset={s.offset} stopColor={s.color} stopOpacity="0.9" />
+              ))}
+            </linearGradient>
+            {/* Ink wash filter on fill only — not stroke — 8+ sources */}
+            {n >= 8 && (
+              <filter id="sv-ink-wash" x="-5%" y="-5%" width="110%" height="110%">
+                <feTurbulence
+                  type="turbulence"
+                  baseFrequency="0.012 0.025"
+                  numOctaves="1"
+                  seed="42"
+                  result="turb"
+                />
+                <feDisplacementMap in="SourceGraphic" in2="turb" scale="1.8" />
+              </filter>
+            )}
+          </defs>
+
+          {/* Dot strip — ≤3 sources: honest dots, no KDE curve */}
+          {isFlat && (
+            <>
+              <line
+                x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
+                stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4"
               />
-              <feDisplacementMap in="SourceGraphic" in2="turb" scale="1.8" />
-            </filter>
+              {sources.map((s, i) => (
+                <circle
+                  key={`dot-${i}`}
+                  cx={(s.politicalLean / 100) * W}
+                  cy={svgH - 8}
+                  r="5"
+                  fill="none"
+                  strokeWidth="1.5"
+                  className="dd-sv-view__dot"
+                  data-lean={leanToBucket(s.politicalLean)}
+                />
+              ))}
+            </>
           )}
-        </defs>
 
-        {/* Dot strip — ≤3 sources: honest dots, no KDE curve */}
-        {isFlat && (
-          <>
-            <line
-              x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
-              stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4"
+          {/* Beat 1: Ink wash fill — rises first, soft organic texture */}
+          {paths && (
+            <path
+              ref={fillRef}
+              d={paths.fillPath}
+              fill="url(#sv-lean-grad)"
+              filter={n >= 8 ? "url(#sv-ink-wash)" : undefined}
+              className="dd-sv-view__fill"
             />
-            {sources.map((s, i) => (
-              <circle
-                key={`dot-${i}`}
-                cx={(s.politicalLean / 100) * W}
-                cy={svgH - 8}
-                r="5"
-                fill="none"
-                strokeWidth="1.5"
-                className="dd-sv-view__dot"
-                data-lean={leanToBucket(s.politicalLean)}
+          )}
+
+          {/* Beat 3 (350ms): Contour lines — topographic depth, dashed */}
+          {contours.map((contour, ci) =>
+            contour.segments.map((seg, si) => (
+              <line
+                key={`contour-${ci}-${si}`}
+                x1={seg.x1} y1={seg.y} x2={seg.x2} y2={seg.y}
+                stroke="var(--fg-tertiary)"
+                strokeWidth="0.5"
+                strokeDasharray="4 3"
+                className="dd-sv-view__contour"
+                style={{ transitionDelay: `${350 + ci * 80}ms` }}
               />
-            ))}
-          </>
-        )}
+            ))
+          )}
 
-        {/* Beat 1: Ink wash fill — rises first, soft organic texture */}
-        {paths && (
-          <path
-            ref={fillRef}
-            d={paths.fillPath}
-            fill="url(#sv-lean-grad)"
-            filter={n >= 8 ? "url(#sv-ink-wash)" : undefined}
-            className="dd-sv-view__fill"
-          />
-        )}
-
-        {/* Beat 3 (350ms): Contour lines — topographic depth, dashed */}
-        {contours.map((contour, ci) =>
-          contour.segments.map((seg, si) => (
-            <line
-              key={`contour-${ci}-${si}`}
-              x1={seg.x1} y1={seg.y} x2={seg.x2} y2={seg.y}
-              stroke="var(--fg-tertiary)"
-              strokeWidth="0.5"
-              strokeDasharray="4 3"
-              className="dd-sv-view__contour"
-              style={{ transitionDelay: `${350 + ci * 80}ms` }}
+          {/* Beat 2 (150ms): Stroke — chromatic curve, blue→green→red spectrum */}
+          {paths && (
+            <path
+              ref={strokeRef}
+              d={paths.strokePath}
+              fill="none"
+              stroke="url(#sv-lean-stroke-grad)"
+              strokeWidth="1.8"
+              className="dd-sv-view__stroke"
             />
-          ))
-        )}
+          )}
 
-        {/* Beat 2 (150ms): Stroke — chromatic curve, blue→green→red spectrum */}
-        {paths && (
-          <path
-            ref={strokeRef}
-            d={paths.strokePath}
-            fill="none"
-            stroke="url(#sv-lean-stroke-grad)"
-            strokeWidth="1.8"
-            className="dd-sv-view__stroke"
-          />
-        )}
-
-        {/* Source dots overlay — n=4-7 only: ground truth on the KDE curve */}
-        {isLow && densities && sources.map((s, i) => {
-          const x = (s.politicalLean / 100) * W;
-          const scaledD = densities.map((d) => d * (peakH / (svgH - 12)));
-          const y = getYOnCurve(s.politicalLean, scaledD, svgH, 12);
-          return (
+          {/* Source dots overlay — n=4-7 only, hidden when expanded (exp-pins take over) */}
+          {isLow && !expanded && densities && sourcePins.map((pin, i) => (
             <circle
               key={`src-dot-${i}`}
-              cx={x}
-              cy={y}
+              cx={pin.x}
+              cy={pin.y}
               r="2.5"
               fill="none"
               strokeWidth="1.5"
               className="dd-sv-view__src-dot"
-              data-lean={leanToBucket(s.politicalLean)}
+              data-lean={pin.leanBucket}
             />
-          );
-        })}
+          ))}
 
-        {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
-        {!isFlat && (
-          <line
-            x1={(mean / 100) * W} y1={4}
-            x2={(mean / 100) * W} y2={svgH - 4}
-            stroke="var(--cin-amber)"
-            strokeWidth="0.75"
-            strokeDasharray="3 2"
-            className="dd-sv-view__mean"
-          />
+          {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
+          {!isFlat && (
+            <line
+              x1={(mean / 100) * W} y1={4}
+              x2={(mean / 100) * W} y2={svgH - 4}
+              stroke="var(--cin-amber)"
+              strokeWidth="0.75"
+              strokeDasharray="3 2"
+              className="dd-sv-view__mean"
+            />
+          )}
+
+          {/* Beat 5 (500ms): Bimodal peak dots — only when split detected */}
+          {bimodal && bimodal.peaks.map((peak, pi) => {
+            const x = (peak.lean / 100) * W;
+            const scaledD = densities!.map((d) => d * (peakH / (svgH - 12)));
+            const y = getYOnCurve(peak.lean, scaledD, svgH, 12);
+            const anchor = x > W * 0.75 ? "end" : x < W * 0.25 ? "start" : "middle";
+            return (
+              <g key={`bm-peak-${pi}`} className="dd-sv-view__bm-peak">
+                <circle cx={x} cy={y} r="2.5" fill="var(--fg-muted)" opacity="0.6" />
+                <text
+                  x={x} y={y - 7}
+                  textAnchor={anchor}
+                  fill="var(--fg-muted)"
+                  fontSize="6"
+                  fontFamily="var(--font-data)"
+                  letterSpacing="0.04em"
+                >
+                  {leanLabelAbbr(peak.lean)}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Dead zone annotations */}
+          {deadZones.map((zone, zi) => (
+            <text
+              key={`dead-${zi}`}
+              x={(zone.midLean / 100) * W}
+              y={svgH - 3}
+              textAnchor="middle"
+              fill="var(--fg-muted)"
+              fontSize="5.5"
+              fontFamily="var(--font-data)"
+              className="dd-sv-view__dead-label"
+            >
+              no coverage
+            </text>
+          ))}
+
+          {/* Expanded: all sources pinned to KDE curve — clickable circles */}
+          {sourcePins.map((pin, i) => (
+            <circle
+              key={`exp-pin-${i}`}
+              cx={pin.x}
+              cy={pin.y}
+              r="4"
+              fill="var(--bg-card)"
+              strokeWidth="2"
+              className="dd-sv-view__exp-pin"
+              data-lean={pin.leanBucket}
+              style={{ transitionDelay: `${i * 25}ms` }}
+              onClick={() => window.open(pin.source.articleUrl, "_blank", "noopener,noreferrer")}
+              aria-label={`${pin.source.name} — ${leanLabel(pin.source.politicalLean)}`}
+            />
+          ))}
+
+          {/* Scrub vertical line */}
+          {scrubLean !== null && (
+            <line
+              x1={(scrubLean / 100) * W}
+              y1={4}
+              x2={(scrubLean / 100) * W}
+              y2={svgH - 4}
+              className="dd-sv-view__scrub-line"
+            />
+          )}
+        </svg>
+
+        {/* Scrub lean label — follows cursor */}
+        {scrubLean !== null && (
+          <div className="dd-sv-view__scrub-label" style={{ left: `${scrubLean}%` }}>
+            {leanLabelAbbr(scrubLean)} {Math.round(scrubLean)}
+          </div>
         )}
+      </div>
 
-        {/* Beat 5 (500ms): Bimodal peak dots — only when split detected */}
-        {bimodal && bimodal.peaks.map((peak, pi) => {
-          const x = (peak.lean / 100) * W;
-          const scaledD = densities!.map((d) => d * (peakH / (svgH - 12)));
-          const y = getYOnCurve(peak.lean, scaledD, svgH, 12);
-          const anchor = x > W * 0.75 ? "end" : x < W * 0.25 ? "start" : "middle";
-          return (
-            <g key={`bm-peak-${pi}`} className="dd-sv-view__bm-peak">
-              <circle cx={x} cy={y} r="2.5" fill="var(--fg-muted)" opacity="0.6" />
-              <text
-                x={x} y={y - 7}
-                textAnchor={anchor}
-                fill="var(--fg-muted)"
-                fontSize="6"
-                fontFamily="var(--font-data)"
-                letterSpacing="0.04em"
-              >
-                {leanLabelAbbr(peak.lean)}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* Dead zone annotations */}
-        {deadZones.map((zone, zi) => (
-          <text
-            key={`dead-${zi}`}
-            x={(zone.midLean / 100) * W}
-            y={svgH - 3}
-            textAnchor="middle"
-            fill="var(--fg-muted)"
-            fontSize="5.5"
-            fontFamily="var(--font-data)"
-            className="dd-sv-view__dead-label"
+      {/* Expand layer — source name labels pinned by lean position */}
+      <div className={`dd-sv-expand-layer${expanded ? " dd-sv-expand-layer--open" : ""}`} aria-hidden={!expanded}>
+        {labelRows.map((item, i) => (
+          <a
+            key={`exp-item-${i}`}
+            href={item.source.articleUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dd-sv-expand-item"
+            data-lean={item.leanBucket}
+            data-row={item.row}
+            style={{
+              left: `${(item.x / W) * 100}%`,
+              transitionDelay: expanded ? `${80 + i * 25}ms` : "0ms",
+            }}
           >
-            no coverage
-          </text>
+            <span className="dd-sv-expand-item__dot" aria-hidden="true" />
+            <span className="dd-sv-expand-item__name">{item.source.name}</span>
+          </a>
         ))}
-      </svg>
+      </div>
 
       {/* 4-state coverage banner — consensus is silent (no banner) */}
       {coverage !== "consensus" && (

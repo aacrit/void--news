@@ -983,3 +983,169 @@ def produce_audio(
         "file_size": file_size,
         "opinion_start_seconds": opinion_start_seconds,
     }
+
+
+# ---------------------------------------------------------------------------
+# void --history companion audio — produce_history_audio()
+# ---------------------------------------------------------------------------
+
+def _upload_history_to_supabase(audio_bytes: bytes, slug: str) -> Optional[str]:
+    """Upload history MP3 to Supabase Storage.
+
+    Path: audio-briefs/history/{slug}.mp3
+    No 'latest' copy — history audio is permanent, not ephemeral.
+    Returns public URL with cache fingerprint, or None on failure.
+    """
+    try:
+        from utils.supabase_client import supabase
+        import hashlib
+
+        path = f"history/{slug}.mp3"
+        opts = {"content-type": "audio/mpeg", "upsert": "true"}
+
+        supabase.storage.from_("audio-briefs").upload(path, audio_bytes, opts)
+
+        base_url = supabase.storage.from_("audio-briefs").get_public_url(path)
+        fingerprint = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        sep = "&" if "?" in base_url else "?"
+        return f"{base_url}{sep}v={fingerprint}"
+    except Exception as e:
+        print(f"  [warn][history-audio] Supabase upload failed for {slug}: {e}")
+        return None
+
+
+def produce_history_audio(
+    audio_script: str,
+    slug: str,
+) -> Optional[dict]:
+    """Synthesize a void --history companion audio MP3.
+
+    Uses the dedicated HISTORY_VOICES pair (Sadaltager + Achernar) and
+    HISTORY_TTS_PREAMBLE director's notes for archival library ambience.
+    Post-processing: ident + dialogue + outro + background bed.
+    No section breaks (single continuous topic).
+    No opinion segment.
+
+    Args:
+        audio_script: The A:/B: dialogue script from audio_script_generator.
+        slug: Event slug (used for storage path and logging).
+
+    Returns:
+        Dict with audio_url, duration_seconds, file_size — or None on failure.
+    """
+    if os.getenv("DISABLE_AUDIO", "").strip().lower() in ("1", "true", "yes"):
+        print(f"  [history-audio:{slug}] DISABLE_AUDIO set — skipping")
+        return None
+
+    if not GEMINI_TTS_AVAILABLE:
+        print(f"  [history-audio:{slug}] google-genai SDK not installed — skipping")
+        return None
+
+    if not PYDUB_AVAILABLE:
+        print(f"  [history-audio:{slug}] pydub not installed — skipping")
+        return None
+
+    try:
+        from briefing.voice_rotation import HISTORY_VOICES, HISTORY_TTS_PREAMBLE
+    except ImportError:
+        try:
+            from pipeline.briefing.voice_rotation import HISTORY_VOICES, HISTORY_TTS_PREAMBLE
+        except ImportError:
+            print(f"  [error][history-audio:{slug}] Cannot import HISTORY_VOICES")
+            return None
+
+    voice_a = HISTORY_VOICES["host_a"]["id"]   # Sadaltager — The Chronicler
+    voice_b = HISTORY_VOICES["host_b"]["id"]   # Achernar  — The Witness
+
+    # Convert A:/B: script to One:/Two: Gemini TTS format
+    dialogue = _script_to_dialogue(audio_script)
+    word_count = len(dialogue.split())
+    print(f"  [history-audio:{slug}] TTS: {word_count} words, voices {voice_a}+{voice_b}")
+
+    # Synthesize via Gemini Flash TTS
+    # Rate-limit buffer before TTS call (shared daily budget)
+    time.sleep(5)
+
+    pcm_data = _synthesize_gemini_tts(dialogue, voice_a, voice_b, HISTORY_TTS_PREAMBLE)
+    if not pcm_data:
+        print(f"  [warn][history-audio:{slug}] TTS synthesis failed — no audio")
+        return None
+
+    dialogue_duration = len(pcm_data) / (24000 * 2)
+    print(f"  [history-audio:{slug}] TTS synthesized: {dialogue_duration:.1f}s")
+
+    # Post-processing: ident + dialogue + outro + background bed
+    wav_data = _pcm_to_wav(pcm_data)
+    dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
+
+    ident = _load_asset("ident.wav")
+    outro = _load_asset("outro.wav")
+    background_bed = _load_asset("background_bed.wav")
+
+    # Assembly: ident (400ms gap) + dialogue + (500ms gap) + outro
+    combined = AudioSegment.empty()
+
+    if ident:
+        combined += ident
+        combined += AudioSegment.silent(duration=400)
+
+    combined += dialogue_seg
+
+    if outro:
+        combined += AudioSegment.silent(duration=500)
+        combined += outro
+
+    # Subharmonic presence layer — same bed as news, full duration
+    if background_bed:
+        # Loop bed to match combined length
+        bed_len = len(combined)
+        if len(background_bed) < bed_len:
+            loops_needed = (bed_len // len(background_bed)) + 2
+            looped_bed = background_bed * loops_needed
+        else:
+            looped_bed = background_bed
+        bed_trimmed = looped_bed[:bed_len]
+        # Bed at -36 dBFS (voice-first balance — same as news)
+        bed_ducked = bed_trimmed - 36
+        combined = combined.overlay(bed_ducked, position=0)
+
+    duration_seconds = round(len(combined) / 1000.0, 1)
+    print(f"  [history-audio:{slug}] Assembled: {duration_seconds:.1f}s total")
+
+    # Export MP3
+    _MAX_FILE_SIZE = 8 * 1024 * 1024
+
+    def _export_hist_mp3(segment: "AudioSegment", bitrate: str = "96k") -> Optional[bytes]:
+        buf = io.BytesIO()
+        try:
+            segment.export(buf, format="mp3", bitrate=bitrate, parameters=["-ac", "1"])
+            return buf.getvalue()
+        except Exception as e:
+            print(f"  [warn][history-audio:{slug}] MP3 export failed: {e}")
+            return None
+
+    audio_bytes = _export_hist_mp3(combined)
+    if not audio_bytes:
+        return None
+
+    file_size = len(audio_bytes)
+    if file_size > _MAX_FILE_SIZE:
+        print(f"  [history-audio:{slug}] {file_size / 1024:.0f} KB > 8MB — re-exporting at 64k")
+        audio_bytes = _export_hist_mp3(combined, bitrate="64k")
+        if not audio_bytes:
+            return None
+        file_size = len(audio_bytes)
+
+    print(f"  [history-audio:{slug}] Exported {file_size / 1024:.1f} KB — uploading...")
+
+    public_url = _upload_history_to_supabase(audio_bytes, slug)
+    if not public_url:
+        return None
+
+    print(f"  [history-audio:{slug}] Uploaded: {public_url}")
+    return {
+        "audio_url": public_url,
+        "duration_seconds": duration_seconds,
+        "file_size": file_size,
+    }
+

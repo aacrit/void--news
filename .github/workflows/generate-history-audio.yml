@@ -1,0 +1,74 @@
+name: Generate History Audio
+
+# Manual trigger only — history audio is a one-time batch, not a cron job.
+# Run on a day when the news pipeline is NOT scheduled (or after it completes).
+# Budget: ~3 Gemini calls/event × batch_size events.
+# At batch_size=8: 24 calls. Safe alongside the daily news pipeline (~177 RPD).
+# For full regeneration (all ~55+ events): use batch_size=8 across ~7 runs.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: "Specific event slugs (space-separated). Leave empty to use batch_size + offset."
+        required: false
+        default: ""
+      batch_size:
+        description: "Number of events to process (default: 8)"
+        required: false
+        default: "8"
+      offset:
+        description: "Starting event index in chronological order (default: 0)"
+        required: false
+        default: "0"
+      force:
+        description: "Force regeneration even if already in manifest"
+        required: false
+        default: "false"
+
+jobs:
+  generate:
+    name: Generate History Audio
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run history audio generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          cd $GITHUB_WORKSPACE
+
+          if [ -n "${{ inputs.slugs }}" ]; then
+            python -m pipeline.history.generate_audio \
+              --slugs ${{ inputs.slugs }}${{ inputs.force == 'true' && ' --force' || '' }}
+          else
+            python -m pipeline.history.generate_audio \
+              --batch-size ${{ inputs.batch_size }} \
+              --offset ${{ inputs.offset }}${{ inputs.force == 'true' && ' --force' || '' }}
+          fi
+
+      - name: Commit manifest update
+        run: |
+          git config user.name "void-pipeline[bot]"
+          git config user.email "pipeline@void-news.app"
+          git add data/history/audio-manifest.json || true
+          git diff --cached --quiet || git commit -m "chore: update history audio manifest [skip ci]"
+          git push origin HEAD || true
