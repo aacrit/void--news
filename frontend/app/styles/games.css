@@ -1725,7 +1725,8 @@
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: #050508;
   color: #f5f0e8;
 }
@@ -1881,8 +1882,9 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  margin: clamp(2rem, 5vh, 3.5rem) 0 var(--space-3);
+  gap: clamp(0.5rem, 3vw, 2rem);
+  margin: clamp(1.5rem, 5vh, 3.5rem) 0 var(--space-3);
+  overflow: hidden;
 }
 
 /* Pole labels — hidden until mounted, then slide in */
@@ -2064,9 +2066,17 @@
   padding: 0.875rem 2.5rem;
   border-radius: 1px;
   cursor: not-allowed;
-  min-height: 44px;
+  min-height: 52px;
   min-width: 44px;
+  width: 100%;
   transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Desktop: constrain submit button width */
+@media (min-width: 768px) {
+  .undertow-submit {
+    width: auto;
+  }
 }
 
 .undertow-submit--ready {
@@ -2331,12 +2341,21 @@
 /* ---- Artifact Text — The Soul of the Game ---- */
 .undertow-card__text {
   font-family: var(--font-editorial);
-  font-size: clamp(1.1rem, 0.9rem + 0.8vw, 1.5rem);
+  font-size: clamp(1rem, 4vw, 1.15rem);
   font-weight: 400;
   line-height: 1.6;
   color: #f5f0e8;
   letter-spacing: -0.005em;
   margin-bottom: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Desktop: restore larger text for comfortable reading */
+@media (min-width: 768px) {
+  .undertow-card__text {
+    font-size: clamp(1.1rem, 0.9rem + 0.8vw, 1.5rem);
+  }
 }
 
 .undertow-card__text p {
@@ -2365,6 +2384,7 @@
 /* ---- Mobile Slot Buttons ---- */
 .undertow-card__slots {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-4);
@@ -2381,19 +2401,25 @@
 
 .undertow-card__slots-pole {
   font-family: var(--font-meta);
-  font-size: var(--text-xxs);
+  font-size: clamp(0.45rem, 0.4rem + 0.2vw, 0.5625rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(138, 130, 120, 0.4);
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 5.5rem;
 }
 
 .undertow-card__slot-btn {
   flex: 1;
+  min-width: 0;
   font-family: var(--font-meta);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(245, 240, 232, 0.4);
   background: rgba(245, 240, 232, 0.04);
@@ -2648,6 +2674,142 @@
   );
 }
 
+
+/* --------------------------------------------------------------------------
+   UNDERTOW — Mobile phone (max-width: 639px): single-column cards
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 639px) {
+  /* Force single column on phones (2-col grid starts at 640px) */
+  .undertow-page__cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   UNDERTOW — Mobile Responsive Overrides (max-width: 767px)
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  /* Content: tighter edge padding on mobile */
+  .undertow-page__content {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  /* Card: reduce padding, no tilt on mobile (prevents edge clipping) */
+  .undertow-card {
+    padding: clamp(1rem, 3vw, 1.5rem);
+    transform: none;
+  }
+
+  .undertow-card:hover {
+    transform: none;
+  }
+
+  /* Axis poles: reduce slide distance to prevent overflow */
+  .undertow-axis__pole--left {
+    transform: translateX(-20px);
+  }
+
+  .undertow-axis__pole--right {
+    transform: translateX(20px);
+  }
+
+  /* Axis description: full width, smaller on mobile */
+  .undertow-axis__desc {
+    max-width: 100%;
+    font-size: var(--text-sm);
+  }
+
+  /* Submit button: full width, prominent on mobile */
+  .undertow-submit {
+    width: 100%;
+  }
+
+  /* Photo credit: respect safe area on mobile */
+  .undertow-page__credit {
+    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Simplified entrance animation — ease-out, no spring */
+  .undertow-card--revealed {
+    animation-timing-function: ease-out;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   UNDERTOW — Ultra-narrow (max-width: 375px)
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 375px) {
+  .undertow-page__content {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  /* Tighter card padding on very small screens */
+  .undertow-card {
+    padding: var(--space-4);
+  }
+
+  /* Pole labels: even smaller on ultra-narrow */
+  .undertow-card__slots-pole {
+    max-width: 4rem;
+    font-size: 0.4rem;
+  }
+
+  /* Slot buttons: smaller text, keep all 4 visible */
+  .undertow-card__slot-btn {
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    padding: var(--space-1);
+  }
+
+  /* Axis pole labels: smaller for tight space */
+  .undertow-axis__pole {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   UNDERTOW — Tablet (640px-767px): 2-col cards with slot buttons
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 640px) and (max-width: 767px) {
+  /* Cards are 2-column at this breakpoint (from base 640px rule).
+     Slot buttons remain visible since axis bar is hidden below 768px. */
+  .undertow-card {
+    padding: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  /* Pole labels tight in 2-col — hide, buttons are self-explanatory */
+  .undertow-card__slots-pole {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   UNDERTOW — Desktop enhancements (1024px+)
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .undertow-page__content {
+    max-width: 900px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   UNDERTOW — Wide desktop (1440px+)
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1440px) {
+  /* No content stretching — max-width already constrains at 900px.
+     Background image, grain, and vignette all use position: fixed
+     with inset: 0 so they cover the full viewport at any size. */
+  .undertow-page__content {
+    max-width: 900px;
+  }
+}
 
 /* --------------------------------------------------------------------------
    Reduced Motion — disable all UNDERTOW animations
