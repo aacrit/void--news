@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
-import { DAILY_UNDERTOW } from "./data";
+import { DAILY_UNDERTOW, getAxisImage } from "./data";
 import type { Artifact } from "./data";
 import ArtifactCard from "./components/ArtifactCard";
 import AxisBar from "./components/AxisBar";
@@ -11,18 +11,24 @@ import ShareButton from "./components/ShareButton";
 /* ==========================================================================
    UndertowGame — void --undertow: Daily Cultural Subtext Puzzle
 
-   Four cultural artifacts. One axis (e.g. CONTROL <-> FREEDOM).
+   Four cultural artifacts. One conceptual axis (e.g. CONTROL <-> FREEDOM).
    Player orders the artifacts along the axis. Three attempts.
-   Cinematic reveal: highlighted words + Orwellian commentary.
+   Cinematic reveal: sequential card-by-card highlighted words + Orwellian
+   commentary.
+
+   Cinematic layer system (back to front):
+     1. Background image — full-viewport, heavily blurred, dark overlay
+     2. Parallax layer — shifts +/-15px on mouse move
+     3. Grain layer — animated film grain (SVG feTurbulence)
+     4. Vignette layer — radial edge darkening
+     5. Content layer — cards, axis, UI chrome
 
    States: playing -> feedback -> reveal
    Desktop: drag cards onto axis bar drop zones.
-   Mobile: tap a card to select, then tap a position slot to assign.
+   Mobile: tap slot buttons (1st 2nd 3rd 4th) on each card.
    ========================================================================== */
 
 const MAX_ATTEMPTS = 3;
-
-/** Roman numeral labels */
 const ROMAN = ["I", "II", "III", "IV"];
 
 type Phase = "playing" | "feedback" | "reveal";
@@ -32,6 +38,30 @@ export default function UndertowGame() {
   const [phase, setPhase] = useState<Phase>("playing");
   const [attempt, setAttempt] = useState(1);
   const [feedbackMsg, setFeedbackMsg] = useState("");
+  const [mounted, setMounted] = useState(false);
+  const bgRef = useRef<HTMLDivElement>(null);
+
+  // Axis intro animation: staged entrance
+  useEffect(() => {
+    // Small delay to ensure DOM is painted before triggering CSS transitions
+    const timer = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Parallax on mouse move — shifts background layer
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 30;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      bgRef.current?.style.setProperty("--px", `${x}px`);
+      bgRef.current?.style.setProperty("--py", `${y}px`);
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   // Slots: 4 positions (left pole -> right pole), each holds an artifact id or null
   const [slots, setSlots] = useState<(string | null)[]>([
@@ -40,9 +70,6 @@ export default function UndertowGame() {
     null,
     null,
   ]);
-
-  // Mobile: currently selected card for tap-to-assign
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
   // Shuffled artifact order for display (randomized on mount)
   const [displayOrder, setDisplayOrder] = useState<Artifact[]>([]);
@@ -92,9 +119,6 @@ export default function UndertowGame() {
         return next;
       });
 
-      // Clear selection after assignment (mobile flow)
-      setSelectedCard(null);
-
       // Clear feedback state when making new assignments
       if (phase === "feedback") {
         setPhase("playing");
@@ -114,16 +138,7 @@ export default function UndertowGame() {
     [assignToSlot]
   );
 
-  /** Handle card selection (mobile: tap to select) */
-  const handleCardSelect = useCallback(
-    (artifactId: string) => {
-      if (phase === "reveal") return;
-      setSelectedCard((prev) => (prev === artifactId ? null : artifactId));
-    },
-    [phase]
-  );
-
-  /** Handle position slot tap on card (mobile: assign selected to slot) */
+  /** Handle mobile slot button click on a card */
   const handleSlotAssign = useCallback(
     (artifactId: string, slot: number) => {
       assignToSlot(artifactId, slot);
@@ -161,9 +176,13 @@ export default function UndertowGame() {
       }
     });
 
+    const correctInPosition = slots.filter(
+      (id, i) => id === challenge.correct_order[i]
+    ).length;
+
     setCorrectPositionIds(correctIds);
     setWrongIds(wrong);
-    setFeedbackMsg("Not quite.");
+    setFeedbackMsg(`Not quite. ${correctInPosition} of 4 in position.`);
     setPhase("feedback");
     setAttempt((a) => a + 1);
 
@@ -185,185 +204,226 @@ export default function UndertowGame() {
     { month: "long", day: "numeric", year: "numeric" }
   );
 
+  const attemptsRemaining = MAX_ATTEMPTS - attempt + 1;
+
+  // Resolve background image for this axis
+  const axisImage = getAxisImage(challenge.axis);
+
   return (
-    <div className="undertow-page">
-      {/* Vignette overlay */}
+    <div className={`undertow-page${mounted ? " undertow-page--mounted" : ""}${phase === "reveal" ? " undertow-page--revealed" : ""}`}>
+      {/* Layer 1: Background image — heavily blurred, dark overlay */}
+      <div className="undertow-page__bg" ref={bgRef} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={axisImage.url}
+          alt=""
+          className="undertow-page__bg-img"
+          loading="eager"
+        />
+        <div className="undertow-page__bg-overlay" />
+      </div>
+
+      {/* Layer 2: Animated film grain */}
+      <div className="undertow-page__grain" aria-hidden="true">
+        <svg width="0" height="0" aria-hidden="true">
+          <filter id="undertow-grain">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.65"
+              numOctaves="3"
+              stitchTiles="stitch"
+              result="noise"
+            />
+            <feColorMatrix
+              type="saturate"
+              values="0"
+              in="noise"
+              result="mono"
+            />
+          </filter>
+        </svg>
+        <div className="undertow-page__grain-layer" />
+      </div>
+
+      {/* Layer 3: Vignette */}
       <div className="undertow-page__vignette" aria-hidden="true" />
-      {/* Film grain overlay */}
-      <div className="undertow-page__grain" aria-hidden="true" />
 
-      {/* Navigation back */}
-      <nav className="undertow-page__nav" aria-label="Breadcrumb">
-        <Link href="/games" className="undertow-page__back">
-          <span aria-hidden="true">&larr;</span> void --games
-        </Link>
-      </nav>
+      {/* Layer 4: Content */}
+      <div className="undertow-page__content">
+        {/* Navigation back */}
+        <nav className="undertow-page__nav" aria-label="Breadcrumb">
+          <Link href="/games" className="undertow-page__back">
+            <span aria-hidden="true">&larr;</span> void --games
+          </Link>
+        </nav>
 
-      {/* Header */}
-      <header className="undertow-page__header">
-        <h1 className="undertow-page__title">UNDERTOW</h1>
-        <p className="undertow-page__meta">
-          #{challenge.id} &middot; {dateStr}
-        </p>
-      </header>
+        {/* Header */}
+        <header className="undertow-page__header">
+          <h1 className="undertow-page__title">UNDERTOW</h1>
+          <p className="undertow-page__meta">
+            #{challenge.id} &middot; {dateStr}
+          </p>
+        </header>
 
-      {/* Axis announcement */}
-      <div className="undertow-page__axis" role="note">
-        <p className="undertow-page__axis-label">TODAY&apos;S AXIS</p>
-        <div className="undertow-page__axis-poles">
-          <span className="undertow-page__pole undertow-page__pole--left">
+        {/* Axis announcement — dramatic intro */}
+        <div
+          className={`undertow-axis${mounted ? " undertow-axis--visible" : ""}`}
+          role="note"
+          aria-label={`Today's axis: ${challenge.axis.left_pole} to ${challenge.axis.right_pole}`}
+        >
+          <span className="undertow-axis__pole undertow-axis__pole--left">
             {challenge.axis.left_pole}
           </span>
-          <span className="undertow-page__axis-line" aria-hidden="true">
-            &larr; &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; &rarr;
-          </span>
-          <span className="undertow-page__pole undertow-page__pole--right">
+          <span className="undertow-axis__line" aria-hidden="true" />
+          <span className="undertow-axis__pole undertow-axis__pole--right">
             {challenge.axis.right_pole}
           </span>
         </div>
-        <p className="undertow-page__axis-desc">
+        <p className={`undertow-axis__desc${mounted ? " undertow-axis__desc--visible" : ""}`}>
           {challenge.axis.description}
         </p>
-      </div>
 
-      {/* Attempt counter */}
-      {phase !== "reveal" && (
-        <div
-          className="undertow-page__attempt"
-          aria-live="polite"
-          aria-label={`Attempt ${attempt} of ${MAX_ATTEMPTS}`}
-        >
-          <span className="undertow-page__attempt-label">
-            ATTEMPT {attempt} OF {MAX_ATTEMPTS}
-          </span>
-          <div className="undertow-page__attempt-dots">
-            {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => (
-              <span
-                key={i}
-                className={`undertow-page__attempt-dot${i < MAX_ATTEMPTS - attempt + 1 ? " undertow-page__attempt-dot--active" : ""}`}
-                aria-hidden="true"
-              />
-            ))}
+        {/* Attempt counter */}
+        {phase !== "reveal" && (
+          <div
+            className="undertow-page__attempt"
+            aria-live="polite"
+            aria-label={`${attemptsRemaining} attempts remaining`}
+          >
+            <span className="undertow-page__attempt-label">ATTEMPTS</span>
+            <div className="undertow-page__attempt-dots">
+              {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`undertow-page__attempt-dot${i < attemptsRemaining ? " undertow-page__attempt-dot--active" : ""}`}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Feedback message */}
-      {feedbackMsg && phase === "feedback" && (
-        <div
-          className="undertow-page__feedback"
-          role="alert"
-          aria-live="assertive"
-        >
-          {feedbackMsg}
-        </div>
-      )}
+        {/* Feedback message */}
+        {feedbackMsg && phase === "feedback" && (
+          <div
+            className="undertow-page__feedback"
+            role="alert"
+            aria-live="assertive"
+          >
+            {feedbackMsg}
+          </div>
+        )}
 
-      {/* Axis bar (desktop drag-drop) — above cards */}
-      {phase !== "reveal" && (
-        <AxisBar
-          slots={slots}
-          artifactMap={
-            new Map(challenge.artifacts.map((a) => [a.id, a.text]))
-          }
-          leftPole={challenge.axis.left_pole}
-          rightPole={challenge.axis.right_pole}
-          onDrop={handleAxisDrop}
-        />
-      )}
-
-      {/* Artifact cards */}
-      <div
-        className={`undertow-page__cards${phase === "reveal" ? " undertow-page__cards--revealed" : ""}`}
-        role="list"
-        aria-label="Artifacts to order"
-      >
-        {(phase === "reveal"
-          ? challenge.correct_order.map(
-              (id) => challenge.artifacts.find((a) => a.id === id)!
-            )
-          : displayOrder
-        ).map((artifact, i) => (
-          <ArtifactCard
-            key={artifact.id}
-            artifact={artifact}
-            roman={
-              phase === "reveal"
-                ? ROMAN[i]
-                : ROMAN[displayOrder.indexOf(artifact)]
+        {/* Axis bar (desktop drag-drop) — above cards */}
+        {phase !== "reveal" && (
+          <AxisBar
+            slots={slots}
+            artifactMap={
+              new Map(challenge.artifacts.map((a) => [a.id, a.text]))
             }
-            position={assignmentMap.get(artifact.id) ?? null}
-            revealed={phase === "reveal"}
-            revealIndex={i}
-            onSelect={() => handleCardSelect(artifact.id)}
-            onSlotAssign={handleSlotAssign}
-            selected={selectedCard === artifact.id}
-            wasWrong={wrongIds.has(artifact.id)}
-            isCorrectPosition={correctPositionIds.has(artifact.id)}
             leftPole={challenge.axis.left_pole}
             rightPole={challenge.axis.right_pole}
+            onDrop={handleAxisDrop}
           />
-        ))}
-      </div>
+        )}
 
-      {/* Submit button */}
-      {phase !== "reveal" && (
-        <div className="undertow-page__submit-row">
-          <button
-            type="button"
-            className={`undertow-page__submit${allFilled ? " undertow-page__submit--ready" : ""}`}
-            onClick={handleSubmit}
-            disabled={!allFilled}
-            aria-label="Submit your ordering"
-          >
-            TRANSMIT RANKING
-          </button>
-        </div>
-      )}
-
-      {/* Reveal summary */}
-      {phase === "reveal" && (
+        {/* Artifact cards */}
         <div
-          className="undertow-page__summary"
-          role="region"
-          aria-label="Game results"
+          className={`undertow-page__cards${phase === "reveal" ? " undertow-page__cards--revealed" : ""}${mounted ? " undertow-page__cards--entered" : ""}`}
+          role="list"
+          aria-label="Artifacts to order"
         >
-          {/* Organic divider */}
-          <svg
-            className="undertow-page__divider"
-            viewBox="0 0 400 4"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path d="M0,2 C40,0.5 80,3.5 120,2 C160,0.5 200,3 240,2 C280,1 320,3.5 360,2 C380,0.5 400,2 400,2" />
-          </svg>
-
-          <p className="undertow-page__result">
-            {isPlayerCorrect
-              ? "Perfect read."
-              : `You placed ${correctCount} of 4 correctly.`}
-            {attempt > 1 && (
-              <span className="undertow-page__result-attempts">
-                {" "}
-                &middot; {attempt} attempt{attempt !== 1 ? "s" : ""}
-              </span>
-            )}
-          </p>
-
-          <ShareButton
-            challengeId={challenge.id}
-            playerOrder={slots}
-            correctOrder={challenge.correct_order}
-            attemptsUsed={attempt}
-          />
-
-          {challenge.tomorrow_axis && (
-            <p className="undertow-page__tomorrow">
-              Tomorrow&apos;s axis: {challenge.tomorrow_axis}
-            </p>
-          )}
+          {(phase === "reveal"
+            ? challenge.correct_order.map(
+                (id) => challenge.artifacts.find((a) => a.id === id)!
+              )
+            : displayOrder
+          ).map((artifact, i) => (
+            <ArtifactCard
+              key={artifact.id}
+              artifact={artifact}
+              roman={
+                phase === "reveal"
+                  ? ROMAN[i]
+                  : ROMAN[displayOrder.indexOf(artifact)]
+              }
+              index={i}
+              position={assignmentMap.get(artifact.id) ?? null}
+              revealed={phase === "reveal"}
+              revealIndex={i}
+              onSlotAssign={handleSlotAssign}
+              wasWrong={wrongIds.has(artifact.id)}
+              isCorrectPosition={correctPositionIds.has(artifact.id)}
+              leftPole={challenge.axis.left_pole}
+              rightPole={challenge.axis.right_pole}
+            />
+          ))}
         </div>
-      )}
+
+        {/* Submit button */}
+        {phase !== "reveal" && (
+          <div className="undertow-page__submit-row">
+            <button
+              type="button"
+              className={`undertow-submit${allFilled ? " undertow-submit--ready" : ""}`}
+              onClick={handleSubmit}
+              disabled={!allFilled}
+              aria-label="Submit your ordering"
+            >
+              DECODE
+            </button>
+          </div>
+        )}
+
+        {/* Reveal summary */}
+        {phase === "reveal" && (
+          <div
+            className="undertow-page__summary"
+            role="region"
+            aria-label="Game results"
+          >
+            {/* Organic divider */}
+            <svg
+              className="undertow-page__divider"
+              viewBox="0 0 400 4"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path d="M0,2 C40,0.5 80,3.5 120,2 C160,0.5 200,3 240,2 C280,1 320,3.5 360,2 C380,0.5 400,2 400,2" />
+            </svg>
+
+            <p className="undertow-page__result">
+              {isPlayerCorrect
+                ? "Perfect read."
+                : `You placed ${correctCount} of 4 correctly.`}
+              {attempt > 1 && (
+                <span className="undertow-page__result-attempts">
+                  {" "}
+                  &middot; {attempt} attempt{attempt !== 1 ? "s" : ""}
+                </span>
+              )}
+            </p>
+
+            <ShareButton
+              challengeId={challenge.id}
+              playerOrder={slots}
+              correctOrder={challenge.correct_order}
+              attemptsUsed={attempt}
+            />
+
+            {challenge.tomorrow_axis && (
+              <p className="undertow-page__tomorrow">
+                Tomorrow&apos;s axis: {challenge.tomorrow_axis}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Photo credit */}
+        <p className="undertow-page__credit" aria-hidden="true">
+          {axisImage.credit}
+        </p>
+      </div>
     </div>
   );
 }

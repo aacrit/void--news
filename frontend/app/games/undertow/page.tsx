@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import UndertowGame from "./UndertowGame";
 
 export const metadata: Metadata = {
-  title: "void --undertow \u2014 every text has a tide",
+  title: "UNDERTOW \u2014 Daily Cultural Subtext Puzzle | void --games",
   description:
-    "Four cultural artifacts. One axis. Order them from pole to pole. A daily cultural subtext puzzle from void --news.",
+    "Four cultural artifacts. One conceptual axis. Order them from pole to pole. Decode the subtext. A daily challenge from void --news.",
 };
 
 export default function UndertowPage() {

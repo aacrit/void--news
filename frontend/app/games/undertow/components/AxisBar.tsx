@@ -3,13 +3,14 @@
 import { useCallback, useState } from "react";
 
 /* ==========================================================================
-   AxisBar — Horizontal spectrum ordering track
+   AxisBar — The Dramatic Horizon
 
-   Desktop: 4 drop zones between the two axis poles for drag-and-drop.
+   Desktop: 4 drop zones along a gradient axis line between two poles.
    Mobile: hidden (mobile uses slot buttons on each card instead).
 
-   Minimal, typographic. Two words at each end, a long em-dash line
-   between them. Not colorful. Just the poles.
+   The axis is a typographic horizon — two pole words at each end,
+   a gradient line between them drawing from cool blue-grey (left)
+   to amber (right). Drop zones sit along this line.
    ========================================================================== */
 
 interface AxisBarProps {
@@ -24,6 +25,8 @@ interface AxisBarProps {
   /** Called when an artifact is dropped into a slot */
   onDrop: (artifactId: string, slotIndex: number) => void;
 }
+
+const POSITION_LABELS = ["1st", "2nd", "3rd", "4th"];
 
 export default function AxisBar({
   slots,
@@ -65,19 +68,18 @@ export default function AxisBar({
     return text.slice(0, max).trim() + "\u2026";
   }
 
-  const POSITION_LABELS = ["1st", "2nd", "3rd", "4th"];
-
   return (
     <div
       className="ut-axis"
       role="list"
-      aria-label="Axis ordering bar"
+      aria-label={`Axis ordering bar: ${leftPole} to ${rightPole}`}
     >
-      {/* Axis line with pole labels */}
-      <div className="ut-axis__poles" aria-hidden="true">
+      {/* Axis line with gradient and pole labels */}
+      <div className="ut-axis__track">
         <span className="ut-axis__pole ut-axis__pole--left">
           &larr; {leftPole}
         </span>
+        <div className="ut-axis__line" aria-hidden="true" />
         <span className="ut-axis__pole ut-axis__pole--right">
           {rightPole} &rarr;
         </span>

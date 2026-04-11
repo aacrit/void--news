@@ -5,16 +5,13 @@ import { useState, useCallback } from "react";
 /* ==========================================================================
    ShareButton — Copies geometric symbol grid of game result to clipboard
 
-   Share format (spec):
+   Share format:
    void --undertow #1
-   axis: CONTROL <-> FREEDOM
-   (player symbols)
-   correct: (correct symbols)
+   CONTROL <-> FREEDOM
+   ◆ ◈ ● ○
+   correct: ◆ ◈ ● ○
    3 of 4 . 2 attempts
    void.news/games
-
-   Uses solid/hollow geometric symbols — not emoji flags or political
-   colors — to avoid spoiling the content.
    ========================================================================== */
 
 interface ShareButtonProps {
@@ -25,7 +22,7 @@ interface ShareButtonProps {
 }
 
 /** Map artifact position to geometric symbol */
-const SYMBOLS = ["\u25C6", "\u25C8", "\u25CF", "\u25CB"]; // diamond, boxdot, circle, open circle
+const SYMBOLS = ["\u25C6", "\u25C8", "\u25CF", "\u25CB"];
 
 export default function ShareButton({
   challengeId,
@@ -36,16 +33,13 @@ export default function ShareButton({
   const [copied, setCopied] = useState(false);
 
   const buildShareText = useCallback(() => {
-    // Build a map: artifact id -> symbol index in correct order
     const symbolMap = new Map<string, string>();
     correctOrder.forEach((id, i) => symbolMap.set(id, SYMBOLS[i]));
 
-    // Build player row
     const playerSymbols = playerOrder
       .map((id) => (id ? symbolMap.get(id) ?? "\u25A1" : "\u25A1"))
       .join(" ");
 
-    // Build correct row
     const correctSymbols = correctOrder
       .map((id) => symbolMap.get(id) ?? "\u25A1")
       .join(" ");
@@ -56,7 +50,6 @@ export default function ShareButton({
 
     const lines = [
       `void --undertow #${challengeId}`,
-      `axis: CONTROL \u2194 FREEDOM`,
       playerSymbols,
       `correct: ${correctSymbols}`,
       `${correctCount} of ${correctOrder.length} \u00B7 ${attemptsUsed} attempt${attemptsUsed !== 1 ? "s" : ""}`,
@@ -73,7 +66,6 @@ export default function ShareButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback: textarea copy
       const textarea = document.createElement("textarea");
       textarea.value = text;
       textarea.style.position = "fixed";
