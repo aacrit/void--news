@@ -130,7 +130,7 @@ const STYLES = `
 
 .si-beam--idle {
   transform-origin: 16px 13px;
-  animation: si-idle 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation: si-idle 7s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-beam--loading {
@@ -155,7 +155,7 @@ const STYLES = `
 
 .si-beam--broadcast {
   transform-origin: 16px 13px;
-  animation: si-broadcast 2.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation: si-broadcast 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-root--pulse {

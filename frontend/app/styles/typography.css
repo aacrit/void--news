@@ -62,7 +62,7 @@
   font-family: var(--font-structural);
   font-size: var(--text-sm);
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--cin-tracking-meta, 0.10em);
   text-transform: uppercase;
 }
 
