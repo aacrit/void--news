@@ -63,14 +63,14 @@ try:
     from summarizer.cluster_summarizer import summarize_clusters_batch, summarize_cluster
     from summarizer.gemini_client import is_available as gemini_is_available, calls_remaining
     SUMMARIZER_AVAILABLE = True
+except ImportError:
+    pass
 
 # Cluster image cacher — downloads og:images and re-serves from Supabase Storage
 IMAGE_CACHER_AVAILABLE = False
 try:
     from media.cluster_image_cacher import cache_cluster_images
     IMAGE_CACHER_AVAILABLE = True
-except ImportError:
-    pass
 except ImportError:
     pass
 
