@@ -3202,43 +3202,103 @@
   color: var(--hist-ink);
   text-align: justify;
   hyphens: auto;
-  max-width: 700px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
 /* ─────────────────────────────────────────────
-   Key Facts — Compact reference panel
+   Key Facts — Pull Stats + Ledger
    ───────────────────────────────────────────── */
 .hist-stage--keyfacts {
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-5);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-4);
 }
 
+/* ─────────────────────────────────────────────
+   Key Facts — Pull Stats + Ledger
+   No card background. Type on page surface.
+   ───────────────────────────────────────────── */
 .hist-keyfacts {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: var(--space-4);
-  background: var(--hist-bg-card);
-  box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
-  border-top: 2px solid var(--hist-accent-wash);
 }
 
-.hist-keyfacts__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3) var(--space-4);
+/* ── Tier 1: Dominant Numbers (Pull Stats) ── */
+.hist-keyfacts__pull {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  justify-content: center;
+  padding: var(--space-5) 0;
+  border-top: 2px solid var(--hist-accent);
+  border-bottom: 1px solid var(--hist-border-subtle);
+  margin-bottom: var(--space-4);
 }
 
-@media (max-width: 767px) {
-  .hist-keyfacts__grid {
-    grid-template-columns: 1fr 1fr;
-  }
+.hist-keyfacts__pull-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
 }
 
-@media (min-width: 768px) {
-  .hist-keyfacts__grid {
-    grid-template-columns: repeat(3, 1fr);
+.hist-keyfacts__pull-number {
+  font-family: var(--font-data);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--hist-accent);
+  letter-spacing: -0.02em;
+}
+
+.hist-keyfacts__pull-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-ink-muted);
+}
+
+/* ── Tier 2: Ledger (ruled document block) ── */
+.hist-keyfacts__ledger {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hist-border-subtle);
+}
+
+.hist-keyfacts__ledger-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-keyfacts__ledger-row dt {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hist-ink-muted);
+  flex: 0 0 7rem;
+  min-width: 0;
+}
+
+.hist-keyfacts__ledger-row dd {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--hist-ink);
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 479px) {
+  .hist-keyfacts__pull-number {
+    font-size: clamp(1.75rem, 1.2rem + 3vw, 2.5rem);
   }
 }
 
@@ -3288,66 +3348,77 @@
   max-width: 700px;
 }
 
-.hist-keyfacts__item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+/* ─────────────────────────────────────────────
+   Key Figures — Name Plate / Brass Plaque
+   Standalone section. Playfair name + Mono dates + Inter role.
+   Thin ruled separators only. No card background.
+   ───────────────────────────────────────────── */
+.hist-stage--figures {
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-5);
 }
 
+.hist-figures {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--hist-border-subtle);
+}
+
+.hist-figures__plate {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-figures__namerow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-1);
+}
+
+.hist-figures__name {
+  font-family: var(--font-editorial);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.2rem);
+  font-weight: 700;
+  font-style: normal;
+  color: var(--hist-ink);
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+a.hist-figures__name:hover {
+  color: var(--hist-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--hist-accent);
+  text-underline-offset: 3px;
+}
+
+.hist-figures__dates {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--hist-ink-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.hist-figures__role {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--hist-ink-secondary);
+  line-height: 1.5;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+/* Legacy keyfacts selectors — kept for any remaining references */
 .hist-keyfacts__label {
   font-family: var(--font-meta);
   font-size: var(--text-xxs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--hist-ink-muted);
-}
-
-.hist-keyfacts__value {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--hist-ink);
-  line-height: 1.4;
-}
-
-.hist-keyfacts__value--figure {
-  font-family: var(--font-data);
-  font-weight: 500;
-  color: var(--hist-accent);
-}
-
-.hist-keyfacts__figures {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--hist-border-subtle);
-}
-
-.hist-keyfacts__figures-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-  margin-top: var(--space-2);
-}
-
-.hist-keyfacts__figure {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.hist-keyfacts__figure-name {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--hist-ink);
-}
-
-.hist-keyfacts__figure-role {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 400;
   color: var(--hist-ink-muted);
 }
 
@@ -3368,8 +3439,7 @@
   border-radius: 2px;
   transition:
     opacity 600ms ease,
-    transform 600ms ease,
-    filter 600ms ease;
+    transform 600ms ease;
 }
 
 .hist-witness--left {
@@ -6098,14 +6168,16 @@
    Progressive Max-Width Narrowing — Wide Shot to Close-Up to Wide
    Applied to EventDetail stages (cinematographic focal distance).
    --------------------------------------------------------------------------- */
-/* Wide shot (establishing) -> Close-up (intimate) -> Pull-back (exit) */
+/* Wide shot (establishing) -> Close-up (intimate) -> Pull-back (exit)
+   3-tier system: 100% / 800px / 680px */
 .hist-stage--scene  { max-width: 100%; }
 .hist-stage--crack  { max-width: 800px; margin-left: auto; margin-right: auto; }
-.hist-stage--context  { max-width: 720px; margin-left: auto; margin-right: auto; }
-.hist-stage--keyfacts { max-width: 740px; margin-left: auto; margin-right: auto; }
+.hist-stage--keyfacts { max-width: 800px; margin-left: auto; margin-right: auto; }
+.hist-stage--figures  { max-width: 800px; margin-left: auto; margin-right: auto; }
+.hist-stage--context  { max-width: 680px; margin-left: auto; margin-right: auto; }
 .hist-stage--perspectives { max-width: 680px; margin-left: auto; margin-right: auto; }
-.hist-stage--omissions { max-width: 640px; margin-left: auto; margin-right: auto; }
-.hist-stage--evidence { max-width: 660px; margin-left: auto; margin-right: auto; }
+.hist-stage--omissions { max-width: 680px; margin-left: auto; margin-right: auto; }
+.hist-stage--evidence { max-width: 800px; margin-left: auto; margin-right: auto; }
 .hist-stage--next   { max-width: 100%; }
 
 /* ---------------------------------------------------------------------------
