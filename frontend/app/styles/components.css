@@ -582,6 +582,11 @@
   -webkit-hyphens: auto;
 }
 
+.story-card__summary--pending {
+  font-style: italic;
+  opacity: 0.5;
+}
+
 
 .story-card__byline,
 .lead-story__byline {
@@ -616,11 +621,10 @@
   padding: var(--space-6) 0;
   border-bottom: var(--rule-strong);
   cursor: pointer;
-  /* blur(0) ensures the filter function list matches the rack focus
-     neighbor filter (blur + sepia + saturate) for smooth interpolation.
-     Without it, CSS falls back to discrete (snap) transition because
-     the base filter lacks a blur() function. */
-  filter: blur(0) var(--cin-warmth-near);
+  /* Warmth filter at rest — no blur(0) to avoid forcing GPU compositing
+     layer on mobile. blur(0) is added via rack-focus hover rules on
+     hover-capable devices only, ensuring smooth interpolation there. */
+  filter: var(--cin-warmth-near);
   transition:
     box-shadow 300ms 30ms var(--ease-out),
     transform  320ms var(--spring-snappy);
@@ -725,6 +729,7 @@
   height: auto;
   max-height: 320px;
   object-fit: cover;
+  object-position: top center;
   opacity: 0;
   transition: opacity 500ms var(--ease-cinematic);
   filter: var(--img-grade-feed);
@@ -776,6 +781,10 @@
 
 .lead-story__headline-text {
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   overflow-wrap: break-word;
   transition: text-shadow 300ms var(--ease-cinematic);
 }
@@ -793,6 +802,11 @@
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
+}
+
+.lead-story__summary--pending {
+  font-style: italic;
+  opacity: 0.5;
 }
 
 /* ---- Filter Bar — collapsible wrapper ---------------------------------- */
@@ -7403,8 +7417,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
   /* ── Inline variant — used in feed content flow, NOT fixed-bottom ── */
   .mob-nav--inline {
-    position: relative;
-    z-index: auto;
+    position: sticky;
+    top: var(--nav-height);
+    z-index: var(--z-sticky);
+    background-color: var(--bg-primary);
   }
 
   .mob-nav--inline .mob-nav__bar {
@@ -7705,6 +7721,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    Hovered card sharpens; surrounding field goes soft.
    Only on hover-capable devices. Suppressed in reduced-motion. */
 @media (hover: hover) and (pointer: fine) {
+  /* blur(0) at rest on hover-capable devices — ensures the filter function
+     list matches the rack-focus neighbor blur() for smooth interpolation.
+     Not set in the base rule to avoid forcing a GPU layer on mobile. */
+  .lead-story {
+    filter: blur(0) var(--cin-warmth-near);
+  }
+
   .feed-grid:has(.story-card:hover) .story-card:not(:hover),
   .hero-slot:has(.lead-story:hover) .lead-story:not(:hover),
   .page-main:has(.story-card:hover) .story-card:not(:hover) {
@@ -7952,8 +7975,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 }
 
-/* ---- Mobile adjustments (≤768px) ---- */
-@media (max-width: 768px) {
+/* ---- Mobile adjustments (≤767px) ---- */
+@media (max-width: 767px) {
   .search-overlay {
     padding-top: var(--space-6);
     backdrop-filter: blur(8px) saturate(0.65) brightness(0.72);

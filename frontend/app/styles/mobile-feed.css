@@ -161,6 +161,11 @@
   color: var(--fg-tertiary);
 }
 
+.msc__summary--pending {
+  font-style: italic;
+  opacity: 0.5;
+}
+
 /* Compact headline now renders directly in article — no wrapper needed */
 
 .msc__footer {
@@ -194,10 +199,11 @@
   color: var(--fg-tertiary);
 }
 
-/* Sigil dedicated row — full-width beneath headline+summary */
+/* Sigil dedicated row — full-width beneath headline */
 .msc__sigil-row {
   display: flex;
   align-items: center;
+  gap: var(--space-2);
   margin-top: var(--space-1);
 }
 
@@ -280,7 +286,7 @@
 /* Content-visibility for cards below fold */
 .msc--compact:nth-child(n+5) {
   content-visibility: auto;
-  contain-intrinsic-size: auto 72px;
+  contain-intrinsic-size: auto 88px;
 }
 
 /* ---------------------------------------------------------------------------
