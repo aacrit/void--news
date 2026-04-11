@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hapticMicro } from "../lib/haptics";
@@ -81,6 +81,8 @@ const TABS: TabDef[] = [
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
   const audio = useAudio();
+  const [onairMsg, setOnairMsg] = useState<string | null>(null);
+  const onairMsgTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isActive = useCallback(
     (key: string): boolean => {
@@ -101,6 +103,12 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
     [pathname, moreOpen, audio.isPlaying]
   );
 
+  const showOnairMsg = useCallback((msg: string) => {
+    setOnairMsg(msg);
+    if (onairMsgTimer.current) clearTimeout(onairMsgTimer.current);
+    onairMsgTimer.current = setTimeout(() => setOnairMsg(null), 2000);
+  }, []);
+
   const handleOnAirTap = useCallback(() => {
     hapticMicro();
     if (audio.isPlaying) {
@@ -116,8 +124,11 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
     const briefPill = document.querySelector(".mbp, .skybox");
     if (briefPill) {
       briefPill.scrollIntoView({ behavior: "smooth", block: "center" });
+      showOnairMsg("brief above ↑");
+    } else {
+      showOnairMsg("loading soon");
     }
-  }, [audio]);
+  }, [audio, showOnairMsg]);
 
   return (
     <nav className="mtb" aria-label="Mobile navigation">
@@ -146,7 +157,14 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
               aria-label="Play audio brief"
               onClick={handleOnAirTap}
             >
-              <Icon />
+              <span className="mtb__onair-wrap">
+                <Icon />
+                {onairMsg && (
+                  <span className="mtb__onair-msg" role="status" aria-live="polite">
+                    {onairMsg}
+                  </span>
+                )}
+              </span>
               <span className="mtb__label">{label}</span>
             </button>
           );

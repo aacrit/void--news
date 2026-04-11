@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import Link from "next/link";
 import type { HistoricalEvent } from "../types";
 import { fetchHistoryEvent, fetchHistoryEvents } from "../data";
 import EventDetail from "../components/EventDetail";
@@ -63,29 +62,5 @@ export default function EventPageClient({ slugPromise }: EventPageClientProps) {
     );
   }
 
-  return (
-    <>
-      {/* Fixed back button for standalone pages */}
-      <Link
-        href="/history"
-        className="hist-standalone-back"
-        aria-label="Back to timeline"
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          aria-hidden="true"
-        >
-          <path d="M18 6L6 18" />
-          <path d="M6 6l12 12" />
-        </svg>
-      </Link>
-      <EventDetail event={event} allEvents={allEvents} />
-    </>
-  );
+  return <EventDetail event={event} allEvents={allEvents} />;
 }
