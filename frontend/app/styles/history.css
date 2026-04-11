@@ -3219,7 +3219,7 @@
    Key Facts — Compact reference panel
    ───────────────────────────────────────────── */
 .hist-stage--keyfacts {
-  padding-top: 0;
+  padding-top: var(--space-5);
   padding-bottom: var(--space-5);
 }
 
@@ -3253,7 +3253,9 @@
 
 /* Progressive disclosure for full story */
 .hist-context__more-toggle {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
   margin-top: var(--space-3);
   font-family: var(--font-meta);
   font-size: var(--text-xs);
@@ -3264,7 +3266,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: var(--space-1) 0;
+  padding: var(--space-2) var(--space-3);
   transition: opacity 200ms ease;
 }
 
@@ -3274,6 +3276,12 @@
 
 .hist-context__extra {
   margin-top: var(--space-2);
+  animation: histContextExtraReveal 350ms var(--ease-cinematic) both;
+}
+
+@keyframes histContextExtraReveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Dossier thread lead — absorbed from standalone thread stage */
@@ -5057,7 +5065,7 @@
    21. CONTEXT PANEL — First paragraph drop cap feel
    --------------------------------------------------------------------------- */
 
-.hist-context p:first-child::first-letter {
+.hist-context__body > p:first-of-type::first-letter {
   font-family: var(--font-editorial);
   font-size: 2.2em;
   float: left;
@@ -6102,7 +6110,7 @@
 .hist-stage--keyfacts { max-width: 740px; margin-left: auto; margin-right: auto; }
 .hist-stage--perspectives { max-width: 680px; margin-left: auto; margin-right: auto; }
 .hist-stage--omissions { max-width: 640px; margin-left: auto; margin-right: auto; }
-.hist-stage--evidence { max-width: 800px; margin-left: auto; margin-right: auto; }
+.hist-stage--evidence { max-width: 700px; margin-left: auto; margin-right: auto; }
 .hist-stage--next   { max-width: 100%; }
 
 /* ---------------------------------------------------------------------------
@@ -7468,6 +7476,25 @@
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* Mobile: single-row horizontal scroll + WCAG touch targets */
+@media (max-width: 767px) {
+  .hist-longview-legend {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: var(--space-1);
+  }
+  .hist-longview-legend::-webkit-scrollbar {
+    display: none;
+  }
+  .hist-longview-legend__item {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+  }
 }
 
 /* ---------------------------------------------------------------------------
