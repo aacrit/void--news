@@ -2546,7 +2546,7 @@ def main():
         print("\n[8d] Gemini top-up for post-rerank top-50...")
         try:
             # Fetch current top-50 by rank_world from DB (post-rerank order)
-            rank_res = supabase.table("story_clusters").select("id").contains("sections", ["world"]).order("rank_world", ascending=False).limit(50).execute()
+            rank_res = supabase.table("story_clusters").select("id").contains("sections", ["world"]).order("rank_world", desc=True).limit(50).execute()
             top50_ids = [row["id"] for row in (rank_res.data or [])]
 
             # Build lookup: cluster_id → in-memory cluster index
