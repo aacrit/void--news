@@ -1700,51 +1700,114 @@
 
 /* ==========================================================================
    UNDERTOW — Daily Cultural Subtext Puzzle
-   Dark cinematic: #0a0a0a bg, warm newsprint text, amber accents.
-   Film grain + vignette. The artifact text is the hero.
+   Cinematic art installation: layered bg image, parallax, animated grain,
+   vignette, physical paper cards with tilt, sequential reveal.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Undertow Page — Container & Atmosphere
+   Animated Film Grain
+   -------------------------------------------------------------------------- */
+
+@keyframes grain-drift {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-2%, -4%); }
+  40%  { transform: translate(-5%, 2%); }
+  60%  { transform: translate(3%, -1%); }
+  80%  { transform: translate(1%, 4%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   Undertow Page — Container & Cinematic Layer Stack
    -------------------------------------------------------------------------- */
 
 .undertow-page {
   min-height: 100vh;
   min-height: 100dvh;
-  padding: var(--space-6) var(--space-5);
-  max-width: 900px;
-  margin: 0 auto;
   position: relative;
-  background: #0a0a0a;
+  overflow: hidden;
+  background: #050508;
   color: #f5f0e8;
 }
 
-/* Vignette — radial darkening at edges */
+/* Layer 1: Background image — full-viewport, blurred, dark overlay */
+.undertow-page__bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  transform: translate(var(--px, 0), var(--py, 0));
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.undertow-page__bg-img {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  object-fit: cover;
+  filter: blur(32px);
+  transform: scale(1.08);
+}
+
+.undertow-page__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+/* Layer 2: Animated film grain */
+.undertow-page__grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.undertow-page__grain svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.undertow-page__grain-layer {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.045;
+  animation: grain-drift 8s steps(10) infinite;
+  pointer-events: none;
+}
+
+/* Layer 3: Vignette */
 .undertow-page__vignette {
   position: fixed;
   inset: 0;
   background: radial-gradient(
-    ellipse 70% 70% at 50% 50%,
+    ellipse 80% 80% at 50% 50%,
     transparent 40%,
-    rgba(0, 0, 0, 0.5) 100%
+    rgba(0, 0, 0, 0.75) 100%
   );
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
 }
 
-/* Film grain overlay */
-.undertow-page__grain {
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.04;
-}
-
-.undertow-page > * {
+/* Layer 4: Content */
+.undertow-page__content {
   position: relative;
-  z-index: 1;
+  z-index: 3;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+}
+
+/* Reveal state — page dims slightly */
+.undertow-page--revealed .undertow-page__bg-overlay {
+  background: rgba(0, 0, 0, 0.80);
+  transition: background 300ms ease;
 }
 
 /* ---- Navigation ---- */
@@ -1755,7 +1818,7 @@
 .undertow-page__back {
   font-family: var(--font-data);
   font-size: var(--text-sm);
-  color: #8a8278;
+  color: rgba(138, 130, 120, 0.8);
   text-decoration: none;
   letter-spacing: 0.03em;
   transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -1771,7 +1834,7 @@
 }
 
 .undertow-page__back:focus-visible {
-  outline: 2px solid #c9a84c;
+  outline: 2px solid rgba(201, 168, 76, 0.8);
   outline-offset: 4px;
   border-radius: 2px;
 }
@@ -1779,7 +1842,15 @@
 /* ---- Header ---- */
 .undertow-page__header {
   text-align: center;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+
+.undertow-page--mounted .undertow-page__header {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .undertow-page__title {
@@ -1796,66 +1867,90 @@
 .undertow-page__meta {
   font-family: var(--font-data);
   font-size: var(--text-sm);
-  color: #8a8278;
+  color: rgba(138, 130, 120, 0.7);
   letter-spacing: 0.04em;
   font-feature-settings: "tnum" 1;
 }
 
-/* ---- Axis Announcement ---- */
-.undertow-page__axis {
-  text-align: center;
-  margin-bottom: var(--space-5);
-  padding: var(--space-5) var(--space-4);
-  border-top: 1px solid #2a2a2a;
-  border-bottom: 1px solid #2a2a2a;
-}
+/* --------------------------------------------------------------------------
+   Axis Announcement — Dramatic Horizon with Animated Entrance
+   -------------------------------------------------------------------------- */
 
-.undertow-page__axis-label {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #8a8278;
-  margin-bottom: var(--space-3);
-}
-
-.undertow-page__axis-poles {
-  display: flex;
+.undertow-axis {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  gap: clamp(1rem, 3vw, 2rem);
+  margin: clamp(2rem, 5vh, 3.5rem) 0 var(--space-3);
 }
 
-.undertow-page__pole {
+/* Pole labels — hidden until mounted, then slide in */
+.undertow-axis__pole {
   font-family: var(--font-meta);
-  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #f5f0e8;
+  opacity: 0;
+  transition: opacity 400ms ease, transform 400ms ease;
 }
 
-.undertow-page__axis-line {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: #3a3a3a;
-  letter-spacing: -0.05em;
-  flex-shrink: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  max-width: 40ch;
+.undertow-axis__pole--left {
+  color: #7a9bb5;
+  transform: translateX(-40px);
+  transition-delay: 100ms;
 }
 
-.undertow-page__axis-desc {
+.undertow-axis__pole--right {
+  color: #c9a84c;
+  transform: translateX(40px);
+  transition-delay: 150ms;
+}
+
+.undertow-axis--visible .undertow-axis__pole {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Axis line — draws itself from center outward */
+.undertow-axis__line {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(122, 155, 181, 0.4),
+    rgba(201, 168, 76, 0.12) 30%,
+    rgba(201, 168, 76, 0.12) 70%,
+    rgba(201, 168, 76, 0.4)
+  );
+  transform: scaleX(0);
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 300ms;
+}
+
+.undertow-axis--visible .undertow-axis__line {
+  transform: scaleX(1);
+}
+
+/* Axis description — fades in last */
+.undertow-axis__desc {
   font-family: var(--font-structural);
   font-size: var(--text-base);
-  color: #8a8278;
+  color: rgba(245, 240, 232, 0.45);
   font-style: italic;
   max-width: 50ch;
-  margin: 0 auto;
-  line-height: 1.5;
+  margin: 0 auto var(--space-5);
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 400ms ease, transform 400ms ease;
+  transition-delay: 600ms;
+}
+
+.undertow-axis__desc--visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ---- Attempt Counter ---- */
@@ -1863,9 +1958,9 @@
   text-align: center;
   margin-bottom: var(--space-4);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  justify-content: center;
+  gap: var(--space-3);
 }
 
 .undertow-page__attempt-label {
@@ -1874,7 +1969,7 @@
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8278;
+  color: rgba(138, 130, 120, 0.6);
 }
 
 .undertow-page__attempt-dots {
@@ -1887,13 +1982,11 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #8a8278;
-  opacity: 0.2;
-  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(138, 130, 120, 0.3);
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .undertow-page__attempt-dot--active {
-  opacity: 1;
   background: #c9a84c;
 }
 
@@ -1921,6 +2014,16 @@
   gap: var(--space-4);
   margin-bottom: var(--space-5);
   grid-template-columns: 1fr;
+  /* Staggered entrance — cards wait for axis intro (700ms) */
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 500ms ease, transform 500ms ease;
+  transition-delay: 700ms;
+}
+
+.undertow-page__cards--entered {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (min-width: 640px) {
@@ -1936,6 +2039,10 @@
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
+  /* Reset entrance state for reveal */
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0ms;
 }
 
 /* ---- Submit Row ---- */
@@ -1945,46 +2052,42 @@
   margin-bottom: var(--space-6);
 }
 
-.undertow-page__submit {
+.undertow-submit {
   font-family: var(--font-meta);
-  font-size: var(--text-sm);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #8a8278;
-  border: 1px solid #3a3a3a;
   background: transparent;
-  padding: var(--space-3) var(--space-6);
-  border-radius: 2px;
+  color: rgba(245, 240, 232, 0.3);
+  border: 1px solid rgba(245, 240, 232, 0.12);
+  padding: 0.875rem 2.5rem;
+  border-radius: 1px;
   cursor: not-allowed;
-  opacity: 0.5;
-  transition:
-    opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
   min-height: 44px;
   min-width: 44px;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.undertow-page__submit--ready {
-  opacity: 1;
-  cursor: pointer;
+.undertow-submit--ready {
   color: #c9a84c;
-  border-color: #c9a84c;
+  border-color: rgba(201, 168, 76, 0.5);
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(201, 168, 76, 0);
 }
 
-.undertow-page__submit--ready:hover {
-  background: rgba(201, 168, 76, 0.08);
+.undertow-submit--ready:hover {
+  background: rgba(201, 168, 76, 0.06);
+  border-color: rgba(201, 168, 76, 0.8);
+  box-shadow: 0 0 24px rgba(201, 168, 76, 0.12);
 }
 
-.undertow-page__submit--ready:active {
+.undertow-submit--ready:active {
   transform: scale(0.97);
-  transition: transform 60ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.undertow-page__submit--ready:focus-visible {
-  outline: 2px solid #c9a84c;
+.undertow-submit--ready:focus-visible {
+  outline: 2px solid rgba(201, 168, 76, 0.8);
   outline-offset: 2px;
 }
 
@@ -2026,263 +2129,283 @@
 .undertow-page__result-attempts {
   font-family: var(--font-data);
   font-size: var(--text-sm);
-  color: #8a8278;
+  color: rgba(138, 130, 120, 0.7);
   font-weight: 400;
 }
 
 .undertow-page__tomorrow {
   font-family: var(--font-data);
   font-size: var(--text-xs);
-  color: #8a8278;
+  color: rgba(138, 130, 120, 0.6);
   letter-spacing: 0.04em;
   margin-top: var(--space-4);
 }
 
+/* Photo credit — bottom right, extremely subtle */
+.undertow-page__credit {
+  position: fixed;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  color: rgba(245, 240, 232, 0.2);
+  letter-spacing: 0.02em;
+  z-index: 3;
+  pointer-events: none;
+}
+
 
 /* --------------------------------------------------------------------------
-   ArtifactCard — Document-like card for cultural artifacts
+   ArtifactCard — Physical Paper Document on Dark Surface
    -------------------------------------------------------------------------- */
 
-.ut-card {
+.undertow-card {
+  background: #13110d;
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  border-radius: 1px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
   position: relative;
-  background: #111009;
-  border: 1px solid #2a2a2a;
-  border-radius: 2px;
-  padding: var(--space-5) var(--space-5) var(--space-4);
   cursor: grab;
+
+  /* Physical depth — triple-shadow stack */
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 24px 48px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  /* Deterministic tilt per card */
+  transform: rotate(calc(var(--card-tilt, 0) * 1deg));
+
   transition:
-    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 350ms cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
-.ut-card:hover {
-  border-color: #3a3a3a;
+/* Paper texture overlay */
+.undertow-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: overlay;
 }
 
-.ut-card:focus-visible {
-  outline: 2px solid #c9a84c;
-  outline-offset: 2px;
-}
-
-/* Drag state */
-.ut-card--dragging {
-  transform: rotate(1deg) translateY(-6px) scale(1.02);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-  opacity: 0.85;
-  cursor: grabbing;
-  z-index: 100;
-}
-
-/* Selected (mobile tap) */
-.ut-card--selected {
-  border-color: #c9a84c;
-  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.2);
-}
-
-/* Assigned to a slot */
-.ut-card--assigned {
-  border-color: #c9a84c;
-}
-
-.ut-card--assigned::after {
+/* Top-left corner fold */
+.undertow-card::after {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 2px;
-  background: #c9a84c;
-  opacity: 0.6;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 14px 14px 0 0;
+  border-color: rgba(201, 168, 76, 0.08) transparent transparent transparent;
+}
+
+/* Hover — card straightens, lifts, glow */
+.undertow-card:hover {
+  transform: rotate(0deg) translateY(-4px) scale(1.015);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 48px 80px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(201, 168, 76, 0.25);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+.undertow-card:focus-visible {
+  outline: 2px solid rgba(201, 168, 76, 0.8);
+  outline-offset: 2px;
+}
+
+/* Drag state */
+.undertow-card--dragging {
+  transform: rotate(2deg) translateY(-8px) scale(1.03);
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.6),
+    0 24px 64px rgba(0, 0, 0, 0.5),
+    0 64px 96px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(201, 168, 76, 0.4);
+  cursor: grabbing;
+  z-index: 100;
+}
+
+/* Assigned to a slot */
+.undertow-card--assigned {
+  border-color: rgba(201, 168, 76, 0.2);
 }
 
 /* Wrong guess shake */
-.ut-card--wrong {
-  animation: utCardShake 300ms cubic-bezier(0.16, 1, 0.3, 1);
+.undertow-card--wrong {
+  animation: card-shake 400ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
 }
 
-@keyframes utCardShake {
-  0%, 100% { transform: translateX(0); }
-  15% { transform: translateX(-6px); }
-  30% { transform: translateX(5px); }
-  45% { transform: translateX(-4px); }
-  60% { transform: translateX(3px); }
-  75% { transform: translateX(-1px); }
+@keyframes card-shake {
+  0%, 100% { transform: translateX(0) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  15% { transform: translateX(-8px) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  30% { transform: translateX(6px) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  45% { transform: translateX(-5px) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  60% { transform: translateX(4px) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  75% { transform: translateX(-2px) rotate(calc(var(--card-tilt, 0) * 1deg)); }
 }
 
 /* Correct position hint — subtle warm glow at base */
-.ut-card--correct-hint {
-  box-shadow: 0 3px 12px rgba(201, 168, 76, 0.08);
+.undertow-card--correct-hint {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 3px 12px rgba(201, 168, 76, 0.08);
 }
 
-.ut-card--correct-hint::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(201, 168, 76, 0.3),
-    transparent
-  );
-}
-
-/* Revealed state */
-.ut-card--revealed {
+/* Revealed state — card straightens, sequential entrance */
+.undertow-card--revealed {
   cursor: default;
   opacity: 0;
-  animation: utCardReveal 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateY(12px) rotate(0deg);
+  animation: undertow-card-reveal 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--reveal-delay, 0ms);
-  border-color: #2a2a2a;
+  border-color: rgba(201, 168, 76, 0.15);
 }
 
-@keyframes utCardReveal {
+@keyframes undertow-card-reveal {
   0% {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px) rotate(0deg);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg);
   }
 }
 
 /* ---- Card Header ---- */
-.ut-card__header {
+.undertow-card__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
 
-.ut-card__roman {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #8a8278;
-}
-
-.ut-card__category {
+.undertow-card__category {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   letter-spacing: 0.04em;
-  color: #c9a84c;
   opacity: 0.7;
+  /* color set via inline style from CATEGORY_COLORS */
 }
 
-/* ---- Artifact Text — The Hero ---- */
-.ut-card__text {
+.undertow-card__roman {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: rgba(138, 130, 120, 0.5);
+}
+
+/* ---- Artifact Text — The Soul of the Game ---- */
+.undertow-card__text {
   font-family: var(--font-editorial);
-  font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.35rem);
+  font-size: clamp(1.1rem, 0.9rem + 0.8vw, 1.5rem);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #f5f0e8;
   letter-spacing: -0.005em;
   margin-bottom: 0;
 }
 
-.ut-card__text p {
+.undertow-card__text p {
   margin: 0;
 }
 
 /* ---- Highlighted Words (Reveal) ---- */
-.ut-card__highlight {
+.undertow-highlight {
   background: none;
   color: inherit;
   font-style: inherit;
   font-weight: inherit;
   position: relative;
   text-decoration: underline;
-  text-decoration-color: #c9a84c;
-  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(201, 168, 76, 0);
   text-underline-offset: 3px;
-  opacity: 0;
-  animation: utHighlightIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: var(--hl-delay, 0ms);
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 600ms ease;
+  transition-delay: var(--hl-delay, 0ms);
 }
 
-@keyframes utHighlightIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+.undertow-highlight--active {
+  text-decoration-color: rgba(201, 168, 76, 0.7);
 }
 
 /* ---- Mobile Slot Buttons ---- */
-.ut-card__slots {
+.undertow-card__slots {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-4);
   padding-top: var(--space-3);
-  border-top: 1px solid #2a2a2a;
+  border-top: 1px solid rgba(245, 240, 232, 0.06);
 }
 
 /* Desktop: hide slot buttons (use drag-drop instead) */
 @media (min-width: 768px) {
-  .ut-card__slots {
+  .undertow-card__slots {
     display: none;
   }
 }
 
-.ut-card__slots-pole {
+.undertow-card__slots-pole {
   font-family: var(--font-meta);
   font-size: var(--text-xxs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #8a8278;
-  opacity: 0.5;
+  color: rgba(138, 130, 120, 0.4);
   flex-shrink: 0;
 }
 
-.ut-card__slot-btn {
+.undertow-card__slot-btn {
   flex: 1;
   font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8278;
-  background: transparent;
-  border: 1px solid #2a2a2a;
-  border-radius: 2px;
-  padding: var(--space-2) var(--space-2);
+  color: rgba(245, 240, 232, 0.4);
+  background: rgba(245, 240, 232, 0.04);
+  border: 1px solid rgba(245, 240, 232, 0.1);
+  border-radius: 1px;
+  padding: var(--space-2);
   min-height: 44px;
   cursor: pointer;
-  transition:
-    background 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 200ms ease;
 }
 
-.ut-card__slot-btn:hover {
-  border-color: #3a3a3a;
-  color: #f5f0e8;
+.undertow-card__slot-btn:hover {
+  border-color: rgba(245, 240, 232, 0.2);
+  color: rgba(245, 240, 232, 0.6);
 }
 
-.ut-card__slot-btn--active {
-  border-color: #c9a84c;
+.undertow-card__slot-btn--active {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: rgba(201, 168, 76, 0.5);
   color: #c9a84c;
-  background: rgba(201, 168, 76, 0.06);
 }
 
-.ut-card__slot-btn:focus-visible {
-  outline: 2px solid #c9a84c;
+.undertow-card__slot-btn:focus-visible {
+  outline: 2px solid rgba(201, 168, 76, 0.8);
   outline-offset: 1px;
 }
 
 
 /* --------------------------------------------------------------------------
-   AxisBar — Desktop drag-drop ordering track
+   AxisBar — Desktop Drag-Drop Ordering Track
    -------------------------------------------------------------------------- */
 
-/* Mobile: hide the axis bar (use card slot buttons) */
+/* Mobile: hide the axis bar */
 .ut-axis {
   display: none;
   margin-bottom: var(--space-5);
@@ -2294,23 +2417,40 @@
   }
 }
 
-/* Axis pole labels */
-.ut-axis__poles {
-  display: flex;
-  justify-content: space-between;
+/* Axis track with pole labels */
+.ut-axis__track {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: clamp(0.5rem, 2vw, 1.5rem);
   margin-bottom: var(--space-3);
-  padding: 0 var(--space-2);
 }
 
 .ut-axis__pole {
   font-family: var(--font-meta);
   font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #8a8278;
-  opacity: 0.7;
+}
+
+.ut-axis__pole--left {
+  color: rgba(122, 155, 181, 0.6);
+}
+
+.ut-axis__pole--right {
+  color: rgba(201, 168, 76, 0.6);
+}
+
+.ut-axis__line {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(122, 155, 181, 0.4),
+    rgba(201, 168, 76, 0.12) 30%,
+    rgba(201, 168, 76, 0.12) 70%,
+    rgba(201, 168, 76, 0.4)
+  );
 }
 
 /* Drop zones */
@@ -2321,8 +2461,8 @@
 }
 
 .ut-axis__zone {
-  border: 1px dashed #2a2a2a;
-  border-radius: 2px;
+  border: 1px dashed rgba(245, 240, 232, 0.08);
+  border-radius: 1px;
   padding: var(--space-4) var(--space-3);
   min-height: 80px;
   display: flex;
@@ -2336,15 +2476,15 @@
 }
 
 .ut-axis__zone--over {
-  border-color: #c9a84c;
-  background: rgba(201, 168, 76, 0.05);
+  border-color: rgba(201, 168, 76, 0.5);
+  background: rgba(201, 168, 76, 0.08);
   border-style: solid;
 }
 
 .ut-axis__zone--filled {
   border-style: solid;
-  border-color: #3a3a3a;
-  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(245, 240, 232, 0.1);
+  background: rgba(201, 168, 76, 0.04);
 }
 
 .ut-axis__zone-label {
@@ -2353,14 +2493,13 @@
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #8a8278;
-  opacity: 0.7;
+  color: rgba(138, 130, 120, 0.5);
 }
 
 .ut-axis__zone-preview {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
-  color: #b8b0a5;
+  color: rgba(184, 176, 165, 0.8);
   text-align: center;
   line-height: 1.4;
   overflow: hidden;
@@ -2373,8 +2512,7 @@
 .ut-axis__zone-placeholder {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
-  color: #8a8278;
-  opacity: 0.4;
+  color: rgba(138, 130, 120, 0.3);
   letter-spacing: 0.04em;
 }
 
@@ -2383,16 +2521,25 @@
    RevealCommentary — Marginalia-style analysis text
    -------------------------------------------------------------------------- */
 
-.ut-commentary {
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: 1px solid #2a2a2a;
+.undertow-reveal__commentary {
+  font-family: var(--font-structural);
+  font-style: italic;
+  font-size: clamp(0.75rem, 1.4vw, 0.875rem);
+  line-height: 1.7;
+  color: rgba(245, 240, 232, 0.55);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(245, 240, 232, 0.08);
+  text-align: left;
+
+  /* Entrance animation — delay per card */
   opacity: 0;
-  animation: utCommentaryIn 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateY(6px);
+  animation: undertow-commentary-in 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--commentary-delay, 0ms);
 }
 
-@keyframes utCommentaryIn {
+@keyframes undertow-commentary-in {
   0% {
     opacity: 0;
     transform: translateY(6px);
@@ -2403,12 +2550,8 @@
   }
 }
 
-.ut-commentary__text {
-  font-family: var(--font-structural);
-  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
-  font-style: italic;
-  color: #a0a0a0;
-  line-height: 1.65;
+.undertow-reveal__text {
+  margin: 0;
   text-align: justify;
   hyphens: auto;
 }
@@ -2428,19 +2571,21 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #c9a84c;
-  border: 1px solid #c9a84c;
+  border: 1px solid rgba(201, 168, 76, 0.5);
   background: transparent;
   padding: var(--space-3) var(--space-5);
-  border-radius: 2px;
+  border-radius: 1px;
   cursor: pointer;
   min-height: 44px;
   transition:
     background 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
     transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ut-share:hover {
-  background: rgba(201, 168, 76, 0.08);
+  background: rgba(201, 168, 76, 0.06);
+  box-shadow: 0 0 24px rgba(201, 168, 76, 0.08);
 }
 
 .ut-share:active {
@@ -2449,7 +2594,7 @@
 }
 
 .ut-share:focus-visible {
-  outline: 2px solid #c9a84c;
+  outline: 2px solid rgba(201, 168, 76, 0.8);
   outline-offset: 2px;
 }
 
@@ -2460,7 +2605,7 @@
 
 
 /* --------------------------------------------------------------------------
-   Games Hub — Multi-card featured section spacing
+   Games Hub — Multi-card featured section spacing + UNDERTOW hero
    -------------------------------------------------------------------------- */
 
 .games-hub__featured {
@@ -2473,16 +2618,33 @@
   border-color: var(--cin-amber);
 }
 
+/* UNDERTOW-specific hub card gradient */
+.games-hub__card--undertow.games-hub__card--featured::before {
+  background: linear-gradient(
+    135deg,
+    rgba(122, 155, 181, 0.06) 0%,
+    rgba(201, 168, 76, 0.04) 100%
+  );
+}
+
 
 /* --------------------------------------------------------------------------
    Reduced Motion — disable all UNDERTOW animations
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .ut-card--wrong { animation: none; }
-  .ut-card--revealed { animation: none; opacity: 1; transform: none; }
-  .ut-card__highlight { animation: none; opacity: 1; }
-  .ut-commentary { animation: none; opacity: 1; transform: none; }
+  .undertow-card--wrong { animation: none; }
+  .undertow-card--revealed { animation: none; opacity: 1; transform: none; }
+  .undertow-highlight { transition: none; }
+  .undertow-highlight--active { text-decoration-color: rgba(201, 168, 76, 0.7); }
+  .undertow-reveal__commentary { animation: none; opacity: 1; transform: none; }
   .undertow-page__feedback { animation: none; opacity: 1; transform: none; }
   .undertow-page__summary { animation: none; opacity: 1; transform: none; }
+  .undertow-page__grain-layer { animation: none; }
+  .undertow-page__bg { transition: none; }
+  .undertow-axis__pole { transition: none; opacity: 1; transform: none; }
+  .undertow-axis__line { transition: none; transform: scaleX(1); }
+  .undertow-axis__desc { transition: none; opacity: 1; transform: none; }
+  .undertow-page__header { transition: none; opacity: 1; transform: none; }
+  .undertow-page__cards { transition: none; opacity: 1; transform: none; }
 }

@@ -6,9 +6,10 @@ import Link from "next/link";
 /* ==========================================================================
    GamesHub — void --games Landing Page
    Featured game card + active games + coming-soon ghost cards.
+   UNDERTOW is the featured hero game. THE FRAME is second.
    ========================================================================== */
 
-/** Active game entries */
+/** Active game entries — UNDERTOW first (hero) */
 const ACTIVE_GAMES = [
   {
     name: "UNDERTOW",
@@ -84,7 +85,7 @@ export default function GamesHub() {
           <Link
             key={game.name}
             href={game.href}
-            className={`games-hub__card games-hub__card--featured${i === 0 ? " games-hub__card--hero" : ""}`}
+            className={`games-hub__card games-hub__card--featured${i === 0 ? " games-hub__card--hero" : ""}${game.name === "UNDERTOW" ? " games-hub__card--undertow" : ""}`}
           >
             <div className="games-hub__card-badge">{game.badge}</div>
             <div className="games-hub__card-content">
