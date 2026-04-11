@@ -93,13 +93,16 @@ function DataMark({ data, size, mounted }: {
   const beamAngle = isUnscored ? 0 : (lean - 50) * 0.30; // ±15° range, level when unscored
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
-  // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.
-  // px sizes: sm=40, lg=56, xl=72 — The Moat, no horizontal saving.
-  const px = size === "xl" ? 72 : size === "lg" ? 56 : 40;
-  // All sizes now use geometric precision — circle + straight beam
+  // px sizes: sm=48 (up from 40 — tilt now displaces ~4.6px vs 3.9px, perceptible on all screens),
+  //           lg=56, xl=72 — The Moat, no horizontal saving.
+  const px = size === "xl" ? 72 : size === "lg" ? 56 : 48;
+  const isSm = size === "sm";
+  // All sizes use geometric precision — circle + straight beam
   const isOrganic = false;
 
-  // Source coverage Harvey ball — ring fill proportional to source count
+  // Source coverage Harvey ball — ring fill proportional to source count.
+  // At sm, the fill arc is ~2.7px rendered — below perceptibility threshold.
+  // sm shows only the background circle (brand silhouette) + beam (lean color).
   const coverage = Math.min(data.sourceCount / 15, 1);
   const circ = isOrganic ? CIRC_ORGANIC : CIRC_GEOMETRIC;
   const ringFill = coverage * circ;
@@ -115,40 +118,44 @@ function DataMark({ data, size, mounted }: {
       aria-hidden="true"
       style={{ display: "block", flexShrink: 0 }}
     >
-      {/* Coverage ring — geometric at sm/lg (precision), organic at xl (Deep Dive texture) */}
+      {/* Coverage ring — geometric precision across all sizes */}
       {isOrganic ? (
         <>
           {/* Background ring (organic) */}
           <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
             stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3}
           />
-          {/* Fill ring (organic) */}
-          <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
-            stroke={ringCol} strokeWidth="1.8"
-            strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_ORGANIC}`}
-            style={{
-              transform: "rotate(-90deg)", transformOrigin: "16px 13px",
-              transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
-            }}
-            opacity={0.9}
-          />
+          {/* Fill ring (organic) — lg/xl only */}
+          {!isSm && (
+            <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
+              stroke={ringCol} strokeWidth="1.8"
+              strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_ORGANIC}`}
+              style={{
+                transform: "rotate(-90deg)", transformOrigin: "16px 13px",
+                transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
+              }}
+              opacity={0.9}
+            />
+          )}
         </>
       ) : (
         <>
-          {/* Background ring (geometric) */}
+          {/* Background ring (geometric) — all sizes: brand silhouette */}
           <circle cx="16" cy="14" r="11"
             stroke="var(--border-subtle)" strokeWidth="1.8" opacity={0.3} fill="none"
           />
-          {/* Fill ring (geometric Harvey ball) */}
-          <circle cx="16" cy="14" r="11"
-            stroke={ringCol} strokeWidth="1.8" fill="none"
-            strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_GEOMETRIC}`}
-            style={{
-              transform: "rotate(-90deg)", transformOrigin: "16px 14px",
-              transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
-            }}
-            opacity={0.9}
-          />
+          {/* Fill ring (geometric Harvey ball) — lg/xl only: arc too small to read at sm */}
+          {!isSm && (
+            <circle cx="16" cy="14" r="11"
+              stroke={ringCol} strokeWidth="1.8" fill="none"
+              strokeDasharray={`${mounted ? ringFill : 0} ${CIRC_GEOMETRIC}`}
+              style={{
+                transform: "rotate(-90deg)", transformOrigin: "16px 14px",
+                transition: "stroke-dasharray 700ms var(--spring) 120ms, stroke 400ms var(--ease-out)",
+              }}
+              opacity={0.9}
+            />
+          )}
         </>
       )}
 
@@ -189,19 +196,21 @@ function DataMark({ data, size, mounted }: {
         )}
       </g>
 
-      {/* Source count — lower semi-circle.
-          r=11, cy=14: chord at y=20 = 18.4 viewBox units, inner ≈ 14.8.
-          font-size 6 × 3 digits × 0.60 aspect = 10.8 units — 4 units breathing room. */}
-      <text x="16" y="20" textAnchor="middle" dominantBaseline="central"
-        style={{
-          fontFamily: "var(--font-data)", fontSize: 6, fontWeight: 700,
-          fill: "var(--fg-secondary)",
-          opacity: mounted ? 0.85 : 0,
-          transition: "opacity 400ms var(--ease-out) 300ms",
-        }}
-      >
-        {data.sourceCount}
-      </text>
+      {/* Source count — lower semi-circle. Shown at lg/xl only.
+          At sm: ~7.5px rendered — below readable threshold, redundant with
+          the msc__sigil-row plain-text label. */}
+      {!isSm && (
+        <text x="16" y="20" textAnchor="middle" dominantBaseline="central"
+          style={{
+            fontFamily: "var(--font-data)", fontSize: 6, fontWeight: 700,
+            fill: "var(--fg-secondary)",
+            opacity: mounted ? 0.85 : 0,
+            transition: "opacity 400ms var(--ease-out) 300ms",
+          }}
+        >
+          {data.sourceCount}
+        </text>
+      )}
 
       {/* Center post — from circle bottom (y=25) to base */}
       <line x1="16" y1="25" x2="16" y2="29"
@@ -426,12 +435,13 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
           opacity: stage >= 3 ? 1 : 0,
           transition: "opacity 280ms var(--ease-out)",
         }}>
-          <div className="sigil-popup__compact-row">
-            <span className="sigil-popup__compact-count">{data.sourceCount}</span>
-            <span className="sigil-popup__compact-sources">
-              source{data.sourceCount !== 1 ? "s" : ""} reporting
-            </span>
-          </div>
+          {/* Human sentence: what the data actually says */}
+          <p className="sigil-popup__compact-sentence">
+            {popupUnscored
+              ? `Balanced coverage across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
+              : `Coverage leans ${ll} across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
+            }
+          </p>
           <span className="sigil-popup__hint">
             Tap story for full analysis
           </span>

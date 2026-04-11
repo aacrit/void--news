@@ -412,30 +412,20 @@
   flex-shrink: 0;
 }
 
-/* ---- Sigil Popup — Compact view for feed-level (F01) ------------------ */
+/* ---- Sigil Popup — Compact view for feed-level (sm) ------------------- */
 .sigil-popup__compact {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.sigil-popup__compact-row {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.sigil-popup__compact-count {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--fg-secondary);
-}
-
-.sigil-popup__compact-sources {
+/* Human-readable sentence: "Coverage leans Left across 12 sources." */
+.sigil-popup__compact-sentence {
   font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--fg-tertiary);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--fg-secondary);
+  margin: 0;
 }
 
 .sigil-popup__hint {
