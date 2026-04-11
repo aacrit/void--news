@@ -45,6 +45,7 @@ interface EventDetailProps {
 
 export default function EventDetail({ event, allEvents, onNavigateToEvent, onClose }: EventDetailProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const [storyExpanded, setStoryExpanded] = useState(false);
 
   /* Determine next event for Stage 6 navigation */
   const nextEvent = useMemo(() => {
@@ -224,37 +225,6 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       </section>
 
       {/* ═══════════════════════════════════════════
-          Stage 2.5 — THE FULL STORY (Context Narrative)
-          The crack hooks them. Now the full story grounds them.
-          No title — content speaks for itself (arrive late).
-          Context image inserted after first paragraph (documentary intercut).
-          ═══════════════════════════════════════════ */}
-      <section className="hist-stage hist-stage--context">
-        <div className="hist-context__body hist-reveal">
-          {(event.contextNarrative || "").split("\n").filter(Boolean).map((para, i) => (
-            <Fragment key={i}>
-              <p>{para}</p>
-              {/* Insert context image after first paragraph */}
-              {i === 0 && contextImage && (
-                <figure className="hist-context__figure hist-reveal">
-                  <img
-                    src={contextImage.url}
-                    alt={contextImage.caption}
-                    loading="lazy"
-                    onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
-                  />
-                  <figcaption>
-                    {contextImage.caption}
-                    <span className="hist-context__figure-attr">{contextImage.attribution}</span>
-                  </figcaption>
-                </figure>
-              )}
-            </Fragment>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
           Key Facts — Compact reference panel
           Date, location, key figures, death toll, displaced, duration.
           ═══════════════════════════════════════════ */}
@@ -307,6 +277,65 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       </section>
 
       {/* ═══════════════════════════════════════════
+          Stage 2.5 — THE FULL STORY (Context Narrative)
+          The crack hooks them. Now the full story grounds them.
+          No title — content speaks for itself (arrive late).
+          Context image inserted after first paragraph (documentary intercut).
+          Progressive disclosure: first 2 paragraphs visible, rest behind toggle.
+          ═══════════════════════════════════════════ */}
+      <section className="hist-stage hist-stage--context">
+        <div className="hist-context__body hist-reveal">
+          {(() => {
+            const paragraphs = (event.contextNarrative || "").split("\n").filter(Boolean);
+            const visible = paragraphs.slice(0, 2);
+            const extra = paragraphs.slice(2);
+            return (
+              <>
+                {visible.map((para, i) => (
+                  <Fragment key={i}>
+                    <p>{para}</p>
+                    {i === 0 && contextImage && (
+                      <figure className="hist-context__figure hist-reveal">
+                        <img
+                          src={contextImage.url}
+                          alt={contextImage.caption}
+                          loading="lazy"
+                          onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+                        />
+                        <figcaption>
+                          {contextImage.caption}
+                          <span className="hist-context__figure-attr">{contextImage.attribution}</span>
+                        </figcaption>
+                      </figure>
+                    )}
+                  </Fragment>
+                ))}
+                {extra.length > 0 && (
+                  <>
+                    {storyExpanded && (
+                      <div className="hist-context__extra">
+                        {extra.map((para, i) => (
+                          <p key={i + 2}>{para}</p>
+                        ))}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="hist-context__more-toggle"
+                      onClick={() => setStoryExpanded((prev) => !prev)}
+                      aria-expanded={storyExpanded}
+                    >
+                      {storyExpanded ? "Collapse \u25B4" : "Continue reading \u25BE"}
+                    </button>
+                  </>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
           Stage 3 — THE PERSPECTIVES (The Conversation)
           Each perspective enters as a "witness."
           Alternating left/right on desktop, stacked on mobile.
@@ -338,6 +367,47 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           </Fragment>
         ))}
       </section>
+
+      {/* ═══════════════════════════════════════════
+          Stage 5 — THE RECORD (Gallery Images)
+          Remaining archival images (after distribution).
+          Only renders if galleryImages remain.
+          ═══════════════════════════════════════════ */}
+      {galleryImages.length > 0 && (
+        <section className="hist-stage hist-stage--evidence">
+          <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE RECORD</h2>
+
+          {/* Archival images + video — vertical, alternating, with context */}
+          <div className="hist-evidence__gallery">
+            {galleryImages.map((item, i) => (
+              <div
+                key={item.id}
+                className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                {item.type === "video" && item.videoEmbedUrl ? (
+                  <ArchivalVideo item={item} />
+                ) : (
+                  <img
+                    src={item.url}
+                    alt={item.caption}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                )}
+                <p className="hist-evidence__caption">{item.caption}</p>
+                <span className="hist-evidence__image-attribution">
+                  {item.type === "video" ? "Filmed by: " : ""}
+                  {item.attribution}
+                  {item.year && ` (${item.year})`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════
           Stage 4 — THE OMISSIONS (The Climax)
@@ -414,129 +484,19 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
       </section>
 
       {/* ═══════════════════════════════════════════
-          Stage 5 — THE RECORD (Images + Data)
-          Stark numbers + remaining archival images (after distribution).
-          Only renders if galleryImages remain or stark numbers exist.
-          ═══════════════════════════════════════════ */}
-      {(galleryImages.length > 0 || event.deathToll || event.displaced || event.duration) && (
-        <section className="hist-stage hist-stage--evidence">
-          <h2 className="hist-stage__label hist-stage__label--sm hist-reveal">THE RECORD</h2>
-
-          {/* Stark numbers */}
-          {(event.deathToll || event.displaced || event.duration) && (
-            <div className="hist-evidence__numbers hist-reveal">
-              {event.deathToll && (
-                <div className="hist-evidence__stat">
-                  <span className="hist-evidence__figure">{event.deathToll}</span>
-                  <span className="hist-evidence__unit">killed</span>
-                </div>
-              )}
-              {event.displaced && (
-                <div className="hist-evidence__stat">
-                  <span className="hist-evidence__figure">{event.displaced}</span>
-                  <span className="hist-evidence__unit">displaced</span>
-                </div>
-              )}
-              {event.duration && (
-                <div className="hist-evidence__stat">
-                  <span className="hist-evidence__figure">{event.duration}</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Archival images + video — vertical, alternating, with context */}
-          {galleryImages.length > 0 && (
-            <div className="hist-evidence__gallery">
-              {galleryImages.map((item, i) => (
-                <div
-                  key={item.id}
-                  className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  {item.type === "video" && item.videoEmbedUrl ? (
-                    <ArchivalVideo item={item} />
-                  ) : (
-                    <img
-                      src={item.url}
-                      alt={item.caption}
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  )}
-                  <p className="hist-evidence__caption">{item.caption}</p>
-                  <span className="hist-evidence__image-attribution">
-                    {item.type === "video" ? "Filmed by: " : ""}
-                    {item.attribution}
-                    {item.year && ` (${item.year})`}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════
-          Stage 5.5 — THE THREAD (Connection Descriptions)
-          Editorial asides drawn from cross-event connections.
-          No heading. The strongest connection leads as italic blockquote.
-          ═══════════════════════════════════════════ */}
-      {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 0 && (
-        <section className="hist-stage hist-thread-stage hist-reveal">
-          <hr className="hist-thread-stage__divider" />
-
-          {/* Strongest connection — full-width Playfair italic quote.
-              Dolly-in entrance with 400ms delay (after divider draws). */}
-          <blockquote className="hist-thread-stage__lead">
-            {sortedConnections[0].description}
-          </blockquote>
-
-          {/* Remaining connections — cascaded reveal.
-              Each item gets 150ms stagger delay (focus-pull rhythm). */}
-          {sortedConnections.length > 1 && (
-            <div className="hist-thread-stage__list">
-              {sortedConnections.slice(1).map((conn, i) => (
-                <div
-                  key={`${conn.targetSlug}-${i}`}
-                  className={`hist-thread-stage__item hist-thread-stage__item--${conn.type}`}
-                  style={{ transitionDelay: `${600 + i * 150}ms` }}
-                >
-                  <span className="hist-thread-stage__indicator" aria-hidden="true">
-                    {conn.type === "caused" || conn.type === "consequence" ? "\u2193" : ""}
-                    {conn.type === "response-to" ? "\u2191" : ""}
-                  </span>
-                  <div className="hist-thread-stage__content">
-                    <Link
-                      href={`/history/${conn.targetSlug}`}
-                      className="hist-thread-stage__title"
-                    >
-                      {conn.targetTitle}
-                    </Link>
-                    <span className="hist-thread-stage__date">
-                      {allEvents.find((e) => e.slug === conn.targetSlug)?.datePrimary ?? ""}
-                    </span>
-                    <p className="hist-thread-stage__desc">
-                      {conn.description.split(". ")[0]}.
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════
           Stage 6 — YOUR TURN (Leave Early)
           Dossier mode: connection-ranked next reads (up to 3).
+          Thread lead absorbed as intro blockquote before cards.
           Fallback: chronological next event (original behavior).
           ═══════════════════════════════════════════ */}
       <section className="hist-stage hist-stage--next hist-reveal">
         {ARC_FEATURES.DOSSIER && dossierEvents.length > 0 ? (
           <>
+            {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 0 && (
+              <blockquote className="hist-dossier__thread-lead hist-reveal">
+                {sortedConnections[0].description}
+              </blockquote>
+            )}
             <div className="hist-dossier">
               {dossierEvents.map(({ connection, event: linkedEvent }, cardIndex) => {
                 const slug = connection.targetSlug;
@@ -577,6 +537,31 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                   Or continue chronologically &rarr;
                 </Link>
               </p>
+            )}
+            {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 1 && (
+              <div className="hist-thread-stage__list hist-reveal">
+                {sortedConnections.slice(1).map((conn, i) => (
+                  <div
+                    key={`${conn.targetSlug}-${i}`}
+                    className={`hist-thread-stage__item hist-thread-stage__item--${conn.type}`}
+                    style={{ transitionDelay: `${i * 150}ms` }}
+                  >
+                    <span className="hist-thread-stage__indicator" aria-hidden="true">
+                      {conn.type === "caused" || conn.type === "consequence" ? "\u2193" : ""}
+                      {conn.type === "response-to" ? "\u2191" : ""}
+                    </span>
+                    <div className="hist-thread-stage__content">
+                      <Link href={`/history/${conn.targetSlug}`} className="hist-thread-stage__title">
+                        {conn.targetTitle}
+                      </Link>
+                      <span className="hist-thread-stage__date">
+                        {allEvents.find((e) => e.slug === conn.targetSlug)?.datePrimary ?? ""}
+                      </span>
+                      <p className="hist-thread-stage__desc">{conn.description.split(". ")[0]}.</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </>
         ) : nextEvent ? (
