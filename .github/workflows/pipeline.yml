@@ -4,10 +4,9 @@ permissions: {}
 
 on:
   schedule:
-    # 3x daily, anchored to Chicago (CDT = UTC-5).
-    # Covers morning, afternoon, evening across US, India, and EU.
+    # 2x daily, anchored to Chicago (CDT = UTC-5).
+    # 70 Gemini calls/run × 2 = 140 RPD + 9 (brief) × 2 = 18 RPD → 158 RPD total (63% of 250 limit).
     - cron: '0 12 * * *'     # 12:00 UTC — 7 AM Chicago, 5:30 PM IST, 2 PM CET
-    - cron: '0 19 * * *'     # 19:00 UTC — 2 PM Chicago, 12:30 AM IST, 9 PM CET
     - cron: '0 1 * * *'      # 01:00 UTC — 8 PM Chicago, 6:30 AM IST, 2 AM CET
   workflow_dispatch:
     inputs:
@@ -70,7 +69,7 @@ jobs:
           if [ -n "${{ inputs.editions }}" ]; then
             echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
           else
-            # All editions run on every scheduled trigger (4x daily)
+            # All editions run on every scheduled trigger (2x daily)
             echo "filter=" >> $GITHUB_OUTPUT
           fi
       - name: Regenerate daily brief only

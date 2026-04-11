@@ -33,10 +33,11 @@ _last_call_time: float = 0.0
 _MIN_INTERVAL: float = 4.2  # 60s / 14 calls = ~4.3s (stay under 15 RPM)
 
 # Per-run call cap — hard limit to stay within free tier (250 RPD).
-# Pipeline runs 3x/day: 50 (summarization) × 3 = 150 RPD
-# + 5 (triage) × 3 = 15 RPD + 9 (brief) × 3 = 27 RPD → 192 RPD total.
-# 58 RPD safety buffer against the 250 RPD free-tier limit.
-_MAX_CALLS_PER_RUN: int = 50
+# Pipeline runs 2x/day: 70 (summarization step-7b + step-8d) × 2 = 140 RPD
+# + 9 (brief) × 2 = 18 RPD → 158 RPD total.
+# 92 RPD safety buffer against the 250 RPD free-tier limit.
+# Step 7b uses up to 50 slots; step 8d uses up to 20 of the remaining 20.
+_MAX_CALLS_PER_RUN: int = 70
 _call_count: int = 0
 
 # Persistent failure flag — set on billing/spending-cap errors to skip all
