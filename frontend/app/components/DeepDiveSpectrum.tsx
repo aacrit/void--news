@@ -88,17 +88,8 @@ const LEAN_GRADIENT_STOPS: Array<{ offset: string; color: string }> = [
   { offset: "100%", color: "var(--bias-far-right)" },
 ];
 
-/* ── Lean zone positions for source row ────────────────────────────── */
-
-const LEAN_ZONE_POSITIONS = [
-  { key: "far-left",     pct: 10,  label: "FL" },
-  { key: "left",         pct: 28,  label: "L"  },
-  { key: "center-left",  pct: 40,  label: "CL" },
-  { key: "center",       pct: 50,  label: "C"  },
-  { key: "center-right", pct: 60,  label: "CR" },
-  { key: "right",        pct: 72,  label: "R"  },
-  { key: "far-right",    pct: 90,  label: "FR" },
-] as const;
+/* ── Min gap for 2-row source collision detection (% of container width) ── */
+const MIN_GAP_PCT = 5.5;
 
 /* ── Tooltip shared ──────────────────────────────────────────────────── */
 
@@ -148,31 +139,17 @@ function SpectrumTooltip({ data }: { data: TooltipData }) {
   );
 }
 
-/* ── Axis ────────────────────────────────────────────────────────────── */
+/* ── Axis — gradient bar with explicit Left / Center / Right labels ──── */
 
-function SpectrumAxis({ mode }: { mode: "full" | "abbr" }) {
-  const labels = mode === "full"
-    ? [
-        { pos: "0%", text: "L" },
-        { pos: "50%", text: "C" },
-        { pos: "100%", text: "R" },
-      ]
-    : [
-        { pos: "0%", text: "FL" },
-        { pos: "50%", text: "C" },
-        { pos: "100%", text: "FR" },
-      ];
-  const ticks = [0, 14, 28, 50, 72, 86, 100];
+function SpectrumAxis() {
   return (
     <div className="dd-sv__axis" aria-hidden="true">
-      {ticks.map((p) => (
-        <span key={p} className="dd-sv__axis-tick" style={{ left: `${p}%` }} />
-      ))}
-      {labels.map((l) => (
-        <span key={l.pos} className="dd-sv__axis-label" style={{ left: l.pos }}>
-          {l.text}
-        </span>
-      ))}
+      <div className="dd-sv__axis-bar" />
+      <div className="dd-sv__axis-labels">
+        <span className="dd-sv__axis-label dd-sv__axis-label--left">Left</span>
+        <span className="dd-sv__axis-label dd-sv__axis-label--center">Center</span>
+        <span className="dd-sv__axis-label dd-sv__axis-label--right">Right</span>
+      </div>
     </div>
   );
 }
@@ -226,11 +203,9 @@ function FaviconAvatar({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   SourceFaviconRow — HTML source cluster row below every SVG
+   SourceFaviconRow — continuous lean% positioning, 2-row collision
+   Each source placed at its actual lean value. No zone buckets.
    ═══════════════════════════════════════════════════════════════════════ */
-
-const MAX_VISIBLE_DESKTOP = 3;
-const MAX_VISIBLE_MOBILE = 2;
 
 function SourceFaviconRow({
   sources,
@@ -239,8 +214,6 @@ function SourceFaviconRow({
   sources: DeepDiveSpectrumSource[];
   setTooltip: (t: TooltipData | null) => void;
 }) {
-  const [expandedZone, setExpandedZone] = useState<string | null>(null);
-  const rowRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -251,118 +224,47 @@ function SourceFaviconRow({
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  const maxVisible = isMobile ? MAX_VISIBLE_MOBILE : MAX_VISIBLE_DESKTOP;
   const avatarSize = isMobile ? 16 : 20;
+  const rowH = avatarSize + 4; // 4px gap between rows
 
-  // Group sources into lean zones
-  const zoneMap = useMemo(() => {
-    const map = new Map<string, DeepDiveSpectrumSource[]>();
-    for (const zone of LEAN_ZONE_POSITIONS) {
-      map.set(zone.key, []);
-    }
-    for (const s of sources) {
-      const bucket = leanToBucket(s.politicalLean);
-      const existing = map.get(bucket);
-      if (existing) existing.push(s);
-    }
-    return map;
+  // Sort by lean, assign row via 2-row collision detection
+  const placed = useMemo(() => {
+    const sorted = [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
+    const lastRight: [number, number] = [-Infinity, -Infinity];
+    return sorted.map((s) => {
+      const leftPct = 2 + (s.politicalLean / 100) * 96;
+      let row: 0 | 1;
+      if (leftPct - lastRight[0] >= MIN_GAP_PCT) {
+        row = 0;
+      } else if (leftPct - lastRight[1] >= MIN_GAP_PCT) {
+        row = 1;
+      } else {
+        row = 1; // overlap row 1 as last resort
+      }
+      lastRight[row] = leftPct;
+      return { source: s, leftPct, row };
+    });
   }, [sources]);
 
-  const handleAvatarEnter = useCallback(
-    (e: React.PointerEvent, source: DeepDiveSpectrumSource) => {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      setTooltip({
-        source,
-        x: rect.left + rect.width / 2,
-        y: rect.top,
-      });
-    },
-    [setTooltip]
-  );
-
-  const handleAvatarLeave = useCallback(() => {
-    setTooltip(null);
-  }, [setTooltip]);
-
-  // Mobile dismiss: close expanded zone when clicking outside the row
-  useEffect(() => {
-    if (!expandedZone || !isMobile) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (rowRef.current && !rowRef.current.contains(e.target as Node)) {
-        setExpandedZone(null);
-        setTooltip(null);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [expandedZone, isMobile, setTooltip]);
-
   return (
-    <div className="dd-sv-sources" ref={rowRef}>
-      {LEAN_ZONE_POSITIONS.map((zone) => {
-        const zoneSources = zoneMap.get(zone.key) ?? [];
-        if (zoneSources.length === 0) return null;
-
-        const isExpanded = expandedZone === zone.key;
-        const visibleSources = isExpanded ? zoneSources : zoneSources.slice(0, maxVisible);
-        const overflow = zoneSources.length - maxVisible;
-
-        const isEdgeLeft = zone.pct <= 15;
-        const isEdgeRight = zone.pct >= 85;
-        const slotClass = [
-          "dd-sv-sources__slot",
-          isExpanded ? "dd-sv-sources__slot--expanded" : "",
-          isEdgeLeft ? "dd-sv-sources__slot--edge-left" : "",
-          isEdgeRight ? "dd-sv-sources__slot--edge-right" : "",
-        ].filter(Boolean).join(" ");
-
-        return (
-          <div
-            key={zone.key}
-            className={slotClass}
-            style={{ left: `${zone.pct}%` }}
-            onPointerEnter={() => setExpandedZone(zone.key)}
-            onPointerLeave={() => { setExpandedZone(null); setTooltip(null); }}
-          >
-            <div className="dd-sv-sources__avatars">
-              {visibleSources.map((s, i) => (
-                <FaviconAvatar
-                  key={`${s.name}-${s.articleUrl}-${i}`}
-                  source={s}
-                  size={avatarSize}
-                  onPointerEnter={(e) => handleAvatarEnter(e, s)}
-                  onPointerLeave={handleAvatarLeave}
-                />
-              ))}
-              {!isExpanded && overflow > 0 && (
-                <div
-                  className="dd-sv-avatar dd-sv-avatar--count"
-                  style={{ width: avatarSize, height: avatarSize }}
-                  title={`${overflow} more source${overflow > 1 ? "s" : ""}`}
-                >
-                  +{overflow}
-                </div>
-              )}
-            </div>
-            {isExpanded && zoneSources.length > 0 && (
-              <div className="dd-sv-sources__names">
-                {zoneSources.map((s, i) => (
-                  <a
-                    key={`${s.articleUrl}-${i}`}
-                    href={s.articleUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="dd-sv-sources__name-link"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {s.name}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
+    <div className="dd-sv-sources" style={{ height: rowH * 2 }}>
+      {placed.map(({ source, leftPct, row }, i) => (
+        <a
+          key={`pin-${i}`}
+          href={source.articleUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dd-sv-sources__pin"
+          style={{ left: `${leftPct}%`, top: `${row * rowH}px` }}
+          onPointerEnter={(e) => {
+            const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+            setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
+          }}
+          onPointerLeave={() => setTooltip(null)}
+        >
+          <FaviconAvatar source={source} size={avatarSize} />
+        </a>
+      ))}
     </div>
   );
 }
@@ -937,8 +839,8 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
     <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
       <SpectrumView sources={sources} />
       <TiltRow mean={mean} />
+      <SpectrumAxis />
       <SourceFaviconRow sources={sources} setTooltip={setTooltip} />
-      <SpectrumAxis mode="full" />
       {tooltip && <SpectrumTooltip data={tooltip} />}
     </div>
   );

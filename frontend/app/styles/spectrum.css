@@ -2305,33 +2305,45 @@
 .dd-sv-view__dot[data-lean="far-right"],
 .dd-sv-view__src-dot[data-lean="far-right"]    { stroke: var(--bias-far-right); }
 
-/* ---- Shared axis ---- */
+/* ---- Spectrum axis — gradient bar + Left / Center / Right labels ---- */
 .dd-sv__axis {
-  position: relative;
   width: 100%;
-  height: 14px;
-  margin-top: 2px;
+  margin: 4px 0 2px;
 }
 
-.dd-sv__axis-tick {
-  position: absolute;
-  top: 0;
-  width: 1px;
-  height: 4px;
-  background: var(--fg-muted);
-  opacity: 0.3;
-  transform: translateX(-50%);
+.dd-sv__axis-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--bias-far-left)    0%,
+    var(--bias-left)        16%,
+    var(--bias-center-left) 32%,
+    var(--bias-center)      50%,
+    var(--bias-center-right) 68%,
+    var(--bias-right)       84%,
+    var(--bias-far-right)   100%
+  );
+  opacity: 0.55;
+}
+
+.dd-sv__axis-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
 }
 
 .dd-sv__axis-label {
-  position: absolute;
-  top: 5px;
   font-family: var(--font-data);
   font-size: var(--text-xxs);
-  color: var(--fg-muted);
-  transform: translateX(-50%);
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
+
+.dd-sv__axis-label--left   { color: var(--bias-left); }
+.dd-sv__axis-label--center { color: var(--fg-muted); }
+.dd-sv__axis-label--right  { color: var(--bias-right); }
 
 /* ---- Tilt row (HTML) ---- */
 .dd-sv__tilt-row {
@@ -2362,69 +2374,30 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Source favicon row (HTML) ---- */
+/* ---- Source favicon row — continuous lean% positioning, 2-row collision ---- */
 .dd-sv-sources {
   position: relative;
-  height: 28px;
-  margin: 4px 0 2px;
+  width: 100%;
+  margin: 6px 0 2px;
 }
 
-.dd-sv-sources__slot {
+/* Each source is an absolutely positioned link */
+.dd-sv-sources__pin {
   position: absolute;
   transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
   z-index: 2;
+  transition: z-index 0ms;
 }
 
-.dd-sv-sources__avatars {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  transition: gap 200ms ease;
-}
-
-.dd-sv-sources__slot--expanded {
+.dd-sv-sources__pin:hover {
   z-index: 10;
 }
 
-.dd-sv-sources__slot--expanded .dd-sv-sources__avatars {
-  gap: 4px;
-}
-
-/* Names dropdown — hidden by default */
-.dd-sv-sources__names {
-  display: none;
-}
-
-.dd-sv-sources__slot--expanded .dd-sv-sources__names {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  top: 26px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  padding: 6px 8px;
-  gap: 2px;
-  z-index: 20;
-  box-shadow: var(--shadow-e2);
-  min-width: 120px;
-}
-
-.dd-sv-sources__name-link {
-  font-family: var(--font-structural);
-  font-size: var(--text-xxs);
-  color: var(--fg-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-
-.dd-sv-sources__name-link:hover {
-  color: var(--fg-primary);
-  text-decoration: underline;
+.dd-sv-sources__pin:hover .dd-sv-avatar {
+  transform: scale(1.2);
 }
 
 /* ---- Avatar (favicon circle) ---- */
@@ -2439,22 +2412,8 @@
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
-  margin-left: -6px;
-  transition: margin 200ms ease, transform 200ms ease;
+  transition: transform 200ms ease;
   cursor: pointer;
-}
-
-.dd-sv-sources__avatars .dd-sv-avatar:first-child {
-  margin-left: 0;
-}
-
-.dd-sv-sources__slot--expanded .dd-sv-avatar {
-  margin-left: 0;
-}
-
-.dd-sv-avatar:hover {
-  transform: scale(1.15);
-  z-index: 5;
 }
 
 .dd-sv-avatar__img {
@@ -2497,25 +2456,6 @@
 .dd-sv-avatar[data-lean="right"]        .dd-sv-avatar__letter { color: var(--bias-right); }
 .dd-sv-avatar[data-lean="far-right"]    .dd-sv-avatar__letter { color: var(--bias-far-right); }
 
-/* ---- Edge zone popup anchoring (prevents viewport clipping) ---- */
-.dd-sv-sources__slot--edge-left {
-  transform: translateX(-10%);
-}
-
-.dd-sv-sources__slot--edge-left .dd-sv-sources__names {
-  left: 0;
-  transform: none;
-}
-
-.dd-sv-sources__slot--edge-right {
-  transform: translateX(-90%);
-}
-
-.dd-sv-sources__slot--edge-right .dd-sv-sources__names {
-  left: auto;
-  right: 0;
-  transform: none;
-}
 
 /* ---- Shared tooltip ---- */
 .dd-sv__tooltip {
@@ -2829,11 +2769,8 @@
     opacity: 0.8;
   }
 
-  /* Source row */
-  .dd-sv-sources__avatars {
-    transition: none;
-  }
-
+  /* Source row pins and avatars */
+  .dd-sv-sources__pin,
   .dd-sv-avatar {
     transition: none;
   }
@@ -2889,28 +2826,5 @@
   /* Tilt label smaller on mobile */
   .dd-sv__tilt-label {
     font-size: 8px;
-  }
-
-  /* Source name dropdown — fixed bottom sheet feel on mobile */
-  .dd-sv-sources__slot--expanded .dd-sv-sources__names {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: auto;
-    min-width: unset;
-    width: 100%;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    box-shadow: var(--shadow-e3);
-    padding: var(--space-3);
-    gap: var(--space-1);
-    max-height: 40vh;
-    overflow-y: auto;
-    z-index: 30;
-  }
-
-  .dd-sv-sources__name-link {
-    font-size: var(--text-xs);
-    padding: var(--space-1) 0;
   }
 }
