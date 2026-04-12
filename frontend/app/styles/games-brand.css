@@ -1,0 +1,162 @@
+/* ==========================================================================
+   void --games — Brand Identity CSS
+   Logo animation, signal mark, masthead treatment.
+
+   Design: dark-first cinematic. The games hub is near-black (#0a0a0a)
+   with amber (#c9a84c / var(--cin-amber)) as the signal accent.
+   The wordmark stages in: void fades, signal pulses, --games slides.
+
+   All animations respect prefers-reduced-motion.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Wordmark Container
+   -------------------------------------------------------------------------- */
+
+.games-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Wordmark Parts — SVG groups controlled via CSS
+   -------------------------------------------------------------------------- */
+
+/* "void" — fades in first */
+.games-wordmark__void {
+  opacity: 0;
+  animation: gw-void-in 400ms var(--ease-cinematic) 100ms forwards;
+}
+
+/* Signal diamond — pulses once with amber glow after void appears */
+.games-wordmark__signal {
+  opacity: 0;
+  animation:
+    gw-signal-in 300ms var(--ease-cinematic) 350ms forwards,
+    gw-signal-pulse 600ms var(--ease-rack) 500ms forwards;
+  transform-origin: center;
+}
+
+/* "--games" — slides in from right */
+.games-wordmark__flag {
+  opacity: 0;
+  transform: translateX(12px);
+  animation: gw-flag-in 450ms var(--ease-cinematic) 400ms forwards;
+}
+
+/* The "--" dashes specifically — amber accent treatment */
+.games-wordmark__dashes {
+  opacity: 0;
+  animation: gw-dash-in 350ms var(--ease-cinematic) 350ms forwards;
+}
+
+/* --------------------------------------------------------------------------
+   Keyframes — Staged Reveal
+   -------------------------------------------------------------------------- */
+
+/* "void" fades in */
+@keyframes gw-void-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Signal diamond appears */
+@keyframes gw-signal-in {
+  from { opacity: 0; transform: scale(0.5) rotate(45deg); }
+  to   { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+
+/* Signal diamond amber glow pulse — one shot */
+@keyframes gw-signal-pulse {
+  0%   { filter: drop-shadow(0 0 0px var(--cin-amber, #c9a84c)); }
+  50%  { filter: drop-shadow(0 0 8px var(--cin-amber, #c9a84c)) drop-shadow(0 0 16px color-mix(in srgb, var(--cin-amber, #c9a84c) 40%, transparent)); }
+  100% { filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cin-amber, #c9a84c) 30%, transparent)); }
+}
+
+/* "--" dashes fade in (with amber color already applied) */
+@keyframes gw-dash-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* "--games" slides in from right */
+@keyframes gw-flag-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* --------------------------------------------------------------------------
+   Signal Diamond — Persistent Subtle Glow
+   After the entrance animation, the diamond retains a faint amber aura.
+   -------------------------------------------------------------------------- */
+
+.games-wordmark__signal--settled {
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cin-amber, #c9a84c) 30%, transparent));
+}
+
+/* --------------------------------------------------------------------------
+   Game Sigils — 24x24 marks on hub cards
+   -------------------------------------------------------------------------- */
+
+.game-sigil {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 200ms var(--ease-cinematic);
+}
+
+.games-hub__card:hover .game-sigil,
+.games-hub__card:focus-visible .game-sigil {
+  opacity: 1;
+}
+
+/* Sigil-specific entrance delays (stagger with card) */
+.game-sigil--undertow {
+  /* Surface wave draw-on */
+}
+
+.game-sigil--wire {
+  /* Signal pulse */
+}
+
+.game-sigil--run {
+  /* Motion streaks */
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion — collapse all animations to instant
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .games-wordmark__void,
+  .games-wordmark__signal,
+  .games-wordmark__flag,
+  .games-wordmark__dashes {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    filter: none;
+  }
+
+  .games-wordmark__signal {
+    transform: rotate(45deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Hub Masthead — wordmark sizing within the games hub
+   -------------------------------------------------------------------------- */
+
+.games-hub__wordmark-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-3);
+}
+
+.games-hub__wordmark-wrap svg {
+  height: clamp(32px, 5vw, 48px);
+  width: auto;
+}

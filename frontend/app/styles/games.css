@@ -2,7 +2,68 @@
    void --games & THE FRAME
    Press & Precision: newspaper heritage, cinematic grain, typewriter data.
    No Tailwind. All colors from CSS custom properties.
+
+   VFX POST-PROCESSING PIPELINE (shared across all game pages):
+     Layer 1: Animated film grain (grain-drift keyframe, SVG feTurbulence)
+     Layer 2: Per-game vignette (radial-gradient, mix-blend-mode: multiply)
+     Layer 3: Per-game color grade / atmospheric tint
+     Layer 4: Per-game signature effects (CRT, speed lines, warm tint)
    ========================================================================== */
+
+/* ==========================================================================
+   SHARED VFX FOUNDATION — All Games Pages
+   The animated grain-drift keyframe is defined in the UNDERTOW section
+   and reused by all games that render a grain layer div.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Games Hub — VFX: Broadcast Atmospherics
+   The hub feels like tuning into a frequency. Strong vignette, ambient glow,
+   desaturated background grade.
+   -------------------------------------------------------------------------- */
+
+/* Hub vignette — cinematic framing, draws eye to center */
+.games-hub__vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 70% at 50% 50%,
+    transparent 35%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: multiply;
+}
+
+/* Hub ambient glow — subtle amber pulse, broadcast frequency warmth */
+.games-hub__ambient-glow {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60vw;
+  height: 60vh;
+  background: radial-gradient(
+    ellipse,
+    rgba(148, 107, 21, 0.08) 0%,
+    transparent 70%
+  );
+  animation: hub-ambient-pulse 10s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes hub-ambient-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
 
 /* --------------------------------------------------------------------------
    Games Hub — Landing Page
@@ -160,13 +221,20 @@
   margin-bottom: var(--space-3);
 }
 
+/* Card header — sigil + name horizontal pair */
+.games-hub__card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
 .games-hub__card-name {
   font-family: var(--font-editorial);
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
-  margin-bottom: var(--space-3);
 }
 
 .games-hub__card-tagline {
@@ -1783,17 +1851,26 @@
   pointer-events: none;
 }
 
-/* Layer 3: Vignette */
+/* Layer 3: Vignette — strengthened for deeper cinematic framing */
 .undertow-page__vignette {
   position: fixed;
   inset: 0;
   background: radial-gradient(
-    ellipse 80% 80% at 50% 50%,
-    transparent 40%,
-    rgba(0, 0, 0, 0.75) 100%
+    ellipse 75% 75% at 50% 50%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.8) 100%
   );
   pointer-events: none;
   z-index: 2;
+}
+
+/* Layer 3.5: Warm tint — subtle page-level warming (Paper Archive signature) */
+.undertow-page__warm-tint {
+  position: fixed;
+  inset: 0;
+  background: rgba(201, 140, 40, 0.015);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Layer 4: Content */
