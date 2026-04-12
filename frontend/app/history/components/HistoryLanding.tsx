@@ -545,8 +545,8 @@ export default function HistoryLanding({
       setEntranceReady(true);
       return;
     }
-    const timer = setTimeout(() => setEntranceReady(true), 100);
-    return () => clearTimeout(timer);
+    const raf = requestAnimationFrame(() => setEntranceReady(true));
+    return () => cancelAnimationFrame(raf);
   }, [reducedMotion]);
 
   /* ── Ink track draw-on: measure path length ── */
