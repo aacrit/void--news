@@ -307,20 +307,6 @@ function Masthead({
         >
           World Edition
         </a>
-        {" \u00B7 "}
-        <a
-          href={`${basePath}/us`}
-          className={edition === "us" ? "np-edition-nav__active" : ""}
-        >
-          United States
-        </a>
-        {" \u00B7 "}
-        <a
-          href={`${basePath}/south-asia`}
-          className={edition === "south-asia" ? "np-edition-nav__active" : ""}
-        >
-          South Asia
-        </a>
       </nav>
     </header>
   );
