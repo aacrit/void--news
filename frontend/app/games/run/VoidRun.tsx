@@ -27,8 +27,6 @@ const CANVAS_H = 300;
 const GRAVITY = 0.6;
 const JUMP_FORCE = -13;
 const DOUBLE_JUMP_FORCE = -11;
-const INITIAL_SPEED = 5;
-const SPEED_INCREMENT = 0.0008;
 
 const PLAYER_X = 120;
 const PLAYER_Y_GROUND = 230;
@@ -39,8 +37,14 @@ const GROUND_Y = 235;
 
 const TRAIL_LENGTH = 8;
 
-const MIN_OBSTACLE_GAP = 220;
-const MAX_OBSTACLE_GAP = 420;
+/* ---- Difficulty configs ---- */
+const DIFFICULTY_CONFIGS = {
+  clear:  { initialSpeed: 3,   speedIncrement: 0.0004, minGap: 340, maxGap: 580, label: "CLEAR",  hint: "slow start · wide gaps" },
+  signal: { initialSpeed: 5,   speedIncrement: 0.0008, minGap: 220, maxGap: 420, label: "SIGNAL", hint: "default" },
+  static: { initialSpeed: 7.5, speedIncrement: 0.0016, minGap: 155, maxGap: 300, label: "STATIC", hint: "fast · tight gaps" },
+} as const;
+
+type Difficulty = keyof typeof DIFFICULTY_CONFIGS;
 
 /* ---- Obstacle types ---- */
 const OBSTACLE_TYPES = [
@@ -248,12 +252,16 @@ export default function VoidRun() {
   const [displayBest, setDisplayBest] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Difficulty
+  const [difficulty, setDifficulty] = useState<Difficulty>("signal");
+  const difficultyRef = useRef<Difficulty>("signal");
+
   // Mutable game vars
   const playerYRef = useRef(PLAYER_Y_GROUND);
   const velocityYRef = useRef(0);
   const onGroundRef = useRef(true);
   const hasDoubleJumpRef = useRef(true);
-  const speedRef = useRef(INITIAL_SPEED);
+  const speedRef = useRef<number>(DIFFICULTY_CONFIGS.signal.initialSpeed);
   const scoreRef = useRef(0);
   const bestRef = useRef(0);
   const bgOffsetRef = useRef(0);
@@ -264,10 +272,31 @@ export default function VoidRun() {
   const deathFrameRef = useRef(0);
   const flickerCountRef = useRef(0);
 
-  // Load best score
+  // Sync difficulty ref, reload best score, and persist preference when difficulty changes
+  const handleDifficultyChange = useCallback((d: Difficulty) => {
+    if (gameStateRef.current !== "idle") return; // lock during play
+    setDifficulty(d);
+    difficultyRef.current = d;
+    try {
+      localStorage.setItem("void-run-difficulty", d);
+      const stored = localStorage.getItem(`void-run-best-${d}`);
+      const val = stored ? parseInt(stored, 10) : 0;
+      bestRef.current = val;
+      setDisplayBest(val);
+    } catch {
+      bestRef.current = 0;
+      setDisplayBest(0);
+    }
+  }, []);
+
+  // Load saved difficulty preference + best score on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("void-run-best");
+      const savedDiff = localStorage.getItem("void-run-difficulty") as Difficulty | null;
+      const diff: Difficulty = savedDiff && savedDiff in DIFFICULTY_CONFIGS ? savedDiff : "signal";
+      setDifficulty(diff);
+      difficultyRef.current = diff;
+      const stored = localStorage.getItem(`void-run-best-${diff}`);
       if (stored) {
         const val = parseInt(stored, 10);
         bestRef.current = val;
@@ -283,13 +312,14 @@ export default function VoidRun() {
   const doJump = useCallback(() => {
     if (gameStateRef.current === "idle") {
       // Start the game
+      const cfg = DIFFICULTY_CONFIGS[difficultyRef.current];
       gameStateRef.current = "running";
       setGameState("running");
       playerYRef.current = PLAYER_Y_GROUND;
       velocityYRef.current = 0;
       onGroundRef.current = true;
       hasDoubleJumpRef.current = true;
-      speedRef.current = INITIAL_SPEED;
+      speedRef.current = cfg.initialSpeed;
       scoreRef.current = 0;
       bgOffsetRef.current = 0;
       obstaclesRef.current = [];
@@ -315,13 +345,14 @@ export default function VoidRun() {
 
   /* ---- Restart ---- */
   const doRestart = useCallback(() => {
+    const cfg = DIFFICULTY_CONFIGS[difficultyRef.current];
     gameStateRef.current = "idle";
     setGameState("idle");
     playerYRef.current = PLAYER_Y_GROUND;
     velocityYRef.current = 0;
     onGroundRef.current = true;
     hasDoubleJumpRef.current = true;
-    speedRef.current = INITIAL_SPEED;
+    speedRef.current = cfg.initialSpeed;
     scoreRef.current = 0;
     setDisplayScore(0);
     bgOffsetRef.current = 0;
@@ -338,12 +369,12 @@ export default function VoidRun() {
     deathFrameRef.current = 0;
     flickerCountRef.current = 0;
 
-    // Update best
+    // Update best for current difficulty
     if (scoreRef.current > bestRef.current) {
       bestRef.current = scoreRef.current;
       setDisplayBest(scoreRef.current);
       try {
-        localStorage.setItem("void-run-best", String(scoreRef.current));
+        localStorage.setItem(`void-run-best-${difficultyRef.current}`, String(scoreRef.current));
       } catch {
         // localStorage unavailable
       }
@@ -394,6 +425,7 @@ export default function VoidRun() {
 
   /* ---- Spawn obstacle ---- */
   const spawnObstacle = useCallback(() => {
+    const cfg = DIFFICULTY_CONFIGS[difficultyRef.current];
     const type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
     const width = 20 + Math.random() * 15;
     obstaclesRef.current.push({
@@ -403,10 +435,10 @@ export default function VoidRun() {
     });
     // Next obstacle distance decreases slightly as speed increases
     const gap =
-      MIN_OBSTACLE_GAP +
-      Math.random() * (MAX_OBSTACLE_GAP - MIN_OBSTACLE_GAP) -
+      cfg.minGap +
+      Math.random() * (cfg.maxGap - cfg.minGap) -
       Math.min(speedRef.current * 8, 100);
-    nextObstacleXRef.current += Math.max(gap, MIN_OBSTACLE_GAP);
+    nextObstacleXRef.current += Math.max(gap, cfg.minGap);
   }, []);
 
   /* ---- Game loop ---- */
@@ -422,7 +454,7 @@ export default function VoidRun() {
 
       if (state === "running") {
         // Update speed
-        speedRef.current += SPEED_INCREMENT;
+        speedRef.current += DIFFICULTY_CONFIGS[difficultyRef.current].speedIncrement;
 
         // Update bg offset
         bgOffsetRef.current += speedRef.current;
@@ -487,7 +519,7 @@ export default function VoidRun() {
         const breathe = Math.sin(frameRef.current * 0.04) * 0.5;
         drawPlayer(ctx, PLAYER_Y_GROUND + breathe, []);
         drawIdleScreen(ctx, frameRef.current, isMobile);
-        drawScore(ctx, 0, bestRef.current, INITIAL_SPEED);
+        drawScore(ctx, 0, bestRef.current, DIFFICULTY_CONFIGS[difficultyRef.current].initialSpeed);
       }
 
       if (state === "running") {
@@ -601,6 +633,27 @@ export default function VoidRun() {
         <h1 className="run-page__title">VOID RUN</h1>
         <p className="run-page__tagline">run until the signal breaks</p>
       </header>
+
+      {/* Difficulty selector */}
+      <div
+        className={`run-page__difficulty${gameState === "running" ? " run-page__difficulty--locked" : ""}`}
+        aria-label="Select difficulty"
+        role="group"
+      >
+        {(Object.keys(DIFFICULTY_CONFIGS) as Difficulty[]).map((d) => (
+          <button
+            key={d}
+            type="button"
+            className={`run-page__diff-btn${difficulty === d ? " run-page__diff-btn--active" : ""}`}
+            onClick={() => handleDifficultyChange(d)}
+            disabled={gameState === "running"}
+            aria-pressed={difficulty === d}
+            title={DIFFICULTY_CONFIGS[d].hint}
+          >
+            {DIFFICULTY_CONFIGS[d].label}
+          </button>
+        ))}
+      </div>
 
       {/* Canvas */}
       <div className="run-page__canvas-wrap">
