@@ -42,7 +42,7 @@ const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
   { value: 'feature', label: 'Feature' },
 ];
 
-const EDITION_SLUGS: Edition[] = ['world', 'us', 'europe', 'south-asia'];
+const EDITION_SLUGS: Edition[] = ['world'];
 
 // ---- Templates ----
 const BUG_TEMPLATE = `## What happened\n\n## What I expected\n\n## Steps to reproduce\n1. \n2. \n`;
