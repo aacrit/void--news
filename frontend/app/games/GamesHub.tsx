@@ -107,6 +107,103 @@ function GameSigil({ game }: { game: string }) {
 }
 
 /* --------------------------------------------------------------------------
+   Void Mascot — the signal character. Diamond head, stick figure, living idle.
+   Spring-based sway: body tilts 2.4s, head counter-lags 0.35s, arms balance.
+   -------------------------------------------------------------------------- */
+
+function VoidMascot() {
+  return (
+    <div className="void-mascot-wrap" aria-hidden="true">
+      <svg
+        viewBox="0 0 60 82"
+        className="void-mascot"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        overflow="visible"
+      >
+        {/* Root sway group — pivots at the waist (30, 54) */}
+        <g className="vm-body" style={{ transformOrigin: "30px 54px" }}>
+
+          {/* Head group — counter-lags the body sway */}
+          <g className="vm-head-group" style={{ transformOrigin: "30px 15px" }}>
+            {/* Diamond head: ◇ — the void signal */}
+            <polygon
+              className="vm-head"
+              points="30,2 44,15 30,28 16,15"
+              stroke="var(--cin-amber, #c9a84c)"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+            {/* Core dot — pulses like a heartbeat */}
+            <circle
+              className="vm-core"
+              cx="30"
+              cy="15"
+              r="2.2"
+              fill="var(--cin-amber, #c9a84c)"
+              style={{ transformOrigin: "30px 15px" }}
+            />
+          </g>
+
+          {/* Spine — connects head to hips */}
+          <line
+            x1="30" y1="28"
+            x2="30" y2="54"
+            stroke="rgba(245,240,232,0.7)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+
+          {/* Left arm — swings opposite to body lean */}
+          <line
+            className="vm-arm-l"
+            x1="30" y1="36"
+            x2="15" y2="50"
+            stroke="rgba(245,240,232,0.55)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            style={{ transformOrigin: "30px 36px" }}
+          />
+
+          {/* Right arm — mirrors left arm (opposite phase) */}
+          <line
+            className="vm-arm-r"
+            x1="30" y1="36"
+            x2="45" y2="50"
+            stroke="rgba(245,240,232,0.55)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            style={{ transformOrigin: "30px 36px" }}
+          />
+
+          {/* Left leg */}
+          <line
+            className="vm-leg-l"
+            x1="30" y1="54"
+            x2="20" y2="74"
+            stroke="rgba(245,240,232,0.6)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            style={{ transformOrigin: "30px 54px" }}
+          />
+
+          {/* Right leg */}
+          <line
+            className="vm-leg-r"
+            x1="30" y1="54"
+            x2="40" y2="74"
+            stroke="rgba(245,240,232,0.6)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            style={{ transformOrigin: "30px 54px" }}
+          />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------------------
    Games Wordmark — inline SVG with animation classes
    -------------------------------------------------------------------------- */
 
@@ -358,6 +455,7 @@ export default function GamesHub() {
 
         {/* Masthead */}
         <header className="games-hub__masthead">
+          <VoidMascot />
           <h1>
             <GamesWordmark />
           </h1>

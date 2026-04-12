@@ -24,32 +24,25 @@
    Wordmark Parts — SVG groups controlled via CSS
    -------------------------------------------------------------------------- */
 
-/* "void" — fades in first */
+/* "void" — fades in first; fallback: opacity 1 if animation fails */
 .games-wordmark__void {
-  opacity: 0;
-  animation: gw-void-in 400ms var(--ease-cinematic) 100ms forwards;
+  animation: gw-void-in 400ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 100ms both;
 }
 
-/* Signal diamond — pulses once with amber glow after void appears */
+/* Signal diamond */
 .games-wordmark__signal {
-  opacity: 0;
-  animation:
-    gw-signal-in 300ms var(--ease-cinematic) 350ms forwards,
-    gw-signal-pulse 600ms var(--ease-rack) 500ms forwards;
-  transform-origin: center;
+  animation: gw-signal-in 300ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 350ms both;
+  transform-origin: 124px 19px;
 }
 
 /* "--games" — slides in from right */
 .games-wordmark__flag {
-  opacity: 0;
-  transform: translateX(12px);
-  animation: gw-flag-in 450ms var(--ease-cinematic) 400ms forwards;
+  animation: gw-flag-in 450ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 400ms both;
 }
 
-/* The "--" dashes specifically — amber accent treatment */
+/* The "--" dashes */
 .games-wordmark__dashes {
-  opacity: 0;
-  animation: gw-dash-in 350ms var(--ease-cinematic) 350ms forwards;
+  animation: gw-dash-in 350ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 350ms both;
 }
 
 /* --------------------------------------------------------------------------
@@ -62,17 +55,17 @@
   to   { opacity: 1; }
 }
 
-/* Signal diamond appears */
+/* Signal diamond appears — rotated into place */
 @keyframes gw-signal-in {
-  from { opacity: 0; transform: scale(0.5) rotate(45deg); }
+  from { opacity: 0; transform: scale(0.4) rotate(45deg); }
   to   { opacity: 1; transform: scale(1) rotate(45deg); }
 }
 
-/* Signal diamond amber glow pulse — one shot */
+/* Signal diamond glow — simple, no color-mix() */
 @keyframes gw-signal-pulse {
-  0%   { filter: drop-shadow(0 0 0px var(--cin-amber, #c9a84c)); }
-  50%  { filter: drop-shadow(0 0 8px var(--cin-amber, #c9a84c)) drop-shadow(0 0 16px color-mix(in srgb, var(--cin-amber, #c9a84c) 40%, transparent)); }
-  100% { filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cin-amber, #c9a84c) 30%, transparent)); }
+  0%   { filter: drop-shadow(0 0 0px #c9a84c); }
+  50%  { filter: drop-shadow(0 0 8px #c9a84c); }
+  100% { filter: drop-shadow(0 0 3px rgba(201, 168, 76, 0.4)); }
 }
 
 /* "--" dashes fade in (with amber color already applied) */

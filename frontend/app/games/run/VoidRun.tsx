@@ -24,9 +24,9 @@ import Link from "next/link";
 const CANVAS_W = 800;
 const CANVAS_H = 300;
 
-const GRAVITY = 0.6;
-const JUMP_FORCE = -13;
-const DOUBLE_JUMP_FORCE = -11;
+const GRAVITY = 0.45;
+const JUMP_FORCE = -17;
+const DOUBLE_JUMP_FORCE = -14;
 
 const PLAYER_X = 120;
 const PLAYER_Y_GROUND = 230;
@@ -36,6 +36,83 @@ const PLAYER_W = 28;
 const GROUND_Y = 235;
 
 const TRAIL_LENGTH = 8;
+
+/* ---- Tilt / Lean color system ----
+   Cinematographic motivation: the player dash IS a signal, and signals lean.
+   Vertical velocity maps to political lean — rising = left (cool blue),
+   falling = right (warm red), neutral = void cream. The tilt angle uses
+   spring-based smoothing (Lubezki Steadicam lag) so the visual trails
+   the physics by ~3-4 frames, creating inertial weight. Color shifts
+   cross-dissolve like Bradford Young's temperature grades in "Arrival."
+*/
+const TILT_MAX_DEG = 28;
+const TILT_VELOCITY_SCALE = 2.5;
+const TILT_SMOOTHING = 0.12; // Exponential smoothing factor — lower = more lag
+
+// Lean palette: left-blue / neutral-cream / right-red
+const LEAN_LEFT  = { r: 100, g: 140, b: 220, a: 0.9 };
+const LEAN_NEUTRAL = { r: 245, g: 240, b: 232, a: 0.95 };
+const LEAN_RIGHT = { r: 220, g: 100, b: 80,  a: 0.9 };
+
+// Shadow palette mirrors lean (key light temperature shift)
+const SHADOW_LEFT    = "rgba(80, 120, 200, 0.7)";
+const SHADOW_NEUTRAL = "#c9a84c";
+const SHADOW_RIGHT   = "rgba(200, 90, 60, 0.7)";
+
+// Lean label config
+const LEAN_LABEL_HOLD_FRAMES = 60;   // ~1s at 60fps
+const LEAN_LABEL_FADE_FRAMES = 20;   // ~0.33s fade out
+
+type LeanCategory = "left" | "neutral" | "right";
+
+function clampTilt(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+/** Interpolate between two RGBA color objects. t=0 → a, t=1 → b */
+function lerpColor(
+  a: { r: number; g: number; b: number; a: number },
+  b: { r: number; g: number; b: number; a: number },
+  t: number
+): { r: number; g: number; b: number; a: number } {
+  const tc = Math.max(0, Math.min(1, t));
+  return {
+    r: a.r + (b.r - a.r) * tc,
+    g: a.g + (b.g - a.g) * tc,
+    b: a.b + (b.b - a.b) * tc,
+    a: a.a + (b.a - a.a) * tc,
+  };
+}
+
+/** Convert RGBA object to CSS rgba() string */
+function rgbaStr(c: { r: number; g: number; b: number; a: number }): string {
+  return `rgba(${Math.round(c.r)}, ${Math.round(c.g)}, ${Math.round(c.b)}, ${c.a.toFixed(3)})`;
+}
+
+/** Get lean color based on normalized tilt (-1 = full left, 0 = neutral, +1 = full right) */
+function getLeanColor(normalizedTilt: number): { r: number; g: number; b: number; a: number } {
+  if (normalizedTilt < 0) {
+    // Left lean: interpolate left → neutral
+    return lerpColor(LEAN_LEFT, LEAN_NEUTRAL, 1 + normalizedTilt);
+  } else {
+    // Right lean: interpolate neutral → right
+    return lerpColor(LEAN_NEUTRAL, LEAN_RIGHT, normalizedTilt);
+  }
+}
+
+/** Get shadow color string based on normalized tilt */
+function getLeanShadow(normalizedTilt: number): string {
+  if (normalizedTilt < -0.3) return SHADOW_LEFT;
+  if (normalizedTilt > 0.3) return SHADOW_RIGHT;
+  return SHADOW_NEUTRAL;
+}
+
+/** Determine lean category from normalized tilt */
+function getLeanCategory(normalizedTilt: number): LeanCategory {
+  if (normalizedTilt < -0.15) return "left";
+  if (normalizedTilt > 0.15) return "right";
+  return "neutral";
+}
 
 /* ---- Difficulty configs ---- */
 const DIFFICULTY_CONFIGS = {
@@ -73,27 +150,50 @@ const NOISE_CHARS = "\u2588\u2593\u2592\u2591|/-\\:;!?#@$%&*()0101";
 function drawPlayer(
   ctx: CanvasRenderingContext2D,
   y: number,
-  trail: number[]
+  trail: number[],
+  smoothedTilt: number
 ) {
-  ctx.shadowBlur = 12;
-  ctx.shadowColor = "#c9a84c";
+  /* Tilt angle in radians — smoothedTilt is already in degrees, spring-smoothed.
+     Negative tilt = rising = lean left (nose down).
+     Positive tilt = falling = lean right (nose up). */
+  const tiltRad = (smoothedTilt * Math.PI) / 180;
 
-  // Trail
+  /* Normalized tilt for color lookup: -1 (full left) to +1 (full right) */
+  const normalizedTilt = clampTilt(smoothedTilt / TILT_MAX_DEG, -1, 1);
+  const leanColor = getLeanColor(normalizedTilt);
+  const shadowColor = getLeanShadow(normalizedTilt);
+
+  /* Trail color: lean color at reduced opacity — inherits the tilt hue */
+  const trailColor = { ...leanColor, a: leanColor.a * 0.35 };
+
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = shadowColor;
+
+  // Trail — each segment inherits tilt color, progressively fading
   for (let i = 0; i < trail.length; i++) {
-    ctx.globalAlpha = (i / trail.length) * 0.3;
-    ctx.fillStyle = "#c9a84c";
+    const t = i / trail.length;
+    ctx.globalAlpha = t * 0.3;
+    ctx.fillStyle = rgbaStr({ ...trailColor, a: trailColor.a * t });
     ctx.fillRect(
       PLAYER_X - (trail.length - i) * 3,
       trail[i],
-      PLAYER_W * (i / trail.length),
+      PLAYER_W * t,
       PLAYER_H
     );
   }
 
-  // Main dash
+  // Main dash — rotated around its center point (Steadicam pivot)
   ctx.globalAlpha = 1;
-  ctx.fillStyle = "#f5f0e8";
-  ctx.fillRect(PLAYER_X, y, PLAYER_W, PLAYER_H);
+  const cx = PLAYER_X + PLAYER_W / 2;
+  const cy = y + PLAYER_H / 2;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(tiltRad);
+  ctx.fillStyle = rgbaStr(leanColor);
+  ctx.fillRect(-PLAYER_W / 2, -PLAYER_H / 2, PLAYER_W, PLAYER_H);
+  ctx.restore();
+
   ctx.shadowBlur = 0;
 }
 
@@ -178,6 +278,80 @@ function drawScore(
   ctx.textAlign = "left";
   ctx.fillStyle = "rgba(245, 240, 232, 0.2)";
   ctx.fillText(`${(speed * 20).toFixed(0)}m/s`, 20, 30);
+}
+
+/** Draw the lean indicator label — J-cut reveal: text arrives before tilt settles.
+ *  Uses a horizontal clip-path wipe from the left edge, holds, then fades out.
+ *  Only re-triggers when the lean category changes. */
+function drawLeanLabel(
+  ctx: CanvasRenderingContext2D,
+  category: LeanCategory,
+  framesVisible: number
+) {
+  if (framesVisible <= 0) return;
+
+  // Determine label text and color
+  let text: string;
+  let color: { r: number; g: number; b: number; a: number };
+  switch (category) {
+    case "left":
+      text = "\u2190 LEFT LEAN";
+      color = { ...LEAN_LEFT, a: 0.7 };
+      break;
+    case "right":
+      text = "RIGHT LEAN \u2192";
+      color = { ...LEAN_RIGHT, a: 0.7 };
+      break;
+    default:
+      text = "\u25C7 SIGNAL";
+      color = { r: 201, g: 168, b: 76, a: 0.5 };
+      break;
+  }
+
+  // Phase 1: wipe-in (first 10 frames — J-cut, fast reveal)
+  // Phase 2: hold (LEAN_LABEL_HOLD_FRAMES)
+  // Phase 3: fade out (LEAN_LABEL_FADE_FRAMES)
+  const wipeFrames = 10;
+  const totalFrames = wipeFrames + LEAN_LABEL_HOLD_FRAMES + LEAN_LABEL_FADE_FRAMES;
+  const elapsed = totalFrames - framesVisible;
+
+  let alpha: number;
+  let clipFraction: number; // 0 = fully clipped, 1 = fully revealed
+
+  if (elapsed < wipeFrames) {
+    // Wipe in — cinematic horizontal reveal
+    clipFraction = elapsed / wipeFrames;
+    alpha = 1;
+  } else if (elapsed < wipeFrames + LEAN_LABEL_HOLD_FRAMES) {
+    // Hold
+    clipFraction = 1;
+    alpha = 1;
+  } else {
+    // Fade out
+    clipFraction = 1;
+    const fadeProgress = (elapsed - wipeFrames - LEAN_LABEL_HOLD_FRAMES) / LEAN_LABEL_FADE_FRAMES;
+    alpha = 1 - fadeProgress;
+  }
+
+  ctx.save();
+  ctx.font = '9px "IBM Plex Mono", monospace';
+  ctx.textAlign = "left";
+
+  // Measure text width for clip
+  const textWidth = ctx.measureText(text).width;
+  const labelX = 20;
+  const labelY = 48;
+
+  // Clip-path wipe: only reveal a fraction of the text from the left
+  ctx.beginPath();
+  ctx.rect(labelX - 2, labelY - 12, (textWidth + 4) * clipFraction, 16);
+  ctx.clip();
+
+  ctx.globalAlpha = Math.max(0, alpha);
+  ctx.fillStyle = rgbaStr({ ...color, a: color.a * alpha });
+  ctx.fillText(text, labelX, labelY);
+
+  ctx.restore();
 }
 
 function drawIdleScreen(
@@ -272,6 +446,12 @@ export default function VoidRun() {
   const deathFrameRef = useRef(0);
   const flickerCountRef = useRef(0);
 
+  // Tilt / lean state — spring-smoothed for Steadicam inertia
+  const smoothedTiltRef = useRef(0);           // Current smoothed tilt in degrees
+  const leanCategoryRef = useRef<LeanCategory>("neutral");
+  const leanLabelTimerRef = useRef(0);         // Countdown frames for label visibility
+  const leanLabelCategoryRef = useRef<LeanCategory>("neutral"); // Category being displayed
+
   // Sync difficulty ref, reload best score, and persist preference when difficulty changes
   const handleDifficultyChange = useCallback((d: Difficulty) => {
     if (gameStateRef.current !== "idle") return; // lock during play
@@ -325,6 +505,11 @@ export default function VoidRun() {
       obstaclesRef.current = [];
       trailRef.current = [];
       nextObstacleXRef.current = CANVAS_W + 200;
+      // Reset tilt state
+      smoothedTiltRef.current = 0;
+      leanCategoryRef.current = "neutral";
+      leanLabelTimerRef.current = 0;
+      leanLabelCategoryRef.current = "neutral";
       // First jump
       velocityYRef.current = JUMP_FORCE;
       onGroundRef.current = false;
@@ -361,6 +546,11 @@ export default function VoidRun() {
     nextObstacleXRef.current = CANVAS_W + 200;
     deathFrameRef.current = 0;
     flickerCountRef.current = 0;
+    // Reset tilt
+    smoothedTiltRef.current = 0;
+    leanCategoryRef.current = "neutral";
+    leanLabelTimerRef.current = 0;
+    leanLabelCategoryRef.current = "neutral";
   }, []);
 
   /* ---- Death sequence ---- */
@@ -480,6 +670,33 @@ export default function VoidRun() {
           trailRef.current.shift();
         }
 
+        // ---- Tilt smoothing (Steadicam spring lag) ----
+        // Raw tilt from velocity, clamped to ±TILT_MAX_DEG
+        const rawTilt = clampTilt(
+          velocityYRef.current * TILT_VELOCITY_SCALE,
+          -TILT_MAX_DEG,
+          TILT_MAX_DEG
+        );
+        // Exponential smoothing — the visual tilt trails physics by ~3-4 frames
+        smoothedTiltRef.current +=
+          (rawTilt - smoothedTiltRef.current) * TILT_SMOOTHING;
+
+        // Lean category detection — triggers label on change
+        const newCategory = getLeanCategory(
+          smoothedTiltRef.current / TILT_MAX_DEG
+        );
+        if (newCategory !== leanCategoryRef.current) {
+          leanCategoryRef.current = newCategory;
+          leanLabelCategoryRef.current = newCategory;
+          // Reset label timer — J-cut: label appears immediately
+          leanLabelTimerRef.current =
+            10 + LEAN_LABEL_HOLD_FRAMES + LEAN_LABEL_FADE_FRAMES;
+        }
+        // Decrement label timer
+        if (leanLabelTimerRef.current > 0) {
+          leanLabelTimerRef.current--;
+        }
+
         // Move obstacles
         for (const obs of obstaclesRef.current) {
           obs.x -= speedRef.current;
@@ -515,9 +732,9 @@ export default function VoidRun() {
       drawGround(ctx);
 
       if (state === "idle") {
-        // Breathing player
+        // Breathing player — neutral tilt, no lean
         const breathe = Math.sin(frameRef.current * 0.04) * 0.5;
-        drawPlayer(ctx, PLAYER_Y_GROUND + breathe, []);
+        drawPlayer(ctx, PLAYER_Y_GROUND + breathe, [], 0);
         drawIdleScreen(ctx, frameRef.current, isMobile);
         drawScore(ctx, 0, bestRef.current, DIFFICULTY_CONFIGS[difficultyRef.current].initialSpeed);
       }
@@ -527,12 +744,23 @@ export default function VoidRun() {
         for (const obs of obstaclesRef.current) {
           drawObstacle(ctx, obs);
         }
-        drawPlayer(ctx, playerYRef.current, trailRef.current);
+        drawPlayer(
+          ctx,
+          playerYRef.current,
+          trailRef.current,
+          smoothedTiltRef.current
+        );
         drawScore(
           ctx,
           scoreRef.current,
           bestRef.current,
           speedRef.current
+        );
+        // Lean label — J-cut: appears before tilt fully settles
+        drawLeanLabel(
+          ctx,
+          leanLabelCategoryRef.current,
+          leanLabelTimerRef.current
         );
       }
 
