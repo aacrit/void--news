@@ -2888,11 +2888,252 @@
   }
 }
 
+/* ==========================================================================
+   THE WIRE — VFX: CRT Terminal
+   Green phosphor glow, scan lines, screen flicker, blue-shift vignette.
+   Applied by WireGame.tsx (being built by game-builder agent).
+   ========================================================================== */
+
+/* Wire page base — dark terminal surface */
+.wire-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #070a10;
+  color: #d0ddd5;
+}
+
+/* Wire animated grain — same grain-drift keyframe as UNDERTOW */
+.wire-page__grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wire-page__grain svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.wire-page__grain-layer {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.04;
+  animation: grain-drift 8s steps(10) infinite;
+  pointer-events: none;
+}
+
+/* CRT scan lines — horizontal interference pattern across entire page */
+.wire-crt-overlay {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Blue-shift vignette — CRT edge tint, cold terminal feel */
+.wire-page__vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 75% 75% at 50% 50%,
+    transparent 35%,
+    rgba(5, 8, 20, 0.85) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Phosphor glow — green-tinted ambient on transmission text containers */
+.wire-phosphor-glow {
+  text-shadow: 0 0 8px rgba(100, 200, 150, 0.08);
+}
+
+/* Screen flicker — applied to .wire-page by JS (setInterval, random 30-60s) */
+@keyframes wire-screen-flicker {
+  0%   { opacity: 1; }
+  25%  { opacity: 0.97; }
+  50%  { opacity: 1; }
+  75%  { opacity: 0.98; }
+  100% { opacity: 1; }
+}
+
+.wire-page--flicker {
+  animation: wire-screen-flicker 80ms linear 1;
+}
+
+/* Wire content layer */
+.wire-page__content {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+}
+
+
+/* ==========================================================================
+   VOID RUN — VFX: Speed Corridor
+   Tunnel vignette, speed blur, amber speed lines, momentum feedback.
+   Applied by VoidRun.tsx (being built by game-builder agent).
+   ========================================================================== */
+
+/* Run page base — deep void black */
+.run-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background: #030305;
+  color: #e8e0d4;
+}
+
+/* Run animated grain — lighter than UNDERTOW, speed-appropriate */
+.run-page__grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.run-page__grain svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.run-page__grain-layer {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.035;
+  animation: grain-drift 8s steps(10) infinite;
+  pointer-events: none;
+}
+
+/* Tunnel vignette — heavier on left/right edges (speed corridor) */
+.run-page__vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 100% at 50% 50%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Run content layer */
+.run-page__content {
+  position: relative;
+  z-index: 3;
+}
+
+/* Canvas wrapper — the game-builder wraps the canvas element in this */
+.run-page__canvas-wrap {
+  position: relative;
+  width: 100%;
+  transition: filter 300ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* Speed blur — toggled by game logic based on score thresholds */
+.run-speed--fast .run-page__canvas-wrap {
+  filter: blur(0.3px);
+}
+
+.run-speed--faster .run-page__canvas-wrap {
+  filter: blur(0.6px);
+}
+
 /* --------------------------------------------------------------------------
-   Reduced Motion — disable all UNDERTOW animations
+   Amber Speed Lines — horizontal streaks at high speed (score > 300)
+   Game JS creates 4-6 of these at different vertical positions with
+   staggered animation-delay via inline styles.
    -------------------------------------------------------------------------- */
 
+@keyframes run-speed-line {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.15;
+  }
+  80% {
+    opacity: 0.15;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.run-speed-line {
+  position: fixed;
+  height: 1px;
+  width: 40%;
+  left: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(148, 107, 21, 0.3),
+    transparent
+  );
+  animation: run-speed-line 0.4s linear infinite;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Speed line container — hidden by default, shown when speed class active */
+.run-speed-lines {
+  display: none;
+  pointer-events: none;
+}
+
+.run-speed--fast .run-speed-lines,
+.run-speed--faster .run-speed-lines {
+  display: block;
+}
+
+/* Run HUD overlay — score, distance, etc. (z above vignette + grain) */
+.run-page__hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+
+/* ==========================================================================
+   REDUCED MOTION — disable all game VFX animations
+   Static grain, no animation, same visual grade. Per-game.
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
+  /* UNDERTOW */
   .undertow-card--wrong { animation: none; }
   .undertow-card--revealed { animation: none; opacity: 1; transform: none; }
   .undertow-highlight { transition: none; }
@@ -2907,4 +3148,326 @@
   .undertow-axis__desc { transition: none; opacity: 1; transform: none; }
   .undertow-page__header { transition: none; opacity: 1; transform: none; }
   .undertow-page__cards { transition: none; opacity: 1; transform: none; }
+
+  /* Hub */
+  .games-hub__ambient-glow { animation: none; opacity: 0.7; }
+
+  /* THE WIRE */
+  .wire-page__grain-layer { animation: none; }
+  .wire-page--flicker { animation: none; opacity: 1; }
+
+  /* VOID RUN */
+  .run-page__grain-layer { animation: none; }
+  .run-speed-line { animation: none; display: none; }
+  .run-page__canvas-wrap { transition: none; }
+}
+
+/* ==========================================================================
+   MOBILE — reduce VFX budget for performance
+   Disable grain animation, reduce vignette opacity, skip atmospheric haze.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Hub */
+  .games-hub__vignette { opacity: 0.5; }
+  .games-hub__ambient-glow { display: none; }
+
+  /* UNDERTOW */
+  .undertow-page__grain-layer { animation: none; opacity: 0.03; }
+  .undertow-page__warm-tint { display: none; }
+
+  /* THE WIRE */
+  .wire-page__grain-layer { animation: none; opacity: 0.025; }
+  .wire-crt-overlay {
+    /* Coarser scan lines on mobile for visibility at smaller scale */
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 4px,
+      rgba(0, 0, 0, 0.03) 4px,
+      rgba(0, 0, 0, 0.03) 5px
+    );
+  }
+
+  /* VOID RUN */
+  .run-page__grain-layer { animation: none; opacity: 0.025; }
+  .run-speed-line { display: none; }
+  .run-speed--fast .run-page__canvas-wrap,
+  .run-speed--faster .run-page__canvas-wrap {
+    filter: none;
+  }
+}
+
+/* ==========================================================================
+   VOID RUN — Endless Runner
+   Dark canvas corridor, amber signal dash, text-fragment obstacles.
+   ========================================================================== */
+
+.run-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Film grain ---- */
+.run-page__grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.run-page__grain-layer {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  mix-blend-mode: soft-light;
+  animation: runGrainDrift 8s steps(4) infinite;
+}
+
+@keyframes runGrainDrift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-5%, -3%); }
+  50%  { transform: translate(-2%, 5%); }
+  75%  { transform: translate(4%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---- Navigation ---- */
+.run-page__nav {
+  position: absolute;
+  top: var(--space-5);
+  left: var(--space-5);
+  z-index: 10;
+}
+
+.run-page__back {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: rgba(245, 240, 232, 0.35);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 200ms var(--ease-cinematic);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  min-height: 44px;
+}
+
+.run-page__back:hover {
+  color: rgba(245, 240, 232, 0.7);
+}
+
+.run-page__back:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ---- Header ---- */
+.run-page__header {
+  text-align: center;
+  margin-bottom: var(--space-5);
+  z-index: 2;
+}
+
+.run-page__title {
+  font-family: var(--font-meta);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #f5f0e8;
+  margin-bottom: 0.25rem;
+  line-height: 1.1;
+}
+
+.run-page__tagline {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: rgba(201, 168, 76, 0.45);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Canvas wrapper ---- */
+.run-page__canvas-wrap {
+  position: relative;
+  width: min(800px, 100vw - 2rem);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.run-page__canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  box-shadow:
+    0 0 60px rgba(201, 168, 76, 0.06),
+    0 0 0 1px rgba(201, 168, 76, 0.05);
+}
+
+/* ---- Scanline overlay ---- */
+.run-page__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  pointer-events: none;
+}
+
+/* ---- Controls hint ---- */
+.run-page__controls {
+  font-family: var(--font-data);
+  font-size: 0.65rem;
+  color: rgba(245, 240, 232, 0.2);
+  letter-spacing: 0.1em;
+  margin-top: var(--space-4);
+  z-index: 2;
+}
+
+/* ---- Death overlay (HTML — for accessibility + clean typography) ---- */
+.run-page__death-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(4px);
+  animation: runDeathFade 400ms var(--ease-cinematic) forwards;
+}
+
+@keyframes runDeathFade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.run-page__death-title {
+  font-family: var(--font-meta);
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(201, 168, 76, 0.6);
+  margin-bottom: var(--space-6);
+}
+
+.run-page__death-scores {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.run-page__death-score {
+  display: flex;
+  gap: var(--space-5);
+  align-items: baseline;
+}
+
+.run-page__death-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.35);
+  min-width: 5ch;
+}
+
+.run-page__death-value {
+  font-family: var(--font-data);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: rgba(245, 240, 232, 0.8);
+  letter-spacing: 0.1em;
+  font-feature-settings: "tnum" 1;
+}
+
+.run-page__restart {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  background: rgba(201, 168, 76, 0.85);
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  transition:
+    background 200ms var(--ease-cinematic),
+    transform 120ms var(--ease-cinematic);
+}
+
+.run-page__restart:hover {
+  background: rgba(201, 168, 76, 1);
+  transform: translateY(-1px);
+}
+
+.run-page__restart:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.run-page__restart:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 4px;
+}
+
+/* ---- Mobile adjustments ---- */
+@media (max-width: 767px) {
+  .run-page {
+    padding: var(--space-4);
+    justify-content: flex-start;
+    padding-top: calc(var(--space-8) + env(safe-area-inset-top, 0px));
+  }
+
+  .run-page__nav {
+    position: relative;
+    top: auto;
+    left: auto;
+    align-self: flex-start;
+    margin-bottom: var(--space-4);
+  }
+
+  .run-page__header {
+    margin-bottom: var(--space-4);
+  }
+
+  .run-page__canvas-wrap {
+    width: 100%;
+  }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .run-page__grain-layer {
+    animation: none;
+  }
+  .run-page__death-overlay {
+    animation: none;
+    opacity: 1;
+  }
 }

@@ -64,6 +64,47 @@ function SigilWire({ className }: { className?: string }) {
   );
 }
 
+function SigilRun({ className }: { className?: string }) {
+  return (
+    <svg
+      className={`game-sigil game-sigil--run${className ? ` ${className}` : ""}`}
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+    >
+      {/* Forward dash — the signal */}
+      <line
+        x1="6"
+        y1="16"
+        x2="20"
+        y2="16"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      {/* Arrow tip */}
+      <polyline
+        points="17,11 22,16 17,21"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Trail fade */}
+      <line
+        x1="3"
+        y1="16"
+        x2="8"
+        y2="16"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        opacity="0.3"
+      />
+    </svg>
+  );
+}
+
 function SigilFrame({ className }: { className?: string }) {
   return (
     <svg
@@ -99,6 +140,7 @@ function GameSigil({ game }: { game: string }) {
   switch (game) {
     case "UNDERTOW": return <SigilUndertow />;
     case "THE FRAME": return <SigilFrame />;
+    case "VOID RUN": return <SigilRun />;
     case "THE WIRE": return <SigilWire />;
     default: return null;
   }
@@ -193,6 +235,14 @@ const ACTIVE_GAMES = [
       "Four outlets. One story. Rank the headlines from left to right.",
     badge: "DAILY",
   },
+  {
+    name: "VOID RUN",
+    href: "/games/run",
+    tagline: "run until the signal breaks",
+    description:
+      "An endless runner through corridors of language. You are the signal. The obstacles are noise.",
+    badge: "ENDLESS",
+  },
 ];
 
 /** Ghost/coming-soon game entries */
@@ -220,8 +270,14 @@ export default function GamesHub() {
 
   return (
     <div className="games-hub">
-      {/* Film grain */}
+      {/* VFX Layer 1: Film grain */}
       <div className="games-hub__grain" aria-hidden="true" />
+
+      {/* VFX Layer 2: Cinematic vignette — draws eye to center */}
+      <div className="games-hub__vignette" aria-hidden="true" />
+
+      {/* VFX Layer 3: Ambient glow — broadcast frequency warmth */}
+      <div className="games-hub__ambient-glow" aria-hidden="true" />
 
       {/* Navigation */}
       <nav className="games-hub__nav" aria-label="Navigation">
