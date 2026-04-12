@@ -1,6 +1,6 @@
 # void --history — The Archive
 
-Last updated: 2026-04-10 (rev 4)
+Last updated: 2026-04-11 (rev 5)
 
 > Full spec for the multi-perspective historical events platform.
 > Only read when working on history-related files.
@@ -61,7 +61,7 @@ Same 4 voices as main site: Playfair Display (editorial), Inter (structural), Ba
 
 ### Stylesheet
 
-`history.css` (~8,600 lines, `.hist-page` namespace). Full Archival Cinema implementation: palette tokens, timeline layout, card system, stage transitions, witness blocks, perspective colors, evidence gallery, Ken Burns parallax, era bands, fun facts, record block (chisel-grain texture), omissions toggle, dossier cards, thread stages, responsive breakpoints.
+`history.css` (~8,575 lines, `.hist-page` namespace). Full Archival Cinema implementation: palette tokens, timeline layout, card system, stage transitions, witness blocks, perspective colors, evidence gallery, Ken Burns parallax, era bands, fun facts, record block (chisel-grain texture), omissions toggle, dossier cards, thread stages, responsive breakpoints. Dead CSS removed (minimap, era selector blocks). Font tokens use canonical design system names (`--font-editorial`, `--font-structural`, `--font-data`).
 
 ## Storytelling Rules
 
@@ -90,7 +90,7 @@ Every perspective is analyzed across 5 lenses:
 
 `victor`, `vanquished`, `bystander`, `academic`, `revisionist`, `indigenous`
 
-## Timeline Landing — HistoryLanding.tsx (~1,482 lines)
+## Timeline Landing — HistoryLanding.tsx (~1,510 lines)
 
 ### Layout
 
@@ -215,7 +215,7 @@ All in `frontend/app/history/components/`:
 
 | Component | Lines | Purpose |
 |-----------|-------|---------|
-| `HistoryLanding` | ~1,482 | Organic ink timeline, above/below cards, inline story loading, thread overlay mode |
+| `HistoryLanding` | ~1,510 | Organic ink timeline, above/below cards, inline story loading, thread overlay mode |
 | `EventDetail` | ~826 | 8-stage museum journey (hero, crack, record, context, perspectives, omissions, evidence, exit) |
 | `HistoryAudioCue` | — | void --onair companion audio player (between hero and crack, renders when `audioUrl` present) |
 | `ThreadsLanding` | — | Thematic thread strips: horizontal EventCard carousels per thread, scroll snap + nav buttons |
@@ -350,7 +350,7 @@ frontend/app/history/
   layout.tsx        # Shared layout
   page.tsx          # Landing page
 
-frontend/app/styles/history.css   # ~8,600 lines, .hist-page namespace
+frontend/app/styles/history.css   # ~8,575 lines, .hist-page namespace
 
 pipeline/history/
   content_loader.py     # YAML -> Supabase
