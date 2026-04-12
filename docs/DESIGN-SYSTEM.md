@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.2
-**Last updated:** 2026-04-10 (rev 18)
+**Last updated:** 2026-04-11 (rev 19)
 
 ---
 
@@ -718,4 +718,4 @@ Inherits main Cinematic Press tokens plus `--hist-*` namespace: `--hist-accent` 
 
 ### Stylesheet
 
-`history.css` (~8,600 lines, `.hist-page` namespace). Full implementation of all museum UX elements.
+`history.css` (~8,575 lines, `.hist-page` namespace). Full implementation of all museum UX elements.
