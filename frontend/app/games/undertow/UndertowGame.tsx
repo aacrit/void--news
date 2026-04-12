@@ -295,6 +295,9 @@ export default function UndertowGame() {
       {/* Layer 3: Vignette */}
       <div className="undertow-page__vignette" aria-hidden="true" />
 
+      {/* Layer 3.5: Warm tint — Paper Archive signature */}
+      <div className="undertow-page__warm-tint" aria-hidden="true" />
+
       {/* Layer 4: Content */}
       <div className="undertow-page__content">
         {/* Navigation back */}
