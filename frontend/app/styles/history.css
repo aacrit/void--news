@@ -79,6 +79,10 @@
   --ease-lectern-turn: cubic-bezier(0.42, 0, 0.12, 1.15);
   --ease-unfold: cubic-bezier(0.14, 0.8, 0.26, 1);
 
+  /* Mobile navigation tokens */
+  --hist-topbar-height: 56px;
+  --hist-mobile-chrome-height: 52px;
+
   background-color: var(--hist-bg);
   color: var(--hist-ink);
 }
@@ -200,6 +204,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-5);
+  padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px));
   background-color: color-mix(in srgb, var(--hist-bg) 88%, transparent);
   backdrop-filter: blur(10px) saturate(0.9);
   -webkit-backdrop-filter: blur(10px) saturate(0.9);
@@ -1830,6 +1835,13 @@
   overflow: visible;
 }
 
+/* Threads-active state: wrapper expands for vertical thread groups */
+.hist-tl-wrapper--threads-active {
+  height: auto;
+  min-height: calc(100vh - 56px);
+  overflow: visible;
+}
+
 /* ── Mission Brief — fades on first scroll ── */
 .hist-tl-brief {
   position: absolute;
@@ -1892,10 +1904,10 @@
   height: 100%;
 }
 
-/* ── Organic SVG ink track — centered with clearance for top zone ── */
+/* ── Organic SVG ink track — shifted down 30px (matches station offset) for top-zone clearance ── */
 .hist-tl-full__track {
   position: absolute;
-  top: 50%;
+  top: calc(50% + 30px);
   left: 0;
   width: 100%;
   height: 8px;
@@ -1948,9 +1960,10 @@
 }
 
 /* ── Station — absolute positioned container for dot + stem + card ── */
+/* Track center shifted down 30px to give above-cards clearance from top zone */
 .hist-tl-full__station {
   position: absolute;
-  top: 50%;
+  top: calc(50% + 30px);
   transform: translateX(-50%);
   z-index: 3;
   opacity: calc(1 - max(var(--card-dist, 0) - 2, 0) * 0.1);
@@ -2095,6 +2108,11 @@
   }
 
   /* Card scale/shadow on hover removed — cards sit still */
+
+  /* Constrain photo height to prevent cards from overflowing viewport */
+  .hist-tl-card__photo {
+    max-height: clamp(100px, 18vh, 160px);
+  }
 }
 
 /* ── Severity accent — top border ── */
@@ -2208,13 +2226,13 @@
   }
 }
 
-/* Mobile: expanded content always visible */
+/* Mobile: keep cards compact — photo + title only. Entire card is a Link. */
 @media (max-width: 767px) {
   .hist-tl-card__expand {
-    max-height: none;
-    opacity: 1;
-    padding: 0 10px 10px;
-    overflow: visible;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
   }
 }
 
@@ -2416,131 +2434,15 @@
   letter-spacing: 0.08em;
 }
 
-/* ===========================================================================
-   Bottom Minimap — Simplified track at bottom of viewport
-   =========================================================================== */
-.hist-tl-minimap {
-  position: absolute;
-  bottom: var(--space-4);
-  left: 5%;
-  right: 5%;
-  height: 32px;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.hist-tl-minimap__line {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--hist-border);
-  opacity: 0.5;
-  transform: translateY(-50%);
-}
-
-.hist-tl-minimap__dot {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  pointer-events: auto;
-  padding: 0;
-  /* Enlarged touch target */
-  min-width: 44px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hist-tl-minimap__dot::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--hist-border);
-  transition: background 200ms ease, transform 200ms ease;
-  flex-shrink: 0;
-}
-
-/* .hist-tl-minimap__dot:hover scale removed — dots sit still */
-.hist-tl-minimap__dot:hover::before {
-  background: var(--hist-accent);
-}
-
-.hist-tl-minimap__dot:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-tl-minimap__year {
-  position: absolute;
-  top: calc(50% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-data);
-  font-size: 0.55rem;
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-/* ── Era fast-travel buttons ── */
-.hist-tl-eras {
-  position: absolute;
-  bottom: calc(var(--space-4) + 42px);
-  left: 5%;
-  right: 5%;
-  display: flex;
-  justify-content: center;
-  gap: var(--space-1);
-  z-index: 20;
-  flex-wrap: wrap;
-}
-
-.hist-tl-era {
-  font-family: var(--font-meta);
-  font-size: 0.6rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-ink-muted);
-  background: transparent;
-  border: 1px solid var(--hist-border);
-  padding: 3px 10px;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
-  pointer-events: auto;
-  min-height: 28px;
-}
-
-.hist-tl-era:hover {
-  color: var(--hist-accent);
-  border-color: var(--hist-accent);
-}
-
-.hist-tl-era:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
+/* Dead code removed: .hist-tl-minimap block (unused — JSX renders era pills instead) */
+/* Dead code removed: .hist-tl-eras / .hist-tl-era block (unused — JSX renders era-pills instead) */
 
 /* ── Film grain — subtle archival texture ── */
 .hist-tl-full::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 8;
   pointer-events: none;
   mix-blend-mode: multiply;
   opacity: 0.06;
@@ -2719,7 +2621,6 @@
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .hist-tl-full::before { display: none; }
-  .hist-tl-eras { display: none; }
 
   .hist-tl-card {
     transition: none;
@@ -2730,13 +2631,7 @@
   }
   /* .hist-tl-card:hover photo zoom already stripped from base */
 
-  .hist-tl-card__expand {
-    max-height: none;
-    opacity: 1;
-    padding: 0 10px 10px;
-    overflow: visible;
-    transition: none;
-  }
+  /* Only force expand open on desktop — mobile keeps cards compact regardless of motion prefs */
 
   .hist-tl-full__dot {
     transition: none;
@@ -2746,8 +2641,18 @@
     will-change: auto;
   }
 
-  .hist-tl-strip__dot::before,
-  .hist-tl-minimap__dot::before {
+  .hist-tl-strip__dot::before {
+    transition: none;
+  }
+}
+
+/* On desktop (≥768px), keep expand content visible for reduced-motion users (no hover available) */
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  .hist-tl-card__expand {
+    max-height: none;
+    opacity: 1;
+    padding: 0 10px 10px;
+    overflow: visible;
     transition: none;
   }
 }
@@ -2774,8 +2679,13 @@
     position: relative;
     padding-left: 48px;
     padding-right: var(--space-3);
-    padding-top: var(--space-5);
-    padding-bottom: var(--space-7);
+    padding-top: var(--space-4);
+    padding-bottom: calc(
+      var(--hist-mobile-chrome-height)
+      + 36px /* mobile era strip */
+      + env(safe-area-inset-bottom, 0px)
+      + var(--space-3)
+    );
   }
 
   /* Ink track runs vertically on the left */
@@ -2896,46 +2806,9 @@
     display: none;
   }
 
-  /* Top zone compact on mobile */
+  /* Top zone HIDDEN on mobile — era nav moves to bottom chrome strip */
   .hist-tl-top-zone {
-    top: 48px;
-    padding: var(--space-1) var(--space-3) 0;
-  }
-
-  .hist-tl-era-header__label {
-    font-size: 0.9rem;
-  }
-
-  .hist-tl-year-ribbon {
-    gap: 4px;
-  }
-
-  .hist-tl-year-ribbon__year {
-    font-size: 0.55rem;
-  }
-
-  .hist-tl-year-ribbon__year--focused {
-    font-size: 0.75rem;
-  }
-
-  /* Era pills: horizontal scroll on mobile */
-  .hist-tl-era-pills {
-    overflow-x: auto;
-    justify-content: flex-start;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-wrap: nowrap;
-  }
-
-  .hist-tl-era-pills::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hist-tl-era-pill {
-    min-height: 44px;
-    padding: var(--space-2) var(--space-3);
-    font-size: 0.55rem;
-    flex-shrink: 0;
+    display: none !important;
   }
 
   /* CartographerStrip overlay on mobile */
@@ -2956,12 +2829,6 @@
   /* Brief positioned higher */
   .hist-tl-brief {
     top: 25%;
-  }
-
-  .hist-tl-era {
-    min-height: 44px;
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--text-xs);
   }
 
   /* Strip on mobile */
@@ -4358,8 +4225,7 @@ a.hist-figures__name:hover {
     opacity: 0.6;
   }
 
-  .hist-tl-strip__dot::before,
-  .hist-tl-minimap__dot::before {
+  .hist-tl-strip__dot::before {
     transition: none;
   }
 
@@ -4518,6 +4384,12 @@ a.hist-figures__name:hover {
   font-size: var(--text-xs);
   color: var(--hist-ink-secondary);
   line-height: 1.5;
+}
+
+/* Hide footer on landing page — wrapper overflow:hidden makes it invisible anyway;
+   this prevents layout shift. Topbar provides back-to-void-news navigation. */
+main:has(.hist-tl-wrapper) + .hist-footer {
+  display: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -5482,7 +5354,7 @@ a.hist-figures__name:hover {
   flex-direction: column;
   align-items: center;
   padding: var(--space-2) var(--space-4) var(--space-1);
-  background: linear-gradient(180deg, var(--hist-bg) 90%, transparent);
+  background: linear-gradient(180deg, var(--hist-bg) 60%, transparent);
   pointer-events: none;
   transition: opacity 400ms ease;
 }
@@ -5492,7 +5364,7 @@ a.hist-figures__name:hover {
 }
 
 :root[data-mode="dark"] .hist-tl-top-zone {
-  background: linear-gradient(180deg, var(--hist-bg) 85%, transparent);
+  background: linear-gradient(180deg, var(--hist-bg) 55%, transparent);
 }
 
 /* Era header — clean, no border */
@@ -5620,6 +5492,68 @@ a.hist-figures__name:hover {
 .hist-tl-era-pill:focus-visible {
   outline: 2px solid var(--hist-brass);
   outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile Era Strip — Fixed bottom navigation, replaces top zone on mobile
+   Sits above the longview controls bar to form consolidated bottom chrome.
+   --------------------------------------------------------------------------- */
+.hist-mobile-era-strip {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 767px) {
+  .hist-mobile-era-strip {
+    display: flex;
+    position: fixed;
+    bottom: calc(var(--hist-mobile-chrome-height) + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    z-index: 92;
+    background: color-mix(in srgb, var(--hist-bg) 94%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: var(--space-1) var(--space-3);
+    gap: var(--space-1);
+    overflow-x: auto;
+    border-top: 1px solid var(--hist-border-subtle);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hist-mobile-era-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hist-mobile-era-btn {
+    flex-shrink: 0;
+    padding: var(--space-1) var(--space-2);
+    min-height: 32px;
+    min-width: 44px;
+    background: transparent;
+    border: 1px solid var(--hist-border);
+    border-radius: 2px;
+    color: var(--hist-ink-muted);
+    font-family: var(--font-meta);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+    white-space: nowrap;
+  }
+
+  .hist-mobile-era-btn--active {
+    color: var(--hist-accent);
+    border-color: var(--hist-accent);
+    background: var(--hist-accent-ghost);
+  }
+
+  .hist-mobile-era-btn:focus-visible {
+    outline: 2px solid var(--hist-brass);
+    outline-offset: 2px;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -5781,7 +5715,7 @@ a.hist-figures__name:hover {
    --------------------------------------------------------------------------- */
 .hist-tl-arc-lane {
   position: absolute;
-  top: calc(50% + 320px); /* Well below tallest below-cards */
+  top: calc(50% + 350px); /* Well below tallest below-cards (accounts for 30px track offset) */
   height: 36px;
   z-index: 3;
 }
@@ -6046,17 +5980,6 @@ a.hist-figures__name:hover {
 }
 
 /* Minimap dot pulse */
-@keyframes histMinimapDotPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.4); }
-  100% { transform: scale(1); }
-}
-
-.hist-tl-minimap__dot--active::before {
-  background: var(--hist-brass);
-  animation: histMinimapDotPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
 /* ---------------------------------------------------------------------------
    Ink Track Draw-On — stroke-dashoffset animation on load
    --------------------------------------------------------------------------- */
@@ -6170,10 +6093,6 @@ a.hist-figures__name:hover {
     animation: none;
   }
 
-  .hist-tl-minimap__dot--active::before {
-    animation: none;
-  }
-
   .hist-tl-full__track--draw .hist-tl-full__ink-path {
     animation: none;
     stroke-dasharray: none;
@@ -6232,10 +6151,6 @@ a.hist-figures__name:hover {
 
   /* No parallax, no stem spring, no dot pulse */
   .hist-tl-full__dot--focused {
-    animation: none;
-  }
-
-  .hist-tl-minimap__dot--active::before {
     animation: none;
   }
 
@@ -7297,7 +7212,7 @@ a.hist-figures__name:hover {
    --------------------------------------------------------------------------- */
 .hist-tl-card__conn-badge {
   position: absolute;
-  bottom: 4px;
+  top: 4px;
   right: 4px;
   display: inline-flex;
   align-items: center;
@@ -7382,7 +7297,25 @@ a.hist-figures__name:hover {
 
 @media (max-width: 767px) {
   .hist-longview-controls {
-    bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+    bottom: env(safe-area-inset-bottom, 0px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    transform: none;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    background: var(--hist-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--hist-border-subtle);
+    padding: var(--space-2) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
+    height: var(--hist-mobile-chrome-height);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+    justify-content: center;
+    z-index: 95;
   }
 }
 
@@ -7583,7 +7516,7 @@ a.hist-figures__name:hover {
 }
 
 .hist-thread-group__subtitle {
-  font-family: var(--font-body);
+  font-family: var(--font-structural);
   font-size: var(--text-sm);
   color: var(--hist-ink-muted);
   margin: 0;
@@ -7592,7 +7525,7 @@ a.hist-figures__name:hover {
 
 .hist-thread-group__count {
   flex-shrink: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: 11px;
   color: var(--hist-ink-muted);
   border: 1px solid var(--hist-border-subtle);
@@ -7654,7 +7587,7 @@ a.hist-figures__name:hover {
 }
 
 .hist-thread-tile__year {
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: 10px;
   letter-spacing: 0.08em;
   color: var(--hist-ink-muted);
@@ -7663,7 +7596,7 @@ a.hist-figures__name:hover {
 }
 
 .hist-thread-tile__title {
-  font-family: var(--font-display);
+  font-family: var(--font-editorial);
   font-size: 14px;
   font-weight: 600;
   color: var(--hist-ink);
@@ -7672,7 +7605,7 @@ a.hist-figures__name:hover {
 }
 
 .hist-thread-tile__hook {
-  font-family: var(--font-body);
+  font-family: var(--font-structural);
   font-size: 12px;
   color: var(--hist-ink-muted);
   margin: 0;
@@ -7718,10 +7651,26 @@ a.hist-figures__name:hover {
   opacity: 1;
 }
 
-/* Mobile: tile width adapts */
+/* Mobile: tile width adapts, thread groups scroll within canvas */
 @media (max-width: 767px) {
   .hist-thread-groups {
     padding: var(--space-4) var(--space-3) var(--space-6);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(
+      100dvh
+      - var(--hist-topbar-height)
+      - var(--hist-mobile-chrome-height)
+      - 36px /* mobile era strip */
+      - env(safe-area-inset-top, 0px)
+      - env(safe-area-inset-bottom, 0px)
+    );
+    padding-bottom: calc(
+      var(--hist-mobile-chrome-height)
+      + 36px
+      + env(safe-area-inset-bottom, 0px)
+      + var(--space-6)
+    );
   }
 
   .hist-thread-tile {
