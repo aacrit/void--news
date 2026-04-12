@@ -306,6 +306,24 @@ _OVERLY_COMMON_ENTITIES = frozenset({
     "new york", "california", "texas", "florida",
     "london", "paris", "beijing", "moscow",
     "european union", "eu", "united nations",
+    # v5.7: Geopolitical hotspots that act as transitive merge bridges
+    # between unrelated stories (e.g., Iran links BJP politics to
+    # Australian athletics to US diplomacy via ceasefire/israel chains).
+    "iran", "iranian", "iran's",
+    "israel", "israeli", "israel's",
+    "india", "indian", "india's",
+    "pakistan", "pakistani", "pakistan's",
+    "ceasefire", "cease-fire",
+    "gaza", "west bank", "palestine", "palestinian",
+    "hezbollah", "hamas",
+    "modi", "narendra modi",
+    "nato", "pentagon",
+    "australia", "australian",
+    "germany", "german",
+    "france", "french",
+    "japan", "japanese",
+    "south korea", "north korea",
+    "middle east",
 })
 
 
@@ -342,7 +360,7 @@ def merge_related_clusters(
     clusters: list[dict],
     min_shared_entities: int = 2,
     max_age_spread_hours: float = 48.0,
-    max_cluster_articles: int = 75,
+    max_cluster_articles: int = 30,
 ) -> list[dict]:
     """
     Post-clustering merge pass: consolidate micro-clusters that belong to the
@@ -445,9 +463,9 @@ def merge_related_clusters(
             src_i = len(set(a.get("source_id", "") for a in clusters[i].get("articles", [])))
             src_j = len(set(a.get("source_id", "") for a in clusters[j].get("articles", [])))
             if src_i >= 10 and src_j >= 10:
-                size_cap = 200
+                size_cap = 50
             elif src_i >= 5 and src_j >= 5:
-                size_cap = 150
+                size_cap = 35
             else:
                 size_cap = max_cluster_articles
             if combined_size > size_cap:
@@ -540,7 +558,7 @@ def _title_words(title: str) -> set[str]:
 def merge_duplicate_title_clusters(
     clusters: list[dict],
     jaccard_threshold: float = 0.45,
-    max_merged_articles: int = 250,
+    max_merged_articles: int = 100,
 ) -> list[dict]:
     """
     Final merge pass: consolidate clusters with near-identical headlines.
@@ -608,9 +626,9 @@ def merge_duplicate_title_clusters(
             # Relaxed for quality pairs: both 5+ sources are likely sub-events
             # of the same story. 10+ src pairs get even more relaxed threshold.
             if src_i >= 10 and src_j >= 10:
-                effective_threshold = 0.25
+                effective_threshold = 0.40
             elif src_i >= 5 and src_j >= 5:
-                effective_threshold = 0.35
+                effective_threshold = 0.42
             else:
                 effective_threshold = jaccard_threshold
 
