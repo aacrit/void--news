@@ -30,7 +30,6 @@ import argparse
 import json
 import os
 import sys
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -228,11 +227,7 @@ def process_event(slug: str, force: bool = False) -> bool:
         print(f"  [FAIL] Script generation failed for {slug}")
         return False
 
-    # Step 2: Rate-limit pause before TTS
-    print(f"  [history-audio:{slug}] Waiting 15s before TTS call...")
-    time.sleep(15)
-
-    # Step 3: Synthesize and upload
+    # Step 2: Synthesize and upload (edge-tts, no rate-limit delay needed)
     result = produce_history_audio(script, slug)
     if not result:
         print(f"  [FAIL] Audio production failed for {slug}")
@@ -314,10 +309,6 @@ def main():
 
     for i, slug in enumerate(target_slugs):
         if i > 0:
-            # Rate-limit pause between events (script gen + TTS = ~30s each)
-            print(f"\n[pause 20s between events...]")
-            time.sleep(20)
-
         ok = process_event(slug, force=args.force)
         if ok:
             success += 1
