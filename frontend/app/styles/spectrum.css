@@ -2150,8 +2150,8 @@
 }
 
 /* ==========================================================================
-   Spectrum Visualization System
-   Individual source pins at actual lean values. No zone grouping.
+   Spectrum Visualization System — Toggle + 3 views (Ridge, Witness, Terrain)
+   Architecture: SVG = distribution shape only; HTML = source avatars + tilt
    ========================================================================== */
 
 /* ---- Container ---- */
@@ -2169,6 +2169,8 @@
   color: var(--fg-muted);
 }
 
+/* ---- (Toggle removed — single merged organic view) ---- */
+
 /* ==========================================================================
    Merged Organic View — 5-beat cinematic entrance
    ========================================================================== */
@@ -2182,65 +2184,66 @@
   overflow: visible;
 }
 
-/* Beat 1: Fill — rAF handles the rise */
-.dd-sv-view__fill { }
+/* Beat 1: Fill — no CSS anim, rAF handles the rise */
+.dd-sv-view__fill {
+  /* rAF writes d= attribute directly */
+}
 
-/* Beat 2: Stroke — dashoffset transition at 150ms */
+/* Beat 2: Stroke — dashoffset transition triggered by JS at 150ms */
 .dd-sv-view__stroke {
   transition: stroke-dashoffset 550ms var(--ease-cinematic);
   opacity: 0.65;
 }
 
-/* Beat 3: Contour lines */
+/* Beat 3: Contour lines — fade in at 350ms */
 .dd-sv-view__contour {
   opacity: 0;
   transition: opacity 200ms ease-out;
 }
-.dd-sv-view--animated .dd-sv-view__contour { opacity: 0.22; }
 
-/* Beat 4: Mean line */
+.dd-sv-view--animated .dd-sv-view__contour {
+  opacity: 0.22;
+}
+
+/* Beat 4: Amber mean line — fades in at 400ms */
 .dd-sv-view__mean {
   opacity: 0;
   transition: opacity 150ms ease-out 400ms;
 }
-.dd-sv-view--animated .dd-sv-view__mean { opacity: 0.65; }
 
+.dd-sv-view--animated .dd-sv-view__mean {
+  opacity: 0.65;
+}
+
+/* Dark mode: amber mean gets subtle glow */
 :root[data-mode="dark"] .dd-sv-view--animated .dd-sv-view__mean {
   filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cin-amber) 50%, transparent));
 }
 
-/* Beat 5: Bimodal peak callouts */
+/* Beat 5: Bimodal peak callouts — fade in at 500ms with slight upward settle */
 .dd-sv-view__bm-peak {
   opacity: 0;
   transition: opacity 250ms ease-out 500ms, transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms;
   transform: translateY(4px);
   transform-box: fill-box;
 }
-.dd-sv-view--animated .dd-sv-view__bm-peak { opacity: 1; transform: translateY(0); }
 
-/* Dead zone labels */
+.dd-sv-view--animated .dd-sv-view__bm-peak {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Dead zone labels — static, subtle */
 .dd-sv-view__dead-label {
   opacity: 0;
   transition: opacity 300ms ease-out 600ms;
 }
-.dd-sv-view--animated .dd-sv-view__dead-label { opacity: 0.45; }
 
-/* Dot strip (≤3 sources) */
-.dd-sv-view__dot {
-  opacity: 0;
-  transition: opacity 300ms ease-out 200ms;
+.dd-sv-view--animated .dd-sv-view__dead-label {
+  opacity: 0.45;
 }
-.dd-sv-view--animated .dd-sv-view__dot { opacity: 0.8; }
 
-.dd-sv-view__dot[data-lean="far-left"]     { stroke: var(--bias-far-left); }
-.dd-sv-view__dot[data-lean="left"]         { stroke: var(--bias-left); }
-.dd-sv-view__dot[data-lean="center-left"]  { stroke: var(--bias-center-left); }
-.dd-sv-view__dot[data-lean="center"]       { stroke: var(--bias-center); }
-.dd-sv-view__dot[data-lean="center-right"] { stroke: var(--bias-center-right); }
-.dd-sv-view__dot[data-lean="right"]        { stroke: var(--bias-right); }
-.dd-sv-view__dot[data-lean="far-right"]    { stroke: var(--bias-far-right); }
-
-/* 4-state coverage banner */
+/* ---- 4-state coverage banner ---- */
 .dd-sv-view__banner {
   display: flex;
   align-items: center;
@@ -2254,89 +2257,89 @@
   opacity: 0;
   animation: svBannerIn 300ms ease-out 600ms both;
 }
-.dd-sv-view__banner-icon { font-size: 8px; }
-.dd-sv-view__banner--split .dd-sv-view__banner-icon   { color: var(--cin-amber); }
-.dd-sv-view__banner--split                             { color: var(--fg-secondary); }
+
+.dd-sv-view__banner-icon {
+  font-size: 8px;
+}
+
+/* Split: amber — highest urgency */
+.dd-sv-view__banner--split .dd-sv-view__banner-icon { color: var(--cin-amber); }
+.dd-sv-view__banner--split { color: var(--fg-secondary); }
+
+/* Divergent: muted — notable but not alarming */
 .dd-sv-view__banner--divergent .dd-sv-view__banner-icon { color: var(--fg-tertiary); }
-.dd-sv-view__banner--leaning .dd-sv-view__banner-icon   { color: var(--fg-tertiary); }
+
+/* Leaning: lean-colored icon */
+.dd-sv-view__banner--leaning .dd-sv-view__banner-icon { color: var(--fg-tertiary); }
 
 @keyframes svBannerIn {
   from { opacity: 0; transform: translateY(-2px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ==========================================================================
-   Source Pins — hidden by default, revealed on hover (desktop) / tap (mobile)
-   ========================================================================== */
-
-.dd-sv-pin {
-  cursor: pointer;
-  outline: none;
-}
-
-/* Thin lean-colored ring — hidden until pins-visible */
-.dd-sv-pin__circle {
+/* ---- Source dots (n≤3 dot strip + n=4-7 overlay) ---- */
+.dd-sv-view__dot,
+.dd-sv-view__src-dot {
   opacity: 0;
-  transition: opacity 180ms ease-out, transform 120ms ease;
-  transform-box: fill-box;
-  transform-origin: center;
+  transition: opacity 300ms ease-out 200ms;
 }
 
-/* Favicon inside the ring — inherits visibility from circle */
-.dd-sv-pin__favicon {
-  opacity: 0;
-  transition: opacity 180ms ease-out;
-  pointer-events: none;
+.dd-sv-view--animated .dd-sv-view__dot,
+.dd-sv-view--animated .dd-sv-view__src-dot {
+  opacity: 0.8;
 }
 
-/* Fallback letter */
-.dd-sv-pin__letter {
-  opacity: 0;
-  transition: opacity 180ms ease-out;
-  fill: var(--fg-muted);
-  pointer-events: none;
+/* Lean-colored strokes via data-lean */
+.dd-sv-view__dot[data-lean="far-left"],
+.dd-sv-view__src-dot[data-lean="far-left"]     { stroke: var(--bias-far-left); }
+.dd-sv-view__dot[data-lean="left"],
+.dd-sv-view__src-dot[data-lean="left"]         { stroke: var(--bias-left); }
+.dd-sv-view__dot[data-lean="center-left"],
+.dd-sv-view__src-dot[data-lean="center-left"]  { stroke: var(--bias-center-left); }
+.dd-sv-view__dot[data-lean="center"],
+.dd-sv-view__src-dot[data-lean="center"]       { stroke: var(--bias-center); }
+.dd-sv-view__dot[data-lean="center-right"],
+.dd-sv-view__src-dot[data-lean="center-right"] { stroke: var(--bias-center-right); }
+.dd-sv-view__dot[data-lean="right"],
+.dd-sv-view__src-dot[data-lean="right"]        { stroke: var(--bias-right); }
+.dd-sv-view__dot[data-lean="far-right"],
+.dd-sv-view__src-dot[data-lean="far-right"]    { stroke: var(--bias-far-right); }
+
+/* ---- Shared axis ---- */
+.dd-sv__axis {
+  position: relative;
+  width: 100%;
+  height: 14px;
+  margin-top: 2px;
 }
 
-/* Revealed state — toggled via .dd-sv-view--pins-visible */
-.dd-sv-view--pins-visible .dd-sv-pin__circle  { opacity: 1; }
-.dd-sv-view--pins-visible .dd-sv-pin__favicon { opacity: 1; }
-.dd-sv-view--pins-visible .dd-sv-pin__letter  { opacity: 1; }
-
-/* Lean-colored ring border via data-lean on the parent <a> */
-.dd-sv-pin[data-lean="far-left"]     .dd-sv-pin__circle { stroke: var(--bias-far-left); }
-.dd-sv-pin[data-lean="left"]         .dd-sv-pin__circle { stroke: var(--bias-left); }
-.dd-sv-pin[data-lean="center-left"]  .dd-sv-pin__circle { stroke: var(--bias-center-left); }
-.dd-sv-pin[data-lean="center"]       .dd-sv-pin__circle { stroke: var(--bias-center); }
-.dd-sv-pin[data-lean="center-right"] .dd-sv-pin__circle { stroke: var(--bias-center-right); }
-.dd-sv-pin[data-lean="right"]        .dd-sv-pin__circle { stroke: var(--bias-right); }
-.dd-sv-pin[data-lean="far-right"]    .dd-sv-pin__circle { stroke: var(--bias-far-right); }
-
-/* Hover / selected — scale ring slightly */
-.dd-sv-pin:hover .dd-sv-pin__circle,
-.dd-sv-pin--selected .dd-sv-pin__circle {
-  transform: scale(1.25);
-  stroke-width: 1.5;
+.dd-sv__axis-tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 4px;
+  background: var(--fg-muted);
+  opacity: 0.3;
+  transform: translateX(-50%);
 }
 
-/* Keyboard focus — amber ring */
-.dd-sv-pin:focus-visible .dd-sv-pin__circle {
-  stroke: var(--cin-amber);
-  stroke-width: 2;
-  transform: scale(1.3);
+.dd-sv__axis-label {
+  position: absolute;
+  top: 5px;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  transform: translateX(-50%);
+  letter-spacing: 0.04em;
 }
 
-/* Selected (mobile tap) — thicker ring */
-.dd-sv-pin--selected .dd-sv-pin__circle { stroke-width: 2; }
-
-/* ==========================================================================
-   Tilt row
-   ========================================================================== */
-
+/* ---- Tilt row (HTML) ---- */
 .dd-sv__tilt-row {
   position: relative;
   height: 16px;
   margin-top: 2px;
 }
+
 .dd-sv__tilt-needle {
   position: absolute;
   top: 0;
@@ -2346,6 +2349,7 @@
   opacity: 0.6;
   transform: translateX(-50%);
 }
+
 .dd-sv__tilt-label {
   position: absolute;
   top: 2px;
@@ -2358,67 +2362,162 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ==========================================================================
-   Spectrum axis — gradient bar + bold Left / Center / Right
-   ========================================================================== */
-
-.dd-sv__axis {
+/* ---- Source favicon row (HTML) ---- */
+.dd-sv-sources {
   position: relative;
-  width: 100%;
-  height: 22px;
-  margin-top: 4px;
+  height: 28px;
+  margin: 4px 0 2px;
 }
 
-/* Full-width lean spectrum gradient bar */
-.dd-sv__axis-bar {
+.dd-sv-sources__slot {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(to right,
-    var(--bias-far-left)     0%,
-    var(--bias-left)        16%,
-    var(--bias-center-left) 32%,
-    var(--bias-center)      50%,
-    var(--bias-center-right) 68%,
-    var(--bias-right)       84%,
-    var(--bias-far-right)  100%
-  );
-  opacity: 0.55;
-}
-
-/* L / C / R labels — larger, bold, lean-colored */
-.dd-sv__axis-label {
-  position: absolute;
-  top: 6px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.dd-sv__axis-label--l {
-  left: 0;
-  color: var(--bias-left);
-}
-.dd-sv__axis-label--c {
-  left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.dd-sv-sources__avatars {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transition: gap 200ms ease;
+}
+
+.dd-sv-sources__slot--expanded {
+  z-index: 10;
+}
+
+.dd-sv-sources__slot--expanded .dd-sv-sources__avatars {
+  gap: 4px;
+}
+
+/* Names dropdown — hidden by default */
+.dd-sv-sources__names {
+  display: none;
+}
+
+.dd-sv-sources__slot--expanded .dd-sv-sources__names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 26px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 6px 8px;
+  gap: 2px;
+  z-index: 20;
+  box-shadow: var(--shadow-e2);
+  min-width: 120px;
+}
+
+.dd-sv-sources__name-link {
+  font-family: var(--font-structural);
+  font-size: var(--text-xxs);
   color: var(--fg-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.4;
 }
-.dd-sv__axis-label--r {
+
+.dd-sv-sources__name-link:hover {
+  color: var(--fg-primary);
+  text-decoration: underline;
+}
+
+/* ---- Avatar (favicon circle) ---- */
+.dd-sv-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-left: -6px;
+  transition: margin 200ms ease, transform 200ms ease;
+  cursor: pointer;
+}
+
+.dd-sv-sources__avatars .dd-sv-avatar:first-child {
+  margin-left: 0;
+}
+
+.dd-sv-sources__slot--expanded .dd-sv-avatar {
+  margin-left: 0;
+}
+
+.dd-sv-avatar:hover {
+  transform: scale(1.15);
+  z-index: 5;
+}
+
+.dd-sv-avatar__img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+.dd-sv-avatar__letter {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dd-sv-avatar--count {
+  background: var(--bg-secondary);
+  border-color: var(--border-subtle);
+  font-family: var(--font-data);
+  font-size: 7px;
+  color: var(--fg-tertiary);
+  font-weight: 600;
+}
+
+/* ---- Avatar lean colors via data-lean (theme-reactive CSS vars) ---- */
+.dd-sv-avatar[data-lean="far-left"]     { border-color: var(--bias-far-left); }
+.dd-sv-avatar[data-lean="left"]         { border-color: var(--bias-left); }
+.dd-sv-avatar[data-lean="center-left"]  { border-color: var(--bias-center-left); }
+.dd-sv-avatar[data-lean="center"]       { border-color: var(--bias-center); }
+.dd-sv-avatar[data-lean="center-right"] { border-color: var(--bias-center-right); }
+.dd-sv-avatar[data-lean="right"]        { border-color: var(--bias-right); }
+.dd-sv-avatar[data-lean="far-right"]    { border-color: var(--bias-far-right); }
+
+.dd-sv-avatar[data-lean="far-left"]     .dd-sv-avatar__letter { color: var(--bias-far-left); }
+.dd-sv-avatar[data-lean="left"]         .dd-sv-avatar__letter { color: var(--bias-left); }
+.dd-sv-avatar[data-lean="center-left"]  .dd-sv-avatar__letter { color: var(--bias-center-left); }
+.dd-sv-avatar[data-lean="center"]       .dd-sv-avatar__letter { color: var(--bias-center); }
+.dd-sv-avatar[data-lean="center-right"] .dd-sv-avatar__letter { color: var(--bias-center-right); }
+.dd-sv-avatar[data-lean="right"]        .dd-sv-avatar__letter { color: var(--bias-right); }
+.dd-sv-avatar[data-lean="far-right"]    .dd-sv-avatar__letter { color: var(--bias-far-right); }
+
+/* ---- Edge zone popup anchoring (prevents viewport clipping) ---- */
+.dd-sv-sources__slot--edge-left {
+  transform: translateX(-10%);
+}
+
+.dd-sv-sources__slot--edge-left .dd-sv-sources__names {
+  left: 0;
+  transform: none;
+}
+
+.dd-sv-sources__slot--edge-right {
+  transform: translateX(-90%);
+}
+
+.dd-sv-sources__slot--edge-right .dd-sv-sources__names {
+  left: auto;
   right: 0;
-  color: var(--bias-right);
+  transform: none;
 }
 
-/* ==========================================================================
-   Tooltip — pointer-events: auto so the link is reachable
-   Hover bridge below tooltip closes the gap between pin and tooltip box.
-   ========================================================================== */
-
+/* ---- Shared tooltip ---- */
 .dd-sv__tooltip {
   position: fixed;
   transform: translate(-50%, calc(-100% - 10px));
@@ -2426,7 +2525,7 @@
   border: 1px solid var(--border-strong);
   box-shadow: var(--shadow-e2);
   padding: var(--space-2) var(--space-3);
-  pointer-events: auto;           /* was none — now links are clickable */
+  pointer-events: none;
   z-index: var(--z-tooltip);
   min-width: 140px;
   max-width: 220px;
@@ -2435,20 +2534,15 @@
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Hover bridge — transparent extension below tooltip that prevents
-   gap-triggered dismissal when cursor moves from pin up to tooltip */
-.dd-sv__tooltip-bridge {
-  position: absolute;
-  bottom: -14px;
-  left: 0;
-  right: 0;
-  height: 14px;
-  display: block;
-}
-
 @keyframes svTooltipIn {
-  from { opacity: 0; transform: translate(-50%, calc(-100% - 16px)); }
-  to   { opacity: 1; transform: translate(-50%, calc(-100% - 10px)); }
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 16px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 10px));
+  }
 }
 
 .dd-sv__tooltip-name {
@@ -2458,6 +2552,7 @@
   color: var(--fg-primary);
   margin-bottom: 2px;
 }
+
 .dd-sv__tooltip-lean {
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -2467,6 +2562,7 @@
   gap: var(--space-1);
   margin-bottom: 2px;
 }
+
 .dd-sv__tooltip-dot {
   width: 7px;
   height: 7px;
@@ -2474,11 +2570,13 @@
   flex-shrink: 0;
   display: inline-block;
 }
+
 .dd-sv__tooltip-score {
   font-variant-numeric: tabular-nums;
   opacity: 0.6;
   margin-left: 2px;
 }
+
 .dd-sv__tooltip-tier {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
@@ -2486,229 +2584,333 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--fg-tertiary);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
+
 .dd-sv__tooltip-trust {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
-.dd-sv__tooltip-link {
-  display: block;
+
+.dd-sv__tooltip-hint {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.dd-sv__tooltip-link {
   color: var(--fg-secondary);
   text-decoration: none;
-  padding: 4px 0 2px;
-  border-top: 1px solid var(--border-subtle);
-  margin-top: 2px;
-  transition: color 120ms ease;
+  pointer-events: auto;
+  font-style: normal;
 }
-.dd-sv__tooltip-link:hover { color: var(--fg-primary); text-decoration: underline; }
+
+.dd-sv__tooltip-link:hover {
+  text-decoration: underline;
+}
 
 /* ==========================================================================
-   Mobile info bar — tap-to-select persistent callout
+   Interactive Expand — toggle button, source pins, scrub, label strip
    ========================================================================== */
 
-.dd-sv__info-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  margin-top: var(--space-2);
-  animation: infoBarIn 200ms var(--ease-out) both;
-  min-height: 48px;
+/* SVG wrapper — position:relative for scrub label + crosshair on expand */
+.dd-sv-view__svg-wrap {
+  position: relative;
 }
 
-@keyframes infoBarIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+.dd-sv-view--expanded .dd-sv-view__svg-wrap {
+  cursor: crosshair;
 }
 
-.dd-sv__info-bar__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.dd-sv__info-bar__name {
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--fg-primary);
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.dd-sv__info-bar__lean {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 2px 5px;
-  border-radius: 2px;
-  background: var(--bg-secondary);
-  color: var(--fg-secondary);
-  flex-shrink: 0;
-}
-.dd-sv__info-bar__lean[data-lean="far-left"]     { color: var(--bias-far-left); }
-.dd-sv__info-bar__lean[data-lean="left"]         { color: var(--bias-left); }
-.dd-sv__info-bar__lean[data-lean="center-left"]  { color: var(--bias-center-left); }
-.dd-sv__info-bar__lean[data-lean="center"]       { color: var(--bias-center); }
-.dd-sv__info-bar__lean[data-lean="center-right"] { color: var(--bias-center-right); }
-.dd-sv__info-bar__lean[data-lean="right"]        { color: var(--bias-right); }
-.dd-sv__info-bar__lean[data-lean="far-right"]    { color: var(--bias-far-right); }
-
-.dd-sv__info-bar__link {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-secondary);
-  text-decoration: none;
-  border: 1px solid var(--border-subtle);
-  padding: 5px 10px;
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  transition: background 120ms ease, color 120ms ease;
-}
-.dd-sv__info-bar__link:hover,
-.dd-sv__info-bar__link:active {
-  background: var(--bg-secondary);
-  color: var(--fg-primary);
-}
-.dd-sv__info-bar__dismiss {
+/* ---- Toggle button ---- */
+.dd-sv-view__toggle-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
   background: none;
   border: none;
-  color: var(--fg-muted);
-  font-size: 16px;
+  padding: 0 2px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--fg-tertiary);
   cursor: pointer;
-  padding: 4px;
+  z-index: 5;
   line-height: 1;
-  flex-shrink: 0;
-  min-width: 32px;
-  min-height: 32px;
+  opacity: 0.45;
+  transition: opacity 150ms ease, color 150ms ease;
+}
+
+.dd-sv-view__toggle-btn:hover {
+  opacity: 1;
+  color: var(--fg-secondary);
+}
+
+.dd-sv-view--expanded .dd-sv-view__toggle-btn {
+  opacity: 0.7;
+}
+
+/* ---- Expanded source pins — all sources on KDE curve ---- */
+.dd-sv-view__exp-pin {
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 200ms ease-out, transform 150ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dd-sv-view--expanded .dd-sv-view__exp-pin {
+  opacity: 1;
+}
+
+.dd-sv-view__exp-pin:hover {
+  transform: scale(1.45);
+}
+
+/* Lean-colored borders via data-lean */
+.dd-sv-view__exp-pin[data-lean="far-left"]     { stroke: var(--bias-far-left); }
+.dd-sv-view__exp-pin[data-lean="left"]         { stroke: var(--bias-left); }
+.dd-sv-view__exp-pin[data-lean="center-left"]  { stroke: var(--bias-center-left); }
+.dd-sv-view__exp-pin[data-lean="center"]       { stroke: var(--bias-center); }
+.dd-sv-view__exp-pin[data-lean="center-right"] { stroke: var(--bias-center-right); }
+.dd-sv-view__exp-pin[data-lean="right"]        { stroke: var(--bias-right); }
+.dd-sv-view__exp-pin[data-lean="far-right"]    { stroke: var(--bias-far-right); }
+
+/* ---- Scrub line ---- */
+.dd-sv-view__scrub-line {
+  stroke: var(--fg-muted);
+  stroke-width: 0.75;
+  stroke-dasharray: 3 2;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ---- Scrub label — follows cursor horizontally ---- */
+.dd-sv-view__scrub-label {
+  position: absolute;
+  bottom: 2px;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-card);
+  padding: 0 3px;
+  border-radius: 2px;
+  opacity: 0.9;
+  border: 1px solid var(--border-subtle);
+}
+
+/* ---- Expand label strip ---- */
+.dd-sv-expand-layer {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  transition: height 400ms var(--ease-out);
+  margin-top: 2px;
+}
+
+.dd-sv-expand-layer--open {
+  height: 44px;
+}
+
+/* ---- Expand items — absolutely pinned by lean % ---- */
+.dd-sv-expand-item {
+  position: absolute;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  transition: color 120ms ease;
-}
-.dd-sv__info-bar__dismiss:hover { color: var(--fg-primary); }
-
-/* ==========================================================================
-   Compact source list — shown when 12+ sources
-   ========================================================================== */
-
-.dd-sv__source-list {
-  list-style: none;
-  margin: var(--space-2) 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px 8px;
-  max-height: 120px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb, var(--border-subtle)) transparent;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: var(--space-1);
+  transform: translateX(-50%);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  max-width: 62px;
 }
 
-.dd-sv__source-list__item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 20px;
+.dd-sv-expand-layer--open .dd-sv-expand-item {
+  opacity: 1;
 }
 
-.dd-sv__source-list__dot {
-  width: 6px;
-  height: 6px;
+.dd-sv-expand-item[data-row="0"] { top: 2px; }
+.dd-sv-expand-item[data-row="1"] { top: 23px; }
+
+.dd-sv-expand-item__dot {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   border: 1.5px solid var(--fg-muted);
   flex-shrink: 0;
+  display: block;
+  margin-bottom: 2px;
+  transition: border-color 150ms ease;
 }
-.dd-sv__source-list__dot[data-lean="far-left"]     { border-color: var(--bias-far-left); }
-.dd-sv__source-list__dot[data-lean="left"]         { border-color: var(--bias-left); }
-.dd-sv__source-list__dot[data-lean="center-left"]  { border-color: var(--bias-center-left); }
-.dd-sv__source-list__dot[data-lean="center"]       { border-color: var(--bias-center); }
-.dd-sv__source-list__dot[data-lean="center-right"] { border-color: var(--bias-center-right); }
-.dd-sv__source-list__dot[data-lean="right"]        { border-color: var(--bias-right); }
-.dd-sv__source-list__dot[data-lean="far-right"]    { border-color: var(--bias-far-right); }
 
-.dd-sv__source-list__link {
+/* Lean-colored dots */
+.dd-sv-expand-item[data-lean="far-left"]     .dd-sv-expand-item__dot { border-color: var(--bias-far-left); }
+.dd-sv-expand-item[data-lean="left"]         .dd-sv-expand-item__dot { border-color: var(--bias-left); }
+.dd-sv-expand-item[data-lean="center-left"]  .dd-sv-expand-item__dot { border-color: var(--bias-center-left); }
+.dd-sv-expand-item[data-lean="center"]       .dd-sv-expand-item__dot { border-color: var(--bias-center); }
+.dd-sv-expand-item[data-lean="center-right"] .dd-sv-expand-item__dot { border-color: var(--bias-center-right); }
+.dd-sv-expand-item[data-lean="right"]        .dd-sv-expand-item__dot { border-color: var(--bias-right); }
+.dd-sv-expand-item[data-lean="far-right"]    .dd-sv-expand-item__dot { border-color: var(--bias-far-right); }
+
+.dd-sv-expand-item__name {
   font-family: var(--font-structural);
-  font-size: 10px;
-  color: var(--fg-secondary);
-  text-decoration: none;
+  font-size: 7px;
+  color: var(--fg-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
-  min-width: 0;
-  transition: color 120ms ease;
+  max-width: 60px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1.1;
+  transition: color 150ms ease;
 }
-.dd-sv__source-list__link:hover { color: var(--fg-primary); text-decoration: underline; }
 
-.dd-sv__source-list__lean {
-  font-family: var(--font-data);
-  font-size: 8px;
-  color: var(--fg-muted);
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
+.dd-sv-expand-item:hover .dd-sv-expand-item__name {
+  color: var(--fg-primary);
+}
+
+/* Mobile: tighter rows */
+@media (max-width: 767px) {
+  .dd-sv-expand-layer--open {
+    height: 48px;
+  }
+
+  .dd-sv-expand-item[data-row="1"] { top: 25px; }
+
+  .dd-sv-expand-item__name {
+    font-size: 6px;
+    max-width: 52px;
+  }
+
+  .dd-sv-view__toggle-btn {
+    font-size: 12px;
+    opacity: 0.6;
+  }
 }
 
 /* ==========================================================================
-   Reduced motion
+   Reduced motion — merged organic view + source row
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+  /* Stroke: JS already checks matchMedia and skips dashoffset setup */
   .dd-sv-view__stroke {
     transition: none;
     stroke-dashoffset: 0 !important;
     stroke-dasharray: none !important;
   }
+
   .dd-sv-view__contour,
   .dd-sv-view__mean,
-  .dd-sv-view__bm-peak {
+  .dd-sv-view__bm-peak,
+  .dd-sv-view__dead-label {
     transition: none !important;
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
-  .dd-sv-view__banner { animation: none; opacity: 1; }
-  .dd-sv-view__dot    { transition: none; opacity: 0.8; }
-  /* Pins: skip fade transition, show immediately when visible */
-  .dd-sv-pin__circle,
-  .dd-sv-pin__favicon,
-  .dd-sv-pin__letter  { transition: none; }
-  .dd-sv__info-bar    { animation: none; }
+
+  .dd-sv-view__banner {
+    animation: none;
+    opacity: 1;
+  }
+
+  .dd-sv-view__dot,
+  .dd-sv-view__src-dot {
+    transition: none;
+    opacity: 0.8;
+  }
+
+  /* Source row */
+  .dd-sv-sources__avatars {
+    transition: none;
+  }
+
+  .dd-sv-avatar {
+    transition: none;
+  }
+
+  /* Expand layer */
+  .dd-sv-expand-layer {
+    transition: none;
+  }
+
+  .dd-sv-expand-item,
+  .dd-sv-view__exp-pin {
+    transition: none;
+  }
+
+  .dd-sv-expand-layer--open .dd-sv-expand-item {
+    opacity: 1;
+  }
+
+  .dd-sv-view--expanded .dd-sv-view__exp-pin {
+    opacity: 1;
+  }
 }
 
 /* ==========================================================================
-   Mobile
+   Mobile — Spectrum Visualization System
    ========================================================================== */
 
 @media (max-width: 767px) {
-  .dd-sv__tilt-label { font-size: 8px; }
-
-  /* Source list: single column on mobile */
-  .dd-sv__source-list {
-    grid-template-columns: 1fr;
-    max-height: 100px;
+  .dd-sv {
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Info bar: tighter padding */
-  .dd-sv__info-bar {
-    padding: var(--space-1) var(--space-2);
+  /* Smaller avatars on mobile */
+  .dd-sv-avatar {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dd-sv-avatar__img {
+    width: 10px;
+    height: 10px;
+  }
+
+  .dd-sv-avatar__letter {
+    font-size: 6px;
+  }
+
+  .dd-sv-avatar--count {
+    font-size: 6px;
+  }
+
+  /* Tilt label smaller on mobile */
+  .dd-sv__tilt-label {
+    font-size: 8px;
+  }
+
+  /* Source name dropdown — fixed bottom sheet feel on mobile */
+  .dd-sv-sources__slot--expanded .dd-sv-sources__names {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    min-width: unset;
+    width: 100%;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: var(--shadow-e3);
+    padding: var(--space-3);
     gap: var(--space-1);
+    max-height: 40vh;
+    overflow-y: auto;
+    z-index: 30;
   }
-  .dd-sv__info-bar__name { font-size: var(--text-xs); }
+
+  .dd-sv-sources__name-link {
+    font-size: var(--text-xs);
+    padding: var(--space-1) 0;
+  }
 }
