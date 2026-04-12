@@ -89,7 +89,7 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
       const p = pathname.replace(BASE_PATH, "") || "/";
       switch (key) {
         case "feed":
-          return p === "/" || p === "" || /^\/(world|us|europe|south-asia)\/?$/.test(p);
+          return p === "/" || p === "" || /^\/(world)\/?$/.test(p);
         case "history":
           return p.startsWith("/history");
         case "onair":

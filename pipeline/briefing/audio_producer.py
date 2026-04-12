@@ -1,8 +1,9 @@
 """
 Audio producer for the void --news daily brief.
 
-Uses Gemini 2.5 Flash TTS for native LLM-powered multi-speaker dialogue.
-Both speakers generated in a single API call — no per-turn stitching.
+Uses edge-tts (Microsoft Neural voices, $0) for two-speaker dialogue.
+Each speaker turn is synthesized separately and stitched with pydub.
+Gemini TTS is NOT used — it is not on the free tier and costs ~$3/day.
 
 Post-processing via pydub:
   - Intro: ~2s D major 9th bloom chord (Glass & Gravity sonic identity)
@@ -24,17 +25,12 @@ import wave
 from pathlib import Path
 from typing import Optional
 
-GEMINI_TTS_AVAILABLE = False
+EDGE_TTS_AVAILABLE = False
 PYDUB_AVAILABLE = False
 
-# Fail-fast flag: set True on first 429 RESOURCE_EXHAUSTED to skip all
-# remaining TTS calls for this pipeline run. Saves ~20 min of retries.
-_tts_quota_exhausted = False
-
 try:
-    from google import genai
-    from google.genai import types
-    GEMINI_TTS_AVAILABLE = True
+    import edge_tts as _edge_tts_module
+    EDGE_TTS_AVAILABLE = True
 except ImportError:
     pass
 
@@ -64,7 +60,34 @@ except ImportError:
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 ASSETS_DIR = Path(__file__).parent / "assets"
-_TTS_MODEL = "gemini-2.5-flash-preview-tts"
+
+# ---------------------------------------------------------------------------
+# edge-tts voice mapping — Gemini voice name → Microsoft Neural voice name
+# Chosen for character match: tone, gender, and delivery style.
+# ---------------------------------------------------------------------------
+
+_GEMINI_TO_EDGE_VOICE: dict[str, str] = {
+    # History pair — The Chronicler + The Witness
+    "Sadaltager":   "en-US-AndrewMultilingualNeural",  # deep, scholarly male
+    "Achernar":     "en-US-AriaNeural",                # clear, measured female
+    # News host rotation (6 voices)
+    "Kore":         "en-US-JennyNeural",               # firm, authoritative female
+    "Charon":       "en-US-DavisNeural",               # grounded male
+    "Gacrux":       "en-US-NancyNeural",               # mature, precise female
+    "Orus":         "en-US-ChristopherNeural",          # analytical male
+    # Opinion voices by edition
+    "Sulafat":      "en-US-MichelleNeural",            # warm female (world)
+    "Schedar":      "en-US-RogerNeural",               # even male (us)
+    "Despina":      "en-US-AvaMultilingualNeural",     # smooth female (india)
+    "Vindemiatrix": "en-US-SaraNeural",                # gentle female (canada)
+}
+_DEFAULT_EDGE_VOICE_A = "en-US-AndrewMultilingualNeural"
+_DEFAULT_EDGE_VOICE_B = "en-US-AriaNeural"
+
+
+def _edge_voice(gemini_id: str) -> str:
+    """Map a Gemini voice name to an edge-tts Microsoft Neural voice name."""
+    return _GEMINI_TO_EDGE_VOICE.get(gemini_id, _DEFAULT_EDGE_VOICE_A)
 
 
 # ---------------------------------------------------------------------------
@@ -113,7 +136,98 @@ def _script_to_dialogue(audio_script: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Gemini TTS synthesis
+# edge-tts synthesis ($0 — Microsoft Neural voices)
+# ---------------------------------------------------------------------------
+
+def _synthesize_edge_tts(
+    dialogue: str,
+    voice_a_edge: str,
+    voice_b_edge: str,
+) -> Optional[bytes]:
+    """Generate two-speaker audio via edge-tts (Microsoft Neural, $0).
+
+    Synthesizes each One:/Two: speaker turn separately then stitches
+    segments into a single continuous stream. Returns raw PCM bytes
+    (24 kHz 16-bit mono) for compatibility with _pcm_to_wav().
+
+    Args:
+        dialogue: Two-speaker dialogue in One:/Two: format.
+        voice_a_edge: edge-tts voice name for speaker One (e.g. en-US-AriaNeural).
+        voice_b_edge: edge-tts voice name for speaker Two.
+
+    Returns raw PCM bytes (24 kHz 16-bit mono), or None on failure.
+    """
+    import asyncio
+
+    if not EDGE_TTS_AVAILABLE:
+        print("  [warn][audio] edge-tts not installed — skipping")
+        return None
+    if not PYDUB_AVAILABLE:
+        print("  [warn][audio] pydub not installed — skipping")
+        return None
+
+    # Parse speaker turns
+    turns: list[tuple[str, str]] = []
+    for line in dialogue.strip().splitlines():
+        m = re.match(r"^(One|Two):\s*(.+)$", line.strip())
+        if m and m.group(2).strip():
+            turns.append((m.group(1), m.group(2).strip()))
+
+    if not turns:
+        print("  [warn][audio] edge-tts: no dialogue turns to synthesize")
+        return None
+
+    segments: list["AudioSegment"] = []
+    failed = 0
+
+    for speaker, text in turns:
+        voice = voice_a_edge if speaker == "One" else voice_b_edge
+
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+            tmp_path = tmp.name
+
+        try:
+            async def _synth(t: str = text, v: str = voice, p: str = tmp_path) -> None:
+                comm = _edge_tts_module.Communicate(t, v)
+                await comm.save(p)
+
+            loop = asyncio.new_event_loop()
+            try:
+                loop.run_until_complete(_synth())
+            finally:
+                loop.close()
+
+            seg = AudioSegment.from_mp3(tmp_path)
+            # Normalise to 24 kHz mono 16-bit (same as Gemini TTS output)
+            seg = seg.set_frame_rate(24000).set_channels(1).set_sample_width(2)
+            segments.append(seg)
+        except Exception as e:
+            print(f"  [warn][audio] edge-tts turn failed ({voice}): {e}")
+            failed += 1
+        finally:
+            try:
+                Path(tmp_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+    if not segments:
+        print("  [warn][audio] edge-tts: all turns failed")
+        return None
+
+    if failed:
+        print(f"  [warn][audio] edge-tts: {failed}/{len(turns)} turns failed")
+
+    # Stitch turns with a brief natural pause (60 ms)
+    pause = AudioSegment.silent(duration=60, frame_rate=24000)
+    combined = segments[0]
+    for seg in segments[1:]:
+        combined = combined + pause + seg
+
+    return combined.raw_data
+
+
+# ---------------------------------------------------------------------------
+# Legacy Gemini TTS helpers (chunking — reused by edge-tts path if needed)
 # ---------------------------------------------------------------------------
 
 def _chunk_dialogue(dialogue: str, max_words: int = 400) -> list[str]:
@@ -687,12 +801,8 @@ def produce_audio(
             preamble entirely. Used by weekly broadcast for magazine-pace
             direction that differs from the daily bulletin style.
     """
-    if os.getenv("DISABLE_AUDIO", "").strip().lower() in ("1", "true", "yes"):
-        print("  [audio] DISABLE_AUDIO is set — skipping TTS to avoid billing")
-        return None
-
-    if not GEMINI_TTS_AVAILABLE:
-        print("  [audio] google-genai SDK not installed — skipping")
+    if not EDGE_TTS_AVAILABLE:
+        print("  [audio] edge-tts not installed — skipping")
         return None
 
     if not PYDUB_AVAILABLE:
@@ -726,12 +836,14 @@ def produce_audio(
                 f"Speaker Two: {host_b_preamble}"
             )
 
-    # --- Step 1: Synthesize news dialogue (2 speakers) ---
+    # --- Step 1: Synthesize news dialogue (2 speakers via edge-tts) ---
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
-    print(f"  [audio] News TTS: {word_count} words, voices {voice_a_name}+{voice_b_name}")
+    voice_a_edge = _edge_voice(voice_a_name)
+    voice_b_edge = _edge_voice(voice_b_name)
+    print(f"  [audio] News TTS: {word_count} words, {voice_a_edge} + {voice_b_edge}")
 
-    pcm_data = _synthesize_gemini_tts(dialogue, voice_a_name, voice_b_name, tts_preamble)
+    pcm_data = _synthesize_edge_tts(dialogue, voice_a_edge, voice_b_edge)
     if not pcm_data:
         print("  [warn][audio] News TTS synthesis failed — no audio")
         return None
@@ -742,58 +854,32 @@ def produce_audio(
     wav_data = _pcm_to_wav(pcm_data)
     news_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
 
-    # --- Step 2: Synthesize opinion monologue (1 speaker, separate call) ---
+    # --- Step 2: Synthesize opinion monologue (1 speaker via edge-tts) ---
     opinion_seg = None
     if opinion_audio_script:
         opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
+        opinion_voice_edge = _edge_voice(opinion_voice_name)
         opinion_words = len(opinion_audio_script.split())
+        print(f"  [audio] Opinion TTS: {opinion_words} words, {opinion_voice_edge}")
 
-        # Look up opinion host's TTS preamble for editorial voice direction
-        opinion_preamble = ""
-        if opinion_lean and get_opinion_host is not None:
-            opinion_host = get_opinion_host(opinion_lean)
-            opinion_preamble = opinion_host.get("opinion_tts_preamble", "")
-            if opinion_preamble:
-                print(f"  [audio] Opinion preamble: {opinion_host.get('name', 'unknown')} ({opinion_lean})")
+        # Convert to One: lines (monologue — single speaker for all turns)
+        opinion_lines = []
+        for line in opinion_audio_script.splitlines():
+            stripped = line.strip()
+            if stripped:
+                stripped = re.sub(r"^(One|Two|A|B):\s*", "", stripped)
+                if stripped:
+                    opinion_lines.append(f"One: {stripped}")
+        opinion_dialogue = "\n".join(opinion_lines)
 
-        print(f"  [audio] Opinion TTS: {opinion_words} words, voice {opinion_voice_name}")
-
-        # Wait 20s between news and opinion TTS to avoid rate limits.
-        # Free tier is aggressive — 10s was insufficient; most opinion
-        # failures were 429 rate-limit errors on the first attempt.
-        print("  [audio] Rate-limit pause (20s) before opinion TTS...")
-        time.sleep(20)
-
-        # Expected duration: ~150 words/minute speech rate, 2x ceiling
-        expected_dur = opinion_words / 150 * 60
-        max_opinion_dur = expected_dur * 2
-
-        # Retry up to 3 times with increasing backoff
-        opinion_pcm = None
-        for attempt in range(3):
-            pcm_candidate = _synthesize_opinion_monologue(
-                opinion_audio_script, opinion_voice_name, opinion_preamble
-            )
-            if pcm_candidate:
-                candidate_dur = len(pcm_candidate) / (24000 * 2)
-                if candidate_dur > max_opinion_dur:
-                    print(f"  [warn][audio] Opinion TTS attempt {attempt + 1}: {candidate_dur:.1f}s "
-                          f"exceeds 2x expected ({max_opinion_dur:.0f}s) — discarding inflated audio")
-                else:
-                    opinion_pcm = pcm_candidate
-                    print(f"  [audio] Opinion TTS: {candidate_dur:.1f}s (attempt {attempt + 1})")
-                    break
-            wait = 20 * (attempt + 1)  # 20s, 40s, 60s
-            print(f"  [warn][audio] Opinion TTS attempt {attempt + 1}/3 failed — "
-                  f"{'retrying in ' + str(wait) + 's' if attempt < 2 else 'giving up'}")
-            if attempt < 2:
-                time.sleep(wait)
-
+        opinion_pcm = _synthesize_edge_tts(opinion_dialogue, opinion_voice_edge, opinion_voice_edge)
         if opinion_pcm:
             opinion_wav = _pcm_to_wav(opinion_pcm)
             opinion_seg = AudioSegment.from_wav(io.BytesIO(opinion_wav))
+            dur = len(opinion_pcm) / (24000 * 2)
+            print(f"  [audio] Opinion TTS: {dur:.1f}s")
         else:
-            print("  [WARN][audio] Opinion TTS FAILED after 3 attempts — NO OPINION IN BROADCAST")
+            print("  [WARN][audio] Opinion TTS FAILED — NO OPINION IN BROADCAST")
     else:
         print("  [audio] No opinion_audio_script — broadcast ends after news")
 
@@ -1033,12 +1119,8 @@ def produce_history_audio(
     Returns:
         Dict with audio_url, duration_seconds, file_size — or None on failure.
     """
-    if os.getenv("DISABLE_AUDIO", "").strip().lower() in ("1", "true", "yes"):
-        print(f"  [history-audio:{slug}] DISABLE_AUDIO set — skipping")
-        return None
-
-    if not GEMINI_TTS_AVAILABLE:
-        print(f"  [history-audio:{slug}] google-genai SDK not installed — skipping")
+    if not EDGE_TTS_AVAILABLE:
+        print(f"  [history-audio:{slug}] edge-tts not installed — skipping")
         return None
 
     if not PYDUB_AVAILABLE:
@@ -1054,19 +1136,17 @@ def produce_history_audio(
             print(f"  [error][history-audio:{slug}] Cannot import HISTORY_VOICES")
             return None
 
-    voice_a = HISTORY_VOICES["host_a"]["id"]   # Sadaltager — The Chronicler
-    voice_b = HISTORY_VOICES["host_b"]["id"]   # Achernar  — The Witness
+    voice_a_gemini = HISTORY_VOICES["host_a"]["id"]   # Sadaltager → The Chronicler
+    voice_b_gemini = HISTORY_VOICES["host_b"]["id"]   # Achernar  → The Witness
+    voice_a_edge = _edge_voice(voice_a_gemini)
+    voice_b_edge = _edge_voice(voice_b_gemini)
 
-    # Convert A:/B: script to One:/Two: Gemini TTS format
+    # Convert A:/B: script to One:/Two: for edge-tts parser
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
-    print(f"  [history-audio:{slug}] TTS: {word_count} words, voices {voice_a}+{voice_b}")
+    print(f"  [history-audio:{slug}] TTS: {word_count} words, {voice_a_edge} + {voice_b_edge}")
 
-    # Synthesize via Gemini Flash TTS
-    # Rate-limit buffer before TTS call (shared daily budget)
-    time.sleep(5)
-
-    pcm_data = _synthesize_gemini_tts(dialogue, voice_a, voice_b, HISTORY_TTS_PREAMBLE)
+    pcm_data = _synthesize_edge_tts(dialogue, voice_a_edge, voice_b_edge)
     if not pcm_data:
         print(f"  [warn][history-audio:{slug}] TTS synthesis failed — no audio")
         return None

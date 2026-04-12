@@ -26,7 +26,7 @@ News aggregation platform with per-article, 6-axis rule-based NLP bias analysis.
 GitHub Actions (3x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
 ```
 
-No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Gemini 2.5 Flash free tier (summaries + TTS), Supabase (PostgreSQL), Next.js 16/React 19/TypeScript, Motion One v11 (CDN), CSS custom properties. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono.
+No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Gemini 2.5 Flash free tier (summaries + script gen only — NOT TTS), edge-tts (audio synthesis, $0), Supabase (PostgreSQL), Next.js 16/React 19/TypeScript, Motion One v11 (CDN), CSS custom properties. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono.
 
 ## Core Principles
 
@@ -48,7 +48,7 @@ Applies to: void --history event pages, daily briefs, CTAs, audio scripts. These
 
 - **Product Family Branding**: CLI-style naming: `void --news`, `void --tl;dr`, `void --onair`, `void --history`, `void --weekly`, `void --paper`, `void --sources`, `void --deep-dive`, `void --opinion`, `void --ship`.
 - **No Personalization (LOCKED)**: Newspaper principle. Same stories, same order for everyone. No user accounts, no recommendation algorithms, no "for you" logic. Locked architectural decision.
-- **Zero Operational Cost**: $0. Rule-based NLP + Gemini Flash free tier (250 RPD) + GitHub Actions + Supabase + Pages all free tier.
+- **Zero Operational Cost**: $0. Rule-based NLP + Gemini Flash free tier (text only, ~250 RPD limit) + edge-tts ($0 audio) + GitHub Actions + Supabase + Pages all free tier. **Gemini TTS is NOT used — it costs ~$3/day and is not free tier.**
 - **Bias Analysis**: 6 axes (political lean, sensationalism, opinion vs. reporting, factual rigor, framing, per-topic EMA). All rule-based NLP, no LLM. See `docs/PIPELINE-BRAIN.md`.
 - **LLM Grounding**: All Gemini prompts: "Every fact MUST appear in the provided articles. Do not supplement with prior knowledge."
 
@@ -59,18 +59,19 @@ Applies to: void --history event pages, daily briefs, CTAs, audio scripts. These
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 
 ### Parking Lot (Disabled Pre-Launch)
-Features disabled for Gemini Flash free tier (250 RPD). All gated by env vars/config -- no code deleted.
+Features gated by env vars/config — no code deleted.
 
 | Feature | Gate | Re-enable |
 |---------|------|-----------|
 | Regional editions | `ACTIVE_EDITIONS = ["world"]` in `main.py` | Add editions back |
 | Gemini bias reasoning | `DISABLE_GEMINI_REASONING=1` in `pipeline.yml` | Remove env var |
 | Editorial triage | `DISABLE_EDITORIAL_TRIAGE=1` in `pipeline.yml` | Remove env var |
-| Audio/TTS | `DISABLE_AUDIO=1` in `pipeline.yml` | Remove env var |
 | Weekly digest cron | Cron commented in `weekly-digest.yml` | Uncomment |
 | Claude API briefs | `CLAUDE_AVAILABLE = False` in `claude_client.py` | Uncomment import |
 
-**Current budget**: ~177 RPD/day (71% of 250 limit). Summarization cap: 50/run.
+Audio (void --onair) is **enabled** — uses edge-tts at $0. No DISABLE_AUDIO gate.
+
+**Gemini text budget**: ~177 RPD/day used. Free tier limit: ~250 RPD. Summarization cap: 50/run.
 
 ## Git & Dev
 

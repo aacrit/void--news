@@ -148,7 +148,7 @@ interface HomeContentProps {
    --------------------------------------------------------------------------- */
 
 const EDITION_STORAGE_KEY = "void-news-edition";
-const VALID_EDITIONS: Edition[] = ["world", "us", "europe", "south-asia"];
+const VALID_EDITIONS: Edition[] = ["world"];
 
 function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Edition state: URL-driven routes (/us, /india) pass the correct edition.
@@ -220,7 +220,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Whip pan direction — track previous edition index for direction-aware animation.
   // isEditionSwitch tracks whether the current content remount is from an edition
   // change (whip pan) vs a filter change (no whip pan, just card reshuffling).
-  const EDITION_ORDER: Edition[] = ["world", "us", "europe", "south-asia"];
+  const EDITION_ORDER: Edition[] = ["world"];
   const prevEditionRef = useRef<Edition>(activeEdition);
   const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
   const [isEditionSwitch, setIsEditionSwitch] = useState(false);

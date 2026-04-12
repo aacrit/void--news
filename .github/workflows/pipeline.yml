@@ -79,7 +79,6 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # ANTHROPIC_API_KEY disabled pre-launch to avoid costs
-          DISABLE_AUDIO: "1"
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
@@ -100,7 +99,6 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # ANTHROPIC_API_KEY disabled pre-launch to avoid costs
-          DISABLE_AUDIO: "1"
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
