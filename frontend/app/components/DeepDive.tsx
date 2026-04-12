@@ -692,21 +692,21 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             opacity: 1,
             boxShadow: "var(--shadow-cinematic-lifted)",
             transition: [
-              "transform 380ms var(--spring-bouncy)",
-              "border-radius 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "transform 200ms var(--spring-bouncy)",
+              "border-radius 120ms cubic-bezier(0.16, 1, 0.3, 1)",
               "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
-              "box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
             ].join(", "),
           });
 
           // L-cut: content cascades in while morph is still settling.
-          setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
+          setTimeout(() => setContentVisible(true), isDesktopNow ? 80 : 50);
 
           // Clear morph style after transition settles
           setTimeout(() => {
             setMorphStyle(null);
             panelRef.current?.setAttribute('data-settled', '');
-          }, 320);
+          }, 220);
         });
       });
     } else {
@@ -939,22 +939,22 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         opacity: 0,
         boxShadow: "var(--shadow-e0)",
         transition: [
-          "transform 320ms cubic-bezier(0.32, 0.72, 0, 1)",
-          "border-radius 240ms cubic-bezier(0.32, 0.72, 0, 1)",
-          "opacity 100ms cubic-bezier(0.16, 1, 0.3, 1) 220ms",
-          "box-shadow 280ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "transform 150ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "border-radius 100ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "opacity 80ms cubic-bezier(0.16, 1, 0.3, 1) 70ms",
+          "box-shadow 100ms cubic-bezier(0.32, 0.72, 0, 1)",
         ].join(", "),
       });
 
       // L-cut — backdrop fades early so feed sharpens while panel mid-flight
-      setTimeout(() => setIsVisible(false), 100);
+      setTimeout(() => setIsVisible(false), 50);
 
       // Cleanup — after panel has visually merged with the card
       setTimeout(() => {
         pageMain?.classList.remove('page-main--deep-dive-closing');
         previousFocusRef.current?.focus();
         onClose();
-      }, 350);
+      }, 180);
     } else {
       /* ═══ FALLBACK: fast slide-out ═══ */
       setIsVisible(false);

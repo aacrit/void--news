@@ -33,9 +33,9 @@
   cursor: pointer;
   /* GPU layer hint — only promoted on hover/active, not at rest (saves VRAM on long feeds) */
   transition:
-    background-color 120ms var(--ease-out),
-    box-shadow      300ms var(--shadow-lag, 30ms) var(--ease-out),
-    transform       var(--scene-dolly-in) var(--spring-snappy);
+    background-color 120ms var(--ease-cinematic),
+    box-shadow      120ms var(--ease-out),
+    transform       120ms var(--ease-cinematic);
   /* Mobile separator token — hairline iOS-convention border.
      Referenced by the max-width: 767px block. Toggling --separator-mobile
      here is the single-point change for the mobile card border weight. */
@@ -657,10 +657,10 @@
 
 /* ---- Lead Story — Front-Page Photograph -------------------------------- */
 /*
- * Stage 1: Base grade on <img> — cinematic amber, desaturated editorial.
- *   Compounds with .page-main --cin-grade (contrast 1.03, sat 0.92, sepia 0.04).
- *   Effective compound (light): contrast ~1.06, sat ~0.83, sepia ~0.09.
- *   Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.06-0.16.
+ * Stage 1: Base grade on <img> — warm tungsten overhead, slightly de-glamorized.
+ *   Compounds with .page-main --cin-grade (contrast 1.05, sat 0.90, sepia 0.04).
+ *   Effective compound (light): contrast ~1.08, sat ~0.86, sepia ~0.06.
+ *   Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.02-0.08 (news).
  *
  * Stage 2: Gradient overlay (.lead-story__image-grade) — fades bottom edge
  *   into the card background, grounding the image in the page surface.
@@ -3033,11 +3033,11 @@
 
 /* ---- Deep Dive Hero Image — Documentary Opening Shot ------------------- */
 /*
- * Stage 1: Base grade on <img> — higher contrast, minimal sepia. The "close-up"
- *   grade. Clean, studio-lit editorial feel for feature article openers.
- *   Compounds with .page-main --cin-grade (contrast 1.03, sat 0.92, sepia 0.04).
- *   Effective compound (light): contrast ~1.08, sat ~0.85, sepia ~0.07.
- *   Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.06-0.16.
+ * Stage 1: Base grade on <img> — studio editorial, sharp, de-glamorized, crisp.
+ *   Evidence-quality forensic feel. Minimal additional grade atop editorial page.
+ *   Note: panel is NOT a descendant of .page-main, so no ancestor-level compound.
+ *   Effective: contrast 1.02, sat 0.88, sepia 0.01 (standalone — no compounding).
+ *   Within bounds: contrast 1.02-1.04, sat 0.84-0.88, sepia 0.01-0.02 (news).
  *
  * Stage 2: Gradient overlay (.dd-hero-image__grade) — heavy bottom gradient
  *   fading into the panel background. Grounds the image into the summary text.
@@ -7616,8 +7616,8 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .skb:has(.skb__onair-pill--active) {
     background-color: var(--cin-practical-warmth);
     transition:
-      background-color 800ms var(--ease-cinematic),
-      border-color 450ms var(--ease-cinematic);
+      background-color 300ms var(--ease-cinematic),
+      border-color 200ms var(--ease-cinematic);
   }
 }
 
@@ -7648,35 +7648,35 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .filter-chip,
   .site-footer {
     transition:
-      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
-      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
-      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
-      box-shadow var(--dissolve-shadow-dur, 400ms) var(--ease-cinematic);
+      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
+      box-shadow var(--dissolve-shadow-dur, 200ms) var(--ease-cinematic);
   }
   .page-main,
   .nav-header {
     transition:
-      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
-      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
-      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
-      box-shadow var(--dissolve-shadow-dur, 400ms) var(--ease-cinematic),
-      filter var(--dissolve-filter-dur, 400ms) var(--ease-out);
+      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
+      box-shadow var(--dissolve-shadow-dur, 200ms) var(--ease-cinematic),
+      filter var(--dissolve-filter-dur, 200ms) var(--ease-out);
   }
-  /* story-card and lead-story: preserve hover transitions (dolly-in
-     transform + shadow lag), layer theme dissolve underneath */
+  /* story-card and lead-story: preserve hover transitions (snap tier),
+     layer theme dissolve underneath */
   .story-card {
     transition:
-      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
-      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
-      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
-      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out),
-      transform var(--scene-dolly-in) var(--spring-snappy);
+      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
+      box-shadow 120ms var(--ease-out),
+      transform 120ms var(--ease-cinematic);
   }
   .lead-story {
     transition:
-      background-color var(--dissolve-surface-dur, 500ms) var(--ease-cinematic),
-      color var(--dissolve-ink-dur, 380ms) var(--ease-cinematic),
-      border-color var(--dissolve-border-dur, 450ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
+      border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-out);
   }
 }

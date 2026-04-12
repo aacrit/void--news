@@ -150,15 +150,15 @@
    animationDelay inline style for per-card stagger. */
 .anim-stagger {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(6px);
 }
 
 .anim-stagger--visible {
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 180ms var(--ease-out),
-    transform 400ms var(--spring-gentle);
+    opacity 120ms var(--ease-out),
+    transform 200ms var(--ease-cinematic);
 }
 
 /* Filter-change card entrance — fires immediately (not paused).
@@ -222,10 +222,10 @@
    section approaches the viewer as it sharpens. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(16px) scale(var(--dd-content-scale-from, 0.97));
+  transform: translateY(8px) scale(var(--dd-content-scale-from, 0.99));
   transition:
-    opacity var(--dur-reveal, 500ms) var(--ease-cinematic),
-    transform var(--dur-reveal, 500ms) var(--spring-gentle, var(--ease-cinematic));
+    opacity 150ms var(--ease-cinematic),
+    transform 200ms var(--ease-cinematic);
 }
 
 .anim-dd-section--visible {
@@ -233,12 +233,12 @@
   transform: translateY(0) scale(1);
 }
 
-/* Deep Dive cascade sections — staggered reveal delays */
-.dd-cascade-1 { transition-delay: 100ms; }
-.dd-cascade-2 { transition-delay: 350ms; }
-.dd-cascade-3 { transition-delay: 600ms; }
-.dd-cascade-4 { transition-delay: 850ms; }
-.dd-cascade-trigger { transition-delay: 500ms; }
+/* Deep Dive cascade sections — staggered reveal delays (snap tier) */
+.dd-cascade-1 { transition-delay: 50ms; }
+.dd-cascade-2 { transition-delay: 120ms; }
+.dd-cascade-3 { transition-delay: 190ms; }
+.dd-cascade-4 { transition-delay: 260ms; }
+.dd-cascade-trigger { transition-delay: 160ms; }
 
 /* Filter chip active spring press feedback — elastic for snappy toggle feel */
 .filter-chip--active {
@@ -466,56 +466,23 @@
    impression — the equivalent of a film's opening frame. */
 
 @keyframes coldOpenSettle {
-  /* Nav: Tilt down — camera settling onto its tripod after a crane move.
-     Small translateY, quick opacity. The nav is structure, not spectacle. */
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes coldOpenDollyIn {
-  /* Skybox: Dolly in — the camera pushes toward the subject.
-     Scale from 0.985 simulates the lens approaching the banner.
-     Lubezki's Revenant opening: slow, inevitable forward momentum. */
-  from {
-    opacity: 0;
-    transform: scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes coldOpenRackIn {
-  /* Lead story: simple settle-in (opacity + subtle scale). */
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.005); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-/* Feed entrance: Tilt up — content rises into the frame like a
-   newspaper being lifted from a desk. Gentle spring overshoot gives
-   physical weight to the content mass arriving. */
 @keyframes coldOpenFeedRise {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.995);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ── Film Grain Drift ──
@@ -557,26 +524,26 @@
 
 @keyframes whipPanOut {
   0%   { transform: translateX(0) scaleX(1); opacity: 1; }
-  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.7; }
-  100% { transform: translateX(-12%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(-4%) scaleX(1.008); opacity: 0.7; }
+  100% { transform: translateX(-10%) scaleX(1); opacity: 0; }
 }
 
 @keyframes whipPanIn {
-  0%   { transform: translateX(12%) scaleX(1); opacity: 0; }
-  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.3; }
+  0%   { transform: translateX(10%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(4%) scaleX(1.008); opacity: 0.3; }
   100% { transform: translateX(0) scaleX(1); opacity: 1; }
 }
 
 /* Direction-aware: rightward exit (switching to an earlier edition) */
 @keyframes whipPanOutRight {
   0%   { transform: translateX(0) scaleX(1); opacity: 1; }
-  35%  { transform: translateX(4%) scaleX(1.012); opacity: 0.7; }
-  100% { transform: translateX(12%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(4%) scaleX(1.008); opacity: 0.7; }
+  100% { transform: translateX(10%) scaleX(1); opacity: 0; }
 }
 
 @keyframes whipPanInLeft {
-  0%   { transform: translateX(-12%) scaleX(1); opacity: 0; }
-  35%  { transform: translateX(-4%) scaleX(1.012); opacity: 0.3; }
+  0%   { transform: translateX(-10%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(-4%) scaleX(1.008); opacity: 0.3; }
   100% { transform: translateX(0) scaleX(1); opacity: 1; }
 }
 
@@ -732,6 +699,23 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Scroll Divider Reveal — section dividers wipe in on scroll ── */
+@keyframes scrollDividerReveal {
+  from { opacity: 0; transform: scaleX(0.3); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .feed-grid__section-divider {
+      animation: scrollDividerReveal auto linear;
+      animation-timeline: view();
+      animation-range: entry var(--scroll-divider-entry-start, 10%) entry var(--scroll-divider-entry-end, 60%);
+      transform-origin: left center;
+    }
   }
 }
 
@@ -1044,8 +1028,8 @@
    This layers on top of the IO-based fade-in. */
 @keyframes scrollCardDolly {
   from {
-    transform: scale(0.985) translateY(8px);
-    opacity: 0.7;
+    transform: scale(var(--scroll-card-dolly-scale, 0.99)) translateY(var(--scroll-card-dolly-ty, 6px));
+    opacity: var(--scroll-card-dolly-opacity, 0.85);
   }
   to {
     transform: scale(1) translateY(0);
@@ -1251,8 +1235,8 @@
    fastest movement phase (30-70%) and resolves at both ends. */
 @keyframes whipPanBlurPulse {
   0%   { filter: blur(0); }
-  30%  { filter: blur(3px); }
-  70%  { filter: blur(3px); }
+  30%  { filter: blur(2px); }
+  70%  { filter: blur(2px); }
   100% { filter: blur(0); }
 }
 
@@ -1309,13 +1293,17 @@
    Haze: transition disabled (cards appear at final state immediately) */
 
 @media (prefers-reduced-motion: reduce) {
-  /* Film grain: static texture, no drift animation */
+  /* Film grain: static texture, no drift animation.
+     Explicit opacity required — base rule relies on cinGrainEntrance fill-mode
+     to set final opacity. Without it, grain would render at opacity: 1. */
   .page-container::after {
     animation: none;
+    opacity: var(--cin-grain-opacity);
   }
-  /* Vignette: no scroll-driven deepening */
+  /* Vignette: static (no scroll-driven deepening), visible immediately */
   .page-container::before {
     animation: none;
+    opacity: 1;
   }
   /* Color grade filter lives on .page-main and .nav-header — instant swap */
   .page-main,

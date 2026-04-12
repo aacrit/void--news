@@ -367,7 +367,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.85);
+  /* Archival sepia — digitized newspaper photograph from the event's era.
+     Compounds with .hist-grade (contrast 1.02, sat 0.88, sepia 0.06).
+     Effective compound: contrast ~1.10, sat ~0.62, sepia ~0.24, brightness ~0.96.
+     Within history bounds: contrast 1.04-1.12, sat 0.55-0.85, sepia 0.10-0.25. */
+  filter: var(--img-grade-history);
 }
 
 /* Static hero variant — no Ken Burns / dolly-in animation */
@@ -382,7 +386,7 @@
 }
 
 .hist-hero--receded .hist-hero__image {
-  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.72);
+  filter: var(--img-grade-history-receded);
   transition: filter 600ms var(--ease-cinematic);
 }
 
@@ -615,7 +619,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-card);
   transition: transform 600ms var(--ease-cinematic);
 }
 
@@ -1217,12 +1221,12 @@
   aspect-ratio: 3 / 2;
   object-fit: cover;
   border-radius: 2px;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-gallery);
   transition: filter 300ms var(--ease-cinematic);
 }
 
 .hist-gallery__item:hover .hist-gallery__image {
-  filter: contrast(1.05) saturate(0.80) sepia(0.06);
+  filter: var(--img-grade-history-hover);
 }
 
 .hist-gallery__caption {
@@ -2111,10 +2115,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Easter egg: saturation + sepia driven by victor dominance.
-     More victors = heavier sepia (further from truth).
-     Balanced perspectives = more color fidelity. */
-  filter: contrast(1.05) saturate(var(--photo-sat, 0.75)) sepia(var(--photo-sepia, 0.12)) brightness(0.85);
+  /* Easter egg: saturation + sepia driven by victor dominance via inline
+     --photo-sat / --photo-sepia. Falls back to --img-grade-history values
+     when no inline overrides are present. The contrast/brightness are fixed
+     from the history hero token; only sat/sepia vary per-card. */
+  filter: contrast(1.08) saturate(var(--photo-sat, 0.70)) sepia(var(--photo-sepia, 0.18)) brightness(0.95);
   transition: transform 3s linear, filter 500ms ease;
 }
 
@@ -2704,7 +2709,8 @@
   min-height: calc(100dvh - 56px);
   overflow-y: auto;
   background: var(--hist-bg);
-  /* H03: Match timeline's archival color grade for film stock consistency */
+  /* Page-level archival grade — matches .hist-grade for film stock consistency.
+     Not an image grade; this is a container-level grade (vfx-artist territory). */
   filter: contrast(1.02) saturate(0.88) sepia(0.06) brightness(1.01);
 }
 
@@ -3032,8 +3038,10 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
-  /* Static archival filter — no longer animated via keyframe */
-  filter: contrast(1.05) saturate(0.75) sepia(0.12) brightness(0.92);
+  /* Archival filter — uses history hero token with slight brightness lift
+     (0.95 vs hero's 0.95) since stage hero sits behind scrollable content.
+     Token: --img-grade-history provides the canonical archival grade. */
+  filter: var(--img-grade-history);
   /* H06: Dolly-in — 1.5s subtle settle (was 4s) */
   animation: histDollyIn 1.5s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
@@ -3831,7 +3839,7 @@ a.hist-figures__name:hover {
 .hist-evidence__image img {
   width: 100%;
   display: block;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-card);
   border-radius: 2px;
 }
 
@@ -3871,12 +3879,12 @@ a.hist-figures__name:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
-  transition: filter 300ms ease;
+  filter: var(--img-grade-history-card);
+  transition: filter 300ms var(--ease-cinematic);
 }
 
 .hist-video--poster:hover .hist-video__poster {
-  filter: contrast(1.05) saturate(0.8) sepia(0.06);
+  filter: var(--img-grade-history-hover);
 }
 
 .hist-video__play {
@@ -3941,7 +3949,7 @@ a.hist-figures__name:hover {
   overflow: hidden;
   border-radius: 2px;
   opacity: 0.7;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-card);
   box-shadow: var(--hist-doc-edge);
 }
 
@@ -5130,7 +5138,7 @@ a.hist-figures__name:hover {
 .hist-context__figure img {
   width: 100%;
   display: block;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-card);
   border-radius: 2px;
 }
 
@@ -5162,7 +5170,7 @@ a.hist-figures__name:hover {
 .hist-intercut img {
   width: 100%;
   display: block;
-  filter: contrast(1.03) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-card);
   border-radius: 2px;
 }
 
@@ -6509,13 +6517,13 @@ a.hist-figures__name:hover {
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: contrast(1.03) saturate(0.65) sepia(0.15);
+  filter: var(--img-grade-history-dossier);
   transition: transform 4s linear, filter 600ms var(--ease-cinematic);
 }
 
 .hist-dossier__card:hover .hist-dossier__card-bg {
   transform: scale(1.04);
-  filter: contrast(1.05) saturate(0.72) sepia(0.10);
+  filter: var(--img-grade-history-hover);
 }
 
 .hist-dossier__card-bg::after {
@@ -7103,12 +7111,12 @@ a.hist-figures__name:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.5) sepia(0.1);
+  filter: var(--img-grade-history-threads);
   transition: filter 300ms var(--ease-cinematic);
 }
 
 .hist-threads__card:hover .hist-threads__card-img {
-  filter: saturate(0.65) sepia(0.05);
+  filter: var(--img-grade-history-hover);
 }
 
 .hist-threads__card-gradient {

@@ -55,8 +55,8 @@ const STYLES = `
 /* idle — gentle tipping */
 @keyframes si-idle {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2deg); }
-  75% { transform: rotate(-2deg); }
+  25% { transform: rotate(1.5deg); }
+  75% { transform: rotate(-1.5deg); }
 }
 
 /* loading — dramatic tipping */
@@ -70,7 +70,7 @@ const STYLES = `
 @keyframes si-hover {
   0% { transform: rotate(0deg); }
   35% { transform: rotate(-5deg); }
-  65% { transform: rotate(1.5deg); }
+  65% { transform: rotate(1deg); }
   100% { transform: rotate(0deg); }
 }
 
@@ -130,7 +130,7 @@ const STYLES = `
 
 .si-beam--idle {
   transform-origin: 16px 13px;
-  animation: si-idle 7s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation: si-idle 5.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-beam--loading {
@@ -166,11 +166,11 @@ const STYLES = `
 .si-void { transform-origin: 16px 13px; }
 
 .si-hoverable:hover .si-beam--idle {
-  animation: si-hover 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: si-hover 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .si-hoverable:hover .si-void {
-  animation: si-void-pulse 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: si-void-pulse 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* === Draw animation — staggered per element === */

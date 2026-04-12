@@ -590,16 +590,16 @@
   filter: var(--focus-modal) saturate(0.7) brightness(0.88);
   transform-origin: center top;
   transition:
-    transform 400ms var(--ease-cinematic),
-    filter 500ms var(--ease-cinematic);
+    transform 200ms var(--ease-cinematic),
+    filter 250ms var(--ease-cinematic);
 }
 
 .page-main--deep-dive-closing {
   transform: scale(1);
   filter: blur(0px) saturate(1) brightness(1);
   transition:
-    transform 300ms var(--ease-out),
-    filter 280ms var(--ease-whip);
+    transform 150ms var(--ease-out),
+    filter 120ms var(--ease-whip);
 }
 
 /* ---------------------------------------------------------------------------
