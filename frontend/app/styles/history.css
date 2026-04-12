@@ -5921,13 +5921,13 @@ a.hist-figures__name:hover {
 
 .hist-tl-card--entrance {
   animation: histCardEntrance 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
-  animation-delay: calc(var(--card-index, 0) * 30ms);
+  animation-delay: min(calc(var(--card-index, 0) * 15ms), 100ms);
 }
 
 /* Above cards: entrance includes the side-specific positioning */
 .hist-tl-card--entrance.hist-tl-card--above {
   animation: histCardEntranceAbove 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
-  animation-delay: calc(var(--card-index, 0) * 30ms);
+  animation-delay: min(calc(var(--card-index, 0) * 15ms), 100ms);
 }
 
 @keyframes histCardEntranceAbove {
@@ -5937,7 +5937,7 @@ a.hist-figures__name:hover {
 
 .hist-tl-card--entrance.hist-tl-card--below {
   animation: histCardEntranceBelow 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
-  animation-delay: calc(var(--card-index, 0) * 30ms);
+  animation-delay: min(calc(var(--card-index, 0) * 15ms), 100ms);
 }
 
 @keyframes histCardEntranceBelow {
