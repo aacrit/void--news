@@ -116,9 +116,17 @@ export default function ArtifactCard({
     [artifact.id, revealed, onSlotAssign]
   );
 
-  /** Handle card body click for confidence pick (not slot buttons) */
+  /** Handle card body click for confidence pick (not slot buttons).
+   *  Triggers the ut-confidence-tap spring animation via CSS class toggle. */
   const handleCardClick = useCallback(() => {
     if (revealed) return;
+    // Trigger spring tap animation
+    if (cardRef.current) {
+      cardRef.current.classList.remove("undertow-card--confidence-tap");
+      // Force reflow so re-adding the class restarts the animation
+      void cardRef.current.offsetWidth;
+      cardRef.current.classList.add("undertow-card--confidence-tap");
+    }
     onConfidencePick?.();
   }, [revealed, onConfidencePick]);
 

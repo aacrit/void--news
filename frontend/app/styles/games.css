@@ -3471,3 +3471,371 @@
     opacity: 1;
   }
 }
+
+
+/* ╔═══════════════════════════════════════════════════════════════════════════╗
+   ║  MOTION CHOREOGRAPHY — Spring Physics & Interaction Design              ║
+   ║  Motion Director layer: spring curves, card physics, game transitions.  ║
+   ║  Appended after all layout/VFX styles. CSS cascade ensures overrides.   ║
+   ╚═══════════════════════════════════════════════════════════════════════════╝ */
+
+
+/* ==========================================================================
+   1. SPRING PHYSICS — CSS Custom Easing Curves
+   Four spring profiles tuned for game interactions:
+     snap    — card interactions, button presses (tight, fast)
+     bounce  — game state transitions (solve, death) (overshoot, playful)
+     inertia — entrance animations, heavy objects settling (long decel)
+     micro   — hover states, instant response feedback (springy overshoot)
+   ========================================================================== */
+
+:root {
+  --spring-games-snap: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --spring-games-bounce: linear(
+    0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938, 1.077 20.4%,
+    1.121, 1.149 24.3%, 1.159, 1.163 27%, 1.148, 1.096 32.8%,
+    1.018 37.9%, 0.99, 0.972 43.2%, 0.966 44.7%, 0.969 50%, 1
+  );
+
+  --spring-games-inertia: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --spring-games-micro: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+/* ==========================================================================
+   2. HUB PAGE — Card Interaction Physics
+   ========================================================================== */
+
+/* Hub card: spring physics transition upgrade.
+   Transform leads (snap), shadow follows with 30ms perceptual lag. */
+.games-hub__card {
+  transition:
+    transform 350ms var(--spring-games-snap),
+    box-shadow 350ms var(--spring-games-snap),
+    border-color 300ms ease,
+    filter 300ms ease,
+    opacity 300ms ease;
+  will-change: transform;
+}
+
+/* Hover — physically picking a card off a table.
+   translateY(-8px) lift, scale(1.02) foreshortening, rotate(-0.3deg) tilt. */
+.games-hub__card--featured:hover {
+  transform: translateY(-8px) scale(1.02) rotate(-0.3deg);
+}
+
+/* Active press — card drops back, compresses slightly, tilt resets. */
+.games-hub__card--featured:active {
+  transform: translateY(-2px) scale(0.985) rotate(0deg);
+  transition-duration: 100ms;
+}
+
+/* Sigil hover activation — paused by default, activates on card hover */
+.game-sigil {
+  opacity: 0.5;
+  transition: opacity 300ms ease, transform 300ms var(--spring-games-micro);
+}
+
+.games-hub__card:hover .game-sigil {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+
+/* ==========================================================================
+   3. UNDERTOW — Card & Reveal Motion (Spring Upgrade)
+   ========================================================================== */
+
+/* Undertow card: spring snap easing for physical card-on-table feel. */
+.undertow-card {
+  transition:
+    transform 350ms var(--spring-games-snap),
+    box-shadow 350ms var(--spring-games-snap),
+    border-color 200ms ease;
+}
+
+/* Hover — faster 250ms response, higher lift, slight scale */
+.undertow-card:hover {
+  transform: rotate(0deg) translateY(-6px) scale(1.018);
+  transition-duration: 250ms;
+}
+
+/* Drag state — 80ms instant snap to drag position.
+   Higher lift (10px), stronger tilt (2.5deg), max shadow depth. */
+.undertow-card--dragging {
+  transform: rotate(2.5deg) translateY(-10px) scale(1.04);
+  transition-duration: 80ms;
+}
+
+/* Wrong guess shake — includes rotation for physical realism */
+.undertow-card--wrong {
+  animation: ut-card-shake 400ms ease-out;
+}
+
+@keyframes ut-card-shake {
+  0%, 100% { transform: translateX(0) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  15%      { transform: translateX(-5px) rotate(calc(var(--card-tilt, 0) * 1deg - 1deg)); }
+  30%      { transform: translateX(4px) rotate(calc(var(--card-tilt, 0) * 1deg + 1deg)); }
+  45%      { transform: translateX(-4px) rotate(calc(var(--card-tilt, 0) * 1deg - 0.5deg)); }
+  60%      { transform: translateX(3px) rotate(calc(var(--card-tilt, 0) * 1deg + 0.5deg)); }
+  75%      { transform: translateX(-2px) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+}
+
+/* Reveal bounce — spring-bounce settle into final position */
+.undertow-card--revealed {
+  animation: ut-card-reveal-bounce 600ms var(--spring-games-bounce) forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes ut-card-reveal-bounce {
+  from { transform: scale(0.95) translateY(8px); opacity: 0.7; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Confidence tap — micro spring when toggling confidence pick */
+.undertow-card--confidence-tap {
+  animation: ut-confidence-tap 300ms var(--spring-games-bounce);
+}
+
+@keyframes ut-confidence-tap {
+  0%   { transform: scale(1) rotate(calc(var(--card-tilt, 0) * 1deg)); }
+  40%  { transform: scale(0.95) rotate(0deg); }
+  70%  { transform: scale(1.03) rotate(-0.5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+
+/* ==========================================================================
+   4. THE WIRE — Text & Input Motion
+   ========================================================================== */
+
+/* Transmission scan-in: clip-path wipe + blur clear */
+@keyframes wire-line-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0);
+    filter: blur(0);
+  }
+}
+
+.wire-line {
+  animation: wire-line-in 600ms var(--spring-games-inertia) both;
+}
+
+/* Staggered reveal: 300ms gap per line = reading pace */
+.wire-line:nth-child(1) { animation-delay: 0.1s; }
+.wire-line:nth-child(2) { animation-delay: 0.4s; }
+.wire-line:nth-child(3) { animation-delay: 0.7s; }
+.wire-line:nth-child(4) { animation-delay: 1.0s; }
+.wire-line:nth-child(5) { animation-delay: 1.3s; }
+
+/* Word snap: hidden word guessed correctly — flash + spring scale */
+@keyframes wire-word-snap {
+  0%   { transform: scale(1.2); filter: brightness(3); }
+  40%  { transform: scale(0.95); filter: brightness(1.5); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.wire-word--snapping {
+  animation: wire-word-snap 400ms var(--spring-games-bounce);
+}
+
+/* Wrong guess: the hidden word block shivers with rotation */
+@keyframes wire-shake {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(-5px) rotate(-1deg); }
+  30%      { transform: translateX(4px) rotate(1deg); }
+  45%      { transform: translateX(-4px) rotate(-0.5deg); }
+  60%      { transform: translateX(3px) rotate(0.5deg); }
+  75%      { transform: translateX(-2px); }
+}
+
+.wire-hidden--wrong {
+  animation: wire-shake 400ms ease-out;
+}
+
+/* Connection reveal: "CONNECTION ESTABLISHED" types across */
+@keyframes wire-connection-type-in {
+  from { clip-path: inset(0 100% 0 0); opacity: 0.5; }
+  to   { clip-path: inset(0 0% 0 0); opacity: 1; }
+}
+
+.wire-connection-reveal {
+  animation: wire-connection-type-in 800ms var(--spring-games-inertia);
+}
+
+/* Word solved settle: flash then rest */
+@keyframes wire-solved-settle {
+  from { filter: brightness(1.5); transform: scale(1.05); }
+  to   { filter: brightness(1); transform: scale(1); }
+}
+
+.wire-word--solved {
+  animation: wire-solved-settle 500ms var(--spring-games-bounce);
+}
+
+/* Wire input focus glow */
+.wire-input--focused {
+  box-shadow: 0 0 0 2px rgba(100, 200, 150, 0.3);
+  transition: box-shadow 200ms var(--spring-games-snap);
+}
+
+
+/* ==========================================================================
+   5. VOID RUN — Game State Transitions
+   ========================================================================== */
+
+/* CRT death flicker: signal breaks */
+@keyframes run-crt-death {
+  0%   { filter: brightness(1); }
+  10%  { filter: brightness(2) contrast(2); }
+  20%  { filter: brightness(0.1); }
+  30%  { filter: brightness(1.8) contrast(1.5); }
+  40%  { filter: brightness(0.05); }
+  50%  { filter: brightness(1); }
+  100% { filter: brightness(0.6) grayscale(0.3); }
+}
+
+.run-page__canvas-wrap--dead {
+  animation: run-crt-death 600ms var(--spring-games-snap) forwards;
+}
+
+/* Score slam: final score bounces into view */
+@keyframes run-score-slam {
+  from {
+    transform: scale(1.5) translateY(-20px);
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* Death score: spring-bounce entrance, staggered per item */
+.run-page__death-score {
+  animation: run-score-slam 400ms var(--spring-games-bounce) both;
+}
+.run-page__death-score:nth-child(1) { animation-delay: 0.5s; }
+.run-page__death-score:nth-child(2) { animation-delay: 0.7s; }
+
+/* Death overlay: fade + blur in after CRT flicker */
+.run-page__death-overlay {
+  animation: run-death-overlay-in 400ms var(--spring-games-inertia) 0.3s both;
+}
+
+@keyframes run-death-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(4px); }
+}
+
+/* Death title: letter-spacing narrows as it settles */
+@keyframes run-death-title-in {
+  from { opacity: 0; transform: translateY(-8px); letter-spacing: 0.4em; }
+  to   { opacity: 1; transform: translateY(0); letter-spacing: 0.2em; }
+}
+
+.run-page__death-title {
+  animation: run-death-title-in 500ms var(--spring-games-inertia) 0.4s both;
+}
+
+/* Restart button: bouncy entrance after death sequence */
+.run-page__restart {
+  animation: fadeInUp 300ms var(--spring-games-bounce) 0.9s both;
+}
+
+.run-page__restart:hover {
+  transform: scale(1.05);
+  transition: transform 150ms var(--spring-games-micro);
+}
+
+.run-page__restart:active {
+  transform: scale(0.95);
+  transition-duration: 80ms;
+}
+
+/* Scanline drift during gameplay */
+@keyframes run-scanline-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(4px); }
+}
+
+.run-page__scanlines {
+  animation: run-scanline-drift 2s linear infinite alternate;
+}
+
+
+/* ==========================================================================
+   6. MOTION REDUCED MOTION — Disable all motion choreography
+   All choreography: instant (0ms). Scroll-driven: disabled.
+   Stagger: simultaneous appearance.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Hub */
+  .games-hub__card { transition: none; will-change: auto; }
+  .game-sigil { transition: none; }
+
+  /* UNDERTOW motion */
+  .undertow-card { transition: none; }
+  .undertow-card--wrong { animation: none; }
+  .undertow-card--revealed { animation: none; opacity: 1; transform: none; }
+  .undertow-card--confidence-tap { animation: none; }
+
+  /* THE WIRE motion */
+  .wire-line { animation: none; opacity: 1; clip-path: none; filter: none; }
+  .wire-word--snapping { animation: none; }
+  .wire-hidden--wrong { animation: none; }
+  .wire-connection-reveal { animation: none; opacity: 1; clip-path: none; }
+  .wire-word--solved { animation: none; }
+
+  /* VOID RUN motion */
+  .run-page__canvas-wrap--dead { animation: none; filter: brightness(0.6) grayscale(0.3); }
+  .run-page__death-overlay { animation: none; opacity: 1; }
+  .run-page__death-title { animation: none; opacity: 1; transform: none; letter-spacing: 0.2em; }
+  .run-page__death-score { animation: none; opacity: 1; transform: none; }
+  .run-page__restart { animation: none; opacity: 1; transform: none; }
+  .run-page__scanlines { animation: none; }
+}
+
+
+/* ==========================================================================
+   7. MOTION MOBILE — Reduce motion budget for performance
+   Disable parallax, reduce stagger gaps, skip rack focus, skip motion blur.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Hub: disable will-change, simpler hover */
+  .games-hub__card { will-change: auto; }
+  .games-hub__card--featured:hover {
+    transform: translateY(-4px) scale(1.01) rotate(0deg);
+  }
+
+  /* UNDERTOW: no hover lift on mobile, simpler reveal easing */
+  .undertow-card:hover {
+    transform: none;
+    transition-duration: 350ms;
+  }
+  .undertow-card--revealed {
+    animation-timing-function: var(--spring-games-inertia);
+  }
+
+  /* Wire: reduce stagger delays by 50% */
+  .wire-line:nth-child(1) { animation-delay: 0.05s; }
+  .wire-line:nth-child(2) { animation-delay: 0.2s; }
+  .wire-line:nth-child(3) { animation-delay: 0.35s; }
+  .wire-line:nth-child(4) { animation-delay: 0.5s; }
+  .wire-line:nth-child(5) { animation-delay: 0.65s; }
+
+  /* Run: no scanline drift (saves GPU) */
+  .run-page__scanlines { animation: none; }
+}
