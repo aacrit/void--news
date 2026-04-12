@@ -349,25 +349,25 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       // Clear any pending timer from a rapid edition switch
       if (editionTransitionTimerRef.current) clearTimeout(editionTransitionTimerRef.current);
       setEditionTransition("out");
-      // L-cut overlap: new content starts entering before old fully exits
+      // L-cut overlap: new content starts entering at 50% of 180ms whip pan
       editionTransitionTimerRef.current = setTimeout(() => {
         setEditionTransition("in");
         editionTransitionTimerRef.current = setTimeout(() => {
           setEditionTransition(null);
           editionTransitionTimerRef.current = null;
-        }, 250);
-      }, 120);
+        }, 150);
+      }, 90);
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     // Compute whip pan direction based on edition order.
     // Mark isEditionSwitch so the desktop whip pan animation applies to
-    // all grid sections. Cleared after whip pan duration (350ms + buffer).
+    // all grid sections. Cleared after whip pan duration (180ms + buffer).
     if (prevIdx !== nextIdx) {
       setWhipDirection(nextIdx > prevIdx ? "right" : "left");
       setIsEditionSwitch(true);
-      setTimeout(() => setIsEditionSwitch(false), 500);
+      setTimeout(() => setIsEditionSwitch(false), 280);
     }
     prevEditionRef.current = activeEdition;
   }, [activeEdition]);

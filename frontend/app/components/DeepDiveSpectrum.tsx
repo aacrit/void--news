@@ -45,7 +45,8 @@ function getFaviconUrl(sourceUrl: string): string {
     const domain = new URL(
       sourceUrl.startsWith("http") ? sourceUrl : `https://${sourceUrl}`
     ).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+    // Clearbit Logo API — returns actual publication logos, not browser favicons
+    return `https://logo.clearbit.com/${domain}`;
   } catch {
     return "";
   }

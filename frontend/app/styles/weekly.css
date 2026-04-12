@@ -443,12 +443,11 @@
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.6s var(--ease-cinematic, ease-out);
-  /* Magazine warmth: heavier sepia + lower saturation than feed. The
-     Economist/TIME cover stock. Compounds with .wk-main --cin-grade-editorial
-     (contrast 1.04, sat 0.88, sepia 0.06).
-     Effective compound (light): contrast ~1.08, sat ~0.77, sepia ~0.12.
+  /* Magazine warmth: punchy, warm, authoritative. The Economist/TIME cover stock.
+     Compounds with .wk-main --cin-grade-editorial (contrast 1.04, sat 0.88, sepia 0.06).
+     Effective compound (light): contrast ~1.09, sat ~0.81, sepia ~0.10.
      Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.06-0.16. */
-  filter: var(--img-grade-weekly, contrast(1.04) saturate(0.88) sepia(0.06));
+  filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
 }
 
 .wk-cover-hero__image--loaded {

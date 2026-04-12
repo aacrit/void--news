@@ -154,6 +154,10 @@
 .feed-grid__item {
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
+  /* contain: paint removed — clips outline-offset focus rings and box-shadow
+     on .story-card--kbd-focus (outline-offset: 3px paints outside padding box).
+     layout + style still prevent layout/counter propagation up the tree. */
+  contain: layout style;
   /* Prevent grid blowout from long headlines */
   min-width: 0;
 }
@@ -197,14 +201,14 @@
   /* Rack-in: backdrop-filter ramps from no blur to full blur over 500ms.
      The depth of field deepens progressively — the camera is narrowing its
      aperture after acquiring focus on the subject (Deep Dive panel). */
-  animation: backdropRackIn var(--cin-backdrop-ramp-dur, 500ms) var(--ease-cinematic) both;
+  animation: backdropRackIn var(--cin-backdrop-ramp-dur, 200ms) var(--ease-cinematic) both;
 }
 
 /* Closing state: rack-out (blur clears before panel finishes morphing).
    L-cut: the feed refocuses before the viewer's foveal attention leaves
    the closing panel. Applied via JS class toggle on close. */
 .deep-dive-backdrop--closing {
-  animation: backdropRackOut var(--cin-backdrop-rack-out-dur, 280ms) var(--ease-whip) both;
+  animation: backdropRackOut var(--cin-backdrop-rack-out-dur, 120ms) var(--ease-whip) both;
 }
 
 /* ── Deep Dive Backdrop: Chiaroscuro Light Falloff ──
