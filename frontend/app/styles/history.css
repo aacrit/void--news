@@ -3237,8 +3237,9 @@
   color: var(--hist-ink-secondary);
   border-left: 2px solid var(--hist-accent);
   padding-left: var(--space-4);
-  margin: 0 0 var(--space-5) 0;
+  margin: 0 auto var(--space-5);
   max-width: 700px;
+  text-align: left;
 }
 
 /* ─────────────────────────────────────────────
@@ -6115,7 +6116,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 .hist-stage--perspectives { max-width: 680px; margin-left: auto; margin-right: auto; }
 .hist-stage--omissions { max-width: 680px; margin-left: auto; margin-right: auto; }
 .hist-stage--evidence { max-width: 800px; margin-left: auto; margin-right: auto; }
-.hist-stage--next   { max-width: 100%; }
+.hist-stage--next   { max-width: 900px; margin-left: auto; margin-right: auto; }
 
 /* ---------------------------------------------------------------------------
    Reduced Motion — Disable all new animations
@@ -6254,6 +6255,10 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 .hist-thread-stage {
   padding-top: var(--space-5);
   padding-bottom: var(--space-5);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 /* Divider: ink draw-in from left to right — a nib crossing the page */
