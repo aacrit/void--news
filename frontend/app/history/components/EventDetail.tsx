@@ -193,7 +193,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
   const fmtYear = (y: number) => y <= 0 ? `${Math.abs(y) + (y === 0 ? 1 : 0)} BCE` : String(y);
 
   return (
-    <div ref={contentRef} className={showSidebar ? "hist-layout-sidebar" : ""}>
+    <div ref={contentRef} className={`hist-event-detail${showSidebar ? " hist-layout-sidebar" : ""}`}>
 
       {/* ── HERO — full-screen cinematic entry, unchanged ── */}
       <section className="hist-stage hist-stage--scene">
@@ -207,6 +207,23 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
             <span className="hist-stage__date">{event.datePrimary}</span>
             <h1 className="hist-stage__title">{event.title}</h1>
             {event.subtitle && <p className="hist-stage__subtitle">{event.subtitle}</p>}
+            {event.audioUrl && (
+              <button
+                type="button"
+                className="hist-hero-listen"
+                onClick={() => {
+                  const playBtn = document.querySelector('.hist-audio-cue__play') as HTMLButtonElement;
+                  if (playBtn) playBtn.click();
+                }}
+                aria-label={`Listen to ${event.title} — ${event.perspectives.length} perspectives`}
+              >
+                <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true" className="hist-hero-listen__icon">
+                  <path d="M1 1.5v11l10-5.5z" />
+                </svg>
+                <span className="hist-hero-listen__label">Listen</span>
+                <span className="hist-hero-listen__meta">{event.perspectives.length} perspectives · {Math.floor((event.audioDuration ?? 0) / 60)}:{String((event.audioDuration ?? 0) % 60).padStart(2, '0')}</span>
+              </button>
+            )}
           </div>
           {event.heroAttribution && (
             <span className="hist-stage__attribution">{event.heroAttribution}</span>

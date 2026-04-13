@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
   getLeanColor,
   leanLabel,
@@ -386,8 +386,6 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
   const riseRafRef = useRef<number>(0);
   const svgWrapRef = useRef<HTMLDivElement>(null);
   const [animated, setAnimated] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [scrubLean, setScrubLean] = useState<number | null>(null);
 
   const n = sources.length;
   const leans = sources.map((s) => s.politicalLean);
@@ -480,33 +478,6 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
     }));
   }, [densities, sources, peakH, svgH]);
 
-  // Label row assignment — 2-row collision detection in SVG coord space
-  const labelRows = useMemo(() => {
-    const sorted = [...sourcePins].sort((a, b) => a.x - b.x);
-    const minGap = 55; // SVG units (~14% of W=400)
-    const result: Array<(typeof sorted)[number] & { row: 0 | 1 }> = [];
-    const lastX: [number, number] = [-Infinity, -Infinity];
-    for (const pin of sorted) {
-      if (pin.x - lastX[0] >= minGap) {
-        result.push({ ...pin, row: 0 as const });
-        lastX[0] = pin.x;
-      } else {
-        result.push({ ...pin, row: 1 as const });
-        lastX[1] = pin.x;
-      }
-    }
-    return result;
-  }, [sourcePins]);
-
-  // Scrub handlers — convert clientX → lean value 0-100
-  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!expanded || !svgWrapRef.current) return;
-    const rect = svgWrapRef.current.getBoundingClientRect();
-    setScrubLean(Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)));
-  }, [expanded]);
-
-  const handlePointerLeave = useCallback(() => setScrubLean(null), []);
-
   // Trigger entrance
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 50);
@@ -559,24 +530,11 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
   }, [animated, paths]);
 
   return (
-    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}${expanded ? " dd-sv-view--expanded" : ""}`}>
-      {/* Expand toggle button */}
-      <button
-        type="button"
-        className="dd-sv-view__toggle-btn"
-        onClick={() => setExpanded((v) => !v)}
-        aria-expanded={expanded}
-        aria-label={expanded ? "Collapse source detail" : "Expand source detail"}
-      >
-        {expanded ? "⊖" : "⊕"}
-      </button>
-
-      {/* SVG wrapper — captures pointer for scrub */}
+    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}`}>
+      {/* SVG wrapper */}
       <div
         ref={svgWrapRef}
         className="dd-sv-view__svg-wrap"
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
       >
         <svg
           viewBox={`0 0 ${W} ${svgH}`}
@@ -673,8 +631,8 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
             />
           )}
 
-          {/* Source dots overlay — n=4-7 only, hidden when expanded (exp-pins take over) */}
-          {isLow && !expanded && densities && sourcePins.map((pin, i) => (
+          {/* Source dots overlay — n=4-7 only */}
+          {isLow && densities && sourcePins.map((pin, i) => (
             <circle
               key={`src-dot-${i}`}
               cx={pin.x}
@@ -738,63 +696,7 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
             </text>
           ))}
 
-          {/* Expanded: all sources pinned to KDE curve — clickable circles */}
-          {sourcePins.map((pin, i) => (
-            <circle
-              key={`exp-pin-${i}`}
-              cx={pin.x}
-              cy={pin.y}
-              r="4"
-              fill="var(--bg-card)"
-              strokeWidth="2"
-              className="dd-sv-view__exp-pin"
-              data-lean={pin.leanBucket}
-              style={{ transitionDelay: `${i * 25}ms` }}
-              onClick={() => window.open(pin.source.articleUrl, "_blank", "noopener,noreferrer")}
-              aria-label={`${pin.source.name} — ${leanLabel(pin.source.politicalLean)}`}
-            />
-          ))}
-
-          {/* Scrub vertical line */}
-          {scrubLean !== null && (
-            <line
-              x1={(scrubLean / 100) * W}
-              y1={4}
-              x2={(scrubLean / 100) * W}
-              y2={svgH - 4}
-              className="dd-sv-view__scrub-line"
-            />
-          )}
         </svg>
-
-        {/* Scrub lean label — follows cursor */}
-        {scrubLean !== null && (
-          <div className="dd-sv-view__scrub-label" style={{ left: `${scrubLean}%` }}>
-            {leanLabelAbbr(scrubLean)} {Math.round(scrubLean)}
-          </div>
-        )}
-      </div>
-
-      {/* Expand layer — source name labels pinned by lean position */}
-      <div className={`dd-sv-expand-layer${expanded ? " dd-sv-expand-layer--open" : ""}`} aria-hidden={!expanded}>
-        {labelRows.map((item, i) => (
-          <a
-            key={`exp-item-${i}`}
-            href={item.source.articleUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="dd-sv-expand-item"
-            data-lean={item.leanBucket}
-            data-row={item.row}
-            style={{
-              left: `${(item.x / W) * 100}%`,
-              transitionDelay: expanded ? `${80 + i * 25}ms` : "0ms",
-            }}
-          >
-            <span className="dd-sv-expand-item__dot" aria-hidden="true" />
-            <span className="dd-sv-expand-item__name">{item.source.name}</span>
-          </a>
-        ))}
       </div>
 
       {/* 4-state coverage banner — consensus is silent (no banner) */}

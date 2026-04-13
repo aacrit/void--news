@@ -906,7 +906,7 @@ export default function HistoryLanding({
 
   /* ── State A: Full timeline ── */
   return (
-    <div className="hist-tl-wrapper">
+    <div className={`hist-tl-wrapper${threadsMode ? " hist-tl-wrapper--threads-active" : ""}`}>
       {/* ── TOP ZONE: Era header + year ribbon + era pills ── */}
       <div
         className={`hist-tl-top-zone ${hasScrolled ? "" : "hist-tl-top-zone--hidden"}`}
@@ -968,6 +968,34 @@ export default function HistoryLanding({
           })}
         </nav>
       </div>
+
+      {/* Mobile-only era navigation — fixed bottom chrome strip, replaces hidden top zone */}
+      {isMobileVertical && (
+        <nav className="hist-mobile-era-strip" aria-label="Era navigation">
+          {eraGroups.map((era) => {
+            const isActive = currentEra === era.id;
+            return (
+              <button
+                key={era.id}
+                className={`hist-mobile-era-btn${isActive ? " hist-mobile-era-btn--active" : ""}`}
+                onClick={() => {
+                  const station = stationRefs.current[era.firstIndex];
+                  if (station) {
+                    station.scrollIntoView({
+                      block: "center",
+                      behavior: "smooth",
+                    });
+                  }
+                }}
+                type="button"
+                aria-label={`Jump to ${ERA_CONTEXT[era.id]?.label || era.label}`}
+              >
+                {(ERA_CONTEXT[era.id]?.label || era.label).split(" ").pop()}
+              </button>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Mission Brief -- fades on first scroll */}
       <div
