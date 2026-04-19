@@ -25,6 +25,10 @@ on:
         description: "Force regeneration even if already in manifest"
         required: false
         default: "false"
+      voices_only:
+        description: "Reuse cached Gemini scripts; only re-run TTS (0 Gemini calls; requires warm cache)"
+        required: false
+        default: "false"
 
 jobs:
   generate:
@@ -56,19 +60,20 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
 
+          FLAGS="${{ inputs.force == 'true' && ' --force' || '' }}${{ inputs.voices_only == 'true' && ' --voices-only' || '' }}"
+
           if [ -n "${{ inputs.slugs }}" ]; then
-            python -m pipeline.history.generate_audio \
-              --slugs ${{ inputs.slugs }}${{ inputs.force == 'true' && ' --force' || '' }}
+            python -m pipeline.history.generate_audio --slugs ${{ inputs.slugs }}$FLAGS
           else
             python -m pipeline.history.generate_audio \
               --batch-size ${{ inputs.batch_size }} \
-              --offset ${{ inputs.offset }}${{ inputs.force == 'true' && ' --force' || '' }}
+              --offset ${{ inputs.offset }}$FLAGS
           fi
 
-      - name: Commit manifest update
+      - name: Commit manifest + script cache
         run: |
           git config user.name "void-pipeline[bot]"
           git config user.email "pipeline@void-news.app"
-          git add data/history/audio-manifest.json || true
-          git diff --cached --quiet || git commit -m "chore: update history audio manifest [skip ci]"
+          git add data/history/audio-manifest.json data/history/scripts/ || true
+          git diff --cached --quiet || git commit -m "chore: update history audio manifest + script cache [skip ci]"
           git push origin HEAD || true
